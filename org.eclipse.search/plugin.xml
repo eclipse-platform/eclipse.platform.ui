@@ -184,6 +184,8 @@
 	            markerType="org.eclipse.search.searchmarker"
 	            textPreferenceKey="searchResultIndication"
 	            textPreferenceValue="true"
+	            highlightPreferenceKey="searchResultHighlighting"
+	            highlightPreferenceValue="false"
 	            overviewRulerPreferenceKey="searchResultIndicationInOverviewRuler"
 	            overviewRulerPreferenceValue="true"
 	            colorPreferenceKey="searchResultIndicationColor"

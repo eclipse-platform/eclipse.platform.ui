@@ -72,6 +72,15 @@
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
+
+         <attribute name="highlightPreferenceKey" type="string">
+            <annotation>
+               <documentation>
+                  The preference key for highlighting in text.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
                   
                </documentation>
             </annotation>
@@ -121,6 +130,16 @@
                </documentation>
             </annotation>
          </attribute>
+
+         <attribute name="highlightPreferenceValue" type="boolean">
+            <annotation>
+               <documentation>
+                  The default value for highlighting in text.
+since: 3.0
+               </documentation>
+            </annotation>
+         </attribute>
+
          <attribute name="annotationType" type="string" use="required">
             <annotation>
                <documentation>
@@ -128,6 +147,7 @@
                </documentation>
             </annotation>
          </attribute>
+
          <attribute name="contributesToHeader" type="boolean">
             <annotation>
                <documentation>
@@ -135,51 +155,57 @@
                </documentation>
             </annotation>
          </attribute>
+
          <attribute name="showInNextPrevDropdownToolbarActionKey" type="string">
             <annotation>
                <documentation>
                   The preference key for the visibility in the next/previous drop down toolbar action.
-Since: 3.0
+since: 3.0
                </documentation>
             </annotation>
          </attribute>
+
          <attribute name="showInNextPrevDropdownToolbarAction" type="boolean">
             <annotation>
                <documentation>
                   The default value for the visibility in the next/previous drop down toolbar action.
-Since: 3.0
+since: 3.0
                </documentation>
             </annotation>
          </attribute>
+
          <attribute name="isGoToNextNavigationTargetKey" type="string">
             <annotation>
                <documentation>
                   The preference key for go to next navigation enablement.
-Since: 3.0
+since: 3.0
                </documentation>
             </annotation>
          </attribute>
+
          <attribute name="isGoToNextNavigationTarget" type="boolean">
             <annotation>
                <documentation>
                   The default value for go to next navigation enablement.
-Since: 3.0
+since: 3.0
                </documentation>
             </annotation>
          </attribute>
+
          <attribute name="isGoToPreviousNavigationTargetKey" type="string">
             <annotation>
                <documentation>
                   The preference key for go to previous navigation enablement.
-Since: 3.0
+since: 3.0
                </documentation>
             </annotation>
          </attribute>
+
          <attribute name="isGoToPreviousNavigationTarget" type="boolean">
             <annotation>
                <documentation>
                   The default value for go to previous navigation enablement.
-Since: 3.0
+since: 3.0
                </documentation>
             </annotation>
          </attribute>

@@ -146,12 +146,23 @@ public class MarkerAnnotationPreferences {
 		s= element.getAttribute("textPreferenceKey");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		info.setTextPreferenceKey(s);
-
+		
 		b= false;
 		s= element.getAttribute("textPreferenceValue");  //$NON-NLS-1$
 		if (s != null && s.trim().length() > 0)
 			b= StringConverter.asBoolean(s, false);
 		info.setTextPreferenceValue(b);
+		
+		s= element.getAttribute("highlightPreferenceKey");  //$NON-NLS-1$
+		if (s == null || s.trim().length() == 0)
+			s= null;
+		info.setHighlightPreferenceKey(s);
+		
+		b= false;
+		s= element.getAttribute("highlightPreferenceValue");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, false);
+		info.setHighlightPreferenceValue(b);
 		
 		s= element.getAttribute("overviewRulerPreferenceKey");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
@@ -240,7 +251,9 @@ public class MarkerAnnotationPreferences {
 			if (info.getIsGoToNextNavigationTargetKey() != null)
 				store.setDefault(info.getIsGoToNextNavigationTargetKey(), info.isGoToNextNavigationTarget());
 			if (info.getIsGoToPreviousNavigationTargetKey() != null)
-				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());			
+				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());
+			if (info.getHighlightPreferenceKey() != null)
+				store.setDefault(info.getHighlightPreferenceKey(), info.getHighlightPreferenceValue());
 		}
 	}
 }
