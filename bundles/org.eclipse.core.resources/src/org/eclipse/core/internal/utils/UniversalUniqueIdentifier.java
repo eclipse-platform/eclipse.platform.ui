@@ -375,7 +375,7 @@ private void setTimestamp(BigInteger timestamp) {
 	fBits[TIME_HIGH_AND_VERSION] = (byte) (timeHigh | version);
 }
 protected synchronized void setTimeValues() {
-	this.setTimestamp(this.timestamp());
+	this.setTimestamp(timestamp());
 	this.setClockSequence(fgClockSequence);
 }
 protected int setVariant(int variantIdentifier) {

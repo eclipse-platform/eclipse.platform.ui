@@ -317,7 +317,7 @@ protected void resetIndexedStore() {
 	store.reset();
 	IPath location = workspace.getMetaArea().getHistoryStoreLocation();
 	java.io.File target = location.toFile();
-	workspace.clear(target);
+	Workspace.clear(target);
 	target.mkdirs();
 	String message = Policy.bind("history.corrupt"); //$NON-NLS-1$
 	ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);

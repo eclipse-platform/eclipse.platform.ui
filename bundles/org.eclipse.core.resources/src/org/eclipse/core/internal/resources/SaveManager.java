@@ -872,7 +872,7 @@ protected void snapTree(ElementTree tree, IProgressMonitor monitor) throws CoreE
 			try {
 				out.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 				writeWorkspaceFields(out, monitor);
-				writer.writeDelta(tree, lastSnap, Path.ROOT, writer.D_INFINITE, out, ResourceComparator.getComparator());
+				writer.writeDelta(tree, lastSnap, Path.ROOT, ElementTreeWriter.D_INFINITE, out, ResourceComparator.getComparator());
 				safeStream.succeed();
 			} finally {
 				out.close();
@@ -997,7 +997,7 @@ protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMon
 			/* save the forest! */
 			ElementTreeWriter writer = new ElementTreeWriter(this);
 			ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
-			writer.writeDeltaChain(treesToSave, Path.ROOT, writer.D_INFINITE, output, ResourceComparator.getComparator());
+			writer.writeDeltaChain(treesToSave, Path.ROOT, ElementTreeWriter.D_INFINITE, output, ResourceComparator.getComparator());
 			monitor.worked(Policy.totalWork * 50 / 100);
 		} finally {
 			if (!wasImmutable)
@@ -1058,7 +1058,7 @@ protected void writeTree(Project project, DataOutputStream output, IProgressMoni
 			/* save the forest! */
 			ElementTreeWriter writer = new ElementTreeWriter(this);
 			ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
-			writer.writeDeltaChain(treesToSave, project.getFullPath(), writer.D_INFINITE, output, ResourceComparator.getComparator());
+			writer.writeDeltaChain(treesToSave, project.getFullPath(), ElementTreeWriter.D_INFINITE, output, ResourceComparator.getComparator());
 			monitor.worked(8);
 		} finally {
 			if (output != null)
