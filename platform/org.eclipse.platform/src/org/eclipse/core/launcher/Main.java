@@ -27,7 +27,21 @@ import java.util.*;
  *    -application &lt;id&gt;: the identifier of the application to run
  * </dd>
  * <dd>
- *    -boot &lt;location&gt;: the location, expressed as a URL, of the platform's boot.jar
+ *    -arch &lt;architecture&gt;: sets the processor architecture value
+ * </dd>
+ * <dd>
+ *    -boot &lt;location&gt;: the location, expressed as a URL, of the platform's boot.jar.
+ * <i>Deprecated: replaced by -configuration</i>
+ * </dd>
+ * <dd>
+ *    -classloaderproperties [properties file]: activates platform class loader enhancements using 
+ * the class loader properties file at the given location, if specified. The (optional) file argument 
+ * can be either a file path or an absolute URL.
+ * </dd>
+ * <dd>
+ *    -configuration &lt;location&gt;: the location, expressed as a URL, for the Eclipse platform 
+ * configuration file. The configuration file determines the location of the Eclipse platform, the set 
+ * of available plug-ins, and the primary feature.
  * </dd>
  * <dd>
  *    -consolelog : enables log to the console. Handy when combined with -debug
@@ -39,25 +53,55 @@ import java.util.*;
  *    -debug [options file]: turns on debug mode for the platform and optionally specifies a location
  * for the .options file. This file indicates what debug points are available for a
  * plug-in and whether or not they are enabled. If a location is not specified, the platform searches
- * for the .options file under the install directory
+ * for the .options file under the install directory.
  * </dd>
  * <dd>
  *    -dev [entries]: turns on dev mode and optionally specifies comma-separated class path entries
  * which are added to the class path of each plug-in
  * </dd>
  * <dd>
+ *    -feature &lt;id&gt;: the identifier of the primary feature. The primary feature gives the launched 
+ * instance of Eclipse its product personality, and determines the product customization 
+ * information.
+ * </dd>
+ * <dd>
  *    -keyring &lt;location&gt;: the location of the authorization database on disk. This argument
- * has to be used together with the -password argument
+ * has to be used together with the -password argument.
+ * </dd>
+ * <dd>
+ *    -nl &lt;locale&gt;: sets the name of the locale on which Eclipse platform will run
+ * </dd>
+ * <dd>
+ *    -nolazyregistrycacheloading : deactivates platform plug-in registry cache loading optimization. 
+ * By default, extensions' configuration elements will be loaded from the registry cache (when 
+ * available) only on demand, reducing memory footprint. This option will force the registry cache 
+ * to be fully loaded at startup.
+ * </dd>
+ *  <dd>
+ *    -nopackageprefixes: deactivates classloader package prefixes optimization
+ * </dd> 
+ *  <dd>
+ *    -noregistrycache: bypasses the reading and writing of an internal plug-in registry cache file
+ * </dd>
+ * <dd>
+ *    -os &lt;operating system&gt;: sets the operating system value
  * </dd>
  * <dd>
  *    -password &lt;passwd&gt;: the password for the authorization database
  * </dd>
  * <dd>
- *    -plugins &lt;location&gt;: The arg is a URL pointing to a file which specs the plugin 
+ *    -plugins &lt;location&gt;: the arg is a URL pointing to a file which specs the plugin 
  * path for the platform.  The file is in property file format where the keys are user-defined 
  * names and the values are comma separated lists of either explicit paths to plugin.xml 
- * files or directories containing plugins. (e.g., .../eclipse/plugins).
+ * files or directories containing plugins (e.g., .../eclipse/plugins). 
+ * <i>Deprecated: replaced by -configuration</i>
  * </dd>
+ * <dd>
+ *    -plugincustomization &lt;properties file&gt;: the location of a properties file containing default 
+ * settings for plug-in preferences. These default settings override default settings specified in the 
+ * primary feature. Relative paths are interpreted relative to the directory that eclipse was started 
+ * from.
+ * </dd> 
  * <dd>
  *    -ws &lt;window system&gt;: sets the window system value
  * </dd>
