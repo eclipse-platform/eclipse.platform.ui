@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -219,7 +220,17 @@ public class EclipseSynchronizer {
 		try {
 			beginOperation(null);
 			// cache resource sync for siblings, then return for self
-			cacheResourceSyncForChildren(parent);
+			try {
+				cacheResourceSyncForChildren(parent);
+			} catch (CVSException e) {
+				if (e.getStatus().getCode() == IResourceStatus.WORKSPACE_LOCKED) {
+					// This can occur if the resource sync is loaded during the POST_CHANGE delta phase.
+					// We will resort to loading the sync info for the requested resource from disk
+					return getSyncBytesFromDisk(resource);
+				} else {
+					throw e;
+				}
+			}
 			return getCachedSyncBytes(resource);
 		} finally {
 			endOperation(null);
@@ -657,6 +668,23 @@ public class EclipseSynchronizer {
 			}
 			getSyncInfoCacheFor(container).setResourceSyncInfoCached(container);
 		}
+	}
+	
+	/**
+	 * Load the sync info for the given resource from disk
+	 * @param resource
+	 * @return byte[]
+	 */
+	private byte[] getSyncBytesFromDisk(IResource resource) throws CVSException {
+		byte[][] infos = SyncFileWriter.readAllResourceSync(resource.getParent());
+		if (infos == null) return null;
+		for (int i = 0; i < infos.length; i++) {
+			byte[] syncBytes = infos[i];
+			if (resource.getName().equals(getName(syncBytes))) {
+				return syncBytes;
+			}
+		}
+		return null;
 	}
 	
 	/**

@@ -24,17 +24,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ISynchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
@@ -278,20 +273,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 					getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
 			}
 		} catch (CoreException e) {
-			if (e.getStatus().getCode() == IResourceStatus.WORKSPACE_LOCKED) {
-				// This can occur if the resource sync is loaded during the POST_CHANGE delta phase.
-				// The sync info being set should match what is already in the synchronizer but it doesn't
-				// Log the error and leave the sync info as is
-				// (see bug 29521)
-				CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 
-					Policy.bind("SynchrnoizerSyncInfoCache.failedToSetSyncBytes", new Object[] { //$NON-NLS-1$
-						resource.getFullPath().toString(),
-						oldBytes == null ? Policy.bind("null") : new String(oldBytes), //$NON-NLS-1$
-						syncBytes == null ? Policy.bind("null") : new String(syncBytes)}),  //$NON-NLS-1$
-					e));
-			} else {
-				throw CVSException.wrapException(e);
-			}
+			throw CVSException.wrapException(e);
 		}
 	}
 	
