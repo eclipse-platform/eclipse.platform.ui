@@ -31,57 +31,31 @@ public class ResourceExtender extends PropertyTester {
 	private static final String PROPERTY_MATCHES_PATTERN= "matchesPattern";	 //$NON-NLS-1$
 	private static final String PROJECT_NATURE = "projectNature";	 //$NON-NLS-1$
 	private static final String PROPERTY_MATCHES_CONTENT_TYPE= "matchesContentType"; //$NON-NLS-1$
-	private static final String INSTANCE_OF= "instanceof"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.corext.refactoring.participants.properties.IPropertyEvaluator#test(java.lang.Object, java.lang.String, java.lang.String)
 	 */
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
-		if (INSTANCE_OF.equals(method)) {
-			return instanceOf(receiver.getClass(), (String)expectedValue);
-		} else {
-			IResource resource= (IResource) ((IAdaptable)receiver).getAdapter(IResource.class);
-			if (resource != null) {
-				if (PROPERTY_MATCHES_PATTERN.equals(method)) { //$NON-NLS-1$
-					String fileName= resource.getName();
-					StringMatcher matcher= new StringMatcher((String)expectedValue, false, false);
-					return matcher.match(fileName);
-				} else if (PROJECT_NATURE.equals(method)) {
-					try {
-						IProject proj = resource.getProject();
-						return proj.isAccessible() && proj.hasNature((String)expectedValue);
-					} catch (CoreException e) {
-						return false;		
-					}
-				} else if (PROPERTY_MATCHES_CONTENT_TYPE.equals(method)) {
-					return matchesContentType(resource, (String) expectedValue);
+		IResource resource= (IResource) ((IAdaptable)receiver).getAdapter(IResource.class);
+		if (resource != null) {
+			if (PROPERTY_MATCHES_PATTERN.equals(method)) { //$NON-NLS-1$
+				String fileName= resource.getName();
+				StringMatcher matcher= new StringMatcher((String)expectedValue, false, false);
+				return matcher.match(fileName);
+			} else if (PROJECT_NATURE.equals(method)) {
+				try {
+					IProject proj = resource.getProject();
+					return proj.isAccessible() && proj.hasNature((String)expectedValue);
+				} catch (CoreException e) {
+					return false;		
 				}
+			} else if (PROPERTY_MATCHES_CONTENT_TYPE.equals(method)) {
+				return matchesContentType(resource, (String) expectedValue);
 			}
 		}
 		return false;
 	}
-	
-	private boolean instanceOf(Class clazz, String name) {
-		if (clazz.getName().equals(name)) {
-			return true;
-		}
-		Class[] interfaces = clazz.getInterfaces();
-		for (int i = 0; i < interfaces.length; i++) {
-			Class inter = interfaces[i];
-			if (instanceOf(inter, name)) {
-				return true;
-			}
-		}
-		clazz = clazz.getSuperclass();
-		while (clazz != null) {
-			if (instanceOf(clazz, name)) {
-				return true;
-			}
-			clazz = clazz.getSuperclass();
-		}
-		return false;
-	}
-	
+		
 	/**
 	 * Returns whether or not the given file's content type matches
 	 * the specified content type.
