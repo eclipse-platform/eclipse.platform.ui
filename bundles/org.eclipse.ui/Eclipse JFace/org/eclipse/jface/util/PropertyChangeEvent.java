@@ -76,6 +76,10 @@ public Object getOldValue() {
 }
 /**
  * Returns the name of the property that changed.
+ * <p>
+ * Warning: there is no guarantee that the property name returned
+ * is a constant string.  Callers must compare property names using
+ * equals, not ==.
  *
  * @return the name of the property that changed
  */
