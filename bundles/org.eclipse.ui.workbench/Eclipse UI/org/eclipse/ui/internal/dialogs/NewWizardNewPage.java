@@ -33,6 +33,9 @@ class NewWizardNewPage implements ISelectionChangedListener, IDoubleClickListene
 	private IWorkbench workbench;
 	private NewWizardSelectionPage page;
 	private IDialogSettings settings;
+	
+	//Keep track of the wizards we have previously selected
+	private Hashtable selectedWizards = new Hashtable();
 
 	private TreeViewer categoryTreeViewer;
 	private TableViewer wizardSelectionViewer;
@@ -222,13 +225,23 @@ private void handleWizardSelection(SelectionChangedEvent selectionEvent) {
 		page.selectWizardNode(null);
 		return;
 	}
+	
+	WorkbenchWizardNode selectedNode;
+	
+	if(selectedWizards.containsKey(currentSelection)){
+		selectedNode = (WorkbenchWizardNode) selectedWizards.get(currentSelection);
+	}
+	else{
+		selectedNode = 
+			new WorkbenchWizardNode(page,currentSelection) {
+				public IWorkbenchWizard createWizard() throws CoreException {
+					return (INewWizard)wizardElement.createExecutableExtension();
+				}
+			};
+		selectedWizards.put(currentSelection,selectedNode);
+	}
 
-	page.selectWizardNode(
-		new WorkbenchWizardNode(page,currentSelection) {
-			public IWorkbenchWizard createWizard() throws CoreException {
-				return (INewWizard)wizardElement.createExecutableExtension();
-			}
-		});
+	page.selectWizardNode(selectedNode);
 
 	page.setMessage((String)currentSelection.getDescription());
 }
