@@ -19,8 +19,8 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
             <element ref="command"/>
-<!--element ref="gestureBinding"/-->
 <!--element ref="gestureConfiguration"/-->
+<!--element ref="gestureBinding"/-->
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
             <element ref="scope"/>
@@ -153,6 +153,38 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
+<!--element name="gestureConfiguration">
+      <complexType>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="parent" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element-->
 <!--element name="gestureBinding">
       <complexType>
          <sequence>
@@ -194,38 +226,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
             </annotation>
          </attribute>
          <attribute name="string" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element-->
-<!--element name="gestureConfiguration">
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
             <annotation>
                <documentation>
                   
@@ -313,7 +313,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The translatable name of this key configuration for display in the UI. If this key configuration has a parent, it is not necessary to add &quot;(extends &lt;parent&gt;)&quot; to the name. This will be automatically added by the UI where necessary.
+                  The translatable name of this key configuration for display in the UI. If this key configuration has a parent, it is not necessary to add &quot;(extends ...)&quot; to the name. This will be automatically added by the UI where necessary.
                </documentation>
             </annotation>
          </attribute>
@@ -327,13 +327,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-<!--element name="sequence">
-      <complexType>
-         <sequence>
-            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
-      </complexType>
-   </element-->
 <!--element name="stroke">
       <complexType>
          <attribute name="value" type="string">
@@ -343,6 +336,13 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element-->
+<!--element name="sequence">
+      <complexType>
+         <sequence>
+            <element ref="stroke" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
       </complexType>
    </element-->
    <element name="scope">
