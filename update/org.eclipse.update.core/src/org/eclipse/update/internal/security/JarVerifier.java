@@ -318,7 +318,6 @@ public class JarVerifier extends Verifier {
 			// while reading it
 			jarFile = new JarFile(file, true);
 			List filesInJar = readJarFile(jarFile);
-			jarFile.close();
 
 			// you have to read all the files once
 			// before getting the certificates 
@@ -361,6 +360,10 @@ public class JarVerifier extends Verifier {
 		} catch (Exception e) {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
+		} finally {
+			if (jarFile!=null){
+				try {jarFile.close();} catch (IOException e){}
+			}
 		}
 
 	}
