@@ -124,7 +124,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private Label noOpenPerspective;
 	private Rectangle normalBounds;
 	private boolean asMaximizedState = false;
-	
+
 	/**
 	 * Bit flags indication which submenus (New, Show Views, ...) this
 	 * window contains. Initially none.
@@ -216,8 +216,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private static final int FILL_ALL_ACTION_BARS =
 		WorkbenchAdvisor.FILL_MENU_BAR
-		| WorkbenchAdvisor.FILL_TOOL_BAR
-		| WorkbenchAdvisor.FILL_STATUS_LINE;
+			| WorkbenchAdvisor.FILL_TOOL_BAR
+			| WorkbenchAdvisor.FILL_STATUS_LINE;
 
 	/**
 	 * The layout for the workbench window's shell.
@@ -280,17 +280,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 					if (coolBarChildrenExist()) {
 						Point coolBarSize =
-							coolBar.computeSize(
-								clientArea.width,
-								SWT.DEFAULT,
-								flushCache);
+							coolBar.computeSize(clientArea.width, SWT.DEFAULT, flushCache);
 						height = coolBarSize.y;
 					}
-					coolBar.setBounds(
-						clientArea.x,
-						clientArea.y,
-						coolBarWidth,
-						height);
+					coolBar.setBounds(clientArea.x, clientArea.y, coolBarWidth, height);
 					clientArea.y += height;
 					clientArea.height -= height;
 				} else
@@ -301,13 +294,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			Control sep2 = getSeparator2();
 			if (sep2 != null) {
 				if (getWindowConfigurer().getShowCoolBar()) {
-					Point sep2Size =
-						sep2.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-					sep2.setBounds(
-						clientArea.x,
-						clientArea.y,
-						clientArea.width,
-						sep2Size.y);
+					Point sep2Size = sep2.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+					sep2.setBounds(clientArea.x, clientArea.y, clientArea.width, sep2Size.y);
 					clientArea.y += sep2Size.y;
 					clientArea.height -= sep2Size.y;
 				} else
@@ -757,8 +745,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 		};
 		getCoolBarControl().addListener(SWT.MouseDown, listener);
-		Control[] children =
-			((Composite) getStatusLineManager().getControl()).getChildren();
+		Control[] children = ((Composite) getStatusLineManager().getControl()).getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] != null)
 				children[i].addListener(SWT.MouseDown, listener);
@@ -790,7 +777,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 		});
 	}
-
 
 	/* (non-Javadoc)
 	 * Method declared on ApplicationWindow.
@@ -1251,60 +1237,70 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (getCoolBarManager() != null) {
 			CoolBarManager coolBarMgr = getCoolBarManager();
 			IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
-			// The new layout of the cool bar manager
-			ArrayList layout = new ArrayList();
-			// Traverse through all the cool item in the memento
-			IMemento contributionMems[] = coolBarMem.getChildren(IWorkbenchConstants.TAG_COOLITEM);
-			for(int i=0; i < contributionMems.length; i++) {
-				IMemento contributionMem = contributionMems[i];
-				String type = contributionMem.getString(IWorkbenchConstants.TAG_ITEM_TYPE);
-				String id = contributionMem.getString(IWorkbenchConstants.TAG_ID);
-				IContributionItem newItem = null;
-				if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
-					if (id != null) {
-						newItem = new Separator(id);
-					}else {
-						newItem = new Separator();
+			if (coolBarMem != null) {
+				// The new layout of the cool bar manager
+				ArrayList layout = new ArrayList();
+				// Traverse through all the cool item in the memento
+				IMemento contributionMems[] =
+					coolBarMem.getChildren(IWorkbenchConstants.TAG_COOLITEM);
+				for (int i = 0; i < contributionMems.length; i++) {
+					IMemento contributionMem = contributionMems[i];
+					String type = contributionMem.getString(IWorkbenchConstants.TAG_ITEM_TYPE);
+					String id = contributionMem.getString(IWorkbenchConstants.TAG_ID);
+					IContributionItem newItem = null;
+					if (type.equals(IWorkbenchConstants.TAG_TYPE_SEPARATOR)) {
+						if (id != null) {
+							newItem = new Separator(id);
+						} else {
+							newItem = new Separator();
+						}
+					} else if (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
+						newItem = new GroupMarker(id);
+					} else if (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION)) {
+
+						// Get Width and height
+						Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
+						Integer height = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_Y);
+						// Look for the object in the current cool bar manager
+						IContributionItem oldItem = coolBarMgr.find(id);
+						// If a tool bar contribution item already exists for this id then use the old object
+						if (oldItem instanceof ToolBarContributionItem) {
+							newItem = (ToolBarContributionItem) oldItem;
+						} else {
+							newItem =
+								new ToolBarContributionItem(
+									new ToolBarManager(coolBarMgr.getStyle()),
+									id);
+							// make it invisible by default
+							newItem.setVisible(false);
+							// Need to add the item to the cool bar manager so that its canonical order can be preserved
+							IContributionItem refItem =
+								findAlphabeticalOrder(
+									IWorkbenchActionConstants.MB_ADDITIONS,
+									id,
+									coolBarMgr);
+							coolBarMgr.insertAfter(refItem.getId(), newItem);
+						}
+						// Set the current height and width
+						if (width != null) {
+							((ToolBarContributionItem) newItem).setCurrentWidth(width.intValue());
+						}
+						if (height != null) {
+							((ToolBarContributionItem) newItem).setCurrentHeight(height.intValue());
+						}
 					}
-				}else if (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
-					newItem = new GroupMarker(id);
-				}else if (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION)) {
-					
-					// Get Width and height
-					Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
-					Integer height = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_Y);
-					// Look for the object in the current cool bar manager
-					IContributionItem oldItem = coolBarMgr.find(id);
-					// If a tool bar contribution item already exists for this id then use the old object
-					if (oldItem instanceof ToolBarContributionItem) {
-						newItem = (ToolBarContributionItem)oldItem;
-					}else {
-						newItem = new ToolBarContributionItem(new ToolBarManager(coolBarMgr.getStyle()), id);
-						// make it invisible by default
-						newItem.setVisible(false);
-						// Need to add the item to the cool bar manager so that its canonical order can be preserved
-						IContributionItem refItem = findAlphabeticalOrder(IWorkbenchActionConstants.MB_ADDITIONS,id,coolBarMgr);
-						coolBarMgr.insertAfter(refItem.getId(),newItem);
-					}
-					// Set the current height and width
-					if (width != null) {
-						((ToolBarContributionItem)newItem).setCurrentWidth(width.intValue());
-					}
-					if (height != null) {
-						((ToolBarContributionItem)newItem).setCurrentHeight(height.intValue());
+					// Add new item into cool bar manager
+					if (newItem != null) {
+						layout.add(newItem);
+						newItem.setParent(coolBarMgr);
+						coolBarMgr.markDirty();
 					}
 				}
-				// Add new item into cool bar manager
-				if (newItem != null) {
-					layout.add(newItem);
-					newItem.setParent(coolBarMgr);
-					coolBarMgr.markDirty();
-				}
+				// Set the cool bar layout to the given layout.
+				coolBarMgr.setLayout(layout);
 			}
-			// Set the cool bar layout to the given layout.
-			coolBarMgr.setLayout(layout);
 		}
-		
+
 		// Recreate each page in the window. 
 		IWorkbenchPage newActivePage = null;
 		IMemento[] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
@@ -1387,7 +1383,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		return result;
 	}
-	
+
 	/**
 	 * Returns the contribution item that the given contribution item should be inserted after.
 	 * 
@@ -1396,10 +1392,13 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @param mgr the contribution manager.
 	 * @return the contribution item that the given items should be returned after.
 	 */
-	private IContributionItem findAlphabeticalOrder(String startId, String itemId, IContributionManager mgr) {
+	private IContributionItem findAlphabeticalOrder(
+		String startId,
+		String itemId,
+		IContributionManager mgr) {
 		IContributionItem[] items = mgr.getItems();
 		int insertIndex = 0;
-		
+
 		// look for starting point
 		while (insertIndex < items.length) {
 			IContributionItem item = items[insertIndex];
@@ -1407,25 +1406,25 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 				break;
 			++insertIndex;
 		}
-		
+
 		// Find the index that this item should be inserted in
-		for (int i= insertIndex+1; i < items.length; i++) {
+		for (int i = insertIndex + 1; i < items.length; i++) {
 			IContributionItem item = (IContributionItem) items[i];
 			String testId = item.getId();
-			
-			if (item.isGroupMarker()) break;
-			
+
+			if (item.isGroupMarker())
+				break;
+
 			if (itemId != null) {
 				if (itemId.compareTo(testId) < 1)
 					break;
 			}
 			insertIndex = i;
 		}
-		
+
 		return items[insertIndex];
 	}
-	
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IRunnableContext.
 	 */
@@ -1497,29 +1496,38 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			getCoolBarManager().refresh();
 			IMemento coolBarMem = memento.createChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
 			IContributionItem[] items = getCoolBarManager().getItems();
-			for(int i=0; i < items.length; i++) {
+			for (int i = 0; i < items.length; i++) {
 				IMemento coolItemMem = coolBarMem.createChild(IWorkbenchConstants.TAG_COOLITEM);
 				IContributionItem item = items[i];
 				// The id of the contribution item
 				if (item.getId() != null) {
-					coolItemMem.putString(IWorkbenchConstants.TAG_ID,item.getId());
+					coolItemMem.putString(IWorkbenchConstants.TAG_ID, item.getId());
 				}
 				// Write out type and size if applicable
 				if (item.isSeparator()) {
-					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,IWorkbenchConstants.TAG_TYPE_SEPARATOR);
-				}else if (item.isGroupMarker() && !item.isSeparator()) {
-					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
-				}else {
+					coolItemMem.putString(
+						IWorkbenchConstants.TAG_ITEM_TYPE,
+						IWorkbenchConstants.TAG_TYPE_SEPARATOR);
+				} else if (item.isGroupMarker() && !item.isSeparator()) {
+					coolItemMem.putString(
+						IWorkbenchConstants.TAG_ITEM_TYPE,
+						IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
+				} else {
 					// Assume that it is a ToolBarContributionItem
-					coolItemMem.putString(IWorkbenchConstants.TAG_ITEM_TYPE,IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
-					ToolBarContributionItem tbItem = (ToolBarContributionItem)item;
+					coolItemMem.putString(
+						IWorkbenchConstants.TAG_ITEM_TYPE,
+						IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
+					ToolBarContributionItem tbItem = (ToolBarContributionItem) item;
 					tbItem.saveWidgetState();
-					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_X, tbItem.getCurrentWidth());
-					coolItemMem.putInteger(IWorkbenchConstants.TAG_ITEM_Y, tbItem.getCurrentHeight());
+					coolItemMem.putInteger(
+						IWorkbenchConstants.TAG_ITEM_X,
+						tbItem.getCurrentWidth());
+					coolItemMem.putInteger(
+						IWorkbenchConstants.TAG_ITEM_Y,
+						tbItem.getCurrentHeight());
 				}
 			}
 		}
-		
 
 		// Save each page.
 		Iterator enum = pageList.iterator();
@@ -1827,7 +1835,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		WorkbenchPage currentPage = getActiveWorkbenchPage();
 		if (currentPage == null)
 			actionPresentation.clearActionSets();
-		else { 
+		else {
 			if (getCoolBarManager() != null) {
 				getCoolBarManager().refresh();
 			}
