@@ -22,7 +22,6 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
@@ -41,7 +40,6 @@ import org.eclipse.update.internal.ui.UpdateUI;
  * @see ViewPart
  */
 public class ConfigurationView
-	extends ViewPart
 	implements
 		IInstallConfigurationChangedListener,
 		IConfiguredSiteChangedListener,
@@ -71,12 +69,12 @@ public class ConfigurationView
 	private SashForm splitter;
 	private ConfigurationPreview preview;
 	private Hashtable previewTasks;
-	private String viewName;
 
 	private IUpdateModelChangedListener modelListener;
 	private boolean refreshLock = false;
 	private Image eclipseImage;
 	private boolean initialized;
+	private ConfigurationManagerWindow configurationWindow;
 
 	class ConfigurationSorter extends ViewerSorter {
 		public int category(Object obj) {
@@ -103,7 +101,6 @@ public class ConfigurationView
 			Object newInput) {
 			if (newInput == null)
 				return;
-			updateTitle(newInput);
 		}
 
 		/**
@@ -343,9 +340,10 @@ public class ConfigurationView
 		}
 	}
 
-	public ConfigurationView() {
+	public ConfigurationView(ConfigurationManagerWindow window) {
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		initializeImages();
+		configurationWindow=window;
 	}
 
 	private void initializeImages() {
@@ -441,7 +439,7 @@ public class ConfigurationView
 		OperationsManager.removeUpdateModelChangedListener(modelListener);
 		if (preview != null)
 			preview.dispose();
-		super.dispose();
+		//super.dispose();
 	}
 
 	protected void makeActions() {
@@ -506,9 +504,7 @@ public class ConfigurationView
 		makeShowSitesAction();
 		makeShowNestedFeaturesAction();
 		makePreviewTasks();
-		getViewSite().getActionBars().setGlobalActionHandler(
-			IWorkbenchActionConstants.PROPERTIES,
-			propertiesAction);
+		configurationWindow.setPropertiesActionHandler(propertiesAction);
 	}
 
 	private void makeShowNestedFeaturesAction() {
@@ -573,13 +569,12 @@ public class ConfigurationView
 		showUnconfFeaturesAction.setToolTipText(UpdateUI.getString("ConfigurationView.showDisabledTooltip")); //$NON-NLS-1$
 	}
 
-	protected void fillActionBars(IActionBars bars) {
-		IToolBarManager tbm = bars.getToolBarManager();
+	protected void fillActionBars(ToolBarManager tbm) {
 		tbm.add(showSitesAction);
 		tbm.add(showNestedFeaturesAction);
 		tbm.add(showUnconfFeaturesAction);
 		tbm.add(new Separator());
-		drillDownAdapter.addNavigationActions(bars.getToolBarManager());
+		drillDownAdapter.addNavigationActions(tbm);
 		tbm.add(new Separator());
 		tbm.add(collapseAllAction);
 		tbm.add(new Separator());
@@ -737,9 +732,10 @@ public class ConfigurationView
 				bag[0] = getRootFeatures(result);
 			}
 		};
+
 		try {
-			if (getViewSite().getWorkbenchWindow().getShell().isVisible())
-				getViewSite().getWorkbenchWindow().run(true, false, op);
+			if (configurationWindow.getShell().isVisible())
+				configurationWindow.run(true, false, op);
 			else
 				op.run(new NullProgressMonitor());
 		} catch (InterruptedException e) {
@@ -836,7 +832,7 @@ public class ConfigurationView
 		preview.getScrollingControl().setLayoutData(
 			new GridData(GridData.FILL_BOTH));
 		splitter.setWeights(new int[] { 2, 3 });
-		fillActionBars(getViewSite().getActionBars());
+		fillActionBars(getConfigurationWindow().getToolBarManager());
 
 		treeViewer.expandToLevel(2);
 	}
@@ -859,7 +855,6 @@ public class ConfigurationView
 
 		treeViewer.getControl().setMenu(
 			menuMgr.createContextMenu(treeViewer.getControl()));
-		getSite().registerContextMenu(menuMgr, treeViewer);
 
 		treeViewer
 			.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -873,8 +868,6 @@ public class ConfigurationView
 				handleDoubleClick(event);
 			}
 		});
-
-		getSite().setSelectionProvider(treeViewer);
 
 	}
 
@@ -1101,29 +1094,8 @@ public class ConfigurationView
 		return (tasks != null) ? tasks : new IPreviewTask[0];
 	}
 
-	void updateTitle(Object newInput) {
-		if (newInput == null
-			|| newInput.equals(UpdateUI.getDefault().getUpdateModel())) {
-			// restore old
-			setTitle(getViewName());
-			setTitleToolTip(getTitle());
-		} else {
-			String name =
-				((LabelProvider) treeViewer.getLabelProvider()).getText(
-					newInput);
-			setTitle(getViewName() + ": " + name); //$NON-NLS-1$
-			setTitleToolTip(getTitle());
-		}
-	}
-	public String getViewName() {
-		return viewName;
-	}
-
-	public void setViewName(String viewName) {
-		this.viewName = viewName;
-	}
-
-	public void setFocus() {
+	ConfigurationManagerWindow getConfigurationWindow(){
+		return configurationWindow;
 	}
 
 }

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -104,8 +103,7 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 					UpdateUI.showURL(url);
 			}
 		};
-		IActionBars bars = view.getViewSite().getActionBars();
-		action.setStatusLineManager(bars.getStatusLineManager());
+		action.setStatusLineManager(view.getConfigurationWindow().getStatusLineManager());
 		
 		HTTPAction taskAction = new HTTPAction() {
 			public void linkActivated(IHyperlinkSegment link) {
@@ -119,7 +117,7 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 				}
 			}
 		};
-		taskAction.setStatusLineManager(bars.getStatusLineManager());
+		taskAction.setStatusLineManager(view.getConfigurationWindow().getStatusLineManager());
 
 		desc = factory.createFormEngine(parent);
 		desc.setHyperlinkSettings(factory.getHyperlinkHandler());

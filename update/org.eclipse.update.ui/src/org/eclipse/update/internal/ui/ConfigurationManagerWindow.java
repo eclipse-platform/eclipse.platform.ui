@@ -1,9 +1,13 @@
-/*
- * Created on May 15, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
 import org.eclipse.core.runtime.*;
@@ -14,54 +18,21 @@ import org.eclipse.jface.window.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * 
  */
 public class ConfigurationManagerWindow
 	extends ApplicationWindow
-	implements IWorkbenchWindow {
-	private ManagerActionBars bars;
-	private SubActionBars viewBars;
+	{
 	private ConfigurationView view;
 	private GlobalAction propertiesAction;
-
-	class ManagerActionBars implements IActionBars {
-		public void clearGlobalActionHandlers() {
-		}
-
-		public IAction getGlobalActionHandler(String actionId) {
-			return null;
-		}
-
-		public IMenuManager getMenuManager() {
-			return ConfigurationManagerWindow.this.getMenuBarManager();
-		}
-
-		public IStatusLineManager getStatusLineManager() {
-			return ConfigurationManagerWindow.this.getStatusLineManager();
-		}
-
-		public IToolBarManager getToolBarManager() {
-			return ConfigurationManagerWindow.this.getToolBarManager();
-		}
-
-		public void setGlobalActionHandler(String actionId, IAction handler) {
-		}
-
-		public void updateActionBars() {
-			ConfigurationManagerWindow.this.updateActionBars();
-		}
-	}
-
+	private IAction propertiesActionHandler;
+	
 	class GlobalAction extends Action implements IPropertyChangeListener {
 		private IAction handler;
 
@@ -90,11 +61,6 @@ public class ConfigurationManagerWindow
 			} else if (event.getProperty().equals(Action.CHECKED)) {
 				Boolean bool = (Boolean) event.getNewValue();
 				setChecked(bool.booleanValue());
-			} else if (
-				event.getProperty().equals(SubActionBars.P_ACTION_HANDLERS)) {
-				setActionHandler(
-					((IActionBars) event.getSource()).getGlobalActionHandler(
-						getId()));
 			}
 		}
 
@@ -104,65 +70,12 @@ public class ConfigurationManagerWindow
 		}
 	}
 
-	class ManagerSite implements IViewSite {
-		public IActionBars getActionBars() {
-			return viewBars;
-		}
-
-		public String getId() {
-			return null;
-		}
-
-		public IKeyBindingService getKeyBindingService() {
-			return null;
-		}
-
-		public String getPluginId() {
-			return UpdateUI.PLUGIN_ID;
-		}
-
-		public String getRegisteredName() {
-			return "Configuration Manager"; //$NON-NLS-1$
-		}
-
-		public void registerContextMenu(
-			MenuManager menuManager,
-			ISelectionProvider selectionProvider) {
-		}
-
-		public void registerContextMenu(
-			String menuId,
-			MenuManager menuManager,
-			ISelectionProvider selectionProvider) {
-		}
-
-		public IWorkbenchPage getPage() {
-			return null;
-		}
-
-		public ISelectionProvider getSelectionProvider() {
-			return null;
-		}
-
-		public Shell getShell() {
-			return ConfigurationManagerWindow.this.getShell();
-		}
-
-		public IWorkbenchWindow getWorkbenchWindow() {
-			return ConfigurationManagerWindow.this;
-		}
-
-		public void setSelectionProvider(ISelectionProvider provider) {
-		}
-	}
 	/**
 	 * @param parentShell
 	 */
 	public ConfigurationManagerWindow(Shell parentShell) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.APPLICATION_MODAL);
-		bars = new ManagerActionBars();
-		viewBars = new SubActionBars(bars);
 		// Setup window.
 		addMenuBar();
 		addActions();
@@ -192,27 +105,12 @@ public class ConfigurationManagerWindow
 	}
 	
 	private void hookGlobalActions() {
-		propertiesAction.setActionHandler(viewBars.getGlobalActionHandler(IWorkbenchActionConstants.PROPERTIES));
+		if(propertiesActionHandler!=null)
+			propertiesAction.setActionHandler(propertiesActionHandler);
 	}
 	
-	public int open() {
-		view.setViewName(getShell().getText());
-		return super.open();
-	}
-
 	protected Control createContents(Composite parent) {
-		view = new ConfigurationView();
-		try {
-			view.init(new ManagerSite());
-		} catch (PartInitException e) {
-			UpdateUI.logException(e);
-		}
-		view.addPropertyListener(new IPropertyListener() {
-			public void propertyChanged(Object source, int id) {
-				if (id==IWorkbenchPart.PROP_TITLE &&view.getTitle()!=null)
-					getShell().setText(view.getTitle());
-			}
-		});
+		view = new ConfigurationView(this);
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
@@ -230,7 +128,9 @@ public class ConfigurationManagerWindow
 		gd = new GridData(GridData.FILL_BOTH);
 		viewControl.setLayoutData(gd);
 		hookGlobalActions();
-		viewBars.activate();
+
+		updateActionBars();
+
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			view.getTreeViewer().setSelection(new StructuredSelection(localSite));
@@ -249,91 +149,10 @@ public class ConfigurationManagerWindow
 		getToolBarManager().update(false);
 		getStatusLineManager().update(false);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#getActivePage()
-	 */
-	public IWorkbenchPage getActivePage() {
-		return null;
+	public StatusLineManager getStatusLineManager() {
+		return super.getStatusLineManager();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#getPages()
-	 */
-	public IWorkbenchPage[] getPages() {
-		return new IWorkbenchPage[0];
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#getPartService()
-	 */
-	public IPartService getPartService() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#getSelectionService()
-	 */
-	public ISelectionService getSelectionService() {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#getWorkbench()
-	 */
-	public IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#isApplicationMenu(java.lang.String)
-	 */
-	public boolean isApplicationMenu(String menuId) {
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable)
-	 */
-	public IWorkbenchPage openPage(IAdaptable input)
-		throws WorkbenchException {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(java.lang.String, org.eclipse.core.runtime.IAdaptable)
-	 */
-	public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
-		throws WorkbenchException {
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindow#setActivePage(org.eclipse.ui.IWorkbenchPage)
-	 */
-	public void setActivePage(IWorkbenchPage page) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#addPageListener(org.eclipse.ui.IPageListener)
-	 */
-	public void addPageListener(IPageListener listener) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.IPerspectiveListener)
-	 */
-	public void addPerspectiveListener(IPerspectiveListener listener) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#removePageListener(org.eclipse.ui.IPageListener)
-	 */
-	public void removePageListener(IPageListener listener) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.IPerspectiveListener)
-	 */
-	public void removePerspectiveListener(IPerspectiveListener listener) {
+	public void setPropertiesActionHandler(IAction handler){
+		propertiesActionHandler=handler;
 	}
 }
