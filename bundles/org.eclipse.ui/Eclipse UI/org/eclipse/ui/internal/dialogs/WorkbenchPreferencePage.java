@@ -34,6 +34,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoSaveAllButton;
 	private Button linkButton;
 	private Combo accelConfigCombo;
+
+	// Temporary option to enable wizard for project capability
+	private Button capabilityButton;
 	
 	private Button reuseEditors;
 	private IntegerFieldEditor reuseEditorsThreshold;
@@ -117,11 +120,21 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		//createSpace(composite);
 		//createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
 
+		// Temporary option to enable wizard for project capability work
+		createSpace(composite);
+		capabilityButton = new Button(composite, SWT.CHECK);
+		capabilityButton.setText("Enable new configurable project wizard (work in progress of project capabilities)"); //$NON-NLS-1$
+		Label label = new Label(composite, SWT.NONE);
+		label.setText("Note: The new configurable project option will only take effect after restarting.");
+
 		// set initial values
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
+		
+		// Temporary option to enable wizard for project capability
+		capabilityButton.setSelection(store.getBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$
 
 		return composite;
 	}
@@ -367,6 +380,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
+
+		// Temporary option to enable wizard for project capability
+		capabilityButton.setSelection(store.getDefaultBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$
+
 		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 		reuseEditorsThreshold.loadDefault();
 		
@@ -427,6 +444,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// store the link navigator to editor setting
 		store.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, linkButton.getSelection());
+
+		// Temporary option to enable wizard for project capability
+		store.setValue("ENABLE_CONFIGURABLE_PROJECT_WIZARD", capabilityButton.getSelection()); //$NON-NLS-1$
 
 		// store the reuse editors setting
 		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
