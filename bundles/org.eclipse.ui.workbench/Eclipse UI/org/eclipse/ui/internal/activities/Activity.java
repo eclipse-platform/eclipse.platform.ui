@@ -35,7 +35,6 @@ final class Activity implements IActivity {
 	private Set activityPatternBindings;
 	private transient IActivityPatternBinding[] activityPatternBindingsAsArray;
 	private boolean defined;
-	private String description;
 	private boolean enabled;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
@@ -82,25 +81,19 @@ final class Activity implements IActivity {
 				compareTo = Util.compare(defined, castedObject.defined);
 
 				if (compareTo == 0) {
-					compareTo =
-						Util.compare(description, castedObject.description);
+					compareTo = Util.compare(enabled, castedObject.enabled);
 
 					if (compareTo == 0) {
-						compareTo = Util.compare(enabled, castedObject.enabled);
+						compareTo = Util.compare(id, castedObject.id);
 
 						if (compareTo == 0) {
-							compareTo = Util.compare(id, castedObject.id);
+							compareTo = Util.compare(name, castedObject.name);
 
-							if (compareTo == 0) {
+							if (compareTo == 0)
 								compareTo =
-									Util.compare(name, castedObject.name);
-
-								if (compareTo == 0)
-									compareTo =
-										Util.compare(
-											parentId,
-											castedObject.parentId);
-							}
+									Util.compare(
+										parentId,
+										castedObject.parentId);
 						}
 					}
 				}
@@ -125,7 +118,6 @@ final class Activity implements IActivity {
 				activityPatternBindings,
 				castedObject.activityPatternBindings);
 		equals &= Util.equals(defined, castedObject.defined);
-		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(enabled, castedObject.enabled);
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
@@ -149,13 +141,6 @@ final class Activity implements IActivity {
 
 	public Set getActivityPatternBindings() {
 		return activityPatternBindings;
-	}
-
-	public String getDescription() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
-
-		return description;
 	}
 
 	public String getId() {
@@ -185,7 +170,6 @@ final class Activity implements IActivity {
 			hashCode =
 				hashCode * HASH_FACTOR + Util.hashCode(activityPatternBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
@@ -203,7 +187,7 @@ final class Activity implements IActivity {
 	public boolean isEnabled() {
 		return enabled;
 	}
-	
+
 	public boolean isMatch(String string) {
 		return match(string);
 	}
@@ -211,21 +195,21 @@ final class Activity implements IActivity {
 	public boolean match(String string) {
 		if (isDefined())
 			for (Iterator iterator = activityPatternBindings.iterator();
-					iterator.hasNext();
-			) {
+				iterator.hasNext();
+				) {
 				IActivityPatternBinding activityPatternBinding =
-				(IActivityPatternBinding) iterator.next();
+					(IActivityPatternBinding) iterator.next();
 
 				if (activityPatternBinding
-						.getPattern()
-						.matcher(string)
-						.matches())
+					.getPattern()
+					.matcher(string)
+					.matches())
 					return true;
 			}
 
 		return false;
 	}
-		
+
 	public void removeActivityListener(IActivityListener activityListener) {
 		if (activityListener == null)
 			throw new NullPointerException();
@@ -301,18 +285,6 @@ final class Activity implements IActivity {
 		return false;
 	}
 
-	boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
-			this.description = description;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
-
-		return false;
-	}
-
 	boolean setEnabled(boolean enabled) {
 		if (enabled != this.enabled) {
 			this.enabled = enabled;
@@ -358,8 +330,6 @@ final class Activity implements IActivity {
 			stringBuffer.append(activityPatternBindings);
 			stringBuffer.append(',');
 			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
 			stringBuffer.append(',');
 			stringBuffer.append(enabled);
 			stringBuffer.append(',');

@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 
-import org.eclipse.ui.internal.activities.ui.ActivityMessages;
-import org.eclipse.ui.internal.activities.ui.SwapActivityHelper;
+import org.eclipse.ui.internal.activities.ws.ActivityMessages;
+import org.eclipse.ui.internal.activities.ws.SwapActivityHelper;
 
 /**
  * Activates the Activity configuration dialog. Can be replaced by addition to

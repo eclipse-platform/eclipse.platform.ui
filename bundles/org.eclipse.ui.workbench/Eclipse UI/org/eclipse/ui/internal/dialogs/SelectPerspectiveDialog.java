@@ -33,11 +33,11 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.ws.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.activities.ui.ActivityMessages;
+import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
 /**

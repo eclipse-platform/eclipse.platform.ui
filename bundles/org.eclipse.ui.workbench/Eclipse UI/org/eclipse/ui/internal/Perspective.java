@@ -56,8 +56,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.activities.service.ActivityServiceFactory;
-import org.eclipse.ui.activities.service.ICompoundActivityService;
+import org.eclipse.ui.contexts.activationservice.ContextActivationServiceFactory;
+import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
@@ -187,9 +187,9 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
 	fastViews = new ArrayList(2);
 }
 
-private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
+private final ICompoundContextActiviationService compoundActivityService = ContextActivationServiceFactory.getCompoundContextActivationService();
 
-ICompoundActivityService getCompoundActivityService() {
+ICompoundContextActiviationService getCompoundActivityService() {
 	return compoundActivityService;
 }
 

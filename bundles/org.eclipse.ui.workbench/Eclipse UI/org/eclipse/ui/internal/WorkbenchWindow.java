@@ -72,7 +72,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.service.IActivityService;
+import org.eclipse.ui.contexts.activationservice.IContextActivationService;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -472,14 +472,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// Fill the action bars	
 		getAdvisor().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
 
-		workbenchWindowActivityService = new WorkbenchWindowActivityService(this);
-		workbenchWindowActivityService.start();
+		workbenchWindowContextActivationService = new WorkbenchWindowContextActivationService(this);
+		workbenchWindowContextActivationService.start();
 	}
 
-	private WorkbenchWindowActivityService workbenchWindowActivityService;
+	private WorkbenchWindowContextActivationService workbenchWindowContextActivationService;
 
-	public IActivityService getActivityService() {
-		return workbenchWindowActivityService;
+	public IContextActivationService getContextActivationService() {
+		return workbenchWindowContextActivationService;
 	}	
 	
 	private SortedMap actionsForActionSets = new TreeMap();

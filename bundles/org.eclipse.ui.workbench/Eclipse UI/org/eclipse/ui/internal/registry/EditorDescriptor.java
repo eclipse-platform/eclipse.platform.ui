@@ -19,7 +19,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.*;
-import org.eclipse.ui.activities.support.*;
+import org.eclipse.ui.activities.ws.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 

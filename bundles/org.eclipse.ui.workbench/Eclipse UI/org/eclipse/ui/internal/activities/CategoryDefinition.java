@@ -17,9 +17,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.ui.internal.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryDefinition implements Comparable, ICategoryDefinition {
+final class CategoryDefinition implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		CategoryDefinition.class.getName().hashCode();
@@ -35,9 +36,8 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition categoryDefinition =
-				(ICategoryDefinition) object;
+			Util.assertInstance(object, CategoryDefinition.class);
+			CategoryDefinition categoryDefinition = (CategoryDefinition) object;
 			String id = categoryDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -78,7 +78,6 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 		return map;
 	}
 
-	private String description;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String id;
@@ -86,12 +85,7 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 	private String pluginId;
 	private transient String string;
 
-	CategoryDefinition(
-		String description,
-		String id,
-		String name,
-		String pluginId) {
-		this.description = description;
+	CategoryDefinition(String id, String name, String pluginId) {
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
@@ -99,17 +93,13 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 
 	public int compareTo(Object object) {
 		CategoryDefinition castedObject = (CategoryDefinition) object;
-		int compareTo = Util.compare(description, castedObject.description);
+		int compareTo = Util.compare(id, castedObject.id);
 
 		if (compareTo == 0) {
-			compareTo = Util.compare(id, castedObject.id);
+			compareTo = Util.compare(name, castedObject.name);
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(name, castedObject.name);
-
-				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, castedObject.pluginId);
-			}
+			if (compareTo == 0)
+				compareTo = Util.compare(pluginId, castedObject.pluginId);
 		}
 
 		return compareTo;
@@ -121,15 +111,10 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 
 		CategoryDefinition castedObject = (CategoryDefinition) object;
 		boolean equals = true;
-		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
-	}
-
-	public String getDescription() {
-		return description;
 	}
 
 	public String getId() {
@@ -147,7 +132,6 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
@@ -161,8 +145,6 @@ final class CategoryDefinition implements Comparable, ICategoryDefinition {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);

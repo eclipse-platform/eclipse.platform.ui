@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
-import org.eclipse.ui.activities.support.IPluginContribution;
+import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**

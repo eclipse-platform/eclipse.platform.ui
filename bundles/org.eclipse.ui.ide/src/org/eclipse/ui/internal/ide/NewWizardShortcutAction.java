@@ -26,7 +26,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.activities.support.IPluginContribution;
+import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.help.WorkbenchHelp;
 //@issue illegal reference to org.eclipse.ui.internal.dialogs.WorkbenchWizardElement
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;

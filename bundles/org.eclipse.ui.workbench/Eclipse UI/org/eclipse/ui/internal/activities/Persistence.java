@@ -20,8 +20,8 @@ import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
 	final static String PACKAGE_BASE = "activities"; //$NON-NLS-1$
+	final static String PACKAGE_FULL = "org.eclipse.ui.activities"; //$NON-NLS-1$
 	final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$
-	final static String PACKAGE_FULL = PACKAGE_PREFIX + '.' + PACKAGE_BASE;
 	final static String TAG_ACTIVITY = "activity"; //$NON-NLS-1$	
 	final static String TAG_ACTIVITY_ACTIVITY_BINDING = "activityActivityBinding"; //$NON-NLS-1$		
 	final static String TAG_ACTIVITY_ID = "activityId"; //$NON-NLS-1$	
@@ -30,7 +30,6 @@ final class Persistence {
 	final static String TAG_CATEGORY_ACTIVITY_BINDING = "categoryActivityBinding"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_CHILD_ACTIVITY_ID = "childActivityId"; //$NON-NLS-1$		
-	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
 	final static String TAG_NAME = "name"; //$NON-NLS-1$	
 	final static String TAG_PARENT_ACTIVITY_ID = "parentActivityId"; //$NON-NLS-1$		
@@ -38,7 +37,7 @@ final class Persistence {
 	final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$	
 	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 
-	static IActivityActivityBindingDefinition readActivityActivityBindingDefinition(
+	static ActivityActivityBindingDefinition readActivityActivityBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -79,13 +78,12 @@ final class Persistence {
 		return list;
 	}
 
-	static IActivityDefinition readActivityDefinition(
+	static ActivityDefinition readActivityDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
-		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
 		String parentId = memento.getString(TAG_PARENT_ID);
@@ -93,12 +91,7 @@ final class Persistence {
 			pluginIdOverride != null
 				? pluginIdOverride
 				: memento.getString(TAG_PLUGIN_ID);
-		return new ActivityDefinition(
-			description,
-			id,
-			name,
-			parentId,
-			pluginId);
+		return new ActivityDefinition(id, name, parentId, pluginId);
 	}
 
 	static List readActivityDefinitions(
@@ -121,7 +114,7 @@ final class Persistence {
 		return list;
 	}
 
-	static IActivityPatternBindingDefinition readActivityPatternBindingDefinition(
+	static ActivityPatternBindingDefinition readActivityPatternBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -162,7 +155,7 @@ final class Persistence {
 		return list;
 	}
 
-	static ICategoryActivityBindingDefinition readCategoryActivityBindingDefinition(
+	static CategoryActivityBindingDefinition readCategoryActivityBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -203,20 +196,19 @@ final class Persistence {
 		return list;
 	}
 
-	static ICategoryDefinition readCategoryDefinition(
+	static CategoryDefinition readCategoryDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
-		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
 		String pluginId =
 			pluginIdOverride != null
 				? pluginIdOverride
 				: memento.getString(TAG_PLUGIN_ID);
-		return new CategoryDefinition(description, id, name, pluginId);
+		return new CategoryDefinition(id, name, pluginId);
 	}
 
 	static List readCategoryDefinitions(
@@ -241,7 +233,7 @@ final class Persistence {
 
 	static void writeActivityActivityBindingDefinition(
 		IMemento memento,
-		IActivityActivityBindingDefinition activityActivityBindingDefinition) {
+		ActivityActivityBindingDefinition activityActivityBindingDefinition) {
 		if (memento == null || activityActivityBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -272,23 +264,22 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				IActivityActivityBindingDefinition.class);
+				ActivityActivityBindingDefinition.class);
 
 		iterator = activityActivityBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeActivityActivityBindingDefinition(
 				memento.createChild(name),
-				(IActivityActivityBindingDefinition) iterator.next());
+				(ActivityActivityBindingDefinition) iterator.next());
 	}
 
 	static void writeActivityDefinition(
 		IMemento memento,
-		IActivityDefinition activityDefinition) {
+		ActivityDefinition activityDefinition) {
 		if (memento == null || activityDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_DESCRIPTION, activityDefinition.getDescription());
 		memento.putString(TAG_ID, activityDefinition.getId());
 		memento.putString(TAG_NAME, activityDefinition.getName());
 		memento.putString(TAG_PARENT_ID, activityDefinition.getParentId());
@@ -306,19 +297,19 @@ final class Persistence {
 		Iterator iterator = activityDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IActivityDefinition.class);
+			Util.assertInstance(iterator.next(), ActivityDefinition.class);
 
 		iterator = activityDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeActivityDefinition(
 				memento.createChild(name),
-				(IActivityDefinition) iterator.next());
+				(ActivityDefinition) iterator.next());
 	}
 
 	static void writeActivityPatternBindingDefinition(
 		IMemento memento,
-		IActivityPatternBindingDefinition activityPatternBindingDefinition) {
+		ActivityPatternBindingDefinition activityPatternBindingDefinition) {
 		if (memento == null || activityPatternBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -349,19 +340,19 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				IActivityPatternBindingDefinition.class);
+				ActivityPatternBindingDefinition.class);
 
 		iterator = activityPatternBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeActivityPatternBindingDefinition(
 				memento.createChild(name),
-				(IActivityPatternBindingDefinition) iterator.next());
+				(ActivityPatternBindingDefinition) iterator.next());
 	}
 
 	static void writeCategoryActivityBindingDefinition(
 		IMemento memento,
-		ICategoryActivityBindingDefinition categoryActivityBindingDefinition) {
+		CategoryActivityBindingDefinition categoryActivityBindingDefinition) {
 		if (memento == null || categoryActivityBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -392,23 +383,22 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				ICategoryActivityBindingDefinition.class);
+				CategoryActivityBindingDefinition.class);
 
 		iterator = categoryActivityBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeCategoryActivityBindingDefinition(
 				memento.createChild(name),
-				(ICategoryActivityBindingDefinition) iterator.next());
+				(CategoryActivityBindingDefinition) iterator.next());
 	}
 
 	static void writeCategoryDefinition(
 		IMemento memento,
-		ICategoryDefinition categoryDefinition) {
+		CategoryDefinition categoryDefinition) {
 		if (memento == null || categoryDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_DESCRIPTION, categoryDefinition.getDescription());
 		memento.putString(TAG_ID, categoryDefinition.getId());
 		memento.putString(TAG_NAME, categoryDefinition.getName());
 		memento.putString(TAG_PLUGIN_ID, categoryDefinition.getPluginId());
@@ -425,14 +415,14 @@ final class Persistence {
 		Iterator iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), ICategoryDefinition.class);
+			Util.assertInstance(iterator.next(), CategoryDefinition.class);
 
 		iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeCategoryDefinition(
 				memento.createChild(name),
-				(ICategoryDefinition) iterator.next());
+				(CategoryDefinition) iterator.next());
 	}
 
 	private Persistence() {

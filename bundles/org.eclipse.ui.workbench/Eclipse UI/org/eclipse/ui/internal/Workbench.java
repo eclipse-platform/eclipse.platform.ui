@@ -84,9 +84,9 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.activities.service.ActivityServiceFactory;
-import org.eclipse.ui.activities.service.IActivityService;
-import org.eclipse.ui.activities.service.ICompoundActivityService;
+import org.eclipse.ui.contexts.activationservice.ContextActivationServiceFactory;
+import org.eclipse.ui.contexts.activationservice.IContextActivationService;
+import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.CommandManagerFactory;
@@ -292,9 +292,9 @@ public final class Workbench implements IWorkbench {
 	private IMutableActivityManager activityManager;
 	/* TODO private */
 	ICommandManager commandManager;
-	private WorkbenchActivityService workbenchActivityService;
-	private final ICompoundActivityService compoundActivityService =
-		ActivityServiceFactory.getCompoundActivityService();
+	private WorkbenchContextActiviationService workbenchActivityService;
+	private final ICompoundContextActiviationService compoundActivityService =
+		ContextActivationServiceFactory.getCompoundContextActivationService();
 	// TODO reduce visibility
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles =
 		new WorkbenchActivitiesCommandsAndRoles(this);
@@ -313,11 +313,11 @@ public final class Workbench implements IWorkbench {
 		return commandManager;
 	}
 
-	public IActivityService getActivityService() {
+	public IContextActivationService getContextActivationService() {
 		return workbenchActivityService;
 	}
 
-	public ICompoundActivityService getCompoundActivityService() {
+	public ICompoundContextActiviationService getCompoundContextActivationService() {
 		return compoundActivityService;
 	}
 
@@ -850,7 +850,7 @@ public final class Workbench implements IWorkbench {
 		// create workbench window manager
 		windowManager = new WindowManager();
 
-		workbenchActivityService = new WorkbenchActivityService(this);
+		workbenchActivityService = new WorkbenchContextActiviationService(this);
 		workbenchActivityService.start();
 
 		// allow the workbench configurer to initialize

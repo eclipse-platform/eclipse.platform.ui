@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.activities.support.IPluginContribution;
+import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 

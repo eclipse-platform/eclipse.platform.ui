@@ -20,8 +20,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.internal.activities.ui.ActivityEnabler;
-import org.eclipse.ui.internal.activities.ui.ActivityMessages;
+import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
+import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
 /**
  * Activates the Activity configuration dialog. 

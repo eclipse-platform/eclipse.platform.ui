@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ActivityDefinition implements Comparable, IActivityDefinition {
+final class ActivityDefinition implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		ActivityDefinition.class.getName().hashCode();
@@ -35,9 +35,8 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IActivityDefinition.class);
-			IActivityDefinition activityDefinition =
-				(IActivityDefinition) object;
+			Util.assertInstance(object, ActivityDefinition.class);
+			ActivityDefinition activityDefinition = (ActivityDefinition) object;
 			String id = activityDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -58,9 +57,8 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IActivityDefinition.class);
-			IActivityDefinition activityDefinition =
-				(IActivityDefinition) object;
+			Util.assertInstance(object, ActivityDefinition.class);
+			ActivityDefinition activityDefinition = (ActivityDefinition) object;
 			String name = activityDefinition.getName();
 
 			if (allowNullNames || name != null) {
@@ -78,7 +76,6 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 		return map;
 	}
 
-	private String description;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String id;
@@ -88,12 +85,10 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 	private transient String string;
 
 	ActivityDefinition(
-		String description,
 		String id,
 		String name,
 		String parentId,
 		String pluginId) {
-		this.description = description;
 		this.id = id;
 		this.name = name;
 		this.parentId = parentId;
@@ -102,21 +97,16 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 
 	public int compareTo(Object object) {
 		ActivityDefinition castedObject = (ActivityDefinition) object;
-		int compareTo = Util.compare(description, castedObject.description);
+		int compareTo = Util.compare(id, castedObject.id);
 
 		if (compareTo == 0) {
-			compareTo = Util.compare(id, castedObject.id);
+			compareTo = Util.compare(name, castedObject.name);
 
 			if (compareTo == 0) {
-				compareTo = Util.compare(name, castedObject.name);
+				compareTo = Util.compare(parentId, castedObject.parentId);
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, castedObject.parentId);
-
-					if (compareTo == 0)
-						compareTo =
-							Util.compare(pluginId, castedObject.pluginId);
-				}
+				if (compareTo == 0)
+					compareTo = Util.compare(pluginId, castedObject.pluginId);
 			}
 		}
 
@@ -129,16 +119,11 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 
 		ActivityDefinition castedObject = (ActivityDefinition) object;
 		boolean equals = true;
-		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
 		equals &= Util.equals(parentId, castedObject.parentId);
 		equals &= Util.equals(pluginId, castedObject.pluginId);
 		return equals;
-	}
-
-	public String getDescription() {
-		return description;
 	}
 
 	public String getId() {
@@ -160,7 +145,6 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
@@ -175,8 +159,6 @@ final class ActivityDefinition implements Comparable, IActivityDefinition {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);

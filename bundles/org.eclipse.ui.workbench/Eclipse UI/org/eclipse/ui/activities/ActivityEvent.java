@@ -28,7 +28,6 @@ public final class ActivityEvent {
 	private boolean activityActivityBindingsChanged;
 	private boolean activityPatternBindingsChanged;
 	private boolean definedChanged;
-	private boolean descriptionChanged;
 	private boolean enabledChanged;
 	private boolean nameChanged;
 	private boolean parentIdChanged;
@@ -44,8 +43,6 @@ public final class ActivityEvent {
 	 *            true, iff the activityPatternBindings property changed.
 	 * @param definedChanged
 	 *            true, iff the defined property changed.
-	 * @param descriptionChanged
-	 *            true, iff the description property changed.
 	 * @param enabledChanged
 	 *            true, iff the enabled property changed.
 	 * @param nameChanged
@@ -58,7 +55,6 @@ public final class ActivityEvent {
 		boolean activityActivityBindingsChanged,
 		boolean activityPatternBindingsChanged,
 		boolean definedChanged,
-		boolean descriptionChanged,
 		boolean enabledChanged,
 		boolean nameChanged,
 		boolean parentIdChanged) {
@@ -69,7 +65,6 @@ public final class ActivityEvent {
 		this.activityActivityBindingsChanged = activityActivityBindingsChanged;
 		this.activityPatternBindingsChanged = activityPatternBindingsChanged;
 		this.definedChanged = definedChanged;
-		this.descriptionChanged = descriptionChanged;
 		this.enabledChanged = enabledChanged;
 		this.nameChanged = nameChanged;
 		this.parentIdChanged = parentIdChanged;
@@ -92,15 +87,6 @@ public final class ActivityEvent {
 	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
-	}
-
-	/**
-	 * Returns whether or not the description property changed.
-	 * 
-	 * @return true, iff the description property changed.
-	 */
-	public boolean hasDescriptionChanged() {
-		return descriptionChanged;
 	}
 
 	/**

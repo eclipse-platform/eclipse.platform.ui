@@ -17,8 +17,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.service.IActivityService;
-import org.eclipse.ui.activities.service.ICompoundActivityService;
+import org.eclipse.ui.contexts.activationservice.IContextActivationService;
+import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -392,7 +392,7 @@ public ICommandManager getCommandManager();
  * 		   <code>null</code>.
  * @since 3.0
  */
-public IActivityService getActivityService();
+public IContextActivationService getContextActivationService();
 
 /**
  * Returns the compound activity service for the workbench.
@@ -401,5 +401,5 @@ public IActivityService getActivityService();
  * 		   <code>null</code>.
  * @since 3.0
  */
-public ICompoundActivityService getCompoundActivityService();
+public ICompoundContextActiviationService getCompoundContextActivationService();
 }

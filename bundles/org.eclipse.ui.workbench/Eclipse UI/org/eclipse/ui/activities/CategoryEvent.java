@@ -27,7 +27,6 @@ public final class CategoryEvent {
 	private ICategory category;
 	private boolean categoryActivityBindingsChanged;
 	private boolean definedChanged;
-	private boolean descriptionChanged;
 	private boolean nameChanged;
 
 	/**
@@ -39,8 +38,6 @@ public final class CategoryEvent {
 	 *            true, iff the categoryActivityBindings property changed.
 	 * @param definedChanged
 	 *            true, iff the defined property changed.
-	 * @param descriptionChanged
-	 *            true, iff the description property changed.
 	 * @param nameChanged
 	 *            true, iff the name property changed.
 	 */
@@ -48,7 +45,6 @@ public final class CategoryEvent {
 		ICategory category,
 		boolean categoryActivityBindingsChanged,
 		boolean definedChanged,
-		boolean descriptionChanged,
 		boolean nameChanged) {
 		if (category == null)
 			throw new NullPointerException();
@@ -56,7 +52,6 @@ public final class CategoryEvent {
 		this.category = category;
 		this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;
 		this.definedChanged = definedChanged;
-		this.descriptionChanged = descriptionChanged;
 		this.nameChanged = nameChanged;
 	}
 
@@ -77,15 +72,6 @@ public final class CategoryEvent {
 	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
-	}
-
-	/**
-	 * Returns whether or not the description property changed.
-	 * 
-	 * @return true, iff the description property changed.
-	 */
-	public boolean hasDescriptionChanged() {
-		return descriptionChanged;
 	}
 
 	/**

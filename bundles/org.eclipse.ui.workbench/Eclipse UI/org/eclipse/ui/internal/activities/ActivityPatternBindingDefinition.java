@@ -19,8 +19,7 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ActivityPatternBindingDefinition
-	implements IActivityPatternBindingDefinition {
+final class ActivityPatternBindingDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		ActivityPatternBindingDefinition.class.getName().hashCode();
@@ -34,11 +33,9 @@ final class ActivityPatternBindingDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(
-				object,
-				IActivityPatternBindingDefinition.class);
-			IActivityPatternBindingDefinition activityPatternBindingDefinition =
-				(IActivityPatternBindingDefinition) object;
+			Util.assertInstance(object, ActivityPatternBindingDefinition.class);
+			ActivityPatternBindingDefinition activityPatternBindingDefinition =
+				(ActivityPatternBindingDefinition) object;
 			String activityId =
 				activityPatternBindingDefinition.getActivityId();
 

@@ -38,7 +38,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.support.IPluginContribution;
+import org.eclipse.ui.activities.ws.IPluginContribution;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**

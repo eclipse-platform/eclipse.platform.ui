@@ -79,7 +79,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			activityActivityBindingDefinitions = new ArrayList();
 		else
 			activityActivityBindingDefinitions.clear();
-		
+
 		if (activityDefinitions == null)
 			activityDefinitions = new ArrayList();
 		else
@@ -124,12 +124,13 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		boolean activityRegistryChanged = false;
 
 		if (!activityActivityBindingDefinitions
-				.equals(super.activityActivityBindingDefinitions)) {
+			.equals(super.activityActivityBindingDefinitions)) {
 			super.activityActivityBindingDefinitions =
-			Collections.unmodifiableList(activityActivityBindingDefinitions);
+				Collections.unmodifiableList(
+					activityActivityBindingDefinitions);
 			activityRegistryChanged = true;
-		}		
-		
+		}
+
 		if (!activityDefinitions.equals(super.activityDefinitions)) {
 			super.activityDefinitions =
 				Collections.unmodifiableList(activityDefinitions);
@@ -162,18 +163,18 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	}
 
 	private void readActivityActivityBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityActivityBindingDefinition activityActivityBindingDefinition =
-		Persistence.readActivityActivityBindingDefinition(
+		ActivityActivityBindingDefinition activityActivityBindingDefinition =
+			Persistence.readActivityActivityBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
 
 		if (activityActivityBindingDefinition != null)
 			activityActivityBindingDefinitions.add(
-					activityActivityBindingDefinition);
-	}	
-	
+				activityActivityBindingDefinition);
+	}
+
 	private void readActivityDefinition(IConfigurationElement configurationElement) {
-		IActivityDefinition activityDefinition =
+		ActivityDefinition activityDefinition =
 			Persistence.readActivityDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -183,7 +184,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	}
 
 	private void readActivityPatternBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityPatternBindingDefinition activityPatternBindingDefinition =
+		ActivityPatternBindingDefinition activityPatternBindingDefinition =
 			Persistence.readActivityPatternBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -194,7 +195,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	}
 
 	private void readCategoryActivityBindingDefinition(IConfigurationElement configurationElement) {
-		ICategoryActivityBindingDefinition categoryActivityBindingDefinition =
+		CategoryActivityBindingDefinition categoryActivityBindingDefinition =
 			Persistence.readCategoryActivityBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));
@@ -205,7 +206,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 	}
 
 	private void readCategoryDefinition(IConfigurationElement configurationElement) {
-		ICategoryDefinition categoryDefinition =
+		CategoryDefinition categoryDefinition =
 			Persistence.readCategoryDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));

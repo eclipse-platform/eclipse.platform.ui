@@ -19,8 +19,7 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryActivityBindingDefinition
-	implements ICategoryActivityBindingDefinition {
+final class CategoryActivityBindingDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		CategoryActivityBindingDefinition.class.getName().hashCode();
@@ -36,9 +35,9 @@ final class CategoryActivityBindingDefinition
 			Object object = iterator.next();
 			Util.assertInstance(
 				object,
-				ICategoryActivityBindingDefinition.class);
-			ICategoryActivityBindingDefinition categoryActivityBindingDefinition =
-				(ICategoryActivityBindingDefinition) object;
+				CategoryActivityBindingDefinition.class);
+			CategoryActivityBindingDefinition categoryActivityBindingDefinition =
+				(CategoryActivityBindingDefinition) object;
 			String categoryId =
 				categoryActivityBindingDefinition.getCategoryId();
 

@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.activities.support.FilterableObject;
-import org.eclipse.ui.activities.support.WorkbenchActivityHelper;
+import org.eclipse.ui.activities.ws.FilterableObject;
+import org.eclipse.ui.activities.ws.WorkbenchActivityHelper;
 
 public class PerspContentProvider
 	extends FilterableObject
