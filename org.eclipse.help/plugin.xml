@@ -35,13 +35,21 @@
 		<handler protocol="help" class="org.eclipse.help.internal.protocols.URLHandler"/> 
 		<handler protocol="search" class="org.eclipse.help.internal.protocols.URLHandler"/> 
 		<handler protocol="links" class="org.eclipse.help.internal.protocols.URLHandler"/> 
-		<handler protocol="livehelp" class="org.eclipse.help.internal.protocols.URLHandler"/> 
 	</extension> 
 	
+	<!-- Stand-alone infocenter application -->
+	<extension point="org.eclipse.core.runtime.applications" id="infocenterApplication">
+		<application> 
+			<run class="org.eclipse.help.internal.HelpApplication">
+				<parameter name="mode" value="infocenter"/> 
+			</run>
+		</application>
+	</extension>
 	<!-- Stand-alone help application -->
 	<extension point="org.eclipse.core.runtime.applications" id="helpApplication">
 		<application> 
 			<run class="org.eclipse.help.internal.HelpApplication">
+				<parameter name="mode" value="standalone"/> 
 			</run>
 		</application>
 	</extension>

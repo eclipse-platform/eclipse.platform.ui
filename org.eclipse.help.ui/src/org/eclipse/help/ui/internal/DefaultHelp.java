@@ -22,8 +22,6 @@ public class DefaultHelp implements IHelp {
 	private static DefaultHelp instance;
 	private ContextHelpDialog f1Dialog = null;
 	private int idCounter = 0;
-	private boolean webappStarted=false;
-	private boolean webappRunning=false;
 	/**
 	 * BaseHelpViewer constructor.
 	 */
@@ -37,14 +35,6 @@ public class DefaultHelp implements IHelp {
 	 */
 	public static DefaultHelp getInstance() {
 		return instance;
-	}
-	private boolean ensureWebappRunning(){
-		if(!webappStarted){
-			webappStarted=true;
-			// get an app server and start the help web app
-			webappRunning=AppServer.add("help", "org.eclipse.help.webapp", "");
-		}
-		return webappRunning;
 	}
 
 	/**
@@ -98,7 +88,8 @@ public class DefaultHelp implements IHelp {
 			displayHelpURL("toc=" + URLEncoder.encode(helpResource.getHref()));
 		else if (helpResource instanceof ITopic)
 			displayHelpURL(
-				"topic=" + URLEncoder.encode(getTopicURL(helpResource.getHref())));
+				"topic="
+					+ URLEncoder.encode(getTopicURL(helpResource.getHref())));
 		else
 			displayHelpResource(helpResource.getHref());
 	}
@@ -117,7 +108,9 @@ public class DefaultHelp implements IHelp {
 	public void displayHelpResource(String href) {
 		// check if this is a toc
 		IToc toc =
-			HelpSystem.getTocManager().getToc(href, Locale.getDefault().toString());
+			HelpSystem.getTocManager().getToc(
+				href,
+				Locale.getDefault().toString());
 		if (toc != null)
 			displayHelpResource(toc);
 		else if (
@@ -125,7 +118,8 @@ public class DefaultHelp implements IHelp {
 				&& (href.startsWith("tab=")
 					|| href.startsWith("toc=")
 					|| href.startsWith("topic=")
-					|| href.startsWith("contextId="))) { // assume it is a query string
+					|| href.startsWith(
+						"contextId="))) { // assume it is a query string
 			displayHelpURL(href);
 		} else // assume this is a topic
 			displayHelpURL("topic=" + URLEncoder.encode(href));
@@ -154,7 +148,8 @@ public class DefaultHelp implements IHelp {
 		if (toc != null) {
 			query = "toc=" + toc;
 			if (topic != null)
-				query = query + "&topic=" + URLEncoder.encode(getTopicURL(topic));
+				query =
+					query + "&topic=" + URLEncoder.encode(getTopicURL(topic));
 		} else {
 			if (topic != null)
 				query = "topic=" + URLEncoder.encode(getTopicURL(topic));
@@ -202,7 +197,10 @@ public class DefaultHelp implements IHelp {
 		if (searchQuery == null || topic == null)
 			return;
 		String url =
-			"tab=search&" + searchQuery + "&topic=" + URLEncoder.encode(getTopicURL(topic));
+			"tab=search&"
+				+ searchQuery
+				+ "&topic="
+				+ URLEncoder.encode(getTopicURL(topic));
 		displayHelpURL(url);
 	}
 	/**
@@ -210,11 +208,13 @@ public class DefaultHelp implements IHelp {
 	 * The url can contain query parameters to identify how help displays the document
 	 */
 	void displayHelpURL(String helpURL) {
-		if (!ensureWebappRunning())
+		if (!HelpSystem.ensureWebappRunning())
 			return;
+
 		// may want to display an error message
 		if (helpURL == null || helpURL.length() == 0) {
-			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(getBaseURL());
+			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
+				getBaseURL());
 		} else if (
 			helpURL.startsWith("tab=")
 				|| helpURL.startsWith("toc=")
@@ -223,7 +223,8 @@ public class DefaultHelp implements IHelp {
 			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
 				getBaseURL() + "?" + helpURL);
 		} else {
-			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(helpURL);
+			WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(
+				helpURL);
 		}
 	}
 	/**
@@ -240,7 +241,8 @@ public class DefaultHelp implements IHelp {
 	 * @return an array of TOC's
 	 */
 	public IToc[] getTocs() {
-		return HelpSystem.getTocManager().getTocs(Locale.getDefault().toString());
+		return HelpSystem.getTocManager().getTocs(
+			Locale.getDefault().toString());
 	}
 
 	/**

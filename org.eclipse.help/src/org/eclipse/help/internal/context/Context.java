@@ -55,7 +55,7 @@ public class Context extends ContextsNode implements IContext {
 		this.pluginID = pluginID;
 	}
 	/**
-	 * @see IContextContributionNode#build(ContextBuilder)
+	 * @see ContextsNode#build(ContextsBuilder)
 	 */
 	public void build(ContextsBuilder builder) {
 		builder.build(this);

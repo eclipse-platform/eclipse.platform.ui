@@ -55,4 +55,19 @@ public class SearchHit {
 		return toc;
 	}
 
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	public void setHref(String href) {
+		this.href = href;
+	}
+	
+	public void setScore(float score) {
+		this.score = score;
+	}
+	
+	public void setToc(IToc toc) {
+		this.toc = toc;
+	}
 }

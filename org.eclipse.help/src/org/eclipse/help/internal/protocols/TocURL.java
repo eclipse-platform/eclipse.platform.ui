@@ -17,14 +17,14 @@ import org.eclipse.help.internal.util.XMLGenerator;
  * <ul>
  * <li>toc/pluginid/tocfile.xml: the toc defined by the specified toc xml</li> 
  * <li>toc/: all the toc's </li>
- * <li>toc/topic=/pluginid/topic.html: the toc that contains the specified topic </li>
+ * <li>toc/?topic=/pluginid/topic.html: a list of toc that contain the specified topic </li>
  * </ul>
  */
 public class TocURL extends HelpURL {
 	public final static String TOC = "toc";
 	
 	/**
-	 * @url "/pluginid/tocfile.xml"
+	 * @param url "/pluginid/tocfile.xml"
 	 * or "/"
 	 * or "/?topic=/pluginid/topic.html"
 	 */
@@ -47,7 +47,7 @@ public class TocURL extends HelpURL {
 			if (getValue("topic") == null)
 				return serializeTocs();
 			else
-				return serializeToc(findTocContainingTopic(getValue("topic")));
+				return serializeTocs(findTocContainingTopic(getValue("topic")));
 		} 
 		return serializeToc(url);
 	}
@@ -90,6 +90,29 @@ public class TocURL extends HelpURL {
 			gen.printPad();
 			gen.generate(tocs[i], false);
 		}
+		gen.pad--;
+		gen.println("</tocs>");
+		gen.close();
+		try {
+			return new ByteArrayInputStream(stWriter.toString().getBytes("UTF8"));
+		} catch (UnsupportedEncodingException uee) {
+			return null;
+		}
+	}
+	
+	/**
+	 * @return InputStream from XML representation of TOC list
+	 */
+	private InputStream serializeTocs(IToc toc) {
+		if (toc == null)
+			return null;
+
+		StringWriter stWriter = new StringWriter();
+		TocWriter gen = new TocWriter(stWriter);
+		gen.println("<tocs>");
+		gen.pad++;
+		gen.printPad();
+		gen.generate(toc, false);
 		gen.pad--;
 		gen.println("</tocs>");
 		gen.close();

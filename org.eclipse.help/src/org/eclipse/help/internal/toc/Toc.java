@@ -37,18 +37,22 @@ public class Toc extends TocNode implements IToc {
 		this.label = attrs.getValue("label");
 		this.link_to = attrs.getValue("link_to");
 		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
-		this.href = HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref());
-		// create the description topic
-		String topic = attrs.getValue("topic");
-		if (topic != null && topic.trim().length() > 0) {
-			try {
-				this.descriptionTopic = new Topic(tocFile, null);
-				this.descriptionTopic.setLabel(this.label);
+		this.href =
+			HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref());
+
+		try {
+			// create the description topic
+			this.descriptionTopic = new Topic(tocFile, null);
+			this.descriptionTopic.setLabel(this.label);
+			String topic = attrs.getValue("topic");
+			if (topic != null && topic.trim().length() > 0)
 				this.descriptionTopic.setHref(
 					HrefUtil.normalizeHref(tocFile.getPluginID(), topic));
-			} catch (Exception e) {
-			}
+			else
+				this.descriptionTopic.setHref("");
+		} catch (Exception e) {
 		}
+
 		childrenTocs = new ArrayList();
 		directoryToc = new DirectoryToc(tocFile);
 	}
@@ -138,8 +142,14 @@ public class Toc extends TocNode implements IToc {
 			if (toc instanceof Toc) {
 				ITopic[] moreDirTopics = ((Toc) toc).getExtraTopics();
 				if (moreDirTopics.length > 0) {
-					ITopic[] newDirTopics = new ITopic[dirTopics.length + moreDirTopics.length];
-					System.arraycopy(dirTopics, 0, newDirTopics, 0, dirTopics.length);
+					ITopic[] newDirTopics =
+						new ITopic[dirTopics.length + moreDirTopics.length];
+					System.arraycopy(
+						dirTopics,
+						0,
+						newDirTopics,
+						0,
+						dirTopics.length);
 					System.arraycopy(
 						moreDirTopics,
 						0,

@@ -88,7 +88,7 @@ public class SearchResults implements ISearchHitCollector {
 	 * Finds a topic in a bookshelf
 	 * or within a scope if specified
 	 */
-	public IToc findTocForTopic(String href) {
+	private IToc findTocForTopic(String href) {
 		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			if (scope != null)

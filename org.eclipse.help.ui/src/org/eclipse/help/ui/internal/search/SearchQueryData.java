@@ -9,13 +9,14 @@ import java.util.*;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.search.ISearchQuery;
+import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.util.URLCoder;
 
 /**
  * Help Search Query Data.
  */
-public class SearchQueryData implements ISearchQuery {
+public class SearchQueryData {
+	private SearchQuery searchQuery;
 	/** 
 	 * Default maximum number of hits that a search engine
 	 * will search stop
@@ -26,35 +27,21 @@ public class SearchQueryData implements ISearchQuery {
 	 * will search
 	 */
 	private int maxHits;
-	private boolean fieldSearch;
 	private boolean bookFiltering;
 	private List selectedBooks;
-	/** search word(s) */
-	private String searchWord;
-	/** locale to be used for search */
-	private String locale;
-	/** fields that will be searched */
-	private Collection fieldNames;
 	/**
 	 * HelpSearchQuery constructor.
 	 * @param key java.lang.String
 	 * @param maxH int
 	 */
 	public SearchQueryData() {
-		searchWord = "";
+		searchQuery = new SearchQuery();
 		bookFiltering = false;
-		locale = Locale.getDefault().toString();
 		maxHits = MAX_HITS;
-		fieldSearch = false;
-		fieldNames = new ArrayList();
-		//		fieldNames.add("h1");
-		//		fieldNames.add("h2");
-		//		fieldNames.add("h3");
-		//		fieldNames.add("keyword");
-		//		fieldNames.add("role");
-		//		fieldNames.add("solution");
-		//		fieldNames.add("technology");
 		selectedBooks = null;
+	}
+	public ISearchQuery getSearchQuery() {
+		return searchQuery;
 	}
 	/**
 	 * Returns the list of books to be included in search,
@@ -70,19 +57,13 @@ public class SearchQueryData implements ISearchQuery {
 	 * Returns the locale in which the search will be performed.
 	 */
 	public String getLocale() {
-		return locale;
+		return searchQuery.getLocale();
 	}
 	/**
 	 * Returns true if books filtering is enabled.
 	 */
 	public boolean isBookFiltering() {
 		return bookFiltering;
-	}
-	/**
-	 * Returns true if search is to be performed on the fields only.
-	 */
-	public boolean isFieldSearch() {
-		return fieldSearch;
 	}
 	/**
 	 * Enables book filtering.
@@ -92,7 +73,8 @@ public class SearchQueryData implements ISearchQuery {
 		this.bookFiltering = enable;
 		if (enable && selectedBooks == null) {
 			selectedBooks = new ArrayList();
-			IToc tocs[] = HelpSystem.getTocManager().getTocs(locale);
+			IToc tocs[] =
+				HelpSystem.getTocManager().getTocs(searchQuery.getLocale());
 			for (int i = 0; i < tocs.length; i++)
 				selectedBooks.add(tocs[i]);
 		}
@@ -108,7 +90,7 @@ public class SearchQueryData implements ISearchQuery {
 	 * @param fieldSearch true if field only search
 	 */
 	public void setFieldsSearch(boolean fieldSearch) {
-		this.fieldSearch = fieldSearch;
+		searchQuery.setFieldSearch(fieldSearch);
 	}
 	/**
 	* Sets the maxHits.
@@ -121,24 +103,23 @@ public class SearchQueryData implements ISearchQuery {
 	public String toURLQuery() {
 		String q =
 			"searchWord="
-				+ URLCoder.encode(searchWord)
+				+ URLCoder.encode(searchQuery.getSearchWord())
 				+ "&maxHits="
 				+ maxHits
 				+ "&lang="
-				+ (locale != null ? locale : Locale.getDefault().toString());
-		if (fieldNames != null && !fieldNames.isEmpty())
-			for (Iterator iterator = fieldNames.iterator();
+				+ (searchQuery.getLocale());
+		if (!searchQuery.getFieldNames().isEmpty())
+			for (Iterator iterator = searchQuery.getFieldNames().iterator();
 				iterator.hasNext();
 				) {
 				String field = (String) iterator.next();
 				q += "&field=" + URLEncoder.encode(field);
 			}
-		if (fieldSearch)
+		if (searchQuery.isFieldSearch())
 			q += "&fieldSearch=true";
 		else
 			q += "&fieldSearch=false";
 		if (bookFiltering) {
-			q += "&scopedSearch=true";
 			if (selectedBooks != null) {
 				for (Iterator iterator = selectedBooks.iterator();
 					iterator.hasNext();
@@ -155,21 +136,14 @@ public class SearchQueryData implements ISearchQuery {
 	 * @return Returns a String
 	 */
 	public String getSearchWord() {
-		return searchWord;
+		return searchQuery.getSearchWord();
 	}
 	/**
 	 * Sets the searchWord
 	 * @param searchWord The search word to set
 	 */
 	public void setSearchWord(String searchWord) {
-		this.searchWord = searchWord;
-	}
-	/**
-	 * Gets the fieldNames.
-	 * @return Returns a Collection
-	 */
-	public Collection getFieldNames() {
-		return fieldNames;
+		searchQuery.setSearchWord(searchWord);
 	}
 	/**
 	 * Gets the maxHits.

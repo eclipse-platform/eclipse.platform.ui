@@ -4,207 +4,138 @@
  */
 package org.eclipse.help.standalone;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.*;
 
+import org.eclipse.help.internal.standalone.StandaloneHelp;
 
 /**
- * This is the standalone help proxy class. It takes care of 
- * launching the eclipse help system under cover and communicating with it.
+ * This is a standalone help system. It takes care of 
+ * launching the Eclipse with its help system implementation,
+ * and controling it.
+ * This class can be instantiated and used in a Java program,
+ * or can be launched from command line to execute single help action.
  * 
- * Usage: 
+ * Usage as a Java component: 
  * <ul>
- * <li> create an instantance of this class by passing the plugins directory, and then hold onto 
+ * <li> create an instantance of this class and then hold onto 
  * this instance for the duration of your application</li>
  * <li> call start() </li>
  * <li> call displayHelp(...) or displayContext(..) any number of times </li>
  * <li> at the end, call shutdown(). </li>
  * </ul>
  */
-public class Help
-{
-	private Eclipse eclipse;
-	private String pluginsDir;
+public class Help {
+	private StandaloneHelp help;
 	
+	/**
+	* Constructs help system
+	* @param options array of String options and their values
+	* <p>
+	*  Option <code>-eclipseHome dir</code> specifies Eclipse
+	*  installation directory.
+	*  It must be provided, when current directory is not the same
+	*  as Eclipse installation directory.
+	* <p>
+	*  Option <code>-host helpServerHost</code> specifies host name
+	*  of the interface that help server will use.
+	*  It overrides host name specified in the application server plugin preferences.
+	* <p>
+	*  Option <code>-port helpServerPort</code> specifies port number
+	*  that help server will use.
+	*  It overrides port number specified in the application server plugin preferences.
+	* <p>
+	*  Additionally, most options accepted by Eclipse execuable are supported.
+	*/
+	public Help(String[] options) {
+		help = new StandaloneHelp(options);
+	}
 	/**
 	 * This contstructs the stand alone help.
 	 * @param pluginsDir directory containing Eclipse plugins
+	 * @deprecated use Help#Help(String[])
 	 */
-	public Help(String pluginsDir)
-	{
-		this.pluginsDir = pluginsDir;
-	}
-	
-	/**
-	 * Starts the help system. To be called once only.
-	 */
-	public void start()
-	{
-		try
-		{
-			eclipse = new Eclipse(pluginsDir, null);
+	public Help(String pluginsDir) {
+		File plugins = new File(pluginsDir);
+		String install = plugins.getParent();
+		ArrayList options = new ArrayList(2);
+		if (install != null) {
+			options = new ArrayList(2);
+			options.add("-eclipseHome");
+			options.add(install);
 		}
-		catch(Exception e)
-		{
-		}
+		String[] args = new String[options.size()];
+		options.toArray(args);
+		help = new StandaloneHelp(args);
 	}
-	
 	/**
-	 * Shuts-down the help system . To be called once, at the end. 
-	 * Do not call other methods after shutdown is called.
+	 * Starts the stand alone help system.
 	 */
-	public void shutdown()
-	{
-		if (eclipse != null)
-				eclipse.shutdown();
+	public void start() {
+		help.start();
 	}
-	
+	/**
+	 * Shuts-down the stand alone help system.
+	 */
+	public void shutdown() {
+		help.shutdown();
+	}
 	/**
 	 * Displays help.
 	 */
-	public void displayHelp()
-	{
-		displayHelp(null);
+	public void displayHelp() {
+		help.displayHelp();
 	}
-	
+
 	/**
 	 * Displays specified help resource.
 	 * @param href the href of the table of contents
 	 */
-	public void displayHelp(String href)
-	{
-		try
-		{
-			Boolean b = eclipse.displayHelp(href);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Could not display help: " + href );
-		}
+	public void displayHelp(String href) {
+		help.displayHelp(href);
 	}
-	
+
 	/**
 	 * Displays context sensitive help.
 	 * @param contextId context id
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 */
-	public void displayContext(String contextId, int x, int y)
-	{
-		try
-		{
-			Boolean b = eclipse.displayContext(contextId,x, y);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Could not display  context:"  +contextId);
-		}
+	public void displayContext(String contextId, int x, int y) {
+		help.displayContext(contextId, x, y);
 	}
-	
+
 	/**
 	 * Displays context sensitive help in infopop.
 	 * @param contextId context id
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 */
-	public void displayContextInfopop(String contextId, int x, int y)
-	{
-		try
-		{
-			Boolean b = eclipse.displayContextInfopop(contextId,x, y);
-		}
-		catch(Exception e)
-		{
-			System.out.println("Could not display  context:"  +contextId);
-		}
+	public void displayContextInfopop(String contextId, int x, int y) {
+		help.displayContextInfopop(contextId, x, y);
 	}
+
 	/**
-	 * Starts the stand-alone help from command line for testing purposes.
-	 * @param args array of String;
-	 *  First array element is a name of directory containg plugins.
+	 * Controls standalone help system from command line.
+	 * @param args array of String containing options
+	 *  Options are:
+	 * 	<code>-command start | shutdown | (displayHelp [href]) [-eclipsehome eclipseInstallPath] [-host helpServerHost] [-port helpServerPort] [platform options] [-vmargs JavaVMarguments]</code>
+	 *  where
+	 *  <ul>
+	 *  <li><code>href</code> is the URL of the help resource to display,</li>
+	 * 	<li><code>eclipseInstallPath</code> specifies Eclipse installation directory;
+	 * 	  it must be provided, when current directory is not the same
+	 *    as Eclipse installation directory,</li>
+	 * 	<li><code>helpServerHost</code> specifies host name of the interface
+	 * 	  that help server will use, it overrides host name specified
+	 *    the application server plugin preferences</li>
+	 * 	<li><code>helpServerPort</code> specifies port number
+	 * 	  that help server will use, it overrides port number specified
+	 *    the application server plugin preferences.</li>
+	 *  <li><code>platform options</code> are other options that are supported by Eclipse Executable.</li>
+	 *  <ul>
 	 */
-	public static void main(String[] args)
-	{
-		// Test
-		String plugins = "d:\\eclipse\\plugins";
-		if (args.length > 0)
-			plugins = args[0];
-		final Help help = new Help(plugins);
-		help.start();
-		
-		final Frame f = new Frame();
-		Panel p = new Panel();
-		Button b1 = new Button("context help");
-		Button b2 = new Button("help");
-		
-		ActionListener a1 = new ActionListener()
-		{
-			/*
-			 * @see ActionListener#actionPerformed(ActionEvent)
-			 */
-			public void actionPerformed(ActionEvent e)
-			{
-				help.displayContext("org.eclipse.help.ui.f1Shell", 200, 800);
-			}
-
-		};
-
-		ActionListener a2 = new ActionListener()
-		{
-			/*
-			 * @see ActionListener#actionPerformed(ActionEvent)
-			 */
-			public void actionPerformed(ActionEvent e)
-			{
-				help.displayHelp();
-			}
-
-		};
-		
-		f.addWindowListener(new WindowAdapter() {
-			/*
-			 * @see WindowListener#windowClosed(WindowEvent)
-			 */
-			public void windowClosing(WindowEvent e)
-			{
-				f.dispose();
-				help.shutdown();
-				System.exit(0);
-			}
-		});
-	
-		
-		b1.addActionListener(a1);
-		b2.addActionListener(a2);
-		
-		f.add(p);
-		p.add(b1);
-		p.add(b2);
-		
-		f.pack();
-		
-		f.show();
-		
-		/*
-		// Test
-		Help help = new Help("d:\\eclipse\\plugins");
-		help.start();
-		help.displayContext("org.eclipse.help.ui.f1Shell", 200, 800);
-		help.displayContext("org.eclipse.help.ui.f1Shell", 600, 800);
-		//help.displayHelp();
-		 */
-		/*
-		try
-		{
-		Thread.sleep(20000);
-		}catch(InterruptedException e) {}
-		*/
-		try
-		{
-		System.in.read();
-		}catch(Exception ex){}
-		help.shutdown();
+	public static void main(String[] args) {
+		StandaloneHelp.main(args);
 	}
 }

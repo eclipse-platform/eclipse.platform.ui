@@ -13,9 +13,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.WorkbenchResources;
-import org.eclipse.help.internal.util.Logger;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.search.ui.*;
@@ -46,7 +46,9 @@ public class SearchOperation extends WorkspaceModifyOperation {
 	public SearchOperation(SearchQueryData data) {
 		if (imgRegistry == null) {
 			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
-			imgRegistry.put(IHelpUIConstants.IMAGE_KEY_SEARCH, IMAGE_DSCR_SEARCH);
+			imgRegistry.put(
+				IHelpUIConstants.IMAGE_KEY_SEARCH,
+				IMAGE_DSCR_SEARCH);
 			imgRegistry.put(IHelpUIConstants.IMAGE_KEY_TOPIC, IMAGE_DSCR_TOPIC);
 		}
 		queryData = data;
@@ -66,10 +68,16 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				}
 			}
 			SearchResults results =
-				new SearchResults(scope, queryData.getMaxHits(), queryData.getLocale());
-			HelpSystem.getSearchManager().search(queryData, results, monitor);
+				new SearchResults(
+					scope,
+					queryData.getMaxHits(),
+					queryData.getLocale());
+			HelpSystem.getSearchManager().search(
+				queryData.getSearchQuery(),
+				results,
+				monitor);
 			displayResults(results.getSearchHits());
-		} catch (OperationCanceledException oce){
+		} catch (OperationCanceledException oce) {
 			// allowed, no logging
 			monitor.done();
 			throw oce;
@@ -84,18 +92,21 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			sView
 				.searchStarted(
 					IHelpUIConstants.RESULTS_PAGE_ID,
-					WorkbenchResources.getString("singleSearchResult", queryData.getSearchWord()),
+					WorkbenchResources.getString(
+						"singleSearchResult",
+						queryData.getSearchWord()),
 					WorkbenchResources.getString(
 						"multipleSearchResult",
 						queryData.getSearchWord(),
 						"{0}"),
 					IMAGE_DSCR_SEARCH,
-					(IContextMenuContributor)null,
+					(IContextMenuContributor) null,
 					new LabelProvider() {
 			public String getText(Object element) {
 				if (element instanceof ISearchResultViewEntry)
 					try {
-						ISearchResultViewEntry entry = (ISearchResultViewEntry) element;
+						ISearchResultViewEntry entry =
+							(ISearchResultViewEntry) element;
 						return (String) entry.getSelectedMarker().getAttribute(
 							IHelpUIConstants.HIT_MARKER_ATTR_LABEL);
 					} catch (CoreException ce) {
@@ -114,15 +125,19 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				ISelection selection = view.getSelection();
 				Object element = null;
 				if (selection instanceof IStructuredSelection)
-					element = ((IStructuredSelection) selection).getFirstElement();
+					element =
+						((IStructuredSelection) selection).getFirstElement();
 				if (element instanceof ISearchResultViewEntry) {
-					ISearchResultViewEntry entry = (ISearchResultViewEntry) element;
+					ISearchResultViewEntry entry =
+						(ISearchResultViewEntry) element;
 					try {
 						IHelp ihelp = WorkbenchHelp.getHelpSupport();
 						if (ihelp instanceof DefaultHelp)
 							((DefaultHelp) ihelp).displaySearch(
 								queryData.toURLQuery(),
-								(String) entry.getSelectedMarker().getAttribute(
+								(String) entry
+									.getSelectedMarker()
+									.getAttribute(
 									IHelpUIConstants.HIT_MARKER_ATTR_HREF));
 					} catch (Exception e) {
 						System.out.println(e);
@@ -132,8 +147,11 @@ public class SearchOperation extends WorkspaceModifyOperation {
 		}, new IGroupByKeyComputer() {
 			public Object computeGroupByKey(IMarker marker) {
 				try {
-					if (marker.getAttribute(IHelpUIConstants.HIT_MARKER_ATTR_HREF) != null)
-						return marker.getAttribute(IHelpUIConstants.HIT_MARKER_ATTR_HREF);
+					if (marker
+						.getAttribute(IHelpUIConstants.HIT_MARKER_ATTR_HREF)
+						!= null)
+						return marker.getAttribute(
+							IHelpUIConstants.HIT_MARKER_ATTR_HREF);
 				} catch (CoreException ce) {
 				}
 				return "UNKNOWN";
@@ -169,7 +187,9 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				NumberFormat percentFormat = NumberFormat.getPercentInstance();
 				String scoreString = percentFormat.format(score);
 				String label = scoreString + " " + searchHits[i].getLabel();
-				marker.setAttribute(IHelpUIConstants.HIT_MARKER_ATTR_LABEL, label);
+				marker.setAttribute(
+					IHelpUIConstants.HIT_MARKER_ATTR_LABEL,
+					label);
 				marker.setAttribute(
 					IHelpUIConstants.HIT_MARKER_ATTR_ORDER,
 					new Integer(i).toString());

@@ -2,7 +2,23 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
+
+/**
+ * Private helper function for use by other (public) functions. 
+ */
+function findHelpTop() {
+	var helpTop;
+	for (helpTop=self; helpTop; helpTop = helpTop.parent){
+		if (helpTop.liveActionInternal){
+			break;
+		}
+		if (helpTop==helpTop.parent){
+			break;
+		}
+	}
+	return helpTop;
+}
+
 /**
  * Call this Javascript method to trigger a specified live help action
  * in the workbench. 
@@ -14,38 +30,12 @@
 
 function liveAction(pluginId, className, argument)
 {
-	// construct the proper url for communicating with the server
-	var url= window.location.href;
-	var i = url.indexOf("content/help:");
-	if(i < 0)
-		i = url.lastIndexOf("/")+1;
-
-	url=url.substring(0, i);
-	url=url+"livehelp/?pluginID="+pluginId+"&class="+className+"&arg="+escape(argument)+"&nocaching="+Math.random();
-
-	// this script can be called by content page or by our jsp pages. 
-	// we need to find the toolbar frame.
-	// to do: cleanup this, including the location of the hidden livehelp frame.
-
-	// navigate to top help frameset
-	for (var x=self; x; x = x.parent)
-		if (x.EclipseHelpSystem)
-			break;
-	
-	if (x == null) 
-		return;
-		
-	var toolbarFrame = x.ToolbarFrame;
-	if (!toolbarFrame)
-		return;
-
-	if(toolbarFrame.liveHelpFrame){
-		toolbarFrame.liveHelpFrame.location=url;
-	} else if(toolbarFrame.document && toolbarFrame.document.liveHelpFrame){
-		toolbarFrame.document.liveHelpFrame.src=url;
-	} 
+	// find top help frameset
+	var helpTop=findHelpTop();
+	if (helpTop != null && helpTop.liveActionInternal){
+		return helpTop.liveActionInternal(helpTop, pluginId, className, argument);
+	}
 }
-
 
 /**
  * Show specified topic in the Contents tree.
@@ -58,17 +48,8 @@ function liveAction(pluginId, className, argument)
  *  showTopicInContents(window.location.href); 
  */
 function showTopicInContents(topic) {
-	var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
-	var isIE = navigator.userAgent.indexOf('MSIE') != -1;
-
-	if (!isIE && !isMozilla) 
-		return;
-		
-	try
-	{
-		parent.displayTocFor(topic);
-	}
-	catch(e)
-	{
-	}
+		var helpTop=findHelpTop();
+		if (helpTop != null && helpTop.howTopicInContentsInternal){
+			return helpTop.showTopicInContents(helpTop, topic);
+		}
 }

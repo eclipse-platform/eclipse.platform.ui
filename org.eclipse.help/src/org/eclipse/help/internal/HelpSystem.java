@@ -3,13 +3,12 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal;
-import java.net.URL;
-
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.context.*;
+import org.eclipse.help.AppServer;
+import org.eclipse.help.internal.context.ContextManager;
+import org.eclipse.help.internal.search.SearchManager;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.*;
-import org.eclipse.help.internal.search.SearchManager;
 /**
  * The actual implementation of the help system plugin.
  */
@@ -22,10 +21,16 @@ public final class HelpSystem {
 	public final static String LINKS_VIEW_KEY = "linksView";
 	public final static String BASE_TOCS_KEY = "baseTOCS";
 	public final static String BOOKMARKS = "bookmarks";
-	
+	public final static int MODE_WORKBENCH = 0;
+	public final static int MODE_INFOCENTER = 1;
+	public final static int MODE_STANDALONE = 2;
+
 	protected TocManager tocManager;
 	protected ContextManager contextManager;
 	protected SearchManager searchManager;
+	private int mode = MODE_WORKBENCH;
+	private boolean webappStarted = false;
+	private boolean webappRunning = false;
 	/**
 	 * HelpSystem constructor comment.
 	 */
@@ -91,11 +96,44 @@ public final class HelpSystem {
 			HelpPlugin.getDefault().getLog().log(
 				new Status(
 					Status.ERROR,
-					HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					HelpPlugin
+						.getDefault()
+						.getDescriptor()
+						.getUniqueIdentifier(),
 					0,
 					Resources.getString("E005"),
 					e));
 		}
 		Logger.logInfo(Resources.getString("I002"));
 	}
+	public static boolean ensureWebappRunning() {
+		if (!getInstance().webappStarted) {
+			getInstance().webappStarted = true;
+			if (getMode()!=MODE_WORKBENCH) {
+				// start the help control web app
+				AppServer.add("helpControl", "org.eclipse.help.webapp", "");
+			}
+			// start the help web app
+			getInstance().webappRunning =
+				AppServer.add("help", "org.eclipse.help.webapp", "");
+		}
+		return getInstance().webappRunning;
+	}
+
+	/**
+	 * Returns the mode.
+	 * @return int
+	 */
+	public static int getMode() {
+		return getInstance().mode;
+	}
+
+	/**
+	 * Sets the mode.
+	 * @param mode The mode to set
+	 */
+	public static void setMode(int mode) {
+		getInstance().mode = mode;
+	}
+
 }

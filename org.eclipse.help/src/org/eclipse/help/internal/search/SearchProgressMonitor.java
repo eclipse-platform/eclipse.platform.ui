@@ -4,17 +4,39 @@
  */
 package org.eclipse.help.internal.search;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import java.util.*;
+
+import org.apache.lucene.search.Hits;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.util.*;
 
 /**
  * Progress monitor for search
  * @since 2.0
  */
 public class SearchProgressMonitor implements IProgressMonitor {
+
+	// Progress monitors, indexed by locale
+	private static Map progressMonitors = new HashMap();
+
+	// Dummy collector for triggering a progress monitor
+	private static ISearchHitCollector dummy_collector;
+
 	private boolean started, done, canceled;
 	private int totalWork = IProgressMonitor.UNKNOWN;
 	private int currWork;
 
+	static {
+		dummy_collector = new ISearchHitCollector() {
+			public void addHits(Hits h, String s) {
+			}
+		};
+	}
+
+	/**
+	 * Constructor.
+	 */
 	public SearchProgressMonitor() {
 		started = done = canceled = false;
 	}
@@ -94,6 +116,86 @@ public class SearchProgressMonitor implements IProgressMonitor {
 	 */
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
+	}
+
+	/**
+	 * Returns a progress monitor for specified query and locale
+	 */
+	public static synchronized SearchProgressMonitor getProgressMonitor(final String locale) {
+
+		// return an existing progress monitor if there is one
+		if (progressMonitors.get(locale) != null)
+			return (SearchProgressMonitor) progressMonitors.get(locale);
+
+		final SearchProgressMonitor pm = new SearchProgressMonitor();
+		progressMonitors.put(locale, pm);
+
+		// spawn a thread that will cause indexing if needed
+		Thread indexer = new Thread(new Runnable() {
+			public void run() {
+				try {
+					HelpSystem.getSearchManager().search(
+						new DummySearchQuery(locale),
+						dummy_collector,
+						pm);
+				} catch (OperationCanceledException oce) {
+					// operation cancelled
+					// throw out the progress monitor
+					progressMonitors.remove(locale);
+				} catch (Exception e) {
+					progressMonitors.remove(locale);
+					e.printStackTrace();
+					Logger.logError(
+						Resources.getString("search_index_update_error"),
+						null);
+				}
+			}
+		});
+		indexer.setName("HelpSearchIndexer");
+		indexer.start();
+		// give pm chance to start
+		// this will avoid seing progress if there is no work to do
+		while (!pm.isStarted()) {
+			try {
+				Thread.currentThread().sleep(50);
+			} catch (InterruptedException ie) {
+			}
+			if (progressMonitors.get(locale) == null)
+				// operation got canceled
+				break;
+		}
+
+		return pm;
+	}
+	static class DummySearchQuery implements ISearchQuery {
+		private String l;
+		DummySearchQuery(String loc) {
+			l = loc;
+		}
+		/**
+		 * Obtains names of fields in addition to default field
+		 */
+		public Collection getFieldNames() {
+			return new ArrayList();
+		}
+		/**
+		 * Obtains search word (user query)
+		 */
+		public String getSearchWord() {
+			return "dummy";
+		}
+		/**
+		 * @return true if search only in specified fields, not the default field
+		 */
+		public boolean isFieldSearch() {
+			return false;
+		}
+		/**
+		 * Obtains locale
+		 */
+		public String getLocale() {
+			return l;
+		}
 	}
 
 }

@@ -33,7 +33,7 @@ public class RelatedTopic extends ContextsNode implements IHelpResource {
 		return label;
 	}
 	/**
-	 * @see IContextContributionNode#build(ContextBuilder)
+	 * @see ContextsNode#build(ContextsBuilder)
 	 */
 	public void build(ContextsBuilder builder) {
 		builder.build(this);

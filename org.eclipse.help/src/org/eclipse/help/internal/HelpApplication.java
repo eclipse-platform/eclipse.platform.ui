@@ -4,179 +4,98 @@ package org.eclipse.help.internal;
  * All Rights Reserved.
  */
 import java.io.*;
-import java.net.*;
+import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
+import org.eclipse.help.AppServer;
 
 /**
- * Facade for Eclipse servlet
+ * Help application.
+ * Starts webserver and help web application for use
+ * by infocenter and stand-alone help.
+ * Application takes a parameter "mode", that can take values:
+ *  "infocenter" - when help system should run as infocenter,
+ *  "standalone" - when help system should run as standalone.
  */
-public class HelpApplication implements IPlatformRunnable
-{
-	private static final String HELP_KEY = "org.eclipse.ui.help";
-	private static final String HELP_SYSTEM_EXTENSION_ID =
-		"org.eclipse.help.support";
-	private static final String HELP_SYSTEM_CLASS_ATTRIBUTE = "class";
-	private static IHelp helpSupport = null;
-
+public class HelpApplication
+	implements IPlatformRunnable, IExecutableExtension {
+	private static final int STATUS_EXITTING = 0;
+	private static final int STATUS_RESTARTING = 2;
+	private static final int STATUS_RUNNING = 1;
+	private static int status = STATUS_RUNNING;
+	private boolean infocenter = false;
 	/**
-	 * To be called by the servlets.
+	 * Causes help service to stop and exit
 	 */
-	private URLConnection openConnection(String urlStr)
-	{
-		try
-		{
-			if (urlStr != null && urlStr.length() > 1)
-			{
-				URL url = new URL(urlStr);
-				return url.openConnection();
+	public static void stop() {
+		status = STATUS_EXITTING;
+	}
+	/**
+	 * Causes help service to exit and start again
+	 */
+	public static void restart() {
+		if (status != STATUS_EXITTING) {
+			status = STATUS_RESTARTING;
+		}
+	}
+	/**
+	 * Runs help service application.
+	 */
+	public Object run(Object args) throws Exception {
+		if (!HelpSystem.ensureWebappRunning()) {
+			throw new Exception("Help web application is not running.");
+		}
+		writeHostAndPort();
+		// main program loop
+		while (status == STATUS_RUNNING) {
+			try {
+				Thread.currentThread().sleep(250);
+			} catch (InterruptedException ie) {
+				break;
 			}
 		}
-		catch (IOException e)
-		{
-			// for debugging purposes
-			e.printStackTrace();
-		}
-		return null;
-	}
 
+		if (status == STATUS_RESTARTING) {
+			return this.EXIT_RESTART;
+		} else {
+			return this.EXIT_OK;
+		}
+	}
 	/**
-	 * To be called by the standalone interface to display help
+	 * @see IExecutableExtension
 	 */
-	private Boolean displayHelp(String href)
-	{
-		if (helpSupport == null)
-			initializeHelpSupport();
-
-		if (helpSupport != null)
-		{
-			if (href == null)
-				helpSupport.displayHelp();
-			else
-				helpSupport.displayHelpResource(href);
-
-			return new Boolean(true);
+	public void setInitializationData(
+		IConfigurationElement configElement,
+		String propertyName,
+		Object data) {
+		String value = (String) ((Map) data).get("mode");
+		if ("infocenter".equalsIgnoreCase(value)) {
+			HelpSystem.setMode(HelpSystem.MODE_INFOCENTER);
+		} else if ("standalone".equalsIgnoreCase(value)) {
+			HelpSystem.setMode(HelpSystem.MODE_STANDALONE);
 		}
-		else
-			return new Boolean(false);
 	}
-	
-	/**
-	 * To be called by the standalone interface to display help resources
-	 */
-	private Boolean displayHelpResource(String href)
-	{
-		if (helpSupport == null)
-			initializeHelpSupport();
+	private void writeHostAndPort() throws IOException {
+		Properties p = new Properties();
+		p.put("host", AppServer.getHost());
+		p.put("port", "" + AppServer.getPort());
 
-		if (helpSupport != null)
-		{
-			helpSupport.displayHelpResource(href);
-			return new Boolean(true);
-		}
-		else
-			return new Boolean(false);
-	}
-	
-	/**
-	 * To be called by the standalone interface to display context sensitive help
-	 */
-	private Boolean displayContext(String contextId, Integer X, Integer Y)
-	{
-		//System.out.println("display Context in facade " + contextId + X + Y);
-		if (helpSupport == null)
-			initializeHelpSupport();
-
-		if (helpSupport != null)
-		{
-			int x = X.intValue();
-			int y = Y.intValue();
-			
-			helpSupport.displayContext(contextId, x, y);
-			return new Boolean(true);
-		}
-		else
-			return new Boolean(false);
-
-	}
-	
-
-	/**
-	* Initializes the help support system by getting an instance via the extension
-	* point.
-	*/
-	private static void initializeHelpSupport()
-	{
-		if (helpSupport != null)
-			return;
-
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint point =
-			pluginRegistry.getExtensionPoint(HELP_SYSTEM_EXTENSION_ID);
-		if (point != null)
-		{
-			IExtension[] extensions = point.getExtensions();
-			if (extensions.length != 0)
-			{
-				// There should only be one extension/config element so we just take the first
-				IConfigurationElement[] elements = extensions[0].getConfigurationElements();
-				if (elements.length != 0)
-				{ // Instantiate the app server
-					try
-					{
-						;
-						helpSupport =
-							(IHelp) elements[0].createExecutableExtension(HELP_SYSTEM_CLASS_ATTRIBUTE);
-					}
-					catch (CoreException e)
-					{
-						// may need to change this
-						HelpPlugin.getDefault().getLog().log(e.getStatus());
-					}
+		File workspace = Platform.getLocation().toFile();
+		File hostPortFile = new File(workspace, ".metadata/.connection");
+		hostPortFile.deleteOnExit();
+		FileOutputStream out = null;
+		try {
+			out = new FileOutputStream(hostPortFile);
+			p.store(out, null);
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException ioe2) {
 				}
 			}
 		}
 
-	}
-	/**
-	 * @param args array of objects
-	 *  first is String command
-	 *  rest are command parameters
-	 */
-	public Object run(Object args)
-	{
-		if (args == null || !(args instanceof Object[]))
-			return null;
-		Object[] argsArray = (Object[]) args;
-		if (argsArray.length < 1
-			|| !(argsArray[0] instanceof String)
-			|| argsArray[0] == null)
-			return null;
-			
-		String command = (String) argsArray[0];
-
-		if ("openConnection".equals(command))
-		{
-			if ((argsArray.length == 2) && (argsArray[1] instanceof String))
-				return openConnection((String) argsArray[1]);
-		}
-		else if ("displayHelp".equals(command))
-		{
-			if ((argsArray.length== 2)	)
-				return displayHelp((String) argsArray[1]);
-		}
-		else if ("displayHelpResource".equals(command))
-		{
-			if ((argsArray.length== 2)	)
-				return displayHelpResource((String) argsArray[1]);
-		}
-		else if ("displayContext".equals(command))
-		{
-			if ((argsArray.length== 4)	)
-				return displayContext((String) argsArray[1], (Integer) argsArray[2], (Integer) argsArray[3]);
-		}
-		return null;
 	}
 }

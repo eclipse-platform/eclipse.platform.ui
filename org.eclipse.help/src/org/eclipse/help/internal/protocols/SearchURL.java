@@ -55,11 +55,11 @@ public class SearchURL extends HelpURL {
 		try {
 			SearchProgressMonitor pm = getProgressMonitor();
 			if (pm.isDone()) {
-				SearchQuery sQuery = new SearchQuery(query.toString());
-				SearchResults results =
-					new SearchResults(sQuery.getScope(), sQuery.getMaxHits(), sQuery.getLocale());
-
-				HelpSystem.getSearchManager().search(sQuery, results, pm);
+				SearchResults results = createHitCollector();
+				HelpSystem.getSearchManager().search(
+					createSearchQuery(),
+					results,
+					pm);
 				InputStream is = serializeSearchResults(results);
 				if (is != null) {
 					contentSize = is.available();
@@ -97,10 +97,18 @@ public class SearchURL extends HelpURL {
 						try {
 							HelpSystem
 								.getSearchManager()
-								.search(new SearchQuery(query.toString()), new ISearchHitCollector() {
+								.search(
+									new SearchQuery(
+										"dummy",
+										false,
+										new ArrayList(),
+										getLocale().toString()),
+									new ISearchHitCollector() {
 								public void addHits(Hits h, String s) {
 								}
-							}, (IProgressMonitor) progressMonitors.get(getLocale()));
+							},
+								(IProgressMonitor) progressMonitors.get(
+									getLocale()));
 						} catch (OperationCanceledException oce) {
 							// operation cancelled
 							// throw out the progress monitor
@@ -108,7 +116,10 @@ public class SearchURL extends HelpURL {
 						} catch (Exception e) {
 							progressMonitors.remove(getLocale());
 							e.printStackTrace();
-							Logger.logError(Resources.getString("search_index_update_error"), null);
+							Logger.logError(
+								Resources.getString(
+									"search_index_update_error"),
+								null);
 						}
 					}
 				});
@@ -150,7 +161,9 @@ public class SearchURL extends HelpURL {
 			// Set the document toc
 			if (searchHits[s].getToc() != null) {
 				e.setAttribute(IToc.TOC, searchHits[s].getToc().getHref());
-				e.setAttribute(IToc.TOC + IToc.LABEL, searchHits[s].getToc().getLabel());
+				e.setAttribute(
+					IToc.TOC + IToc.LABEL,
+					searchHits[s].getToc().getLabel());
 			}
 		}
 		return dom;
@@ -173,12 +186,67 @@ public class SearchURL extends HelpURL {
 			//format.setPreserveSpace(true);
 			format.setEncoding("UTF-8");
 			Serializer serializer =
-				SerializerFactory.getSerializerFactory("xml").makeSerializer(outStream, format);
+				SerializerFactory.getSerializerFactory("xml").makeSerializer(
+					outStream,
+					format);
 			serializer.asDOMSerializer().serialize(dom);
 			return new ByteArrayInputStream(outStream.toByteArray());
 		} catch (IOException e) {
 			return null;
 		}
+	}
+	private ISearchQuery createSearchQuery() {
+		if (arguments == null) {
+			return new SearchQuery(
+				"",
+				false,
+				new ArrayList(),
+				Locale.getDefault().toString());
+		}
+		String searchWord = (String) arguments.get("searchWord");
+		if (searchWord == null) {
+			searchWord = "";
+		}
+		boolean fieldSearch = false;
+		try {
+			fieldSearch =
+				new Boolean((String) arguments.get("fieldSearch"))
+					.booleanValue();
+		} catch (Exception e) {
+		}
+
+		return new SearchQuery(
+			searchWord,
+			fieldSearch,
+			new ArrayList(),
+			getLocale().toString());
+	}
+	private SearchResults createHitCollector() {
+		if (arguments == null) {
+			return new SearchResults(null, 500, Locale.getDefault().toString());
+		}
+		Collection scopeCol = null;
+		Object scopes = arguments.get("scope");
+		if (scopes != null) {
+			if (scopes instanceof List) {
+				List scopeList = (List) scopes;
+				if (scopeList.size()
+					!= HelpSystem.getTocManager().getTocs(
+						getLocale().toString()).length) {
+					// scope only if not all books selected
+					scopeCol = scopeList;
+				}
+			} else {
+				if (1
+					!= HelpSystem.getTocManager().getTocs(
+						getLocale().toString()).length) {
+					// scope only if not all books selected
+					List l = new ArrayList(1);
+					l.add(scopes);
+				}
+			}
+		}
+		return new SearchResults(scopeCol, 500, getLocale().toString());
 	}
 
 }
