@@ -83,7 +83,7 @@ public interface IJobManager {
 	 * another thread continues to add jobs of the given family.
 	 * </p>
 	 * 
-	 * @param family the job family to wait for
+	 * @param family the job family to wait for, or <code>null</code> to wait for all jobs.
 	 * @param monitor Progress monitor for reporting progress on how the
 	 * wait is progressing, or <code>null</code> if no progress monitoring is required.
 	 * @exception InterruptedException if this thread is interrupted while waiting

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
  * </p>
  * 
  * @see IJobManager.setLockListener
+ * @since 3.0
  */
 public class LockListener {
 	private final LockManager manager = ((JobManager)Platform.getJobManager()).getLockManager();
