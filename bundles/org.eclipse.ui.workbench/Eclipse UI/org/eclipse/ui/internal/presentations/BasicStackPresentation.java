@@ -190,8 +190,9 @@ public class BasicStackPresentation extends StackPresentation {
 			public void handleEvent(Event event) {
 				Point localPos = new Point(event.x, event.y);
 				CTabItem tabUnderPointer = tabFolder.getItem(localPos);
-				
+		
 				if (tabUnderPointer == null) {
+					getSite().dragStart(tabFolder.toDisplay(localPos), false);
 					return;
 				}
 
