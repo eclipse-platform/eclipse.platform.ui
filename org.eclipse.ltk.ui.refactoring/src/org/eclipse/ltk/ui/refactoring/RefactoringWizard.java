@@ -71,19 +71,19 @@ import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 public abstract class RefactoringWizard extends Wizard {
 
 	/** 
-	 * Flag indicating that no special flags are provided.
+	 * Flag (value 0) indicating that no special flags are provided.
 	 */
 	public static final int NONE= 0;
 	
 	/**
-	 * Flag indicating that the initial condition checking of the refactoring is done when 
+	 * Flag (value 1) indicating that the initial condition checking of the refactoring is done when 
 	 * the wizard opens. If not specified it is assumed that the initial condition checking
 	 * has been done by the client before opening the wizard dialog. 
 	 */
 	public static final int CHECK_INITIAL_CONDITIONS_ON_OPEN= 1 << 0;
 	
 	/**
-	 * Flag indicating that a normal wizard based user interface consisting
+	 * Flag (value 2) indicating that a normal wizard based user interface consisting
 	 * of a back, next, finish and cancel button should be used to present
 	 * this refactoring wizard. This flag can't be specified together with
 	 * the flag {@link #DIALOG_BASED_UESR_INTERFACE}.
@@ -91,7 +91,7 @@ public abstract class RefactoringWizard extends Wizard {
 	public static final int WIZARD_BASED_USER_INTERFACE= 1 << 1;
 	
 	/**
-	 * Flag indicating that a lightweight dialog based user interface should
+	 * Flag (value 4) indicating that a lightweight dialog based user interface should
 	 * be used to present this refactoring wizard. This user interface consists
 	 * of a preview, finish and cancel button and the initial size of dialog
 	 * is based on the first user input page. This flag is only valid if only
@@ -103,26 +103,27 @@ public abstract class RefactoringWizard extends Wizard {
 	public static final int DIALOG_BASED_UESR_INTERFACE= 1 << 2;
 	
 	/**
-	 * Flag indicating that the finish and cancel button should be named
+	 * Flag (value 8) indicating that the finish and cancel button should be named
 	 * yes and no. The flag is ignored if the flag {@link #WIZARD_BASED_USER_INTERFACE}
 	 * is specified.
 	 */
 	public static final int YES_NO_BUTTON_STYLE= 1 << 3;
+	
 	/**
-	 * Flag indicating that the wizard should not show a preview page.
+	 * Flag (value 16) indicating that the wizard should not show a preview page.
 	 * The flag is ignored if the flag {@link #WIZARD_BASED_USER_INTERFACE}
 	 * is specified.
 	 * */
 	public static final int NO_PREVIEW_PAGE= 1 << 4;
 	
 	/**
-	 * Flag indicating that the first change node presented in the
+	 * Flag (value 32) indicating that the first change node presented in the
 	 * preview page should be fully expanded.
 	 */
 	public static final int PREVIEW_EXPAND_FIRST_NODE= 1 << 5;
 
 	/**
-	 * Flag indicating that the dialog representing the refactoring
+	 * Flag (value 64) indicating that the dialog representing the refactoring
 	 * status to the user will not contain a back button. The flag
 	 * is ignored if the flag (@link #WIZARD_BASED_USER_INTERFACE}
 	 * is specified.

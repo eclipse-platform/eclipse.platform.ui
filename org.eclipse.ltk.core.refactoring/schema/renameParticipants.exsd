@@ -9,9 +9,9 @@
          This extension point is used to define refactoring rename participants. The reader of the expression provides the following predefined variables which can be referenced via the &amp;lt;with variable=&quot;...&quot;&amp;gt; expression element:
 
 &lt;ul&gt;
+  &lt;li&gt;Object element: the element to be renamed&lt;/li&gt;
   &lt;li&gt;List&amp;lt;String&amp;gt; affectedNatures: a list containing the natures of the projects affected 
       by the refactoring&lt;/li&gt;
-  &lt;li&gt;Object element: the element to be renamed&lt;/li&gt;
   &lt;li&gt;String processorId: the id of the refactoring processor that will own the participant.
 &lt;/ul&gt;
 

@@ -30,8 +30,9 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
 /**
  * A validate edit checker is a shared checker to collect files
  * to be validated all at once. A validate edit checker checks
- * if the files are in sync with the underlying files system and
- * if the can be edited if the are marked as read-only.
+ * if the files are in sync with the underlying files system.
+ * Additionally <code>IWorkspace#validateEdit</code> is called for
+ * all read-only resources.
  * <p> 
  * Note: this class is not intended to be extended by clients.
  * </p>
