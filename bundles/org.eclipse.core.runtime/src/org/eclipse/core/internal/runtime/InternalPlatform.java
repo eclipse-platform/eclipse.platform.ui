@@ -560,7 +560,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	IPath path = InternalPlatform.getMetaArea().getRegistryPath();
 	DataInputStream input = null;
 	registry = null;
-	try {
+	/*try {
 		input = new DataInputStream(new FileInputStream(path.toOSString()));
 		try {
 			RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
@@ -571,7 +571,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	} catch (IOException ioe) {
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Policy.bind("meta.unableToReadCache"), ioe);
 		problems.merge(status);
-	}
+	}*/
 	if (registry == null) {
 		URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);	// augment the plugin path with any additional platform entries	(eg. user scripts)
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
