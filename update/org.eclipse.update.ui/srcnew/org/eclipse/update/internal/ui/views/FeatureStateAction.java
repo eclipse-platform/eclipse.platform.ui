@@ -59,11 +59,13 @@ public class FeatureStateAction extends Action {
 								PendingOperation.CONFIGURE,
 								PendingOperation.UNCONFIGURE);
 					}
+					
+					SiteManager.getLocalSite().save();
+					UpdateManager.getOperationsManager().fireObjectChanged(adapter, "");
+					
 					if (restartNeeded)
 						UpdateUI.informRestartNeeded();
 
-					SiteManager.getLocalSite().save();
-					UpdateManager.getOperationsManager().fireObjectChanged(adapter, "");
 				} catch (CoreException e) {
 					revert(isConfigured);
 					UpdateUI.logException(e);
