@@ -9,8 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.runtime.jobs.LockListener;
@@ -55,9 +54,11 @@ public class LockManager {
 	private LockListener lockListener;
 	private final ArrayList locks = new ArrayList();
 	/**
-	 * Set of threads that currently own locks.
+	 * Set of threads that currently own locks.  Maps Thread->int[], where the
+	 * integer array is always size one, and its value stores the number of locks
+	 * currently owned by this thread.
 	 */
-	private final HashSet lockThreads = new HashSet(20);
+	private final Map lockThreads = new HashMap(20);
 	public LockManager() {
 	}
 	/* (non-Javadoc)
@@ -74,16 +75,33 @@ public class LockManager {
 		if (lockListener != null)
 			lockListener.aboutToWait(lockOwner);
 	}
-	void addLockThread(Thread thread) {
-		lockThreads.add(thread);
+	/**
+	 * This thread has just acquired a lock.  Add to the locking thread set if necessary,
+	 * and increment the lock counter for this thread.
+	 */
+	synchronized void addLockThread(Thread thread) {
+		int[] value = (int[]) lockThreads.get(thread);
+		if (value == null) {
+			value = new int[] {0};
+			lockThreads.put(thread, value);
+		}
+		value[0]++;
 	}
 	public synchronized OrderedLock newLock() {
 		OrderedLock result = new OrderedLock(this);
 		locks.add(result);
 		return result;
 	}
-	void removeLockThread(Thread thread) {
-		lockThreads.remove(thread);
+	/**
+	 * This thread has just relinquised a lock.  Decrement the lock counter
+	 * for this thread, and remove from the locking thread set if necessary.
+	 */
+	synchronized void removeLockThread(Thread thread) {
+		int[] value = (int[]) lockThreads.get(thread);
+		if (value == null)
+			Assert.isNotNull(value, "Removing lock thread that didn't own a lock"); //$NON-NLS-1$
+		if (--value[0] <= 0)
+			lockThreads.remove(thread);
 	}
 	public void setLockListener(LockListener listener) {
 		this.lockListener = listener;
@@ -125,6 +143,13 @@ public class LockManager {
 		return (LockState[]) toAcquire.toArray(new LockState[toAcquire.size()]);
 	}
 	public synchronized boolean isLockOwner() {
-		return lockThreads.contains(Thread.currentThread());
+		return lockThreads.containsKey(Thread.currentThread());
+	}
+	/**
+	 * This thread is known to be in an idle state, so it cannot possibly be owning any
+	 * locks.  Flush any locks that this thread might have acquired that were never released.
+	 */
+	synchronized void removeAllLocks(Thread thread) {
+		lockThreads.remove(thread);
 	}
 }

@@ -205,7 +205,6 @@ public class OrderedLock implements ILock {
 		this.currentOperationThread = newThread;
 		if (currentOperationThread != null)
 			manager.addLockThread(currentOperationThread);
-		
 	}
 	/**
 	 * Forces the lock to be at the given depth.  Used when re-acquiring a suspended

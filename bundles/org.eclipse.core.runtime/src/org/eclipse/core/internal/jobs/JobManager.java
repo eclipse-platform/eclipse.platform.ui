@@ -274,6 +274,7 @@ public class JobManager implements IJobManager {
 			blocked = internalJob.previous();
 			internalJob.setPrevious(null);
 		}
+
 		//add any blocked jobs back to the wait queue
 		while (blocked != null) {
 			InternalJob previous = blocked.previous();

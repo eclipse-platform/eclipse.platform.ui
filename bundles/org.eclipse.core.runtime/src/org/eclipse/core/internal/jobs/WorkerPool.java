@@ -48,6 +48,8 @@ class WorkerPool {
 	protected synchronized void endJob(Job job, IStatus result) {
 		busyThreads--;
 		manager.endJob(job, result);
+		//remove any locks this thread may be owning
+		manager.getLockManager().removeAllLocks(Thread.currentThread());
 	}
 	protected synchronized void endWorker(Worker worker) {
 		threads.remove(worker);
@@ -132,8 +134,11 @@ class WorkerPool {
 			if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && threads.size() > MIN_THREADS)
 				break;
 		}
-		if (job != null)  {
+		if (job != null) {
 			busyThreads++;
+			//if this job has a rule, then we are essentially acquiring a lock
+			if (job.getRule() != null)
+				manager.getLockManager().addLockThread(Thread.currentThread());
 			//see if we need to wake another worker
 			if (manager.sleepHint() <= 0)
 				jobQueued(null);

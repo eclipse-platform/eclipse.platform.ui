@@ -44,13 +44,13 @@ class ImplicitJobs {
 		synchronized void joinRun() {
 			schedule();
 			while (!running) {
-				jobManager.getLockManager().aboutToWait(null);
+				manager.getLockManager().aboutToWait(null);
 				try {
 					wait();
 				} catch (InterruptedException e) {
 				}
 			}
-			jobManager.getLockManager().aboutToRelease();
+			manager.getLockManager().aboutToRelease();
 		}
 		/**
 		 * Pops a rule.  Returns true if it was the last rule for this thread job, and false
@@ -83,9 +83,9 @@ class ImplicitJobs {
 	 * for that thread.
 	 */
 	private static final Map threadJobs = new HashMap(20);
-	private JobManager jobManager;
+	private JobManager manager;
 	ImplicitJobs(JobManager manager) {
-		this.jobManager = manager;
+		this.manager = manager;
 	}
 	/**
 	 * The lock to wait on when joining a run.  One lock is sufficient because
@@ -116,8 +116,12 @@ class ImplicitJobs {
 			threadJob.push(rule);
 		}
 		//join the thread job outside sync block
-		if (join)
+		if (join) {
+			//if this job has a rule, then we are essentially acquiring a lock
+			if (rule != null)
+				manager.getLockManager().addLockThread(Thread.currentThread());
 			threadJob.joinRun();
+		}
 	}
 	/* (Non-javadoc)
 	 * @see IJobManager#end
@@ -129,8 +133,12 @@ class ImplicitJobs {
 		if (threadJob.pop()) {
 			//clean up when last rule scope exits
 			threadJobs.remove(currentThread);
-			if (threadJob.running)
+			if (threadJob.running) {
 				threadJob.done(Status.OK_STATUS);
+				//if this job had a rule, then we are essentially releasing a lock
+				if (threadJob.getRule() != null)
+					manager.getLockManager().removeLockThread(Thread.currentThread());
+			}
 		}
 	}
 }
