@@ -10,10 +10,12 @@ var args = parent.parseQueryString();
 function onloadFrameset()
 {
 	framesLoaded = true;
-
-	NavFrame.document.getElementById("toc").src = getFrameInput("toc");
-	NavFrame.document.getElementById("search").src = getFrameInput("search");
-	NavFrame.document.getElementById("links").src = getFrameInput("links");
+	if(args && args["toc"])
+		NavFrame.document.getElementById("toc").src = "toc.jsp"+ getQuery();
+	else
+		NavFrame.document.getElementById("toc").src = "tocs.jsp"+ getQuery();
+	NavFrame.document.getElementById("search").src = "search_results.jsp" + getQuery();
+	NavFrame.document.getElementById("links").src = "links.jsp" + getQuery();
 		
 	// show the appropriate tab
 	var tab = "toc";
@@ -24,15 +26,16 @@ function onloadFrameset()
 }
 
 /**
- *Returns the parameters passed to the url
+ * Returns query passed to the url, prefixed with "?"
+ * or "" if no query was passed.
  */
-function getQueryString () 
+function getQuery()
 {
-    var str = window.location.href;
-    var longquery = str.split("?");
+    var longquery = window.location.href.split("?");
     if (longquery.length <= 1) return "";
-    return longquery[1];
+    return "?" + longquery[1];
 }
+
     
 /**
  * Parses the parameters passed to the url
@@ -54,52 +57,6 @@ function parseQueryString (str)
         }
     }
     return args;
-}
-
-
-/**
- * Returns the input source for a frame
- */
-function getFrameInput(nav)
-{
-	switch(nav)
-	{
-	case "toc":
-		// load frames
-		var tocUrl="";
-
-		if(args && args["toc"])
-		{
-			tocUrl="toc.jsp?toc="+args["toc"];
-			if(args["topic"])
-				return tocUrl+"&topic="+args["topic"];
-			return tocUrl;
-		}
-		else
-			return "tocs.jsp";
-			
-		break;
-		
-	case "search":
-		
-		if(args && args["searchWord"])
-			return "search_results.jsp?"+parent.getQueryString();
-		else
-			return "search_results.jsp";
-			
-		break;
-		
-	case "links":
-		if(args && args["contextId"])
-			return "links.jsp?contextId="+args["contextId"] + "&topic="+args["topic"];
-		else
-			return "links.jsp";
-		break;
-		
-	default:
-		return "about:blank";
-		break;
-	}
 }
 
 var tocTitle = null;
