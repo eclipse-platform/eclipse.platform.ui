@@ -7,6 +7,7 @@ package org.eclipse.jface.preference;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -203,8 +204,12 @@ public int getNumberOfControls() {
  */
 public Composite getRadioBoxControl(Composite parent) {
 	if (radioBox == null) {
+		
+		Font font = parent.getFont();
+		
 		if (useGroup) {
 			Group group = new Group(parent, SWT.NONE);
+			group.setFont(font);
 			String text = getLabelText();
 			if (text != null)
 				group.setText(text);
@@ -222,6 +227,7 @@ public Composite getRadioBoxControl(Composite parent) {
 			layout.horizontalSpacing = HORIZONTAL_GAP;
 			layout.numColumns = numColumns;
 			radioBox.setLayout(layout);
+			radioBox.setFont(font);
 		}
 
 		radioButtons = new Button[labelsAndValues.length];
@@ -231,6 +237,7 @@ public Composite getRadioBoxControl(Composite parent) {
 			String[] labelAndValue = labelsAndValues[i];
 			radio.setText(labelAndValue[0]);
 			radio.setData(labelAndValue[1]);
+			radio.setFont(font);
 			radio.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
 					String oldValue = value;

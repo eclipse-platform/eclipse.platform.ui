@@ -134,6 +134,7 @@ protected abstract String createList(String[] items);
 private Button createPushButton(Composite parent, String key) {
 	Button button = new Button(parent, SWT.PUSH);
 	button.setText(JFaceResources.getString(key));
+	button.setFont(parent.getFont());
 	GridData data = new GridData(GridData.FILL_HORIZONTAL);
 	data.heightHint = convertVerticalDLUsToPixels(button, IDialogConstants.BUTTON_HEIGHT);
 	int widthHint = convertHorizontalDLUsToPixels(button, IDialogConstants.BUTTON_WIDTH);
@@ -267,6 +268,7 @@ public Composite getButtonBoxControl(Composite parent) {
 public List getListControl(Composite parent) {
 	if (list == null) {
 		list = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
+		list.setFont(parent.getFont());
 		list.addSelectionListener(getSelectionListener());
 		list.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {

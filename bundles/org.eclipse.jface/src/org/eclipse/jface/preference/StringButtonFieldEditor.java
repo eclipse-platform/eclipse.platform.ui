@@ -87,6 +87,7 @@ protected Button getChangeControl(Composite parent) {
 		if (changeButtonText == null)
 			changeButtonText = JFaceResources.getString("openChange");//$NON-NLS-1$
 		changeButton.setText(changeButtonText);
+		changeButton.setFont(parent.getFont());
 		changeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				String newValue = changePressed();
