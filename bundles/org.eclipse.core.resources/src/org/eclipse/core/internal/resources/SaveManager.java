@@ -28,9 +28,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected int operationCount = 0;
 	protected boolean snapshotRequested;
 	
-	// snapshotInterval should be set as part of the workspace description
-	// or possibly as a preference
-	protected long snapshotInterval= 5 * 60 * 1000;
+
 	protected DelayedSnapshotRunnable snapshotRunnable;	
 	
 	/** plugins that participate on a workspace save */
@@ -814,8 +812,8 @@ public void snapshotIfNeeded() throws CoreException {
 	if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
 		if (snapshotRunnable != null) {
 			snapshotRunnable.cancel();
+			snapshotRunnable = null;
 		}
-		snapshotRunnable = null;
 		try {
 			ResourceStats.startSnapshot();
 			long begin = System.currentTimeMillis();
@@ -831,11 +829,12 @@ public void snapshotIfNeeded() throws CoreException {
 		}
 	} else {
 		operationCount++;
-		if (snapshotRunnable == null) {
+		long interval = workspace.internalGetDescription().getSnapshotInterval();
+		if (snapshotRunnable == null && interval > 0) {
 			if (ResourcesPlugin.getPlugin().isDebugging()) {
 				System.out.println("Starting snapshot delay thread");
 			}
-			snapshotRunnable = new DelayedSnapshotRunnable(this, snapshotInterval);
+			snapshotRunnable = new DelayedSnapshotRunnable(this, interval);
 			Thread t = new Thread(snapshotRunnable, "Snapshot");
 			t.start();
 		}

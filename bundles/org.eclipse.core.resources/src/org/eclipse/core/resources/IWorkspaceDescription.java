@@ -136,4 +136,17 @@ public void setMaxFileStates(int number);
  * @see #getMaxFileStateSize
  */
 public void setMaxFileStateSize(long size);
+/**
+ * Sets the interval between automatic workspace snapshots.  The new interval
+ * will only take effect after the next snapshot.
+ * <p>
+ * Users must call <code>IWorkspace.setDescription</code> before changes 
+ * made to this description take effect.
+ * </p>
+ *
+ * @param delay the amount of time in milliseconds between automatic workspace snapshots
+ * @see IWorkspace#setDescription
+ * @since 2.0
+ */
+public void setSnapshotInterval(long delay);
 }

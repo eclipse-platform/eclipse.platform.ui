@@ -27,6 +27,8 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	protected volatile long maxFileStateSize = Policy.defaultMaxFileStateSize;
 	protected int maxFileStates = Policy.defaultMaxFileStates;
 	protected String[] buildOrder = null;
+	// thread safety: (Concurrency004)
+	private volatile long snapshotInterval = Policy.defaultSnapshotInterval;
 public WorkspaceDescription(String name) {
 	super(name);
 	dirty = true;
@@ -71,6 +73,9 @@ public long getMaxFileStateSize() {
 }
 public int getOperationsPerSnapshot() {
 	return operationsPerSnapshot;
+}
+public long getSnapshotInterval() {
+	return snapshotInterval;
 }
 public void internalSetBuildOrder(String[] value) {
 	dirty = true;
@@ -138,5 +143,9 @@ public void setOperationsPerSnapshot(int operations) {
 public void setSnapshotEnabled(boolean enable) {
 	dirty = true;
 	snapshotsEnabled = enable;
+}
+public void setSnapshotInterval(long snapshotInterval) {
+	dirty = true;
+	this.snapshotInterval = snapshotInterval;
 }
 }

@@ -184,6 +184,7 @@ protected WorkspaceDescription readWorkspaceDescription(Node node) {
 	String autobuild = getString(node, AUTOBUILD);
 	String snapshots = getString(node, SNAPSHOTS_ENABLED);
 	String operations = getString(node, OPERATIONS_PER_SNAPSHOT);
+	String snapshotInterval = getString(node, SNAPSHOT_INTERVAL);
 	String deltaExpiration = getString(node, DELTA_EXPIRATION_TIMESTAMP);
 	String fileStateLongevity = getString(node, FILE_STATE_LONGEVITY);
 	String maxFileStateSize = getString(node, MAX_FILE_STATE_SIZE);
@@ -206,9 +207,10 @@ protected WorkspaceDescription readWorkspaceDescription(Node node) {
 		description.setMaxFileStateSize(new Long(maxFileStateSize).longValue());
 	if (maxFileStates != null)
 		description.setMaxFileStates(new Integer(maxFileStates).intValue());
-	if (buildOrder != null) {
+	if (buildOrder != null)
 		description.internalSetBuildOrder(buildOrder);
-	}
+	if (snapshotInterval != null) 
+		description.setSnapshotInterval(new Long(snapshotInterval).longValue());
 	return description;
 }
 protected Node searchNode(Node target, String tagName) {

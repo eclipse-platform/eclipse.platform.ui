@@ -22,7 +22,7 @@ public class DelayedSnapshotRunnable implements Runnable {
 	private SaveManager saveManager;
 	private long delay;
 	
-	private static final long MIN_DELAY= 1000;
+	private static final long MIN_DELAY= 1000 * 30l;//30 seconds
 
 	public DelayedSnapshotRunnable(SaveManager manager, long delay) {
 		saveManager= manager;

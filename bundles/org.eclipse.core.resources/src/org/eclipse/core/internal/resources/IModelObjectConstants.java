@@ -24,6 +24,7 @@ public interface IModelObjectConstants {
 	public static final String NATURE = "nature";
 	public static final String NATURES = "natures";
 	public static final String OPERATIONS_PER_SNAPSHOT = "operationsPerSnapshot";
+	public static final String SNAPSHOT_INTERVAL = "snapshotInterval";
 	public static final String PROJECT = "project";
 	public static final String PROJECT_DESCRIPTION = "projectDescription";
 	public static final String PROJECTS = "projects";

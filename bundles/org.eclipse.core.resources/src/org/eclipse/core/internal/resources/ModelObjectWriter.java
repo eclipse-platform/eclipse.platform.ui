@@ -125,6 +125,7 @@ protected void write(WorkspaceDescription description, XMLWriter writer) throws 
 		writer.printSimpleTag(AUTOBUILD, description.isAutoBuilding() ? "1" : "0");
 		writer.printSimpleTag(SNAPSHOTS_ENABLED, description.isSnapshotEnabled() ? "1" : "0");
 		writer.printSimpleTag(OPERATIONS_PER_SNAPSHOT, new Integer(description.getOperationsPerSnapshot()));
+		writer.printSimpleTag(SNAPSHOT_INTERVAL, new Long(description.getSnapshotInterval()));
 		writer.printSimpleTag(DELTA_EXPIRATION_TIMESTAMP, new Long(description.getDeltaExpiration()));
 		writer.printSimpleTag(FILE_STATE_LONGEVITY, new Long(description.getFileStateLongevity()));
 		writer.printSimpleTag(MAX_FILE_STATE_SIZE, new Long(description.getMaxFileStateSize()));
