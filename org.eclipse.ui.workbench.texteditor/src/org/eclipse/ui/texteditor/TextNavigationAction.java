@@ -64,7 +64,7 @@ public class TextNavigationAction implements IAction {
 	 * @see IAction#run()
 	 */
 	public void run() {
-		Point selection= fTextWidget.getSelectionRange();
+		Point selection= fTextWidget.getSelection();
 		fTextWidget.invokeAction(fAction);
 		fireSelectionChanged(selection);
 	}
@@ -94,7 +94,7 @@ public class TextNavigationAction implements IAction {
 	 * @since 3.0
 	 */
 	protected void fireSelectionChanged(Point oldSelection) {
-		Point selection= fTextWidget.getSelectionRange();
+		Point selection= fTextWidget.getSelection();
 		if (oldSelection == null || !selection.equals(oldSelection))
 			doFireSelectionChanged(selection);
 	}
