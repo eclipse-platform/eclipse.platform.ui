@@ -252,7 +252,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Configures the decoration support for this editor's the source viewer. Subclasses may override this
+	 * Configures the decoration support for this editor's source viewer. Subclasses may override this
 	 * method, but should call their superclass' implementation at some point.
 	 * 
 	 * @param support the decoration support to configure

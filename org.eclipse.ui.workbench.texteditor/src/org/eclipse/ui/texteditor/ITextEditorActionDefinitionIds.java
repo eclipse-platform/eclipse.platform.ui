@@ -329,7 +329,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	// modification
 	
 	/**
-	 * Action definition id of the edit delet previous character action.
+	 * Action definition id of the edit delete previous character action.
 	 * Value: <code>"org.eclipse.ui.edit.text.deletePrevious"</code>
 	 */
 	public static final String DELETE_PREVIOUS= "org.eclipse.ui.edit.text.deletePrevious"; //$NON-NLS-1$
@@ -373,13 +373,13 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	public static final String CONVERT_LINE_DELIMITERS_TO_WINDOWS= "org.eclipse.ui.edit.text.convert.lineDelimiters.toWindows"; //$NON-NLS-1$
 	
 	/**
-	 * Action definition id of the edit convert to unix' line delimiter action.
+	 * Action definition id of the edit convert to unix line delimiter action.
 	 * Value: <code>"org.eclipse.ui.edit.text.convert.lineDelimiters.toUNIX"</code>
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_UNIX= "org.eclipse.ui.edit.text.convert.lineDelimiters.toUNIX"; //$NON-NLS-1$
 	
 	/**
-	 * Action definition id of the edit convert to mac' line delimiter action.
+	 * Action definition id of the edit convert to mac line delimiter action.
 	 * Value: <code>"org.eclipse.ui.edit.text.convert.lineDelimiters.toMac"</code>
 	 */
 	public static final String CONVERT_LINE_DELIMITERS_TO_MAC= "org.eclipse.ui.edit.text.convert.lineDelimiters.toMac"; //$NON-NLS-1$

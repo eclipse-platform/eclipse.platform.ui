@@ -33,8 +33,9 @@ import org.eclipse.jface.text.TextUtilities;
 
 
 /**
- * An action to convert line delimiters of a text editor document to a particular line 
- * delimiter.
+ * An action to convert line delimiters of a text editor document to a
+ * particular line delimiter.
+ * 
  * @since 2.0
  */
 public class ConvertLineDelimitersAction extends TextEditorAction {

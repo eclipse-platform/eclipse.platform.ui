@@ -1453,7 +1453,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected final static int VERTICAL_RULER_WIDTH= 12;
 	
 	/** 
-	 * The complete mapping between action definition ids used by eclipse and StyledText actions.
+	 * The complete mapping between action definition IDs used by eclipse and StyledText actions.
+	 * 
 	 * @since 2.0
 	 */
 	protected final static IdMapEntry[] ACTION_MAP= new IdMapEntry[] {
@@ -1776,72 +1777,80 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 		
 	/** 
-	 * Returns the editor's range indicator. 
+	 * Returns the editor's range indicator. May return <code>null</code> if no
+	 * range indicator is installed.
 	 *
-	 * @return the editor's range indicator
+	 * @return the editor's range indicator which may be <code>null</code>
 	 */
 	protected final Annotation getRangeIndicator() {
 		return fRangeIndicator;
 	}
 	
 	/** 
-	 * Returns the editor's source viewer configuration.
+	 * Returns the editor's source viewer configuration. May return <code>null</code>
+	 * before the editor's part has been created and after disposal.
 	 *
-	 * @return the editor's source viewer configuration
+	 * @return the editor's source viewer configuration which may be <code>null</code>
 	 */
 	protected final SourceViewerConfiguration getSourceViewerConfiguration() {
 		return fConfiguration;
 	}
 	
 	/** 
-	 * Returns the editor's source viewer.
+	 * Returns the editor's source viewer. May return <code>null</code> before
+	 * the editor's part has been created and after disposal.
 	 *
-	 * @return the editor's source viewer
+	 * @return the editor's source viewer which may be <code>null</code>
 	 */
 	protected final ISourceViewer getSourceViewer() {
 		return fSourceViewer;
 	}
 	
 	/** 
-	 * Returns the editor's vertical ruler.
+	 * Returns the editor's vertical ruler. May return <code>null</code> before
+	 * the editor's part has been created and after disposal.
 	 * 
-	 * @return the editor's vertical ruler
+	 * @return the editor's vertical ruler which may be <code>null</code>
 	 */
 	protected final IVerticalRuler getVerticalRuler() {
 		return fVerticalRuler;
 	}
 	
 	/** 
-	 * Returns the editor's context menu id.
+	 * Returns the editor's context menu id. May return <code>null</code> before
+	 * the editor's part has been created.
 	 *
-	 * @return the editor's context menu id
+	 * @return the editor's context menu id which may be <code>null</code>
 	 */
 	protected final String getEditorContextMenuId() {
 		return fEditorContextMenuId;
 	}
 	
 	/** 
-	 * Returns the ruler's context menu id.
+	 * Returns the ruler's context menu id. May return <code>null</code> before
+	 * the editor's part has been created.
 	 *
-	 * @return the ruler's context menu id
+	 * @return the ruler's context menu id which may be <code>null</code>
 	 */
 	protected final String getRulerContextMenuId() {
 		return fRulerContextMenuId;
 	}
 	
 	/** 
-	 * Returns the editor's help context id.
+	 * Returns the editor's help context id or <code>null</code> if none has
+	 * been set.
 	 *
-	 * @return the editor's help context id
+	 * @return the editor's help context id which may be <code>null</code>
 	 */
 	protected final String getHelpContextId() {
 		return fHelpContextId;
 	}
 	
 	/**
-	 * Returns this editor's preference store.
+	 * Returns this editor's preference store or <code>null</code> if none has
+	 * been set.
 	 * 
-	 * @return this editor's preference store
+	 * @return this editor's preference store which may be <code>null</code>
 	 */
 	protected final IPreferenceStore getPreferenceStore() {
 		return fPreferenceStore;
@@ -1873,7 +1882,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Sets the annotation which this editor uses to represent the highlight
 	 * range if the editor is configured to show the entire document. If the
-	 * range indicator is not set, this editor uses a <code>DefaultRangeIndicator</code>.
+	 * range indicator is not set, this editor will not show a range indication.
 	 *
 	 * @param rangeIndicator the annotation
 	 */
@@ -1926,7 +1935,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Sets the keybinding scopes for this editor.
 	 * 
-	 * @param scopes the scopes 
+	 * @param scopes a non-empty array of keybinding scope identifiers
 	 * @since 2.1
 	 */
 	protected void setKeyBindingScopes(String[] scopes) {
@@ -1938,7 +1947,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Sets this editor's preference store. This method must be
 	 * called before the editor's control is created.
 	 * 
-	 * @param store the preference store
+	 * @param store the preference store or <code>null</code> to unset the 
+	 * 		  preference store
 	 */
 	protected void setPreferenceStore(IPreferenceStore store) {
 		if (fPreferenceStore != null)
@@ -1962,8 +1972,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return false;
 	}
 	
-	/*
-	 * @see ITextEditor#getSelectionProvider()
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * Returns <code>null</code> after disposal.
+	 * </p>
+	 * 
+	 * @return the selection provider or <code>null</code> if the editor has
+	 *         been disposed
 	 */
 	public ISelectionProvider getSelectionProvider() {
 		return fSelectionProvider;
@@ -2189,8 +2205,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return fCursorListener;
 	}
 
-	/*
-	 * @see IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	/**
+	 * Implements the <code>init</code> method of <code>IEditorPart</code>. 
+	 * Subclasses replacing <code>init</code> may choose to call this method in
+	 * their implementation.
+	 * 
+	 * @param window the site's workbench window
+	 * @param site the editor's site
+	 * @param input the editor input for the editor being created
+	 * @throws PartInitException if {@link #doSetInput(IEditorInput)} fails or gets canceled
+	 * 
+	 * @see org.eclipse.ui.IEditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 * @since 2.1
 	 */
 	protected final void internalInit(IWorkbenchWindow window, final IEditorSite site, final IEditorInput input) throws PartInitException {
@@ -2289,10 +2314,55 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * The <code>AbstractTextEditor</code> implementation of this 
+	 * The <code>AbstractTextEditor</code> implementation of this
 	 * <code>IWorkbenchPart</code> method creates the vertical ruler and
 	 * source viewer.
-	 * Subclasses may extend.
+	 * <p>
+	 * Subclasses may extend this method. Besides extending this method, the
+	 * behavior of <code>createPartControl</code> may be customized by
+	 * calling, extending or replacing the following methods: <br>
+	 * Subclasses may supply customized implementations for some members using
+	 * the following methods before <code>createPartControl</code> is invoked:
+	 * <ul>
+	 * <li>
+	 * {@linkplain #setSourceViewerConfiguration(SourceViewerConfiguration) setSourceViewerConfiguration}
+	 * to supply a custom source viewer configuration,</li>
+	 * <li>{@linkplain #setRangeIndicator(Annotation) setRangeIndicator} to
+	 * provide a range indicator,</li>
+	 * <li>{@linkplain #setHelpContextId(String) setHelpContextId} to provide a
+	 * help context id,</li>
+	 * <li>{@linkplain #setEditorContextMenuId(String) setEditorContextMenuId}
+	 * to set a custom context menu id,</li>
+	 * <li>{@linkplain #setRulerContextMenuId(String) setRulerContextMenuId} to
+	 * set a custom ruler context menu id.</li>
+	 * </ul>
+	 * <br>
+	 * Subclasses may replace the following methods called from within
+	 * <code>createPartControl</code>:
+	 * <ul>
+	 * <li>{@linkplain #createVerticalRuler() createVerticalRuler} to supply a
+	 * custom vertical ruler,</li>
+	 * <li>{@linkplain #createSourceViewer(Composite, IVerticalRuler, int) createSourceViewer}
+	 * to supply a custom source viewer,</li>
+	 * <li>{@linkplain #getSelectionProvider() getSelectionProvider} to supply
+	 * a custom selection provider.</li>
+	 * </ul>
+	 * <br>
+	 * Subclasses may extend the following methods called from within
+	 * <code>createPartControl</code>:
+	 * <ul>
+	 * <li>
+	 * {@linkplain #initializeViewerColors(ISourceViewer) initializeViewerColors}
+	 * to customize the viewer color scheme (may also be replaced),</li>
+	 * <li>
+	 * {@linkplain #initializeDragAndDrop(ISourceViewer) initializeDragAndDrop}
+	 * to customize drag and drop (may also be replaced),</li>
+	 * <li>{@linkplain #createNavigationActions() createNavigationActions} to
+	 * add navigation actions,</li>
+	 * <li>{@linkplain #createActions() createActions} to add text editor
+	 * actions.</li>
+	 * </ul>
+	 * </p>
 	 * 
 	 * @param parent the parent composite
 	 */
@@ -2442,6 +2512,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Initializes the activation code trigger.
+	 * 
 	 * @since 2.1
 	 */
 	private void initializeActivationCodeTrigger() {
@@ -2569,7 +2641,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Initializes the given viewer's colors.
+	 * Initializes the fore- and background colors of the given viewer for both
+	 * normal and selected text.
 	 * 
 	 * @param viewer the viewer to be initialized
 	 * @since 2.0
@@ -2630,6 +2703,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Initializes the background color used for highlighting the document ranges
 	 * defining search scopes.
+	 * 
 	 * @param viewer the viewer to initialize
 	 * @since 2.0
 	 */
@@ -2756,10 +2830,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Internal <code>setInput</code> method.
-	 *
+	 * Called directly from <code>setInput</code> and from within a workspace
+	 * runnable from <code>init</code>, this method does the actual setting
+	 * of the editor input. Closes the editor if <code>input</code> is
+	 * <code>null</code>. Disconnects from any previous editor input and its
+	 * document provider and connects to the new one.
+	 * <p>
+	 * Subclasses may extend.
+	 * </p>
+	 * 
 	 * @param input the input to be set
-	 * @exception CoreException if input cannot be connected to the document provider
+	 * @exception CoreException if input cannot be connected to the document
+	 *            provider
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		
@@ -2841,6 +2923,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * The <code>AbstractTextEditor</code> implementation of this 
 	 * <code>IWorkbenchPart</code> method may be extended by subclasses.
 	 * Subclasses must call <code>super.dispose()</code>.
+	 * <p>
+	 * Note that many methods may return <code>null</code> after the editor is
+	 * disposed.
+	 * </p>
 	 */
 	public void dispose() {
 		
@@ -2981,7 +3067,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Disposes the connection with the document provider. Subclasses
+	 * Disposes of the connection with the document provider. Subclasses
 	 * may extend.
 	 * 
 	 * @since 3.0
@@ -3017,10 +3103,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
-	 * Returns the symbolic font name for this
-	 * editor as defined in XML.
+	 * Returns the symbolic font name for this editor as defined in XML.
 	 * 
-	 * @return a String with the symbolic font name or <code>null</code> if none is defined
+	 * @return a String with the symbolic font name or <code>null</code> if
+	 *         none is defined
 	 * @since 2.1
 	 */
 	private String getSymbolicFontName() {
@@ -3031,7 +3117,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
-	 * Returns the property preference key for the editor font.
+	 * Returns the property preference key for the editor font. Subclasses may
+	 * replace this method.
 	 * 
 	 * @return a String with the key
 	 * @since 2.1
@@ -3046,9 +3133,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Handles a property change event describing a change
-	 * of the editor's preference store and updates the preference
-	 * related editor properties.
+	 * Handles a property change event describing a change of the editor's
+	 * preference store and updates the preference related editor properties.
+	 * <p>
+	 * Subclasses may extend.
+	 * </p>
 	 * 
 	 * @param event the property change event
 	 */
@@ -3081,7 +3170,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Returns the progress monitor related to this editor.
+	 * Returns the progress monitor related to this editor. It should not be
+	 * necessary to extend this method.
 	 * 
 	 * @return the progress monitor related to this editor
 	 * @since 2.1
@@ -3097,80 +3187,81 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return pm != null ? pm : new NullProgressMonitor();
 	}
 	
-		/**
-		 * Handles an external change of the editor's input element.
-		 */
-		protected void handleEditorInputChanged() {
+	/**
+	 * Handles an external change of the editor's input element. Subclasses may
+	 * extend.
+	 */
+	protected void handleEditorInputChanged() {
+		
+		String title;
+		String msg;
+		Shell shell= getSite().getShell();
+		
+		final IDocumentProvider provider= getDocumentProvider();
+		if (provider == null) {
+			// fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=15066
+			close(false);
+			return;
+		}
+		
+		final IEditorInput input= getEditorInput();
+		if (provider.isDeleted(input)) {
 			
-			String title;
-			String msg;
-			Shell shell= getSite().getShell();
-			
-			final IDocumentProvider provider= getDocumentProvider();
-			if (provider == null) {
-				// fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=15066
-				close(false);
-				return;
-			}
-			
-			final IEditorInput input= getEditorInput();
-			if (provider.isDeleted(input)) {
+			if (isSaveAsAllowed()) {
 				
-				if (isSaveAsAllowed()) {
+				title= EditorMessages.getString("Editor.error.activated.deleted.save.title"); //$NON-NLS-1$
+				msg= EditorMessages.getString("Editor.error.activated.deleted.save.message"); //$NON-NLS-1$
 				
-					title= EditorMessages.getString("Editor.error.activated.deleted.save.title"); //$NON-NLS-1$
-					msg= EditorMessages.getString("Editor.error.activated.deleted.save.message"); //$NON-NLS-1$
-					
-					String[] buttons= {
+				String[] buttons= {
 						EditorMessages.getString("Editor.error.activated.deleted.save.button.save"), //$NON-NLS-1$
 						EditorMessages.getString("Editor.error.activated.deleted.save.button.close"), //$NON-NLS-1$
-					};
-						
-					MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
-					
-					if (dialog.open() == 0) {
-						IProgressMonitor pm= getProgressMonitor();
-						performSaveAs(pm);
-						if (pm.isCanceled())
-							handleEditorInputChanged();
-					} else {
-						close(false);
-					}
-					
+				};
+				
+				MessageDialog dialog= new MessageDialog(shell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
+				
+				if (dialog.open() == 0) {
+					IProgressMonitor pm= getProgressMonitor();
+					performSaveAs(pm);
+					if (pm.isCanceled())
+						handleEditorInputChanged();
 				} else {
-					
-					title= EditorMessages.getString("Editor.error.activated.deleted.close.title"); //$NON-NLS-1$
-					msg= EditorMessages.getString("Editor.error.activated.deleted.close.message"); //$NON-NLS-1$
-					if (MessageDialog.openConfirm(shell, title, msg))
-						close(false);
+					close(false);
 				}
 				
 			} else {
 				
-				title= EditorMessages.getString("Editor.error.activated.outofsync.title"); //$NON-NLS-1$
-				msg= EditorMessages.getString("Editor.error.activated.outofsync.message"); //$NON-NLS-1$
+				title= EditorMessages.getString("Editor.error.activated.deleted.close.title"); //$NON-NLS-1$
+				msg= EditorMessages.getString("Editor.error.activated.deleted.close.message"); //$NON-NLS-1$
+				if (MessageDialog.openConfirm(shell, title, msg))
+					close(false);
+			}
+			
+		} else {
+			
+			title= EditorMessages.getString("Editor.error.activated.outofsync.title"); //$NON-NLS-1$
+			msg= EditorMessages.getString("Editor.error.activated.outofsync.message"); //$NON-NLS-1$
+			
+			if (MessageDialog.openQuestion(shell, title, msg)) {
 				
-				if (MessageDialog.openQuestion(shell, title, msg)) {
-					
-					
-					try {
-						if (provider instanceof IDocumentProviderExtension) {
-							IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
-							extension.synchronize(input);
-						} else {
-							doSetInput(input);
-						} 
-					} catch (CoreException x) {
-						IStatus status= x.getStatus();
-						if (status == null || status.getSeverity() != IStatus.CANCEL) {
-							title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
-							msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
-							ErrorDialog.openError(shell, title, msg, x.getStatus());
-						}
+				
+				try {
+					if (provider instanceof IDocumentProviderExtension) {
+						IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
+						extension.synchronize(input);
+					} else {
+						doSetInput(input);
+					} 
+				} catch (CoreException x) {
+					IStatus status= x.getStatus();
+					if (status == null || status.getSeverity() != IStatus.CANCEL) {
+						title= EditorMessages.getString("Editor.error.refresh.outofsync.title"); //$NON-NLS-1$
+						msg= EditorMessages.getString("Editor.error.refresh.outofsync.message"); //$NON-NLS-1$
+						ErrorDialog.openError(shell, title, msg, x.getStatus());
 					}
 				}
 			}
 		}
+	}
 
 	/**
 	 * The <code>AbstractTextEditor</code> implementation of this 
@@ -3557,6 +3648,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Performs revert and handles errors appropriately.
+	 * <p>
+	 * Subclasses may extend.
+	 * </p>
 	 * 
 	 * @since 3.0
 	 */
@@ -3586,9 +3680,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Performs any additional action necessary to perform after
-	 * the input document's content has been replaced.
-	 * <p> 
+	 * Performs any additional action necessary to perform after the input
+	 * document's content has been replaced.
+	 * <p>
 	 * Clients may extended this method.
 	 * 
 	 * @since 3.0
@@ -4652,6 +4746,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Sets the overwrite mode enablement.
+	 * 
+	 * @param enable <code>true</code> to enable new overwrite mode,
+	 *        <code>false</code> to disable
 	 * @since 3.0
 	 */
 	protected void enableOverwriteMode(boolean enable) {

@@ -12,7 +12,7 @@
 package org.eclipse.ui.texteditor;
  
 /**
- * Extension interface for <code>IElementStateListener</code>.
+ * Extension interface for {@link org.eclipse.ui.texteditor.IElementStateListener}. 
  * It adds
  * <ul>
  * <li> state validation notification

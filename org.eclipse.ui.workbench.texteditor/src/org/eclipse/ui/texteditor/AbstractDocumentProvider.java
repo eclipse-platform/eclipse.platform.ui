@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
- * An abstract implementation of a shareable document provider.
+ * An abstract implementation of a sharable document provider.
  * <p>
  * Subclasses must implement <code>createDocument</code>,
  * <code>createAnnotationModel</code>, and <code>doSaveDocument</code>.
@@ -176,7 +176,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	static final protected boolean PR14469_ENABLED= false;
 	
 	/**
-	 * Constant for representing the ok status. This is considered a value object.
+	 * Constant for representing the OK status. This is considered a value object.
 	 * @since 2.0
 	 */
 	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("AbstractDocumentProvider.ok"), null); //$NON-NLS-1$
@@ -217,8 +217,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	protected abstract IDocument createDocument(Object element) throws CoreException;
 	
 	/**
-	 * Creates an annotation model for the given element. <p>
-	 * Subclasses must implement this method.
+	 * Creates an annotation model for the given element.
+	 * <p>
+	 * Subclasses must implement this method.</p>
 	 *
 	 * @param element the element
 	 * @return the annotation model
@@ -595,7 +596,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			/*
 			 * @see org.eclipse.ui.texteditor.AbstractDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 			 */
-			protected void execute(IProgressMonitor monitor) throws CoreException {
+			protected void execute(IProgressMonitor pm) throws CoreException {
 				ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 				if (info != null) {
 					if (info.fDocument != document) {
@@ -603,9 +604,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 						throw new CoreException(status);				
 					}
 					
-					doSaveDocument(monitor, element, document, overwrite);
+					doSaveDocument(pm, element, document, overwrite);
 					
-					if (monitor != null && monitor.isCanceled())
+					if (pm != null && pm.isCanceled())
 						return;
 					
 					info.fCanBeSaved= false;
@@ -613,7 +614,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 					fireElementDirtyStateChanged(element, false);
 			
 				} else {
-					doSaveDocument(monitor, element, document, overwrite);
+					doSaveDocument(pm, element, document, overwrite);
 				}
 			}
 			

@@ -30,7 +30,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 /**
- * Manages the installation and deinstallation of global actions for 
+ * Manages the installation and uninstallation of global actions for
  * the same type of editors.
  * <p>
  * If instantiated and used as-is, this contributor connects to all of the workbench defined
@@ -270,28 +270,4 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		doSetActiveEditor(null);
 		super.dispose();
 	}
-	
-	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.ui.IEditorActionBarContributor#init(org.eclipse.ui.IActionBars, org.eclipse.ui.IWorkbenchPage)
-//	 */
-//	public void init(IActionBars bars, IWorkbenchPage page) {
-//		
-//		if (page != null) {
-//			IWorkbenchWindow window= page.getWorkbenchWindow();
-//			if (window instanceof WorkbenchWindow) {
-//				WorkbenchWindow wWindow= (WorkbenchWindow) window;
-//				WWinKeyBindingService service= wWindow.getKeyBindingService();
-//				if (service != null) {
-//					service.registerGlobalAction(fFindNext);
-//					service.registerGlobalAction(fFindPrevious);
-//					service.registerGlobalAction(fIncrementalFind);
-//					service.registerGlobalAction(fIncrementalFindReverse);
-//					service.registerGlobalAction(fGotoLine);
-//				}
-//			}
-//		}
-//		super.init(bars, page);
-//	}
-
 }

@@ -19,6 +19,13 @@ import java.util.ResourceBundle;
  * but can subsequently be changed using <code>setEditor</code>.
  * Subclasses must implement the <code>run</code> method and if
  * required override the <code>update</code> method.
+ * <p>
+ * Subclasses that may modify the editor content should use {@link #canModifyEditor()}
+ * in their <code>update</code> code to check whether updating the editor is most
+ * likely possible (even if it is read-only - this may change for editor contents
+ * that are under version control) and {@link #validateEditorInputState()} before
+ * actually modifying the editor contents.
+ * </p>
  */
 public abstract class TextEditorAction extends ResourceAction implements IUpdate {
 	

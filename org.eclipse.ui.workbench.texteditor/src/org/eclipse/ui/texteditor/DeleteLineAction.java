@@ -58,7 +58,7 @@ public class DeleteLineAction extends TextEditorAction {
 	/**
 	 * Creates a line delimiter conversion action.
 	 * 
-	 * @param bundle the resource bundle for ui strings
+	 * @param bundle the resource bundle for UI strings
 	 * @param prefix the prefix for the property keys into <code>bundle</code>
 	 * @param editor the editor
 	 * @param type the line deletion type, must be one of
@@ -71,7 +71,7 @@ public class DeleteLineAction extends TextEditorAction {
 	/**
 	 * Creates a line deletion action.
 	 * 
-	 * @param bundle the resource bundle for ui strings
+	 * @param bundle the resource bundle for UI strings
 	 * @param prefix the prefix for the property keys into <code>bundle</code>
 	 * @param editor the editor
 	 * @param type the line deletion type, must be one of

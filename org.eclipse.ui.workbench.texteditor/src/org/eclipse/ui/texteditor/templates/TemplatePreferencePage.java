@@ -144,7 +144,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	/** The viewer displays the pattern of selected template. */
 	private SourceViewer fPatternViewer;
-	/** Format checkbox. This gets conditionaly added. */
+	/** Format checkbox. This gets conditionally added. */
 	private Button fFormatButton;
 	/** The store for our templates. */
 	private TemplateStore fTemplateStore;
@@ -153,7 +153,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	
 	/**
-	 * Creates a new template preferenc page.
+	 * Creates a new template preference page.
 	 */
 	protected TemplatePreferencePage() {
 		super();

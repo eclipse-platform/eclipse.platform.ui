@@ -14,14 +14,14 @@ package org.eclipse.ui.texteditor;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Extends <code>IStatusField</code> with the following concepts:
+ * Extends {@link org.eclipse.ui.texteditor.IStatusField} with the following
+ * concepts:
  * <ul>
  *    <li>set error text and image</li>
  *    <li>set tool tip</li>
  *    <li>control visibility</li>
  * </ul>
  * 
- * @see org.eclipse.ui.texteditor.IStatusField
  * @since 3.0
  */
 public interface IStatusFieldExtension {

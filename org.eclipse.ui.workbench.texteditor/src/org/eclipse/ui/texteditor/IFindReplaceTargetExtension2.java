@@ -11,8 +11,8 @@
 package org.eclipse.ui.texteditor;
 
 /**
- * Extension interface for <code>IFindReplaceTarget</code>. Extends the find replace target with
- * the concept of state validation.
+ * Extension interface for {@link org.eclipse.jface.text.IFindReplaceTarget}.
+ * Extends the find replace target with the concept of state validation.
  * 
  * @since 2.1
  */
@@ -20,7 +20,7 @@ public interface IFindReplaceTargetExtension2 {
 	
 	/**
 	 * Validates the state of this target. The predominate intent of this method
-	 * is to take any action propably necessary to ensure that the target can
+	 * is to take any action probably necessary to ensure that the target can
 	 * persistently be changed.
 	 * 
 	 * @return <code>true</code> if the target was validated, <code>false</code> otherwise

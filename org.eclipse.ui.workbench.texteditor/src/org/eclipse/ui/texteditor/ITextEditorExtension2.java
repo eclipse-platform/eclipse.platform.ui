@@ -12,10 +12,11 @@
 package org.eclipse.ui.texteditor;
 
 /**
- * Extension interface for <code>ITextEditor</code>. Adds the following functions:
+ * Extension interface for {@link org.eclipse.ui.texteditor.ITextEditor}. Adds
+ * the following functions:
  * <ul>
- * <li> modifiable state of the editor's input
- * <li> validate state of editor input
+ * <li>modifiable state of the editor's input
+ * <li>validate state of editor input
  * </ul>
  * 
  * @since 2.1
@@ -36,7 +37,7 @@ public interface ITextEditorExtension2 {
 
 	/**
 	 * Validates the state of the given editor input. The predominate intent
-	 * of this method is to take any action propably necessary to ensure that
+	 * of this method is to take any action probably necessary to ensure that
 	 * the input can persistently be changed.
 	 * 
 	 * @return <code>true</code> if the input was validated, <code>false</code> otherwise

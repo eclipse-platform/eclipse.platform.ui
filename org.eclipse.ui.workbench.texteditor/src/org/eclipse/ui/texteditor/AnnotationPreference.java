@@ -27,28 +27,50 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
- * An annotation preference provides all the information required for handing the preferences for the presentation of annotations of a specified type.
- * The provided information covers:
+ * An annotation preference provides all the information required for handing
+ * the preferences for the presentation of annotations of a specified type. The
+ * type can be changed and retrieved using the <code>getAnnotationType</code>
+ * and <code>setAnnotationType</code> methods. For each preference, getter and
+ * setter methods are provided.
+ * <p>
+ * Preferences that may be changed by the user also have a corresponding key
+ * that can be used to obtain the currently set value from an
+ * <code>IPreferenceStore</code>.
+ * </p>
+ * <h3>The following annotation preferences are covered:</h4>
+ * <h4>Display Preferences controlling how and where annotations are shown</h4>
  * <ul>
- * <li> the preference key for the presentation  color
- * <li> the default presentation color
- * <li> the preference key for the visibility of annotations inside text
- * <li> the default visibility of annotations inside text
- * <li> the preference key for the visibility of annotations inside the overview ruler
- * <li> the default visibility of annotations inside the overview ruler
- * <li> the presentation layer
- * <li> how the annotation type should be presented on a preference page
- * <li> whether the annotation type should be presented in the header of the overview ruler
- * <li> the marker type if the annotation type is derived from an <code>IMarker</code>
- * <li> the severity of the marker if the annotation type is derived from an <code>IMarker</code>
- * <li> the preference key for the visibility in the next/previous navigation toolbar drop down action
- * <li> the default value for the visibility in the next/previous navigation toolbar drop down action
- * <li> the preference key for go to next navigation enablement
- * <li> the default value for go to next navigation enablement
- * <li> the preference key for got to previous navigation enablement
- * <li> the default value for got to previous navigation enablement	
- * <li> the image descriptor
- * <li> the symbolic image name
+ * <li>as text background highlighting (and respective preference key),</li>
+ * <li>as text decorations (and respective preference key),</li>
+ * <li>on the overview ruler (and respective preference key),</li>
+ * <li>on the overview ruler header,</li>
+ * <li>on the vertical ruler (and respective preference key),</li>
+ * </li>
+ * </ul>
+ * <h4>Additional Display Preferences</h4>
+ * <ul>
+ * <li>the base color for annotations of this type (and respective preference key),
+ * <li>the style of text decorations that are drawn (and respective preference
+ * key),</li>
+ * <li>the annotation image provider,</li>
+ * <li>the image descriptor,</li>
+ * <li>the symbolic image name,</li>
+ * <li>the presentation layer.</li>
+ * </ul>
+ * <h4>Navigation Preferences</h4>
+ * <ul>
+ * <li>whether included in the "Go to Next Annotation" navigation action (and
+ * respective preference key),</li>
+ * <li>whether included in the "Go to Previous Annotation" navigation action
+ * (and respective preference key),</li>
+ * <li>whether to be shown in the "Go to Next/Previous Annotation" navigation
+ * toolbar dropdown (and respective preference key).</li>
+ * </ul>
+ * <h4>Preference Page Preferences</h4>
+ * <ul>
+ * <li>whether the annotation type should be included on the generic annotation
+ * preference page,</li>
+ * <li>preference label.</li>
  * </ul>
  * 
  * @since 2.1
@@ -975,7 +997,7 @@ public class AnnotationPreference {
 	 * Sets the data needed to create the annotation image provider.
 	 * 
 	 * @param configurationElement the configuration element
-	 * @param annotationImageProviderAttribute the atrribute of the
+	 * @param annotationImageProviderAttribute the attribute of the
 	 *            configuration element
 	 * @since 3.0
 	 */

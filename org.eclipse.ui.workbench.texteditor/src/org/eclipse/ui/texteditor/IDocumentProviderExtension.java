@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 
 
 /**
- * Extension interface for <code>IDocumentProvider</code>. It adds the following
+ * Extension interface for {@link IDocumentProvider}. It adds the following
  * functions:
  * <ul>
  * <li> dealing with immutable domain elements

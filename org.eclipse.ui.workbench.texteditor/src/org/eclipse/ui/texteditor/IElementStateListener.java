@@ -23,6 +23,17 @@ package org.eclipse.ui.texteditor;
  * The notifications sent to the element state listeners inform about those standardized,
  * abstract changes. The concrete change applied might differ from the one the listeners
  * are notified about, but should be interpreted as the one the listeners receive.
+ * <p>
+ * In order to provided backward compatibility for clients of <code>IElementStateListener</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interface
+ * exists:
+ * <ul>
+ * <li>{@link org.eclipse.ui.texteditor.IElementStateListenerExtension} since version 2.0 introducing
+ * 		state validation events.</li>
+ * </ul>
+ * </p>
+ * 
+ * @see org.eclipse.ui.texteditor.IElementStateListenerExtension
  */
 public interface IElementStateListener {
 	

@@ -33,6 +33,7 @@ import org.eclipse.ui.IEditorPart;
  * adapter (inner) action on menu and mouse action on the vertical ruler.<p>
  * Extending classes must implement the factory method
  * <code>createAction(ITextEditor editor, IVerticalRulerInfo)</code>.
+ * 
  * @since 2.0
  */
 public abstract class AbstractRulerActionDelegate implements IEditorActionDelegate, MouseListener, IMenuListener {

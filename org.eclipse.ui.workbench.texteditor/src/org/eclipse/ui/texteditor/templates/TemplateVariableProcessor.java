@@ -28,6 +28,10 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
 /**
  * A content assist processor for template variables.
+ * <p>
+ * This class should not be used by clients and may become package visible in
+ * the future.
+ * </p>
  * 
  * @since 3.0
  */

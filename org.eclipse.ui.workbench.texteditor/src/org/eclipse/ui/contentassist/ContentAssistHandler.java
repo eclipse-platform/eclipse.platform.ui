@@ -43,7 +43,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * A content assistant handler which handles the key binding and
- * the cue for a content assist and its subject adapter.
+ * the cue for a {@link org.eclipse.jface.text.contentassist.ContentAssistant}
+ * and its subject adapter.
  * 
  * @since 3.0
  */

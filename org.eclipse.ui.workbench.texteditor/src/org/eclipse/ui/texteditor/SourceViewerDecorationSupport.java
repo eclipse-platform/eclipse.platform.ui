@@ -43,8 +43,41 @@ import org.eclipse.jface.text.source.MatchingCharacterPainter;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
 
 /**
- * Support for source viewer decoration.
+ * Support class used by text editors to draw and update decorations on the
+ * source viewer and its rulers. An instance of this class is independent of a
+ * certain editor and must be configured with the needed preference keys and
+ * helper objects before it can be used.
+ * <p>
+ * Once configured, an instance may be installed (see
+ * {@link #install(IPreferenceStore) install}) on a preference store, from then
+ * on monitoring the configured preference settings and changing the respective
+ * decorations. Calling {@link #uninstall() uninstall} will unregister the
+ * listeners with the preferences store and must be called before changing the
+ * preference store by another call to <code>install</code>.<br>
+ * {@link #dispose() dispose} will uninstall the support and remove any
+ * decorations from the viewer. It is okay to reuse a
+ * <code>SourceViewerDecorationSupport</code> instance after disposing it.
+ * </p>
+ * <p>
+ * <code>SourceViewerDecorationSupport</code> can draw the following
+ * decorations:
+ * <ul>
+ * <li>matching character highlighting,</li>
+ * <li>current line highlighting,</li>
+ * <li>print margin, and</li>
+ * <li>annotations.</li>
+ * </ul>
+ * Annotations are managed for the overview ruler and also drawn onto the text
+ * widget by an 
+ * {@link org.eclipse.jface.text.source.AnnotationPainter AnnotationPainter}
+ * instance.
+ * </p>
+ * <p>
+ * Subclasses may add decorations but should adhere to the lifecyle described
+ * above.
+ * </p>
  * 
+ * @see org.eclipse.jface.text.source.AnnotationPainter
  * @since 2.1
  */
 public class SourceViewerDecorationSupport {
@@ -896,7 +929,7 @@ public class SourceViewerDecorationSupport {
 	 * Enable annotation overview for the given annotation type.
 	 * 
 	 * @param annotationType the annotation type
-	 * @param update <code>true</code> iff the overview should be updated
+	 * @param update <code>true</code> if the overview should be updated
 	 */	
 	private void showAnnotationOverview(Object annotationType, boolean update) {
 		if (fOverviewRuler != null) {
@@ -911,7 +944,7 @@ public class SourceViewerDecorationSupport {
 	/**
 	 * Hides the annotation overview for the given type.
 	 * @param annotationType the annotation type
-	 * @param update <code>true</code> iff the overview should be updated
+	 * @param update <code>true</code> if the overview should be updated
 	 */
 	private void hideAnnotationOverview(Object annotationType, boolean update) {
 		if (fOverviewRuler != null) {

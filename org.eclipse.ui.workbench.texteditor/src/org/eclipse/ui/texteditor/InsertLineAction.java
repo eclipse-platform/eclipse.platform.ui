@@ -33,7 +33,7 @@ import org.eclipse.swt.custom.StyledText;
  * <li> if the caret is on a line containing any non-whitespace, we insert a line above the 
  * current one and move the caret to it (i.e. it stays at the same offset in the widget),</li>
  * <li> if the caret is on a whitespace-only line, a line is inserted above the current line,
- * but the caret stays in its logical position (i.e., it gets shiftet one line down in the
+ * but the caret stays in its logical position (i.e., it gets shifted one line down in the
  * document, but keeps its position relative to the content following the caret).</li>
  * </ul>
  * </p>
@@ -143,7 +143,7 @@ public class InsertLineAction extends TextEditorAction {
 		} else {
 			lineLength= st.getOffsetAtLine(lineNumber + 1); // next line offset
 			lineLength -= lineOffset;
-			lineLength -= st.getLineDelimiter().length(); // subtract line delim
+			lineLength -= st.getLineDelimiter().length(); // subtract line delimiter
 		}
 		return lineLength;
 	}

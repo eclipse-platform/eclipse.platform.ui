@@ -36,11 +36,12 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 /**
- * An action which finds the next/previous occurrence of the last search or
- * the current selection if present.
+ * An action which finds the next/previous occurrence of the last search or the
+ * current selection if present.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * 
  * @since 2.0
  */
 public class FindNextAction extends ResourceAction implements IUpdate {
@@ -382,7 +383,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		
 		/*
 		 * 1GF86V3: ITPUI:WINNT - Internal errors using Find/Replace Dialog
-		 * Now uses TextUtilities rather than focussing on '\n'  
+		 * Now uses TextUtilities rather than focusing on '\n'  
 		 */
 		String selection= fTarget.getSelectionText();
 		if (selection != null && selection.length() > 0) {

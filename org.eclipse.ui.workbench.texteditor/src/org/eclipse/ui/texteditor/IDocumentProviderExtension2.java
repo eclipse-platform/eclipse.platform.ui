@@ -15,7 +15,7 @@ package org.eclipse.ui.texteditor;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Extension interface for <code>IDocumentProvider</code>. It adds the following
+ * Extension interface for {@link org.eclipse.ui.texteditor.IDocumentProvider}. It adds the following
  * functions:
  * <ul>
  * <li> global temporary progress monitor

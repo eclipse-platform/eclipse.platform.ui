@@ -35,10 +35,6 @@ public interface IAbstractTextEditorHelpContextIds {
 	 */
 	public static final String ACTION_POSTFIX= "_action_context"; //$NON-NLS-1$
 
-	
-
-
-
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.undo_action_context"</code>

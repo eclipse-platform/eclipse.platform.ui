@@ -24,8 +24,11 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 
 /**
- * A proposal for insertion of template variables. Clients ususally do not have
- * to instantiate this class.
+ * A proposal for insertion of template variables.
+ * <p>
+ * This class should not be used by clients and may become package visible in
+ * the future.
+ * </p>
  * 
  * @since 3.0
  */

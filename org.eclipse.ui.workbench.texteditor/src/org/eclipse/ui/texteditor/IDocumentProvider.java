@@ -22,28 +22,44 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
- * A document provider maps between domain elements and documents.
- * A document provider has the following responsibilities:
+ * A document provider maps between domain elements and documents. A document provider has the
+ * following responsibilities:
  * <ul>
- * <li> create an annotation model of a domain model element
- * <li> create and manage a textual representation, i.e., a document, of a domain model element
- * <li> create and save the content of domain model elements based on given documents
- * <li> update the documents this document provider manages for domain model elements 
- *			to changes directly applied to those domain model elements
- * <li> notify all element state listeners about changes directly applied to domain model
- *			elements this document provider manages a document for, i.e. the document 
- *			provider must know which changes of a domain model element are to be interpreted 
- *			as element moves, deletes, etc.
+ * <li>create an annotation model of a domain model element
+ * <li>create and manage a textual representation, i.e., a document, of a domain model element
+ * <li>create and save the content of domain model elements based on given documents
+ * <li>update the documents this document provider manages for domain model elements to changes
+ * directly applied to those domain model elements
+ * <li>notify all element state listeners about changes directly applied to domain model elements
+ * this document provider manages a document for, i.e. the document provider must know which changes
+ * of a domain model element are to be interpreted as element moves, deletes, etc.
  * </ul>
  * Text editors use document providers to bridge the gap between their input elements and the
- * documents they work on. A single document provider may be shared between multiple editors;
- * the methods take the editors' input elements as a parameter.
+ * documents they work on. A single document provider may be shared between multiple editors; the
+ * methods take the editors' input elements as a parameter.
  * <p>
- * This interface may be implemented by clients; or subclass the standard 
- * abstract base class <code>AbstractDocumentProvider</code>.</p>
- *
+ * This interface may be implemented by clients; or subclass the standard abstract base class
+ * <code>AbstractDocumentProvider</code>.
+ * </p>
+ * <p>
+ * In order to provided backward compatibility for clients of <code>IDocumentProvider</code>,
+ * extension interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * <ul>
+ * <li>{@link org.eclipse.ui.texteditor.IDocumentProviderExtension} since version 2.0 introducing
+ * 		state validation, extended read-only handling and synchronization.</li>
+ * <li>{@link org.eclipse.ui.texteditor.IDocumentProviderExtension2} since version 2.1 introducing
+ * 		adding support for a global progress monitor.</li>
+ * <li>{@link org.eclipse.ui.texteditor.IDocumentProviderExtension3} since version 3.0 adding
+ * 		a predicate for querying synchronization state.</li>
+ * </ul>
+ * </p>
+ * 
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.ui.texteditor.AbstractDocumentProvider
+ * @see org.eclipse.ui.texteditor.IDocumentProviderExtension
+ * @see org.eclipse.ui.texteditor.IDocumentProviderExtension2
+ * @see org.eclipse.ui.texteditor.IDocumentProviderExtension3
  */
 public interface IDocumentProvider {
 	

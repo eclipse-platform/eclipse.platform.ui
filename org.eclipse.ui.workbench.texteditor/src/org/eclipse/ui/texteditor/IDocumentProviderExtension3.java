@@ -12,7 +12,7 @@ package org.eclipse.ui.texteditor;
 
 
 /**
- * Extension interface to <code>IDocumentProvider</code>. The method
+ * Extension interface for {@link org.eclipse.ui.texteditor.IDocumentProvider}. The method
  * <code>isSynchronized</code> replaces the original <code>getSynchronizationStamp</code> method.
  * 
  * @since 3.0

@@ -34,7 +34,7 @@ import org.osgi.framework.Constants;
  * Allows to sort an array based on their elements' configuration elements
  * according to the prerequisite relation of their defining plug-ins.
  * <p>
- * This class can directly be used or subclassed.
+ * This class may be subclassed.
  * </p>
  * 
  * @since 3.0
@@ -114,7 +114,7 @@ public abstract class ConfigurationElementSorter {
 		}
 		
 		/**
-		 * Initialize this comarator.
+		 * Initialize this comparator.
 		 * 
 		 * @param elements an array of Java editor hover descriptors
 		 */

@@ -16,8 +16,19 @@ import org.eclipse.swt.graphics.Image;
 
 
 /**
- * Interface of a status field of a text editor. The field that shows up in the 
+ * Interface of a status field of a text editor. The field that shows up in the
  * workbench's status line if the contributing editor is active.
+ * <p>
+ * In order to provided backward compatibility for clients of
+ * <code>IStatusField</code>, extension interfaces are used to provide a
+ * means of evolution. The following extension interface exists:
+ * <ul>
+ * <li>{@link org.eclipse.ui.texteditor.IStatusFieldExtension} since
+ * version 3.0 introducing error text, tooltips and visibility control.</li>
+ * </ul>
+ * </p>
+ * 
+ * @see org.eclipse.ui.texteditor.IStatusFieldExtension
  * @since 2.0
  */
 public interface IStatusField {

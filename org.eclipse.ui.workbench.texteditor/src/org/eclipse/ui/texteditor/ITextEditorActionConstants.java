@@ -260,8 +260,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String CONVERT_LINE_DELIMITERS_TO_MAC= "ConvertLineDelimitersToMAC"; //$NON-NLS-1$
 	
-	
-	
 	/** 
 	 * Name of the ruler action performed when double clicking the editor's vertical ruler. 
 	 * Value: <code>"RulerDoubleClick"</code>
@@ -311,7 +309,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	
 	/**
 	 * Status line category "findField".
-	 * Value: <code>"FindField"</code>
+	 * Value: <code>"findField"</code>
 	 * @since 3.0
 	 */
 	static final String STATUS_CATEGORY_FIND_FIELD= "findField"; //$NON-NLS-1$

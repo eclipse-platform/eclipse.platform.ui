@@ -16,7 +16,8 @@ import org.eclipse.jface.action.IMenuListener;
 
 
 /**
- * Extension interface for <code>ITextEditor</code>. Adds the following functions:
+ * Extension interface for {@link org.eclipse.ui.texteditor.ITextEditor}. Adds
+ * the following functions:
  * <ul>
  * <li> status fields
  * <li> read-only state of the editor's input

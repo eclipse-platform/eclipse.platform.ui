@@ -24,7 +24,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Access class for the quick diff reference provider extension point.
- * 
+ * <p>
+ * This class may be instantiated, it is not intended to be subclassed.
+ * </p>
  * @since 3.0
  */
 public class QuickDiff {

@@ -30,9 +30,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * the "wrapped" action sends out property change events in response to state
  * changes. It uses these change notifications to adapt its enabling state and
  * its visual presentation.
- * <p>
- * This class may be instantiated; it is not intended to be subclassed.
- * </p>
  */
 public final class RetargetTextEditorAction extends ResourceAction {
 	
