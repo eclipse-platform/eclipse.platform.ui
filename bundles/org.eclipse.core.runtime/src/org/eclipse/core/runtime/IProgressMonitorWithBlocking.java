@@ -32,11 +32,18 @@ public interface IProgressMonitorWithBlocking extends IProgressMonitor {
 	 * a running operation ever calls <code>setBlocked</code>, it must
 	 * eventually call <code>clearBlocked</code> before the operation
 	 * completes.
+	 * <p>
+	 * If the caller is blocked by a currently executing job, this method will return
+	 * an <code>IJobStatus</code> indicating the job that is currently blocking
+	 * the caller. If this blocking job is not known, this method will return a plain
+	 * informational <code>IStatus</code> object.
+	 * </p>
 	 * 
 	 * @param reason an optional status object whose message describes the
 	 * reason why this operation is blocked, or <code>null</code> if this
 	 * information is not available.
 	 * @see #clearBlocked()
+	 * @see org.eclipse.core.runtime.jobs.IJobStatus
 	 */
 	public void setBlocked(IStatus reason);
 
