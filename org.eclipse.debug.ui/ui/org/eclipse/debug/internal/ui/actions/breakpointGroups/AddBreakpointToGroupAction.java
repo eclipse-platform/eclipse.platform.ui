@@ -15,41 +15,38 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * 
+ * An action which prompts the user to asign a breakpoint to a group.
  */
-public class AddBreakpointToGroupAction implements IViewActionDelegate {
+public class AddBreakpointToGroupAction extends AbstractBreakpointsViewAction {
 	
+	/**
+	 * The currently selected breakpoints
+	 */
 	private Object[] fBreakpoints= null;
-	private BreakpointsView fView= null;
-	
-	private static String fgLastValue= null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		String initialValue= fgLastValue;
-		if (initialValue == null) {
+		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		String initialValue= preferenceStore.getString(IDebugPreferenceConstants.LAST_BREAKPOINT_GROUP);
+		if (initialValue == null || initialValue.length() < 1) {
 		    initialValue= fView.getAutoGroup();
 		}
 		SelectBreakpointGroupDialog dialog = new SelectBreakpointGroupDialog(fView, BreakpointGroupMessages.getString("AddBreakpointToGroupAction.0"), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.1"), initialValue, null); //$NON-NLS-1$ //$NON-NLS-2$
 		int dialogResult = dialog.open();
 		if (dialogResult == Window.OK) {
 			String value= dialog.getValue();
-			if (value.equals("")) { //$NON-NLS-1$
-				value= null;
-			}
-			fgLastValue= value;
+			preferenceStore.putValue(IDebugPreferenceConstants.LAST_BREAKPOINT_GROUP, value);
 			try {
 				for (int i = 0; i < fBreakpoints.length; i++) {
 					((IBreakpoint) fBreakpoints[i]).setGroup(value);
@@ -81,13 +78,6 @@ public class AddBreakpointToGroupAction implements IViewActionDelegate {
 		}
 		action.setEnabled(true);
 		fBreakpoints= selection.toArray();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
-	public void init(IViewPart view) {
-		fView= (BreakpointsView) view;
 	}
 
 }

@@ -134,6 +134,13 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.0
 	 */
 	public static final int PREF_COLUMN_SIZE_DEFAULT = 4;
+	
+	/**
+	 * The last (most recent) breakpoint group specified by the user.
+	 * 
+	 * @since 3.1
+	 */
+	public static final String LAST_BREAKPOINT_GROUP = ".lastBreakpointGroup"; //$NON-NLS-1$
 }
 
 
