@@ -26,6 +26,8 @@ import org.eclipse.search.internal.ui.util.SWTUtil;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -74,6 +76,8 @@ public class ScopePart {
 	/**
 	 * Returns a new scope part with workspace as initial scope.
 	 * The part is not yet created.
+	 * @param searchPageContainer The parent container
+	 * @param searchEnclosingProjects If true, add the 'search enclosing project' radio button
 	 */
 	public ScopePart(ISearchPageContainer searchPageContainer, boolean searchEnclosingProjects) {
 		int initialScope= getStoredScope();
@@ -212,15 +216,14 @@ public class ScopePart {
 	public IWorkingSet[] getSelectedWorkingSets() {
 		if (getSelectedScope() == ISearchPageContainer.WORKING_SET_SCOPE)
 			return fWorkingSets;
-		else
-			return null;
+		return null;
 	}
 
 	/**
 	 * Sets the selected working set for this part.
 	 * This method must only be called on a created part.
 	 * 
-	 * @param workingSet the working set to be selected
+	 * @param workingSets the working set to be selected
 	 */
 	public void setSelectedWorkingSets(IWorkingSet[] workingSets) {
 		Assert.isNotNull(workingSets);
@@ -259,6 +262,7 @@ public class ScopePart {
 	 * Creates this scope part.
 	 * 
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
+	 * @return Returns the created part control
 	 */
 	public Composite createPart(Composite parent) {
 		fPart= new Group(parent, SWT.NONE);
@@ -302,6 +306,12 @@ public class ScopePart {
 		fUseWorkingSet.setData(new Integer(ISearchPageContainer.WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
 		fWorkingSetText= new Text(fPart, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fWorkingSetText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result= SearchMessages.getString("ScopePart.workingSetText.accessible.label"); //$NON-NLS-1$
+			}
+		});
+		
 		Button chooseWorkingSet= new Button(fPart, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
 		chooseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetChooseButton.text")); //$NON-NLS-1$
@@ -380,21 +390,20 @@ public class ScopePart {
 			if (fScope == ISearchPageContainer.WORKING_SET_SCOPE)
 				setSelectedScope(ISearchPageContainer.WORKSPACE_SCOPE);
 			return false;
-		} else {
-			if (fWorkingSets != null) {
-				// test if selected working set has been removed
-				int i= 0;
-				while (i < fWorkingSets.length) {
-					if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(fWorkingSets[i].getName())
-						== null)
-						break;
-					i++;
-				}
-				if (i < fWorkingSets.length) {
-					fWorkingSetText.setText(""); //$NON-NLS-1$
-					fWorkingSets= null;
-					updateSearchPageContainerActionPerformedEnablement();
-				}
+		}
+		if (fWorkingSets != null) {
+			// test if selected working set has been removed
+			int i= 0;
+			while (i < fWorkingSets.length) {
+				if (PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(fWorkingSets[i].getName())
+					== null)
+					break;
+				i++;
+			}
+			if (i < fWorkingSets.length) {
+				fWorkingSetText.setText(""); //$NON-NLS-1$
+				fWorkingSets= null;
+				updateSearchPageContainerActionPerformedEnablement();
 			}
 		}
 		return false;
