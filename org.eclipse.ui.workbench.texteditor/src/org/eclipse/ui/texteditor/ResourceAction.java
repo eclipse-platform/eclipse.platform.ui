@@ -125,7 +125,7 @@ public abstract class ResourceAction extends Action {
 	 * @param prefix a prefix to be prepended to the various resource keys, or <code>null</code> if none
 	 * @since 2.1
 	 */
-	private void initialize(ResourceBundle bundle, String prefix) {
+	protected void initialize(ResourceBundle bundle, String prefix) {
 		String labelKey= "label"; //$NON-NLS-1$
 		String tooltipKey= "tooltip"; //$NON-NLS-1$
 		String imageKey= "image"; //$NON-NLS-1$
