@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor.templates;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
@@ -246,9 +244,9 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		MessageDialog.openError(shell, TemplateMessages.getString("TemplateEvaluator.error.title"), e.getMessage()); //$NON-NLS-1$
 	}
 
-	private void handleException(Shell shell, CoreException e) {
+//	private void handleException(Shell shell, CoreException e) {
 //		ExceptionHandler.handle(e, shell, TemplateMessages.getString("TemplateEvaluator.error.title"), null); //$NON-NLS-1$
-	}
+//	}
 
 	/*
 	 * @see IJavaCompletionProposal#getRelevance()
