@@ -561,7 +561,8 @@
             name="%command.selectAll.name"
             description="%command.selectAll.description"
             categoryId="org.eclipse.ui.category.edit"
-            id="org.eclipse.ui.edit.selectAll" />
+            id="org.eclipse.ui.edit.selectAll"
+            defaultHandler="org.eclipse.ui.internal.handlers.SelectAllHandler" />
       <command
             name="%command.findReplace.name"
             description="%command.findReplace.description"
