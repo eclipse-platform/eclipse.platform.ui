@@ -122,4 +122,8 @@ public class Commit extends Command {
 			session.setTextTransferOverride(null);
 		}
 	}
+    
+    protected String getDisplayText() {
+        return "commit"; //$NON-NLS-1$
+    }
 }	

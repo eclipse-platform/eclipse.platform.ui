@@ -239,6 +239,6 @@ public abstract class Request {
 		return NLS.bind(CVSMessages.Command_serverError, new String[] { getDisplayText() }); //$NON-NLS-1$  //$NON-NLS-2$
 	}
     protected String getDisplayText() {
-        return Policy.getMessage("Command_" + getRequestId()); //$NON-NLS-1$
+        return getRequestId();
     }
 }
