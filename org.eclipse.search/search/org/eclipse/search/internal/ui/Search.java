@@ -159,7 +159,7 @@ public class Search extends Object {
 	}
 	
 	boolean isSameSearch(Search search) {
-		return search != null && search.getOperation() == fOperation;
+		return search != null && search.getOperation() == fOperation && fOperation != null;
 	}
 	
 	void backupMarkers() {
