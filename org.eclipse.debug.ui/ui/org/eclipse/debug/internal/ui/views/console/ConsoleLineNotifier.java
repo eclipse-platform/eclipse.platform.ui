@@ -24,7 +24,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IPatternMatchListener;
-import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
 
 /**
