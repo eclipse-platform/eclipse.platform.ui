@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
+import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
@@ -147,7 +148,18 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		public Image getImage(Object anElement) {
 			XmlElement tempElement = (XmlElement)anElement;
 			if("target".equals(tempElement.getName())) { //$NON-NLS-1$
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
+				XmlElement projectNode= tempElement.getParentNode();
+				XmlAttribute attribute= projectNode.getAttributeNamed("default"); //$NON-NLS-1$
+				String defaultTarget= ""; //$NON-NLS-1$
+				if (attribute != null) {
+					defaultTarget= attribute.getValue();
+				}
+				if (tempElement.getAttributeNamed("name").getValue().equals(defaultTarget)) { //$NON-NLS-1$
+					//TODO:replace with default target icon when available Bug 29815
+					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
+				} else {
+					return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TARGET);
+				}
 			}
 			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
 				if (tempElement.isErrorNode()) {

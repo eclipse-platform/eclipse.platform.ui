@@ -133,18 +133,32 @@ public class OutlinePreparingHandler extends DefaultHandler {
         else {
             throw new PlantyException(AntOutlineMessages.getString("OutlinePreparingHandler.Error_Name")); //$NON-NLS-1$
         }
-        if(tempElementName.equalsIgnoreCase("target") || tempElementName.equalsIgnoreCase("project")) { //$NON-NLS-1$ //$NON-NLS-2$
+        if(tempElementName.equalsIgnoreCase("target")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
                     XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
                     if(tempXmlAttr != null) {
-                    	return tempXmlAttr.getValue();
+                    	StringBuffer name= new StringBuffer(tempXmlAttr.getValue());
+                    	XmlAttribute defaultTarget= getParentNode().getAttributeNamed("default"); //$NON-NLS-1$
+                    	if (defaultTarget != null && defaultTarget.getValue().equals(tempXmlAttr.getValue())) {
+                    		name.append(AntOutlineMessages.getString("OutlinePreparingHandler._[default]_2")); //$NON-NLS-1$
+                    	}
+                    	return name.toString();
                     }
                     return super.getDisplayName();
                 }
         	};
-        }
-        else if(tempElementName.equalsIgnoreCase("property")) { //$NON-NLS-1$
+        } else if (tempElementName.equalsIgnoreCase("project")) { //$NON-NLS-1$
+			tempElement = new XmlElement(tempElementName) {
+				public String getDisplayName() {
+					XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
+					if(tempXmlAttr != null) {
+						return tempXmlAttr.getValue();
+					}
+					return super.getDisplayName();
+				}
+			};
+        } else if(tempElementName.equalsIgnoreCase("property")) { //$NON-NLS-1$
         	tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
                     XmlAttribute tempXmlAttr = getAttributeNamed("name"); //$NON-NLS-1$
