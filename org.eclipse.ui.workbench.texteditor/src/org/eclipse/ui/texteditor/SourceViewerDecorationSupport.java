@@ -19,6 +19,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.CursorLinePainter;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -48,6 +49,16 @@ public class SourceViewerDecorationSupport {
 		public String fOverviewRulerKey;
 		public String fEditorKey;
 		public int fLayer;
+	};
+
+	private class FontPropertyChangeListener implements IPropertyChangeListener {
+		/*
+		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			if (fSymbolicFontName != null && fSymbolicFontName.equals(event.getProperty()))
+				fMarginPainter.initialize();
+		}
 	};
 
 	
@@ -91,6 +102,10 @@ public class SourceViewerDecorationSupport {
 	private IPropertyChangeListener fPropertyChangeListener;
 	/** The preference store */
 	private IPreferenceStore fPreferenceStore;
+	/** The symbolic font name */
+	private String fSymbolicFontName;
+	/** The font change listener */
+	private FontPropertyChangeListener fFontPropertyChangeListener;
 
 
 	/**
@@ -161,6 +176,9 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+	/**
+	 * Updates the annotation overview for all configured annotation types.
+	 */
 	public void updateOverviewDecorations() {
 		Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
 		while (e.hasNext()) {
@@ -258,6 +276,14 @@ public class SourceViewerDecorationSupport {
 		fMatchingCharacterPainterColorKey= colorKey;
 	}
 	
+	/**
+	 * Sets the symbolic font name that is used for computing the margin width.
+	 * @param symbolicFontName
+	 */
+	public void setSymbolicFontName(String symbolicFontName) {
+		fSymbolicFontName= symbolicFontName;
+	}
+	
 	private AnnotationTypePreferenceInfo getAnnotationTypePreferenceInfo(String preferenceKey) {
 		Iterator e= fAnnotationTypeKeyMap.values().iterator();
 		while (e.hasNext()) {
@@ -274,7 +300,7 @@ public class SourceViewerDecorationSupport {
 		
 		String p= event.getProperty();		
 		
-		if (fMatchingCharacterPainterEnableKey.equals(p) && fCharacterPairMatcher != null) {
+		if (fMatchingCharacterPainterEnableKey != null && fMatchingCharacterPainterEnableKey.equals(p) && fCharacterPairMatcher != null) {
 			if (areMatchingCharactersShown())
 				showMatchingCharacters();
 			else
@@ -282,7 +308,7 @@ public class SourceViewerDecorationSupport {
 			return;
 		}
 		
-		if (fMatchingCharacterPainterColorKey.equals(p)) {
+		if (fMatchingCharacterPainterColorKey != null && fMatchingCharacterPainterColorKey.equals(p)) {
 			if (fMatchingCharacterPainter != null) {
 				fMatchingCharacterPainter.setColor(getColor(fMatchingCharacterPainterColorKey));
 				fMatchingCharacterPainter.paint(IPainter.CONFIGURATION);
@@ -412,7 +438,7 @@ public class SourceViewerDecorationSupport {
 	}
 	
 	private boolean areMatchingCharactersShown() {
-		if (fPreferenceStore != null)
+		if (fPreferenceStore != null && fMatchingCharacterPainterEnableKey != null)
 			return fPreferenceStore.getBoolean(fMatchingCharacterPainterEnableKey);
 		return false;
 	}
@@ -455,6 +481,9 @@ public class SourceViewerDecorationSupport {
 					fMarginPainter.setMarginRulerColumn(fPreferenceStore.getInt(fMarginPainterColumnKey));
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fMarginPainter);
+				
+				fFontPropertyChangeListener= new FontPropertyChangeListener();
+				JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 			}
 		}
 	}
@@ -462,6 +491,9 @@ public class SourceViewerDecorationSupport {
 	private void hideMargin() {
 		if (fMarginPainter != null) {
 			if (fSourceViewer instanceof ITextViewerExtension2) {
+				JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
+				fFontPropertyChangeListener= null;
+				
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.removePainter(fMarginPainter);
 				fMarginPainter.deactivate(true);
