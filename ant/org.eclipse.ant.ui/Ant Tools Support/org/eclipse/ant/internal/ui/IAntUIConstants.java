@@ -117,4 +117,10 @@ public interface IAntUIConstants {
 	 * Id of the IProcessFactory to use when creating processes for remote Ant builds.
 	 */
 	public static final String REMOTE_ANT_PROCESS_FACTORY_ID= "org.eclipse.ant.ui.remoteAntProcessFactory"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean attribute indicating if an input handler should be supplied for the build
+	 * Default value is <code>true</code>.
+	 */
+	public static final String SET_INPUTHANDLER= PLUGIN_ID + "SET_INPUTHANDLER"; //$NON-NLS-1$
 }

@@ -12,11 +12,12 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry;
@@ -24,6 +25,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.swt.SWT;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -67,6 +69,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
+		boolean setInputHandler= configuration.getAttribute(IAntUIConstants.SET_INPUTHANDLER, true);
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		IAntClasspathEntry[] antClasspathEntries = prefs.getContributedClasspathEntries();
 		IAntClasspathEntry[] userEntries = prefs.getAdditionalClasspathEntries();
@@ -95,6 +98,11 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		if (!haveToolsEntry) {
 			addToolsJar(configuration, rtes, null);
 		}
+		
+		if (setInputHandler && separateVM) {
+			addSWTJar(rtes);
+		}
+		
 		return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
 	}
 	
@@ -117,6 +125,14 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		} else {
 			rtes.add(tools);
 		}
+	}
+	
+	private void addSWTJar(List rtes) {
+		IPath swtPath= AntLaunchDelegate.getSWTPath();
+		swtPath= swtPath.append("ws"); //$NON-NLS-1$
+		swtPath= swtPath.append(SWT.getPlatform());
+		swtPath= swtPath.append("swt.jar"); //$NON-NLS-1$
+		rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(swtPath));
 	}
 	
 	/**

@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
@@ -34,6 +33,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
@@ -51,9 +52,12 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
+import org.osgi.framework.Bundle;
 
 /**
  * Launch delegate for Ant builds
@@ -64,8 +68,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private static final String NULL_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.NullBuildLogger"; //$NON-NLS-1$
 	private static final String REMOTE_ANT_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger"; //$NON-NLS-1$
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
-	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$	
-
+	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$
+	private static final String REMOTE_INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.SWTInputHandler"; //$NON-NLS-1$
+	
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -133,9 +138,17 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		URL[] customClasspath= AntUtil.getCustomClasspath(configuration);
 		String antHome= AntUtil.getAntHome(configuration);
 		
+		boolean setInputHandler= true;
+		try {
+			//check if set specify inputhandler
+			setInputHandler = configuration.getAttribute(IAntUIConstants.SET_INPUTHANDLER, true);
+		} catch (CoreException ce) {
+			AntUIPlugin.log(ce);			
+		}
+		
 		AntRunner runner= null;
 		if (vmTypeID == null) {
-			runner = configureAntRunner(configuration, location, basedir, idProperty, arguments, userProperties, propertyFiles, targets, customClasspath, antHome);
+			runner = configureAntRunner(configuration, location, basedir, idProperty, arguments, userProperties, propertyFiles, targets, customClasspath, antHome, setInputHandler);
 		}
 		 
 		monitor.worked(1);
@@ -154,11 +167,12 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 			userProperties.put("eclipse.connect.port", Integer.toString(port)); //$NON-NLS-1$
 		}
-		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, vmTypeID != null, captureOutput);
+		
+		StringBuffer commandLine= generateCommandLine(location, arguments, userProperties, propertyFiles, targets, antHome, basedir, vmTypeID != null, captureOutput, setInputHandler);
 		
 		if (vmTypeID != null) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
-			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine, captureOutput);
+			runInSeparateVM(configuration, launch, monitor, idStamp, port, commandLine, captureOutput, setInputHandler);
 		} else {
 			runInSameVM(configuration, launch, monitor, location, idStamp, runner, commandLine, captureOutput);
 		}
@@ -211,7 +225,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	}
 
-	private AntRunner configureAntRunner(ILaunchConfiguration configuration, IPath location, String baseDir, StringBuffer idProperty, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, URL[] customClasspath, String antHome) throws CoreException {
+	private AntRunner configureAntRunner(ILaunchConfiguration configuration, IPath location, String baseDir, StringBuffer idProperty, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, URL[] customClasspath, String antHome, boolean setInputHandler) throws CoreException {
 		int argLength = 1; // at least one user property - timestamp
 		if (arguments != null) {
 			argLength += arguments.length;
@@ -235,7 +249,11 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		} else {
 			runner.addBuildLogger(NULL_LOGGER_CLASS);
 		}
-		runner.setInputHandler(INPUT_HANDLER_CLASS);
+		if (setInputHandler) {
+			runner.setInputHandler(INPUT_HANDLER_CLASS);
+		} else {
+			runner.setInputHandler(""); //$NON-NLS-1$
+		}
 		runner.setArguments(runnerArgs);
 		if (userProperties != null) {
 			runner.addUserProperties(userProperties);
@@ -283,7 +301,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	}
 
-	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM, boolean captureOutput) {
+	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, String basedir, boolean separateVM, boolean captureOutput, boolean setInputHandler) {
 		StringBuffer commandLine= new StringBuffer();
 
 		if (!separateVM) {
@@ -366,9 +384,15 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 					commandLine.append(REMOTE_ANT_LOGGER_CLASS);
 				}
 			}
+			if (commandLine.indexOf("-inputhandler") == -1 && setInputHandler) { //$NON-NLS-1$
+				commandLine.append(" -inputhandler "); //$NON-NLS-1$
+				commandLine.append(REMOTE_INPUT_HANDLER_CLASS);
+			}
 		} else {
-			commandLine.append(" -inputhandler "); //$NON-NLS-1$
-			commandLine.append(INPUT_HANDLER_CLASS);
+			if (setInputHandler) {
+				commandLine.append(" -inputhandler "); //$NON-NLS-1$
+				commandLine.append(INPUT_HANDLER_CLASS);
+			}
 		
 			commandLine.append(" -logger "); //$NON-NLS-1$
 			if (captureOutput) {
@@ -425,7 +449,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		commandLine.append(" \""); //$NON-NLS-1$
 	}
 	
-	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine, boolean captureOutput) throws CoreException {
+	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine, boolean captureOutput, boolean setInputHandler) throws CoreException {
 		if (captureOutput) {
 			RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
 			if (port != -1) {
@@ -435,7 +459,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
-		StringBuffer vmArgs= generateVMArguments(copy);
+		StringBuffer vmArgs= generateVMArguments(copy, setInputHandler);
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, vmArgs.toString());
 
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
@@ -486,7 +510,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 	}
 	
-	private StringBuffer generateVMArguments(ILaunchConfiguration config) {
+	private StringBuffer generateVMArguments(ILaunchConfiguration config, boolean setInputHandler) {
 		StringBuffer vmArgs= new StringBuffer();
 		try {
 			String configArgs= config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, (String)null);
@@ -504,6 +528,15 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		vmArgs.append("-Dant.library.dir=\""); //$NON-NLS-1$
 		vmArgs.append(antLibDir.getAbsolutePath());
 		vmArgs.append('\"');
+
+		if (setInputHandler) {
+			String swtLocation= getSWTLibraryLocation();
+			if (swtLocation != null) {
+				vmArgs.append(" -Djava.library.path=\""); //$NON-NLS-1$
+				vmArgs.append(swtLocation);
+				vmArgs.append('\"');
+			}
+		}
 		return vmArgs;
 	}
 
@@ -527,5 +560,33 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 		return computeBuildOrder(projects);
 	}
+
+	private String getSWTLibraryLocation() {
+		IPath path= getSWTPath();
+		if (path == null) {
+			return null;
+		}
+		
+		path= path.append("os"); //$NON-NLS-1$
+		path= path.append(SWT.getPlatform());
+		path= path.append(Platform.getOSArch());
+		return path.toOSString();
+	}
 	
+	protected static IPath getSWTPath() {
+		Location eclipseHome= Platform.getInstallLocation();
+		if (eclipseHome == null) {
+			return null;
+		}
+		
+		Bundle bundle= Platform.getBundle("org.eclipse.swt"); //$NON-NLS-1$
+		String eclipseVersion = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+		
+		String platform= SWT.getPlatform();
+
+		IPath path= new Path(new File(eclipseHome.getURL().getPath()).getAbsolutePath());
+		path= path.append("plugins"); //$NON-NLS-1$
+		path= path.append("org.eclipse.swt." + platform + '_' + eclipseVersion); //$NON-NLS-1$
+		return path;
+	}
 }

@@ -606,14 +606,15 @@ public class InternalAntRunner {
 				return;
 			}
 			
-			if (!allowInput) {
+			if (allowInput && (inputHandlerClassname != null && inputHandlerClassname.length() > 0)) {
+				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+					getCurrentProject().setDefaultInputStream(originalIn);
+					System.getProperties().remove("eclipse.ant.noInput");  //$NON-NLS-1$
+				}
+			} else {
 				//set the system property that any input handler
 				//can check to see if handling input is allowed
 				System.setProperty("eclipse.ant.noInput", "true");  //$NON-NLS-1$//$NON-NLS-2$
-			} else {
-				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-					getCurrentProject().setDefaultInputStream(originalIn);
-				}
 			}
 			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
@@ -1473,7 +1474,7 @@ public class InternalAntRunner {
      *                           implementation could not be loaded.
      */
     private void addInputHandler(Project project) {
-    	if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
+    	if (!isVersionCompatible("1.5") || (inputHandlerClassname != null && inputHandlerClassname.length() == 0)) { //$NON-NLS-1$
 			return;
 		}
 		InputHandlerSetter setter= new InputHandlerSetter();

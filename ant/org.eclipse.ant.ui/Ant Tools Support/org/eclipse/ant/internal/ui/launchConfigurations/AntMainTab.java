@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -28,7 +29,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsLaunchConfigurationMessages;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
@@ -36,8 +36,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntMainTab extends ExternalToolsMainTab {
 
-	protected Button captureOutputButton;
-	private String currentLocation= null;
+	private Button fCaptureOutputButton;
+	private String fCurrentLocation= null;
+	private Button fSetInputHandlerButton;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -45,10 +46,10 @@ public class AntMainTab extends ExternalToolsMainTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		super.initializeFrom(configuration);
 		try {
-			currentLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
+			fCurrentLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException e) {
 		}
-		updateCaptureOutput(configuration);
+		updateCheckButtons(configuration);
 	}
 	
 	/* (non-Javadoc)
@@ -60,17 +61,18 @@ public class AntMainTab extends ExternalToolsMainTab {
 			//has the location changed
 			String newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 			if (newLocation != null) {
-				if (!newLocation.equals(currentLocation)) {
+				if (!newLocation.equals(fCurrentLocation)) {
 					updateTargetsTab();
-					currentLocation= newLocation;
+					fCurrentLocation= newLocation;
 				}
-			} else if (currentLocation != null){
+			} else if (fCurrentLocation != null){
 				updateTargetsTab();
-				currentLocation= newLocation;
+				fCurrentLocation= newLocation;
 			}
 		} catch (CoreException e) {
 		}
-		setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, configuration, captureOutputButton.getSelection(), true);
+		setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, configuration, fCaptureOutputButton.getSelection(), true);
+		setAttribute(IAntUIConstants.SET_INPUTHANDLER, configuration, fSetInputHandlerButton.getSelection(), true);
 	}
 
 	/* (non-Javadoc)
@@ -91,35 +93,57 @@ public class AntMainTab extends ExternalToolsMainTab {
 		createArgumentComponent(mainComposite);
 		createVerticalSpacer(mainComposite, 2);
 		createCaptureOutputComponent(mainComposite);
+		createSetInputHandlerComponent(mainComposite);
 		Dialog.applyDialogFont(parent);
 	}
 	
 	/**
 	 * Creates the controls needed to edit the capture output attribute of an
-	 * external tool
+	 * Ant build
 	 *
 	 * @param parent the composite to create the controls in
 	 */
-	protected void createCaptureOutputComponent(Composite parent) {
-		captureOutputButton = createCheckButton(parent, AntLaunchConfigurationMessages.getString("AntMainTab.Capture_&output_1")); //$NON-NLS-1$
+	private void createCaptureOutputComponent(Composite parent) {
+		fCaptureOutputButton = createCheckButton(parent, AntLaunchConfigurationMessages.getString("AntMainTab.Capture_&output_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
-		captureOutputButton.setLayoutData(data);
-		captureOutputButton.addSelectionListener(new SelectionAdapter() {
+		fCaptureOutputButton.setLayoutData(data);
+		fCaptureOutputButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 	}
 	
-	protected void updateCaptureOutput(ILaunchConfiguration configuration) {
+	/**
+	 * Creates the controls needed to edit the set input handler attribute of an
+	 * Ant build
+	 *
+	 * @param parent the composite to create the controls in
+	 */
+	private void createSetInputHandlerComponent(Composite parent) {
+		fSetInputHandlerButton = createCheckButton(parent, AntLaunchConfigurationMessages.getString("AntMainTab.0")); //$NON-NLS-1$
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.horizontalSpan = 2;
+		fSetInputHandlerButton.setLayoutData(data);
+		fSetInputHandlerButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+	}
+	
+	private void updateCheckButtons(ILaunchConfiguration configuration) {
 		boolean captureOutput= true;
+		boolean setInputHandler= true;
 		try {
 			captureOutput= configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
+			setInputHandler= configuration.getAttribute(IAntUIConstants.SET_INPUTHANDLER, true);
 		} catch (CoreException ce) {
-			AntUIPlugin.log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_7"), ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntMainTab.1"), ce); //$NON-NLS-1$
 		}
-		captureOutputButton.setSelection(captureOutput);
+		fCaptureOutputButton.setSelection(captureOutput);
+		fSetInputHandlerButton.setSelection(setInputHandler);
 	}
 
 	/* (non-Javadoc)

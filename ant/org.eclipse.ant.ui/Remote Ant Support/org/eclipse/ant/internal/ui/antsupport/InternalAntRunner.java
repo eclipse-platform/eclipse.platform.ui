@@ -349,13 +349,14 @@ public class InternalAntRunner {
 				return;
 			}
 			
-			//we do not want to set the default input stream for the default input handler
-			//as we currently have no means for querying from System.in for input.
-			//see bug 45484
-			if (allowInput && inputHandlerClassname != null) {
+			if (allowInput && (inputHandlerClassname != null && inputHandlerClassname.length() > 0)) {
 				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 					getCurrentProject().setDefaultInputStream(originalIn);
 				}
+			} else {
+				//set the system property that any input handler
+				//can check to see if handling input is allowed
+				System.setProperty("eclipse.ant.noInput", "true");  //$NON-NLS-1$//$NON-NLS-2$
 			}
 			
 			getCurrentProject().log(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
