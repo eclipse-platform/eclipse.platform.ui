@@ -442,8 +442,53 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			Workspace.clear(resolvePath(fileLocation).toFile());
 		}
 	}
+	public void testDeepMoveProjectWithLinks() {
+		IPath fileLocation = getRandomLocation();
+		IFile file = nonExistingFileInExistingProject;
+		IFolder folder = nonExistingFolderInExistingProject;
+		IFile childFile = folder.getFile(childName);
+		IResource[] oldResources = new IResource[] {file, folder, existingProject, childFile};
+		try {
+			try {
+				createFileInFileSystem(resolvePath(fileLocation));
+				folder.createLink(existingLocation, IResource.NONE, getMonitor());
+				file.createLink(fileLocation, IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+
+			//move the project
+			IProject destination = getWorkspace().getRoot().getProject("MoveTargetProject");
+			IFile newFile = destination.getFile(file.getProjectRelativePath());
+			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
+			IFile newChildFile = newFolder.getFile(childName);
+			IResource[] newResources = new IResource[] {destination, newFile, newFolder, newChildFile};
+
+			assertDoesNotExistInWorkspace("2.0", destination);
+
+			try {
+				existingProject.move(destination.getFullPath(), IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("2.1", e);
+			}
+			assertExistsInWorkspace("3.0", newResources);
+			assertDoesNotExistInWorkspace("3.1", oldResources);
+			assertTrue("3.2", existingProject.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("3.3", destination.isSynchronized(IResource.DEPTH_INFINITE));
+
+			assertTrue("3.4", !newFile.isLinked());
+			assertEquals("3.5", destination.getLocation().append(newFile.getProjectRelativePath()), newFile.getLocation());
+
+			assertTrue("3.6", !newFolder.isLinked());
+			assertEquals("3.7", destination.getLocation().append(newFolder.getProjectRelativePath()), newFolder.getLocation());
+			
+			assertTrue("3.8", destination.isSynchronized(IResource.DEPTH_INFINITE));
+		} finally {
+			Workspace.clear(resolvePath(fileLocation).toFile());
+		}
+	}	
 	public void testMoveFolder() {
-		IResource[] sourceResources = new IResource[] {nonExistingFolderInExistingProject};
+		IResource[] sourceResources = new IResource[] {nonExistingFolderInExistingProject};	
 		IResource[] destinationResources = new IResource[] {existingProject, closedProject, nonExistingProject, existingFolderInExistingProject, nonExistingFolderInOtherExistingProject, nonExistingFolderInExistingFolder};
 		IProgressMonitor[] monitors = new IProgressMonitor[] {new FussyProgressMonitor(), new CancelingProgressMonitor(), null};
 		Object[][] inputs = new Object[][] {sourceResources, destinationResources, monitors};
@@ -504,7 +549,8 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		IPath fileLocation = getRandomLocation();
 		IFile file = nonExistingFileInExistingProject;
 		IFolder folder = nonExistingFolderInExistingProject;
-		IResource[] oldResources = new IResource[] {file, folder, existingProject};
+		IFile childFile = folder.getFile(childName);
+		IResource[] oldResources = new IResource[] {file, folder, existingProject, childFile};
 		try {
 			try {
 				createFileInFileSystem(resolvePath(fileLocation));
@@ -518,7 +564,8 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			IProject destination = getWorkspace().getRoot().getProject("MoveTargetProject");
 			IFile newFile = destination.getFile(file.getProjectRelativePath());
 			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
-			IResource[] newResources = new IResource[] {destination, newFile, newFolder};
+			IFile newChildFile = newFolder.getFile(childName);
+			IResource[] newResources = new IResource[] {destination, newFile, newFolder, newChildFile};
 
 			assertDoesNotExistInWorkspace("2.0", destination);
 
@@ -536,6 +583,8 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			assertTrue("3.4", newFolder.isLinked());
 			assertEquals("3.5", resolvePath(existingLocation), newFolder.getLocation());
 			
+			assertTrue("3.6", destination.isSynchronized(IResource.DEPTH_INFINITE));
+			
 			//now do a deep move back to the original project
 			try {
 				destination.move(existingProject.getFullPath(), IResource.NONE, getMonitor());
@@ -548,6 +597,8 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			assertTrue("5.4", !folder.isLinked());
 			assertEquals("5.5", existingProject.getLocation().append(file.getProjectRelativePath()), file.getLocation());
 			assertEquals("5.6", existingProject.getLocation().append(folder.getProjectRelativePath()), folder.getLocation());
+			assertTrue("5.7", existingProject.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("5.8", destination.isSynchronized(IResource.DEPTH_INFINITE));
 		} finally {
 			Workspace.clear(resolvePath(fileLocation).toFile());
 		}
