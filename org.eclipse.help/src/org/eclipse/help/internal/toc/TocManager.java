@@ -20,6 +20,7 @@ import org.eclipse.help.internal.model.*;
  * Manages the navigation model. It keeps track of all the tables of contents.
  */
 public class TocManager {
+	public static final String TOC_XP_NAME = "toc";
 
 	/**
 	 * Map of ITocNavNode[] by String
@@ -185,7 +186,7 @@ public class TocManager {
 		IExtensionPoint xpt =
 			Platform.getExtensionRegistry().getExtensionPoint(
 				HelpPlugin.PLUGIN_ID,
-				"toc");
+				TOC_XP_NAME);
 		if (xpt == null)
 			return contributedTocFiles;
 		// get all extensions
@@ -197,7 +198,7 @@ public class TocManager {
 			IConfigurationElement[] configElements =
 				extensions[i].getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++)
-				if (configElements[j].getName().equals("toc")) {
+				if (configElements[j].getName().equals(TOC_XP_NAME)) {
 					String pluginId =
 						configElements[j]
 							.getDeclaringExtension()

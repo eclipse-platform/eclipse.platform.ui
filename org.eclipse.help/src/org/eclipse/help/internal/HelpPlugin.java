@@ -16,7 +16,7 @@ import org.osgi.framework.*;
 /**
  * Help System Core plug-in
  */
-public class HelpPlugin extends Plugin {
+public class HelpPlugin extends Plugin implements IRegistryChangeListener{
 	public final static String PLUGIN_ID = "org.eclipse.help";
 	// debug options
 	public static boolean DEBUG = false;
@@ -85,6 +85,8 @@ public class HelpPlugin extends Plugin {
 		super.start(context);
 		plugin = this;
 		bundleContext = context;
+		Platform.getExtensionRegistry().addRegistryChangeListener(this,
+				HelpPlugin.PLUGIN_ID);
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
@@ -114,6 +116,20 @@ public class HelpPlugin extends Plugin {
 		if (getDefault().contextManager == null)
 			getDefault().contextManager = new ContextManager();
 		return getDefault().contextManager;
+	}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+	 */
+	public void registryChanged(IRegistryChangeEvent event) {
+		synchronized (tocManagerCreateLock) {
+			IExtensionDelta[] deltas = event.getExtensionDeltas(
+					HelpPlugin.PLUGIN_ID, TocManager.TOC_XP_NAME);
+			if (deltas.length > 0) {
+				tocManager = null;
+			}
+		}
 	}
 
 }
