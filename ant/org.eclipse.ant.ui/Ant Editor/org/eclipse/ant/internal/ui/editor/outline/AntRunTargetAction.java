@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - bug 34548
+ * 	   Nico Seessle - bug 51319
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.outline;
 
@@ -137,7 +138,7 @@ public class AntRunTargetAction extends Action {
 			if (structuredSelection.size() == 1) {
 				Object selectedResource = structuredSelection.getFirstElement();
 				if (selectedResource instanceof AntTargetNode) {
-					selectedTarget = ((AntTargetNode)selectedResource).getLabel();
+					selectedTarget = ((AntTargetNode)selectedResource).getTarget().getName();
 				} else if (selectedResource instanceof AntProjectNode) {
 					selectedTarget = ""; //$NON-NLS-1$
 				}
