@@ -87,8 +87,12 @@ public abstract class ResponseHandler implements IResponseHandler {
 									  							remote));
 		}
 		
-		if ((setTag) && (tag != null)) {
-			info.setTag(new CVSEntryLineTag(tag));
+		if (setTag) {
+			if (tag == null) {
+				info.setTag(null);
+			} else {
+				info.setTag(new CVSEntryLineTag(tag));
+			}
 		}
 		
 		if (setStatic) {

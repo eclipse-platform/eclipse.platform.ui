@@ -43,7 +43,13 @@ class Import extends Command {
 		// NOTE: Yes, but at least the user would get better feedback!
 		// We should be throwing a CVSException!
 		Assert.isTrue(getArguments().length == 3);
-
+		
+		// XXX Why do we need this?
+		if (!Util.isOption(getLocalOptions(),Client.BRANCH_OPTION)) {
+			requestSender.sendArgument(Client.BRANCH_OPTION);
+			requestSender.sendArgument("1.1.1");
+		}
+	
 		// At this point we need to know wether we need to send	the file
 		// as a binary. The server will set the mode properly based on the wrapper option.
 		if (Util.isOption(getLocalOptions(),ResourceSyncInfo.BINARY_TAG)) {

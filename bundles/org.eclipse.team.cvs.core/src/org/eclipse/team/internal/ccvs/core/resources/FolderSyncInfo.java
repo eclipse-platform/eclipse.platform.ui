@@ -61,7 +61,11 @@ public class FolderSyncInfo {
 	 * @param tag The tag to set
 	 */
 	public void setTag(CVSTag tag) {
-		this.tag = new CVSEntryLineTag(tag);
+		if (tag == null) {
+			this.tag = null;
+		} else {
+			this.tag = new CVSEntryLineTag(tag);
+		}
 	}
 
 	/**

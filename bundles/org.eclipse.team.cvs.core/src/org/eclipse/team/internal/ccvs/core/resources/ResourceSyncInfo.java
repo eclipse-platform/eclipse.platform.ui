@@ -128,6 +128,8 @@ public class ResourceSyncInfo {
 		String tagEntry = tokenizer.nextToken();
 		if(tagEntry.length()>0) {
 			tag = new CVSEntryLineTag(tagEntry);
+		} else {
+			tag = null;
 		}
 	}
 

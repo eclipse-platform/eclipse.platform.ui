@@ -120,10 +120,15 @@ public class SyncFileUtil {
 		}
 
 		writeLine(parent, ROOT, info.getRoot());
-		if (info.getTag() != null)
+		if (info.getTag() != null) {
 			writeLine(parent, TAG, info.getTag().toEntryLineFormat());
+		} else {
+			writeLine(parent, TAG, null);
+		}
 		if(info.getIsStatic()) {
 			writeLine(parent, STATIC, ""); // touch file
+		} else {
+			writeLine(parent, STATIC, null);
 		}
 		writeLine(parent, REPOSITORY, info.getRepository());
 	}
