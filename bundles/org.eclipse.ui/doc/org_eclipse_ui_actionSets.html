@@ -1,7 +1,8 @@
-<!doctype html public "-//w3c//dtd html 4.0//en">
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <title>Eclipse Workbench Extension Point: Action Sets</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -17,11 +18,12 @@ appear within the workbench window by user preference.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT actionSet (menu)* (action)* (description?)></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST actionSet</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp; CDATA
 #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; visible&nbsp;&nbsp; (true
-| false) #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; visible&nbsp;&nbsp; (true | false)
+#IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT description (#PCDATA)></tt>
 <ul>
@@ -222,7 +224,13 @@ followed by a series of modifiers and the final accelerator character (for
 example, <tt>&amp;amp;Save@Ctrl+S</tt>). Modifier can be chained using
 the '+' sign as the delimiter (as in <tt>@Ctrl+Shift+S</tt>).</li>
 </ol>
-<b><i>Examples:</i></b>
+If two or more actions are contributed to a menu or toolbar by a single
+extension the actions will appear in the reverse order of how they are
+listed in the plugin.xml file. This behavior is admittedly unintuitive.&nbsp;
+However, it was discovered after the&nbsp; Eclipse Platform API was frozen.&nbsp;
+Changing the behavior now would break every plug-in which relies upon the
+existing behavior.
+<p><b><i>Examples:</i></b>
 <p>The following is an example of an action set (note the subelements and
 the way attributes are used):
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;extension point = "org.eclipse.ui.actionSets"></tt>

@@ -1,7 +1,8 @@
-<!doctype html public "-//w3c//dtd html 4.0//en">
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <title>Eclipse Workbench Extension Point: View Actions</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -29,8 +30,8 @@ CDATA #REQUIRED</tt>
 <b>id</b> - a unique identifier that can be used to reference this contribution</li>
 
 <li>
-<b>targetID</b> - the unique identifier of the view (as specified in the registry) into
-which the contribution is made</li>
+<b>targetID</b> - the unique identifier of the view (as specified in the
+registry) into which the contribution is made</li>
 </blockquote>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT menu (separator)+></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST menu</tt>
@@ -194,7 +195,13 @@ followed by a series of modifiers and the final accelerator character (for
 example, <tt>&amp;amp;Save@Ctrl+S</tt>). Modified can be chained using
 the '+' sign as the delimiter (as in <tt>@Ctrl+Shift+S</tt>).</li>
 </ol>
-<b><i>Examples:</i></b>
+If two or more actions are contributed to a menu or toolbar by a single
+extension the actions will appear in the reverse order of how they are
+listed in the plugin.xml file. This behavior is admittedly unintuitive.&nbsp;
+However, it was discovered after the&nbsp; Eclipse Platform API was frozen.&nbsp;
+Changing the behavior now would break every plug-in which relies upon the
+existing behavior.
+<p><b><i>Examples:</i></b>
 <p>The following is an example of a view actions extension point (note
 the subelements and the way attributes are used):
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.viewActions"></tt>

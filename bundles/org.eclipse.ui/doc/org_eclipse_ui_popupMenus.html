@@ -1,7 +1,8 @@
-<!doctype html public "-//w3c//dtd html 4.0//en">
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
    <title>Eclipse Workbench Extension Point: Pop-up Menus</title>
 </head>
 <body link="#0000FF" vlink="#800080">
@@ -65,8 +66,8 @@ CDATA #REQUIRED</tt>
 <b>id</b> - a unique identifier that can be used to reference this contribution</li>
 
 <li>
-<b>targetID</b> - the unique identifier of a popup menu inside a view, editor or
-viewer.</li>
+<b>targetID</b> - the unique identifier of a popup menu inside a view,
+editor or viewer.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT filter EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST filter</tt>
@@ -217,7 +218,13 @@ Optional accelerators are specified at the and of the name string, using
 one modifier are obtained by chaining modifiers, using the '+' sign as
 the delimiter (as in <tt>@Ctrl+Shift+S</tt>).</li>
 </ol>
-<b><i>Examples:</i></b>
+If two or more actions are contributed to a menu or toolbar by a single
+extension the actions will appear in the reverse order of how they are
+listed in the plugin.xml file. This behavior is admittedly unintuitive.&nbsp;
+However, it was discovered after the&nbsp; Eclipse Platform API was frozen.&nbsp;
+Changing the behavior now would break every plug-in which relies upon the
+existing behavior.
+<p><b><i>Examples:</i></b>
 <p>The following is an example of a pop-up menu extension point:
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.popupMenus"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;objectContribution</tt>
@@ -318,7 +325,8 @@ across parts the following strategy should be adopted by all part implementors.
 If the target part has only one context menu it should be registered with
 <tt>id
 == part id</tt>.&nbsp; This can be done easily by calling <tt>registerContextMenu(MenuManager,
-ISelectionProvider)</tt>.&nbsp; Extenders may use the <tt>part id</tt> itself as the <tt>targetID</tt> for the action extension.</li>
+ISelectionProvider)</tt>.&nbsp; Extenders may use the <tt>part id</tt>
+itself as the <tt>targetID</tt> for the action extension.</li>
 
 <li>
 If the target part has more than one context menu a unique id should be
