@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.ui.IMemento;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -27,7 +26,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -35,9 +33,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 
+import org.eclipse.ui.IMemento;
+
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
 
 /**
@@ -78,7 +80,7 @@ class SearchResultViewer extends TableViewer {
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		setLabelProvider(new SearchResultLabelProvider());
+		setLabelProvider(new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL), fOuterPart.getSite().getDecoratorManager()));
 
 		boolean hasSearch= SearchManager.getDefault().getCurrentSearch() != null;
 
@@ -304,14 +306,7 @@ class SearchResultViewer extends TableViewer {
 	}
 
 	void internalSetLabelProvider(ILabelProvider provider) {
-		IBaseLabelProvider tableLabelProvider= getLabelProvider();
-		if (tableLabelProvider instanceof SearchResultLabelProvider)
-			((SearchResultLabelProvider)getLabelProvider()).setLabelProvider(provider);
-		else {
-			// should never happen - just to be safe
-			setLabelProvider(new SearchResultLabelProvider());
-			internalSetLabelProvider(provider);
-		}
+		setLabelProvider(new SearchResultLabelProvider(provider, fOuterPart.getSite().getDecoratorManager()));
 	}
 
 	/**

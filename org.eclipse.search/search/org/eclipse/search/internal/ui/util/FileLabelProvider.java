@@ -5,20 +5,27 @@
 package org.eclipse.search.internal.ui.util;
 
 import java.text.MessageFormat;
-import org.eclipse.core.resources.IResource;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
 
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
 
-public class FileLabelProvider extends LabelProvider {
+
+public class FileLabelProvider extends DecoratingLabelProvider {
 		
 	public static final int SHOW_LABEL= 1;
 	public static final int SHOW_LABEL_PATH= 2;
@@ -30,9 +37,8 @@ public class FileLabelProvider extends LabelProvider {
 	private int fOrder;
 	private String[] fArgs= new String[2];
 
-	private WorkbenchLabelProvider fWorkbenchLabelProvider= new WorkbenchLabelProvider();
-	
 	public FileLabelProvider(int orderFlag) {
+		super(new WorkbenchLabelProvider(), getDecoratorManager());
 		fOrder= orderFlag;
 	}
 
@@ -43,41 +49,66 @@ public class FileLabelProvider extends LabelProvider {
 	public String getText(Object element) {
 		if (!(element instanceof ISearchResultViewEntry))
 			return ""; //$NON-NLS-1$
+
 		IResource resource= ((ISearchResultViewEntry) element).getResource();
+		String text= null;
 
 		if (resource == null || !resource.exists())
-			return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
+			text= SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
 		
-		IPath path= resource.getFullPath().removeLastSegments(1);
-		if (path.getDevice() == null)
-			path= path.makeRelative();
-		if (fOrder == SHOW_LABEL || fOrder == SHOW_LABEL_PATH) {
-			String resourceString= fWorkbenchLabelProvider.getText(resource);
-			if (path != null && fOrder == SHOW_LABEL_PATH) {
-				fArgs[0]= resourceString;
-				fArgs[1]= path.toString();
-				return MessageFormat.format(fgSeparatorFormat, fArgs);
+		else {
+			IPath path= resource.getFullPath().removeLastSegments(1);
+			if (path.getDevice() == null)
+				path= path.makeRelative();
+			if (fOrder == SHOW_LABEL || fOrder == SHOW_LABEL_PATH) {
+				text= getLabelProvider().getText(resource);
+				if (path != null && fOrder == SHOW_LABEL_PATH) {
+					fArgs[0]= text;
+					fArgs[1]= path.toString();
+					text= MessageFormat.format(fgSeparatorFormat, fArgs);
+				}
+			} else {
+				if (path != null)
+					text= path.toString();
+				else
+					text= ""; //$NON-NLS-1$
+				if (fOrder == SHOW_PATH_LABEL) {
+					fArgs[0]= text;
+					fArgs[1]= getLabelProvider().getText(resource);
+					text= MessageFormat.format(fgSeparatorFormat, fArgs);
+				}
 			}
-			else
-				return resourceString;
-		} else {
-			String pathString;
-			if (path != null)
-				pathString= path.toString();
-			else
-				pathString= ""; //$NON-NLS-1$
-			if (fOrder == SHOW_PATH_LABEL) {
-				fArgs[0]= pathString;
-				fArgs[1]= fWorkbenchLabelProvider.getText(resource);
-				return MessageFormat.format(fgSeparatorFormat, fArgs);
-			} else
-			 return pathString;
 		}
+		
+		// Do the decoration
+		if (getLabelDecorator() != null) {
+			String decorated= getLabelDecorator().decorateText(text, element);
+		if (decorated != null)
+			return decorated;
+		}
+		return text;
 	}
 
 	public Image getImage(Object element) {
 		if (!(element instanceof ISearchResultViewEntry))
 			return null; //$NON-NLS-1$
-		return fWorkbenchLabelProvider.getImage(((ISearchResultViewEntry) element).getResource());
+		return super.getImage(((ISearchResultViewEntry) element).getResource());
+	}
+
+	private static IWorkbenchPartSite getSite() {
+		IWorkbenchPage page= SearchPlugin.getActivePage();
+		if (page != null) {
+			IWorkbenchPart part= page.getActivePart();
+			if (part != null)
+				return part.getSite();
+		}
+		return null;
+	}		
+
+	private static ILabelDecorator getDecoratorManager() {
+		if (getSite() != null)
+			return getSite().getDecoratorManager();
+		else
+			return null;
 	}
 }
