@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000, 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.internal;
 
@@ -38,20 +37,15 @@ public class MergeSourceViewer extends SourceViewer
 	public static final String PASTE_ID= "paste";
 	public static final String DELETE_ID= "delete";
 	public static final String SELECT_ALL_ID= "selectAll";
-	
+	public static final String SAVE_ID= "save";
 
-	class TextOperationAction extends Action implements IUpdate {
+	class TextOperationAction extends MergeViewerAction {
 		
-		int fOperationCode;
-		boolean fMutable;
-		boolean fSelection;
-		boolean fContent;
+		private int fOperationCode;
 		
 		TextOperationAction(int operationCode, boolean mutable, boolean selection, boolean content) {
+			super(mutable, selection, content);
 			fOperationCode= operationCode;
-			fMutable= mutable;
-			fSelection= selection;
-			fContent= content;
 			update();
 		}
 		
@@ -282,25 +276,29 @@ public class MergeSourceViewer extends SourceViewer
 		}
 	}
 	
-	public TextOperationAction getAction(String actionId) {
-		TextOperationAction action= (TextOperationAction) fActions.get(actionId);
+	public void addAction(String actionId, MergeViewerAction action) {
+		fActions.put(actionId, action);
+	}
+	
+	public MergeViewerAction getAction(String actionId) {
+		MergeViewerAction action= (MergeViewerAction) fActions.get(actionId);
 		if (action == null) {
 			action= createAction(actionId);
 			
-			if (action.fContent)
+			if (action.isContentDependent())
 				addTextListener(this);
-			if (action.fSelection)
+			if (action.isSelectionDependent())
 				addSelectionChangedListener(this);
 				
 			Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			
 			fActions.put(actionId, action);
 		}
-		if (action.fMutable && !isEditable())
+		if (action.isEditableDependent() && !isEditable())
 			return null;
 		return action;
 	}
 	
-	protected TextOperationAction createAction(String actionId) {
+	protected MergeViewerAction createAction(String actionId) {
 		if (UNDO_ID.equals(actionId))
 			return new TextOperationAction(UNDO, true, false, true);
 		if (REDO_ID.equals(actionId))
@@ -321,21 +319,18 @@ public class MergeSourceViewer extends SourceViewer
 	public void selectionChanged(SelectionChangedEvent event) {
 		Iterator e= fActions.values().iterator();
 		while (e.hasNext()) {
-			TextOperationAction action= (TextOperationAction) e.next();
-			if (action.fSelection) {
+			MergeViewerAction action= (MergeViewerAction) e.next();
+			if (action.isSelectionDependent())
 				action.update();
-			}
 		}
 	}
 					
-	//public void documentChanged(DocumentEvent event) {
 	public void textChanged(TextEvent event) {
 		Iterator e= fActions.values().iterator();
 		while (e.hasNext()) {
-			TextOperationAction action= (TextOperationAction) e.next();
-			if (action.fContent) {
+			MergeViewerAction action= (MergeViewerAction) e.next();
+			if (action.isContentDependent())
 				action.update();
-			}
 		}
 	}
 		
@@ -360,13 +355,13 @@ public class MergeSourceViewer extends SourceViewer
 		//addMenu(menu, FIND_ID);
 		
 		menu.add(new Separator("save"));
-		//addMenu(menu, SAVE_ID);
+		addMenu(menu, SAVE_ID);
 		
 		menu.add(new Separator("rest"));
 	}
 	
 	private void addMenu(IMenuManager menu, String actionId) {
-		TextOperationAction action= getAction(actionId);
+		IAction action= getAction(actionId);
 		if (action != null)
 			menu.add(action);
 	}
@@ -379,4 +374,3 @@ public class MergeSourceViewer extends SourceViewer
 		super.handleDispose();
 	}
 }
-

@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000, 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.contentmergeviewer;
 
@@ -51,6 +50,7 @@ import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.DocLineComparator;
 import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.MergeViewerAction;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
@@ -102,7 +102,7 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
  * @see org.eclipse.compare.IStreamContentAccessor
  */
 public class TextMergeViewer extends ContentMergeViewer  {
-	
+		
 	private static final String[] GLOBAL_ACTIONS= {
 		IWorkbenchActionConstants.UNDO,
 		IWorkbenchActionConstants.REDO,
@@ -110,7 +110,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IWorkbenchActionConstants.COPY,
 		IWorkbenchActionConstants.PASTE,
 		IWorkbenchActionConstants.DELETE,
-		IWorkbenchActionConstants.SELECT_ALL
+		IWorkbenchActionConstants.SELECT_ALL,
+		IWorkbenchActionConstants.SAVE,
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
@@ -119,7 +120,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer.COPY_ID,
 		MergeSourceViewer.PASTE_ID,
 		MergeSourceViewer.DELETE_ID,
-		MergeSourceViewer.SELECT_ALL_ID
+		MergeSourceViewer.SELECT_ALL_ID,
+		MergeSourceViewer.SAVE_ID
 	};
 		
 	private static final String MY_UPDATER= "my_updater";
@@ -146,7 +148,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final boolean DEAD_STEP= false;
 	
 	private static final boolean IS_MOTIF= false;
-		
+	
+	// determines whether a change between left and right is considered incoming or outgoing
+	private boolean fLeftIsLocal= true;
+	
 	// Colors to use
 	private static final RGB INCOMING= new RGB(100, 100, 200);
 	private static final RGB INCOMING_FILL= new RGB(230, 230, 240);
@@ -523,9 +528,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		fLeft= createPart(composite);
 		fLeft.getTextWidget().getVerticalBar().setVisible(false);
+		fLeft.addAction(MergeSourceViewer.SAVE_ID, fLeftSaveAction);
 			
 		fRight= createPart(composite);
 		fRight.getTextWidget().getVerticalBar().setVisible(false);
+		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
 		
 		fRightCanvas= new BufferedCanvas(composite, SWT.V_SCROLL) {
 			public void doPaint(GC gc) {
@@ -645,7 +652,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IActionBars actionBars= CompareEditor.findActionBars(fComposite);
 		if (actionBars != null) {
 			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
-				Action action= null;
+				IAction action= null;
 				if (part != null)
 					action= part.getAction(TEXT_ACTIONS[i]);
 				actionBars.setGlobalActionHandler(GLOBAL_ACTIONS[i], action);
@@ -976,15 +983,15 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fChangeDiffs= new ArrayList();
 
 		IDocument aDoc= null;
-		IDocument iDoc= fLeft.getDocument();
-		IDocument oDoc= fRight.getDocument();
+		IDocument lDoc= fLeft.getDocument();
+		IDocument rDoc= fRight.getDocument();
 
-		if (iDoc == null || oDoc == null)
+		if (lDoc == null || rDoc == null)
 			return;
 			
 		IRegion aRegion= null;
-		IRegion iRegion= fLeft.getRegion();
-		IRegion oRegion= fRight.getRegion();
+		IRegion lRegion= fLeft.getRegion();
+		IRegion rRegion= fRight.getRegion();
 		
 		boolean threeWay= isThreeWay();
 		
@@ -999,13 +1006,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		boolean ignoreWhiteSpace= Utilities.getBoolean(getCompareConfiguration(), CompareConfiguration.IGNORE_WHITESPACE, false);		
 		
-		DocLineComparator sright= new DocLineComparator(oDoc, oRegion, ignoreWhiteSpace);
-		DocLineComparator sleft= new DocLineComparator(iDoc, iRegion, ignoreWhiteSpace);
+		DocLineComparator sright= new DocLineComparator(rDoc, rRegion, ignoreWhiteSpace);
+		DocLineComparator sleft= new DocLineComparator(lDoc, lRegion, ignoreWhiteSpace);
 		DocLineComparator sancestor= null;
 		if (aDoc != null)
 			sancestor= new DocLineComparator(aDoc, aRegion, ignoreWhiteSpace);
 			
-		if (!fSubDoc && oRegion != null && iRegion != null) {
+		if (!fSubDoc && rRegion != null && lRegion != null) {
 			// we have to add a diff for the ignored lines
 			
 			int astart= 0;
@@ -1014,14 +1021,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				astart= aRegion.getOffset();
 				as= Math.max(0, astart-1);
 			}
-			int ys= Math.max(0, iRegion.getOffset()-1);
-			int ms= Math.max(0, oRegion.getOffset()-1);
+			int ys= Math.max(0, lRegion.getOffset()-1);
+			int ms= Math.max(0, rRegion.getOffset()-1);
 			
 			if (as > 0 || ys > 0 || ms > 0) {
 				Diff diff= new Diff(null, RangeDifference.NOCHANGE,
 					aDoc, 0, astart,
-					iDoc, 0, iRegion.getOffset(),
-					oDoc, 0, oRegion.getOffset());
+					lDoc, 0, lRegion.getOffset(),
+					rDoc, 0, rRegion.getOffset());
 				fAllDiffs.add(diff);
 			}
 		}
@@ -1049,8 +1056,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			Diff diff= new Diff(null, kind,
 				aDoc, ancestorStart, ancestorEnd,
-				iDoc, leftStart, leftEnd,
-				oDoc, rightStart, rightEnd);	
+				lDoc, leftStart, leftEnd,
+				rDoc, rightStart, rightEnd);	
 			
 			fAllDiffs.add(diff);	// remember all range diffs for scrolling
 
@@ -1077,14 +1084,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					if (a == null && sancestor != null)
 						a= sancestor.extract(es.ancestorStart(), es.ancestorLength());
 					if (USE_MERGING_TOKEN_DIFF)
-						mergingTokenDiff(diff, aDoc, a, oDoc, d, iDoc, s);
+						mergingTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
 					else
-						simpleTokenDiff(diff, aDoc, a, oDoc, d, iDoc, s);
+						simpleTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
 				}
 			}
 		}
 		
-		if (!fSubDoc && oRegion != null && iRegion != null) {
+		if (!fSubDoc && rRegion != null && lRegion != null) {
 			// we have to add a diff for the ignored lines
 			
 			int aEnd= 0;
@@ -1095,8 +1102,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 			Diff diff= new Diff(null, RangeDifference.NOCHANGE,
 				aDoc, aEnd, aLen,
-				iDoc, iRegion.getOffset()+iRegion.getLength(), iDoc.getLength(),
-				oDoc, oRegion.getOffset()+oRegion.getLength(), oDoc.getLength());
+				lDoc, lRegion.getOffset()+lRegion.getLength(), lDoc.getLength(),
+				rDoc, rRegion.getOffset()+rRegion.getLength(), rDoc.getLength());
 			fAllDiffs.add(diff);
 		}
 	}
@@ -1782,32 +1789,48 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 	private RGB getFillColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
-		switch (diff.fDirection) {
-		case RangeDifference.RIGHT:
-			return selected ? SELECTED_OUTGOING_FILL : OUTGOING_FILL;
-		case RangeDifference.ANCESTOR:
-			return selected ? SELECTED_CONFLICT_FILL : CONFLICT_FILL;
-		case RangeDifference.LEFT:
-			return selected ? SELECTED_INCOMING_FILL : INCOMING_FILL;
-		case RangeDifference.CONFLICT:
-			return selected ? SELECTED_CONFLICT_FILL : CONFLICT_FILL;
+		
+		if (isThreeWay()) {
+			switch (diff.fDirection) {
+			case RangeDifference.RIGHT:
+				if (fLeftIsLocal)
+					return selected ? SELECTED_INCOMING_FILL : INCOMING_FILL;
+				return selected ? SELECTED_OUTGOING_FILL : OUTGOING_FILL;
+			case RangeDifference.ANCESTOR:
+				return selected ? SELECTED_CONFLICT_FILL : CONFLICT_FILL;
+			case RangeDifference.LEFT:
+				if (fLeftIsLocal)
+					return selected ? SELECTED_OUTGOING_FILL : OUTGOING_FILL;
+				return selected ? SELECTED_INCOMING_FILL : INCOMING_FILL;
+			case RangeDifference.CONFLICT:
+				return selected ? SELECTED_CONFLICT_FILL : CONFLICT_FILL;
+			}
+			return null;
 		}
-		return null;
+		return selected ? SELECTED_OUTGOING_FILL : OUTGOING_FILL;
 	}
 	
 	private RGB getStrokeColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
-		switch (diff.fDirection) {
-		case RangeDifference.RIGHT:
-			return selected ? SELECTED_OUTGOING : OUTGOING;
-		case RangeDifference.ANCESTOR:
-			return selected ? SELECTED_CONFLICT : CONFLICT;
-		case RangeDifference.LEFT:
-			return selected ? SELECTED_INCOMING : INCOMING;
-		case RangeDifference.CONFLICT:
-			return selected ? SELECTED_CONFLICT : CONFLICT;
+		
+		if (isThreeWay()) {
+			switch (diff.fDirection) {
+			case RangeDifference.RIGHT:
+				if (fLeftIsLocal)
+					return selected ? SELECTED_INCOMING : INCOMING;
+				return selected ? SELECTED_OUTGOING : OUTGOING;
+			case RangeDifference.ANCESTOR:
+				return selected ? SELECTED_CONFLICT : CONFLICT;
+			case RangeDifference.LEFT:
+				if (fLeftIsLocal)
+					return selected ? SELECTED_OUTGOING : OUTGOING;
+				return selected ? SELECTED_INCOMING : INCOMING;
+			case RangeDifference.CONFLICT:
+				return selected ? SELECTED_CONFLICT : CONFLICT;
+			}
+			return null;
 		}
-		return null;
+		return selected ? SELECTED_OUTGOING : OUTGOING;
 	}
 	
 	private Color getColor(RGB rgb) {

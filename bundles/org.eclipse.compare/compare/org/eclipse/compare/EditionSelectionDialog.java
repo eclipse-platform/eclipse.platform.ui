@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare;
 
@@ -472,12 +471,17 @@ public class EditionSelectionDialog extends Dialog {
 			}
 		);
 		
-		if (!fReplaceMode) {
-	
+		if (fReplaceMode) {
+			fEditionPane= new Pane(vsplitter, SWT.NONE);
+			
+			String titleFormat= Utilities.getString(fBundle, "treeTitleFormat", "treeTitleFormat");
+			String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
+			fEditionPane.setText(title);
+		} else {
 			Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
 			
 			fMemberPane= new Pane(hsplitter, SWT.NONE);
-			fMemberPane.setText("Available Members");
+			fMemberPane.setText(Utilities.getString(fBundle, "memberPaneTitle"));
 			fMemberTable= new Table(fMemberPane, SWT.H_SCROLL + SWT.V_SCROLL);
 			fMemberTable.addSelectionListener(
 				new SelectionAdapter() {
@@ -490,13 +494,7 @@ public class EditionSelectionDialog extends Dialog {
 			fMemberPane.setContent(fMemberTable);
 			
 			fEditionPane= new Pane(hsplitter, SWT.NONE);
-		} else {
-			fEditionPane= new Pane(vsplitter, SWT.NONE);
 		}
-		
-		String titleFormat= Utilities.getString(fBundle, "treeTitleFormat", "treeTitleFormat");
-		String title= MessageFormat.format(titleFormat, new Object[] { fTargetPair.getItem().getName() });
-		fEditionPane.setText(title);
 		
 		fEditionTree= new Tree(fEditionPane, SWT.H_SCROLL + SWT.V_SCROLL);
 		fEditionTree.addSelectionListener(
@@ -602,13 +600,13 @@ public class EditionSelectionDialog extends Dialog {
 			if (fMemberTable != null) {
 				if (!fMemberTable.isDisposed() && fMemberTable.getItemCount() == 0) {
 					TableItem ti= new TableItem(fMemberTable, SWT.NONE);
-					ti.setText("No additional members found");
+					ti.setText(Utilities.getString(fBundle, "noAdditionalMembersMessage"));
 				}
 				return;
 			}			
 			if (fEditionTree != null && !fEditionTree.isDisposed() && fEditionTree.getItemCount() == 0) {
 				TreeItem ti= new TreeItem(fEditionTree, SWT.NONE);
-				ti.setText("No editions found");
+				ti.setText(Utilities.getString(fBundle, "notFoundInLocalHistoryMessage"));
 			}
 			return;
 		}
@@ -691,7 +689,7 @@ public class EditionSelectionDialog extends Dialog {
 				formatKey= "yesterdayFormat";
 			else
 				formatKey= "dayFormat";
-			String pattern= Utilities.getString(fBundle, formatKey, null);
+			String pattern= Utilities.getString(fBundle, formatKey);
 			if (pattern != null)
 				df= MessageFormat.format(pattern, new Object[] { df });
 			lastDay.setText(df);
@@ -721,7 +719,11 @@ public class EditionSelectionDialog extends Dialog {
 			if (editions != fCurrentEditions) {
 				fCurrentEditions= editions;
 				fEditionTree.removeAll();
-				fEditionPane.setText("Editions of " + ((Item)w).getText());
+				
+				String pattern= Utilities.getString(fBundle, "treeTitleFormat");
+				String title= MessageFormat.format(pattern, new Object[] { ((Item)w).getText() });
+				fEditionPane.setText(title);
+				
 				Iterator iter= editions.iterator();
 				while (iter.hasNext()) {
 					Object item= iter.next();

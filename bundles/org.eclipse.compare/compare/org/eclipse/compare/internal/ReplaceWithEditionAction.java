@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.internal;
 
@@ -23,7 +22,8 @@ import org.eclipse.compare.*;
 
 public class ReplaceWithEditionAction implements IActionDelegate {
 		
-	private static final String ACTION_LABEL= "Replace with Edition";
+	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.ReplaceWithEditionAction";
+
 	private ISelection fSelection;
 	
 
@@ -53,13 +53,16 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 
 	void replaceFromHistory(IFile file) {
 				
+		ResourceBundle bundle= ResourceBundle.getBundle(BUNDLE_NAME);
+		String title= Utilities.getString(bundle, "title");
+		
 		Shell parent= CompareUIPlugin.getShell();
-
+		
 		IFileState states[]= null;
 		try {
 			states= file.getHistory(null);
 		} catch (CoreException ex) {		
-			MessageDialog.openError(parent, ACTION_LABEL, ex.getMessage());
+			MessageDialog.openError(parent, title, ex.getMessage());
 			return;
 		}
 		
@@ -71,7 +74,6 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 			for (int i= 0; i < states.length; i++)
 				editions[i]= new HistoryItem(base, states[i]);
 
-			ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.compare.internal.ReplaceWithEditionAction");
 			EditionSelectionDialog d= new EditionSelectionDialog(parent, bundle);
 
 			ITypedElement ti= d.selectEdition(base, editions, null);			
@@ -80,11 +82,13 @@ public class ReplaceWithEditionAction implements IActionDelegate {
 					InputStream is= ((IStreamContentAccessor)ti).getContents();
 					file.setContents(is, false, true, null);
 				} catch (CoreException ex) {
-					MessageDialog.openError(parent, ACTION_LABEL, ex.getMessage());
+					MessageDialog.openError(parent, title, ex.getMessage());
 				}
 			}
-		} else
-			MessageDialog.openInformation(parent, ACTION_LABEL, "No local editions available for selected resource.");
+		} else {
+			String msg= Utilities.getString(bundle, "noLocalHistoryError");
+			MessageDialog.openInformation(parent, title, msg);
+		}
 	}
 }
 

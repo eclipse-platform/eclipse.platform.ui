@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000, 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.contentmergeviewer;
 
@@ -15,7 +14,7 @@ import org.eclipse.swt.custom.CLabel;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -54,6 +53,20 @@ import org.eclipse.compare.internal.*;
  * @see TextMergeViewer
  */
 public abstract class ContentMergeViewer extends ContentViewer implements IPropertyChangeNotifier {
+	
+	class SaveAction extends MergeViewerAction {
+		
+		private boolean fLeft;
+		
+		SaveAction(boolean left) {
+			super(true, false, false);
+			Utilities.initAction(this, getResourceBundle(), "action.save.");
+		}
+			
+		public void run() {
+			saveContent(getInput());
+		}
+	};
 	
 	/**
 	 * Property names.
@@ -219,9 +232,10 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	private IPropertyChangeListener fPropertyChangeListener;
 	private ICompareInputChangeListener fCompareInputChangeListener;
 	private ListenerList fListenerList;
+	boolean fAllowSave= true;
 
-	private boolean fLeftDirty;		// left side is dirty
-	private boolean fRightDirty;		// right side is dirty
+	//private boolean fLeftDirty;		// left side is dirty
+	//private boolean fRightDirty;		// right side is dirty
 	
 	private double fHSplit= HSPLIT;		// width ratio of left and right panes
 	private double fVSplit= VSPLIT;		// height ratio of ancestor and bottom panes
@@ -233,6 +247,9 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	
 	private Action fCopyLeftToRightAction;	// copy from left to right
 	private Action fCopyRightToLeftAction;	// copy from right to left
+
+	MergeViewerAction fLeftSaveAction;
+	MergeViewerAction fRightSaveAction;
 
 	// SWT widgets
 	/* package */ Composite fComposite;
@@ -259,7 +276,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		fStyles= style;
 		fBundle= bundle;
 		
-		
 		fAncestorEnabled= Utilities.getBoolean(cc, ANCESTOR_ENABLED, fAncestorEnabled);
 
 		setContentProvider(new MergeViewerContentProvider(cc));
@@ -279,6 +295,11 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		fCompareConfiguration= cc;
 		if (fCompareConfiguration != null)
 			fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
+			
+		fLeftSaveAction= new SaveAction(true);
+		fLeftSaveAction.setEnabled(false);
+		fRightSaveAction= new SaveAction(false);
+		fRightSaveAction.setEnabled(false);
 	}
 	
 	//---- hooks ---------------------
@@ -479,8 +500,38 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			((ICompareInput)oldInput).removeCompareInputChangeListener(fCompareInputChangeListener);
 		
 		// before setting the new input we have to save the old
-		if (fLeftDirty || fRightDirty)
-			saveContent(oldInput);
+		if (fLeftSaveAction.isEnabled() || fRightSaveAction.isEnabled()) {
+			
+			// post alert
+			if (fAllowSave) {
+				Shell shell= fComposite.getShell();
+				
+				MessageDialog dialog= new MessageDialog(shell,
+					"Save Resource",
+					null, 	// accept the default window icon
+					"Resource has been modified. Save changes?",
+					MessageDialog.QUESTION,
+					new String[] {
+						IDialogConstants.YES_LABEL,
+						IDialogConstants.NO_LABEL,
+						IDialogConstants.CANCEL_LABEL
+					},
+					0);		// default button index
+									
+				switch (dialog.open()) {	// open returns index of pressed button
+				case 0:
+					saveContent(oldInput);
+					break;
+				case 1:
+					setLeftDirty(false);
+					setRightDirty(false);
+					break;
+				case 2:
+					throw new CompareViewerSwitchingPane.ViewerSwitchingCancelled();
+				}
+			} else
+				saveContent(oldInput);
+		}
 			
 		if (input instanceof ICompareInput)
 			((ICompareInput)input).addCompareInputChangeListener(fCompareInputChangeListener);
@@ -492,15 +543,13 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		//boolean rightEditable= fMergeViewerContentProvider.isRightEditable(input);
 		//boolean leftEditable= fMergeViewerContentProvider.isLeftEditable(input);
 				
-//		if (fInput instanceof ICompareInput)	
-//			fIsThreeWay= (((ICompareInput)fInput).getChangeType() & Differencer.DIRECTION_MASK) != 0;
-//		else
-//			fIsThreeWay= true;
-
 		IMergeViewerContentProvider content= getMergeContentProvider();
 		
 		Object ancestor= content.getAncestorContent(input);
-		fIsThreeWay= ancestor != null;
+		if (input instanceof ICompareInput)	
+			fIsThreeWay= (((ICompareInput)input).getKind() & Differencer.DIRECTION_MASK) != 0;
+		else 
+			fIsThreeWay= true;	// ancestor != null;
 			
 		if (fAncestorItem != null)
 			fAncestorItem.setVisible(fIsThreeWay);
@@ -893,14 +942,9 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	 * @param dirty the state of the left side dirty flag
 	 */
 	protected void setLeftDirty(boolean dirty) {
-		if (fLeftDirty != dirty) {
-			fLeftDirty= dirty;
+		if (fLeftSaveAction.isEnabled() != dirty) {
+			fLeftSaveAction.setEnabled(dirty);
 			fireDirtyState(dirty);
-//			if (fActions != null) {
-//				Action saveAction= (Action) fActions.get("Save");
-//				if (saveAction != null)
-//					saveAction.setEnabled(dirty);
-//			}
 		}
 	}
 	
@@ -914,36 +958,29 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	 * @param dirty the state of the right side dirty flag
 	 */
 	protected void setRightDirty(boolean dirty) {
-		if (fRightDirty != dirty) {
-			fRightDirty= dirty;
+		if (fRightSaveAction.isEnabled() != dirty) {
+			fRightSaveAction.setEnabled(dirty);
 			fireDirtyState(dirty);
-//			if (fActions != null) {
-//				Action saveAction= (Action) fActions.get("Save");
-//				if (saveAction != null)
-//					saveAction.setEnabled(dirty);
-//			}
 		}
 	}
-			
+	
 	/**
 	 * Save modified content back to input elements via the content provider.
 	 */
 	/* package */ void saveContent(Object oldInput) {
-		
+				
 		// write back modified contents
 		IMergeViewerContentProvider content= (IMergeViewerContentProvider) getContentProvider();
 		
-		if (fCompareConfiguration.isLeftEditable() && fLeftDirty) {
-			
+		if (fCompareConfiguration.isLeftEditable() && fLeftSaveAction.isEnabled()) {
 			byte[] bytes= getContents(true);
-			content.saveLeftContent(oldInput, bytes);	
+			content.saveLeftContent(oldInput, bytes);
 			setLeftDirty(false);
 		}
 		
-		if (fCompareConfiguration.isRightEditable() && fRightDirty) {
-			
+		if (fCompareConfiguration.isRightEditable() && fRightSaveAction.isEnabled()) {
 			byte[] bytes= getContents(false);
-			content.saveRightContent(oldInput, bytes);				
+			content.saveRightContent(oldInput, bytes);
 			setRightDirty(false);
 		}
 	}

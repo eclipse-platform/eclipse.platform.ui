@@ -1,4 +1,4 @@
-package org.eclipse.compare.internal;
+/* * (c) Copyright IBM Corp. 2000, 2001. * All Rights Reserved. */package org.eclipse.compare.internal;
 import java.util.ResourceBundle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Composite;

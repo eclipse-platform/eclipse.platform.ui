@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000, 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.structuremergeviewer;
 
@@ -46,7 +45,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private IStructureComparator fAncestorStructure;
 	private IStructureComparator fLeftStructure;
 	private IStructureComparator fRightStructure;
-		
+	
 	private IStructureCreator fStructureCreator;
 	private IDiffContainer fRoot;
 	private ChangePropertyAction fSmartAction;
@@ -267,7 +266,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			
 			if (fStructureCreator.canRewriteTree()) {
 				boolean smart= Utilities.getBoolean(getCompareConfiguration(), SMART, false);
-				if (smart)
+				if (smart && fRoot != null)
 					fStructureCreator.rewriteTree(fDifferencer, fRoot);
 			}
 		}	

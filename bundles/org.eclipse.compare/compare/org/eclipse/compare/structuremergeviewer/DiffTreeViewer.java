@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000, 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.structuremergeviewer;
 
@@ -55,7 +54,6 @@ public class DiffTreeViewer extends TreeViewer {
 	class DiffViewerContentProvider implements ITreeContentProvider {
 			
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// System.out.println("input: " + newInput);
 		}
 	
 		public boolean isDeleted(Object element) {
@@ -282,12 +280,20 @@ public class DiffTreeViewer extends TreeViewer {
 	protected void propertyChange(PropertyChangeEvent event) {
 			
 		//if (event.getProperty().equals(CompareConfiguration.SHOW_PSEUDO_CONFLICTS))
-		//	syncShowPseudoConflictFilter();			
+		//	syncShowPseudoConflictFilter();	 		 
 	}
 	
 	protected void inputChanged(Object in, Object oldInput) {
 		super.inputChanged(in, oldInput);
 		expandToLevel(2);
+		updateActions();
+		
+//			System.out.println("inputChanged: " + in);
+//			if (fCompareConfiguration != null) {
+//				System.out.println("  left: " + fCompareConfiguration.isLeftEditable());
+//				System.out.println("  right: " + fCompareConfiguration.isRightEditable());
+//			}
+
 	}
 
 	/**
@@ -552,7 +558,7 @@ public class DiffTreeViewer extends TreeViewer {
 		}
 		return false;
 	}
-	
+		
 	private void updateActions() {
 		int leftToRight= 0;
 		int rightToLeft= 0;

@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000, 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.internal;
 
@@ -29,6 +28,10 @@ import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
  */
 public abstract class CompareViewerSwitchingPane extends Pane
 				implements ISelectionChangedListener, ISelectionProvider, IDoubleClickListener {
+	
+	
+	public static class ViewerSwitchingCancelled extends Error {
+	}
 	
 	/**
 	 * Used whenever the input is null or no viewer can be found.
@@ -207,6 +210,13 @@ public abstract class CompareViewerSwitchingPane extends Pane
 		if (fInput == input)
 			return;
 		
+		try {
+			if (fViewer != null)
+				fViewer.setInput(null);	// force save before switching viewer
+		} catch (ViewerSwitchingCancelled ex) {
+			return;
+		}
+
 		fInput= input;
 
 		// viewer switching
@@ -219,7 +229,7 @@ public abstract class CompareViewerSwitchingPane extends Pane
 				return;
 			newViewer= new NullViewer(this);
 		}
-
+		
 		setViewer(newViewer);
 
 		// set input

@@ -1,7 +1,6 @@
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 package org.eclipse.compare.internal;
 
@@ -155,7 +154,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		setTitle(title.toString());
 			
 		try {													
-			pm.beginTask("Comparing:", IProgressMonitor.UNKNOWN);
+			pm.beginTask("Operation in Progress...", IProgressMonitor.UNKNOWN);
 
 			Differencer d= new Differencer() {
 				protected Object visit(Object parent, int description, Object ancestor, Object left, Object right) {
