@@ -107,7 +107,7 @@ document.write(extraStyle);
 	
 var selectedBooks;
 var advancedDialog;
-var w = 580;
+var w = 400;
 var h = 400;
 
 function saveSelectedBooks(books)
