@@ -71,11 +71,11 @@ public class ActivityConstraints {
 		IFeature feature,
 		ArrayList children) {
 		try {
-			// test for the platform feature
-			if (isPlatformFeature(feature)) {
+			IFeature platformFeature = getPlatformFeature(feature);
+			if (platformFeature != null) {
 				children.add(
 					createStatus(
-						feature,
+						platformFeature,
 						UpdateUIPlugin.getResourceString(KEY_PRIMARY)));
 				// That's enough - there is no need to check the rest
 				// if we get to here.
@@ -321,21 +321,20 @@ public class ActivityConstraints {
 		}
 	}
 
-	private static boolean isPlatformFeature(IFeature feature)
+	private static IFeature getPlatformFeature(IFeature feature)
 		throws CoreException {
 		String[] bootstrapPlugins =
 			BootLoader
 				.getCurrentPlatformConfiguration()
 				.getBootstrapPluginIdentifiers();
-		if (containsBootstrapPlugins(feature, bootstrapPlugins))
-			return true;
+		IFeature result = getBootstrapFeature(feature, bootstrapPlugins);
+		if (result != null)
+			return result;
 		// is primary
-		return feature.isPrimary();
+		return feature.isPrimary() ? feature : null;
 	}
 
-	private static boolean containsBootstrapPlugins(
-		IFeature feature,
-		String[] ids)
+	private static IFeature getBootstrapFeature(IFeature feature, String[] ids)
 		throws CoreException {
 		IPluginEntry[] entries = feature.getPluginEntries();
 		// contains bootstrap plug-ins
@@ -343,16 +342,18 @@ public class ActivityConstraints {
 			IPluginEntry entry = entries[i];
 			String id = entry.getVersionedIdentifier().getIdentifier();
 			if (isOnTheList(id, ids))
-				return true;
+				return feature;
 		}
 		// test included
 		IFeatureReference[] included = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < included.length; i++) {
 			IFeatureReference ref = included[i];
-			if (containsBootstrapPlugins(ref.getFeature(), ids))
-				return true;
+			IFeature includedFeature = ref.getFeature();
+			IFeature result = getBootstrapFeature(includedFeature, ids);
+			if (result != null)
+				return result;
 		}
-		return false;
+		return null;
 	}
 
 	private static boolean isOnTheList(String id, String[] list) {

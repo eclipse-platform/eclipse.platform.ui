@@ -92,7 +92,6 @@ public class NewUpdatesWizard extends Wizard {
 					installCount = 0;
 					InstallWizard.makeConfigurationCurrent(config);
 					execute(selectedJobs, monitor);
-					InstallWizard.saveLocalSite();
 				} catch (InstallAbortedException e) {
 					throw new InvocationTargetException(e);
 				} catch (CoreException e) {
@@ -107,12 +106,7 @@ public class NewUpdatesWizard extends Wizard {
 		} catch (InvocationTargetException e) {
 			Throwable targetException = e.getTargetException();
 			if (targetException instanceof InstallAbortedException) {
-				// We may want to reset install count to avoid
-				// restarting the workbench.
-				// We may also want to revert to the previous
-				// configuration unless we want a record of 
-				// the cancelation showing up as activity.
-				//installCount = 0;
+				return true;
 			}
 			else {
 				UpdateUIPlugin.logException(e);
@@ -146,6 +140,7 @@ public class NewUpdatesWizard extends Wizard {
 			PendingChange job = selectedJobs[i];
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
 			executeOneJob(job, subMonitor);
+			InstallWizard.saveLocalSite();
 			installCount++;
 		}
 	}

@@ -67,7 +67,7 @@ public class JarVerificationPage extends BannerPage {
 
 		// Choice Area
 		//------------		
-		createChoiceArea(compositeClient);
+		//createChoiceArea(compositeClient);
 
 		return compositeClient;
 
