@@ -301,8 +301,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		fScrollPos= styledText.getTopPixel();
 		int lineheight= styledText.getLineHeight();
 			
-		int shift= fTextViewer.getTopInset();
-		
 		int topLine= -1, bottomLine= -1;
 		try {
 			IRegion region= fTextViewer.getVisibleRegion();
@@ -359,7 +357,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					endLine -= topLine;
 					
 					r.x= 0;
-					r.y= (startLine * lineheight) - fScrollPos + shift;
+					r.y= (startLine * lineheight) - fScrollPos;
 					r.width= d.x;
 					int lines= endLine - startLine;
 					if (lines < 0)
@@ -399,7 +397,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		fScrollPos= textWidget.getTopPixel();
 		int lineheight= textWidget.getLineHeight();
 		Point dimension= fCanvas.getSize();
-		int shift= fTextViewer.getTopInset();
 
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
@@ -439,7 +436,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					continue;
 
 				r.x= 0;
-				r.y= (startLine * lineheight) - fScrollPos + shift;
+				r.y= (startLine * lineheight) - fScrollPos;
 				r.width= dimension.x;
 				int lines= endLine - startLine;
 				if (lines < 0)

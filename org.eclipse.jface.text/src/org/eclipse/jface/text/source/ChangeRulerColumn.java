@@ -332,7 +332,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int canvasheight= fCanvas.getSize().y;
 
-		int y= ((topLine - firstLine) * lineheight) - fScrollPos + fCachedTextViewer.getTopInset();
+		int y= ((topLine - firstLine) * lineheight) - fScrollPos;
 		for (int line= topLine; line <= bottomLine; line++, y+= lineheight) {
 			
 			if (y >= canvasheight)
@@ -393,7 +393,7 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int canvasheight= fCanvas.getSize().y;
 
-		int y= (widgetTopLine * lineheight) - fScrollPos + fCachedTextViewer.getTopInset();
+		int y= (widgetTopLine * lineheight) - fScrollPos;
 		for (int modelLine= topLine; modelLine <= bottomLine; modelLine++) {
 
 			if (y >= canvasheight)

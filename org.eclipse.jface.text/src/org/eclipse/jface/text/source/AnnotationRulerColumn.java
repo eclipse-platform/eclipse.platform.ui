@@ -636,7 +636,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int lineheight= fCachedTextWidget.getLineHeight();
 		Point dimension= fCanvas.getSize();
-		int shift= fCachedTextViewer.getTopInset();
 
 		IDocument doc= fCachedTextViewer.getDocument();		
 		
@@ -698,7 +697,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					endLine -= topLine;
 
 					r.x= 0;
-					r.y= (startLine * lineheight) - fScrollPos + shift;
+					r.y= (startLine * lineheight) - fScrollPos;
 					r.width= dimension.x;
 					int lines= endLine - startLine;
 					if (lines < 0)
@@ -730,7 +729,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int lineheight= fCachedTextWidget.getLineHeight();
 		Point dimension= fCanvas.getSize();
-		int shift= fCachedTextViewer.getTopInset();
 
 		int vOffset= getInclusiveTopIndexStartOffset();
 		int vLength= getExclusiveBottomIndexEndOffset() - vOffset;		
@@ -791,7 +789,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					continue;
 
 				r.x= 0;
-				r.y= (startLine * lineheight) - fScrollPos + shift;
+				r.y= (startLine * lineheight) - fScrollPos;
 				r.width= dimension.x;
 				int lines= endLine - startLine;
 				if (lines < 0)
