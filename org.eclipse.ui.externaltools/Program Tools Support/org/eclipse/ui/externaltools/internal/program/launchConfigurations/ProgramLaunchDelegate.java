@@ -75,7 +75,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 				}
 				if (configType.equals(programType)) {
 					if (!launches[i].isTerminated()) {
-						MessageDialog.openWarning(window.getShell(), ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.Workbench_Closing_1"), ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.The_workbench_is_exiting_and_a_program_launched_from_an_external_tool_appears_to_still_be_running._These_programs_will_be_terminated_when_the_workbench_exits._It_is_recommended_that_you_exit_any_external_programs_launched_from_the_workbench_before_you_proceed._n_nClick_OK_to_continue_exiting_the_workbench._2")); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openWarning(window.getShell(), ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.Workbench_Closing_1"), ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.The_workbench_is_exiting")); //$NON-NLS-1$ //$NON-NLS-2$
 						break;
 					}
 				}
@@ -83,13 +83,6 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		public void windowOpened(IWorkbenchWindow window) {
 		}
-	}
-	
-	/**
-	 * Constructor for ProgramLaunchDelegate.
-	 */
-	public ProgramLaunchDelegate() {
-		super();
 	}
 
 	/**
@@ -168,7 +161,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (p != null) {
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
 		}
-		process.setAttribute(IProcess.ATTR_CMDLINE, renderCommandLine(cmdLine));
+		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdLine));
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
 			// refresh resources after process finishes
@@ -194,9 +187,10 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 	}
 	
-	protected static String renderCommandLine(String[] commandLine) {
-		if (commandLine.length < 1)
+	private String generateCommandLine(String[] commandLine) {
+		if (commandLine.length < 1) {
 			return ""; //$NON-NLS-1$
+		}
 		StringBuffer buf= new StringBuffer(commandLine[0]);
 		for (int i= 1; i < commandLine.length; i++) {
 			buf.append(' ');
