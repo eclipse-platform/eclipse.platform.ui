@@ -55,17 +55,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		initialize();
 		//Short cut, if the configuration has not changed
 		String application = configuration.getApplicationIdentifier();
-
-		//TODO Hack until PDE changes the default application that they are setting
-		if("org.eclipse.ui.workbench".equals(System.getProperties().get("eclipse.application"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			System.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	
-//		if (lastTimeStamp==configuration.getChangeStamp() && !(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null)) {
-		if (lastTimeStamp==configuration.getChangeStamp() && System.getProperties().get("osgi.dev") == null) {
-				
+		
+		if (lastTimeStamp==configuration.getChangeStamp() && System.getProperties().get("osgi.dev") == null) {		
 			Utils.debug("Same last time stamp *****");
-			
 			if (System.getProperty("eclipse.application") == null) {
 				Utils.debug("no eclipse.application, setting it and returning");
 				System.setProperty("eclipse.application", application);
@@ -199,7 +191,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			}
 			context.ungetService(reference);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
-//			if (System.getProperty("eclipse.application") == null || System.getProperty("eclipse.application").equals(PlatformConfiguration.RECONCILER_APP))
 			if (System.getProperty("eclipse.application") == null)
 				System.setProperty("eclipse.application", configuration.getApplicationIdentifier());
 		} catch (Exception e) {

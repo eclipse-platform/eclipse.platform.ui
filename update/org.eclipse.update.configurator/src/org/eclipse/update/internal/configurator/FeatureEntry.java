@@ -79,7 +79,7 @@ public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConf
 	 * @see IFeatureEntry#getFeaturePluginVersion()
 	 */
 	public String getFeaturePluginVersion() {
-		return pluginVersion;
+		return pluginVersion != null && pluginVersion.length() > 0 ? pluginVersion : null;
 	}
 
 	/*
