@@ -16,16 +16,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -312,7 +314,14 @@ public abstract class Command extends Request {
 				
 				// print the invocation string to the console
 				if (session.isOutputToConsole() || Policy.DEBUG_CVS_PROTOCOL) {
-					String line = constructCommandInvocationString(gOptions, lOptions, arguments);
+					IPath commandRootPath;
+					IResource resource = session.getLocalRoot().getIResource();
+					if (resource == null) {
+						commandRootPath = Path.EMPTY;
+					} else {
+						commandRootPath = resource.getFullPath();
+					}
+					String line = constructCommandInvocationString(commandRootPath, gOptions, lOptions, arguments);
 					if (session.isOutputToConsole()) {
 						IConsoleListener consoleListener = CVSProviderPlugin.getPlugin().getConsoleListener();
 						if (consoleListener != null) consoleListener.commandInvoked(line);
@@ -409,7 +418,7 @@ public abstract class Command extends Request {
 	 * @param arguments the arguments
 	 * @return the command invocation string
 	 */
-	private String constructCommandInvocationString(GlobalOption[] globalOptions,
+	private String constructCommandInvocationString(IPath commandRootPath, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, String[] arguments) {
 		StringBuffer commandLine = new StringBuffer("cvs"); //$NON-NLS-1$
 		for (int i = 0; i < globalOptions.length; ++i) {
@@ -429,7 +438,11 @@ public abstract class Command extends Request {
 		for (int i = 0; i < arguments.length; ++i) {
 			if (arguments[i].length() == 0) continue;
 			commandLine.append(" \""); //$NON-NLS-1$
-			commandLine.append(arguments[i]);
+			IPath completePath = commandRootPath;
+			if (!arguments[i].equals(Session.CURRENT_LOCAL_FOLDER)) {
+				completePath = completePath.append(arguments[i]);
+			}
+			commandLine.append(completePath.toString());
 			commandLine.append('"'); //$NON-NLS-1$
 		}
 		return commandLine.toString();
