@@ -47,7 +47,9 @@ public void baseTest() {
 	// considered as a new root node).
 	
 	IPluginDescriptor[] pluginDescriptors = registry.getPluginDescriptors();
-	assertEquals("0.0", pluginDescriptors.length, 0);
+	assertEquals("1.0", 1, pluginDescriptors.length);
+	assertEquals("1.1", "tests.b", pluginDescriptors[0].getUniqueIdentifier());
+	assertEquals("1.2", new PluginVersionIdentifier("1.0.1"), pluginDescriptors[0].getVersionIdentifier());
 }
 public static Test suite() {
 	TestSuite suite = new TestSuite();

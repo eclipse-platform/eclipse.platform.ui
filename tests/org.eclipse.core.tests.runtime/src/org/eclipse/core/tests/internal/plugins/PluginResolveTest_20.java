@@ -43,7 +43,9 @@ public void baseTest() {
 	IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, true);
 
 	IPluginDescriptor[] plugins = registry.getPluginDescriptors();
-	assertEquals("0.0", plugins.length, 0);
+	assertEquals("1.0", 1, plugins.length);
+	assertEquals("1.1", "tests.b", plugins[0].getUniqueIdentifier());
+	assertEquals("1.2", new PluginVersionIdentifier("3.0.1"), plugins[0].getVersionIdentifier());
 }
 public static Test suite() {
 	TestSuite suite = new TestSuite();

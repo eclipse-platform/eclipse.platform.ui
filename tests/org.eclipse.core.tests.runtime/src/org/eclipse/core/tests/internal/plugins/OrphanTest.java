@@ -50,7 +50,7 @@ public void test1() {
 	 * and teste.  All other plugins should be disabled (and
 	 * trimmed).
 	 */
-/*	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "fragmentResolveTest", null);
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "fragmentResolveTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	URL pluginURLs[] = new URL[1];
 	try {
@@ -69,7 +69,7 @@ public void test1() {
 	IPluginDescriptor pd = registry.getPluginDescriptor("testc");
 	assertNotNull("1.2 Should find plugin testc", pd);
 	pd = registry.getPluginDescriptor("teste");
-	assertNotNull("1.3 Should find plugin teste", pd);*/
+	assertNotNull("1.3 Should find plugin teste", pd);
 }
 
 public void test2() {
@@ -125,7 +125,7 @@ public void test2() {
 	 * All other plugins (a, c, and i) should be disabled
 	 * (and trimmed).
 	 */
-/*	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "fragmentResolveTest", null);
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "fragmentResolveTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	URL pluginURLs[] = new URL[1];
 	try {
@@ -159,7 +159,7 @@ public void test2() {
 	pd = registry.getPluginDescriptor("testl");
 	assertNotNull("2.8 Should find plugin testl", pd);
 	pd = registry.getPluginDescriptor("testm");
-	assertNotNull("2.9 Should find plugin testm", pd);*/
+	assertNotNull("2.9 Should find plugin testm", pd);
 }
 
 public void test3() {
@@ -210,7 +210,7 @@ public void test3() {
 	 * All other plugins (a, c, and i) should be disabled
 	 * (and trimmed).
 	 */
-/*	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "fragmentResolveTest", null);
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "fragmentResolveTest", null);
 	InternalFactory factory = new InternalFactory(problems);
 	URL pluginURLs[] = new URL[1];
 	try {
@@ -240,7 +240,7 @@ public void test3() {
 	pd = registry.getPluginDescriptor("testj");
 	assertNotNull("3.6 Should find plugin testj", pd);
 	pd = registry.getPluginDescriptor("testa2");
-	assertNotNull("3.7 Should find plugin testa2", pd);*/
+	assertNotNull("3.7 Should find plugin testa2", pd);
 }
 
 public void test4() {
@@ -475,12 +475,9 @@ public void test6() {
 
 public static Test suite() {
 	TestSuite suite = new TestSuite();
-	// Comment out test1, 2 and 3 until bug 21465 - 
-	// "Plugin Resolving - reorder REQUIRES clause & different
-	// plugins are disabled" is fixed.
-//	suite.addTest(new OrphanTest("test1"));
-//	suite.addTest(new OrphanTest("test2"));
-//	suite.addTest(new OrphanTest("test3"));
+	suite.addTest(new OrphanTest("test1"));
+	suite.addTest(new OrphanTest("test2"));
+	suite.addTest(new OrphanTest("test3"));
 	suite.addTest(new OrphanTest("test4"));
 	suite.addTest(new OrphanTest("test5"));
 	suite.addTest(new OrphanTest("test6"));
