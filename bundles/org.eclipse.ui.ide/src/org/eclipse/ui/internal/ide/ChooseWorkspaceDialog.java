@@ -10,18 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -99,7 +94,11 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		setMessage(IDEWorkbenchMessages
 				.format("ChooseWorkspaceDialog.dialogMessage", //$NON-NLS-1$
 						new Object[]{ productName } ));
-		setTitleImage();
+
+		// bug 59934: load title image for sizing, but set it non-visible so the
+		//            white background is displayed
+		if (getTitleImageLabel() != null)
+		    getTitleImageLabel().setVisible(false);
 
 		createWorkspaceBrowseRow(composite);
 		createShowDialogButton(composite);
@@ -147,22 +146,6 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	protected void cancelPressed() {
 		launchData.workspaceSelected(null);
 		super.cancelPressed();
-	}
-
-	private void setTitleImage() {
-		try {
-			URL installURL = Platform.getPlugin(
-					IDEWorkbenchPlugin.IDE_WORKBENCH).getDescriptor()
-					.getInstallURL();
-			URL url = new URL(installURL, "icons/full/wizban/newfolder_wiz.gif");//$NON-NLS-1$
-
-			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-			Image image = desc.createImage();
-			if (image != null)
-				setTitleImage(image);
-		} catch (MalformedURLException e) {
-			// do nothing
-		}
 	}
 
 	/**
