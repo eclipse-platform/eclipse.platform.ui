@@ -377,6 +377,9 @@
       <defaultEnablement
             id="org.eclipse.debugging">
       </defaultEnablement>
+      <defaultEnablement
+            id="org.eclipse.plugInDevelopment">
+      </defaultEnablement>           
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
