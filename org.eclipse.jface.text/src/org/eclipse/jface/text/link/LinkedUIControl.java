@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.link;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -956,12 +960,16 @@ public class LinkedUIControl {
 		redraw();
 	}
 
-	void leave(int flags) {
+	void leave(final int flags) {
 		if (!fIsActive)
 			return;
 		fIsActive= false;
 
 		endCompoundChange();
+		
+		Display display= null;
+		if (fCurrentTarget.fWidget != null && !fCurrentTarget.fWidget.isDisposed())
+			display= fCurrentTarget.fWidget.getDisplay();
 		
 //		// debug trace
 //		JavaPlugin.log(new Status(IStatus.INFO, JavaPlugin.getPluginId(), IStatus.OK, "leaving linked mode", null));
@@ -994,28 +1002,44 @@ public class LinkedUIControl {
 		if ((flags & ILinkedListener.UPDATE_CARET) != 0 && fExitPosition != null && fFramePosition != fExitPosition && !fExitPosition.isDeleted())
 			switchPosition(fExitPosition, true, false);
 
+		final List docs= new ArrayList();
 		for (int i= 0; i < fTargets.length; i++) {
 			IDocument doc= fTargets[i].getViewer().getDocument();
-			if (doc != null) {
-				doc.removePositionUpdater(fPositionUpdater);
-				boolean uninstallCat= false;
-				String[] cats= doc.getPositionCategories();
-				for (int j= 0; j < cats.length; j++) {
-					if (getCategory().equals(cats[j])) {
-						uninstallCat= true;
-						break;
-					}
-				}
-				if (uninstallCat)
-					try {
-						doc.removePositionCategory(getCategory());
-					} catch (BadPositionCategoryException e) {
-						// ignore
-					}
-			}
+			if (doc != null)
+				docs.add(doc);
 		}
 
-		fEnvironment.exit(flags);
+		Runnable runnable= new Runnable() {
+			public void run() {
+				for (Iterator iter = docs.iterator(); iter.hasNext(); ) {
+					IDocument doc= (IDocument) iter.next();
+					doc.removePositionUpdater(fPositionUpdater);
+					boolean uninstallCat= false;
+					String[] cats= doc.getPositionCategories();
+					for (int j= 0; j < cats.length; j++) {
+						if (getCategory().equals(cats[j])) {
+							uninstallCat= true;
+							break;
+						}
+					}
+					if (uninstallCat)
+						try {
+							doc.removePositionCategory(getCategory());
+						} catch (BadPositionCategoryException e) {
+							// ignore
+						}
+				}
+				fEnvironment.exit(flags);
+			}
+		};
+
+		// remove positions (both exit positions AND linked positions in the
+		// environment) async to make sure that the annotation painter
+		// gets correct document offsets.
+		if (display != null)
+			display.asyncExec(runnable);
+		else
+			runnable.run();
 	}
 
 	/**

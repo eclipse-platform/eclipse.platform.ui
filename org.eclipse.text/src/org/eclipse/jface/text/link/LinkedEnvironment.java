@@ -141,6 +141,9 @@ public class LinkedEnvironment {
 	 */
 	private class DocumentListener implements IDocumentListener {
 
+		private DocumentEvent fLastEvent;
+		private boolean fExit= false;
+		
 		/**
 		 * Checks whether <code>event</code> occurs within any of the positions
 		 * managed by this environment. If not, the linked mode is left.
@@ -151,6 +154,9 @@ public class LinkedEnvironment {
 			// don't react on changes executed by the parent environment
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
+			
+			fExit= false;
+			fLastEvent= event;
 
 			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
 				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
@@ -161,11 +167,12 @@ public class LinkedEnvironment {
 			}
 			
 			// the event describes a change that lies outside of any managed
-			// position -> exit mode.
+			// position -> signal to exit 
+			// don't exit here already, since we want to make sure that the positions
+			// are updated to the document event.
 			// TODO we might not always want to exit, e.g. we want to stay
 			// linked if code completion has inserted import statements
-			LinkedEnvironment.this.exit(ILinkedListener.EXTERNAL_MODIFICATION);
-
+			fExit= true;
 		}
 
 		/**
@@ -177,6 +184,9 @@ public class LinkedEnvironment {
 			// don't react on changes executed by the parent environment
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
+
+			if (event.equals(fLastEvent) && fExit)
+				LinkedEnvironment.this.exit(ILinkedListener.EXTERNAL_MODIFICATION);
 
 			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
 				LinkedPositionGroup group= (LinkedPositionGroup) it.next();

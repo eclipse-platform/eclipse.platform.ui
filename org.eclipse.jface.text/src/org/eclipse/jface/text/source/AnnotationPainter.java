@@ -803,6 +803,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						t.printStackTrace(System.out);
 					}
 				}
+				
+				// TODO posting here is a problem for annotations that are being
+				// removed and the positions of which are not updated to document
+				// changes any more. If the document gets modified between
+				// now and running the posted runnable, the position information
+				// is not accurate any longer.
 				if (d != null) {
 					d.asyncExec(new Runnable() {
 						public void run() {
