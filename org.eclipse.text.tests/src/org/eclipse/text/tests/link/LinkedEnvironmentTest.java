@@ -258,7 +258,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		// second level
 		
 		LinkedPositionGroup group1_2= new LinkedPositionGroup();
-		group1_2.createPosition(doc1, 7, 3);
+		group1_2.addPosition(new LinkedPosition(doc1, 7, 3, LinkedPositionGroup.NO_STOP));
 		
 		
 		LinkedEnvironment childEnv= new LinkedEnvironment();
@@ -306,7 +306,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		
 		LinkedPositionGroup group1_2= new LinkedPositionGroup();
 		
-		group1_2.createPosition(doc1, 12, 3);
+		group1_2.addPosition(new LinkedPosition(doc1, 12, 3, LinkedPositionGroup.NO_STOP));
 		
 		LinkedEnvironment childEnv= new LinkedEnvironment();
 		childEnv.addGroup(group1_2);
@@ -341,7 +341,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		// second level
 		
 		LinkedPositionGroup group1_2= new LinkedPositionGroup();
-		group1_2.createPosition(doc1, 12, 3);
+		group1_2.addPosition(new LinkedPosition(doc1, 12, 3, LinkedPositionGroup.NO_STOP));
 		
 		LinkedEnvironment childEnv= new LinkedEnvironment();
 		childEnv.addGroup(group1_2);
@@ -447,7 +447,7 @@ public class LinkedEnvironmentTest extends TestCase {
 			
 		
 		for (int offset= text.indexOf(substring); offset != -1; offset= text.indexOf(substring, offset + 1)) {
-			group.createPosition(doc, offset, substring.length());
+			group.addPosition(new LinkedPosition(doc, offset, substring.length(), LinkedPositionGroup.NO_STOP));
 			fPositions.add(new LinkedPosition(original, offset, substring.length()));
 		}
 		

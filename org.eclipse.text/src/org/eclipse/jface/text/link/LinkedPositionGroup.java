@@ -25,7 +25,6 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 
 /**
@@ -70,82 +69,18 @@ public class LinkedPositionGroup {
 	private int fLastPositionOffset;
 	
 	/**
-	 * Adds a position to this group. If the position overlaps with another in
-	 * this group, or if the group is already part of an environment, an
-	 * exception is thrown.
-	 * 
-	 * @param document the document of the position
-	 * @param offset the offset of the position
-	 * @param length the length of the position
-	 * @throws BadLocationException if the position is invalid or conflicts
-	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has already been added to an
-	 *         environment
-	 */
-	public void createPosition(IDocument document, int offset, int length) throws BadLocationException {
-		createPosition(document, offset, length, LinkedPositionGroup.NO_STOP);
-	}
-
-	/**
-	 * Adds a position to this group. If the position overlaps with another in
-	 * this group, or if the group is already part of an environment, an
-	 * exception is thrown.
-	 * 
-	 * @param document the document of the position
-	 * @param offset the offset of the position
-	 * @param length the length of the position
-	 * @param sequence the tab stop number of the position
-	 * @throws BadLocationException if the position is invalid or conflicts
-	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has already been added to an
-	 *         environment
-	 */
-	public void createPosition(IDocument document, int offset, int length, int sequence) throws BadLocationException {
-		addPosition(new LinkedPosition(document, offset, length, sequence));
-	}
-
-	/**
-	 * Adds a position to this group. If the position overlaps with another in
-	 * this group, or if the group is already part of an environment, an
-	 * exception is thrown.
-	 * 
-	 * @param document the document of the position
-	 * @param region a region describing the new position (it is not
-	 *        stored, only its values are used)
-	 * @throws BadLocationException if the position is invalid or conflicts
-	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has already been added to an
-	 *         environment
-	 */
-	public void createPosition(IDocument document, IRegion region) throws BadLocationException {
-		createPosition(document, region, LinkedPositionGroup.NO_STOP);
-	}
-
-	/**
-	 * Adds a position to this group. If the position overlaps with another in
-	 * this group, or if the group is already part of an environment, an
-	 * exception is thrown.
-	 * 
-	 * @param document the document of the position
-	 * @param region a region describing the new position (it is not
-	 *        stored, only its values are used)
-	 * @param sequence the tab stop number of the position
-	 * @throws BadLocationException if the position is invalid or conflicts
-	 *         with other positions in the group
-	 * @throws IllegalStateException if the group has already been added to an
-	 *         environment
-	 */
-	public void createPosition(IDocument document, IRegion region, int sequence) throws BadLocationException {
-		createPosition(document, region.getOffset(), region.getLength(), sequence);
-	}
-	
-	/**
-	 * Adds a position to this group. If the position overlaps with another in
-	 * this group, or if the group is already part of an environment, an
-	 * exception is thrown.
+	 * Adds a position to this group. The document region defined by the
+	 * position must contain the same content (and thus have the same length) as
+	 * any of the other positions already in this group. Additionally, all
+	 * positions added must be disjoint; otherwise a
+	 * <code>BadLocationException</code> is thrown.
 	 * <p>
 	 * Positions added using this method are owned by this group afterwards and
 	 * may not be updated or modified thereafter.
+	 * </p>
+	 * <p>
+	 * Once a group has been added to a <code>LinkedEnvironment</code>, it
+	 * becomes <em>sealed</em> and no positions may be added any more.
 	 * </p>
 	 * 
 	 * @param position the position to add
