@@ -103,6 +103,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 * By default, delegate to all of the tabs in this group.
 	 * 
 	 * @see ILaunchConfigurationTabGroup#launched(ILaunch)
+	 * @deprecated
 	 */
 	public void launched(ILaunch launch) {
 		ILaunchConfigurationTab[] tabs = getTabs();

@@ -192,9 +192,11 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * configurations of this type. The first time this method
 	 * is called, the delegate is instantiated.
 	 * 
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegate()
 	 * @return launch configuration delegate
 	 * @exception CoreException if unable to instantiate the
 	 *  delegate
+	 * @deprecated use <code>getDelegate(String)</code> to specify mode
 	 */
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		return getDelegate(ILaunchManager.RUN_MODE);
