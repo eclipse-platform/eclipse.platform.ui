@@ -52,7 +52,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * The Editors preference page of the workbench.
  */
 public class EditorsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private IWorkbench workbench;
 	
 	// State for encoding group
 	private String defaultEnc;
@@ -116,7 +115,6 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 	}
 	
 	public void init(IWorkbench aWorkbench) {
-		workbench = aWorkbench;
 	}
 	
 	protected void performDefaults() {
