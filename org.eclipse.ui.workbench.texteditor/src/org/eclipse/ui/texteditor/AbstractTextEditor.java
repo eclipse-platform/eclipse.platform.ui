@@ -3770,7 +3770,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				updateForTab();
 			}
 		};
-		setAction("ShiftRightTab", action); //$NON-NLS-1$
+		setAction(ITextEditorActionConstants.SHIFT_RIGHT_TAB, action);
 		
 		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftLeft.", this, ITextOperationTarget.SHIFT_LEFT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHIFT_LEFT_ACTION);
@@ -3887,7 +3887,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
-		markAsSelectionDependentAction("ShiftRightTab", true);
+		markAsSelectionDependentAction(ITextEditorActionConstants.SHIFT_RIGHT_TAB, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.UPPER_CASE, true);
 		markAsSelectionDependentAction(ITextEditorActionConstants.LOWER_CASE, true);
 		
@@ -3899,7 +3899,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.PASTE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
-		markAsStateDependentAction("ShiftRightTab", true); //$NON-NLS-1$
+		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_RIGHT_TAB, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
 		markAsStateDependentAction(ITextEditorActionConstants.FIND, true);
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE, true);
@@ -3911,7 +3911,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_BEGINNING, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT_LINE_TO_END, true);
 		
-		setActionActivationCode("ShiftRightTab",'\t', -1, SWT.NONE); //$NON-NLS-1$
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT_TAB,'\t', -1, SWT.NONE);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', -1, SWT.SHIFT);
 	}
 	

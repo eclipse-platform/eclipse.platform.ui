@@ -74,6 +74,14 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	static final String SHIFT_RIGHT= "ShiftRight"; //$NON-NLS-1$
 	
 	/** 
+	 * Name of the action for shifting text blocks to the right, triggered by the TAB key. 
+	 * Value: <code>"ShiftRightTab"</code>
+	 * 
+	 * @since 3.0
+	 */
+	static final String SHIFT_RIGHT_TAB= "ShiftRightTab"; //$NON-NLS-1$
+	
+	/** 
 	 * Name of the action for shifting text blocks to the left. 
 	 * Value: <code>"ShiftLeft"</code>
 	 */
