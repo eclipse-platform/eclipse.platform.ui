@@ -1,5 +1,7 @@
 package org.eclipse.ui.internal;
 
+import java.text.Collator;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -9,7 +11,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.EditorPart;
 
-public class EditorShortcut {
+public class EditorShortcut implements Comparable {
 	
 	private IMemento memento;
 	private String title;
@@ -20,7 +22,9 @@ public class EditorShortcut {
 	private String path;
 	
 	private String id;
-	private IEditorInput input; 
+	private IEditorInput input;
+	
+	private Collator collator = Collator.getInstance();
 	
 	public static EditorShortcut create(IEditorReference editorRef) {
 		WorkbenchPartReference ref = (WorkbenchPartReference)editorRef;
@@ -211,7 +215,11 @@ public class EditorShortcut {
 			return false;
 		EditorShortcut other = (EditorShortcut)o;
 		return title.equals(other.title);
-	}	
+	}
+	public int compareTo(Object o) {
+		EditorShortcut other = (EditorShortcut)o;
+		return collator.compare(this.getTitle(),other.getTitle());
+	}
 	private EditorShortcutManager getManager() {
 		return ((Workbench)PlatformUI.getWorkbench()).getEditorShortcutManager();
 	}

@@ -160,10 +160,7 @@ public class EditorCoolBar {
 					ToolItem item = (ToolItem) event.widget;
 					EditorShortcut shortcut = (EditorShortcut)item.getData();
 					if (shortcut != null && shortcut.getInput() != null)
-						try {
-							window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
-						} catch (PartInitException e) {
-						}
+						activateEditor(shortcut);
 	
 				}			
 			});
@@ -185,23 +182,16 @@ public class EditorCoolBar {
 		return dropDownLabel.getImage();
 	}
 	
-	private void activateEditor(IEditorReference editorRef) {
-		IEditorPart editor = editorRef.getEditor(true);
-		if (editor != null) {
-			WorkbenchPage p = (WorkbenchPage)editor.getEditorSite().getPage();
-			Shell s = p.getWorkbenchWindow().getShell();
-			if(s.getMinimized()) {
-				s.setMinimized(false);
-			}
-			s.moveAbove(null);
-			p.getWorkbenchWindow().setActivePage(p);
-			
-			if (editor == p.getActivePart()) {
-				editor.setFocus();
-			} else {
-				p.activate(editor);
-			}	
-		}		
+	private void activateEditor(EditorShortcut shortcut) {
+		Shell s = window.getShell();
+		if(s.getMinimized()) {
+			s.setMinimized(false);
+		}
+		s.moveAbove(null);
+		try {
+			window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
+		} catch (PartInitException e) {
+		}
 	}
 	
 	private void closeEditorList() {
@@ -473,19 +463,6 @@ public class EditorCoolBar {
 	public CLabel getDragControl() {
 		return dropDownLabel;
 	}
-//	public Control getDragControl() {
-//		return dropDownComposite;
-//	}
-	/**
-	 * Sets the parent for this part.
-	 */
-	public void setContainer(ILayoutContainer container) {;
-		if (!mouseDownListenerAdded && workbook.getEditorArea() != null) {
-			dropDownLabel.addListener(SWT.MouseDown, workbook.getEditorArea().getMouseDownListener());
-			mouseDownListenerAdded = true;
-		}
-	}	
-
 	private boolean hasMovedEnough(MouseEvent e) {
 		int dx= e.x - xAnchor;
 		int dy= e.y - yAnchor;
@@ -571,18 +548,18 @@ public class EditorCoolBar {
 		shortcutListComposite.setVisible(true);
 		shortcutListComposite.moveAbove(null);
 			 
-// 		shortcutListControl.addListener(SWT.Deactivate, new Listener() {
-//			public void handleEvent(Event event) {
-//				shortcutListComposite.getDisplay().asyncExec(new Runnable() {
-//					public void run() {
-//						if (shortcutListComposite != null) {
-//							closeShortcutList();
-//						}
-//					}
-//				});
-//
-//			}
-// 		});
+ 		shortcutListControl.addListener(SWT.Deactivate, new Listener() {
+			public void handleEvent(Event event) {
+				shortcutListComposite.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						if (shortcutListComposite != null) {
+							closeShortcutList();
+						}
+					}
+				});
+
+			}
+ 		});
 	}	
 
 	 private void popupCoolBarMenu(MouseEvent e) {
@@ -609,19 +586,22 @@ public class EditorCoolBar {
 		bookMarkMenuManager.dispose(); // infw is this part necessary?
 		bookMarkMenuManager.removeAll();
 		
-		bookMarkMenuManager.add(new OpenAction());
-		bookMarkMenuManager.add(new RenameAction());
-		bookMarkMenuManager.add(new DeleteAction());
+		fillContextMenu(bookMarkMenuManager);
 
 		Menu popUp = bookMarkMenuManager.createContextMenu(bookMarkToolBar);
 		pt = ((Control) e.widget).toDisplay(pt);
 		popUp.setLocation(pt.x, pt.y);
 		popUp.setVisible(true);
+	}
+		
+	private void fillContextMenu(IMenuManager menuMgr) {
+		menuMgr.add(new OpenAction());
+		menuMgr.add(new RenameAction());
+		menuMgr.add(new DeleteAction());
 	}	
 	
 	private class ShortcutList {
 		private Table shortcutTable;
-		private Object selection;
 		private List elements = new ArrayList();
 	
 		private final Collator collator = Collator.getInstance();		
@@ -645,7 +625,7 @@ public class EditorCoolBar {
 			menuMgr.setRemoveAllWhenShown(true);
 			menuMgr.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
-					ShortcutList.this.fillContextMenu(manager);				
+					fillContextMenu(manager);				
 				}
 			});
 	
@@ -653,35 +633,28 @@ public class EditorCoolBar {
 				public void widgetSelected(SelectionEvent e) {
 					TableItem[] items = shortcutTable.getSelection();
 					EditorShortcut[] shortcuts = new EditorShortcut[items.length];
-					EditorShortcutManager manager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
 					for (int i = 0; i < items.length; i++) {
-						Adapter a = (Adapter)items[i].getData("Adapter");
-						shortcuts[i] = a.getShortcut();					
+						shortcuts[i] = (EditorShortcut)items[i].getData();
 					}					
 					selection = shortcuts;
 				}
 				
 				public void widgetDefaultSelected(SelectionEvent e) {
 					TableItem[] items = shortcutTable.getSelection();
-					EditorShortcutManager manager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
-					Adapter a = (Adapter)items[0].getData("Adapter");
-					EditorShortcut shortcut = a.getShortcut();				
-					if (shortcut != null) {
-						if(shortcut.getInput() != null) {
-							try {
-								window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
-							} catch (PartInitException exception) {
-							}
-						}					
-					}						
+					EditorShortcut[] shortcuts = new EditorShortcut[items.length];
+					for (int i = 0; i < items.length; i++) {
+						shortcuts[i] = (EditorShortcut)items[i].getData();
+					}					
+					selection = shortcuts;			
+					new OpenAction().run();					
 				}					
 			});
 			
-			shortcutTable.addFocusListener(new FocusAdapter() {
-				public void focusLost(FocusEvent e) {
-					closeShortcutList();
-				}				
-			});
+//			shortcutTable.addFocusListener(new FocusAdapter() {
+//				public void focusLost(FocusEvent e) {
+//					closeShortcutList();
+//				}				
+//			});
 			shortcutTable.setMenu(menuMgr.createContextMenu(shortcutTable));
 			return shortcutTable; 
 		}
@@ -704,82 +677,23 @@ public class EditorCoolBar {
 		/**
 		 * Updates the specified item
 		 */
-		private void updateItem(TableItem item, Adapter adapter) {
-			item.setData("Adapter", adapter);
-			item.setText(adapter.getText());
-			
-			Image image = adapter.getImage();		
+		private void updateItem(TableItem item, EditorShortcut shortcut) {
+			item.setData(shortcut);
+			item.setText(shortcut.getTitle());
+			Image image = shortcut.getTitleImage();		
 			if (image != null) {
 				item.setImage(image);
 			}
 		}
-		
-		/**
-		 * Sorts the shortcuts
-		 */
-		private void sort() {
-			Adapter a[] = new Adapter[elements.size()];
-			elements.toArray(a);
-			Arrays.sort(a);
-			elements = Arrays.asList(a);
-		}
-		
 		/**
 		 * Updates all items in the table
 		 */
 		private void updateItems(EditorShortcut[] items) {
 			shortcutTable.removeAll();
-			elements = new ArrayList();
+			Arrays.sort(items);
 			for (int i = 0; i < items.length; i++) {
-				elements.add(new Adapter(items[i]));
-			}
-			sort();
-			for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
-				Adapter e = (Adapter) iterator.next();
 				TableItem item = new TableItem(shortcutTable, SWT.NULL);
-				updateItem(item,e);
-			}		
-		}
-	
-		private void fillContextMenu(IMenuManager menuMgr) {
-			menuMgr.add(new OpenAction());
-			menuMgr.add(new RenameAction());
-			menuMgr.add(new DeleteAction());
-		}
-	
-		/**
-		 * A helper inner class
-		 */
-		private class Adapter implements Comparable {
-			EditorShortcut shortcutRef;
-			String text[];
-			Image images[];
-			Adapter(EditorShortcut shortcut) {
-				shortcutRef = shortcut;
-			}
-			// file name without any dirty indication, used for sorting
-			String[] getText() {
-				if(text != null) {
-					return text;
-				}
-				text = new String[2];
-				text[0] = shortcutRef.getTitle();
-				text[1] = shortcutRef.getTitleToolTip();
-				return text;
-			}
-				
-			Image getImage() {
-				return shortcutRef.getTitleImage();
-			}
-			
-			EditorShortcut getShortcut() {
-				return shortcutRef;
-			}
-		
-			public int compareTo(Object another) {
-				Adapter adapter = (Adapter)another;
-				int  result = collator.compare(getText()[0],adapter.getText()[0]);
-				return result;
+				updateItem(item,items[i]);
 			}
 		}
 	}
@@ -802,18 +716,11 @@ public class EditorCoolBar {
 			EditorShortcutManager shortcutManager = getManager();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
-				if (shortcut != null) {
-					if(shortcut.getInput() != null) {
-						try {
-							window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
-						} catch (PartInitException e) {
-						}
-					}					
-				}	
+				if (shortcut != null && shortcut.getInput() != null)
+					activateEditor(shortcut);
 			}
-			if (shortcutListComposite != null) {
+			if (shortcutListComposite != null)
 				closeShortcutList();
-			}			
 		}			
 	}
 	
