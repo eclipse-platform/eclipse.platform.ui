@@ -287,8 +287,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 	/**
 	 * Creates and starts the platform configuration.
-	 * @param args
-	 * @param metaPath
 	 * @return the just started platform configuration
 	 */
 	private PlatformConfiguration getPlatformConfiguration(URL installURL, Location configLocation) {

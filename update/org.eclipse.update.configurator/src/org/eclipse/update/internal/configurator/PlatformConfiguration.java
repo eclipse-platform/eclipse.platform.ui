@@ -62,7 +62,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
 //	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
-	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
 //	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
@@ -505,21 +504,32 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			if (workingDir != null && !workingDir.exists())
 				workingDir.mkdirs();
 
+			// Do safe i/o: 
+			//    - backup current config, by moving it to the history folder
+			//    - write new config to platform.xml.tmp file
+			//    - rename the temp file to platform.xml
+			File cfigFileOriginal = new File(cfigFile.getAbsolutePath());
+			File cfigTmp = new File(cfigFile.getAbsolutePath() + CONFIG_FILE_TEMP_SUFFIX);
+			
 			// Backup old file
 			if (cfigFile.exists()){
 				File backupDir = new File(workingDir, CONFIG_HISTORY);
 				if (!backupDir.exists())
 					backupDir.mkdir();
 				File preservedFile = new File(backupDir, String.valueOf(cfigFile.lastModified())+".xml");
-				copy(cfigFile, preservedFile);
-				preservedFile.setLastModified(cfigFile.lastModified());
+				if (!preservedFile.exists()) {
+					// try renaming current config to backup copy
+					if (!cfigFile.renameTo(preservedFile))
+						Utils.log("Cannot backup current configuration");
+				}
+//				copy(cfigFile, preservedFile);
+//				preservedFile.setLastModified(cfigFile.lastModified());
 			}
 			
 			// If config.ini does not exist, generate it in the configuration area
 			writeConfigIni(workingDir.getParentFile());
 			
 			// first save the file as temp
-			File cfigTmp = new File(cfigFile.getAbsolutePath() + CONFIG_FILE_TEMP_SUFFIX);
 			os = new FileOutputStream(cfigTmp);
 			try {
 				saveAsXML(os);
@@ -545,59 +555,19 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					}
 			}
 
-			// make the saved config the "active" one
-			File cfigBak = new File(cfigFile.getAbsolutePath() + CONFIG_FILE_BAK_SUFFIX);
-			if (cfigBak.exists())
-				cfigBak.delete(); // may have old .bak due to prior failure
-
-			if (cfigFile.exists())
-				if (!cfigFile.renameTo(cfigBak))
-					Utils.log("Could not rename the backup file");
-
 			// at this point we have old config (if existed) as "bak" and the
 			// new config as "tmp".
-			boolean ok = cfigTmp.renameTo(cfigFile);
-			if (ok) {
-				// at this point we have the new config "activated", and the old
-				// config (if it existed) as "bak"
-				cfigBak.delete(); // clean up
-			} else {
-				Utils.log("Could not rename temp file");
+			boolean ok = cfigTmp.renameTo(cfigFileOriginal);
+			if (!ok) {
 				// this codepath represents a tiny failure window. The load processing
 				// on startup will detect missing config and will attempt to start
 				// with "tmp" (latest), then "bak" (the previous). We can also end up
 				// here if we failed to rename the current config to "bak". In that
 				// case we will restart with the previous state.
+				Utils.log("Could not rename configuration temp file");
+				
 				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			}
-			
-			// TODO **** Big workaround to deal with platform.xml under configuration.
-			//      **** Remove before M9
-			File M8platformXML = new File(url.getFile().replace('/', File.separatorChar));
-			if (!M8platformXML.getName().equals("platform.xml"))
-				M8platformXML = new File(M8platformXML, "platform.xml");
-			os = new FileOutputStream(M8platformXML);
-			try {
-				saveAsXML(os);
-				try {
-					os.close();
-					os = null;
-				} catch (IOException e1) {
-					Utils.log("Could not close output stream for " + cfigTmp);
-				}
-				// set file time stamp to match that of the config element
-				M8platformXML.setLastModified(config.getDate().getTime());
-			} catch (Exception e) {
-				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
-			} finally {
-				if (os != null)
-					try {
-						os.close();
-					} catch (IOException e1) {
-						Utils.log("Could not close output stream for temp file " + cfigTmp);
-					}
-			}
-			// TODO *** end workaround
 		}
 	}
 	
@@ -700,20 +670,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					return;
 				} catch (Exception ioe) {
 					Utils.debug("Creating default configuration from " + configFileURL.toExternalForm());
-					
-					// TODO *** workaround for M8 saving of platform.xml under configuration
-					//      *** remove before M9
-					if (System.getProperty("osgi.dev") != null) {
-						// try loading form configuration/platform.xml
-						try {
-							URL configFileURL2 = new URL(platformConfigLocation.getURL(), PLATFORM_XML);
-							config = loadConfig(configFileURL2);
-							Utils.debug("Using configuration " + configFileURL2.toString()); //$NON-NLS-1$
-							return;
-						} catch (Exception tempEx) {
-							//createDefaultConfiguration(configFileURL);
-						}
-					} 
 					createDefaultConfiguration(configFileURL);
 				}
 			}
@@ -1039,52 +995,52 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 //		}
 //	}
 
-	private void copy(File src, File tgt) throws IOException {
-		if (src.isDirectory()) {
-			// copy content of directories
-			tgt.mkdir();
-			FilenameFilter filter = new FilenameFilter() {
-				public boolean accept(File dir, String name) {
-					return !name.equals(ConfigurationActivator.LAST_CONFIG_STAMP);
-				}
-			};
-			File[] list = src.listFiles(filter);
-			if (list == null)
-				return;
-			for (int i = 0; i < list.length; i++) {
-				copy(list[i], new File(tgt, list[i].getName()));
-			}
-		} else {
-			// copy individual files
-			FileInputStream is = null;
-			FileOutputStream os = null;
-			try {
-				is = new FileInputStream(src);
-				os = new FileOutputStream(tgt);
-				byte[] buff = new byte[1024];
-				int count = is.read(buff);
-				while (count != -1) {
-					os.write(buff, 0, count);
-					count = is.read(buff);
-				}
-			} catch (IOException e) {
-				// continue ... update reconciler will have to reconstruct state
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch (IOException e) {
-						// ignore ...
-					}
-				if (os != null)
-					try {
-						os.close();
-					} catch (IOException e) {
-						// ignore ...
-					}
-			}
-		}
-	}
+//	private void copy(File src, File tgt) throws IOException {
+//		if (src.isDirectory()) {
+//			// copy content of directories
+//			tgt.mkdir();
+//			FilenameFilter filter = new FilenameFilter() {
+//				public boolean accept(File dir, String name) {
+//					return !name.equals(ConfigurationActivator.LAST_CONFIG_STAMP);
+//				}
+//			};
+//			File[] list = src.listFiles(filter);
+//			if (list == null)
+//				return;
+//			for (int i = 0; i < list.length; i++) {
+//				copy(list[i], new File(tgt, list[i].getName()));
+//			}
+//		} else {
+//			// copy individual files
+//			FileInputStream is = null;
+//			FileOutputStream os = null;
+//			try {
+//				is = new FileInputStream(src);
+//				os = new FileOutputStream(tgt);
+//				byte[] buff = new byte[1024];
+//				int count = is.read(buff);
+//				while (count != -1) {
+//					os.write(buff, 0, count);
+//					count = is.read(buff);
+//				}
+//			} catch (IOException e) {
+//				// continue ... update reconciler will have to reconstruct state
+//			} finally {
+//				if (is != null)
+//					try {
+//						is.close();
+//					} catch (IOException e) {
+//						// ignore ...
+//					}
+//				if (os != null)
+//					try {
+//						os.close();
+//					} catch (IOException e) {
+//						// ignore ...
+//					}
+//			}
+//		}
+//	}
 
 	private void copy(URL src, File tgt) throws IOException {
 		InputStream is = null;
@@ -1137,8 +1093,23 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				config = parser.parse(tempURL); 
 			} catch (Exception e2) {
 				try {
-					URL backupUrl = new URL(url.toExternalForm()+CONFIG_FILE_BAK_SUFFIX);
-					config = parser.parse(backupUrl);
+					// check the backup
+					if ("file".equals(url.getProtocol())) {
+						File cfigFile = new File(url.getFile().replace('/', File.separatorChar));
+						File workingDir = cfigFile.getParentFile();
+						if (workingDir != null && workingDir.exists()) {
+							File[] backups = workingDir.listFiles(new FileFilter(){
+								public boolean accept(File pathname) {
+									return pathname.isFile() && pathname.getName().endsWith(".xml");
+								}});
+							if (backups != null && backups.length > 0) {
+								URL backupUrl = backups[backups.length-1].toURL();
+								config = parser.parse(backupUrl);
+							}
+						}
+					}
+					if (config == null)
+						throw originalException; // we tried, but no config here ...
 				} catch (IOException e3) {
 					throw originalException; // we tried, but no config here ...
 				}
