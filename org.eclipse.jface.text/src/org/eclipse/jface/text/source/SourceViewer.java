@@ -63,7 +63,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	/**
 	 * Layout of a source viewer. Vertical ruler, text widget, and overview ruler are shown side by side.
 	 */
-	class RulerLayout extends Layout {
+	protected class RulerLayout extends Layout {
 		
 		/** The gap between the text viewer and the vertical ruler. */
 		protected int fGap;
@@ -73,7 +73,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		 * 
 		 * @param gap the gap between text viewer and vertical ruler
 		 */
-		protected RulerLayout(int gap) {
+		public RulerLayout(int gap) {
 			fGap= gap;
 		}
 		
@@ -241,7 +241,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		if (fVerticalRuler != null || fOverviewRuler != null) {
 			styles= (styles & ~SWT.BORDER);
 			fComposite= new Canvas(parent, SWT.NONE);
-			fComposite.setLayout(new RulerLayout(GAP_SIZE));
+			fComposite.setLayout(createLayout());
 			parent= fComposite;
 		}
 		
@@ -251,6 +251,17 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fVerticalRuler.createControl(fComposite, this);
 		if (fOverviewRuler != null)
 			fOverviewRuler.createControl(fComposite, this);
+	}
+	
+	/**
+	 * Creates the layout used for this viewer.
+	 * Subclasses may override this method.
+	 * 
+	 * @return the layout used for this viewer
+	 * @since 3.0
+	 */
+	protected Layout createLayout() {
+		return new RulerLayout(GAP_SIZE);
 	}
 	
 	/*
