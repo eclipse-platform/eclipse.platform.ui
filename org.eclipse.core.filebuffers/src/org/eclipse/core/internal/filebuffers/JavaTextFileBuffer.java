@@ -263,10 +263,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
 				if (description != null) {
 					fEncoding= description.getCharset();
-					
-					fUTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-					if (fUTF8BOM != null && fUTF8BOM != IContentDescription.BOM_UTF_8)
-						throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.error.wrongByteOrderMark"), null)); //$NON-NLS-1$
+					if (CHARSET_UTF_8.equals(fEncoding)) {
+						fUTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
+						if (fUTF8BOM != null && fUTF8BOM != IContentDescription.BOM_UTF_8)
+							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.error.wrongByteOrderMark"), null)); //$NON-NLS-1$
+					}
 				}
 			} catch (IOException e) {
 				fEncoding= null;
