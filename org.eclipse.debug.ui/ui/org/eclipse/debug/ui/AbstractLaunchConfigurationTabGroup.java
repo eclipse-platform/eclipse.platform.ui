@@ -98,7 +98,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	}
 
 	/**
-	 * Be default, delegate to all of the tabs in this group.
+	 * By default, delegate to all of the tabs in this group.
 	 * 
 	 * @see ILaunchConfigurationTabGroup#launched(ILaunch)
 	 */
