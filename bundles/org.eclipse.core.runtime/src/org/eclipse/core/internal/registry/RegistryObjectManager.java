@@ -63,9 +63,9 @@ public class RegistryObjectManager implements IObjectManager {
 	public RegistryObjectManager() {
 		extensionPoints = new HashtableOfStringAndInt();
 		if ("true".equalsIgnoreCase(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_FLUSHING))) { //$NON-NLS-1$
-			cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.HARD, CACHE_INITIAL_SIZE, DEFAULT_LOADFACTOR);
+			cache = new ReferenceMap(ReferenceMap.HARD, CACHE_INITIAL_SIZE, DEFAULT_LOADFACTOR);
 		} else {
-			cache = new ReferenceMap(ReferenceMap.HARD, ReferenceMap.SOFT, CACHE_INITIAL_SIZE, DEFAULT_LOADFACTOR);
+			cache = new ReferenceMap(ReferenceMap.SOFT, CACHE_INITIAL_SIZE, DEFAULT_LOADFACTOR);
 		}
 		newContributions = new KeyedHashSet();
 		fileOffsets = new HashtableOfInt();
@@ -147,19 +147,19 @@ public class RegistryObjectManager implements IObjectManager {
 			int id = nextId++;
 			registryObject.setObjectId(id);
 		}
-		cache.put(new Integer(registryObject.getObjectId()), registryObject);
+		cache.put(registryObject.getObjectId(), registryObject);
 		if (hold)
 			hold(registryObject);
 	}
 
 	private void remove(RegistryObject registryObject, boolean release) {
-		cache.remove(new Integer(registryObject.getObjectId()));
+		cache.remove(registryObject.getObjectId());
 		if (release)
 			release(registryObject);
 	}
 
 	synchronized void remove(int id, boolean release) {
-		RegistryObject toRemove = (RegistryObject) cache.get(new Integer(id));
+		RegistryObject toRemove = (RegistryObject) cache.get(id);
 		if (fileOffsets != null)
 			fileOffsets.removeKey(id);
 		if (toRemove != null)
@@ -179,14 +179,14 @@ public class RegistryObjectManager implements IObjectManager {
 	}
 
 	private Object basicGetObject(int id, byte type) {
-		Object result = cache.get(new Integer(id));
+		Object result = cache.get(id);
 		if (result != null)
 			return result;
 		if (fromCache)
 			result = load(id, type);
 		if (result == null)
 			throw new InvalidRegistryObjectException(); //$NON-NLS-1$
-		cache.put(new Integer(id), result);
+		cache.put(id, result);
 		return result;
 	}
 
