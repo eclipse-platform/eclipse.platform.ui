@@ -73,7 +73,7 @@ import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
 import org.eclipse.search.internal.ui.util.ListContentProvider;
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
-class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
+public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
 
 	private class TabFolderLayout extends Layout {
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {

@@ -88,6 +88,6 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void run() {
-			new ShowSearchesAction(fSearchView).run();
+		new ShowSearchesAction(fSearchView).run();
 	}
 }

@@ -11,12 +11,16 @@
 package org.eclipse.search2.internal.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-
+import org.eclipse.jface.window.Window;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
+
+
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -25,37 +29,6 @@ import org.eclipse.search.ui.ISearchResult;
 class ShowSearchesAction extends Action {
 	private SearchView fSearchView;
 
-	/*private static final class SearchesLabelProvider extends LabelProvider {
-		
-		private ArrayList fImages= new ArrayList();
-		
-		public String getText(Object element) {
-			if (!(element instanceof ShowSearchAction))
-				return ""; //$NON-NLS-1$
-			return ((ShowSearchAction)element).getText();
-		}
-		public Image getImage(Object element) {
-			if (!(element instanceof ShowSearchAction))
-				return null;
-
-			ImageDescriptor imageDescriptor= ((ShowSearchAction)element).getImageDescriptor(); 
-			if (imageDescriptor == null)
-				return null;
-			
-			Image image= imageDescriptor.createImage();
-			fImages.add(image);
-
-			return image;
-		}
-		
-		public void dispose() {
-			Iterator iter= fImages.iterator();
-			while (iter.hasNext())
-				((Image)iter.next()).dispose();
-			
-			fImages= null;
-		}
-	}*/
 
 	/**
 	 *	Create a new instance of this class
@@ -71,14 +44,25 @@ class ShowSearchesAction extends Action {
 		ISearchQuery[] queries= sm.getQueries();
 
 		ArrayList input= new ArrayList();
-		int i= 0;
 		for (int j= 0; j < queries.length; j++) {
-			ISearchResult search= queries[i].getSearchResult();
-			String label= search.getLabel();
-			String tooltip= search.getTooltip();
-			ImageDescriptor image= search.getImageDescriptor();
-			ShowSearchAction action= new ShowSearchAction(fSearchView, search, label, image, tooltip );
-			input.add(action);
+			ISearchResult search= queries[j].getSearchResult();
+			input.add(search);
 		}
+		
+		SearchesDialog dlg= new SearchesDialog(SearchPlugin.getActiveWorkbenchShell(),input);
+		
+		ISearchResult current= fSearchView.getCurrentSearchResult();
+		if (current != null) {
+			Object[] selected= new Object[1];
+			selected[0]= current;
+			dlg.setInitialSelections(selected);
+		}
+		if (dlg.open() == Window.OK) {
+			List result= Arrays.asList(dlg.getResult());
+			if (result != null && result.size() == 1) {
+				fSearchView.showSearchResult((ISearchResult) result.get(0));
+			}
+		}
+
 	}
 }
