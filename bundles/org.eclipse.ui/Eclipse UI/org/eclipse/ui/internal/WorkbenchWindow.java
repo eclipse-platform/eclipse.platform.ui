@@ -181,7 +181,7 @@ public class WorkbenchWindow extends ApplicationWindow
 							ToolItem item = bar.getItem(0);
 							width = item.getWidth();
 							Rectangle trim = bar.computeTrim(0,0,width,width);
-							width = trim.width + 2; // Add 2 pixels around shortcut bar
+							width = trim.width;
 						}
 					}
 					w.setBounds(clientArea.x, clientArea.y, width, clientArea.height);
