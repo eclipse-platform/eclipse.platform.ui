@@ -6,19 +6,18 @@
    version="1.0.0">
 
    <runtime>
-      <library name="newIntro1.jar">
+      <library name="intro.jar">
          <export name="*"/>
       </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.tests"/>
    </requires>
    <extension
          id="testDynamicIntroAddition"
          point="org.eclipse.ui.intro">
       <intro
-            class="org.eclipse.ui.tests.intro.MockIntroPart"
+            class="org.eclipse.ui.dynamic.DynamicIntro"
             id="org.eclipse.newIntro1.newIntro1"/>
       <introProductBinding
             introId="org.eclipse.newIntro1.newIntro1"

@@ -146,6 +146,41 @@ public abstract class DynamicTestCase extends UITestCase implements
 	 * @return the install location of the bundle to test
 	 */
 	protected abstract String getInstallLocation();
+	
+	/**
+	 * Return a <code>Class</code> that we know to be in teh bundle to test.
+	 * 
+	 * @return a <code>Class</code> that we know to be in teh bundle to test.  May be <code>null</code>.
+	 * @since 3.1
+	 */
+	protected String getMarkerClass() {
+		return null;
+	}
+	
+	/**
+	 * Tests to ensure that the marker class is released when the bundle is unloaded.
+	 * If <code>getMarkerClass()</code> returns <code>null</code> then this method 
+	 * will always succeed.
+	 * 
+	 * @throws Exception
+	 * @since 3.1
+	 */
+	public void testClass() throws Exception {	
+		String className = getMarkerClass();
+		if (className == null)
+			return;		
+		
+		Bundle bundle = getBundle();
+		
+		Class clazz = bundle.loadClass(className);
+		assertNotNull(clazz);
+		ReferenceQueue myQueue = new ReferenceQueue();
+		WeakReference ref = new WeakReference(clazz.getClassLoader(), myQueue);
+		clazz = null; //null our refs
+		bundle = null;
+		removeBundle();
+		LeakTests.checkRef(myQueue, ref);
+	}
 
 	/**
 	 * Return whether the bundle ADDED event has been recieved.

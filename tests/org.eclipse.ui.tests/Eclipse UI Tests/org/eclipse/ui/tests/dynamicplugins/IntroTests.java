@@ -141,5 +141,12 @@ public class IntroTests extends DynamicTestCase {
     protected void doTearDown() throws Exception {
         super.doTearDown();
         Workbench.getInstance().setIntroDescriptor(oldDesc);
-    }
+    }    
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#getMarkerClass()
+	 */
+	protected String getMarkerClass() {
+		return "org.eclipse.ui.dynamic.DynamicIntro";
+	}
 }
