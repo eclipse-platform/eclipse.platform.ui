@@ -58,7 +58,6 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIEventFilter;
-import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -68,14 +67,9 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -221,38 +215,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		//we can rely on not creating a display as we 
 		//prereq the base eclipse ui plugin.
 		return Display.getDefault();
-	}
-		
-	/**
-	 * Returns a launches view if the specified window contains the debugger part for the
-	 * specified debug mode.
-	 */
-	protected IViewPart findDebugPart(IWorkbenchWindow window, String mode, boolean checkAllPages) {
-		if (window == null) {
-			return null;
-		}
-		
-		IWorkbenchPage activePage= window.getActivePage();
-		if (activePage == null) {
-			return null;
-		}
-
-		IViewPart debugPart= activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW);							
-		if (debugPart == null && checkAllPages) {
-			//look through the rest of the pages
-			IWorkbenchPage[] pages= window.getPages();
-			for (int i=0; i < pages.length; i++) {
-				IWorkbenchPage page= pages[i];
-				if (page.equals(activePage)) {
-					continue;
-				}
-				debugPart= page.findView(IDebugUIConstants.ID_DEBUG_VIEW);							
-				if (debugPart != null) {
-					break;
-				}
-			}
-		}
-		return debugPart;
 	}
 		
 	/**
@@ -422,7 +384,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	}
 	
 	/**
-	 * Returns thedocument for the process, or <code>null</code>
+	 * Returns the document for the process, or <code>null</code>
 	 * if none.
 	 */
 	public IDocument getConsoleDocument(IProcess process) {
@@ -603,13 +565,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		setCurrentProcess(newProcess);
 	}
 	
-	/**
-	 * Must be called in the UI thread
-	 */
-	public boolean userPreferenceToSwitchPerspective(boolean isDebug) {
-		IPreferenceStore prefs= getPreferenceStore();
-		return isDebug ? prefs.getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW) : prefs.getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW);
-	}
 	/**
 	 * Returns the collection of most recent debug launches, which 
 	 * can be empty.
