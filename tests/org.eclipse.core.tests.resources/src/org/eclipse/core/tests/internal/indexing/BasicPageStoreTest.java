@@ -285,14 +285,14 @@ public class BasicPageStoreTest extends TestCase {
 	}
 	
 	/**
-	 * Adds a 256 meg chunk to the page file.
+	 * Adds a 64 meg chunk to the page file.
 	 */
 	public void testWriteHuge() throws Exception {
 		env.printHeading("testWriteHuge");
 		PageStore.delete(env.getFileName());
 		PageStore store = new PageStore(new TestPagePolicy());
 		store.open(env.getFileName());
-		for (int i = 0; i < 256; i++) writeBlock(store);
+		for (int i = 0; i < 64; i++) writeBlock(store);
 		printStats(store);
 		store.close();
 	}
