@@ -119,7 +119,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	// XXX do we need the first two constructors?
 	public RemoteFile(RemoteFolder parent, int workspaceSyncState, String name, CVSTag tag) {
-		this(parent, workspaceSyncState, name, "", tag);
+		this(parent, workspaceSyncState, name, "", tag);  //$NON-NLS-1$
 		MutableResourceSyncInfo newInfo = info.cloneMutable();
 		newInfo.setAdded();
 	}

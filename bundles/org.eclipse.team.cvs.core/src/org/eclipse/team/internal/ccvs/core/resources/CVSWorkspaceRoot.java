@@ -136,7 +136,7 @@ public class CVSWorkspaceRoot {
 	public ICVSRepositoryLocation getRemoteLocation() throws CVSException {
 		FolderSyncInfo info = localRoot.getFolderSyncInfo();
 		if (info == null) {
-			throw new CVSException(Policy.bind("CVSWorkspaceRoot.notCVSFolder", localRoot.getName()));
+			throw new CVSException(Policy.bind("CVSWorkspaceRoot.notCVSFolder", localRoot.getName()));  //$NON-NLS-1$
 		}
 		return CVSProvider.getInstance().getRepository(info.getRoot());
 	}

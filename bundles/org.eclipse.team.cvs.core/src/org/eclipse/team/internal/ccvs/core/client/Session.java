@@ -163,14 +163,14 @@ public class Session {
 
 			// enable compression
 			compressionLevel = CVSProviderPlugin.getPlugin().getCompressionLevel();
-			if (compressionLevel != 0 && isValidRequest("gzip-file-contents")) {
+			if (compressionLevel != 0 && isValidRequest("gzip-file-contents")) { //$NON-NLS-1$
 				// Enable the use of CVS 1.8 per-file compression mechanism.
 				// The newer Gzip-stream request seems to be problematic due to Java's
 				// GZIPInputStream tendency to block on read() rather than to return a
 				// partially filled buffer.  The latter option would be better since it
 				// can make more effective use of the code dictionary, if it can be made
 				// to work...
-				connection.writeLine("gzip-file-contents " + Integer.toString(compressionLevel));
+				connection.writeLine("gzip-file-contents " + Integer.toString(compressionLevel)); //$NON-NLS-1$
 			} else {
 				compressionLevel = 0;
 			}
@@ -592,7 +592,7 @@ public class Session {
 				};
 				// send the file
 				String sizeLine = Long.toString(size);
-				if (compressed) sizeLine = "z" + sizeLine;
+				if (compressed) sizeLine = "z" + sizeLine; //$NON-NLS-1$
 				writeLine(sizeLine);
 				for (int count; (count = in.read(buffer)) != -1;) out.write(buffer, 0, count);
 			} finally {

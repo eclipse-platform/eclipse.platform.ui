@@ -62,8 +62,8 @@ public class PollingOutputStream extends FilterOutputStream {
 				return;
 			} catch (InterruptedIOException e) {
 				if (++attempts == numAttempts)
-					throw new InterruptedIOException(Policy.bind("PollingOutputStream.writeTimeout"));
-				if (DEBUG) System.out.println("write retry=" + attempts);
+					throw new InterruptedIOException(Policy.bind("PollingOutputStream.writeTimeout")); //$NON-NLS-1$
+				if (DEBUG) System.out.println("write retry=" + attempts); //$NON-NLS-1$
 			}
 		}
 	}
@@ -93,11 +93,11 @@ public class PollingOutputStream extends FilterOutputStream {
 					attempts = 0; // made some progress, don't time out quite yet
 				}
 				if (++attempts == numAttempts) {
-					e = new InterruptedIOException(Policy.bind("PollingOutputStream.writeTimeout"));
+					e = new InterruptedIOException(Policy.bind("PollingOutputStream.writeTimeout")); //$NON-NLS-1$
 					e.bytesTransferred = count;
 					throw e;
 				}
-				if (DEBUG) System.out.println("write retry=" + attempts);
+				if (DEBUG) System.out.println("write retry=" + attempts); //$NON-NLS-1$
 			}
 		}
 	}
@@ -124,11 +124,11 @@ public class PollingOutputStream extends FilterOutputStream {
 					attempts = 0; // made some progress, don't time out quite yet
 				}
 				if (++attempts == numAttempts) {
-					e = new InterruptedIOException(Policy.bind("PollingOutputStream.writeTimeout"));
+					e = new InterruptedIOException(Policy.bind("PollingOutputStream.writeTimeout")); //$NON-NLS-1$
 					e.bytesTransferred = count;
 					throw e;
 				}
-				if (DEBUG) System.out.println("write retry=" + attempts);
+				if (DEBUG) System.out.println("write retry=" + attempts); //$NON-NLS-1$
 			}
 		}
 	}
@@ -153,8 +153,8 @@ public class PollingOutputStream extends FilterOutputStream {
 				} catch (InterruptedIOException e) {
 					if (monitor.isCanceled()) throw new OperationCanceledException();
 					if (++attempts == numAttempts)
-						throw new InterruptedIOException(Policy.bind("PollingOutputStream.closeTimeout"));
-					if (DEBUG) System.out.println("close retry=" + attempts);
+						throw new InterruptedIOException(Policy.bind("PollingOutputStream.closeTimeout")); //$NON-NLS-1$
+					if (DEBUG) System.out.println("close retry=" + attempts); //$NON-NLS-1$
 				}
 			}
  		}

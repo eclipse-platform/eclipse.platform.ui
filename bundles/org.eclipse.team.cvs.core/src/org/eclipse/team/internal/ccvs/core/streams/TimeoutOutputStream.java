@@ -101,7 +101,7 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized void write(int b) throws IOException {
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream"));
+		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
 		checkError();
 		if (length == iobuffer.length) {
 			syncCommit();
@@ -119,7 +119,7 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized void write(byte[] buffer, int off, int len) throws IOException {
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream"));
+		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
 		checkError();
 		int amount = 0;
 		try {
@@ -146,7 +146,7 @@ public class TimeoutOutputStream extends FilterOutputStream {
 	 * @throws IOException if an i/o error occurs
 	 */
 	public synchronized void flush() throws IOException {
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream"));
+		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
 		checkError();
 		flushRequested = true;
 		int amount = 0;
@@ -176,7 +176,7 @@ public class TimeoutOutputStream extends FilterOutputStream {
 			Thread.currentThread().interrupt(); // we weren't expecting to be interrupted
 		}
 		checkError();
-		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream"));
+		if (cannotWrite) throw new IOException(Policy.bind("TimeoutOutputStream.cannotWriteToStream")); //$NON-NLS-1$
 	}
 
 	/*

@@ -460,6 +460,24 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	/**
+	 * Return the remote location to which the receiver's project is mapped.
+	 */
+	public ICVSRepositoryLocation getRemoteLocation() throws CVSException {
+		try {
+			return workspaceRoot.getRemoteLocation();
+		} catch (CVSException e) {
+			// If we can't get the remote location, we should disconnect since nothing can be done with the provider
+			try {
+				Team.removeNatureFromProject(project, CVSProviderPlugin.getTypeId(), Policy.monitorFor(null));
+			} catch (TeamException ex) {
+				CVSProviderPlugin.log(ex);
+			}
+			// We need to trigger a decorator refresh					
+			throw e;
+		}
+	}
+	
+	/**
 	 * @see ITeamProvider#hasRemote(IResource)
 	 * XXX to be removed when sync methods are removed from ITeamProvider
 	 */
