@@ -11,6 +11,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
@@ -120,12 +121,16 @@ public class WorkingSetManager implements IWorkingSetManager, IResourceChangeLis
 	 * 	removed.
 	 */
 	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
-		Object[] listeners = propertyChangeListeners.getListeners();
-		PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
-
-		for (int i = 0; i < listeners.length; i++) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
-		}
+		final PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
+		
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				Object[] listeners = propertyChangeListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					((IPropertyChangeListener) listeners[i]).propertyChange(event);
+				}
+			}
+		});
 	}
 	/**
 	 * Implements IWorkingSetManager.
