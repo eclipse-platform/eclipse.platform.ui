@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
@@ -86,7 +85,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/*
 		 * @see java.lang.Runnable#run()
-		 * @since 2.0
 		 */
 		public void run() {
 			
@@ -111,6 +109,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		
 		/** The file editor input */
 		protected IFileEditorInput fFileEditorInput;
+		/** A flag indicating whether this synchronizer is installed or not. */
+		protected boolean fIsInstalled= false;
 		
 		/**
 		 * Creates a new file synchronizer. Is not yet installed on a resource.
@@ -142,6 +142,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 */
 		public void install() {
 			getFile().getWorkspace().addResourceChangeListener(this);
+			fIsInstalled= true;
 		}
 		
 		/**
@@ -149,6 +150,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 */
 		public void uninstall() {
 			getFile().getWorkspace().removeResourceChangeListener(this);
+			fIsInstalled= false;
 		}
 		
 		/*
@@ -157,7 +159,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		public void resourceChanged(IResourceChangeEvent e) {
 			IResourceDelta delta= e.getDelta();
 			try {
-				if (delta != null)
+				if (delta != null && fIsInstalled)
 					delta.accept(this);
 			} catch (CoreException x) {
 				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.resourceChanged")); //$NON-NLS-1$
@@ -496,7 +498,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				d= createDocument(element);
 			} catch (CoreException x) {
 				s= x.getStatus();
-				d= new Document();
+				d= createEmptyDocument();
 			}
 			
 			IAnnotationModel m= createAnnotationModel(element);
@@ -535,7 +537,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	protected void handleElementContentChanged(IFileEditorInput fileEditorInput) {
 		FileInfo info= (FileInfo) getElementInfo(fileEditorInput);
 		
-		IDocument document= new Document();
+		IDocument document= createEmptyDocument();
 		IStatus status= null;
 		
 		try {

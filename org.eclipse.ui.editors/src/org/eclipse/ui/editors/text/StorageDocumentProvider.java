@@ -39,6 +39,9 @@ import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
 
 /**
+ * StorageDocumentProvider.java
+ */
+/**
  * Shareable document provider specialized for <code>IStorage</code>s.
  */
 public class StorageDocumentProvider extends AbstractDocumentProvider implements IStorageDocumentProvider {
@@ -176,13 +179,21 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		return null;
 	}
 	
+	/**
+	 * Factory method for creating empty documents.
+	 * @return the newly created document
+	 */
+	protected IDocument createEmptyDocument() {
+		return new Document();
+	}
+		
 	/*
 	 * @see AbstractDocumentProvider#createDocument(Object)
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
 		
 		if (element instanceof IEditorInput) {
-			Document document= new Document();
+			IDocument document= createEmptyDocument();
 			if (setDocumentContent(document, (IEditorInput) element, getEncoding(element)))
 				return document;
 		}
@@ -204,7 +215,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 				document= createDocument(element);
 			} catch (CoreException x) {
 				status= x.getStatus();
-				document= new Document();
+				document= createEmptyDocument();
 			}
 			
 			ElementInfo info= new StorageInfo(document, createAnnotationModel(element));
