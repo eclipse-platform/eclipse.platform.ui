@@ -1273,7 +1273,7 @@ public final class Workbench implements IWorkbench {
 			final String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 			public void run() {
 				IPluginRegistry registry = Platform.getPluginRegistry();
-				IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.TAG_STARTUP);
+				IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
 				IExtension[] extensions = point.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
 					IExtension extension = extensions[i];
