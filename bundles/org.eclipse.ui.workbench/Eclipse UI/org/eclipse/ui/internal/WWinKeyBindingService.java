@@ -45,35 +45,71 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.commands.Sequence;
-import org.eclipse.ui.internal.commands.Stroke;
 import org.eclipse.ui.internal.commands.Machine;
 import org.eclipse.ui.internal.commands.Manager;
+import org.eclipse.ui.internal.commands.Sequence;
+import org.eclipse.ui.internal.commands.Stroke;
 import org.eclipse.ui.internal.commands.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
-/**
- * @version 	2.0
- * @author
- */
 public class WWinKeyBindingService {
 
-	/* Maps all global actions definition ids to the action */
-	private HashMap globalActionDefIdToAction = new HashMap();
-	/* Maps all action sets definition ids to the action */
-	private HashMap actionSetDefIdToAction = new HashMap();
-	/* A listener to property changes so the mappings can
-	 * be updated whenever the active configuration changes.
-	 */
-	private IPropertyChangeListener propertyListener;
-	/* The current KeyBindindService */
-	private KeyBindingService activeService;
-	/* The window this service is managing the accelerators for.*/
-	private WorkbenchWindow window;
+	private static class KeyModeContributionItem extends ContributionItem {
 
-	private AcceleratorMenu accMenu;
+		private int fixedWidth = -1;
+		private String text;
+		private CLabel label;
+	
+		public KeyModeContributionItem(String id) {
+			super(id);
+		}
+	
+		public void setText(String msg) {
+			text = msg;
+			
+			if (label != null && !label.isDisposed())
+				label.setText(text);
+			
+			if (text == null || text.length() < 1) {
+				if (isVisible()) {
+					setVisible(false);
+					getParent().update(true);
+				}
+			} else {
+				if (!isVisible()) {
+					setVisible(true);
+					getParent().update(true);
+				}
+			}
+		}
+	
+		public void fill(Composite parent) {
+			label = new CLabel(parent, SWT.SHADOW_IN);
+			StatusLineLayoutData data = new StatusLineLayoutData();
+			
+			if (fixedWidth < 0) {
+				GC gc = new GC(parent);
+				gc.setFont(parent.getFont());
+				fixedWidth = gc.getFontMetrics().getAverageCharWidth() * 40;
+				gc.dispose();
+			}
+			
+			data.widthHint = fixedWidth;
+			label.setLayoutData(data);
+		
+			if (text != null)
+				label.setText(text);
+		}
+	}
+
 	private final KeyModeContributionItem statusItem = new KeyModeContributionItem("KeyModeContribution"); //$NON-NLS-1$
+
+	private HashMap globalActionDefIdToAction = new HashMap();
+	private HashMap actionSetDefIdToAction = new HashMap();
+	private IPropertyChangeListener propertyListener;
+	private KeyBindingService activeService;
+	private WorkbenchWindow window;
+	private AcceleratorMenu acceleratorMenu;
 
 	private VerifyListener verifyListener = new VerifyListener() {
 		public void verifyText(VerifyEvent event) {
@@ -82,149 +118,125 @@ public class WWinKeyBindingService {
 		}
 	};
 
-	private void setStatusLineMessage(Sequence keySequence) {
-		StringBuffer stringBuffer = new StringBuffer();
-		
-		if (keySequence != null) {
-			Iterator iterator = keySequence.getStrokes().iterator();
-			int i = 0;
-			
-			while (iterator.hasNext()) {					
-				if (i != 0)
-					stringBuffer.append(' ');
-	
-				Stroke keyStroke = (Stroke) iterator.next();
-				int accelerator = keyStroke.getValue();
-				stringBuffer.append(
-					org.eclipse.jface.action.Action.convertAccelerator(
-					accelerator));					
-				i++;
-			}		
-		}
-
-		statusItem.setText(stringBuffer.toString());	
-	}
-
 	public void clear() {		
-		Manager keyManager = Manager.getInstance();
-		Machine keyMachine = keyManager.getKeyMachine();
-		
-		/*if (*/keyMachine.setMode(Sequence.create());//) {
-			setStatusLineMessage(null);	
-			updateAccelerators();
-		//}
+		Manager manager = Manager.getInstance();
+		Machine keyMachine = manager.getKeyMachine();
+		keyMachine.setMode(Sequence.create());
+		statusItem.setText(""); //$NON-NLS-1$	
+		updateAccelerators();
 	}
 	
-	public void pressed(Stroke keyStroke, Event event) { 
-		Manager keyManager = Manager.getInstance();
-		Machine keyMachine = keyManager.getKeyMachine();		
-		
-		Sequence mode = keyMachine.getMode();			
-		
-		List keyStrokes = new ArrayList(keyMachine.getMode().getStrokes());
-		keyStrokes.add(keyStroke);
-		Sequence childMode = Sequence.create(keyStrokes);
-		
-		Map keySequenceMapForMode = keyMachine.getSequenceMapForMode();		
-		
+	public void pressed(Stroke stroke, Event event) { 
+		Manager manager = Manager.getInstance();
+		Machine keyMachine = manager.getKeyMachine();				
+		Sequence mode = keyMachine.getMode();					
+		List strokes = new ArrayList(keyMachine.getMode().getStrokes());
+		strokes.add(stroke);
+		Sequence childMode = Sequence.create(strokes);		
+		Map sequenceMapForMode = keyMachine.getSequenceMapForMode();				
 		keyMachine.setMode(childMode);
-		Map childKeySequenceMapForMode = keyMachine.getSequenceMapForMode();
+		Map childSequenceMapForMode = keyMachine.getSequenceMapForMode();
 
-		if (childKeySequenceMapForMode.isEmpty()) {
+		if (childSequenceMapForMode.isEmpty()) {
 			clear();
-			String command = (String) keySequenceMapForMode.get(childMode);
+			String command = (String) sequenceMapForMode.get(childMode);
 
-			if (command != null)
-				invoke(command, event);					
+			if (command != null && activeService != null) {
+				IAction action = activeService.getAction(command);
+			
+				if (action != null && action.isEnabled())
+					action.runWithEvent(event);
+			}
 		}
 		else {
-			setStatusLineMessage(childMode);
+			statusItem.setText(childMode.formatKeySequence());
 			updateAccelerators();
 		}
 	}
 
-	public void invoke(String action, Event event) {		
-		if (activeService != null) {
-			IAction a = activeService.getAction(action);
-			
-			if (a != null && a.isEnabled())
-				a.runWithEvent(event);
-		}
-	}
-
-	/**
-	 * Create an instance of WWinKeyBindingService and initializes it.
-	 */			
 	public WWinKeyBindingService(WorkbenchWindow workbenchWindow) {
 		this.window = workbenchWindow;
-		window.getStatusLineManager().add(statusItem);
-		
+		window.getStatusLineManager().add(statusItem);		
 		IWorkbenchPage[] pages = window.getPages();
+		
 		final IPartListener partListener = new IPartListener() {
 			public void partActivated(IWorkbenchPart part) {
-				update(part,false);
+				update(part, false);
 			}
-			public void partBroughtToTop(IWorkbenchPart part) {}
-			public void partClosed(IWorkbenchPart part) {}
+			
+			public void partBroughtToTop(IWorkbenchPart part) {
+			}
+			
+			public void partClosed(IWorkbenchPart part) {
+			}
+			
 			public void partDeactivated(IWorkbenchPart part) {
 				clear();
 			}
-			public void partOpened(IWorkbenchPart part) {}
+			
+			public void partOpened(IWorkbenchPart part) {
+			}
 		};
+		
 		final ShellListener shellListener = new ShellAdapter() {
 			public void shellDeactivated(ShellEvent e) {
 				clear();
 			}
 		};
+		
 		// TODO: Just use getPartService to add listener.		
-		for(int i=0; i<pages.length;i++) {
+		for (int i = 0; i < pages.length; i++) {
 			pages[i].addPartListener(partListener);
 		}
-		window.addPageListener(new IPageListener() {
-			public void pageActivated(IWorkbenchPage page){}
-			public void pageClosed(IWorkbenchPage page){}
-			public void pageOpened(IWorkbenchPage page){
+		
+		window.addPageListener(new IPageListener() {			
+			public void pageActivated(IWorkbenchPage page) {
+			}
+			
+			public void pageClosed(IWorkbenchPage page) {
+			}
+			
+			public void pageOpened(IWorkbenchPage page) {
 				page.addPartListener(partListener);
 				partListener.partActivated(page.getActivePart());
 				window.getShell().removeShellListener(shellListener);				
 				window.getShell().addShellListener(shellListener);				
 			}
 		});
+		
 		propertyListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals("org.eclipse.ui.commands")) { //$NON-NLS-1$
 					IWorkbenchPage page = window.getActivePage();
-					if(page != null) {
+					
+					if (page != null) {
 						IWorkbenchPart part = page.getActivePart();
-						if(part != null) {
-							update(part,true);
+						
+						if (part != null) {
+							update(part, true);
 							return;
 						}
 					}
+
 					MenuManager menuManager = window.getMenuManager();
 					menuManager.updateAll(true);
 				}
 			}
 		};
+		
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.addPropertyChangeListener(propertyListener);
 	}
-	/** 
-	 * Remove the propety change listener when the windows is disposed.
-	 */
+
 	public void dispose() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.removePropertyChangeListener(propertyListener);
 	}
-	/**
-	 * Register a global action in this service
-	 */	
+
 	public void registerGlobalAction(IAction action) {
 		globalActionDefIdToAction.put(action.getActionDefinitionId(),action);
 	}
-	/**
-	 * Register all action from the specifed action set.
-	 */	
+
 	public void registerActionSets(IActionSet sets[]) {
 		actionSetDefIdToAction.clear();
 		
@@ -245,108 +257,76 @@ public class WWinKeyBindingService {
 		}
 	}
 
-	/**
-	 * Returns a Map with all action registered in this service.
-	 */
 	public HashMap getMapping() {
-		// TBD: this could be a performance problem.
+		// TODO this could be a performance problem.
 		HashMap result = (HashMap) globalActionDefIdToAction.clone();
 		result.putAll(actionSetDefIdToAction);
 		return result;
 	}
-	/**
-	 * Returns the workbench window.
-	 */
-	public IWorkbenchWindow getWindow() {
-		return window;	
-	}
-	/**
-	 * Remove or restore the accelerators in the menus.
-	 */
-   	public void update(IWorkbenchPart part, boolean force) {
-   		if (part == null)
-   			return;
+
+	public void update(IWorkbenchPart part, boolean force) {
+		if (part == null)
+			return;
    		
 		String[] oldScopeIds = new String[0];
    		
-   		if (activeService != null)
-   			oldScopeIds = activeService.getScopeIds();
+		if (activeService != null)
+			oldScopeIds = activeService.getScopeIds();
    			
-    	activeService = (KeyBindingService) part.getSite().getKeyBindingService();
+		activeService = (KeyBindingService) part.getSite().getKeyBindingService();
 		clear();
 
-   		String[] newScopeIds = new String[0];
+		String[] newScopeIds = new String[0];
   		
-   		if (activeService != null)
-   			newScopeIds = activeService.getScopeIds();
+		if (activeService != null)
+			newScopeIds = activeService.getScopeIds();
 
-    	if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
-			Manager keyManager = Manager.getInstance();
-			Machine keyMachine = keyManager.getKeyMachine();
+		if (force || Util.compare(oldScopeIds, newScopeIds) != 0) {
+			Manager manager = Manager.getInstance();
+			Machine keyMachine = manager.getKeyMachine();
+
+			// TODO
+			if (newScopeIds == null || newScopeIds.length == 0)
+				newScopeIds = new String[] { "org.eclipse.ui.globalScope" }; //$NON-NLS-1$
 	    	
-	    	// TODO remove this later
-	    	if (newScopeIds == null || newScopeIds.length == 0)
-	    		newScopeIds = new String[] { "org.eclipse.ui.globalScope" }; //$NON-NLS-1$
-	    	
-	    	try {
-	    		keyMachine.setScopes(newScopeIds);
-	    	} catch (IllegalArgumentException eIllegalArgument) {
-	    		System.err.println(eIllegalArgument);
-	    	}
+			try {
+				keyMachine.setScopes(newScopeIds);
+			} catch (IllegalArgumentException eIllegalArgument) {
+				System.err.println(eIllegalArgument);
+			}
 	    			    	   	
-	    	WorkbenchWindow w = (WorkbenchWindow) getWindow();
-   	 		MenuManager menuManager = w.getMenuManager();
- 			menuManager.update(IAction.TEXT);
-    	}
-    }
-    /**
-     * Returns the definition id for <code>accelerator</code>
-     */
-    public String getDefinitionId(int accelerator) {
-    	if (activeService == null) 
-    		return null;
- 
-		Manager keyManager = Manager.getInstance();
-		Machine keyMachine = keyManager.getKeyMachine();        
-		Sequence mode = keyMachine.getMode();
-		List keyStrokes = new ArrayList(mode.getStrokes());
-		keyStrokes.add(Stroke.create(accelerator));
-		Sequence childMode = Sequence.create(keyStrokes);    		
-		Map keySequenceMapForMode = keyMachine.getSequenceMapForMode();
-		return (String) keySequenceMapForMode.get(childMode);
-    }
+			MenuManager menuManager = window.getMenuManager();
+			menuManager.update(IAction.TEXT);
+		}
+	}
 
-	/**
-	 * Update the KeyBindingMenu with the current set of accelerators.
-	 */
 	public void updateAccelerators() {
-		Manager keyManager = Manager.getInstance();
-		Machine keyMachine = keyManager.getKeyMachine();      		
+		Manager manager = Manager.getInstance();
+		Machine keyMachine = manager.getKeyMachine();      		
 		Sequence mode = keyMachine.getMode();
-		List keyStrokes = mode.getStrokes();
-		int size = keyStrokes.size();
-		
-		Map keySequenceMapForMode = keyMachine.getSequenceMapForMode();
-		SortedSet keyStrokeSetForMode = new TreeSet();
-		Iterator iterator = keySequenceMapForMode.keySet().iterator();
+		List strokes = mode.getStrokes();
+		int size = strokes.size();		
+		Map sequenceMapForMode = keyMachine.getSequenceMapForMode();
+		SortedSet strokeSetForMode = new TreeSet();
+		Iterator iterator = sequenceMapForMode.keySet().iterator();
 
 		while (iterator.hasNext()) {
-			Sequence keySequence = (Sequence) iterator.next();
+			Sequence sequence = (Sequence) iterator.next();
 			
-			if (keySequence.isChildOf(mode, false))
-				keyStrokeSetForMode.add(keySequence.getStrokes().get(size));	
+			if (sequence.isChildOf(mode, false))
+				strokeSetForMode.add(sequence.getStrokes().get(size));	
 		}
 
-	   	iterator = keyStrokeSetForMode.iterator();
-	   	int[] accelerators = new int[keyStrokeSetForMode.size()];
+	   	iterator = strokeSetForMode.iterator();
+	   	int[] accelerators = new int[strokeSetForMode.size()];
 		int i = 0;
 			   	
 	   	while (iterator.hasNext()) {
-	   		Stroke keyStroke = (Stroke) iterator.next();
-	   		accelerators[i++] = keyStroke.getValue();	   		
+	   		Stroke stroke = (Stroke) iterator.next();
+	   		accelerators[i++] = stroke.getValue();	   		
 	   	}
 
-		if (accMenu == null || accMenu.isDisposed()) {		
+		if (acceleratorMenu == null || acceleratorMenu.isDisposed()) {		
 			Menu parent = window.getShell().getMenuBar();
 			
 			if (parent == null || parent.getItemCount() < 1)
@@ -354,14 +334,14 @@ public class WWinKeyBindingService {
 			
 			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
 			parent = parentItem.getMenu();
-			accMenu = new AcceleratorMenu(parent);
+			acceleratorMenu = new AcceleratorMenu(parent);
 		}
 		
-		if (accMenu == null)
+		if (acceleratorMenu == null)
 			return;
 		
-		accMenu.setAccelerators(accelerators);		
-		accMenu.addSelectionListener(new SelectionAdapter() {
+		acceleratorMenu.setAccelerators(accelerators);		
+		acceleratorMenu.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				Event event = new Event();
 				event.item = selectionEvent.item;
@@ -381,80 +361,8 @@ public class WWinKeyBindingService {
 		});
 
 		if (mode.getStrokes().size() == 0)
-			accMenu.removeVerifyListener(verifyListener);
+			acceleratorMenu.removeVerifyListener(verifyListener);
 		else
-			accMenu.addVerifyListener(verifyListener);
-	}
-
-
-	/**
-	 * Contribution item for the status line.
-	 */
-	private static class KeyModeContributionItem extends ContributionItem {
-		/**
-		 * Precomputed label width hint
-		 */
-		private int fixedWidth = -1;
-		/**
-		 * Current message to display
-		 */
-		private String text;
-		/** 
-		 * The status line label widget
-		 */
-		private CLabel label;
-	
-		/**
-		 * Creates a new item with the given id.
-		 * 
-		 * @param id the item's id
-		 */
-		public KeyModeContributionItem(String id) {
-			super(id);
-		}
-	
-		/**
-		 * Sets the message for this contribution. If the message
-		 * is valid, then the contribution will be made visible,
-		 * otherwise the contribution will be hidden.
-		 *  
-		 * @param msg the message to show, or <code>null</code>
-		 */
-		public void setText(String msg) {
-			text = msg;
-			if (label != null && !label.isDisposed()) {
-				label.setText(text);
-			}
-			if (text == null || text.length() < 1) {
-				if (isVisible()) {
-					setVisible(false);
-					getParent().update(true);
-				}
-			} else {
-				if (!isVisible()) {
-					setVisible(true);
-					getParent().update(true);
-				}
-			}
-		}
-	
-		/*
-		 * @see IContributionItem#fill(Composite)
-		 */
-		public void fill(Composite parent) {
-			label= new CLabel(parent, SWT.SHADOW_IN);
-			StatusLineLayoutData data = new StatusLineLayoutData();
-			if (fixedWidth < 0) {
-				GC gc = new GC(parent);
-				gc.setFont(parent.getFont());
-				fixedWidth = gc.getFontMetrics().getAverageCharWidth() * 40;
-				gc.dispose();
-			}
-			data.widthHint = fixedWidth;
-			label.setLayoutData(data);
-		
-			if (text != null)
-				label.setText(text);
-		}
+			acceleratorMenu.addVerifyListener(verifyListener);
 	}
 }

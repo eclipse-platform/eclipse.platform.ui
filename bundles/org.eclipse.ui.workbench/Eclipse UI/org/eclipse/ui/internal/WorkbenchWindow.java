@@ -80,9 +80,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.commands.Machine;
+import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.Sequence;
 import org.eclipse.ui.internal.commands.Stroke;
-import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -764,7 +765,14 @@ protected MenuManager createMenuManager() {
 				return text;
 				
 			char altChar = Character.toUpperCase(text.charAt(index + 1));
-			String commandId = keyBindingService.getDefinitionId(SWT.ALT | altChar);
+			Manager manager = Manager.getInstance();
+			Machine keyMachine = manager.getKeyMachine();        
+			Sequence mode = keyMachine.getMode();
+			List strokes = new ArrayList(mode.getStrokes());
+			strokes.add(Stroke.create(SWT.ALT | altChar));
+			Sequence childMode = Sequence.create(strokes);    		
+			Map sequenceMapForMode = keyMachine.getSequenceMapForMode();
+			String commandId = (String) sequenceMapForMode.get(childMode);
 			
 			if (commandId == null)
 				return text;
