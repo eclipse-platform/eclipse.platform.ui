@@ -9,7 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 /**
  * A security exception that is thrown by the AntSecurityManager if
- * a Ant task in some way attempts to halt or exit the Java Virtual Machine.
+ * an Ant task in some way attempts to halt or exit the Java Virtual Machine.
  * 
  * @since 2.1 */
 public class AntSecurityException extends SecurityException {
