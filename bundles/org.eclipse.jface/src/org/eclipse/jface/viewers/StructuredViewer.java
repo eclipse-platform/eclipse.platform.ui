@@ -132,20 +132,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see IFontProvider
 	 * @see IDecoration
 	 */
-	protected class ColorAndFontCollector {
-
-		Color foreground = null;
-
-		Color background = null;
-
-		Font font = null;
-
-		boolean usedDecorators = false;
+	protected class ColorAndFontCollectorWithProviders extends ColorAndFontCollector{
 
 		IColorProvider colorProvider;
 
 		IFontProvider fontProvider;
-
+		
 		/**
 		 * Create a new instance of the receiver using the supplied
 		 * label provider. If it is an IColorProvider or IFontProvider
@@ -154,36 +146,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		 * @see IColorProvider
 		 * @see IFontProvider
 		 */
-		public ColorAndFontCollector(IBaseLabelProvider provider) {
+		public ColorAndFontCollectorWithProviders(IBaseLabelProvider provider) {
+			super();
 			if (provider instanceof IColorProvider)
 				colorProvider = (IColorProvider) provider;
 			if (provider instanceof IFontProvider)
 				fontProvider = (IFontProvider) provider;
 		}
 		
-		/**
-		 * Create a new instance of the receiver with
-		 * no colour and font provider.	
-		 */
-		public ColorAndFontCollector(){
-			//Create an instance with no providers.
-		}
-
-		/**
-		 * Clear all of the results.
-		 */
-		public void clear() {
-			foreground = null;
-			background = null;
-			font = null;
-			usedDecorators = false;
-		}
-
-		
-		/**
-		 * Set the initial fonts and colors for the element from the
-		 * content providers.
-		 * @param element Object
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.StructuredViewer.ColorAndFontManager#setFontsAndColors(java.lang.Object)
 		 */
 		public void setFontsAndColors(Object element){
 			
@@ -201,14 +174,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			if(foreground == null)
 				foreground = colorProvider.getForeground(element);			
 		}
-
-		/**
-		 * Set that decorators were applied.
-		 */
-		public void setUsedDecorators() {
-			this.usedDecorators = true;
-		}
-
+		
 		/**
 		 * Apply the fonts and colors to the control if
 		 * required.
@@ -242,10 +208,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			clear();
 		}
 		
-		/**
-		 * Apply the fonts and colors to the control if
-		 * required.
-		 * @param control
+
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.StructuredViewer.ColorAndFontManager#applyFontsAndColors(org.eclipse.swt.widgets.TreeItem)
 		 */
 		public void applyFontsAndColors(TreeItem control) {
 			
@@ -275,10 +241,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			clear();
 		}
 		
-		/**
-		 * Apply the fonts and colors to the control if
-		 * required.
-		 * @param control
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.StructuredViewer.ColorAndFontManager#applyFontsAndColors(org.eclipse.swt.custom.TableTreeItem)
 		 */
 		public void applyFontsAndColors(TableTreeItem control) {
 			
@@ -308,6 +273,121 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			clear();
 		}
 		
+		
+	}
+	
+	/**
+	 * The ColorAndFontManager collects fonts and colors without a
+	 * a color or font provider.
+	 *
+	 */
+	class ColorAndFontCollector {
+
+		Color foreground = null;
+
+		Color background = null;
+
+		Font font = null;
+
+		boolean usedDecorators = false;
+
+		/**
+		 * Create a new instance of the receiver with
+		 * no colour and font provider.	
+		 */
+		public ColorAndFontCollector(){
+			super();
+		}
+		
+
+		/**
+		 * Clear all of the results.
+		 */
+		public void clear() {
+			foreground = null;
+			background = null;
+			font = null;
+			usedDecorators = false;
+		}
+
+		
+		/**
+		 * Set the initial fonts and colors for the element from the
+		 * content providers.
+		 * @param element Object
+		 */
+		public void setFontsAndColors(Object element){
+			//Do nothing if there are no providers
+		}
+
+		/**
+		 * Set that decorators were applied.
+		 */
+		public void setUsedDecorators() {
+			this.usedDecorators = true;
+		}
+
+		/**
+		 * Apply the fonts and colors to the control if
+		 * required.
+		 * @param control
+		 */
+		public void applyFontsAndColors(TableItem control) {
+			
+			if(usedDecorators){
+				//If there is no provider only apply set values
+				if(background != null)
+					control.setBackground(background);
+			
+				if(foreground != null)
+					control.setForeground(foreground);
+		
+				if(font != null)
+					control.setFont(font);
+			}
+			clear();
+		}
+		
+		/**
+		 * Apply the fonts and colors to the control if
+		 * required.
+		 * @param control
+		 */
+		public void applyFontsAndColors(TreeItem control) {
+			if(usedDecorators){
+				//If there is no provider only apply set values
+				if(background != null)
+					control.setBackground(background);
+			
+				if(foreground != null)
+					control.setForeground(foreground);
+		
+				if(font != null)
+					control.setFont(font);
+			}
+			clear();
+		}
+		
+		/**
+		 * Apply the fonts and colors to the control if
+		 * required.
+		 * @param control
+		 */
+		public void applyFontsAndColors(TableTreeItem control) {
+			if(usedDecorators){
+				//If there is no provider only apply set values
+				if(background != null)
+					control.setBackground(background);
+			
+				if(foreground != null)
+					control.setForeground(foreground);
+		
+				if(font != null)
+					control.setFont(font);
+			}
+			clear();
+		}
+		
 		/**
 		 * Set the background color.
 		 * @param background 
@@ -329,6 +409,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		public void setForeground(Color foreground) {
 			this.foreground = foreground;
 		}
+	
+		
 	}
 
 	/**
@@ -1710,7 +1792,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see org.eclipse.jface.viewers.ContentViewer#setLabelProvider(org.eclipse.jface.viewers.IBaseLabelProvider)
 	 */
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
-		colorAndFontCollector = new ColorAndFontCollector(labelProvider);
+		if (labelProvider instanceof IColorProvider || labelProvider instanceof IFontProvider)
+			colorAndFontCollector = new ColorAndFontCollectorWithProviders(labelProvider);
+		else
+			colorAndFontCollector = new ColorAndFontCollector();
 		super.setLabelProvider(labelProvider);
 		
 	}
@@ -1746,6 +1831,40 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			updateLabel.setImage(labelProvider.getImage(element));
 		}
 	
+	}
+	
+	/**
+	 * Build a label up for the element using the supplied label provider.
+	 * @param updateLabel The ViewerLabel to collect the result in
+	 * @param element The element being decorated.
+	 * @param labelProvider ILabelProvider the labelProvider for the receiver.
+	 */
+	void buildLabel(ViewerLabel updateLabel, Object element,IViewerLabelProvider labelProvider){
+
+			labelProvider.updateLabel(updateLabel, element);
+            		
+			colorAndFontCollector.setUsedDecorators();
+			
+			if(updateLabel.hasNewBackground())
+				colorAndFontCollector.setBackground(updateLabel.getBackground());
+			
+			if(updateLabel.hasNewForeground())
+				colorAndFontCollector.setForeground(updateLabel.getForeground());
+			
+			if(updateLabel.hasNewFont())
+				colorAndFontCollector.setFont(updateLabel.getFont());
+	
+	}
+	
+	/**
+	 * Build a label up for the element using the supplied label provider.
+	 * @param updateLabel The ViewerLabel to collect the result in
+	 * @param element The element being decorated.
+	 * @param labelProvider ILabelProvider the labelProvider for the receiver.
+	 */
+	void buildLabel(ViewerLabel updateLabel, Object element,ILabelProvider labelProvider){
+			updateLabel.setText(labelProvider.getText(element));
+			updateLabel.setImage(labelProvider.getImage(element));
 	}
 
 }

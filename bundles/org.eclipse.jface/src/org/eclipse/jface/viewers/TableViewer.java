@@ -155,6 +155,34 @@ public class TableViewer extends StructuredViewer {
 	}
 	
 	private VirtualManager virtualManager;
+	
+	/**
+	 * TableColorAndFontNoOp is an optimization for tables without
+	 * color and font support.
+	 * @see ITableColorProvider
+	 * @see ITableFontProvider
+	 */
+	private class TableColorAndFontNoOp{
+		
+		/**
+		 * Create a new instance of the receiver.
+		 *
+		 */
+		TableColorAndFontNoOp(){
+			
+		}
+		
+		/**
+		 * Set the fonts and colors for the tableItem if there is a color
+		 * and font provider available.
+		 * @param tableItem The item to update.
+		 * @param element The element being represented
+		 * @param column The column index
+		 */
+		public void setFontsAndColors(TableItem tableItem, Object element, int column){
+		}	
+		
+	}
 
 	/**
 	 * TableColorAndFontCollector is an helper class for color and font
@@ -164,7 +192,7 @@ public class TableViewer extends StructuredViewer {
 	 * @see ITableFontProvider
 	 */
 	
-	private class TableColorAndFontCollector{
+	private class TableColorAndFontCollector extends TableColorAndFontNoOp{
 		
 		ITableFontProvider fontProvider = null;
 		ITableColorProvider colorProvider = null;
@@ -180,13 +208,7 @@ public class TableViewer extends StructuredViewer {
 			if(provider instanceof ITableColorProvider)
 				colorProvider = (ITableColorProvider) provider;
 		}
-		
-		/**
-		 * Create an instance of the receiver with no color and font
-		 * providers.
-		 */
-		public TableColorAndFontCollector(){
-		}
+	
 		
 		/**
 		 * Set the fonts and colors for the tableItem if there is a color
@@ -226,7 +248,7 @@ public class TableViewer extends StructuredViewer {
 	/**
 	 * The color and font collector for the cells.
 	 */
-	private TableColorAndFontCollector tableColorAndFont = new TableColorAndFontCollector();
+	private TableColorAndFontNoOp tableColorAndFont = new TableColorAndFontNoOp();
 	
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
@@ -397,12 +419,20 @@ public class TableViewer extends StructuredViewer {
 			}
 
 			IBaseLabelProvider prov = getLabelProvider();
-			ITableLabelProvider tprov = null;			
+			ITableLabelProvider tprov = null;		
+			ILabelProvider lprov = null;
+			IViewerLabelProvider vprov = null;
+			
+			if(prov instanceof ILabelProvider)
+				lprov = (ILabelProvider) prov;
+			
+			if (prov instanceof IViewerLabelProvider) {
+				vprov = (IViewerLabelProvider) prov;
+			} 
 
 			if (prov instanceof ITableLabelProvider) {
 				tprov = (ITableLabelProvider) prov;
 			} 
-			
 			
 			int columnCount = table.getColumnCount();
 			TableItem ti = item;
@@ -420,7 +450,13 @@ public class TableViewer extends StructuredViewer {
 					if (column == 0) {
 						ViewerLabel updateLabel = new ViewerLabel(item
 								.getText(), item.getImage());
-						buildLabel(updateLabel,element);
+						
+						if(vprov != null)
+							buildLabel(updateLabel,element,vprov);
+						else{
+							if(lprov != null)
+								buildLabel(updateLabel,element,lprov);
+						}
 						
 //						As it is possible for user code to run the event 
 			            //loop check here.
@@ -959,7 +995,11 @@ public class TableViewer extends StructuredViewer {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ILabelProvider);
 		super.setLabelProvider(labelProvider);
-		tableColorAndFont = new TableColorAndFontCollector(labelProvider);
+		if(labelProvider instanceof ITableFontProvider || labelProvider instanceof ITableColorProvider)
+			tableColorAndFont = new TableColorAndFontCollector(labelProvider);
+		else
+			tableColorAndFont = new TableColorAndFontNoOp();
+				
 	}
 
 	/*
@@ -1056,4 +1096,6 @@ public class TableViewer extends StructuredViewer {
 	}
 	
 	
+	
 }
+

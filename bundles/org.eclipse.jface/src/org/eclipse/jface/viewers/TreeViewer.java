@@ -203,16 +203,33 @@ public class TreeViewer extends AbstractTreeViewer {
 
 		IBaseLabelProvider prov = getLabelProvider();
 		ITableLabelProvider tprov = null;
+		ILabelProvider lprov = null;
+		IViewerLabelProvider vprov = null;
+		
+		if(prov instanceof ILabelProvider)
+			lprov = (ILabelProvider) prov;
+		
+		if (prov instanceof IViewerLabelProvider) {
+			vprov = (IViewerLabelProvider) prov;
+		} 
+		
 		if (prov instanceof ITableLabelProvider) {
 			tprov = (ITableLabelProvider) prov;
 		}
+		
+		
 		int columnCount = tree.getColumnCount();
 		if (columnCount == 0) {// If no columns were created use the label
 								// provider
 
 			ViewerLabel updateLabel = new ViewerLabel(treeItem.getText(),
 					treeItem.getImage());
-			buildLabel(updateLabel, element);
+			if(vprov != null)
+				buildLabel(updateLabel,element,vprov);
+			else{
+				if(lprov != null)
+					buildLabel(updateLabel,element,lprov);
+			}
 
 			// As it is possible for user code to run the event
 			// loop check here.
@@ -237,7 +254,12 @@ public class TreeViewer extends AbstractTreeViewer {
 					if (column == 0) {
 						ViewerLabel updateLabel = new ViewerLabel(treeItem
 								.getText(), treeItem.getImage());
-						buildLabel(updateLabel, element);
+						if(vprov != null)
+							buildLabel(updateLabel,element,vprov);
+						else{
+							if(lprov != null)
+								buildLabel(updateLabel,element,lprov);
+						}
 
 						// As it is possible for user code to run the event
 						// loop check here.
