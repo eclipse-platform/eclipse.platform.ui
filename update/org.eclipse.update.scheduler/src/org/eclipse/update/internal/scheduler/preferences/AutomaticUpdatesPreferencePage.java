@@ -76,10 +76,19 @@ public class AutomaticUpdatesPreferencePage
 
 		dayCombo = new Combo(group, SWT.NULL);
 		dayCombo.setItems(UpdateScheduler.DAYS);
+		gd = new GridData();
+		gd.widthHint = 100;
+		gd.horizontalIndent = 30;
+		dayCombo.setLayoutData(gd);
+		
 		Label label = new Label(group, SWT.NULL);
 		label.setText("at");
+		
 		hourCombo = new Combo(group, SWT.NULL);
 		hourCombo.setItems(UpdateScheduler.HOURS);
+		gd = new GridData();
+		gd.widthHint = 60;
+		hourCombo.setLayoutData(gd);
 
 		initialize();
 
