@@ -411,7 +411,15 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		targetToolBar = new ToolBar(targetForm, SWT.FLAT | SWT.WRAP);
 		targetForm.setTopRight(targetToolBar);
 
-		targetViewer = new TableViewer(targetForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		targetViewer = new TableViewer(targetForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL) {
+			// Override preservingSelection to *not* preserve the selection
+			// since it doesn't preserve the selection properly with multiple occurrances
+			// of the same item in the viewer.
+			protected void preservingSelection(Runnable updateCode) {
+					// perform the update
+					updateCode.run();
+			}
+		};
 		targetForm.setContent(targetViewer.getTable());
 		targetContentProvider = new AntTargetContentProvider();
 		targetViewer.setContentProvider(targetContentProvider);
@@ -978,9 +986,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			newIndices[i] = index - 1;
 		}
 		targetViewer.refresh();
-		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
-		targetViewer.getTable().deselectAll();
-		targetViewer.getTable().select(newIndices);
+		targetViewer.getTable().setSelection(newIndices);
 		updateTargetActions();
 	}
 
@@ -1003,9 +1009,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			newIndices[i] = index + 1;
 		}
 		targetViewer.refresh();
-		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
-		targetViewer.getTable().deselectAll();
-		targetViewer.getTable().select(newIndices);
+		targetViewer.getTable().setSelection(newIndices);
 		updateTargetActions();
 	}
 
