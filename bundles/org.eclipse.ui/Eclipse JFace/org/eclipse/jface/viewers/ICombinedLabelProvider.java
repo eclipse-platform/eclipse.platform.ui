@@ -14,7 +14,7 @@ public interface ICombinedLabelProvider extends IBaseLabelProvider {
 	 * and text is owned by the label provider and must not be disposed directly.
 	 * Instead, dispose the label provider when no longer needed.
 	 *
-	 * @param element the element for which to provide the label image
+	 * @param element the element for which to provide the label
 	 * @return the CombinedLabel used to label the element. If no decoration
 	 * is applied the CombinedLabel will contain the original undecorated
 	 * text and image.

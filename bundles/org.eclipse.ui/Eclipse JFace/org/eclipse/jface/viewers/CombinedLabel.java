@@ -8,54 +8,55 @@ package org.eclipse.jface.viewers;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * The CombinedLabel is a type used to keep track of the result
- * of an Image and text decoration for an Object.
- * This is used by the ICombinedLabelDecorator to return the
- * results of decoration.
+ * The CombinedLabel combines the text and image for the label of an element.
  */
-
 public class CombinedLabel {
 
 	private String text;
 	private Image image;
 
 	/**
-	 * Create a new Decoration beginning with a startText
-	 * and a startImage
+	 * Create a new <code>CombinedLabel</code> with the given text and image.
+	 * 
+	 * @param initialText the initial text for the label
+	 * @param initialImage the initial image for the label
 	 */
-
-	public CombinedLabel(String startText, Image startImage) {
-		text = startText;
-		image = startImage;
+	public CombinedLabel(String initialText, Image initialImage) {
+		this.text = text;
+		this.image = image;
 	}
 
 	/**
-	 * Return the current text.
-	 * @return String
+	 * Returns the label's text.
+	 * 
+	 * @return the label's text
 	 */
 	public String getText() {
 		return text;
 	}
 
 	/**
-	 * Return the current image.
-	 * @return Image
+	 * Returns the label's image.
+	 * 
+	 * @return the label's image
 	 */
 	public Image getImage() {
 		return image;
 	}
 
 	/**
-	 * Set the current text.
-	 * @param String
+	 * Sets the label's text.
+	 * 
+	 * @param newText the new text for the label
 	 */
 	public void setText(String newText) {
 		text = newText;
 	}
 
 	/**
-	 * Set the current image.
-	 * @param Image
+	 * Sets the label's image.
+	 * 
+	 * @param newImage the new image for the label
 	 */
 	public void setImage(Image newImage) {
 		image = newImage;
