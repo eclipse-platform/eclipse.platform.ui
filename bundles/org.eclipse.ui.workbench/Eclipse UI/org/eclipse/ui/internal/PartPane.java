@@ -24,6 +24,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -54,6 +56,25 @@ public abstract class PartPane extends LayoutPart
 	protected IWorkbenchPartReference partReference;
 	protected WorkbenchPage page;
 	protected Composite control;
+	
+	private TraverseListener traverseListener = new TraverseListener() {	
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
+		 */
+		public void keyTraversed(TraverseEvent e) {
+			ILayoutContainer container = getContainer();
+			if (container != null && container instanceof LayoutPart) {
+				LayoutPart parent = (LayoutPart)container;
+				Control parentControl = parent.getControl();
+				if (parentControl != null && !parentControl.isDisposed()) {
+					parentControl.traverse(e.detail);
+					e.doit = false;				
+				}
+			}
+		}
+		
+	};
+
 	
 	public static class Sashes {
 		public Sash left;
@@ -116,7 +137,8 @@ protected void createChildControl() {
 		}
 	});
 	page.addPart(partReference);
-	page.firePartOpened(part[0]);	
+	page.firePartOpened(part[0]);
+
 }
 
 public void addSizeMenuItem (Menu menu, int index) {
@@ -151,6 +173,8 @@ public void createControl(Composite parent) {
 	
 	// When the pane or any child gains focus, notify the workbench.
 	control.addListener(SWT.Activate, this);
+	
+	control.addTraverseListener(traverseListener);
 }
 
 protected abstract WorkbenchPart createErrorPart(WorkbenchPart oldPart);
@@ -166,6 +190,7 @@ public void dispose() {
 
 	if ((control != null) && (!control.isDisposed())) {
 		control.removeListener(SWT.Activate, this);
+		control.removeTraverseListener(traverseListener);
 		control.dispose();
 		control = null;
 	}
