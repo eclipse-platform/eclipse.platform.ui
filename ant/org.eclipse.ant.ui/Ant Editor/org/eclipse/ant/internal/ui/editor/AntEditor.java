@@ -24,6 +24,7 @@ import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.InformationDispatchAction;
+import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.ant.internal.ui.editor.text.AntFoldingStructureProvider;
@@ -41,6 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
@@ -84,6 +86,7 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -378,6 +381,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		action = new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
 		action.setActionDefinitionId("org.eclipse.ant.ui.format"); //$NON-NLS-1$
         setAction("ContentFormat", action); //$NON-NLS-1$
+        
+        action = new OpenDeclarationAction(this);
+        setAction("OpenDeclaration", action); //$NON-NLS-1$
         
         fFoldingGroup= new FoldingActionGroup(this, getViewer());
         
@@ -692,13 +698,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		
-		IAction formatAction= getAction("ContentFormat"); //$NON-NLS-1$
-		if (formatAction == null) {
-			return;
+		IAction action= getAction("ContentFormat"); //$NON-NLS-1$
+		if (action != null && action.isEnabled()) {
+			menu.add(action);
 		}
-		
-		if (formatAction.isEnabled()) {
-			menu.add(formatAction);
+
+		action= getAction("OpenDeclaration"); //$NON-NLS-1$
+		if (action != null) {
+			String openGroup = "group.open"; //$NON-NLS-1$
+    	    menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, new Separator(openGroup)); 
+			menu.appendToGroup(openGroup, action);
 		}
 	}
 	
