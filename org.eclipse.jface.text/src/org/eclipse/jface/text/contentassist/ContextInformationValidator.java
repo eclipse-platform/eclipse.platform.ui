@@ -12,6 +12,8 @@ package org.eclipse.jface.text.contentassist;
 
 
 
+import org.eclipse.jface.contentassist.*;
+
 import org.eclipse.jface.text.ITextViewer;
 
 

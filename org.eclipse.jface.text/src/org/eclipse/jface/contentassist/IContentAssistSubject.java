@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.text.contentassist;
+package org.eclipse.jface.contentassist;
 
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyListener;
@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEventConsumer;
+
 
 /**
  * A content assist subject can request assistance provided by a

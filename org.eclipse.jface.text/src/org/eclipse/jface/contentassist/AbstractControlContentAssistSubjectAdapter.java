@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.text.contentassist;
+package org.eclipse.jface.contentassist;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,7 +53,7 @@ import org.eclipse.jface.text.IEventConsumer;
 
 /**
  * An <code>AbstractControlContentAssistSubjectAdapter</code> delegates assistance requests from a 
- * {@link org.eclipse.jface.text.contentassist.IContentAssistantExtension content assistant}
+ * {@linkplain org.eclipse.jface.text.contentassist.ContentAssistant content assistant}
  * to a <code>Control</code>.
  * 
  * A visual affordance can be configured via {@link #setContentAssistCueProvider(ILabelProvider)}.

@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.contentassist.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.jface.text.Assert;
@@ -1026,9 +1027,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/*
-	 * @see IContentAssistantExtension#install(IContentAssistSubject)
+	 * @see IControlContentAssistant#install(IContentAssistSubject)
 	 */
-	public void install(IContentAssistSubject contentAssistSubject) {
+	protected void install(IContentAssistSubject contentAssistSubject) {
 		fContentAssistSubject= contentAssistSubject;
 		fContentAssistSubjectAdapter= new ContentAssistSubjectAdapter(fContentAssistSubject);
 		install();

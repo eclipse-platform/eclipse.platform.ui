@@ -8,28 +8,21 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM Corporation - Initial implementation
 **********************************************************************/
-package org.eclipse.jface.text.contentassist;
+package org.eclipse.jface.contentassist;
 
 
 /**
  * Extension interface for <code>IContentAssistant</code>.
- * Updates the content assistant to be aware of documents with multiple partitions.
  * 
  * @since 3.0
  */
-public interface IContentAssistantExtension {
+public interface IControlContentAssistant {
 	
 	/**
-	 * Returns the document partitioning this content assistant is using.
+	 * Installs content assist support on the given subject.
 	 * 
-	 * @return the document partitioning this content assistant is using
+	 * @param contentAssistSubject the one who requests content assist
+	 * @throws UnsupportedOperationException if the content assist does not support this method
 	 */
-	String getDocumentPartitioning();
-
-	/**
-	 * Complete the common prefix of the available choices.
-	 *
-	 * @return an optional error message if no proposals can be computed
-	 */
-	String completePrefix();
+	void install(IContentAssistSubject contentAssistSubject);
 }

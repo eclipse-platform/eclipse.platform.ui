@@ -58,7 +58,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContentAssistSubject;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -1034,13 +1033,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		fInformationControlCreator= creator;
 	}
 
-	/*
-	 * @see IContentAssistantExtension#install(IContentAssistSubject)
-	 */
-	public void install(IContentAssistSubject contentAssistSubject) {
-		throw new UnsupportedOperationException();
-	}
-		
 	/*
 	 * @see IContentAssist#install
 	 */

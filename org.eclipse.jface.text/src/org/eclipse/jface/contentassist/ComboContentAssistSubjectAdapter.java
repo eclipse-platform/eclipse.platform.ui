@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.text.contentassist;
+package org.eclipse.jface.contentassist;
 
 import java.util.HashMap;
 
@@ -45,7 +45,7 @@ import org.eclipse.jface.util.Assert;
  *	</p>
  * 
  * @see org.eclipse.swt.widgets.Combo
- * @see org.eclipse.jface.text.contentassist.IContentAssistSubject
+ * @see org.eclipse.jface.contentassist.IContentAssistSubject
  * @since 3.0
  */
 public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssistSubjectAdapter {

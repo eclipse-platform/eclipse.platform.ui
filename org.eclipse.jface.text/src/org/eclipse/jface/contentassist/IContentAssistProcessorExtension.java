@@ -9,14 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.text.contentassist;
+package org.eclipse.jface.contentassist;
+
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 
 /**
  * Extends <code>IContentAssit</code> with the concept of a
  * content assist subject which provides the context for
  * the content assistant.
  * 
- * @see org.eclipse.jface.text.contentassist.IContentAssistSubject
+ * @see org.eclipse.jface.contentassist.IContentAssistSubject
  * @since 3.0
  */
 public interface IContentAssistProcessorExtension {
