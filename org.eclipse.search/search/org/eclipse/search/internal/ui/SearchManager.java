@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -153,6 +154,7 @@ public class SearchManager implements IResourceChangeListener {
 		if (fCurrentSearch != null)
 			fCurrentSearch.backupMarkers();
 				
+		final Search previousSearch= fCurrentSearch;
 		fCurrentSearch= search;
 		monitor.beginTask(SearchMessages.getString("SearchManager.updating"), getCurrentResults().size() + 20); //$NON-NLS-1$
 		
@@ -235,14 +237,20 @@ public class SearchManager implements IResourceChangeListener {
 		// update viewers
 		iter= fListeners.iterator();
 		if (display != null && !display.isDisposed()) {
+			final Viewer visibleViewer= ((SearchResultView)SearchPlugin.getSearchResultView()).getViewer();
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
 				viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 				viewer.setContextMenuTarget(search.getContextMenuContributor());
 				display.syncExec(new Runnable() {
 					public void run() {
-						viewer.setPageId(search.getPageId());						
+						if (previousSearch != null && viewer == visibleViewer)
+							previousSearch.setSelection(viewer.getSelection());
+						viewer.setPageId(search.getPageId());
 						viewer.setInput(getCurrentResults());
+						viewer.setSelection(fCurrentSearch.getSelection(), true);
+						if (viewer.getSelectedEntriesCount() == 0 && !getCurrentResults().isEmpty())
+							viewer.setSelection(new StructuredSelection(getCurrentResults().get(0)));
 					}
 				});
 			}
@@ -264,12 +272,16 @@ public class SearchManager implements IResourceChangeListener {
 		Iterator iter= fListeners.iterator();
 		Display display= getDisplay();
 		if (display != null && !display.isDisposed()) {
+			final Viewer visibleViewer= ((SearchResultView)SearchPlugin.getSearchResultView()).getViewer();
 			while (iter.hasNext()) {
 				final SearchResultViewer viewer= (SearchResultViewer)iter.next();
 				display.syncExec(new Runnable() {
 					public void run() {
+						if (fCurrentSearch != null && viewer == visibleViewer)
+							fCurrentSearch.setSelection(viewer.getSelection());
 						viewer.handleRemoveAll();
 						viewer.clearTitle();
+
 					}
 				});
 			}

@@ -19,11 +19,13 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IContextMenuContributor;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultViewEntry;
+
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 class Search extends Object {
 	private String fPageId;
@@ -31,6 +33,7 @@ class Search extends Object {
 	private String fPluralLabelPattern;
 	private ImageDescriptor fImageDescriptor;
 	private ILabelProvider fLabelProvider;
+	private ISelection fSelection;
 	private ArrayList fResults;
 	private IAction fGotoMarkerAction;
 	private IContextMenuContributor fContextMenuContributor;
@@ -170,6 +173,14 @@ class Search extends Object {
 	void setResults(ArrayList results) {
 		Assert.isNotNull(results);
 		fResults= results;
+	}
+
+	ISelection getSelection() {
+		return fSelection;
+	}
+
+	void setSelection(ISelection selection) {
+		fSelection= selection;
 	}
 }
 
