@@ -1,16 +1,20 @@
 package org.eclipse.ui.tests.api;
 
 import java.util.ArrayList;
+
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.junit.util.CallHistory;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
  * An ElementViewPart shows a bunch of elements in a list
  * viewer.
  */
-public class ListView extends MockViewPart {
+public class ListView extends MockViewPart 
+	implements IMenuListener
+{
 
 	ListViewer viewer;
 	ArrayList input;
@@ -44,16 +48,16 @@ public class ListView extends MockViewPart {
 		// Create popup menu.
 		menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(this);
 		menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
+		
 	}
 	
-	public ListElement addElement(String name) {
-		ListElement result = new ListElement(name);
-		input.add(result);
+	public void addElement(ListElement el) {
+		input.add(el);
 		viewer.refresh();
-		return result;
 	}
 	
 	public void selectElement(ListElement el) {
@@ -64,5 +68,12 @@ public class ListView extends MockViewPart {
 	public MenuManager getMenuManager() {
 		return menuMgr;
 	}
+	/**
+	 * @see IMenuListener#menuAboutToShow(IMenuManager)
+	 */
+	public void menuAboutToShow(IMenuManager menuMgr) {
+		menuMgr.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
 }
 

@@ -108,23 +108,36 @@
 </extension> 
 
 <extension point="org.eclipse.ui.popupMenus"> 
-    <objectContribution 
-        id="redActionContribution" 
+    <objectContribution id="oc1" 
         objectClass="org.eclipse.ui.tests.api.ListElement"> 
         <filter name="name" value="red"/> 
-        <action id="redAction" 
-            label="redAction" 
-            class="bogus"> 
-        </action> 
+        <action id="oc1" label="redAction" 
+        	class="org.eclipse.ui.tests.api.MockActionDelegate"/> 
     </objectContribution> 
-    <objectContribution 
-        id="blueActionContribution" 
+    <objectContribution id="oc2" 
         objectClass="org.eclipse.ui.tests.api.ListElement"> 
         <filter name="name" value="blue"/> 
-        <action id="blueAction" 
-            label="blueAction" 
-            class="bogus"> 
-        </action> 
+        <action id="oc2" label="blueAction"
+        	class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc3" 
+        objectClass="org.eclipse.ui.tests.api.ListElement"> 
+        <filter name="flag" value="true"/> 
+        <action id="oc3" label="trueAction"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc4" 
+        objectClass="org.eclipse.ui.tests.api.ListElement"> 
+        <filter name="flag" value="false"/> 
+        <action id="oc4" label="falseAction"
+			class="org.eclipse.ui.tests.api.MockActionDelegate"/>
+    </objectContribution> 
+    <objectContribution id="oc5" 
+        objectClass="org.eclipse.ui.tests.api.ListElement"> 
+        <filter name="name" value="red"/> 
+        <filter name="flag" value="true"/> 
+        <action id="oc5" label="redTrueAction"
+        	class="org.eclipse.ui.tests.api.MockActionDelegate"/>
     </objectContribution> 
 </extension> 
 

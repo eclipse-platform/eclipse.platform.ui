@@ -6,13 +6,15 @@ import org.eclipse.ui.IActionFilter;
 public class ListElement implements IAdaptable {
 
 	private String name;
+	private boolean flag;
 	
-	/**
-	 * Constructor for Element
-	 */
 	public ListElement(String name) {
-		super();
+		this(name, false);
+	}
+	
+	public ListElement(String name, boolean flag) {
 		this.name = name;
+		this.flag = flag;
 	}
 	
 	public String toString() {
@@ -21,6 +23,10 @@ public class ListElement implements IAdaptable {
 
 	public String getName() {
 		return name;
+	}
+	
+	public boolean getFlag() {
+		return flag;
 	}
 		
 	public Object getAdapter(Class adapter) {

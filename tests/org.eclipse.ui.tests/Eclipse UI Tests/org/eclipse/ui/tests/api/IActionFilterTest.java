@@ -6,6 +6,9 @@ import org.eclipse.ui.junit.util.*;
 
 /**
  * Test the lifecycle of an action filter.
+ * 
+ * From Javadoc: "An IActionFilter returns whether the specific attribute
+ * 		matches the state of the target object."
  */
 public class IActionFilterTest extends UITestCase {
 
@@ -22,47 +25,80 @@ public class IActionFilterTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 	
-	public void testTestAttribute() throws Throwable {
-		// From Javadoc: "Returns whether the specific attribute 
-		// matches the state of the target object."
-
-		// Setup: The plugin.xml contains one popup menu action targetted 
-		// to ListElements with name="red" and another targetted to
-		// ListElements with name="blue".  If we create a view with
-		// these elements and open the popup menu the action filter
-		// should be invoked and the menu should be populated correctly.
-
+	/**
+	 * Select a ListElement, popup a menu and verify that the 
+	 * ListElementActionFilter.testAttribute method is invoked.  
+	 * Then verify that the correct actions are added to the
+	 * popup menu.
+	 * 
+	 * Setup: The plugin.xml contains a number of popup menu action 
+	 * targetted to ListElements 
+	 * 
+	 * redAction -> (name = red)
+	 * blueAction -> (name = blue)
+	 * trueAction -> (flag = true)
+	 * falseAction -> (flag = false)
+	 * redTrueAction -> (name = red) (flag = true)
+	 */
+	public void testAttribute() throws Throwable {
+		// Create the test objects.
+		ListElement red = new ListElement("red");
+		ListElement blue = new ListElement("blue");
+		ListElement green = new ListElement("green");
+		ListElement redTrue = new ListElement("red", true);
+		
 		// Create a list view.  
 		ListView view = (ListView)fPage.showView(VIEW_ID);
 		MenuManager menuMgr = view.getMenuManager();
-		ListElement red = view.addElement("red");
-		ListElement blue = view.addElement("blue");
-		ListElement green = view.addElement("green");
+		view.addElement(red);
+		view.addElement(blue);
+		view.addElement(green);
+		view.addElement(redTrue);
 		
 		// Get action filter.
 		ListElementActionFilter	filter = ListElementActionFilter.getSingleton();
 			
-		// Open a popup menu on red.
+		// Select red, verify popup.
 		view.selectElement(red);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(filter.getCalled());
 		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
 		
-		// Open a popup menu on blue.
+		// Select blue, verify popup.
 		filter.clearCalled();
 		view.selectElement(blue);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(filter.getCalled());
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
 		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
 		
-		// Open a popup menu on green.
+		// Select green, verify popup.
 		filter.clearCalled();
 		view.selectElement(green);
 		ActionUtil.fireAboutToShow(menuMgr);
 		assertTrue(filter.getCalled());
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
 		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
+		
+		// Select redTrue, verify popup.
+		filter.clearCalled();
+		view.selectElement(redTrue);
+		ActionUtil.fireAboutToShow(menuMgr);
+		assertTrue(filter.getCalled());
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "blueAction"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "trueAction"));
+		assertNull(ActionUtil.getActionWithLabel(menuMgr, "falseAction"));
+		assertNotNull(ActionUtil.getActionWithLabel(menuMgr, "redTrueAction"));
  	}	
 }
