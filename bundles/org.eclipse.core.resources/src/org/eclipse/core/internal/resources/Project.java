@@ -131,7 +131,9 @@ public void checkAccessible(int flags) throws CoreException {
 protected void checkDescription(IProjectDescription desc) throws CoreException {
 	if (desc.getLocation() == null)
 		return;
-	IStatus status = workspace.validateProjectLocation(this, desc.getLocation());
+	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, "Invalid project description.", null);
+	status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
+	status.merge(workspace.validateProjectLocation(this, desc.getLocation()));
 	if (!status.isOK())
 		throw new ResourceException(status);
 }
@@ -231,7 +233,6 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 	if (destination.segmentCount() == 1) {
 		// copy project to project
 		String projectName = destination.segment(0);
-		Assert.isLegal(workspace.validateName(projectName, IResource.PROJECT).isOK());
 		IProjectDescription desc = getDescription();
 		desc.setName(projectName);
 		desc.setLocation(null);
@@ -905,7 +906,6 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
 	if (destination.segmentCount() == 1) {
 		// move project to project
 		String projectName = destination.segment(0);
-		Assert.isLegal(workspace.validateName(projectName, IResource.PROJECT).isOK());
 		IProjectDescription desc = getDescription();
 		desc.setName(projectName);
 		desc.setLocation(null);
