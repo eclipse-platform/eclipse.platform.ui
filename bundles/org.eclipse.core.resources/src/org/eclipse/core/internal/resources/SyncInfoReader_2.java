@@ -5,9 +5,12 @@ package org.eclipse.core.internal.resources;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 2000
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.internal.utils.Assert;
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.*;
 
@@ -16,42 +19,62 @@ import java.util.*;
  * for reading files with version number 2.
  */
 public class SyncInfoReader_2 extends SyncInfoReader {
+	
+	// version number
+	public static final int SYNCINFO_VERSION = 2;
+
+	// for sync info
+	public static final int INDEX = 1;
+	public static final int QNAME = 2;
+
 public SyncInfoReader_2(Workspace workspace, Synchronizer synchronizer) {
 	super(workspace, synchronizer);
 }
-public void readSyncInfo(DataInputStream input) throws CoreException {
-	final List readPartners = new ArrayList(5);
+/**
+ * SAVE_FILE -> VERSION_ID RESOURCE*
+ * VERSION_ID -> int
+ * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
+ * RESOURCE_PATH -> String
+ * SIZE -> int
+ * SYNCINFO -> TYPE BYTES
+ * TYPE -> INDEX | QNAME
+ * INDEX -> int int
+ * QNAME -> int String
+ * BYTES -> byte[]
+ * 
+ */ 
+public void readSyncInfo(DataInputStream input) throws IOException {
 	try {
-		while (input.available() != 0) {
+		List readPartners = new ArrayList(5);
+		while (true) {
 			IPath path = new Path(input.readUTF());
 			Resource resource = (Resource) workspace.getRoot().findMember(path, true);
+			readSyncInfo(resource, input, readPartners);
 			if (resource == null)
 				return;
-			readSyncInfo(resource, input, readPartners);
 		}
-	} catch (IOException e) {
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, "Failed reading sync info.", e);
+	} catch (EOFException e) {
+		// ignore end of file
 	}
 }
-private void readSyncInfo(Resource resource, DataInputStream input, List readPartners) throws IOException, CoreException {
+private void readSyncInfo(Resource resource, DataInputStream input, List readPartners) throws IOException {
 	int size = input.readInt();
 	HashMap table = new HashMap(size);
 	for (int i = 0; i < size; i++) {
 		QualifiedName name = null;
 		int type = input.readInt();
 		switch (type) {
-			case ICoreConstants.QNAME_CONSTANT :
+			case QNAME :
 				String qualifier = input.readUTF();
 				String local = input.readUTF();
 				name = new QualifiedName(qualifier, local);
 				readPartners.add(name);
 				break;
-			case ICoreConstants.INT_CONSTANT :
+			case INDEX :
 				name = (QualifiedName) readPartners.get(input.readInt());
 				break;
 			default :
-				// XXX: assert(false) here or throw a real exception?
-				throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), "Errors restoring sync info for resource."));
+				Assert.isTrue(false, "Errors restoring sync info for resource.");
 		}
 		// read the bytes
 		int length = input.readInt();
