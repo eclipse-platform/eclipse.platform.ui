@@ -13,14 +13,14 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jdt.launching.JavaLaunchDelegate;
 
 /**
  * Used by the AntLaunchDelegate for Ant builds in a separate VM
  * The subclassing is needed to be able to launch an Ant build from a non-Java project
  */
-public class AntJavaLaunchDelegate extends JavaLocalApplicationLaunchConfigurationDelegate {
+public class AntJavaLaunchDelegate extends JavaLaunchDelegate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
