@@ -10,15 +10,12 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.util.*;
+
+import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.events.*;
-import org.eclipse.core.internal.localstore.*;
-import org.eclipse.core.internal.properties.*;
-import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.watson.*;
-import java.io.*;
-import java.util.*;
 
 public class Project extends Container implements IProject {
 	/**
@@ -650,6 +647,9 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
 				}
 			}
+			//see if we have an old .prj file
+			if (!hadSavedDescription)
+				hadSavedDescription = workspace.getMetaArea().hasSavedProject(this);
 			workspace.beginOperation(true);
 			workspace.changing(this);
 			writeDescription(description, updateFlags);
