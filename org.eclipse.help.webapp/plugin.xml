@@ -9,7 +9,7 @@
 <plugin
    name = "%help_plugin_name"
    id = "org.eclipse.help.webapp"
-   version = "1.0"
+   version = "1.9.0"
    provider-name = "International Business Machines Corp.">
 
    <requires>
