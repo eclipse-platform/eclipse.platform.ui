@@ -64,9 +64,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	public static Test suite() {
 		return new TestSuite(IJobManagerTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new IJobManagerTest("testJobFamilyJoinRepeating"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new IJobManagerTest("testJobFamilyJoinRepeating"));
+		//		return suite;
 	}
 
 	public IJobManagerTest() {
@@ -172,6 +172,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		jobC.cancel();
 		jobB.cancel();
 	}
+
 	/**
 	 * Regression test for bug 57656
 	 */
@@ -186,6 +187,46 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		jobA.sleep();
 		//jobB should still run within ten seconds
 		waitForCompletion(jobB, 30000);
+	}
+
+	public void testCurrentJob() {
+		final Thread[] thread = new Thread[1];
+		final boolean[] done = new boolean[] {false};
+		final boolean[] success = new boolean[] {false};
+		//create a job that will complete asynchronously
+		final Job job = new Job("Test Job") {
+			protected IStatus run(IProgressMonitor monitor) {
+				setThread(thread[0]);
+				done[0] = true;
+				return ASYNC_FINISH;
+			}
+		};
+		//create and run a thread that will run and finish the async job
+		Runnable r = new Runnable() {
+			public void run() {
+				job.schedule();
+				//wait for job to start running
+				while (!done[0]) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						//ignore
+					}
+				}
+				//job should now be finishing asynchronously in this thread
+				success[0] = job == Platform.getJobManager().currentJob();
+				job.done(Status.OK_STATUS);
+			}
+		};
+		thread[0] = new Thread(r);
+		thread[0].start();
+		try {
+			thread[0].join();
+		} catch (InterruptedException e) {
+			//ignore
+		}
+		//assert that currentJob returned the correct value
+		assertTrue("1.0", success[0]);
 	}
 
 	public void testDelayedJob() {
@@ -1104,13 +1145,14 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			manager.removeJobChangeListener(listener);
 		}
 	}
+
 	/**
 	 * Tests conditions where there is a race to schedule the same job multiple times.
 	 */
 	public void testScheduleRace() {
 		final int[] count = new int[1];
-		final boolean[] running= new boolean[] {false};
-		final boolean[] failure= new boolean[] {false};
+		final boolean[] running = new boolean[] {false};
+		final boolean[] failure = new boolean[] {false};
 		final Job testJob = new Job("testScheduleRace") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -1144,7 +1186,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		waitForCompletion(testJob, 5000);
 		assertTrue("1.0", !failure[0]);
 	}
-	
 
 	public void testSimple() {
 		final int JOB_COUNT = 10;
@@ -1194,7 +1235,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		TestJob blockingJob = new TestJob("Long Job", 1000000, 10);
 		blockingJob.setRule(rule);
 		blockingJob.schedule();
-		
+
 		TestJob job = new TestJob("Long Job", 1000000, 10);
 		job.setRule(rule);
 		job.schedule();
@@ -1205,7 +1246,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//cancel the blocking job, thus freeing the pool for the waiting job
 		blockingJob.cancel();
-		
+
 		//make sure the job is still sleeping
 		assertState("1.3", job, Job.SLEEPING);
 

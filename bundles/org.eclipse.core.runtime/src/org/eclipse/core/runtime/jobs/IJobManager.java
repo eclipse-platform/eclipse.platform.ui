@@ -134,7 +134,7 @@ public interface IJobManager {
 	public IProgressMonitor createProgressGroup();
 
 	/**
-	 * Returns the job that is currently running in this thread, or null if there
+	 * Returns the job that is currently running in this thread, or <code>null</code> if there
 	 * is no currently running job.
 	 * 
 	 * @return the job or <code>null</code>

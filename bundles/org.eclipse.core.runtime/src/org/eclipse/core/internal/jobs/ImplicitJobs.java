@@ -136,14 +136,6 @@ class ImplicitJobs {
 	}
 
 	/**
-	 * Returns the currently running implicit job for the given thread, or null
-	 * if there currently isn't one.
-	 */
-	Job jobForThread(Thread thread) {
-		return (Job) threadJobs.get(thread);
-	}
-
-	/**
 	 * Returns a new or reused ThreadJob instance. 
 	 */
 	private ThreadJob newThreadJob(ISchedulingRule rule) {

@@ -317,7 +317,14 @@ public class JobManager implements IJobManager {
 		Thread current = Thread.currentThread();
 		if (current instanceof Worker)
 			return ((Worker) current).currentJob();
-		return implicitJobs.jobForThread(current);
+		synchronized (lock) {
+			for (Iterator it = running.iterator(); it.hasNext();) {
+				Job job = (Job) it.next();
+				if (job.getThread() == current)
+					return job;
+			}
+		}
+		return null;
 	}
 
 	/**
