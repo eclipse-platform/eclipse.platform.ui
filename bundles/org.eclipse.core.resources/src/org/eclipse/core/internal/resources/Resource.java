@@ -479,7 +479,7 @@ public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -515,7 +515,7 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -575,7 +575,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(getProject(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -598,7 +598,7 @@ public IMarker createMarker(String type) throws CoreException {
 		workspace.getMarkerManager().add(this, new MarkerInfo[] { info });
 		return new Marker(this, info.getId());
 	} finally {
-		workspace.endOperation(false, null);
+		workspace.endOperation(this, false, null);
 	}
 }
 
@@ -617,8 +617,9 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 	try {
 		String message = Policy.bind("resources.deleting", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork * 1000);
+		ISchedulingRule rule = getType() == ROOT ? (ISchedulingRule)this : getParent();
 		try {
-			workspace.prepareOperation(getType() == ROOT ? (ISchedulingRule)this : getParent());
+			workspace.prepareOperation(rule);
 			/* if there is no such resource (including type check) then there is nothing
 			   to delete so just return. */
 			if (!exists())
@@ -670,7 +671,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork * 1000));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork * 1000));
 		}
 	} finally {
 		monitor.done();
@@ -697,7 +698,7 @@ public void deleteMarkers(String type, boolean includeSubtypes, int depth) throw
 		workspace.beginOperation(true);
 		workspace.getMarkerManager().removeMarkers(this, type, includeSubtypes, depth);
 	} finally {
-		workspace.endOperation(false, null);
+		workspace.endOperation(this, false, null);
 	}
 }
 /**
@@ -1151,7 +1152,7 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(workspace.getRoot(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -1168,8 +1169,9 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 		String message = isRoot ? Policy.bind("resources.refreshingRoot") : Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
+		ISchedulingRule rule = isRoot ? (ISchedulingRule) this : getParent();
 		try {
-			workspace.prepareOperation(isRoot ? (ISchedulingRule) this : getParent());
+			workspace.prepareOperation(rule);
 			if (!isRoot && !getProject().isAccessible())
 				return;
 			workspace.beginOperation(true);
@@ -1178,7 +1180,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(build, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, build, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -1198,7 +1200,7 @@ public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws C
 			internalSetLocal(flag, depth);
 			monitor.worked(Policy.opWork);
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -1270,7 +1272,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

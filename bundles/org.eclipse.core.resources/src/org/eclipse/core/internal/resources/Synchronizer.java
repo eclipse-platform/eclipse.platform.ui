@@ -239,7 +239,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 				throw new ResourceException(status);
 		}
 	} finally {
-		workspace.endOperation(false, null);
+		workspace.endOperation(resource, false, null);
 	}
 }
 public void snapSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {

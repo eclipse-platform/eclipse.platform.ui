@@ -66,7 +66,7 @@ class AutoBuildJob extends Job {
             //building may close the tree, but we are still inside an operation so open it
             if (workspace.getElementTree().isImmutable())
                workspace.newWorkingTree();
-            workspace.endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
+            workspace.endOperation(workspace.getRoot(), false, Policy.subMonitorFor(monitor, Policy.buildWork));
          }
       } finally {
          monitor.done();

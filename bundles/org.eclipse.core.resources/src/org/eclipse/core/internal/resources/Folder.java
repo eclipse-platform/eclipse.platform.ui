@@ -100,7 +100,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

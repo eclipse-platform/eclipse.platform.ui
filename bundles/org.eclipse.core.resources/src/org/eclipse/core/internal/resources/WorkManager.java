@@ -43,7 +43,7 @@ class WorkManager implements IManager {
 	private IJobManager jobManager;
 	private final ILock lock;
 	private int nestedOperations = 0;
-	private NotifyRule notifyRule = new NotifyRule();
+	protected NotifyRule notifyRule = new NotifyRule();
 	private boolean operationCanceled = false;
 	private int preparedOperations = 0;
 
@@ -86,7 +86,7 @@ class WorkManager implements IManager {
 	/**
 	 * Inform that an operation has finished.
 	 */
-	public synchronized void checkOut() throws CoreException {
+	public synchronized void checkOut(ISchedulingRule rule) throws CoreException {
 		decrementPreparedOperations();
 		rebalanceNestedOperations();
 		//reset state if this is the end of a top level operation
@@ -95,7 +95,7 @@ class WorkManager implements IManager {
 			hasBuildChanges = false;
 		}
 		lock.release();
-		jobManager.endRule();
+		jobManager.endRule(rule);
 	}
 	/**
 	 * This method can only be safelly called from inside a workspace
@@ -106,7 +106,7 @@ class WorkManager implements IManager {
 		preparedOperations--;
 	}
 	public void endNotify() {
-		jobManager.endRule();
+		jobManager.endRule(notifyRule);
 	}
 	/**
 	 * Re-acquires the workspace lock that was temporarily released during an

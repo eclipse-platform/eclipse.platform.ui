@@ -67,7 +67,7 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
 		if (workspace.getElementTree().isImmutable())
 			workspace.newWorkingTree();
 		workspace.autoBuildJob.avoidBuild();
-		workspace.endOperation(false, null);
+		workspace.endOperation(getParent(), false, null);
 	}
 }
 /** 
@@ -88,7 +88,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		if (workspace.getElementTree().isImmutable())
 			workspace.newWorkingTree();
 		workspace.autoBuildJob.avoidBuild();
-		workspace.endOperation(false, null);
+		workspace.endOperation(getParent(), false, null);
 	}
 }
 /**
@@ -164,7 +164,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -256,7 +256,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -421,7 +421,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation(workspace.getRoot());
+			workspace.prepareOperation(getParent());
 			String destName = destDesc.getName();
 			IPath destPath = new Path(destName).makeAbsolute();
 			// The following assert method throws CoreExceptions as stated in the IProject.copy API
@@ -487,7 +487,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(getParent(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -630,7 +630,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation(workspace.getRoot());
+			workspace.prepareOperation(getParent());
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			if (!getName().equals(description.getName())) {
@@ -655,7 +655,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(getParent(), true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -700,7 +700,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -815,7 +815,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			if (!status.isOK())
 				throw new CoreException(status);
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();
@@ -857,7 +857,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

@@ -62,7 +62,7 @@ public void delete() throws CoreException {
 		getWorkspace().beginOperation(true);
 		getWorkspace().getMarkerManager().removeMarker(getResource(), getId());
 	} finally {
-		getWorkspace().endOperation(false, null);
+		getWorkspace().endOperation(resource, false, null);
 	}
 }
 /**
@@ -223,7 +223,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
 		}
 	} finally {
-		workspace.endOperation(false, null);
+		workspace.endOperation(resource, false, null);
 	}
 }
 /**
@@ -257,7 +257,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
 		}
 	} finally {
-		workspace.endOperation(false, null);
+		workspace.endOperation(resource, false, null);
 	}
 }
 /**
@@ -283,7 +283,7 @@ public void setAttributes(Map values) throws CoreException {
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
 		}
 	} finally {
-		workspace.endOperation(false, null);
+		workspace.endOperation(resource, false, null);
 	}
 }
 void setId(int value) {

@@ -184,7 +184,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (tree.isImmutable())
 					newWorkingTree();
 				autoBuildJob.avoidBuild();
-				endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
+				endOperation(getRoot(), false, Policy.subMonitorFor(monitor, Policy.buildWork));
 			}
 		} finally {
 			monitor.done();
@@ -196,11 +196,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void checkpoint(boolean build) {
 		try {
 			try {
-				prepareOperation(null);
+				prepareOperation(getWorkManager().notifyRule);
 				beginOperation(true);
 				broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 			} finally {
-				endOperation(build, null);
+				endOperation(getWorkManager().notifyRule, build, null);
 			}
 		} catch (CoreException e) {
 			ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
@@ -540,7 +540,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				endOperation(true, Policy.subMonitorFor(monitor, totalWork - opWork));
+				endOperation(getRoot(), true, Policy.subMonitorFor(monitor, totalWork - opWork));
 			}
 			if (status.matches(IStatus.ERROR))
 				throw new ResourceException(status);
@@ -765,7 +765,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				endOperation(true, Policy.subMonitorFor(monitor, totalWork - opWork));
+				endOperation(getRoot(), true, Policy.subMonitorFor(monitor, totalWork - opWork));
 			}
 		} finally {
 			monitor.done();
@@ -797,7 +797,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (markers[i] != null && markers[i].getResource() != null)
 					markerManager.removeMarker(markers[i].getResource(), markers[i].getId());
 		} finally {
-			endOperation(false, null);
+			endOperation(getRoot(), false, null);
 		}
 	}
 	/**
@@ -828,7 +828,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * registered resource change listeners are notified.  If autobuilding is
 	 * enabled, a build is run.
 	 */
-	public void endOperation(boolean build, IProgressMonitor monitor) throws CoreException {
+	public void endOperation(ISchedulingRule rule, boolean build, IProgressMonitor monitor) throws CoreException {
 		WorkManager workManager = getWorkManager();
 		// This is done in a try finally to ensure that we always decrement the operation count
 		// and release the workspace lock.  This must be done at the end because snapshot
@@ -892,7 +892,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					newWorkingTree();
 			}
 		} finally {
-			workManager.checkOut();
+			workManager.checkOut(rule);
 		}
 		if (Policy.BACKGROUND_BUILD)
 			autoBuildJob.endTopLevel(hasTreeChanges);
@@ -1357,7 +1357,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				endOperation(true, Policy.subMonitorFor(monitor, totalWork - opWork));
+				endOperation(getRoot(), true, Policy.subMonitorFor(monitor, totalWork - opWork));
 			}
 			if (status.matches(IStatus.ERROR))
 				throw new ResourceException(status);
@@ -1590,7 +1590,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			} finally {
 				if (depth >= 0)
 					getWorkManager().endUnprotected(depth);
-				endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
+				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.buildWork));
 			}
 		} finally {
 			monitor.done();
@@ -1618,7 +1618,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			message = Policy.bind("resources.snapRequest"); //$NON-NLS-1$
 			return new ResourceStatus(IStatus.OK, message);
 		} finally {
-			endOperation(false, null);
+			endOperation(getRoot(), false, null);
 		}
 	}
 	public void setCrashed(boolean value) {

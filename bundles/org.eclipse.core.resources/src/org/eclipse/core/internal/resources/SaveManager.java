@@ -13,12 +13,14 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.internal.events.*;
+import org.eclipse.core.internal.events.BuilderPersistentInfo;
+import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class SaveManager implements IElementInfoFlattener, IManager {
@@ -96,7 +98,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 					workspace.beginOperation(true);
 					state.newTree = workspace.getElementTree();
 				} finally {
-					workspace.endOperation(false, null);
+					workspace.endOperation(workspace.getRoot(), false, null);
 				}
 				return state;
 			}
@@ -1259,8 +1261,9 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			monitor.beginTask(message, 6);
 			message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
 			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
+			ISchedulingRule rule = project != null ? (IResource) project : workspace.getRoot();
 			try {
-				workspace.prepareOperation(project != null ? (IResource) project : workspace.getRoot());
+				workspace.prepareOperation(rule);
 				workspace.beginOperation(false);
 				Map contexts = computeSaveContexts(getSaveParticipantPlugins(), kind, project);
 				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));
@@ -1347,7 +1350,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
 			} finally {
-				workspace.endOperation(false, Policy.monitorFor(null));
+				workspace.endOperation(rule, false, Policy.monitorFor(null));
 			}
 		} finally {
 			monitor.done();
