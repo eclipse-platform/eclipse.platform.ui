@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
@@ -55,11 +56,32 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
 	/** the SWT control */
 	private Control fControl;
+	/** the outline page */
+	private CompareOutlinePage fOutlinePage;
+	/** enable outline */
 	
 	
 	public CompareEditor() {
 	}
+	
+	/** (non-Javadoc)
+	 * Method declared on IAdaptable
+	 */
+	public Object getAdapter(Class key) {
 		
+		if (key.equals(IContentOutlinePage.class)) {
+			Object object= getCompareConfiguration().getProperty(CompareConfiguration.USE_OUTLINE_VIEW);
+			if (object instanceof Boolean && ((Boolean)object).booleanValue()) {
+				IEditorInput input= getEditorInput();
+				if (input instanceof CompareEditorInput) {
+					fOutlinePage= new CompareOutlinePage((CompareEditorInput) input);
+					return fOutlinePage;
+				}
+			}
+		}
+		return super.getAdapter(key);
+	}
+	
 	/* package */ CompareConfiguration getCompareConfiguration() {
 		IEditorInput input= getEditorInput();
 		if (input instanceof CompareEditorInput)
