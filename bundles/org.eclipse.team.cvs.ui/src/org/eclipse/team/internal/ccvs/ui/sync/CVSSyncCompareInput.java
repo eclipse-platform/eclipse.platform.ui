@@ -254,7 +254,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 			public void run() {							
 				AvoidableMessageDialog dialog = new AvoidableMessageDialog(
 						shell,
-						Policy.bind("CVSSyncCompareInput.confirmMergeTitle"),  //$NON-NLS-1$
+						Policy.bind("CVSSyncCompareInput.confirmMergeMessageTitle"),  //$NON-NLS-1$
 						null,	// accept the default window icon
 						Policy.bind("CVSSyncCompareInput.confirmMergeMessage"),  //$NON-NLS-1$
 						MessageDialog.INFORMATION, 
