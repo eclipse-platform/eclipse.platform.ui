@@ -42,7 +42,7 @@ public class RegistryCacheReader {
 	private boolean lazilyLoadExtensions;
 	protected File cacheFile;
 
-	public static final byte REGISTRY_CACHE_VERSION = 4;
+	public static final byte REGISTRY_CACHE_VERSION = 5;
 	public static final byte NULL = 0;
 	public static final byte OBJECT = 1;
 	public static final byte INDEX = 2;
@@ -181,13 +181,6 @@ public class RegistryCacheReader {
 				for (int i = 0; i < length; i++)
 					extensions[i] = readExtension(in);
 				result.setExtensions(extensions);
-
-				// and then fragments
-				length = in.readInt();
-				BundleModel[] bundles = new BundleModel[length];
-				for (int i = 0; i < length; i++)
-					bundles[i] = readBundleModel(in);
-				result.setFragments(bundles);
 				return result;
 			} catch (IOException e) {
 				String bundleId = (result == null || result.getUniqueIdentifier() == null) ? "<not available>" : result.getUniqueIdentifier(); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	private static String[] NL_JAR_VARIANTS = buildNLVariants(InternalPlatform.getDefault().getEnvironmentInfoService().getNL());
 
 	private String hostId;
-	private BundleModel[] fragments;
 	private IExtensionPoint[] extensionPoints;
 	private IExtension[] extensions;
 
@@ -242,46 +241,8 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	public boolean isFragment() {
 		return hostId != null;
 	}
-	void addFragment(BundleModel fragment) {
-		if (fragments == null) {
-			fragments = new BundleModel[] { fragment };
-			return;
-		}
-		BundleModel[] existingFragments = fragments;
-		fragments = new BundleModel[fragments.length + 1];
-		System.arraycopy(existingFragments, 0, fragments, 0, existingFragments.length);
-		fragments[fragments.length - 1] = fragment;
-
-	}
-	void removeFragment(BundleModel fragment) {
-		if (fragments == null)
-			return;
-		int position = -1;
-		for (int i = 0; position >= 0 || i < fragments.length; i++)
-			if (fragment == fragments[i])
-				position = i;
-		if (position == -1)
-			return;
-		if (fragments.length == 0) {
-			fragments = null;
-			return;
-		}
-		BundleModel[] newFragments = new BundleModel[fragments.length - 1];
-		System.arraycopy(fragments, 0, newFragments, 0, position);
-		if (position < fragments.length - 1)
-			System.arraycopy(fragments, position + 1, newFragments, position, fragments.length - (position + 1));
-		fragments = newFragments;
-	}
 	public String toString() {
 		return "BundleModel: " + getName();
-	}
-
-	public BundleModel[] getFragments() {		
-		return fragments == null ? new BundleModel[0] : fragments;
-	}
-
-	public void setFragments(BundleModel[] value) {
-		fragments = value;
 	}
 	/**
 	 * Fixes up the extension declarations in the given pre-3.0 plug-in or fragment to compensate

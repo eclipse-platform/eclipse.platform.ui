@@ -181,13 +181,6 @@ public class RegistryCacheWriter {
 			out.writeInt(length);
 			for (int i = 0; i < length; i++)
 				writeExtension((Extension) extensions[i], out);
-
-			// and then fragments
-			BundleModel[] fragments = object.getFragments();
-			length = (fragments == null) ? 0 : fragments.length;
-			out.writeInt(length);
-			for (int i = 0; i < length; i++)
-				writeBundleModel(fragments[i], out);
 		} catch (IOException ioe) {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Bundle"), ioe)); //$NON-NLS-1$
 		}
