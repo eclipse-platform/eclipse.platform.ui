@@ -149,6 +149,9 @@ protected void fixMovesAndMarkers(ElementTree oldTree) {
 					//our API states that MOVED_FROM must be in conjunction with ADDED | (CHANGED + REPLACED)
 					if (kind == CHANGED)
 						status = status | REPLACED | CONTENT;
+					//check for gender change
+					if (oldInfo != null && newInfo != null && oldInfo.getType() != newInfo.getType())
+						status |= TYPE;
 				}
 		}
 		switch (kind) {
