@@ -429,7 +429,9 @@ public final class MutableActivityManager
 		boolean definedActivityIdsChanged = false;
 		Set definedActivityIds = new HashSet(activityDefinitionsById.keySet());
 
+		Set previouslyDefinedActivityIds = null;
 		if (!definedActivityIds.equals(this.definedActivityIds)) {
+		    previouslyDefinedActivityIds = this.definedActivityIds;
 			this.definedActivityIds = definedActivityIds;
 			definedActivityIdsChanged = true;
 		}
@@ -437,7 +439,9 @@ public final class MutableActivityManager
 		boolean definedCategoryIdsChanged = false;
 		Set definedCategoryIds = new HashSet(categoryDefinitionsById.keySet());
 
+		Set previouslyDefinedCategoryIds = null;
 		if (!definedCategoryIds.equals(this.definedCategoryIds)) {
+		    previouslyDefinedCategoryIds = this.definedCategoryIds;
 			this.definedCategoryIds = definedCategoryIds;
 			definedCategoryIdsChanged = true;
 		}
@@ -446,7 +450,9 @@ public final class MutableActivityManager
 		getRequiredActivityIds(this.enabledActivityIds, enabledActivityIds);
 		boolean enabledActivityIdsChanged = false;
 
+		Set previouslyEnabledActivityIds = null;
 		if (!this.enabledActivityIds.equals(enabledActivityIds)) {
+		    previouslyEnabledActivityIds = this.enabledActivityIds;
 			this.enabledActivityIds = enabledActivityIds;
 			enabledActivityIdsChanged = true;
 		}
@@ -468,7 +474,10 @@ public final class MutableActivityManager
 					this,
 					definedActivityIdsChanged,
 					definedCategoryIdsChanged,
-					enabledActivityIdsChanged));
+					enabledActivityIdsChanged,
+					previouslyDefinedActivityIds,
+					previouslyDefinedCategoryIds,
+					previouslyEnabledActivityIds));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);
@@ -494,7 +503,9 @@ public final class MutableActivityManager
 		boolean activityManagerChanged = false;
 		Map activityEventsByActivityId = null;
 
+		Set previouslyEnabledActivityIds = null;
 		if (!this.enabledActivityIds.equals(enabledActivityIds)) {
+		    previouslyEnabledActivityIds = this.enabledActivityIds;
 			this.enabledActivityIds = enabledActivityIds;
 			activityManagerChanged = true;
 			activityEventsByActivityId =
@@ -510,8 +521,9 @@ public final class MutableActivityManager
 			notifyActivities(activityEventsByActivityId);
 
 		if (activityManagerChanged)
-			fireActivityManagerChanged(
-				new ActivityManagerEvent(this, false, false, true));
+                fireActivityManagerChanged(new ActivityManagerEvent(this,
+                        false, false, true, null, null,
+                        previouslyEnabledActivityIds));
 	}
 
 	private Map updateActivities(Collection activityIds) {

@@ -38,7 +38,10 @@ public final class ProxyActivityManager extends AbstractActivityManager {
 						ProxyActivityManager.this,
 						activityManagerEvent.haveDefinedActivityIdsChanged(),
 						activityManagerEvent.haveDefinedCategoryIdsChanged(),
-						activityManagerEvent.haveEnabledActivityIdsChanged());
+						activityManagerEvent.haveEnabledActivityIdsChanged(),
+						activityManagerEvent.getPreviouslyDefinedActivityIds(),
+						activityManagerEvent.getPreviouslyDefinedCategoryIds(),
+						activityManagerEvent.getPreviouslyEnabledActivityIds());
 				fireActivityManagerChanged(proxyActivityManagerEvent);
 			}
 		});
