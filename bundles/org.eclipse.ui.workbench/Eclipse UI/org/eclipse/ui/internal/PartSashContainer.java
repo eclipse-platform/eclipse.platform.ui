@@ -747,8 +747,27 @@ public abstract boolean isPaneType(LayoutPart toTest);
  */
 protected void dropObject(LayoutPart sourcePart, LayoutPart targetPart, int side) {
 	
-	if (side == SWT.CENTER) {
+	if (side == SWT.CENTER) {	    	    
+	    ILayoutContainer container = (ILayoutContainer)targetPart;
+	    ILayoutContainer sourceContainer = null;
+	    LayoutPart visiblePart = null;
+	    if (isStackType(sourcePart)) {
+	        sourceContainer = (ILayoutContainer)sourcePart;
+	        visiblePart = getVisiblePart(sourceContainer);
+	    }
+
 		stack(sourcePart, targetPart);
+		
+		if (sourceContainer != null) {	        	
+			if (visiblePart != null) {
+				setVisiblePart(container, visiblePart);
+				visiblePart.setFocus();
+			}	    
+	    }
+		else if (isPaneType(sourcePart)) {
+			setVisiblePart(container, sourcePart);
+			sourcePart.setFocus();
+		}
 	} else {
 
 		if (isStackType(sourcePart)) {
@@ -780,19 +799,12 @@ public void stack(LayoutPart newPart, LayoutPart relPos) {
 	getControl().setRedraw(false);
 	if (isStackType(newPart)) {
 		ILayoutContainer sourceContainer = (ILayoutContainer)newPart;
-		LayoutPart visiblePart = getVisiblePart(sourceContainer);
 		LayoutPart[] children = sourceContainer.getChildren();
 		for (int i = 0; i < children.length; i++)
 			stackPane(children[i], container);
-		if (visiblePart != null) {
-			setVisiblePart(container, visiblePart);
-			visiblePart.setFocus();
-		}
 	}
 	else if (isPaneType(newPart)) {
 		stackPane(newPart, container);
-		setVisiblePart(container, newPart);
-		newPart.setFocus();
 	}
 	
 	getControl().setRedraw(true);
