@@ -231,10 +231,21 @@ public class ActivityConstraints {
 			String message =
 				UpdateUIPlugin.getFormattedMessage(KEY_PREREQ, vid.toString());
 			boolean found = false;
+			PluginVersionIdentifier version = vid.getVersion();
+			boolean ignoreVersion =
+				version.getMajorComponent() == 0
+					&& version.getMinorComponent() == 0
+					&& version.getServiceComponent() == 0;
 
 			for (int j = 0; j < goingPlugins.size(); j++) {
 				IPluginEntry entry = (IPluginEntry) goingPlugins.get(j);
-				if (entry.getVersionedIdentifier().equals(vid))
+				if (ignoreVersion) {
+					if (entry
+						.getVersionedIdentifier()
+						.getIdentifier()
+						.equals(vid.getIdentifier()))
+						found = true;
+				} else if (entry.getVersionedIdentifier().equals(vid))
 					found = true;
 				if (inclusion && found) {
 					children.add(createStatus(feature, message));
