@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.webapp.servlet.*;
 
 /**
@@ -53,9 +54,10 @@ public class BookmarksData extends RequestData {
 			// separate the url and title by vertical bar
 
 			// check for duplicates
-			if (bookmarks.indexOf("," + bookmarkURL + "|") != -1)
+			if (bookmarks.indexOf("," + encode(bookmarkURL) + "|") != -1)
 				return;
-			bookmarks = bookmarks + "," + bookmarkURL + "|" + title;
+			bookmarks =
+				bookmarks + "," + encode(bookmarkURL) + "|" + encode(title);
 			prefs.setValue(HelpSystem.BOOKMARKS, bookmarks);
 			HelpPlugin.getDefault().savePluginPreferences();
 		}
@@ -73,7 +75,8 @@ public class BookmarksData extends RequestData {
 					: request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
-			String removeString = "," + bookmarkURL + "|" + title;
+			String removeString =
+				"," + encode(bookmarkURL) + "|" + encode(title);
 			int i = bookmarks.indexOf(removeString);
 			if (i == -1)
 				return;
@@ -98,9 +101,11 @@ public class BookmarksData extends RequestData {
 				// url and title are separated by vertical bar
 				int separator = bookmark.indexOf('|');
 
-				String label = bookmark.substring(separator + 1);
+				String label = decode(bookmark.substring(separator + 1));
 				String href =
-					separator < 0 ? "" : bookmark.substring(0, separator);
+					separator < 0
+						? ""
+						: decode(bookmark.substring(0, separator));
 				topics[i] = new Topic(label, href);
 			}
 			return topics;
@@ -116,5 +121,21 @@ public class BookmarksData extends RequestData {
 			return REMOVE;
 		else
 			return NONE;
+	}
+	/**
+	 * Ensures that string does not contains
+	 * ',' or '|' characters.
+	 * @param s
+	 * @return String
+	 */
+	private static String encode(String s) {
+		s = TString.change(s, "\\", "\\escape");
+		s = TString.change(s, ",", "\\coma");
+		return TString.change(s, "|", "\\pipe");
+	}
+	private static String decode(String s) {
+		s = TString.change(s, "\\pipe", "|");
+		s = TString.change(s, "\\coma", ",");
+		return TString.change(s, "\\escape", "\\");
 	}
 }
