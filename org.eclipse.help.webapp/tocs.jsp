@@ -14,7 +14,6 @@
 <style type="text/css" >
 
 BODY {
-	background-color: Window;
 	font: icon;
 	margin-top:5px;
 	padding:0;
