@@ -369,14 +369,10 @@ public class LinkedModeUI {
 	}
 	
 	private class DocumentListener implements IDocumentListener {
-		private int fExitFlags;
-		private DocumentEvent fLastEvent;
 		/*
 		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent event) {
-			fExitFlags= -1;
-			fLastEvent= event;
 			
 			// default behavior: any document change outside a linked position
 			// causes us to exit
@@ -392,7 +388,7 @@ public class LinkedModeUI {
 						}
 					}
 					
-					fExitFlags= ILinkedModeListener.EXTERNAL_MODIFICATION;
+					leave(ILinkedModeListener.EXTERNAL_MODIFICATION);
 					return;
 				}
 			}
@@ -402,10 +398,6 @@ public class LinkedModeUI {
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent event) {
-			if (event == fLastEvent && fExitFlags != -1) {
-				leave(fExitFlags);
-			}
-			fLastEvent= null;
 		}
 	}
 
@@ -1132,6 +1124,9 @@ public class LinkedModeUI {
 			if (doc != null)
 				docs.add(doc);
 		}
+		
+		if (flags == ILinkedModeListener.EXTERNAL_MODIFICATION)
+			fModel.exit(flags);
 
 		Runnable runnable= new Runnable() {
 			public void run() {

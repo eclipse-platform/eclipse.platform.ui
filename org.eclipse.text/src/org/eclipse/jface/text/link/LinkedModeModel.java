@@ -66,6 +66,11 @@ import org.eclipse.jface.text.IDocumentExtension.IReplace;
 public class LinkedModeModel {
 	
 	/**
+	 * Listener flag to signal internal message.
+	 */
+	private static final int INTERNAL= 1 << 20;
+
+	/**
 	 * Checks whether there is already a model installed on <code>document</code>.
 	 * 
 	 * @param document the <code>IDocument</code> of interest
@@ -116,8 +121,7 @@ public class LinkedModeModel {
 		LinkedModeManager mgr= LinkedModeManager.getLinkedManager(new IDocument[] {document}, false);
 		if (mgr != null)
 			return mgr.getTopEnvironment();
-		else
-			return null;
+		return null;
 	}
 
 	/**
@@ -165,7 +169,6 @@ public class LinkedModeModel {
 	 */
 	private class DocumentListener implements IDocumentListener {
 
-		private DocumentEvent fLastEvent;
 		private boolean fExit= false;
 		
 		/**
@@ -179,9 +182,6 @@ public class LinkedModeModel {
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
 			
-			fExit= false;
-			fLastEvent= event;
-
 			for (Iterator it= fGroups.iterator(); it.hasNext(); ) {
 				LinkedPositionGroup group= (LinkedPositionGroup) it.next();
 				if (!group.isLegalEvent(event)) {
@@ -197,13 +197,12 @@ public class LinkedModeModel {
 		 * @param event {@inheritDoc}
 		 */
 		public void documentChanged(DocumentEvent event) {
-			if (event.equals(fLastEvent) && fExit) {
-				LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
+			if (fExit) {
+				LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION | INTERNAL);
 				return;
 			}
+			fExit= false;
 			
-			fLastEvent= null;
-
 			// don't react on changes executed by the parent model
 			if (fParentEnvironment != null && fParentEnvironment.isChanging())
 				return;
@@ -216,7 +215,7 @@ public class LinkedModeModel {
 				Map map= group.handleEvent(event);
 				if (result != null && map != null) {
 					// exit if more than one position was changed
-					LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION);
+					LinkedModeModel.this.exit(ILinkedModeListener.EXTERNAL_MODIFICATION | INTERNAL);
 					return;
 				}
 				if (map != null)
@@ -255,7 +254,7 @@ public class LinkedModeModel {
 	/** The position updater for linked positions. */
 	private final IPositionUpdater fUpdater= new InclusivePositionUpdater(getCategory());
 	/** The document listener on the documents affected by this model. */
-	private final IDocumentListener fDocumentListener= new DocumentListener();
+	private final DocumentListener fDocumentListener= new DocumentListener();
 	/** The parent model for a hierarchical set up, or <code>null</code>. */
 	private LinkedModeModel fParentEnvironment;
 	/**
@@ -316,6 +315,15 @@ public class LinkedModeModel {
 	public void exit(int flags) {
 		if (!fIsActive)
 			return;
+		if ((flags & ILinkedModeListener.EXTERNAL_MODIFICATION) != 0
+				&& (flags & INTERNAL) == 0) {
+			// deferred exit
+			fDocumentListener.fExit= true;
+			return;
+		}
+		
+		flags= flags & ~INTERNAL;
+		
 		fIsActive= false;
 
 		for (Iterator it= fDocuments.iterator(); it.hasNext(); ) {
