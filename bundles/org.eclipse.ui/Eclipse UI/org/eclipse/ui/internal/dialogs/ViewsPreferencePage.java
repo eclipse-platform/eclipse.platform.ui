@@ -62,7 +62,7 @@ private Composite createButtonGroup(Composite composite) {
 	buttonComposite.setLayout(layout);
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
-	composite.setData(data);
+	buttonComposite.setData(data);
 
 	return buttonComposite;
 
