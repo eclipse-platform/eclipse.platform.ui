@@ -105,7 +105,7 @@ public interface IActivity extends IAdaptable {
 	 * @return action code, as defined in this interface
 	 * @since 2.0 
 	 */
-	int getAction();
+	public int getAction();
 
 	/**
 	 * Returns the displayable label for this action
@@ -113,7 +113,7 @@ public interface IActivity extends IAdaptable {
 	 * @return diplayable label for action
 	 * @since 2.0 
 	 */
-	String getLabel();
+	public String getLabel();
 
 	/**
 	 * Returns the creation date of this activity
@@ -121,7 +121,7 @@ public interface IActivity extends IAdaptable {
 	 * @return activity date
 	 * @since 2.0 
 	 */
-	Date getDate();
+	public Date getDate();
 
 	/** 
 	 * Returns the activity completion status
@@ -131,7 +131,7 @@ public interface IActivity extends IAdaptable {
 	 * @return completion status, as defined in this interface
 	 * @since 2.0 
 	 */
-	int getStatus();
+	public int getStatus();
 
 	/**
 	 * Returns the installation configuration that was the result of 
@@ -140,5 +140,5 @@ public interface IActivity extends IAdaptable {
 	 * @return installation configuration
 	 * @since 2.0
 	 */
-	IInstallConfiguration getInstallConfiguration();
+	public IInstallConfiguration getInstallConfiguration();
 }
