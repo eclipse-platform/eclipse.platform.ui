@@ -17,8 +17,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import org.eclipse.help.internal.appserver.WebappManager;
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Geometry;
@@ -285,15 +283,7 @@ public class IntroURL implements IIntroURL {
         }
     }
 
-    /**
-     * Open a help topic.
-     */
-    // private boolean showHelpTopic(String href) {
-    // show href in Help window. WorkbenchHelp takes care of error
-    // handling.
-    // PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
-    // return true;
-    // }
+
     /**
      * Open a help topic. If embed="true", open the help href as an intro page.
      * If false, open the href in the Help system window. In the case of SWT
@@ -317,40 +307,18 @@ public class IntroURL implements IIntroURL {
             // embedded.
             BrowserIntroPartImplementation impl = (BrowserIntroPartImplementation) model
                 .getPresentation().getIntroParttImplementation();
-            href = toAbsoluteURL(href);
+            // INTRO: maybe add support for navigation
+            href = PlatformUI.getWorkbench().getHelpSystem()
+                .resolve(href, true).toExternalForm();
             impl.getBrowser().setUrl(href);
             return true;
         } else {
             // show href in Help window. SWT presentation is handled here.
-            // WorkbenchHelp takes care of error
-            // handling.
+            // WorkbenchHelp takes care of error handling.
             PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(href);
             return true;
         }
     }
-
-
-    /*
-     * INTRO: Internal method usage that needs to be removed asap!
-     */
-
-    private String toAbsoluteURL(String url) {
-        if (url == null || url.indexOf("://") != -1) //$NON-NLS-1$
-            return url;
-        BaseHelpSystem.ensureWebappRunning();
-        String base = getBase();
-        if (url.startsWith("/"))
-            return base + url;
-        else
-            return base + "/" + url;
-    }
-
-    private String getBase() {
-        return "http://" //$NON-NLS-1$
-                + WebappManager.getHost() + ":" //$NON-NLS-1$
-                + WebappManager.getPort() + "/help/nftopic"; //$NON-NLS-1$
-    }
-
 
 
 

@@ -7,7 +7,7 @@
    provider-name="%provider_name"
    class="org.eclipse.ui.internal.intro.impl.IntroPlugin">
 
-   <runtime>
+   <runtime>   
       <library name=".">
          <export name="*"/>
       </library>
@@ -18,8 +18,6 @@
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.help.base"/>
-      <import plugin="org.eclipse.help.appserver"/> 
    </requires>
 
 
