@@ -34,9 +34,12 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPaintPositionManager;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextPresentationListener;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension3;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextPresentation;
 
 
 
@@ -47,7 +50,7 @@ import org.eclipse.jface.text.Region;
  * 
  * @since 2.1
  */
-public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener {	
+public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener, ITextPresentationListener {	
 	
 	/** 
 	 * The presentation information (decoration) for an annotation.  Each such
@@ -98,10 +101,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private Set fHighlightAnnotationTypes= new HashSet();
 	/**
-	 * List of style ranges used to do background highlighting.
-	 * since 3.0
+	 * The range in which all highlight annotations can be found.
+	 * @since 3.0
 	 */
-	private ArrayList fStyleRanges= new ArrayList();
+	private Position fHighlightAnnotationRange= new Position(0);
 
 	
 	/**
@@ -180,10 +183,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Updates the set of decorations based on the current state of
 	 * the painter's annotation model.
 	 */
-	private void catchupWithModel() {	
+	private synchronized void catchupWithModel() {	
 		if (fDecorations != null && fHighlightAnnotationTypes != null) {
 			fDecorations.clear();
 			fHighlightedDecorations.clear();
+			
+			int highlightAnnotationRangeStart= Integer.MAX_VALUE; 			
+			int highlightAnnotationRangeEnd= -1;
+			
 			if (fModel != null) {
 				
 				Iterator e= fModel.getAnnotationIterator();
@@ -213,9 +220,17 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						
 						if (isDrawingSquiggles)
 							fDecorations.add(pp);
-						if (isHighlighting)
+						
+						if (isHighlighting) {
 							fHighlightedDecorations.add(pp);
+							highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, position.offset);
+							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
+						}
 					}
+				}
+				if (!fHighlightedDecorations.isEmpty()) {
+					fHighlightAnnotationRange.offset= highlightAnnotationRangeStart;
+					fHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
 				}
 			}
 		}
@@ -227,54 +242,37 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	private void updatePainting() {
 		disablePainting(true);
 		
-		// remove background from style ranges
-		applyBackground(false); // faster than invalidateTextPresentation();
-		
 		catchupWithModel();
 		
-		// add background to style ranges
-		applyBackground(true);
+		invalidateTextPresentation();
 		
 		enablePainting();
 	}
 
-	private void applyBackground(boolean highlight) {
+	private void invalidateTextPresentation() {
+		if (fSourceViewer instanceof ITextViewerExtension2) {
+			IRegion r= getWidgetRange(fHighlightAnnotationRange);
+			if (r != null)
+				((ITextViewerExtension2)fSourceViewer).invalidateTextPresentation(r.getOffset(), r.getLength());
+		} else {
+			fSourceViewer.invalidateTextPresentation();
+		}
+	}
+
+	/*
+	 * @see ITextPresentationListener#applyTextPresentation(TextPresentation, IRegion)
+	 * @since 3.0
+	 */
+	public synchronized void applyTextPresentation(TextPresentation tp, IRegion region) {
 		for (Iterator iter= fHighlightedDecorations.iterator(); iter.hasNext();) {
 
 			Decoration pp = (Decoration)iter.next();
 			Position p= pp.fPosition;
 			if (!fSourceViewer.overlapsWithVisibleRegion(p.offset, p.length))
 				continue;
-			
-			IRegion r= getWidgetRange(p);
-			if (r != null) {
-				StyleRange[] styleRanges= fTextWidget.getStyleRanges(r.getOffset(), r.getLength());
-				ArrayList newStyleRanges= new ArrayList(styleRanges.length + 10); 
-				int offset= r.getOffset();
-				for (int j= 0, length= styleRanges.length; j < length; j++) {
-					StyleRange sr= styleRanges[j]; 
-					Color bgColor= highlight ? pp.fColor : null;
-					if (offset < sr.start) {
-						// Unstyled range
-						StyleRange usr= new StyleRange(offset, sr.start - offset, null, bgColor);
-						fStyleRanges.add(usr);
-						newStyleRanges.add(usr);
-					}
-					offset= sr.start + sr.length;
-					sr.background= bgColor;
-					fStyleRanges.add(sr);
-					newStyleRanges.add(sr);
-				}
-				int endOffset= r.getOffset() + r.getLength();
-				if (offset < endOffset) {
-					// Last unstyled range
-					StyleRange usr= new StyleRange(offset, endOffset - offset, null, pp.fColor);
-					fStyleRanges.add(usr);
-					newStyleRanges.add(usr);
-				}
-				styleRanges= (StyleRange[])newStyleRanges.toArray(new StyleRange[newStyleRanges.size()]);
-				fTextWidget.replaceStyleRanges(r.getOffset(), r.getLength(), styleRanges);
-			}
+
+			if (p.getOffset() + p.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > p.getOffset())
+				tp.mergeStyleRange(new StyleRange(p.getOffset(), p.getLength(), null, pp.fColor));
 		}
 	}
 	
@@ -506,6 +504,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @return the corresponding widget region
 	 */
 	private IRegion getWidgetRange(Position p) {
+		if (p == null)
+			return null;
+		
 		if (fSourceViewer instanceof ITextViewerExtension3) {
 			
 			ITextViewerExtension3 extension= (ITextViewerExtension3) fSourceViewer;

@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.CursorLinePainter;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.MarginPainter;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -454,6 +455,8 @@ public class SourceViewerDecorationSupport {
 		return null;
 	}
 	
+
+	
 	/**
 	 * Returns the layer of the given annotation type.
 	 * 
@@ -605,6 +608,8 @@ public class SourceViewerDecorationSupport {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
 			if (fAnnotationPainter == null) {
 				fAnnotationPainter= new AnnotationPainter(fSourceViewer, fAnnotationAccess);
+				if (fSourceViewer instanceof ITextViewerExtension4)
+					((ITextViewerExtension4)fSourceViewer).addTextPresentationListener(fAnnotationPainter);
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.addPainter(fAnnotationPainter);
 			}
@@ -626,6 +631,9 @@ public class SourceViewerDecorationSupport {
 				ITextViewerExtension2 extension= (ITextViewerExtension2) fSourceViewer;
 				extension.removePainter(fAnnotationPainter);
 			}
+			if (fSourceViewer instanceof ITextViewerExtension4)
+				((ITextViewerExtension4)fSourceViewer).removeTextPresentationListener(fAnnotationPainter);
+			
 			fAnnotationPainter.deactivate(true);
 			fAnnotationPainter.dispose();
 			fAnnotationPainter= null;
