@@ -308,6 +308,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				selectTargetSite(ssel);
+				jobViewer.refresh();
 				updateDeleteButton(ssel);
 			}
 		});
