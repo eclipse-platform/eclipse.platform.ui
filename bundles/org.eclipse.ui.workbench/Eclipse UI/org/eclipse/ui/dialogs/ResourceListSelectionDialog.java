@@ -83,23 +83,30 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 			if(disposed[0])
 				return;
 				 
-			int last = lastMatch;
-			boolean setFirstMatch = true;
-			for (int i = firstMatch; i <= lastMatch;i++) {
-				if(i % 50 == 0) {
-					try { Thread.sleep(10); } catch(InterruptedException e){}
+			int last;
+			if ((patternString.indexOf('?') == -1) && (patternString.endsWith("*")) && 
+				(patternString.indexOf('*') == patternString.length() - 1)) {
+				// Use a binary search to get first and last match when the pattern
+				// string ends with "*" and has no other embedded special characters.  
+				// For this case, we can be smarter about getting the first and last 
+				// match since the items are in sorted order.
+				firstMatch = getFirstMatch();
+				if (firstMatch == -1) {
+					firstMatch = 0;
+					lastMatch = -1;
+				} else {
+					lastMatch = getLastMatch();
 				}
-				if(stop || resourceNames.isDisposed()){
-					disposed[0] = true;
-					 return;
-				}
-				final int index = i;
-				if(match(descriptors[index].label)) {
-					if(setFirstMatch) {
-						setFirstMatch = false;
-						firstMatch = index;
+				last = lastMatch;
+				for (int i = firstMatch; i <= lastMatch;i++) {
+					if(i % 50 == 0) {
+						try { Thread.sleep(10); } catch(InterruptedException e){}
 					}
-					last = index;
+					if(stop || resourceNames.isDisposed()){
+						disposed[0] = true;
+						 return;
+					}
+					final int index = i;
 					display.syncExec(new Runnable() {
 						public void run() {
 							if(stop || resourceNames.isDisposed()) return;
@@ -107,6 +114,33 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 							itemIndex[0]++;
 						}
 					});
+				}
+			} else {
+				last = lastMatch;
+				boolean setFirstMatch = true;
+				for (int i = firstMatch; i <= lastMatch;i++) {
+					if(i % 50 == 0) {
+						try { Thread.sleep(10); } catch(InterruptedException e){}
+					}
+					if(stop || resourceNames.isDisposed()){
+						disposed[0] = true;
+						 return;
+					}
+					final int index = i;
+					if(match(descriptors[index].label)) {
+						if(setFirstMatch) {
+							setFirstMatch = false;
+							firstMatch = index;
+						}
+						last = index;
+						display.syncExec(new Runnable() {
+							public void run() {
+								if(stop || resourceNames.isDisposed()) return;
+								updateItem(index,itemIndex[0],itemCount[0]);
+								itemIndex[0]++;
+							}
+						});
+					}
 				}
 			}
 			
@@ -205,7 +239,6 @@ protected Control createDialogArea(Composite parent) {
 	folderNames.setLayoutData(data);
 	
 	updateThread = new UpdateThread();
-	updateThread.start();
 	
 	pattern.addKeyListener(new KeyAdapter(){
 		public void keyPressed(KeyEvent e) {
@@ -231,6 +264,36 @@ protected Control createDialogArea(Composite parent) {
 	return dialogArea;
 }
 /**
+ * Use a binary search to get the first match for the patternString.
+ * This method assumes the patternString does not contain any '?' 
+ * characters and that it contains only one '*' character at the end
+ * of the string.
+ */
+private int getFirstMatch() {
+	int high = descriptorsSize;
+	int low = -1;
+	boolean match = false;
+	ResourceDescriptor desc = new ResourceDescriptor();
+	desc.label = patternString.substring(0, patternString.length() - 1);
+	while (high - low > 1) {
+		int index = (high + low) / 2;
+		String label = descriptors[index].label;
+		if (match(label)) {
+			high = index;
+			match = true;
+		} else {
+			int compare = descriptors[index].compareTo(desc);
+			if (compare == -1) {
+				low = index;
+			} else {
+				high = index;
+			}
+		}
+	}
+	if (match) return high;
+	else return -1;
+}
+/**
  * Return an image for a resource descriptor.
  * 
  * @param desc resource descriptor to return image for
@@ -239,6 +302,36 @@ protected Control createDialogArea(Composite parent) {
 private Image getImage(ResourceDescriptor desc) {
 	IResource r = (IResource)desc.resources.get(0);
 	return labelProvider.getImage(r);
+}
+/**
+ * Use a binary search to get the last match for the patternString.
+ * This method assumes the patternString does not contain any '?' 
+ * characters and that it contains only one '*' character at the end
+ * of the string.
+ */
+private int getLastMatch() {
+	int high = descriptorsSize;
+	int low = -1;
+	boolean match = false;
+	ResourceDescriptor desc = new ResourceDescriptor();
+	desc.label = patternString.substring(0, patternString.length() - 1);
+	while (high - low > 1) {
+		int index = (high + low) / 2;
+		String label = descriptors[index].label;
+		if (match(label)) {
+			low = index;
+			match = true;
+		} else {
+			int compare = descriptors[index].compareTo(desc);
+			if (compare == -1) {
+				low = index;
+			} else {
+				high = index;
+			}
+		}
+	}
+	if (match) return low;
+	else return -1;
 }
 /**
  * Creates a ResourceDescriptor for each IResource,
@@ -311,9 +404,10 @@ protected void okPressed() {
 private void textChanged() {
 	String oldPattern = patternString;
 	patternString = pattern.getText().trim();
-	if(patternString.indexOf('*') == -1 && patternString.indexOf('?') == -1)	//$NON-NLS-1$ //$NON-NLS-2$
-		patternString = patternString + "*";	//$NON-NLS-1$
-	
+	if (!patternString.equals("")) {
+		if(patternString.indexOf('*') == -1 && patternString.indexOf('?') == -1)	//$NON-NLS-1$ //$NON-NLS-2$
+			patternString = patternString + "*";	//$NON-NLS-1$
+	}
 	if(patternString.equals(oldPattern))
 		return;
 	
@@ -321,7 +415,10 @@ private void textChanged() {
 	stringMatcher = new StringMatcher(patternString,true,false);
 	UpdateThread oldThread = updateThread;
 	updateThread = new UpdateThread();
-	if(oldPattern == null || 
+	if (patternString.equals("")) {
+		updateThread.firstMatch = 0;
+		updateThread.lastMatch = -1;
+	} else if(oldPattern == null || 
 	  (oldPattern.length() == 0) || 
 	  (!patternString.regionMatches(0,oldPattern,0,oldPattern.length())) ||
 	  (patternString.endsWith("?")) ||
