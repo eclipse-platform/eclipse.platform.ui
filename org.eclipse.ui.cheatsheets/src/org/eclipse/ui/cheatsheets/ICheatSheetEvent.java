@@ -16,13 +16,11 @@ import org.eclipse.ui.cheatsheets.ICheatSheetManager;
  * Event in the life cycle of a cheat sheet.
  * <p>
  * Events over the life time of a running cheat sheet
- * follow the pattern:
+ * follow this pattern:
  * <pre>
- * opened { started | restarted | end_reached }* closed
+ * opened { started | restored } { restarted | end_reached }* closed
  * </pre> 
  * </p>
- * TODO (lorne) - verify that the pattern is correct
- * TODO (lorne) - what happens when a cheatsheet is restored after workbench shutdown and restart?
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
@@ -61,8 +59,15 @@ public interface ICheatSheetEvent {
 	/**
 	 * Event type constant (value {@value}) indicating that
 	 * the cheat sheet has been completed.
+	 * TODO (lorne) - rename CHEATSHEET_COMPLETED ?
 	 */
 	public static final int CHEATSHEET_END_REACHED = 4;
+
+	/**
+	 * Event type constant (value {@value}) indicating that
+	 * the cheat sheet has been restored.
+	 */
+	public static final int CHEATSHEET_RESTORED = 5;
 
 	/**
 	 * Returns the type of this cheat sheet event.
