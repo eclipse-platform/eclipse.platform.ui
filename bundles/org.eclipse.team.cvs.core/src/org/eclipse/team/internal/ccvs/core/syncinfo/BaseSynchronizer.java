@@ -15,15 +15,18 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.RemoteSynchronizer;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 /**
  * A base sychronizer provides access to the base sync bytes for the 
  * resources in the local workspace
  */
-public class BaseSynchronizer extends ResourceSynchronizer {
+public class BaseSynchronizer extends RemoteSynchronizer {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer#getSyncBytes(org.eclipse.core.resources.IResource)
@@ -67,6 +70,25 @@ public class BaseSynchronizer extends ResourceSynchronizer {
 		throws TeamException {
 			
 		// TODO Ensure that file contents are cached for modified local files
-		return super.refresh(resources, depth, cacheFileContentsHint, monitor);
+		try {
+			monitor.beginTask(null, 100);
+			return new IResource[0];
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer#getRemoteResource(org.eclipse.core.resources.IResource)
+	 */
+	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
+		return CVSWorkspaceRoot.getRemoteResourceFor(resource);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.RemoteSynchronizer#hasRemote(org.eclipse.core.resources.IResource)
+	 */
+	public boolean hasRemote(IResource resource) throws TeamException {
+		return getSyncBytes(resource) != null;
 	}
 }

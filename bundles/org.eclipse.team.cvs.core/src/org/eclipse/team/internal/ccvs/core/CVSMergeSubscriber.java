@@ -31,14 +31,14 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ContentComparisonCriteria;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
+import org.eclipse.team.core.subscribers.RemoteBytesSynchronizer;
+import org.eclipse.team.core.subscribers.RemoteSynchronizer;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MergedSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
 import org.eclipse.team.internal.core.SaveContext;
 
 /**
@@ -63,7 +63,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	private CVSTag start, end;
 	private List roots;
 	private RemoteTagSynchronizer remoteSynchronizer;
-	private RemoteSynchronizer mergedSynchronizer;
+	private RemoteBytesSynchronizer mergedSynchronizer;
 	private RemoteTagSynchronizer baseSynchronizer;
 
 	private static final byte[] NO_REMOTE = new byte[0];
@@ -75,7 +75,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		return remoteChanges;
 	}
 
-	private void adjustMergedResources(IResource[] remoteChanges) throws CVSException {
+	private void adjustMergedResources(IResource[] remoteChanges) throws TeamException {
 		for (int i = 0; i < remoteChanges.length; i++) {
 			IResource resource = remoteChanges[i];
 			mergedSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, false /* not silent */);			
@@ -125,7 +125,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		return new CVSMergeSyncInfo(local, base, remote, this, monitor);
 	}
 
-	public void merged(IResource[] resources) throws CVSException {
+	public void merged(IResource[] resources) throws TeamException {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			byte[] remoteBytes = remoteSynchronizer.getSyncBytes(resource);
@@ -167,14 +167,14 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizer()
 	 */
-	protected ResourceSynchronizer getRemoteSynchronizer() {
+	protected RemoteSynchronizer getRemoteSynchronizer() {
 		return remoteSynchronizer;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizer()
 	 */
-	protected ResourceSynchronizer getBaseSynchronizer() {
+	protected RemoteSynchronizer getBaseSynchronizer() {
 		return baseSynchronizer;
 	}
 
@@ -182,7 +182,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	 * @see org.eclipse.team.core.sync.TeamSubscriber#isSupervised(org.eclipse.core.resources.IResource)
 	 */
 	public boolean isSupervised(IResource resource) throws TeamException {
-		return getBaseSynchronizer().getSyncBytes(resource) != null || getRemoteSynchronizer().getSyncBytes(resource) != null; 
+		return getBaseSynchronizer().hasRemote(resource) || getRemoteSynchronizer().hasRemote(resource); 
 	}
 	
 	/* (non-Javadoc)
@@ -301,7 +301,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		}
 	}
 
-	public boolean isMerged(IResource resource) throws CVSException {
+	public boolean isMerged(IResource resource) throws TeamException {
 		return mergedSynchronizer.getSyncBytes(resource) != null;
 	}
 

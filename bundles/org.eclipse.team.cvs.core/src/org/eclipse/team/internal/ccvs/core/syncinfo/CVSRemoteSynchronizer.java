@@ -10,26 +10,29 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.RemoteBytesSynchronizer;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 
 /**
- * A resource synchronizer is responsible for managing synchronization information for
- * CVS resources.
+ * CVS specific remote synchronizer behavior
  */
-public abstract class ResourceSynchronizer {
+public abstract class CVSRemoteSynchronizer extends RemoteBytesSynchronizer {
+
+	public static final String SYNC_KEY_QUALIFIER = "org.eclipse.team.cvs"; //$NON-NLS-1$
 	
-	protected abstract QualifiedName getSyncName();
-	
+	public CVSRemoteSynchronizer(String id) {
+		super(new QualifiedName(SYNC_KEY_QUALIFIER, id));
+	}
+
 	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
 		byte[] remoteBytes = getSyncBytes(resource);
 		if (remoteBytes == null) {
@@ -48,32 +51,42 @@ public abstract class ResourceSynchronizer {
 				}
 				return RemoteFile.fromBytes(resource, remoteBytes, parentBytes);
 			} else {
-				return RemoteFolder.fromBytes((IContainer)resource, remoteBytes);
+				return RemoteFolder.fromBytes(resource, remoteBytes);
 			}
 		}
 	}
 
-	public abstract byte[] getSyncBytes(IResource resource) throws CVSException;
-
-	/**
-	 * Refreshes the contents of the resource synchronizer and returns the list
-	 * of resources whose remote sync state changed. The <code>cacheFileContentsHint</code>
-	 * indicates that the user of this synchronizer will be using the file contents. Subclasses can decide
-	 * whether to cache file contents during the refresh or to allow them to be fetched when request.
-	 * @param resources
-	 * @param depth
-	 * @param cacheFileContentsHint a hint which indicates whether file contents will be used
-	 * @param monitor
-	 * @return
-	 * @throws TeamException
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer#setSyncBytes(org.eclipse.core.resources.IResource, byte[])
 	 */
-	public IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
-		try {
-			monitor.beginTask(null, 100);
-			return new IResource[0];
-		} finally {
-			monitor.done();
+	public void setSyncBytes(IResource resource, byte[] bytes) throws TeamException {
+		super.setSyncBytes(resource, bytes);
+		if (getSyncBytes(resource) != null && !parentHasSyncBytes(resource)) {
+			// Log a warning if there is no sync bytes available for the resource's
+			// parent but there is valid sync bytes for the child
+			CVSProviderPlugin.log(new TeamException(Policy.bind("ResourceSynchronizer.missingParentBytesOnSet", getSyncName().toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
 		}
 	}
 
+	/**
+	 * Indicates whether the parent of the given local resource has sync bytes for its
+	 * corresponding remote resource. The parent bytes of a remote resource are required
+	 * (by CVS) to create a handle to the remote resource.
+	 */
+	protected boolean parentHasSyncBytes(IResource resource) throws TeamException {
+		if (resource.getType() == IResource.PROJECT) return true;
+		return (getSyncBytes(resource.getParent()) != null);
+	}
+	
+	/**
+	 * Return the sync bytes associated with the remote resource. A return
+	 * value of <code>null</code> indicates that the remote resource does not exist.
+	 */
+	protected byte[] getRemoteSyncBytes(IResource local, IRemoteResource remote) throws TeamException {
+		if (remote != null) {
+			return ((RemoteResource)remote).getSyncBytes();
+		} else {
+			return null;
+		}
+	}
 }

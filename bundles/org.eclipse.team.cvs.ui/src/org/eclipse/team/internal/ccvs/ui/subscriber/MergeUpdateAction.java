@@ -60,7 +60,7 @@ public class MergeUpdateAction extends SafeUpdateAction {
 		});
 	}
 	
-	protected void updated(IResource[] resources) throws CVSException {
+	protected void updated(IResource[] resources) throws TeamException {
 		// Mark all succesfully updated resources as merged
 		((CVSMergeSubscriber)getSubscriber()).merged(resources);
 	}

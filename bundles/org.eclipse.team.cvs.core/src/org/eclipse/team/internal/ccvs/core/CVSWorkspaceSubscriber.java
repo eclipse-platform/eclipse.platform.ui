@@ -19,14 +19,15 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.RemoteSynchronizer;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.OptimizedRemoteSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
 
 /**
  * CVSWorkspaceSubscriber
@@ -90,11 +91,11 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 					remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
 				} else if (resource.getType() == IResource.FOLDER) {
 					// If the base has sync info for the folder, purge the remote bytes
-					if (getBaseSynchronizer().getSyncBytes(resource) != null) {
+					if (getBaseSynchronizer().hasRemote(resource)) {
 						remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO, true /* silent */);
 					}
 				}
-			} catch (CVSException e) {
+			} catch (TeamException e) {
 				CVSProviderPlugin.log(e);
 			}
 		}		
@@ -128,7 +129,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	public void projectDeconfigured(IProject project) {
 		try {
 			remoteSynchronizer.removeSyncBytes(project, IResource.DEPTH_INFINITE, false /* not silent */);
-		} catch (CVSException e) {
+		} catch (TeamException e) {
 			CVSProviderPlugin.log(e);
 		}
 		TeamDelta delta = new TeamDelta(this, TeamDelta.PROVIDER_DECONFIGURED, project);
@@ -138,14 +139,14 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizer()
 	 */
-	protected ResourceSynchronizer getRemoteSynchronizer() {
+	protected RemoteSynchronizer getRemoteSynchronizer() {
 		return remoteSynchronizer;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizer()
 	 */
-	protected ResourceSynchronizer getBaseSynchronizer() {
+	protected RemoteSynchronizer getBaseSynchronizer() {
 		return remoteSynchronizer.getBaseSynchronizer();
 	}
 	
@@ -159,6 +160,10 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			IResource resource = resources[i];
 			final IProgressMonitor infinite = Policy.infiniteSubMonitorFor(monitor, 100);
 			try {
+				// We need to do a scheduling rule on the project because
+				// the EclipseSynchronizer currently obtains rules which causes
+				// many workers to be created (see bug 41979).
+				Platform.getJobManager().beginRule(resource);
 				infinite.beginTask(null, 512);
 				resource.accept(new IResourceVisitor() {
 					public boolean visit(IResource innerResource) throws CoreException {
@@ -179,6 +184,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			} catch (CoreException e) {
 				throw CVSException.wrapException(e);
 			} finally {
+				Platform.getJobManager().endRule();
 				infinite.done();
 			}
 		}
@@ -186,7 +192,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		return (SyncInfo[]) result.toArray(new SyncInfo[result.size()]);
 	}
 	
-	/* internal use only */ boolean isOutOfSync(IResource resource, IProgressMonitor monitor) throws CVSException {
+	/* internal use only */ boolean isOutOfSync(IResource resource, IProgressMonitor monitor) throws TeamException {
 		return (hasIncomingChange(resource) || hasOutgoingChange(CVSWorkspaceRoot.getCVSResourceFor(resource), monitor));
 	}
 	
@@ -212,7 +218,7 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		return false;
 	}
 	
-	private boolean hasIncomingChange(IResource resource) throws CVSException {
+	private boolean hasIncomingChange(IResource resource) throws TeamException {
 		return remoteSynchronizer.isRemoteKnown(resource);
 	}
 }

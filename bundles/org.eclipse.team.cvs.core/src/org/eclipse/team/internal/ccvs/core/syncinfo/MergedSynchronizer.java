@@ -11,27 +11,20 @@
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.RemoteBytesSynchronizer;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
- * Override RemoteSynchronizer to allow unparented remote resource sync info
- * since the CVSMergeSubscriber only needs to know if the resource sync info 
- * of the incoming change differs from the last merge. The parenting is used
- * to create IRemoteResources which this synchronizer is not used to do
+ * This synchronizer keeps track of which resources have been merged.
+ * It is to be used only by the CVSMergeSubscriber.
  */
-public class MergedSynchronizer extends RemoteSynchronizer {
+public class MergedSynchronizer extends RemoteBytesSynchronizer {
 
 	public MergedSynchronizer(String id) {
-		super(id);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer#parentHasSyncBytes(org.eclipse.core.resources.IResource)
-	 */
-	protected boolean parentHasSyncBytes(IResource resource) throws CVSException {
-		return true;
+		super(new QualifiedName(CVSRemoteSynchronizer.SYNC_KEY_QUALIFIER, id));
 	}
 
 	/* (non-Javadoc)
@@ -39,6 +32,18 @@ public class MergedSynchronizer extends RemoteSynchronizer {
 	 */
 	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
 		throw new UnsupportedOperationException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.sync.ResourceSynchronizer#refresh(org.eclipse.core.resources.IResource[], int, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IResource[] refresh(IResource[] resources, int depth, boolean cacheFileContentsHint, IProgressMonitor monitor) throws TeamException {
+		try {
+			monitor.beginTask(null, 100);
+			return new IResource[0];
+		} finally {
+			monitor.done();
+		}
 	}
 
 }

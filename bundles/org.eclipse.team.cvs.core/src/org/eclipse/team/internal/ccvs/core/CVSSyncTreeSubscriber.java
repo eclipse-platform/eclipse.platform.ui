@@ -27,13 +27,12 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ComparisonCriteria;
 import org.eclipse.team.core.subscribers.ContentComparisonCriteria;
+import org.eclipse.team.core.subscribers.RemoteSynchronizer;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class provides common funtionality for three way sychronizing
@@ -122,7 +121,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 				// TODO: consider that there may be several sync states on this resource. There
 				// should instead be a method to check for the existance of a set of sync types on
 				// a resource.
-				if(member.isPhantom() && getRemoteSynchronizer().getSyncBytes(member) == null) {
+				if(member.isPhantom() && !getRemoteSynchronizer().hasRemote(member)) {
 					continue;
 				}
 				
@@ -159,11 +158,11 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	/**
 	 * Return the synchronizer that provides the remote resources
 	 */
-	protected abstract ResourceSynchronizer getRemoteSynchronizer();
+	protected abstract RemoteSynchronizer getRemoteSynchronizer();
 	/**
 	 * Return the synchronizer that provides the base resources
 	 */
-	protected abstract ResourceSynchronizer getBaseSynchronizer();
+	protected abstract RemoteSynchronizer getBaseSynchronizer();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#getSyncInfo(org.eclipse.core.resources.IResource)
@@ -215,7 +214,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 			int baseWork = getCacheFileContentsHint() ? 10 : 30;
 			int remoteWork = 100;
 			monitor.beginTask(null, baseWork + remoteWork);
-			IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, getCacheFileContentsHint(), Policy.subMonitorFor(monitor, baseWork));
+			IResource[] baseChanges = refreshBase(resources, depth, Policy.subMonitorFor(monitor, baseWork));
 			IResource[] remoteChanges = refreshRemote(resources, depth, Policy.subMonitorFor(monitor, remoteWork));
 		
 			Set allChanges = new HashSet();
@@ -226,6 +225,10 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 		} finally {
 			monitor.done();
 		} 
+	}
+
+	protected IResource[] refreshBase(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
+		return getBaseSynchronizer().refresh(resources, depth, getCacheFileContentsHint(), monitor);
 	}
 
 	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
@@ -271,7 +274,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 		ICVSResource cvsThing = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		if (cvsThing.isIgnored()) {
 			// An ignored resource could have an incoming addition (conflict)
-			return getRemoteSynchronizer().getSyncBytes(resource) != null;
+			return getRemoteSynchronizer().hasRemote(resource);
 		}
 		return true;
 	}
