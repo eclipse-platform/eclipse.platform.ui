@@ -1579,4 +1579,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	private TaskDescriptionProvider getDescriptionProvider() {
 		return TaskDescriptionProvider.getDefault();
 	}
+	
+	protected static void resetCodeCompletionDataStructures() {
+		fgDtd= null;
+		TaskDescriptionProvider.reset();
+	}
 }

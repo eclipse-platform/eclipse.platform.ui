@@ -42,6 +42,7 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
+import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThread;
 import org.eclipse.ant.internal.ui.editor.model.AntCommentNode;
 import org.eclipse.ant.internal.ui.editor.model.AntDTDNode;
 import org.eclipse.ant.internal.ui.editor.model.AntDefiningTaskNode;
@@ -147,6 +148,7 @@ public class AntModel {
 		AntUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(fUIPropertyChangeListener);
 		AntDefiningTaskNode.setJavaClassPath();
 		fgInstanceCount++;
+		DecayCodeCompletionDataStructuresThread.cancel();
 	}
 
 	private void reconcileForPropertyChange(boolean classpathChanged) {
@@ -188,6 +190,7 @@ public class AntModel {
 		fgInstanceCount--;
 		if (fgInstanceCount == 0) {
 			fgClassLoader= null;
+			DecayCodeCompletionDataStructuresThread.getDefault().start();
 		}
 		AntProjectNode projectNode= getProjectNode();
 		if (projectNode != null) {

@@ -421,4 +421,8 @@ public class TaskDescriptionProvider {
         //Not found
         return null;																 	
     }
+    
+    protected static void reset() {
+    	fgDefault= null;
+    }
 }
