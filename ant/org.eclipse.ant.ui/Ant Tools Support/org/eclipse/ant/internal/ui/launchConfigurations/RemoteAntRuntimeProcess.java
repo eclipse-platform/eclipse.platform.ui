@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import java.util.Map;
 
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.core.RuntimeProcess;
 
 
@@ -26,9 +27,13 @@ public class RemoteAntRuntimeProcess extends RuntimeProcess {
 	 * Sets the streams proxy to an AntStreamsProxy.
 	 */
 	public RemoteAntRuntimeProcess(ILaunch launch, Process process, String name, Map attributes) {
-		super(launch, process, name, attributes, false);
-		setStreamsProxy(new AntStreamsProxy());
-		launch.addProcess(this);
-		fireCreationEvent();
+		super(launch, process, name, attributes);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.RuntimeProcess#createStreamsProxy()
+	 */
+	protected IStreamsProxy createStreamsProxy() {
+		return new AntStreamsProxy();
 	}
 }

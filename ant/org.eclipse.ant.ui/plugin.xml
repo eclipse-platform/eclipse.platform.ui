@@ -294,5 +294,13 @@
             id="org.eclipse.ant.ui.statusHandler.runAntInit">
       </statusHandler>
    </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.processFactories">
+      <processFactory
+            id= "org.eclipse.ant.ui.remoteAntProcessFactory"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.RemoteAntProcessFactory">
+      </processFactory>
+   </extension>
 
 </plugin>
