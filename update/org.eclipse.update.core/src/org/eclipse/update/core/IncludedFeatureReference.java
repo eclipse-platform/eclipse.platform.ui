@@ -15,7 +15,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 
-
 /**
  * This is a utility class representing the options of a nested feature.
  * Feature will include other features. This class will represent the options of the inclusion.
@@ -25,9 +24,11 @@ import org.eclipse.update.internal.core.*;
  * @see org.eclipse.update.core.VersionedIdentifier
  * @since 2.0.1
  */
-public class IncludedFeatureReference extends IncludedFeatureReferenceModel implements IIncludedFeatureReference {
-	
-	private IFeature bestMatchFeature;	 
+public class IncludedFeatureReference
+	extends IncludedFeatureReferenceModel
+	implements IIncludedFeatureReference {
+
+	private IFeature bestMatchFeature;
 
 	/**
 	 * Construct a included feature reference
@@ -37,7 +38,6 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	public IncludedFeatureReference() {
 		super();
 	}
-
 
 	/**
 	 * Construct a feature options 
@@ -49,7 +49,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	 * @since 2.0.2
 	 */
 	public IncludedFeatureReference(IIncludedFeatureReference includedFeatureRef) {
-		super((IncludedFeatureReferenceModel)includedFeatureRef);
+		super((IncludedFeatureReferenceModel) includedFeatureRef);
 	}
 
 	/**
@@ -60,7 +60,6 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 		super(featureReference);
 	}
 
-
 	/**
 	* Method matches.
 	* @param identifier
@@ -68,7 +67,9 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	* @param options
 	* @return boolean
 	*/
-	private boolean matches(VersionedIdentifier baseIdentifier, VersionedIdentifier id) {
+	private boolean matches(
+		VersionedIdentifier baseIdentifier,
+		VersionedIdentifier id) {
 		if (baseIdentifier == null || id == null)
 			return false;
 		if (!id.getIdentifier().equals(baseIdentifier.getIdentifier()))
@@ -78,68 +79,115 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 			case IImport.RULE_PERFECT :
 				return id.getVersion().isPerfect(baseIdentifier.getVersion());
 			case IImport.RULE_COMPATIBLE :
-				return id.getVersion().isCompatibleWith(baseIdentifier.getVersion());
+				return id.getVersion().isCompatibleWith(
+					baseIdentifier.getVersion());
 			case IImport.RULE_EQUIVALENT :
-				return id.getVersion().isEquivalentTo(baseIdentifier.getVersion());
+				return id.getVersion().isEquivalentTo(
+					baseIdentifier.getVersion());
 			case IImport.RULE_GREATER_OR_EQUAL :
-				return id.getVersion().isGreaterOrEqualTo(baseIdentifier.getVersion());
+				return id.getVersion().isGreaterOrEqualTo(
+					baseIdentifier.getVersion());
 		}
 		UpdateCore.warn("Unknown matching rule:" + getMatch());
 		return false;
 	}
 
-	
 	/*
 	 * Method isDisabled.
 	 * @return boolean
 	 */
 	private boolean isDisabled() {
-		/*IConfiguredSite cSite = getSite().getConfiguredSite();
-		if (cSite==null) return false;
+		IConfiguredSite cSite = getSite().getCurrentConfiguredSite();
+		if (cSite == null)
+			return false;
 		IFeatureReference[] configured = cSite.getConfiguredFeatures();
 		for (int i = 0; i < configured.length; i++) {
-			if (this.equals(configured[i])) return false;
+			if (this.equals(configured[i]))
+				return false;
 		}
-		return true;*/
-		// FIXME: this code was never executed, should we remove it ?
-		return false;
+		return true;
+		//		// FIXME: the above code was commented out and returned false. 
+		//		// Should this be commented out again?
+		//		return false;
 	}
-	
+
+	/*
+	 * Method isInstalled.
+	 * @return boolean
+	 */
+	private boolean isUninstalled() {
+		if (!isDisabled())
+			return false;
+		IFeatureReference[] installed = getSite().getFeatureReferences();
+		for (int i = 0; i < installed.length; i++) {
+			if (this.equals(installed[i]))
+				return false;
+		}
+		// if we reached this point, the configured site exists and it does not
+		// contain this feature reference, so clearly the feature is uninstalled
+		return true;
+	}
+
 	/**
 	 * @see org.eclipse.update.core.IIncludedFeatureReference#getFeature(boolean,
 	 * IConfiguredSite)
 	 * @deprecated
 	 */
-	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite) throws CoreException {
-		return getFeature(perfectMatch,configuredSite,null);
-	}	
-	
+	public IFeature getFeature(
+		boolean perfectMatch,
+		IConfiguredSite configuredSite)
+		throws CoreException {
+		return getFeature(perfectMatch, configuredSite, null);
+	}
+
 	/**
 	 * @see org.eclipse.update.core.IIncludedFeatureReference#getFeature(boolean,
 	 * IConfiguredSite,IProgressMonitor)
 	 */
-	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite,IProgressMonitor monitor) throws CoreException {
-
+	public IFeature getFeature(
+		boolean perfectMatch,
+		IConfiguredSite configuredSite,
+		IProgressMonitor monitor)
+		throws CoreException {
 		// if perfect match is asked or if the feature is disabled
 		// we return the exact match 		
-		if (perfectMatch || getMatch() == IImport.RULE_PERFECT || isDisabled()) {
-			return super.getFeature(monitor);
+		if (perfectMatch
+			|| getMatch() == IImport.RULE_PERFECT
+			|| isDisabled()) {
+			//
+			if (isUninstalled())
+				throw new CoreException(
+					new Status(
+						IStatus.ERROR,
+						UpdateCore
+							.getPlugin()
+							.getDescriptor()
+							.getUniqueIdentifier(),
+						IStatus.OK,
+						Policy.bind("IncludedFeatureReference.featureUninstalled", getFeatureIdentifier()),
+						null));
+			else
+				return super.getFeature(monitor);
 		} else {
 			if (bestMatchFeature == null) {
 				// find best match
-				if (configuredSite==null)
+				if (configuredSite == null)
 					configuredSite = getSite().getCurrentConfiguredSite();
-				IFeatureReference bestMatchReference = getBestMatch(configuredSite);
-				IFeature localBestMatchFeature = getFeature(bestMatchReference,monitor);
+				IFeatureReference bestMatchReference =
+					getBestMatch(configuredSite);
+				IFeature localBestMatchFeature =
+					getFeature(bestMatchReference, monitor);
 				// during reconciliation, we may not have the currentConfiguredSite yet
 				// do not preserve the best match
-				if (configuredSite==null) return localBestMatchFeature;
-				else bestMatchFeature = localBestMatchFeature;
+				if (configuredSite == null)
+					return localBestMatchFeature;
+				else
+					bestMatchFeature = localBestMatchFeature;
 			}
 			return bestMatchFeature;
 		}
 	}
-	
+
 	/*
 	 * Method getBestMatch.
 	 * @param enabledFeatures
@@ -147,19 +195,26 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	 * @param options
 	 * @return Object
 	 */
-	private IIncludedFeatureReference getBestMatch(IConfiguredSite configuredSite) throws CoreException {
+	private IIncludedFeatureReference getBestMatch(IConfiguredSite configuredSite)
+		throws CoreException {
 		IncludedFeatureReference newRef = null;
 
-		if (configuredSite==null) return this;
-		IFeatureReference[] enabledFeatures = configuredSite.getConfiguredFeatures();
+		if (configuredSite == null)
+			return this;
+		IFeatureReference[] enabledFeatures =
+			configuredSite.getConfiguredFeatures();
 
 		// find the best feature based on match from enabled features
 		for (int ref = 0; ref < enabledFeatures.length; ref++) {
 			if (enabledFeatures[ref] != null) {
-				VersionedIdentifier id = enabledFeatures[ref].getVersionedIdentifier();
+				VersionedIdentifier id =
+					enabledFeatures[ref].getVersionedIdentifier();
 				if (matches(getVersionedIdentifier(), id)) {
-					if (newRef == null || id.getVersion().isGreaterThan(newRef.getVersionedIdentifier().getVersion())) {
-						newRef = new IncludedFeatureReference(enabledFeatures[ref]);
+					if (newRef == null
+						|| id.getVersion().isGreaterThan(
+							newRef.getVersionedIdentifier().getVersion())) {
+						newRef =
+							new IncludedFeatureReference(enabledFeatures[ref]);
 						newRef.setMatchingRule(getMatch());
 						newRef.isOptional(isOptional());
 						newRef.setLabel(getLabel());
@@ -168,15 +223,19 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 			}
 		}
 
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS){
-			UpdateCore.warn("Found best match feature:"+newRef+" for feature reference "+this.getURLString());
+		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS) {
+			UpdateCore.warn(
+				"Found best match feature:"
+					+ newRef
+					+ " for feature reference "
+					+ this.getURLString());
 		}
 
 		if (newRef != null)
 			return newRef;
-		else 
+		else
 			return this;
-	}			
+	}
 	/**
 	 * @see org.eclipse.update.core.IFeatureReference#getFeature()
 	 * @deprecated
@@ -189,6 +248,6 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	 * (IProgressMonitor)
 	 */
 	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
-		return getFeature(false,null,monitor);
-	}	
+		return getFeature(false, null, monitor);
+	}
 }

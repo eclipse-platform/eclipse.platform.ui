@@ -160,7 +160,7 @@ public class SiteFile extends Site {
 			if (featureReferences != null) {
 				for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
 					IFeatureReference element = featureReferences[indexRef];
-					if (element.equals(feature)) {
+					if (element.getVersionedIdentifier().equals(feature.getVersionedIdentifier())) {
 						removeFeatureReferenceModel((FeatureReferenceModel) element);
 						break;
 					}
@@ -199,6 +199,9 @@ public class SiteFile extends Site {
 					remove(childrenRef[i].getFeature(null), monitor);
 			}
 
+			// remove the feature from the site cache
+			removeFeatureFromCache(feature.getURL());
+			
 			handler.completeUninstall();
 
 			success = true;

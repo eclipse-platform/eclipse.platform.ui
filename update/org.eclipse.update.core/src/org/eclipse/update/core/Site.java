@@ -517,5 +517,9 @@ public class Site extends SiteModel implements ISite {
 		return feature;
 	}
 
+	protected void removeFeatureFromCache(URL featureURL) {
+		URLKey key = new URLKey(featureURL);
+		featureCache.remove(key);
+	}
 
 }
