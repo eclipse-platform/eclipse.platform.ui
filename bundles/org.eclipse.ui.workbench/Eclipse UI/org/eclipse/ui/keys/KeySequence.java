@@ -49,7 +49,14 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  */
 public final class KeySequence implements Comparable {
-
+	
+	/**
+	 * The delimiter between multiple key strokes in a single key sequence --
+	 * expressed in the formal key stroke grammar. This is not to be displayed
+	 * to the user. It is only intended as an internal representation.
+	 */
+	public final static String KEY_STROKE_DELIMITER = Character.toString('\u0020'); //$NON-NLS-1$
+	
 	/**
 	 * An empty key sequence instance for use by everyone.
 	 */
@@ -69,7 +76,7 @@ public final class KeySequence implements Comparable {
 	 * The set of delimiters for <code>KeyStroke</code> objects allowed
 	 * during parsing of the formal string representation.
 	 */
-	public final static String KEY_STROKE_DELIMITERS = IKeyFormatter.KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
+	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
 
 	/**
 	 * Gets an instance of <code>KeySequence</code>.

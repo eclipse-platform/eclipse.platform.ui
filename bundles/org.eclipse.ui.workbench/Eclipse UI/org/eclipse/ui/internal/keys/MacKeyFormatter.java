@@ -16,6 +16,7 @@ import java.util.ResourceBundle;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.Key;
+import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ModifierKey;
 import org.eclipse.ui.keys.SpecialKey;
 
@@ -52,31 +53,31 @@ public final class MacKeyFormatter extends AbstractKeyFormatter {
 		ResourceBundle.getBundle(MacKeyFormatter.class.getName());
 
 	static {
-		KEY_LOOKUP.put(CharacterKey.BS_NAME, Character.toString('\u232B'));
-		KEY_LOOKUP.put(CharacterKey.CR_NAME, Character.toString('\u21A9'));
-		KEY_LOOKUP.put(CharacterKey.DEL_NAME, Character.toString('\u2326'));
-		KEY_LOOKUP.put(CharacterKey.SPACE_NAME, Character.toString('\u2423'));
-		KEY_LOOKUP.put(ModifierKey.ALT_NAME, Character.toString('\u2325'));
-		KEY_LOOKUP.put(ModifierKey.COMMAND_NAME, Character.toString('\u2318'));
-		KEY_LOOKUP.put(ModifierKey.CTRL_NAME, Character.toString('\u2303'));
-		KEY_LOOKUP.put(ModifierKey.SHIFT_NAME, Character.toString('\u21E7'));
+		KEY_LOOKUP.put(CharacterKey.BS.toString(), Character.toString('\u232B'));
+		KEY_LOOKUP.put(CharacterKey.CR.toString(), Character.toString('\u21A9'));
+		KEY_LOOKUP.put(CharacterKey.DEL.toString(), Character.toString('\u2326'));
+		KEY_LOOKUP.put(CharacterKey.SPACE.toString(), Character.toString('\u2423'));
+		KEY_LOOKUP.put(ModifierKey.ALT.toString(), Character.toString('\u2325'));
+		KEY_LOOKUP.put(ModifierKey.COMMAND.toString(), Character.toString('\u2318'));
+		KEY_LOOKUP.put(ModifierKey.CTRL.toString(), Character.toString('\u2303'));
+		KEY_LOOKUP.put(ModifierKey.SHIFT.toString(), Character.toString('\u21E7'));
 		KEY_LOOKUP.put(
-			SpecialKey.ARROW_DOWN_NAME,
+			SpecialKey.ARROW_DOWN.toString(),
 			Character.toString('\u2193'));
 		KEY_LOOKUP.put(
-			SpecialKey.ARROW_LEFT_NAME,
+			SpecialKey.ARROW_LEFT.toString(),
 			Character.toString('\u2190'));
 		KEY_LOOKUP.put(
-			SpecialKey.ARROW_RIGHT_NAME,
+			SpecialKey.ARROW_RIGHT.toString(),
 			Character.toString('\u2192'));
-		KEY_LOOKUP.put(SpecialKey.ARROW_UP_NAME, Character.toString('\u2191'));
-		KEY_LOOKUP.put(SpecialKey.END_NAME, Character.toString('\u2198'));
+		KEY_LOOKUP.put(SpecialKey.ARROW_UP.toString(), Character.toString('\u2191'));
+		KEY_LOOKUP.put(SpecialKey.END.toString(), Character.toString('\u2198'));
 		KEY_LOOKUP.put(
-			SpecialKey.NUMPAD_ENTER_NAME,
+			SpecialKey.NUMPAD_ENTER.toString(),
 			Character.toString('\u2324'));
-		KEY_LOOKUP.put(SpecialKey.HOME_NAME, Character.toString('\u2196'));
-		KEY_LOOKUP.put(SpecialKey.PAGE_DOWN_NAME, Character.toString('\u21DF'));
-		KEY_LOOKUP.put(SpecialKey.PAGE_UP_NAME, Character.toString('\u21DE'));
+		KEY_LOOKUP.put(SpecialKey.HOME.toString(), Character.toString('\u2196'));
+		KEY_LOOKUP.put(SpecialKey.PAGE_DOWN.toString(), Character.toString('\u21DF'));
+		KEY_LOOKUP.put(SpecialKey.PAGE_UP.toString(), Character.toString('\u21DE'));
 	}
 
 	public String format(Key key) {
@@ -97,7 +98,7 @@ public final class MacKeyFormatter extends AbstractKeyFormatter {
 		return Util.translateString(
 				RESOURCE_BUNDLE,
 				KEY_STROKE_DELIMITER_KEY,
-				KEY_STROKE_DELIMITER,
+				KeySequence.KEY_STROKE_DELIMITER,
 				false,
 				false);
 	}

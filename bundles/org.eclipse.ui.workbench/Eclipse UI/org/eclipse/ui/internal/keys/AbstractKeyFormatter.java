@@ -34,6 +34,7 @@ import org.eclipse.ui.keys.NaturalKey;
  * @since 3.0
  */
 public abstract class AbstractKeyFormatter implements IKeyFormatter {
+	
 	/**
 	 * The key for the delimiter between keys. This is used in the
 	 * internationalization bundles.

@@ -48,6 +48,13 @@ import org.eclipse.ui.internal.util.Util;
 public final class KeyStroke implements Comparable {
 
 	/**
+	 * The delimiter between multiple keys in a single key strokes -- expressed
+	 * in the formal key stroke grammar. This is not to be displayed to the
+	 * user. It is only intended as an internal representation.
+	 */
+	public final static String KEY_DELIMITER = Character.toString('\u002B');	
+	
+	/**
 	 * An internal constant used only in this object's hash code algorithm.
 	 */
 	private final static int HASH_FACTOR = 89;
@@ -61,7 +68,7 @@ public final class KeyStroke implements Comparable {
 	 * The set of delimiters for <code>Key</code> objects allowed during
 	 * parsing of the formal string representation.
 	 */
-	public final static String KEY_DELIMITERS = IKeyFormatter.KEY_DELIMITER;
+	public final static String KEY_DELIMITERS = KEY_DELIMITER;
 
 	/**
 	 * Gets an instance of <code>KeyStroke</code> given a single modifier key

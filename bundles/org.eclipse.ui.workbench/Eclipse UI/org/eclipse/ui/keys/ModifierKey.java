@@ -43,7 +43,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'Alt' key.
 	 */
-	public final static String ALT_NAME = "ALT"; //$NON-NLS-1$
+	private final static String ALT_NAME = "ALT"; //$NON-NLS-1$
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which
@@ -54,7 +54,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'Command' key.
 	 */
-	public final static String COMMAND_NAME = "COMMAND"; //$NON-NLS-1$
+	private final static String COMMAND_NAME = "COMMAND"; //$NON-NLS-1$
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which
@@ -65,7 +65,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'Ctrl' key.
 	 */
-	public final static String CTRL_NAME = "CTRL"; //$NON-NLS-1$
+	private final static String CTRL_NAME = "CTRL"; //$NON-NLS-1$
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which
@@ -96,7 +96,7 @@ public final class ModifierKey extends Key {
 	/**
 	 * The name of the 'Shift' key.
 	 */
-	public final static String SHIFT_NAME = "SHIFT"; //$NON-NLS-1$	
+	private final static String SHIFT_NAME = "SHIFT"; //$NON-NLS-1$	
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which

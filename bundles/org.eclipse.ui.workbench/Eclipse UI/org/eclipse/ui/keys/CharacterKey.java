@@ -58,7 +58,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'BS' key.
 	 */
-	public final static String BS_NAME = "BS"; //$NON-NLS-1$
+	private final static String BS_NAME = "BS"; //$NON-NLS-1$
 
 	/**
 	 * The character for CR (U+000D)
@@ -74,7 +74,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'CR' key.
 	 */
-	public final static String CR_NAME = "CR"; //$NON-NLS-1$
+	private final static String CR_NAME = "CR"; //$NON-NLS-1$
 
 	/**
 	 * The character for DEL (U+007F)
@@ -90,7 +90,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'DEL' key.
 	 */
-	public final static String DEL_NAME = "DEL"; //$NON-NLS-1$
+	private final static String DEL_NAME = "DEL"; //$NON-NLS-1$
 
 	/**
 	 * The character for ESC (U+001B)
@@ -106,7 +106,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'ESC' key.
 	 */
-	public final static String ESC_NAME = "ESC"; //$NON-NLS-1$
+	private final static String ESC_NAME = "ESC"; //$NON-NLS-1$
 
 	/**
 	 * The character for FF (U+000C)
@@ -122,7 +122,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'FF' key.
 	 */
-	public final static String FF_NAME = "FF"; //$NON-NLS-1$
+	private final static String FF_NAME = "FF"; //$NON-NLS-1$
 
 	/**
 	 * The character for LF (U+000A)
@@ -138,7 +138,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'LF' key.
 	 */
-	public final static String LF_NAME = "LF"; //$NON-NLS-1$
+	private final static String LF_NAME = "LF"; //$NON-NLS-1$
 
 	/**
 	 * The character for NUL (U+0000)
@@ -154,7 +154,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'NUL' key.
 	 */
-	public final static String NUL_NAME = "NUL"; //$NON-NLS-1$
+	private final static String NUL_NAME = "NUL"; //$NON-NLS-1$
 
 	/**
 	 * The character for SPACE (U+0020)
@@ -170,7 +170,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'SPACE' key.
 	 */
-	public final static String SPACE_NAME = "SPACE"; //$NON-NLS-1$
+	private final static String SPACE_NAME = "SPACE"; //$NON-NLS-1$
 
 	/**
 	 * The character for TAB (U+0009)
@@ -186,7 +186,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'TAB' key.
 	 */
-	public final static String TAB_NAME = "TAB"; //$NON-NLS-1$
+	private final static String TAB_NAME = "TAB"; //$NON-NLS-1$
 
 	/**
 	 * The character for VT (U+000B)
@@ -202,7 +202,7 @@ public final class CharacterKey extends NaturalKey {
 	/**
 	 * The name of the 'VT' key.
 	 */
-	public final static String VT_NAME = "VT"; //$NON-NLS-1$
+	private final static String VT_NAME = "VT"; //$NON-NLS-1$
 
 	/**
 	 * Creates an instance of <code>CharacterKey</code> given a unicode
@@ -218,7 +218,7 @@ public final class CharacterKey extends NaturalKey {
 	 */
 	public static CharacterKey getInstance(char character) {
 		String name;
-
+		
 		switch (character) {
 			case BS_CHARACTER :
 				name = BS_NAME;
