@@ -364,15 +364,17 @@ public LayoutPart[] getChildren() {
 		}
 	}
 
-	LayoutPart [] newChildren = new LayoutPart[children.length + mapTabToPart.size()];
-	int index = children.length;
-	System.arraycopy(children, 0, newChildren, 0, children.length);
-	children = newChildren;
-		
-	Iterator enum = mapTabToPart.values().iterator();
-	while (enum.hasNext()) {
-		children[index] = (LayoutPart)enum.next();
-		index++;
+	int count = mapTabToPart.size();
+	if (count > 0) {
+		int index = children.length;
+		LayoutPart [] newChildren = new LayoutPart[children.length + count];
+		System.arraycopy(children, 0, newChildren, 0, children.length);
+		children = newChildren;
+		for (int nX = 0; nX < count; nX ++) {
+			CTabItem tabItem = tabFolder.getItem(nX);
+			children[index] = (LayoutPart)mapTabToPart.get(tabItem);
+			index++;
+		}
 	}
 	
 	return children;
