@@ -153,7 +153,7 @@ class RenderingBindings implements IMemoryRenderingBindingsProvider {
             String name = fConfigurationElement.getAttribute(ATTR_PROVIDER);
             if (name != null) {
                 try {
-                    fProvider = (IMemoryRenderingBindingsProvider) fConfigurationElement.createExecutableExtension(name);
+                    fProvider = (IMemoryRenderingBindingsProvider) fConfigurationElement.createExecutableExtension(ATTR_PROVIDER);
                 } catch (CoreException e) {
                     DebugUIPlugin.log(e);
                 }
