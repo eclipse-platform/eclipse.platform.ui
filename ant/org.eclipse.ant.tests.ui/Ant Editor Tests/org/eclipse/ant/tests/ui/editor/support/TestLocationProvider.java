@@ -13,12 +13,12 @@ package org.eclipse.ant.tests.ui.editor.support;
 
 import java.io.File;
 
-import org.eclipse.ant.internal.ui.editor.outline.ILocationProvider;
+import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 
-public class TestLocationProvider implements ILocationProvider {
+public class TestLocationProvider extends LocationProvider {
 
 	private File buildFile;
 	

@@ -573,10 +573,12 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	 */
 	public ShowInContext getShowInContext() {
 		if (fModel != null) {
-			ILocationProvider locationProvider= fModel.getLocationProvider();
-			IFile file= AntUtil.getFile(locationProvider.getLocation().toOSString());
-			ISelection selection= new StructuredSelection(file);
-			return new ShowInContext(null, selection);
+			LocationProvider locationProvider= fModel.getLocationProvider();
+			IFile file= locationProvider.getFile();
+			if (file != null) {
+				ISelection selection= new StructuredSelection(file);
+				return new ShowInContext(null, selection);
+			}
 		}
 		return null;
 	}
