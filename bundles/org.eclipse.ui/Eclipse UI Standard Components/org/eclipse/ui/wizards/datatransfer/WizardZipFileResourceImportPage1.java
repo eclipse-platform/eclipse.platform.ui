@@ -113,6 +113,7 @@ protected void createOptionsGroup(Composite parent) {
 	// overwrite... checkbox
 	overwriteExistingResourcesCheckbox = new Button(parent,SWT.CHECK);
 	overwriteExistingResourcesCheckbox.setText(DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
+	overwriteExistingResourcesCheckbox.setFont(parent.getFont());
 }
 /**
  *	Answer a boolean indicating whether the specified source currently exists

@@ -7,10 +7,18 @@ package org.eclipse.ui.dialogs;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
@@ -21,8 +29,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.IElementFilter;
+import org.eclipse.ui.internal.dialogs.ResourceTreeAndListGroup;
+import org.eclipse.ui.internal.dialogs.TypeFilteringDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -122,6 +133,7 @@ public void createControl(Composite parent) {
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 	composite.setSize(composite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	composite.setFont(parent.getFont());
 
 	createSourceGroup(composite);
 
@@ -151,10 +163,13 @@ protected final void createDestinationGroup(Composite parent) {
 	containerGroup.setLayout(layout);
 	containerGroup.setLayoutData(new GridData(
 		GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+	containerGroup.setFont(parent.getFont());
+
 
 	// container label
 	Label resourcesLabel = new Label(containerGroup,SWT.NONE);
 	resourcesLabel.setText(WorkbenchMessages.getString("WizardExportPage.folder")); //$NON-NLS-1$
+	resourcesLabel.setFont(parent.getFont());
 
 	// container name entry field
 	containerNameField = new Text(containerGroup,SWT.SINGLE|SWT.BORDER);
@@ -162,12 +177,14 @@ protected final void createDestinationGroup(Composite parent) {
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	containerNameField.setLayoutData(data);
+	containerNameField.setFont(parent.getFont());
 
 	// container browse button
 	containerBrowseButton = new Button(containerGroup,SWT.PUSH);
 	containerBrowseButton.setText(WorkbenchMessages.getString("WizardImportPage.browse2")); //$NON-NLS-1$
 	containerBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	containerBrowseButton.addListener(SWT.Selection,this);
+	containerBrowseButton.setFont(parent.getFont());
 
 	initialPopulateContainerField();
 }

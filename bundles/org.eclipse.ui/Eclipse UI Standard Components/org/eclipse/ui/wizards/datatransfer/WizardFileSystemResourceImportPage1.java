@@ -121,6 +121,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 	((GridLayout)parent.getLayout()).numColumns++;
 
 	Button button = new Button(parent, SWT.PUSH );
+	button.setFont(parent.getFont());
 
 	GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
 	button.setLayoutData(buttonData);
@@ -150,6 +151,7 @@ protected final void createButtonsGroup(Composite parent) {
 	layout.numColumns = 3;
 	layout.makeColumnsEqualWidth = true;
 	buttonComposite.setLayout(layout);
+	buttonComposite.setFont(parent.getFont());
 	buttonComposite.setLayoutData(
 		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
@@ -213,17 +215,20 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 
 		// overwrite... checkbox
 		overwriteExistingResourcesCheckbox = new Button(optionsGroup, SWT.CHECK);
+		overwriteExistingResourcesCheckbox.setFont(optionsGroup.getFont());
 		overwriteExistingResourcesCheckbox.setText(
 			DataTransferMessages.getString("FileImport.overwriteExisting")); //$NON-NLS-1$
 
 		// create containers radio
 		createContainerStructureButton = new Button(optionsGroup, SWT.RADIO);
+		createContainerStructureButton.setFont(optionsGroup.getFont());
 		createContainerStructureButton.setText(
 			DataTransferMessages.getString("FileImport.createComplete")); //$NON-NLS-1$
 		createContainerStructureButton.setSelection(false);
 		
 		// create selection only radio
 		createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
+		createOnlySelectedButton.setFont(optionsGroup.getFont());
 		createOnlySelectedButton.setText(
 			DataTransferMessages.getString("FileImport.createSelectedFolders")); //$NON-NLS-1$
 		createOnlySelectedButton.setSelection(true);
@@ -238,10 +243,13 @@ protected void createRootDirectoryGroup(Composite parent) {
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	sourceContainerGroup.setLayout(layout);
+	sourceContainerGroup.setFont(parent.getFont());
 	sourceContainerGroup.setLayoutData(
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
-	new Label(sourceContainerGroup, SWT.NONE).setText(getSourceLabel());
+	Label groupLabel = new Label(sourceContainerGroup, SWT.NONE);
+	groupLabel.setText(getSourceLabel());
+	groupLabel.setFont(parent.getFont());
 
 	// source name entry field
 	sourceNameField = new Combo(sourceContainerGroup, SWT.BORDER);
@@ -249,6 +257,7 @@ protected void createRootDirectoryGroup(Composite parent) {
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	sourceNameField.setLayoutData(data);
+	sourceNameField.setFont(parent.getFont());
 
 	sourceNameField.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -298,6 +307,7 @@ protected void createRootDirectoryGroup(Composite parent) {
 	sourceBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	sourceBrowseButton.addListener(SWT.Selection, this);
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+	sourceBrowseButton.setFont(parent.getFont());
 }
 
 /**
