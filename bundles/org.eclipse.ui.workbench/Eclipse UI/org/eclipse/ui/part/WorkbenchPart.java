@@ -201,8 +201,9 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	// Save config element.
 	configElement = cfig;
 
-	// Title.
-	title = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$
+	// Part name and title.
+	partName = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$; 
+	title = partName;
 
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
@@ -344,7 +345,7 @@ protected void setStatusText(String statusText) {
 	if(Util.equals(this.statusText, statusText))
 		return;
 	this.statusText = statusText;
-	firePropertyChange(IWorkbenchPart.PROP_STATUS);
+	firePropertyChange(IWorkbenchPart.PROP_STATUS_TEXT);
 }
 
 }
