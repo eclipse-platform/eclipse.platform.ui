@@ -16,25 +16,25 @@ import java.util.ArrayList;
  * Maintain statistics about a loaded class.
  */
 public class ClassStats {
-	private String className;					// fully qualified name of this class 
-	private ClassloaderStats classloader;		// the classloader that loaded this class
-	private int loadOrder = -1;					
+	private String className; // fully qualified name of this class 
+	private ClassloaderStats classloader; // the classloader that loaded this class
+	private int loadOrder = -1;
 
-	private long timestamp;					// time at which this class was loaded
-	private long timeLoading;					// time to load the class
-	private long timeLoadingOthers = 0;		// time spent loading classes which has been triggered by this class  
+	private long timestamp; // time at which this class was loaded
+	private long timeLoading; // time to load the class
+	private long timeLoadingOthers = 0; // time spent loading classes which has been triggered by this class  
 
 	// parentage of classes loaded
-	private ClassStats loadedBy=null;			// a reference to the class that loaded this class
-	private ArrayList loaded=new ArrayList(2); 	// a reference to the classes that this class loaded
+	private ClassStats loadedBy = null; // a reference to the class that loaded this class
+	private ArrayList loaded = new ArrayList(2); // a reference to the classes that this class loaded
 
-	private boolean duringStartup;			// indicate if the class was loaded during platform startup
+	private boolean duringStartup; // indicate if the class was loaded during platform startup
 
 	//information to retrieve the stacktrace from the file
 	private long traceStart = -1;
 	private long traceEnd = -1;
 
-	static private boolean booting = true;		// whether or not the platform is starting up.
+	static private boolean booting = true; // whether or not the platform is starting up.
 
 	public static void setBooting(boolean value) {
 		booting = value;
@@ -52,7 +52,7 @@ public class ClassStats {
 	}
 
 	public void loadingDone() {
-		timeLoading = System.currentTimeMillis()-timestamp;
+		timeLoading = System.currentTimeMillis() - timestamp;
 	}
 
 	public long getTimeLoading() {
@@ -60,7 +60,7 @@ public class ClassStats {
 	}
 
 	public long getLocalTimeLoading() {
-		return timeLoading-timeLoadingOthers;
+		return timeLoading - timeLoadingOthers;
 	}
 
 	public void addTimeLoadingOthers(long time) {

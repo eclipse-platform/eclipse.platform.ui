@@ -20,19 +20,19 @@ import org.eclipse.core.boot.BootLoader;
  * to information about classes and bundles in a plugin.
  */
 public class ClassloaderStats {
-	private String id; 
-	private long loadingTime;								// time spent loading classes
-	private int failureCount = 0;							// number of classes requested but that we fail to provide
-	private Map classes = new HashMap(20);	// classes loaded by the plugin	(key: class name, value: ClassStats) 
-	private ArrayList bundles = new ArrayList(2);	// bundles loaded
-	
-	private boolean keepTraces = false;					// indicate whether or not the traces of classes loaded are kept 
+	private String id;
+	private long loadingTime; // time spent loading classes
+	private int failureCount = 0; // number of classes requested but that we fail to provide
+	private Map classes = new HashMap(20); // classes loaded by the plugin	(key: class name, value: ClassStats) 
+	private ArrayList bundles = new ArrayList(2); // bundles loaded
+
+	private boolean keepTraces = false; // indicate whether or not the traces of classes loaded are kept 
 	// filters to indicate which classes we want to keep the traces
-	private static ArrayList packageFilters = new ArrayList(4);	// filters on a package basis
-	private static Set pluginFilters = new HashSet(5);				// filters on a plugin basis
-	
-	private static Stack classStack = new Stack();		// represents the classes that are currently being loaded 
-	private static Map loaders = new HashMap(20);	// a dictionary of the classloaderStats (key: pluginId, value: ClassloaderStats)
+	private static ArrayList packageFilters = new ArrayList(4); // filters on a package basis
+	private static Set pluginFilters = new HashSet(5); // filters on a plugin basis
+
+	private static Stack classStack = new Stack(); // represents the classes that are currently being loaded 
+	private static Map loaders = new HashMap(20); // a dictionary of the classloaderStats (key: pluginId, value: ClassloaderStats)
 	public static File traceFile;
 
 	static {
@@ -61,7 +61,7 @@ public class ClassloaderStats {
 			System.out.println("  Loaded."); //$NON-NLS-1$
 			Properties filters = new Properties() {
 				public Object put(Object key, Object value) {
-					addFilters((String)key, (String)value);
+					addFilters((String) key, (String) value);
 					return null;
 				}
 			};
@@ -103,7 +103,7 @@ public class ClassloaderStats {
 	}
 
 	public static ClassloaderStats[] getLoaders() {
-		return (ClassloaderStats[])loaders.values().toArray(new ClassloaderStats[loaders.size()]);
+		return (ClassloaderStats[]) loaders.values().toArray(new ClassloaderStats[loaders.size()]);
 	}
 
 	public static void endLoadingClass(String id, String className, boolean success) {
@@ -132,7 +132,7 @@ public class ClassloaderStats {
 			if (classes.get(name) == null) {
 				ClassStats value = new ClassStats(name, this);
 				value.toBaseClass();
-				classes.put (name, value);
+				classes.put(name, value);
 			}
 		}
 	}
@@ -164,14 +164,14 @@ public class ClassloaderStats {
 		if (current.getLoadOrder() >= 0)
 			return;
 
-		classes.put (name, current);
+		classes.put(name, current);
 		current.setLoadOrder(classes.size());
 		current.loadingDone();
 		traceLoad(name, current);
 
 		// is there something on the load stack.  if so, link them together...
 		if (classStack.size() != 0) {
-		// get the time spent loading cli and subtract its load time from the class that requires loading
+			// get the time spent loading cli and subtract its load time from the class that requires loading
 			ClassStats previous = ((ClassStats) classStack.peek());
 			previous.addTimeLoadingOthers(current.getTimeLoading());
 			current.setLoadedBy(previous);
@@ -186,7 +186,7 @@ public class ClassloaderStats {
 		if (!keepTraces) {
 			boolean found = false;
 			for (int i = 0; !found && i < packageFilters.size(); i++)
-				if (name.startsWith((String)packageFilters.get(i)))
+				if (name.startsWith((String) packageFilters.get(i)))
 					found = true;
 			if (!found)
 				return;
@@ -195,13 +195,13 @@ public class ClassloaderStats {
 		// Write the stack trace. The position in the file are set to the corresponding classStat object
 		try {
 			target.setTraceStart(traceFile.length());
-			PrintWriter output = new PrintWriter(new FileOutputStream(traceFile.getAbsolutePath(),true));
+			PrintWriter output = new PrintWriter(new FileOutputStream(traceFile.getAbsolutePath(), true));
 			try {
 				output.println("Loading class: " + name); //$NON-NLS-1$
 				output.println("Class loading stack:"); //$NON-NLS-1$
 				output.println("\t" + name); //$NON-NLS-1$
-				for (int i = classStack.size() - 1; i >= 0 ; i--) 
-					output.println("\t" + ((ClassStats)classStack.get(i)).getClassName()); //$NON-NLS-1$
+				for (int i = classStack.size() - 1; i >= 0; i--)
+					output.println("\t" + ((ClassStats) classStack.get(i)).getClassName()); //$NON-NLS-1$
 				output.println("Stack trace:"); //$NON-NLS-1$
 				new Throwable().printStackTrace(output);
 			} finally {
@@ -222,7 +222,7 @@ public class ClassloaderStats {
 	}
 
 	public ClassStats[] getClasses() {
-		return (ClassStats[])classes.values().toArray(new ClassStats[classes.size()]);
+		return (ClassStats[]) classes.values().toArray(new ClassStats[classes.size()]);
 	}
 
 	public String getId() {
