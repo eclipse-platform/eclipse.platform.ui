@@ -60,23 +60,25 @@ public class OrderedLock implements ILock {
 	public boolean acquire(long delay) throws InterruptedException {
 		if (Thread.interrupted())
 			throw new InterruptedException();
-		boolean success = attempt();
-		if (!success && delay > 0) {
-			Semaphore semaphore = enqueue(new Semaphore(Thread.currentThread()));
-			if (DEBUG)
-				System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... :-/"); //$NON-NLS-1$ //$NON-NLS-2$
-			//free all greater locks that this thread currently holds
-			LockManager.LockState[] oldLocks = manager.suspendGreaterLocks(this);
-			//now it is safe to acquire this lock
-			success = doAcquire(semaphore, delay);
-			//finally, re-acquire the greater locks that we freed earlier
-			if (oldLocks != null) {
-				for (int i = 0; i < oldLocks.length; i++) {
-					oldLocks[i].resume();
-				}
+		boolean success = true;
+		if (delay <= 0) {
+			success = attempt();
+		} else {
+			Semaphore semaphore = createSemaphore();
+			if (semaphore != null) {
+				if (DEBUG)
+					System.out.println("[" + Thread.currentThread() + "] Operation waiting to be executed... :-/"); //$NON-NLS-1$ //$NON-NLS-2$
+				//free all greater locks that this thread currently holds
+				LockManager.LockState[] oldLocks = manager.suspendGreaterLocks(this);
+				//now it is safe to acquire this lock
+				success = doAcquire(semaphore, delay);
+				//finally, re-acquire the greater locks that we freed earlier
+				if (oldLocks != null)
+					for (int i = 0; i < oldLocks.length; i++)
+						oldLocks[i].resume();
+				if (DEBUG)
+					System.out.println("[" + Thread.currentThread() + "] Operation started... :-)"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			if (DEBUG)
-				System.out.println("[" + Thread.currentThread() + "] Operation started... :-)"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (success)
 			depth++;
