@@ -78,7 +78,7 @@ public PreferenceStore() {
  *
  * @param filename the file name
  * @see #load()
- * @see #store()
+ * @see #save()
  */
 public PreferenceStore(String filename) {
 	this();
