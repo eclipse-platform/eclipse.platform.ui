@@ -224,6 +224,16 @@ description, distributable, and context-param elements.
 		<servlet-class>org.eclipse.help.jsp.advanced.views</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>org.eclipse.help.jsp.advanced.workingSet</servlet-name>
+		<servlet-class>org.eclipse.help.jsp.advanced.workingSet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>org.eclipse.help.jsp.advanced.workingSetManager</servlet-name>
+		<servlet-class>org.eclipse.help.jsp.advanced.workingSetManager</servlet-class>
+	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>org.eclipse.help.jsp.index</servlet-name>
 		<url-pattern>/index.jsp</url-pattern>
@@ -419,6 +429,16 @@ description, distributable, and context-param elements.
 		<url-pattern>/advanced/views.jsp</url-pattern>
 	</servlet-mapping>
 
+	<servlet-mapping>
+		<servlet-name>org.eclipse.help.jsp.advanced.workingSet</servlet-name>
+		<url-pattern>/advanced/workingSet.jsp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>org.eclipse.help.jsp.advanced.workingSetManager</servlet-name>
+		<url-pattern>/advanced/workingSetManager.jsp</url-pattern>
+	</servlet-mapping>
+	
 <!--
 All session-config, mime-mapping, welcome-file-list, error-page, taglib,
 resource-ref, security-constraint, login-config, security-role,
