@@ -27,7 +27,9 @@ public class UpdateTestsPlugin extends Plugin {
 	/**
 	 * Called by Platform after loading the plugin
 	 */
-	public void startup() {
+	public void startup() throws CoreException {
+		IAppServer localAppServer = UpdateManagerPlugin.getWebAppServer();
+		localAppServer.add("updatetests", "org.eclipse.update.tests.core", "webserver");		
 	}
 
 	/**
@@ -36,7 +38,9 @@ public class UpdateTestsPlugin extends Plugin {
 	 *   this plug-in 
 	 */
 	public void shutdown() throws CoreException {
-		super.shutdown();
+		IAppServer localAppServer = UpdateManagerPlugin.getWebAppServer();
+		localAppServer.remove("updatetests", "org.eclipse.update.tests.core");				
+		super.shutdown();		
 	}
 
 }
