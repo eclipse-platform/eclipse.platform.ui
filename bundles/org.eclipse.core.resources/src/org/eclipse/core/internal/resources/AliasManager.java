@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
-import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -411,6 +410,9 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * resource.  Returns null if no aliases are found.
 	 */
 	private void computeDeepAliases(IResource resource, IPath location) {
+		//if the location is invalid then there won't be any aliases to update
+		if (location == null)
+			return;
 		//get the normal aliases (resources rooted in parent locations)
 		internalComputeAliases(resource, location);
 		//get all resources rooted below this resource's location
