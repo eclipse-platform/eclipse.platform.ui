@@ -234,7 +234,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 		contextManager.setActiveContextIds(new HashSet(activeContextIds));
 
 		// Initialize the schemes.
-		bindingManager = new BindingManager(contextManager);
+		bindingManager = new BindingManager(contextManager, commandManager);
 		final List schemes = new ArrayList();
 		createScheme(bindingManager, null, schemeDepth, schemes);
 		bindingManager
@@ -404,7 +404,7 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 		// Time how long it takes to access the cache;
 		startMeasuring();
 		for (int i = 0; i < cacheHits; i++) {
-			bindingManager.getActiveBindingsFor(null);
+			bindingManager.getActiveBindingsFor((ParameterizedCommand) null);
 		}
 		stopMeasuring();
 		commitMeasurements();

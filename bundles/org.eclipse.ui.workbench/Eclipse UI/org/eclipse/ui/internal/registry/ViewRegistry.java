@@ -197,8 +197,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
             PlatformUI.getWorkbench().getExtensionTracker().registerObject(
                     desc.getConfigurationElement().getDeclaringExtension(),
                     desc, IExtensionTracker.REF_WEAK);
-            PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
-                    desc.getHandlerSubmission());
+			desc.activateHandler();
         }
     }
     
@@ -387,10 +386,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
             }
             else if (objects[i] instanceof ViewDescriptor) {
                 views.remove(objects[i]);
-                PlatformUI.getWorkbench().getCommandSupport()
-                        .removeHandlerSubmission(
-                                ((ViewDescriptor) objects[i])
-                                        .getHandlerSubmission());
+				((ViewDescriptor) objects[i]).deactivateHandler();
                 dirtyViewCategoryMappings = true;
             }
             else if (objects[i] instanceof Category) {

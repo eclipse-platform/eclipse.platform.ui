@@ -13,13 +13,12 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -75,8 +74,8 @@ public class ViewTests extends DynamicTestCase {
         getBundle();
         ViewDescriptor desc = (ViewDescriptor) registry.find(VIEW_ID);
         assertNotNull(desc);
-        HandlerSubmission submission = desc.getHandlerSubmission();
-        ICommand command = PlatformUI.getWorkbench().getCommandSupport().getCommandManager().getCommand(submission.getCommandId());
+		final ICommandService commandService = (ICommandService) fWorkbench.getAdapter(ICommandService.class);
+        final Command command = commandService.getCommand(desc.getId());
         assertTrue(command.isHandled());
         removeBundle();
         assertFalse(command.isHandled());

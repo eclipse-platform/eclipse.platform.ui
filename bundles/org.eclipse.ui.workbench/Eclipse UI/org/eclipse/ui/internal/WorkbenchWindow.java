@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -35,6 +36,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
@@ -62,9 +64,11 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -79,12 +83,10 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.eclipse.ui.commands.ActionHandler;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.handlers.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -327,7 +329,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * The list of handler submissions submitted to the workbench command
      * support. This list may be empty, but it is never <code>null</code>.
      */
-    private List handlerSubmissions = new ArrayList();
+    private List handlerActivations = new ArrayList();
     
     /**
      * The number of large updates that are currently going on. If this is
@@ -441,6 +443,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * </p>
      */
     void submitActionSetAndGlobalHandlers() {
+		final IHandlerService handlerService = (IHandlerService) PlatformUI
+				.getWorkbench().getAdapter(IHandlerService.class);
+		
         /* Mash the action sets and global actions together, with global actions
          * taking priority.
          */
@@ -448,13 +453,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
         handlersByCommandId.putAll(actionSetHandlersByCommandId);
         handlersByCommandId.putAll(globalActionHandlersByCommandId);
         
-        List toRemove = new ArrayList();
         List newHandlers = new ArrayList(handlersByCommandId.size());
-        List toAdd = new ArrayList();
         
-        Iterator existingIter = handlerSubmissions.iterator();
+        Iterator existingIter = handlerActivations.iterator();
         while (existingIter.hasNext()) {
-            HandlerSubmission next = (HandlerSubmission)existingIter.next();
+            IHandlerActivation next = (IHandlerActivation) existingIter.next();
             
             String cmdId = next.getCommandId();
             
@@ -463,7 +466,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 handlersByCommandId.remove(cmdId);
                 newHandlers.add(next);
             } else {
-                toRemove.add(next);
+                handlerService.deactivateHandler(next);
             }
         }
         
@@ -474,20 +477,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String commandId = (String) entry.getKey();
                 IHandler handler = (IHandler) entry.getValue();
-                HandlerSubmission submission = new HandlerSubmission(null, shell,
-                        null, commandId, handler, Priority.LEGACY);
-                
-                toAdd.add(submission);
-                newHandlers.add(submission);
+				newHandlers.add(handlerService.activateHandler(commandId,
+						handler, new LegacyHandlerSubmissionExpression(null,
+								shell, null), ISources.ACTIVE_SHELL
+								| ISources.ACTIVE_WORKBENCH_WINDOW));
             }
         }
         
-        // Remove the old submissions, and the add the new ones.
-        final IWorkbenchCommandSupport commandSupport = Workbench.getInstance()
-                .getCommandSupport();
-        commandSupport.removeHandlerSubmissions(toRemove);
-        handlerSubmissions = newHandlers;
-        commandSupport.addHandlerSubmissions(toAdd);
+        handlerActivations = newHandlers;
     }
 
     /*
@@ -1223,16 +1220,16 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
             // Remove the handler submissions. Bug 64024.
             final IWorkbench workbench = getWorkbench();
-            final IWorkbenchCommandSupport commandSupport = workbench
-                    .getCommandSupport();
-            commandSupport.removeHandlerSubmissions(handlerSubmissions);
-            final Iterator submissionItr = handlerSubmissions.iterator();
-            while (submissionItr.hasNext()) {
-                final HandlerSubmission submission = (HandlerSubmission) submissionItr
-                        .next();
-                submission.getHandler().dispose();
-            }
-            handlerSubmissions.clear();
+			final IHandlerService handlerService = (IHandlerService) workbench
+					.getAdapter(IHandlerService.class);
+			handlerService.deactivateHandlers(handlerActivations);
+			final Iterator activationItr = handlerActivations.iterator();
+			while (activationItr.hasNext()) {
+				final IHandlerActivation activation = (IHandlerActivation) activationItr
+						.next();
+				activation.getHandler().dispose();
+			}
+            handlerActivations.clear();
             actionSetHandlersByCommandId.clear();
             globalActionHandlersByCommandId.clear();
 

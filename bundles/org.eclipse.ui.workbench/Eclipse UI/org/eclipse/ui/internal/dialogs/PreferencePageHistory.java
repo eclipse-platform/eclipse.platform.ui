@@ -16,12 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -29,11 +31,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ActionHandler;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.handlers.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -69,7 +71,7 @@ class PreferencePageHistory {
 	/**
 	 * The handler submission for these controls.
 	 */
-	private Set submissions = new HashSet();
+	private Set activations = new HashSet();
 
 	/**
 	 * Creates a new history for the given dialog.
@@ -285,11 +287,14 @@ class PreferencePageHistory {
 	 *            the action to register.
 	 */
 	private void registerKeybindings(IAction action) {
-		IHandler handler = new ActionHandler(action);
-		HandlerSubmission submission = new HandlerSubmission(null, dialog.getShell(), null,
-				action.getActionDefinitionId(), handler, Priority.MEDIUM);
-		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(submission);
-		submissions.add(submission);
+		final IHandler handler = new ActionHandler(action);
+		final IHandlerService handlerService = (IHandlerService) PlatformUI
+				.getWorkbench().getAdapter(IHandlerService.class);
+		final IHandlerActivation activation = handlerService.activateHandler(
+				action.getActionDefinitionId(), handler,
+				new LegacyHandlerSubmissionExpression(null, dialog.getShell(),
+						null), ISources.ACTIVE_SHELL);
+		activations.add(activation);
 	}
 
 	/**
@@ -297,12 +302,14 @@ class PreferencePageHistory {
 	 *
 	 */
 	public void dispose() {
-		Iterator iterator = submissions.iterator();
-		while(iterator.hasNext()){
-			PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
-					(HandlerSubmission) iterator.next());
+		final IHandlerService handlerService = (IHandlerService) PlatformUI
+				.getWorkbench().getAdapter(IHandlerService.class);
+		final Iterator iterator = activations.iterator();
+		while (iterator.hasNext()) {
+			handlerService.deactivateHandler((IHandlerActivation) iterator
+					.next());
 		}
-		submissions.clear();
+		activations.clear();
 		
 	}
 

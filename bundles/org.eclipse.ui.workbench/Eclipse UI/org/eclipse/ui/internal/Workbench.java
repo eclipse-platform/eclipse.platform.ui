@@ -898,7 +898,7 @@ public final class Workbench implements IWorkbench {
 				commandManager, context);
 		services.put(IHandlerService.class, handlerService);
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
-		bindingManager = new BindingManager(contextManager);
+		bindingManager = new BindingManager(contextManager, commandManager);
 		final IBindingService bindingService = new BindingService(
 				bindingManager);
 		services.put(IBindingService.class, bindingService);

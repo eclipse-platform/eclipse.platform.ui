@@ -123,7 +123,7 @@ public final class BindingManagerTest extends UITestCase {
 	protected final void doSetUp() {
 		commandManager = new CommandManager();
 		contextManager = new ContextManager();
-		bindingManager = new BindingManager(contextManager);
+		bindingManager = new BindingManager(contextManager, commandManager);
 		listener = new TestListener();
 		bindingManager.addBindingManagerListener(listener);
 	}
@@ -144,7 +144,7 @@ public final class BindingManagerTest extends UITestCase {
 	 */
 	public final void testConstructor() {
 		try {
-			new BindingManager(null);
+			new BindingManager(null, null);
 			fail("A binding manager cannot be constructed with a null context manager");
 		} catch (final NullPointerException e) {
 			// Success
@@ -227,7 +227,7 @@ public final class BindingManagerTest extends UITestCase {
 	public final void testGetActiveBindingsFor() throws NotDefinedException {
 		// Test with a null argument.
 		final TriggerSequence[] activeBindingsForNull = bindingManager
-				.getActiveBindingsFor(null);
+				.getActiveBindingsFor((ParameterizedCommand) null);
 		assertNotNull("The active bindings for a command should never be null",
 				activeBindingsForNull);
 		assertTrue(
@@ -759,7 +759,7 @@ public final class BindingManagerTest extends UITestCase {
 		// SET NULL
 		bindingManager.setBindings(null);
 		assertTrue("There should be no active bindings", bindingManager
-				.getActiveBindingsFor(null).length == 0);
+				.getActiveBindingsFor((ParameterizedCommand) null).length == 0);
 
 		// ADD BINDING
 		final String commandId = "commandId";

@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.handlers;
 
+import java.util.Collection;
+
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.ISourceProvider;
@@ -116,6 +118,21 @@ public interface IHandlerService {
 	 *            <code>activateHandler</code>; must not be <code>null</code>.
 	 */
 	public void deactivateHandler(IHandlerActivation activation);
+
+	/**
+	 * Deactivates the given handlers within the context of this service. If the
+	 * handler was activated with a different service, then it must be
+	 * deactivated from that service instead. It is only possible to retract a
+	 * handler activation with this method. That is, you must have the same
+	 * <code>IHandlerActivation</code> used to activate the handler.
+	 * 
+	 * @param activations
+	 *            The tokens that were returned from a call to
+	 *            <code>activateHandler</code>. This collection must only
+	 *            contain instances of <code>IHandlerActivation</code>. The
+	 *            collection must not be <code>null</code>.
+	 */
+	public void deactivateHandlers(Collection activations);
 
 	/**
 	 * <p>

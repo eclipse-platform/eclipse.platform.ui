@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -27,10 +28,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A quick menu actions provides support to assign short cuts
@@ -101,18 +101,16 @@ public abstract class QuickMenuAction extends Action {
      * @return the short cut as a human readable string or <code>null</code>
      */
     public String getShortCutString() {
-        final ICommandManager commandManager = PlatformUI.getWorkbench()
-                .getCommandSupport().getCommandManager();
-        final ICommand command = commandManager
-                .getCommand(getActionDefinitionId());
-        if (command.isDefined()) {
-            List l = command.getKeySequenceBindings();
-            if (!l.isEmpty()) {
-                IKeySequenceBinding binding = (IKeySequenceBinding) l.get(0);
-                return binding.getKeySequence().format();
-            }
-        }
-        return null; //$NON-NLS-1$
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final IBindingService bindingService = (IBindingService) workbench
+				.getAdapter(IBindingService.class);
+		final TriggerSequence[] activeBindings = bindingService
+				.getActiveBindingsFor(getActionDefinitionId());
+		if (activeBindings.length > 0) {
+			return activeBindings[0].format();
+		}
+
+		return null; //$NON-NLS-1$
     }
 
     private Point computeMenuLocation(Control focus, Menu menu) {

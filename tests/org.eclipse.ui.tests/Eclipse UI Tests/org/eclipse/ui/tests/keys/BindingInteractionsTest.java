@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
@@ -61,7 +62,8 @@ public final class BindingInteractionsTest extends UITestCase {
 	 */
 	protected void doSetUp() {
 		contextManager = new ContextManager();
-		bindingManager = new BindingManager(contextManager);
+		bindingManager = new BindingManager(contextManager,
+				new CommandManager());
 	}
 
 	/**

@@ -36,6 +36,9 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  * @see org.eclipse.ui.commands.IWorkbenchCommandSupport
+ * @deprecated Please use <code>IHandlerService.activateHandler</code>
+ *             instead.
+ * @see org.eclipse.ui.handlers.IHandlerService
  */
 public final class HandlerSubmission implements Comparable {
 

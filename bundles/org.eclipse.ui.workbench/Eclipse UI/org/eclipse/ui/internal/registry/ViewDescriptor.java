@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -21,8 +22,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.part.NewViewToOldWrapper;
 import org.eclipse.ui.internal.part.components.services.IPartDescriptor;
@@ -60,7 +62,11 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         }
     };
 
-    private HandlerSubmission handlerSubmission;
+	/**
+	 * The activation token returned when activating the show view handler with
+	 * the workbench.
+	 */
+	private IHandlerActivation handlerActivation;
     
     /**
      * Create a new <code>ViewDescriptor</code> for an extension.
@@ -260,17 +266,35 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	}
 
     /**
-     * Return the handler submission for showing this view.
-     * 
-     * @return the handler submission for showing this view
-     * @since 3.1
-     */
-    public HandlerSubmission getHandlerSubmission() {
-        if (handlerSubmission == null) {
-            ShowViewHandler showViewHandler = new ShowViewHandler(getId());
-            handlerSubmission = new HandlerSubmission(null,
-                null, null, getId(), showViewHandler, Priority.MEDIUM);
-        }
-        return handlerSubmission;
+	 * Activates a show view handler for this descriptor. This handler can later
+	 * be deactivated by calling {@link ViewDescriptor#deactivateHandler()}.
+	 * This method will only activate the handler if it is not currently active.
+	 * 
+	 * @since 3.1
+	 */
+    public final void activateHandler() {
+		if (handlerActivation == null) {
+			final IHandler handler = new ShowViewHandler(getId());
+			final IHandlerService handlerService = (IHandlerService) PlatformUI
+					.getWorkbench().getAdapter(IHandlerService.class);
+			handlerActivation = handlerService
+					.activateHandler(getId(), handler);
+		}
     }
+	
+	/**
+	 * Deactivates the show view handler for this descriptor. This handler was
+	 * previously activated by calling {@link ViewDescriptor#activateHandler()}.
+	 * This method will only deactivative the handler if it is currently active.
+	 * 
+	 * @since 3.1
+	 */
+	public final void deactivateHandler() {
+		if (handlerActivation != null) {
+			final IHandlerService handlerService = (IHandlerService) PlatformUI
+					.getWorkbench().getAdapter(IHandlerService.class);
+			handlerService.deactivateHandler(handlerActivation);
+			handlerActivation = null;
+		}
+	}
 }

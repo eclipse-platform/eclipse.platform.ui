@@ -34,6 +34,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
@@ -448,7 +449,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * then persisted.
 	 */
 	private final BindingManager localChangeManager = new BindingManager(
-			new ContextManager());
+			new ContextManager(), new CommandManager());
 
 	/**
 	 * A map of all the scheme identifiers indexed by the names that appear in

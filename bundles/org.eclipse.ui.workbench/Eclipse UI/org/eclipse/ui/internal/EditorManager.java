@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -70,6 +73,7 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
@@ -77,12 +81,10 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.handlers.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.Assert;
@@ -138,7 +140,7 @@ public class EditorManager implements IExtensionRemovalHandler {
     private Hashtable imgHashtable = new Hashtable();
 
     // Handler for the pin editor keyboard shortcut
-    private HandlerSubmission pinEditorHandlerSubmission = null;
+    private IHandlerActivation pinEditorHandlerActivation = null;
 
     private MultiStatus closingEditorStatus = null;
 
@@ -257,11 +259,12 @@ public class EditorManager implements IExtensionRemovalHandler {
                         .removePropertyChangeListener(editorPropChangeListnener);
                 editorPropChangeListnener = null;
             }
-            if (pinEditorHandlerSubmission != null) {
+            if (pinEditorHandlerActivation != null) {
                 // remove pin editor keyboard shortcut handler
-                PlatformUI.getWorkbench().getCommandSupport()
-                        .removeHandlerSubmission(pinEditorHandlerSubmission);
-                pinEditorHandlerSubmission = null;
+				final IHandlerService handlerService = (IHandlerService) window
+						.getWorkbench().getAdapter(IHandlerService.class);
+				handlerService.deactivateHandler(pinEditorHandlerActivation);
+                pinEditorHandlerActivation = null;
             }
             // Dispose the cached images for editors
             Enumeration images = imgHashtable.elements();
@@ -297,43 +300,46 @@ public class EditorManager implements IExtensionRemovalHandler {
     }
 
     /**
-     * Check to determine if the handler for the pin editor keyboard shortcut should be created.
-     */
-    private void checkCreatePinEditorShortcutKeyHandler() {
-        if (pinEditorHandlerSubmission == null) {
-            final Shell shell = page.getWorkbenchWindow().getShell();
-            IHandler pinEditorHandler = new AbstractHandler() {
-                public Object execute(Map parameterValuesByName)
-                        throws ExecutionException {
-                    // check if the "Close editors automatically" preference is set
-                    if (WorkbenchPlugin.getDefault().getPreferenceStore()
-                            .getBoolean(
-                                    IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-                        // add or remove the editor's pin
-                        IWorkbenchPartSite iEditorSite = editorPresentation
-                                .getVisibleEditor().getPart(false).getSite();
-                        if (iEditorSite instanceof EditorSite) {
-                            EditorSite editorSite = (EditorSite) iEditorSite;
-                            editorSite.setReuseEditor(!editorSite
-                                    .getReuseEditor());
-                        }
-                    }
-                    return null;
-                }
-            };
-            pinEditorHandlerSubmission = new HandlerSubmission(null, shell,
-                    null, "org.eclipse.ui.window.pinEditor", //$NON-NLS-1$
-                    pinEditorHandler, Priority.MEDIUM);
-            // Assign the handler for the pin editor keyboard shortcut.
-            PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
-                    pinEditorHandlerSubmission);
+	 * Check to determine if the handler for the pin editor keyboard shortcut
+	 * should be created.
+	 */
+	private void checkCreatePinEditorShortcutKeyHandler() {
+		if (pinEditorHandlerActivation == null) {
+			final Shell shell = window.getShell();
+			final IHandler pinEditorHandler = new AbstractHandler() {
+				public final Object execute(final ExecutionEvent event) {
+					// check if the "Close editors automatically" preference is
+					// set
+					if (WorkbenchPlugin.getDefault().getPreferenceStore()
+							.getBoolean(
+									IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+						// add or remove the editor's pin
+						IWorkbenchPartSite iEditorSite = editorPresentation
+								.getVisibleEditor().getPart(false).getSite();
+						if (iEditorSite instanceof EditorSite) {
+							EditorSite editorSite = (EditorSite) iEditorSite;
+							editorSite.setReuseEditor(!editorSite
+									.getReuseEditor());
+						}
+					}
+					return null;
+				}
+			};
+
+			// Assign the handler for the pin editor keyboard shortcut.
+			final IHandlerService handlerService = (IHandlerService) window
+					.getWorkbench().getAdapter(IHandlerService.class);
+			pinEditorHandlerActivation = handlerService
+					.activateHandler(
+							"org.eclipse.ui.window.pinEditor", pinEditorHandler, new LegacyHandlerSubmissionExpression(null, shell, null), ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW); //$NON-NLS-1$
         }
     }
 
     /**
-     * Method to create the editor's pin ImageDescriptor
-     * @return the single image descriptor for the editor's pin icon
-     */
+	 * Method to create the editor's pin ImageDescriptor
+	 * 
+	 * @return the single image descriptor for the editor's pin icon
+	 */
     private ImageDescriptor getEditorPinImageDesc() {
         ImageRegistry registry = JFaceResources.getImageRegistry();
         ImageDescriptor pinDesc = registry.getDescriptor(PIN_EDITOR_KEY);

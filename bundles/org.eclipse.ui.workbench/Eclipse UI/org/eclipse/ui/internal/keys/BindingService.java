@@ -71,6 +71,10 @@ public final class BindingService implements IBindingService {
 		return bindingManager.getActiveBindingsFor(parameterizedCommand);
 	}
 
+	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
+		return bindingManager.getActiveBindingsFor(commandId);
+	}
+
 	public final Scheme getActiveScheme() {
 		return bindingManager.getActiveScheme();
 	}
@@ -105,7 +109,7 @@ public final class BindingService implements IBindingService {
 
 	public final Scheme getScheme(final String schemeId) {
 		/*
-		 * TODO Need to put in place protection against the context being
+		 * TODO Need to put in place protection against the scheme being
 		 * changed.
 		 */
 		return bindingManager.getScheme(schemeId);

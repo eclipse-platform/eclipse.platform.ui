@@ -13,8 +13,10 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Shell;
@@ -22,57 +24,52 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
-import org.eclipse.ui.commands.HandlerSubmission;
-import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.handlers.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.part.MultiEditor;
 
 /**
  * EditorAreaHelper is a wrapper for PartTabworkbook.
  */
 public class EditorAreaHelper {
-    private WorkbenchPage page;
 
     private ArrayList editorTable = new ArrayList(4);
 
     private EditorSashContainer editorArea;
 
-    private HandlerSubmission openEditorDropDownHandlerSubmission;
+    private IHandlerActivation openEditorDropDownHandlerActivation;
 
     /**
      * Creates a new EditorAreaHelper.
      */
     public EditorAreaHelper(WorkbenchPage page) {
-
-        this.page = page;
         this.editorArea = new EditorSashContainer(IPageLayout.ID_EDITOR_AREA,
                 page);
 
         this.editorArea.createControl(page.getClientComposite());
 
         final Shell shell = page.getWorkbenchWindow().getShell();
-        IHandler openEditorDropDownHandler = new AbstractHandler() {
-
-            public Object execute(Map parameterValuesByName)
-                    throws ExecutionException {
-                displayEditorList();
-                return null;
-            }
-        };
-        openEditorDropDownHandlerSubmission = new HandlerSubmission(null,
-                shell, null, "org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
-                openEditorDropDownHandler, Priority.MEDIUM);
-
-        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
-                openEditorDropDownHandlerSubmission);
+        final IHandler openEditorDropDownHandler = new AbstractHandler() {
+			public final Object execute(final ExecutionEvent event) {
+				displayEditorList();
+				return null;
+			}
+		};
+		final IHandlerService handlerService = (IHandlerService) PlatformUI
+				.getWorkbench().getAdapter(IHandlerService.class);
+		openEditorDropDownHandlerActivation = handlerService.activateHandler(
+				"org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
+				openEditorDropDownHandler,
+				new LegacyHandlerSubmissionExpression(null, shell, null),
+				ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW);
     }
 
     /**
-     * Displays a list of open editors
-     */
+	 * Displays a list of open editors
+	 */
     public void displayEditorList() {
         EditorStack activeWorkbook = editorArea.getActiveWorkbook();
         if (activeWorkbook != null) {
@@ -160,8 +157,9 @@ public class EditorAreaHelper {
      * Dispose of the editor presentation. 
      */
     public void dispose() {
-        PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(
-                openEditorDropDownHandlerSubmission);
+		final IHandlerService handlerService = (IHandlerService) PlatformUI
+				.getWorkbench().getAdapter(IHandlerService.class);
+		handlerService.deactivateHandler(openEditorDropDownHandlerActivation);
 
         if (editorArea != null) {
             editorArea.dispose();

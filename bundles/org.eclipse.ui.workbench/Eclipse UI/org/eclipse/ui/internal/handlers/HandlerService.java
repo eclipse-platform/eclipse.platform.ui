@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
@@ -68,7 +71,6 @@ public class HandlerService implements IHandlerService {
 		if (expression == null) {
 			throw new NullPointerException("The expression cannot be null"); //$NON-NLS-1$
 		}
-		// TODO Need to figure out priorities.
 		final IHandlerActivation activation = new HandlerActivation(commandId,
 				handler, expression, sourcePriority, this);
 		handlerAuthority.activateHandler(activation);
@@ -82,6 +84,15 @@ public class HandlerService implements IHandlerService {
 	public final void deactivateHandler(final IHandlerActivation activation) {
 		if (activation.getHandlerService() == this) {
 			handlerAuthority.deactivateHandler(activation);
+		}
+	}
+
+	public final void deactivateHandlers(final Collection activations) {
+		final Iterator activationItr = activations.iterator();
+		while (activationItr.hasNext()) {
+			final IHandlerActivation activation = (IHandlerActivation) activationItr
+					.next();
+			deactivateHandler(activation);
 		}
 	}
 

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
@@ -205,6 +206,13 @@ public final class BindingManager implements IContextManagerListener,
 	private Map cachedBindings = new HashMap();
 
 	/**
+	 * The command manager for this binding manager. This manager is only needed
+	 * for the <code>getActiveBindingsFor(String)</code> method. This value is
+	 * guaranteed to never be <code>null</code>.
+	 */
+	private final CommandManager commandManager;
+
+	/**
 	 * The context manager for this binding manager. For a binding manager to
 	 * function, it needs to listen for changes to the contexts. This value is
 	 * guaranteed to never be <code>null</code>.
@@ -283,15 +291,25 @@ public final class BindingManager implements IContextManagerListener,
 	 * @param contextManager
 	 *            The context manager that will support this binding manager.
 	 *            This value must not be <code>null</code>.
+	 * @param commandManager
+	 *            The command manager that will support this binding manager.
+	 *            This value must not be <code>null</code>.
 	 */
-	public BindingManager(final ContextManager contextManager) {
+	public BindingManager(final ContextManager contextManager,
+			final CommandManager commandManager) {
 		if (contextManager == null) {
 			throw new NullPointerException(
 					"A binding manager requires a context manager"); //$NON-NLS-1$
 		}
 
+		if (commandManager == null) {
+			throw new NullPointerException(
+					"A binding manager requires a command manager"); //$NON-NLS-1$
+		}
+
 		this.contextManager = contextManager;
 		contextManager.addContextManagerListener(this);
+		this.commandManager = commandManager;
 	}
 
 	/**
@@ -921,6 +939,41 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final TriggerSequence[] getActiveBindingsFor(
 			final ParameterizedCommand parameterizedCommand) {
+		final Object object = getActiveBindingsByParameterizedCommand().get(
+				parameterizedCommand);
+		if (object instanceof Collection) {
+			final Collection collection = (Collection) object;
+			return (TriggerSequence[]) collection
+					.toArray(new TriggerSequence[collection.size()]);
+		}
+
+		return new TriggerSequence[0];
+	}
+
+	/**
+	 * <p>
+	 * Returns the active bindings for a particular command identifier. This
+	 * method operates in O(n) time over the number of bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>. If the active bindings are
+	 * not yet computed, then this completes in <code>O(nn)</code>, where
+	 * <code>n</code> is the number of bindings.
+	 * </p>
+	 * 
+	 * @param commandId
+	 *            The identifier of the command whose bindings you wish to find.
+	 *            This argument may be <code>null</code>. It is assumed that
+	 *            you are looking for an instance of the command without
+	 *            parameters.
+	 * @return The array of active triggers (<code>TriggerSequence</code>)
+	 *         for a particular command identifier. This value is guaranteed to
+	 *         never be <code>null</code>, but it may be empty.
+	 */
+	public final TriggerSequence[] getActiveBindingsFor(
+			final String commandId) {
+		final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
+				commandManager.getCommand(commandId), null);
 		final Object object = getActiveBindingsByParameterizedCommand().get(
 				parameterizedCommand);
 		if (object instanceof Collection) {

@@ -46,7 +46,7 @@ public interface IBindingService extends IService {
 	public static final String DEFAULT_DEFAULT_ACTIVE_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 
 	/**
-	 * Gets the active bindings for a given command identifier.
+	 * Gets the active bindings for a given parameterized command.
 	 * 
 	 * @param parameterizedCommand
 	 *            The fully-parameterized command for which the active bindings
@@ -56,6 +56,18 @@ public interface IBindingService extends IService {
 	 */
 	public TriggerSequence[] getActiveBindingsFor(
 			ParameterizedCommand parameterizedCommand);
+
+	/**
+	 * Gets the active bindings for a given command identifier. It is assumed
+	 * that the command has no parameters.
+	 * 
+	 * @param commandId
+	 *            The id of the command for which the active bindings should be
+	 *            found; must not be <code>null</code>.
+	 * @return The array of all active bindings for the given command. This
+	 *         collection may be empty, but it is never <code>null</code>.
+	 */
+	public TriggerSequence[] getActiveBindingsFor(String commandId);
 
 	/**
 	 * Returns the currently active scheme.

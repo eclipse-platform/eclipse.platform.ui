@@ -433,12 +433,15 @@ public interface IWorkbench extends IAdaptable {
     IWorkbenchActivitySupport getActivitySupport();
 
     /**
-     * Returns an interface to manage commands at the workbench level.
-     * 
-     * @return an interface to manage commands at the workbench level.
-     *         Guaranteed not to be <code>null</code>.
-     * @since 3.0
-     */
+	 * Returns an interface to manage commands at the workbench level.
+	 * 
+	 * @return an interface to manage commands at the workbench level.
+	 *         Guaranteed not to be <code>null</code>.
+	 * @since 3.0
+	 * @deprecated Please use <code>getAdapter(ICommandService.class)</code>
+	 *             instead.
+	 * @see org.eclipse.ui.commands.ICommandService
+	 */
     IWorkbenchCommandSupport getCommandSupport();
 
     /**

@@ -96,7 +96,8 @@ public final class Bug84763Test extends UITestCase {
 
 		};
 		contextManager.addContextManagerListener(contextManagerListener);
-		bindingManager = new BindingManager(contextManager);
+		bindingManager = new BindingManager(contextManager,
+				new CommandManager());
 	}
 
 	/**
@@ -150,7 +151,7 @@ public final class Bug84763Test extends UITestCase {
 		bindingManager.addBinding(new KeyBinding(KeySequence
 				.getInstance("CTRL+F"), parameterizedCommand, scheme.getId(),
 				windowChildContext.getId(), null, null, null, Binding.SYSTEM));
-		bindingManager.getActiveBindingsFor(null);
+		bindingManager.getActiveBindingsFor((ParameterizedCommand) null);
 
 		// Activate the dialog context and the sibling.
 		final Set activeContextIds = new HashSet();
@@ -160,7 +161,7 @@ public final class Bug84763Test extends UITestCase {
 		contextManager.setActiveContextIds(activeContextIds);
 
 		// Force a binding computation.
-		bindingManager.getActiveBindingsFor(null);
+		bindingManager.getActiveBindingsFor((ParameterizedCommand) null);
 
 		// Active the window context.
 		activeContextIds.remove(IContextIds.CONTEXT_ID_DIALOG);
@@ -168,7 +169,7 @@ public final class Bug84763Test extends UITestCase {
 		contextManager.setActiveContextIds(activeContextIds);
 
 		// Force a binding computation.
-		bindingManager.getActiveBindingsFor(null);
+		bindingManager.getActiveBindingsFor((ParameterizedCommand) null);
 
 		/*
 		 * Check to see what the listener got as the list of previously active

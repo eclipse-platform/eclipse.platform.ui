@@ -21,6 +21,8 @@ import java.util.Collection;
  * </p>
  * 
  * @since 3.0
+ * @deprecated Please use <code>ICommandService</code> instead.
+ * @see org.eclipse.ui.commands.ICommandService
  */
 public interface IWorkbenchCommandSupport {
 

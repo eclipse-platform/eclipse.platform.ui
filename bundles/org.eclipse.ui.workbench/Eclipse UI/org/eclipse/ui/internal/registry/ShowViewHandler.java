@@ -11,44 +11,57 @@
 
 package org.eclipse.ui.internal.registry;
 
-import java.util.Map;
-
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * Command handler to show a particular view.
- *
+ * 
  * @since 3.0
  */
-public class ShowViewHandler extends AbstractHandler {
-    private String viewId;
+public final class ShowViewHandler extends AbstractHandler {
+	
+	/**
+	 * The identifier of the view this handler should open. This value should
+	 * never be <code>null</code>.
+	 */
+	private final String viewId;
 
-    public ShowViewHandler(String viewId) {
-        this.viewId = viewId;
-    }
+	/**
+	 * Constructs a new instance of <code>ShowViewHandler</code>.
+	 * 
+	 * @param viewId
+	 *            The identifier of the view this handler should open; must not
+	 *            be <code>null</code>.
+	 */
+	public ShowViewHandler(final String viewId) {
+		this.viewId = viewId;
+	}
 
-    public Object execute(Map parameterValuesByName) throws ExecutionException {
-        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow();
-        if (activeWorkbenchWindow == null)
-            return null;
-        IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-        if (activePage == null)
-            return null;
-        try {
-            activePage.showView(viewId);
-        } catch (PartInitException e) {
-            ErrorDialog.openError(activePage.getWorkbenchWindow().getShell(),
-                    WorkbenchMessages.ShowView_errorTitle,
-                    e.getMessage(), e.getStatus());
-        }
-        return null;
-    }
+	public final Object execute(final ExecutionEvent event) {
+		final IWorkbenchWindow activeWorkbenchWindow = PlatformUI
+				.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow == null)
+			return null;
+
+		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+		if (activePage == null)
+			return null;
+
+		try {
+			activePage.showView(viewId);
+		} catch (PartInitException e) {
+			ErrorDialog.openError(activePage.getWorkbenchWindow().getShell(),
+					WorkbenchMessages.ShowView_errorTitle, e.getMessage(), e
+							.getStatus());
+		}
+
+		return null;
+	}
 }
