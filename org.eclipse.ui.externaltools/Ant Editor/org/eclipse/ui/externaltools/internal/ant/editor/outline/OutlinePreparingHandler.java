@@ -697,18 +697,26 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 			
 			if (line <= 0) {
 				line= locator.getLineNumber();
+				startColumn= locator.getColumnNumber();
+				
 				if (line <= 0) {
 					line= 1;
+					startColumn= 1;
 				}
-				
-				startColumn= locator.getColumnNumber();
 			}
 
 			if (startColumn <= 0) {
 				startColumn= 1;
 				endColumn= getLastCharColumn(line) + 1;
 			} else {
-				endColumn= startColumn + 1;
+				if (startColumn > 1) {
+					--startColumn;
+				}
+				
+				endColumn= startColumn;
+				if (startColumn <= getLastCharColumn(line)) {
+					++endColumn;
+				}
 			}
 			
 			int offset= getOffset(line, startColumn);
