@@ -83,13 +83,19 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * A collection of objects listening to changes to this command. This
 	 * collection is <code>null</code> if there are no listeners.
 	 */
-	private Collection commandListeners = null;
+	private transient Collection commandListeners = null;
+
+	/**
+	 * A collection of objects listening to the execution of this command. This
+	 * collection is <code>null</code> if there are no listeners.
+	 */
+	private transient Collection executionListeners = null;
 
 	/**
 	 * The handler currently associated with this command. This value may be
 	 * <code>null</code> if there is no handler currently.
 	 */
-	private IHandler handler = null;
+	private transient IHandler handler = null;
 
 	/**
 	 * The ordered array of parameters understood by this command. This value
@@ -120,12 +126,40 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 *            The listener to be added; must not be <code>null</code>.
 	 */
 	public final void addCommandListener(final ICommandListener commandListener) {
-		if (commandListener == null)
-			throw new NullPointerException();
-		if (commandListeners == null)
+		if (commandListener == null) {
+			throw new NullPointerException("Cannot add a null command listener"); //$NON-NLS-1$
+		}
+
+		if (commandListeners == null) {
 			commandListeners = new ArrayList(1);
-		if (!commandListeners.contains(commandListener))
-			commandListeners.add(commandListener);
+		} else if (commandListeners.contains(commandListener)) {
+			return;
+		}
+
+		commandListeners.add(commandListener);
+	}
+
+	/**
+	 * Adds a listener to this command that will be notified when this command
+	 * is about to execute.
+	 * 
+	 * @param executionListener
+	 *            The listener to be added; must not be <code>null</code>.
+	 */
+	public final void addExecutionListener(
+			final IExecutionListener executionListener) {
+		if (executionListener == null) {
+			throw new NullPointerException(
+					"Cannot add a null execution listener"); //$NON-NLS-1$
+		}
+
+		if (executionListeners == null) {
+			executionListeners = new ArrayList(1);
+		} else if (executionListeners.contains(executionListener)) {
+			return;
+		}
+
+		executionListeners.add(executionListener);
 	}
 
 	/**
@@ -268,7 +302,9 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 * @param event
 	 *            An event containing all the information about the current
 	 *            state of the application; must not be <code>null</code>.
-	 * @return The result of the execution; may be <code>null</code>.
+	 * @return The result of the execution; may be <code>null</code>. This
+	 *         result will be available to the client executing the command, and
+	 *         execution listeners.
 	 * @throws ExecutionException
 	 *             If the handler has problems executing this command.
 	 * @throws NotHandledException
@@ -276,6 +312,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 */
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException, NotHandledException {
+		firePreExecute(event);
 		final IHandler handler = this.handler;
 
 		// Debugging output
@@ -294,10 +331,21 @@ public final class Command extends NamedHandleObject implements Comparable {
 		}
 
 		// Perform the execution, if there is a handler.
-		if ((handler != null) && (handler.isHandled()))
-			return handler.execute(event);
+		if ((handler != null) && (handler.isHandled())) {
+			try {
+				final Object returnValue = handler.execute(event);
+				firePostExecuteSuccess(returnValue);
+				return returnValue;
+			} catch (final ExecutionException e) {
+				firePostExecuteFailure(e);
+				throw e;
+			}
+		}
 
-		throw new NotHandledException("There is no handler to execute."); //$NON-NLS-1$
+		final NotHandledException e = new NotHandledException(
+				"There is no handler to execute."); //$NON-NLS-1$
+		fireNotHandled(e);
+		throw e;
 	}
 
 	/**
@@ -308,14 +356,91 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 *            <code>null</code>.
 	 */
 	private final void fireCommandChanged(final CommandEvent commandEvent) {
-		if (commandEvent == null)
-			throw new NullPointerException();
-		if (commandListeners != null) {
+		if (commandEvent == null) {
+			throw new NullPointerException("Cannot fire a null event"); //$NON-NLS-1$
+		}
+
+		if ((commandListeners != null) && (commandListeners.size() > 0)) {
 			final Iterator listenerItr = commandListeners.iterator();
 			while (listenerItr.hasNext()) {
 				final ICommandListener listener = (ICommandListener) listenerItr
 						.next();
 				listener.commandChanged(commandEvent);
+			}
+		}
+	}
+
+	/**
+	 * Notifies the execution listeners for this command that an attempt to
+	 * execute has failed because there is no handler.
+	 * 
+	 * @param e
+	 *            The exception that is about to be thrown; never
+	 *            <code>null</code>.
+	 */
+	private final void fireNotHandled(final NotHandledException e) {
+		if ((executionListeners != null) && (executionListeners.size() > 0)) {
+			final Iterator listenerItr = executionListeners.iterator();
+			while (listenerItr.hasNext()) {
+				final IExecutionListener listener = (IExecutionListener) listenerItr
+						.next();
+				listener.notHandled(getId(), e);
+			}
+		}
+	}
+
+	/**
+	 * Notifies the execution listeners for this command that an attempt to
+	 * execute has failed during the execution.
+	 * 
+	 * @param e
+	 *            The exception that has been thrown; never <code>null</code>.
+	 *            After this method completes, the exception will be thrown
+	 *            again.
+	 */
+	private final void firePostExecuteFailure(final ExecutionException e) {
+		if ((executionListeners != null) && (executionListeners.size() > 0)) {
+			final Iterator listenerItr = executionListeners.iterator();
+			while (listenerItr.hasNext()) {
+				final IExecutionListener listener = (IExecutionListener) listenerItr
+						.next();
+				listener.postExecuteFailure(getId(), e);
+			}
+		}
+	}
+
+	/**
+	 * Notifies the execution listeners for this command that an execution has
+	 * completed successfully.
+	 * 
+	 * @param returnValue
+	 *            The return value from the command; may be <code>null</code>.
+	 */
+	private final void firePostExecuteSuccess(final Object returnValue) {
+		if ((executionListeners != null) && (executionListeners.size() > 0)) {
+			final Iterator listenerItr = executionListeners.iterator();
+			while (listenerItr.hasNext()) {
+				final IExecutionListener listener = (IExecutionListener) listenerItr
+						.next();
+				listener.postExecuteSuccess(getId(), returnValue);
+			}
+		}
+	}
+
+	/**
+	 * Notifies the execution listeners for this command that an attempt to
+	 * execute is about to start.
+	 * 
+	 * @param event
+	 *            The execution event that will be used; never <code>null</code>.
+	 */
+	private final void firePreExecute(final ExecutionEvent event) {
+		if ((executionListeners != null) && (executionListeners.size() > 0)) {
+			final Iterator listenerItr = executionListeners.iterator();
+			while (listenerItr.hasNext()) {
+				final IExecutionListener listener = (IExecutionListener) listenerItr
+						.next();
+				listener.preExecute(getId(), event);
 			}
 		}
 	}
@@ -398,11 +523,32 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 */
 	public final void removeCommandListener(
 			final ICommandListener commandListener) {
-		if (commandListener == null)
-			throw new NullPointerException();
+		if (commandListener == null) {
+			throw new NullPointerException(
+					"Cannot remove a null command listener"); //$NON-NLS-1$
+		}
 
 		if (commandListeners != null) {
 			commandListeners.remove(commandListener);
+		}
+	}
+
+	/**
+	 * Removes a listener from this command.
+	 * 
+	 * @param executionListener
+	 *            The listener to be removed; must not be <code>null</code>.
+	 * 
+	 */
+	public final void removeExecutionListener(
+			final IExecutionListener executionListener) {
+		if (executionListener == null) {
+			throw new NullPointerException(
+					"Cannot remove a null execution listener"); //$NON-NLS-1$
+		}
+
+		if (executionListeners != null) {
+			executionListeners.remove(executionListener);
 		}
 	}
 
@@ -430,7 +576,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 				&& ((DEBUG_HANDLERS_COMMAND_ID == null) || (DEBUG_HANDLERS_COMMAND_ID
 						.equals(id)))) {
 			System.out.print("HANDLERS >>> Command('" + id //$NON-NLS-1$
-					+ "' has changed to "); //$NON-NLS-1$
+					+ "') has changed to "); //$NON-NLS-1$
 			if (handler == null) {
 				System.out.println("no handler"); //$NON-NLS-1$
 			} else {

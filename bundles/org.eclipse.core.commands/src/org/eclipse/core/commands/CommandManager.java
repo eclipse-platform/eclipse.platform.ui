@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,11 +39,73 @@ public final class CommandManager implements ICategoryListener,
 		ICommandListener {
 
 	/**
+	 * A listener that forwards incoming execution events to execution listeners
+	 * on this manager. The execution events will come from any command on this
+	 * manager.
+	 * 
+	 * @since 3.1
+	 */
+	private final class ExecutionListener implements IExecutionListener {
+
+		public void notHandled(String commandId, NotHandledException exception) {
+			if ((executionListeners != null) && (executionListeners.size() > 0)) {
+				final Iterator listenerItr = executionListeners.iterator();
+				while (listenerItr.hasNext()) {
+					final IExecutionListener listener = (IExecutionListener) listenerItr
+							.next();
+					listener.notHandled(commandId, exception);
+				}
+			}
+		}
+
+		public void postExecuteFailure(String commandId,
+				ExecutionException exception) {
+			if ((executionListeners != null) && (executionListeners.size() > 0)) {
+				final Iterator listenerItr = executionListeners.iterator();
+				while (listenerItr.hasNext()) {
+					final IExecutionListener listener = (IExecutionListener) listenerItr
+							.next();
+					listener.postExecuteFailure(commandId, exception);
+				}
+			}
+		}
+
+		public void postExecuteSuccess(String commandId, Object returnValue) {
+			if ((executionListeners != null) && (executionListeners.size() > 0)) {
+				final Iterator listenerItr = executionListeners.iterator();
+				while (listenerItr.hasNext()) {
+					final IExecutionListener listener = (IExecutionListener) listenerItr
+							.next();
+					listener.postExecuteSuccess(commandId, returnValue);
+				}
+			}
+		}
+
+		public final void preExecute(final String commandId,
+				final ExecutionEvent event) {
+			if ((executionListeners != null) && (executionListeners.size() > 0)) {
+				final Iterator listenerItr = executionListeners.iterator();
+				while (listenerItr.hasNext()) {
+					final IExecutionListener listener = (IExecutionListener) listenerItr
+							.next();
+					listener.preExecute(commandId, event);
+				}
+			}
+		}
+	}
+
+	/**
 	 * The map of category identifiers (<code>String</code>) to categories (
 	 * <code>Category</code>). This collection may be empty, but it is never
 	 * <code>null</code>.
 	 */
 	private final Map categoriesById = new HashMap();
+
+	/**
+	 * The collection of listeners to this command manager. This collection is
+	 * <code>null</code> if there are no listeners.
+	 */
+	private Collection commandManagerListeners = null;
 
 	/**
 	 * The map of command identifiers (<code>String</code>) to commands (
@@ -64,10 +127,17 @@ public final class CommandManager implements ICategoryListener,
 	private final Set definedCommandIds = new HashSet();
 
 	/**
-	 * The collection of listener to this command manager. This collection is
+	 * The execution listener for this command manager. This just forwards
+	 * events from commands controlled by this manager to listeners on this
+	 * manager.
+	 */
+	private IExecutionListener executionListener = null;
+
+	/**
+	 * The collection of execution listeners. This collection is
 	 * <code>null</code> if there are no listeners.
 	 */
-	private Collection listeners = null;
+	private Collection executionListeners = null;
 
 	/**
 	 * Adds a listener to this command manager. The listener will be notified
@@ -83,11 +153,46 @@ public final class CommandManager implements ICategoryListener,
 			throw new NullPointerException();
 		}
 
-		if (listeners == null) {
-			listeners = new HashSet();
+		if (commandManagerListeners == null) {
+			commandManagerListeners = new ArrayList(1);
+		} else if (!commandManagerListeners.contains(listener)) {
+			return; // Listener already exists.
 		}
 
-		listeners.add(listener);
+		commandManagerListeners.add(listener);
+	}
+
+	/**
+	 * Adds an execution listener to this manager. This listener will be
+	 * notified if any of the commands controlled by this manager execute. This
+	 * can be used to support macros and instrumentation of commands.
+	 * 
+	 * @param listener
+	 *            The listener to attach; must not be <code>null</code>.
+	 */
+	public final void addExecutionListener(final IExecutionListener listener) {
+		if (listener == null) {
+			throw new NullPointerException(
+					"Cannot add a null execution listener"); //$NON-NLS-1$
+		}
+
+		if (executionListeners == null) {
+			executionListeners = new ArrayList(1);
+
+			// Add an execution listener to every command.
+			executionListener = new ExecutionListener();
+			final Iterator commandItr = commandsById.values().iterator();
+			while (commandItr.hasNext()) {
+				final Command command = (Command) commandItr.next();
+				command.addExecutionListener(executionListener);
+			}
+
+		} else if (executionListeners.contains(listener)) {
+			return; // Listener already exists
+
+		}
+
+		executionListeners.add(listener);
 	}
 
 	/*
@@ -143,8 +248,8 @@ public final class CommandManager implements ICategoryListener,
 		if (commandManagerEvent == null)
 			throw new NullPointerException();
 
-		if (listeners != null) {
-			final Iterator listenerItr = listeners.iterator();
+		if (commandManagerListeners != null) {
+			final Iterator listenerItr = commandManagerListeners.iterator();
 			while (listenerItr.hasNext()) {
 				final ICommandManagerListener listener = (ICommandManagerListener) listenerItr
 						.next();
@@ -204,6 +309,10 @@ public final class CommandManager implements ICategoryListener,
 			command = new Command(commandId);
 			commandsById.put(commandId, command);
 			command.addCommandListener(this);
+
+			if (executionListener != null) {
+				command.addExecutionListener(executionListener);
+			}
 		}
 
 		return command;
@@ -241,14 +350,79 @@ public final class CommandManager implements ICategoryListener,
 			throw new NullPointerException();
 		}
 
-		if (listeners == null) {
+		if (commandManagerListeners == null) {
 			return;
 		}
 
-		listeners.remove(listener);
+		commandManagerListeners.remove(listener);
 
-		if (listeners.isEmpty()) {
-			listeners = null;
+		if (commandManagerListeners.isEmpty()) {
+			commandManagerListeners = null;
+		}
+	}
+
+	/**
+	 * Removes an execution listener from this command manager.
+	 * 
+	 * @param listener
+	 *            The listener to be removed; must not be <code>null</code>.
+	 */
+	public final void removeExecutionListener(final IExecutionListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("Cannot remove a null listener"); //$NON-NLS-1$
+		}
+
+		if (executionListeners == null) {
+			return;
+		}
+
+		executionListeners.remove(listener);
+
+		if (executionListeners.isEmpty()) {
+			executionListeners = null;
+
+			// Remove the execution listener to every command.
+			final Iterator commandItr = commandsById.values().iterator();
+			while (commandItr.hasNext()) {
+				final Command command = (Command) commandItr.next();
+				command.removeExecutionListener(executionListener);
+			}
+			executionListener = null;
+
+		}
+	}
+
+	/**
+	 * Block updates all of the handlers for all of the commands. If the handler
+	 * is <code>null</code> or the command id does not exist in the map, then
+	 * the command becomes unhandled. Otherwise, the handler is set to the
+	 * corresponding value in the map.
+	 * 
+	 * @param handlersByCommandId
+	 *            A map of command identifiers (<code>String</code>) to
+	 *            handlers (<code>IHandler</code>). This map may be
+	 *            <code>null</code> if all handlers should be cleared.
+	 *            Similarly, if the map is empty, then all commands will become
+	 *            unhandled.
+	 */
+	public final void setHandlersByCommandId(final Map handlersByCommandId) {
+		// Make that all the reference commands are created.
+		final Iterator commandIdItr = handlersByCommandId.keySet().iterator();
+		while (commandIdItr.hasNext()) {
+			getCommand((String) commandIdItr.next());
+		}
+
+		// Now, set-up the handlers on all of the existing commands.
+		final Iterator commandItr = commandsById.values().iterator();
+		while (commandItr.hasNext()) {
+			final Command command = (Command) commandItr.next();
+			final String commandId = command.getId();
+			final Object value = handlersByCommandId.get(commandId);
+			if (value instanceof IHandler) {
+				command.setHandler((IHandler) value);
+			} else {
+				command.setHandler(null);
+			}
 		}
 	}
 }

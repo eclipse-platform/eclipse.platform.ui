@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.runtime.IStatus;
@@ -380,7 +379,8 @@ public final class WorkbenchKeyboard {
 	 */
 	final boolean executeCommand(final Binding binding, final Object trigger)
 			throws CommandException {
-		final ParameterizedCommand parameterizedCommand = binding.getParameterizedCommand();
+		final ParameterizedCommand parameterizedCommand = binding
+				.getParameterizedCommand();
 
 		if (DEBUG) {
 			System.out
@@ -409,8 +409,7 @@ public final class WorkbenchKeyboard {
 		}
 
 		if (commandDefined && commandHandled && commandEnabled) {
-			command.execute(new ExecutionEvent(parameterizedCommand
-					.getParameterMap(), trigger, null));
+			parameterizedCommand.execute(trigger, null);
 		}
 
 		/*
@@ -660,23 +659,22 @@ public final class WorkbenchKeyboard {
 		/*
 		 * TODO Kludge. A partial workaround for Bug 56231. This should be
 		 * removed once SWT fixes Bug 56231 such that activation works properly
-		 * on all platforms.  Commented out at the moment.
+		 * on all platforms. Commented out at the moment.
 		 */
-//		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
-//			final Widget widget = event.widget;
-//			final Shell shell;
-//			if ((widget instanceof Control) && (!widget.isDisposed())) {
-//				shell = ((Control) widget).getShell();
-//			} else {
-//				shell = Display.getCurrent().getActiveShell();
-//			}
-//
-//			((WorkbenchCommandSupport) workbench.getCommandSupport())
-//					.processHandlerSubmissions(false, shell);
-//			((WorkbenchContextSupport) workbench.getContextSupport())
-//					.processEnabledSubmissions(false, shell);
-//		}
-
+		// if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		// final Widget widget = event.widget;
+		// final Shell shell;
+		// if ((widget instanceof Control) && (!widget.isDisposed())) {
+		// shell = ((Control) widget).getShell();
+		// } else {
+		// shell = Display.getCurrent().getActiveShell();
+		// }
+		//
+		// ((WorkbenchCommandSupport) workbench.getCommandSupport())
+		// .processHandlerSubmissions(false, shell);
+		// ((WorkbenchContextSupport) workbench.getContextSupport())
+		// .processEnabledSubmissions(false, shell);
+		// }
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
 				.hasNext();) {

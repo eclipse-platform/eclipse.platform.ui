@@ -374,6 +374,28 @@ public final class ParameterizedCommand implements Comparable {
 		return parameterMap;
 	}
 
+	/**
+	 * Executes this command with its parameters.
+	 * 
+	 * @param trigger
+	 *            The object that triggered the execution; may be
+	 *            <code>null</code>.
+	 * @param applicationContext
+	 *            The state of the application at the time the execution was
+	 *            triggered; may be <code>null</code>.
+	 * @return The result of the execution; may be <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 */
+	public final Object execute(final Object trigger,
+			final Object applicationContext) throws ExecutionException,
+			NotHandledException {
+		return command.execute(new ExecutionEvent(getParameterMap(), trigger,
+				applicationContext));
+	}
+
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);
@@ -384,6 +406,5 @@ public final class ParameterizedCommand implements Comparable {
 			}
 		}
 		return hashCode;
-
 	}
 }

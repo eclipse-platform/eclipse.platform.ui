@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
@@ -397,26 +396,18 @@ public final class CommandManagerWrapper implements ICommandManager,
 	 *            handler (<code>IHandler</code>).
 	 */
 	public final void setHandlersByCommandId(final Map handlersByCommandId) {
+		// Wrap legacy handlers so they can be passed to the new API.
 		final Iterator entryItr = handlersByCommandId.entrySet().iterator();
 		while (entryItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) entryItr.next();
-			final String commandId = (String) entry.getKey();
-
-			// Convert the handler to the right kind of handler.
-			final Object value = entry.getValue();
-			final IHandler handler;
-			if (value instanceof IHandler) {
-				handler = (IHandler) value;
-			} else if (value == null) {
-				handler = null;
-			} else {
-				handler = new LegacyHandlerWrapper(
-						(org.eclipse.ui.commands.IHandler) value);
+			final Object handler = entry.getValue();
+			if (handler instanceof org.eclipse.ui.commands.IHandler) {
+				final String commandId = (String) entry.getKey();
+				handlersByCommandId.put(commandId, new LegacyHandlerWrapper(
+						(org.eclipse.ui.commands.IHandler) handler));
 			}
-
-			// Set the handler on the command.
-			final Command command = commandManager.getCommand(commandId);
-			command.setHandler(handler);
 		}
+
+		commandManager.setHandlersByCommandId(handlersByCommandId);
 	}
 }
