@@ -238,7 +238,9 @@
       </action>
       <action
             label="%RunLastAction.label"
-            icon="icons/full/elcl116/runlast_co.gif"
+            icon="icons/full/elcl16/runlast_co.gif"
+            disabledIcon="icons/full/dlcl16/runlast_co.gif"
+            hoverIcon="icons/full/clcl16/runlast_co.gif"
             class="org.eclipse.debug.internal.ui.actions.RunLastAction"
             menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
             id="org.eclipse.debug.internal.ui.actions.RunLastAction">
@@ -274,7 +276,9 @@
       </action>
       <action
             label="%DebugLastAction.label"
-            icon="icons/full/elcl116/debuglast_co.gif"
+            icon="icons/full/elcl16/debuglast_co.gif"
+            disabledIcon="icons/full/dlcl16/debuglast_co.gif"
+            hoverIcon="icons/full/clcl16/debuglast_co.gif"
             class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
     		menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
             id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
