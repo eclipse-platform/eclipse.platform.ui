@@ -92,13 +92,6 @@ public interface IJobManager {
 	 */
 	public void join(Object family, IProgressMonitor monitor) throws InterruptedException, OperationCanceledException;
 	/**
-	 * Returns a new compound scheduling rule that groups together a set of 
-	 * rules. A compound rule conflicts with another rule if any of its rules conflict with 
-	 * that rule.  More formally, a compound rule represents the logical intersection of its 
-	 * nested rules with respect to the <code>isConflicting</code> equivalence relation.
-	 */
-	public ISchedulingRule newCompoundRule(ISchedulingRule[] nestedRules);
-	/**
 	 * Creates a new lock object.  All lock objects supplied by the job manager
 	 * know about each other and will always avoid circular deadlock amongst
 	 * themselves.

@@ -207,6 +207,7 @@ public class JobManager implements IJobManager {
 				return;
 			if (JobManager.DEBUG)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
+			internalJob.setResult(result);
 			internalJob.setState(Job.NONE);
 			internalJob.setMonitor(null);
 			running.remove(job);
@@ -545,12 +546,6 @@ public class JobManager implements IJobManager {
 			monitor.done();
 			removeJobChangeListener(listener);
 		}
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IJobManager#newCompoundRule(org.eclipse.core.runtime.jobs.ISchedulingRule[])
-	 */
-	public ISchedulingRule newCompoundRule(ISchedulingRule[] nestedRules) {
-		return new CompoundRule(nestedRules);
 	}
 	/* (non-Javadoc)
 	 * @see Job#wakeUp(String)

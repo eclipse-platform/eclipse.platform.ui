@@ -208,6 +208,15 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.getPriority();
 	}
 	/**
+	 * Returns the result of this job's last run.
+	 * 
+	 * @return the result of this job's last run, or <code>null</code> if this
+	 * job has never finished running.
+	 */
+	public final IStatus getResult() {
+		return super.getResult();
+	}
+	/**
 	 * Returns the scheduling rule for this job.  Returns <code>null</code> if this job has no
 	 * scheduling rule.
 	 * 

@@ -631,11 +631,11 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
  */
 public static void loaderShutdown() {
 	assertInitialized();
-	//shutdown all running jobs
-	JobManager.shutdown();
 	if (writeVersion)
 		writeVersion();
 	registry.shutdown(null);
+	//shutdown all running jobs
+	JobManager.shutdown();
 	clearLockFile();
 	if (DEBUG_PLUGINS && DEBUG_PLUGINS_DUMP != null) {
 		// We are debugging so output the registry in XML

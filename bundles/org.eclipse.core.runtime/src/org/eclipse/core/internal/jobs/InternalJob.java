@@ -41,6 +41,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	private InternalJob previous;
 	private int priority = Job.LONG;
+	private IStatus result;
 	private ISchedulingRule schedulingRule;
 	/**
 	 * If the job is waiting, this represents the time the job should start by.  If
@@ -99,6 +100,9 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected int getPriority() {
 		return priority;
 	}
+	protected IStatus getResult() {
+		return result;
+	}
 	protected ISchedulingRule getRule() {
 		return schedulingRule;
 	}
@@ -120,7 +124,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		if (schedulingRule == null || otherRule == null)
 			return false;
 		//if one of the rules is a compound rule, it must be asked the question.
-		if (schedulingRule.getClass() == CompoundRule.class)
+		if (schedulingRule.getClass() == MultiRule.class)
 			return schedulingRule.isConflicting(otherRule);
 		else
 			return otherRule.isConflicting(schedulingRule);
@@ -178,6 +182,9 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	}
 	protected void setPriority(int NewPriority) {
 		manager.setPriority(this, NewPriority);
+	}
+	final void setResult(IStatus result) {
+		this.result = result;
 	}
 	protected void setRule(ISchedulingRule rule) {
 		schedulingRule = rule;
