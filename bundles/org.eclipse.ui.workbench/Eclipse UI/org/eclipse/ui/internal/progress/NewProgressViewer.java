@@ -359,13 +359,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			}
 		}
 		private void updateToolTip() {
+			String tt= text;
 			if (isLinkEnabled() && gotoAction != null && gotoAction.isEnabled()) {
 				String tooltip= gotoAction.getToolTipText();
-				if (tooltip != null)
-					setToolTipText(tooltip);
-			} else {
-				setToolTipText(text);
+				if (tooltip != null && tooltip.trim().length() > 0)
+					tt= tooltip;
 			}
+			setToolTipText(tt);
 		}
 		public void propertyChange(PropertyChangeEvent event) {
 		    if (gotoAction != null) {	    	
