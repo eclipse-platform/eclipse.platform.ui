@@ -1051,10 +1051,19 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 			cookieConstraint = (Constraint) change.next();
 			prereq = cookieConstraint.getPrerequisite();
 			if (childPd == cookieConstraint.getParent()) {
-				if (!orphans.contains(prereq.getPlugin())) // keep track of orphaned subtrees
+				// keep track of orphaned subtrees
+				if (!orphans.contains(prereq.getPlugin()) &&
+				    (idmap.get(prereq.getPlugin()) != null))
 					orphans.add(prereq.getPlugin());
 			}
 			removeConstraintFor(prereq);
+		}
+		// Make sure you picked up all the orphaned subtrees
+		// for this childPd
+		for (int i = 0; i < prereqs.length; i++) {
+			if (!orphans.contains(prereqs[i].getPlugin()) &&
+				(idmap.get(prereqs[i].getPlugin()) != null))
+				orphans.add(prereqs[i].getPlugin());
 		}
 		if (parent != null)
 			error(Policy.bind("parse.prereqDisabled", parent.getId(), child)); //$NON-NLS-1$
