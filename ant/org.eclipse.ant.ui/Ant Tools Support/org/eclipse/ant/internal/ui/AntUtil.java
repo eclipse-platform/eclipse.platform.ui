@@ -211,6 +211,9 @@ public final class AntUtil {
 				targets.add(node);
 			}
 		}
+		if (targets.size() == 0) {
+		    return null;
+		}
 		return (AntTargetNode[])targets.toArray(new AntTargetNode[targets.size()]);
     }
 
