@@ -31,7 +31,7 @@ public abstract class InternalWorkspaceJob extends Job {
 			monitor.beginTask(null, Policy.totalWork);
 			int depth = -1;
 			try {
-				workspace.prepareOperation(null);
+				workspace.prepareOperation(null, monitor);
 				workspace.beginOperation(true);
 				depth = workspace.getWorkManager().beginUnprotected();
 				return runInWorkspace(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));

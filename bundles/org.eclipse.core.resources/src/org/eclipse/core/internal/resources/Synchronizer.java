@@ -208,7 +208,7 @@ public void setSyncInfo(QualifiedName partner, IResource resource, byte[] info) 
 	Assert.isLegal(partner != null);
 	Assert.isLegal(resource != null);
 	try {
-		workspace.prepareOperation(resource);
+		workspace.prepareOperation(resource, null);
 		workspace.beginOperation(true);
 		if (!isRegistered(partner)) {
 			String message = Policy.bind("synchronizer.partnerNotRegistered", partner.toString()); //$NON-NLS-1$

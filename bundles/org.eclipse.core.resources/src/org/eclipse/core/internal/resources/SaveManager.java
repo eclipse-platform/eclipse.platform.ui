@@ -94,7 +94,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				try {
 					// thread safety: (we need to guarantee that the tree is imutable when computing deltas)
 					// so, the tree inside the saved state needs to be immutable
-					workspace.prepareOperation(workspace.getRoot());
+					workspace.prepareOperation(workspace.getRoot(), null);
 					workspace.beginOperation(true);
 					state.newTree = workspace.getElementTree();
 				} finally {
@@ -1263,7 +1263,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
 			ISchedulingRule rule = project != null ? (IResource) project : workspace.getRoot();
 			try {
-				workspace.prepareOperation(rule);
+				workspace.prepareOperation(rule, monitor);
 				workspace.beginOperation(false);
 				Map contexts = computeSaveContexts(getSaveParticipantPlugins(), kind, project);
 				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));

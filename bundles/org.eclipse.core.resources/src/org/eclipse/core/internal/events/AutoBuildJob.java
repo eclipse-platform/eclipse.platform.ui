@@ -69,7 +69,7 @@ class AutoBuildJob extends Job {
 		try {
 			monitor.beginTask(null, Policy.opWork);
 			try {
-				workspace.prepareOperation(workspace.getRoot());
+				workspace.prepareOperation(workspace.getRoot(), monitor);
 				workspace.beginOperation(true);
 				broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD);
 				if (shouldBuild())

@@ -167,7 +167,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			monitor.beginTask(null, Policy.opWork);
 			try {
-				prepareOperation(getRoot());
+				prepareOperation(getRoot(), monitor);
 				beginOperation(true);
 				getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 			} finally {
@@ -186,7 +186,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void checkpoint(boolean build) {
 		try {
 			try {
-				prepareOperation(getWorkManager().notifyRule);
+				prepareOperation(getWorkManager().notifyRule, null);
 				beginOperation(true);
 				broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 			} finally {
@@ -263,7 +263,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.subTask(msg);
 			//this operation will never end because the world is going away
 			try {
-				prepareOperation(getRoot());
+				prepareOperation(getRoot(), monitor);
 				if (isOpen()) {
 					beginOperation(true);
 					IProject[] projects = getRoot().getProjects();
@@ -489,7 +489,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			message = Policy.bind("resources.copyProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			try {
-				prepareOperation(getRoot());
+				prepareOperation(getRoot(), monitor);
 				beginOperation(true);
 				for (int i = 0; i < resources.length; i++) {
 					Policy.checkCanceled(monitor);
@@ -727,7 +727,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				return result;
 			resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 			try {
-				prepareOperation(getRoot());
+				prepareOperation(getRoot(), monitor);
 				beginOperation(true);
 				for (int i = 0; i < resources.length; i++) {
 					Policy.checkCanceled(monitor);
@@ -781,7 +781,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// clone to avoid outside changes
 		markers = (IMarker[]) markers.clone();
 		try {
-			prepareOperation(getRoot());
+			prepareOperation(getRoot(), null);
 			beginOperation(true);
 			for (int i = 0; i < markers.length; ++i)
 				if (markers[i] != null && markers[i].getResource() != null)
@@ -1286,7 +1286,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			try {
-				prepareOperation(getRoot());
+				prepareOperation(getRoot(), monitor);
 				beginOperation(true);
 				for (int i = 0; i < resources.length; i++) {
 					Policy.checkCanceled(monitor);
@@ -1514,10 +1514,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * 
 	 * @param rule the scheduling rule that describes what this operation intends to modify.
 	 */
-	public void prepareOperation(ISchedulingRule rule) throws CoreException {
+	public void prepareOperation(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
 		//ask the autobuild to cancel, and it should quickly give up its lock
 		buildManager.interrupt();
-		getWorkManager().checkIn(rule);
+		getWorkManager().checkIn(rule, monitor);
 		if (!isOpen()) {
 			String message = Policy.bind("resources.workspaceClosed"); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
@@ -1549,7 +1549,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.beginTask(null, Policy.totalWork);
 			int depth = -1;
 			try {
-				prepareOperation(rule);
+				prepareOperation(rule, monitor);
 				beginOperation(true);
 				depth = getWorkManager().beginUnprotected();
 				action.run(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
@@ -1587,7 +1587,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// A snapshot was requested.  Start an operation (if not already started) and 
 		// signal that a snapshot should be done at the end.
 		try {
-			prepareOperation(getRoot());
+			prepareOperation(getRoot(), monitor);
 			beginOperation(false);
 			saveManager.requestSnapshot();
 			message = Policy.bind("resources.snapRequest"); //$NON-NLS-1$

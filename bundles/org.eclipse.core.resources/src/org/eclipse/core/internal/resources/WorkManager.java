@@ -89,9 +89,9 @@ class WorkManager implements IManager {
 	 * An operation calls this method and it only returns when the operation is
 	 * free to run.
 	 */
-	public void checkIn(ISchedulingRule rule) {
+	public void checkIn(ISchedulingRule rule, IProgressMonitor monitor) {
 		try {
-			jobManager.beginRule(rule, null);
+			jobManager.beginRule(rule, monitor);
 		} finally {
 			//must increment regardless of failure because checkOut is always
 			// in finally

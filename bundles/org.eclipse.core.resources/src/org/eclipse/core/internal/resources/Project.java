@@ -54,7 +54,7 @@ protected MultiStatus basicSetDescription(ProjectDescription description) {
  */
 public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 	try {
-		workspace.prepareOperation(workspace.getRoot());
+		workspace.prepareOperation(workspace.getRoot(), monitor);
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		if (!exists(flags, true) || !isOpen(flags))
@@ -74,7 +74,7 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
  */
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	try {
-		workspace.prepareOperation(workspace.getRoot());
+		workspace.prepareOperation(workspace.getRoot(), monitor);
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		if (!exists(flags, true) || !isOpen(flags))
@@ -139,7 +139,7 @@ public void close(IProgressMonitor monitor) throws CoreException {
 		try {
 			// Do this before the prepare to allow lifecycle participants to change the tree.
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
-			workspace.prepareOperation(this);
+			workspace.prepareOperation(this, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkExists(flags, true);
@@ -212,7 +212,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork); //$NON-NLS-1$
 		checkValidPath(path, PROJECT, false);
 		try {
-			workspace.prepareOperation(this);
+			workspace.prepareOperation(this, monitor);
 			checkDoesNotExist();
 			if (description != null)
 				checkDescription(this, description, false);
@@ -419,7 +419,7 @@ protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProg
 		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation(workspace.getRoot());
+			workspace.prepareOperation(workspace.getRoot(), monitor);
 			String destName = destDesc.getName();
 			IPath destPath = new Path(destName).makeAbsolute();
 			// The following assert method throws CoreExceptions as stated in the IProject.copy API
@@ -628,7 +628,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
 		String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation(workspace.getRoot());
+			workspace.prepareOperation(workspace.getRoot(), monitor);
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			if (!getName().equals(description.getName())) {
@@ -669,7 +669,7 @@ public void open(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(msg, Policy.totalWork);
 		monitor.subTask(msg);
 		try {
-			workspace.prepareOperation(this);
+			workspace.prepareOperation(this, monitor);
 			ProjectInfo info = (ProjectInfo)getResourceInfo(false, false);
 			int flags = getFlags(info);
 			checkExists(flags, true);
@@ -780,7 +780,7 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 	try {
 		monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork); //$NON-NLS-1$
 		try {
-			workspace.prepareOperation(this);
+			workspace.prepareOperation(this, monitor);
 			ResourceInfo info = getResourceInfo(false, false);
 			checkAccessible(getFlags(info));
 			//If we're out of sync and !FORCE, then fail.
@@ -847,7 +847,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 		String message = Policy.bind("resource.touch", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		try {
-			workspace.prepareOperation(this);
+			workspace.prepareOperation(this, monitor);
 			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CHANGE, this));
 			workspace.beginOperation(true);
 			super.touch(Policy.subMonitorFor(monitor, Policy.opWork));
