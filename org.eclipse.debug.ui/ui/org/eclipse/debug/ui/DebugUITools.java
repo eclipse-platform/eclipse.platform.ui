@@ -24,7 +24,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -287,15 +286,19 @@ public class DebugUITools {
 	 * @return the return code from opening the launch configuration dialog -
 	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
 	 * @since 2.0
+	 * @deprecated use openLaunchConfigurationDialogOnGroup(Shell, IStructuredSelection, String)
+	 *  to specify the launch group that the dialog should be opened on. This method will open
+	 *  on the launch group with the specified mode and a <code>null</code> category 
 	 */
 	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
-		String groupId = null;
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			groupId = IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
-		} else {
-			groupId = IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
+		ILaunchGroup[] groups = getLaunchGroups();
+		for (int i = 0; i < groups.length; i++) {
+			ILaunchGroup group = groups[i];
+			if (group.getMode().equals(mode) && group.getCategory() == null) {
+				return openLaunchConfigurationDialogOnGroup(shell, selection, group.getIdentifier());
+			}
 		}
-		return openLaunchConfigurationDialogOnGroup(shell, selection, groupId);
+		return Window.CANCEL;
 	}
 	
 	/**
