@@ -203,7 +203,7 @@ public class HistoryStore2 implements IHistoryStore {
 				Entry sourceEntry = currentBucket.getEntry(source);
 				if (sourceEntry == null)
 					return;
-				Entry destinationEntry = new Entry(destination, sourceEntry.getData(true));
+				Entry destinationEntry = new Entry(destination, sourceEntry);
 				currentBucket.addBlobs(destinationEntry);
 				currentBucket.save();
 				// apply clean-up policy to the destination tree 
@@ -242,7 +242,7 @@ public class HistoryStore2 implements IHistoryStore {
 					if (!ensureLoaded(sourceEntry.getPath()))
 						return STOP;
 					IPath destinationPath = destination.append(sourceEntry.getPath().removeFirstSegments(source.segmentCount()));
-					Entry destinationEntry = new Entry(destinationPath, sourceEntry.getData(true));
+					Entry destinationEntry = new Entry(destinationPath, sourceEntry);
 					destinationBucket.addBlobs(destinationEntry);
 					return CONTINUE;
 				}

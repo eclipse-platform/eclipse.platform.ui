@@ -22,15 +22,22 @@ public class BucketIndex {
 
 	/**
 	 * A entry in the bucket index. Each entry has one path and a collection
-	 * of states, which by their turn contain a (UUID, timestamp) pair.  
+	 * of states, which by their turn contain a (UUID, timestamp) pair.
+	 * <p>
+	 * This class is intended as a lightweight way of hiding the internal data structure.
+	 * Objects of this class are supposed to be short-lived. No instances
+	 * of this class are kept stored anywhere. The real stuff (the internal data structure)
+	 * is.  
+	 * </p>  
 	 */
 	public static final class Entry {
 
+		// TODO: remove this backward compatibility before M4
 		final static Comparator COMPARATOR = new Comparator() {
 			public int compare(Object o1, Object o2) {
 				byte[] state1 = (byte[]) o1;
 				byte[] state2 = (byte[]) o2;
-				return Entry.compareStates(state1, state2);
+				return compareStates(state1, state2);
 			}
 		};
 
@@ -85,7 +92,7 @@ public class BucketIndex {
 		 * 
 		 * @see Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
-		static int compareStates(byte[] state1, byte[] state2) {
+		private static int compareStates(byte[] state1, byte[] state2) {
 			long timestamp1 = getTimestamp(state1);
 			long timestamp2 = getTimestamp(state2);
 			if (timestamp1 == timestamp2)
@@ -96,25 +103,47 @@ public class BucketIndex {
 		/**
 		 * Returns the byte array representation of a (UUID, timestamp) pair. 
 		 */
-		static byte[] getDataAsByteArray(byte[] uuid, long timestamp) {
-			byte[] item = new byte[DATA_LENGTH];
-			System.arraycopy(uuid, 0, item, 0, uuid.length);
+		static byte[] getState(UniversalUniqueIdentifier uuid, long timestamp) {
+			byte[] uuidBytes = uuid.toBytes();
+			byte[] state = new byte[DATA_LENGTH];
+			System.arraycopy(uuidBytes, 0, state, 0, uuidBytes.length);
 			for (int j = 0; j < LONG_LENGTH; j++) {
-				item[UUID_LENGTH + j] = (byte) (0xFF & timestamp);
+				state[UUID_LENGTH + j] = (byte) (0xFF & timestamp);
 				timestamp >>>= 8;
 			}
-			return item;
+			return state;
 		}
 
-		private static long getTimestamp(byte[] item) {
+		private static long getTimestamp(byte[] state) {
 			long timestamp = 0;
 			for (int j = 0; j < LONG_LENGTH; j++)
-				timestamp += (item[UUID_LENGTH + j] & 0xFFL) << j * 8;
+				timestamp += (state[UUID_LENGTH + j] & 0xFFL) << j * 8;
 			return timestamp;
 		}
 
-		private static UniversalUniqueIdentifier getUUID(byte[] item) {
-			return new UniversalUniqueIdentifier(item);
+		/** 
+		 * Inserts the given item into the given array at the right position. 
+		 * Returns the resulting array. Returns null if the item already exists. 
+		 */
+		static byte[][] insert(byte[][] existing, byte[] toAdd) {
+			// look for the right spot where to insert the new guy
+			int insertPosition;
+			for (insertPosition = 0; insertPosition < existing.length; insertPosition++) {
+				int result = compareStates(existing[insertPosition], toAdd);
+				if (result == 0)
+					// already there - nothing else to be done
+					return null;
+				if (result > 0)
+					// this is the correct position
+					break;
+			}
+			byte[][] newValue = new byte[existing.length + 1][];
+			if (insertPosition > 0)
+				System.arraycopy(existing, 0, newValue, 0, insertPosition);
+			newValue[insertPosition] = toAdd;
+			if (insertPosition < existing.length)
+				System.arraycopy(existing, insertPosition, newValue, insertPosition + 1, existing.length - insertPosition);
+			return newValue;
 		}
 
 		/**
@@ -136,7 +165,7 @@ public class BucketIndex {
 				else
 					result[added++] = additions[additionPointer++];
 			}
-			// copy the remaining items from either additions or base arrays
+			// copy the remaining states from either additions or base arrays
 			byte[][] remaining = basePointer == base.length ? additions : base;
 			int remainingPointer = basePointer == base.length ? additionPointer : basePointer;
 			int remainingCount = remaining.length - remainingPointer;
@@ -158,6 +187,12 @@ public class BucketIndex {
 			this.data = data;
 		}
 
+		public Entry(IPath path, Entry base) {
+			this.path = path;
+			this.data = new byte[base.data.length][];
+			System.arraycopy(base.data, 0, this.data, 0, this.data.length);
+		}
+
 		/**
 		 * Compacts the given array removing any null slots. If non-null slots
 		 * are found, the entry is marked for removal. 
@@ -170,10 +205,10 @@ public class BucketIndex {
 				if (data[i] != null)
 					data[occurrences++] = data[i];
 			if (occurrences == data.length)
-				// no items deleted
+				// no states deleted
 				return;
 			if (occurrences == 0) {
-				// no items remaining
+				// no states remaining
 				data = EMPTY_DATA;
 				delete();
 				return;
@@ -194,16 +229,7 @@ public class BucketIndex {
 		}
 
 		byte[][] getData() {
-			return getData(false);
-		}
-
-		public byte[][] getData(boolean clone) {
-			if (!clone || isEmpty())
-				return data;
-			// don't need to clone the contained arrays because they immutable
-			byte[][] newData = new byte[data.length][];
-			System.arraycopy(data, 0, newData, 0, data.length);
-			return newData;
+			return data;
 		}
 
 		public int getOccurrences() {
@@ -219,7 +245,7 @@ public class BucketIndex {
 		}
 
 		public UniversalUniqueIdentifier getUUID(int i) {
-			return getUUID(data[i]);
+			return new UniversalUniqueIdentifier(data[i]);
 		}
 
 		public boolean isDeleted() {
@@ -340,30 +366,17 @@ public class BucketIndex {
 	}
 
 	public void addBlob(IPath path, UniversalUniqueIdentifier uuid, long lastModified) {
-		byte[] item = Entry.getDataAsByteArray(uuid.toBytes(), lastModified);
+		byte[] state = Entry.getState(uuid, lastModified);
 		String pathAsString = path.toString();
 		byte[][] existing = (byte[][]) entries.get(pathAsString);
 		if (existing == null) {
-			entries.put(pathAsString, new byte[][] {item});
+			entries.put(pathAsString, new byte[][] {state});
 			needSaving = true;
 			return;
 		}
-		// look for the right spot where to insert the new guy
-		int insertPosition;
-		for (insertPosition = 0; insertPosition < existing.length; insertPosition++) {
-			int result = Entry.compareStates(existing[insertPosition], item);
-			if (result == 0)
-				// already there - nothing else to be done
-				return;
-			if (result > 0)
-				break;
-		}
-		byte[][] newValue = new byte[existing.length + 1][];
-		if (insertPosition > 0)
-			System.arraycopy(existing, 0, newValue, 0, insertPosition);
-		newValue[insertPosition] = item;
-		if (insertPosition < existing.length)
-			System.arraycopy(existing, insertPosition, newValue, insertPosition + 1, existing.length - insertPosition);
+		byte[][] newValue = Entry.insert(existing, state);
+		if (newValue == null)
+			return;
 		entries.put(pathAsString, newValue);
 		needSaving = true;
 	}
