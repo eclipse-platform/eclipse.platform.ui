@@ -56,8 +56,10 @@ public final class PreferencesUtil {
 	 * the dialog.
 	 * 
 	 * @param shell
-	 * 			  The shell to use to parent the dialog if required  or <code>null</code> 
-	 * 			  to create a top-level shell. 
+	 * 			The Shell to parent the dialog off of if it is not
+	 * 			already created. May be <code>null</code>
+	 * 			in which case the active workbench window will be used
+	 * 			if available.
 	 * @param preferencePageId
 	 *            The identifier of the preference page to open; may be
 	 *            <code>null</code>. If it is <code>null</code>, then the
