@@ -34,13 +34,6 @@ public class ProcessMonitorJob extends Job {
 	 * The <code>Thread</code> which is monitoring the underlying process.
 	 */
 	protected Thread fThread;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.jobs.InternalJob#isSystem()
-	 */
-	public boolean isSystem() {
-		return true;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -69,6 +62,7 @@ public class ProcessMonitorJob extends Job {
 	public ProcessMonitorJob(RuntimeProcess process) {
 		super(DebugCoreMessages.getString("ProcessMonitorJob.0")); //$NON-NLS-1$
 		setPriority(Job.INTERACTIVE);
+		setSystem(true);
 		fProcess= process;
 		fOSProcess= process.getSystemProcess();
 		schedule();
