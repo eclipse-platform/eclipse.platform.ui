@@ -284,15 +284,25 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (getViewer() != null) {
 			getViewer().removeSelectionChangedListener(this);
 		}
+		
 		getSite().getPage().removePartListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		getSite().getWorkbenchWindow().removePageListener(this);
-		setEditorId(null);
-		setEditorInput(null);
-		setStackFrame(null);
+		
+		cleanup();
+		
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		super.dispose();
+	}
+	
+	/**
+	 * Disposes of cached information
+	 */
+	protected void cleanup() {
+		setEditorId(null);
+		setEditorInput(null);
+		setStackFrame(null);
 	}
 	
 	/**
@@ -437,7 +447,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	
 	/**
 	 * Opens a marker for the current selection if it is a stack frame.
-	 * If the current selection is a thread, deselection occurs.
 	 * Otherwise, nothing will happen.
 	 */
 	protected void showMarkerForCurrentSelection() {
@@ -458,7 +467,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 				
 				IStackFrame stackFrame= (IStackFrame) obj;
-				if (!stackFrame.equals(getStackFrame())) {
+				if (stackFrame.equals(getStackFrame())) {
+					if (getEditorInput() == null || getEditorId() == null) {
+						lookupEditorInput();
+					}
+				} else {
 					setStackFrame(stackFrame);
 					lookupEditorInput();
 				}
@@ -622,6 +635,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * the debugger.
 	 */
 	public void clearSourceSelection() {		
+		
+		cleanup();
+		
 		// Get the active editor
 		IEditorPart editor= getSite().getPage().getActiveEditor();
 		if (!(editor instanceof ITextEditor)) {
@@ -949,9 +965,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					IProject project = (IProject)resource;
 					if (!project.isOpen()) {
 						// clear
-					    setStackFrame(null);
-					    setEditorId(null);
-					    setEditorInput(null);
+					    cleanup();
 					}
 				}
 				return false;
