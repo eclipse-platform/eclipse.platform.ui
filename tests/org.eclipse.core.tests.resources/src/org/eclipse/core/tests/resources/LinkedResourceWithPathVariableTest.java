@@ -309,6 +309,25 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 		}
 		assertTrue("3.6", !destination.exists());
 		
+		//try to create a sub-file
+		try {
+			destination.create(getRandomContents(), IResource.NONE, getMonitor());
+			//shoudl fail
+			fail("3.7");
+		} catch (CoreException e) {
+			//expected
+		}
+
+		//try to create a sub-folder
+		IFolder subFolder = folder.getFolder("SubFolder");
+		try {
+			subFolder.create(IResource.NONE, true, getMonitor());
+			//should fail
+			fail("3.8");
+		} catch (CoreException e) {
+			//expected
+		}
+		
 		// try to change resource's contents
 		try {
 			childFile.setContents(getContents("new contents"), IResource.NONE, null);
