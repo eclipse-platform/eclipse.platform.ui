@@ -14,26 +14,28 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -44,6 +46,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
+	GroupedPreferenceLabelProvider groupedLabelProvider;
+	
 	/**
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
@@ -83,17 +87,83 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		ToolBar toolbar = createToolBar(composite);
 		
-		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-		data.horizontalAlignment = SWT.CENTER;
-		toolbar.setLayoutData(data);
+		Composite top = new Composite(composite,SWT.NONE);
+		GridLayout topLayout = new GridLayout();
+		topLayout.makeColumnsEqualWidth = false;
+		topLayout.numColumns = 2;
+		top.setLayout(topLayout);
+		
+		GridData topData = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		top.setLayoutData(topData);
+
+		ToolBar toolbar = createToolBar(top);
+		
+		toolbar.setLayoutData(new GridData());
+		
+		Control searchArea = createSearchArea(top);
+		GridData searchData = new GridData(GridData.FILL_HORIZONTAL);
+		searchData.grabExcessHorizontalSpace = true;
+		searchData.verticalAlignment = SWT.BOTTOM;
+		searchArea.setLayoutData(searchData);
 
 		super.createDialogArea(composite);
 
 		applyDialogFont(composite);
+		
+		toolbar.getItem(0).setSelection(true);
+		
 		return composite;
+	}
+
+
+	/**
+	 * Create the search area for the receiver.
+	 * @param composite
+	 * @return Control The control that contains the area.
+	 */
+	private Control createSearchArea(Composite composite) {
+		
+		Composite searchArea = new Composite(composite,SWT.NONE);
+		
+		GridLayout searchLayout = new GridLayout();
+		searchLayout.numColumns = 2;
+		searchLayout.marginWidth = 0;
+		searchLayout.marginHeight = 0;
+		searchLayout.makeColumnsEqualWidth = false;
+		searchArea.setLayout(searchLayout);
+		
+		final Text searchText = new Text(searchArea,SWT.BORDER);
+		
+		GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
+		searchText.setLayoutData(textData);
+		
+		Button searchButton = new Button(searchArea,SWT.PUSH);
+		searchButton.setText(WorkbenchMessages.getString("FilteredPreferenceDialog.SearchButton")); //$NON-NLS-1$
+		GridData searchData = new GridData(GridData.END);
+		searchButton.setLayoutData(searchData);
+		
+		searchButton.addSelectionListener(new SelectionAdapter(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				highlightHits(searchText.getText());
+			}
+		});
+		
+		return searchArea;
+	}
+
+	/**
+	 * Highlight all nodes that match text;
+	 * @param text
+	 */
+	protected void highlightHits(String text) {
+		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
+		
+		group.highlightHits(text);
+		getTreeViewer().refresh();
 	}
 
 	/**
@@ -106,7 +176,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		final ILabelProvider labelProvider = getCategoryLabelProvider();
 		
-		ToolBar toolbar = new ToolBar(composite,SWT.HORIZONTAL);
+		ToolBar toolbar = new ToolBar(composite,SWT.HORIZONTAL | SWT.RIGHT);
 	
 		WorkbenchPreferenceGroup[] groups = getGroups();
 		
@@ -114,11 +184,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			final WorkbenchPreferenceGroup group = groups[i];
 			ToolItem newItem = new ToolItem(toolbar,SWT.RADIO);
 			newItem.setText(group.getName());
-			
-			Image image = group.getImage();
-			if(image == null)
-				image = JFaceResources.getImage(Dialog.DLG_IMG_INFO);
-			newItem.setImage(image);
+			newItem.setImage(group.getImage());
 			newItem.addSelectionListener(new SelectionAdapter(){
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
@@ -182,8 +248,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		TreeViewer tree = super.createTreeViewer(parent);
 
 		if (hasGroups()) {
+			groupedLabelProvider = new GroupedPreferenceLabelProvider();
 			tree.setContentProvider(new GroupedPreferenceContentProvider());
-			tree.setLabelProvider(new GroupedPreferenceLabelProvider());
+			tree.setLabelProvider(groupedLabelProvider);
 
 		} else {
 			tree.setContentProvider(new FilteredPreferenceContentProvider());
@@ -211,8 +278,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#selectSavedItem()
 	 */
 	protected void selectSavedItem() {
-		if (hasGroups())
-			return;
+		if (hasGroups()){
+			WorkbenchPreferenceGroup startGroup = getGroups()[0];
+			getTreeViewer().setInput(startGroup);
+			
+			StructuredSelection selection = new StructuredSelection(startGroup.getPreferenceNodes()[0]);
+			getTreeViewer().setSelection(selection);
+		}
 		super.selectSavedItem();
 	}
 
@@ -249,4 +321,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		if(getCurrentPage() != null)
 			super.updateTitle();
 	}
+	
+	
 }

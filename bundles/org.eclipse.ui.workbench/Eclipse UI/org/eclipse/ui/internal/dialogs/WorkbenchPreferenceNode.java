@@ -38,6 +38,8 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
     private IConfigurationElement configurationElement;
 
     private IWorkbench workbench;
+    
+    private boolean highlight = false;
 
     /**
      * Create a new instance of the receiver.
@@ -121,4 +123,18 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
     	return getImageDescriptor();
     }
  
+	/**
+	 * Return whether or not the receiver is highlighted.
+	 * @return Returns the highlight.
+	 */
+	public boolean isHighlighted() {
+		return highlight;
+	}
+	/**
+	 * Set whether or not the receiver is highlighted.
+	 * @param highlight 
+	 */
+	public void setHighlighted(boolean highlight) {
+		this.highlight = highlight;
+	}
 }

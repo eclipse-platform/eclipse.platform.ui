@@ -12,6 +12,9 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -32,6 +35,7 @@ public class WorkbenchPreferenceGroup {
 	private Collection pageIds;
 	private ImageDescriptor imageDescriptor;
 	private Image image;
+	private boolean highlight = false;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -154,4 +158,52 @@ public class WorkbenchPreferenceGroup {
 		return allChildren.toArray();
 	}
 
+	/**
+	 * Add all of the children that match text to the
+	 * highlight list.
+	 * @param text
+	 */
+	public void highlightHits(String text) {
+		Iterator pagesIterator = pages.iterator();
+		Pattern pattern = Pattern.compile( ".*" +text + ".*");//$NON-NLS-1$//$NON-NLS-2$
+		
+		
+		while(pagesIterator.hasNext()){
+			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) pagesIterator.next();
+			matchNode(pattern, node);
+		}
+		
+		Iterator groupsIterator = childGroups.iterator();
+		
+		while(groupsIterator.hasNext()){
+			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) pagesIterator.next();
+			Matcher m = pattern.matcher(group.getName());
+			group.highlight = m.matches();
+			group.highlightHits(text);
+		}
+	}
+
+	/**
+	 * Match the node to the pattern and highlight it if there is
+	 * a match.
+	 * @param pattern
+	 * @param node
+	 */
+	private void matchNode(Pattern pattern, WorkbenchPreferenceNode node) {
+		Matcher m = pattern.matcher(node.getLabelText());
+		node.setHighlighted(m.matches());
+		IPreferenceNode[] children = node.getSubNodes();
+		for (int i = 0; i < children.length; i++) {
+			matchNode(pattern,(WorkbenchPreferenceNode) children[i]);			
+		}
+	}
+
+	/**
+	 * Return whether or not the receiver is highlighted.
+	 * @return Returns the highlight.
+	 */
+	public boolean isHighlighted() {
+		return highlight;
+	}
+	
 }
