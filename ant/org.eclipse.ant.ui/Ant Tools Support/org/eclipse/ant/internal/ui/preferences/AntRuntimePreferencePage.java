@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Ant preference page to set the classpath, tasks, and types and properties.
+ * Ant preference page to set the classpath, tasks, types and properties.
  */
 public class AntRuntimePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -53,13 +53,13 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on IWorkbenchPreferencePage.
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on PreferencePage.
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_RUNTIME_PREFERENCE_PAGE);
@@ -91,7 +91,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on PreferencePage.
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
 		super.performDefaults();
@@ -106,7 +106,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on PreferencePage.
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -145,14 +145,14 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		return super.performOk();
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#setButtonLayoutData(org.eclipse.swt.widgets.Button)
 	 */
 	protected GridData setButtonLayoutData(Button button) {
 		return super.setButtonLayoutData(button);
 	}
 	
-	protected List getLibraryURLs() {
+	protected List getLibraryEntries() {
 		List urls= new ArrayList();
 		urls.addAll(Arrays.asList(classpathPage.getAntHomeEntries()));
 		urls.addAll(Arrays.asList(classpathPage.getAdditionalEntries()));

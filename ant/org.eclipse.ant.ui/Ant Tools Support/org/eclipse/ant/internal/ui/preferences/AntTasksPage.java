@@ -46,7 +46,7 @@ public class AntTasksPage extends AntPage {
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on AntPage.
+	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#addButtonsToButtonGroup(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
 		createPushButton(parent, AntPreferencesMessages.getString("AntTasksPage.1"), ADD_TASK_BUTTON); //$NON-NLS-1$
@@ -67,7 +67,7 @@ public class AntTasksPage extends AntPage {
 		Task task = new Task();
 		task.setTaskName(dialog.getName());
 		task.setClassName(dialog.getClassName());
-		task.setLibrary(dialog.getLibrary());
+		task.setLibrary(dialog.getLibrary().getEntryURL());
 		addContent(task);
 	}
 	
@@ -78,7 +78,7 @@ public class AntTasksPage extends AntPage {
 			Task task = (Task) tasks.next();
 			names.add(task.getTaskName());	
 		}
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, helpContext);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryEntries(), names, helpContext);
 		dialog.setTitle(title);
 		dialog.setAlreadyExistsErrorMsg(AntPreferencesMessages.getString("AntTasksPage.8")); //$NON-NLS-1$
 		dialog.setNoNameErrorMsg(AntPreferencesMessages.getString("AntTasksPage.9")); //$NON-NLS-1$
@@ -86,7 +86,7 @@ public class AntTasksPage extends AntPage {
 	}
 
 	/* (non-Javadoc)
-	 * Method declared on AntPage.
+	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
@@ -119,28 +119,28 @@ public class AntTasksPage extends AntPage {
 		return item;
 	}
 
-	/**
-	 * Allows the user to edit a custom Ant task.
-	 */	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#edit(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
 	protected void edit(IStructuredSelection selection) {
 		Task task= (Task)selection.getFirstElement();
 		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
 		AddCustomDialog dialog = getCustomDialog(title, IAntUIHelpContextIds.EDIT_TASK_DIALOG);
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());
-		dialog.setLibrary(task.getLibrary());
+		dialog.setLibrary(new ClasspathEntry(task.getLibrary(), null));
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
 		task.setTaskName(dialog.getName());
 		task.setClassName(dialog.getClassName());
-		task.setLibrary(dialog.getLibrary());
+		task.setLibrary(dialog.getLibrary().getEntryURL());
 		updateContent(task);
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on AntPage.
+	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#getLabelProvider()
 	 */
 	protected ITableLabelProvider getLabelProvider() {
 		return labelProvider;
