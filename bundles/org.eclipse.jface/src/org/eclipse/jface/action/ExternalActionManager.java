@@ -194,6 +194,10 @@ public final class ExternalActionManager {
 		 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 		 */
 		public final void bindingManagerChanged(final BindingManagerEvent event) {
+			/*
+			 * TODO Performance: This should filter based on the registered
+			 * command identifier.
+			 */
 			if (event.haveActiveBindingsChanged()) {
 				final Iterator listenerItr = registeredListeners.values()
 						.iterator();
