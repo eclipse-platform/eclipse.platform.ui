@@ -139,7 +139,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		disabledActivityIds.removeAll(activityManager.getEnabledActivityIds());
 		for (int i = 0; i < allTypes.length; i++) {
 			ILaunchConfigurationType type = allTypes[i];
-			if (isVisible(type, mode) && !activityManager.match(type.getIdentifier(), disabledActivityIds)) {
+			if (isVisible(type, mode) && !activityManager.isMatch(type.getIdentifier(), disabledActivityIds)) {
 				// Don't add config types that match disabled activities.
 				filteredTypes.add(type);
 			}

@@ -162,7 +162,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e.getStatus());
 			}
-			if (type != null && !activityManager.match(type.getIdentifier(), disabledActivityIds)) {
+			if (type != null && !activityManager.isMatch(type.getIdentifier(), disabledActivityIds)) {
 				// Don't add config types that match disabled activities.
 				filteredConfigs.add(configuration);
 			}

@@ -37,7 +37,7 @@ public class BreakpointsViewContentProvider
 		IBreakpoint[] breakpoints= ((IBreakpointManager) parent).getBreakpoints();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint= breakpoints[i];
-			if (!activityManager.match(breakpoint.getModelIdentifier(), disabledActivityIds)) {
+			if (!activityManager.isMatch(breakpoint.getModelIdentifier(), disabledActivityIds)) {
 				// Don't add config types that match disabled activities.
 				filteredBreakpoints.add(breakpoint);
 			}

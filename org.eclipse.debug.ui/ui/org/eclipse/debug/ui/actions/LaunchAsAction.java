@@ -166,7 +166,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 while (iter.hasNext()) {
 			 LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			 if (ext.getModes().contains(getMode())) {
-					if (!activityManager.match(ext.getId(), disabledActivityIds)) {
+					if (!activityManager.isMatch(ext.getId(), disabledActivityIds)) {
 						// Don't add config types that match disabled activities.
 						populateMenu(ext, getCreatedMenu(), menuCount);
 						menuCount++;
