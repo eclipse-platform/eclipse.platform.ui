@@ -113,7 +113,7 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @see TextEditorAction#update()
 	 */
 	public void update() {
-		setEnabled(true);
+		setEnabled(getResource() != null);
 	}
 	
 	/**
@@ -269,7 +269,11 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @return the resource to which to attach the newly created marker
 	 */
 	protected IResource getResource() {
-		IEditorInput input= getTextEditor().getEditorInput();
-		return (IResource) ((IAdaptable) input).getAdapter(IResource.class);
+		ITextEditor editor= getTextEditor();
+		if (editor != null) {
+			IEditorInput input= editor.getEditorInput();
+			return (IResource) ((IAdaptable) input).getAdapter(IResource.class);
+		}
+		return null;
 	}
 }

@@ -60,18 +60,6 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	
 	/** The active editor part */
 	private IEditorPart fActiveEditorPart;
-	/** The delete line action */
-	private RetargetTextEditorAction fDeleteLine;
-	/** The delete line to beginning action */
-	private RetargetTextEditorAction fDeleteLineToBeginning;
-	/** The delete line to end action */
-	private RetargetTextEditorAction fDeleteLineToEnd;
-	/** The set mark action */
-	private RetargetTextEditorAction fSetMark;
-	/** The clear mark action */
-	private RetargetTextEditorAction fClearMark;
-	/** The swap mark action */
-	private RetargetTextEditorAction fSwapMark;
 	/** The find next action */
 	private RetargetTextEditorAction fFindNext;
 	/** The find previous action */
@@ -92,16 +80,9 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	public BasicTextEditorActionContributor() {
 		
-		fDeleteLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.DeleteLine."); //$NON-NLS-1$
-		fDeleteLineToBeginning= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToBeginning."); //$NON-NLS-1$
-		fDeleteLineToEnd= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.DeleteLineToEnd."); //$NON-NLS-1$
-		fSetMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.SetMark."); //$NON-NLS-1$
-		fClearMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.ClearMark."); //$NON-NLS-1$
-		fSwapMark= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.SwapMark."); //$NON-NLS-1$
-		
 		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindNext."); //$NON-NLS-1$
 		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious."); //$NON-NLS-1$
-		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.IncrementalFind."); //$NON-NLS-1$
+		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental."); //$NON-NLS-1$
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.GotoLine."); //$NON-NLS-1$
 		
 		fStatusFields= new HashMap(3);
@@ -151,13 +132,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 			for (int i= 0; i < ACTIONS.length; i++)
 				actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
 		}
-
-		fDeleteLine.setAction(getAction(editor, ITextEditorActionConstants.DELETE_LINE));
-		fDeleteLineToBeginning.setAction(getAction(editor, ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING));
-		fDeleteLineToEnd.setAction(getAction(editor, ITextEditorActionConstants.DELETE_LINE_TO_END));
-		fSetMark.setAction(getAction(editor, ITextEditorActionConstants.SET_MARK));
-		fClearMark.setAction(getAction(editor, ITextEditorActionConstants.CLEAR_MARK));
-		fSwapMark.setAction(getAction(editor, ITextEditorActionConstants.SWAP_MARK));
+		
 		fFindNext.setAction(getAction(editor, ITextEditorActionConstants.FIND_NEXT));
 		fFindPrevious.setAction(getAction(editor, ITextEditorActionConstants.FIND_PREVIOUS));
 		fIncrementalFind.setAction(getAction(editor, ITextEditorActionConstants.FIND_INCREMENTAL));
@@ -186,19 +161,6 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
-
-			IMenuManager markMenu= new MenuManager(EditorMessages.getString("Editor.mark.submenu.label")); //$NON-NLS-1$
-			markMenu.add(fSetMark);
-			markMenu.add(fClearMark);
-			markMenu.add(fSwapMark);
-			editMenu.add(markMenu);
-
-			IMenuManager deleteLineMenu= new MenuManager(EditorMessages.getString("Editor.delete.line.submenu.label")); //$NON-NLS-1$
-			deleteLineMenu.add(fDeleteLine);
-			deleteLineMenu.add(fDeleteLineToBeginning);
-			deleteLineMenu.add(fDeleteLineToEnd);
-			editMenu.add(deleteLineMenu);
-			
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fFindPrevious);
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fIncrementalFind);
