@@ -101,8 +101,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		typesPage.setInput(prefs.getDefaultTypes());
 		classpathPage.performDefaults();
 		propertiesPage.performDefaults();
-		
-		getPreferenceStore().setToDefault(IAntUIPreferenceConstants.ANT_VM_INFORMATION);
 	}
 	
 	/* (non-Javadoc)
