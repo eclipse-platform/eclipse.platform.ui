@@ -243,6 +243,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (commandLine != null) {
 			process.setAttribute(IProcess.ATTR_CMDLINE, commandLine.toString());
 		}
+		TaskLinkManager.registerAntBuild(process);
 	}
 
 	private StringBuffer generateCommandLine(IPath location, String[] arguments, Map userProperties, String[] propertyFiles, String[] targets, String antHome, boolean separateVM) {
