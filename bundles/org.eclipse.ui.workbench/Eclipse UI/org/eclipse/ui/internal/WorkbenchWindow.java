@@ -325,6 +325,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	List handlerSubmissions = new ArrayList();
 	
+	private boolean coolBarVisible = true;
+	private boolean perspectiveBarVisible = true;
+	private boolean statusLineVisible;
+	
 	void setHandlersByCommandId() {
 		Map handlersByCommandId = new HashMap();
 		handlersByCommandId.putAll(actionSetHandlersByCommandId);
@@ -2090,26 +2094,127 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 	
 	/**
+	 * @param visible whether the cool bar should be shown.  This is only 
+	 * applicable if the window configurer also wishes either the cool bar to be
+	 * visible.
+	 * @since 3.0 
+	 */	
+	public void setCoolBarVisible(boolean visible) {
+		boolean oldValue = coolBarVisible;
+		coolBarVisible = visible;
+		if (oldValue != coolBarVisible) {
+			updateLayoutDataForContents(true);
+		}
+	}
+	
+	/** 
+	 * @return whether the cool bar should be shown.  This is only 
+	 * applicable if the window configurer also wishes either the cool bar to be
+	 * visible.
+	 * @since 3.0
+	 */
+	public boolean getCoolBarVisible() {
+		return coolBarVisible;
+	}
+	
+	/**
+	 * @param visible whether the perspective bar should be shown.  This is only 
+	 * applicable if the window configurer also wishes either the perspective 
+	 * bar to be visible.
+	 * @since 3.0 
+	 */	
+	public void setPerspectiveBarVisible(boolean visible) {
+		boolean oldValue = perspectiveBarVisible;
+		perspectiveBarVisible = visible;
+		if (oldValue != perspectiveBarVisible) {
+			updateLayoutDataForContents(true);
+		}
+	}
+	
+	/** 
+	 * @return whether the perspective bar should be shown.  This is only 
+	 * applicable if the window configurer also wishes either the perspective 
+	 * bar to be visible.
+	 * @since 3.0
+	 */
+	public boolean getPerspectiveBarVisible() {
+		return perspectiveBarVisible;
+	}	
+	
+	/**
+	 * @param visible whether the perspective bar should be shown.  This is only 
+	 * applicable if the window configurer also wishes either the perspective 
+	 * bar to be visible.
+	 * @since 3.0 
+	 */	
+	public void setStatusLineVisible(boolean visible) {
+		boolean oldValue = statusLineVisible;
+		statusLineVisible = visible;
+		if (oldValue != statusLineVisible) {
+			updateLayoutDataForContents(true);
+		}
+	}
+	
+	/** 
+	 * @return whether the perspective bar should be shown.  This is only 
+	 * applicable if the window configurer also wishes either the perspective 
+	 * bar to be visible.
+	 * @since 3.0
+	 */
+	public boolean getStatusLineVisible() {
+		return statusLineVisible;
+	}	
+	/**
+	 * @param refresh whether to refresh the layout
+	 * @since 3.0
+	 */
+	private void updateLayoutDataForContents(boolean refresh) {
+		// @issue this is not ideal; coolbar and perspective shortcuts should be
+		//   separately configurable
+		if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar()) || (getPerspectiveBarVisible() && getWindowConfigurer().getShowPerspectiveBar())) {
+			layout.addTrim(topBar, SWT.TOP, null);
+			topBar.setVisible(true);
+		}
+		else {
+			layout.removeTrim(topBar);
+			topBar.setVisible(false);
+		}
+
+		if (getStatusLineVisible() && getWindowConfigurer().getShowStatusLine()) {
+			layout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
+			getStatusLineManager().getControl().setVisible(true);
+		}
+		else {
+			layout.removeTrim(getStatusLineManager().getControl());
+			getStatusLineManager().getControl().setVisible(false);
+		}
+		
+		if (getWindowConfigurer().getShowProgressIndicator()) {
+			if (animationItem.getControl().getLayoutData() == null) {
+				TrimLayoutData animationData = new TrimLayoutData(false, 
+						animationItem.getPreferredWidth(), 
+						getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+	
+				animationItem.getControl().setLayoutData(animationData);
+			}
+			layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null);
+			animationItem.getControl().setVisible(true);
+		}
+		else {
+			layout.removeTrim(animationItem.getControl());
+			animationItem.getControl().setVisible(false);
+		}
+		layout.setCenterControl(getClientComposite());	
+		if (refresh) {
+			getShell().layout();
+		}
+	}
+	
+	/**
 	 * Set the layout data for the contents of the window.
 	 */
 	private void setLayoutDataForContents() {
-		// @issue this is not ideal; coolbar and perspective shortcuts should be
-		//   separately configurable
-		if (getWindowConfigurer().getShowCoolBar() || getWindowConfigurer().getShowPerspectiveBar()) {
-			layout.addTrim(topBar, SWT.TOP, null);
-		}
-		if (getWindowConfigurer().getShowStatusLine()) {
-			layout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
-		}
-		if (getWindowConfigurer().getShowProgressIndicator()) {
-			TrimLayoutData animationData = new TrimLayoutData(false, 
-					animationItem.getPreferredWidth(), 
-					getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-
-			animationItem.getControl().setLayoutData(animationData);
-			layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null);
-		}
-		layout.setCenterControl(getClientComposite());
+		updateLayoutDataForContents(false);
 		
 		if (getWindowConfigurer().getShowFastViewBars()) {
 			fastViewBar.addDockingListener(new IChangeListener() {

@@ -48,7 +48,17 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		((PartSite)getSite()).getPane().addPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(PartPane.PROP_ZOOMED)) {
-					introPart.standbyStateChanged(!((Boolean)event.getNewValue()).booleanValue());
+					boolean standby = !((Boolean)event.getNewValue()).booleanValue();
+					introPart.standbyStateChanged(standby);					
+					WorkbenchWindow window = ((WorkbenchWindow)((PartSite)getSite()).getPane().getWorkbenchWindow());
+					if (standby) {
+						window.setCoolBarVisible(true);
+						window.setPerspectiveBarVisible(true);
+					}
+					else {
+						window.setCoolBarVisible(false);
+						window.setPerspectiveBarVisible(false);						
+					}
 				}
 			}
 		});
