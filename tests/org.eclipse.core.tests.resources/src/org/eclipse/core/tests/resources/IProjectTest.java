@@ -140,7 +140,9 @@ public void testDescriptionConstant() {
 /**
  * Tests creation and manipulation of projects names that are reserved on some platforms.
  */
-public void testInvalidProjectNames() {
+public void skipTestInvalidProjectNames() {
+	//FIXME Temporarily skip this test due to VM vendor bug #96338
+	
 	IWorkspaceRoot root = getWorkspace().getRoot();
 	
 	//do some tests with invalid names
