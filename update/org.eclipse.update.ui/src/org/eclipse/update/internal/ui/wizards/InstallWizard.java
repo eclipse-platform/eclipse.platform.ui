@@ -268,7 +268,7 @@ public class InstallWizard
 
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
-		return page.getNextPage() == null && super.canFinish();
+		return page.equals(targetPage) && page.isPageComplete();
 	}
 
 	private void preserveOriginatingURLs(
