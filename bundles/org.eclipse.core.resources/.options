@@ -46,3 +46,5 @@ org.eclipse.core.resources/save/metainfo=false
 org.eclipse.core.resources/save/snapshots=false
 org.eclipse.core.resources/save/mastertable=false
 
+# Report debug of workspace auto-refresh
+org.eclipse.core.resources/refresh=false

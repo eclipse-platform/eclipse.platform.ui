@@ -72,6 +72,9 @@ public class Policy {
 	public static boolean DEBUG_SAVE_SNAPSHOTS = false;
 	public static boolean DEBUG_SAVE_MASTERTABLE = false;
 	
+	public static boolean DEBUG_AUTO_REFRESH = false;
+	
+	
 	static {
 		setupAutoBuildProgress(defaultAutoBuild);
 		
@@ -103,6 +106,8 @@ public class Policy {
 			DEBUG_SAVE_SNAPSHOTS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/snapshots")); //$NON-NLS-1$ 
 			DEBUG_SAVE_MASTERTABLE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save/mastertable")); //$NON-NLS-1$ 
 			DEBUG_SAVE = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/save")); //$NON-NLS-1$ 
+
+			DEBUG_AUTO_REFRESH = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/refresh")); //$NON-NLS-1$ 
 		}
 	}
 	

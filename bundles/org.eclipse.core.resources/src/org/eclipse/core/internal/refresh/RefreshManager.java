@@ -10,10 +10,10 @@
 package org.eclipse.core.internal.refresh;
 
 import org.eclipse.core.internal.resources.IManager;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.refresh.*;
+import org.eclipse.core.resources.refresh.IRefreshMonitor;
+import org.eclipse.core.resources.refresh.IRefreshResult;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * set of monitors and controlling the refresh job.
  */
 public class RefreshManager implements IRefreshResult, IManager, Preferences.IPropertyChangeListener {
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = Policy.DEBUG_AUTO_REFRESH;
 	public static final String DEBUG_PREFIX = "Auto-refresh: "; //$NON-NLS-1$
 	private MonitorManager monitors;
 	private RefreshJob refreshJob;
@@ -83,7 +83,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	}
 	public void startup(IProgressMonitor monitor) {
 		Preferences preferences= ResourcesPlugin.getPlugin().getPluginPreferences();
-		preferences.setDefault(ResourcesPlugin.PREF_AUTO_REFRESH, true);
+		preferences.setDefault(ResourcesPlugin.PREF_AUTO_REFRESH, false);
 		preferences.setDefault(ResourcesPlugin.PREF_REFRESH_POLLING_DELAY, 30000);
 		preferences.addPropertyChangeListener(this);
 		long pollingDelay = preferences.getLong(ResourcesPlugin.PREF_REFRESH_POLLING_DELAY);
