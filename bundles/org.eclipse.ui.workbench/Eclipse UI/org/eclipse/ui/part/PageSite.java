@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.misc.Assert;
 /**
  * This implementation of <code>IPageSite</code> provides a site for a page
@@ -35,6 +39,10 @@ public class PageSite implements IPageSite {
 	 */
 	private SubActionBars subActionBars;
 	/**
+	 * The list of menu extender for each registered menu.
+	 */
+	private ArrayList menuExtenders;
+	/**
 	 * Creates a new sub view site of the given parent 
 	 * view site.
 	 * 
@@ -44,6 +52,17 @@ public class PageSite implements IPageSite {
 		Assert.isNotNull(parentViewSite);
 		parentSite = parentViewSite;
 		subActionBars = new SubActionBars(parentViewSite.getActionBars());
+	}
+	/**
+	 * Disposes of the menu extender contributions.
+	 */
+	protected void dispose() {
+		if (menuExtenders != null) {
+			for (int i = 0; i < menuExtenders.size(); i++) {
+				((PopupMenuExtender)menuExtenders.get(i)).dispose();
+			}
+			menuExtenders = null;
+		}
 	}
 	/**
 	 * The PageSite implementation of this <code>IPageSite</code>
@@ -82,7 +101,12 @@ public class PageSite implements IPageSite {
 	 * Method declared on IPageSite.
 	 */
 	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
-		parentSite.registerContextMenu(menuID, menuMgr, selProvider);
+		if (menuExtenders == null) {
+			menuExtenders = new ArrayList(1);
+		}
+		// Each page holds onto its own menu extenders so they
+		// can be properly disposed of.
+		menuExtenders.add(new PopupMenuExtender(menuID, menuMgr, selProvider, ((ViewSite)parentSite).getPart()));
 	}
 	/* (non-Javadoc)
 	 * Method declared on IPageSite.

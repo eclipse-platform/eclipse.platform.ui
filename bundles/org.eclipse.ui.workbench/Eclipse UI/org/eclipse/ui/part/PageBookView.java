@@ -625,7 +625,7 @@ private void refreshGlobalActionHandlers() {
  * Removes a page.
  */
 private void removePage(PageRec rec) {
-	mapPageToSite.remove(rec.page);
+	Object site = mapPageToSite.remove(rec.page);
 	mapPartToRec.remove(rec.part);
 
 	if (rec.subActionBars != null) {
@@ -641,6 +641,10 @@ private void removePage(PageRec rec) {
 		control.dispose();
 	}
 
+	if (site instanceof PageSite) {
+		((PageSite)site).dispose();
+	}
+	
 	// free the page 
 	doDestroyPage(rec.part, rec);
 }
