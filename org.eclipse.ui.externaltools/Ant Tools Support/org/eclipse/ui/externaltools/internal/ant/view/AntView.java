@@ -278,7 +278,7 @@ public class AntView extends ViewPart {
 	private void createProjectViewer() {
 		ViewForm projectForm= new ViewForm(sashForm, SWT.NONE);
 		CLabel title= new CLabel(projectForm, SWT.NONE);
-		title.setText("Build files");
+		title.setText("Build Files");
 		projectForm.setTopLeft(title);
 		projectToolBar= new ToolBar(projectForm, SWT.FLAT | SWT.WRAP);
 		projectForm.setTopRight(projectToolBar);
