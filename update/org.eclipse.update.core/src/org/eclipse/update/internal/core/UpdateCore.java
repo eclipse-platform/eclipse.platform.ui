@@ -26,15 +26,15 @@ import org.eclipse.update.configurator.*;
 public class UpdateCore extends Plugin {
 
 	// debug options
-	public static boolean DEBUG = false;
-	public static boolean DEBUG_SHOW_INSTALL = false;
-	public static boolean DEBUG_SHOW_PARSING = false;
-	public static boolean DEBUG_SHOW_WARNINGS = false;
-	public static boolean DEBUG_SHOW_CONFIGURATION = false;
-	public static boolean DEBUG_SHOW_TYPE = false;
-	public static boolean DEBUG_SHOW_WEB = false;
-	public static boolean DEBUG_SHOW_IHANDLER = false;
-	public static boolean DEBUG_SHOW_RECONCILER = false;
+	public static boolean DEBUG;
+	public static boolean DEBUG_SHOW_INSTALL;
+	public static boolean DEBUG_SHOW_PARSING;
+	public static boolean DEBUG_SHOW_WARNINGS;
+	public static boolean DEBUG_SHOW_CONFIGURATION;
+	public static boolean DEBUG_SHOW_TYPE;
+	public static boolean DEBUG_SHOW_WEB;
+	public static boolean DEBUG_SHOW_IHANDLER;
+	public static boolean DEBUG_SHOW_RECONCILER;
 
 	// preference keys
 	private static final String PREFIX = "org.eclipse.update.core";

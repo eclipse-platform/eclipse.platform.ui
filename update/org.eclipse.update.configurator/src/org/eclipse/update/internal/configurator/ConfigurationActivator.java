@@ -89,7 +89,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		Utils.setLog(platform.getLog(context.getBundle()));
 		
 		installURL = platform.getInstallURL();
-		configArea = platform.getConfigurationLocation().toOSString();
+		configArea = platform.getConfigurationMetadataLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(installURL, configArea);
 		if (configuration == null)

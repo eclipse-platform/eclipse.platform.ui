@@ -308,6 +308,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public void save(boolean isTransient) throws CoreException {
 
+		// save the install log
+		// TODO change the method name
+		saveConfigurationFile(isTransient);
+		
 		// Write info  into platform for the next runtime
 		IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		ConfiguredSiteModel[] configurationSites = getConfigurationSitesModel();
@@ -520,20 +524,20 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 *
 	 */
 	public void saveConfigurationFile(boolean isTransient) throws CoreException {
-//		// save the configuration
-//		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
-//			// the location points to a file
-//			File file = new File(getURL().getFile());
-//			if (!file.exists()) {
-//				//log + 24642 [works for all activities]
-//				UpdateCore.log(this);
-//			}
-//			if (isTransient)
-//				file.deleteOnExit();
-//			//export(file);
-//			// make a backup copy of the current platform.xml
-//			// TODO copy to history
-//		}
+		// save the configuration
+		if ("file".equalsIgnoreCase(getURL().getProtocol())) { //$NON-NLS-1$
+			// the location points to a file
+			File file = new File(getURL().getFile());
+			if (!file.exists()) {
+				//log + 24642 [works for all activities]
+				UpdateCore.log(this);
+			}
+			if (isTransient)
+				file.deleteOnExit();
+			//export(file);
+			// make a backup copy of the current platform.xml
+			// TODO copy to history
+		}
 	}
 
 	/*
