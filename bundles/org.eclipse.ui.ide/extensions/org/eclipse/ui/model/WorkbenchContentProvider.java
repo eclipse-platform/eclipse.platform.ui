@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.ide;
+package org.eclipse.ui.model;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 
 /**
  * Tree content provider for resource objects that can be adapted to the interface
@@ -30,17 +30,14 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * <p>
  * This class may be instantiated, or subclassed by clients.
  * </p>
- * 
- * @since 3.0
- * @issue consider prohibiting subclassing and make class final
  */
-public class WorkbenchResourceContentProvider extends WorkbenchContentProvider implements IResourceChangeListener {
+public class WorkbenchContentProvider extends BaseWorkbenchContentProvider implements IResourceChangeListener {
 	private Viewer viewer;
 
 	/**
 	 * Creates the resource content provider.
 	 */
-	public WorkbenchResourceContentProvider() {
+	public WorkbenchContentProvider() {
 		super();
 	}
 

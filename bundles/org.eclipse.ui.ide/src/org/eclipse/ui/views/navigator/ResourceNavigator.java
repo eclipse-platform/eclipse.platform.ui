@@ -78,8 +78,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ISetSelectionTarget;
@@ -320,7 +320,7 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	protected void initContentProvider(TreeViewer viewer) {
-		viewer.setContentProvider(new WorkbenchResourceContentProvider());
+		viewer.setContentProvider(new WorkbenchContentProvider());
 	}
 
 	/**

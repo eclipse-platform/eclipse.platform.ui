@@ -14,7 +14,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.ide.WorkbenchResourceContentProvider;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.CheckboxTreeAndListGroup;
@@ -151,7 +150,7 @@ protected Control createDialogArea(Composite parent) {
  * only children of the given resource type.
  */
 private ITreeContentProvider getResourceProvider(final int resourceType) {
-	return new WorkbenchResourceContentProvider() {
+	return new WorkbenchContentProvider() {
 		public Object[] getChildren(Object o) {
 			if (o instanceof IContainer) {
 				IResource[] members = null;
