@@ -4249,6 +4249,8 @@ public class TextViewer extends Viewer implements
 		
 		if (fTextWidget != null && !fTextWidget.isDisposed())
 			fTextWidget.setRedraw(false);
+		
+		fireRedrawChanged();
 	}
 	
 	/*

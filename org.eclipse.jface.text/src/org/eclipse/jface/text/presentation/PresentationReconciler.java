@@ -66,6 +66,8 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 				
 		/** Set to <code>true</code> if between a document about to be changed and a changed event. */
 		private boolean fDocumentChanging= false;
+		/** The cached redraw state of the text viewer */
+		private boolean fCachedRedrawState= true;
 		
 		/*
 		 * @see ITextInputListener#inputDocumentAboutToBeChanged(IDocument, IDocument)
@@ -93,6 +95,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		public void inputDocumentChanged(IDocument oldDocument, IDocument newDocument) {
 			
 			fDocumentChanging= false;
+			fCachedRedrawState= true;
 			
 			if (newDocument != null) {
 				
@@ -113,7 +116,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 * @see IDocumentPartitioningListener#documentPartitioningChanged(IDocument)
 		 */
 		public void documentPartitioningChanged(IDocument document) {
-			if (!fDocumentChanging)
+			if (!fDocumentChanging && fCachedRedrawState)
 				processDamage(new Region(0, document.getLength()), document);
 			else
 				fDocumentPartitioningChanged= true;
@@ -124,7 +127,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 * @since 2.0
 		 */
 		public void documentPartitioningChanged(IDocument document, IRegion changedRegion) {
-			if (!fDocumentChanging) {
+			if (!fDocumentChanging && fCachedRedrawState) {
 				processDamage(new Region(changedRegion.getOffset(), changedRegion.getLength()), document);
 			} else {
 				fDocumentPartitioningChanged= true;
@@ -147,16 +150,17 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			
 			fDocumentChanging= true;
-			
-			try {
-				int offset= e.getOffset() + e.getLength();
-				ITypedRegion region= getPartition(e.getDocument(), offset);
-				fRememberedPosition= new TypedPosition(region);
-				e.getDocument().addPosition(fPositionCategory, fRememberedPosition);
-			} catch (BadLocationException x) {
-				// can not happen
-			} catch (BadPositionCategoryException x) {
-				// should not happen on input elements
+			if (fCachedRedrawState) {
+				try {
+					int offset= e.getOffset() + e.getLength();
+					ITypedRegion region= getPartition(e.getDocument(), offset);
+					fRememberedPosition= new TypedPosition(region);
+					e.getDocument().addPosition(fPositionCategory, fRememberedPosition);
+				} catch (BadLocationException x) {
+					// can not happen
+				} catch (BadPositionCategoryException x) {
+					// should not happen on input elements
+				}
 			}
 		}
 		
@@ -164,12 +168,13 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 * @see IDocumentListener#documentChanged(DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
-			try {
-				e.getDocument().removePosition(fPositionCategory, fRememberedPosition);
-			} catch (BadPositionCategoryException x) {
-				// can not happen on input documents
+			if (fCachedRedrawState) {
+				try {
+					e.getDocument().removePosition(fPositionCategory, fRememberedPosition);
+				} catch (BadPositionCategoryException x) {
+					// can not happen on input documents
+				}
 			}
-			
 			fDocumentChanging= false;
 		}
 		
@@ -178,7 +183,8 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		 */
 		public void textChanged(TextEvent e) {
 			
-	 		if (!e.getViewerRedrawState())
+			fCachedRedrawState= e.getViewerRedrawState();
+	 		if (!fCachedRedrawState)
 	 			return;
 	 			
 	 		IRegion damage= null;
