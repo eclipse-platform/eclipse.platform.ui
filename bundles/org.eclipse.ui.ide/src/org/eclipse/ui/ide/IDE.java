@@ -97,7 +97,7 @@ public final class IDE {
 	private static final List emptyUnmodifiableList = Collections.unmodifiableList(new ArrayList(0));
 	
 	/**
-	 * Standard shared images defined by the IDE. These are over and about the
+	 * Standard shared images defined by the IDE. These are over and above the
 	 * standard workbench images declared in {@link org.eclipse.ui.ISharedImages
 	 * ISharedImages}.
 	 * <p>
@@ -105,9 +105,6 @@ public final class IDE {
 	 * </p>
 	 * 
 	 * @see org.eclipse.ui.ISharedImages
-	 * 
-	 * @issue this defines API constants, but there is no public API
-	 *   for obtaining the corresponding image.
 	 */
 	public interface SharedImages {
 		/**
