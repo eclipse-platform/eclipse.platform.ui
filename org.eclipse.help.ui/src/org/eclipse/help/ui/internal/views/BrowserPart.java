@@ -59,26 +59,33 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 			public void changed(ProgressEvent e) {
 				if (e.current == e.total)
 					return;
-				IProgressMonitor monitor = BrowserPart.this.parent
-						.getStatusLineManager().getProgressMonitor();
+				IStatusLineManager slm = BrowserPart.this.parent
+				.getStatusLineManager();
+				IProgressMonitor monitor = slm!=null?slm.getProgressMonitor():null; 
 				if (lastProgress == -1) {
 					lastProgress = 0;
-					monitor.beginTask("", e.total); //$NON-NLS-1$
-					BrowserPart.this.parent.getStatusLineManager().setCancelEnabled(true);
+					if (monitor!=null) {
+						monitor.beginTask("", e.total); //$NON-NLS-1$
+						slm.setCancelEnabled(true);
+					}
 				}
-				else if (monitor.isCanceled()) {
+				else if (monitor!=null && monitor.isCanceled()) {
 					browser.stop();
 					return;
 				}
-				monitor.worked(e.current - lastProgress);
+				if (monitor!=null)
+					monitor.worked(e.current - lastProgress);
 				lastProgress = e.current;
 			}
 
 			public void completed(ProgressEvent e) {
-				IProgressMonitor monitor = BrowserPart.this.parent
-						.getStatusLineManager().getProgressMonitor();
-				BrowserPart.this.parent.getStatusLineManager().setCancelEnabled(false);				
-				monitor.done();
+				IStatusLineManager slm = BrowserPart.this.parent
+				.getStatusLineManager();
+				IProgressMonitor monitor = slm!=null?slm.getProgressMonitor():null;
+				if (monitor!=null) {
+					slm.setCancelEnabled(false);				
+					monitor.done();
+				}
 				lastProgress = -1;
 				query=true;
 				boolean status = browser.execute("window.status=document.title;");
@@ -97,7 +104,8 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				}
 				IStatusLineManager statusLine = BrowserPart.this.parent
 						.getStatusLineManager();
-				statusLine.setMessage(event.text);
+				if (statusLine!=null)
+					statusLine.setMessage(event.text);
 				if (event.text.indexOf("://")!= -1) //$NON-NLS-1$
 					statusURL = event.text;
 			}

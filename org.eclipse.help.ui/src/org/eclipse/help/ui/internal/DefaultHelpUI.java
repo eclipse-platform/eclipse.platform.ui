@@ -185,7 +185,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		Shell helpShell = f1Window.getShell();
 		helpShell.setText("Help");
 		helpShell.setSize(300, pbounds.height);
-		f1Window.syncHelpBounds();
+		f1Window.dock(true);
 		f1Window.update(context, c);
 		helpShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
