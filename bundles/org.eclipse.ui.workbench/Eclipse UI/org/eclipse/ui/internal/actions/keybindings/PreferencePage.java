@@ -40,6 +40,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 	
+	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
+	
 	private Button buttonCustomize;
 	private Combo comboConfiguration;
 	private String configurationId;
@@ -68,7 +70,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		
 		TabItem tabItemGeneral = new TabItem(tabFolder, SWT.NULL);
 		tabItemGeneral.setText("General");
-		tabItemGeneral.setImage(ImageFactory.getImage("key"));
+		//tabItemGeneral.setImage(ImageFactory.getImage("key"));
 
 		Composite compositeGeneral = new Composite(tabFolder, SWT.NULL);
 		compositeGeneral.setFont(tabFolder.getFont());
@@ -103,7 +105,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		
 		TabItem tabItemCustomize = new TabItem(tabFolder, SWT.NULL);
 		tabItemCustomize.setText("Customize");
-		tabItemCustomize.setImage(ImageFactory.getImage("pencil"));
+		//tabItemCustomize.setImage(ImageFactory.getImage("pencil"));
 
 		Composite compositeCustomize = new Composite(tabFolder, SWT.NULL);		
 		compositeCustomize.setFont(tabFolder.getFont());
@@ -220,14 +222,14 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	
 	private String loadConfiguration() {
 		String configuration = preferenceStore.getString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		
-		if (configuration.length() != 0)
-			return configuration;
-		else {
-			String defaultConfiguration = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);		
-			preferenceStore.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, defaultConfiguration);
-			return defaultConfiguration;
-		}
+
+		if (configuration == null || configuration.length() == 0)
+			configuration = preferenceStore.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
+
+		if (configuration == null)
+			configuration = ZERO_LENGTH_STRING;
+
+		return configuration;
 	}
 	
 	private void saveConfiguration(String configuration)
