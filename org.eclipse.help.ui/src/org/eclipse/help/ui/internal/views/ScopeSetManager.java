@@ -14,7 +14,6 @@ import java.io.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
