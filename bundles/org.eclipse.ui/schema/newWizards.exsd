@@ -213,7 +213,7 @@ Since 3.0
    <element name="primaryWizard">
       <annotation>
          <documentation>
-            a means of declaring that a wizard is &quot;primary&quot; in the UI.  A primary wizard is emphasized in the new wizard dialog.  Please not that this element is not intended to be used by plug in developers!  This element exists so that product managers may emphasize a set of wizards for their products.
+            a means of declaring that a wizard is &quot;primary&quot; in the UI.  A primary wizard is emphasized in the new wizard dialog.  Please note that this element is not intended to be used by plug in developers!  This element exists so that product managers may emphasize a set of wizards for their products.
          </documentation>
       </annotation>
       <complexType>
