@@ -281,7 +281,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				   proposals= new ICompletionProposal[0];
             	} else {
 	            	proposals= new ICompletionProposal[]{proposal};
-	            }
+            	}
                 break;
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
             	String textToSearch= document.get().substring(0, cursorPosition-prefix.length());
@@ -308,8 +308,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			case PROPOSAL_MODE_NONE :
             default :
                 proposals= new ICompletionProposal[0];
-            	errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
-        } 
+				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
+        }
         Arrays.sort(proposals, proposalComparator);
         if (proposals.length > 0) {
         	errorMessage= ""; //$NON-NLS-1$
@@ -582,40 +582,29 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             String rootElementName= "project"; //$NON-NLS-1$
 			IElement rootElement = dtd.getElement(rootElementName);
 			if(rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
-				additionalProposalOffset= 0;
 				proposal = newCompletionProposal(document, prefix, rootElementName);
 				proposals.add(proposal);
 			}
-        } //else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
+       // } else if (parentName == "project" || parentName == "target") { //$NON-NLS-1$ //$NON-NLS-2$
         	//use the definitions in the project as that includes more than what is defined in the DTD
-		//	Project project= antModel.getProjectNode().getProject();
-		//	Map tasks= project.getTaskDefinitions();
-		//	Iterator keys= tasks.keySet().iterator();
-		//	ICompletionProposal proposal;
-		//	while (keys.hasNext()) {
-		//		String className = (String) keys.next();
-		//		if (className.toLowerCase().startsWith(aPrefix)) {
-			//		proposal = newCompletionProposal(document, aPrefix, className);
-			//		proposals.add(proposal);
-		//		}
-		//	}
-		//}
-		 else {
+			//Project project= antModel.getProjectNode().getProject();
+			//Map tasks= project.getTaskDefinitions();
+			//createProposals(document, prefix, proposals, tasks);
+			//Map types= project.getDataTypeDefinitions();
+			//createProposals(document, prefix, proposals, types);
+		} else {
 			IElement parent = dtd.getElement(parentName);
 			if (parent != null) {
 				IDfm dfm = parent.getDfm();
 				String[] accepts = dfm.getAccepts();
 				String elementName;
 				for (int i = 0; i < accepts.length; i++) {
-					additionalProposalOffset= 0;
 					elementName = accepts[i];
 					if(prefix.length() == 0 || elementName.toLowerCase().startsWith(prefix)) {
 						proposal = newCompletionProposal(document, prefix, elementName);
 						proposals.add(proposal);
 					}
 				}
-			} else {
-				//TODO check for a task or type that has been defined and is not in the dtd
 			}
         }
         
@@ -627,7 +616,20 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
        return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
    }
 
-    private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
+//    private void createProposals(IDocument document, String prefix, List proposals, Map tasks) {
+//		Iterator keys= tasks.keySet().iterator();
+//		ICompletionProposal proposal;
+//		while (keys.hasNext()) {
+//			String key = (String) keys.next();
+//			if (prefix.length() == 0 || key.toLowerCase().startsWith(prefix)) {
+//				proposal = newCompletionProposal(document, prefix, key);
+//				proposals.add(proposal);
+//			}
+//		}
+//	}
+
+	private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
+		additionalProposalOffset= 0;
 		Image proposalImage = AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
 		String proposalInfo = descriptionProvider.getDescriptionForTask(elementName);
 		boolean hasNestedElements= hasNestedElements(elementName);
@@ -642,14 +644,19 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		if (hasNestedElements) {
 			proposalCursorPosition= elementName.length() + 2 + additionalProposalOffset;
 		} else {
-			proposalCursorPosition= elementName.length() + 1 + additionalProposalOffset;
+			if (additionalProposalOffset > 0) {
+				additionalProposalOffset+=2; //<antstructure output="|"/>
+			} else {
+				additionalProposalOffset+=1; //<arg|/>
+			}
+			proposalCursorPosition= elementName.length() + additionalProposalOffset;
 		}
 		return new AntCompletionProposal(replacementString, replacementOffset, 
 			replacementLength, proposalCursorPosition, proposalImage, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 	}
 
 	/**
-     * Returns the one possible completion for the specified unclosed task.
+     * Returns the one possible completion for the specified unclosed task .
      * 
      * @param openElementName the task that hasn't been closed 
      * last
@@ -667,19 +674,19 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 	if (previousChar != '/') {
 	                	if (previousChar != '<') {
 	                		replaceString.append('<');
-	                	}
+            }
 	                	replaceString.append('/');
-	                }
-                }
+        }
+        }
                 replaceString.append(openElementName);
                 replaceString.append('>');
                 StringBuffer displayString= new StringBuffer("</"); //$NON-NLS-1$
                 displayString.append(openElementName);
                 displayString.append('>');
                 proposal= new AntCompletionProposal(replaceString.toString(), cursorPosition - prefix.length(), prefix.length(), replaceString.length(), null, displayString.toString(), AntEditorMessages.getString("AntEditorCompletionProcessor.39"), AntCompletionProposal.TAG_CLOSING_PROPOSAL); //$NON-NLS-1$
-            }
+    }
         }
-       
+
         return proposal;
     }
 
@@ -695,7 +702,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		return previousChar;
 	}
 
-	/**
+    /**
      * Returns the replacement string for the specified task name.
      */
     private String getTaskProposalReplacementString(String aTaskName, boolean hasNested) {
@@ -796,6 +803,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @param anOffset the cursor position
      */
     protected String getPrefixFromDocument(String aDocumentText, int anOffset) {
+        
         int startOfWordToken = anOffset;
         
         char token= 'a';
@@ -851,18 +859,14 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
              
             // Attribute proposal
             if(lastChar != '>' && lastChar != '<') {
-                String taskString =
-                    getTaskStringFromDocumentStringToPrefix(
-                        trimmedString);
+                String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
                 if(taskString != null && isNamedTaskKnown(taskString)) {
                     return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
                 }
             }                
         } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"' || trimmedString.charAt(trimmedString.length()-1) == ',') {
 			// Attribute value proposal
-            String taskString =
-                getTaskStringFromDocumentStringToPrefix(
-                    trimmedString);
+            String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
             if(taskString != null && isNamedTaskKnown(taskString)) {
                 return PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL;
             }
@@ -981,14 +985,14 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     	//return getTaskClass(taskName) != null;
     }
 
-//    private Class getTaskClass(String taskName) {
-//    	AntProjectNode node= antModel.getProjectNode();
-//    	if (node != null) {
-//    		Project antProject= node.getProject();
-//    		return (Class)antProject.getTaskDefinitions().get(taskName);
-//    	}
-//    	return null;
-//    }
+   // private Class getTaskClass(String taskName) {
+   // 	AntProjectNode node= antModel.getProjectNode();
+   // 	if (node != null) {
+   // 		Project antProject= node.getProject();
+   // 		return (Class)antProject.getTaskDefinitions().get(taskName);
+   // 	}
+   // 	return null;
+   // }
 
     /**
      * Finds the parent task element in respect to the cursor position.
