@@ -198,7 +198,7 @@ public interface IMarker extends IAdaptable {
 	 * default is <code>true</code>. Note that the value of this attribute
 	 * is to be used by the UI as a suggestion and its value will NOT be
 	 * interpreted by Core in any manner and will not be enforced by Core 
-	 * when setting the values of other attributes.
+	 * when performing any operations on markers.
 	 *
 	 * @see #getAttribute
 	 */
