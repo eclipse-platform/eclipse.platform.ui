@@ -54,6 +54,7 @@ public class RefreshTagsAction extends CVSAction {
 							subMonitor.done();
 						}
 					}
+					manager.saveState();
 					monitor.done();
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

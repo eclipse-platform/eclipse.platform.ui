@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -178,7 +179,13 @@ public class RepositoriesView extends ViewPart {
 				dialog.open();
 				CVSWorkingSet[] sets = dialog.getSelection();
 				if (sets != null && sets.length > 0) {
-					CVSUIPlugin.getPlugin().getRepositoryManager().setCurrentWorkingSet(sets[0]);
+					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();	
+					manager.setCurrentWorkingSet(sets[0]);
+					try {
+						manager.saveState();
+					} catch (TeamException e) {
+						CVSUIPlugin.openError(null, null, null, e);
+					}
 				}
 			}
 		};
@@ -206,6 +213,11 @@ public class RepositoriesView extends ViewPart {
 					CVSWorkingSet newSet = wizard.getSelection();
 					manager.addWorkingSet(newSet);
 					manager.setCurrentWorkingSet(newSet);
+					try {
+						manager.saveState();
+					} catch (TeamException e) {
+						CVSUIPlugin.openError(null, null, null, e);
+					}
 				}
 			}
 		};

@@ -350,7 +350,7 @@ public class RepositoryManager {
 		}
 	}
 	
-	private void saveState() throws TeamException {
+	protected void saveState() throws TeamException {
 		IPath pluginStateLocation = CVSUIPlugin.getPlugin().getStateLocation();
 		File tempFile = pluginStateLocation.append(REPOSITORIES_VIEW_FILE + ".tmp").toFile(); //$NON-NLS-1$
 		File stateFile = pluginStateLocation.append(REPOSITORIES_VIEW_FILE).toFile();
@@ -680,6 +680,7 @@ public class RepositoryManager {
 	}
 	
 	private void broadcastRepositoriesChanged(ICVSRepositoryLocation[] roots) {
+		if (roots.length == 0) return;
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
