@@ -12,9 +12,7 @@ package org.eclipse.update.internal.ui.preferences;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.*;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -28,39 +26,8 @@ import org.eclipse.jface.dialogs.Dialog;
 public class AppServerPreferencePage
 	extends FieldEditorPreferencePage
 	implements IWorkbenchPreferencePage {
-	private static final String KEY_DESCRIPTION =
-		"AppServerPreferencePage.description";
-	private static final String PREFIX = UpdateUI.getPluginId();
-	public static final String P_MASTER_SWITCH = PREFIX + ".appServer";
-	public static final String P_ENCODE_URLS = PREFIX + ".encodeURLs";
-	private static final String KEY_MASTER_SWITCH =
-		"AppServerPreferencePage.masterSwitch";
-	private static final String KEY_ENCODE_URLS =
-		"AppServerPreferencePage.encodeURLs";
-	//private MasterField masterField;
-	private BooleanFieldEditor masterField;
+	//private BooleanFieldEditor masterField;
 
-/*
-	class MasterField extends BooleanFieldEditor {
-		BooleanFieldEditor slave;
-		public MasterField(String property, String key, Composite parent) {
-			super(property, key, parent);
-		}
-
-		protected void valueChanged(boolean oldValue, boolean newValue) {
-			super.valueChanged(oldValue, newValue);
-			slave.setEnabled(newValue, getFieldEditorParent());
-		}
-
-		void update() {
-			slave.setEnabled(getBooleanValue(), getFieldEditorParent());
-		}
-
-		public void setSlave(BooleanFieldEditor slave) {
-			this.slave = slave;
-		}
-	}
-*/
 
 	/**
 	 * The constructor.
@@ -68,7 +35,7 @@ public class AppServerPreferencePage
 	public AppServerPreferencePage() {
 		super(GRID);
 		setPreferenceStore(UpdateUI.getDefault().getPreferenceStore());
-		setDescription(UpdateUI.getString(KEY_DESCRIPTION));
+		setDescription(UpdateUI.getString("AppServerPreferencePage.description"));
 	}
 
 	/**
@@ -81,21 +48,11 @@ public class AppServerPreferencePage
 		WorkbenchHelp.setHelp(
 			getFieldEditorParent(),
 			"org.eclipse.update.ui.AppServerPreferencePage");
-		masterField =
+		addField(
 			new BooleanFieldEditor(
-				P_MASTER_SWITCH,
-				UpdateUI.getString(KEY_MASTER_SWITCH),
-				getFieldEditorParent());
-		addField(masterField);
-		/*
-		BooleanFieldEditor encodeURLs =
-			new BooleanFieldEditor(
-				P_ENCODE_URLS,
-				UpdateUI.getString(KEY_ENCODE_URLS),
-				getFieldEditorParent());
-		addField(encodeURLs);
-		masterField.setSlave(encodeURLs);
-		*/
+				UpdateUI.P_MASTER_SWITCH,
+				UpdateUI.getString("AppServerPreferencePage.masterSwitch"),
+				getFieldEditorParent()));
 	}
 	
 	public void createControl(Composite parent) {
@@ -104,32 +61,7 @@ public class AppServerPreferencePage
 		WorkbenchHelp.setHelp(
 			parent,"org.eclipse.update.ui.AppServerPreferencePage");
 	}	
-/*
-	protected void initialize() {
-		super.initialize();
-		masterField.update();
-	}
-*/
-	protected void createSpacer(Composite composite, int columnSpan) {
-		Label label = new Label(composite, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = columnSpan;
-		label.setLayoutData(gd);
-	}
-	public static boolean getUseApplicationServer() {
-		IPreferenceStore store =
-			UpdateUI.getDefault().getPreferenceStore();
-		return store.getBoolean(P_MASTER_SWITCH);
-	}
 
-	public static boolean getEncodeURLs() {
-		return true;
-		/*
-		IPreferenceStore store =
-			UpdateUI.getDefault().getPreferenceStore();
-		return store.getBoolean(P_ENCODE_URLS);
-		*/
-	}
 
 	public boolean performOk() {
 		boolean result = super.performOk();
@@ -154,7 +86,7 @@ public class AppServerPreferencePage
 	}
 
 	private void handleServerActivation() throws CoreException {
-		boolean masterSwitch = getUseApplicationServer();
+		boolean masterSwitch = getPreferenceStore().getBoolean(UpdateUI.P_MASTER_SWITCH);
 		boolean webAppRunning = UpdateUI.getDefault().isWebAppStarted();
 
 		if (!masterSwitch && webAppRunning) {

@@ -34,7 +34,6 @@ import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
-import org.eclipse.update.internal.ui.preferences.*;
 import org.eclipse.update.internal.ui.security.*;
 
 /**
@@ -45,6 +44,9 @@ public class UpdateUI extends AbstractUIPlugin {
 	public static final String WEB_APP_ID = "org.eclipse.update";
 
 	public static final String ID_BROWSER = PLUGIN_ID + "WebBrowser";
+	
+	// Web-triggered update preference
+	public static final String P_MASTER_SWITCH = PLUGIN_ID + ".appServer";
 
 	//The shared instance.
 	private static UpdateUI plugin;
@@ -165,7 +167,7 @@ public class UpdateUI extends AbstractUIPlugin {
 		if (historyPref > 0) {
 			SiteLocalModel.DEFAULT_HISTORY = historyPref;
 		}
-		if (AppServerPreferencePage.getUseApplicationServer()) {
+		if (getPluginPreferences().getBoolean(P_MASTER_SWITCH)) {
 			try {
 				startWebApp();
 			} catch (CoreException e) {
@@ -465,8 +467,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	 * @param store the preference store to fill
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		store.setDefault(AppServerPreferencePage.P_MASTER_SWITCH, false);
-		store.setDefault(AppServerPreferencePage.P_ENCODE_URLS, true);
+		store.setDefault(P_MASTER_SWITCH, false);
 	}
 
 	public static boolean showURL(String url) {

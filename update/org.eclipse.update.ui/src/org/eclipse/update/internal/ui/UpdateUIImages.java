@@ -25,8 +25,6 @@ public class UpdateUIImages {
 
 
 	private static final String NAME_PREFIX= UpdateUI.getPluginId()+".";
-	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-
 
 	private final static URL BASE_URL = UpdateUI.getDefault().getDescriptor().getInstallURL();
 
