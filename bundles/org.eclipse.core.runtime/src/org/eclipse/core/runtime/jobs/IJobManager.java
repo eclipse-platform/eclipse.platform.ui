@@ -48,7 +48,7 @@ public interface IJobManager {
 	 * a chance to wake up.  Currently executing jobs will be asked to cancel but there 
 	 * is no guarantee that they will do so.
 	 * 
-	 * @param family the job family to cancel
+	 * @param family the job family to cancel, or <code>null</code> to cancel all jobs.
 	 * @see Job#belongsTo(Object)
 	 */
 	public void cancel(Object family);
@@ -59,11 +59,9 @@ public interface IJobManager {
 	public Job currentJob();
 	/**
 	 * Returns all waiting, executing and sleeping jobs belonging
-	 * to the given family. 
+	 * to the given family. If no jobs are found, an empty array is returned.
 	 * 
-	 * If no jobs are found, an empty array is returned.
-	 * 
-	 * @param family the job family to find
+	 * @param family the job family to find, or <code>null</code> to find all jobs.
 	 * @see Job#belongsTo(Object)
 	 */
 	public Job[] find(Object family);
@@ -122,9 +120,9 @@ public interface IJobManager {
 	 * This method is for internal use by the platform-related plug-ins.  
 	 * Clients should not call this method.
 	 * </p>
-	 * @see ILockListener
+	 * @see LockListener
 	 */
-	public void setLockListener(ILockListener listener);
+	public void setLockListener(LockListener listener);
 	/**
 	 * Registers a progress provider with the job manager.  If there was a
 	 * provider already registered, it is replaced.
@@ -146,13 +144,15 @@ public interface IJobManager {
 	 * 
 	 * Sleeping jobs can be resumed using <code>wakeUp</code>.
 	 * 
-	 * @param family the job family to put to sleep
+	 * @param family the job family to sleep, or <code>null</code> to sleep all jobs.
 	 * @see Job#belongsTo(Object)
 	 */
 	public void sleep(Object family);
 	/**
 	 * Resumes scheduling of all sleeping jobs in the given family.  This method
 	 * has no effect on jobs in the family that are not currently sleeping.
+	 * 
+	 * @param family the job family to wake up, or <code>null</code> to wake up all jobs.
 	 * @see Job#belongsTo(Object)
 	 */
 	public void wakeUp(Object family);

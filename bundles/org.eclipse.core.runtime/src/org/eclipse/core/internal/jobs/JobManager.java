@@ -202,6 +202,9 @@ public class JobManager implements IJobManager {
 			//if the job is finishing asynchronously, there is nothing more to do for now
 			if (result == Job.ASYNC_FINISH)
 				return;
+			//if job is not known then it cannot be done
+			if (internalJob.getState() == Job.NONE)
+				return;
 			if (JobManager.DEBUG)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			internalJob.setState(Job.NONE);
@@ -247,6 +250,9 @@ public class JobManager implements IJobManager {
 			}
 		}
 		return null;
+	}
+	public LockManager getLockManager() {
+		return lockManager;
 	}
 	/* (non-Javadoc)
 	 * @see IJobManager#newLock(java.lang.String)
@@ -332,7 +338,7 @@ public class JobManager implements IJobManager {
 		InternalJob job = firstJob;
 		do {
 			//note that job state cannot be NONE at this point
-			if (job.belongsTo(family) && ((job.getState() & stateMask) != 0))
+			if ((family == null || job.belongsTo(family)) && ((job.getState() & stateMask) != 0))
 				members.add(job);
 			job = job.previous();
 		} while (job != null && job != firstJob);
@@ -359,9 +365,9 @@ public class JobManager implements IJobManager {
 		return members;
 	}
 	/* (non-Javadoc)
-	 * @see IJobManager#setLockListener(ILockListener)
+	 * @see IJobManager#setLockListener(LockListener)
 	 */
-	public void setLockListener(ILockListener listener) {
+	public void setLockListener(LockListener listener) {
 		lockManager.setLockListener(listener);
 	}
 	/**

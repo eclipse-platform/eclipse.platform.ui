@@ -9,26 +9,41 @@
  **********************************************************************/
 package org.eclipse.core.runtime.jobs;
 
+import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.internal.jobs.LockManager;
+import org.eclipse.core.runtime.Platform;
+
 /**
  * A lock listener is notified whenever a thread is about to wait
  * on a lock, and when a thread is about to release a lock.
  * <p>
  * This interface is for internal use by the platform-related plug-ins.
- * Clients should not implement this interface.
+ * Clients should not reference or subclass this class.
  * </p>
  * 
  * @see IJobManager.setLockListener
  */
-public interface ILockListener {
+public class LockListener {
+	private final LockManager manager = ((JobManager)Platform.getJobManager()).getLockManager();
 	/**
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
 	 * 
 	 * @param lockOwner the thread that currently owns the lock this thread is
 	 * waiting for
 	 */
-	public void aboutToWait(Thread lockOwner);
+	public void aboutToWait(Thread lockOwner)  {
+	}
 	/**
 	 * Notification that a thread is about to release a lock.
 	 */
-	public void aboutToRelease();
+	public void aboutToRelease()  {
+	}
+	/**
+	 * Returns whether this thread currently owns any locks
+	 * @return <code>true</code> if this thread owns any locks, and 
+	 * <code>false</code> otherwise.
+	 */
+	protected final boolean isLockOwnerThread() {
+		return manager.isLockOwner();
+	}
 }

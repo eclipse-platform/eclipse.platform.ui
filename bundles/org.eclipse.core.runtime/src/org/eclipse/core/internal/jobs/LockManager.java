@@ -1,14 +1,15 @@
 package org.eclipse.core.internal.jobs;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.runtime.jobs.ILockListener;
+import org.eclipse.core.runtime.jobs.LockListener;
 
 /**
  * Manages a set of locks and ensures that deadlock never occurs.
  */
-public class LockManager implements ILockListener {
+public class LockManager {
 	/**
 	 * This class captures the state of suspended locks.  Locks are suspended if
 	 * a thread tries to acquire locks out of order.
@@ -42,8 +43,12 @@ public class LockManager implements ILockListener {
 			lock.setDepth(depth);
 		}
 	}
-	private ILockListener lockListener;
+	private LockListener lockListener;
 	private final ArrayList locks = new ArrayList();
+	/**
+	 * Set of threads that currently own locks.
+	 */
+	private final HashSet lockThreads = new HashSet(20);
 	public LockManager() {
 	}
 	/* (non-Javadoc)
@@ -60,12 +65,18 @@ public class LockManager implements ILockListener {
 		if (lockListener != null)
 			lockListener.aboutToWait(lockOwner);
 	}
+	void addLockThread(Thread thread) {
+		lockThreads.add(thread);
+	}
 	public synchronized OrderedLock newLock() {
 		OrderedLock result = new OrderedLock(this);
 		locks.add(result);
 		return result;
 	}
-	public void setLockListener(ILockListener listener) {
+	void removeLockThread(Thread thread) {
+		lockThreads.remove(thread);
+	}
+	public void setLockListener(LockListener listener) {
 		this.lockListener = listener;
 	}
 	/**
@@ -103,5 +114,8 @@ public class LockManager implements ILockListener {
 		if (toAcquire == null)
 			return null;
 		return (LockState[]) toAcquire.toArray(new LockState[toAcquire.size()]);
+	}
+	public synchronized boolean isLockOwner() {
+		return lockThreads.contains(Thread.currentThread());
 	}
 }

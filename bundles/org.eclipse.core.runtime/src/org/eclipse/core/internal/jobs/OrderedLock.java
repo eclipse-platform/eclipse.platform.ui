@@ -23,12 +23,6 @@ import org.eclipse.core.runtime.jobs.ILock;
 public class OrderedLock implements ILock {
 	private static final boolean DEBUG = false;
 	/**
-	 * Records the number of successive acquires in the same
-	 * thread. The thread is released only when the depth
-	 * reaches zero.
-	 */
-	private int depth;
-	/**
 	 * Locks are sequentially ordered for debugging purposes.
 	 */
 	private static int nextLockNumber = 0;
@@ -37,7 +31,13 @@ public class OrderedLock implements ILock {
 	 */
 	private Thread currentOperationThread;
 	/**
-	 * The manager that implements the circular wait protocol.
+	 * Records the number of successive acquires in the same
+	 * thread. The thread is released only when the depth
+	 * reaches zero.
+	 */
+	private int depth;
+	/**
+	 * The manager that implements the release and wait protocol.
 	 */
 	private final LockManager manager;
 	private final int number;
@@ -53,6 +53,21 @@ public class OrderedLock implements ILock {
 	protected OrderedLock(LockManager manager) {
 		this.manager = manager;
 		this.number = nextLockNumber++;
+	}
+	/* (non-Javadoc)
+	 * @see ILock#acquire
+	 */
+	public void acquire() {
+		//spin until the lock is successfully acquired
+		//NOTE: spinning here allows the UI thread to service pending syncExecs
+		//if the UI thread is trying to acquire a lock.
+		while (true) {
+			try {
+				if (acquire(Long.MAX_VALUE))
+					return;
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 	/* (non-Javadoc)
 	 * @see ILock#acquire(long)
@@ -84,23 +99,6 @@ public class OrderedLock implements ILock {
 			depth++;
 		return success;
 	}
-	/* (non-Javadoc)
-	 * @see ILock#acquire
-	 */
-	public void acquire() {
-		//spin until the lock is successfully acquired
-		//NOTE: spinning here allows the UI thread to service pending syncExecs
-		//if the UI thread is trying to acquire a lock.
-		while (true) {
-			try {
-				if (acquire(Long.MAX_VALUE))
-					return;
-			} catch (InterruptedException e) {
-				//clear the interrupted state
-				Thread.interrupted();
-			}
-		}
-	}
 	/**
 	 * Attempts to acquire the lock.  Returns false if the lock is not available and
 	 * true if the lock has been successfully acquired.
@@ -111,7 +109,7 @@ public class OrderedLock implements ILock {
 			return true;
 		//if nobody is waiting, grant the lock immediately
 		if (currentOperationThread == null && operations.isEmpty()) {
-			currentOperationThread = Thread.currentThread();
+			setCurrentOperationThread(Thread.currentThread());
 			return true;
 		}
 		return false;
@@ -145,6 +143,20 @@ public class OrderedLock implements ILock {
 		return true;
 	}
 	/**
+	 * Force this lock to release, regardless of depth.  Returns the current depth.
+	 */
+	protected synchronized int doRelease() {
+		//notifiy hook
+		manager.aboutToRelease();
+		int oldDepth = depth;
+		depth = 0;
+		Semaphore next = (Semaphore) operations.peek();
+		setCurrentOperationThread(null);
+		if (next != null)
+			next.release();
+		return oldDepth;
+	}
+	/**
 	 * If there is another semaphore with the same runnable in the
 	 * queue, the other is returned and the new one is not added.
 	 */
@@ -157,27 +169,13 @@ public class OrderedLock implements ILock {
 		return semaphore;
 	}
 	/**
-	 * Force this lock to release, regardless of depth.  Returns the current depth.
-	 */
-	protected synchronized int doRelease() {
-		//notifiy hook
-		manager.aboutToRelease();
-		int oldDepth = depth;
-		depth = 0;
-		Semaphore next = (Semaphore) operations.peek();
-		currentOperationThread = null;
-		if (next != null)
-			next.release();
-		return oldDepth;
-	}
-	/**
 	 * Returns the thread of the current operation, or <code>null</code> if
 	 * there is no current operation
 	 */
 	public synchronized Thread getCurrentOperationThread() {
 		return currentOperationThread;
 	}
-	public synchronized int getDepth()  {
+	public synchronized int getDepth() {
 		return depth;
 	}
 	/* (non-Javadoc)
@@ -190,6 +188,14 @@ public class OrderedLock implements ILock {
 		Assert.isTrue(depth >= 0, "Lock released too many times"); //$NON-NLS-1$
 		if (--depth == 0)
 			doRelease();
+	}
+	private void setCurrentOperationThread(Thread newThread) {
+		if (currentOperationThread != null)
+			manager.removeLockThread(currentOperationThread);
+		this.currentOperationThread = newThread;
+		if (currentOperationThread != null)
+			manager.addLockThread(currentOperationThread);
+		
 	}
 	/**
 	 * Forces the lock to be at the given depth.  Used when re-acquiring a suspended
@@ -210,6 +216,6 @@ public class OrderedLock implements ILock {
 	 */
 	private synchronized void updateCurrentOperation() {
 		operations.dequeue();
-		currentOperationThread = Thread.currentThread();
+		setCurrentOperationThread(Thread.currentThread());
 	}
 }
