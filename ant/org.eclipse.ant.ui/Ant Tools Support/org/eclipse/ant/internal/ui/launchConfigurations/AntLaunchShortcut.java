@@ -143,6 +143,11 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 
 		if (configuration != null) {
 			if (fShowDialog) {
+				// Offer to save dirty editors before opening the dialog as the contents
+				// of an Ant editor often affect the contents of the dialog.
+				if (!DebugUITools.saveBeforeLaunch()) {
+					return;
+				}
 				IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
 				DebugUITools.openLaunchConfigurationDialog(AntUIPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
 			} else {
