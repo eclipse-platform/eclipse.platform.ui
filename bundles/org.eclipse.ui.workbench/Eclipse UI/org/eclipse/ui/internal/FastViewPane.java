@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 import org.eclipse.ui.internal.presentations.StandardSystemContribution;
 import org.eclipse.ui.presentations.IPresentablePart;
@@ -90,6 +91,33 @@ class FastViewPane {
 			}
 			currentPane.getPage().hideView(currentPane.getViewReference());
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(org.eclipse.ui.internal.skins.IPresentablePart, boolean)
+		 */
+		public void dragStart(IPresentablePart beingDragged, Point initialPosition, boolean keyboard) {
+			dragStart(initialPosition, keyboard);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
+		 */
+		public void dragStart(Point initialPosition, boolean keyboard) {
+			ViewPane pane = currentPane;
+			
+			Control control = getPresentation().getControl(); 
+			
+			Rectangle bounds = Geometry.toDisplay(clientComposite,
+                    control.getBounds());
+			
+			Perspective persp = currentPane.getPage().getActivePerspective();
+			
+			persp.setActiveFastView(null, 0);
+			
+            DragUtil.performDrag(pane, bounds,
+                    initialPosition, !keyboard);
+		}
+		
 	};
 	
 	private StandardSystemContribution systemContribution = new StandardSystemContribution(site) {
