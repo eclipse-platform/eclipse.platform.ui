@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
- * Implements a input for a MultiEditor.
+ * Implements an input for a <code>MultiEditor</code>.
  * 
- * This class is intended to be instanciated by clients but is 
- * not intented to be subclassed.
+ * This class is intended to be instantiated by clients but is 
+ * not intended to be subclassed.
  */
 public class MultiEditorInput implements IEditorInput {
 
@@ -27,10 +30,11 @@ public class MultiEditorInput implements IEditorInput {
     String editors[];
 
     /**
-     * Constructor for MultiEditorInput.
+     * Constructs a new MultiEditorInput.
      */
     public MultiEditorInput(String[] editorIDs, IEditorInput[] innerEditors) {
-        super();
+        Assert.isNotNull(editorIDs);
+        Assert.isNotNull(innerEditors);
         editors = editorIDs;
         input = innerEditors;
     }
@@ -94,5 +98,33 @@ public class MultiEditorInput implements IEditorInput {
      */
     public Object getAdapter(Class adapter) {
         return null;
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof MultiEditorInput))
+            return false;
+        MultiEditorInput other = (MultiEditorInput) obj;
+        return Arrays.equals(this.editors, other.editors) && Arrays.equals(this.input, other.input);
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        int hash = 0;
+        for (int i = 0; i < editors.length; i++) {
+            hash = hash * 37 + editors[i].hashCode();
+        }
+        for (int i = 0; i < input.length; i++) {
+            hash = hash * 37 + input[i].hashCode();
+        }
+        return hash;
     }
 }
