@@ -170,7 +170,7 @@ for (int i=0; i<wsets.length; i++)
 	<td align='left' class='label' nowrap style="width:100%; padding-left:5px;">
 		<a id='a<%=i%>' 
 		   href='#' 
-		   xonclick="document.getElementById('selectws').checked = true;"
+		   onclick="active=this;highlightHandler()"
    		   ondblclick="selectWorkingSet()"
 		   title="<%=wsets[i]%>">
 		   <%=wsets[i]%>
