@@ -6,7 +6,12 @@
 <meta name="GENERATOR" content="Microsoft FrontPage 5.0">
 <meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Style-Type" content="text/css">
-<link rel="stylesheet" href="style.css" charset="ISO-8859-1" type="text/css">
+<!-- default platform documentation stylesheets -->
+<style>@import url("../../book.css");</style>
+<style>@import url("book.css");</style>
+<!-- default schema documentation stylesheets -->
+<style>@import url("schema.css");</style>
+
 <title>Intro Content File XML Format</title>
 </head>
 
@@ -148,7 +153,7 @@ no parameters required<br>
 <h2><code>html</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.html">html</a> (<a href="#e.img">img</a> | <a href="#e.text">text</a>)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST html</p>
-<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(inline|embed) <p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) &gt;</p>
+<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>src&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(inline|embed) <p class=code id=dtdAttlist>style-id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>filteredFrom&nbsp;(swt|html) &gt;<p class=code id=dtdAttlist>encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 direct HTML to include in the page either by embedding the entire document, or inlining a snippet of HTML in-place. A fallback image or text must be defined for alternative swt presentation rendering.
@@ -163,6 +168,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
 <li><b>type</b> - if 'embed', a valid (full) HTML document will be embedded using HTML 'OBJECT' tag. If 'inline', value of 'src' will be treated as a snippet of HTML to emit 'in-place'. (if type is not specified, this html object is ignored by the intro configuration).</li>
 <li><b>style-id</b> - A means to classify this HTML element into a given category so that a common style may be applied.</li>
 <li><b>filteredFrom</b> - an optional attribute that allows for filtering a given element out of a specific implementation. For example, if a group has filteredFrom = swt, it means that this group will not appear as content in the swt implementation.</li>
+<li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file (in the case where type=inline is specified). If not specified, the local file encoding is used.</li>
 </ul>
 <h2><code>title</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.title">title</a> EMPTY&gt;</p>
@@ -208,7 +214,7 @@ expands an element targeted by the given path and optional configId attributes. 
 <h2><code>head</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.head">head</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST head</p>
-<p class=code id=dtdAttlist>src&nbsp;CDATA #REQUIRED&gt;</p>
+<p class=code id=dtdAttlist>src&nbsp;CDATA #REQUIRED&gt;<p class=code id=dtdAttlist>encoding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 Direct HTML to include in a page's HEAD content area. It allows for additional html to be added to the HTML HEAD section. This is useful for adding java 
@@ -217,6 +223,7 @@ This markup is only to be used with an HTML based intro part implementation. It 
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>src</b> - relative or absolute URL to a file containing HTML to include directly into the HTML head section.</li>
+<li><b>encoding</b> - an optional attribute to specify the encoding of the inlined file containing the head snippet.</li>
 </ul>
 <h2><code>img</code></h2>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.img">img</a> EMPTY&gt;</p>
@@ -282,7 +289,7 @@ is supported for both the HTML and SWT presentations.</p>
 <p><br>
 &nbsp;</p>
 <ul class="ConfigMarkup" id="attlistDesc">
-  <li><b>id</b> - unique identifier of this HTML element </li>
+  <li><b>id</b> - unique identifier of this content provider element. </li>
   <li><b>pluginId</b> - The id of the plug-in that contains the IContentProvider 
   class specified by the class attribute. This is an optional attribute that 
   should be used if the class doesn't come from the same plug-in that defined 

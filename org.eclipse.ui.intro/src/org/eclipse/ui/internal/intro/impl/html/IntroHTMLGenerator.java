@@ -144,7 +144,7 @@ public class IntroHTMLGenerator {
         IntroHead introHead = IntroPlugin.getDefault().getIntroModelRoot()
                 .getPresentation().getHead();
         if (introHead != null) {
-            content = readFromFile(introHead.getSrc());
+            content = readFromFile(introHead.getSrc(), introHead.getInlineEncoding());
             if (content != null)
                 head.addContent(content);
         }
@@ -155,7 +155,7 @@ public class IntroHTMLGenerator {
         for (int i = 0; i < htmlHeads.length; i++) {
             introHead = htmlHeads[i];
             if (introHead != null) {
-                content = readFromFile(introHead.getSrc());
+                content = readFromFile(introHead.getSrc(), introHead.getInlineEncoding());
                 if (content != null)
                     head.addContent(content);
             }
@@ -466,7 +466,9 @@ public class IntroHTMLGenerator {
      */
     private HTMLElement generateInlineIntroHTML(IntroHTML element,
             int indentLevel) {
-        StringBuffer content = readFromFile(element.getSrc());
+        // make sure to ask model for encoding. If encoding is null (ie: not specified in
+        // markup, local encoding is used.
+        StringBuffer content = readFromFile(element.getSrc(), element.getInlineEncoding());
         if (content != null && content.length() > 0) {
             // Create the outer div element
             String divClass = (element.getStyleId() != null) ? element
@@ -909,9 +911,11 @@ public class IntroHTMLGenerator {
      * 
      * @param src -
      *            the file that contains the target conent
+     * @param charsetName -
+     *            the encoding of the file to be read. If null, local encoding is used.
      * @return a StringBuffer containing the content in the file, or null
      */
-    private StringBuffer readFromFile(String src) {
+    private StringBuffer readFromFile(String src, String charsetName) {
         if (src == null)
             return null;
         InputStream stream = null;
@@ -923,7 +927,10 @@ public class IntroHTMLGenerator {
             //TODO: Do we need to worry about the encoding here? e.g.:
             //reader = new BufferedReader(new InputStreamReader(stream,
             // ResourcesPlugin.getEncoding()));
-            reader = new BufferedReader(new InputStreamReader(stream));
+            if(charsetName == null)
+                reader = new BufferedReader(new InputStreamReader(stream));
+            else 
+                reader = new BufferedReader(new InputStreamReader(stream, charsetName));
             while (true) {
                 int character = reader.read();
                 if (character == -1) // EOF

@@ -243,7 +243,7 @@ public class Util {
                         // command failed
                         p = null;
                     }
-                    if (p != null && remote) {
+                    if (p != null) {
                         int exitCode = p.waitFor();
                         if (exitCode == 0)
                             return p;
@@ -258,7 +258,7 @@ public class Util {
                         // command failed
                         p = null;
                     }
-                    if (p != null && remote) {
+                    if (p != null) {
                         int exitCode = p.waitFor();
                         if (exitCode == 0)
                             return p;

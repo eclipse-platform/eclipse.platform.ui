@@ -187,6 +187,13 @@ This markup is only to be used with an HTML based intro part implementation. It 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="encoding" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute to specify the encoding of the inlined file containing the head snippet.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -506,6 +513,13 @@ Inclusion allows for including an html snippet directly from a file into the dyn
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="encoding" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute to specify the encoding of the inlined file (in the case where type=inline is specified). If not specified, the local file encoding is used.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -610,7 +624,7 @@ Another difference between the tags is that the html tag is only supported for t
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  unique identifier of this HTML element
+                  unique identifier of this content provider element.
                </documentation>
             </annotation>
          </attribute>
