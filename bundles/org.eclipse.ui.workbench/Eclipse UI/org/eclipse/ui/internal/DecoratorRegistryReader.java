@@ -11,6 +11,7 @@ import java.util.Collection;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
@@ -76,7 +77,7 @@ class DecoratorRegistryReader extends RegistryReader {
 	 */
 	Collection readRegistry(IPluginRegistry in) {
 		values = new ArrayList();
-		readRegistry(in, IWorkbenchConstants.PLUGIN_ID, EXTENSION_ID);
+		readRegistry(in, PlatformUI.PLUGIN_ID, EXTENSION_ID);
 		return values;
 	}
 

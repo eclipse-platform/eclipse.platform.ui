@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
@@ -66,6 +67,6 @@ public class ActionDefinitionRegistryReader extends RegistryReader {
 	 */	
 	public void readActionDefinitions(IPluginRegistry registry, ActionDefinitionRegistry out) {
 		actionDefinitions = out;
-		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_DEFINITIONS);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_DEFINITIONS);
 	}
 }

@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.registry;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.*;
 
 /**
@@ -70,7 +71,7 @@ public void readViews(IPluginRegistry in, ViewRegistry out)
 	throws CoreException {
 	// this does not seem to really ever be throwing an the exception
 	viewRegistry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_VIEWS);
 	out.mapViewsToCategories();
 }
 }

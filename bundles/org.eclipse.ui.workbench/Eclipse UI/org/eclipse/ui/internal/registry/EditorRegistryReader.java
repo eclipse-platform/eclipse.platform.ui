@@ -5,6 +5,7 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.*;
@@ -45,7 +46,7 @@ public class EditorRegistryReader extends RegistryReader {
 protected void addEditors(boolean readAll, EditorRegistry registry) {
 	IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 	this.editorRegistry = registry;
-	readRegistry(pluginRegistry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
+	readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_EDITOR);
 }
 /**
  * Implementation of the abstract method that

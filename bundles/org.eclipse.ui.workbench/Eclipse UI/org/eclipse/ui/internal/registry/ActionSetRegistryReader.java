@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.registry;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.*;
 
 /**
@@ -44,7 +45,7 @@ protected boolean readElement(IConfigurationElement element) {
 public void readRegistry(IPluginRegistry in, ActionSetRegistry out)
 {
 	registry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SETS);
 	out.mapActionSetsToCategories();
 }
 }

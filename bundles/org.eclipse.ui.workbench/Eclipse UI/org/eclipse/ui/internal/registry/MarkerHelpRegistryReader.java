@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -44,9 +45,9 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		markerHelpRegistry = registry;
 		markerQueries = new ArrayList();
-		readRegistry(pluginRegistry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_HELP);
+		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_HELP);
 		markerQueries = new ArrayList();
-		readRegistry(pluginRegistry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_RESOLUTION);
+		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_RESOLUTION);
 	}
 
 	/**

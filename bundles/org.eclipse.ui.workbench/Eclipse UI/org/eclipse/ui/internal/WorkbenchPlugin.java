@@ -67,7 +67,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * The workbench plugin ID.
 	 */
-	public static String PI_WORKBENCH = IWorkbenchConstants.PLUGIN_ID;
+	public static String PI_WORKBENCH = PlatformUI.PLUGIN_ID;
 
 	/**
 	 * The character used to separate preference page category ids

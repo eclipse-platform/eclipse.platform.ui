@@ -5,10 +5,10 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.misc.*;
-import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.dialogs.*;
 import java.util.*;
@@ -139,7 +139,7 @@ protected void readWizards() {
 	if (wizards == null) {
 		wizards = createEmptyWizardCollection();
 		IPluginRegistry pregistry = Platform.getPluginRegistry();
-		readRegistry(pregistry, IWorkbenchConstants.PLUGIN_ID, pluginPoint);
+		readRegistry(pregistry, PlatformUI.PLUGIN_ID, pluginPoint);
 	}
 }
 }

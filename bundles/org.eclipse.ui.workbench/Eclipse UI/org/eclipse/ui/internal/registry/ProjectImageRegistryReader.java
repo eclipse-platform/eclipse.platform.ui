@@ -5,6 +5,7 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -58,6 +59,6 @@ protected boolean readElement(IConfigurationElement element) {
 public void readProjectNatureImages(IPluginRegistry in, ProjectImageRegistry out)
 {
 	registry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_PROJECT_NATURE_IMAGES);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PROJECT_NATURE_IMAGES);
 }
 }

@@ -68,6 +68,6 @@ protected boolean readElement(IConfigurationElement element) {
 public void readRegistry(IPluginRegistry in, ActionSetRegistry out)
 {
 	registry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
 }
 }

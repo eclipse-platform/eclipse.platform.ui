@@ -80,8 +80,7 @@ public String getID() {
  * @return IPreferenceStore
  */
 /*package*/ IPreferenceStore getPreferenceStore() {
-	return ((AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID))
-		.getPreferenceStore();
+	return WorkbenchPlugin.getDefault().getPreferenceStore();		
 }
 /**
  * Return whether the window's shell is activated

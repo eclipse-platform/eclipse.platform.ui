@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 
 /**
@@ -252,8 +253,8 @@ public class AcceleratorRegistryReader extends RegistryReader{
 	 */	
 	public void read(IPluginRegistry registry, AcceleratorRegistry out) {
 		acceleratorRegistry = out;
-		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
-		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
-		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_ACCELERATOR_SETS);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACCELERATOR_CONFIGURATIONS);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACCELERATOR_SCOPES);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACCELERATOR_SETS);
 	}
 }

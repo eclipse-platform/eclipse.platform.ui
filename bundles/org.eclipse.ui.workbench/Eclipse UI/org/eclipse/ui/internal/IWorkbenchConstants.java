@@ -10,8 +10,6 @@ import org.eclipse.ui.PlatformUI;
  * General constants used by the workbench.
  */
 public interface IWorkbenchConstants {
-	// Plug-in id to match the id in the plugin.xml file
-	public static final String PLUGIN_ID = PlatformUI.PLUGIN_ID;
 
 	// Workbench Extension Point Names
 	public static final String PL_ACTION_SETS = "actionSets"; //$NON-NLS-1$
@@ -61,21 +59,21 @@ public interface IWorkbenchConstants {
 	public static final String WORKBENCH_VISIBLE_VIEW_ID = "Workbench.visibleViewID";  //$NON-NLS-1$
 
 	// String to show in preference dialog as root node of workbench preferences
-	public static final String WORKBENCH_PREFERENCE_CATEGORY_ID = PLUGIN_ID + ".preferencePages.Workbench"; //$NON-NLS-1$
+	public static final String WORKBENCH_PREFERENCE_CATEGORY_ID = PlatformUI.PLUGIN_ID + ".preferencePages.Workbench"; //$NON-NLS-1$
 
 	// Identifier of workbench info properties page
-	public static final String WORKBENCH_PROPERTIES_PAGE_INFO = PLUGIN_ID + ".propertypages.info.file"; //$NON-NLS-1$
+	public static final String WORKBENCH_PROPERTIES_PAGE_INFO = PlatformUI.PLUGIN_ID + ".propertypages.info.file"; //$NON-NLS-1$
 	
 	// Default layout.
-	public static final String DEFAULT_LAYOUT_ID = PLUGIN_ID + ".resourcePerspective";       //$NON-NLS-1$
+	public static final String DEFAULT_LAYOUT_ID = PlatformUI.PLUGIN_ID + ".resourcePerspective";       //$NON-NLS-1$
 
 	// Various editor.
-	public static final String DEFAULT_EDITOR_ID = PLUGIN_ID + ".DefaultTextEditor"; //$NON-NLS-1$
-	public static final String OLE_EDITOR_ID = PLUGIN_ID + ".OleEditor"; //$NON-NLS-1$
-	public static final String SYSTEM_EDITOR_ID = PLUGIN_ID + ".SystemEditor"; //$NON-NLS-1$
+	public static final String DEFAULT_EDITOR_ID = PlatformUI.PLUGIN_ID + ".DefaultTextEditor"; //$NON-NLS-1$
+	public static final String OLE_EDITOR_ID = PlatformUI.PLUGIN_ID + ".OleEditor"; //$NON-NLS-1$
+	public static final String SYSTEM_EDITOR_ID = PlatformUI.PLUGIN_ID + ".SystemEditor"; //$NON-NLS-1$
 
 	// Default view category.
-	public static final String DEFAULT_CATEGORY_ID = PLUGIN_ID;
+	public static final String DEFAULT_CATEGORY_ID = PlatformUI.PLUGIN_ID;
 
 	// Persistance tags.
 	public static final String TAG_ID = "id"; //$NON-NLS-1$

@@ -5,6 +5,7 @@ package org.eclipse.ui.internal.registry;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -42,6 +43,6 @@ protected boolean readElement(IConfigurationElement element) {
  */
 public void readWorkingSets(IPluginRegistry in, WorkingSetRegistry out) {
 	registry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_WORKINGSETS);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_WORKINGSETS);
 }
 }

@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.registry;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.*;
 
 /**
@@ -44,6 +45,6 @@ protected boolean readElement(IConfigurationElement element) {
 public void readPerspectives(IPluginRegistry in, PerspectiveRegistry out)
 {
 	registry = out;
-	readRegistry(in, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVES);
+	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_PERSPECTIVES);
 }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -126,6 +127,6 @@ public class CapabilityRegistryReader extends RegistryReader{
 	 */
 	public void read(IPluginRegistry registry, CapabilityRegistry out) {
 		capabilityRegistry = out;
-		readRegistry(registry, IWorkbenchConstants.PLUGIN_ID, IWorkbenchConstants.PL_CAPABILITIES);
+		readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_CAPABILITIES);
 	}
 }
