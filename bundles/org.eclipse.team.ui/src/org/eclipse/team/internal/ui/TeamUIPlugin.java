@@ -184,10 +184,10 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		getPreferenceStore().addPropertyChangeListener(this);
 		
 		// startup auto-refresh job if necessary
-		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName")); //$NON-NLS-1$
-		refreshJob.setReschedule(true);
+		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName")); //$NON-NLS-1$		
 		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
+			refreshJob.setReschedule(true);
 			// start once the platform has started and stabilized
 			refreshJob.schedule(20000 /* 20 seconds */);
 		}
@@ -372,9 +372,11 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 			RefreshSubscriberJob refreshJob = getRefreshJob();
 			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 			if(((Boolean)event.getNewValue()).booleanValue()) {
+				refreshJob.setReschedule(true);
 				refreshJob.schedule();				
 			} else {				
 				refreshJob.setRestartOnCancel(false /* don't restart the job */);
+				refreshJob.setReschedule(false);
 				refreshJob.cancel();
 			}
 		}

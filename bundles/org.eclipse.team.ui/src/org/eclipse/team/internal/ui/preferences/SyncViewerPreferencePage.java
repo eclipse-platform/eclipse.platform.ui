@@ -116,15 +116,26 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		scheduledDelay = new IntegerFieldEditor2(IPreferenceIds.SYNCVIEW_DELAY, "How often should the background refresh run? (in minutes)", getFieldEditorParent(), 2);
 		addField(scheduledDelay);
 		
-		Date lastTimeRun = new Date(TeamUIPlugin.getPlugin().getRefreshJob().getLastTimeRun());
-		String sLastTimeRun = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun);
-		Label label= new Label(getFieldEditorParent(), SWT.NONE);
-		label.setText(Policy.bind("SyncViewPreferencePage.lastRefreshRun", sLastTimeRun)); //$NON-NLS-1$ 
+		updateLastRunTime(new Label(getFieldEditorParent(), SWT.NONE));
 		
 		compressFolders = new BooleanFieldEditor(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, "Compress in-sync folder paths when using the tree view", SWT.NONE, getFieldEditorParent());
 		addField(compressFolders);
 	}
 	
+	private void updateLastRunTime(Label label) {
+		String text;
+		long mills = TeamUIPlugin.getPlugin().getRefreshJob().getLastTimeRun();
+		if(mills == 0) {
+			String never = Policy.bind("SyncViewPreferencePage.lastRefreshRunNever"); //$NON-NLS-1$
+			text = Policy.bind("SyncViewPreferencePage.lastRefreshRun", never); //$NON-NLS-1$
+		} else {
+			Date lastTimeRun = new Date(TeamUIPlugin.getPlugin().getRefreshJob().getLastTimeRun());
+			String sLastTimeRun = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun);
+			text = Policy.bind("SyncViewPreferencePage.lastRefreshRun", sLastTimeRun); //$NON-NLS-1$
+		}
+		label.setText(text);		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */

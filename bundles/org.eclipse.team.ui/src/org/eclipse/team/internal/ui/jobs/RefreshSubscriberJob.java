@@ -32,8 +32,6 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 public class RefreshSubscriberJob extends Job {
 	
-	protected final static boolean DEBUG = Policy.DEBUG_REFRESH_JOB;		
-	
 	/**
 	 * Uniquely identifies this type of job. This is used for cancellation.
 	 */
@@ -91,9 +89,10 @@ public class RefreshSubscriberJob extends Job {
 		addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				if(shouldReschedule()) {
-					if(restartOnCancel && shouldReschedule()) {					
-						RefreshSubscriberJob.this.schedule(scheduleDelay);
+					if(event.getResult().getSeverity() == IStatus.CANCEL && ! restartOnCancel) {					
+						return;
 					}
+					RefreshSubscriberJob.this.schedule(scheduleDelay);
 					restartOnCancel = true;
 				}
 			}
