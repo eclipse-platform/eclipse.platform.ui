@@ -46,6 +46,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -53,10 +55,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -78,20 +78,21 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	
 	private AntModel fAntModel;
 
-	private Listener fLocationModifyListener = new Listener() {
-		public void handleEvent(Event e) {
+	private ModifyListener fLocationModifyListener = new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
 			fAntModel= null;
 			File buildfile= getBuildFile(getProjectLocationFieldValue());
 			if (buildfile != null) {
 				fAntModel= getAntModel(buildfile);
-				setProjectName();
+				setProjectName(); // page will be validated on setting the project name
+			} else {
+				setPageComplete(validatePage());
 			}
-			setPageComplete(validatePage());
 		}
 	};
 	
-	private Listener fNameModifyListener = new Listener() {
-		public void handleEvent(Event e) {
+	private ModifyListener fNameModifyListener = new ModifyListener() {
+		public void modifyText(ModifyEvent e) {
 			setPageComplete(validatePage());
 		}
 	};
@@ -181,7 +182,7 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		fProjectNameField.setLayoutData(data);
 		fProjectNameField.setFont(dialogFont);
 		
-		fProjectNameField.addListener(SWT.Modify, fNameModifyListener);
+		fProjectNameField.addModifyListener(fNameModifyListener);
 	}
 	/**
 	 * Creates the project location specification controls.
@@ -212,21 +213,15 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 			}
 		});
 
-		fLocationPathField.addListener(SWT.Modify, fLocationModifyListener);
+		fLocationPathField.addModifyListener(fLocationModifyListener);
 	}
 
 	/**
-	 * Returns the current project name as entered by the user, or its anticipated
-	 * initial value.
+	 * Returns the current project name
 	 *
-	 * @return the project name, its anticipated initial value, or <code>null</code>
-	 *   if no project name is known
+	 * @return the project name
 	 */
 	private String getProjectName(AntProjectNode projectNode) {
-		String userSpecifiedName= getProjectNameFieldValue();
-		if (userSpecifiedName.length() > 0) {
-			return userSpecifiedName;
-		}
 		String projectName= projectNode.getLabel();
 		if (projectName == null) {
 			projectName= DataTransferMessages.getString("ExternalAntBuildfileImportPage.14"); //$NON-NLS-1$
