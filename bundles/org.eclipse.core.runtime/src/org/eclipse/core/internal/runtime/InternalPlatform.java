@@ -853,7 +853,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	public Bundle[] getBundles(String symbolicName, String version) {
-		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version, null);
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version);
 		if (bundles == null)
 			return null;
 
