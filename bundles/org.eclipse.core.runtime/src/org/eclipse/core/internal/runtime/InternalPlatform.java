@@ -90,6 +90,9 @@ public final class InternalPlatform implements IPlatform {
 	 */
 	private static boolean writeVersion = true;
 
+	private ArrayList groupProviders = new ArrayList(3);
+	private IProduct product;
+
 	/**
 	 * Name of the plug-in customization file (value "plugin_customization.ini")
 	 * located in the root of the primary feature plug-in and it's 
@@ -1231,4 +1234,30 @@ public final class InternalPlatform implements IPlatform {
 	public void setKeyringLocation(String keyringFile) {
 		getMetaArea().setKeyringFile(keyringFile);
 	}
+	
+	public IBundleGroupProvider[] getBundleGroupProviders() {
+		return (IBundleGroupProvider[])groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
+	}
+
+	public IProduct getProduct() {
+		if (product != null)
+			return product;
+		String productId = System.getProperty("eclipse.product");
+		if (productId == null)
+			return null;
+		IConfigurationElement[] entries = getRegistry().getConfigurationElementsFor(PI_RUNTIME, "product", productId);
+		if (entries == null || entries.length == 0)
+			return null;
+		// There should only be one product with the given id so just take the first element
+		product = new Product(entries[0]);
+		return product;
+		}
+
+	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
+		groupProviders.add(provider);		
+	}
+	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
+		groupProviders.remove(provider);		
+	}
+	
 }
