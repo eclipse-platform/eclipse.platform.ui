@@ -54,6 +54,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -346,9 +348,22 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		updateCommandsAndContexts();
 	}
 
-	// TODO is this necessary? as well, should CommandAndContextController be a singleton?
+	// TODO is this necessary here? as well, should CommandAndContextController be a singleton?
 	public void updateCommandAndContextController() {
-		commandAndContextController.update();			
+		commandAndContextController.update();	
+		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
+		
+		if (workbenchWindow != null) {
+			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+			menuManager.update(IAction.TEXT);
+
+			/* TODO make this work like it does for menus
+			CoolBarManager coolBarManager = ((WorkbenchWindow) workbenchWindow).getCoolBarManager();
+		
+			if (coolBarManager != null)
+				coolBarManager.update(true);
+			*/
+		}
 	}
 
 	void updateCommandsAndContexts() {
