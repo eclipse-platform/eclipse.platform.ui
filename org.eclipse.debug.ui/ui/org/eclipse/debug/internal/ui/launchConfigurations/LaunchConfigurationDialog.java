@@ -951,7 +951,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.addDoubleClickListener(this);
 		tree.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				handleKeyPressed(e);
+				handleTreeViewerKeyPressed(e);
 			}
 		});
 		
@@ -2929,14 +2929,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Handles key events in tree viewer. Specifically
-	 * when the delete key is pressed.
+	 * Handles key events in the tree viewer. Specifically
+	 * when the delete key or 'Ctrl-C' for duplicate is pressed.
 	 */
-	protected void handleKeyPressed(KeyEvent event) {
+	protected void handleTreeViewerKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			if (getButtonActionDelete().isEnabled()) {
 				getButtonActionDelete().run();
 			}
+		// Treat Ctrl-C as 'duplicate'
+		} else if (event.character == '\003' && event.stateMask == SWT.CTRL && event.keyCode == 0) {
+			if (getButtonActionDuplicate().isEnabled()) {
+				getButtonActionDuplicate().run();
+			}			
 		}
 	}
 	
