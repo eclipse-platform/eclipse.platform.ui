@@ -205,7 +205,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		ArrayList allLibraries = new ArrayList();
 		ArrayList allBundes = new ArrayList();
 		allBundes.add(bundleOsgi);
-		Bundle[] fragments = bundleOsgi.getFragments();
+		Bundle[] fragments = InternalPlatform.getDefault().getFragments(bundleOsgi);
 		if (fragments != null)
 			allBundes.addAll(Arrays.asList(fragments));
 		
@@ -296,9 +296,13 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	//Recusively collect the required bundles of a given bundles
 	private Set collectRequired(String requiredId) {
-		String requiredBundle = (String) InternalPlatform.getDefault().getBundle(requiredId).getHeaders().get(Constants.REQUIRE_BUNDLE);
-		ManifestElement[] entries;
 		Set recursiveRequired = new HashSet(3);
+		Bundle required = InternalPlatform.getDefault().getBundle(requiredId);
+		if (required == null)
+			return recursiveRequired;
+
+		String requiredBundle = (String) required.getHeaders().get(Constants.REQUIRE_BUNDLE);
+		ManifestElement[] entries;
 		try {
 			entries = ManifestElement.parseBasicCommaSeparation(Constants.REQUIRE_BUNDLE, requiredBundle);
 			if (entries == null)
@@ -345,7 +349,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		return deactivated;
 	}
 	private void logError(IStatus status) {
-		InternalPlatform.getDefault().getLog(org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle("org.eclipse.core.runtime")).log(status);
+		InternalPlatform.getDefault().getLog(org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 	}
 	/**
 	 * Returns <code>true</code> if we should continue with the plugin activation.
@@ -456,7 +460,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	private String getId() {
-		return bundleOsgi.getGlobalName();
+		return bundleOsgi.getSymbolicName();
 	}
 
 	private void internalDoPluginActivation() throws CoreException {

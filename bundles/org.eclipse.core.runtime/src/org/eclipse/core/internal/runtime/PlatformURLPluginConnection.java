@@ -47,7 +47,7 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 		String ref = ix == -1 ? spec.substring(PLUGIN.length() + 1) : spec.substring(PLUGIN.length() + 1, ix);
 		String id = getId(ref);
 		String vid = getVersion(ref);
-		target = PlatformActivator.getContext().getBundle(id);
+		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
 			throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
 		if (ix == -1 || (ix + 1) >= spec.length())
@@ -73,11 +73,11 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 			String ref = ix == -1 ? spec.substring(PLUGIN.length() + 1) : spec.substring(PLUGIN.length() + 1, ix);
 			String id = getId(ref);
 			String vid = getVersion(ref);
-			target = PlatformActivator.getContext().getBundle(id);
+			target = InternalPlatform.getDefault().getBundle(id);
 			if (target == null)
 				throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
 		}
-		Bundle[] fragments = target.getFragments();
+		Bundle[] fragments = InternalPlatform.getDefault().getFragments(target);
 		int fragmentLength = (fragments == null) ? 0 : fragments.length;
 		if (fragmentLength == 0)
 			return null;

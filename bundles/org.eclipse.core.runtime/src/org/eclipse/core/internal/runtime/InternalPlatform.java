@@ -25,6 +25,7 @@ import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.osgi.framework.*;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -45,6 +46,7 @@ public final class InternalPlatform implements IPlatform {
 	static EnvironmentInfo infoService;
 	static URLConverter urlConverter;
 	static FrameworkLog frameworkLog;
+	static PackageAdmin packageAdmin;
 
 	// registry index - used to store last modified times for
 	// registry caching
@@ -198,7 +200,7 @@ public final class InternalPlatform implements IPlatform {
 		//TODO: this is bogus - only to satisfy clients that want to resolve bundle2 URLs
 		if (url.getProtocol().equals("bundle2")) { //$NON-NLS-1$
 			String bundleName = url.getHost();
-			Bundle bundle = this.context.getBundle(bundleName.substring(0, bundleName.indexOf('_')));
+			Bundle bundle = getBundle(bundleName.substring(0, bundleName.indexOf('_')));
 
 			if (bundle != null) {
 				URL localURL = bundle.getEntry(url.getPath());
@@ -1066,7 +1068,16 @@ public final class InternalPlatform implements IPlatform {
 		return context;
 	}
 	public Bundle getBundle(String id) {
-		return getBundleContext().getBundle(id);
+		return packageAdmin.getResolvedBundle(id,null,null);
+	}
+	public Bundle[] getFragments(Bundle bundle) {
+		return packageAdmin.getFragments(bundle);
+	}
+	public Bundle[] getHosts(Bundle bundle) {
+		return packageAdmin.getHosts(bundle);
+	}
+	public boolean isFragment(Bundle bundle) {
+		return packageAdmin.isFragment(bundle);
 	}
 
 	public URL getInstallURL() {
@@ -1091,7 +1102,7 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	public boolean isRunning() {
-		int state = context.getBundle(PI_RUNTIME).getState();
+		int state = context.getBundle().getState();
 		return state == Bundle.ACTIVE;
 	}
 
@@ -1195,15 +1206,15 @@ public final class InternalPlatform implements IPlatform {
 		return getStateLocation(bundle, true);
 	}
 	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
-		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName());
+		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getSymbolicName());
 		return model != null ? model.getResourceBundle() : null ;
 	}
 	public String getResourceString(Bundle bundle, String value) {
-		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName());
+		BundleModel model = (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getSymbolicName());
 		return model != null ? model.getResourceString(value) : value;
 	}
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
-		BundleModel model =  (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName());
+		BundleModel model =  (BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getSymbolicName());
 		return model != null ? model.getResourceString(value, resourceBundle) : value;
 	}
 	public String getOSArch() {

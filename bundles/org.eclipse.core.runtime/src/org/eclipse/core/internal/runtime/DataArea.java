@@ -84,7 +84,7 @@ public class DataArea {
 	 */
 	public IPath getStateLocation(Bundle bundle) throws IllegalStateException {
 		assertLocationInitialized();
-		return getMetadataLocation().append(F_PLUGIN_DATA).append(bundle.getGlobalName());
+		return getMetadataLocation().append(F_PLUGIN_DATA).append(bundle.getSymbolicName());
 	}
 	/**
 	 * Returns the read/write location of the file for storing plugin preferences.

@@ -258,7 +258,7 @@ public class FindSupport {
 	}
 
 	private static URL findInFragments(Bundle b, IPath filePath) {
-		Bundle[] fragments = b.getFragments();
+		Bundle[] fragments = InternalPlatform.getDefault().getFragments(b);
 		if (fragments == null)
 			return null;
 

@@ -46,10 +46,10 @@ public class PlatformURLFragmentConnection extends PlatformURLConnection {
 		String ref = ix == -1 ? spec.substring(FRAGMENT.length() + 1) : spec.substring(FRAGMENT.length() + 1, ix);
 		String id = getId(ref);
 		String vid = getVersion(ref);
-		target = PlatformActivator.getContext().getBundle(id);
-		URL result = target.getEntry("");
+		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
 			throw new IOException(Policy.bind("url.resolveFragment", url.toString())); //$NON-NLS-1$
+		URL result = target.getEntry("");
 		if (ix == -1 || (ix + 1) >= spec.length())
 			return result;
 		else

@@ -283,7 +283,7 @@ public abstract class Plugin implements BundleActivator {
 		this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
 
 		// on plugin start, find and start the corresponding bundle.
-		bundle = InternalPlatform.getDefault().getBundleContext().getBundle(descriptor.getUniqueIdentifier());
+		bundle = InternalPlatform.getDefault().getBundle(descriptor.getUniqueIdentifier());
 		try {
 			if ((bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) == 0)
 				bundle.start();
@@ -331,7 +331,7 @@ public abstract class Plugin implements BundleActivator {
 	public final IPluginDescriptor getDescriptor() {
 		if (descriptor!=null)
 			return descriptor;
-		IPluginDescriptor descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getGlobalName());
+		IPluginDescriptor descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
 		if (descriptor != null)
 			CompatibilityHelper.setPlugin(descriptor, this);
 		return descriptor;
@@ -395,7 +395,7 @@ public abstract class Plugin implements BundleActivator {
 	public final Preferences getPluginPreferences() {
 		if (preferences != null) {
 			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("Plugin preferences already loaded for " + bundle.getGlobalName()); //$NON-NLS-1$
+				System.out.println("Plugin preferences already loaded for " + bundle.getSymbolicName()); //$NON-NLS-1$
 			}
 			// N.B. preferences instance field set means already created
 			// and initialized (or in process of being initialized)
@@ -403,7 +403,7 @@ public abstract class Plugin implements BundleActivator {
 		}
 
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Loading preferences for plugin " + bundle.getGlobalName()); //$NON-NLS-1$
+			System.out.println("Loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
 		}
 		// lazily create preference store
 		// important: set preferences instance field to prevent re-entry
@@ -418,7 +418,7 @@ public abstract class Plugin implements BundleActivator {
 		// 3. override with defaults from primary feature or command line
 		applyExternalPluginDefaultOverrides();
 		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Completed loading preferences for plugin " + bundle.getGlobalName()); //$NON-NLS-1$
+			System.out.println("Completed loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
 		}
 		return preferences;
 	}
@@ -577,9 +577,9 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	private void applyExternalPluginDefaultOverrides() {
 		// 1. InternalPlatform is central authority for platform configuration questions
-		InternalPlatform.getDefault().applyPrimaryFeaturePluginDefaultOverrides(bundle.getGlobalName(), preferences);
+		InternalPlatform.getDefault().applyPrimaryFeaturePluginDefaultOverrides(bundle.getSymbolicName(), preferences);
 		// 2. command line overrides take precedence over feature-specified overrides
-		InternalPlatform.getDefault().applyCommandLinePluginDefaultOverrides(bundle.getGlobalName(), preferences);
+		InternalPlatform.getDefault().applyCommandLinePluginDefaultOverrides(bundle.getSymbolicName(), preferences);
 	}
 
 	/**
@@ -638,7 +638,7 @@ public abstract class Plugin implements BundleActivator {
 		// exists).
 		Properties props = null;
 		if (!overrides.isEmpty()) {
-			props = InternalPlatform.getDefault().getPreferenceTranslator(bundle.getGlobalName(), PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
+			props = InternalPlatform.getDefault().getPreferenceTranslator(bundle.getSymbolicName(), PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
 		}
 
 		for (Iterator it = overrides.entrySet().iterator(); it.hasNext();) {
@@ -870,7 +870,7 @@ public abstract class Plugin implements BundleActivator {
 	public void start(BundleContext context) throws Exception{
 		this.context = context;
 		bundle = context.getBundle();
-		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getGlobalName());
+		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
 		CompatibilityHelper.setPlugin(descriptor, this);
 		CompatibilityHelper.setActive(descriptor);
 	}

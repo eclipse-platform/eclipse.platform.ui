@@ -103,9 +103,11 @@ public class PluginRegistry implements IPluginRegistry {
 	public IPluginDescriptor[] getPluginDescriptors() {
 		Bundle[] bundles = InternalPlatform.getDefault().getBundleContext().getBundles();
 		ArrayList pds = new ArrayList(bundles.length);
-		for (int i = 0; i < bundles.length; i++)
-			if (!bundles[i].isFragment() && bundles[i].getGlobalName() != null && (bundles[i].getState() == Bundle.RESOLVED || bundles[i].getState() == Bundle.STARTING || bundles[i].getState() == Bundle.ACTIVE))
-				pds.add(getPluginDescriptor(bundles[i].getGlobalName()));
+		for (int i = 0; i < bundles.length; i++) {
+			boolean isFragment = InternalPlatform.getDefault().isFragment(bundles[i]);
+			if (!isFragment && bundles[i].getSymbolicName() != null && (bundles[i].getState() == Bundle.RESOLVED || bundles[i].getState() == Bundle.STARTING || bundles[i].getState() == Bundle.ACTIVE))
+				pds.add(getPluginDescriptor(bundles[i].getSymbolicName()));
+		}
 		IPluginDescriptor[] result = new IPluginDescriptor[pds.size()];
 		return (IPluginDescriptor[]) pds.toArray(result);
 	}
@@ -119,7 +121,7 @@ public class PluginRegistry implements IPluginRegistry {
 	public class RegistryListener implements BundleListener {
 		public synchronized void bundleChanged(BundleEvent event) {
 			if (event.getType() == BundleEvent.UNINSTALLED || event.getType() == BundleEvent.UNRESOLVED) {
-				String globalName = event.getBundle().getGlobalName();
+				String globalName = event.getBundle().getSymbolicName();
 				if (globalName != null && descriptors.containsKey(globalName)) {
 					descriptors.remove(globalName);
 				}

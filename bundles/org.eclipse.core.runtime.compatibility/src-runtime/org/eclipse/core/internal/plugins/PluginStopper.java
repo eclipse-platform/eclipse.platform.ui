@@ -49,11 +49,11 @@ public class PluginStopper implements IShutdownHook {
 		for (int i = 0; i < plugins.length; i++) {
 			if (!plugins[i].isLegacy())
 				continue; 
-			Bundle pluginBundle = context.getBundle(plugins[i].getUniqueIdentifier());
-			if (pluginBundle.getState()  == Bundle.ACTIVE) {
-				activeLegacyBundles.put(pluginBundle.getGlobalName(),pluginBundle);
+			Bundle pluginBundle = InternalPlatform.getDefault().getBundle(plugins[i].getUniqueIdentifier());
+			if (pluginBundle != null && pluginBundle.getState()  == Bundle.ACTIVE) {
+				activeLegacyBundles.put(pluginBundle.getSymbolicName(),pluginBundle);
 				if (debug)
-					System.out.println("Active plugin bundle: " + pluginBundle.getGlobalName()); //$NON-NLS-1$
+					System.out.println("Active plugin bundle: " + pluginBundle.getSymbolicName()); //$NON-NLS-1$
 			}
 		}
 		// find dependencies betweeen them
@@ -83,7 +83,7 @@ public class PluginStopper implements IShutdownHook {
 				StringBuffer sb = new StringBuffer("***Cycle: "); //$NON-NLS-1$
 				for (int j = 0; j < cycles[i].length; j++) {
 					sb.append('\n');				
-					sb.append(((Bundle)cycles[i][j]).getGlobalName());
+					sb.append(((Bundle)cycles[i][j]).getSymbolicName());
 				}
 				System.out.println(sb);
 			}
@@ -95,9 +95,9 @@ public class PluginStopper implements IShutdownHook {
 		// stop all active legacy bundles in the reverse order of Require-Bundle
 		for (int i = orderedBundles.length - 1; i >= 0; i--) {
 			try {
-				if (Platform.getPluginRegistry().getPluginDescriptor(orderedBundles[i].getGlobalName()).isLegacy() && orderedBundles[i].getState() == Bundle.ACTIVE) {
+				if (Platform.getPluginRegistry().getPluginDescriptor(orderedBundles[i].getSymbolicName()).isLegacy() && orderedBundles[i].getState() == Bundle.ACTIVE) {
 					if (debug)
-						System.out.println("Stopping: " + orderedBundles[i].getGlobalName() + " (#" + orderedBundles[i].getBundleId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						System.out.println("Stopping: " + orderedBundles[i].getSymbolicName() + " (#" + orderedBundles[i].getBundleId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					orderedBundles[i].stop();
 				}
 			} catch (Exception e) {

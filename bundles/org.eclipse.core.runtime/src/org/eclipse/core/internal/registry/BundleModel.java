@@ -145,7 +145,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		}
 	}
 	private URL findInFragments(Bundle bundle, String filePath) {
-		Bundle[] fragments = bundle.getFragments();
+		Bundle[] fragments = InternalPlatform.getDefault().getFragments(bundle);
 		URL fileURL = null;
 		int i = 0;
 		while (fragments != null && i < fragments.length && fileURL == null) {
@@ -167,7 +167,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		if (bundleNotFound)
 			throw new MissingResourceException(Policy.bind("plugin.bundleNotFound", getName(), DEFAULT_BUNDLE_NAME + "_" + targetLocale), DEFAULT_BUNDLE_NAME + "_" + targetLocale, ""); //$NON-NLS-1$  //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
-		Bundle bundle = InternalPlatform.getDefault().getBundleContext().getBundle(this.getName());
+		Bundle bundle = InternalPlatform.getDefault().getBundle(this.getName());
 
 		URL resourceURL = null;
 		//TODO Need to make sure that the NL fragments are provided flat.

@@ -13,6 +13,8 @@ package org.eclipse.core.internal.registry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.MultiStatus;
 import org.osgi.framework.*;
@@ -65,13 +67,13 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	private void removeBundle(Bundle bundle) {
-		registry.remove(bundle.getGlobalName(), bundle.getBundleId());
+		registry.remove(bundle.getSymbolicName(), bundle.getBundleId());
 	}
 
 	private void addBundle(Bundle bundle) {
 		// if the given bundle already exists in the registry then return.
 		// note that this does not work for update cases.
-		if (registry.getElement(bundle.getGlobalName()) != null)
+		if (registry.getElement(bundle.getSymbolicName()) != null)
 			return;
 		BundleModel bundleModel = getBundleModel(bundle);
 		if (bundleModel == null)
@@ -89,7 +91,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			return null;
 		InputStream is = null;
 		String manifestType = null;
-		boolean isFragment = bundle.isFragment();
+		boolean isFragment = InternalPlatform.getDefault().isFragment(bundle);
 		try {
 			URL url = bundle.getEntry(isFragment ? FRAGMENT_MANIFEST : PLUGIN_MANIFEST);
 			if (url != null) {
@@ -105,10 +107,13 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry problems", null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
 			BundleModel bundleModel = new ExtensionsParser(factory).parseManifest(new InputSource(is), manifestType);
-			bundleModel.setUniqueIdentifier(bundle.getGlobalName());
+			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setId(bundle.getBundleId());
-			if (isFragment)
-				bundleModel.setHostIdentifier(bundle.getHost().getGlobalName());
+			if (isFragment){
+				Bundle[] hosts = InternalPlatform.getDefault().getHosts(bundle);
+				if (hosts != null && hosts.length>0)
+					bundleModel.setHostIdentifier(hosts[0].getSymbolicName());
+			}
 			return bundleModel;
 		} catch (SAXException e) {
 			// TODO: need to log this

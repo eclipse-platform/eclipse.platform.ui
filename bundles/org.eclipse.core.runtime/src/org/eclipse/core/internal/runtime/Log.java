@@ -60,7 +60,7 @@ public class Log implements ILog {
 			final ILogListener listener = listeners[i];
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
-					listener.logging(status, bundle.getGlobalName());
+					listener.logging(status, bundle.getSymbolicName());
 				}
 				public void handleException(Throwable e) {
 				}

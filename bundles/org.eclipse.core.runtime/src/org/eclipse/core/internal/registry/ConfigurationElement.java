@@ -83,7 +83,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			else {
 				String message = Policy.bind("plugin.extDefNotFound", attributeName); //$NON-NLS-1$
 				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$
-				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(status); //$NON-NLS-1$
+				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		} else {
@@ -106,7 +106,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		if (className == null || className.equals("")) { //$NON-NLS-1$
 			String message = Policy.bind("plugin.extDefNoClass", attributeName); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
-			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(status); //$NON-NLS-1$
+			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
 
 			throw new CoreException(status);
 		}
@@ -115,7 +115,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	}
 
 	Object createExecutableExtension(Bundle bundle, String pluginName, String className, Object initData, IConfigurationElement cfig, String propertyName) throws CoreException {
-		String id = bundle.getGlobalName(); // this plugin id
+		String id = bundle.getSymbolicName(); // this plugin id
 		// check if we need to delegate to some other plugin
 		if (pluginName != null && !pluginName.equals("") && !pluginName.equals(id)) { //$NON-NLS-1$
 			Bundle otherBundle = null;
@@ -134,7 +134,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			//classInstance = getPluginClassLoader(true).loadClass(className);z
 			classInstance = bundle.loadClass(className);
 		} catch (Exception e1) {
-			throwException(Policy.bind("plugin.loadClassError", bundle.getGlobalName(), className), e1); //$NON-NLS-1$
+			throwException(Policy.bind("plugin.loadClassError", bundle.getSymbolicName(), className), e1); //$NON-NLS-1$
 		}
 
 		// create a new instance
@@ -142,7 +142,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		try {
 			result = classInstance.newInstance();
 		} catch (Exception e) {
-			throwException(Policy.bind("plugin.instantiateClassError", bundle.getGlobalName(), className), e); //$NON-NLS-1$
+			throwException(Policy.bind("plugin.instantiateClassError", bundle.getSymbolicName(), className), e); //$NON-NLS-1$
 		}
 
 		// check if we have extension adapter and initialize
@@ -152,11 +152,11 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 				 ((IExecutableExtension) result).setInitializationData(cfig, propertyName, initData);
 			} catch (CoreException ce) {
 				// user code threw exception
-				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(ce.getStatus());
+				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(ce.getStatus());
 				throw new CoreException(ce.getStatus());
 			} catch (Exception te) {
 				// user code caused exception
-				throwException(Policy.bind("policy.initObjectError", bundle.getGlobalName(), className), te); //$NON-NLS-1$
+				throwException(Policy.bind("policy.initObjectError", bundle.getSymbolicName(), className), te); //$NON-NLS-1$
 			}
 		}
  		return result;
@@ -164,7 +164,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 
 	private void throwException(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, exception);
-		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(status);
+		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 		throw new CoreException(status);
 	}
 

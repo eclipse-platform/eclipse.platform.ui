@@ -44,7 +44,7 @@ public class PluginActivator implements BundleActivator {
 		// will bail if it is not time to start
 		ensureNormalStartup(context);
 		this.context = context;
-		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getGlobalName());
+		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getSymbolicName());
 		plugin = pd.getPlugin();
 		plugin.startup();
 		plugin.start(context);
@@ -56,7 +56,7 @@ public class PluginActivator implements BundleActivator {
 		if (startLevel == null)
 			return;
 		if (startLevel.getStartLevel() <= startLevel.getBundleStartLevel(context.getBundle())) {
-			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getGlobalName()), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getSymbolicName()), null); //$NON-NLS-1$
 			InternalPlatform.getDefault().log(status);
 			throw new BundleException(status.getMessage());
 		}

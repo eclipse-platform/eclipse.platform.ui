@@ -20,6 +20,7 @@ import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.urlconversion.URLConverter;
 import org.osgi.framework.*;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.service.url.URLConstants;
 import org.osgi.service.url.URLStreamHandlerService;
 
@@ -36,6 +37,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private ServiceReference environmentServiceReference;
 	private ServiceReference urlServiceReference;
 	private ServiceReference logServiceReference;
+	private ServiceReference packageAdminReference;
 	private static File cacheFile = InternalPlatform.getDefault().getConfigurationLocation().append(".registry").toFile(); //$NON-NLS-1$
 
 	public static BundleContext getContext() {
@@ -47,6 +49,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		acquireInfoService();
 		acquireURLConverterService();
 		acquireFrameworkLogService();
+		acquirePackageAdminService();
 		startInternalPlatform();		
 		startRegistry(context);
 		installPlatformURLSupport();
@@ -119,6 +122,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		environmentInfoServiceReleased(environmentServiceReference);
 		urlServiceReleased(urlServiceReference);
 		logServiceReleased(logServiceReference);
+		packageAdminServiceReleased(packageAdminReference);
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(context);
 		InternalPlatform.getDefault().setRuntimeInstance(null);
@@ -151,6 +155,13 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		if (logServiceReference == null)
 			return;
 		InternalPlatform.frameworkLog  = (FrameworkLog) context.getService(logServiceReference);
+	}
+
+	private void acquirePackageAdminService() throws Exception{
+		packageAdminReference = context.getServiceReference(PackageAdmin.class.getName());
+		if (packageAdminReference == null)
+			return;
+		InternalPlatform.packageAdmin  = (PackageAdmin) context.getService(packageAdminReference);
 	}
 
 	private void startInternalPlatform() {
@@ -188,6 +199,17 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.frameworkLog = null;
 		context.ungetService(logServiceReference);
 		logServiceReference = null;
+	}
+
+	private void packageAdminServiceReleased(ServiceReference reference) {
+		if (packageAdminReference == null)
+			return;
+		if (packageAdminReference != reference)
+			return;
+
+		InternalPlatform.packageAdmin = null;
+		context.ungetService(packageAdminReference);
+		packageAdminReference = null;
 	}
 
 //	public void serviceChanged(ServiceEvent event) {

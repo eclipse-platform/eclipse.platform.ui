@@ -31,7 +31,7 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 	}
 
 	public String getUniqueIdentifier() {
-		return prereq.getGlobalName();
+		return prereq.getSymbolicName();
 	}
 
 	public PluginVersionIdentifier getVersionIdentifier() {
