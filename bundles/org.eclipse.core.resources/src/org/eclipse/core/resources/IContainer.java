@@ -395,6 +395,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @throws CoreException if this method fails Reasons include:
 	 * <ul>
 	 * <li> This resource does not exist.</li>
+	 * <li> An error happened while persisting this setting .</li>
 	 * </ul>
 	 * @see IContainer#getDefaultCharset()
 	 * @since 3.0
