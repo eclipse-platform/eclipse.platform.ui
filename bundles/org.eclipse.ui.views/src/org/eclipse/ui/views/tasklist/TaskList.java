@@ -529,8 +529,7 @@ public class TaskList extends ViewPart {
 		sorter = new TaskSorter();
 		IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
 		IDialogSettings settings = workbenchSettings.getSection(TAG_SORT_SECTION);
-		if (settings != null)
-			sorter.restoreState(settings);
+		sorter.restoreState(settings);
 		viewer.setSorter(sorter);
 			
 		//update the menu to indicate how task are currently sorted

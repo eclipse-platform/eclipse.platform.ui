@@ -41,10 +41,10 @@ class TaskSorter extends ViewerSorter {
 		  RESOURCE,
 		  LOCATION,
 		  DESCRIPTION,
+		  TYPE,
 		  PRIORITY,
-		  CREATION_TIME,
 		  COMPLETION,
-		  TYPE };
+		  CREATION_TIME };
 	final static int[] DEFAULT_DIRECTIONS = 
 		{ DESCENDING,  //type
 		  DESCENDING,  //completed
@@ -59,8 +59,7 @@ class TaskSorter extends ViewerSorter {
 	 * Creates a new task sorter.
 	 */
 	public TaskSorter() {
-		priorities = new int[DEFAULT_PRIORITIES.length];
-		directions = new int[DEFAULT_DIRECTIONS.length];
+		resetState();
 	}
 
 	/* (non-Javadoc)
@@ -125,8 +124,10 @@ class TaskSorter extends ViewerSorter {
 	}
 	
 	public void resetState() {
-		priorities = DEFAULT_PRIORITIES;
-		directions = DEFAULT_DIRECTIONS;
+		priorities = new int[DEFAULT_PRIORITIES.length];
+		System.arraycopy(DEFAULT_PRIORITIES, 0, priorities, 0, priorities.length);
+		directions = new int[DEFAULT_DIRECTIONS.length];
+		System.arraycopy(DEFAULT_DIRECTIONS, 0, directions, 0, directions.length);
 	}
 	
 	/* (non-Javadoc)
@@ -295,7 +296,7 @@ class TaskSorter extends ViewerSorter {
 	private int getPriorityOrder(IMarker marker) {
 		if (MarkerUtil.isMarkerType(marker, IMarker.TASK))
 			return MarkerUtil.getPriority(marker);
-		return getCategoryOrder(marker) + 1;
+		return -1;
 	}
 	public void saveState(IDialogSettings settings) {
 		if (settings == null)

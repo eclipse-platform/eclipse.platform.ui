@@ -43,8 +43,7 @@ class BookmarkSorter extends ViewerSorter {
 		  ASCENDING, };	//creation time
 									
 	public BookmarkSorter() {
-		directions = new int[DEFAULT_DIRECTIONS.length];
-		priorities = new int[DEFAULT_PRIORITIES.length];
+		resetState();
 	}
 	
 	public void reverseTopPriority() {
@@ -92,8 +91,10 @@ class BookmarkSorter extends ViewerSorter {
 	}
 	
 	public void resetState() {
-		priorities = DEFAULT_PRIORITIES;
-		directions = DEFAULT_DIRECTIONS;
+		priorities = new int[DEFAULT_PRIORITIES.length];
+		System.arraycopy(DEFAULT_PRIORITIES, 0, priorities, 0, priorities.length);
+		directions = new int[DEFAULT_DIRECTIONS.length];
+		System.arraycopy(DEFAULT_DIRECTIONS, 0, directions, 0, directions.length);
 	}
 	
 	private int compare(IMarker marker1, IMarker marker2, int depth) {

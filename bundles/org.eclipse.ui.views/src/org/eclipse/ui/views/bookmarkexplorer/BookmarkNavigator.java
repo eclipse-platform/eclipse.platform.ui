@@ -225,10 +225,7 @@ public class BookmarkNavigator extends ViewPart {
 	
 		IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
 		IDialogSettings settings = workbenchSettings.getSection("BookmarkSortState");//$NON-NLS-1$
-		if(settings == null)
-			settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
-		else
-			sorter.restoreState(settings);
+		sorter.restoreState(settings);
 	
 		addContributions();
 		initDragAndDrop();
