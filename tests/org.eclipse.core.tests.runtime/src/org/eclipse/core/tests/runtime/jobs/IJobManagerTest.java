@@ -649,7 +649,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for(int i = 0; i < NUM_JOBS; i++) {
 			assertState("4." + i, jobs[i], Job.NONE);
 		}
-						
+				
 	}
 	
 	public void testJobFamilyJoin() {
@@ -676,8 +676,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				jobs[i].setRule(rule2);
 				jobs[i].schedule();
 			}	
-			
-			
 		}
 		
 		Thread t = new Thread(new Runnable() {
@@ -724,8 +722,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		//cancel the second family of jobs
 		manager.cancel(second);
-		waitForCancel(jobs[1]);
-		waitForCancel(jobs[NUM_JOBS-2]);
+		waitForCompletion();
 		
 		//all the jobs should now be in the NONE state
 		for(int j = 0; j < NUM_JOBS; j++) {
@@ -1052,7 +1049,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			assertState("7." + i, jobs[i], Job.NONE);
 		}
 	}
-	
 	public void testJobFamilySleep() {
 		//test the sleep method on a family of jobs
 		final int NUM_JOBS = 20;
