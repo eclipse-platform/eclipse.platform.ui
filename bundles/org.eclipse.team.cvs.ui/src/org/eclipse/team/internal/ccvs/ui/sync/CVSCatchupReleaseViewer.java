@@ -348,6 +348,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 				manager.add(commitAction);
 				updateAction.update(SyncView.SYNC_BOTH);
 				manager.add(updateAction);
+				ignoreAction.update();
+				manager.add(ignoreAction);
 				manager.add(new Separator());
 				forceCommitAction.update(SyncView.SYNC_BOTH);
 				manager.add(forceCommitAction);
