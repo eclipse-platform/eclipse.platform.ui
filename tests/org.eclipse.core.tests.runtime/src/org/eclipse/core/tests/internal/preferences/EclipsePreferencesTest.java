@@ -605,6 +605,8 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		assertNotNull("1.0", node);
 		assertEquals("1.1", "", node.name());
 		assertEquals("1.2", "/", node.absolutePath());
+		// Bug 57150 [runtime] prefs: root.node("/") should return root
+		assertEquals("1.3", node, node.node("/"));
 
 		// scope root
 		node = node.node(TestScope.SCOPE);

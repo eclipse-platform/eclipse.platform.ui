@@ -88,7 +88,7 @@ public class RootPreferences extends EclipsePreferences {
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences#node(org.eclipse.core.runtime.IPath)
 	 */
 	public IEclipsePreferences node(IPath path) {
-		if (path.isEmpty())
+		if (path.segmentCount() == 0)
 			return this;
 		IEclipsePreferences child = null;
 		Object value = null;
