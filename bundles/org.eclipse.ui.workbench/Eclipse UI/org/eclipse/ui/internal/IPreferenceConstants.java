@@ -40,6 +40,9 @@ public interface IPreferenceConstants {
 	//Boolean: true = open after delay
 	public static final String OPEN_AFTER_DELAY = "OPEN_AFTER_DELAY"; //$NON-NLS-1$
 
+	//Do we show color icons in toolbars?
+	public static final String COLOR_ICONS = "COLOR_ICONS"; //$NON-NLS-1$
+	
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
 	

@@ -1,10 +1,16 @@
+/**********************************************************************
+Copyright (c) 2000, 2003 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -13,10 +19,25 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 /**
  * The ViewsPreferencePage is the page used to set preferences for the look of the
  * views in the workbench.
@@ -24,11 +45,13 @@ import org.eclipse.ui.internal.*;
 public class ViewsPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
+
 	private Button editorTopButton;
 	private Button editorBottomButton;
 	private Button viewTopButton;
 	private Button viewBottomButton;
 
+	private BooleanFieldEditor colorIconsEditor;
 	private ColorFieldEditor errorColorEditor;
 	private ColorFieldEditor hyperlinkColorEditor;
 	private ColorFieldEditor activeHyperlinkColorEditor;
@@ -39,6 +62,7 @@ public class ViewsPreferencePage
 	private int editorAlignment;
 	private int viewAlignment;
 
+	private static final String COLOUR_ICONS_TITLE = WorkbenchMessages.getString("ViewsPreference.colorIcons"); //$NON-NLS-1$
 	private static final String EDITORS_TITLE = WorkbenchMessages.getString("ViewsPreference.editors"); //$NON-NLS-1$
 	private static final String EDITORS_TOP_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.top"); //$NON-NLS-1$
 	private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages.getString("ViewsPreference.editors.bottom"); //$NON-NLS-1$
@@ -54,6 +78,7 @@ public class ViewsPreferencePage
 	 */
 	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
 	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
+
 /**
  * Create a composite that for creating the tab toggle buttons.
  * @param composite Composite
@@ -95,23 +120,27 @@ protected Control createContents(Composite parent) {
 	viewAlignment =	store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 
 	Composite composite = new Composite(parent, SWT.NONE);
-	composite.setLayoutData(
-		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	composite.setFont(font);
 
 	GridLayout layout = new GridLayout();
 	layout.marginWidth = 0;
 	layout.marginHeight = 0;
 	layout.verticalSpacing = 10;
-	
 	composite.setLayout(layout);
+
+	Composite colorIconsComposite = new Composite(composite, SWT.NONE);
+	colorIconsComposite.setFont(font);
+	colorIconsEditor = new BooleanFieldEditor(IPreferenceConstants.COLOR_ICONS, COLOUR_ICONS_TITLE, colorIconsComposite);
+	colorIconsEditor.setPreferenceStore(doGetPreferenceStore());
+	colorIconsEditor.load();
 
 	createEditorTabButtonGroup(composite);
 	createViewTabButtonGroup(composite);
 
 	createNoteComposite(font, composite, NOTE_LABEL,APPLY_MESSAGE);
 
-	new Label(composite, SWT.NONE);
+	new Label(composite, SWT.NONE);  // spacing
 	
 	Group colorComposite = new Group(composite,SWT.NONE);
 	colorComposite.setLayout(new GridLayout());
@@ -253,6 +282,7 @@ public void init(org.eclipse.ui.IWorkbench workbench) {}
  */
 protected void performDefaults() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	
 	int editorTopValue =
 		store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
 	editorTopButton.setSelection(editorTopValue == SWT.TOP);
@@ -265,6 +295,7 @@ protected void performDefaults() {
 	viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
 	viewAlignment = viewTopValue;
 	
+	colorIconsEditor.loadDefault();
 	errorColorEditor.loadDefault();
 	hyperlinkColorEditor.loadDefault();
 	activeHyperlinkColorEditor.loadDefault();
@@ -290,6 +321,7 @@ public boolean performOk() {
 	// store the view tab value to setting
 	store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
 		
+	colorIconsEditor.store();
 	errorColorEditor.store();
 	hyperlinkColorEditor.store();
 	activeHyperlinkColorEditor.store();

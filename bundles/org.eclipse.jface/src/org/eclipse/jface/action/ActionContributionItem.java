@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class ActionContributionItem extends ContributionItem {
 
+	private static boolean USE_COLOR_ICONS = true;
+	
 	private static ImageCache globalImageCache;
 	
 	/**
@@ -145,6 +147,27 @@ public class ActionContributionItem extends ContributionItem {
 			entries.clear();
 		}
 	}
+	
+/**
+ * Returns whether color icons should be used in toolbars.
+ * 
+ * @return <code>true</code> if color icons should be used in toolbars, 
+ *   <code>false</code> otherwise
+ */
+public static boolean getUseColorIconsInToolbars() {
+	return USE_COLOR_ICONS;
+}
+
+/**
+ * Sets whether color icons should be used in toolbars.
+ * 
+ * @param useColorIcons <code>true</code> if color icons should be used in toolbars, 
+ *   <code>false</code> otherwise
+ */
+public static void setUseColorIconsInToolbars(boolean useColorIcons) {
+	USE_COLOR_ICONS = useColorIcons;
+}
+
 /**
  * Creates a new contribution item from the given action.
  * The id of the action is used as the id of the item.
@@ -616,41 +639,67 @@ private boolean updateImages(boolean forceImage) {
 	ImageCache cache = getImageCache();
 
 	if (widget instanceof ToolItem) {
-		Image image = cache.getImage(action.getImageDescriptor());
-		Image hoverImage = cache.getImage(action.getHoverImageDescriptor());
-		Image disabledImage = cache.getImage(action.getDisabledImageDescriptor());
+		if (USE_COLOR_ICONS) {
+			Image image = cache.getImage(action.getHoverImageDescriptor());
+			if (image == null) {
+				image = cache.getImage(action.getImageDescriptor());
+			}
+			Image disabledImage = cache.getImage(action.getDisabledImageDescriptor());
 
-		// If there is no regular image, but there is a hover image,
-		// convert the hover image to gray and use it as the regular image.
-		if (image == null && hoverImage != null) { 
-			image = cache.getGrayImage(action.getHoverImageDescriptor());
+			// Make sure there is a valid image.
+			if (image == null && forceImage) {
+				image = cache.getMissingImage();
+			}
+				
+			// performance: more efficient in SWT to set disabled and hot image before regular image
+			if (disabledImage != null) {
+				// Set the disabled image if we were able to create one.
+				// Assumes that SWT.ToolItem will use platform's default
+				// behavior to show item when it is disabled and a disabled
+				// image has not been set. 
+				((ToolItem) widget).setDisabledImage(disabledImage);
+			}
+			((ToolItem) widget).setImage(image);
+			
+			return image != null;
 		}
 		else {
-			// If there is no hover image, use the regular image as the hover image,
-			// and convert the regular image to gray
-			if (hoverImage == null && image != null) {
-				hoverImage = image;
-				image = cache.getGrayImage(action.getImageDescriptor());
+			Image image = cache.getImage(action.getImageDescriptor());
+			Image hoverImage = cache.getImage(action.getHoverImageDescriptor());
+			Image disabledImage = cache.getImage(action.getDisabledImageDescriptor());
+	
+			// If there is no regular image, but there is a hover image,
+			// convert the hover image to gray and use it as the regular image.
+			if (image == null && hoverImage != null) { 
+				image = cache.getGrayImage(action.getHoverImageDescriptor());
 			}
-		}
-
-		// Make sure there is a valid image.
-		if (hoverImage == null && image == null && forceImage) {
-			image = cache.getMissingImage();
-		}
+			else {
+				// If there is no hover image, use the regular image as the hover image,
+				// and convert the regular image to gray
+				if (hoverImage == null && image != null) {
+					hoverImage = image;
+					image = cache.getGrayImage(action.getImageDescriptor());
+				}
+			}
+	
+			// Make sure there is a valid image.
+			if (hoverImage == null && image == null && forceImage) {
+				image = cache.getMissingImage();
+			}
+				
+			// performance: more efficient in SWT to set disabled and hot image before regular image
+			if (disabledImage != null) {
+				// Set the disabled image if we were able to create one.
+				// Assumes that SWT.ToolItem will use platform's default
+				// behavior to show item when it is disabled and a disabled
+				// image has not been set. 
+				((ToolItem) widget).setDisabledImage(disabledImage);
+			}
+			((ToolItem) widget).setHotImage(hoverImage);
+			((ToolItem) widget).setImage(image);
 			
-		// performance: more efficient in SWT to set disabled and hot image before regular image
-		if (disabledImage != null) {
-			// Set the disabled image if we were able to create one.
-			// Assumes that SWT.ToolItem will use platform's default
-			// behavior to show item when it is disabled and a disabled
-			// image has not been set. 
-			((ToolItem) widget).setDisabledImage(disabledImage);
+			return image != null;
 		}
-		((ToolItem) widget).setHotImage(hoverImage);
-		((ToolItem) widget).setImage(image);
-		
-		return image != null;
 	}
 	else if (widget instanceof Item || widget instanceof Button) {
 		// Use hover image if there is one, otherwise use regular image.

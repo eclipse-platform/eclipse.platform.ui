@@ -39,6 +39,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin; 
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -674,6 +676,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		addAdapters();
 		windowManager = new WindowManager();
 		WorkbenchColors.startup();
+		boolean useColorIcons = getPreferenceStore().getBoolean(IPreferenceConstants.COLOR_ICONS);
+		ActionContributionItem.setUseColorIconsInToolbars(useColorIcons);
 		initializeFonts();
 		initializeConfiguration();
 		initializeSingleClickOption();
