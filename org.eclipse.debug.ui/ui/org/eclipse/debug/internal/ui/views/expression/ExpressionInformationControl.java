@@ -158,7 +158,9 @@ public class ExpressionInformationControl extends PopupInformationControl {
 			public void detailComputed(IValue value, final String result) {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						valueDisplay.setText(result);
+                        if (!valueDisplay.isDisposed()) {
+                            valueDisplay.setText(result);
+                        }
 					}
 				});
 			}
