@@ -171,12 +171,9 @@ public class SearchResultViewer extends TableViewer {
 			setGotoMarkerAction(search.getGotoMarkerAction());
 			setContextMenuTarget(search.getContextMenuContributor());
 			setActionGroupFactory(null);
-			// preserving selection since next call destroys it
-			ISelection selection= search.getSelection();
-			setInput(search.getResults());
 			setActionGroupFactory(search.getActionGroupFactory());
-			setSelection(selection, true);
 			setPageId(search.getPageId());
+			setInput(search.getResults());			
 		}
 	}
 
@@ -195,9 +192,6 @@ public class SearchResultViewer extends TableViewer {
 		int selectionCount= getSelectedEntriesCount();
 		boolean hasSingleSelection= selectionCount == 1;
 		boolean hasElements= getItemCount() > 0;
-		Search search= SearchManager.getDefault().getCurrentSearch();
-		if (search != null)
-			search.setSelection(fLastSelection);
 		fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 		fShowPreviousResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
 		fGotoMarkerActionProxy.setEnabled(hasSingleSelection);
