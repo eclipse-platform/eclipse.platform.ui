@@ -7,6 +7,8 @@ package org.eclipse.debug.core;
 
 import java.util.EventObject;
 
+import org.eclipse.debug.internal.core.DebugCoreMessages;
+
 /**
  * A debug event describes an event in a program being debugged.
  * Debug model implementations are required to generate debug events as
@@ -204,9 +206,9 @@ public final class DebugEvent extends EventObject {
 	public DebugEvent(Object eventSource, int kind, int detail) {
 		super(eventSource);
 		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE)) == 0)
-			throw new IllegalArgumentException("kind is not one of the allowed constants, see IDebugEventConstants");
+			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_kind")); //$NON-NLS-1$
 		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST)) == 0)
-			throw new IllegalArgumentException("detail is not one of the allowed constants, see IDebugEventConstants");
+			throw new IllegalArgumentException(DebugCoreMessages.getString("DebugEvent.illegal_detail")); //$NON-NLS-1$
 		fKind= kind;
 		fDetail= detail;
 	}
@@ -243,6 +245,62 @@ public final class DebugEvent extends EventObject {
 	 */
 	public boolean isStepStart() {
 		return (getDetail() & (STEP_INTO | STEP_OVER | STEP_RETURN)) > 0;
+	}
+	
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buf = new StringBuffer("DebugEvent["); //$NON-NLS-1$
+		if (getSource() != null) {
+			buf.append(getSource().toString());
+		} else {
+			buf.append("null"); //$NON-NLS-1$
+		}
+		buf.append(", "); //$NON-NLS-1$
+		switch (getKind()) {
+			case CREATE:
+				buf.append("CREATE"); //$NON-NLS-1$
+				break;
+			case TERMINATE:
+				buf.append("TERMINATE"); //$NON-NLS-1$
+				break;
+			case RESUME:
+				buf.append("RESUME"); //$NON-NLS-1$
+				break;
+			case CHANGE:
+				buf.append("CHANGE"); //$NON-NLS-1$
+				break;
+			case UNSPECIFIED:
+				buf.append("UNSPECIFIED"); //$NON-NLS-1$
+				break;
+		}
+		buf.append(", "); //$NON-NLS-1$
+		switch (getDetail()) {
+			case BREAKPOINT:
+				buf.append("BREAKPOINT"); //$NON-NLS-1$
+				break;
+			case CLIENT_REQUEST:
+				buf.append("CLIENT_REQUEST"); //$NON-NLS-1$
+				break;
+			case STEP_END:
+				buf.append("STEP_END"); //$NON-NLS-1$
+				break;
+			case STEP_INTO:
+				buf.append("STEP_INTO"); //$NON-NLS-1$
+				break;
+			case STEP_OVER:
+				buf.append("STEP_OVER"); //$NON-NLS-1$
+				break;
+			case STEP_RETURN:
+				buf.append("STEP_RETURN"); //$NON-NLS-1$
+				break;
+			case UNSPECIFIED:
+				buf.append("UNSPECIFIED"); //$NON-NLS-1$
+				break;
+		}
+		buf.append("]"); //$NON-NLS-1$
+		return buf.toString();
 	}
 }
 
