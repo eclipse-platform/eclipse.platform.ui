@@ -33,9 +33,8 @@ public class TestRevert extends UpdateManagerTestCase {
 
 		// cleanup
 		SiteLocal siteLocal = ((SiteLocal)SiteManager.getLocalSite());
-		File localFile = new File(new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		File localFile = new File(siteLocal.getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -80,7 +79,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		
 		// check
 		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
-		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),"platform.xml").getFile());
+		File file = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		assertTrue("new configuration does not exist", file.exists());
 		
 		
@@ -111,9 +110,9 @@ public class TestRevert extends UpdateManagerTestCase {
 		assertEquals("wrong number of unconfigured features",oldNumberUnconfiguredFeatures+2,newNumberUnconfiguredFeatures);
 		
 		// cleanup
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(siteLocal.getLocationURL().getFile());;
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+		localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);				
 		UpdateManagerUtils.removeFromFileSystem(file);	
 		time = ""+newConfig.getCreationDate().getTime();

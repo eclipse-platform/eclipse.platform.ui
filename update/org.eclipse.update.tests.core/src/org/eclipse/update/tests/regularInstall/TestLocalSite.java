@@ -31,11 +31,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	public void testCreationConfigFile() throws Exception {
 
 		//clean up
-		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
-		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
-		File localFile = new File(newURL.getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
+		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();;
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		InternalSiteManager.localSite=null;	
 
 
@@ -53,10 +51,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 		//clean up
 		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
-		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
-		File localFile = new File(newURL.getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		InternalSiteManager.localSite=null;
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -66,11 +62,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		System.out.println("Default Config Site is :"+site.getCurrentConfiguration().getConfiguredSites()[0].getSite().getURL().toExternalForm());
 		
-		// cleanup
-		URL location = ((SiteLocal)site).getLocationURL();		
-		String filePath = new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile();
-		File file = new File(filePath);
-		UpdateManagerUtils.removeFromFileSystem(file);		
+		// cleanup	
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		
 
@@ -164,10 +156,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 		//clean up
 		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
-		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
-		File localFile = new File(newURL.getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -234,13 +224,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		
 		// cleanup
-		localFile = new File(new URL(location,SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);			
 		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
-		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)site.getCurrentConfiguration()).getURL().getFile()));				
+		UpdateManagerUtils.removeFromFileSystem(localFile);					
 		UpdateManagerUtils.removeFromFileSystem(file);		
 	}
 
@@ -248,10 +235,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 		//clean up
 		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
-		URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
-		File localFile = new File(newURL.getFile());
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
-		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -320,13 +305,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		
 		
 		// cleanup
-		localFile = new File(new URL(location,SiteLocal.SITE_LOCAL_FILE).getFile());
+		localFile = new File(location.getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
-		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)site.getCurrentConfiguration()).getURL().getFile()));						
+		UpdateManagerUtils.removeFromFileSystem(localFile);							
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);

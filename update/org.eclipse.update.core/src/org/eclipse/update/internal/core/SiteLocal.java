@@ -92,7 +92,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 //				newFeaturesFound = localSite.reconcile(true);
 //			}
 		} catch (MalformedURLException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + SITE_LOCAL_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + CONFIG_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	
 		return localSite;
@@ -227,7 +227,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 
 		InstallConfiguration result = null;
 		Date currentDate = new Date();
-		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE, currentDate);
+		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, currentDate);
 		try {
 			URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
 			// pass the date onto the name
@@ -301,7 +301,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		if (configuration != null) {
 
 			// create new configuration based on the one to preserve
-			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_PRESERVED_CONFIG_FILE, new Date());
+			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, new Date());
 			try {
 				URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
 				// pass the date onto teh name

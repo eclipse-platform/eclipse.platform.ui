@@ -67,12 +67,7 @@ public class TestFeatureDisable extends StandaloneManagerTestCase {
 		String config = new File(configURL.getFile()).getParent();
 		ISite localSite = SiteManager.getSite(new URL("file", null, config), null);
 
-		File localFile =
-			new File(
-				new URL(
-					localSite.getURL(),
-					"platform.cfg.metadata/" + SiteLocal.SITE_LOCAL_FILE)
-					.getFile());
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		System.out.println(localFile.getAbsolutePath());
 		assertTrue(localFile.exists());
 		File configFile = getLatestConfigurationFile(localFile);

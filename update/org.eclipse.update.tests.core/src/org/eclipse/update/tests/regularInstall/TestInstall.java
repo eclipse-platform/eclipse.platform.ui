@@ -165,9 +165,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	public void testInstall() throws Exception {
 
 		// cleanup local files...
-		URL localURL = ((SiteLocal) SiteManager.getLocalSite()).getLocationURL();
-		File localFile =
-			new File(new URL(localURL, SiteLocal.SITE_LOCAL_FILE).getFile());
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 
 		URL INSTALL_SITE = null;
@@ -275,12 +273,7 @@ public class TestInstall extends UpdateManagerTestCase {
 					+ Site.DEFAULT_PLUGIN_PATH
 					+ "org.eclipse.update.core.tests.feature1.plugin2_5.0.0");
 		UpdateManagerUtils.removeFromFileSystem(file);
-		File localFile =
-			new File(
-				new URL(
-					((SiteLocal) SiteManager.getLocalSite()).getLocationURL(),
-					SiteLocal.SITE_LOCAL_FILE)
-					.getFile());
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 
 		try {

@@ -225,8 +225,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		// cleanup local files...
 		URL localURL = ((SiteLocal) SiteManager.getLocalSite()).getLocationURL();
-		File localFile =
-			new File(new URL(localURL, SiteLocal.SITE_LOCAL_FILE).getFile());
+		File localFile = new File(localURL.getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 		InstallRegistry.cleanup();
 

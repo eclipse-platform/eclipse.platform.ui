@@ -19,10 +19,7 @@ import org.eclipse.update.core.model.*;
  */
 
 public class SiteLocalModel extends ModelObject {
-
-	public static final String SITE_LOCAL_FILE = "platform.xml"; //$NON-NLS-1$
-	public static final String DEFAULT_CONFIG_FILE = "platform.xml"; //$NON-NLS-1$
-	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "platform.xml"; //$NON-NLS-1$
+	public static final String CONFIG_FILE = "platform.xml"; //$NON-NLS-1$
 	public static int DEFAULT_HISTORY = Integer.MAX_VALUE;	
 
 
@@ -222,7 +219,7 @@ public class SiteLocalModel extends ModelObject {
 	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
 	 */
 	protected String getPropertyName() {
-		return SiteLocalModel.SITE_LOCAL_FILE;
+		return SiteLocalModel.CONFIG_FILE;
 	}
 
 }

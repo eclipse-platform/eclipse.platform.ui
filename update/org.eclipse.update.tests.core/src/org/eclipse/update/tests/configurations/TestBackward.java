@@ -30,9 +30,7 @@ public class TestBackward extends UpdateManagerTestCase {
 
 		// cleanup
 		SiteLocal siteLocal = ((SiteLocal)SiteManager.getLocalSite());
-		File localFile = new File(new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
-//		UpdateManagerUtils.removeFromFileSystem(localFile);		
-//		UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));
+		File localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
@@ -59,11 +57,8 @@ public class TestBackward extends UpdateManagerTestCase {
 		assertTrue(newConfigSite.getInstallConfiguration().equals(current));
 		
 		// cleanup
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.SITE_LOCAL_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
-		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);	
-	
+		localFile = new File(((SiteLocal)SiteManager.getLocalSite()).getLocationURL().getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);			
 	}
 
 }
