@@ -48,7 +48,7 @@ protected void createFiles(final IContainer target, final Hashtable set) throws 
 			for (int i = 0; i < limit; i++) {
 				IFile child = target.getFile(new Path("wbFile" + i));
 				workspace.createResource(child, false);
-				String location = child.getLocation().toOSString();
+				String location = child.getLocation().toFile().getAbsolutePath();
 				set.put(location, "");
 			}
 		}
@@ -71,7 +71,7 @@ protected void createResourcesInWorkspace(IContainer target, Hashtable set) thro
 	for (int i = 0; i < limit; i++) {
 		IFolder child = target.getFolder(new Path("wbFolder" + i));
 		child.create(true, true, null);
-		String location = child.getLocation().toOSString();
+		String location = child.getLocation().toFile().getAbsolutePath();
 		set.put(location, "");
 		if (i < (limit / 2))
 			createFiles(child, set);
@@ -110,7 +110,7 @@ public void testTraverseMechanismInFolder() throws Throwable {
 
 			/* test the node.getLocalLocation() method */
 			String key = node.getLocalLocation();
-			assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
+			assertEquals("1.0", node.getResource().getLocation().toFile().getAbsolutePath(), key);
 
 			/* remove from the hashtable the resource we're visiting */
 			set.remove(key);
@@ -152,7 +152,7 @@ public void testTraverseMechanismInFolderSkipingSomeChildren() throws Throwable 
 
 			/* test the node.getLocalLocation() method */
 			String key = node.getLocalLocation();
-			assertEquals("1.0", node.getResource().getLocation().toOSString(), key);;
+			assertEquals("1.0", node.getResource().getLocation().toFile().getAbsolutePath(), key);
 
 			/* force children to be added to the queue */
 			node.getChildren();
@@ -204,7 +204,7 @@ public void testTraverseMechanismInProject() throws Throwable {
 
 			/* test the node.getLocalLocation() method */
 			String key = node.getLocalLocation();
-			assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
+			assertEquals("1.0", node.getResource().getLocation().toFile().getAbsolutePath(), key);
 			/* remove from the hashtable the resource we're visiting */
 			set.remove(key);
 			return true;

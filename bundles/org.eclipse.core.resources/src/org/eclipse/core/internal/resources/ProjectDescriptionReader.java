@@ -12,8 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
-
-import org.apache.xerces.parsers.SAXParser;
+import javax.xml.parsers.*;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Policy;
@@ -440,18 +439,17 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		objectStack = new Stack();
 		state = S_INITIAL;
 		try {
-			SAXParser parser = new SAXParser();
-			parser.setContentHandler(this);
-			parser.setDTDHandler(this);
-			parser.setEntityResolver(this);
-			parser.setErrorHandler(this);
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setNamespaceAware(true);
 			try {
-				parser.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+				factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
 			} catch (SAXException e) {
 				// In case support for this feature is removed
 			}
-
-			parser.parse(input);
+			SAXParser parser = factory.newSAXParser();
+			parser.parse(input, this);
+		} catch (ParserConfigurationException e) {
+			log(e);
 		} catch (IOException e) {
 			log(e);
 		} catch (SAXException e) {

@@ -6,10 +6,6 @@
   provider-name="%providerName"
   class="org.eclipse.core.resources.ResourcesPlugin">
 
-  <requires>
-    <import plugin="org.apache.xerces"/>
-  </requires>
-
   <runtime>
     <library name="resources.jar">
       <export name="*"/>

@@ -48,8 +48,11 @@ protected IProjectNatureDescriptor findNature(IProjectNatureDescriptor[] descrip
 }
 
 public static Test suite() {
-	TestSuite suite = new TestSuite(IWorkspaceTest.class);
-	return suite;
+	return new TestSuite(IWorkspaceTest.class);
+
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new IWorkspaceTest("testValidateProjectLocation"));
+//	return suite;
 }
 protected void setUp() throws Exception {
 	super.setUp();
