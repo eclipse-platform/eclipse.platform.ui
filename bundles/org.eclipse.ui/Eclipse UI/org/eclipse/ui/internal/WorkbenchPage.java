@@ -254,6 +254,12 @@ private void busyResetPerspective() {
 	// Install new persp.
 	setPerspective(newPersp);
 
+	IToolBarManager toolsMgr = window.getToolsManager();
+	if (toolsMgr instanceof CoolBarManager) {
+		CoolBarManager coolBarMgr = (CoolBarManager)toolsMgr;
+		coolBarMgr.resetLayout();
+	}
+
 	// Notify listeners.
 	window.firePerspectiveChanged(this, desc, CHANGE_RESET);
 	
