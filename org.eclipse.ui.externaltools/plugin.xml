@@ -144,12 +144,14 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             type="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+            description="%programLaunchConfigurationTabGroup.description"
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.program"
             class="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramTabGroup"
             id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.program">
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             type="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"
+            description="%programBuilderLaunchConfigurationTabGroup.description"
             helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.program_builder"
             class="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramBuilderTabGroup"
             id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.program.builder">
