@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.launchConfigurations.RemoteAntBuildListener;
 import org.eclipse.debug.core.DebugEvent;
@@ -116,12 +117,8 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener {
 		} else if (message.startsWith(DebugMessageIds.TERMINATED)){
 			fTarget.terminated();
 		} else if (message.startsWith(DebugMessageIds.STACK)){
-			try {
-				AntStackFrame frame= (AntStackFrame) fTarget.getThreads()[0].getTopStackFrame();
-				frame.init(message);
-			} catch (DebugException de) {
-				
-			}
+			AntThread thread= (AntThread) fTarget.getThreads()[0];
+			thread.buildStack(message);
 		} else if (message.startsWith(DebugMessageIds.PROPERTIES)){
 			try {
 				AntStackFrame frame= (AntStackFrame) fTarget.getThreads()[0].getTopStackFrame();

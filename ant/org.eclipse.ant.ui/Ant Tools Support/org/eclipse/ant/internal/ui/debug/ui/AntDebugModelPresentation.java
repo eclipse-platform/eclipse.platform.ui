@@ -56,7 +56,14 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 			String name= frame.getName();
 			if (name != null) {
 				StringBuffer text= new StringBuffer(name);
-				text.append(MessageFormat.format(" line: {0}", new String[]{Integer.toString(frame.getLineNumber())}));
+				int lineNumber= frame.getLineNumber();
+				String lineNumberString= null;
+				if (lineNumber == 0) {
+				    lineNumberString= "<not available>";
+				} else {
+				    lineNumberString= Integer.toString(lineNumber);
+				}
+				text.append(MessageFormat.format(" line: {0}", new String[]{lineNumberString}));
 				return text.toString();
 			}
 		} else if (element instanceof AntThread) {
