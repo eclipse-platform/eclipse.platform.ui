@@ -1,3 +1,7 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 #include <jni.h>
 #include <io.h>
 #include <sys/stat.h>
