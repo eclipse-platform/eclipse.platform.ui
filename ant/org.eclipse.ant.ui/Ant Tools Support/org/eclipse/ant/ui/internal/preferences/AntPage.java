@@ -236,9 +236,9 @@ public abstract class AntPage {
 	protected void remove(TableViewer viewer) {
 		ExternalToolsContentProvider antContentProvider= (ExternalToolsContentProvider)viewer.getContentProvider();
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
-		Iterator enum = sel.iterator();
-		while (enum.hasNext()) {
-			antContentProvider.remove(enum.next());
+		Iterator itr = sel.iterator();
+		while (itr.hasNext()) {
+			antContentProvider.remove(itr.next());
 		}
 	}
 	

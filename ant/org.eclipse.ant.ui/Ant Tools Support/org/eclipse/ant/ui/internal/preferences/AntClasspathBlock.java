@@ -251,9 +251,9 @@ public class AntClasspathBlock {
 	private void remove(TableViewer viewer) {
 		ExternalToolsContentProvider viewerContentProvider = (ExternalToolsContentProvider) viewer.getContentProvider();
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
-		Iterator enum = sel.iterator();
-		while (enum.hasNext()) {
-			viewerContentProvider.remove(enum.next());
+		Iterator itr = sel.iterator();
+		while (itr.hasNext()) {
+			viewerContentProvider.remove(itr.next());
 		}
 		updateContainer();
 	}
