@@ -13,6 +13,7 @@ package org.eclipse.core.internal.runtime;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.jobs.JobManager;
@@ -362,25 +363,18 @@ public final class InternalPlatform implements IPlatform {
 	public String getProtectionSpace(URL resourceUrl) {
 		return keyring.getProtectionSpace(resourceUrl);
 	}
-	private void handleException(ISafeRunnable code, Throwable e) {
-		try {
-			if (!(e instanceof OperationCanceledException)) {
-				// try to figure out which plugin caused the problem.  Derive this from the class
-				// of the code arg.  Attribute to the Runtime plugin if we can't figure it out.
-				Bundle bundle = context.getBundleFor(code);
-				String pluginId = bundle.getGlobalName();
-				String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
-				IStatus status;
-				if (e instanceof CoreException) {
-					status = new MultiStatus(pluginId, PLUGIN_ERROR, message, e);
-					((MultiStatus) status).merge(((CoreException) e).getStatus());
-				} else {
-					status = new Status(IStatus.ERROR, pluginId, PLUGIN_ERROR, message, e);
-				}
-				getLog(bundle).log(status);
+	private  void handleException(ISafeRunnable code, Throwable e) {
+		if (!(e instanceof OperationCanceledException)) {
+			String pluginId = PI_RUNTIME;
+			String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
+			IStatus status;
+			if (e instanceof CoreException) {
+				status = new MultiStatus(pluginId, IPlatform.PLUGIN_ERROR, message, e);
+				((MultiStatus)status).merge(((CoreException)e).getStatus());
+			} else {
+				status = new Status(IStatus.ERROR, pluginId, IPlatform.PLUGIN_ERROR, message, e);
 			}
-		} catch (Throwable th) {
-			th.printStackTrace();
+			log(status); //$NON-NLS-1$
 		}
 		code.handleException(e);
 	}
