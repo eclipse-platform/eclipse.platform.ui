@@ -141,6 +141,11 @@
 				tooltip="%CompareWithTagAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.IContainerContributions"
+			objectClass="org.eclipse.core.resources.IContainer" adaptable="true">
+			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.replaceWithTag"
 				label="%ReplaceWithTagAction.label"
