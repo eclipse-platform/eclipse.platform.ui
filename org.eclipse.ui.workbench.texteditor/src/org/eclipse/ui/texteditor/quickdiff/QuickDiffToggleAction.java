@@ -85,7 +85,6 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 				 * don't add themselves to MB_ADDITIONS or alike, but rather to the end, too. So
 				 * we pre-install their respective menu groups here.
 				 */
-				// TODO move these into editor as well
 				if (manager.find(GROUP_DEBUB) == null)
 					manager.insertBefore(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(GROUP_DEBUB));
 				if (manager.find(GROUP_ADD) == null)
