@@ -119,7 +119,7 @@ public class SiteFile extends Site {
 	public void remove(IFeature feature, IProgressMonitor progress) throws CoreException {
 
 		if (feature == null) {
-			UpdateCore.warn("Feature to remove is null");
+			UpdateCore.warn("Feature to remove is null"); //$NON-NLS-1$
 			return;
 		}
 		
@@ -171,8 +171,8 @@ public class SiteFile extends Site {
 				}
 			}
 
-			if (InstallRegistry.getInstance().get("feature_"+feature.getVersionedIdentifier()) == null) {
-				UpdateCore.log("Feature " + feature.getVersionedIdentifier() + " was not removed", null);
+			if (InstallRegistry.getInstance().get("feature_"+feature.getVersionedIdentifier()) == null) { //$NON-NLS-1$
+				UpdateCore.log(Policy.bind("SiteFile.featureNotRemoved", feature.getVersionedIdentifier().toString()), null); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				// remove the feature content
 				ContentReference[] references = feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
@@ -201,7 +201,7 @@ public class SiteFile extends Site {
 				try {
 					childFeature = childrenRef[i].getFeature(null);
 				} catch (CoreException e) {
-					UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
+					UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]); //$NON-NLS-1$
 				}
 				if (childFeature != null)
 					remove(childrenRef[i].getFeature(null), monitor);
@@ -359,8 +359,8 @@ public class SiteFile extends Site {
 		if (pluginEntry == null)
 			return;
 			
-		if (InstallRegistry.getInstance().get("plugin_"+pluginEntry.getVersionedIdentifier()) == null) {
-			UpdateCore.log("Plugin " + pluginEntry.getVersionedIdentifier() + " was not removed", null);
+		if (InstallRegistry.getInstance().get("plugin_"+pluginEntry.getVersionedIdentifier()) == null) { //$NON-NLS-1$
+			UpdateCore.log(Policy.bind("SiteFile.pluginNotRemoved", pluginEntry.getVersionedIdentifier().toString()), null); //$NON-NLS-1$ //$NON-NLS-2$
 			return; 
 		}
 
@@ -422,7 +422,7 @@ public class SiteFile extends Site {
 			try {
 				childFeature = childrenRef[i].getFeature(null);
 			} catch (CoreException e) {
-				UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]);
+				UpdateCore.warn("Unable to retrieve feature to remove for:" + childrenRef[i]); //$NON-NLS-1$
 			}
 			aboutToRemove(childFeature);
 		}

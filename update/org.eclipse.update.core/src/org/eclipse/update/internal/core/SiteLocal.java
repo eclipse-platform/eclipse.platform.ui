@@ -194,11 +194,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	 */
 	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException {
 		try {
-			// This method should be deprecated
-//		return getCurrentConfiguration();
 			return new InstallConfiguration(getCurrentConfiguration());
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException("Clonning current configuration", e);
+			throw Utilities.newCoreException(Policy.bind("SiteLocal.cloneConfig"), e); //$NON-NLS-1$
 		}
 	}
 
@@ -249,37 +247,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	 */
 	public IInstallConfiguration addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException {
 		return null;
-//		InstallConfiguration newConfiguration = null;
-//		if (configuration != null) {
-//
-//			// create new configuration based on the one to preserve
-//			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, new Date());
-//			try {
-//				URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
-//				// pass the date onto teh name
-//				Date currentDate = configuration.getCreationDate();
-//				String name = configuration.getLabel();
-//				newConfiguration = new InstallConfiguration(configuration, newFile, name);
-//				// set the same date in the installConfig
-//				newConfiguration.setCreationDate(currentDate);
-//				newConfiguration.setTimeline(configuration.getTimeline());
-//			} catch (MalformedURLException e) {
-//				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e);
-//				//$NON-NLS-1$
-//			}
-//
-//			// activity
-//			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_ADD_PRESERVED);
-//			activity.setLabel(configuration.getLabel());
-//			activity.setDate(new Date());
-//			activity.setStatus(IActivity.STATUS_OK);
-//			((InstallConfiguration) newConfiguration).addActivity(activity);
-////			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
-//
-//			// add to the list			
-//			addPreservedInstallConfigurationModel(newConfiguration);
-//		}
-//		return newConfiguration;
 	}
 
 	/*
@@ -365,105 +332,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	private void isTransient(boolean isTransient) {
 		this.isTransient = isTransient;
 	}
-
-	/**
-	 * if we are unable to parse the SiteLocal.xml
-	 * we will attempt to parse the file system
-	 */
-//	private static void recoverSiteLocal(URL url, SiteLocal site) throws CoreException, MalformedURLException {
-//
-//		if (url == null)
-//			throw Utilities.newCoreException(Policy.bind("SiteLocal.SiteUrlIsNull"),
-//			//$NON-NLS-1$
-//			null);
-//
-//		// parse site information
-//		site.setLabel(url.toExternalForm());
-//
-//		//stamp
-//		long stamp = 0L;
-//		site.setStamp(stamp);
-//
-//		// retrieve XML files
-//		File localXml = new File(url.getFile());
-//		if (localXml.exists()) {
-//			try {
-//				UpdateManagerUtils.removeFromFileSystem(localXml);
-//				UpdateCore.warn("Removed bad LocalSite.xml file:" + localXml);
-//			} catch (Exception e) {
-//				UpdateCore.warn("Unable to remove bad LocalSite.xml file:" + localXml, e);
-//			}
-//		}
-//
-//		File dir = localXml.getParentFile();
-//		File[] configFiles = dir.listFiles(new FilenameFilter() {
-//			public boolean accept(File dir, String name) {
-//				return (name.startsWith(DEFAULT_CONFIG_PREFIX) && name.endsWith("xml"));
-//			}
-//		});
-//		if (configFiles == null)
-//			configFiles = new File[0];
-//
-//		File[] preservedFiles = dir.listFiles(new FilenameFilter() {
-//			public boolean accept(File dir, String name) {
-//				return (name.startsWith(DEFAULT_PRESERVED_CONFIG_PREFIX) && name.endsWith("xml"));
-//			}
-//		});
-//		if (preservedFiles == null)
-//			preservedFiles = new File[0];
-//
-//		// history
-//		int history = 0;
-//		if (configFiles.length > 0) {
-//			history = configFiles.length;
-//		}
-//
-//		if (SiteLocalModel.DEFAULT_HISTORY > history)
-//			history = SiteLocalModel.DEFAULT_HISTORY;
-//		site.setMaximumHistoryCount(history);
-//
-//		// parse configuration information
-//		List validConfig = new ArrayList();
-//		for (int i = 0; i < configFiles.length; i++) {
-//			URL configURL = configFiles[i].toURL();
-//			InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
-//			String relativeURL = UpdateManagerUtils.getURLAsString(url, configURL);
-//			config.setLocationURLString(relativeURL);
-//			config.resolve(configURL, url);
-//			config.setLabel(Utilities.format(config.getCreationDate()));
-//			validConfig.add(config);
-//		}
-//
-//		// add the currentConfig last
-//		// based on creation date
-//		if (validConfig.size() > 0) {
-//			Iterator iter = validConfig.iterator();
-//			InstallConfigurationModel currentConfig = (InstallConfigurationModel) iter.next();
-//			while (iter.hasNext()) {
-//				InstallConfigurationModel element = (InstallConfigurationModel) iter.next();
-//				Date currentConfigDate = currentConfig.getCreationDate();
-//				Date elementDate = element.getCreationDate();
-//				if (elementDate != null && elementDate.after(currentConfigDate)) {
-//					site.addConfigurationModel(currentConfig);
-//					currentConfig = element;
-//				} else {
-//					site.addConfigurationModel(element);
-//				}
-//			}
-//			site.addConfigurationModel(currentConfig);
-//		}
-//
-//		// parse preserved configuration information
-//		for (int i = 0; i < preservedFiles.length; i++) {
-//			URL configURL = preservedFiles[i].toURL();
-//			InstallConfigurationModel config = new BaseSiteLocalFactory().createInstallConfigurationModel();
-//			String relativeURL = UpdateManagerUtils.getURLAsString(url, configURL);
-//			config.setLocationURLString(relativeURL);
-//			config.resolve(configURL, url);
-//			config.setLabel(Utilities.format(config.getCreationDate()));
-//			site.addPreservedInstallConfigurationModel(config);
-//		}
-//	}
 
 	/*
 	 * 

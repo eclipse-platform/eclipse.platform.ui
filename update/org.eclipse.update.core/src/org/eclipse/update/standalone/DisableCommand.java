@@ -51,7 +51,7 @@ public class DisableCommand extends ScriptedCommand {
 			if (toSite != null) {
 				URL toSiteURL = new File(toSite).toURL();
 				if (SiteManager.getSite(toSiteURL, null) == null) {
-					throw new Exception("Cannot find site " + toSite);
+					throw new Exception(Policy.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
 				}
 				targetSite =
 					SiteManager
@@ -70,8 +70,7 @@ public class DisableCommand extends ScriptedCommand {
 			IFeature[] features =
 				UpdateUtils.searchSite(featureId, targetSite, true);
 			if (features == null || features.length == 0) {
-				throw new Exception(
-					"There are no configured features with id:" + featureId);
+				throw new Exception(Policy.bind("Standalone.noFeatures3", featureId)); //$NON-NLS-1$
 			}
 			if (version == null || version.trim().length() == 0)
 				feature = features[0]; // pick the first feature
@@ -87,11 +86,7 @@ public class DisableCommand extends ScriptedCommand {
 					}
 				}
 			if (feature == null) {
-				throw new Exception(
-					"Cannot find configured feature "
-						+ featureId
-						+ " with version "
-						+ version);
+				throw new Exception(Policy.bind("Standalone.noFeatures4", featureId, version)); //$NON-NLS-1$
 			}
 
 		} catch (MalformedURLException e) {

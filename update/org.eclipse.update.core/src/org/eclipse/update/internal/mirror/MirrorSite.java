@@ -24,7 +24,7 @@ import org.eclipse.update.standalone.*;
  * Local mirror site.  Read/Write
  */
 public class MirrorSite extends Site {
-	private final static String INDENT = "   ";
+	private final static String INDENT = "   "; //$NON-NLS-1$
 	private SiteModelFactory factory;
 	/**
 	 * plugin entries 
@@ -55,13 +55,13 @@ public class MirrorSite extends Site {
 			optionalfeatures);
 
 		System.out.println(
-			"Installing features finished. Updating categories ...");
+			"Installing features finished. Updating categories ..."); //$NON-NLS-1$
 		updateCategories(remoteSite);
 		System.out.println(
-			"Updating categories finished. Updating site description ...");
+			"Updating categories finished. Updating site description ..."); //$NON-NLS-1$
 		updateDescription(remoteSite);
 		System.out.println(
-			"Updating site description finished. Saving site.xml ...");
+			"Updating site description finished. Saving site.xml ..."); //$NON-NLS-1$
 		save();
 		if (mirrorSiteUrl != null) {
 			generateUpdatePolicy(mirrorSiteUrl);
@@ -133,14 +133,14 @@ public class MirrorSite extends Site {
 		IFeatureReference[] optionalfeatures,
 		int indent)
 		throws CoreException {
-		String tab = "";
+		String tab = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
-			tab += " ";
+			tab += " "; //$NON-NLS-1$
 		System.out.println(
 			tab
-				+ "Mirroring feature "
+				+ "Mirroring feature " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		SiteFeatureReferenceModel existingFeatures[] =
 			getDownloadedFeatureReferenceModels();
 		for (int e = 0; e < existingFeatures.length; e++) {
@@ -149,9 +149,9 @@ public class MirrorSite extends Site {
 				.equals(sourceFeature.getVersionedIdentifier())) {
 				System.out.println(
 					tab
-						+ "Feature "
+						+ "Feature " //$NON-NLS-1$
 						+ sourceFeature.getVersionedIdentifier()
-						+ " already exists.  Skipping downloading.");
+						+ " already exists.  Skipping downloading."); //$NON-NLS-1$
 				return existingFeatures[e];
 			}
 		}
@@ -160,9 +160,9 @@ public class MirrorSite extends Site {
 			sourceFeature.getFeatureContentProvider();
 		System.out.println(
 			tab
-				+ "Getting plugin entries for "
+				+ "Getting plugin entries for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		final IPluginEntry[] sourceFeaturePluginEntries =
 			sourceFeature.getPluginEntries();
 
@@ -177,17 +177,17 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Getting non plugin entries for "
+				+ "Getting non plugin entries for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		final INonPluginEntry[] nonPluginsToInstall =
 			sourceFeature.getRawNonPluginEntries();
 
 		System.out.println(
 			tab
-				+ "Getting included features for "
+				+ "Getting included features for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		IFeatureReference[] children =
 			sourceFeature.getRawIncludedFeatureReferences();
 		if (optionalfeatures != null) {
@@ -199,17 +199,17 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Downloading feature archives for "
+				+ "Downloading feature archives for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		// download feature archives
 		provider.getFeatureEntryArchiveReferences(null);
 
 		System.out.println(
 			tab
-				+ "Downloading plug-in archives for "
+				+ "Downloading plug-in archives for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		// download plugin archives
 		for (int i = 0; i < pluginsToInstall.length; i++) {
 			provider.getPluginEntryArchiveReferences(pluginsToInstall[i], null);
@@ -217,9 +217,9 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Downloading non plug-in archives for "
+				+ "Downloading non plug-in archives for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		// download non-plugin archives
 		for (int i = 0; i < nonPluginsToInstall.length; i++) {
 			provider.getNonPluginEntryArchiveReferences(
@@ -229,9 +229,9 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Installing child features for "
+				+ "Installing child features for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		// install child features first
 		for (int i = 0; i < children.length; i++) {
 			IFeature childFeature = children[i].getFeature(null);
@@ -244,9 +244,9 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Storing plug-in archives for "
+				+ "Storing plug-in archives for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		// store plugins' archives
 		for (int i = 0; i < pluginsToInstall.length; i++) {
 			ContentReference[] references =
@@ -259,9 +259,9 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Storing non plug-in archives for "
+				+ "Storing non plug-in archives for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		// store non plugins' archives
 		for (int i = 0; i < nonPluginsToInstall.length; i++) {
 			ContentReference[] references =
@@ -277,9 +277,9 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Storing feature archives for "
+				+ "Storing feature archives for " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " ...");
+				+ " ..."); //$NON-NLS-1$
 		// store feature archive
 		ContentReference[] references =
 			provider.getFeatureEntryArchiveReferences(null);
@@ -287,9 +287,9 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Adding feature "
+				+ "Adding feature " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " to model ...");
+				+ " to model ..."); //$NON-NLS-1$
 
 		// add feature model to site model
 		SiteFeatureReferenceModel featureRef =
@@ -305,9 +305,9 @@ public class MirrorSite extends Site {
 
 		System.out.println(
 			tab
-				+ "Mirroring feature "
+				+ "Mirroring feature " //$NON-NLS-1$
 				+ sourceFeature.getVersionedIdentifier()
-				+ " finished.");
+				+ " finished."); //$NON-NLS-1$
 		return featureRef;
 
 	}
@@ -336,9 +336,9 @@ public class MirrorSite extends Site {
 		}
 		save();
 		System.out.println(
-			"Feature "
+			"Feature " //$NON-NLS-1$
 				+ featureReference.getVersionedIdentifier()
-				+ " added to site.xml.");
+				+ " added to site.xml."); //$NON-NLS-1$
 	}
 	/**
 	 * Adds feature model to site model, removing old feature
@@ -370,13 +370,13 @@ public class MirrorSite extends Site {
 					this.getURL(),
 					Site.DEFAULT_INSTALLED_FEATURE_PATH
 						+ contentReference.getIdentifier()
-						+ ".jar");
+						+ ".jar"); //$NON-NLS-1$
 			featurePath = newURL.getFile();
 			inStream = contentReference.getInputStream();
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				"Error occurred while creating "+ featurePath+" file.",
+				"Error occurred while creating "+ featurePath+" file.", //$NON-NLS-1$ //$NON-NLS-2$
 				e);
 		} finally {
 			if (inStream != null) {
@@ -403,7 +403,7 @@ public class MirrorSite extends Site {
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-			"Error occurred while creating "+ pluginPath+" file.",
+			"Error occurred while creating "+ pluginPath+" file.", //$NON-NLS-1$ //$NON-NLS-2$
 				e);
 		} finally {
 			if (inStream != null) {
@@ -427,7 +427,7 @@ public class MirrorSite extends Site {
 				new URL(
 					getURL(),
 					Site.DEFAULT_INSTALLED_FEATURE_PATH
-						+ "/"
+						+ "/" //$NON-NLS-1$
 						+ featureVersionedIdentifier);
 			File dir = new File(newDirURL.getFile());
 			dir.mkdirs();
@@ -440,7 +440,7 @@ public class MirrorSite extends Site {
 				null);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-			"Error occurred while creating "+ nonPluginArchivePath.getAbsolutePath()+" file."
+			"Error occurred while creating "+ nonPluginArchivePath.getAbsolutePath()+" file." //$NON-NLS-1$ //$NON-NLS-2$
 				,e);
 		} finally {
 			if (inStream != null) {
@@ -455,9 +455,9 @@ public class MirrorSite extends Site {
 	private void save() {
 		FileOutputStream fos = null;
 		try {
-			URL siteURL = new URL(this.getURL(), "site.xml");
+			URL siteURL = new URL(this.getURL(), "site.xml"); //$NON-NLS-1$
 			fos = new FileOutputStream(new File(siteURL.getFile()));
-			OutputStreamWriter outWriter = new OutputStreamWriter(fos, "UTF-8");
+			OutputStreamWriter outWriter = new OutputStreamWriter(fos, "UTF-8"); //$NON-NLS-1$
 			PrintWriter writer = new PrintWriter(outWriter);
 			save(writer);
 			writer.flush();
@@ -465,7 +465,7 @@ public class MirrorSite extends Site {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(
 				Utilities.newCoreException(
-					"Site XML could not be saved.",
+					"Site XML could not be saved.", //$NON-NLS-1$
 					ioe));
 		} finally {
 			if (fos != null) {
@@ -477,19 +477,19 @@ public class MirrorSite extends Site {
 		}
 	}
 	private void save(PrintWriter writer) {
-		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
 		//writer.println("<!DOCTYPE site SYSTEM \"dtd/site.dtd\">");
-		writeSite("", writer);
+		writeSite("", writer); //$NON-NLS-1$
 	}
 
 	private void writeSite(String indent, PrintWriter writer) {
-		writer.print(indent + "<site");
+		writer.print(indent + "<site"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;
 		// default type
 		//writeIfDefined(indenta, writer, "type", getType());
 		// stored relative to site.xml
 		//writeIfDefined(indenta, writer, "url", getURL());
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		URLEntryModel description = getDescriptionModel();
 		if (description != null) {
 			writer.println();
@@ -498,41 +498,41 @@ public class MirrorSite extends Site {
 		}
 		writeFeatures(indent2, writer);
 		writeCategories(indent2, writer);
-		writer.println(indent + "</site>");
+		writer.println(indent + "</site>"); //$NON-NLS-1$
 	}
 	private void writeFeatures(String indent, PrintWriter writer) {
 		SiteFeatureReferenceModel[] featureReferenceModels =
 			getFeatureReferenceModels();
 		for (int i = 0; i < featureReferenceModels.length; i++) {
 			writer.print(indent);
-			writer.print("<feature");
+			writer.print("<feature"); //$NON-NLS-1$
 			writer.print(
-				" url=\"features/"
+				" url=\"features/" //$NON-NLS-1$
 					+ featureReferenceModels[i].getFeatureIdentifier()
-					+ "_"
+					+ "_" //$NON-NLS-1$
 					+ featureReferenceModels[i].getFeatureVersion()
-					+ ".jar\"");
+					+ ".jar\""); //$NON-NLS-1$
 			writer.print(
-				" id=\""
+				" id=\"" //$NON-NLS-1$
 					+ featureReferenceModels[i].getFeatureIdentifier()
-					+ "\"");
+					+ "\""); //$NON-NLS-1$
 			writer.print(
-				" version=\""
+				" version=\"" //$NON-NLS-1$
 					+ featureReferenceModels[i].getFeatureVersion()
-					+ "\"");
-			writer.println(">");
+					+ "\""); //$NON-NLS-1$
+			writer.println(">"); //$NON-NLS-1$
 
 			String[] categoryNames =
 				featureReferenceModels[i].getCategoryNames();
 			for (int cn = 0; cn < categoryNames.length; cn++) {
 				writer.print(indent + INDENT);
 				writer.println(
-					"<category name=\"" + categoryNames[cn] + "\" />");
+					"<category name=\"" + categoryNames[cn] + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			}
 
 			writer.print(indent);
-			writer.println("</feature>");
+			writer.println("</feature>"); //$NON-NLS-1$
 			writer.println();
 		}
 	}
@@ -543,20 +543,20 @@ public class MirrorSite extends Site {
 		}
 		for (int i = 0; i < categoryModels.length; i++) {
 			writer.print(indent);
-			writer.print("<category-def");
+			writer.print("<category-def"); //$NON-NLS-1$
 			writer.print(
-				" name=\""
+				" name=\"" //$NON-NLS-1$
 					+ categoryModels[i].getName()
-					+ "\" label=\""
+					+ "\" label=\"" //$NON-NLS-1$
 					+ categoryModels[i].getLabel()
-					+ "\"");
-			writer.println(">");
+					+ "\""); //$NON-NLS-1$
+			writer.println(">"); //$NON-NLS-1$
 			writeDescription(
 				indent + INDENT,
 				writer,
 				categoryModels[i].getDescriptionModel());
 			writer.print(indent);
-			writer.println("</category-def>");
+			writer.println("</category-def>"); //$NON-NLS-1$
 			writer.println();
 		}
 	}
@@ -570,18 +570,18 @@ public class MirrorSite extends Site {
 			return;
 		}
 		writer.print(indent);
-		writer.print("<description");
+		writer.print("<description"); //$NON-NLS-1$
 		if (url != null)
-			writer.print(" url=\"" + url + "\"");
+			writer.print(" url=\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (text == null || text.length() <= 0) {
-			writer.println(" />");
+			writer.println(" />"); //$NON-NLS-1$
 		} else {
-			writer.println(">");
+			writer.println(">"); //$NON-NLS-1$
 			if (text != null) {
 				writer.println(
 					indent + INDENT + UpdateManagerUtils.Writer.xmlSafe(text));
 			}
-			writer.println(indent + "</description>");
+			writer.println(indent + "</description>"); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -701,27 +701,27 @@ public class MirrorSite extends Site {
 	private void generateUpdatePolicy(String url) {
 		FileOutputStream fos = null;
 		try {
-			URL siteURL = new URL(this.getURL(), "policy.xml");
+			URL siteURL = new URL(this.getURL(), "policy.xml"); //$NON-NLS-1$
 			fos = new FileOutputStream(new File(siteURL.getFile()));
-			OutputStreamWriter outWriter = new OutputStreamWriter(fos, "UTF-8");
+			OutputStreamWriter outWriter = new OutputStreamWriter(fos, "UTF-8"); //$NON-NLS-1$
 			PrintWriter writer = new PrintWriter(outWriter);
 
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<update-policy>");
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+			writer.println("<update-policy>"); //$NON-NLS-1$
 
 			writer.println(
-				"<!-- You can paste the following fragment, containing url-map elements, into another policy file. -->");
+				"<!-- You can paste the following fragment, containing url-map elements, into another policy file. -->"); //$NON-NLS-1$
 			writeUrlMaps(writer, url);
-			writer.println("<!-- End of fragment with url-map elements. -->");
+			writer.println("<!-- End of fragment with url-map elements. -->"); //$NON-NLS-1$
 
-			writer.println("</update-policy>");
+			writer.println("</update-policy>"); //$NON-NLS-1$
 
 			writer.flush();
 		} catch (IOException ioe) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(
 				Utilities.newCoreException(
-					"policy.xml could not be saved",
+					"policy.xml could not be saved", //$NON-NLS-1$
 					ioe));
 		} finally {
 			if (fos != null) {
@@ -736,14 +736,14 @@ public class MirrorSite extends Site {
 		SiteFeatureReferenceModel[] featureReferenceModels =
 			getFeatureReferenceModels();
 		for (int i = 0; i < featureReferenceModels.length; i++) {
-			writer.print("\t");
-			writer.print("<url-map");
+			writer.print("\t"); //$NON-NLS-1$
+			writer.print("<url-map"); //$NON-NLS-1$
 			writer.print(
-				" pattern=\""
+				" pattern=\"" //$NON-NLS-1$
 					+ featureReferenceModels[i].getFeatureIdentifier()
-					+ "\"");
-			writer.print(" url=\"" + url + "\"");
-			writer.println(" />");
+					+ "\""); //$NON-NLS-1$
+			writer.print(" url=\"" + url + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println(" />"); //$NON-NLS-1$
 		}
 	}
 }

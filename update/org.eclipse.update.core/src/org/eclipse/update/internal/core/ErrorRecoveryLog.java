@@ -27,25 +27,25 @@ public class ErrorRecoveryLog {
 
 	public static final boolean RECOVERY_ON = false;
 
-	private static final String ERROR_RECOVERY_LOG = "error_recovery.log";
-	private static final String LOG_ENTRY_KEY = "LogEntry.";
-	private static final String RETURN_CARRIAGE = "\r\n";
-	private static final String END_OF_FILE = "eof=eof";
+	private static final String ERROR_RECOVERY_LOG = "error_recovery.log"; //$NON-NLS-1$
+	private static final String LOG_ENTRY_KEY = "LogEntry."; //$NON-NLS-1$
+	private static final String RETURN_CARRIAGE = "\r\n"; //$NON-NLS-1$
+	private static final String END_OF_FILE = "eof=eof"; //$NON-NLS-1$
 
 	//
-	public static final String START_INSTALL_LOG = 	"START_INSTALL_LOG";
-	public static final String PLUGIN_ENTRY = 		"PLUGIN";
-	public static final String FRAGMENT_ENTRY = 		"FRAGMENT";	
-	public static final String BUNDLE_MANIFEST_ENTRY = 		"BUNDLE_MANIFEST";	
-	public static final String BUNDLE_JAR_ENTRY = 			"BUNDLE";	
-	public static final String FEATURE_ENTRY = 		"FEATURE";
-	public static final String ALL_INSTALLED = 		"ALL_FEATURES_INSTALLED";
-	public static final String RENAME_ENTRY = 		"RENAME";
-	public static final String END_INSTALL_LOG = 	"END_INSTALL_LOG";
-	public static final String START_REMOVE_LOG = 	"REMOVE_LOG";
-	public static final String END_ABOUT_REMOVE =	"END_ABOUT_TO_REMOVE";
-	public static final String DELETE_ENTRY = 		"DELETE";
-	public static final String END_REMOVE_LOG = 		"END_REMOVE_LOG";
+	public static final String START_INSTALL_LOG = 	"START_INSTALL_LOG"; //$NON-NLS-1$
+	public static final String PLUGIN_ENTRY = 		"PLUGIN"; //$NON-NLS-1$
+	public static final String FRAGMENT_ENTRY = 		"FRAGMENT";	 //$NON-NLS-1$
+	public static final String BUNDLE_MANIFEST_ENTRY = 		"BUNDLE_MANIFEST";	 //$NON-NLS-1$
+	public static final String BUNDLE_JAR_ENTRY = 			"BUNDLE";	 //$NON-NLS-1$
+	public static final String FEATURE_ENTRY = 		"FEATURE"; //$NON-NLS-1$
+	public static final String ALL_INSTALLED = 		"ALL_FEATURES_INSTALLED"; //$NON-NLS-1$
+	public static final String RENAME_ENTRY = 		"RENAME"; //$NON-NLS-1$
+	public static final String END_INSTALL_LOG = 	"END_INSTALL_LOG"; //$NON-NLS-1$
+	public static final String START_REMOVE_LOG = 	"REMOVE_LOG"; //$NON-NLS-1$
+	public static final String END_ABOUT_REMOVE =	"END_ABOUT_TO_REMOVE"; //$NON-NLS-1$
+	public static final String DELETE_ENTRY = 		"DELETE"; //$NON-NLS-1$
+	public static final String END_REMOVE_LOG = 		"END_REMOVE_LOG"; //$NON-NLS-1$
 
 	public static boolean forceRemove = false;
 
@@ -84,7 +84,7 @@ public class ErrorRecoveryLog {
 		
 		// verify if it will be a directory without creating the file
 		// as it doesn't exist yet
-		if (path.endsWith(File.separator) || path.endsWith("/"))
+		if (path.endsWith(File.separator) || path.endsWith("/")) //$NON-NLS-1$
 			return path;
 		File file = new File(path);
 		String newName =
@@ -118,7 +118,7 @@ public class ErrorRecoveryLog {
 	public void open(String logEntry) throws CoreException {
 		if (open) {
 			nbOfOpen++;			
-			UpdateCore.warn("Open nested Error/Recovery log #"+nbOfOpen+":"+logEntry);				
+			UpdateCore.warn("Open nested Error/Recovery log #"+nbOfOpen+":"+logEntry);				 //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		
@@ -130,10 +130,10 @@ public class ErrorRecoveryLog {
 			paths=null;
 			open=true;
 			nbOfOpen=0;
-			UpdateCore.warn("Start new Error/Recovery log #"+nbOfOpen+":"+logEntry);							
+			UpdateCore.warn("Start new Error/Recovery log #"+nbOfOpen+":"+logEntry);							 //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }),
+				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }), //$NON-NLS-1$
 				e);
 		}
 		
@@ -147,13 +147,13 @@ public class ErrorRecoveryLog {
 		File logFile = null;
 		try {
 			if (!open) {
-				UpdateCore.warn("Internal Error: The Error/Recovery log is not open:"+logEntry);				
+				UpdateCore.warn("Internal Error: The Error/Recovery log is not open:"+logEntry);				 //$NON-NLS-1$
 				return;
 			}
 
 			StringBuffer buffer = new StringBuffer(LOG_ENTRY_KEY);
 			buffer.append(index);
-			buffer.append("=");
+			buffer.append("="); //$NON-NLS-1$
 			buffer.append(logEntry);
 			buffer.append(RETURN_CARRIAGE);
 
@@ -162,7 +162,7 @@ public class ErrorRecoveryLog {
 			index++;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
-				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }),
+				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }), //$NON-NLS-1$
 				e);
 		}
 	}
@@ -174,7 +174,7 @@ public class ErrorRecoveryLog {
 		if (path == null)
 			return;
 		StringBuffer buffer = new StringBuffer(logEntry);
-		buffer.append(" ");
+		buffer.append(" "); //$NON-NLS-1$
 		buffer.append(path);
 		append(buffer.toString());
 		
@@ -187,12 +187,12 @@ public class ErrorRecoveryLog {
 	public void close(String logEntry) throws CoreException {
 		
 		if (nbOfOpen>0){
-			UpdateCore.warn("Close nested Error/Recovery log #"+nbOfOpen+":"+logEntry);			
+			UpdateCore.warn("Close nested Error/Recovery log #"+nbOfOpen+":"+logEntry);			 //$NON-NLS-1$ //$NON-NLS-2$
 			nbOfOpen--;			
 			return;
 		}			
 		
-		UpdateCore.warn("Close Error/Recovery log #"+nbOfOpen+":"+logEntry);
+		UpdateCore.warn("Close Error/Recovery log #"+nbOfOpen+":"+logEntry); //$NON-NLS-1$ //$NON-NLS-2$
 		append(logEntry);
 		if (out != null) {
 			try {
@@ -233,18 +233,18 @@ public class ErrorRecoveryLog {
 	 */
 	public IStatus recover(){
 		
-		IStatus mainStatus = createStatus(IStatus.OK,"Recovering status",null);
+		IStatus mainStatus = createStatus(IStatus.OK,Policy.bind("ErrorRecoveryLog.recoveringStatus"),null); //$NON-NLS-1$
 		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),mainStatus.getMessage(),null);
 
 		//check if recovery is on
 		if (!RECOVERY_ON){
-			UpdateCore.warn("Recovering is turned off. Abort recovery");
+			UpdateCore.warn("Recovering is turned off. Abort recovery"); //$NON-NLS-1$
 			return multi;
 		}
 		
 		File logFile = getRecoveryLogFile();
 		if (!logFile.exists()){
-			multi.add(createStatus(IStatus.ERROR,"Unable to find log file:"+logFile,null));
+			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.cannotFindLogFile")+logFile,null)); //$NON-NLS-1$
 			return multi;
 		}
 		
@@ -255,8 +255,8 @@ public class ErrorRecoveryLog {
 			prop = new Properties();
 			prop.load(in);
 		} catch (IOException e){
-			UpdateCore.warn("Unable to read:"+logFile,e);
-			multi.add(createStatus(IStatus.ERROR,"Unable to access property file:"+logFile,e));
+			UpdateCore.warn("Unable to read:"+logFile,e); //$NON-NLS-1$
+			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noPropertyFile")+logFile,e)); //$NON-NLS-1$
 			return multi;
 		} finally {
 			if (in != null)
@@ -266,18 +266,18 @@ public class ErrorRecoveryLog {
 				}
 		}
 		
-		String eof = prop.getProperty("eof");
-		if(eof!=null && eof.equals("eof")){
+		String eof = prop.getProperty("eof"); //$NON-NLS-1$
+		if(eof!=null && eof.equals("eof")){ //$NON-NLS-1$
 			// all is good
 			delete();
-			UpdateCore.warn("Found log file. Log file contains end-of-file. No need to process");
+			UpdateCore.warn("Found log file. Log file contains end-of-file. No need to process"); //$NON-NLS-1$
 			multi.add(createStatus(IStatus.OK,null,null));
 			return multi;
 		}
 		
-		String recovery = prop.getProperty(LOG_ENTRY_KEY+"0");
+		String recovery = prop.getProperty(LOG_ENTRY_KEY+"0"); //$NON-NLS-1$
 		if (recovery==null){
-			multi.add(createStatus(IStatus.ERROR,"Unable to read log file. File doesn't contain the log entry:"+logFile,null));
+			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noLogEntry")+logFile,null)); //$NON-NLS-1$
 			return multi;			
 		}
 	
@@ -291,7 +291,7 @@ public class ErrorRecoveryLog {
 			return multi;
 		}
 
-		multi.add(createStatus(IStatus.ERROR,"Unable to read log file. Unable to determine recovery to execute based on the first line of :"+logFile,null));
+		multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noRecoveryToExecute")+logFile,null)); //$NON-NLS-1$
 		return multi;	
 	}
 	
@@ -302,13 +302,13 @@ public class ErrorRecoveryLog {
 		String id =
 			UpdateCore.getPlugin().getBundle().getSymbolicName();
 	
-		StringBuffer completeString = new StringBuffer("");
+		StringBuffer completeString = new StringBuffer(""); //$NON-NLS-1$
 		if (msg!=null)
 			completeString.append(msg);
 		if (e!=null){
-			completeString.append("\r\n[");
+			completeString.append("\r\n["); //$NON-NLS-1$
 			completeString.append(e.toString());
-			completeString.append("]\r\n");
+			completeString.append("]\r\n"); //$NON-NLS-1$
 		}
 		return new Status(statusSeverity, id, IStatus.OK, completeString.toString(), e);
 	}	
@@ -318,15 +318,15 @@ public class ErrorRecoveryLog {
 	 */
 	 private IStatus processRecoverInstall(Properties prop){
 	 	
-		IStatus mainStatus = createStatus(IStatus.OK,"",null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);
+		IStatus mainStatus = createStatus(IStatus.OK,"",null); //$NON-NLS-1$
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null); //$NON-NLS-1$
 	 	
 	 	Collection values = prop.values();
 	 	
 	 	if(values.contains(END_INSTALL_LOG)){
 			// all is good
 			delete();
-			UpdateCore.warn("Found log file. Log file contains END_INSTALL_LOG. No need to process rename");
+			UpdateCore.warn("Found log file. Log file contains END_INSTALL_LOG. No need to process rename"); //$NON-NLS-1$
 			multi.add(createStatus(IStatus.OK,null,null));
 			return multi;
 	 	}
@@ -347,13 +347,13 @@ public class ErrorRecoveryLog {
 	 			val = prop.getProperty(LOG_ENTRY_KEY+index);	 			
 	 		}
 	 		if (val==null){
-	 			UpdateCore.warn("Unable to find value for :"+LOG_ENTRY_KEY+index);
-	 			multi.add(createStatus(IStatus.ERROR,"Wrong log file. Unable to find entry for:"+LOG_ENTRY_KEY+index,null));
+	 			UpdateCore.warn("Unable to find value for :"+LOG_ENTRY_KEY+index); //$NON-NLS-1$
+	 			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.wrongLogFile")+LOG_ENTRY_KEY+index,null)); //$NON-NLS-1$
 				return multi;
 	 		}
 	 		// process recovery finished
 	 		delete();
-			UpdateCore.warn("Found log file. Successfully recovered by renaming. Feature is installed.");
+			UpdateCore.warn("Found log file. Successfully recovered by renaming. Feature is installed."); //$NON-NLS-1$
 			multi.add(createStatus(IStatus.OK,null,null));
 	 	} else {
 	 		// remove all because install did not lay out all the files
@@ -371,7 +371,7 @@ public class ErrorRecoveryLog {
 	 		}
 	 		// process recovery finished
 	 		delete();
-			UpdateCore.warn("Found log file. Successfully recovered by removing. Feature is removed.");
+			UpdateCore.warn("Found log file. Successfully recovered by removing. Feature is removed."); //$NON-NLS-1$
 			multi.add(createStatus(IStatus.OK,null,null));
 	 	}
 	 	return multi;
@@ -387,22 +387,22 @@ public class ErrorRecoveryLog {
 		String newFileName = null;
 	  	if (val.startsWith(PLUGIN_ENTRY)){
 	  		index = PLUGIN_ENTRY.length();
-	  		newFileName= "plugin.xml";
+	  		newFileName= "plugin.xml"; //$NON-NLS-1$
 	  	} else if (val.startsWith(BUNDLE_MANIFEST_ENTRY)){
 	  		index = BUNDLE_MANIFEST_ENTRY.length();
-	  		newFileName= "META-INF/MANIFEST.MF";
+	  		newFileName= "META-INF/MANIFEST.MF"; //$NON-NLS-1$
 	  	}else if (val.startsWith(FRAGMENT_ENTRY)){
 	  		index = FRAGMENT_ENTRY.length();
-	  		newFileName= "fragment.xml";
+	  		newFileName= "fragment.xml"; //$NON-NLS-1$
 	  	} else if (val.startsWith(FEATURE_ENTRY)){
 	  		index = FEATURE_ENTRY.length();
-	  		newFileName= "feature.xml";
+	  		newFileName= "feature.xml"; //$NON-NLS-1$
 	  	} else if (val.startsWith(BUNDLE_JAR_ENTRY)){
 	  		index = BUNDLE_JAR_ENTRY.length();
 	  	}
 	  	
 	  	if (index==-1){
-	  		return createStatus(IStatus.ERROR,"Unable to determine what action was taken by parsing"+val,null);
+	  		return createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noAction")+val,null); //$NON-NLS-1$
 	  	}
 	  	
 	  	String oldName = val.substring(index+1);
@@ -411,32 +411,32 @@ public class ErrorRecoveryLog {
 	  	File oldFile = new File(oldName);
 	  	File newFile;
 	  	if(val.startsWith(BUNDLE_JAR_ENTRY)){
-	  		newFile = new File(oldFile.getAbsolutePath().substring(0, oldFile.getAbsolutePath().lastIndexOf(".jar")+".jar".length()));
+	  		newFile = new File(oldFile.getAbsolutePath().substring(0, oldFile.getAbsolutePath().lastIndexOf(".jar")+".jar".length())); //$NON-NLS-1$ //$NON-NLS-2$
 	  	}else{
 	  		newFile = new File(oldFile.getParentFile(),newFileName);
 	  	}
 	  	if (!oldFile.exists()){
 	  		if (newFile.exists()){
 	  			// ok the file has been renamed apparently
-			  	return createStatus(IStatus.OK,"File already renamed into:"+newFile,null);	  				
+			  	return createStatus(IStatus.OK,Policy.bind("ErrorRecoveryLog.fileAlreadyRenamed")+newFile,null);	  				 //$NON-NLS-1$
 	  		} else {
 	  			// the file doesn't exist, log as problem, and force the removal of the feature
-		  		return createStatus(IStatus.ERROR,"Unable to find file:"+oldFile,null);	  			
+		  		return createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.cannotFindFile")+oldFile,null);	  			 //$NON-NLS-1$
 	  		}
 	  	} 	
 	  	
 		boolean sucess = false;
 		if (newFile.exists()) {
 			UpdateManagerUtils.removeFromFileSystem(newFile);
-			UpdateCore.warn("Removing already existing file:"+newFile);
+			UpdateCore.warn("Removing already existing file:"+newFile); //$NON-NLS-1$
 		}
 		sucess = oldFile.renameTo(newFile);
 			
 		if(!sucess){
-			String msg =("Unable to rename old in new:"+oldFile+newFile);
+			String msg =(Policy.bind("ErrorRecoveryLog.oldToNew")+oldFile+newFile); //$NON-NLS-1$
 			return createStatus(IStatus.ERROR,msg,null);
 		}
-		return createStatus(IStatus.OK,"Sucessfully renamed:"+oldFile+" to:"+newFile,null);
+		return createStatus(IStatus.OK,Policy.bind("ErrorRecoveryLog.renamed")+oldFile+Policy.bind("ErrorRecoveryLog.to")+newFile,null); //$NON-NLS-1$ //$NON-NLS-2$
 	  }
 	  
 	 /*
@@ -444,8 +444,8 @@ public class ErrorRecoveryLog {
 	  */
 	  private IStatus processRemove(String val){
 	  	
-		IStatus mainStatus = createStatus(IStatus.OK,"",null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);	  	
+		IStatus mainStatus = createStatus(IStatus.OK,"",null); //$NON-NLS-1$
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);	  	 //$NON-NLS-1$
 	  	
 		// get the path
 		int index = -1;
@@ -454,14 +454,14 @@ public class ErrorRecoveryLog {
 	  	}
 	  	
 	  	if (index==-1){
-	  		return createStatus(IStatus.ERROR,"Unable to determine what action was taken by parsing"+val,null);
+	  		return createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noAction")+val,null); //$NON-NLS-1$
 	  	}
 	  	
 	  	String oldName = val.substring(index+1);
 	  	File oldFile = new File(oldName);
 	  	if (!oldFile.exists()){
   			// the jar or directory doesn't exist, log as problem, and force the removal of the feature
-	  		multi.add(createStatus(IStatus.ERROR,"Unable to find file:"+oldFile,null));	  			
+	  		multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.cannotFindFile")+oldFile,null));	  			 //$NON-NLS-1$
 	  		return multi;
 	  	} 		  	
 		multi.addAll(removeFromFileSystem(oldFile));
@@ -475,11 +475,11 @@ public class ErrorRecoveryLog {
 	 */
 	public IStatus removeFromFileSystem(File file) {
 		
-		IStatus mainStatus = createStatus(IStatus.OK,"",null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);		
+		IStatus mainStatus = createStatus(IStatus.OK,"",null); //$NON-NLS-1$
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);		 //$NON-NLS-1$
 		
 		if (!file.exists()){
-			multi.add(createStatus(IStatus.ERROR,"Unable to find file to remove:"+file,null));
+			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.noFiletoRemove")+file,null)); //$NON-NLS-1$
 			return multi;
 		}
 			
@@ -503,22 +503,22 @@ public class ErrorRecoveryLog {
 	 */
 	 private IStatus processRecoverRemove(Properties prop){
 	 	
-		IStatus mainStatus = createStatus(IStatus.OK,"",null);
-		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null);
+		IStatus mainStatus = createStatus(IStatus.OK,"",null); //$NON-NLS-1$
+		MultiStatus multi = new MultiStatus(mainStatus.getPlugin(),mainStatus.getCode(),"",null); //$NON-NLS-1$
 	 	
 	 	Collection values = prop.values();
 	 	
 	 	if(values.contains(END_REMOVE_LOG)){
 			// all is good
 			delete();
-			UpdateCore.warn("Found log file. Log file contains END_REMOVE_LOG. No need to process rename");
+			UpdateCore.warn("Found log file. Log file contains END_REMOVE_LOG. No need to process rename"); //$NON-NLS-1$
 			multi.add(createStatus(IStatus.OK,null,null));
 			return multi;
 	 	}
 	 	
 	 	if (!values.contains(END_ABOUT_REMOVE)){
 	 		// finish install by renaming
- 			multi.add(createStatus(IStatus.ERROR,"The remove process didn't start. Please remove the disable feature from the program.",null));
+ 			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.removeFeature"),null)); //$NON-NLS-1$
 				return multi;
 	 	} else {
 	 		// finish install by renaming
@@ -536,13 +536,13 @@ public class ErrorRecoveryLog {
 	 			val = prop.getProperty(LOG_ENTRY_KEY+index);	 			
 	 		}
 	 		if (val==null){
-	 			UpdateCore.warn("Unable to find value for :"+LOG_ENTRY_KEY+index);
-	 			multi.add(createStatus(IStatus.ERROR,"Wrong log file. Unable to find entry for:"+LOG_ENTRY_KEY+index,null));
+	 			UpdateCore.warn("Unable to find value for :"+LOG_ENTRY_KEY+index); //$NON-NLS-1$
+	 			multi.add(createStatus(IStatus.ERROR,Policy.bind("ErrorRecoveryLog.wrongLogFile")+LOG_ENTRY_KEY+index,null)); //$NON-NLS-1$
 				return multi;
 	 		}
 	 		// process recovery finished
 	 		delete();
-			UpdateCore.warn("Found log file. Successfully recovered by deleting. Feature is removed.");
+			UpdateCore.warn("Found log file. Successfully recovered by deleting. Feature is removed."); //$NON-NLS-1$
 			multi.add(createStatus(IStatus.OK,null,null));
 	 	}
 	 	return multi;

@@ -66,7 +66,7 @@ public class MirrorCommand extends ScriptedCommand {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(
 					Utilities.newCoreException(
-						"No matching features found on " + remoteSiteUrl + ".",
+						"No matching features found on " + remoteSiteUrl + ".", //$NON-NLS-1$ //$NON-NLS-2$
 						null));
 				return false;
 			}
@@ -93,7 +93,7 @@ public class MirrorCommand extends ScriptedCommand {
 		if (fromSiteUrl == null || fromSiteUrl.length() <= 0) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(
-				Utilities.newCoreException("from parameter is missing.", null));
+				Utilities.newCoreException("from parameter is missing.", null)); //$NON-NLS-1$
 			return false;
 		}
 		try {
@@ -101,13 +101,13 @@ public class MirrorCommand extends ScriptedCommand {
 		} catch (MalformedURLException mue) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(
-				Utilities.newCoreException("from must be a valid URL", null));
+				Utilities.newCoreException("from must be a valid URL", null)); //$NON-NLS-1$
 			return false;
 		}
 		if (toSiteDir == null || toSiteDir.length() <= 0) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(
-				Utilities.newCoreException("to parameter is missing.", null));
+				Utilities.newCoreException("to parameter is missing.", null)); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -118,19 +118,19 @@ public class MirrorCommand extends ScriptedCommand {
 		if (mirrorSite == null) {
 			if (toSiteDir != null) {
 				MirrorSiteFactory factory = new MirrorSiteFactory();
-				System.out.print("Analyzing features already mirrored ...");
+				System.out.print("Analyzing features already mirrored ..."); //$NON-NLS-1$
 				try {
 					mirrorSite =
 						(MirrorSite) factory.createSite(new File(toSiteDir));
 				} catch (InvalidSiteTypeException iste) {
 				}
-				System.out.println("  Done.");
+				System.out.println("  Done."); //$NON-NLS-1$
 			}
 			if (mirrorSite == null) {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(
 					Utilities.newCoreException(
-						"Mirror site at " + toSiteDir + " cannot be accessed.",
+						"Mirror site at " + toSiteDir + " cannot be accessed.", //$NON-NLS-1$ //$NON-NLS-2$
 						null));
 				return null;
 			}
@@ -158,11 +158,11 @@ public class MirrorCommand extends ScriptedCommand {
 
 		if (featureId == null) {
 			System.out.println(
-				"Parameter feature not specified.  All features on the remote site will be mirrored.");
+				"Parameter feature not specified.  All features on the remote site will be mirrored."); //$NON-NLS-1$
 		}
 		if (featureVersion == null) {
 			System.out.println(
-				"Parameter version not specified.  All versions of features on the remote site will be mirrored.");
+				"Parameter version not specified.  All versions of features on the remote site will be mirrored."); //$NON-NLS-1$
 		} else {
 			featureVersionIdentifier =
 				new PluginVersionIdentifier(featureVersion);
@@ -189,9 +189,9 @@ public class MirrorCommand extends ScriptedCommand {
 					.getVersionedIdentifier()
 					.equals(remoteFeatureVersionedIdentifier)) {
 					System.out.println(
-						"Feature "
+						"Feature " //$NON-NLS-1$
 							+ remoteFeatureVersionedIdentifier
-							+ " already mirrored and exposed.");
+							+ " already mirrored and exposed."); //$NON-NLS-1$
 					// feature already mirrored and exposed in site.xml
 					continue;
 				}
@@ -205,21 +205,21 @@ public class MirrorCommand extends ScriptedCommand {
 				&& !ISite.DEFAULT_PACKAGED_FEATURE_TYPE.equals(type)) {
 				// unsupported
 				throw Utilities.newCoreException(
-					"Feature "
+					"Feature " //$NON-NLS-1$
 						+ remoteFeatureVersionedIdentifier
-						+ " is of type "
+						+ " is of type " //$NON-NLS-1$
 						+ type
-						+ ".  Only features of type "
+						+ ".  Only features of type " //$NON-NLS-1$
 						+ ISite.DEFAULT_PACKAGED_FEATURE_TYPE
-						+ " are supported.",
+						+ " are supported.", //$NON-NLS-1$
 					null);
 			}
 
 			featureReferencesToMirror.add(remoteSiteFeatureReferences[i]);
 			System.out.println(
-				"Feature "
+				"Feature " //$NON-NLS-1$
 					+ remoteSiteFeatureReferences[i].getVersionedIdentifier()
-					+ " will be mirrored.");
+					+ " will be mirrored."); //$NON-NLS-1$
 		}
 		return (ISiteFeatureReference[]) featureReferencesToMirror.toArray(
 			new ISiteFeatureReference[featureReferencesToMirror.size()]);

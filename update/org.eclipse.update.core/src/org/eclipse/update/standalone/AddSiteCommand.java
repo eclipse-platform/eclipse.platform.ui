@@ -15,6 +15,7 @@ import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * Adds a new site.
@@ -38,21 +39,19 @@ public class AddSiteCommand extends ScriptedCommand {
 			if (fromSite != null) {
 				sitePath = new File(fromSite);
 				if (!sitePath.exists())
-					throw new Exception("Cannot find site: " + fromSite);
+					throw new Exception(Policy.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
 					
 				URL fromSiteURL = sitePath.toURL();
 				site = SiteManager.getSite(fromSiteURL, null);
 				if (site == null) {
-					throw new Exception(
-						"Cannot find site : " + fromSite);
+					throw new Exception(Policy.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
 				}
 				IConfiguredSite csite = site.getCurrentConfiguredSite();
 				if (csite != null)
-					throw new Exception("Site is already configured " + fromSite);
+					throw new Exception(Policy.bind("Standalone.siteConfigured") + fromSite); //$NON-NLS-1$
 			} else {
-				throw new Exception("No site specified");
-			}
-		
+				throw new Exception(Policy.bind("Standalone.noSite3") ); //$NON-NLS-1$
+			}		
 		} catch (Exception e) {
 			throw e;
 		} 

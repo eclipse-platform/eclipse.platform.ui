@@ -11,6 +11,7 @@
 package org.eclipse.update.standalone;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.core.*;
 
 /**
  * The application class used to launch standalone update commands.
@@ -38,33 +39,23 @@ public class StandaloneUpdateApplication implements IPlatformRunnable {
 			CmdLineArgs cmdLineArgs = new CmdLineArgs(params);
 			ScriptedCommand cmd = cmdLineArgs.getCommand();
 			if (cmd == null) {
-
-				System.out.println(
-						"Command failed.  Please check "
-							+ Platform.getLogFileLocation().toOSString()
-							+ " log file for details.");
+				System.out.println(Policy.bind("Standalone.cmdFailed", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
 				return EXIT_ERROR;
 			}
 			loggedException = false;
 			boolean result = cmd.run();
 			if (result) {
 				if (loggedException) {
-					System.out.println(
-						"Command completed with errors.  Please check "
-							+ Platform.getLogFileLocation().toOSString()
-							+ " log file for details.");
+					System.out.println(Policy.bind("Standalone.cmdCompleteWithErrors", Platform.getLogFileLocation().toOSString()));//$NON-NLS-1$
 				} else {
-					System.out.println("Command completed successfully.");
+					System.out.println(Policy.bind("Standalone.cmdOK")); //$NON-NLS-1$
 				}
 				return IPlatformRunnable.EXIT_OK;
 			} else {
 				if (loggedException) {
-					System.out.println(
-						"Command failed.  Please check "
-							+ Platform.getLogFileLocation().toOSString()
-							+ " log file for details.");
+					System.out.println(Policy.bind("Standalone.cmdFailed", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
 				} else {
-					System.out.println("Command failed.");
+					System.out.println(Policy.bind("Standalone.cmdFailedNoLog"));//$NON-NLS-1$
 				}
 				return EXIT_ERROR;
 			}

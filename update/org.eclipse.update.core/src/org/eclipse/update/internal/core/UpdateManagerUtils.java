@@ -113,7 +113,7 @@ public class UpdateManagerUtils {
 
 			String rootURLFileString = rootURL.getFile();
 			rootURLFileString = rootURLFileString.replace(File.separatorChar, '/');
-			if (!rootURLFileString.endsWith("/")) {
+			if (!rootURLFileString.endsWith("/")) { //$NON-NLS-1$
 				int index = rootURLFileString.lastIndexOf('/');
 				if (index != -1) {
 					rootURLFileString = rootURLFileString.substring(0, index);
@@ -127,7 +127,7 @@ public class UpdateManagerUtils {
 			} else {
 				// we need to check the following
 				// file:/C:/ and file:C:/
-				if ("file".equalsIgnoreCase(url.getProtocol())) {
+				if ("file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
 					File rootFile = new File(rootURLFileString);
 					File urlFile = new File(urlFileString);
 
@@ -137,13 +137,13 @@ public class UpdateManagerUtils {
 					}
 
 					if (relativePath == null) {
-						UpdateCore.warn("Cannot calculate relative path");
+						UpdateCore.warn("Cannot calculate relative path"); //$NON-NLS-1$
 						return url.toString();
 					} else {
 						String relativeRootString = relativePath.getParentFile().getAbsolutePath();
 						String fullString = urlFile.getAbsolutePath();
 						if (!fullString.startsWith(relativeRootString)) {
-							UpdateCore.warn("Full path:" + fullString + " does not start with " + relativeRootString);
+							UpdateCore.warn("Full path:" + fullString + " does not start with " + relativeRootString); //$NON-NLS-1$ //$NON-NLS-2$
 							return url.toString();
 						} else {
 							String returnString = fullString.substring(relativeRootString.length() + 1);
@@ -214,7 +214,7 @@ public class UpdateManagerUtils {
 	public static void checkPermissions(ContentReference ref, String filePath) {
 
 		if (ref.getPermission() != 0) {
-			UpdateCore.warn("Change permission for " + filePath + " to " + ref.getPermission());
+			UpdateCore.warn("Change permission for " + filePath + " to " + ref.getPermission()); //$NON-NLS-1$ //$NON-NLS-2$
 			// FIXME: change the code to use JNI
 		}
 
@@ -223,12 +223,12 @@ public class UpdateManagerUtils {
 			// do not remove write permission 20896
 			// chmod a+x *.sl
 			try {
-				Process pr = Runtime.getRuntime().exec(new String[] { "chmod", "a+x", filePath });
+				Process pr = Runtime.getRuntime().exec(new String[] { "chmod", "a+x", filePath }); //$NON-NLS-1$ //$NON-NLS-2$
 				Thread chmodOutput = new StreamConsumer(pr.getInputStream());
-				chmodOutput.setName("chmod output reader");
+				chmodOutput.setName("chmod output reader"); //$NON-NLS-1$
 				chmodOutput.start();
 				Thread chmodError = new StreamConsumer(pr.getErrorStream());
-				chmodError.setName("chmod error reader");
+				chmodError.setName("chmod error reader"); //$NON-NLS-1$
 				chmodError.start();
 			} catch (IOException ioe) {
 			}
@@ -361,7 +361,7 @@ public class UpdateManagerUtils {
 				lastSlashIndex = i;
 		}
 		if (lastSlashIndex == -1)
-			file = "";
+			file = ""; //$NON-NLS-1$
 		else
 			file = file.substring(0, lastSlashIndex + 1);
 		try {
@@ -378,7 +378,7 @@ public class UpdateManagerUtils {
 	public static URL asDirectoryURL(URL url) throws MalformedURLException {
 		//url = URLEncoder.encode(url);
 		String path = url.getFile();
-		if (!path.endsWith("/")) {
+		if (!path.endsWith("/")) { //$NON-NLS-1$
 			int index = path.lastIndexOf('/');
 			if (index != -1)
 				path = path.substring(0, index + 1);
@@ -405,9 +405,9 @@ public class UpdateManagerUtils {
 		// have 2 URL pointing to the same featureReference
 		// but with different representation
 		// (i.e. file:/C;/ and file:C:/)
-		if (!"file".equalsIgnoreCase(url1.getProtocol()))
+		if (!"file".equalsIgnoreCase(url1.getProtocol())) //$NON-NLS-1$
 			return false;
-		if (!"file".equalsIgnoreCase(url2.getProtocol()))
+		if (!"file".equalsIgnoreCase(url2.getProtocol())) //$NON-NLS-1$
 			return false;
 
 		File file1 = getFileFor(url1);//new File(url1.getFile());
@@ -456,14 +456,14 @@ public class UpdateManagerUtils {
 						try {
 							compareFeature = children[j].getFeature(null);
 						} catch (CoreException e) {
-							UpdateCore.warn("", e);
+							UpdateCore.warn("", e); //$NON-NLS-1$
 						}
 						if (childFeature.equals(compareFeature)) {
 							if (onlyOptional) {
 								if (UpdateManagerUtils.isOptional(children[j])) {
 									parentList.add(possiblesParent[i]);
 								} else {
-									UpdateCore.warn("Feature :" + children[j] + " not optional. Not included in parents list.");
+									UpdateCore.warn("Feature :" + children[j] + " not optional. Not included in parents list."); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 							} else {
 								parentList.add(possiblesParent[i]);
@@ -472,7 +472,7 @@ public class UpdateManagerUtils {
 					}
 				}
 			} catch (CoreException e) {
-				UpdateCore.warn("", e);
+				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
 
@@ -600,7 +600,7 @@ public class UpdateManagerUtils {
 	 * @since 2.0.2
 	 */
 	public static int getMatchingIdRule(String rule) {
-		if (rule!=null && rule.equalsIgnoreCase("prefix"))
+		if (rule!=null && rule.equalsIgnoreCase("prefix")) //$NON-NLS-1$
 			return IImport.RULE_PREFIX;
 		return IImport.RULE_PERFECT;
 	}
@@ -639,9 +639,9 @@ public class UpdateManagerUtils {
 	 */	
 	private static boolean isMatching(String candidateValues, String siteValues) {
 		if (siteValues==null) return false;
-		if ("*".equalsIgnoreCase(candidateValues)) return true;
+		if ("*".equalsIgnoreCase(candidateValues)) return true; //$NON-NLS-1$
 		siteValues = siteValues.toUpperCase();		
-		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
+		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken().toUpperCase();
 			if (siteValues.indexOf(token)!=-1) return true;
@@ -654,11 +654,11 @@ public class UpdateManagerUtils {
 	 */	
 	private static boolean isMatchingLocale(String candidateValues, String locale) {
 		if (locale==null) return false;
-		if ("*".equalsIgnoreCase(candidateValues)) return true;
+		if ("*".equalsIgnoreCase(candidateValues)) return true; //$NON-NLS-1$
 		
 		locale = locale.toUpperCase();
 		candidateValues = candidateValues.toUpperCase();	
-		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
+		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String candidate = stok.nextToken();
 			if (locale.indexOf(candidate) == 0)
@@ -701,7 +701,7 @@ public static class Writer {
 	 * 
 	 */
 	public void write(IWritable element) {
-		w.println("<?xml version=\"1.0\" encoding=\""+encoding+"\"?>"); //$NON-NLS-1$
+		w.println("<?xml version=\"1.0\" encoding=\""+encoding+"\"?>"); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(""); //$NON-NLS-1$
 		w.println("<!-- File written by Update manager 2.0 -->"); //$NON-NLS-1$
 		w.println("<!-- comments in this file are not preserved -->"); //$NON-NLS-1$
@@ -868,12 +868,12 @@ public static class Writer {
 			if (nextIncrement > 0 && monitor != null)
 				monitor.incrementCount(nextIncrement);
 			if(expectedLength>0 && offset!=expectedLength)
-				throw new IOException("InputStream ended after "+ offset +" bytes (expected "+expectedLength+").");
+				throw new IOException(Policy.bind("UpdateManagerUtils.inputStreamEnded", String.valueOf(offset), String.valueOf(expectedLength))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return -1;
 		} catch(IOException e){
 			// Log the actual error, as this is no longer
 			// passed up the calling stack
-			UpdateCore.log("UpdateManagerUtils.copy(): " + offset, e);
+			UpdateCore.log(Policy.bind("UpdateManagerUtils.copy") + offset, e); //$NON-NLS-1$
 			return offset;
 		} finally {
 			freeBuffer(buf);

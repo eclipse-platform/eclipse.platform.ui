@@ -46,7 +46,7 @@ public abstract class ScriptedCommand implements IOperationListener {
 	 * This is mostly used when wanted to know if the command would fail.
 	 */
 	public ScriptedCommand(String verifyOnly) {
-		this.verifyOnly = "true".equals(verifyOnly);
+		this.verifyOnly = "true".equals(verifyOnly); //$NON-NLS-1$
 	}
 
 	/**
@@ -96,19 +96,13 @@ public abstract class ScriptedCommand implements IOperationListener {
 	 * @return the installation configuration affected by the command
 	 */
 	public final IInstallConfiguration getConfiguration() {
-//		if (config == null) {
-			try {
-				ILocalSite localSite = SiteManager.getLocalSite();
-				config = localSite.getCurrentConfiguration();
-//				if (!isVerifyOnly()) {
-//					config = UpdateUtils.createInstallConfiguration();
-//					UpdateUtils.makeConfigurationCurrent(config, null);
-//				}
-			} catch (CoreException e) {
-				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(e);
-			}
-//		}
+		try {
+			ILocalSite localSite = SiteManager.getLocalSite();
+			config = localSite.getCurrentConfiguration();
+		} catch (CoreException e) {
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
+		}
 		return config;
 	}
 

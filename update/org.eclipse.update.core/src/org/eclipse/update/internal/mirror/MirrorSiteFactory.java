@@ -45,16 +45,16 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		if (!siteLocation.exists()) {
 			if (!siteLocation.mkdirs()) {
 				throw Utilities.newCoreException(
-					"Directory "
+					"Directory " //$NON-NLS-1$
 						+ siteLocation.getAbsolutePath()
-						+ " could not be created.",
+						+ " could not be created.", //$NON-NLS-1$
 					null);
 			}
 		}
 		if (!siteLocation.isDirectory() || !siteLocation.canWrite())
 			throw Utilities.newCoreException(
 				siteLocation.getAbsolutePath()
-					+ " is not a directory or is not writtable.",
+					+ " is not a directory or is not writtable.", //$NON-NLS-1$
 				null);
 
 		MirrorSite site = null;
@@ -89,9 +89,9 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 			url = siteLocation.toURL();
 		} catch (MalformedURLException mue) {
 			throw Utilities.newCoreException(
-				"A URL for site "
+				"A URL for site " //$NON-NLS-1$
 					+ siteLocation.getAbsolutePath()
-					+ " could not be created.",
+					+ " could not be created.", //$NON-NLS-1$
 				mue);
 		}
 		SiteContentProvider contentProvider = null;
@@ -103,8 +103,8 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 			site.resolve(url, url);
 		} catch (MalformedURLException mue) {
 			throw Utilities.newCoreException(
-				"Unable to resolve URL "
-					+ (url == null ? "" : url.toExternalForm()),
+				"Unable to resolve URL " //$NON-NLS-1$
+					+ (url == null ? "" : url.toExternalForm()), //$NON-NLS-1$
 				mue);
 		}
 		return site;
@@ -181,19 +181,19 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 					// check if the JAR file contains a feature.xml
 					currentFeatureFile = new File(featureDir, dir[index]);
 					JarContentReference ref =
-						new JarContentReference("", currentFeatureFile);
+						new JarContentReference("", currentFeatureFile); //$NON-NLS-1$
 					ContentReference result = null;
 					try {
 						result = ref.peek(Feature.FEATURE_XML, null, null);
 					} catch (IOException e) {
 						UpdateCore.warn(
-							"Exception retrieving feature.xml in file:"
+							"Exception retrieving feature.xml in file:" //$NON-NLS-1$
 								+ currentFeatureFile,
 							e);
 					}
 					if (result == null) {
 						UpdateCore.warn(
-							"Unable to find feature.xml in file:"
+							"Unable to find feature.xml in file:" //$NON-NLS-1$
 								+ currentFeatureFile);
 					} else {
 						featureURL = currentFeatureFile.toURL();
@@ -215,7 +215,7 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 				}
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(
-					"Unable to create URL for file " + newFilePath + ".",
+					"Unable to create URL for file " + newFilePath + ".", //$NON-NLS-1$ //$NON-NLS-2$
 					e);
 			}
 		}

@@ -51,14 +51,12 @@ public class UpdateCommand extends ScriptedCommand {
 						getConfiguration(),
 						featureId);
 				if (targetSite == null) {
-					throw new Exception(
-						"Cannot find configured site for " + featureId);
+					throw new Exception(Policy.bind("Standalone.noConfigSiteForFeature", featureId)); //$NON-NLS-1$
 				}
 				IFeature[] currentFeatures =
 					UpdateUtils.searchSite(featureId, targetSite, true);
 				if (currentFeatures == null || currentFeatures.length == 0) {
-					throw new Exception(
-						"Cannot find configured feature " + featureId);
+					throw new Exception(Policy.bind("Standalone.noFeatures3", featureId)); //$NON-NLS-1$
 				}
 				this.currentFeature = currentFeatures[0];
 			} else {
@@ -94,15 +92,12 @@ public class UpdateCommand extends ScriptedCommand {
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		try {
-			monitor.beginTask("Updating feature", 4);
+			monitor.beginTask(Policy.bind("Standalone.updating"), 4);  //$NON-NLS-1$
 			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
 				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(
-					Utilities.newCoreException(
-						"Feature " + featureId + " cannot be updated.",
-						null));
+				UpdateCore.log(Utilities.newCoreException(Policy.bind("Standalone.noUpdate", featureId),	null));  //$NON-NLS-1$
 				return false;
 			}
 			JobTargetSite[] jobTargetSites =
@@ -120,8 +115,7 @@ public class UpdateCommand extends ScriptedCommand {
 					getConfiguration());
 			if (conflicts != null) {
 				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(
-					Utilities.newCoreException("Duplicate conflicts", null));
+				UpdateCore.log(Utilities.newCoreException(Policy.bind("Standalone.duplicate"), null)); //$NON-NLS-1$
 				return false;
 			}
 
@@ -136,13 +130,16 @@ public class UpdateCommand extends ScriptedCommand {
 			try {
 				installOperation.execute(new SubProgressMonitor(monitor,3), this);
 				System.out.println(
-					"Feature " + featureId + " has successfully been updated");
+						Policy.bind("Standalone.feature") //$NON-NLS-1$
+						+ featureId
+						+ " " //$NON-NLS-1$
+						+ Policy.bind("Standalone.updated")); //$NON-NLS-1$
 				return true;
 			} catch (Exception e) {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(
 					Utilities.newCoreException(
-						"Cannot update feature " + featureId,
+							Policy.bind("Standalone.noUpdate", featureId),  //$NON-NLS-1$
 						e));
 				return false;
 			}
@@ -152,7 +149,7 @@ public class UpdateCommand extends ScriptedCommand {
 				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
-				System.out.println("Connection Error");
+				System.out.println(Policy.bind("Standalone.connection")); //$NON-NLS-1$
 			} else {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(ce);

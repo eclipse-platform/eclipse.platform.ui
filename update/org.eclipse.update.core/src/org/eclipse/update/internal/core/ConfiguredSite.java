@@ -28,8 +28,8 @@ import org.eclipse.update.configurator.*;
  */
 public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSite {
 
-	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct";
-	private static final String EXTENSION_SITE_MARKER = ".eclipseextension";
+	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct"; //$NON-NLS-1$
+	private static final String EXTENSION_SITE_MARKER = ".eclipseextension"; //$NON-NLS-1$
 
 	// listeners	
 	private ListenersList listeners = new ListenersList();
@@ -121,7 +121,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			installedFeatureRef = getSite().install(feature, optionalFeatures, verificationListener, monitor);
 
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
-				UpdateCore.debug("Sucessfully installed: " + installedFeatureRef.getURL().toExternalForm());
+				UpdateCore.debug("Sucessfully installed: " + installedFeatureRef.getURL().toExternalForm()); //$NON-NLS-1$
 			}
 
 			if (installedFeatureRef != null) {
@@ -235,7 +235,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	private void configure(IFeature feature, IFeatureReference[] optionalFeatures, boolean callInstallHandler) throws CoreException {
 
 		if (feature == null) {
-			UpdateCore.warn("Attempting to configure a null feature in site:" + getSite().getURL().toExternalForm());
+			UpdateCore.warn("Attempting to configure a null feature in site:" + getSite().getURL().toExternalForm()); //$NON-NLS-1$
 			return;
 		}
 
@@ -256,7 +256,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			} catch (CoreException e) {
 				// will skip any bad children
 				if (!childrenRef[i].isOptional())
-					UpdateCore.warn("Unable to configure child feature: " + childrenRef[i] + " " + e);
+					UpdateCore.warn("Unable to configure child feature: " + childrenRef[i] + " " + e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -296,7 +296,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 							break;
 						}
 					} catch (CoreException e) {
-						UpdateCore.warn("", e);
+						UpdateCore.warn("", e); //$NON-NLS-1$
 					}
 				}
 			}
@@ -322,7 +322,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
 
 		if (featureReference == null) {
-			UpdateCore.warn("Unable to retrieve Feature Reference for feature" + feature);
+			UpdateCore.warn("Unable to retrieve Feature Reference for feature" + feature); //$NON-NLS-1$
 			return false;
 		}
 
@@ -332,7 +332,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// verify no enable parent
 		if (verifyEnableParent && !validateNoConfiguredParents(feature)) {
-			UpdateCore.warn("The feature " + feature.getVersionedIdentifier() + " to disable is needed by another enable feature");
+			UpdateCore.warn("The feature " + feature.getVersionedIdentifier() + " to disable is needed by another enable feature"); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 
@@ -341,8 +341,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			sucessfullyUnconfigured = configPolicy.unconfigure(featureReference, true, true);
 		} catch (CoreException e) {
 			URL url = featureReference.getURL();
-			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCore.warn("Unable to unconfigure" + urlString, e);
+			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>"; //$NON-NLS-1$
+			UpdateCore.warn("Unable to unconfigure" + urlString, e); //$NON-NLS-1$
 			throw e;
 		}
 		if (sucessfullyUnconfigured) {
@@ -366,7 +366,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					unconfigure(child, includePatches, true); // check for parent as we should be the only parent.
 				} catch (CoreException e) {
 					// skip any bad children
-					UpdateCore.warn("Unable to unconfigure child feature: " + childrenRef[i] + " " + e);
+					UpdateCore.warn("Unable to unconfigure child feature: " + childrenRef[i] + " " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 
@@ -380,8 +380,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			return true;
 		} else {
 			URL url = featureReference.getURL();
-			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>";
-			UpdateCore.warn("Unable to unconfigure:" + urlString);
+			String urlString = (url != null) ? url.toExternalForm() : "<no feature reference url>"; //$NON-NLS-1$
+			UpdateCore.warn("Unable to unconfigure:" + urlString); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -406,7 +406,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 				if (UpdateUtils.isPatch(feature, candidate))
 					unconfigure(candidate, false, false);
 			} catch (CoreException e) {
-				UpdateCore.warn("", e);
+				UpdateCore.warn("", e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -676,7 +676,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 */
 	public IStatus getBrokenStatus(IFeature feature) {
 
-		IStatus featureStatus = createStatus(IStatus.OK, IFeature.STATUS_HAPPY, "", null);
+		IStatus featureStatus = createStatus(IStatus.OK, IFeature.STATUS_HAPPY, "", null); //$NON-NLS-1$
 
 		// check the Plugins of all the features
 		// every plugin of the feature must be on the site
@@ -684,12 +684,12 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
 		IPluginEntry[] result = UpdateManagerUtils.diff(featuresEntries, siteEntries);
 		if (result != null && (result.length != 0)) {
-			String msg = Policy.bind("SiteLocal.FeatureUnHappy");
+			String msg = Policy.bind("SiteLocal.FeatureUnHappy"); //$NON-NLS-1$
 			MultiStatus multi = new MultiStatus(featureStatus.getPlugin(), IFeature.STATUS_UNHAPPY, msg, null);
 
 			for (int k = 0; k < result.length; k++) {
 				VersionedIdentifier id = result[k].getVersionedIdentifier();
-				Object[] values = new String[] { "", "" };
+				Object[] values = new String[] { "", "" }; //$NON-NLS-1$ //$NON-NLS-2$
 				if (id != null) {
 					values = new Object[] { id.getIdentifier(), id.getVersion()};
 				}
@@ -703,7 +703,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		// check os, arch, and ws
 
-		String msg = Policy.bind("SiteLocal.FeatureHappy");
+		String msg = Policy.bind("SiteLocal.FeatureHappy"); //$NON-NLS-1$
 		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY, msg, null);
 	}
 
@@ -719,7 +719,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
 		if (featureReference == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-				UpdateCore.warn("Unable to retrieve featureReference for feature:" + feature);
+				UpdateCore.warn("Unable to retrieve featureReference for feature:" + feature); //$NON-NLS-1$
 			return false;
 		}
 		return getConfigurationPolicy().isConfigured(featureReference);
@@ -730,9 +730,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 */
 	public String toString() {
 		if (getSite() == null)
-			return "No Site";
+			return "No Site"; //$NON-NLS-1$
 		if (getSite().getURL() == null)
-			return "No URL";
+			return "No URL"; //$NON-NLS-1$
 		return getSite().getURL().toExternalForm();
 	}
 
@@ -750,7 +750,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			return verifyStatus;
 		}
 
-		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) {
+		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) { //$NON-NLS-1$
 			verifyStatus = createStatus(IStatus.ERROR, Policy.bind("ConfiguredSite.NonLocalSite"), null); //$NON-NLS-1$
 			return verifyStatus;
 		}
@@ -764,7 +764,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		// otherwise don't check if we are contained in another site
 		String productName = getProductName(file);
 		if (productName != null) {
-			if (!productName.equals(getProductIdentifier("id", getProductFile()))) {
+			if (!productName.equals(getProductIdentifier("id", getProductFile()))) { //$NON-NLS-1$
 				verifyStatus = createStatus(IStatus.ERROR, Policy.bind("ConfiguredSite.NotSameProductId", productName), null); //$NON-NLS-1$
 				return verifyStatus;
 			}
@@ -781,7 +781,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			return verifyStatus;
 		}
 
-		verifyStatus = createStatus(IStatus.OK, "", null);
+		verifyStatus = createStatus(IStatus.OK, "", null); //$NON-NLS-1$
 		setUpdatable(true);
 		return verifyStatus;
 	}
@@ -797,7 +797,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		File tryFile = null;
 		FileOutputStream out = null;
 		try {
-			tryFile = new File(file, "toDelete");
+			tryFile = new File(file, "toDelete"); //$NON-NLS-1$
 			out = new FileOutputStream(tryFile);
 			out.write(0);
 		} catch (IOException e) {
@@ -824,7 +824,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		if (file == null)
 			return null;
 
-		UpdateCore.warn("IsContained: Checking for markers at:" + file);
+		UpdateCore.warn("IsContained: Checking for markers at:" + file); //$NON-NLS-1$
 		if (file.exists() && file.isDirectory()) {
 			File productFile = new File(file, PRODUCT_SITE_MARKER);
 			File extensionFile = new File(file, EXTENSION_SITE_MARKER);
@@ -860,25 +860,25 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		String productId = null;
 		String privateId = null;
 		if (productFile != null) {
-			productId = getProductIdentifier("id", productFile);
-			privateId = getProductIdentifier("id", markerFile);
+			productId = getProductIdentifier("id", productFile); //$NON-NLS-1$
+			privateId = getProductIdentifier("id", markerFile); //$NON-NLS-1$
 			if (productId == null) {
-				UpdateCore.warn("Product ID is null at:" + productFile);
+				UpdateCore.warn("Product ID is null at:" + productFile); //$NON-NLS-1$
 				return null;
 			}
 			if (!productId.equalsIgnoreCase(privateId)) {
-				UpdateCore.warn("Product id at" + productFile + " Different than:" + markerFile);
-				String name = getProductIdentifier("name", markerFile);
-				String version = getProductIdentifier("version", markerFile);
-				String markerID = (name == null) ? version : name + ":" + version;
+				UpdateCore.warn("Product id at" + productFile + " Different than:" + markerFile); //$NON-NLS-1$ //$NON-NLS-2$
+				String name = getProductIdentifier("name", markerFile); //$NON-NLS-1$
+				String version = getProductIdentifier("version", markerFile); //$NON-NLS-1$
+				String markerID = (name == null) ? version : name + ":" + version; //$NON-NLS-1$
 				if (markerID == null)
-					markerID = "";
+					markerID = ""; //$NON-NLS-1$
 				return markerID;
 			} else {
 				return privateId;
 			}
 		} else {
-			UpdateCore.warn("Product Marker doesn't exist:" + productFile);
+			UpdateCore.warn("Product Marker doesn't exist:" + productFile); //$NON-NLS-1$
 		}
 
 		return null;
@@ -898,10 +898,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			result = bundle.getString(identifier);
 		} catch (IOException e) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
-				UpdateCore.debug("Exception reading property file:" + propertyFile);
+				UpdateCore.debug("Exception reading property file:" + propertyFile); //$NON-NLS-1$
 		} catch (MissingResourceException e) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
-				UpdateCore.debug("Exception reading '" + identifier + "' from property file:" + propertyFile);
+				UpdateCore.debug("Exception reading '" + identifier + "' from property file:" + propertyFile); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			if (in == null)
 				try {
@@ -923,10 +923,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			if (productFile.exists()) {
 				return productFile;
 			} else {
-				UpdateCore.warn("Product marker doesn't exist:" + productFile);
+				UpdateCore.warn("Product marker doesn't exist:" + productFile); //$NON-NLS-1$
 			}
 		} else {
-			UpdateCore.warn("Cannot retrieve install URL from BootLoader");
+			UpdateCore.warn("Cannot retrieve install URL from BootLoader"); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -938,12 +938,12 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	boolean createPrivateSiteMarker() {
 		URL siteURL = getSite().getURL();
 		if (siteURL == null) {
-			UpdateCore.warn("Unable to create marker. The Site url is null.");
+			UpdateCore.warn("Unable to create marker. The Site url is null."); //$NON-NLS-1$
 			return false;
 		}
 
-		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) {
-			UpdateCore.warn("Unable to create private marker. The Site is not on the local file system.");
+		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) { //$NON-NLS-1$
+			UpdateCore.warn("Unable to create private marker. The Site is not on the local file system."); //$NON-NLS-1$
 			return false;
 		}
 
@@ -951,9 +951,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		File productFile = getProductFile();
 		boolean success = false;
 		if (productFile != null) {
-			String productId = getProductIdentifier("id", productFile);
-			String productName = getProductIdentifier("name", productFile);
-			String productVer = getProductIdentifier("version", productFile);
+			String productId = getProductIdentifier("id", productFile); //$NON-NLS-1$
+			String productName = getProductIdentifier("name", productFile); //$NON-NLS-1$
+			String productVer = getProductIdentifier("version", productFile); //$NON-NLS-1$
 			if (productId != null) {
 				File file = new File(siteLocation, EXTENSION_SITE_MARKER);
 				if (!file.exists()) {
@@ -962,15 +962,15 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					try {
 						out = new FileOutputStream(file);
 						outWriter = new OutputStreamWriter(out, "UTF8"); //$NON-NLS-1$
-						outWriter.write("id=" + productId+"\n");
+						outWriter.write("id=" + productId+"\n"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (productName != null)
-							outWriter.write("name=" + productName+"\n");
+							outWriter.write("name=" + productName+"\n"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (productVer != null)
-							outWriter.write("version=" + productVer+"\n");
+							outWriter.write("version=" + productVer+"\n"); //$NON-NLS-1$ //$NON-NLS-2$
 						success = true;
 						justCreated = true;
 					} catch (Exception e) {
-						UpdateCore.warn("Unable to create private Marker at:" + file, e);
+						UpdateCore.warn("Unable to create private Marker at:" + file, e); //$NON-NLS-1$
 					} finally {
 						try {
 							if (outWriter != null)
@@ -1020,27 +1020,27 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	private boolean containsMarker(String marker) {
 		ISite site = getSite();
 		if (site == null) {
-			UpdateCore.warn("Contains Markers:The site is null");
+			UpdateCore.warn("Contains Markers:The site is null"); //$NON-NLS-1$
 			return false;
 		}
 
 		URL url = site.getURL();
 		if (url == null) {
-			UpdateCore.warn("Contains Markers:Site URL is null");
+			UpdateCore.warn("Contains Markers:Site URL is null"); //$NON-NLS-1$
 			return false;
 		}
-		if (!"file".equalsIgnoreCase(url.getProtocol())) {
-			UpdateCore.warn("Contains Markers:Non file protocol");
+		if (!"file".equalsIgnoreCase(url.getProtocol())) { //$NON-NLS-1$
+			UpdateCore.warn("Contains Markers:Non file protocol"); //$NON-NLS-1$
 			return false;
 		}
 		File file = new File(url.getFile());
 		if (!file.exists()) {
-			UpdateCore.warn("Contains Markers:The site doesn't exist:" + file);
+			UpdateCore.warn("Contains Markers:The site doesn't exist:" + file); //$NON-NLS-1$
 			return false;
 		}
 		File extension = new File(file, marker);
 		if (!extension.exists()) {
-			UpdateCore.warn("Contains Markers:The extensionfile does not exist:" + extension);
+			UpdateCore.warn("Contains Markers:The extensionfile does not exist:" + extension); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -1052,7 +1052,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	public boolean isNativelyLinked() throws CoreException {
 		String platformString = getPlatformURLString();
 		if (platformString == null) {
-			UpdateCore.warn("Unable to retrieve platformString");
+			UpdateCore.warn("Unable to retrieve platformString"); //$NON-NLS-1$
 			return false;
 		}
 
@@ -1066,7 +1066,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			if (entry != null) {
 				return entry.isNativelyLinked();
 			} else {
-				UpdateCore.warn("Unable to retrieve site:" + platformString + " from platform.");
+				UpdateCore.warn("Unable to retrieve site:" + platformString + " from platform."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			// check by comparing URLs
@@ -1078,10 +1078,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					return true;
 			}
 		} catch (MalformedURLException e) {
-			String msg = Policy.bind("ConfiguredSite.UnableResolveURL", platformString);
+			String msg = Policy.bind("ConfiguredSite.UnableResolveURL", platformString); //$NON-NLS-1$
 			throw Utilities.newCoreException(msg, e);
 		} catch (IOException e) {
-			String msg = Policy.bind("ConfiguredSite.UnableToAccessSite", new Object[] { siteURL });
+			String msg = Policy.bind("ConfiguredSite.UnableToAccessSite", new Object[] { siteURL }); //$NON-NLS-1$
 			throw Utilities.newCoreException(msg, e);
 		}
 
@@ -1093,7 +1093,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	*/
 	private boolean validateNoConfiguredParents(IFeature feature) throws CoreException {
 		if (feature == null) {
-			UpdateCore.warn("ConfigurationPolicy: validate Feature is null");
+			UpdateCore.warn("ConfigurationPolicy: validate Feature is null"); //$NON-NLS-1$
 			return true;
 		}
 

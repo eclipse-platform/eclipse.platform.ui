@@ -14,6 +14,7 @@ import java.io.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 
 
 /**
@@ -37,10 +38,10 @@ public class RemoveSiteCommand extends ScriptedCommand {
 		try {
 			if (toSite != null) {
 				sitePath = new File(toSite);
-				if (!sitePath.getName().equals("eclipse"))
-					sitePath = new File(sitePath, "eclipse");
+				if (!sitePath.getName().equals("eclipse")) //$NON-NLS-1$
+					sitePath = new File(sitePath, "eclipse"); //$NON-NLS-1$
 				if (!sitePath.exists())
-					throw new Exception("Cannot find site: " + toSite);
+					throw new Exception(Policy.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
 					
 				IConfiguredSite[] csites = SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites();
 				for (int i=0; i<csites.length; i++) {
@@ -52,9 +53,9 @@ public class RemoveSiteCommand extends ScriptedCommand {
 				}
 				
 				if (csite == null)
-					throw new Exception("Site is not configured " + toSite);
+					throw new Exception(Policy.bind("Standalone.noConfiguredSite") + toSite); //$NON-NLS-1$
 			} else {
-				throw new Exception("No site specified");
+				throw new Exception(Policy.bind("Standalone.noSite3")); //$NON-NLS-1$
 			}
 		
 		} catch (Exception e) {

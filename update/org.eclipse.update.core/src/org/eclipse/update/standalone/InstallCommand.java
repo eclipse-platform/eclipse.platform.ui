@@ -55,7 +55,7 @@ public class InstallCommand extends ScriptedCommand {
 			this.featureId = featureId;
 			this.version = version;
 
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8"));
+			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8")); //$NON-NLS-1$
 
 			// Get site to install to
 			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
@@ -66,8 +66,7 @@ public class InstallCommand extends ScriptedCommand {
 				URL toSiteURL = sitePath.toURL();
 				ISite site = SiteManager.getSite(toSiteURL, null);
 				if (site == null) {
-					throw new Exception(
-						"Cannot find site to install to: " + toSite);
+					throw new Exception(Policy.bind("Standalone.noSite") + toSite); //$NON-NLS-1$
 				}
 				targetSite = site.getCurrentConfiguredSite();
 				if (targetSite == null) {
@@ -87,7 +86,7 @@ public class InstallCommand extends ScriptedCommand {
 			}
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite(
-				"remoteSite",
+				"remoteSite", //$NON-NLS-1$
 				remoteSiteURL,
 				new String[0]);
 
@@ -114,18 +113,18 @@ public class InstallCommand extends ScriptedCommand {
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		try {
-			monitor.beginTask("Installing feature", 4);
+			monitor.beginTask(Policy.bind("Standalone.installing"), 4); //$NON-NLS-1$
 			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
 				throw Utilities.newCoreException(
-					"Feature "
+					Policy.bind("Standalone.feature") //$NON-NLS-1$
 						+ featureId
-						+ " "
+						+ " " //$NON-NLS-1$
 						+ version
-						+ " cannot be found on "
+						+ Policy.bind("Standalone.notFound") //$NON-NLS-1$
 						+ remoteSiteURL
-						+ "\nor a newer version is already installed.",
+						+ Policy.bind("Standalone.newerInstalled"), //$NON-NLS-1$
 					null);
 			}
 			JobTargetSite[] jobTargetSites =
@@ -142,7 +141,7 @@ public class InstallCommand extends ScriptedCommand {
 					jobTargetSites,
 					getConfiguration());
 			if (conflicts != null) {
-				throw Utilities.newCoreException("Duplicate conflicts", null);
+				throw Utilities.newCoreException(Policy.bind("Standalone.duplicate"), null); //$NON-NLS-1$
 			}
 
 			if (isVerifyOnly()) {
@@ -157,15 +156,15 @@ public class InstallCommand extends ScriptedCommand {
 			try {
 				installOperation.execute(new SubProgressMonitor(monitor,3), this);
 				System.out.println(
-					"Feature "
+					Policy.bind("Standalone.feature") //$NON-NLS-1$
 						+ featureId
-						+ " "
+						+ " " //$NON-NLS-1$
 						+ version
-						+ " has successfully been installed");
+						+ Policy.bind("Standalone.installed")); //$NON-NLS-1$
 				return true;
 			} catch (Exception e) {
 				throw Utilities.newCoreException(
-					"Cannot install feature " + featureId + " " + version,
+					Policy.bind("Standalone.cannotInstall") + featureId + " " + version, //$NON-NLS-1$ //$NON-NLS-2$
 					e);
 			}
 		} catch (CoreException ce) {

@@ -182,7 +182,7 @@ public class UpdateSearchRequest {
 			int ntasks = nsearchsites + queries.length * candidates.length;
 			if (updateMapURL!=null) ntasks++;
 
-			monitor.beginTask("Searching...", ntasks);
+			monitor.beginTask(Policy.bind("UpdateSearchRequest.searching"), ntasks); //$NON-NLS-1$
 
 			try {
 				UpdatePolicy updatePolicy=null;
@@ -249,10 +249,10 @@ public class UpdateSearchRequest {
 				(IStatus[]) statusList.toArray(new IStatus[statusList.size()]);
 			MultiStatus multiStatus =
 				new MultiStatus(
-					"org.eclipse.update.core",
+					"org.eclipse.update.core", //$NON-NLS-1$
 					ISite.SITE_ACCESS_EXCEPTION,
 					children,
-					Policy.bind("Search.networkProblems"),
+					Policy.bind("Search.networkProblems"), //$NON-NLS-1$
 					null);
 			throw new CoreException(multiStatus);
 		}
@@ -262,7 +262,7 @@ public class UpdateSearchRequest {
  * Load the update map using the map URL found in the scope.
  */	
 	private IStatus loadUpdatePolicy(UpdatePolicy map, URL url, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask("Loading update policy ...");
+		monitor.subTask(Policy.bind("UpdateSearchRequest.loadingPolicy")); //$NON-NLS-1$
 		try {
 			map.load(url, monitor);
 			monitor.worked(1);
@@ -301,9 +301,9 @@ public class UpdateSearchRequest {
 		IUpdateSearchResultCollector collector,
 		SubProgressMonitor monitor)
 		throws CoreException {
-		String text = "Contacting " + siteAdapter.getLabel() + "...";
+		String text = Policy.bind("UpdateSearchRequest.contacting") + siteAdapter.getLabel() + "..."; //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.subTask(text);
-		monitor.beginTask("", 10);
+		monitor.beginTask("", 10); //$NON-NLS-1$
 		URL siteURL = siteAdapter.getURL();
 
 		ISite site;
@@ -332,7 +332,7 @@ public class UpdateSearchRequest {
 			return null;
 		}
 
-		text = "Checking " + siteAdapter.getLabel() + "...";
+		text = Policy.bind("UpdateSearchRequest.checking") + siteAdapter.getLabel() + "..."; //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.getWrappedProgressMonitor().subTask(text);
 
 		query.run(

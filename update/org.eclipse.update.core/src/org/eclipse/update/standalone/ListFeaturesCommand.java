@@ -39,17 +39,16 @@ public class ListFeaturesCommand extends ScriptedCommand {
 			if (fromSite != null) {
 				File sitePath = new File(fromSite);
 				if (!sitePath.exists())
-					throw new Exception("Cannot find site: " + fromSite);
+					throw new Exception(Policy.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
 					
 				URL fromSiteURL = sitePath.toURL();
 				ISite site = SiteManager.getSite(fromSiteURL, null);
 				if (site == null) {
-					throw new Exception(
-						"Cannot find site : " + fromSite);
+					throw new Exception(Policy.bind("Standalone.noSite") + fromSite); //$NON-NLS-1$
 				}
 				IConfiguredSite csite = site.getCurrentConfiguredSite();
 				if (csite == null)
-					throw new Exception("Cannot find configured site: " + fromSite);
+					throw new Exception(Policy.bind("Standalone.noConfiguredSite") + fromSite); //$NON-NLS-1$
 				sites = new IConfiguredSite[] { csite };
 			} 
 		
@@ -64,19 +63,19 @@ public class ListFeaturesCommand extends ScriptedCommand {
 		try {
 			if (sites != null) {
 				for (int i = 0; i < sites.length; i++) {
-					System.out.println("Site: " + sites[i].getSite().getURL());
+					System.out.println("Site: " + sites[i].getSite().getURL()); //$NON-NLS-1$
 					IFeatureReference[] features = sites[i]
 							.getFeatureReferences();
 					for (int f = 0; f < features.length; f++) {
 						boolean configured = sites[i].isConfigured(features[f]
 								.getFeature(null));
-						System.out.println("  Feature: "
+						System.out.println("  Feature: " //$NON-NLS-1$
 								+ features[f].getVersionedIdentifier()
 										.getIdentifier()
-								+ " "
+								+ " " //$NON-NLS-1$
 								+ features[f].getVersionedIdentifier()
-										.getVersion() + "  "
-								+ (configured ? "enabled" : "disabled"));
+										.getVersion() + "  " //$NON-NLS-1$
+								+ (configured ? "enabled" : "disabled")); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}

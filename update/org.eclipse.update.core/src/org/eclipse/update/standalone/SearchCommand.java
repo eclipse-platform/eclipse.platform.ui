@@ -36,10 +36,10 @@ public class SearchCommand extends ScriptedCommand {
 
 	public SearchCommand(String fromSite) {
 		try {
-			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8"));
+			this.remoteSiteURL = new URL(URLDecoder.decode(fromSite, "UTF-8")); //$NON-NLS-1$
 			UpdateSearchScope searchScope = new UpdateSearchScope();
 			searchScope.addSearchSite(
-				"remoteSite",
+				"remoteSite", //$NON-NLS-1$
 				remoteSiteURL,
 				new String[0]);
 			searchRequest =
@@ -56,9 +56,8 @@ public class SearchCommand extends ScriptedCommand {
 	 */
 	public boolean run(IProgressMonitor monitor) {
 		try {
-			System.out.println("Searching on " + remoteSiteURL.toString());
+			monitor.beginTask(Policy.bind("Standalone.searching") + remoteSiteURL.toExternalForm(), 4); //$NON-NLS-1$
 			searchRequest.performSearch(collector, monitor);
-			System.out.println("Done.");
 			return true;
 		} catch (CoreException ce) {
 			IStatus status = ce.getStatus();
@@ -66,12 +65,14 @@ public class SearchCommand extends ScriptedCommand {
 				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
 				// Just show this but do not throw exception
 				// because there may be results anyway.
-				System.out.println("Connection Error");
+				System.out.println(Policy.bind("Standalone.connection")); //$NON-NLS-1$
 			} else {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(ce);
 			}
 			return false;
+		} finally {
+			monitor.done();
 		}
 	}
 
@@ -79,11 +80,11 @@ public class SearchCommand extends ScriptedCommand {
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		public void accept(IFeature feature) {
 			System.out.println(
-				"\""
+				"\"" //$NON-NLS-1$
 					+ feature.getLabel()
-					+ "\" "
+					+ "\" " //$NON-NLS-1$
 					+ feature.getVersionedIdentifier().getIdentifier()
-					+ " "
+					+ " " //$NON-NLS-1$
 					+ feature.getVersionedIdentifier().getVersion());
 		}
 	}

@@ -22,7 +22,7 @@ import org.eclipse.update.search.*;
 
 public class UpdatesSearchCategory extends BaseSearchCategory {
 	private static final String CATEGORY_ID =
-		"org.eclipse.update.core.new-updates";
+		"org.eclipse.update.core.new-updates"; //$NON-NLS-1$
 	private IFeature [] features;
 
 	class Candidate {
@@ -220,7 +220,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			if (!broken)
 				missingOptionalChildren = isMissingOptionalChildren(candidate);
 			ISiteFeatureReference[] refs = site.getFeatureReferences();
-			monitor.beginTask("", refs.length + 1);
+			monitor.beginTask("", refs.length + 1); //$NON-NLS-1$
 			ArrayList updateJobs = new ArrayList();
 			for (int i = 0; i < refs.length; i++) {
 				ISiteFeatureReference ref = refs[i];
@@ -299,7 +299,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 				continue;
 			// do not accept updates without a license
 			if (!UpdateUtils.hasLicense(job.getFeature())) {
-				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Policy.bind("DefaultFeatureParser.NoLicenseText"), null);
+				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Policy.bind("DefaultFeatureParser.NoLicenseText"), null); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
 			IStatus status;
@@ -339,7 +339,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			}
 		} catch (CoreException e) {
 			UpdateCore.log(
-				"Error while initializing the search for new updates",
+				Policy.bind("UpdatesSearchCategory.errorSearchingForUpdates"), //$NON-NLS-1$
 				e);
 		}
 	}
