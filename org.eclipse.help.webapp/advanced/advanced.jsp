@@ -184,7 +184,7 @@ function onloadHandler()
 	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:0px 10px;"><%=WebappResources.getString("SearchExpression", request)%>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value='<%=data.getSearchWord()%>' maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
           	  	<input type="hidden" name="maxHits" value="500" >
         </td></tr>
         <tr><td style="padding:0px 10px;"><%=WebappResources.getString("expression_label", request)%>
