@@ -152,8 +152,6 @@ public class JobStatusHandler extends JobChangeAdapter {
 	
 	public void schedule(Job job) {
 		job.addJobChangeListener(this);
-		// indicate that the job has started since it will be scheduled immediatley
-		jobStarted(job);
 		job.schedule();
 	}
 	
@@ -161,7 +159,7 @@ public class JobStatusHandler extends JobChangeAdapter {
 		jobDone(event.getJob());
 
 	}
-
+	
 	public void addJobListener(IJobListener listener) {
 		synchronized (listeners) {
 			listeners.add(listener);
@@ -254,4 +252,10 @@ public class JobStatusHandler extends JobChangeAdapter {
 		return jobType;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobChangeListener#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void aboutToRun(IJobChangeEvent event) {
+		jobStarted(event.getJob());
+	}
 }
