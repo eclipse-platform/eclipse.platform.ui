@@ -528,7 +528,7 @@ public class DebugUITools {
 		}
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					buildAndLaunch(configuration, mode, monitor);
 				} catch (CoreException e) {
