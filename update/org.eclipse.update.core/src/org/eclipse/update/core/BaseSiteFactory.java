@@ -29,7 +29,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 
 
 	/**
-	 * return the appropriate resource bundle for this feature
+	 * return the appropriate resource bundle for this site
 	 */
 	protected ResourceBundle getResourceBundle(URL url) {
 		ResourceBundle bundle = null;
