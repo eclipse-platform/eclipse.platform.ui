@@ -25,6 +25,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		"org.eclipse.update.core.new-updates";
 	private static final String KEY_CURRENT_SEARCH =
 		"UpdatesSearchCategory.currentSearch";
+	private IFeature [] features;
 
 	class Candidate {
 		ArrayList children;
@@ -320,7 +321,7 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		}
 	}
 
-	public void initialize() {
+	private void initialize() {
 		candidates = new ArrayList();
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
@@ -410,6 +411,26 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		return queries;
 	}
 	
+/**
+ * Sets the features for which new updates need to be found. If
+ * not set, updates will be searched for all the installed
+ * and configured features.
+ * @param features the features to search updates for
+ */	
+	public void setFeatures(IFeature [] features) {
+		this.features = features;
+	}
+	
+/**
+ * Returns an array of features for which updates need to
+ * be found. 
+ * @return an array of features or <samp>null</samp> if not
+ * set.
+ */	
+	public IFeature [] getFeatures() {
+		return features;
+	}
+	
 	private boolean isNewerVersion(
 		VersionedIdentifier fvi,
 		VersionedIdentifier cvi) {
@@ -491,8 +512,27 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		ArrayList selected = new ArrayList();
 		for (int i=0; i<candidates.size(); i++) {
 			Candidate c = (Candidate)candidates.get(i);
-			c.addToFlatList(selected, true);
+			if (isOnTheList(c))
+				c.addToFlatList(selected, true);
 		}
 		return selected;
+	}
+	
+	private boolean isOnTheList(Candidate c) {
+		if (features==null) return true;
+		VersionedIdentifier vid;
+		try {
+			vid = c.getReference().getVersionedIdentifier();
+		}
+		catch (CoreException e) {
+			return false;
+		}
+		for (int i=0; i<features.length; i++) {
+			IFeature feature = features[i];
+			VersionedIdentifier fvid = feature.getVersionedIdentifier();
+			if (fvid.equals(vid))
+				return true;
+		}
+		return false;
 	}
 }

@@ -1,24 +1,23 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.update.internal.ui.UpdateUI;
-
 
 public class InstallationHistoryAction extends Action {
 
@@ -41,18 +40,17 @@ public class InstallationHistoryAction extends Action {
 		path = new Path(location).removeLastSegments(1).append(".install-log");
 		rowType = "light-row";
 	}
-	
+
 	public void run() {
 		try {
 			openLog();
 			parseLog();
-			UpdateUI.showURL(getTempFile().getPath().toString(), false);
+			DetailsView.showURL(getTempFile().getPath().toString(), false);
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 		} finally {
 			closeLog();
 		}
-
 	}
 
 	private void openLog() throws CoreException {
@@ -77,7 +75,6 @@ public class InstallationHistoryAction extends Action {
 		return tempFile;
 	}
 
-
 	private void parseLog() throws CoreException {
 		//		!CONFIGURATION <configuration-date>
 		//		!ACTIVITY <date> <target> <action> <status>
@@ -92,9 +89,14 @@ public class InstallationHistoryAction extends Action {
 			addCSS();
 			htmlLog.println("</head>");
 			htmlLog.println("<body>");
+			String title = "Installation History";
+			String desc = "The list below represents the history of your update activities from the product installation to date. Each operation carries a date it commenced, as well as activities performed. Operations are sorted by date in ascending order.";
+			htmlLog.println("<h1 class=title>"+title+"</h1>");
+			htmlLog.println("<p class=bodyText>"+desc+"</p>");
+			
 			htmlLog.println("<center>");
 
-			htmlLog.println("<table width =100% border=0>");
+			htmlLog.println("<table width =100% border=0 cellspacing=1 cellpadding=2>");
 
 			while (buffRead.ready()) {
 
@@ -166,12 +168,15 @@ public class InstallationHistoryAction extends Action {
 
 	private void addCSS() {
 		htmlLog.println("<STYLE type=\"text/css\">");
+		htmlLog.println("H1.title { font-family: sans-serif; color: #0080C0 }");
+		htmlLog.println("P.bodyText { font-family: sans-serif; font-size: 9pt; }");
 		htmlLog.println(
 			"TD.log-header { font-family: sans-serif; font-style: normal; font-weight: bold; font-size: 9pt; color: white}");
 		htmlLog.println(
 			"TD.log-text { font-family: sans-serif; font-style: normal; font-weight: lighter; font-size: 8pt; color:black}");
 		htmlLog.println(
-			"TD.config-log-header { font-family: sans-serif; font-style: normal; font-weight: bold; font-size: 9pt; color: white; ;text-align: right; border-top:10px solid white}");
+		//	"TD.config-log-header { font-family: sans-serif; font-style: normal; font-weight: bold; font-size: 9pt; color: white; ;text-align: right; border-top:10px solid white}");
+		"TD.config-log-header { font-family: sans-serif; font-style: normal; font-weight: bold; font-size: 9pt; color: white; border-top:10px solid white}");
 		htmlLog.println("TR.light-row {background:" + white + "}");
 		htmlLog.println("TR.dark-row {background:" + lightBlue + "}");
 		htmlLog.println("TR.header {background:" + darkBlue + "}");
