@@ -133,7 +133,12 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 		String currentFileName = fileText.getText();
 		
 		// Open a dialog allowing the user to choose.
-		final FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN);
+		FileDialog fileDialog = null;
+		if(export)
+			fileDialog = new FileDialog(getShell(), SWT.SAVE);
+		else
+			fileDialog = new FileDialog(getShell(), SWT.OPEN);
+		
 		fileDialog.setFileName(currentFileName);
 		fileDialog.setFilterExtensions(DIALOG_PREFERENCE_EXTENSIONS);
 		currentFileName = fileDialog.open();
