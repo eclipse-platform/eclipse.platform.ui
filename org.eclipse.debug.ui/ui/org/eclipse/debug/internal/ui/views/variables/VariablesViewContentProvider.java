@@ -106,11 +106,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		if (value== null) {
 			return new IVariable[0];
 		}
-		if (value instanceof IndexedValuePartition) {
-			return value.getVariables();
-		} else {
-			return getValueChildren(parent, value);
-		}
+		return getValueChildren(parent, value);
 	}
 	
 	/**
@@ -125,30 +121,58 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		IValue logicalValue = getLogicalValue(value);
 		if (logicalValue instanceof IIndexedValue) {
 			IIndexedValue indexedValue = (IIndexedValue)logicalValue;
-			int valueLength = indexedValue.getSize();
-			int partitionLength = getArrayPartitionSize();
-			if (valueLength > partitionLength) {
-				int numPartitions = valueLength / partitionLength;
-				if ((valueLength % partitionLength) > 0) {
+			int partitionSize = computeParitionSize(indexedValue);
+			if (partitionSize > 1) {
+				int offset = indexedValue.getInitialOffset();
+				int length = indexedValue.getSize();
+				int numPartitions = length / partitionSize;
+				int remainder = length % partitionSize; 
+				if (remainder > 0) {
 					numPartitions++;
 				}
 				IVariable[] partitions = new IVariable[numPartitions];
-				int partition = 0;
-				// partition
-				int offset = 0;
-				while (offset < valueLength) {
-					int partitionSize = partitionLength;
-					if ((valueLength - offset) < partitionLength) {
-						partitionSize = valueLength - offset;
-					}
-					partitions[partition] = new IndexedVariablePartition(parent, indexedValue, offset, partitionSize);
-					partition++;
-					offset+=partitionLength;
+				for (int i = 0; i < (numPartitions - 1); i++) {
+					partitions[i] = new IndexedVariablePartition(parent, indexedValue, offset, partitionSize);
+					offset = offset + partitionSize;
 				}
+				if (remainder == 0) {
+					remainder = partitionSize;
+				}
+				partitions[numPartitions - 1] = new IndexedVariablePartition(parent, indexedValue, offset, remainder);
 				return partitions;
 			}
 		}
 		return logicalValue.getVariables();
+	}
+	
+	/**
+	 * Returns the partition size to use for the given indexed value.
+	 * 
+	 * @param value indexed value
+	 * @return size of paritions the value should be subdivided into
+	 */
+	private int computeParitionSize(IIndexedValue value) {
+		int partitionSize = 1;
+		try {
+			int length = value.getSize();
+			int partitionDepth = 0;
+			int preferredSize = getArrayPartitionSize();
+			int remainder = length % preferredSize;
+			length = length / preferredSize;
+			while (length > 0) {
+				if (remainder == 0 && length == 1) {
+					break; 
+				}
+				partitionDepth++;
+				remainder = length % preferredSize;
+				length = length / preferredSize;
+			}
+			for (int i = 0; i < partitionDepth; i++) {
+				partitionSize = partitionSize * preferredSize;
+			}
+		} catch (DebugException e) {
+		}
+		return partitionSize;
 	}
 
 	/**

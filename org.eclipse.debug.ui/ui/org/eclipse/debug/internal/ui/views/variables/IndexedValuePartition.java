@@ -54,7 +54,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	 * @see org.eclipse.debug.core.model.IIndexedValue#getVariable(int)
 	 */
 	public IVariable getVariable(int offset) throws DebugException {
-		return fValue.getVariable(fOffset + offset);
+		return fValue.getVariable(offset);
 	}
 
 	/* (non-Javadoc)
@@ -76,8 +76,10 @@ public class IndexedValuePartition implements IIndexedValue {
 	 */
 	public IVariable[] getVariables() throws DebugException {
 		IVariable[] vars = new IVariable[fLength];
+		int offset = getInitialOffset();
 		for (int i = 0; i < fLength; i++) {
-			vars[i] = getVariable(i);
+			vars[i] = getVariable(offset);
+			offset++;
 		}
 		return vars;
 	}
@@ -129,6 +131,13 @@ public class IndexedValuePartition implements IIndexedValue {
 	 */
 	public IVariable[] getVariables(int offset, int length) throws DebugException {
 		return fValue.getVariables(fOffset + offset, length);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IIndexedValue#getInitialOffset()
+	 */
+	public int getInitialOffset() {
+		return fOffset;
 	}
 
 }

@@ -56,4 +56,13 @@ public interface IIndexedValue extends IValue {
 	 * of entries in this collection
 	 */
 	public int getSize() throws DebugException;
+	
+	/**
+	 * Returns the index of the first variable contained in this value.
+	 * Generally, indexed values are zero based, but this allows for
+	 * an arbitrary base offset.
+	 * 
+	 * @return the index of the first variable contained in this value
+	 */
+	public int getInitialOffset();
 }
