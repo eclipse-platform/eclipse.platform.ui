@@ -259,7 +259,7 @@ public class ProjectionDocument extends AbstractDocument {
 				offsetInSlave= segment.getOffset() + segment.getLength();
 			}
 			
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, offsetInSlave, 0, fMasterDocument.get(offsetInMaster, lengthInMaster));
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, offsetInSlave, 0, fMasterDocument.get(offsetInMaster, lengthInMaster), offsetInMaster, lengthInMaster);
 			super.fireDocumentAboutToBeChanged(event);
 
 			// check for neighboring fragment
@@ -339,7 +339,7 @@ public class ProjectionDocument extends AbstractDocument {
 			if (fragment == null)
 				throw new IllegalArgumentException();
 			
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), null);
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), null, offsetInMaster, lengthInMaster);
 			super.fireDocumentAboutToBeChanged(event);
 			
 			if (fragment.getOffset() == offsetInMaster) {
@@ -754,7 +754,7 @@ public class ProjectionDocument extends AbstractDocument {
 	public void replaceMasterDocumentRanges(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		try {
 			
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, 0, fMapping.getImageLength(), fMasterDocument.get(offsetInMaster, lengthInMaster));
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, 0, fMapping.getImageLength(), fMasterDocument.get(offsetInMaster, lengthInMaster), offsetInMaster, lengthInMaster);
 			super.fireDocumentAboutToBeChanged(event);
 			
 			Position[] fragments= getFragments();

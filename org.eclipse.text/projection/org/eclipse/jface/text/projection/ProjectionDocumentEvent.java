@@ -25,18 +25,30 @@ public class ProjectionDocumentEvent extends SlaveDocumentEvent {
 	public final static Object CONTENT_CHANGE= new Object();
 
 	private Object fChangeType;
+	private int fMasterOffset= -1;
+	private int fMasterLength= -1;
 	
 	public ProjectionDocumentEvent(IDocument doc, int offset, int length, String text, DocumentEvent masterEvent) {
 		super(doc, offset, length, text, masterEvent);
 		fChangeType= CONTENT_CHANGE;
 	}
 	
-	public ProjectionDocumentEvent(IDocument doc, int offset, int length, String text) {
+	public ProjectionDocumentEvent(IDocument doc, int offset, int length, String text, int masterOffset, int masterLength) {
 		super(doc, offset, length, text, null);
 		fChangeType= PROJECTION_CHANGE;
+		fMasterOffset= masterOffset;
+		fMasterLength= masterLength;
 	}
 	
 	public Object getChangeType() {
 		return fChangeType;
+	}
+	
+	public int getMasterOffset() {
+		return fMasterOffset;
+	}
+	
+	public int getMasterLength() {
+		return fMasterLength;
 	}
 }
