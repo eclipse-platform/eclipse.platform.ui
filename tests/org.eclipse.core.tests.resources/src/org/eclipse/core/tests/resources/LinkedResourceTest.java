@@ -596,7 +596,6 @@ public class LinkedResourceTest extends ResourceTest {
 				existingProject.copy(destination.getFullPath(), IResource.FORCE, getMonitor());
 				fail("6.6");
 			} catch (CoreException e) {
-				e.printStackTrace();
 				//should fail
 			}
 			assertTrue("6.7", destination.exists());
