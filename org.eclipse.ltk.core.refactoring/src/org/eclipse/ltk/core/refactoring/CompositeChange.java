@@ -362,7 +362,7 @@ public class CompositeChange extends Change {
 
 	/**
 	 * Note: this is an internal method and should not be overridden outside of
-	 * the refacotring framework.
+	 * the refactoring framework.
 	 * <p>
 	 * The method gets called if one of the changes managed by this
 	 * composite change generates an operation canceled exception when
@@ -371,6 +371,8 @@ public class CompositeChange extends Change {
 	 *
 	 * @return <code>true</code> if performing the change should
 	 *  continue on cancel; otherwise <code>false</code>
+     *
+     * @since 3.1
 	 */
 	protected boolean internalContinueOnCancel() {
 		return false;

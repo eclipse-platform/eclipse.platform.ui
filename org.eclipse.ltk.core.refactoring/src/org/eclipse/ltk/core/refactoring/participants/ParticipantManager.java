@@ -148,6 +148,8 @@ public class ParticipantManager {
 	 * @param shared a list of shared participants
 	 * 
 	 * @return an array of copy participants
+	 *
+	 * @since 3.1
 	 */
 	public static CopyParticipant[] loadCopyParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CopyArguments arguments, String affectedNatures[], SharableParticipants shared) {
 		RefactoringParticipant[] participants= fgCopyInstance.getParticipants(status, processor, element, arguments, affectedNatures, shared);

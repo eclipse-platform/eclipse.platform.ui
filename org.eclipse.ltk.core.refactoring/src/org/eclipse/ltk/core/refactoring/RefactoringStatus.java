@@ -119,6 +119,8 @@ public class RefactoringStatus {
 	 * @return the list of refactoring status entries that are considered equal
 	 *               to the specified one, in no particular order. Returns an empty
 	 *               array if no entries are managed or none of them matches.
+	 *
+	 * @since 3.1
 	 */
 	public RefactoringStatusEntry[] getEntries(IRefactoringStatusEntryComparator comparator, RefactoringStatusEntry entry) {
 		final List matches= new ArrayList(fEntries.size());
@@ -205,7 +207,7 @@ public class RefactoringStatus {
 	 * @return the entry with the highest severity or <code>null</code> if no
 	 *  entries are present
 	 *  
-	 *  @since 3.1
+	 * @since 3.1
 	 */
 	public RefactoringStatusEntry getEntryWithHighestSeverity() {
 		if (fEntries == null || fEntries.size() == 0)
