@@ -316,7 +316,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             //FIXME: should close output streams? Need to store references.
         } catch (IOException ioe) {
         }
-        patterns.clear();
+        synchronized (patterns) {
+            patterns.clear();
+        }
     }
     
     /**
