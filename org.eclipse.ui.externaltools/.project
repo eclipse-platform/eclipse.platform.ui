@@ -12,6 +12,7 @@
 		<project>org.eclipse.debug.core</project>
 		<project>org.eclipse.debug.ui</project>
 		<project>org.eclipse.ui</project>
+		<project>org.junit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -23,11 +23,14 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
 import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyColorConstants;
 
 /**
  * External tools plug-in class
@@ -42,6 +45,8 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 
 	private RefreshScopeVariableRegistry refreshVarRegistry;
 	private ExternalToolVariableRegistry toolVariableRegistry;
+	
+	public static final String EMPTY_STRING= "";
 
 	/**
 	 * Create an instance of the External Tools plug-in.
@@ -63,6 +68,9 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 * Returns a new <code>IStatus</code> for this plug-in
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
+		if (message == null) {
+			message= EMPTY_STRING; 
+		}		
 		return new Status(Status.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, exception);
 	}
 
@@ -101,6 +109,10 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		IStatus status = newErrorStatus(message, exception);
 		getLog().log(status);
 	}
+	
+	public void log(Throwable exception) {
+		getLog().log(newErrorStatus(null, exception));
+	}
 
 	/**
 	 * Returns the ImageDescriptor for the icon with the given path
@@ -128,10 +140,31 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_INFO_RGB, new RGB(0, 0, 255)); // blue
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_VERBOSE_RGB, new RGB(0, 200, 125)); // green
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0)); // black
+		
+		// Planty color preferences
+		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_DEFAULT, PlantyColorConstants.DEFAULT);
+		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_PROC_INSTR, PlantyColorConstants.PROC_INSTR);
+		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_STRING, PlantyColorConstants.STRING);
+		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_TAG, PlantyColorConstants.TAG);
+		PreferenceConverter.setDefault(prefs, PlantyColorConstants.P_XML_COMMENT, PlantyColorConstants.XML_COMMENT);
 	}
 
+	/**
+	 * Returns the active workbench window or <code>null</code> if none
+	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+	
+	/**
+	 * Returns the active workbench page or <code>null</code> if none.
+	 */
+	public static IWorkbenchPage getActivePage() {
+		IWorkbenchWindow window= getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getActivePage();
+		}
+		return null;
 	}
 
 	/**

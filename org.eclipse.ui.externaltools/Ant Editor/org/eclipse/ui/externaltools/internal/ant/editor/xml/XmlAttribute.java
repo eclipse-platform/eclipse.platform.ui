@@ -1,0 +1,61 @@
+//
+// XmlAttribute.java
+//
+// Copyright:
+// GEBIT Gesellschaft fuer EDV-Beratung
+// und Informatik-Technologien mbH, 
+// Berlin, Duesseldorf, Frankfurt (Germany) 2002
+// All rights reserved.
+//
+package org.eclipse.ui.externaltools.internal.ant.editor.xml;
+
+
+/**
+ * General representation of an xml attribute.
+ * <P>
+ * Here an xml attribute is refered to as what is specified using like
+ * '<... attribute="some value">' in an xml file.
+ * 
+ * @version 12.10.2002
+ * @author Alf Schiefelbein
+ */
+public class XmlAttribute {
+
+
+    /**
+     * The attribute name.
+     */
+    protected String name;
+    
+    
+    /**
+     * The attribute value.
+     */
+    protected String value;
+    
+
+    /**
+     * Creates an instance with the specified name and value.
+     */
+    public XmlAttribute(String aName, String aValue) {
+        name = aName;
+        value = aValue;
+    }
+    
+
+    /**
+     * Returns the name.
+     */
+    public String getName() {
+        return name;
+    }
+
+
+    /**
+     * Returns the value.
+     */
+    public String getValue() {
+        return value;
+    }
+
+}

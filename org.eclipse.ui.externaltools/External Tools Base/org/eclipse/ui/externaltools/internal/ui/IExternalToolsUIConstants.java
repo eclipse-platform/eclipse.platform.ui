@@ -11,7 +11,20 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 
 public interface IExternalToolsUIConstants {
-	
+
+	// Planty images
+	/**
+	 * Icon for property propasal.
+	 */
+	public static final String IMAGE_ID_PROPERTY = IExternalToolConstants.PLUGIN_ID + ".property";
+	/**
+	 * Icon for task proposal.
+	 */
+	public static final String IMAGE_ID_TASK = IExternalToolConstants.PLUGIN_ID + ".html_tab_obj";
+	/**
+	 * Icon for target in the outline view.
+	 */
+	public static final String IMAGE_ID_TARGET = IExternalToolConstants.PLUGIN_ID + ".ant_tsk_arrow";
 	// Action images
 	public static final String IMG_REMOVE= IExternalToolConstants.PLUGIN_ID + ".remove"; //$NON-NLS-1$
 	public static final String IMG_MOVE_UP = IExternalToolConstants.PLUGIN_ID + ".moveUp"; //$NON-NLS-1$
