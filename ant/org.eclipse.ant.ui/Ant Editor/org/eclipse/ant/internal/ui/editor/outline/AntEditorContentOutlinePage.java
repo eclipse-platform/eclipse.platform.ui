@@ -165,8 +165,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private class NonStructuralElementsFilter extends ViewerFilter {
 		
 		/**
-		 * Returns whether the given {@link AntElementNode} is imported from
-		 * another file.
+		 * Returns whether the given {@link AntElementNode} is a structural node
 		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof AntElementNode) {
