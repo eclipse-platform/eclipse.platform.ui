@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
