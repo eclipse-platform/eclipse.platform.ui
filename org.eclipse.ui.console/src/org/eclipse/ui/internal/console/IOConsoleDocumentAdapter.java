@@ -154,7 +154,13 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @see org.eclipse.swt.custom.StyledTextContent#getLine(int)
      */
     public String getLine(int lineIndex) {
-        return (String) lines.get(lineIndex);
+        StringBuffer line = new StringBuffer((String) lines.get(lineIndex));
+        int index = line.length()-1;
+        while(index > 0 && (line.charAt(index)=='\n' || line.charAt(index)=='\r')) {
+            line.setCharAt(index, '\0');
+            index--;
+        }
+        return line.toString();
     }
 
     /* (non-Javadoc)
