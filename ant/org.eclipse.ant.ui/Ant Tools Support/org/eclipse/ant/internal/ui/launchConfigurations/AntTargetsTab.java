@@ -449,8 +449,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, fFilterInternalTargets.getSelection());
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		//	attribute added in 3.0, so null must be used instead of false for backwards compatibility
+		if (fFilterInternalTargets.getSelection()) {
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, true);
+		} else {
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, (String)null);
+		}
 		if (fOrderedTargets.size() == 1) {
 			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
