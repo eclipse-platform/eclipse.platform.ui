@@ -32,13 +32,13 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
     public StackPresentation createPresentation(Composite parent,
-            IStackPresentationSite site, int role, int flags,
+            IStackPresentationSite site, int role, 
             String perspectiveId, String folderId) {
         switch (role) {
         case ROLE_EDITOR_WORKBOOK:
-            return new EditorPresentation(parent, site, flags);
+            return new EditorPresentation(parent, site);
         case ROLE_DOCKED_VIEW:
-            return new PartTabFolderPresentation(parent, site, flags);
+            return new PartTabFolderPresentation(parent, site);
         //case ROLE_FAST_VIEW:
             // TODO 
          //   return new PartTabFolderPresentation(parent, site, flags);
