@@ -373,14 +373,18 @@ public class ReviewPage
 
 	private void createTable(Composite parent) {
 		SashForm sform = new SashForm(parent, SWT.VERTICAL);
-		tableViewer =
-			CheckboxTableViewer.newCheckList(
-				sform,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-		Table table = tableViewer.getTable();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 250;
+		gd.heightHint =100;
 		sform.setLayoutData(gd);
+
+		TableLayoutComposite composite= new TableLayoutComposite(sform, SWT.NONE);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		tableViewer =
+			CheckboxTableViewer.newCheckList(
+					composite,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
+		Table table = tableViewer.getTable();
 
 		table.setHeaderVisible(true);
 
@@ -426,16 +430,16 @@ public class ReviewPage
 			}
 		});
 
-		TableLayout layout = new TableLayout();
-		//layout.addColumnData(new ColumnWeightData(80, 225, true));
-		//layout.addColumnData(new ColumnWeightData(30, 80));
-		//layout.addColumnData(new ColumnWeightData(100, 140, true));
+		//TableLayout layout = new TableLayout();
+		composite.addColumnData(new ColumnWeightData(5, 275, true));
+		composite.addColumnData(new ColumnWeightData(1, 80, true));
+		composite.addColumnData(new ColumnWeightData(5, 90, true));
 
-		layout.addColumnData(new ColumnPixelData(225, true));
-		layout.addColumnData(new ColumnPixelData(80, true));
-		layout.addColumnData(new ColumnPixelData(140, true));
+		//layout.addColumnData(new ColumnPixelData(225, true));
+		//layout.addColumnData(new ColumnPixelData(80, true));
+		//layout.addColumnData(new ColumnPixelData(140, true));
 
-		table.setLayout(layout);
+		//table.setLayout(layout);
 
 		tableViewer.setContentProvider(new JobsContentProvider());
 		tableViewer.setLabelProvider(new JobsLabelProvider());

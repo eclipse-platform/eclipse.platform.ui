@@ -153,15 +153,17 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(
 			UpdateUI.getString("RevertConfigurationWizardPage.activities")); //$NON-NLS-1$
-		activitiesViewer = ActivitiesTableViewer.createViewer(composite, false);
 
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(5, 20, false));
-		layout.addColumnData(new ColumnWeightData(30, 100, true));
-		layout.addColumnData(new ColumnWeightData(50, 183, true));
-		layout.addColumnData(new ColumnWeightData(50, 100, true));
+		TableLayoutComposite tlComposite= new TableLayoutComposite(composite, SWT.NONE);
+		tlComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		activitiesViewer = ActivitiesTableViewer.createViewer(tlComposite, false);
 
-		activitiesViewer.getTable().setLayout(layout);
+		tlComposite.addColumnData(new ColumnPixelData(20, true));
+		tlComposite.addColumnData(new ColumnWeightData(2, 150, true));
+		tlComposite.addColumnData(new ColumnWeightData(5, 200, true));
+		tlComposite.addColumnData(new ColumnWeightData(4, 100, true));
+
+		//activitiesViewer.getTable().setLayout(layout);
 
 		TableItem[] configs = configViewer.getTable().getItems();
 		if (configs.length >0)
