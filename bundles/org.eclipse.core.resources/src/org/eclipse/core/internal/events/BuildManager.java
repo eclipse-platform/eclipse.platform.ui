@@ -115,10 +115,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			currentBuilder = builder;
 			//clear any old requests to forget built state
 			currentBuilder.clearForgetLastBuiltState();
-			// Figure out which trees are involved based on the trigger and tree availabilty.
-			lastBuiltTree = currentBuilder.getLastBuiltTree();
-			boolean fullBuild = (trigger == IncrementalProjectBuilder.FULL_BUILD) || (lastBuiltTree == null);
+			// Figure out want kind of build is needed
 			boolean clean = trigger == IncrementalProjectBuilder.CLEAN_BUILD;
+			lastBuiltTree = currentBuilder.getLastBuiltTree();
+			// If no tree is available we have to do a full build
+			if (!clean && lastBuiltTree == null)
+				trigger = IncrementalProjectBuilder.FULL_BUILD;
+			boolean fullBuild = trigger == IncrementalProjectBuilder.FULL_BUILD;
 			// Grab a pointer to the current state before computing the delta
 			currentTree = fullBuild ? null : workspace.getElementTree();
 			try {
@@ -328,15 +331,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * autobuild and wait until it completes.
 	 */
 	public void interrupt() {
-		if (autoBuildJob.interrupt() && building) {
-			try {
-				//wait until the build completes, otherwise we will fail to re-schedule 
-				//the autobuild job if it is still running when this operation ends
-				autoBuildJob.join();
-			} catch (InterruptedException e) {
-				//break out when interrupted
-			}
-		}
+		autoBuildJob.interrupt();
 	}
 	/**
 	 * Cancel the build if the user has canceled or if an auto-build has been interrupted.
