@@ -293,23 +293,23 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      */ 
 	private ICompletionProposal[] determineProposals() {
 		
-		String prefix = getCurrentPrefix();
 		cursorPosition = ((ITextSelection)viewer.getSelectionProvider().getSelection()).getOffset();
         
-        IDocument tempDocument = viewer.getDocument();
+        IDocument doc = viewer.getDocument();
         try {
-            lineNumber = tempDocument.getLineOfOffset(cursorPosition);
-            columnNumber = cursorPosition - tempDocument.getLineOffset(lineNumber);
+            lineNumber = doc.getLineOfOffset(cursorPosition);
+            columnNumber = cursorPosition - doc.getLineOffset(lineNumber);
         } catch (BadLocationException e) {
             AntUIPlugin.log(e);
         }
 		
+		String prefix = getCurrentPrefix();
 		if (prefix == null || cursorPosition == -1) {
 			AntUIPlugin.getStandardDisplay().beep();
 			return null;
 		}
 	
-		ICompletionProposal[] proposals = getProposalsFromDocument(tempDocument.get(), prefix);
+		ICompletionProposal[] proposals = getProposalsFromDocument(doc.get(), prefix);
 		return proposals;
 		
 	}
@@ -321,7 +321,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @param the prefix
      */
     private ICompletionProposal[] getProposalsFromDocument(String aDocumentString, String aPrefix) {
-        String tempTaskString = null;
+        String taskString = null;
 
         /*
          * Completions will be determined depending on the proposal mode.
@@ -332,8 +332,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 break;
 
             case PROPOSAL_MODE_ATTRIBUTE_PROPOSAL:
-                tempTaskString = getTaskStringFromDocumentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
-                return getAttributeProposals(tempTaskString, aPrefix);
+                taskString = getTaskStringFromDocumentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
+                return getAttributeProposals(taskString, aPrefix);
 
             case PROPOSAL_MODE_TASK_PROPOSAL:
                 return getTaskProposals(aDocumentString, findParentElement(aDocumentString, lineNumber, columnNumber), aPrefix);
@@ -342,9 +342,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 return getClosingTaskProposals(findNotClosedParentElement(aDocumentString, lineNumber, columnNumber), aPrefix);
 
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
-                tempTaskString = getTaskStringFromDocumentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
+                taskString = getTaskStringFromDocumentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
                 String tempAttributeString = getAttributeStringFromDocumentStringToPrefix(aDocumentString.substring(0, cursorPosition-aPrefix.length()));
-                return getAttributeValueProposals(tempTaskString, tempAttributeString, aPrefix);
+                return getAttributeValueProposals(taskString, tempAttributeString, aPrefix);
 
             case PROPOSAL_MODE_PROPERTY_PROPOSAL:
                 return getPropertyProposals(aDocumentString, aPrefix, cursorPosition);
@@ -372,7 +372,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         	Iterator tempKeys = tempElement.getAttributes().keySet().iterator();
         	while (tempKeys.hasNext()) {
         		String tempAttrName = (String) tempKeys.next();
-        		if (tempAttrName.startsWith(aPrefix)) {
+        		if (tempAttrName.toLowerCase().startsWith(aPrefix)) {
         			IAttribute tempDTDAttribute = (IAttribute) tempElement.getAttributes().get(tempAttrName);
 					String tempReplacementString = tempAttrName+"=\"\""; //$NON-NLS-1$
 					String tempDisplayString = tempAttrName;
@@ -440,10 +440,11 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         	if (attribute != null) {
         		String[] tempItems = attribute.getEnum();
         		if (tempItems != null) {
+					String item;
                     for (int i = 0; i < tempItems.length; i++) {
-                        String tempItem = tempItems[i];
-                        if(tempItem.startsWith(aPrefix)) {
-                            ICompletionProposal proposal = new CompletionProposal(tempItem, cursorPosition - aPrefix.length(), aPrefix.length(), tempItem.length(), null, tempItem, null, null);
+                        item= tempItems[i];
+                        if(item.toLowerCase().startsWith(aPrefix)) {
+                            ICompletionProposal proposal = new CompletionProposal(item, cursorPosition - aPrefix.length(), aPrefix.length(), item.length(), null, item, null, null);
                             proposals.add(proposal);
                         }
                     }
@@ -463,11 +464,12 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     protected ICompletionProposal[] getPropertyProposals(String aDocumentText, String aPrefix, int aCursorPosition) {
         Set proposals = new CompletionSet();
         Map properties = findPropertiesFromDocument(aDocumentText);
+		String propertyName;
+		Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
         for(Iterator i=properties.keySet().iterator(); i.hasNext(); ) {
-            String propertyName = (String)i.next();
-            if(propertyName.startsWith(aPrefix)) {
-                String propertyValue = (String)properties.get(propertyName);
-                String additionalPropertyInfo = propertyValue;
+            propertyName= (String)i.next();
+            if(propertyName.toLowerCase().startsWith(aPrefix)) {
+                String additionalPropertyInfo = (String)properties.get(propertyName);
 
                 // Determine replacement length and offset
                 // String from beginning to the beginning of the prefix
@@ -491,7 +493,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 }
                  
                 String replacementString = new StringBuffer("${").append(propertyName).append('}').toString();  //$NON-NLS-1$
-                Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
                 
                 ICompletionProposal proposal = 
                     new CompletionProposal(
@@ -545,7 +546,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				rootElementName = "project"; //$NON-NLS-1$
 			}
 			IElement rootElement = dtd.getElement(rootElementName);
-			if(rootElement != null && rootElementName.startsWith(aPrefix)) {
+			if(rootElement != null && rootElementName.toLowerCase().startsWith(aPrefix)) {
 				additionalProposalOffset= 0;
 				ICompletionProposal proposal = newCompletionProposal(aWholeDocumentString, aPrefix, rootElementName);
 				proposals.add(proposal);
@@ -560,7 +561,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				for (int i = 0; i < accepts.length; i++) {
 					additionalProposalOffset= 0;
 					elementName = accepts[i];
-					if(elementName.startsWith(aPrefix)) {
+					if(elementName.toLowerCase().startsWith(aPrefix)) {
 						proposal = newCompletionProposal(aWholeDocumentString, aPrefix, elementName);
 						proposals.add(proposal);
 					}
@@ -591,7 +592,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * Returns the one possible completion for the specified unclosed task 
      * element.
      * 
-     * @param aUnclosedTaskElement the task element that hasn't been closed 
+     * @param unclosedTaskElement the task element that hasn't been closed 
      * last
      * 
      * @param aPrefix prefix, that the one possible proposals should start 
@@ -599,11 +600,11 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * 
      * @return array which may contain either one or none proposals
      */
-    private ICompletionProposal[] getClosingTaskProposals(Element aUnclosedTaskElement, String aPrefix) {
+    private ICompletionProposal[] getClosingTaskProposals(Element unclosedTaskElement, String aPrefix) {
         Set tempProposals = new CompletionSet();
-        if(aUnclosedTaskElement != null) {
-            if(aUnclosedTaskElement.getTagName().startsWith(aPrefix)) {
-                String tempReplaceString = aUnclosedTaskElement.getTagName();
+        if(unclosedTaskElement != null) {
+            if(unclosedTaskElement.getTagName().toLowerCase().startsWith(aPrefix)) {
+                String tempReplaceString = unclosedTaskElement.getTagName();
                 tempProposals.add(new CompletionProposal(tempReplaceString + '>', cursorPosition - aPrefix.length(), aPrefix.length(), tempReplaceString.length()+1, null, tempReplaceString, null, null));
             }
         }
@@ -738,17 +739,17 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     protected int determineProposalMode(String aWholeDocumentString, int aCursorPosition, String aPrefix) {
 
         // String from beginning of document to the beginning of the prefix
-        String tempStringToPrefix = aWholeDocumentString.substring(0, aCursorPosition - aPrefix.length());
+        String stringToPrefix = aWholeDocumentString.substring(0, aCursorPosition - aPrefix.length());
 
         // Is trimmable from behind
-        String tempTrimmedString = tempStringToPrefix.trim();
-        char tempLastChar = 0;
-        if(tempTrimmedString.length() > 0) {
-	        tempLastChar = tempTrimmedString.charAt(tempTrimmedString.length()-1);
+        String trimmedString = stringToPrefix.trim();
+        char lastChar = 0;
+        if(trimmedString.length() > 0) {
+	        lastChar = trimmedString.charAt(trimmedString.length()-1);
         } else {
         	return PROPOSAL_MODE_TASK_PROPOSAL;
         }
-        if(tempStringToPrefix.charAt(tempStringToPrefix.length()-1) != tempLastChar && tempLastChar != '>') {
+        if(stringToPrefix.charAt(stringToPrefix.length()-1) != lastChar && lastChar != '>') {
             /*
              * Substring must be trimmable from behind in case of attribute 
              * proposal because a space or a new line must be used as delimiter 
@@ -757,30 +758,30 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
              */
              
             // Attribute proposal
-            if(tempLastChar != '>' && tempLastChar != '<') {
-                String tempTaskString =
+            if(lastChar != '>' && lastChar != '<') {
+                String taskString =
                     getTaskStringFromDocumentStringToPrefix(
-                        tempTrimmedString);
-                if(tempTaskString != null && isNamedTaskKnown(tempTaskString)) {
+                        trimmedString);
+                if(taskString != null && isNamedTaskKnown(taskString)) {
                     return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
                 }
             }                
-        } else if(tempStringToPrefix.charAt(tempStringToPrefix.length()-1) == '"') {
+        } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"') {
 			// Attribute value proposal
-            String tempTaskString =
+            String taskString =
                 getTaskStringFromDocumentStringToPrefix(
-                    tempTrimmedString);
-            if(tempTaskString != null && isNamedTaskKnown(tempTaskString)) {
+                    trimmedString);
+            if(taskString != null && isNamedTaskKnown(taskString)) {
                 return PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL;
             }
         } else {  // Task proposal
-            int tempSpaceIndex = tempStringToPrefix.lastIndexOf(' ');
-            int tempLessThanIndex = tempStringToPrefix.lastIndexOf('<');
-            int tempGreaterThanIndex = tempStringToPrefix.lastIndexOf('>');
+            int tempSpaceIndex = stringToPrefix.lastIndexOf(' ');
+            int tempLessThanIndex = stringToPrefix.lastIndexOf('<');
+            int tempGreaterThanIndex = stringToPrefix.lastIndexOf('>');
             
             // Task proposal
             if(tempLessThanIndex > tempSpaceIndex && tempGreaterThanIndex < tempLessThanIndex) {
-                int tempSlashIndex = tempStringToPrefix.lastIndexOf('/');
+                int tempSlashIndex = stringToPrefix.lastIndexOf('/');
                 if(tempSlashIndex == tempLessThanIndex +1) {
                     return PROPOSAL_MODE_TASK_PROPOSAL_CLOSING; // ... </
                 }
@@ -791,7 +792,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 // no other regular character may be between '>' and cursor position
                 int tempActIndex = aCursorPosition;
                 do {
-                    char tempChar = tempStringToPrefix.charAt(--tempActIndex);
+                    char tempChar = stringToPrefix.charAt(--tempActIndex);
                     if(tempChar != ' ' && tempChar != '\t' && tempChar != '\n' && tempChar != '\r') {
                         break; // found a character -> no task proposal mode
                     }
@@ -805,10 +806,10 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         }
 
         // Property proposal
-        if(tempStringToPrefix.length() >= 2) {
-	        String tempLastTwoCharacters = tempStringToPrefix.substring(tempStringToPrefix.length()-2, tempStringToPrefix.length());
+        if(stringToPrefix.length() >= 2) {
+	        String tempLastTwoCharacters = stringToPrefix.substring(stringToPrefix.length()-2, stringToPrefix.length());
 	        if(tempLastTwoCharacters.equals("${") || //$NON-NLS-1$
-	            tempStringToPrefix.charAt(tempStringToPrefix.length()-1) == '$') {
+	            stringToPrefix.charAt(stringToPrefix.length()-1) == '$') {
 	                return PROPOSAL_MODE_PROPERTY_PROPOSAL;
 	        }
         }
