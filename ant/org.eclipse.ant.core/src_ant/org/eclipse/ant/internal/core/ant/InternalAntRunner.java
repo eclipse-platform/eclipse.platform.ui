@@ -212,8 +212,7 @@ public class InternalAntRunner {
 	}
 
 	private void setProperties(Project project) {
-		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
-		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
+		setBuiltInProperties(project);
 		if (userProperties != null) {
 			for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
@@ -230,6 +229,12 @@ public class InternalAntRunner {
 		}
 	}
 
+	private void setBuiltInProperties(Project project) {
+		//note also see processAntHome for system properties that are set
+		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
+		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
+	}
+	
 	private void setGlobalProperties(Project project) {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		List properties= prefs.getProperties();
@@ -681,8 +686,11 @@ public class InternalAntRunner {
 		}
 		if (antHome == null || antHome.length() == 0) {
 			System.getProperties().remove("ant.home"); //$NON-NLS-1$
+			System.getProperties().remove("ant.library.dir"); //$NON-NLS-1$
 		} else {
 			System.setProperty("ant.home", antHome); //$NON-NLS-1$
+			File antLibDir= new File(antHome, "lib"); //$NON-NLS-1$
+			System.setProperty("ant.library.dir", antLibDir.getAbsolutePath()); //$NON-NLS-1$
 		}
 	}
 	

@@ -11,6 +11,7 @@
 package org.eclipse.ant.tests.core.tests;
 
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -208,13 +209,14 @@ public class FrameworkTests extends AbstractAntTest {
 			AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 			run("echoing.xml");
 			assertTrue("ANT_HOME not set correctly", prefs.getDefaultAntHome().equals(System.getProperty("ant.home")));
+			File antLibDir= new File(prefs.getDefaultAntHome(), "lib"); //$NON-NLS-1$
+			assertTrue("ant.library.dir not set correctly", antLibDir.getAbsolutePath().equals(System.getProperty("ant.library.dir")));
 			prefs.setAntHome("");
 			run("echoing.xml");
 			assertTrue("ANT_HOME not set correctly", null == System.getProperty("ant.home"));
+			assertTrue("ant.library.dir not set correctly", null == System.getProperty("ant.library.dir"));
 		} finally {
 			restorePreferenceDefaults();
-		}
-		
-		
+		}	
 	}
 }
