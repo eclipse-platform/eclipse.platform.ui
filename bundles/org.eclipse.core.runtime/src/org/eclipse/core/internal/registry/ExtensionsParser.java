@@ -28,9 +28,6 @@ public class ExtensionsParser extends DefaultHandler {
 	// is in compatibility mode
 	private boolean compatibilityMode;
 
-	// concrete object factory
-	private Factory factory;
-
 	// File name for this extension manifest
 	// This to help with error reporting
 	private String locationName = null;
@@ -45,6 +42,9 @@ public class ExtensionsParser extends DefaultHandler {
 	private ServiceReference parserReference;
 	private String schemaVersion = null;
 
+	// A status for holding results.
+	private MultiStatus status;
+
 	/** 
 	 * Status code constant (value 1) indicating a problem in a bundle extensions
 	 * manifest (<code>extensions.xml</code>) file.
@@ -52,6 +52,8 @@ public class ExtensionsParser extends DefaultHandler {
 	public static final int PARSE_PROBLEM = 1;
 
 	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "id"; //$NON-NLS-1$
+	public static final String PLUGIN_NAME = "name"; //$NON-NLS-1$
 	public static final String FRAGMENT = "fragment"; //$NON-NLS-1$	
 	public static final String BUNDLE_UID = "id"; //$NON-NLS-1$
 
@@ -87,17 +89,16 @@ public class ExtensionsParser extends DefaultHandler {
 	private static final int EXTENSION_POINT_INDEX = 0;
 	private static final int EXTENSION_INDEX = 1;
 	private static final int LAST_INDEX = 1;
-	// TODO does this object need to be a synchronized Vector?
-	// Don't see how this object could be accessed by more than one thread.
-	private Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
+
+	private ArrayList scratchVectors[] = new ArrayList[LAST_INDEX + 1];
 
 	private String manifestType;
 
 	private Locator locator = null;
 
-	public ExtensionsParser(Factory factory) {
+	public ExtensionsParser(MultiStatus status) {
 		super();
-		this.factory = factory;
+		this.status = status;
 	}
 
 	/**
@@ -142,20 +143,20 @@ public class ExtensionsParser extends DefaultHandler {
 			case BUNDLE_STATE :
 				if (elementName.equals(manifestType)) {
 					stateStack.pop();
-					BundleModel root = (BundleModel) objectStack.peek();
+					Namespace root = (Namespace) objectStack.peek();
 
 					// Put the extension points into this bundle model
-					Vector extPointVector = scratchVectors[EXTENSION_POINT_INDEX];
-					if (extPointVector.size() > 0) {
-						root.setExtensionPoints((ExtensionPoint[]) extPointVector.toArray(new ExtensionPoint[extPointVector.size()]));
-						scratchVectors[EXTENSION_POINT_INDEX].removeAllElements();
+					ArrayList extensionPoints = scratchVectors[EXTENSION_POINT_INDEX];
+					if (extensionPoints.size() > 0) {
+						root.setExtensionPoints((ExtensionPoint[]) extensionPoints.toArray(new ExtensionPoint[extensionPoints.size()]));
+						scratchVectors[EXTENSION_POINT_INDEX].clear();
 					}
 
 					// Put the extensions into this bundle model too
-					Vector extVector = scratchVectors[EXTENSION_INDEX];
-					if (extVector.size() > 0) {
-						root.setExtensions((Extension[]) extVector.toArray(new Extension[extVector.size()]));
-						scratchVectors[EXTENSION_INDEX].removeAllElements();
+					ArrayList extensions = scratchVectors[EXTENSION_INDEX];
+					if (extensions.size() > 0) {
+						root.setExtensions((Extension[]) extensions.toArray(new Extension[extensions.size()]));
+						scratchVectors[EXTENSION_INDEX].clear();
 					}
 				}
 				break;
@@ -169,9 +170,9 @@ public class ExtensionsParser extends DefaultHandler {
 					stateStack.pop();
 					// Finish up extension object
 					Extension currentExtension = (Extension) objectStack.pop();
-					BundleModel parent = (BundleModel) objectStack.peek();
+					Namespace parent = (Namespace) objectStack.peek();
 					currentExtension.setParent(parent);
-					scratchVectors[EXTENSION_INDEX].addElement(currentExtension);
+					scratchVectors[EXTENSION_INDEX].add(currentExtension);
 				}
 				break;
 			case CONFIGURATION_ELEMENT_STATE :
@@ -220,7 +221,7 @@ public class ExtensionsParser extends DefaultHandler {
 		throw ex;
 	}
 
-	private void handleExtensionPointState(String elementName, Attributes attributes) {
+	private void handleExtensionPointState(String elementName) {
 		// We ignore all elements under extension points (if there are any)
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		unknownElement(EXTENSION_POINT, elementName);
@@ -237,7 +238,7 @@ public class ExtensionsParser extends DefaultHandler {
 		stateStack.push(new Integer(CONFIGURATION_ELEMENT_STATE));
 
 		// create a new Configuration Element and push it onto the object stack
-		ConfigurationElement currentConfigurationElement = factory.createConfigurationElement();
+		ConfigurationElement currentConfigurationElement = new ConfigurationElement();
 		objectStack.push(currentConfigurationElement);
 		currentConfigurationElement.setName(elementName);
 
@@ -258,7 +259,7 @@ public class ExtensionsParser extends DefaultHandler {
 		// in compatibility mode, any extraneous elements will be silently ignored
 		compatibilityMode = !(elementName.equals(PLUGIN) && attributes.getLength() == 0);
 		stateStack.push(new Integer(BUNDLE_STATE));
-		BundleModel current = factory.createBundle();
+		Namespace current = new Namespace();
 		current.setSchemaVersion(schemaVersion);
 		objectStack.push(current);
 	}
@@ -299,10 +300,6 @@ public class ExtensionsParser extends DefaultHandler {
 			unknownElement(manifestType, elementName);
 	}
 
-	public void ignoreableWhitespace(char[] ch, int start, int length) {
-		// do nothing
-	}
-
 	private void logStatus(SAXParseException ex) {
 		String name = ex.getSystemId();
 		if (name == null)
@@ -318,7 +315,7 @@ public class ExtensionsParser extends DefaultHandler {
 		else
 			msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
 					new String[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
-		factory.error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
+		error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
 	}
 
 	private SAXParserFactory acquireXMLParsing() {
@@ -333,9 +330,7 @@ public class ExtensionsParser extends DefaultHandler {
 			InternalPlatform.getDefault().getBundleContext().ungetService(parserReference);
 	}
 
-	// TODO why is this synchronized; does not appear to be called by multiple threads.
-	// a new ExtensionParser is created for each parsing action.
-	synchronized public BundleModel parseManifest(InputSource in, String manifestType, String manifestName) throws SAXException, IOException {
+	public Namespace parseManifest(InputSource in, String manifestType, String manifestName) throws SAXException, IOException {
 		long start = 0;
 		if (InternalPlatform.DEBUG)
 			start = System.currentTimeMillis();
@@ -364,7 +359,7 @@ public class ExtensionsParser extends DefaultHandler {
 				e.printStackTrace();
 			}
 
-			return (BundleModel) objectStack.pop();
+			return (Namespace) objectStack.pop();
 		} finally {
 			releaseXMLParsing();
 			if (InternalPlatform.DEBUG) {
@@ -387,7 +382,7 @@ public class ExtensionsParser extends DefaultHandler {
 			String attrName = attributes.getLocalName(i);
 			String attrValue = attributes.getValue(i);
 
-			ConfigurationProperty currentConfigurationProperty = factory.createConfigurationProperty();
+			ConfigurationProperty currentConfigurationProperty = new ConfigurationProperty();
 			currentConfigurationProperty.setName(attrName);
 			currentConfigurationProperty.setValue(attrValue);
 			propVector.addElement(currentConfigurationProperty);
@@ -397,8 +392,8 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void parseExtensionAttributes(Attributes attributes) {
-		BundleModel parent = (BundleModel) objectStack.peek();
-		Extension currentExtension = factory.createExtension();
+		Namespace parent = (Namespace) objectStack.peek();
+		Extension currentExtension = new Extension();
 		objectStack.push(currentExtension);
 
 		// Process Attributes
@@ -455,7 +450,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void parseExtensionPointAttributes(Attributes attributes) {
-		ExtensionPoint currentExtPoint = factory.createExtensionPoint();
+		ExtensionPoint currentExtPoint = new ExtensionPoint();
 
 		// Process Attributes
 		int len = (attributes != null) ? attributes.getLength() : 0;
@@ -481,17 +476,17 @@ public class ExtensionsParser extends DefaultHandler {
 		}
 
 		// currentExtPoint contains a pointer to the parent bundle model.
-		BundleModel root = (BundleModel) objectStack.peek();
+		Namespace root = (Namespace) objectStack.peek();
 		currentExtPoint.setParent(root);
 
 		// Now populate the the vector just below us on the objectStack with this extension point
-		scratchVectors[EXTENSION_POINT_INDEX].addElement(currentExtPoint);
+		scratchVectors[EXTENSION_POINT_INDEX].add(currentExtPoint);
 	}
 
 	public void startDocument() {
 		stateStack.push(new Integer(INITIAL_STATE));
 		for (int i = 0; i <= LAST_INDEX; i++) {
-			scratchVectors[i] = new Vector();
+			scratchVectors[i] = new ArrayList();
 		}
 	}
 
@@ -504,7 +499,7 @@ public class ExtensionsParser extends DefaultHandler {
 				handleBundleState(elementName, attributes);
 				break;
 			case BUNDLE_EXTENSION_POINT_STATE :
-				handleExtensionPointState(elementName, attributes);
+				handleExtensionPointState(elementName);
 				break;
 			case BUNDLE_EXTENSION_STATE :
 			case CONFIGURATION_ELEMENT_STATE :
@@ -522,7 +517,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void internalError(String message) {
-		factory.error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, message, null));
+		error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, message, null));
 	}
 
 	/* (non-Javadoc)
@@ -551,5 +546,24 @@ public class ExtensionsParser extends DefaultHandler {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Handles an error state specified by the status.  The collection of all logged status
+	 * objects can be accessed using <code>getStatus()</code>.
+	 *
+	 * @param error a status detailing the error condition
+	 */
+	public void error(IStatus error) {
+		status.add(error);
+	}
+
+	/**
+	 * Returns all of the status objects logged thus far by this factory.
+	 *
+	 * @return a multi-status containing all of the logged status objects
+	 */
+	public MultiStatus getStatus() {
+		return status;
 	}
 }

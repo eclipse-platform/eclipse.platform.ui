@@ -77,8 +77,6 @@ public interface IPluginDescriptor {
 	 *
 	 * @param extensionName the simple identifier of the extension (e.g. <code>"main"</code>).
 	 * @return the extension, or <code>null</code>
-	 * TODO XXX this javadoc direction is incorrect.  There is no corresponding method on 
-	 * IExtensionRegistry
 	 * @deprecated 
 	 * Use 
 	 * <pre>

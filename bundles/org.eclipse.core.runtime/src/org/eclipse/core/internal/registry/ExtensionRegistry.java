@@ -35,7 +35,6 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	// extensions without extension point
 	private Map orphanExtensions = new HashMap(11);
 	private Map orphanFragments = new HashMap(11);
-	private transient IExtensionLinker linker;
 	private transient RegistryCacheReader reader = null;
 	private transient boolean isDirty = false;
 
@@ -56,7 +55,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		}
 	}
 
-	public void add(IRegistryElement[] elements) {
+	public void add(Namespace[] elements) {
 		synchronized (this) {
 			isDirty = true;
 			for (int i = 0; i < elements.length; i++)
@@ -73,7 +72,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	 * interested on changes in the given plug-in.
 	 * </p>
 	 */
-	public void add(IRegistryElement element) {
+	public void add(Namespace element) {
 		synchronized (this) {
 			isDirty = true;
 			basicAdd(element, true);
@@ -81,12 +80,12 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		}
 	}
 
-	void basicAdd(IRegistryElement element, boolean link) {
+	void basicAdd(Namespace element, boolean link) {
 		if (elements.containsKey(element.getUniqueIdentifier()))
 			// this could be caused by a bug on removal
 			throw new IllegalArgumentException("Element already added: " + element.getUniqueIdentifier()); //$NON-NLS-1$
 		elements.put(element.getUniqueIdentifier(), element);
-		((BundleModel) element).setParent(this);
+		element.setParent(this);
 		if (!link)
 			return;
 		if (element.isFragment()) {
@@ -97,14 +96,14 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		} else {
 			Collection fragmentNames = getFragmentNames(element.getUniqueIdentifier());
 			for (Iterator iter = fragmentNames.iterator(); iter.hasNext();) {
-				IRegistryElement fragment = (IRegistryElement) elements.get(iter.next());
+				Namespace fragment = (Namespace) elements.get(iter.next());
 				addExtensionsAndExtensionPoints(fragment);
 			}
 		}
 		addExtensionsAndExtensionPoints(element);
 	}
 
-	private void addExtensionsAndExtensionPoints(IRegistryElement element) {
+	private void addExtensionsAndExtensionPoints(Namespace element) {
 		// now add and resolve extensions and extension points
 		IExtensionPoint[] extPoints = element.getExtensionPoints();
 		for (int i = 0; i < extPoints.length; i++)
@@ -179,7 +178,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 			System.arraycopy(existingExtensions, 0, newExtensions, 0, existingExtensions.length);
 			newExtensions[newExtensions.length - 1] = extension;
 		}
-		linker.link(extPoint, newExtensions);
+		link(extPoint, newExtensions);
 		recordChange(extPoint, extension, IExtensionDelta.ADDED);
 	}
 
@@ -192,7 +191,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		if (existingExtensions == null)
 			return;
 		// otherwise, link them
-		linker.link(extPoint, existingExtensions);
+		link(extPoint, existingExtensions);
 		recordChange(extPoint, existingExtensions, IExtensionDelta.ADDED);
 	}
 
@@ -277,16 +276,25 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	}
 
 	public IExtension[] getExtensions(String elementName) {
-		IRegistryElement element = (IRegistryElement) elements.get(elementName);
+		Namespace element = (Namespace) elements.get(elementName);
 		if (element == null)
 			return new IExtension[0];
 		Collection fragmentNames = getFragmentNames(elementName);
 		IExtension[] allExtensions = element.getExtensions();
 		for (Iterator iter = fragmentNames.iterator(); iter.hasNext();) {
-			IRegistryElement fragment = (IRegistryElement) elements.get(iter.next());
+			Namespace fragment = (Namespace) elements.get(iter.next());
 			allExtensions = (IExtension[]) addArrays(allExtensions, fragment.getExtensions());
 		}
 		return allExtensions;
+	}
+
+	public IExtension getExtension(String extensionId) {
+		int lastdot = extensionId.lastIndexOf('.');
+		if (lastdot == -1)
+			return null;
+		String namespace = extensionId.substring(0, lastdot);
+		Namespace element = getElement(namespace);
+		return element.getExtension(extensionId.substring(lastdot + 1));
 	}
 
 	public IExtension getExtension(String extensionPointId, String extensionId) {
@@ -304,13 +312,13 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	}
 
 	public IExtensionPoint[] getExtensionPoints(String elementName) {
-		IRegistryElement element = (IRegistryElement) elements.get(elementName);
+		Namespace element = (Namespace) elements.get(elementName);
 		if (element == null)
 			return new IExtensionPoint[0];
 		Collection fragmentNames = getFragmentNames(elementName);
 		IExtensionPoint[] allExtensionPoints = element.getExtensionPoints();
 		for (Iterator iter = fragmentNames.iterator(); iter.hasNext();) {
-			IRegistryElement fragment = (IRegistryElement) elements.get(iter.next());
+			Namespace fragment = (Namespace) elements.get(iter.next());
 			allExtensionPoints = (IExtensionPoint[]) addArrays(allExtensionPoints, fragment.getExtensionPoints());
 		}
 		return allExtensionPoints;
@@ -319,7 +327,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	public IExtensionPoint[] getExtensionPoints() {
 		ArrayList extensionPoints = new ArrayList();
 		for (Iterator iter = elements.values().iterator(); iter.hasNext();) {
-			IRegistryElement model = (IRegistryElement) iter.next();
+			Namespace model = (Namespace) iter.next();
 			IExtensionPoint[] toAdd = model.getExtensionPoints();
 			for (int i = 0; i < toAdd.length; i++)
 				extensionPoints.add(toAdd[i]);
@@ -335,7 +343,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	}
 
 	public IExtensionPoint getExtensionPoint(String elementName, String xpt) {
-		IRegistryElement element = (IRegistryElement) elements.get(elementName);
+		Namespace element = (Namespace) elements.get(elementName);
 		if (element == null)
 			return null;
 		IExtensionPoint extPoint = element.getExtensionPoint(xpt);
@@ -343,7 +351,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 			return extPoint;
 		Collection fragmentNames = getFragmentNames(elementName);
 		for (Iterator iter = fragmentNames.iterator(); iter.hasNext();) {
-			extPoint = ((IRegistryElement) elements.get(iter.next())).getExtensionPoint(xpt);
+			extPoint = ((Namespace) elements.get(iter.next())).getExtensionPoint(xpt);
 			if (extPoint != null)
 				return extPoint;
 		}
@@ -392,7 +400,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	 */
 	public boolean remove(String elementName, long bundleId) {
 		synchronized (this) {
-			IRegistryElement element = (IRegistryElement) elements.get(elementName);
+			Namespace element = (Namespace) elements.get(elementName);
 			if (element == null) {
 				if (DEBUG)
 					System.out.println("********* Element unknown: " + elementName + " - not removed."); //$NON-NLS-1$//$NON-NLS-2$
@@ -412,7 +420,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 			} else {
 				Collection fragmentNames = getFragmentNames(element.getUniqueIdentifier());
 				for (Iterator iter = fragmentNames.iterator(); iter.hasNext();) {
-					IRegistryElement fragment = (IRegistryElement) elements.get(iter.next());
+					Namespace fragment = (Namespace) elements.get(iter.next());
 					removeExtensionsAndExtensionPoints(fragment);
 				}
 			}
@@ -427,7 +435,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		return true;
 	}
 
-	private void removeExtensionsAndExtensionPoints(IRegistryElement element) {
+	private void removeExtensionsAndExtensionPoints(Namespace element) {
 		// remove extensions
 		IExtension[] extensions = element.getExtensions();
 		for (int i = 0; i < extensions.length; i++)
@@ -442,7 +450,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		if (extPoint.getExtensions() != null) {
 			IExtension[] existingExtensions = extPoint.getExtensions();
 			orphanExtensions.put(extPoint.getUniqueIdentifier(), existingExtensions);
-			linker.link(extPoint, null);
+			link(extPoint, null);
 			recordChange(extPoint, existingExtensions, IExtensionDelta.REMOVED);
 		}
 	}
@@ -472,7 +480,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 				if (existingExtensions[i] != extension)
 					newExtensions[j++] = existingExtensions[i];
 		}
-		linker.link(extPoint, newExtensions);
+		link(extPoint, newExtensions);
 		recordChange(extPoint, extension, IExtensionDelta.REMOVED);
 	}
 
@@ -484,8 +492,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		this.listeners.remove(new ListenerInfo(listener, null));
 	}
 
-	public ExtensionRegistry(IExtensionLinker extensionLinker) {
-		linker = extensionLinker;
+	public ExtensionRegistry() {
 		String debugOption = InternalPlatform.getDefault().getOption(OPTION_DEBUG_EVENTS_EXTENSION);
 		DEBUG = debugOption == null ? false : debugOption.equalsIgnoreCase("true"); //$NON-NLS-1$		
 		if (DEBUG)
@@ -536,8 +543,8 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 		}
 	}
 
-	public IRegistryElement getElement(String elementId) {
-		return (IRegistryElement) elements.get(elementId);
+	public Namespace getElement(String elementId) {
+		return (Namespace) elements.get(elementId);
 	}
 
 	public void setCacheReader(RegistryCacheReader value) {
@@ -555,10 +562,17 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	public void setDirty(boolean value) {
 		isDirty = value;
 	}
-	
+
 	public RegistryModelObject getRegistry() {
 		return this;
 	}
 
-
+	public void link(IExtensionPoint extPoint, IExtension[] extensions) {
+		ExtensionPoint xpm = (ExtensionPoint) extPoint;
+		if (extensions == null || extensions.length == 0) {
+			xpm.setExtensions(null);
+			return;
+		}
+		xpm.setExtensions(extensions);
+	}
 }

@@ -20,7 +20,7 @@ import org.osgi.framework.Bundle;
  * An object which represents the user-defined contents of a bundle model
  * in a extensions manifest.
  */
-public class BundleModel extends NestedRegistryModelObject implements IRegistryElement {
+public class Namespace extends NestedRegistryModelObject {
 	private String hostId;
 	private IExtensionPoint[] extensionPoints;
 	private IExtension[] extensions;
@@ -79,7 +79,7 @@ public class BundleModel extends NestedRegistryModelObject implements IRegistryE
 		if (list == null)
 			return null;
 		for (int i = 0; i < list.length; i++) {
-			if (id.equals(list[i].getUniqueIdentifier()))
+			if (id.equals(list[i].getSimpleIdentifier()))
 				return list[i];
 		}
 		return null;

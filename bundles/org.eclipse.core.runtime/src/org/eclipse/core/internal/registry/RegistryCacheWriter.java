@@ -92,7 +92,7 @@ public class RegistryCacheWriter {
 			addToObjectTable(object);
 			out.writeByte(RegistryCacheReader.OBJECT);
 			writeStringOrNull(object.getSimpleIdentifier(), out);
-			writeBundleModel((BundleModel) object.getParent(), out);
+			writeBundleModel((Namespace) object.getParent(), out);
 			writeStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getExtensionPointIdentifier(), out);
 			writeSubElements(object, out);
@@ -161,7 +161,7 @@ public class RegistryCacheWriter {
 		}
 	}
 
-	public void writeBundleModel(BundleModel object, DataOutputStream out) {
+	public void writeBundleModel(Namespace object, DataOutputStream out) {
 		try {
 			if (writeIndex(object, out))
 				return;
@@ -210,7 +210,7 @@ public class RegistryCacheWriter {
 			String[] ids = object.getElementIdentifiers();
 			out.writeInt(ids.length);
 			for (int i = 0; i < ids.length; i++)
-				writeBundleModel((BundleModel) object.getElement(ids[i]), out);
+				writeBundleModel(object.getElement(ids[i]), out);
 		} catch (IOException ioe) {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionRegisry"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}

@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.*;
  */
 public class RegistryCacheReader {
 
-	Factory cacheFactory;
+	MultiStatus problems = null;
 	// objectTable will be an array list of objects. The objects will be things
 	// like a plugin descriptor, extension point, etc. The integer
 	// index value will be used in the cache to allow cross-references in the
@@ -46,16 +46,16 @@ public class RegistryCacheReader {
 	public static final byte OBJECT = 1;
 	public static final byte INDEX = 2;
 
-	public RegistryCacheReader(File cacheFile, Factory factory, boolean lazilyLoadExtensions) {
+	public RegistryCacheReader(File cacheFile, MultiStatus problems, boolean lazilyLoadExtensions) {
 		super();
 		this.cacheFile = cacheFile;
+		this.problems = problems;
 		this.lazilyLoadExtensions = lazilyLoadExtensions;
-		cacheFactory = factory;
 		objectTable = new ArrayList();
 	}
 
-	public RegistryCacheReader(File cacheFile, Factory factory) {
-		this(cacheFile, factory, false);
+	public RegistryCacheReader(File cacheFile, MultiStatus problems) {
+		this(cacheFile, problems, false);
 	}
 
 	private int addToObjectTable(Object object) {
@@ -85,7 +85,7 @@ public class RegistryCacheReader {
 	}
 
 	private ConfigurationElement readConfigurationElement(RegistryModelObject parent, DataInputStream in) throws IOException {
-		ConfigurationElement result = cacheFactory.createConfigurationElement();
+		ConfigurationElement result = new ConfigurationElement();
 		result.setParent(parent);
 		result.setName(readString(in, true));
 		result.setValue(readString(in, true));
@@ -105,7 +105,7 @@ public class RegistryCacheReader {
 	}
 
 	private ConfigurationProperty readConfigurationProperty(DataInputStream in) throws IOException {
-		ConfigurationProperty result = cacheFactory.createConfigurationProperty();
+		ConfigurationProperty result = new ConfigurationProperty();
 		result.setName(readString(in, true));
 		result.setValue(readString(in, true));
 		return result;
@@ -117,7 +117,7 @@ public class RegistryCacheReader {
 			result = (Extension) readIndex(in);
 			if (result != null)
 				return result;
-			result = cacheFactory.createExtension();
+			result = new Extension();
 			addToObjectTable(result);
 			result.setSimpleIdentifier(readString(in, true));
 			result.setParent(readBundleModel(in));
@@ -133,13 +133,13 @@ public class RegistryCacheReader {
 		}
 	}
 
-	private ExtensionPoint readExtensionPoint(BundleModel bundle, DataInputStream in) throws InvalidRegistryCacheException {
+	private ExtensionPoint readExtensionPoint(Namespace bundle, DataInputStream in) throws InvalidRegistryCacheException {
 		ExtensionPoint result = null;
 		try {
 			result = (ExtensionPoint) readIndex(in);
 			if (result != null)
 				return result;
-			result = cacheFactory.createExtensionPoint();
+			result = new ExtensionPoint();
 			addToObjectTable(result);
 			result.setParent(bundle);
 			result.setSimpleIdentifier(readString(in, true));
@@ -161,13 +161,13 @@ public class RegistryCacheReader {
 		}
 	}
 
-	private BundleModel readBundleModel(DataInputStream in) throws InvalidRegistryCacheException {
-		BundleModel result = null;
+	private Namespace readBundleModel(DataInputStream in) throws InvalidRegistryCacheException {
+		Namespace result = null;
 		try {
-			result = (BundleModel) readIndex(in);
+			result = (Namespace) readIndex(in);
 			if (result != null)
 				return result;
-			result = cacheFactory.createBundle();
+			result = new Namespace();
 			addToObjectTable(result);
 			result.setUniqueIdentifier(readString(in, true));
 			result.setBundle(InternalPlatform.getDefault().getBundleContext().getBundle(in.readLong()));
@@ -209,7 +209,7 @@ public class RegistryCacheReader {
 			if (result != null)
 				return result;
 
-			result = cacheFactory.createRegistry();
+			result = new ExtensionRegistry();
 			if (lazilyLoadExtensions)
 				result.setCacheReader(this);
 			addToObjectTable(result);

@@ -77,7 +77,7 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 	}
 
 	public String getNamespace() {
-		BundleModel parent = (BundleModel) this.getParent();
+		Namespace parent = (Namespace) this.getParent();
 		return parent.isFragment() ? parent.getHostIdentifier() : parent.getName();
 	}
 
@@ -134,7 +134,7 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 		String s = getName();
 		if (s == null)
 			return ""; //$NON-NLS-1$
-		String localized = ((BundleModel) getParent()).getResourceString(s);
+		String localized = ((Namespace) getParent()).getResourceString(s);
 		if (localized != s)
 			setLocalizedName(localized);
 		return localized;
@@ -157,7 +157,7 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 	}
 
 	public IPluginDescriptor getDeclaringPluginDescriptor() {
-		return CompatibilityHelper.getPluginDescriptor(((BundleModel) getParent()).getName());
+		return CompatibilityHelper.getPluginDescriptor(((Namespace) getParent()).getName());
 	}
 
 	public String getExtensionPointUniqueIdentifier() {

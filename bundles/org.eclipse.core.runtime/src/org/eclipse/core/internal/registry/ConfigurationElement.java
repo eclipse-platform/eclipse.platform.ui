@@ -25,6 +25,8 @@ import org.osgi.framework.Bundle;
  */
 
 public class ConfigurationElement extends NestedRegistryModelObject implements IConfigurationElement {
+	int PLUGIN_ERROR = 1;
+
 	// DTD properties (included in plug-in manifest)
 	private String value = null;
 	private ConfigurationProperty[] properties = null;
@@ -79,7 +81,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 			// specified name is not a simple attribute nor child element
 			else {
 				String message = Policy.bind("plugin.extDefNotFound", attributeName); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$
 				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
@@ -102,7 +104,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 
 		if (className == null || className.equals("")) { //$NON-NLS-1$
 			String message = Policy.bind("plugin.extDefNoClass", attributeName); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
+			IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
 			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
 
 			throw new CoreException(status);
@@ -159,7 +161,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 	}
 
 	private void throwException(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IRegistryConstants.PLUGIN_ERROR, message, exception);
+		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, PLUGIN_ERROR, message, exception);
 		InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 		throw new CoreException(status);
 	}
@@ -202,7 +204,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 		String s = getValueAsIs();
 		if (s == null)
 			return null;
-		BundleModel bundleModel = (BundleModel) ((Extension) getDeclaringExtension()).getParent();
+		Namespace bundleModel = (Namespace) ((Extension) getDeclaringExtension()).getParent();
 		String localized = bundleModel.getResourceString(s);
 		if (localized != s)
 			setLocalizedValue(localized);
@@ -250,7 +252,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 		if (found == null || (s = found.getValue()) == null)
 			return null;
 		//replace the key with its localized value
-		BundleModel bundleModel = (BundleModel) ((Extension) getDeclaringExtension()).getParent();
+		Namespace bundleModel = (Namespace) ((Extension) getDeclaringExtension()).getParent();
 		String localized = bundleModel.getResourceString(s);
 		if (localized != s)
 			found.setLocalizedValue(localized);

@@ -20,13 +20,15 @@ import org.osgi.framework.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-//TODO The comment needs to fixed
-// using a synchronous listener until asynchronous ones work properly
-// Actually synchronous might be the right answer here anyway. If the
-// bundle activator code tries to access the registry to get its extension
-// points, we need to ensure that they are in the registry before the
-// bundle start is called. By listening sync we should be able to ensure that
-// happens.
+/**
+ * A listener for bundle events.  When a bundles come and go we look to see 
+ * if there are any extensions or extension points and update the registry accordingly.
+ * Using a Synchronous listener here is important. If the
+ * bundle activator code tries to access the registry to get its extension
+ * points, we need to ensure that they are in the registry before the
+ * bundle start is called. By listening sync we are able to ensure that
+ * happens.
+ */ 
 public class EclipseBundleListener implements SynchronousBundleListener {
 	private static final String PLUGIN_MANIFEST = "plugin.xml"; //$NON-NLS-1$
 	private static final String FRAGMENT_MANIFEST = "fragment.xml"; //$NON-NLS-1$	
@@ -88,7 +90,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		// note that this does not work for update cases.
 		if (registry.getElement(bundle.getSymbolicName()) != null)
 			return;
-		BundleModel bundleModel = getBundleModel(bundle);
+		Namespace bundleModel = getBundleModel(bundle);
 		if (bundleModel == null)
 			return;
 		// Do not synchronize on registry here because the registry handles
@@ -100,7 +102,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	 * Tries to create a bundle model from a plugin/fragment manifest in the
 	 * bundle.
 	 */
-	private BundleModel getBundleModel(Bundle bundle) {
+	private Namespace getBundleModel(Bundle bundle) {
 		// bail out if system bundle
 		if (bundle.getBundleId() == 0)
 			return null;
@@ -125,8 +127,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		try {
 			String message = Policy.bind("parse.problems", bundle.getLocation()); //$NON-NLS-1$
 			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
-			Factory factory = new Factory(problems);
-			BundleModel bundleModel = new ExtensionsParser(factory).parseManifest(new InputSource(is), manifestType, manifestName);
+			Namespace bundleModel = new ExtensionsParser(problems).parseManifest(new InputSource(is), manifestType, manifestName);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setBundle(bundle);
 			if (isFragment) {

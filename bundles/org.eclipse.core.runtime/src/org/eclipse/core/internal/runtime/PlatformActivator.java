@@ -84,7 +84,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) { //$NON-NLS-1$
 			// Try to read the registry from the cache first. If that fails, create a new registry
 			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
-			Factory factory = new Factory(problems);
 
 			long start = 0;
 			if (InternalPlatform.DEBUG)
@@ -100,7 +99,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 			if (cacheFile != null && cacheFile.isFile()) {
 				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
-				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache(registryStamp);
+				registry = new RegistryCacheReader(cacheFile, problems, lazyLoading).loadCache(registryStamp);
 			}
 			if (InternalPlatform.DEBUG && registry != null)
 				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
@@ -117,7 +116,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		}
 		if (registry == null) {
 			fromCache = false;
-			registry = new ExtensionRegistry(new ExtensionLinker());
+			registry = new ExtensionRegistry();
 		}
 
 		// register a listener to catch new bundle installations/resolutions.

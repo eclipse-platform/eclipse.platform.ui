@@ -113,6 +113,16 @@ public interface IExtensionRegistry {
 	/**
 	 * Returns the specified extension in this extension registry, 
 	 * or <code>null</code> if there is no such extension.
+	 *
+	 * @param extensionId the unique identifier of the extension 
+	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
+	 * @return the extension, or <code>null</code>
+	 */
+	public IExtension getExtension(String extensionId);
+
+	/**
+	 * Returns the specified extension in this extension registry, 
+	 * or <code>null</code> if there is no such extension.
 	 * The first parameter identifies the extension point, and the second
 	 * parameter identifies an extension plugged in to that extension point.
 	 *

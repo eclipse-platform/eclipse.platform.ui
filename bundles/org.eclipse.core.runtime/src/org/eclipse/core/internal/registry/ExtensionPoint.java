@@ -79,7 +79,7 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 	}
 
 	public String getNamespace() {
-		BundleModel parent = (BundleModel) getParent();
+		Namespace parent = (Namespace) getParent();
 		return parent.isFragment() ? parent.getHostIdentifier() : parent.getName();
 	}
 
@@ -87,7 +87,7 @@ public class ExtensionPoint extends NestedRegistryModelObject implements IExtens
 		String s = getName();
 		if (s == null)
 			return ""; //$NON-NLS-1$
-		String localized = ((BundleModel) getParent()).getResourceString(s);
+		String localized = ((Namespace) getParent()).getResourceString(s);
 		if (localized != s)
 			setLocalizedName(localized);
 		return localized;
