@@ -85,20 +85,35 @@ public abstract class TemplateVariableResolver {
 	 * Resolves <code>variable</code> in <code>context</code>. To resolve
 	 * means to find a valid binding of the receiver's type in the given <code>TemplateContext</code>.
 	 * If the variable can be successfully resolved, its value is set using
-	 * {@link TemplateVariable#setValues(String[])} and its resolved state is
-	 * updated using
-	 * {@link TemplateVariable#setResolved(boolean) setResolved(true)}.
+	 * {@link TemplateVariable#setValues(String[])}.
 	 * 
 	 * @param context the context in which variable is resolved
 	 * @param variable the variable to resolve
 	 */
 	public void resolve(TemplateVariable variable, TemplateContext context) {
 		String[] bindings= resolveAll(context);
-		if (bindings.length == 0)
-			variable.setResolved(false);
-		else {
+		if (bindings.length != 0)
 			variable.setValues(bindings);
-			variable.setResolved(true);
-		}
+		if (bindings.length > 0)
+			variable.setUnambiguous(false);
+		else
+			variable.setUnambiguous(isUnambiguous(context));
+	}
+
+	/**
+	 * Returns whether this resolver is able to resolve unambiguously. When
+	 * resolving a <code>TemplateVariable</code>, its <code>isUmambiguous</code>
+	 * state is set to the one of this resolver. By default, this method
+	 * returns <code>false</code>. Clients can overwrite this method to give
+	 * a hint about whether there should be e.g. prompting for input values for
+	 * ambiguous variables.
+	 * 
+	 * @param context the context in which the resolved check should be
+	 *        evaluated
+	 * @return <code>true</code> if the receiver is unambiguously resolveable
+	 *         in <code>context</code>, <code>false</code> otherwise
+	 */
+	protected boolean isUnambiguous(TemplateContext context) {
+		return false;
 	}
 }

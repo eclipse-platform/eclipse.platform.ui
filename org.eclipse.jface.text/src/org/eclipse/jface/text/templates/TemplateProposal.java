@@ -130,8 +130,8 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 			for (int i= 0; i != variables.length; i++) {
 				TemplateVariable variable= variables[i];
 
-				if (variable.isResolved())
-					continue; // TODO why?
+				if (variable.isUnambiguous()) // don't set up linked mode for unambiguous matches
+					continue;
 				
 				LinkedPositionGroup group= new LinkedPositionGroup();
 				

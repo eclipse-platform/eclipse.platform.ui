@@ -43,5 +43,16 @@ public class SimpleVariableResolver extends TemplateVariableResolver {
 	protected String resolve(TemplateContext context) {
 		return fEvaluationString;
 	}
+	
+	
+	/**
+	 * Returns always <code>true</code>, since simple variables are normally
+	 * unambiguous.
+	 * 
+	 * @param context {@inheritDoc}
+	 */
+	protected boolean isUnambiguous(TemplateContext context) {
+		return true;
+	}
 
 }

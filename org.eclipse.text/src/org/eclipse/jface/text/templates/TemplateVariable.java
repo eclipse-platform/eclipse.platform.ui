@@ -30,8 +30,8 @@ public class TemplateVariable {
 	private int fLength;
 	/** The offsets of the variable. */
 	private int[] fOffsets;
-	/** A flag indicating if the variable has been resolved. */
-	private boolean fResolved;
+	/** Flag indicating if the variable has been resolved umambiguously. */
+	private boolean fIsUnambiguous;
 	/**
 	 * The proposal strings available for this variable. The first string is
 	 * the default value.
@@ -62,7 +62,7 @@ public class TemplateVariable {
 		fType= type;
 		setValues(values);
 		setOffsets(offsets);
-		setResolved(false);
+		setUnambiguous(false);
 	}
 
 	/**
@@ -143,21 +143,21 @@ public class TemplateVariable {
 	}
 
 	/**
-	 * Sets the resolved flag of the variable.
+	 * Sets the isUnambiguous flag of the variable.
 	 * 
-	 * @param resolved the new resolved state of the variable
+	 * @param unambiguous the new umambiguous state of the variable
 	 */
-	public void setResolved(boolean resolved) {
-	    fResolved= resolved;
+	public void setUnambiguous(boolean unambiguous) {
+	    fIsUnambiguous= unambiguous;
 	}
 
 	/**
-	 * Returns <code>true</code> if the variable is resolved, <code>false</code> otherwise.
+	 * Returns <code>true</code> if the variable is unambiguously, <code>false</code> otherwise.
 	 * 
-	 * @return <code>true</code> if the variable is resolved, <code>false</code> otherwise
+	 * @return <code>true</code> if the variable is unambiguously, <code>false</code> otherwise
 	 */	
-	public boolean isResolved() {
-	 	return fResolved;   
+	public boolean isUnambiguous() {
+	 	return fIsUnambiguous;   
 	}
 
 }

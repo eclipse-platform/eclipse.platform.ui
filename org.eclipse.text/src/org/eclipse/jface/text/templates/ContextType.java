@@ -143,25 +143,25 @@ public class ContextType {
         for (int i= 0; i != variables.length; i++) {
             TemplateVariable variable= variables[i];
 
-			if (variable.isResolved())
+			if (variable.isUnambiguous())
 				continue;			
 
 			// remember old values
 			int[] oldOffsets= variable.getOffsets();
 			int oldLength= variable.getLength();
+			String oldValue= variable.getDefaultValue();
 			
 			String type= variable.getType();
 			TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
 			if (resolver != null)
 				resolver.resolve(variable, context);
 			
-			if (variable.isResolved()) {
-				String value= variable.getDefaultValue();
-				
+			String value= variable.getDefaultValue();
+			
+			if (!oldValue.equals(value))
 				// update buffer to reflect new value
 				for (int k= 0; k != oldOffsets.length; k++)
 					edits.add(new ReplaceEdit(oldOffsets[k], oldLength, value));
-			}
 			
         }
 
