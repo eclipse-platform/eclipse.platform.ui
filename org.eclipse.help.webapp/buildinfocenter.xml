@@ -30,30 +30,12 @@
 		<delete dir="${temp.folder}"/>
 	</target>
 
-	<!-- custom addition begin -->
-	<target name="build.war" depends="init">
-		<delete dir="${temp.folder}"/>
-		<mkdir dir="${temp.folder}"/>
-		<antcall target="build.jars"/>
-		<antcall target="gather.bin.parts">
-			<param name="destination.temp.folder" value="${temp.folder}/"/>
-		</antcall>
-		<jar jarfile="${plugin.destination}/$eclipseinfocenter.war" basedir="${temp.folder}/${full.name}" filesonly="false"/>
-		<delete dir="${temp.folder}"/>
-	</target>
-	<!-- custom end -->
-
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
-			<!-- custom change begin -->
-			<!--
-			<fileset dir="${basedir}" includes="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,webapp.properties"/>
-			-->
 			<fileset dir="${basedir}" includes="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,webapp.properties" excludes="WEB-INF/classes/"/>
-			<!-- custom end -->
 		</copy>
 		<!-- custom addition begin -->
 		<copy file="${basedir}/infocenter/web.xml" todir="${destination.temp.folder}/${full.name}/WEB-INF" overwrite="true"/>
@@ -68,12 +50,7 @@
 		<delete dir="${temp.folder}/WEB-INF/lib/webapp.jar.bin"/>
 		<mkdir dir="${temp.folder}/WEB-INF/lib/webapp.jar.bin"/>
 		<!-- compile the source code -->
-		<!-- custom change begin -->
-		<!--
-		<javac destdir="${temp.folder}/WEB-INF/lib/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;../org.eclipse.help/help.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help/bin;../org.apache.xerces/bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/xmlParserAPIs.jar;../org.eclipse.core.boot/bin">
-		-->
-		<javac destdir="${temp.folder}/WEB-INF/lib/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;../org.eclipse.help/help.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help/bin;../org.apache.xerces/bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/xmlParserAPIs.jar;../org.eclipse.core.boot/bin;../org.eclipse.tomcat/servlet.jar">
-		<!-- custom end -->
+		<javac destdir="${temp.folder}/WEB-INF/lib/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/runtime.jar;../org.eclipse.help/help.jar;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help/bin;../org.apache.xerces/bin;../org.eclipse.core.runtime/bin;../org.eclipse.core.boot/boot.jar;../org.eclipse.tomcat/servlet.jar;../org.apache.xerces/xmlParserAPIs.jar;../org.eclipse.core.boot/bin">
 			<src path="src/"/>
 		</javac>
 		<!-- copy necessary resources -->
@@ -93,7 +70,7 @@
 	<target name="WEB-INF/lib/webappsrc.zip" depends="init" unless="WEB-INF/lib/webappsrc.zip">
 		<mkdir dir="${build.result.folder}/WEB-INF/lib"/>
 		<zip zipfile="${build.result.folder}/WEB-INF/lib/webappsrc.zip" filesonly="false">
-			<fileset dir="src/" includes="**/*.java"/>
+			<fileset dir="src/" includes="**/*.java" excludes="org/eclipse/help/internal/proxy/**"/>
 		</zip>
 	</target>
 
@@ -128,7 +105,7 @@
 		<delete file="${build.result.folder}/WEB-INF/lib/webappsrc.zip"/>
 		<delete file="${plugin.destination}/${full.name}.jar"/>
 		<!-- custom addition begin -->
-		<delete file="${plugin.destination}/${full.name}.war"/>
+		<delete file="${plugin.destination}/eclipseinfocenter.zip"/>
 		<!-- custom end -->
 		<delete file="${plugin.destination}/${full.name}.zip"/>
 		<delete dir="${temp.folder}"/>
@@ -138,9 +115,13 @@
 		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
 	</target>
 
+	<!-- custom change begin -->
+	<!--
 	<target name="zip.plugin" depends="init">
 		<delete dir="${temp.folder}"/>
 		<mkdir dir="${temp.folder}"/>
+	-->
+	<target name="build.war" depends="init">
 		<antcall target="build.jars"/>
 		<antcall target="build.sources"/>
 		<antcall target="gather.bin.parts">
@@ -152,8 +133,25 @@
 		<delete>
 			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
 		</delete>
+		<!--
 		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="true"/>
 		<delete dir="${temp.folder}"/>
+		-->
+		<jar jarfile="${temp.folder}/$eclipseinfocenter.war" basedir="${temp.folder}/${full.name}" filesonly="false"/>
 	</target>
+	<!-- custom end -->
+
+	<!-- custom addition begin -->
+	<target name="zip.infocenter" depends="init">
+		<delete dir="${temp.folder}"/>
+		<mkdir dir="${temp.folder}"/>
+		<antcall target="build.war"/>
+		<zip zipfile="${plugin.destination}/eclipseinfocenter.zip">
+		    <zipfileset dir="${temp.folder}" includes="eclipseinfocenter.war"/>
+		    <zipfileset dir="${basedir}/infocenter" includes="about.html,notice.html,cpl-v10.html"/>
+		</zip>
+		<delete dir="${temp.folder}"/>
+	</target>
+	<!-- custom end -->
 
 </project>
