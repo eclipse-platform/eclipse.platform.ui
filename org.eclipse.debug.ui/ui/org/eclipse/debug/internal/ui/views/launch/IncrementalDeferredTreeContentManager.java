@@ -20,7 +20,7 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
- * TODO:
+ * A deferred content manager that merges content into a tree rather then replacing * it children with a "pending" node, and then the real children. This avoids * collapsing the viewer when a refresh is performed. This implementation is * currently tied to the LaunchViewer. *  * @since 3.1
  */
 public class IncrementalDeferredTreeContentManager extends DeferredTreeContentManager {
 
