@@ -301,14 +301,14 @@ static public byte[] lengthEncode(byte[] b, int off, int len) throws IOException
 	return result;
 }
 static public byte[] readMpInt(InputStream is) throws IOException {
-	int a = (byte) is.read();
-	int b = (byte) is.read();
+	int a = is.read();
+	int b = is.read();
 
 	if(a == -1 || b == -1){
 		throw new IOException(Policy.bind("stream"));//$NON-NLS-1$
 	}
 
-	int bits = (a << 8) + b;
+	int bits = ((a & 0xFF) << 8) + (b & 0xFF);
 	int bytes = (bits + 7) / 8;
 
 	byte[] result = new byte[bytes];
