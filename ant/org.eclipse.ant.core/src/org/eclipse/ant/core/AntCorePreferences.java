@@ -422,7 +422,7 @@ public class AntCorePreferences {
 		if (dflt) {
 			//always want to recalculate the default custom urls
 			//to pick up any changes in the default classpath
-			prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, "");
+			prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, ""); //$NON-NLS-1$
 			return;
 		}
 		StringBuffer urls = new StringBuffer();

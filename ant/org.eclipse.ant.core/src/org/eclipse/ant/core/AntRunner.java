@@ -286,7 +286,7 @@ public class AntRunner implements IPlatformRunnable {
 				Method setExecutionTargets = classInternalAntRunner.getMethod("setExecutionTargets", new Class[] { String[].class }); //$NON-NLS-1$
 				setExecutionTargets.invoke(runner, new Object[] { fTargets });
 			} else {
-				String message= InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") + "No targets specified."; 
+				String message= InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") + InternalCoreAntMessages.getString("AntRunner.No_targets_specified._2");  //$NON-NLS-1$ //$NON-NLS-2$
 				IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, null);
 				throw new CoreException(status);
 			}
