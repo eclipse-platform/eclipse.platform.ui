@@ -57,14 +57,14 @@
    </extension>
    <extension
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
-      <cheatSheet
+      <cheatsheet
             name="%cheatsheet.cvs.name"
             contentFile="cheatsheets/CVS_1.xml"
             id="org.eclipse.platform.cvs_1">
          <description>
             %cheatsheet.cvs.desc
          </description>
-      </cheatSheet>
+      </cheatsheet>
    </extension>
    <!-- =====================================================  -->
    <!-- Standby Content Part contributions                     -->
