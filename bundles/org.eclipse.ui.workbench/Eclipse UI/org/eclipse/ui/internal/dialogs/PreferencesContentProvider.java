@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.ArrayList;
-
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import java.util.*;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.osgi.service.prefs.BackingStoreException;
@@ -24,6 +22,13 @@ import org.osgi.service.prefs.Preferences;
  * preferences export tree.
  */
 public class PreferencesContentProvider implements ITreeContentProvider {
+
+	private static Set scopes = new HashSet();
+
+	static {
+		scopes.add(InstanceScope.SCOPE);
+		scopes.add(ConfigurationScope.SCOPE);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -67,6 +72,18 @@ public class PreferencesContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	private boolean hasKeys(Preferences node) throws BackingStoreException {
+		if (node.keys().length > 0)
+			return true;
+		String[] children = node.childrenNames();
+		for (int i = 0; i < children.length; i++) {
+			String child = children[i];
+			if (hasKeys(node.node(child)))
+				return true;
+		}
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -76,15 +93,28 @@ public class PreferencesContentProvider implements ITreeContentProvider {
 		ArrayList result = new ArrayList();
 		if (parent instanceof IEclipsePreferences) {
 			IEclipsePreferences node = (IEclipsePreferences) parent;
+
 			try {
-				String[] childrenNames = node.childrenNames();
-				for (int i = 0; childrenNames != null
-						&& i < childrenNames.length; i++) {
-					if (childrenNames[i].equals(DefaultScope.SCOPE))
-						continue;
-					Preferences preferences = node.node(childrenNames[i]);
-					result.add(preferences);
-//					}
+				if (node.parent() == null) {
+					// handle the case where we are given the root of the tree
+					String[] childrenNames = node.childrenNames();
+					for (int i = 0; childrenNames != null && i < childrenNames.length; i++) {
+						String child = childrenNames[i];
+						if (!scopes.contains(child))
+							continue;
+						Preferences preferences = node.node(child);
+						if (hasKeys(preferences))
+							result.add(preferences);
+					}
+				} else if (node.parent().parent() == null) {
+					// if we are on a second level
+					String[] childrenNames = node.childrenNames();
+					for (int i = 0; childrenNames != null && i < childrenNames.length; i++) {
+						String child = childrenNames[i];
+						Preferences preferences = node.node(child);
+						if (hasKeys(preferences))
+							result.add(preferences);
+					}
 				}
 
 			} catch (BackingStoreException e) {
@@ -100,13 +130,15 @@ public class PreferencesContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object parent) {
-		if (parent instanceof IEclipsePreferences)
-			try {
-				IEclipsePreferences node = (IEclipsePreferences) parent;
-				return node.childrenNames().length > 0;
-			} catch (BackingStoreException e) {
-				e.printStackTrace();
-			}
+		IEclipsePreferences node = (IEclipsePreferences) parent;
+		try {
+			if (node.parent() == null && hasKeys(node))
+				return true;
+			if (node.parent().parent() == null && hasKeys(node))
+				return true;
+		} catch (BackingStoreException e) {
+			// do nothing
+		}
 		return false;
 	}
 }

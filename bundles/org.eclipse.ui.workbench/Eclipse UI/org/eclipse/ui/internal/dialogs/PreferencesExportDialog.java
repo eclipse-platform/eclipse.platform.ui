@@ -22,14 +22,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,8 +43,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ViewerSorter;
+
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -83,8 +91,7 @@ public class PreferencesExportDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(WorkbenchMessages
-				.getString("PreferencesExportDialog.SelectMessage")); //$NON-NLS-1$
+		newShell.setText(WorkbenchMessages.getString("PreferencesExportDialog.SelectMessage")); //$NON-NLS-1$
 	}
 
 	/*
@@ -101,7 +108,7 @@ public class PreferencesExportDialog extends Dialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control createDialogArea(Composite parent) {
+protected Control createDialogArea(Composite parent) {
 		Control outerArea = super.createDialogArea(parent);
 
 		createOutputSelectionArea((Composite) outerArea);
@@ -118,12 +125,24 @@ public class PreferencesExportDialog extends Dialog {
 			 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object obj) {
-				String result = obj.toString();
-				if (obj instanceof IEclipsePreferences) {
-					IEclipsePreferences node = (IEclipsePreferences) obj;
-					result = node.name();
+				IEclipsePreferences node = (IEclipsePreferences) obj;
+
+				// we are at the scope level
+				if (node.parent().parent() == null) {
+					if (node.name().equals(InstanceScope.SCOPE))
+						return WorkbenchMessages.getString("PreferencesExportDialog.WorkspaceScope"); //$NON-NLS-1$
+					else if (node.name().equals(ConfigurationScope.SCOPE))
+						return WorkbenchMessages.getString("PreferencesExportDialog.ConfigurationScope"); //$NON-NLS-1$
+					return node.name();
 				}
-				return result;
+
+				// we are at the plug-in level, try and look up a reasonable name
+				String result = node.name();
+				Plugin plugin = Platform.getPlugin(result);
+				if (plugin != null)
+					return WorkbenchMessages.format("PreferencesExportDialog.PluginLabel", //$NON-NLS-1$
+							new String [] {plugin.getDescriptor().getLabel(), node.name()});
+				return node.name();
 			}
 
 			/*
@@ -132,21 +151,19 @@ public class PreferencesExportDialog extends Dialog {
 			 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 			 */
 			public Image getImage(Object obj) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-						ISharedImages.IMG_OBJ_FOLDER);
+				return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 			}
 		});
 
+		viewer.setSorter(new ViewerSorter());
 		viewer.setInput(Platform.getPreferencesService().getRootNode());
 
-		GridData data = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_VERTICAL);
+		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 
 		viewer.getControl().setLayoutData(data);
 		return outerArea;
 
 	}
-
 	/**
 	 * Create the output file location.
 	 * 
@@ -164,11 +181,9 @@ public class PreferencesExportDialog extends Dialog {
 		outputArea.setLayoutData(data);
 
 		Label titleLabel = new Label(outputArea, SWT.NONE);
-		titleLabel.setText(WorkbenchMessages
-				.getString("ExportWizard.selectDestination"));//$NON-NLS-1$
+		titleLabel.setText(WorkbenchMessages.getString("ExportWizard.selectDestination"));//$NON-NLS-1$
 
-		IDialogSettings settings = WorkbenchPlugin.getDefault()
-				.getDialogSettings();
+		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
 		String[] locations = settings.getArray(EXPORT_LOCATION_KEY);
 
 		outputLocationCombo = new Combo(outputArea, SWT.NONE);
@@ -178,13 +193,11 @@ public class PreferencesExportDialog extends Dialog {
 			outputLocationCombo.select(0);
 		}
 
-		outputLocationCombo
-				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		outputLocationCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// destination browse button
 		Button destinationBrowseButton = new Button(outputArea, SWT.PUSH);
-		destinationBrowseButton.setText(WorkbenchMessages
-				.getString("EditorSelection.browse")); //$NON-NLS-1$
+		destinationBrowseButton.setText(WorkbenchMessages.getString("EditorSelection.browse")); //$NON-NLS-1$
 		destinationBrowseButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -193,9 +206,8 @@ public class PreferencesExportDialog extends Dialog {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-				dialog
-						.setText(WorkbenchMessages
-								.getString("PreferencesExportDialog.ExportDialogTitle")); //$NON-NLS-1$
+				dialog.setText(WorkbenchMessages
+						.getString("PreferencesExportDialog.ExportDialogTitle")); //$NON-NLS-1$
 				dialog
 						.setFilterExtensions(PreferenceImportExportFileSelectionPage.DIALOG_PREFERENCE_EXTENSIONS);
 				String selectedDirectoryName = dialog.open();
@@ -216,10 +228,8 @@ public class PreferencesExportDialog extends Dialog {
 	 */
 	protected Point getInitialSize() {
 		Point shellSize = super.getInitialSize();
-		return new Point(Math.max(
-				convertHorizontalDLUsToPixels(MIN_DIALOG_WIDTH), shellSize.x),
-				Math.max(convertVerticalDLUsToPixels(MIN_DIALOG_HEIGHT),
-						shellSize.y));
+		return new Point(Math.max(convertHorizontalDLUsToPixels(MIN_DIALOG_WIDTH), shellSize.x),
+				Math.max(convertVerticalDLUsToPixels(MIN_DIALOG_HEIGHT), shellSize.y));
 	}
 
 	/*
@@ -254,8 +264,7 @@ public class PreferencesExportDialog extends Dialog {
 			items = newValues;
 		}
 
-		WorkbenchPlugin.getDefault().getDialogSettings().put(
-				EXPORT_LOCATION_KEY, items);
+		WorkbenchPlugin.getDefault().getDialogSettings().put(EXPORT_LOCATION_KEY, items);
 
 		super.okPressed();
 	}
@@ -299,9 +308,8 @@ public class PreferencesExportDialog extends Dialog {
 			}
 
 		} catch (FileNotFoundException exception) {
-			openErrorDialog(new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, exception
-							.getMessage(), exception));
+			openErrorDialog(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
+					exception.getMessage(), exception));
 		} catch (CoreException exception) {
 			openErrorDialog(exception.getStatus());
 		} finally {
@@ -320,13 +328,9 @@ public class PreferencesExportDialog extends Dialog {
 	 * @param status
 	 */
 	private void openErrorDialog(IStatus status) {
-		ErrorDialog
-				.openError(
-						getShell(),
-						WorkbenchMessages
-								.getString("PreferencesExportDialog.ErrorDialogTitle"), //$NON-NLS-1$
-						WorkbenchMessages
-								.getString("PreferencesExportDialog.ErrorDialogMessage"), status); //$NON-NLS-1$
+		ErrorDialog.openError(getShell(), WorkbenchMessages
+				.getString("PreferencesExportDialog.ErrorDialogTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("PreferencesExportDialog.ErrorDialogMessage"), status); //$NON-NLS-1$
 	}
 
 }
