@@ -96,7 +96,6 @@ public void add(IContributionItem item) {
 private void addToGroup(String groupName, IContributionItem item, boolean append) 
 {
 	int i;
-	item.setParent(this);
 	Iterator items = contributions.iterator();
 	for (i = 0; items.hasNext(); i++) {
 		IContributionItem o = (IContributionItem) items.next();
@@ -112,6 +111,7 @@ private void addToGroup(String groupName, IContributionItem item, boolean append
 					}
 				}
 				if (!checkDuplication(item)) {
+					item.setParent(this);
 				    contributions.add(i,item);
 				    itemAdded(item);
 				}
