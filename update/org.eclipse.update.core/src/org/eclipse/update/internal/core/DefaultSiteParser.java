@@ -39,7 +39,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	private ResourceBundle bundle;
 
-	private AbstractFeature feature;
+	private IFeatureReference feature;
 
 	/**
 	 * Constructor for DefaultSiteParser
@@ -136,18 +136,14 @@ public class DefaultSiteParser extends DefaultHandler {
 		URL url = UpdateManagerUtils.getURL(site.getURL(), attributes.getValue("url"), null);
 
 		if (url != null) {
+			feature = new FeatureReference(site,url);
+
 			// the type of the feature
 			String type = attributes.getValue("type");
-			if (type == null || type.equals("")) {
-				// ask the Site for the default type 
-				feature = (AbstractFeature) ((AbstractSite) site).getDefaultFeature(url);
-			} else {
-				Assert.isTrue(false, "Not implemented Yet... do not use 'type' in the feature tag of site.xml");
-				//FIXME: manages creation of feature...
-			}
-
+			((FeatureReference)feature).setFeatureType(type);
+			 
 			// add the feature
-			site.addFeature(feature);
+			site.addFeatureReference(feature);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -183,7 +179,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	private void processCategory(Attributes attributes) {
 		// category
 		String category = attributes.getValue("name");
-		feature.addCategoryString(category);
+		((FeatureReference)feature).addCategoryString(category);
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

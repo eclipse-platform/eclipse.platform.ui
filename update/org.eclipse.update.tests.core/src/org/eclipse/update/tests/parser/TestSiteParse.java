@@ -24,7 +24,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 			URL remoteUrl = new URL(SOURCE_FILE_SITE+"xmls/site1/");
 			ISite remoteSite = SiteManager.getSite(remoteUrl);
 			
-			IFeature[] feature = remoteSite.getFeatures();
+			IFeatureReference[] feature = remoteSite.getFeatureReferences();
 			ICategory[] categories = remoteSite.getCategories();
 			
 			assertEquals(remoteUrl.getPath()+"info/siteInfo.html",remoteSite.getInfoURL().getPath());
@@ -41,7 +41,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 			URL remoteURL = new URL("http",bundle.getString("HTTP_HOST_1"),bundle.getString("HTTP_PATH_2"));			
 			ISite remoteSite = SiteManager.getSite(remoteURL);
 			
-			IFeature[] feature = remoteSite.getFeatures();
+			IFeatureReference[] feature = remoteSite.getFeatureReferences();
 			assertEquals(feature.length,2);
 			
 		} catch (Exception e){

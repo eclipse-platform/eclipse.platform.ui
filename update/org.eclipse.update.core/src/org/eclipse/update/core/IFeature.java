@@ -25,7 +25,8 @@ import org.eclipse.core.runtime.CoreException;
   */
  
 public interface IFeature extends IPluginContainer {
-	/**
+
+	/**
 	 * Returns the Identifier of this Feature.
 	 * @return the Identifier of this feature.
 	 * @see VersionedIdentifier
@@ -138,17 +139,6 @@ public interface IFeature extends IPluginContainer {
 	IInfo getLicense() ;
 	
 	/**
-	 * Returns the array of categories the feature belong to.
-	 * 
-	 * The categories are declared in the <code>site.xml</code> file.
-	 * 
-	 * @see ICategory
-	 * @return the array of categories this feature belong to. Returns an empty array
-	 * if there are no cateopries.
-	 */
-	ICategory[] getCategories() ;
-	
-	/**
 	 * Optional operating system specification.
 	 * A comma-separated list of os designators defined by Eclipse.
 	 * Indicates this feature should only be installed on one of the specified
@@ -225,7 +215,8 @@ public interface IFeature extends IPluginContainer {
 	 */
 	// FIXME: javadoc
 	boolean isInstallable();
-
+
+
 	/**
 	 * Returns an array of archives identifier that compose the feature.
 	 * 
@@ -235,4 +226,5 @@ public interface IFeature extends IPluginContainer {
 	String[] getContentReferences();
 	
 }
-
+
+

@@ -98,16 +98,6 @@ public abstract class AbstractFeature implements IFeature {
 	private String ws;
 
 	/**
-	 * category String; From teh XML file
-	 */
-	private List categoryString;
-
-	/**
-	 * category : delegate to teh site
-	 */
-	private List categories;
-
-	/**
 	 * List of plugin entries teh feature contains
 	 * read from teh xml file
 	 */
@@ -303,16 +293,7 @@ public abstract class AbstractFeature implements IFeature {
 		return ws;
 	}
 
-	/**
-	 * Gets the categoryString
-	 * @return Returns a String
-	 */
-	private List getCategoryString() {
-		if (categoryString == null && !isInitialized)
-			logNotInitialized();
-		return categoryString;
-	}
-
+	
 	/**
 	 * Sets the site
 	 * @param site The site to set
@@ -679,30 +660,6 @@ public abstract class AbstractFeature implements IFeature {
 	}
 
 	/**
-	 * @see IFeature#getCategories()
-	 */
-	public ICategory[] getCategories() {
-
-		if (categories == null) {
-			categories = new ArrayList();
-			List categoriesAsString = getCategoryString();
-			if (categoriesAsString != null && !categoriesAsString.isEmpty()) {
-				Iterator iter = categoriesAsString.iterator();
-				while (iter.hasNext()) {
-					categories.add(((AbstractSite) getSite()).getCategory((String) iter.next()));
-				}
-			}
-		}
-
-		ICategory[] result = new ICategory[0];
-
-		if (!(categories == null || categories.isEmpty())) {
-			result = new ICategory[categories.size()];
-			categories.toArray(result);
-		}
-		return result;
-	}
-	/**
 	 * @see IPluginContainer#getPluginEntryCount()
 	 */
 	public int getPluginEntryCount() {
@@ -733,17 +690,6 @@ public abstract class AbstractFeature implements IFeature {
 		}
 	}
 
-	/**
-	 * Sets the categoryString
-	 * @param categoryString The categoryString to set
-	 */
-	public void setCategoryString(String[] categoryString) {
-		if (categoryString != null) {
-			for (int i = 0; i < categoryString.length; i++) {
-				addCategoryString(categoryString[i]);
-			}
-		}
-	}
 
 	/**
 	 * Sets the import
@@ -766,15 +712,7 @@ public abstract class AbstractFeature implements IFeature {
 		pluginEntries.add(pluginEntry);
 	}
 
-	/**
-	 * Adds a categoryString
-	 * @param categoryString The categoryString to add
-	 */
-	public void addCategoryString(String categoryString) {
-		if (this.categoryString == null)
-			this.categoryString = new ArrayList(0);
-		this.categoryString.add(categoryString);
-	}
+
 
 	/**
 	 * Adds an import

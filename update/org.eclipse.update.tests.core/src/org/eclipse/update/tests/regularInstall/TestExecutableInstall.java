@@ -24,7 +24,7 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 	public void testFileSite() throws Exception{
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
-		IFeature remoteFeature = remoteSite.getFeatures()[0];
+		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
 		ISite localSite = new FileSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature,null);
 		

@@ -4,6 +4,7 @@ package org.eclipse.update.tests.regularInstall;
  * All Rights Reserved.
  */
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.core.URLSite;
@@ -21,7 +22,7 @@ public class TestGetFeature extends UpdateManagerTestCase {
 	public void testFeatureFileSite() throws Exception{
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
-		IFeature[] remoteFeatures = remoteSite.getFeatures();
+		IFeatureReference[] remoteFeatures = remoteSite.getFeatureReferences();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");
 		for (int i=0;i<remoteFeatures.length;i++){
 			System.out.println("feature:"+remoteFeatures[i].getURL().toExternalForm());
@@ -31,7 +32,7 @@ public class TestGetFeature extends UpdateManagerTestCase {
 	public void testFeatureHTTPSite() throws Exception{ 
 		
 		ISite remoteSite = new URLSite(SOURCE_HTTP_SITE);
-		IFeature[] remoteFeatures = remoteSite.getFeatures();
+		IFeatureReference[] remoteFeatures = remoteSite.getFeatureReferences();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");		
 		for (int i=0;i<remoteFeatures.length;i++){
 			System.out.println("feature:"+remoteFeatures[i].getURL().toExternalForm());

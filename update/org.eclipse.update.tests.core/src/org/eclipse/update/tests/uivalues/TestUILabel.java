@@ -31,13 +31,14 @@ public class TestUILabel extends UpdateManagerTestCase {
 			System.out.println("Category ->"+categories[i].getLabel()+":"+categories[i].getName());
 		}
 		System.out.println(remoteSite.getInfoURL().toExternalForm());
-		IFeature[] remoteFeatures = remoteSite.getFeatures();
+		IFeatureReference[] remoteFeatures = remoteSite.getFeatureReferences();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");		
 		for (int i=0;i<remoteFeatures.length;i++){
-			System.out.println("feature:"+remoteFeatures[i].getIdentifier()+"->"+remoteFeatures[i].getLabel());
-			print(remoteFeatures[i].getLicense(),"License");
-			print(remoteFeatures[i].getCopyright(),"Copyright");
-			print(remoteFeatures[i].getDescription(),"Description");						
+			IFeature feature = remoteFeatures[i].getFeature();
+			System.out.println("feature:"+feature.getIdentifier()+"->"+feature.getLabel());
+			print(feature.getLicense(),"License");
+			print(feature.getCopyright(),"Copyright");
+			print(feature.getDescription(),"Description");						
 		}
 	}
 	

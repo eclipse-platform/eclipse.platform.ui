@@ -58,7 +58,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	public void testHTTPSite() throws Exception {
 
 		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
-		IFeature[] features = remoteSite.getFeatures();
+		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
 		if (features == null || features.length == 0)
@@ -66,7 +66,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("features2.jar")) {
-				remoteFeature = features[i];
+				remoteFeature = features[i].getFeature();
 				break;
 			}
 		}
@@ -101,7 +101,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		}
 
 		ISite remoteSite = SiteManager.getSite(INSTALL_SITE);
-		IFeature[] features = remoteSite.getFeatures();
+		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
 		if (features == null || features.length == 0)
@@ -109,7 +109,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("helpFeature.jar")) {
-				remoteFeature = features[i];
+				remoteFeature = features[i].getFeature();
 				break;
 			}
 		}
@@ -136,7 +136,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	
 	public void testFileSiteWithoutSiteXML() throws Exception {
 		ISite remoteSite = SiteManager.getTempSite();
-		IFeature[] features = remoteSite.getFeatures();
+		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		if (features.length!=0) fail("The site contains feature");
 	}
 	

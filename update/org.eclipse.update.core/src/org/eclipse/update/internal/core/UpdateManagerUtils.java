@@ -57,10 +57,10 @@ public class UpdateManagerUtils {
 	};
 
 	/**
-		 * Resolve a URL as a local file URL
-		 * if the URL is not a file URL, transfer the stream to teh temp directory 
-		 * and return the new URL
-		 */
+	 * Resolve a URL as a local file URL
+	 * if the URL is not a file URL, transfer the stream to teh temp directory 
+	 * and return the new URL
+	 */
 	public static URL resolveAsLocal(URL remoteURL) throws MalformedURLException, IOException, CoreException {
 		return resolveAsLocal(remoteURL, null);
 	}

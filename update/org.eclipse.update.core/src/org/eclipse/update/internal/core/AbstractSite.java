@@ -111,7 +111,7 @@ public abstract class AbstractSite implements ISite {
 		// should start Unit Of Work and manage Progress Monitor
 		AbstractFeature localFeature = createExecutableFeature(sourceFeature);
 		((AbstractFeature)sourceFeature).install(localFeature);
-		this.addFeature(localFeature);
+		this.addFeatureReference(new FeatureReference(this,localFeature.getURL()));
 		
 		// notify listeners
 		Object[] siteListeners = listeners.getListeners();
@@ -189,22 +189,15 @@ public abstract class AbstractSite implements ISite {
 
 	/**
 	 * Gets the features
-	 * @return Returns a IFeature[]
+	 * @return Returns a IFeatureReference[]
 	 */
-	public IFeature[] getFeatures() throws CoreException {
-		IFeature[] result = new IFeature[0];
+	public IFeatureReference[] getFeatureReferences() throws CoreException {
+		IFeatureReference[] result = new IFeatureReference[0];
 		if (isManageable){
 			if (!isInitialized) initializeSite();
 			if (!(features==null || features.isEmpty())){
-				result = new IFeature[features.size()];
+				result = new IFeatureReference[features.size()];
 				features.toArray(result);
-			}
-			
-			//FIXME: initialize Each Feature
-			if (result.length!=0){
-				for (int i=0; i<result.length;i++){
-					((AbstractFeature)result[i]).initializeFeature();
-				}
 			}
 		}
 		return result;
@@ -215,7 +208,7 @@ public abstract class AbstractSite implements ISite {
 	 * The feature is considered already installed. It does not install it.
 	 * @param feature The feature to add
 	 */
-	public void addFeature(IFeature feature) {
+	public void addFeatureReference(IFeatureReference feature) {
 		if (features==null){
 			features = new ArrayList(0);
 		}

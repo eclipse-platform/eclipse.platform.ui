@@ -6,6 +6,7 @@ package org.eclipse.update.tests.parser;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.FeatureReference;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestCategories extends UpdateManagerTestCase {
@@ -21,7 +22,7 @@ public class TestCategories extends UpdateManagerTestCase {
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "xmls/site1/");
 		ISite remoteSite = SiteManager.getSite(remoteUrl);
 
-		IFeature[] feature = remoteSite.getFeatures();
+		IFeatureReference[] feature = remoteSite.getFeatureReferences();
 		ICategory[] categories = remoteSite.getCategories();
 
 		ICategory featureCategory = feature[0].getCategories()[0];
