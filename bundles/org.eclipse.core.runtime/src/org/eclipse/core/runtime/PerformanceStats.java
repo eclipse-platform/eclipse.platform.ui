@@ -202,10 +202,8 @@ public class PerformanceStats {
 	 * be obtained, a <code>String</code> describing the event should be supplied
 	 */
 	public static PerformanceStats getStats(String eventName, Object blameObject) {
-		if (!ENABLED)
+		if (!ENABLED || eventName == null || blameObject == null)
 			return EMPTY_STATS;
-		Assert.isNotNull(eventName);
-		Assert.isNotNull(blameObject);
 		PerformanceStats newStats = new PerformanceStats(eventName, blameObject);
 		if (!TRACE_SUCCESS)
 			return newStats;
