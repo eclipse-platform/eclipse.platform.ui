@@ -37,11 +37,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -65,7 +63,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class LaunchConfigurationManager implements ILaunchListener {
+public class LaunchConfigurationManager {
 	/**
 	 * Launch group extensions, keyed by launch group identifier.
 	 */
@@ -123,14 +121,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
 	
 	public void startup() {				
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		launchManager.addLaunchListener(this);	
-
-		//update histories for launches already registered
-		ILaunch[] launches= launchManager.getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-			launchAdded(launches[i]);
-		}
 	}
 	
 	/**
@@ -205,52 +195,8 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	}
 	
 	public void shutdown() {
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		launchManager.removeLaunchListener(this);
-		if (fLaunchHistories != null) {
-			Iterator histories = fLaunchHistories.values().iterator();
-			while (histories.hasNext()) {
-				LaunchHistory history = (LaunchHistory)histories.next();
-				history.dispose();
-			}
-		}
 	}
-	
-	/**
-	 * @see ILaunchListener#launchRemoved(ILaunch)
-	 */
-	public void launchRemoved(ILaunch launch) {
-	}
-	
-	/**
-	 * @see ILaunchListener#launchChanged(ILaunch)
-	 */
-	public void launchChanged(ILaunch launch) {	
-
-	}
-
-	/**
-	 * Must not assume that will only be called from the UI thread.
-	 *
-	 * @see ILaunchListener#launchAdded(ILaunch)
-	 */
-	public void launchAdded(final ILaunch launch) {
-		removeTerminatedLaunches(launch);
-	}
-	
-	protected void removeTerminatedLaunches(ILaunch newLaunch) {
-		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
-			ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-			Object[] launches= lManager.getLaunches();
-			for (int i= 0; i < launches.length; i++) {
-				ILaunch launch= (ILaunch)launches[i];
-				if (launch != newLaunch && launch.isTerminated()) {
-					lManager.removeLaunch(launch);
-				}
-			}
-		}
-	}
-	
+		
 	/**
 	 * Returns the most recent launch for the given group, or <code>null</code>
 	 * if none.
