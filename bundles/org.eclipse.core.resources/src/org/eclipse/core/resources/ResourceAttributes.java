@@ -94,4 +94,11 @@ public class ResourceAttributes {
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
+	/* (non-Javadoc)
+	 * For debugging purposes only.
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "ResourceAttributes(readOnly=" + readOnly + ",executable=" + executable + ",archive=" + archive + ')'; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }
