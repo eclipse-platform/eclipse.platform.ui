@@ -14,9 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
@@ -39,6 +38,7 @@ import org.eclipse.ui.part.MarkerTransfer;
  */
 public PasteTaskAction(TaskList tasklist, String id) {
 	super(tasklist, id);
+	WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.PASTE_TASK_ACTION});
 }
 /**
  * Implementation of method defined on <code>IAction</code>.

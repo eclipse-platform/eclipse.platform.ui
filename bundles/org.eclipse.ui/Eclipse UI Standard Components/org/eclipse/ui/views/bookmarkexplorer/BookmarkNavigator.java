@@ -40,6 +40,7 @@ import java.util.ArrayList;
 public class BookmarkNavigator extends ViewPart {
 	private StructuredViewer viewer;
 	private OpenBookmarkAction openAction;
+	private CopyBookmarkAction copyAction;
 	private RemoveBookmarkAction removeAction;
 	private SelectAllAction selectAllAction;
 	private ShowInNavigatorAction showInNavigatorAction;
@@ -67,6 +68,9 @@ void addContributions() {
 	openAction = new OpenBookmarkAction(this);
 	openAction.setHoverImageDescriptor(getImageDescriptor("clcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
 	openAction.setImageDescriptor(getImageDescriptor("elcl16/gotoobj_tsk.gif"));//$NON-NLS-1$
+
+	copyAction = new CopyBookmarkAction(this);
+	copyAction.setImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif"));//$NON-NLS-1$
 	
 	removeAction = new RemoveBookmarkAction(this);
 	removeAction.setHoverImageDescriptor(getImageDescriptor("clcl16/remtsk_tsk.gif"));//$NON-NLS-1$
@@ -100,6 +104,7 @@ void addContributions() {
 	
 	// Register with action service.
 	IActionBars actionBars = getViewSite().getActionBars();
+	actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
 	actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeAction);
 	actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, selectAllAction);
 	
@@ -143,6 +148,7 @@ public void createPartControl(Composite parent) {
  */
 void fillContextMenu(IMenuManager manager) {
 	manager.add(openAction);
+	manager.add(copyAction);
 	manager.add(removeAction);
 	manager.add(selectAllAction);
 	manager.add(showInNavigatorAction);

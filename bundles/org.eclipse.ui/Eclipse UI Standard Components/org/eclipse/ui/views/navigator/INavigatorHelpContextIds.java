@@ -24,8 +24,8 @@ import org.eclipse.ui.PlatformUI;
 	public static final String RESOURCE_NAVIGATOR_RENAME_ACTION = PREFIX + "resource_navigator_rename_action_context"; //$NON-NLS-1$
 	public static final String SHOW_IN_NAVIGATOR_ACTION = PREFIX + "show_in_navigator_action_context"; //$NON-NLS-1$
 	public static final String SORT_VIEW_ACTION = PREFIX + "sort_view_action_context"; //$NON-NLS-1$
-	public static final String COPY_ACTION = PREFIX + "copy_action_context"; //$NON-NLS-1$
-	public static final String PASTE_ACTION = PREFIX + "paste_action_context"; //$NON-NLS-1$
+	public static final String COPY_ACTION = PREFIX + "resource_navigator_copy_action_context"; //$NON-NLS-1$
+	public static final String PASTE_ACTION = PREFIX + "resource_navigator_paste_action_context"; //$NON-NLS-1$
 
 
 	// Dialogs

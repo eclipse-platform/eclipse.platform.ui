@@ -12,8 +12,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.MarkerTransfer;
 
 
@@ -26,6 +25,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 	 */
 	public CopyTaskAction(TaskList tasklist, String id) {
 		super(tasklist, id);
+		WorkbenchHelp.setHelp(this, new Object[] {ITaskListHelpContextIds.COPY_TASK_ACTION});
 	}
 	
 	/**

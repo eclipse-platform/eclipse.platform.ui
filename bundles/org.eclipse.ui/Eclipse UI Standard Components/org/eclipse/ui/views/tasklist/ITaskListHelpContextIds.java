@@ -19,6 +19,8 @@ import org.eclipse.ui.PlatformUI;
 
 	// Actions
 	public static final String PURGE_COMPLETED_TASK_ACTION = PREFIX + "purge_completed_task_action_context"; //$NON-NLS-1$
+	public static final String COPY_TASK_ACTION = PREFIX + "copy_task_action_context"; //$NON-NLS-1$
+	public static final String PASTE_TASK_ACTION = PREFIX + "paste_task_action_context"; //$NON-NLS-1$
 	public static final String NEW_TASK_ACTION = PREFIX + "new_task_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_TASK_ACTION = PREFIX + "remove_task_action_context"; //$NON-NLS-1$
 	public static final String GOTO_TASK_ACTION = PREFIX + "goto_task_action_context"; //$NON-NLS-1$
