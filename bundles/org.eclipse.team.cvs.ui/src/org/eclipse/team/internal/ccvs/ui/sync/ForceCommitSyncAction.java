@@ -139,7 +139,7 @@ public class ForceCommitSyncAction extends MergeAction {
 		for (int i = 0; i < changed.length; i++) {
 			int kind = changed[i].getKind();
 			IResource resource = changed[i].getResource();
-			if (resource.getType() == resource.FILE) {
+			if (resource.getType() == IResource.FILE) {
 				commits.add(resource);
 			}
 			IDiffContainer parent = changed[i].getParent();
@@ -276,29 +276,6 @@ public class ForceCommitSyncAction extends MergeAction {
 			}
 		});
 		return dialog.getReturnCode();
-	}
-
-	/**
-	 * Prompts the user to determine how unadded files should be handled.
-	 * Note: This method is designed to be overridden by test cases.
-	 * @return 0 to add unadded files, 1 to skip unadded, 2 to cancel
-	 */
-	protected int promptForAdditions(CVSSyncSet cvsSyncSet) {
-		final int[] r = new int[1];
-		getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				MessageDialog dialog = new MessageDialog(
-					getShell(),
-					Policy.bind("ForceCommitSyncAction.Outgoing_Changes_Not_Added_1"),  //$NON-NLS-1$
-					null,
-					Policy.bind("ForceCommitSyncAction.You_have_chosen_to_commit_new_resources_which_have_not_been_added_to_version_control._Do_you_wish_to_add_them_to_version_control_now__2"),  //$NON-NLS-1$
-					MessageDialog.QUESTION, 
-					new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 
-					0);
-				r[0] = dialog.open();
-			}
-		});
-		return r[0];
 	}
 		
 	/**
