@@ -7,6 +7,7 @@ package org.eclipse.help.internal.util;
 
 import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.server.PluginURL;
 import java.net.*;
 
 /**
@@ -41,12 +42,10 @@ public class DocResources {
 	
 		if (properties == null) {
 			// load local properties
-			URL propertiesURL = null;
+			PluginURL propertiesURL = null;
 			try {
 				propertiesURL =
-					new URL(
-						HelpSystem.getLocalHelpServerURL(),
-						"/" + pluginID + "/doc.properties?lang=" + Locale.getDefault().toString());
+					new PluginURL(pluginID + "/doc.properties", "lang=" + Locale.getDefault().toString());
 				Properties localProp = new Properties();
 				localProp.load(propertiesURL.openStream()); //throws
 				properties = localProp;
@@ -54,27 +53,7 @@ public class DocResources {
 			} catch (Throwable ex) {
 			}
 		}
-	
-		if (properties == null) {
-			// load remote properties
-			URL propertiesURL = null;
-			try {
-				propertiesURL =
-					new URL(
-						HelpSystem.getRemoteHelpServerURL(),
-						HelpSystem.getRemoteHelpServerPath()
-							+ "/"
-							+ pluginID
-							+ "/doc.properties?lang="
-							+ Locale.getDefault().toString());
-				Properties remoteProp = new Properties();
-				remoteProp.load(propertiesURL.openStream()); //throws
-				properties = remoteProp;
-				propertiesTable.put(pluginID, properties);
-			} catch (Throwable ex) {
-			}
-		}
-	
+		
 		if(properties==null){
 			// cache properties
 			pluginsWithoutResources.add(pluginID);
