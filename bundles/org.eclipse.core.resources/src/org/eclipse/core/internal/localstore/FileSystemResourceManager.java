@@ -794,7 +794,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 		}
 		java.io.File file = location.toFile();
-		if (!force)
+		if (!force) {
 			if (file.isDirectory()) {
 				String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
@@ -803,6 +803,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				String message = Policy.bind("localstore.fileExists", target.getFullPath().toString()); //$NON-NLS-1$
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
+		}
 		getStore().writeFolder(file);
 		long lastModified = CoreFileSystemLibrary.getLastModified(file.getAbsolutePath());
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
