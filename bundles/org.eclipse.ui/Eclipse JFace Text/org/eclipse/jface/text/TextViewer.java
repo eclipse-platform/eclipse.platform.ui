@@ -852,8 +852,79 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		}			
 		
 		length= end - offset;
-		fTextWidget.setSelectionRange(offset, length);
-		selectionChanged(offset, length);
+		
+		int[] selectionRange= new int[] { offset, length };
+		validateSelectionRange(selectionRange);
+		if (selectionRange[0] >= 0 && selectionRange[1] >= 0) {
+			fTextWidget.setSelectionRange(selectionRange[0], selectionRange[1]);
+			selectionChanged(selectionRange[0], selectionRange[1]);
+		}
+	}
+	
+	/**
+	 * Validates and adapts the given selection range if it is not a valid
+	 * widget selection. The widget selection is invalid if it starts or ends
+	 * inside a multi-character line delimiter. If so, the selection is adapted to
+	 * start <b>after</b> the divided line delimiter and to end <b>before</b>
+	 * the divided line delimiter.  The parameter passed in is changed in-place
+	 * when being adapted. An adaptation to <code>[-1, -1]</code> indicates
+	 * that the selection range could not be validated.
+	 * Subclasses may reimplement this method.
+	 * 
+	 * @param selectionRange selectionRange[0] is the offset, selectionRange[1]
+	 * 				the length of the selection to validate.
+	 */
+	protected void validateSelectionRange(int[] selectionRange) {
+		
+		IDocument document= getVisibleDocument();
+		int documentLength= document.getLength();
+		
+		int offset= selectionRange[0];
+		int length= selectionRange[1];
+		
+		
+		if (offset <0)
+			offset= 0;
+			
+		if (offset > documentLength)
+			offset= documentLength;
+			
+		int delta= (offset + length) - documentLength;
+		if (delta > 0)
+			length -= delta;
+			
+		try {
+			
+			int lineNumber= document.getLineOfOffset(offset);
+			IRegion lineInformation= document.getLineInformation(lineNumber);
+			
+			int lineEnd= lineInformation.getOffset() + lineInformation.getLength();
+			delta= offset - lineEnd;
+			if (delta > 0) {
+				// in the middle of a multi-character line delimiter
+				offset= lineEnd;
+				String delimiter= document.getLineDelimiter(lineNumber);
+				if (delimiter != null)
+					offset += delimiter.length();
+			}
+						
+			int end= offset + length;
+			lineInformation= document.getLineInformationOfOffset(end);
+			lineEnd= lineInformation.getOffset() + lineInformation.getLength();
+			delta= end - lineEnd;
+			if (delta > 0) {
+				// in the middle of a multi-character line delimiter
+				length -= delta;
+			}
+			
+		} catch (BadLocationException x) {
+			selectionRange[0]= -1;
+			selectionRange[1]= -1;
+			return;
+		}
+		
+		selectionRange[0]= offset;
+		selectionRange[1]= length;
 	}
 
 	/*
