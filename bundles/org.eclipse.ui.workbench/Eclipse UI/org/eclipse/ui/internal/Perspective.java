@@ -72,7 +72,6 @@ public class Perspective
 	private ArrayList showInPartIds;
 	private HashMap showInTimes = new HashMap();
 	private IViewReference activeFastView;
-	private IViewReference previousActiveFastView;
 	private IMemento memento;
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
@@ -275,7 +274,7 @@ public IPerspectiveDescriptor getDesc() {
 	// get the width ratio of the fast view
 	float ratio = getFastViewWidthRatio(ref.getId());
 	// Compute the actual width of the fast view.
-	bounds.width = (int)(ratio*(float)getClientComposite().getSize().x);
+	bounds.width = (int)(ratio*getClientComposite().getSize().x);
 	return bounds;
 }
 /**
@@ -484,7 +483,7 @@ public boolean isFastView(IViewReference ref) {
  * @since 3.0
  */
 public boolean isFixedView(IViewReference ref) {
-	return fixedViews.contains(ref.getId());
+    return fixedViews.contains(ViewFactory.getKey(ref));
 }
 /**
  * Returns true if a layout or perspective is fixed.
@@ -798,15 +797,11 @@ public IStatus restoreState() {
 		
 		// report error
 		if(ref == null) {
-			String[] viewIds;
-			if (secondaryId != null)
-				viewIds = new String[]{primaryId};
-			else
-				viewIds = new String[]{primaryId+":"+secondaryId}; //$NON-NLS-1$		
-			result.add(new Status(
-				Status.ERROR,PlatformUI.PLUGIN_ID,0,
-				WorkbenchMessages.format("Perspective.couldNotFind", viewIds), //$NON-NLS-1$
-				null));
+		    String key = ViewFactory.getKey(primaryId, secondaryId);
+			result.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
+                        WorkbenchMessages.format("Perspective.couldNotFind", //$NON-NLS-1$
+                                new String[] { key }),
+                        null));
 			continue;
 		}
 		if(ref.getPane() == null) {
@@ -814,7 +809,8 @@ public IStatus restoreState() {
 			ref.setPane(vp);
 		}
 		page.addPart(ref);
-		if(pres.willPartBeVisible(ref.getId())) {
+		boolean willPartBeVisible = pres.willPartBeVisible(ref.getId(), secondaryId);
+		if(willPartBeVisible) {
 			IStatus restoreStatus = viewFactory.restoreView((IViewReference)ref);
 			result.add(restoreStatus);
 			if(restoreStatus.getSeverity() == IStatus.OK) {
@@ -840,6 +836,7 @@ public IStatus restoreState() {
 			// Get the view details.
 			IMemento childMem = views[x];
 			String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
+			String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
 			Float ratio = childMem.getFloat(IWorkbenchConstants.TAG_RATIO);
 			if (ratio == null) {
 				Integer viewWidth = childMem.getInteger(IWorkbenchConstants.TAG_WIDTH);
@@ -848,14 +845,16 @@ public IStatus restoreState() {
 				else
 					ratio = new Float((float)viewWidth.intValue() / (float)getClientComposite().getSize().x);
 			}
+			// FIXME: this needs to work with mutliple view instances
 			mapFastViewToWidthRatio.put(viewID, ratio);
 				
-			WorkbenchPartReference ref = (WorkbenchPartReference) viewFactory.getView(viewID);
+			WorkbenchPartReference ref = (WorkbenchPartReference) viewFactory.getView(viewID, secondaryId);
 			if(ref == null) {
-				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+				String key = ViewFactory.getKey(viewID, secondaryId);
+				WorkbenchPlugin.log("Could not create view: '" + key + "'."); //$NON-NLS-1$ //$NON-NLS-2$
 				result.add(new Status(
-					Status.ERROR,PlatformUI.PLUGIN_ID,0,
-					WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
+					IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+					WorkbenchMessages.format("Perspective.couldNotFind", new String[]{key}), //$NON-NLS-1$
 					null));
 				continue;
 			}
@@ -879,27 +878,9 @@ public IStatus restoreState() {
 			IMemento childMem = views[x];
 			String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
 			
-			WorkbenchPartReference ref = (WorkbenchPartReference) viewFactory.getView(viewID);
-			if(ref == null) {
-				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$ //$NON-NLS-2$
-				result.add(new Status(
-						Status.ERROR,PlatformUI.PLUGIN_ID,0,
-						WorkbenchMessages.format("Perspective.couldNotFind", new String[]{viewID}), //$NON-NLS-1$
-						null));
-				continue;
-			}
-			// Add to fixed view list because creating a view pane
-			// will come back to check if its a fast view. We really
-			// need to clean up this code.
-			
-			//@issue see directly above, also I don't think we need
-			// to actually restore the view bleow, probably shouldn't
-			// throw the error above either
-			fixedViews.add(ref.getId());
-//			if(ref.getPane() == null) {
-//				ref.setPane(new ViewPane((IViewReference)ref,page));
-//			}
-//			page.addPart(ref);
+			// we don't really need to create a view here
+			// we are just adding it to a list
+			fixedViews.add(viewID);
 		}
 	}
 		

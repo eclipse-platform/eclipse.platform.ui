@@ -680,4 +680,11 @@ public class ViewPane extends PartPane implements IPropertyListener {
         presentableAdapter.firePropertyChange(IPresentablePart.PROP_HIGHLIGHT_IF_BACK);
     }
 	
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#getPlaceHolderId()
+     */
+    public String getPlaceHolderId() {
+        return ViewFactory.getKey(getViewReference());
+    }
 }

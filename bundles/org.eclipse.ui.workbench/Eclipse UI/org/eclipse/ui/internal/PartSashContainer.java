@@ -226,11 +226,30 @@ protected void addChild(RelationshipInfo info) {
  * Adds the child using ratio and position attributes
  * from the specified placeholder without replacing
  * the placeholder
+ * 
+ * FIXME: I believe there is a bug in computeRelation()
+ * when a part is positioned relative to the editorarea.
+ * We end up with a null relative and 0.0 for a ratio.
  */
-void addChildForPlaceholder(LayoutPart part, LayoutPart placeholder) {
-	//FIXME we need to get the relation and ratio 
-	// from the placholder
-	add(part, SWT.RIGHT, 0.5f, placeholder);
+void addChildForPlaceholder(LayoutPart child, LayoutPart placeholder) {
+	RelationshipInfo newRelationshipInfo = new RelationshipInfo();
+	newRelationshipInfo.part = child;
+	if(root != null) {
+		findPosition(newRelationshipInfo);
+	}
+	
+	// find the relationship info for the placeholder
+	RelationshipInfo[] relationships = computeRelation();
+	for (int i = 0; i < relationships.length; i ++) {
+		RelationshipInfo info = relationships[i];
+		if (info.part == placeholder) {
+			newRelationshipInfo.ratio = info.ratio;
+			newRelationshipInfo.relationship = info.relationship;
+			newRelationshipInfo.relative = info.relative;
+		}
+	}
+	
+	addChild(newRelationshipInfo);	
 	root.updateSashes(parent);
 	resizeSashes(parent.getClientArea());
 }

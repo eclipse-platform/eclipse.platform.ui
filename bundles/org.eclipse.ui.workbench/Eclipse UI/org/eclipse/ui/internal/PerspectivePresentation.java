@@ -60,7 +60,6 @@ public class PerspectivePresentation {
 
 	private static final int MIN_DETACH_WIDTH = 150;
 	private static final int MIN_DETACH_HEIGHT = 250;
-	private static final String WILD_CARD= new String(new char[] {'*'});
 	
 	private IDragOverListener dragTarget = new IDragOverListener() {
 
@@ -259,7 +258,7 @@ public class PerspectivePresentation {
 					}
 
 					// see if we should replace the placeholder
-					if (placeholder.getID().indexOf(WILD_CARD)!=-1) {
+					if (placeholder.hasWildCard()) {
 						if (container instanceof PartSashContainer)
 							((PartSashContainer)container).addChildForPlaceholder(part, placeholder);
 						else
@@ -330,7 +329,10 @@ public class PerspectivePresentation {
 	 * folder.
 	 */
 	public boolean willPartBeVisible(String partId) {
-		LayoutPart part = findPart(partId);
+		return willPartBeVisible(partId, null);
+	}
+	public boolean willPartBeVisible(String partId, String secondaryId) {
+		LayoutPart part = findPart(partId, secondaryId);
 		if (part == null)
 			return false;
 		ILayoutContainer container = part.getContainer();
@@ -742,28 +744,8 @@ public class PerspectivePresentation {
 	 * Wild cards now supported.
 	 */
 	private LayoutPart findPart(String id) {
-		// Check main window.
-		LayoutPart part = findPart(id, mainLayout.getChildren());
-		if (part != null)
-			return part;
-
-		// Check each detached windows
-		for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
-			DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
-			part = findPart(id, window.getChildren());
-			if (part != null)
-				return part;
-		}
-		for (int i = 0; i < detachedPlaceHolderList.size(); i++) {
-			DetachedPlaceHolder holder =
-				(DetachedPlaceHolder) detachedPlaceHolderList.get(i);
-			part = findPart(id, holder.getChildren());
-			if (part != null)
-				return part;
-		}
-
-		// Not found.
-		return null;
+		String myNull = null;
+		return findPart(id, myNull);
 	}
 	/**
 	 * Find the first part that matches the specified 
@@ -772,21 +754,27 @@ public class PerspectivePresentation {
 	 */
 	private LayoutPart findPart(String primaryId, String secondaryId) {
 		// check main window.
-		LayoutPart part = findPart(primaryId, secondaryId, mainLayout.getChildren());
+		LayoutPart part = (secondaryId != null) ? 
+				findPart(primaryId, secondaryId, mainLayout.getChildren()) : 
+				findPart(primaryId, mainLayout.getChildren());
 		if (part != null)
 			return part;
 
 		// check each detached windows.
 		for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
 			DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
-			part = findPart(primaryId, secondaryId, window.getChildren());
+			part = (secondaryId != null) ? 
+					findPart(primaryId, secondaryId, window.getChildren()) :
+					findPart(primaryId, window.getChildren());
 			if (part != null)
 				return part;
 		}
 		for (int i = 0; i < detachedPlaceHolderList.size(); i++) {
 			DetachedPlaceHolder holder =
 				(DetachedPlaceHolder) detachedPlaceHolderList.get(i);
-			part = findPart(primaryId, secondaryId, holder.getChildren());
+			part = (secondaryId != null) ? 
+					findPart(primaryId, secondaryId, holder.getChildren()) :
+					findPart(primaryId, holder.getChildren()) ;
 			if (part != null)
 				return part;
 		}
@@ -809,8 +797,8 @@ public class PerspectivePresentation {
 		MatchingPart currentMatchingPart = null;
 		for (int i = 0, length = parts.length; i < length; i++) {
 			LayoutPart part = parts[i];
+			// check for part equality, parts with secondary ids fail
 			if (part.getID().equals(id)) {
-				// parts with a secondary id do not match in this case
 				if (part instanceof ViewPane) {
 					ViewPane pane = (ViewPane) part;
 					IViewReference ref = (IViewReference)pane.getPartReference();
@@ -818,17 +806,17 @@ public class PerspectivePresentation {
 						continue;
 				}
 				return part;
-			} 
-			else if (part.getID().indexOf(WILD_CARD) != -1) {
+			}
+			// check pattern matching placeholders
+			else if (part instanceof PartPlaceholder && ((PartPlaceholder) part).hasWildCard()) {
 				StringMatcher sm = new StringMatcher(part.getID(), true, false);
 				MatchingPart matchingPart;
 				if (sm.match(id)) {
 					matchingPart = new MatchingPart(part.getID(), null, part);
-					if (currentMatchingPart != null && 
-							matchingPart.pid.length() > currentMatchingPart.pid.length())
-						currentMatchingPart = matchingPart;	
-					else
+					if (currentMatchingPart == null)
 						currentMatchingPart = matchingPart;
+					else if (matchingPart.pid.length() > currentMatchingPart.pid.length())
+						currentMatchingPart = matchingPart;							
 				}
 			}
 			else if (part instanceof EditorArea) {
@@ -873,13 +861,16 @@ public class PerspectivePresentation {
 			// check placeholders
 			else if ((parts[i] instanceof PartPlaceholder)) {
 				String id = part.getID();
-				if (id.indexOf(":") == -1) { //$NON-NLS-1$
-					if (id.equals(WILD_CARD))
+				
+				// optimization: don't bother parsing id if it has no separator -- it can't match
+				if (id.indexOf(ViewFactory.ID_SEP) == -1) { //$NON-NLS-1$
+				    // but still need to check for wildcard case
+					if (id.equals(PartPlaceholder.WILD_CARD))
 						wildCard = part;
 					continue;
 				}
 				
-				StringTokenizer st = new StringTokenizer(part.getID(), ":"); //$NON-NLS-1$
+				StringTokenizer st = new StringTokenizer(id, ViewFactory.ID_SEP); //$NON-NLS-1$
 				String phPrimaryId = st.nextToken();
 				String phSecondaryId = st.nextToken();
 				// perfect matching pair
@@ -1054,14 +1045,7 @@ public class PerspectivePresentation {
 		// Replace part with a placeholder
 		ILayoutContainer container = part.getContainer();
 		if (container != null) {
-			String placeHolderId = part.getID();
-			// check for a secondary id
-			if (part instanceof ViewPane) {
-				ViewPane pane = (ViewPane) part;
-				IViewReference ref = (IViewReference)pane.getPartReference();
-				if (ref.getSecondaryId() != null)
-					placeHolderId = ref.getId()+":"+ref.getSecondaryId(); //$NON-NLS-1$
-			}
+			String placeHolderId = part.getPlaceHolderId();
 			container.replace(part, new PartPlaceholder(placeHolderId));
 
 			// If the parent is root we're done. Do not try to replace

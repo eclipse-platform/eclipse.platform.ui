@@ -147,8 +147,36 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	private WorkbenchPage page;
 	private IViewRegistry viewReg;
 
+	
 	/**
-	 * ViewManager constructor comment.
+	 * Separates a view's primary id from its secondary id in view key strings.
+	 */
+	static final String ID_SEP = ":";
+	
+	/**
+     * Returns a string representing a view with the given id and (optional) secondary id,
+     * suitable for use as a key in a map.  
+     * 
+     * @param id primary id of the view
+     * @param secondaryId secondary id of the view or <code>null</code>
+     * @return the key
+     */
+    static String getKey(String id, String secondaryId) {
+        return secondaryId == null ? id : id + ID_SEP + secondaryId;
+    }
+
+	/**
+     * Returns a string representing the given view reference, suitable for use as a key in a map.  
+     * 
+     * @param viewRef the view reference
+     * @return the key
+     */
+    static String getKey(IViewReference viewRef) {
+        return getKey(viewRef.getId(), viewRef.getSecondaryId());
+    }
+	
+	/**
+	 * Constructs a new view factory.
 	 */
 	public ViewFactory(WorkbenchPage page, IViewRegistry reg) {
 		super();
@@ -311,17 +339,6 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	}
 	
 	/**
-     * Returns the key to use in the ReferenceCounter.
-     * 
-     * @param id the primary view id
-     * @param secondaryId the secondary view id or <code>null</code>
-     * @return the key to use in the ReferenceCounter
-     */
-    private String getKey(String id, String secondaryId) {
-        return secondaryId == null ? id : id + '/' + secondaryId;
-    }
-
-	/**
 	 * Returns the view with the given id, or <code>null</code> if not found.
 	 */
 	public IViewReference getView(String id) {
@@ -376,7 +393,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	 * getView.
 	 */
 	public void releaseView(IViewReference viewRef) {
-	    String key = getKey(viewRef.getId(), viewRef.getSecondaryId());
+	    String key = getKey(viewRef);
 		IViewReference ref = (IViewReference) counter.get(key);
 		if (ref == null)
 			return;
