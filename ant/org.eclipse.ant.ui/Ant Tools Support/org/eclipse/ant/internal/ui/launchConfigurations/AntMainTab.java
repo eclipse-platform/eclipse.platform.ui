@@ -144,7 +144,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#getWorkingDirectoryLabel()
 	 */
 	protected String getWorkingDirectoryLabel() {
-		return AntLaunchConfigurationMessages.getString("AntMainTab.Base_&Directory__3"); //$NON-NLS-1$
+		return AntLaunchConfigurationMessages.getString("AntMainTab.3"); //$NON-NLS-1$
 	}
 	
 	private void updateTargetsTab() {
