@@ -137,7 +137,9 @@ public final class HelpSystem {
 	 *   this plug-in 
 	 */
 	public static void shutdown() throws CoreException {
-		Logger.logInfo("Help System shutting down");
+		if(HelpPlugin.DEBUG){
+			System.out.println("Help System is shutting down.");
+		}
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
 		}
@@ -150,6 +152,9 @@ public final class HelpSystem {
 		BrowserManager.getInstance().closeAll();
 
 		Logger.shutdown();
+		if(HelpPlugin.DEBUG){
+			System.out.println("Help System is shut down.");
+		}
 	}
 	/**
 	 * Called by Platform after loading the plugin
@@ -180,7 +185,9 @@ public final class HelpSystem {
 					Resources.getString("E005"),
 					e));
 		}
-		Logger.logInfo("Help System started.");
+		if(HelpPlugin.DEBUG){
+			System.out.println("Help System started.");
+		}
 	}
 	public static boolean ensureWebappRunning() {
 		if (!getInstance().webappStarted) {

@@ -8,6 +8,10 @@ import org.eclipse.core.runtime.*;
  * Simple plugin for a remote help system.
  */
 public class HelpPlugin extends Plugin {
+	// debug options
+	public static boolean DEBUG = false;
+	public static boolean DEBUG_CONSOLELOG = false;
+
 	protected static HelpPlugin plugin;
 	/**
 	 * HelpViewerPlugin constructor. It is called as part of plugin
@@ -85,6 +89,12 @@ public class HelpPlugin extends Plugin {
 	 * @exception CoreException if this plug-in did not start up properly
 	 */
 	public void startup() throws CoreException {
+		// Setup debugging options
+		DEBUG = isDebugging();
+		if (DEBUG) {
+			DEBUG_CONSOLELOG = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help/debug/consolelog")); //$NON-NLS-1$
+		}
+		
 		HelpSystem.startup();
 	}
 

@@ -3,6 +3,7 @@ package org.eclipse.help.ui.internal.util;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.*;
@@ -75,7 +76,9 @@ public class ErrorUtil implements IErrorUtil {
 			shell = new Shell();
 		}
 		MessageDialog.openInformation(shell, title, msg);
-		Logger.logInfo(msg);
+		if (HelpPlugin.DEBUG) {
+			System.out.println(msg);
+		}
 	}
 	/**
 	 * Immidiately displays a Question dialog with a given string (question).
