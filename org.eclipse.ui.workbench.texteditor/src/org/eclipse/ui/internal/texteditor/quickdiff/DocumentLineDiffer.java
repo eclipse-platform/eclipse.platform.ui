@@ -45,6 +45,8 @@ import org.eclipse.jface.text.source.ILineDiffer;
 
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+
 /**
  * Standard implementation of <code>ILineDiffer</code> as an incremental diff engine. A 
  * <code>DocumentLineDiffer</code> can be initialized to some start state. Once connected to a 
@@ -209,34 +211,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 	
-	private class FoldingIterator implements Iterator {
-
-		/*
-		 * @see java.util.Iterator#hasNext()
-		 */
-		public boolean hasNext() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		/*
-		 * @see java.util.Iterator#next()
-		 */
-		public Object next() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		/*
-		 * @see java.util.Iterator#remove()
-		 */
-		public void remove() {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-
 	/** The provider for the reference document. */
 	IQuickDiffReferenceProvider fReferenceProvider;
 	/** Whether this differ is in sync with the model. */
@@ -559,7 +533,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	synchronized void initialize() {
 		fIsSynchronized= false;
 		
-		// for now: if a later invocation 
+		// for now: cancel a later invocation 
 		if (fInitializationJob != null) {
 			fInitializationJob.cancel();
 			fInitializationJob= null;
@@ -570,8 +544,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		//
 		// this will block the update of the document (since documentAboutToBeChanged is synchronized)
 		// however, there is no other way to get a consistent known state (?).
-		//		
-		// TODO: use WorkingCopy for this?
 		IDocument current= getDocument();
 		if (current == null)
 			return;
@@ -711,6 +683,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					r.type= ILineDiffInfo.UNCHANGED;
 					r.restore= null;
 					fUpdateNeeded= true;
+				} else if (r.hidden != null && r.hidden.size() > 0 && r.hidden.get(r.hidden.size() - 1).equals(cur)) {
+					r.hidden.remove(r.hidden.size() - 1);
+					if (r.hidden.size() == 0)
+						r.hidden= null;
+					r.deletedBehind--;
 				}
 			}
 		}
@@ -796,13 +773,13 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// 2: Deletion:
 		// Deleting an entire line excluding its delimiter, but including the delimiter of the line
 		// before, does not change the line before.
-		if (startsWithDelimiter(replaced) && startsWithDelimiter(behindInsert)) {
+		if (isEmpty(text) && startsWithDelimiter(replaced) && startsWithDelimiter(behindInsert)) {
 			firstUnchanged(a);
 		}
 
 		// Deleting an entire line including its delimiter (delete line) does not change the previous line
 		// Do either of the alterations, but not both (when deleting a line preceded by an empty line)
-		else if (startsWithDelimiter(beforeInsert) && endsWithDelimiter(replaced)) {
+		else if (isEmpty(text) && startsWithDelimiter(beforeInsert) && endsWithDelimiter(replaced)) {
 			lastUnchanged(a);
 		}
 	}
@@ -1004,8 +981,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#connect(org.eclipse.jface.text.IDocument)
 	 */
 	public void connect(IDocument document) {
-		invariant();
 		Assert.isTrue(fDocument == null || fDocument == document);
+		
+		try {
+			invariant();
+		} catch (Exception e) {
+			// gracefully exit, don't block everything
+			fOpenConnections= 0;
+			uninstall();
+			TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "invariant violated when connecting to DocumentLineDiffer", e)); //$NON-NLS-1$
+			return;
+		}
+		
 		++fOpenConnections;
 		if (fOpenConnections == 1) {
 			fDocument= document;
@@ -1019,21 +1006,37 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#disconnect(org.eclipse.jface.text.IDocument)
 	 */
 	public void disconnect(IDocument document) {
-		invariant();
 		Assert.isTrue(fDocument == document);
-
-		--fOpenConnections;
-		if (fOpenConnections == 0) {
-			fDocument.removeDocumentListener(this);
-			fReferenceListener.installDocument(null);
-			if (fReferenceProvider != null)
-				fReferenceProvider.dispose();
-			fDocument= null;
-			synchronized (this) {
-				fIsSynchronized= false;
+		
+		try {
+			--fOpenConnections;
+			invariant();
+		} finally {
+			if (fOpenConnections == 0) {
+				uninstall();
 			}
 		}
+		
 		invariant();
+	}
+	
+	/**
+	 * Uninstalls all components and dereferences any objects.
+	 */
+	private void uninstall() {
+		synchronized (this) {
+			fIsSynchronized= false;
+			if (fInitializationJob != null)
+				fInitializationJob.cancel();
+			fInitializationJob= null;
+		}
+		
+		if (fDocument != null)
+			fDocument.removeDocumentListener(this);
+		fDocument= null;
+		fReferenceListener.installDocument(null);
+		setReferenceProvider(null);
+		fLines.clear();
 	}
 
 	/*
@@ -1054,7 +1057,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.source.IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
-		return new FoldingIterator();
+		throw new UnsupportedOperationException();
 	}
 
 	/*
