@@ -37,6 +37,12 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  */
 
 public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
+	
+//	static {
+//		// making sure that the BreakpointManager is correctly initialized
+//		// before any breakpoint marker related operation (see bug 54993)
+//		DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
+//	}
 				
 	/**
 	 * Underlying marker.
