@@ -43,6 +43,7 @@ public class RoleManager {
 	// Prefix for all role preferences
 	private static String PREFIX = "UIRoles."; //$NON-NLS-1$
 	private static String ROLES_FILE = "roles.xml"; //$NON-NLS-1$
+	private static String FILTERING_ENABLED = "filterRoles"; //$NON-NLS-1$
 
 	public static RoleManager getInstance() {
 		if (singleton == null)
@@ -114,6 +115,8 @@ public class RoleManager {
 	 */
 	void loadEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
+
 		for (int i = 0; i < roles.length; i++) {
 			roles[i].enabled = store.getBoolean(createPreferenceKey(i));
 		}
@@ -124,6 +127,8 @@ public class RoleManager {
 	 */
 	void saveEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
+
 		for (int i = 0; i < roles.length; i++) {
 			store.setValue(createPreferenceKey(i), roles[i].enabled);
 		}
@@ -182,10 +187,19 @@ public class RoleManager {
 	/**
 	 * Return whether or not the filtering is currently
 	 * enabled.
-	 * @return
+	 * @return boolean
 	 */
 	public boolean isFiltering() {
 		return filterRoles;
+	}
+
+	/**
+	 * Set whether or not the filtering is currently
+	 * enabled.
+	 * @param boolean
+	 */
+	public void setFiltering(boolean value) {
+		filterRoles = value;
 	}
 
 }
