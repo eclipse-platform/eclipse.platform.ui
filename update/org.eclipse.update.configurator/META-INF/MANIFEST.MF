@@ -1,8 +1,9 @@
-Bundle-Name: org.eclipse.update.configurator
+Bundle-Name: %pluginName
 Bundle-GlobalName: org.eclipse.update.configurator
 Bundle-Description: Eclipse Update Configurator
 Bundle-Copyright: Open Source Materials - Eclipse 
 Bundle-Version: 3.0.0
+Bundle-Vendor: %providerName
 Bundle-DocUrl: http://www.eclipse.org
 Build-Information: ${build-information}
 Bundle-Activator: 
