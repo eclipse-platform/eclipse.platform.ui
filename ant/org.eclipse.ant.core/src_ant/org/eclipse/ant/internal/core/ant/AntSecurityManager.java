@@ -23,7 +23,7 @@ import org.eclipse.ant.core.AntSecurityException;
  * if the calling thread attempts to cause the Java Virtual Machine to 
  * exit/halt.
  * Otherwise this manager just delegates to the pre-existing manager
- * passed in the constructor.
+ * passed in the constructor or mimics the default security manager behavior
  */
 public class AntSecurityManager extends SecurityManager {
 
@@ -298,7 +298,7 @@ public class AntSecurityManager extends SecurityManager {
 		if (securityManager != null) {
 			return securityManager.checkTopLevelWindow(window);
 		}
-		return false;
+		return super.checkTopLevelWindow(window);
 	}
 
 	/**
@@ -320,50 +320,14 @@ public class AntSecurityManager extends SecurityManager {
 	}
 
 	/**
-	 * @see java.lang.SecurityManager#classDepth(java.lang.String)
-	 * @deprecated
-	 */
-	protected int classDepth(String name) {
-		return -1;
-	}
-
-	/**
-	 * @see java.lang.SecurityManager#classLoaderDepth()
-	 * @deprecated
-	 */
-	protected int classLoaderDepth() {
-		return -1;
-	}
-
-	/**
-	 * @see java.lang.SecurityManager#currentClassLoader()
-	 * @deprecated
-	 */
-	protected ClassLoader currentClassLoader() {
-		return null;
-	}
-
-	/**
-	 * @see java.lang.SecurityManager#currentLoadedClass()
-	 * @deprecated
-	 */
-	protected Class currentLoadedClass() {
-		return null;
-	}
-
-	/**
-	 * @see java.lang.SecurityManager#getClassContext()
-	 */
-	protected Class[] getClassContext() {
-		return super.getClassContext();
-	}
-
-	/**
 	 * @see java.lang.SecurityManager#getInCheck()
 	 * @deprecated
 	 */
 	public boolean getInCheck() {
-		return false;
+		if (securityManager != null) {
+			return securityManager.getInCheck();
+		}
+		return super.getInCheck();
 	}
 
 	/**
@@ -373,7 +337,7 @@ public class AntSecurityManager extends SecurityManager {
 		if (securityManager != null) {
 			return securityManager.getSecurityContext();
 		}
-		return null;
+		return super.getSecurityContext();
 	}
 
 	/**
@@ -383,22 +347,6 @@ public class AntSecurityManager extends SecurityManager {
 		if (securityManager != null) {
 			securityManager.getThreadGroup();
 		}
-		return null;
-	}
-
-	/**
-	 * @see java.lang.SecurityManager#inClass(java.lang.String)
-	 * @deprecated
-	 */
-	protected boolean inClass(String name) {
-		return false;
-	}
-
-	/**
-	 * @see java.lang.SecurityManager#inClassLoader()
-	 * @deprecated
-	 */
-	protected boolean inClassLoader() {
-		return false;
+		return super.getThreadGroup();
 	}
 }
