@@ -699,11 +699,12 @@ M4 = Platform-specific fourth key -->
       </viewerContribution>
        </extension>
        
-       <extension
+       
+      <!-- bug 78752 <extension
       	 point="org.eclipse.ant.core.antProperties">
       <antProperty
             name="eclipse.target"
             class="org.eclipse.ant.internal.ui.AntPropertyValueProvider">
       </antProperty>
-    </extension>
+    </extension> -->
 </plugin>
