@@ -25,7 +25,7 @@ public class DuplicateConflictsValidator  {
 	private static final String KEY_CONFLICT =
 		"DuplicateConflictsDialog.conflict";
 
-	static class IdEntry {
+	public static class IdEntry {
 		IConfiguredSite csite;
 		IFeature feature;
 

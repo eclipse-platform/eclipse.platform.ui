@@ -10,77 +10,32 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.DuplicateConflictsValidator;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
-
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
 
 /**
  * 
  */
 public class DuplicateConflictsDialog2 extends MessageDialog {
-	private static final String KEY_TITLE = "DuplicateConflictsDialog2.title";
+	private static final String KEY_TITLE = "DuplicateConflictsDialog.title";
 	private static final String KEY_MESSAGE =
-		"DuplicateConflictsDialog2.message";
+		"DuplicateConflictsDialog.message";
 	private static final String KEY_TREE_LABEL =
-		"DuplicateConflictsDialog2.treeLabel";
+		"DuplicateConflictsDialog.treeLabel";
 	private static final String KEY_CONFLICT =
-		"DuplicateConflictsDialog2.conflict";
+		"DuplicateConflictsDialog.conflict";
 
 	private TreeViewer treeViewer;
 	private ArrayList conflicts;
-
-	static class IdEntry {
-		IConfiguredSite csite;
-		IFeature feature;
-
-		public IdEntry(IFeature feature, IConfiguredSite csite) {
-			this.feature = feature;
-			this.csite = csite;
-			if (csite == null) {
-				System.out.println("csite null");
-			}
-		}
-		public boolean isInstallCandidate() {
-			return csite != null;
-		}
-		public IFeature getFeature() {
-			return feature;
-		}
-
-		public String getIdentifier() {
-			return feature.getVersionedIdentifier().getIdentifier();
-		}
-		public IConfiguredSite getConfiguredSite() {
-			if (csite != null)
-				return csite;
-			return feature.getSite().getCurrentConfiguredSite();
-		}
-		public boolean sameLevel(IdEntry entry) {
-			VersionedIdentifier vid = feature.getVersionedIdentifier();
-			VersionedIdentifier evid =
-				entry.getFeature().getVersionedIdentifier();
-			return vid.equals(evid);
-		}
-		public String toString() {
-			IConfiguredSite configSite = getConfiguredSite();
-			String version =
-				feature.getVersionedIdentifier().getVersion().toString();
-			String location = configSite.getSite().getURL().getFile();
-			return UpdateUI.getFormattedMessage(
-				KEY_CONFLICT,
-				new String[] { version, location });
-		}
-	}
 
 	class ConflictContentProvider
 		extends DefaultContentProvider
@@ -108,7 +63,8 @@ public class DuplicateConflictsDialog2 extends MessageDialog {
 			if (obj instanceof ArrayList) {
 				ArrayList list = (ArrayList) obj;
 				for (int i = 0; i < list.size(); i++) {
-					IdEntry entry = (IdEntry) (list).get(i);
+					DuplicateConflictsValidator.IdEntry entry =
+						(DuplicateConflictsValidator.IdEntry) (list).get(i);
 					if (entry.isInstallCandidate())
 						return entry.getFeature().getLabel();
 				}
@@ -119,7 +75,8 @@ public class DuplicateConflictsDialog2 extends MessageDialog {
 			int flags = 0;
 			if (obj instanceof ArrayList)
 				flags = UpdateLabelProvider.F_WARNING;
-			if (obj instanceof IdEntry || obj instanceof ArrayList)
+			if (obj instanceof DuplicateConflictsValidator.IdEntry
+				|| obj instanceof ArrayList)
 				return UpdateUI.getDefault().getLabelProvider().get(
 					UpdateUIImages.DESC_FEATURE_OBJ,
 					flags);
