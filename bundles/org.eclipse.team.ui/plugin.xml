@@ -174,12 +174,12 @@
 <extension point="org.eclipse.ui.views">
 	<category 
 		id="org.eclipse.team.ui"
-		name="Team">
+		name="%Team.viewCategory">
 	</category>
 	<view
 		id="org.eclipse.team.ui.sync.SyncView"
+		name="%SyncView.name"
 		icon="icons/full/cview16/synch_synch.gif"
-		name="Synchronize"
 		fastViewWidthRatio="0.75"
 		category="org.eclipse.team.ui"
 		class="org.eclipse.team.internal.ui.sync.SyncView">
@@ -187,15 +187,15 @@
 
 	<category 
 		id="org.eclipse.team.ui.target"
-		name="Target Management">
+		name="%Deployment.viewCategory">
 	</category>
 	<view
+            id="org.eclipse.team.ui.target.SiteExplorerView"
             name="%SiteExplorerView.name"
             icon="icons/full/cview16/site_view.gif"
             category="org.eclipse.team.ui.target"
-       		fastViewWidthRatio="0.5"
-            class="org.eclipse.team.internal.ui.target.SiteExplorerView"
-            id="org.eclipse.team.ui.target.SiteExplorerView">
+       		fastViewWidthRatio="0.75"
+            class="org.eclipse.team.internal.ui.target.SiteExplorerView">
       </view>
 
 </extension>	
