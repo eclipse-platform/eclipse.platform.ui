@@ -1,0 +1,5 @@
+bin
+build.xml
+helpbase.jar
+helpbase.jar.bin.log
+org.eclipse.help.base_*
