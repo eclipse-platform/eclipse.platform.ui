@@ -259,7 +259,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     }
 
     private boolean isValidFile(String file) {
-        IStatus status = ResourcesPlugin.getWorkspace().validateName(file, IResource.FILE);
+        IStatus status = ResourcesPlugin.getWorkspace().validatePath(file, IResource.FILE);
 		if (status.getCode() != IStatus.OK) {
 		    return false;
 		}
