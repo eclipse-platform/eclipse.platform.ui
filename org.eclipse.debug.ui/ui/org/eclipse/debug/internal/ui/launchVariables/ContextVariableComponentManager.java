@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.launchVariables.*;
+import org.eclipse.debug.ui.launchVariables.AbstractVariableComponent;
 import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
 import org.eclipse.debug.ui.launchVariables.IVariableComponent;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
