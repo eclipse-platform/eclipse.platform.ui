@@ -246,16 +246,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 * of nothing is registered for the id.
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
-		IDebugModelPresentation lp= (IDebugModelPresentation) getLabelProviders().get(id);
-		if (lp != null) {
-			Iterator keys= getAttributes().keySet().iterator();
-			while (keys.hasNext()) {
-				String key= (String)keys.next();
-				lp.setAttribute(key, getAttributes().get(key));
-			}
-			return lp;
-		}
-		return null;
+		return (IDebugModelPresentation) getLabelProviders().get(id);
 	}
 	
 	/**
@@ -266,6 +257,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			return;
 		}
 		getAttributes().put(id, value);
+		Iterator presentations = fLabelProviders.values().iterator();
+		while (presentations.hasNext()) {
+			((IDebugModelPresentation)presentations.next()).setAttribute(id, value);
+		}
 	}
 
 	/**
