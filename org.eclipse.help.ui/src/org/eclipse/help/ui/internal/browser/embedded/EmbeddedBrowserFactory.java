@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
-import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.*;
@@ -28,10 +27,9 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
-		if(Platform.isRunningOSGi()){
-			// TODO enable browser and remove the check for OSGi once launching it correctly under OSGi is fixed
+		// TODO enable browser once launching it correctly under OSGi is fixed
+		if (!HelpUIPlugin.DEBUG_EMBEDDED_BROWSER_IN_PROCESS)
 			return false;
-		}
 		if (!System.getProperty("os.name").startsWith("Win")
 			&& !System.getProperty("os.name").startsWith("Linux")) {
 			return false;
