@@ -31,6 +31,9 @@ private static final String KEY_OTHER_DESCRIPTION= "SiteCategory.other.descripti
 				public Object getAdapter(Class clazz) {
 					return null;
 				}
+				public int getType() {
+					return IURLEntry.UPDATE_SITE;
+				}				
 			};
 		}
 		public String getName() {

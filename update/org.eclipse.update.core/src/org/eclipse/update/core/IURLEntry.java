@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public interface IURLEntry extends IAdaptable {
 
+	public static final int UPDATE_SITE = 0;
+	public static final int WEB_SITE = 1;	
+
 	/** 
 	 * Returns the URL annotation.
 	 * 
@@ -38,4 +41,14 @@ public interface IURLEntry extends IAdaptable {
 	 * @since 2.0 
 	 */
 	public URL getURL();
+	
+	/**
+	 * Returns the type of the URLEntry
+	 * 
+	 * @see UPDATE_SITE
+	 * @see WEB_SITE
+	 * @return type
+	 * @since 2.0 
+	 */
+	public int getType();	
 }

@@ -7,6 +7,7 @@ package org.eclipse.update.core.model;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.update.core.IURLEntry;
 import org.eclipse.update.internal.core.UpdateCore;
 
 /**
@@ -26,6 +27,8 @@ public class URLEntryModel extends ModelObject {
 	private String localizedAnnotation;
 	private String urlString;
 	private URL url;
+	
+	private int type = IURLEntry.UPDATE_SITE;
 	
 	//performance
 	private URL bundleURL;
@@ -145,5 +148,22 @@ public class URLEntryModel extends ModelObject {
 		} catch (MalformedURLException e){
 			UpdateCore.warn("",e);
 		}
+	}
+
+	/**
+	 * Returns the specified type.
+	 * 
+	 * @since 2.1
+	 */
+	public int getType() {
+		return type;
+	}
+
+	/**
+	 * Method setType.
+	 * @param i
+	 */
+	public void setType(int i) {
+		type = i;
 	}
 }

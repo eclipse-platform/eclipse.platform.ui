@@ -897,12 +897,18 @@ public class DefaultFeatureParser extends DefaultHandler {
 		URLEntryModel inf = factory.createURLEntryModel();
 		String infoURL = attributes.getValue("url"); //$NON-NLS-1$
 		String label = attributes.getValue("label"); //$NON-NLS-1$
+		String type = attributes.getValue("type"); //$NON-NLS-1$
 		inf.setURLString(infoURL);
 		inf.setAnnotation(label);
+		
+		if ("web".equalsIgnoreCase(type))
+			inf.setType(IURLEntry.WEB_SITE);
+		else 
+			inf.setType(IURLEntry.UPDATE_SITE);
 
 		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_PARSING)
-			debug("Processed URLInfo: url:" + infoURL + " label:" + label);
-		//$NON-NLS-1$ //$NON-NLS-2$
+			debug("Processed URLInfo: url:" + infoURL + " label:" + label+" type:"+type);
+		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		objectStack.push(inf);
 	}

@@ -29,6 +29,9 @@ public class MissingFeature implements IFeature {
 			public Object getAdapter(Class key) {
 				return null;
 			}
+			public int getType() {
+				return IURLEntry.UPDATE_SITE;
+			}
 		};
 	}
 	public MissingFeature(IFeatureReference ref) {
@@ -50,6 +53,9 @@ public class MissingFeature implements IFeature {
 				}
 				public Object getAdapter(Class key) {
 					return null;
+				}
+				public int getType() {
+					return IURLEntry.UPDATE_SITE;
 				}
 			};
 		}
