@@ -310,6 +310,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	 */
 	protected void initializePreferences() {
 		IPreferenceStore store = getPreferenceStore();
+		store.setDefault(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
 		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
@@ -340,6 +341,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		store.setDefault(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION, false);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, true);
 		store.setDefault(ICVSUIConstants.PREF_ADDED_FLAG, CVSDecoratorConfiguration.DEFAULT_ADDED_FLAG);
 		store.setDefault(ICVSUIConstants.PREF_DIRTY_FLAG, CVSDecoratorConfiguration.DEFAULT_DIRTY_FLAG);
 		store.setDefault(ICVSUIConstants.PREF_CALCULATE_DIRTY, true);
@@ -357,6 +359,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		CVSProviderPlugin.getPlugin().setCompressionLevel(store.getInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		CVSProviderPlugin.getPlugin().setDefaultTextKSubstOption(KSubstOption.fromMode(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
+		CVSProviderPlugin.getPlugin().setRepositoriesAreBinary(store.getBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));
 	}
 
 	/**

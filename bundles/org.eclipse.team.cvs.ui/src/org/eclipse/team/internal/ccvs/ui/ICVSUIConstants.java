@@ -54,7 +54,8 @@ public interface ICVSUIConstants {
 	public final String PREF_PROMPT_ON_SAVING_IN_SYNC = "pref_prompt_on_saving_in_sync"; //$NON-NLS-1$
 	public final String PREF_SAVE_DIRTY_EDITORS = "pref_save_dirty_editors"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_CHANGE_GRANULARITY = "pref_prompt_on_change_granularity"; //$NON-NLS-1$
-
+	public final String PREF_REPOSITORIES_ARE_BINARY = "pref_repositories_are_binary"; //$NON-NLS-1$
+	
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$
 	public final String PREF_CONSOLE_MESSAGE_COLOR = "pref_console_message_color"; //$NON-NLS-1$
@@ -70,6 +71,7 @@ public interface ICVSUIConstants {
 	public final String PREF_SHOW_DIRTY_DECORATION = "pref_show_overlaydirty"; //$NON-NLS-1$
 	public final String PREF_SHOW_ADDED_DECORATION = "pref_show_added"; //$NON-NLS-1$
 	public final String PREF_SHOW_HASREMOTE_DECORATION = "pref_show_hasremote"; //$NON-NLS-1$
+	public final String PREF_SHOW_NEWRESOURCE_DECORATION = "pref_show_newresource"; //$NON-NLS-1$
 	
 	public final String PREF_DIRTY_FLAG = "pref_dirty_flag"; //$NON-NLS-1$
 	public final String PREF_ADDED_FLAG = "pref_added_flag"; //$NON-NLS-1$
