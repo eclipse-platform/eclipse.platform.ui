@@ -119,7 +119,7 @@ public class BrowserIntroPartImplementation extends
      */
     public void createPartControl(Composite parent) {
 
-        browser = new Browser(parent, SWT.MULTI);
+        browser = new Browser(parent, SWT.NONE);
 
         // add a location listener on the browser so we can intercept
         // LocationEvents. Responsible for intercepting URLs and updating UI

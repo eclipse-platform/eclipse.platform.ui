@@ -20,17 +20,27 @@ import org.eclipse.ui.intro.*;
  * content. Standby parts can be contributed to the Eclipse intro using the
  * following extension point:
  * <p>
+ * 
  * <pre>
- *      &lt;extension
- *             point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
- *          &lt;standbyPart
- *                pluginId=&quot;org.eclipse.ui.intro&quot;
- *                class=&quot;org.eclipse.ui.internal.intro.impl.parts.ContextHelpStandbyPart&quot;
- *                id=&quot;org.eclipse.ui.intro.contextHelp&quot;&gt;
- *          &lt;/standbyPart&gt; 
- *       &lt;/extension&gt;
+ * 
+ *       &lt;extension
+ *              point=&quot;org.eclipse.ui.intro.configExtension&quot;&gt;
+ *           &lt;standbyPart
+ *                 pluginId=&quot;org.eclipse.ui.intro&quot;
+ *                 class=&quot;org.eclipse.ui.internal.intro.impl.parts.ContextHelpStandbyPart&quot;
+ *                 id=&quot;org.eclipse.ui.intro.contextHelp&quot;&gt;
+ *           &lt;/standbyPart&gt; 
+ *        &lt;/extension&gt;
+ *  
  * </pre>
+ * 
  * </p>
+ * 
+ * Standby content parts have a life cycle that starts with a call to init,
+ * shortly after part construction, followed by a call to createPartControl.
+ * During these two calls, the part is responsible for creating its content and
+ * using the memento to try to recreate its previous state. SetInput is the last
+ * method called when trying to create a standby part.
  * 
  * @since 3.0
  */
@@ -59,26 +69,32 @@ public interface IStandbyContentPart {
     public Control getControl();
 
     /**
-	 * Initializes this intro standby content part with the given intro site. A memento is
-	 * passed to the part which contains a snapshot of the part state from a
-	 * previous session. Where possible, the part should try to recreate that
-	 * state.
-	 * <p>
-	 * This method is automatically called by the workbench shortly after
-	 * part construction.  It marks the start of this parts' lifecycle. Clients
-	 * must not call this method.
-	 * </p>
-	 *
-	 * @param part the intro part hosting this stanndby content part.
-     * @param memento this part state or <code>null</code> if there is no previous
-     * saved state
-	 * @exception PartInitException if this part was not initialized
-	 * successfully.
-	 */
-    public void init(IIntroPart introPart,  IMemento memento);
+     * Initializes this intro standby content part with the given intro site. A
+     * memento is passed to the part which contains a snapshot of the part state
+     * from a previous session. Where possible, the part should try to recreate
+     * that state.
+     * <p>
+     * This method is automatically called by the workbench shortly after part
+     * construction. It marks the start of this parts' lifecycle. Clients must
+     * not call this method.
+     * </p>
+     * 
+     * @param part
+     *            the intro part hosting this stanndby content part.
+     * @param memento
+     *            this part state or <code>null</code> if there is no previous
+     *            saved state
+     * @exception PartInitException
+     *                if this part was not initialized successfully.
+     */
+    public void init(IIntroPart introPart, IMemento memento);
 
     /**
-     * Sets the input to show in this standby part.
+     * Sets the input to show in this standby part. Note that input can be null,
+     * such as when the part if created through an Intro URL that does not have
+     * an input specified, or when this standby part is being recreated from a
+     * previous workbench session. In this case, the standby part is responsible
+     * for handling a null input, and recreating itself from a cached IMemento.
      * 
      * @param input
      *            the input object to be used by this standby part.
@@ -102,17 +118,18 @@ public interface IStandbyContentPart {
      * </p>
      */
     public void dispose();
-    
+
     /**
-	 * Saves the object state within a memento.
-	 * <p>
-	 * This method is automatically called by the workbench at appropriate
-	 * times. Clients must not call this method directly.
-	 * </p>
-	 *
-	 * @param memento a memento to receive the object state
-	 */
-	public void saveState(IMemento memento);
-    
-    
+     * Saves the object state within a memento.
+     * <p>
+     * This method is automatically called by the workbench at appropriate
+     * times. Clients must not call this method directly.
+     * </p>
+     * 
+     * @param memento
+     *            a memento to receive the object state
+     */
+    public void saveState(IMemento memento);
+
+
 }

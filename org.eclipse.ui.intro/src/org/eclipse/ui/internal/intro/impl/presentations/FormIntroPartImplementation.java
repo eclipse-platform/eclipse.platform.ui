@@ -190,8 +190,9 @@ public class FormIntroPartImplementation extends
     }
 
     public void setFocus() {
+        boolean value = false;
         if (mainPageBook.getCurrentPage() != null)
-            mainPageBook.getCurrentPage().setFocus();
+            value = mainPageBook.getCurrentPage().setFocus();
     }
 
 }

@@ -37,6 +37,15 @@ import org.eclipse.ui.part.*;
  * can be static or dynamic. Static is html files, dynamic is markup in content
  * files. Again, both of whch can be specified using the above extension point.
  * <p>
+ * Memento Support: This intro part tries to restore its presvious state when
+ * posible. The state of the intro page is remembered, along with which standby
+ * content content part was opened. IStandbyContent parts are passed the Intro's
+ * memento shortly after construction, and are expected to restore there own
+ * state based on the momento. The customizable intro part handles there initial
+ * creation on load, and leaves restoring state to content part. Same with
+ * saving state. The memento is paased shortlt before shutdown to enable storing
+ * of part specific data.
+ * 
  * Note: This class was made public on for re-use as-is as a valid class for the
  * <code>org.eclipse.ui.intro</code> extension point. It is not intended to be
  * subclassed or used otheriwse.
@@ -135,6 +144,7 @@ public final class CustomizableIntroPart extends IntroPart implements
             presentation.createPartControl(container);
             standbyPart.createPartControl(container);
         }
+        // Util.highlightFocusControl();
     }
 
     /*
@@ -152,7 +162,10 @@ public final class CustomizableIntroPart extends IntroPart implements
             setTopControl(standby ? getStandbyControl()
                     : getPresentationControl());
         }
+        // Util.highlightFocusControl();
     }
+
+
 
     private void setTopControl(Control c) {
         // container has stack layout. safe to cast.
@@ -175,10 +188,11 @@ public final class CustomizableIntroPart extends IntroPart implements
      * @see org.eclipse.ui.IWorkbenchPart#setFocus()
      */
     public void setFocus() {
-        if (presentation != null)
+        if (PlatformUI.getWorkbench().getIntroManager().isIntroStandby(this)) {
+            if (standbyPart != null)
+                standbyPart.setFocus();
+        } else if (presentation != null)
             presentation.setFocus();
-        if (standbyPart != null)
-            standbyPart.setFocus();
     }
 
     /*
@@ -218,11 +232,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         return container;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
-     */
+
     public void saveState(IMemento memento) {
         // give presentation and standby part there own children to create a
         // name space for each.
@@ -246,6 +256,8 @@ public final class CustomizableIntroPart extends IntroPart implements
             return null;
         return memento.getChild(key);
     }
+
+
 
 }
 

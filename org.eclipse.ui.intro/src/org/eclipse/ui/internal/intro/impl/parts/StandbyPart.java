@@ -106,7 +106,20 @@ public class StandbyPart implements IIntroConstants {
 
     public void init(IIntroPart introPart, IMemento memento) {
         this.introPart = introPart;
+        // make sure to load the child of the standbyPart memento.
+        //this.memento = getMemento(memento, MEMENTO_STANDBY_CONTENT_PART_TAG);
         this.memento = memento;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
+     */
+    private IMemento getMemento(IMemento memento, String key) {
+        if (memento == null)
+            return null;
+        return memento.getChild(key);
     }
 
     public void createPartControl(Composite parent) {
@@ -160,14 +173,13 @@ public class StandbyPart implements IIntroConstants {
      * @return
      */
     private boolean restoreState(IMemento memento) {
-        return false;
-        /*String contentPartId = memento
+        String contentPartId = memento
                 .getString(MEMENTO_STANDBY_CONTENT_PART_ID_ATT);
         if (contentPartId == null)
             return false;
         // create the cached content part. Content parts are responsible for
         // storing and reading their input state.
-        return showContentPart(contentPartId, null);*/
+        return showContentPart(contentPartId, null);
     }
 
 
@@ -229,7 +241,8 @@ public class StandbyPart implements IIntroConstants {
 
         ControlKey controlKey = getCachedContent(partId);
         if (controlKey == null) {
-            standbyContent.init(introPart, memento);
+            standbyContent.init(introPart, getMemento(memento,
+                    MEMENTO_STANDBY_CONTENT_PART_TAG));
             try {
                 standbyContent.createPartControl(content, toolkit);
             } catch (Exception e) {

@@ -203,7 +203,6 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
             String query = "tab=search&searchWord=" + ephrase; //$NON-NLS-1$
             WorkbenchHelp.displayHelpResource(query);
         } catch (UnsupportedEncodingException e) {
-            // TODO handle this for real
             System.out.println(e);
         }
     }

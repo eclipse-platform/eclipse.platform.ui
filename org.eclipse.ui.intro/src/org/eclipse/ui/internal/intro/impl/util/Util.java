@@ -172,6 +172,13 @@ public class Util {
         control.setBackground(control.getDisplay().getSystemColor(color));
     }
 
+    public static void highlightFocusControl() {
+        Control control = Display.getCurrent().getFocusControl();
+        if (control != null)
+            control.setBackground(Display.getCurrent().getSystemColor(
+                    SWT.COLOR_DARK_RED));
+    }
+
     /**
      * Launch an external brwoser on the given url.
      */
