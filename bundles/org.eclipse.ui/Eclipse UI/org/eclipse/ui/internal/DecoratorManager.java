@@ -465,10 +465,10 @@ public class DecoratorManager
 		for (int i = 0; i < definitions.length; i++) {
 			String id = definitions[i].getId();
 			if (enabledIds.contains(id))
-				definitions[i].setEnabled(true);
+				definitions[i].setEnabledWithErrorHandling(true);
 			else {
 				if (disabledIds.contains(id))
-					definitions[i].setEnabled(false);
+					definitions[i].setEnabledWithErrorHandling(false);
 			}
 		}
 
@@ -484,7 +484,7 @@ public class DecoratorManager
 		//so as to force a dispose of thier decorators
 		for (int i = 0; i < definitions.length; i++) {
 			if (definitions[i].isEnabled())
-				definitions[i].setEnabled(false);
+				definitions[i].setEnabledWithErrorHandling(false);
 		}
 	}
 	/**
@@ -508,7 +508,7 @@ public class DecoratorManager
 	/**
 	 * @see IDecoratorManager#setEnabled(String, boolean)
 	 */
-	public void setEnabled(String decoratorId, boolean enabled) {
+	public void setEnabled(String decoratorId, boolean enabled) throws CoreException{
 		DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
 		if (definition != null)
 			definition.setEnabled(enabled);

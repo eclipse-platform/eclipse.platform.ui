@@ -1,5 +1,6 @@
 package org.eclipse.ui;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ILabelDecorator;
 
 /**
@@ -46,8 +47,9 @@ public interface IDecoratorManager extends ILabelDecorator {
 	 * @param decoratorId the decorator id
 	 * @param enabled <code>true</code> to enable the decorator, or
 	 * <code>false</code> to disable it
+	 * @throws CoreException if the decorator cannot be instanitated
 	 */
-	void setEnabled(String decoratorId, boolean enabled);
+	void setEnabled(String decoratorId, boolean enabled) throws CoreException;
 
 	/**
 	 * Reset the cachedDecorators and fire listeners as

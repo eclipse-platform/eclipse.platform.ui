@@ -138,12 +138,28 @@ public class DecoratorDefinition {
 	 * manager as a listener as appropriate.
 	 * @param enabled The enabled to set
 	 */
-	public void setEnabled(boolean newState) {
+	public void setEnabled(boolean newState) throws CoreException{
 		
 		//Only refresh if there has been a change
 		if(this.enabled != newState){
 			this.enabled = newState;
 			refreshDecorator();
+		}
+	}
+	
+	/**
+	 * Sets the enabled flag and adds or removes the decorator
+	 * manager as a listener as appropriate. Handle any exceptions
+	 * within this class
+	 * @param enabled The enabled to set
+	 */
+	public void setEnabledWithErrorHandling(boolean newState){
+		
+		try{
+			setEnabled(newState);
+		}
+		catch(CoreException exception){
+			handleCoreException(exception);
 		}
 	}
 
@@ -152,25 +168,21 @@ public class DecoratorDefinition {
 	 * state.
 	 */
 	
-	private void refreshDecorator() {
+	private void refreshDecorator() throws CoreException{
 		DecoratorManager manager = (DecoratorManager) WorkbenchPlugin.getDefault().getDecoratorManager();
 		
-		try {
-			if (this.enabled)
-				getDecorator().addListener(manager);
-			else {
-				if (decorator != null) {
-					ILabelDecorator cached = decorator;
-					cached.removeListener(manager);
-					//Clear the decorator before disposing
-					decorator = null;
-					cached.dispose();
-				}
+		if (this.enabled)
+			getDecorator().addListener(manager);
+		else {
+			if (decorator != null) {
+				ILabelDecorator cached = decorator;
+				cached.removeListener(manager);
+				//Clear the decorator before disposing
+				decorator = null;
+				cached.dispose();
 			}
-		
-		} catch (CoreException exception) {
-			handleCoreException(exception);
 		}
+		
 	}
 
 	/**
