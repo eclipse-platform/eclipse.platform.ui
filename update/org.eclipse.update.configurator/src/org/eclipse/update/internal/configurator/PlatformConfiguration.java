@@ -560,7 +560,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// TODO **** Big workaround to deal with platform.xml under configuration.
 			//      **** Remove before M9
 			File M8platformXML = new File(url.getFile().replace('/', File.separatorChar));
-			M8platformXML = new File(M8platformXML, "platform.xml");
+			if (!M8platformXML.getName().equals("platform.xml"))
+				M8platformXML = new File(M8platformXML, "platform.xml");
 			os = new FileOutputStream(M8platformXML);
 			try {
 				saveAsXML(os);
