@@ -287,7 +287,7 @@
                <iterate>
                  <and>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
-                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.contentTypes.antBuildFile"/>
+                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
                  </and>
                </iterate>
              </with>
@@ -542,7 +542,7 @@
          point="org.eclipse.core.filebuffers.documentCreation">
       <factory
             extensions="xml, ent, macrodef"
-            contentTypeId="org.eclipse.ant.core.contentTypes.antBuildFile"
+            contentTypeId="org.eclipse.ant.core.antBuildFile"
             class="org.eclipse.ant.internal.ui.editor.text.AntDocumentFactory">
       </factory>
    </extension>
@@ -553,7 +553,7 @@
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
             extensions="xml, ent, macrodef"
-            contentTypeId="org.eclipse.ant.core.contentTypes.antBuildFile"
+            contentTypeId="org.eclipse.ant.core.antBuildFile"
             class="org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant">
       </participant>
    </extension>
