@@ -254,8 +254,31 @@
                definitionId="org.eclipse.ui.edit.text.folding.toggle"
                id="org.eclipse.ant.ui.folding.toggle">
          </action>
+         <action
+               label="%quickdiff.toggle.enable"
+               style="push"
+               definitionId="org.eclipse.quickdiff.toggle"
+               helpContextId="quickdiff.toggle"
+               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
+               menubarPath="quickdiff"
+               id="ant.quickdiff.toggle">
+         </action>
       </viewerContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.eclipse.ant.ui.internal.editor.AntEditor"
+            id="org.eclipse.quickdiff.editoractions.antEditor">
+         <action
+               definitionId="org.eclipse.quickdiff.toggle"
+               label="%quickdiff.toggle.enable"
+               class="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction"
+               id="org.eclipse.ui.texteditor.quickdiff.QuickDiffToggleAction">
+         </action>
+      </editorContribution>
+   </extension>   
+   
    <extension
          point="org.eclipse.ant.core.extraClasspathEntries">
       <extraClasspathEntry
