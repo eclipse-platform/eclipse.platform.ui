@@ -37,7 +37,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 	protected ImageDescriptor getBaseImageDescriptor() {
 		String taskName= getTask().getTaskName();
 		if ("taskdef".equalsIgnoreCase(taskName) || "typedef".equalsIgnoreCase(taskName)) {  //$NON-NLS-1$//$NON-NLS-2$
-			return super.getBaseImageDescriptor();
+			return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TASKDEF);	
 		}
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_MACRODEF);	
 	}
