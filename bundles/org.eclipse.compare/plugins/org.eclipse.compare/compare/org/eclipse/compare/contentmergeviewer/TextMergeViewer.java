@@ -157,6 +157,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final int BIRDS_EYE_VIEW_WIDTH= 10;
 	/** Width of birds eye view */
 	private static final int BIRDS_EYE_VIEW_INSET= 1;
+	/** Use splines between diff ranges */
+	private static final boolean USE_SPLINES= false;
 
 	/** line width of change borders */
 	private static final int LW= 1;
@@ -2757,18 +2759,52 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 				fPts[0]= x;	fPts[1]= ly;	fPts[2]= w;	fPts[3]= ry;
 				fPts[6]= x;	fPts[7]= ly+lh;	fPts[4]= w;	fPts[5]= ry+rh;
-							
-				g.setBackground(getColor(display, getFillColor(diff)));
-				g.fillPolygon(fPts);
-	
-				g.setLineWidth(LW);
-				g.setForeground(getColor(display, getStrokeColor(diff)));
-				g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
-				g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
+				
+				if (USE_SPLINES) {
+					g.setBackground(getColor(display, getFillColor(diff)));
+	 
+	 				g.setLineWidth(LW);
+					g.setForeground(getColor(display, getStrokeColor(diff)));
+					
+					int[] topPoints = getCurvePoints(fPts[0], fPts[1], fPts[2], fPts[3]);
+					int[] bottomPoints = getCurvePoints(fPts[6], fPts[7], fPts[4], fPts[5]);
+					g.setForeground(getColor(display, getFillColor(diff)));
+					g.drawLine(0, bottomPoints[0], 0, topPoints[0]);
+					for (int i = 1; i < bottomPoints.length; i++) {
+						g.setForeground(getColor(display, getFillColor(diff)));
+						g.drawLine(i, bottomPoints[i], i, topPoints[i]);
+						g.setForeground(getColor(display, getStrokeColor(diff)));
+						g.drawLine(i-1, topPoints[i-1], i, topPoints[i]);
+						g.drawLine(i-1, bottomPoints[i-1], i, bottomPoints[i]);
+					}
+				} else {
+					g.setBackground(getColor(display, getFillColor(diff)));
+					g.fillPolygon(fPts);
+		
+					g.setLineWidth(LW);
+					g.setForeground(getColor(display, getStrokeColor(diff)));
+					g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
+					g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
+				}
 			}
 		}
 	}
 	
+	private int[] getCurvePoints(int startx, int starty, int endx, int endy) {
+		double height= endy - starty;
+		height= height/2;
+		int width= endx - startx;
+		int lastX= startx;
+		int lastY= starty;
+		int[] points= new int[width];
+		for (int i= 0; i < points.length; i++) {
+			double r= ((double) i) / (double) width;
+			int y= (int) ((-height * Math.cos(Math.PI * r)) + height + starty);
+			points[i]= y;
+		}
+		return points;
+	}
+
 	private void paintSides(GC g, MergeSourceViewer tp, Canvas canvas, boolean right) {
 		
 		Display display= canvas.getDisplay();
