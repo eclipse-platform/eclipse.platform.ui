@@ -681,13 +681,25 @@ public class HistoryView extends ViewPart {
 			SyncInfoCompareInput syncInput = (SyncInfoCompareInput) input;
 			SyncInfo info = syncInput.getSyncInfo();
 			if(info instanceof CVSSyncInfo && info.getLocal().getType() == IResource.FILE) {
-				ICVSRemoteFile remote = (ICVSRemoteFile)info.getRemote();
-				ICVSRemoteFile base = (ICVSRemoteFile)info.getBase();
-				if(remote != null) {
-					showHistory(remote, false);
-				} else if(base != null) {
-					showHistory(base, false);
-				}
+                // Highlight the loaded versions unless there isn't one
+                ICVSRemoteFile loaded;
+                try {
+                    loaded = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
+                } catch (CVSException e) {
+                    CVSUIPlugin.log(e);
+                    loaded = null;
+                }
+                if (loaded != null) {
+                    showHistory(loaded, false);
+                } else {
+    				ICVSRemoteFile remote = (ICVSRemoteFile)info.getRemote();
+    				ICVSRemoteFile base = (ICVSRemoteFile)info.getBase();
+                    if(remote != null) {
+                        showHistory(remote, false);
+                    } else if(base != null) {
+                        showHistory(base, false);
+                    }
+                }
 			}
 		// Handle editors opened on remote files
 		} else if(input instanceof RemoteFileEditorInput) {
