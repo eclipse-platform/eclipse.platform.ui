@@ -24,6 +24,7 @@ import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension3;
 
 
 
@@ -62,7 +63,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	private boolean fIsReset= false;
 	/** Object to synchronize display thread and table selection changes */
 	private Object fMutex= new Object();
-	/** Object to synchronize initial display of additonal info */
+	/** Object to synchronize initial display of additional info */
 	private Object fStartSignal;
 	/** The table selection listener */
 	private SelectionListener fSelectionListener= new TableSelectionListener();
@@ -214,7 +215,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 				setCustomInformationControlCreator(null);
 			
 			// compute subject area
-			setMargins(4, -1);
+			setMargins(4, -2);
 			Rectangle area= fProposalTable.getBounds();
 			area.x= 0; // subject area is the whole subject control
 			area.y= 0;
@@ -230,6 +231,17 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getSize();
+
+		Rectangle otherTrim= subjectControl.getShell().computeTrim(0, 0, 0, 0);
+		size.x += otherTrim.width;
+		size.y += otherTrim.height;
+
+		if (informationControl instanceof IInformationControlExtension3) {
+			Rectangle thisTrim= ((IInformationControlExtension3)informationControl).computeTrim();
+			size.x -= thisTrim.width;
+			size.y -= thisTrim.height;
+		}
+			
 		if (sizeConstraint.x < size.x)
 			sizeConstraint.x= size.x;
 		if (sizeConstraint.y < size.y)

@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @since 2.0
  */
-public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
+public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3,  DisposeListener {
 	
 	/**
 	 * An information presenter determines the style presentation
@@ -318,6 +318,20 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 */
 	public Point computeSizeHint() {
 		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Rectangle computeTrim() {
+		return fShell.computeTrim(0, 0, 0, 0);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Rectangle getBounds() {
+		return fShell.getBounds();
 	}
 	
 	/*

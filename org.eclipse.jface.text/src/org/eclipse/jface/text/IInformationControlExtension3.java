@@ -38,4 +38,14 @@ public interface IInformationControlExtension3 {
 	 * @return the receiver's bounding rectangle
 	 */
 	Rectangle getBounds();
+	
+	/**
+	 * Computes the trim for this control.
+	 * x and y denote the upper left corner of the trimming relative
+	 * to this control's location i.e. this will most likely be
+	 * negative values. Width and height represent the border sizes.
+	 * 
+	 * @return the receivers trim
+	 */
+	Rectangle computeTrim();
 }
