@@ -309,12 +309,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		try {
 			config.getType();
 		} catch (CoreException e) {
-			if (e.getStatus().getCode() == DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE) {
-				// just make it a warning without an exception
-				IStatus status = new Status(IStatus.WARNING, DebugPlugin.getUniqueIdentifier(), DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE, 
-					MessageFormat.format(DebugCoreMessages.getString("LaunchManager.31"), new String[]{config.getName()}), null); //$NON-NLS-1$
-				DebugPlugin.log(status);
-			} else {
+			if (e.getStatus().getCode() != DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE) {
+				// only log warnings due to something other than a missing
+				// launch config type
 				DebugPlugin.log(e);
 			}
 			return false;
