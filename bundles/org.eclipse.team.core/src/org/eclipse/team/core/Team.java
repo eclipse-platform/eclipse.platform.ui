@@ -571,12 +571,13 @@ public final class Team {
 				for (int i = 0; i < projectDeltas.length; i++) {							
 					IResourceDelta delta = projectDeltas[i];
 					IResource resource = delta.getResource();
-					RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
-					// Only consider projects that have a provider
-					if (provider == null) continue;
 					// Only consider project additions that are moves
 					if (delta.getKind() != IResourceDelta.ADDED) continue;
 					if ((delta.getFlags() & IResourceDelta.MOVED_FROM) == 0) continue;
+					// Only consider projects that have a provider
+					if (!RepositoryProvider.isShared(resource.getProject())) continue;
+					RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+					if (provider == null) continue;
 					// Only consider providers whose project is not mapped properly already
 					if (provider.getProject().equals(resource.getProject())) continue;
 					// Tell the provider about it's new project
