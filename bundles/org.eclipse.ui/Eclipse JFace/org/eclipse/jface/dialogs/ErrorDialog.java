@@ -277,7 +277,7 @@ private void populateList(List list, IStatus status, int nesting) {
 	}
 	StringBuffer sb = new StringBuffer();
 	for (int i = 0; i < nesting; i++) {
-		sb.append("  ");
+		sb.append("  "); //$NON-NLS-1$
 	}
 	sb.append(status.getMessage());
 	list.add(sb.toString());

@@ -82,12 +82,12 @@ public interface IPreferenceStore {
 	/**
 	 * The string representation used for <code>true</code> (<code>"true"</code>).
 	 */
-	public static final String TRUE = "true";
+	public static final String TRUE = "true"; //$NON-NLS-1$
 
 	/**
 	 * The string representation used for <code>false</code> (<code>"false"</code>).
 	 */
-	public static final String FALSE = "false";
+	public static final String FALSE = "false"; //$NON-NLS-1$
 /**
  * Adds a property change listener to this preference store.
  *

@@ -55,37 +55,37 @@ public interface IAction {
 	/**
 	 * Property name of an action's text (value <code>"text"</code>).
 	 */
-	public static final String TEXT= "text";
+	public static final String TEXT= "text"; //$NON-NLS-1$
 	
 	
 	/**
 	 * Property name of an action's enabled state
 	 * (value <code>"enabled"</code>).
 	 */
-	public static final String ENABLED= "enabled";
+	public static final String ENABLED= "enabled"; //$NON-NLS-1$
 
 	
 	/**
 	 * Property name of an action's image (value <code>"image"</code>).
 	 */
-	public static final String IMAGE= "image";
+	public static final String IMAGE= "image"; //$NON-NLS-1$
 	
 	/**
 	 * Property name of an action's tooltip text (value <code>"toolTipText"</code>).
 	 */
-	public static final String TOOL_TIP_TEXT= "toolTipText";
+	public static final String TOOL_TIP_TEXT= "toolTipText"; //$NON-NLS-1$
 
 	
 	/**
 	 * Property name of an action's description (value <code>"description"</code>).
 	 * Typically the description is shown as a (longer) help text in the status line.
 	 */
-	public static final String DESCRIPTION= "description";
+	public static final String DESCRIPTION= "description"; //$NON-NLS-1$
 	
 	/**
 	 * Property name of an action's checked status (value <code>"checked"</code>).
 	 */
-	public static final String CHECKED= "checked";
+	public static final String CHECKED= "checked"; //$NON-NLS-1$
 
 /**
  * Adds a property change listener to this action.

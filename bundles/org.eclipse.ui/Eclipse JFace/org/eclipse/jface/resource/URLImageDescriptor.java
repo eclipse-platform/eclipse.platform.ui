@@ -78,6 +78,6 @@ public int hashCode() {
  * returns a string representation of this object which is suitable only for debugging.
  */
 public String toString() {
-	return "URLImageDescriptor(" + url + ")";
+	return "URLImageDescriptor(" + url + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 }

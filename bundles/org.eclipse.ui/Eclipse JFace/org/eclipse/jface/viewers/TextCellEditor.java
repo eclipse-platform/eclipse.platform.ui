@@ -297,13 +297,13 @@ public void performCut() {
 public void performDelete() {
 	if (text.getSelectionCount() > 0)
 		// remove the contents of the current selection
-		text.insert("");
+		text.insert(""); //$NON-NLS-1$
 	else {
 		// remove the next character
 		int pos = text.getCaretPosition();
 		if (pos < text.getCharCount()) {
 			text.setSelection(pos, pos + 1);
-			text.insert("");
+			text.insert(""); //$NON-NLS-1$
 		}
 	}
 	checkSelection(); 

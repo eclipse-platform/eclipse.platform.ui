@@ -158,25 +158,25 @@ public interface IDialogConstants {
 	public int CLIENT_ID = 1024;
 
 	// button labels
-	public String OK_LABEL = JFaceResources.getString("ok");
-	public String CANCEL_LABEL = JFaceResources.getString("cancel");
-	public String YES_LABEL = JFaceResources.getString("yes");
-	public String NO_LABEL = JFaceResources.getString("no");
-	public String YES_TO_ALL_LABEL = JFaceResources.getString("yestoall");
-	public String SKIP_LABEL = JFaceResources.getString("skip");
-	public String STOP_LABEL = JFaceResources.getString("stop");
-	public String ABORT_LABEL = JFaceResources.getString("abort");
-	public String RETRY_LABEL = JFaceResources.getString("retry");
-	public String IGNORE_LABEL = JFaceResources.getString("ignore");
-	public String PROCEED_LABEL = JFaceResources.getString("proceed");
-	public String OPEN_LABEL = JFaceResources.getString("open");
-	public String CLOSE_LABEL = JFaceResources.getString("close");
-	public String SHOW_DETAILS_LABEL = JFaceResources.getString("showDetails");
-	public String HIDE_DETAILS_LABEL = JFaceResources.getString("hideDetails");
-	public String BACK_LABEL = JFaceResources.getString("backButton");
-	public String NEXT_LABEL = JFaceResources.getString("nextButton");
-	public String FINISH_LABEL = JFaceResources.getString("finish");
-	public String HELP_LABEL = JFaceResources.getString("help");
+	public String OK_LABEL = JFaceResources.getString("ok"); //$NON-NLS-1$
+	public String CANCEL_LABEL = JFaceResources.getString("cancel"); //$NON-NLS-1$
+	public String YES_LABEL = JFaceResources.getString("yes"); //$NON-NLS-1$
+	public String NO_LABEL = JFaceResources.getString("no"); //$NON-NLS-1$
+	public String YES_TO_ALL_LABEL = JFaceResources.getString("yestoall"); //$NON-NLS-1$
+	public String SKIP_LABEL = JFaceResources.getString("skip"); //$NON-NLS-1$
+	public String STOP_LABEL = JFaceResources.getString("stop"); //$NON-NLS-1$
+	public String ABORT_LABEL = JFaceResources.getString("abort"); //$NON-NLS-1$
+	public String RETRY_LABEL = JFaceResources.getString("retry"); //$NON-NLS-1$
+	public String IGNORE_LABEL = JFaceResources.getString("ignore"); //$NON-NLS-1$
+	public String PROCEED_LABEL = JFaceResources.getString("proceed"); //$NON-NLS-1$
+	public String OPEN_LABEL = JFaceResources.getString("open"); //$NON-NLS-1$
+	public String CLOSE_LABEL = JFaceResources.getString("close"); //$NON-NLS-1$
+	public String SHOW_DETAILS_LABEL = JFaceResources.getString("showDetails"); //$NON-NLS-1$
+	public String HIDE_DETAILS_LABEL = JFaceResources.getString("hideDetails"); //$NON-NLS-1$
+	public String BACK_LABEL = JFaceResources.getString("backButton"); //$NON-NLS-1$
+	public String NEXT_LABEL = JFaceResources.getString("nextButton"); //$NON-NLS-1$
+	public String FINISH_LABEL = JFaceResources.getString("finish"); //$NON-NLS-1$
+	public String HELP_LABEL = JFaceResources.getString("help"); //$NON-NLS-1$
 
 	// Margins, spacings, and sizes 
 	/**
