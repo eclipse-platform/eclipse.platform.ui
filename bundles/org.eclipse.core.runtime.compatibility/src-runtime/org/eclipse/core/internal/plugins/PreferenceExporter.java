@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.runtime;
+package org.eclipse.core.internal.plugins;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
