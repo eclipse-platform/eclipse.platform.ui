@@ -31,10 +31,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  */
 public class LaunchViewEventHandler extends AbstractDebugEventHandler implements ILaunchListener{
 		
-	public void handleDebugEvents(final DebugEvent[] events) {
-		super.handleDebugEvents(events);
-	}
-		
 	/**
 	 * Stack frame counts keyed by thread.  Used to optimize thread refreshing.
 	 */
@@ -105,19 +101,21 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 		
 	protected void doHandleResumeEvent(DebugEvent event, Object element) {
+		if (event.isEvaluation()) {
+			// do nothing when an evaluation begins
+			return;
+		}
 		if (element instanceof ISuspendResume) {
 			if (((ISuspendResume)element).isSuspended()) {
 				IThread thread = getThread(element);
 				if (thread != null) {								
 					resetStackFrameCount(thread);
 				}
-				if (!event.isEvaluation()) {
-					return;
-				}
+				return;
 			}
 		}		
 		clearSourceSelection(null);
-		if (event.isStepStart() || event.isEvaluation()) {
+		if (event.isStepStart()) {
 			IThread thread = getThread(element);
 			if (thread != null) {								
 				getLaunchViewer().updateStackFrameIcons(thread);
@@ -139,12 +137,13 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
+		if (event.isEvaluation()) {
+			return;
+		}
 		if (element instanceof IThread) {
-			if (!event.isEvaluation()) {
-				doHandleSuspendThreadEvent((IThread)element);
-				return;
-			}
-		} 
+			doHandleSuspendThreadEvent((IThread)element);
+			return;
+		}
 		refresh(element);
 	}
 	
