@@ -42,7 +42,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDoubleClickListener, ISelectionChangedListener {
     
-    private final static String DEFAULT_SELECTION= TeamUIPlugin.ID + "GlobalRefreshWizardSelectionPage.default_selection";
+    private final static String DEFAULT_SELECTION= TeamUIPlugin.ID + "GlobalRefreshWizardSelectionPage.default_selection"; //$NON-NLS-1$
 
 	private TableViewer fViewer;
 	private IWizard wizard;

@@ -144,7 +144,7 @@ public class LogEntryCacheUpdateHandler extends BackgroundEventHandler {
     }
     
     public LogEntryCacheUpdateHandler(ISynchronizePageConfiguration configuration) {
-        super(Policy.bind("CVSChangeSetCollector.4"), "Errors have occured while maintaining the log entry cache."); //$NON-NLS-1$
+        super(Policy.bind("CVSChangeSetCollector.4"), Policy.bind("LogEntryCacheUpdateHandler.0")); //$NON-NLS-1$ //$NON-NLS-2$
         this.configuration = configuration;
         this.subscriber = getSubscriber(configuration);
         cacheReference = new SoftReference(new LogEntryCache());

@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbench;
  */
 public class GlobalSynchronizeWizard extends Wizard {
     
-    private final static String DIALOG_SETTINGS_SECTION= "SynchronizeWizard";
+    private final static String DIALOG_SETTINGS_SECTION= "SynchronizeWizard"; //$NON-NLS-1$
 
 	protected IWorkbench workbench;
 	protected GlobalRefreshWizardSelectionPage mainPage;
