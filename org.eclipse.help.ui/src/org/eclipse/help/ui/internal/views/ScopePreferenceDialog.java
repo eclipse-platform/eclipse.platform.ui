@@ -104,17 +104,13 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 			EngineDescriptor desc = new EngineDescriptor(descManager);
 			desc.setEngineType(etdesc);
 			desc.setUserDefined(true);
-			desc.setId(computeNewId(etdesc));
+			desc.setId(descManager.computeNewId(etdesc.getId()));
 			ScopePreferenceManager mng = (ScopePreferenceManager)getPreferenceManager();
 			IPreferenceNode node = mng.addNode(desc);
 			getTreeViewer().refresh();
 			getTreeViewer().setSelection(new StructuredSelection(node));
 			scheduleOperation(NEW_ID, desc);
 		}
-	}
-	
-	private String computeNewId(EngineTypeDescriptor etdesc) {
-		return etdesc.getId() +"." + 1; //$NON-NLS-1$
 	}
 
 	private void doDelete() {

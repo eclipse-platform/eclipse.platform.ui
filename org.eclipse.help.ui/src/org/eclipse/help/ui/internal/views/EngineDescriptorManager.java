@@ -228,12 +228,52 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		edesc.setUserDefined(true);
 		descriptors.add(edesc);
 	}
+
+	public String computeNewId(String typeId) {
+		ArrayList used = new ArrayList();
+		for (int i=0; i<descriptors.size(); i++) {
+			EngineDescriptor ed = (EngineDescriptor)descriptors.get(i);
+			if (!ed.isUserDefined()) continue;
+			String edTypeId = ed.getEngineTypeId();
+			if (typeId.equals(edTypeId)) {
+				String edId = ed.getId();
+				int loc = edId.lastIndexOf('.');
+				if (loc!= -1) {
+					String cvalue = edId.substring(loc+1);
+					int ivalue = Integer.parseInt(cvalue);
+					used.add(new Integer(ivalue));
+				}
+			}
+		}
+		for (int i=1; i<Integer.MAX_VALUE; i++) {
+			if (!isUsed(i, used)) {
+				return typeId+"."+"user."+i;
+			}
+		}
+		return typeId;
+	}
 	
+	private boolean isUsed(int value, ArrayList used) {
+		for (int i=0; i<used.size(); i++) {
+			Integer iv = (Integer)used.get(i);
+			if (iv.intValue()==value)
+				return true;
+		}
+		return false;
+	}
+
 	private String getDescription(Node node) {
 		NodeList list = ((Element)node).getElementsByTagName(TAG_DESC);
 		if (list.getLength()==1) {
 			Node desc = list.item(0);
-			return desc.getNodeValue();
+			NodeList children = desc.getChildNodes();
+			for (int i=0; i<children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child.getNodeType()==Node.TEXT_NODE) {
+					String text = child.getNodeValue();
+					return text.trim();
+				}
+			}
 		}
 		return null;
 	}

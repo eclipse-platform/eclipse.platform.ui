@@ -369,7 +369,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 	}
 
 	private void updateEngine(EngineDescriptor desc) {
-		Control[] children = container.getChildren();
+		Control[] children = ((Composite)scopeSection.getClient()).getChildren();
 		boolean reflowNeeded = false;
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
@@ -377,7 +377,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 			if (ed == desc) {
 				Button b = (Button) children[i + 1];
 				b.setText(desc.getLabel());
-				Label d = (Label) children[i + 2];
+				Label d = (Label) children[i + 3];
 				d.setText(desc.getDescription());
 				d.getParent().layout();
 				reflowNeeded = true;
