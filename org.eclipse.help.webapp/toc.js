@@ -58,6 +58,8 @@ function getPlusMinus(node)
 		return node;
   	else if (node.nodeType == 3)  //"Node.TEXT_NODE") 
 		return getChildNode(node.parentNode.parentNode, "IMG");
+	else if (node.tagName == "IMG")
+    	return getChildNode(node.parentNode.parentNode, "IMG");
   	else if (node.tagName == "A") 
     	return getChildNode(node.parentNode, "IMG");
    	else if (node.tagName == "NOBR")
@@ -149,6 +151,9 @@ function isCollapsed(node) {
  */
 function highlightTopic(topic)
 {
+	if (isMozilla)
+		window.getSelection().removeAllRanges();
+
   	var a = getAnchorNode(topic); 
   	if (a != null)
   	{
