@@ -57,11 +57,5 @@ public class RemoteFolderTree extends RemoteFolder  {
 			((ICVSResource)children[i]).accept(visitor);
 		}
 	}
-	
-	protected String getLocalPath() {
-		if (parent == null)
-			return ""; //$NON-NLS-1$
-		return Util.appendPath(parent.getLocalPath(), getName());
-	}
 }
 

@@ -35,12 +35,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -305,7 +306,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 * Method declared on CompareEditorInput
 	 */
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		boolean threeWay = ancestor != null;
+		final boolean threeWay = ancestor != null;
 		if (right == null || left == null) {
 			setMessage(Policy.bind("CVSCompareEditorInput.different")); //$NON-NLS-1$
 			return null;
@@ -313,7 +314,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		
 		initLabels();
 	
-		Differencer d = new Differencer() {
+		final Differencer d = new Differencer() {
 			protected boolean contentsEqual(Object input1, Object input2) {
 				int compare = teamEqual(input1, input2);
 				if (compare == NODE_EQUAL) {
@@ -349,22 +350,30 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			}
 		};
 		
-		try {
-			monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30); //$NON-NLS-1$
-			
+		try {	
 			// do the diff	
-			IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
-			try {
-				sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100); //$NON-NLS-1$
-				return d.findDifferences(threeWay, sub, null, ancestor, left, right);
-			} finally {
-				sub.done();
-			}
+			final Object[] result = new Object[] { null };
+			Session.run(null, null, false, new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					monitor.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 30); //$NON-NLS-1$
+					IProgressMonitor sub = new SubProgressMonitor(monitor, 30);
+					sub.beginTask(Policy.bind("CVSCompareEditorInput.comparing"), 100); //$NON-NLS-1$
+					try {
+						result[0] = d.findDifferences(threeWay, sub, null, ancestor, left, right);
+					} finally {
+						sub.done();
+					}
+				}
+			}, monitor);
+			return result[0];
 		} catch (OperationCanceledException e) {
 			throw new InterruptedException(e.getMessage());
 		} catch (RuntimeException e) {
 			handle(e);
-			return null;	
+			return null;
+		} catch (CVSException e) {
+			handle(e);
+			return null;
 		} finally {
 			monitor.done();
 		}

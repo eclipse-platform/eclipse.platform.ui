@@ -1,11 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 
 /**
  * This listener is used by RemoteFolder to listener for E and M messages
@@ -13,17 +19,34 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IUpdateMessageListener {
 	/**
-	 * information that a directory which has been reported using directoryInformation() does not exist
+	 * Notification that a directory (which may or may not have been reported by 
+	 * directoryInformation()) does not exist.
+	 * 
+	 * @param commandRoot the root directory of the command
+	 * @param path the path of the directory relative to the commandRoot
 	 */
-	public void directoryDoesNotExist(IPath path);
+	public void directoryDoesNotExist(ICVSFolder commandRoot, IPath path);
 	/**
-	 * directory information
+	 * Notification of information about a directory.
+	 * 
+	 * @param commandRoot the root directory of the command
+	 * @param path the path of the directory relative to the commandRoot
+	 * @param newDirectory true if the directory does not exist locally (i.e. in the commandRoot hierarchy)
 	 */
-	public void directoryInformation(IPath path, boolean newDirectory);
+	public void directoryInformation(ICVSFolder commandRoot, IPath path, boolean newDirectory);
 	/**
-	 * file information
+	 * Notification of information about a file
+	 * 
+	 * @param type the type of update for the file (see Update for type constants)
+	 * @param commandRoot the root directory of the command
+	 * @param filename the path of the file relative to the commandRoot
 	 */
-	public void fileInformation(int type, String filename);
-	
-	public void fileDoesNotExist(String filename);
+	public void fileInformation(int type, ICVSFolder parent, String filename);
+	/**
+	 * Notification that a file does not exists remotely
+	 * 
+	 * @param commandRoot the root directory of the command
+	 * @param filename the path of the file relative to the commandRoot
+	 */
+	public void fileDoesNotExist(ICVSFolder parent, String filename);
 }

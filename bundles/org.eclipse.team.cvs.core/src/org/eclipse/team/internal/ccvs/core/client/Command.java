@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -674,5 +679,40 @@ public abstract class Command extends Request {
 	 */
 	protected LocalOption[] filterLocalOptions(Session session, GlobalOption[] globalOptions, LocalOption[] localOptions) {
 		return localOptions;
+	}
+	
+	/**
+	 * Execute a CVS command inside an ICVSRunnable passed to Session.run()
+	 * <p>
+	 * Dispatches the commands, retrieves the results, and determines whether or
+	 * not an error occurred.  A listener may be supplied to capture message text
+	 * that would normally be written to the standard error and standard output
+	 * streams of a command line CVS client.
+	 * </p>
+	 * @param globalOptions the array of global options, or NO_GLOBAL_OPTIONS
+	 * @param localOptions the array of local options, or NO_LOCAL_OPTIONS
+	 * @param arguments the array of arguments (usually filenames relative to localRoot), or NO_ARGUMENTS
+	 * @param listener the command output listener, or null to discard all messages
+	 * @param monitor the progress monitor
+	 * @return a status code indicating success or failure of the operation
+	 * @throws CVSException if a fatal error occurs (e.g. connection timeout)
+	 */
+	public final IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, ICVSResource[] arguments, 
+		ICommandOutputListener listener, IProgressMonitor pm) throws CVSException {
+		
+		// We assume that all the passed resources have the same root
+		Session openSession = Session.getOpenSession(arguments[0]);
+		if (openSession == null) {
+			throw new CVSException(Policy.bind("Command.noOpenSession")); //$NON-NLS-1$
+		} else {
+			// Convert arguments
+			List stringArguments = new ArrayList(arguments.length);
+			for (int i = 0; i < arguments.length; i++) {
+				stringArguments.add(arguments[i].getRelativePath(openSession.getLocalRoot()));
+			}
+			return execute(openSession, globalOptions, localOptions, (String[]) stringArguments.toArray(new String[stringArguments.size()]), listener, pm);
+		}
+				
+		
 	}
 }

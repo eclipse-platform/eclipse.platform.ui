@@ -41,9 +41,6 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		return info.getName();
 	}
 
-	protected String getLocalPath() {
-		return Util.appendPath(parent.getLocalPath(), getName());
-	}
 	/*
 	 * @see ICVSRemoteResource#getParent()
 	 */
@@ -93,8 +90,8 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * @see ICVSResource#getParent()
 	 */
 	public ICVSFolder getParent() {
-		throw new UnsupportedOperationException(Policy.bind("RemoteResource.invalidOperation")); //$NON-NLS-1$
-	}
+		return parent;
+ 	}
 
 	/*
 	 * @see ICVSResource#isIgnored()
@@ -107,7 +104,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * @see ICVSResource#isManaged()
 	 */
 	public boolean isManaged() {
-		return true;
+		return parent != null;
 	}
 
 	/*

@@ -48,13 +48,6 @@ public class CVSEntryLineTag extends CVSTag {
 		return "";//$NON-NLS-1$
 	}
 	
-	public boolean equals(Object obj) {
-		// We assume, that the name and type can not be null
-		if (obj == this) return true;
-		if (!(obj instanceof CVSEntryLineTag)) return false;
-		return (type == ((CVSEntryLineTag)obj).type) && name.equals(((CVSEntryLineTag)obj).name);
-	}
-	
 	/*
 	 * For debugging purposes.
 	 */

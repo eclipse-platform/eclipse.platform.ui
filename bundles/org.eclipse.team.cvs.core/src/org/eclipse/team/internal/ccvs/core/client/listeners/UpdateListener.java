@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,7 +61,7 @@ public class UpdateListener implements ICommandOutputListener {
 					type = Update.STATE_MERGEABLE_CONFLICT;
 				merging = false;
 			}
-			updateMessageListener.fileInformation(type, path);
+			updateMessageListener.fileInformation(type, commandRoot, path);
 		}
 		return OK;
 	}
@@ -99,23 +104,23 @@ public class UpdateListener implements ICommandOutputListener {
 			String message = line.substring(SERVER_PREFIX.length());
 			if (message.startsWith("Updating")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
-					IPath path = new Path(message.substring(8));
-					updateMessageListener.directoryInformation(path, false);
+					IPath path = new Path(message.substring(9));
+					updateMessageListener.directoryInformation(commandRoot, path, false);
 				}
 			} else if (message.startsWith("skipping directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(18).trim());
-					updateMessageListener.directoryDoesNotExist(path);
+					updateMessageListener.directoryDoesNotExist(commandRoot, path);
 				}
 			} else if (message.startsWith("New directory")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					IPath path = new Path(message.substring(15, message.indexOf('\'', 15)));
-					updateMessageListener.directoryInformation(path, true);
+					updateMessageListener.directoryInformation(commandRoot, path, true);
 				}
 			} else if (message.endsWith("is no longer in the repository")) { //$NON-NLS-1$
 				if (updateMessageListener != null) {
 					String filename = message.substring(0, message.length() - 31);
-					updateMessageListener.fileDoesNotExist(filename);
+					updateMessageListener.fileDoesNotExist(commandRoot, filename);
 				}
 			} else if (message.startsWith("conflict:")) { //$NON-NLS-1$
 				/*
@@ -130,7 +135,7 @@ public class UpdateListener implements ICommandOutputListener {
 					if (message.endsWith("is modified but no longer in the repository")) { //$NON-NLS-1$
 						// The "C foler/file.ext" will come after this so if whould be ignored!
 						String filename = message.substring(10, message.length() - 44);
-						updateMessageListener.fileDoesNotExist(filename);
+						updateMessageListener.fileDoesNotExist(commandRoot, filename);
 					}
 				}
 				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
@@ -143,7 +148,7 @@ public class UpdateListener implements ICommandOutputListener {
 				if (updateMessageListener != null) {
 					if (message.endsWith("is not (any longer) pertinent")) { //$NON-NLS-1$
 						String filename = message.substring(9, message.length() - 30);
-						updateMessageListener.fileDoesNotExist(filename);
+						updateMessageListener.fileDoesNotExist(commandRoot, filename);
 					}
 				}
 				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);

@@ -5,16 +5,24 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -75,4 +83,38 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 		// for merge purposes as equal.
 		return IRemoteSyncElement.GRANULARITY_CONTENTS;
 	}
+	
+	/**
+	 * Wrap the input preparation in a CVS session run so open sessions will be reused
+	 */
+	public Object prepareInput(IProgressMonitor pm) throws InterruptedException, InvocationTargetException {
+		final Object[] result = new Object[] { null };
+		final Exception[] exception = new Exception[] {null};
+		try {
+			Session.run(null, null, false, new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					try {
+						result[0] = MergeEditorInput.super.prepareInput(monitor);
+					} catch (InterruptedException e) {
+						exception[0] = e;
+					} catch (InvocationTargetException e) {
+						exception[0] = e;
+					}
+				}
+			}, pm);
+		} catch (CVSException e) {
+			throw new InvocationTargetException(e);
+		}
+		
+		if (exception[0] != null) {
+			if (exception[0] instanceof InvocationTargetException) {
+				throw (InvocationTargetException)exception[0];
+			} else {
+				throw (InterruptedException)exception[0];
+			}
+		}
+			
+		return result[0];
+	}
+
 }
