@@ -42,7 +42,7 @@ public class ExternalToolsContentProvider implements IStructuredContentProvider 
 	}
 
 	public Object[] getElements(Object inputElement) {
-		return (Object[]) elements.toArray(new Object[elements.size()]);
+		return elements.toArray(new Object[elements.size()]);
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
