@@ -749,8 +749,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 
 		IEditorPart editor = null;
+		IEditorInput input= getEditorInput();
+		String id= getEditorId();
+		if (input == null || id == null) {
+			return null;
+		}
 		if (fReuseEditor) {
-			IEditorInput input= getEditorInput();
 			editor = page.getActiveEditor();
 			if (editor != null) {
 				// The active editor is the one we want to reuse
@@ -772,21 +776,21 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 			if (editor == null) {
 				if (fEditor == null || fEditor.isDirty() || page.isEditorPinned(fEditor)) {
-					editor = openEditor(page, input, getEditorId());
+					editor = openEditor(page, input, id);
 					fEditor = editor;
-				} else if (fEditor instanceof IReusableEditor && getEditorId().equals(fEditor.getSite().getId())) {
+				} else if (fEditor instanceof IReusableEditor && fEditor.getSite().getId().equals(id)) {
 					((IReusableEditor)fEditor).setInput(input);
 					editor = fEditor;
 					page.bringToTop(editor);
 				} else {
 					page.closeEditor(fEditor, false);
-					editor = openEditor(page, input, getEditorId());
+					editor = openEditor(page, input, id);
 					fEditor = editor;
 				}
 			}
 		} else {
 			// Open a new editor
-			editor = openEditor(page, getEditorInput(), getEditorId());
+			editor = openEditor(page, input, id);
 		}
 		return editor;
 	}
