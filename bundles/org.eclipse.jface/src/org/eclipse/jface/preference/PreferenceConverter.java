@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A utility class for dealing with preferences whose values are
@@ -75,9 +75,11 @@ public class PreferenceConverter {
      */
     public static final FontData FONTDATA_DEFAULT_DEFAULT;
     static {
-        Shell shell = new Shell();
-        FONTDATA_ARRAY_DEFAULT_DEFAULT = shell.getFont().getFontData();
-        shell.dispose();
+		Display display = Display.getCurrent();
+		if (display == null) 
+			display = Display.getDefault ();
+		
+        FONTDATA_ARRAY_DEFAULT_DEFAULT = display.getSystemFont().getFontData();
         /**
          * The default-default value for <code>FontData</code> preferences.
          * This is left in for compatibility purposes. It is recommended that
