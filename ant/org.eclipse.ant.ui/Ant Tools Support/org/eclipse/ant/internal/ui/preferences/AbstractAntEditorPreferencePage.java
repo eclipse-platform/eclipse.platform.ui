@@ -66,9 +66,6 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 		}
 	};
 			
-	/**
-	 * 
-	 */
 	public AbstractAntEditorPreferencePage() {
 		super();
 		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
