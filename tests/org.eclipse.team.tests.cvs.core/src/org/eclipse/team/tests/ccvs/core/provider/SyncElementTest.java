@@ -309,6 +309,7 @@ public class SyncElementTest extends EclipseTest {
 		getProvider(project).update(new IResource[] {project.getFile("file1.txt")}, 
 												 new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES, Command.DO_NOT_RECURSE}, 
 												 null, null, DEFAULT_MONITOR);
+		JUnitTestCase.waitMsec(1500); // XXX Stab in the dark for releng test failure						 
 		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testFileConflict", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
