@@ -363,6 +363,35 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		subscriber.cancel();			
 	}
 	
+	public void testBug37546MergeWantsToDeleteNewDirectories() throws CVSException, CoreException {		
+		IProject project = createProject("testBug37546", new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
+		commitProject(project);
+		
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// modify the branch
+		addResources(branchedProject, new String[] {"folder2/", "folder2/c.txt"}, true);
+		
+		// modify HEAD and add the same folder
+		addResources(project, new String[] {"folder2/"}, true);
+		addResources(project, new String[] {"folder3/"}, true);
+		addResources(project, new String[] {"folder4/", "folder4/d.txt"}, false);
+		
+		// create a merge subscriber
+		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		 
+		assertSyncEquals("testBug37546", subscriber, project, 
+				new String[]{"folder2/", "folder2/c.txt", "folder3/", "folder4/", "folder4/d.txt"}, true, 
+				new int[]{
+						SyncInfo.IN_SYNC, 
+						SyncInfo.INCOMING | SyncInfo.ADDITION,
+						SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC});		
+	}
+	
 	public void testDisconnectingProject() throws CoreException, IOException, TeamException, InterruptedException {
 		// Create a test project (which commits it as well)
 		//		Create a test project
