@@ -25,7 +25,7 @@ import com.jcraft.jsch.*;
 
 class JSchSession {
 	private static final int SSH_DEFAULT_PORT = 22;
-	private static JSch jsch;
+	private static JSch jsch=new JSch();
 	private static java.util.Hashtable pool = new java.util.Hashtable();
 
 	static String default_ssh_home = null;
@@ -124,9 +124,6 @@ class JSchSession {
 	static Session getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, final IProgressMonitor monitor) throws JSchException {
 		if (port == 0)
 			port = SSH_DEFAULT_PORT;
-		if (jsch == null) {
-			jsch = new JSch();
-		}
 
 		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
 		String ssh_home = store.getString(CVSSSH2PreferencePage.KEY_SSH2HOME);
@@ -239,4 +236,7 @@ class JSchSession {
 			pool.clear();
 		}
 	}
+  static JSch getJSch(){
+    return jsch;
+  }
 }
