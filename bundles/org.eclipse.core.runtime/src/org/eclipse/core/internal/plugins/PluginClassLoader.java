@@ -1,19 +1,12 @@
-/*******************************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
- * 
- * Contributors:
- * IBM - Initial API and implementation
- ******************************************************************************/
-
 package org.eclipse.core.internal.plugins;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.boot.BootLoader;import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.runtime.Policy;
 import java.io.File;
 import java.util.*;
@@ -33,9 +26,7 @@ import java.net.URL;
 public final class PluginClassLoader extends DelegatingURLClassLoader {
 	private PluginDescriptor descriptor;
 	private boolean pluginActivationInProgress = false;
-	
-	private static ThreadLocal pluginsToActivate= new ThreadLocal();
-	
+	private boolean loadInProgress = false;
 public PluginClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent, PluginDescriptor descriptor) {
 	// create a class loader with the given classpath and filters.  Also, the parent
 	// should be the parent of the platform class loader.  This allows us to decouple standard
@@ -134,48 +125,30 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 
 	// If we will find the class and the plugin is not yet activated, go ahead and do it now.
 	// Note that this MUST be done outside the sync block to avoid deadlock if
-	// plugin activaion forks threads etc.
-	List plugins= (List)pluginsToActivate.get();
-	boolean shouldActivate= false;
-	if (plugins == null) {
-		plugins= new ArrayList(5);
-		pluginsToActivate.set(plugins);
-		shouldActivate= true;
-	}	
-	plugins.add(0, name);
-		
+	// plugin activation forks threads etc.
+	activatePlugin(name);
+
 	// By now the plugin is activated and we need to sycn and retry the
 	// class load.
 	synchronized (this) {
 		result = findLoadedClass(name);
-		if (result != null) {
-			result= checkClassVisibility(result, requestor, true);
-		} else {
-	
-			// do search/load in this class loader
-			try {
-				result = super.findClass(name);
-				// If the class is loaded in this classloader register it with
-				// the hot swap support.  Need to do this regardless of visibility
-				// because the class was actually loaded.
-				if (result != null) {
-					enableHotSwap(this, result);
-					result= checkClassVisibility(result, requestor, false);
-				}
-			} catch (ClassNotFoundException e) {
-				result= null;
-			}
-		}
-	}
-	
-	if (shouldActivate) {
-		pluginsToActivate.set(null);
-		for(int i= 0, length= plugins.size(); i < length; i++) {
-			activatePlugin((String)plugins.get(i));
-		}
-	}
+		if (result != null)
+			return checkClassVisibility(result, requestor, true);
 
-	return result;
+		// do search/load in this class loader
+		try {
+			result = super.findClass(name);
+			// If the class is loaded in this classloader register it with
+			// the hot swap support.  Need to do this regardless of visibility
+			// because the class was actually loaded.
+			if (result == null)
+				return null;
+			enableHotSwap(this, result);
+			return checkClassVisibility(result, requestor, false);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
 }
 public PluginDescriptor getPluginDescriptor() {
 	return descriptor;
