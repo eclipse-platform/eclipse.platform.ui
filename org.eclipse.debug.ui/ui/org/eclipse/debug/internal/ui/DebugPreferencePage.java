@@ -76,7 +76,7 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	protected static void initDefaults(IPreferenceStore store) {
 		store.setDefault(IDebugPreferenceConstants.LAUNCHING_STYLE, IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, true);
-		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, true);
+		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, false);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, true);
 		store.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN, true);
