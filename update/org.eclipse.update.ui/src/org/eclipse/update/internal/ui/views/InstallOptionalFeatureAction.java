@@ -80,6 +80,10 @@ public class InstallOptionalFeatureAction extends Action {
 		});
 	}
 	private void openWizard(UpdateSearchRequest searchRequest) {
+		if (InstallWizard.isRunning()) {
+			MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
+			return;
+		}
 		InstallWizard wizard = new InstallWizard(searchRequest);
 		WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString(KEY_OPTIONAL_INSTALL_TITLE));
 		dialog.create();

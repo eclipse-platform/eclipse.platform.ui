@@ -54,6 +54,10 @@ public class FindUpdatesAction extends Action {
 				!confirm(UpdateUI.getString("Actions.brokenConfigQuestion"))) //$NON-NLS-1$
 			return;
 			
+		if (InstallWizard.isRunning()) {
+			MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
+			return;
+		}
 		
 		IFeature [] features=null;
 		if (feature!=null)

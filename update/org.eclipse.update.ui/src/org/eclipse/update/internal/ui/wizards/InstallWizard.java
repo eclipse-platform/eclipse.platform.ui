@@ -335,7 +335,7 @@ public class InstallWizard
 	}
 
 	public static synchronized boolean isRunning() {
-		return isRunning;
+		return isRunning || Platform.getJobManager().find(jobFamily).length > 0;
 	}
 	
 	private IBatchOperation getBatchInstallOperation(final IInstallFeatureOperation[] selectedJobs) {

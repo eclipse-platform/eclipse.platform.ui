@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.ui;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.widgets.*;
@@ -41,6 +42,10 @@ public class UpdateManagerUI {
 	 * @param shell the dialog parent shell
 	 */
 	public static void openInstaller(Shell shell) {
+		if (InstallWizard.isRunning()) {
+			MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
+			return;
+		}
 		InstallWizard wizard = new InstallWizard();
 		WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
 		dialog.create();
