@@ -39,11 +39,16 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 		//add a resource change listener that blocks forever, thus 
 		//simulating a scenario where workspace lock is held indefinitely
 		final int[] barrier = new int[1];
+		final Throwable[] error = new Throwable[1];
 		IResourceChangeListener listener = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
 				//block until we are told to do otherwise
 				barrier[0] = TestBarrier.STATUS_START;
-				TestBarrier.waitForStatus(barrier, TestBarrier.STATUS_DONE);
+				try {
+					TestBarrier.waitForStatus(barrier, TestBarrier.STATUS_DONE);
+				} catch (Throwable e) {
+					error[0] = e;
+				}
 			}
 		};
 		getWorkspace().addResourceChangeListener(listener);
@@ -92,6 +97,8 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 			} catch (InterruptedException e1) {
 				//ignore
 			}
+			if (error[0] != null)
+				fail("3.0", error[0]);
 		} finally {
 			getWorkspace().removeResourceChangeListener(listener);
 		}
