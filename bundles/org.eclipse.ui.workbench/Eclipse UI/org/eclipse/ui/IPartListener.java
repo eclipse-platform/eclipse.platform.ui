@@ -18,7 +18,7 @@ public interface IPartListener {
  * Notifies this listener that the given part has been activated.
  *
  * @param part the part that was activated
- * @see IPerspective#activate
+ * @see IWorkbenchPage#activate
  */
 public void partActivated(IWorkbenchPart part);
 /**
@@ -32,27 +32,28 @@ public void partActivated(IWorkbenchPart part);
  * </p>
  *
  * @param part the part that was surfaced
- * @see IPerspective#bringToTop
+ * @see IWorkbenchPage#bringToTop
  */
 public void partBroughtToTop(IWorkbenchPart part);
 /**
  * Notifies this listener that the given part has been closed.
  *
  * @param part the part that was closed
- * @see IPerspective#close
+ * @see IWorkbenchPage#hideView
  */
 public void partClosed(IWorkbenchPart part);
 /**
  * Notifies this listener that the given part has been deactivated.
  *
  * @param part the part that was deactivated
- * @see IPerspective#activate
+ * @see IWorkbenchPage#activate
  */
 public void partDeactivated(IWorkbenchPart part);
 /**
  * Notifies this listener that the given part has been opened.
  *
  * @param part the part that was opened
- */
+ * @see IWorkbenchPage#showView
+ */ 
 public void partOpened(IWorkbenchPart part);
 }

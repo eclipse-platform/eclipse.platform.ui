@@ -316,6 +316,12 @@ public void hideActionSet(String actionSetID);
  */
 public void hideView(IViewPart view);
 /**
+ * Returns whether the specified part is visible.
+ *
+ * @return boolean true if part is visible
+ */
+public boolean isPartVisible(IWorkbenchPart part);
+/**
  * Returns whether the page's current perspective is showing
  * the editor area.
  *

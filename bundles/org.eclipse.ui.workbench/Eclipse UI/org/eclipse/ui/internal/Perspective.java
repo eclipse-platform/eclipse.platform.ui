@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
 
+import java.util.*;
 import java.util.List;
 
 /**
@@ -449,6 +450,8 @@ protected void hideEditorArea() {
 	// keyboard focus it will let it go.
 	if (editorArea.getControl() != null)
 		editorArea.getControl().setEnabled(false);
+		
+	setEditorAreaVisible(false);	
 }
 /**
  * Hides a fast view. The view shrinks equally <code>steps</code> times
@@ -498,7 +501,7 @@ private void hideFastView(IViewReference ref, int steps) {
 		}
 	}
 	// Hide it completely.
-	pane.setBounds(0, 0, 0, 0);
+	pane.setVisible(false);
 	pane.setFastViewSash(null);
 	ctrl.setEnabled(false); // Remove focus support.
 }
@@ -634,11 +637,12 @@ protected void onActivate() {
 			// Enable the editor area now that it will be made
 			// visible and can accept keyboard focus again.
 			editorArea.getControl().setEnabled(true);
-		}
-		else {
+			setEditorAreaVisible(true);
+		} else {
 			// Disable the entire editor area so if an editor had
 			// keyboard focus it will let it go.
 			editorArea.getControl().setEnabled(false);
+			setEditorAreaVisible(false);
 		}
 	}
 
@@ -1264,9 +1268,23 @@ protected void showEditorArea() {
 	if (editorArea.getControl() != null)
 		editorArea.getControl().setEnabled(true);
 
+	setEditorAreaVisible(true);
+
 	// Replace the part holder with the editor area.
 	presentation.getLayout().replace(editorHolder, editorArea);
 	editorHolder = null;
+}
+
+private void setEditorAreaVisible(boolean visible) {
+	ArrayList workbooks = ((EditorArea)editorArea).getEditorWorkbooks();
+	for (Iterator iter = workbooks.iterator(); iter.hasNext();) {
+		EditorWorkbook workbook = (EditorWorkbook) iter.next();
+		workbook.setVisible(visible);
+		EditorPane pane = workbook.getVisibleEditor();
+		if(pane != null)
+			pane.setVisible(visible);
+	}
+	editorArea.setVisible(visible);
 }
 /**
  * Shows a fast view.
@@ -1287,6 +1305,7 @@ void showFastView(IViewReference ref) {
 	Composite parent = ctrl.getParent();
 	Rectangle bounds = getFastViewBounds(ref);
 
+	pane.setVisible(true);
 	pane.setBounds(bounds);
 	pane.moveAbove(null);
 	pane.setFocus();

@@ -64,6 +64,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 			if (IWorkingSetManager.CHANGE_WORKING_SET_REMOVE.equals(property) && 
 				event.getOldValue().equals(workingSet)) {
 				setWorkingSet(null);
+			} else if(LayoutPart.PROP_VISIBILITY.equals(property)) {
+				WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)event.getSource()).getPartReference();
+				IWorkbenchPart part = ref.getPart(true);
+				if(ref == null)
+					return;
+				if(Boolean.TRUE.equals(event.getNewValue()))
+					partListeners.firePartVisible(part);
+				else
+					partListeners.firePartHidden(part);
 			}
 		}
 	};
@@ -1002,7 +1011,7 @@ private void disposePerspective(Perspective persp) {
 		IViewPart view = (IViewPart)ref.getPart(false);
 		if (!exists && view != null) {
 			firePartClosed(view);
-			activationList.remove(view);
+			activationList.remove(ref);
 			disposePart(view);
 		}
 	}
@@ -1426,7 +1435,7 @@ public void hideView(IViewPart view) {
 	if (!exists) {
 		firePartClosed(view);
 		disposePart(view);
-		activationList.remove(view);		
+		activationList.remove(ref);		
 	}
 	
 	// Notify interested listeners
@@ -1495,6 +1504,12 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 		Workbench wb = (Workbench)window.getWorkbench();
 		wb.getPerspectiveHistory().add(desc);
 	}
+}
+/**
+ * See IWorkbenchPage.
+ */
+public boolean isPartVisible(IWorkbenchPart part) {
+	return ((PartSite)part.getSite()).getPane().isVisible();
 }
 /**
  * See IWorkbenchPage.
@@ -2318,6 +2333,21 @@ private void setPerspective(Perspective newPersp) {
 	// Update the Coolbar layout.  Do this after the part is activated,
 	// since the layout may contain items associated to the part.
 	setToolBarLayout();
+	
+	//Update visibility state of all views.
+	HashSet set = new HashSet();
+	IWorkbenchPartReference refs[] = oldPersp.getViewReferences();
+	for (int i = 0; i < refs.length; i++)
+		set.add(((WorkbenchPartReference)refs[i]).getPane());
+	refs = newPersp.getViewReferences();
+	for (int i = 0; i < refs.length; i++)
+		set.add(((WorkbenchPartReference)refs[i]).getPane());
+	PerspectivePresentation pres = newPersp.getPresentation();	
+	for (Iterator iter = set.iterator(); iter.hasNext();) {
+		PartPane pane = (PartPane) iter.next();
+		boolean isVisible = pres.isPartVisible(pane.getID());
+		pane.setVisible(isVisible);
+	}
 }
 private void activateOldPart(Perspective newPersp) {
 	if (newPersp != null) {
@@ -2619,6 +2649,7 @@ private class ActivationList {
 			parts.remove(ref);
 			parts.add(ref);
 		}
+		pane.addPropertyChangeListener(propertyChangeListener);	
 	}
 	/*
 	 * Add/Move the active part to end of the list;
@@ -2642,6 +2673,9 @@ private class ActivationList {
 				return;
 			}
 		}
+		PartPane pane = ((WorkbenchPartReference)ref).getPane();
+		if(pane != null)
+			pane.addPropertyChangeListener(propertyChangeListener);	
 		parts.add(0,ref);
 	}
 	/*
@@ -2693,16 +2727,12 @@ private class ActivationList {
 	/*
 	 * Remove a part from the list
 	 */
-	boolean remove(IWorkbenchPart part) {
-		return parts.remove(getReference(part));
-	}
-	/*
-	 * Remove a part from the list
-	 */
 	boolean remove(IWorkbenchPartReference ref) {
+		PartPane pane = ((WorkbenchPartReference)ref).getPane();
+		if(pane != null) 
+			pane.removePropertyChangeListener(propertyChangeListener);
 		return parts.remove(ref);
 	}
-
 	/*
 	 * Remove the editors from the activation list.
 	 */

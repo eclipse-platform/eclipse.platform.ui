@@ -305,12 +305,6 @@ public void handleEvent(Event event) {
 		requestActivation();
 }
 /**
- * Returns true if this part is visible.  A part is visible if it has a control.
- */
-public boolean isVisible() {
-	return (getControl() != null);
-}
-/**
  * Return whether the pane is zoomed or not
  */
 public boolean isZoomed() {

@@ -13,6 +13,9 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -27,12 +30,36 @@ import org.eclipse.ui.IWorkbenchWindow;
 abstract public class LayoutPart implements IPartDropTarget {
 	protected ILayoutContainer container;
 	protected String id;
+
+	private Boolean visible;
+	private ListenerList propertyListeners = new ListenerList(1);
+	
+	public static final String PROP_VISIBILITY = "PROP_VISIBILITY";
+	
 /**
  * PresentationPart constructor comment.
  */
 public LayoutPart(String id) {
 	super();
 	this.id = id;
+}
+/**
+ * Adds a property change listener to this action.
+ * Has no effect if an identical listener is already registered.
+ *
+ * @param listener a property change listener
+ */
+public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	propertyListeners.add(listener);
+}
+/**
+ * Removes the given listener from this action.
+ * Has no effect if an identical listener is not registered.
+ *
+ * @param listener a property change listener
+ */
+public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	propertyListeners.remove(listener);
 }
 /**
  * Creates the SWT control
@@ -154,12 +181,6 @@ public boolean isDragAllowed(Point p) {
 	return true;
 }
 /**
- * Returns true if this part is visible.  A part is visible if it has a control.
- */
-public boolean isVisible() {
-	return true;
-}
-/**
  * Move the control over another one.
  */
 public void moveAbove(Control refControl) {
@@ -186,10 +207,33 @@ public void reparent(Composite newParent) {
 	control.setEnabled(enabled);
 }
 /**
- * Sets the presentation bounds.
+ * Returns true if this part is visible.
  */
-final public void setBounds(int x, int y, int w, int h) {
-	setBounds(new Rectangle(x, y, w, h));
+public boolean isVisible() {
+	Control ctrl = getControl();
+	if (ctrl != null)
+		return visible == Boolean.TRUE ? true : false;
+	return false;
+}
+/**
+ * Shows the receiver if <code>visible</code> is true otherwise hide it.
+ */
+public void setVisible(boolean makeVisible) {
+	Control ctrl = getControl();
+	if (ctrl != null) {
+		if(visible != null && makeVisible == visible.booleanValue())
+			return;
+		
+		visible = makeVisible ? Boolean.TRUE : Boolean.FALSE;
+		ctrl.setVisible(makeVisible);
+		final Object[] listeners = propertyListeners.getListeners();
+		if (listeners.length > 0) {
+			Boolean oldValue = makeVisible ? Boolean.FALSE : Boolean.TRUE;
+			PropertyChangeEvent event = new PropertyChangeEvent(this,PROP_VISIBILITY, oldValue,visible);
+			for (int i = 0; i < listeners.length; ++i)
+				((IPropertyChangeListener)listeners[i]).propertyChange(event);
+		}
+	}
 }
 /**
  * Sets the presentation bounds.

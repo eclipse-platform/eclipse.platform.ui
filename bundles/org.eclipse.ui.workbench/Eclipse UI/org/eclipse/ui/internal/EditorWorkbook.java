@@ -146,7 +146,7 @@ public void createControl(Composite parent) {
 	// listener to resize visible components
 	tabFolder.addListener(SWT.Resize, new Listener() {
 		public void handleEvent(Event e) {
-			setControlSize(visibleEditor);
+			setControlSize();
 		}
 	});
 
@@ -494,12 +494,6 @@ public void openTracker(LayoutPart part) {
 }
 
 /**
- * Returns true if this part is visible.  A part is visible if it has a control.
- */
-public boolean isVisible() {
-	return (tabFolder != null);
-}
-/**
  * Listen for notifications from the editor part
  * that its title has change or it's dirty, and
  * update the corresponding tab
@@ -728,7 +722,7 @@ private void setActiveState(int state) {
 public void setBounds(Rectangle r) {
 	if (tabFolder != null) {
 		tabFolder.setBounds(r);
-		setControlSize(visibleEditor);
+		setControlSize();
 	}
 }
 /**
@@ -746,12 +740,12 @@ public void setContainer(ILayoutContainer container) {
 /**
  * Set the size of a page in the folder.
  */
-private void setControlSize(LayoutPart part) {
-	if (part == null || tabFolder == null) 
+private void setControlSize() {
+	if (visibleEditor == null || tabFolder == null) 
 		return;
 	Rectangle bounds = PartTabFolder.calculatePageBounds(tabFolder);
-	part.setBounds(bounds);
-	part.moveAbove(tabFolder);
+	visibleEditor.setBounds(bounds);
+	visibleEditor.moveAbove(tabFolder);
 }
 public void setVisibleEditor(EditorPane comp) {
 
@@ -768,8 +762,8 @@ public void setVisibleEditor(EditorPane comp) {
 	}
 
 	// Hide old part. Be sure that it is not in the middle of closing
-	if (visibleEditor != null && visibleEditor != comp && visibleEditor.getControl()!= null){
-		visibleEditor.getControl().setVisible(false);
+	if (visibleEditor != null && visibleEditor != comp){
+		visibleEditor.setVisible(false);
 	}
 
 	// Show new part.
@@ -780,9 +774,9 @@ public void setVisibleEditor(EditorPane comp) {
 			int index = tabFolder.indexOf(key);
 			tabFolder.setSelection(index);
 		}
-		setControlSize(visibleEditor);
-		if(visibleEditor.getControl() != null)
-			visibleEditor.getControl().setVisible(true);
+		setControlSize();
+		if(visibleEditor != null)
+			visibleEditor.setVisible(true);
 			
 		becomeActiveWorkbook(activeState == ACTIVE_FOCUS);
 	}

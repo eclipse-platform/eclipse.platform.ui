@@ -121,6 +121,7 @@ private void addChild(RelationshipInfo info) {
 	
 	if (active) {
 		child.createControl(parent);
+		child.setVisible(true);
 		child.setContainer(this);
 		resizeSashes(parent.getClientArea());
 	}
@@ -326,12 +327,6 @@ private boolean isRelationshipCompatible(int relationship,boolean isVertical) {
 		return (relationship == IPageLayout.TOP || relationship == IPageLayout.BOTTOM);
 }
 /**
- * @see LayoutPart#isVisible
- */
-public boolean isVisible() {
-	return (this.parent != null);
-}
-/**
  * Returns whether this container is zoomed.
  */
 public boolean isZoomed() {
@@ -385,7 +380,7 @@ public void remove(LayoutPart child) {
 	childRemoved(child);
 	
 	if (active){
-		child.setBounds(0, 0, 0, 0);
+		child.setVisible(false);
 		child.setContainer(null);
 		resizeSashes(parent.getClientArea());
 	}
@@ -409,10 +404,11 @@ public void replace(LayoutPart oldChild, LayoutPart newChild) {
 
 	childRemoved(oldChild);
 	if (active){
-		oldChild.setBounds(0, 0, 0, 0);
+		oldChild.setVisible(false);
 		oldChild.setContainer(null);
 		newChild.createControl(parent);
-		newChild.setContainer(this);		
+		newChild.setContainer(this);
+		newChild.setVisible(true);		
 		resizeSashes(parent.getClientArea());
 	}
 }

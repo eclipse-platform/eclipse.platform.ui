@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -32,8 +33,8 @@ public void addPartListener(IPartListener l) {
  */
 public void firePartActivated(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPartListener l = (IPartListener)array[nX];
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener l = (IPartListener)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partActivated(part);
@@ -52,8 +53,8 @@ public void firePartActivated(final IWorkbenchPart part) {
  */
 public void firePartBroughtToTop(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPartListener l = (IPartListener)array[nX];
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener l = (IPartListener)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partBroughtToTop(part);
@@ -72,8 +73,8 @@ public void firePartBroughtToTop(final IWorkbenchPart part) {
  */
 public void firePartClosed(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPartListener l = (IPartListener)array[nX];
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener l = (IPartListener)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partClosed(part);
@@ -92,8 +93,8 @@ public void firePartClosed(final IWorkbenchPart part) {
  */
 public void firePartDeactivated(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPartListener l = (IPartListener)array[nX];
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener l = (IPartListener)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partDeactivated(part);
@@ -112,11 +113,61 @@ public void firePartDeactivated(final IWorkbenchPart part) {
  */
 public void firePartOpened(final IWorkbenchPart part) {
 	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IPartListener l = (IPartListener)array[nX];
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener l = (IPartListener)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				l.partOpened(part);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removePartListener(l);
+			}
+		});
+	}
+}
+/**
+ * Notifies the listener that a part has been opened.
+ */
+public void firePartHidden(final IWorkbenchPart part) {
+	Object [] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener2 l;
+		if(array[i] instanceof IPartListener2)
+			l = (IPartListener2)array[i];
+		else
+			continue;
+			
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.partHidden(part);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removePartListener(l);
+			}
+		});
+	}
+}
+/**
+ * Notifies the listener that a part has been opened.
+ */
+public void firePartVisible(final IWorkbenchPart part) {
+	Object [] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener2 l;
+		if(array[i] instanceof IPartListener2)
+			l = (IPartListener2)array[i];
+		else
+			continue;
+			
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.partVisible(part);
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);

@@ -25,10 +25,4 @@ public void createControl(Composite parent) {
 public Control getControl() {
 	return null;
 }
-/**
- * Returns true if this part is visible.
- */
-public boolean isVisible() {
-	return false;
-}
 }

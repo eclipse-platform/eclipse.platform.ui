@@ -461,7 +461,7 @@ private void derefPart(LayoutPart part) {
 			// make sure one is at least visible
 			int childVisible = 0;
 			for (int i = 0; i < children.length; i++)
-				if(children[i].isVisible())
+				if(children[i].getControl() != null)
 					childVisible++;
 
 			// none visible, then reprarent and remove container

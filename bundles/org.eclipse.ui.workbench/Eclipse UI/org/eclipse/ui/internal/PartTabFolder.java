@@ -197,7 +197,7 @@ public void createControl(Composite parent) {
 	// listener to resize visible components
 	tabFolder.addListener(SWT.Resize, new Listener(){
 		public void handleEvent(Event e){
-			setControlSize(current);
+			setControlSize();
 		}
 	});
 
@@ -469,12 +469,6 @@ public int indexOf (LayoutPart item) {
 	return 0;
 }
 /**
- * Returns true if this part is visible.  A part is visible if it has a control.
- */
-public boolean isVisible() {
-	return (tabFolder != null);
-}
-/**
  * See IVisualContainer#remove
  */
 public void remove(LayoutPart child) {
@@ -494,7 +488,7 @@ public void remove(LayoutPart child) {
 	}
 
 	if (active) {
-		child.setBounds(0, 0, 0, 0);
+		child.setVisible(false);
 		child.setContainer(null);
 	}
 }
@@ -654,11 +648,11 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 				if (invisibleChildren != null)
 					index = invisibleChildren.length;
 				invisibleChildren = arrayAdd(invisibleChildren, info, index);
-				oldChild.setBounds(new Rectangle(0, 0, 0, 0));
+				oldChild.setVisible(false);
 				oldChild.setContainer(null);
 				newChild.setContainer(this);
 				if (tabFolder.getItemCount() > 0 && !partIsActive) {
-					setControlSize(current);
+					setControlSize();
 				}
 				break;
 			}
@@ -802,22 +796,23 @@ public IStatus saveState(IMemento memento)
 public void setBounds(Rectangle r) {
 	if (tabFolder != null)
 		tabFolder.setBounds(r);
-	setControlSize(current);
+	setControlSize();
 }
 /**
  * Set the size of a page in the folder.
  */
-private void setControlSize(LayoutPart part) {
-	if (part == null || tabFolder == null) 
+private void setControlSize() {
+	if (current == null || tabFolder == null) 
 		return;
 	Rectangle bounds;
 	if (mapTabToPart.size() > 1)
 		bounds = calculatePageBounds(tabFolder);
 	else
 		bounds = tabFolder.getBounds();
-	part.setBounds(bounds);
-	part.moveAbove(tabFolder);
+	current.setBounds(bounds);
+	current.moveAbove(tabFolder);
 }
+
 public void setSelection(int index) {
 	if (!active) return;
 
@@ -842,11 +837,12 @@ private void setSelection(LayoutPart part) {
 
 	// Deactivate old / Activate new.
 	if (current != null && current != part){
-		current.setBounds(0, 0, 0, 0);
+		current.setVisible(false);
 	}
 	current = part;
 	if (current != null) {
-		setControlSize(current);
+		setControlSize();
+		current.setVisible(true);
 	}
 
 	/*
