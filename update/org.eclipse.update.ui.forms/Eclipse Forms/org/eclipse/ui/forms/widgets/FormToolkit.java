@@ -300,6 +300,26 @@ public class FormToolkit {
 		hyperlinkGroup.add(hyperlink);
 		return hyperlink;
 	}
+	
+	/**
+	 * Creates an image hyperlink as a part of the form. The hyperlink will be added
+	 * to the hyperlink group that belongs to this toolkit.
+	 * 
+	 * @param parent
+	 *            the hyperlink parent
+	 * @param style
+	 *            the hyperlink style
+	 * @return the image hyperlink widget
+	 */
+	public ImageHyperlink createImageHyperlink(
+		Composite parent,
+		int style) {
+		ImageHyperlink hyperlink = new ImageHyperlink(parent, style);
+		hyperlink.addFocusListener(visibilityHandler);
+		hyperlink.addKeyListener(keyboardHandler);
+		hyperlinkGroup.add(hyperlink);
+		return hyperlink;
+	}
 
 	/**
 	 * Creates a rich text as a part of the form.

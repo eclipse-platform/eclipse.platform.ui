@@ -107,18 +107,7 @@ public class Hyperlink extends AbstractHyperlink {
 		int textHeight = textSize.y + 2 * marginHeight;
 		return new Point(textWidth, textHeight);
 	}
-	private Point computeTextSize(int wHint, int hHint) {
-		Point extent;
-		GC gc = new GC(this);
-		gc.setFont(getFont());
-		if ((getStyle() & SWT.WRAP) != 0 && wHint != SWT.DEFAULT) {
-			extent = FormUtil.computeWrapSize(gc, text, wHint);
-		} else {
-			extent = gc.textExtent(getText());
-		}
-		gc.dispose();
-		return extent;
-	}
+
 	/**
 	 * Returns the current hyperlink text.
 	 * 
@@ -151,10 +140,15 @@ public class Hyperlink extends AbstractHyperlink {
 		int x = marginWidth;
 		int y = marginHeight;
 		Point size = getSize();
-		Rectangle bounds =  new Rectangle(x, y, size.x - marginWidth - marginWidth, size.y
-				- marginHeight - marginHeight);
+		Rectangle bounds = new Rectangle(x, y, size.x - marginWidth
+				- marginWidth, size.y - marginHeight - marginHeight);
 		paintText(gc, bounds);
 	}
+	/**
+	 * Paints the hyperlink text in provided bounding rectangle.
+	 * @param gc graphic context
+	 * @param bounds the bounding rectangle in which to paint the text
+	 */
 	protected void paintText(GC gc, Rectangle bounds) {
 		gc.setFont(getFont());
 		gc.setForeground(getForeground());
@@ -169,5 +163,17 @@ public class Hyperlink extends AbstractHyperlink {
 				gc.drawLine(marginWidth, lineY, bounds.width, lineY);
 			}
 		}
+	}
+	private Point computeTextSize(int wHint, int hHint) {
+		Point extent;
+		GC gc = new GC(this);
+		gc.setFont(getFont());
+		if ((getStyle() & SWT.WRAP) != 0 && wHint != SWT.DEFAULT) {
+			extent = FormUtil.computeWrapSize(gc, text, wHint);
+		} else {
+			extent = gc.textExtent(getText());
+		}
+		gc.dispose();
+		return extent;
 	}
 }
