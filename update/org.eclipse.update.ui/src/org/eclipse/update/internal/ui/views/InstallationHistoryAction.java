@@ -30,6 +30,8 @@ public class InstallationHistoryAction extends Action {
 	private static final String lightBlue = "#EEEEFF"; //$NON-NLS-1$
 	private static final String white = "#FFFFFF"; //$NON-NLS-1$
 	private static final String darkBlue = "#99AADD"; //$NON-NLS-1$
+//	private static final String CONFIGURATION = "CONFIGURATION"; //$NON-NLS-1$
+	private static final String ACTIVITY = "ACTIVITY"; //$NON-NLS-1$
 
 	public InstallationHistoryAction(String text, ImageDescriptor desc) {
 		super(text, desc);
@@ -57,8 +59,10 @@ public class InstallationHistoryAction extends Action {
 	private void openLog() throws CoreException {
 		try {
 			buffRead = new BufferedReader(new FileReader(path.toOSString()));
-			htmlLog = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getTempFile()))));
+			htmlLog = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getTempFile()), "UTF-8")));
 		} catch (FileNotFoundException e) {
+			throwCoreException(e);
+		} catch (UnsupportedEncodingException e) {
 			throwCoreException(e);
 		}
 
@@ -112,7 +116,7 @@ public class InstallationHistoryAction extends Action {
 				type = htmlCode.nextToken();
 				type = type.substring(type.indexOf("!") + 1, type.length()); //$NON-NLS-1$
 
-				if (type.equals(UpdateUI.getString("InstallationHistoryAction.activity"))) { //$NON-NLS-1$
+				if (type.equals(ACTIVITY)) {
 					target = ""; //$NON-NLS-1$
 					Date d = new Date(new Long(htmlCode.nextToken()).longValue());
 					DateFormat df = DateFormat.getDateTimeInstance();
