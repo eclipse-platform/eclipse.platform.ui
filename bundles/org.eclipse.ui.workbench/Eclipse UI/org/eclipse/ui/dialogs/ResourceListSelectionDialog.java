@@ -242,7 +242,8 @@ protected Control createDialogArea(Composite parent) {
 	
 	pattern.addKeyListener(new KeyAdapter(){
 		public void keyPressed(KeyEvent e) {
-			textChanged();
+			if (e.keyCode == SWT.ARROW_DOWN) resourceNames.setFocus();
+			else textChanged();
 		}
 	});
 			
