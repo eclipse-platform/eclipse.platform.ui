@@ -148,7 +148,7 @@ A.book {
 %>
 <body>
 <script>
-alert('<%=WebappResources.getString("CannotSync", null)%>');
+alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", null))%>');
 // Restore old navigation
 if (parent.parent.temp){
 	document.body.innerHTML = parent.parent.temp;
@@ -171,7 +171,7 @@ if (parent.parent.temp){
 		tocDescription = "content/help:" + tocDescription;
 
 %>
-<body onload='onloadHandler("<%=tocHref%>", "<%=tocElement.getAttribute("label")%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
+<body onload='onloadHandler("<%=tocHref%>", "<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
 	<ul class='expanded' id='root'>
 		<a class='book' href='<%=tocDescription%>'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
 <%

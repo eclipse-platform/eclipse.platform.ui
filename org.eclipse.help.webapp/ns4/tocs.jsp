@@ -46,7 +46,7 @@ DIV {
 ContentUtil content = new ContentUtil(application, request);
 String bookshelf = WebappResources.getString("Bookshelf", request);
 %>
-	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <img src="../images/home_obj.gif" border=0> <%=bookshelf%> </nobr> </a></div>
+	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(bookshelf)%>"'> <nobr> <img src="../images/home_obj.gif" border=0> <%=bookshelf%> </nobr> </a></div>
 <%
 Element tocsElement = content.loadTocs();
 if (tocsElement == null) return;
@@ -57,7 +57,7 @@ for (int i=0; i<tocs.getLength(); i++)
 	String label = toc.getAttribute("label");
 	String id = toc.getAttribute("href");
 %>
-		<div class='list'><a  href='javascript:parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=label%>"'><nobr><img src="../images/container_obj.gif" border=0> <%=label%> </nobr> </a></div>
+		<div class='list'><a  href='javascript:parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(label)%>"'><nobr><img src="../images/container_obj.gif" border=0> <%=label%> </nobr> </a></div>
 <%		
 }
 %>

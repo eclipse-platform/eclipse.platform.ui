@@ -128,7 +128,7 @@ if (document.layers){
 		tocDescription = "content/help:" + tocDescription;
 
 %>
-<body onload='onloadHandler("<%=tocHref%>", "<%=tocElement.getAttribute("label")%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
+<body onload='onloadHandler("<%=tocHref%>", "<%=UrlUtil.JavaScriptEncode(tocElement.getAttribute("label"))%>", "<%=tocDescription%>", <%=topicHref != null%>)'>
 	<ul class='expanded' id='root'>
 		<a class='book' href='<%=tocDescription%>'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
 <%
@@ -178,7 +178,7 @@ if (document.layers){
 		// use <nobr> for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
 %>
 		<li>
-			<a href="<%=href%>" onmouseover='window.status="<%=topic.getAttribute("label")%>"'><nobr> <img src="<%=image%>" border=0>&nbsp;<%=topic.getAttribute("label")%></nobr></a>
+			<a href="<%=href%>" onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(topic.getAttribute("label"))%>"'><nobr> <img src="<%=image%>" border=0>&nbsp;<%=topic.getAttribute("label")%></nobr></a>
 <%
 		if (hasNodes) {
 			childrenStack.pushChildren(topic);
