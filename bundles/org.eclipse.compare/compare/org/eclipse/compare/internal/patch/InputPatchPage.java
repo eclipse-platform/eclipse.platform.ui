@@ -8,7 +8,6 @@ package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 import java.text.MessageFormat;
-import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
@@ -171,34 +170,13 @@ import org.eclipse.core.runtime.*;
 		return super.getNextPage();
 	}
 			
-	private void addLeaf(ArrayList list, IContainer c) {
-		IResource[] rs= null;
-		try {
-			rs= c.members();
-		} catch(CoreException ex) {
-		}
-		if (rs != null) {
-			for (int i= 0; i < rs.length; i++) {
-				IResource r= rs[i];
-				if (r instanceof IFile)
-					list.add(r.getFullPath());
-				else if (r instanceof IContainer)
-					addLeaf(list, (IContainer) r);
-			}
-		}
-	}
-
 	/* (non-JavaDoc)
 	 * Method declared in IWizardPage.
 	 */
 	public boolean canFlipToNextPage() {
-		if (true) {
-			// we can't call getNextPage to determine if flipping is allowed since computing
-			// the next page is quite expensive. So we say yes if the page is complete.
-			return isPageComplete();
-		} else {
-			return super.canFlipToNextPage();
-		}
+		// we can't call getNextPage to determine if flipping is allowed since computing
+		// the next page is quite expensive. So we say yes if the page is complete.
+		return isPageComplete();
 	}
 	
 	private void setEnablePatchFile(boolean enable) {
