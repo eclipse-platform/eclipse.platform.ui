@@ -241,6 +241,7 @@ public class NewProjectWizard extends MultiStepCapabilityWizard implements INewW
 	protected void initializeDefaultPageImageDescriptor() {
 		String iconPath = "icons/full/";//$NON-NLS-1$		
 		try {
+			// @issue when icons move to IDE, need to update the following
 			URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
 			URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
 			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
