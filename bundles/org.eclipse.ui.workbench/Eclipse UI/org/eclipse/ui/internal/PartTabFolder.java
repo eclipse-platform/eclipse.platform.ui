@@ -119,17 +119,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		 * @see org.eclipse.swt.events.MouseAdapter#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-
-			if (current instanceof PartPane) {
-				WorkbenchPage page = ((PartPane) current).getPage();
-				if (current instanceof ViewPane) {
-					if (page.isZoomed()) {
-						setState(STATE_RESTORED);
-					} else {
-						setState(STATE_MAXIMIZED);
-					}
-				}
-			}
+//
+//			if (current instanceof PartPane) {
+//				WorkbenchPage page = ((PartPane) current).getPage();
+//				if (current instanceof ViewPane) {
+//					if (page.isZoomed()) {
+//						setState(STATE_RESTORED);
+//					} else {
+//						setState(STATE_MAXIMIZED);
+//					}
+//				}
+//			}
 
 		}
 
