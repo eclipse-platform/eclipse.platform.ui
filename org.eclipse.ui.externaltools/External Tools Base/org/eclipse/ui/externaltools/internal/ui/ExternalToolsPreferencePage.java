@@ -65,7 +65,6 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		promptForMigrationButton.setText("Always &prompt before migrating project builders");
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
 		
-		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 	

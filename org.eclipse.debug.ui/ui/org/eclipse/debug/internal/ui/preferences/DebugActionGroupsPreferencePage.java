@@ -175,7 +175,6 @@ public class DebugActionGroupsPreferencePage extends PreferencePage implements I
 		Color clr = disp.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 		actionViewer.getTable().setBackground(clr);
 		
-		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 	

@@ -17,7 +17,6 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -99,7 +98,6 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 			}
 		}				
 		fTabs = (LaunchHistoryPreferenceTab[])tabList.toArray(new LaunchHistoryPreferenceTab[tabList.size()]);
-		Dialog.applyDialogFont(composite);
 		return composite;
 	}
 	
