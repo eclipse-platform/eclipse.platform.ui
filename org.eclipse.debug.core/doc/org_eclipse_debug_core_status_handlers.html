@@ -13,7 +13,7 @@
 <p><b><i>Identifier: </i></b>org.eclipse.debug.core.statusHandlers</p>
 
 <p><b><i>Description: </i></b>This extension point provides a generic
- mechanism for separating the generation and resolutoin of an error.
+ mechanism for separating the generation and resolution of an error.
  The interaction between the source of the error, and the resolution
  is client defined. It is a client reponsibility to lookup and delegate
  to status handlers when an error condition occurrs.</p>
@@ -21,8 +21,8 @@
 <p><b><i>Configuration Markup:</i></b> </p>
 
 <pre>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT statusHandler</tt>&gt;
-<tt>&nbsp;&nbsp; &lt;!ATTLIST statusHandler</tt> 
+<tt>&nbsp;&nbsp; &lt;!ELEMENT statusHandlers</tt>&gt;
+<tt>&nbsp;&nbsp; &lt;!ATTLIST statusHandlers</tt> 
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; plugin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
@@ -50,7 +50,7 @@
        id="com.example.ExampleIdentifier"
        class="com.example.ExampleStatusHandler"
        plugin="com.example.ExamplePluginId"
-       code="123"
+       code="123"&gt;
     &lt;/statusHandler&gt;
   &lt;/extension&gt;
 </pre>
