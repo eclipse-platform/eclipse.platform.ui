@@ -26,6 +26,4 @@ public interface IPreferenceIds {
 	public static final String SYNCVIEW_VIEW_TYPE = PREFIX + "view_type"; //$NON-NLS-1$
 	public static final String SYNCVIEW_VIEW_TABLESORT = PREFIX + "table_column_sort"; //$NON-NLS-1$
 	public static final String SYNCVIEW_VIEW_TABLESORT_REVERSED = PREFIX + "table_column_sort_reversed"; //$NON-NLS-1$
-	
-	public static final String TESTING_SYNCVIEW = PREFIX + "testing_syncview"; //$NON-NLS-1$
 }

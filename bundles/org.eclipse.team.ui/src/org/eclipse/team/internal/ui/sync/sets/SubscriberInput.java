@@ -87,6 +87,10 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 		return workingRootsSet.getSyncSet();
 	}
 
+	public SubscriberEventHandler getEventHandler() {
+		return eventHandler;
+	}
+
 	public void setFilter(SyncInfoFilter filter, IProgressMonitor monitor) throws TeamException {
 		filteredSyncSet.setFilter(filter);
 		filteredSyncSet.reset(monitor);

@@ -14,6 +14,7 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -29,6 +30,23 @@ import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 public class SyncInfoFromSyncSet extends SyncInfoSource {
 
 	public SyncInfoFromSyncSet() {		
+	}
+	
+	public void waitForEventNotification(SubscriberInput input) {
+		// process UI events first, give the main thread a chance
+		// to handle any syncExecs or asyncExecs posted as a result
+		// of the event processing thread.
+		while (Display.getCurrent().readAndDispatch()) {};
+		
+		// wait for the event handler to process changes.
+		Job job = input.getEventHandler().getEventHandlerJob();
+		while(job.getState() != Job.NONE) {
+			while (Display.getCurrent().readAndDispatch()) {};
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+			}
+		}						
 	}
 	
 	public SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
@@ -51,19 +69,19 @@ public class SyncInfoFromSyncSet extends SyncInfoSource {
 		if (subscriber != input.getSubscriber()) {
 			// ensure that the CVS subscriber is active
 			syncView.activateSubscriber(subscriber);
-			while (Display.getCurrent().readAndDispatch()) {};			
 			input = syncView.getInput();
 		}
 		if (subscriber != input.getSubscriber()) {
 			throw new AssertionFailedError();
 		}
+		waitForEventNotification(input);
 		return input;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#assertProjectRemoved(org.eclipse.team.core.subscribers.TeamSubscriber, org.eclipse.core.resources.IProject)
 	 */
-	protected void assertProjectRemoved(TeamSubscriber subscriber, IProject project) throws TeamException {
+	protected void assertProjectRemoved(TeamSubscriber subscriber, IProject project) throws TeamException {		
 		super.assertProjectRemoved(subscriber, project);
 		SubscriberInput input = getInput(subscriber);
 		SyncSet set = input.getFilteredSyncSet();

@@ -13,8 +13,6 @@ package org.eclipse.team.tests.ccvs.ui.sync;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.CVSMergeSubscriberTest;
@@ -39,7 +37,6 @@ public class AllTestsSynchronizeView extends EclipseTest {
 		
 		// sync info tests re-using the subscribers tests but checking state based on the 
 		// sync set data structures in the synchronize view.
-		TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.TESTING_SYNCVIEW, true);
 		suite.addTest(CVSMergeSubscriberTest.suite());
 		suite.addTest(CVSWorkspaceSubscriberTest.suite());
 		CVSSyncSubscriberTest.setSyncSource(new SyncInfoFromSyncSet());
