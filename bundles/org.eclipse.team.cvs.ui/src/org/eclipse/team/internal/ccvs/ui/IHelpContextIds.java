@@ -71,4 +71,7 @@ public interface IHelpContextIds {
 	
 	// Viewers
 	public static final String CATCHUP_RELEASE_VIEWER = PREFIX + "catchup_release_viewer_context"; //$NON-NLS-1$
+	
+	// Add to .cvsignor dialog
+	public static final String ADD_TO_CVSIGNORE = PREFIX + "add_to_cvsignore_context"; //$NON-NLS-1$	
 }

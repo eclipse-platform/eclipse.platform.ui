@@ -55,6 +55,10 @@
       <description>Enter the name of the branch tag to be applied to the revisions that exist locally.
       </description>
     </context>
+    <context id="add_to_cvsignore_context">
+    	<description>In this dialog choose how to add the selected resources to the .cvsignore files. For each resource to be ignored, a .cvsignore file will created in its parent directory containing the pattern specified in the dialog. This won't affect resources already under version control.
+    	</description>
+    </context>
     
  	<!-- ********************************** -->
  	<!-- Preference Pages 					-->

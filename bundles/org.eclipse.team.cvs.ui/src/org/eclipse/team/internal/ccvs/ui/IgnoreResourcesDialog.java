@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class IgnoreResourcesDialog extends Dialog {
 	// resources that should be ignored
@@ -133,8 +134,8 @@ public class IgnoreResourcesDialog extends Dialog {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		
-		createWrappingLabel(top, Policy.bind("IgnoreResourcesDialog.description")); //$NON-NLS-1$
-		createIndentedLabel(top, "", 0); // blank line //$NON-NLS-1$
+		WorkbenchHelp.setHelp(top, IHelpContextIds.ADD_TO_CVSIGNORE);
+		
 		createIndentedLabel(top, Policy.bind("IgnoreResourcesDialog.prompt"), 0); //$NON-NLS-1$
 		
 		Listener selectionListener = new Listener() {
