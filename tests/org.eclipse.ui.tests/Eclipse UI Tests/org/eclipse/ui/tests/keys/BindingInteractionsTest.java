@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -23,8 +21,6 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
-import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -36,82 +32,6 @@ import org.eclipse.ui.tests.util.UITestCase;
  * @since 3.1
  */
 public final class BindingInteractionsTest extends UITestCase {
-
-	/**
-	 * A binding that can be used for testing purposes. This guarantees that the
-	 * properties tested are inherent to all bindings, and not just a specific
-	 * type of bindings.
-	 */
-	private static final class TestBinding extends Binding {
-
-		/**
-		 * A simple trigger sequence for this test.
-		 */
-		private static final class TestTriggerSequence extends TriggerSequence {
-
-			/**
-			 * Constructs a new instance of <code>TestTriggerSequence</code>.
-			 * 
-			 * @param myTriggers
-			 *            The triggers to use in constructing this sequence;
-			 *            must not be <code>null</code>.
-			 */
-			public TestTriggerSequence(final List myTriggers) {
-				super(myTriggers);
-			}
-
-			public final String format() {
-				return toString();
-			}
-		}
-
-		/**
-		 * A trigger sequence to be used by all test bindings. This value is
-		 * never <code>null</code>.
-		 */
-		private static final TriggerSequence TRIGGER_SEQUENCE = new TestTriggerSequence(
-				Collections.EMPTY_LIST);
-
-		/**
-		 * Constructs a new instance of <code>TestBinding</code>.
-		 * 
-		 * @param commandId
-		 *            The command identifier triggered by this binding; must not
-		 *            be <code>null</code>.
-		 * @param schemeId
-		 *            The scheme to which this binding belongs; must not be
-		 *            <code>null</code>.
-		 * @param contextId
-		 *            The context to which this binding belongs; must not be
-		 *            <code>null</code>.
-		 * @param locale
-		 *            The locale for which this binding applies; may be
-		 *            <code>null</code>.
-		 * @param platform
-		 *            The platform for which this binding applies; may be
-		 *            <code>null</code>.
-		 * @param type
-		 *            The type of binding.
-		 */
-		private TestBinding(final String commandId, final String schemeId,
-				final String contextId, final String locale,
-				final String platform, final int type) {
-			super(commandId, schemeId, contextId, locale, platform, null, type);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.bindings.Binding#getTriggerSequence()
-		 */
-		public final TriggerSequence getTriggerSequence() {
-			return TRIGGER_SEQUENCE;
-		}
-
-		public final String toString() {
-			return Util.ZERO_LENGTH_STRING;
-		}
-	}
 
 	/**
 	 * The binding manager to use in each test case. A new binding manager is
