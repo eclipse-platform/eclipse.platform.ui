@@ -46,7 +46,9 @@ protected WorkspaceModifyOperation() {
  * @exception InvocationTargetException if the operation fails due to an exception other than CoreException
  * @exception InterruptedException if the operation detects a request to cancel, 
  *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
- *  <code>InterruptedException</code>
+ *  <code>InterruptedException</code>.  It is also possible to throw 
+ *  <code>OperationCanceledException</code>, which gets mapped to <code>InterruptedException</code>
+ *  by the <code>run</code> method.
  */
 protected abstract void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException;
 /**
