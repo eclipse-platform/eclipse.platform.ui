@@ -42,7 +42,8 @@
       <page
             name="%appserver_preferences_page_name"
             class="org.eclipse.help.ui.internal.AppserverPreferencePage"
-            id="org.eclipse.help.ui.appserverPreferancePage">
+            id="org.eclipse.help.ui.appserverPreferancePage"
+            category="org.eclipse.help.ui.browsersPreferancePage">
       </page>
    </extension>
 <!-- Context Help contribution -->
