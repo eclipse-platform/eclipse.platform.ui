@@ -1223,7 +1223,10 @@
             commandId="org.eclipse.team.cvs.ui.update"/>
       <handlerSubmission
       		commandId="org.eclipse.team.ui.synchronizeLast"
-            handler="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>      
+            handler="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>
+      <handlerSubmission
+            handler="org.eclipse.team.internal.ccvs.ui.actions.CheckoutWizardAction"
+            commandId="org.eclipse.team.cvs.ui.checkout"/>      
    </extension>
    
 <!-- ********** Color and Font Definitions ************** -->   
