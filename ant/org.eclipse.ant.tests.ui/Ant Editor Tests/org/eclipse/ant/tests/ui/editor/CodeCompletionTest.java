@@ -41,7 +41,6 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Tests everything about code completion and code assistance.
@@ -505,7 +504,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     /**
      * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
      */
-    public void testXMLParsingWithAntEditorDefaultHandler() throws SAXException, ParserConfigurationException, IOException {
+    public void testXMLParsingWithAntEditorDefaultHandler() throws ParserConfigurationException, IOException {
         SAXParser parser = getSAXParser();
 		File file= getBuildFile("test1.xml");
         AntEditorSaxDefaultHandler handler = new AntEditorSaxDefaultHandler(file.getParentFile(), 4, 8);

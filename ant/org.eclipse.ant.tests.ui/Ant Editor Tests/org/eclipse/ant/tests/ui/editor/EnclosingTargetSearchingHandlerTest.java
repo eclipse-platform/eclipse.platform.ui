@@ -28,7 +28,6 @@ import junit.framework.TestSuite;
 import org.eclipse.ant.internal.ui.editor.EnclosingTargetSearchingHandler;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /**
  * Tests the parsing using the EnclosingTargetSearchingHandler.
@@ -54,7 +53,7 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
     /**
      * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
-    public void testParsingOfBuildFileWithoutTargetElement() throws SAXException, IOException, ParserConfigurationException {
+    public void testParsingOfBuildFileWithoutTargetElement() throws IOException, ParserConfigurationException {
         SAXParser parser = getSAXParser();
 		File file= getBuildFile("test1.xml");
         EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 4, 8);
@@ -89,7 +88,7 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
     /**
      * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
-    public void testParsingOfBuildFileWithTargetElement() throws SAXException, ParserConfigurationException, IOException {
+    public void testParsingOfBuildFileWithTargetElement() throws ParserConfigurationException, IOException {
         SAXParser parser = getSAXParser();
 
 		File file= getBuildFile("russianbuild.xml");
@@ -127,7 +126,7 @@ public class EnclosingTargetSearchingHandlerTest extends AbstractAntUITest {
     /**
      * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
-    public void testParsingOfEmptyBuildFile() throws SAXException, ParserConfigurationException, IOException {
+    public void testParsingOfEmptyBuildFile() throws ParserConfigurationException, IOException {
 		File file= getBuildFile("projectOnly.xml");
         EnclosingTargetSearchingHandler handler = new EnclosingTargetSearchingHandler(file.getParentFile(), 0, 0);
         InputStream stream= new FileInputStream(file);
