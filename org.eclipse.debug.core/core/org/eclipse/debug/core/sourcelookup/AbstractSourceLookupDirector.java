@@ -7,11 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems - Mikhail Khodjaiants - Bug 88232
  *******************************************************************************/
 package org.eclipse.debug.core.sourcelookup;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -422,9 +424,12 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	public void setSourceContainers(ISourceContainer[] containers) {
 		synchronized (this) {
+			List list = Arrays.asList( containers );
 			ISourceContainer[] old = getSourceContainers();
 			for (int i = 0; i < old.length; i++) {
-				old[i].dispose();
+				// skip overlapping containers
+				if (!list.contains(old[i]))
+					old[i].dispose();
 			}
 			fSourceContainers = containers;
 			for (int i = 0; i < containers.length; i++) {
