@@ -17,7 +17,7 @@ import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStor
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 
-public class CVSBaseSynchronizationCache extends ResourceVariantByteStore {
+public class CVSBaseResourceVariantTree extends ResourceVariantByteStore {
 	public void dispose() {
 		// Do nothing
 	}

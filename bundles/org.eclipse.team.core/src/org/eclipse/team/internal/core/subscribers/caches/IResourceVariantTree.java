@@ -34,6 +34,8 @@ public interface IResourceVariantTree {
 	
 	public abstract IResourceVariant getResourceVariant(IResource resource) throws TeamException;
 	
+	public boolean hasResourceVariant(IResource resource) throws TeamException;
+	
 	/**
 	 * Refreshes the resource variant tree for the specified resources and possibly 
 	 * their descendants, depending on the depth.

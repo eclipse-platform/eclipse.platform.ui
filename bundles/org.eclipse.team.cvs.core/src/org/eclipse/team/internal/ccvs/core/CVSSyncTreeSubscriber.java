@@ -10,17 +10,33 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.core.subscribers.caches.*;
-import org.eclipse.team.internal.ccvs.core.resources.*;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
+import org.eclipse.team.core.synchronize.IResourceVariant;
+import org.eclipse.team.core.synchronize.IResourceVariantComparator;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.core.subscribers.caches.PersistantResourceVariantByteStore;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.SyncTreeSubscriber;
 
 /**
  * This class provides common funtionality for three way sychronizing
@@ -151,27 +167,15 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 
 	protected IResource[] refreshBase(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		if (isThreeWay()) {
-			return new CVSRefreshOperation(getBaseSynchronizationCache(), null, getBaseTag(),  getCacheFileContentsHint())
-				.refresh(resources, depth, monitor);
+			return getBaseTree().refresh(resources, depth, monitor);
 		} else {
 			return new IResource[0];
 		}
 	}
 
 	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		return new CVSRefreshOperation(getRemoteSynchronizationCache(), getBaseSynchronizationCache(), getRemoteTag(), getCacheFileContentsHint())
-			.refresh(resources, depth, monitor);
+		return getRemoteTree().refresh(resources, depth, monitor);
 	}
-
-	/**
-	 * Return the tag associated with the base tree. t is used by the refreshBase method.
-	 */
-	protected abstract CVSTag getRemoteTag();
-	
-	/**
-	 * Return the tag associated with the base tree. t is used by the refreshRemote method.
-	 */
-	protected abstract CVSTag getBaseTag();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#isSupervised(org.eclipse.core.resources.IResource)
@@ -199,66 +203,26 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 	}
 	
 	public IResourceVariant getRemoteResource(IResource resource) throws TeamException {
-		return getRemoteResource(resource, getRemoteSynchronizationCache());
+		return getRemoteTree().getResourceVariant(resource);
 	}
 
 	public IResourceVariant getBaseResource(IResource resource) throws TeamException {
 		if (isThreeWay()) {
-			return getRemoteResource(resource, getBaseSynchronizationCache());
+			return getBaseTree().getResourceVariant(resource);
 		} else {
 			return null;
 		}
 	}
 	
 	/**
-	 * Return the synchronization cache that provides access to the base sychronization bytes.
+	 * Return the base resource variant tree.
 	 */
-	protected abstract ResourceVariantByteStore getBaseSynchronizationCache();
+	protected abstract ResourceVariantTree getBaseTree();
 
 	/**
-	 * Return the synchronization cache that provides access to the base sychronization bytes.
+	 * Return the remote resource variant tree.
 	 */
-	protected abstract ResourceVariantByteStore getRemoteSynchronizationCache();
-	
-	public IResourceVariant getRemoteResource(IResource resource, ResourceVariantByteStore cache) throws TeamException {
-		byte[] remoteBytes = cache.getBytes(resource);
-		if (remoteBytes == null) {
-			// There is no remote handle for this resource
-			return null;
-		} else {
-			// TODO: This code assumes that the type of the remote resource
-			// matches that of the local resource. This may not be true.
-			if (resource.getType() == IResource.FILE) {
-				byte[] parentBytes = cache.getBytes(resource.getParent());
-				if (parentBytes == null) {
-					// Before failing, try and use the local folder sync bytes
-					ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor(resource.getParent());
-					FolderSyncInfo info = local.getFolderSyncInfo();
-					if (info == null) {
-						CVSProviderPlugin.log(new CVSException( 
-								Policy.bind("ResourceSynchronizer.missingParentBytesOnGet", getSyncName(cache).toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
-						// Assume there is no remote and the problem is a programming error
-						return null;
-					} else {
-						// Use the folder sync from the workspace and the tag from the file
-						
-						byte[] tagBytes = ResourceSyncInfo.getTagBytes(remoteBytes);
-						CVSTag tag;
-						if (tagBytes == null || tagBytes.length == 0) {
-							tag = CVSTag.DEFAULT;
-						} else {
-							tag = new CVSEntryLineTag(new String(tagBytes));
-						}
-						FolderSyncInfo newInfo = new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, false);
-						parentBytes = newInfo.getBytes();
-					}
-				}
-				return RemoteFile.fromBytes(resource, remoteBytes, parentBytes);
-			} else {
-				return RemoteFolder.fromBytes(resource, remoteBytes);
-			}
-		}
-	}
+	protected abstract ResourceVariantTree getRemoteTree();
 	
 	private String getSyncName(ResourceVariantByteStore cache) {
 		if (cache instanceof PersistantResourceVariantByteStore) {
@@ -271,7 +235,7 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 	 * @see org.eclipse.team.core.subscribers.helpers.SyncTreeSubscriber#hasRemote(org.eclipse.core.resources.IResource)
 	 */
 	protected boolean hasRemote(IResource resource) throws TeamException {
-		return getRemoteSynchronizationCache().getBytes(resource) != null;
+		return getRemoteTree().hasResourceVariant(resource);
 	}
 
 	/* (non-Javadoc)
@@ -296,9 +260,9 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 					throw e;
 				}
 			}
-			allMembers.addAll(Arrays.asList(getMembers(getRemoteSynchronizationCache(), resource)));
+			allMembers.addAll(Arrays.asList(getMembers(getRemoteTree(), resource)));
 			if (isThreeWay()) {
-				allMembers.addAll(Arrays.asList(getMembers(getBaseSynchronizationCache(), resource)));
+				allMembers.addAll(Arrays.asList(getMembers(getBaseTree(), resource)));
 			}
 			for (Iterator iterator = allMembers.iterator(); iterator.hasNext();) {
 				IResource member = (IResource) iterator.next();
@@ -316,11 +280,11 @@ public abstract class CVSSyncTreeSubscriber extends SyncTreeSubscriber {
 		}
 	}
 
-	private IResource[] getMembers(ResourceVariantByteStore cache, IResource resource) throws TeamException, CoreException {
+	private IResource[] getMembers(ResourceVariantTree tree, IResource resource) throws TeamException, CoreException {
 		// Filter and return only phantoms associated with the remote synchronizer.
 		IResource[] members;
 		try {
-			members = cache.members(resource);
+			members = tree.members(resource);
 		} catch (CoreException e) {
 			if (!isSupervised(resource) || e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
 				// The resource is no longer supervised or doesn't exist in any form

@@ -14,13 +14,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
 import org.eclipse.team.core.subscribers.ISubscriberChangeListener;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
-import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantByteStore;
+import org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MultiTagResourceVariantTree;
+import org.eclipse.team.internal.core.subscribers.caches.ResourceVariantTree;
 import org.eclipse.team.internal.core.subscribers.caches.SessionResourceVariantByteStore;
 
 /**
@@ -32,51 +35,44 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	public static final String QUALIFIED_NAME = CVSProviderPlugin.ID + ".compare"; //$NON-NLS-1$
 	private static final String UNIQUE_ID_PREFIX = "compare-"; //$NON-NLS-1$
 	
-	private CVSTag tag;
-	private SessionResourceVariantByteStore remoteByteStore;
 	private IResource[] resources;
+	private CVSResourceVariantTree tree;
 	
 	public CVSCompareSubscriber(IResource[] resources, CVSTag tag) {
 		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", tag.getName()), Policy.bind("CVSCompareSubscriber.3")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.resources = resources;
-		this.tag = tag;
+		tree = new CVSResourceVariantTree(new SessionResourceVariantByteStore(), tag, getCacheFileContentsHint());
+		initialize();
+	}
+	
+	public CVSCompareSubscriber(IProject[] projects, CVSTag[] tags, String name) {
+		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", name), Policy.bind("CVSCompareSubscriber.3")); //$NON-NLS-1$ //$NON-NLS-2$
+		this.resources = projects;
+		MultiTagResourceVariantTree multiTree = new MultiTagResourceVariantTree(new SessionResourceVariantByteStore(), getCacheFileContentsHint());
+		for (int i = 0; i < tags.length; i++) {
+			multiTree.addProject(projects[i], tags[i]);
+		}
 		initialize();
 	}
 
 	private void initialize() {
-		remoteByteStore = new SessionResourceVariantByteStore();
 		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().addListener(this);
 	}
 
 	public void dispose() {	
 		CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().removeListener(this);	
-		remoteByteStore.dispose();	
+		tree.dispose();	
 	}
 	
 	private static QualifiedName getUniqueId() {
 		String uniqueId = Long.toString(System.currentTimeMillis());
 		return new QualifiedName(QUALIFIED_NAME, UNIQUE_ID_PREFIX + uniqueId); //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteTag()
-	 */
-	protected CVSTag getRemoteTag() {
-		return tag;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseTag()
-	 */
-	protected CVSTag getBaseTag() {
-		// No base tag needed since it's a two way compare
-		return null;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getBaseSynchronizationCache()
 	 */
-	protected ResourceVariantByteStore getBaseSynchronizationCache() {
+	protected ResourceVariantTree getBaseTree() {
 		// No base cache needed since it's a two way compare
 		return null;
 	}
@@ -84,8 +80,8 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber#getRemoteSynchronizationCache()
 	 */
-	protected ResourceVariantByteStore getRemoteSynchronizationCache() {
-		return remoteByteStore;
+	protected ResourceVariantTree getRemoteTree() {
+		return tree;
 	}
 	
 	/* (non-Javadoc)
@@ -136,6 +132,11 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 			if (removedRoot.getFullPath().isPrefixOf(root.getFullPath())) {
 				// The root is no longer managed by CVS
 				removals.add(root);
+				try {
+					tree.removeRoot(root);
+				} catch (TeamException e) {
+					CVSProviderPlugin.log(e);
+				}
 			}
 		}
 		if (removals.isEmpty()) {
@@ -161,7 +162,7 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	 */
 	public boolean isSupervised(IResource resource) throws TeamException {
 		if (super.isSupervised(resource)) {
-			if (!resource.exists() && getRemoteSynchronizationCache().getBytes(resource) == null) {
+			if (!resource.exists() && !getRemoteTree().hasResourceVariant(resource)) {
 				// Exclude conflicting deletions
 				return false;
 			}
