@@ -3038,8 +3038,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (IncrementalFindTarget.class.equals(required)) {
 			if (fIncrementalFindTarget == null) {
-				IStatusLineManager manager= getStatusLineManager();				
-				fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
+				IStatusLineManager manager= getStatusLineManager();
+				// check introduced for #22282
+				if (manager != null)			
+					fIncrementalFindTarget= (fSourceViewer == null ? null : new IncrementalFindTarget(fSourceViewer, manager));
 			}
 			return fIncrementalFindTarget;
 		}
