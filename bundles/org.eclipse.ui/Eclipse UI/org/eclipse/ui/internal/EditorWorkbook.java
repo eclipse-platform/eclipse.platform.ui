@@ -786,22 +786,11 @@ public void zoomIn() {
 	if (isZoomed)
 		return;
 	isZoomed = true;
-	
-	// Remove each tab but the active.
-	if (tabFolder != null) {
-		// Get active editor.
-		CTabItem activeTab = tabFolder.getSelection();
-		if (activeTab == null)
-			return;
 
-		// Hide all inactive tabs.
-		Object [] tabArray = mapTabToEditor.keySet().toArray();
-		for (int nX = 0; nX < tabArray.length; nX ++) {
-			CTabItem tab = (CTabItem)tabArray[nX];
-			if (tab != activeTab)
-				removeTab(tab);
-		}
-	}
+	// Mark it's editors as zoom in
+	Iterator iterator = editors.iterator();
+	while (iterator.hasNext())
+		((EditorPane) iterator.next()).setZoomed(true);
 }
 /**
  * Zoom out and show all editors.
@@ -811,16 +800,9 @@ public void zoomOut() {
 		return;
 	isZoomed = false;
 	
-	// Create a tab for each inactive editor.
-	if (tabFolder != null) {
-		int count = 0;
-		Iterator enum = editors.iterator();
-		while (enum.hasNext()) {
-			EditorPane part = (EditorPane) enum.next();
-			if (part != visibleEditor)
-				createTab(part, count);
-			++ count;
-		}
-	}
+	// Mark it's editors as zoom out
+	Iterator iterator = editors.iterator();
+	while (iterator.hasNext())
+		((EditorPane) iterator.next()).setZoomed(false);
 }
 }

@@ -1033,7 +1033,7 @@ public boolean partChangeAffectsZoom(PartPane part) {
 	if (part.getWindow().getShell() != 
 		page.getWorkbenchWindow().getShell())
 		return false;
-	if (part == zoomPart)
+	if (part.isZoomed())
 		return false;
 	return true;
 }

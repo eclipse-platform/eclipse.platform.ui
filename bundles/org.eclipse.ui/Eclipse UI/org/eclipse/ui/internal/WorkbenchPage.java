@@ -404,11 +404,20 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	// Sanity check.	
 	if (!certifyPart(editor))
 		return false;
-		
-	// If part is added / removed always unzoom.
-	if (isZoomed())
-		zoomOut();
 
+	// Unzoom if necessary...
+	if (isZoomed()) {
+		PartSite site = (PartSite) editor.getSite();
+		EditorPane pane = (EditorPane) site.getPane();
+		if (!pane.isZoomed()) {
+			// Editor not the zoom part
+			zoomOut();
+		} else if (pane.getWorkbook().getItemCount() == 1) {
+			// Editor is zoomed and only editor left in workbook
+			zoomOut();
+		}
+	}
+	
 	// Save part.
 	if (save && editor.isSaveOnCloseNeeded() 
 		&& !getEditorManager().saveEditor(editor, true))
