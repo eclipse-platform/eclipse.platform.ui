@@ -263,7 +263,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		Control toolbar = getContainerToolBar(parentFolder);
 		parentFolder.setTopRight(toolbar, SWT.RIGHT);
 		int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		parentFolder.setTabHeight(height);
+		if (parentFolder.getTabHeight() < height)
+		    parentFolder.setTabHeight(height);
 		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL));
 		parentFolder.setSimple(false);
