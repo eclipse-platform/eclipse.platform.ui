@@ -864,14 +864,15 @@ public static void log(final IStatus status) {
 	}
 	for (int i = 0; i < listeners.length; i++) {
 		final ILogListener listener = listeners[i];
-		ISafeRunnable code = new ISafeRunnable() {
-			public void run() throws Exception {
+		try {
 				listener.logging(status, Platform.PI_RUNTIME);
-			}
-			public void handleException(Throwable e) {
-			}
-		};
-		run(code);
+		} catch (Exception e) {
+			//can't log an exception from a log listener (infinite loop)
+			e.printStackTrace(System.err);
+		} catch (LinkageError e) {
+			//can't log an exception from a log listener (infinite loop)
+			e.printStackTrace(System.err);
+		}
 	}
 }
 /**
