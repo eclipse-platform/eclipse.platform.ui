@@ -1,5 +1,4 @@
-ant.jar
-example.txt
-example.xml
-plugin.jars
-plugin.xml
+build.includes=ant.jar,example.txt,example.xml,plugin.jars,plugin.xml
+
+bin.includes=example.*,plugin.xml,*.jar
+javadoc.packages=org.eclipse.*

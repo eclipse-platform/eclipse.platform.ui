@@ -1,3 +1,4 @@
-icons
-plugin.jars
-plugin.xml
+build.includes=icons,plugin.jars,plugin.xml
+
+bin.includes=icons,plugin.xml,*.jar
+javadoc.packages=org.eclipse.*
