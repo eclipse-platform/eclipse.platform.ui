@@ -89,7 +89,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	private void removeBundle(Bundle bundle) {
-		registry.remove(bundle.getSymbolicName(), bundle.getBundleId());
+		registry.remove(bundle.getSymbolicName(), bundle.getBundleId());		
 	}
 
 	private void addBundle(Bundle bundle) {
@@ -100,8 +100,12 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		Namespace bundleModel = getBundleModel(bundle);
 		if (bundleModel == null)
 			return;
+		// bug 70941
+		// need to ensure we can find resource bundles from fragments 
+		if (Platform.PI_RUNTIME.equals(bundleModel.getHostIdentifier()))
+			Policy.forgetResourceBundle();
 		// Do not synchronize on registry here because the registry handles
-		// the synchronization for us in registry.add
+		// the synchronization for us in registry.add		
 		registry.add(bundleModel);
 	}
 

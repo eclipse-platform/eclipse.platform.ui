@@ -10,13 +10,33 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.Bundle;
 
 public class Policy {
 	private static String bundleName = "org.eclipse.core.internal.runtime.messages"; //$NON-NLS-1$
-	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
+	private static ResourceBundle bundle;
+
+	/*
+	 * Returns a resource bundle, creating one if it none is available. 
+	 */
+	private static ResourceBundle getResourceBundle() {
+		// thread safety
+		ResourceBundle tmpBundle = bundle;
+		if (tmpBundle != null)
+			return tmpBundle;
+		return bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault(), new BundleClassLoader(InternalPlatform.getDefault().getBundleContext().getBundle()));
+	}
+
+	/**
+	 * Forces the internal resource bundle to be recreated.
+	 */
+	public static void forgetResourceBundle() {
+		bundle = null;
+	}
 
 	/**
 	 * Lookup the message with the given ID in this catalog 
@@ -50,7 +70,7 @@ public class Policy {
 			return "No message available"; //$NON-NLS-1$
 		String message = null;
 		try {
-			message = bundle.getString(id);
+			message = getResourceBundle().getString(id);
 		} catch (MissingResourceException e) {
 			// If we got an exception looking for the message, fail gracefully by just returning
 			// the id we were looking for.  In most cases this is semi-informative so is not too bad.
@@ -96,4 +116,24 @@ public class Policy {
 		buffer.append(message);
 		System.out.println(buffer.toString());
 	}
+
+	/**
+	 * A helper classloader that prevents ResourceBundles to be cached.
+	 */
+	private static class BundleClassLoader extends ClassLoader {
+		private Bundle base;
+
+		public BundleClassLoader(Bundle base) {
+			this.base = base;
+		}
+
+		protected Class findClass(String name) throws ClassNotFoundException {
+			return base.loadClass(name);
+		}
+
+		protected URL findResource(String name) {
+			return base.getResource(name);
+		}
+	}
+
 }
