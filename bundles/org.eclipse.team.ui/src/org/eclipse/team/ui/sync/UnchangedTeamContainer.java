@@ -20,16 +20,14 @@ import org.eclipse.swt.graphics.Image;
  */
 public class UnchangedTeamContainer extends DiffNode implements ITeamNode {
 	private IResource resource;
-	protected SyncCompareInput diffModel;
 	
-	public UnchangedTeamContainer(SyncCompareInput input, IDiffContainer parent, IResource resource) {
-		this(input, parent, resource, Differencer.NO_CHANGE);
+	public UnchangedTeamContainer(IDiffContainer parent, IResource resource) {
+		this(parent, resource, Differencer.NO_CHANGE);
 	}
 	
-	public UnchangedTeamContainer(SyncCompareInput input, IDiffContainer parent, IResource resource, int description) {
+	public UnchangedTeamContainer(IDiffContainer parent, IResource resource, int description) {
 		super(parent, description);
 		this.resource = resource;
-		this.diffModel =input;
 	}
 	
 	/*

@@ -236,7 +236,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		MergeResource mergeResource = new MergeResource(tree);
 	
 		if (tree.isContainer()) {
-			IDiffContainer element = new ChangedTeamContainer(this, parent, mergeResource, type);
+			IDiffContainer element = new ChangedTeamContainer(parent, mergeResource, type);
 			try {				
 				ILocalSyncElement[] children = tree.members(pm);
 				for (int i = 0; i < children.length; i++) {
@@ -261,7 +261,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		while (resource.getType() != IResource.ROOT && !found) {
 			DiffContainer container = (DiffContainer)diffRoot.findChild(resource.getName());
 			if (container == null) {
-				container = new UnchangedTeamContainer(this, null, resource);
+				container = new UnchangedTeamContainer(null, resource);
 			} else {
 				found = true;
 			}

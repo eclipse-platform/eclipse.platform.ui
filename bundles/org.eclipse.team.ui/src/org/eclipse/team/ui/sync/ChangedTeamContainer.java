@@ -19,8 +19,8 @@ public class ChangedTeamContainer extends UnchangedTeamContainer {
 	/**
 	 * ChangedTeamContainer constructor
 	 */
-	public ChangedTeamContainer(SyncCompareInput input, IDiffContainer parent, MergeResource resource, int description) {
-		super(input, parent, resource.getResource(), description);
+	public ChangedTeamContainer(IDiffContainer parent, MergeResource resource, int description) {
+		super(parent, resource.getResource(), description);
 		this.mergeResource = resource;
 	}
 	

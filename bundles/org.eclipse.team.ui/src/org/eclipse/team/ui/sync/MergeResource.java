@@ -27,7 +27,7 @@ public class MergeResource {
 	/**
 	 * Creates a new merge resource based on the given sync information.
 	 */
-	MergeResource(IRemoteSyncElement syncTree) {
+	public MergeResource(IRemoteSyncElement syncTree) {
 		this.syncTree = syncTree;
 	}
 	

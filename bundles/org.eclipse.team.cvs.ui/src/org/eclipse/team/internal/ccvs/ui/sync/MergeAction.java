@@ -129,7 +129,7 @@ abstract class MergeAction extends Action {
 				if (children.length > 0) {
 					IDiffContainer parent = container.getParent();
 					parent.removeToRoot(container);
-					UnchangedTeamContainer unchanged = new UnchangedTeamContainer(diffModel, parent, container.getResource());
+					UnchangedTeamContainer unchanged = new UnchangedTeamContainer(parent, container.getResource());
 					for (int j = 0; j < children.length; j++) {
 						unchanged.add(children[j]);
 					}
