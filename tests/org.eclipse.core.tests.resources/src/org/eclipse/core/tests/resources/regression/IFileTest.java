@@ -44,7 +44,7 @@ public void testBug25658() {
 
 	// This test is no longer valid since the error code is dependant on whether 
 	// or not the parent folder is marked as read-only. We need to write a different
-	// test to make the file.create file.	
+	// test to make the file.create fail.	
 	if (true)
 		return;
 
