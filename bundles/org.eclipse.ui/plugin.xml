@@ -70,10 +70,6 @@
       <application>
          <run
                class="org.eclipse.ui.internal.Workbench">
-            <parameter
-                  name="productInfo"
-                  value="product.ini">
-            </parameter>
          </run>
       </application>
    </extension>
