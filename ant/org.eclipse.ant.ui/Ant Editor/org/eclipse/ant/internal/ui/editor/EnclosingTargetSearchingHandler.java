@@ -35,6 +35,8 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
 	 * <code>determineEnclosingTargetTaskElement</code> has been called once.
 	 */
 	protected boolean enclosingTargetElementDetermined;
+	
+	private Element lastTargetSeen;
 
     /**
      * Creates an EnclosingTargetSearchingHandler, with the specified parameters.
@@ -66,7 +68,7 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
 			if(!stillOpenElements.isEmpty()) {        
 		        Element lastStillOpenElement = (Element)stillOpenElements.peek(); 
 		        if(lastStillOpenElement != null && lastStillOpenElement.getTagName().equals(tagName)) {
-		            stillOpenElements.pop();
+		            lastTargetSeen= (Element)stillOpenElements.pop();
 		            
 		            if(!stillOpenElements.empty()) {
 		                Element secondLastStillOpenElement = (Element)stillOpenElements.peek();
@@ -126,11 +128,12 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
             if(locator != null) {
                  //The locator's numbers are 1-based though, we do everything
                  //0-based.
-                int lineNr = locator.getLineNumber() -1;
-                int columnNr = locator.getColumnNumber() -1;
-                if(lineNr> rowOfCursorPosition ||
+                int lineNr = locator.getLineNumber() - 1;
+                int columnNr = locator.getColumnNumber() - 1;
+                if(lineNr > rowOfCursorPosition ||
                     (lineNr == rowOfCursorPosition && columnNr > columnOfCursorPosition)) {
                         determineEnclosingTargetTaskElement();
+                        parsingFinished= true;
 	                    return true;
                     }
             }
@@ -173,7 +176,11 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
      */
     public Element getParentElement(boolean guessParent) {
         if(enclosingTargetElementDetermined) {
-            return parentElement;
+        	if (parentElement == null) {
+        		return lastTargetSeen;
+        	} else {
+        		return parentElement;
+        	}
         }
         if(guessParent) {
             if(!stillOpenElements.empty()) {
