@@ -30,7 +30,7 @@ import org.eclipse.debug.ui.console.IConsole;
 public class AntProcess implements IProcess, IProgressMonitor {
 	
 	/**
-	 * Process attribute with process identifier - links the ant process build
+	 * Process attribute with process identifier - links the Ant process build
 	 * logger to a process.
 	 */
 	public static final String ATTR_ANT_PROCESS_ID = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_PROCESS_ID"; //$NON-NLS-1$
