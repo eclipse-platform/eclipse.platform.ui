@@ -17,18 +17,18 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 
-public class ScrollableRichText {
+public class ScrolledRichText {
 	private ScrolledComposite scomp;
 	private RichText richText;
 	private String text;
 	private FormToolkit toolkit;
 	private int style;
 
-	public ScrollableRichText(int style) {
+	public ScrolledRichText(int style) {
 		this.style = style;
 	}
 	
-	public ScrollableRichText(FormColors colors, int style) {
+	public ScrolledRichText(FormColors colors, int style) {
 		this.style = style;
 		toolkit = new FormToolkit(colors);
 	}

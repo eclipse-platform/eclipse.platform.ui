@@ -633,7 +633,7 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 				if (td.isItemData == false)
 					continue;
 				Control child = children[td.childIndex];
-				int maxWidth = -1;
+				int maxWidth = SWT.DEFAULT;
 				if (child instanceof Composite) {
 					Composite cc = (Composite) child;
 					Layout l = cc.getLayout();
@@ -644,7 +644,9 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 								changed);
 					}
 				}
-				if (maxWidth == -1) {
+				else if (td.maxWidth!=SWT.DEFAULT)
+					maxWidth = td.maxWidth;
+				if (maxWidth == SWT.DEFAULT) {
 					Point size =
 						child.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 					maxWidth = size.x;

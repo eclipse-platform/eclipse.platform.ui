@@ -69,6 +69,9 @@ public class ExpandableComposite extends Composite {
 	 */
 	public static final int EXPANDED = 1 << 7;
 	
+	public int marginWidth = 0;
+	public int marginHeight = 0;
+	
 	private int GAP = 4;
 	private int VSPACE = 3;
 	private int SEPARATOR_HEIGHT = 2;
@@ -82,13 +85,13 @@ public class ExpandableComposite extends Composite {
 	private class ExpandableLayout extends Layout implements ILayoutExtension {
 		protected void layout(Composite parent, boolean changed) {
 			Rectangle clientArea = parent.getClientArea();
-			int x = 0;
-			int y = 0;
+			int x = marginWidth;
+			int y = marginHeight;
 			Point tsize = null;
 
 			if (toggle != null)
 				tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
-			int twidth = clientArea.width;
+			int twidth = clientArea.width-marginWidth-marginWidth;
 			if (tsize != null)
 				twidth -= tsize.x + GAP;
 			Point size = textLabel.computeSize(twidth, SWT.DEFAULT, changed);
@@ -117,14 +120,14 @@ public class ExpandableComposite extends Composite {
 			
 			if (getSeparatorControl()!=null) {
 				y+= VSPACE;
-				getSeparatorControl().setBounds(0, y, clientArea.width, SEPARATOR_HEIGHT);
+				getSeparatorControl().setBounds(marginWidth, y, clientArea.width-marginWidth-marginWidth, SEPARATOR_HEIGHT);
 				y+= SEPARATOR_HEIGHT;
 				if (expanded) y+= VSPACE;
 			}
 			
 			if (expanded) {
-				int areaWidth = clientArea.width;
-				int cx = 0;
+				int areaWidth = clientArea.width-marginWidth-marginWidth;
+				int cx = marginWidth;
 				if ((expansionStyle & CLIENT_INDENT) != 0) {
 					cx = x;
 					areaWidth -= x;
@@ -137,8 +140,8 @@ public class ExpandableComposite extends Composite {
 						desc.setBounds(cx, y, dsize.x, dsize.y);
 						y+= dsize.y+VSPACE;
 					}
-					int cwidth = clientArea.width - cx;
-					int cheight = clientArea.height - y;
+					int cwidth = clientArea.width -marginWidth-marginWidth- cx;
+					int cheight = clientArea.height -marginHeight-marginHeight- y;
 					client.setBounds(cx, y, cwidth, cheight);
 				}
 			}
@@ -208,7 +211,7 @@ public class ExpandableComposite extends Composite {
 				height = height - size.y + Math.max(size.y, tsize.y);
 				width += twidth;
 			}
-			return new Point(width, height);
+			return new Point(width+marginWidth+marginWidth, height+marginHeight+marginHeight);
 		}
 		public int computeMinimumWidth(Composite parent, boolean changed) {
 			int width = 0;
@@ -229,7 +232,7 @@ public class ExpandableComposite extends Composite {
 					toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 				width += tsize.x + GAP;
 			}
-			return width;
+			return width+marginWidth+marginWidth;
 		}
 
 		/*
@@ -258,7 +261,7 @@ public class ExpandableComposite extends Composite {
 					toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 				width += tsize.x + GAP;
 			}
-			return width;
+			return width+marginWidth+marginWidth;
 		}
 	}
 

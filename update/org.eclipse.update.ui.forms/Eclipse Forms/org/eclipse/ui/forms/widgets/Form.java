@@ -10,9 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * Form is a control that is capable of scrolling its content. It renders the
@@ -38,28 +45,12 @@ import org.eclipse.swt.widgets.*;
  * @since 3.0
  */
 
-public class Form extends ScrolledComposite {
-	private static final int H_SCROLL_INCREMENT = 5;
-	private static final int V_SCROLL_INCREMENT = 64;
+public class Form extends SharedScrolledComposite {
 	private int TITLE_HMARGIN = 10;
 	private int TITLE_VMARGIN = 5;
 	private Image backgroundImage;
 	private String text;
 	private Composite body;
-	
-	private class BodyComposite extends Composite {
-		public BodyComposite(Composite parent, int style) {
-			super(parent, style);
-		}
-		public Point computeSize(int wHint, int hHint, boolean changed) {
-			Layout layout = getLayout();
-			if (layout instanceof TableWrapLayout)
-				return ((TableWrapLayout)layout).computeSize(this, wHint, hHint, changed);
-			if (layout instanceof ColumnLayout)
-				return ((ColumnLayout)layout).computeSize(this, wHint, hHint, changed);
-			return super.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
-		}
-	}
 	
 	private class ContentComposite extends Composite {
 		public ContentComposite(Composite parent, int style) {
@@ -148,12 +139,7 @@ public class Form extends ScrolledComposite {
 	 *            the parent widget
 	 */
 	public Form(Composite parent) {
-		super(parent, SWT.V_SCROLL | SWT.H_SCROLL);
-		addListener(SWT.Resize, new Listener() {
-			public void handleEvent(Event e) {
-				reflow(true);
-			}
-		});
+		super(parent, SWT.NULL);
 		final Composite content = new ContentComposite(this, SWT.NULL);
 		content.addListener(SWT.Paint, new Listener() {
 			public void handleEvent(Event e) {
@@ -163,9 +149,8 @@ public class Form extends ScrolledComposite {
 		super.setContent(content);
 		content.setLayout(new FormLayout());
 
-		body = new BodyComposite(content, SWT.NULL);
+		body = new LayoutComposite(content, SWT.NULL);
 		body.setMenu(parent.getMenu());
-		initializeScrollBars();
 	}
 	/**
 	 * Returns the title text that will be rendered at the top of the form.
@@ -181,7 +166,6 @@ public class Form extends ScrolledComposite {
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		getContent().setForeground(fg);
 		body.setForeground(fg);
 	}
 
@@ -191,16 +175,7 @@ public class Form extends ScrolledComposite {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		getContent().setBackground(bg);
 		body.setBackground(bg);
-	}
-	/**
-	 * Sets the font of the form. This font will be used to render the title
-	 * text. It will not affect the body.
-	 */
-	public void setFont(Font font) {
-		super.setFont(font);
-		getContent().setFont(font);
 	}
 /**
  * The form sets the content widget. This method should not be called by 
@@ -251,8 +226,8 @@ public class Form extends ScrolledComposite {
 	public void reflow(boolean flushCache) {
 		if (body!=null) {
 			body.layout(flushCache);
-		    updateClientSize(flushCache);
 		}
+		super.reflow(flushCache);
 	}
 	/**
 	 * Returns the container that occupies the body of the form (the form area
@@ -281,34 +256,5 @@ public class Form extends ScrolledComposite {
 				TITLE_HMARGIN,
 				TITLE_VMARGIN);
 		}
-	}
-
-	private void initializeScrollBars() {
-		ScrollBar hbar = getHorizontalBar();
-		if (hbar != null) {
-			hbar.setIncrement(H_SCROLL_INCREMENT);
-		}
-		ScrollBar vbar = getVerticalBar();
-		if (vbar != null) {
-			vbar.setIncrement(V_SCROLL_INCREMENT);
-		}
-		FormUtil.updatePageIncrement(this);
-	}
-
-	private void updateClientSize(boolean flushCache) {
-		Composite c = (Composite) getContent();
-		Rectangle clientArea = getClientArea();
-		if (c == null)
-			return;
-		body.layout(flushCache);
-		c.layout(flushCache);
-		Point newSize =
-			c.computeSize(
-				FormUtil.getWidthHint(clientArea.width, c),
-				FormUtil.getHeightHint(clientArea.height, c),
-				flushCache);
-		c.setSize(newSize);
-		setMinSize(newSize);
-		FormUtil.updatePageIncrement(this);
 	}
 }

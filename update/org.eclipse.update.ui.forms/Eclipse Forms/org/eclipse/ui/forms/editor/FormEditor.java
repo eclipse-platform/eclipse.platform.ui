@@ -17,6 +17,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.*;
+import org.eclipse.update.ui.forms.internal.FormsPlugin;
 
 /**
  * This class forms a base of multi-page form editors that typically use one or
@@ -246,5 +247,11 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	private void registerPage(IFormPage page) {
 		if (!pages.contains(page))
 			pages.add(page);
+		try {
+			page.init(getEditorSite(), getEditorInput());
+		}
+		catch (PartInitException e) {
+			FormsPlugin.logException(e);
+		}
 	}
 }

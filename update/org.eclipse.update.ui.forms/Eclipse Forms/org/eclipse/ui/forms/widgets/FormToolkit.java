@@ -314,7 +314,7 @@ public class FormToolkit {
 		engine.setMenu(parent.getMenu());
 		return engine;
 	}
-
+	
 	/**
 	 * Adapts a control to be used in a form that is associated with this
 	 * toolkit. This involves adjusting colors and optionally adding handlers
@@ -480,7 +480,7 @@ public class FormToolkit {
 		hookDeleteListener(tree);
 		return tree;
 	}
-
+	
 	/**
 	 * Creates a form widget in the provided parent.
 	 * 
@@ -497,6 +497,25 @@ public class FormToolkit {
 		form.setFont(JFaceResources.getHeaderFont());
 		return form;
 	}
+	
+	/**
+	 * Creates a rich text as a part of the form.
+	 * 
+	 * @param parent
+	 *            the rich text parent
+	 * @param trackFocus
+	 *            if <code>true</code>, the toolkit will monitor focus
+	 *            transfers to ensure that the hyperlink in focus is visible in
+	 *            the form.
+	 * @return the rich text widget
+	 */
+
+	public ScrolledPageBook createPageBook(Composite parent) {
+		ScrolledPageBook book = new ScrolledPageBook(parent, SWT.NULL);
+		adapt(book, true, true);
+		book.setMenu(parent.getMenu());
+		return book;
+	}	
 
 	//TODO hook delete key
 	/*
