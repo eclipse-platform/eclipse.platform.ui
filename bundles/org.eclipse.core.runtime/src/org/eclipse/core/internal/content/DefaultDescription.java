@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
- * @see ContentType#getDefaultDescription
+ * @see IContentType#getDefaultDescription
  */
 public final class DefaultDescription implements IContentDescription {
 	private ContentType contentType;

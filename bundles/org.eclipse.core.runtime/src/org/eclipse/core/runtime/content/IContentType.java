@@ -90,7 +90,24 @@ public interface IContentType {
 	 * @return this content type's base type, or <code>null</code>
 	 */
 	public IContentType getBaseType();
-	
+
+	/**
+	 * Returns the default content description for this content type. A default 
+	 * content description is returned by the content type API whenever 
+	 * content analysis could not find any particular information to be described
+	 * about the contents being processed, so all default attributes for the 
+	 * content type in question apply.
+	 * <p>
+	 * Clients doing caching of content descriptions may choose to treat default 
+	 * descriptions in a special manner, since they are easily recoverable 
+	 * through this API.
+	 * </p>  
+	 * 
+	 *  @return a content description
+	 *  @since 3.1
+	 */
+	public IContentDescription getDefaultDescription();
+
 	/**
 	 * Tries to obtain a description for the given contents. 
 	 * <p>

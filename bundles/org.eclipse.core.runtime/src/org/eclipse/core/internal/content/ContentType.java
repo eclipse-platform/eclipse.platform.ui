@@ -198,6 +198,9 @@ public final class ContentType implements IContentType {
 		return aliasTargetId;
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public IContentType getBaseType() {
 		return getBaseType(manager.getCatalog());
 	}
@@ -233,19 +236,7 @@ public final class ContentType implements IContentType {
 	}
 
 	/**
-	 * Returns the default content description for this content type. A default 
-	 * content description is returned by the content type API whenever 
-	 * content analysis could not find any particular information to be described
-	 * about the contents being processed, so all default attributes for the 
-	 * content type in question apply.
-	 * <p>
-	 * Clients doing some sort of caching of content descriptions may choose 
-	 * not to do so for default descriptions, since they are easily recoverable
-	 * through this API.
-	 * </p>  
-	 * 
-	 *  @return a content description
-	 *  @since 3.1
+	 * @see IContentType
 	 */
 	public IContentDescription getDefaultDescription() {
 		return getDefaultDescription(manager.getCatalog());
@@ -335,6 +326,9 @@ public final class ContentType implements IContentType {
 		return internalGetDescriptionFor(catalog, buffer, options);
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public String[] getFileSpecs(int typeMask) {
 		return getFileSpecs(manager.getCatalog(), typeMask);
 	}
@@ -368,10 +362,16 @@ public final class ContentType implements IContentType {
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public String getId() {
 		return namespace + '.' + simpleId;
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public String getName() {
 		return name;
 	}
@@ -544,10 +544,16 @@ public final class ContentType implements IContentType {
 		return describer = new InvalidDescriber();
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public boolean isAssociatedWith(String fileName) {
 		return internalIsAssociatedWith(manager.getCatalog(), fileName) != NOT_ASSOCIATED;
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public boolean isKindOf(IContentType another) {
 		return isKindOf(manager.getCatalog(), (ContentType) another);
 	}
@@ -576,6 +582,9 @@ public final class ContentType implements IContentType {
 		InternalPlatform.getDefault().log(status);
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public void removeFileSpec(String fileSpec, int type) throws CoreException {
 		removeFileSpec(manager.getCatalog(), fileSpec, type);
 	}
@@ -614,9 +623,8 @@ public final class ContentType implements IContentType {
 		catalog.setAliasTarget(this, newTarget);
 	}
 
-	/*
-	 * (non-Javadoc) 
-	 * @see org.eclipse.core.runtime.content.IContentType#setDefaultCharset(java.lang.String)
+	/**
+	 * @see IContentType
 	 */
 	public void setDefaultCharset(String newCharset) throws CoreException {
 		synchronized (this) {

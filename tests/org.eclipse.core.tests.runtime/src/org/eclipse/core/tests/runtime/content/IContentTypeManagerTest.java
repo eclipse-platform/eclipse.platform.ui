@@ -234,47 +234,47 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			description = getDescriptionFor(contentTypeManager, MINIMAL_XML, "UTF-8", "foo.xml", IContentDescription.ALL, text);
 			assertNotNull("1.0" + sufix, description);
 			assertEquals("1.1" + sufix, xmlType, description.getContentType());
-			assertTrue("1.2", description instanceof DefaultDescription);
+			assertSame("1.2", xmlType.getDefaultDescription(), description);
 
 			description = getDescriptionFor(contentTypeManager, MINIMAL_XML, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.0" + sufix, description);
 			assertEquals("2.1" + sufix, xmlType, description.getContentType());
 			// the default charset should have been filled by the content type manager
 			assertEquals("2.2" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
-			assertTrue("2.3", description instanceof DefaultDescription);
+			assertSame("2.3", xmlType.getDefaultDescription(), description);
 
 			description = getDescriptionFor(contentTypeManager, XML_ISO_8859_1, "ISO-8859-1", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.3a" + sufix, description);
 			assertEquals("2.3b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.3c" + sufix, "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
-			assertFalse("2.3d", description instanceof DefaultDescription);
+			assertNotSame("2.3d", xmlType.getDefaultDescription(), description);
 
 			// ensure we handle single quotes properly (bug 65443)
 			description = getDescriptionFor(contentTypeManager, XML_ISO_8859_1_SINGLE_QUOTES, "ISO-8859-1", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.3e" + sufix, description);
 			assertEquals("2.3f" + sufix, xmlType, description.getContentType());
 			assertEquals("2.3g" + sufix, "ISO-8859-1", description.getProperty(IContentDescription.CHARSET));
-			assertFalse("2.3h", description instanceof DefaultDescription);
+			assertNotSame("2.3h", xmlType.getDefaultDescription(), description);
 
 			description = getDescriptionFor(contentTypeManager, XML_UTF_16, "UTF-16", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK}, text);
 			assertNotNull("2.4a" + sufix, description);
 			assertEquals("2.4b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.4c" + sufix, "UTF-16", description.getProperty(IContentDescription.CHARSET));
 			assertTrue("2.4d" + sufix, text || IContentDescription.BOM_UTF_16BE == description.getProperty(IContentDescription.BYTE_ORDER_MARK));
-			assertFalse("2.4e", description instanceof DefaultDescription);
+			assertNotSame("2.4e", xmlType.getDefaultDescription(), description);
 
 			description = getDescriptionFor(contentTypeManager, XML_UTF_16BE, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.5a" + sufix, description);
 			assertEquals("2.5b" + sufix, xmlType, description.getContentType());
 			assertEquals("2.5c" + sufix, "UTF-16BE", description.getProperty(IContentDescription.CHARSET));
-			assertFalse("2.5d", description instanceof DefaultDescription);
+			assertNotSame("2.5d", xmlType.getDefaultDescription(), description);
 
 			description = getDescriptionFor(contentTypeManager, XML_UTF_16LE, "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
 			assertNotNull("2.6a" + sufix, description);
 			assertEquals("2.6b" + sufix, xmlType, description.getContentType());
 			// the default charset should have been filled by the content type manager
 			assertEquals("2.6c" + sufix, "UTF-16LE", description.getProperty(IContentDescription.CHARSET));
-			assertFalse("2.6d", description instanceof DefaultDescription);
+			assertNotSame("2.6d", xmlType.getDefaultDescription(), description);
 
 			description = getDescriptionFor(contentTypeManager, MINIMAL_XML, "UTF-8", "foo.xml", IContentDescription.ALL, text);
 			assertNotNull("4.0" + sufix, description);
@@ -282,13 +282,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			assertEquals("4.2" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
 			assertNotNull("5.0" + sufix, mytext);
 			assertEquals("5.0b" + sufix, "BAR", mytext.getDefaultCharset());
-			assertTrue("5.0c", description instanceof DefaultDescription);
+			assertSame("5.0c", xmlType.getDefaultDescription(), description);
 
 			description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, text);
 			assertNotNull("5.1" + sufix, description);
 			assertEquals("5.2" + sufix, mytext, description.getContentType());
 			assertEquals("5.3" + sufix, "BAR", description.getProperty(IContentDescription.CHARSET));
-			assertTrue("5.4", description instanceof DefaultDescription);
+			assertSame("5.4", mytext.getDefaultDescription(), description);
 			// now plays with setting a non-default default charset
 			mytext.setDefaultCharset("FOO");
 
@@ -296,14 +296,14 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			assertNotNull("5.5" + sufix, description);
 			assertEquals("5.6" + sufix, mytext, description.getContentType());
 			assertEquals("5.7" + sufix, "FOO", description.getProperty(IContentDescription.CHARSET));
-			assertTrue("5.8", description instanceof DefaultDescription);
+			assertSame("5.8", mytext.getDefaultDescription(), description);
 			mytext.setDefaultCharset(null);
 
 			description = getDescriptionFor(contentTypeManager, "some contents", null, "abc.tzt", IContentDescription.ALL, text);
 			assertNotNull("5.10" + sufix, description);
 			assertEquals("5.11" + sufix, mytext, description.getContentType());
 			assertEquals("5.12" + sufix, "BAR", description.getProperty(IContentDescription.CHARSET));
-			assertTrue("5.13", description instanceof DefaultDescription);
+			assertSame("5.13", mytext.getDefaultDescription(), description);
 		}
 		assertNotNull("6.0", mytext1);
 		assertEquals("6.1", "BAR", mytext1.getDefaultCharset());
@@ -640,7 +640,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentDescription description = manager.getDescriptionFor(getInputStream(MyContentDescriber.SIGNATURE, "US-ASCII"), "myContent.mc1", IContentDescription.ALL);
 		assertNotNull("1.0", description);
 		assertEquals("1.1", myContent, description.getContentType());
-		assertTrue("1.2", !(description instanceof DefaultDescription));
+		assertNotSame("1.2", myContent.getDefaultDescription(), description);
 		for (int i = 0; i < MyContentDescriber.MY_OPTIONS.length; i++)
 			assertEquals("2." + i, MyContentDescriber.MY_OPTION_VALUES[i], description.getProperty(MyContentDescriber.MY_OPTIONS[i]));
 	}
