@@ -136,12 +136,12 @@ public final class BuilderPropertyPage extends PropertyPage {
 							// Found the movedFrom config in the tree. Replace it with the new config 
 							item.setData(configuration);
 							updateConfigItem(item, configuration);
-							// Also replace the movedFrom config in the list of newly created configs
-							if (newConfigList.remove(oldConfig)) {
-								newConfigList.add(configuration);
-							}
-							return;
+							break;
 						}
+					}
+					//Also replace the movedFrom config in the list of newly created configs
+					if (newConfigList.remove(oldConfig)) {
+						newConfigList.add(configuration);
 					}
 				}
 			});
@@ -172,10 +172,17 @@ public final class BuilderPropertyPage extends PropertyPage {
 		try {
 			ICommand[] commands = project.getDescription().getBuildSpec();
 			for (int i = 0; i < commands.length; i++) {
-				//ExternalTool tool = ExternalToolRegistry.toolFromBuildCommandArgs(commands[i].getArguments(), NEW_NAME);
 				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
 				if (config != null) {
-					addConfig(config, false);
+					if (!config.exists()) {
+						IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, MessageFormat.format("Builder launch configuration {0} no longer exists", new String[]{config.getLocation().toOSString()}), null); 	
+						ErrorDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
+										MessageFormat.format("External Tool Builder {0} Not Added", new String[]{config.getName()}), 
+										status);
+						userHasMadeChanges= true;
+					} else {
+						addConfig(config, false);
+					}
 				} else {
 					addCommand(commands[i], -1, false);
 				}
@@ -547,14 +554,19 @@ public final class BuilderPropertyPage extends PropertyPage {
 			ILaunchConfiguration config = null;
 			setAutobuild(false);
 			config = workingCopy.doSave();
+			//needs to be added here in case the user hits apply in the edit dialog
+			//then we can correctly update the list with the new config.
+			newConfigList.add(config);
 			int code= editConfiguration(config);
 			if (code == Dialog.CANCEL) {
 				// If the user cancelled, delete the newly created config
+				newConfigList.remove(config);
 				config.delete();
 			} else {
 				userHasMadeChanges= true;
-				newConfigList.add(config);
-				addConfig(config, true);
+				//retrieve the last "new" config
+				//may have been changed by the user pressing apply in the edit dialog
+				addConfig((ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1), true);
 			}
 		} catch (CoreException e) {
 			handleException(e);
@@ -945,7 +957,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 		}
 		try {
-			if (getBuilderFolder().members().length == 0) {
+			if (getBuilderFolder() != null && getBuilderFolder().members().length == 0) {
 				// All files in the builder folder were newly created. Clean up
 				getBuilderFolder().delete(true, false, null);
 			}
