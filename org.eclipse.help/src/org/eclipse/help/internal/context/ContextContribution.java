@@ -15,14 +15,15 @@ public class ContextContribution implements IContext, IContextContributionNode {
 	private ContextContributor contributor;
 	protected List children = new ArrayList(/* of HelpContribution */
 	);
-	protected String plugin;
+	protected String pluginID;
+	protected String shortID;
 	/**
-	 * Context constructor comment.
+	 * Context constructor.
 	 */
 	public ContextContribution(Attributes attrs) {
 		if (attrs == null)
 			return;
-		plugin = attrs.getValue("id");
+		shortID = attrs.getValue("id");
 	}
 	/**
 	 * Adds a child and returns it
@@ -40,8 +41,8 @@ public class ContextContribution implements IContext, IContextContributionNode {
 	}
 	/**
 	 */
-	public String getPlugin() {
-		return plugin;
+	public String getShortId() {
+		return shortID;
 	}
 	public String getDescription() {
 		// description is already NL enabled when the XML files are parsed.
@@ -64,15 +65,21 @@ public class ContextContribution implements IContext, IContextContributionNode {
 	public String getText() {
 		return getDescription();
 	}
-	/**
-	 */
-	public void setPlugin(String id) {
-		this.plugin = id;
-	}
-	public void setDescription(String s) {
+		public void setDescription(String s) {
 		description = s;
 	}
 	public void setContributor(ContextContributor contributor) {
 		this.contributor = contributor;
 	}
+	public String getID(){
+		return pluginID+"."+shortID;
+	}
+	/**
+	 * Sets the pluginID.
+	 * @param pluginID The pluginID to set
+	 */
+	public void setPluginID(String pluginID) {
+		this.pluginID = pluginID;
+	}
+
 }
