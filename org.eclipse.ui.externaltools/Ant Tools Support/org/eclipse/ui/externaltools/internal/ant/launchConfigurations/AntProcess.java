@@ -120,7 +120,9 @@ public class AntProcess implements IProcess, IProgressMonitor {
 	protected void terminated() {
 		if (!fTerminated) {
 			fTerminated = true;
-			DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.TERMINATE)});
+			if (DebugPlugin.getDefault() != null) {
+				DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.TERMINATE)});
+			}
 		}
 	}
 
