@@ -799,23 +799,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 		return message;
 	}
 	
-	/*
-	 * @see ITeamProvider#validateEdit(IFile[], Object)
-	 */
-	public IStatus validateEdit(IFile[] files, Object context) {
-		//todo: we can assume that there is only one file due to the way FileModificationValidator is implemented
-		return
-			(files[0].isReadOnly())
-				? new CVSStatus(CVSStatus.ERROR, Policy.bind("FileModificationValidator.isReadOnly")) //$NON-NLS-1$
-				: new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
-	}
-
-	/*
-	 * @see ITeamProvider#validateSave(IFile)
-	 */
-	public IStatus validateSave(IFile file) {
-		return new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
-	}
 	
 	/*
 	 * @see ITeamProvider#refreshState(IResource[], int, IProgressMonitor)
