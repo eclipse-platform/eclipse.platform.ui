@@ -267,8 +267,10 @@ public abstract class AbstractUIPlugin extends Plugin {
      * quietly created, initialized with defaults, and returned.
      * </p>
      * <p>
-     * Subclasses should reimplement <code>initializeDefaultPreferences</code> if
-     * they have custom graphic images to load.
+     * <strong>NOTE:</strong> As of Eclipse 3.1 this method is
+     * no longer referring to the core runtime compatibility layer and so
+     * plug-ins relying on Plugin#initializeDefaultPreferences
+     * will have to access the compatibility layer themselves.
      * </p>
      *
      * @return the preference store 
