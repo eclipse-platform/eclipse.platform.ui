@@ -88,10 +88,14 @@ public class SiteManager {
 		InternalSiteManager.handleNewChanges();
 	}
 	/**
-	 * Returns the string name of the system architecture 
+	 * Returns system architecture specification. A comma-separated list of arch
+	 * designators defined by the platform. 
 	 * 
-	 * @see BootLoader#ARCH_LIST
-	 * @return String
+	 * This information is used as a hint by the installation and update
+	 * support.
+	 * 
+     * @see BootLoader#ARCH_LIST
+	 * @return system architecture specification
 	 * @since 2.1
 	 */
 	public static String getOSArch(){
@@ -100,11 +104,15 @@ public class SiteManager {
 		return arch;
 	}
 
-	/**
-	 * Returns the string name of the opearting system
+    /**
+	 * Returns operating system specification. A comma-separated list of os
+	 * designators defined by the platform.
 	 * 
+	 * This information is used as a hint by the installation and update
+	 * support.
+	 *
 	 * @see BootLoader#OS_LIST
-	 * @return String
+	 * @return the operating system specification.
 	 * @since 2.1
 	 */
 	public static String getOS(){
@@ -114,10 +122,14 @@ public class SiteManager {
 	}
 
 	/**
-	 * Returns the string name of the windowing system
+	 * Returns system architecture specification. A comma-separated list of arch
+	 * designators defined by the platform. 
+	 * 
+	 * This information is used as a hint by the installation and update
+	 * support.
 	 * 
 	 * @see BootLoader#WS_LIST
-	 * @return String
+	 * @return system architecture specification.
 	 * @since 2.1
 	 */
 	public static String getWS() {

@@ -606,11 +606,13 @@ public class UpdateManagerUtils {
 	/**
 	 * 
 	 */	
-	private static boolean isMatching(String values, String current) {
-		StringTokenizer stok = new StringTokenizer(values, ",");
+	private static boolean isMatching(String candidateValues, String siteValues) {
+		if (siteValues==null) return false;
+		siteValues = siteValues.toUpperCase();		
+		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
 		while (stok.hasMoreTokens()) {
-			String token = stok.nextToken();
-			if (token.equalsIgnoreCase(current)) return true;
+			String token = stok.nextToken().toUpperCase();
+			if (siteValues.indexOf(token)!=-1) return true;
 		}
 		return false;
 	}
