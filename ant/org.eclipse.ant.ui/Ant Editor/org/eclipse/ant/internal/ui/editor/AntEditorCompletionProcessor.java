@@ -1060,7 +1060,11 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 					|| task instanceof Available
 					|| task instanceof UpToDate
 					|| task instanceof Condition) {
-						task.perform();					
+					try {
+						task.perform();
+					} catch (BuildException be) {
+						
+					}
 				}
 			
 			
