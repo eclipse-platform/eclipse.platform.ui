@@ -681,6 +681,7 @@ public class HistoryView extends ViewPart {
 						// has completed.
 						tableViewer.setInput(remoteFile);
 						setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+						setTitleToolTip(resource.getFullPath().toString());
 					}
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
@@ -690,6 +691,7 @@ public class HistoryView extends ViewPart {
 			this.file = null;
 			tableViewer.setInput(null);
 			setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setTitleToolTip(""); //$NON-NLS-1$
 		}
 	}
 	
@@ -744,6 +746,7 @@ public class HistoryView extends ViewPart {
 			if (remoteFile == null) {
 				tableViewer.setInput(null);
 				setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+				setTitleToolTip(""); //$NON-NLS-1$
 				return;
 			}
 			ICVSFile existingFile = historyTableProvider.getICVSFile(); 
@@ -752,6 +755,7 @@ public class HistoryView extends ViewPart {
 			historyTableProvider.setFile(remoteFile);
 			tableViewer.setInput(remoteFile);
 			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+			setTitleToolTip(remoteFile.getRepositoryRelativePath());
 		} catch (TeamException e) {
 			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 		} 
