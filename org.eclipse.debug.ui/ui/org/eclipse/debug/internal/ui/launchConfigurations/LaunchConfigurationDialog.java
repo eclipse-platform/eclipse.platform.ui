@@ -74,7 +74,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -475,6 +477,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 		IResource res = getResourceContext();
+		if (res == null) {
+			IEditorInput activeEditorInput= WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
+			if (activeEditorInput != null) {
+				setContext(activeEditorInput);
+				res= getResourceContext();
+			}
+		}
 		ILaunchConfiguration def = null;
 		if (res != null) {
 			ILaunchConfigurationType type = determineConfigTypeFromContext();
