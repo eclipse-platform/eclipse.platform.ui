@@ -164,6 +164,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				try {
 					resolvedURL = ((PlatformURLConnection)url.openConnection()).getResolvedURL();
 				} catch(IOException e) {
+					// will use the baseline URL ...
 				}
 			}
 		}
@@ -485,15 +486,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		private String id;
 		private String version;
 		private String application;
-		private URL root;
+		private URL[] root;
 		
-		private FeatureEntry(String id, String version, String application, URL root) {
+		private FeatureEntry(String id, String version, String application, URL[] root) {
 			if (id == null)
 				throw new IllegalArgumentException();
 			this.id = id;
 			this.version = version;
 			this.application = application;
-			this.root = root;
+			this.root = (root==null ? new URL[0] : root);
 		}
 				
 		/*
@@ -518,9 +519,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		
 		/*
-		 * @see IFeatureEntry#getFeatureRootURL()
+		 * @see IFeatureEntry#getFeatureRootURLs()
 		 */
-		public URL getFeatureRootURL() {
+		public URL[] getFeatureRootURLs() {
 			return root;
 		}
 	}
@@ -604,7 +605,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				if (elements.size()>=3) this.service = (new Integer((String)elements.get(2))).intValue();
 				if (elements.size()>=4) this.qualifier = removeWhiteSpace((String)elements.get(3));
 		
-			} catch (Exception e) { // use what we got so far
+			} catch (Exception e) {
+				// use what we got so far ...
 			}
 		}
 		
@@ -660,6 +662,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				load(new FileInputStream(file));
 			} catch (Exception e) {
+				// continue ... actual parsing will report errors
 			}	
 		}
 	
@@ -670,6 +673,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				load(url.openStream());
 			} catch (Exception e) {
+				// continue ... actual parsing will report errors
 			}
 		}		
 	
@@ -752,6 +756,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				if (r != null) try {
 					r.close();
 				} catch (IOException e) {
+					// ignore
 				}
 			}
 		
@@ -862,7 +867,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String id,
 		String version,
 		String application,
-		URL root) {
+		URL[] root) {
 		return new PlatformConfiguration.FeatureEntry(id, version, application, root);
 	}
 
@@ -1093,6 +1098,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					if (DEBUG)
 						debug("   "+pathURL.toString());
 				} catch(MalformedURLException e) {
+					// skip entry ...
 					if (DEBUG)
 						debug("   bad URL: "+e);
 				}
@@ -1251,6 +1257,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				cmdConfiguration = createConfigurationFromPlugins(cmdPlugins, cmdConfiguration);
 			} catch (Exception e) {
+				// continue using default ...
 				if (DEBUG)
 					debug("Unable to use specified plugin-path: "+e);
 			}
@@ -1369,6 +1376,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				}
 				return;			
 			} catch(IOException e) {
+				// continue ...
 			}
 			
 			// if load failed, initialize with default site info
@@ -1442,6 +1450,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				cfgLockFileRAF = null;
 			}
 		} catch (IOException e) {
+			// ignore ...
 		}
 		if (cfgLockFile != null) {
 			cfgLockFile.delete();
@@ -1490,6 +1499,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		try {
 			linkURL = new URL(linkURL, LINKS + "/");
 		} catch (MalformedURLException e) {
+			// skip bad links ...
 			if (DEBUG)
 				debug("Unable to obtain link URL");
 			return;
@@ -1515,6 +1525,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				props.load(is);			
 				configureExternalLinkSites(links[i],props);				
 			} catch(IOException e) {
+				// skip bad links ...
 				if (DEBUG)
 					debug("   unable to load link file "+e);
 				continue;
@@ -1523,6 +1534,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					try {
 						is.close();
 					} catch(IOException e) {
+						// ignore ...
 					}
 				}
 			}
@@ -1561,6 +1573,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				link += "/"; // sites must be directories
 			siteURL = new URL(link);
 		} catch(MalformedURLException e) {
+			// ignore bad links ...
 			if (DEBUG)
 				debug("  bad URL "+e);
 			return;
@@ -1644,10 +1657,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					count = is.read(buff);
 				}
 			} catch(IOException e) {
-				// try to copy other files
+				// continue ... update reconciler will have to reconstruct state
 			} finally {
-				if (is != null) try { is.close(); } catch(IOException e) {}
-				if (os != null) try { os.close(); } catch(IOException e) {}
+				if (is != null) try { is.close(); } catch(IOException e) {
+					// ignore ...
+				}
+				if (os != null) try { os.close(); } catch(IOException e) {
+					// ignore ...
+				}
 			}			
 		}		
 	}
@@ -1673,6 +1690,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				try {
 					is.close();
 				} catch(IOException e) {
+					// ignore ...
 				}
 			}
 		}
@@ -1699,6 +1717,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				lastChangeStamp = Long.parseLong(stamp);
 			} catch(NumberFormatException e) {
+				// ignore bad attribute ...
 			}
 		}
 		
@@ -1707,6 +1726,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				lastFeaturesChangeStamp = Long.parseLong(stamp);
 			} catch(NumberFormatException e) {
+				// ignore bad attribute ...
 			}
 		}
 		
@@ -1715,6 +1735,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				lastPluginsChangeStamp = Long.parseLong(stamp);
 			} catch(NumberFormatException e) {
+				// ignore bad attribute ...
 			}
 		}
 		
@@ -1786,6 +1807,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				site.lastChangeStamp = Long.parseLong(stamp);
 			} catch(NumberFormatException e) {
+				// ignore bad attribute ...
 			}
 		}
 		
@@ -1794,6 +1816,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				site.lastFeaturesChangeStamp = Long.parseLong(stamp);
 			} catch(NumberFormatException e) {
+				// ignore bad attribute ...
 			}
 		}
 		
@@ -1802,6 +1825,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				site.lastPluginsChangeStamp = Long.parseLong(stamp);
 			} catch(NumberFormatException e) {
+				// ignore bad attribute ...
 			}
 		}
 		
@@ -1827,14 +1851,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return dflt;
 		String version = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_VERSION, null);
 		String application = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_APPLICATION, null);
-		String rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT, null);
-		URL root = null;
-		if (rootString != null)
+		ArrayList rootList = new ArrayList();
+		String rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+".0", null);
+		for (int i=1; rootString != null; i++) {
 			try {
-				root = new URL(rootString);
-			} catch (MalformedURLException e) {
+				URL rootEntry = new URL(rootString);
+				rootList.add(rootEntry);
+			} catch(MalformedURLException e) {
+				// skip bad entries ...
 			}
-		return createFeatureEntry(id, version, application, root);
+			rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+"."+i, null);
+		}
+		URL[] roots = (URL[])rootList.toArray(new URL[0]);
+		return createFeatureEntry(id, version, application, roots);
 	}
 	
 	private String[] loadListAttribute(Properties props, String name, String[] dflt) {
@@ -1899,6 +1928,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				try {
 					is.close();
 				} catch(IOException e) {
+					// ignore ...
 				}
 			}
 		}
@@ -2055,6 +2085,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		try {
 			dirURL = new URL(entry.getProtocol(), entry.getHost(), entry.getPort(), dir);
 		} catch(MalformedURLException e) {
+			// continue ...
 		}
 		
 		// return boot descriptor for the plugin
@@ -2241,7 +2272,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String typeString = CFG_POLICY_TYPE_UNKNOWN;
 		try {
 			typeString = CFG_POLICY_TYPE[type];
-		} catch (IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {			
+			// ignore bad attribute ...
 		}
 		writeAttribute(w, id + "." + CFG_POLICY, typeString);
 		writeListAttribute(w, id + "." + CFG_LIST, entry.getSitePolicy().getList());
@@ -2256,7 +2288,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ID, entry.getFeatureIdentifier());
 		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_VERSION, entry.getFeatureVersion());
 		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_APPLICATION, entry.getFeatureApplication());
-		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ROOT, entry.getFeatureRootURL()==null ? null : entry.getFeatureRootURL().toExternalForm());
+		URL[] roots = entry.getFeatureRootURLs();
+		for (int i=0; i<roots.length; i++) {
+			// write our as individual attributes (is easier for Main.java to read)	
+			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ROOT + "." + i, roots[i].toExternalForm());
+		}
 	}
 	
 	private void writeListAttribute(PrintWriter w, String id, String[] list) {
@@ -2568,6 +2604,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						tempConfig.configureSite(oldSites[i], false /*do not replace*/);
 					}
 				} catch(IOException e) {
+					// continue  without merging ...
 				} finally {
 					if (oldConfig != null) {
 						// clear the lock so it can be re-acquired when the "current"
@@ -2576,6 +2613,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					}
 				}
 			} catch(MalformedURLException e) {
+				// continue without merging ...
 			}
 		}
 		
@@ -2664,6 +2702,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				if (resolved.getProtocol().equals("file"))
 					path = resolved.getFile();
 			} catch(IOException e) {
+				// continue ...
 			}
 		} 
 		

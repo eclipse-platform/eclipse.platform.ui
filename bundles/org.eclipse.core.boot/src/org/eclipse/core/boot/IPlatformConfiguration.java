@@ -217,12 +217,13 @@ public interface IPlatformConfiguration {
 		public String getFeatureApplication();
 		
 		/**
-		 * Returns URL to the feature "root" files potentially
-		 * containing feature customization information
-		 * @return feature root path, or <code>null</code>
+		 * Returns URLs to the feature "root" locations. The rool
+		 * URL are install locations of the feature plugin and its
+		 * fragments
+		 * @return array of URLs, or an empty array
 		 * @since 2.0
 		 */
-		public URL getFeatureRootURL();
+		public URL[] getFeatureRootURLs();
 	}
 	
 	/**
@@ -256,11 +257,13 @@ public interface IPlatformConfiguration {
 	 * If specified, the identifier must represent a valid extension 
 	 * registered in the <code>org.eclipse.core.runtime.applications</code>
 	 * extension point.
-	 * @param root URL to feature root. Can be <code>null</code>.
+	 * @param an array of URLs to feature root directories.
+	 * These are URLs to install locations for the feature plugin
+	 * and its fragments. Can be <code>null</code>.
 	 * @return create feature entry
 	 * @since 2.0
 	 */	
-	public IFeatureEntry createFeatureEntry(String id, String version, String application, URL root);
+	public IFeatureEntry createFeatureEntry(String id, String version, String application, URL[] root);
 		
 	/**
 	 * Configures the specified site entry. If a site entry with the
