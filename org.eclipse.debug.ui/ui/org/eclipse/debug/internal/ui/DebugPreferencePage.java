@@ -28,6 +28,9 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		setPreferenceStore(store);
 	}
 
+	/**
+	 * @see PreferencePage#createControl(Composite)
+	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		WorkbenchHelp.setHelp(
@@ -43,8 +46,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 											"Launching style", 
 											1,
 											new String[][] {
-												{"Launcher-based (no history or relaunching)", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, //$NON-NLS-1$
-												{"Configuration-based (history and relaunching available)", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} //$NON-NLS-1$
+												{"La&uncher-based", IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS}, //$NON-NLS-1$
+												{"C&onfiguration-based", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} //$NON-NLS-1$
 											},
 											getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
@@ -65,12 +68,12 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	}
 
 	/**
-	 * @see IWorkbenchPreferencePage#init
+	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
 	}
 	
-	public static void initDefaults(IPreferenceStore store) {
+	protected static void initDefaults(IPreferenceStore store) {
 		store.setDefault(IDebugPreferenceConstants.LAUNCHING_STYLE, IDebugPreferenceConstants.LAUNCHING_STYLE_LAUNCHERS);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, true);
 		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, true);
