@@ -46,6 +46,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		sep.setLayoutData(gd);
 
 		text = toolkit.createFormText(container, true);
+		text.setWhitespaceNormalized(false);
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		text.marginWidth = 5;
 		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
@@ -77,39 +78,39 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		if ((parent.getStyle() & ReusableHelpPart.ALL_TOPICS) != 0)
 			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.allTopics"), IHelpUIConstants.HV_ALL_TOPICS_PAGE, //$NON-NLS-1$
 				IHelpUIConstants.IMAGE_TOC_OPEN);
-		if ((parent.getStyle() & ReusableHelpPart.SEARCH) != 0)		
+		if ((parent.getStyle() & ReusableHelpPart.SEARCH) != 0) {
+			addSpace(buf, 3);
 			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.search"), IHelpUIConstants.HV_FSEARCH_PAGE, //$NON-NLS-1$
 				IHelpUIConstants.IMAGE_HELP_SEARCH);
-		if ((parent.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0)		
+		}
+		if ((parent.getStyle() & ReusableHelpPart.CONTEXT_HELP) != 0) {
+			addSpace(buf, 3);
 			addPageLink(buf, HelpUIResources.getString("SeeAlsoPart.contextHelp"), //$NON-NLS-1$
 				IHelpUIConstants.HV_CONTEXT_HELP_PAGE,
 				IHelpUIConstants.IMAGE_CONTAINER);
+		}
 		buf.append("</p>"); //$NON-NLS-1$
 		buf.append("</form>"); //$NON-NLS-1$
 		text.setText(buf.toString(), true, false);
 	}
+	
+	private void addSpace(StringBuffer buf, int count) {
+		for (int i=0; i<count; i++) {
+			buf.append(" ");
+		}
+	}
 
 	private void addPageLink(StringBuffer buf, String text, String id,
 			String imgRef) {
-		/*
-		buf.append("<li indent=\"25\" bindent=\"5\" style=\"image\" value=\""); //$NON-NLS-1$
+		buf.append("<img href=\""); //$NON-NLS-1$
 		buf.append(imgRef);
-		buf.append("\">"); //$NON-NLS-1$
+		buf.append("\"/>"); //$NON-NLS-1$
+		addSpace(buf, 1);
 		buf.append("<a href=\""); //$NON-NLS-1$
 		buf.append(id);
 		buf.append("\">"); //$NON-NLS-1$
 		buf.append(text);
 		buf.append("</a>"); //$NON-NLS-1$
-		buf.append("</li>"); //$NON-NLS-1$
-		*/
-		buf.append("<img href=\""); //$NON-NLS-1$
-		buf.append(imgRef);
-		buf.append("\"/> "); //$NON-NLS-1$
-		buf.append("<a href=\""); //$NON-NLS-1$
-		buf.append(id);
-		buf.append("\">"); //$NON-NLS-1$
-		buf.append(text);
-		buf.append("</a> "); //$NON-NLS-1$
 	}
 
 	/*
