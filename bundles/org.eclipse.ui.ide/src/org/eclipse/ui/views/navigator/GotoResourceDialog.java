@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * Shows a list of resources to the user with a text entry field
@@ -31,5 +32,15 @@ import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
         setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell,
                 INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
+        setAllowUserToToggleDerived(true);
+        setShowDerived(IDEWorkbenchPlugin.getDefault().getDialogSettings().getBoolean("ResourceListSelectionDialog.showDerived")); //$NON-NLS-1$
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.dialogs.ResourceListSelectionDialog#okPressed()
+     */
+    protected void okPressed() {
+        IDEWorkbenchPlugin.getDefault().getDialogSettings().put("ResourceListSelectionDialog.showDerived", getShowDerived()); //$NON-NLS-1$
+        super.okPressed();
     }
 }

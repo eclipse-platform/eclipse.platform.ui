@@ -55,6 +55,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * @since 2.1
  */
 public class ResourceListSelectionDialog extends SelectionDialog {
+    
     Text pattern;
 
     Table resourceNames;
@@ -84,6 +85,12 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
     
     boolean okEnabled = false;
+
+    private boolean showDerived = false;
+
+    private Button showDerivedButton;
+
+    private boolean allowUserToToggleDerived;
 
     static class ResourceDescriptor implements Comparable {
         String label;
@@ -346,7 +353,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      * create the dialog, resources will be gathered dynamically as the pattern
      * string is specified.  Only resources of the given types that match the 
      * pattern string will be listed.  To further filter the matching resources,
-     * @see #select(IResource).
+     * @see #select(IResource)
      * 
      * @param parentShell shell to parent the dialog on
      * @param container container to get resources from
@@ -457,7 +464,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
         pattern.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
-                textChanged();
+                refresh(false);
             }
         });
 
@@ -477,16 +484,49 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             }
         });
 
+        if (getAllowUserToToggleDerived()) {
+            showDerivedButton = new Button(dialogArea, SWT.CHECK);
+            showDerivedButton.setText(IDEWorkbenchMessages.getString("ResourceSelectionDialog.showDerived")); //$NON-NLS-1$
+            showDerivedButton.addSelectionListener(new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    setShowDerived(showDerivedButton.getSelection());
+                    refresh(true);
+                }
+            });
+            showDerivedButton.setSelection(getShowDerived());
+        }
+            
         applyDialogFont(dialogArea);
         return dialogArea;
     }
 
     /**
+     * Returns whether to include a "Show derived resources" checkbox in the dialog.
+     * The default is <code>false</code>.
+     * 
+     * @return <code>true</code> to include the checkbox, <code>false</code> to omit
+     * @since 3.1
      */
-    private void filterResources() {
-        String oldPattern = patternString;
+    public boolean getAllowUserToToggleDerived() {
+        return allowUserToToggleDerived;
+    }
+
+    /**
+     * Sets whether to include a "Show derived resources" checkbox in the dialog.
+     * 
+     * @param allow <code>true</code> to include the checkbox, <code>false</code> to omit
+     * @since 3.1
+     */
+    public void setAllowUserToToggleDerived(boolean allow) {
+        allowUserToToggleDerived = allow;
+    }
+    
+    /**
+     */
+    private void filterResources(boolean force) {
+        String oldPattern = force ? null : patternString;
         patternString = adjustPattern();
-        if (patternString.equals(oldPattern))
+        if (!force && patternString.equals(oldPattern))
             return;
 
         updateFilterThread.stop = true;
@@ -554,10 +594,10 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 
     /**
      */
-    private void gatherResources() {
-        String oldPattern = patternString;
+    private void gatherResources(boolean force) {
+        String oldPattern = force ? null : patternString;
         patternString = adjustPattern();
-        if (patternString.equals(oldPattern))
+        if (!force && patternString.equals(oldPattern))
             return;
 
         updateGatherThread.stop = true;
@@ -652,8 +692,8 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         try {
             container.accept(new IResourceProxyVisitor() {
                 public boolean visit(IResourceProxy proxy) {
-                    // exclude derived resources (bug 38085)
-                    if (proxy.isDerived()) {
+                    // optionally exclude derived resources (bugs 38085 and 81333)
+                    if (!getShowDerived() && proxy.isDerived()) {
                         return false;
                     }
                     int type = proxy.getType();
@@ -695,6 +735,27 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         if(text == null)
         	return ""; //$NON-NLS-1$
         return text;
+    }
+
+    /**
+     * Returns whether derived resources should be shown in the list.
+     * The default is <code>false</code>.
+     * 
+     * @return <code>true</code> to show derived resources, <code>false</code> to hide them
+     * @since 3.1
+     */
+    protected boolean getShowDerived() {
+       return showDerived ; 
+    }
+
+    /**
+     * Sets whether derived resources should be shown in the list.
+     * 
+     * @param show <code>true</code> to show derived resources, <code>false</code> to hide them
+     * @since 3.1
+     */
+    protected void setShowDerived(boolean show) {
+        showDerived  = show;
     }
 
     /**
@@ -785,14 +846,19 @@ public class ResourceListSelectionDialog extends SelectionDialog {
     }
 
     /**
-     * The text in the pattern text entry has changed.
-     * Create a new string matcher and start a new update tread.
+     * Refreshes the filtered list of resources.
+     * Called when the text in the pattern text entry has changed.
+     * 
+     * @param force if <code>true</code> a refresh is forced, if <code>false</code> a refresh only
+     *   occurs if the pattern has changed
+     * 
+     * @since 3.1
      */
-    private void textChanged() {
+    protected void refresh(boolean force) {
         if (gatherResourcesDynamically) {
-            gatherResources();
+            gatherResources(force);
         } else {
-            filterResources();
+            filterResources(force);
         }
     }
 

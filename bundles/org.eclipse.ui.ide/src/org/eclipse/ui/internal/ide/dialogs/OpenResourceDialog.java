@@ -11,11 +11,11 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 /**
@@ -31,7 +31,7 @@ public class OpenResourceDialog extends ResourceListSelectionDialog {
      * 
      * @param parentShell the parent shell
      * @param container the container
-     * @param typesMask the mask
+     * @param typesMask the types mask
      */
     public OpenResourceDialog(Shell parentShell, IContainer container,
             int typesMask) {
@@ -39,14 +39,15 @@ public class OpenResourceDialog extends ResourceListSelectionDialog {
         setTitle(IDEWorkbenchMessages.getString("OpenResourceDialog.title")); //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem()
                 .setHelp(parentShell, IIDEHelpContextIds.OPEN_RESOURCE_DIALOG);
+        setAllowUserToToggleDerived(true);
+        setShowDerived(IDEWorkbenchPlugin.getDefault().getDialogSettings().getBoolean("ResourceListSelectionDialog.showDerived")); //$NON-NLS-1$
     }
 
-    /**
-     * Extends the super's filter to exclude derived resources.
-     * 
-     * @since 3.0
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.dialogs.ResourceListSelectionDialog#okPressed()
      */
-    protected boolean select(IResource resource) {
-        return super.select(resource) && !resource.isDerived();
+    protected void okPressed() {
+        IDEWorkbenchPlugin.getDefault().getDialogSettings().put("ResourceListSelectionDialog.showDerived", getShowDerived()); //$NON-NLS-1$
+        super.okPressed();
     }
 }
