@@ -1112,8 +1112,8 @@ public class EditorManager {
 			this.tooltip = tooltip;
 			this.title = title;
 			//make it backward compatible.
-			if(name == null)
-				name = title;
+			if(this.name == null)
+				this.name = title;
 		}
 		Editor() {
 		}
