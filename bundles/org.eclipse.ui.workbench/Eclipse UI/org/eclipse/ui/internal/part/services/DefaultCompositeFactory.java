@@ -10,25 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.services;
 
-import org.eclipse.core.components.ComponentFactory;
-import org.eclipse.core.components.ComponentHandle;
-import org.eclipse.core.components.CustomHandle;
-import org.eclipse.core.components.IServiceProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.components.ComponentFactory;
+import org.eclipse.ui.components.ComponentHandle;
+import org.eclipse.ui.components.IDisposable;
+import org.eclipse.ui.components.IServiceProvider;
 
 /**
  * @since 3.1
  */
 public class DefaultCompositeFactory extends ComponentFactory {
 
-    private final static class CompositeHandle extends CustomHandle {
+    private final static class CompositeHandle extends ComponentHandle implements IDisposable {
         
         public CompositeHandle(Composite toWrap) {
             super(toWrap);
+        }
+        
+        public IDisposable getDisposable() {
+            return this;
         }
         
         public void dispose() {

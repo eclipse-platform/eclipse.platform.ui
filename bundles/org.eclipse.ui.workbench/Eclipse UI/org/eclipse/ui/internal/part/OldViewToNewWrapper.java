@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.ComponentException;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.components.ComponentException;
 import org.eclipse.ui.part.services.IPartDescriptor;
 
 /**

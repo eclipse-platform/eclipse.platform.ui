@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.ServiceFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.part.Part;
 
 /**

@@ -12,9 +12,6 @@ package org.eclipse.ui.internal.part.services;
 
 import java.util.Map;
 
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.IServiceProvider;
-import org.eclipse.core.components.IDisposable;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -23,6 +20,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.IDisposable;
+import org.eclipse.ui.components.IServiceProvider;
 import org.eclipse.ui.internal.part.multiplexer.INestedComponent;
 import org.eclipse.ui.internal.part.multiplexer.ISharedContext;
 

@@ -142,8 +142,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     private IntroRegistry introRegistry;
     
     private IWorkbenchOperationSupport operationSupport;
+        
     
-
     /**
      * Create an instance of the WorkbenchPlugin. The workbench plugin is
      * effectively the "application" for the workbench UI. The entire UI
@@ -572,6 +572,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         //1FTTJKV: ITPCORE:ALL - log(status) does not allow plugin information to be recorded
     }
 
+    public static Status getStatus(Throwable t) {
+        return getStatus(t.getLocalizedMessage() != null ? t.getLocalizedMessage() : t.toString(), t);
+    }
+    
+    public static void log(Throwable t) {
+        getDefault().getLog().log(getStatus(t));
+    }
+    
+    public static Status getStatus(String message, Throwable t) {
+        return new Status(Status.ERROR, getDefault().getBundle().getSymbolicName(), 0,
+                message, t);        
+    }
+    
     /**
      * Logs the given message and throwable to the platform log.
      * 
@@ -663,7 +676,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         // Start the UI plugin so that it can install the callback in PrefUtil,
         // which needs to be done as early as possible, before the workbench
         // accesses any API preferences.
-        Platform.getBundle(PlatformUI.PLUGIN_ID).start();
+        Bundle uiBundle = Platform.getBundle(PlatformUI.PLUGIN_ID); 
+        uiBundle.start();
     }
 
     /**
@@ -749,6 +763,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
         	operationSupport.dispose();
         	operationSupport = null;
         }
+        
         SWTResourceUtil.shutdown();
     } 
     

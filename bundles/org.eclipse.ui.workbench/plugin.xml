@@ -27,7 +27,6 @@
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.swt"/>
       <import plugin="org.eclipse.core.expressions"/>
-      <import plugin="org.eclipse.core.components"/>
    </requires>
 
    <extension

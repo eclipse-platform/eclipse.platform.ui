@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.IServiceProvider;
+import org.eclipse.ui.components.Components;
+import org.eclipse.ui.components.IServiceProvider;
 import org.eclipse.ui.internal.part.multiplexer.IDelegatingContext;
 import org.eclipse.ui.part.interfaces.IFocusable;
 

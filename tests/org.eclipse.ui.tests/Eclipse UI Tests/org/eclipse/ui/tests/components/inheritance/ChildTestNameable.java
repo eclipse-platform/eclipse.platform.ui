@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.components.inheritance;
 
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.IServiceProvider;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.IServiceProvider;
 
 /**
  * @since 3.1

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.components;
 
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.ServiceFactory;
-import org.eclipse.core.components.IServiceProvider;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -20,6 +17,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.part.multiplexer.Multiplexer;
 import org.eclipse.ui.internal.part.multiplexer.MultiplexerChild;
 import org.eclipse.ui.internal.part.multiplexer.NestedContext;

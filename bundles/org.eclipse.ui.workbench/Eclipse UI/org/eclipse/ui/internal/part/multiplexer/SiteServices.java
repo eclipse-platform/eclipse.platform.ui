@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.multiplexer;
 
-import org.eclipse.core.components.FactoryMap;
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.Container;
-import org.eclipse.core.components.ServiceFactory;
-import org.eclipse.core.components.IServiceProvider;
-import org.eclipse.core.components.IDisposable;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.Container;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.IDisposable;
+import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.ComponentUtil;
 import org.eclipse.ui.internal.part.IWorkbenchScopeConstants;
 import org.osgi.framework.Bundle;
 
@@ -35,8 +35,8 @@ public class SiteServices implements IServiceProvider, IDisposable {
     private static FactoryMap createContext(ServiceFactory args) {
         return new FactoryMap()
                 .add(args)
-                .add(Components.getContext(IWorkbenchScopeConstants.SITE_SCOPE))
-                .add(Components.getContext(IWorkbenchScopeConstants.PLUGIN_SCOPE));
+                .add(ComponentUtil.getContext(IWorkbenchScopeConstants.SITE_SCOPE))
+                .add(ComponentUtil.getContext(IWorkbenchScopeConstants.PLUGIN_SCOPE));
     }
     
     /**

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.components.inheritance;
 
-import org.eclipse.core.components.Container;
-import org.eclipse.core.components.ReflectionFactory;
-import org.eclipse.core.components.FactoryMap;
+import org.eclipse.ui.components.Container;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.ReflectionFactory;
 
 /**
  * @since 3.1

@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.FactoryMap;
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.ServiceFactory;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -21,6 +17,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.Components;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.Part;
 import org.eclipse.ui.part.services.IWorkbenchPartFactory;

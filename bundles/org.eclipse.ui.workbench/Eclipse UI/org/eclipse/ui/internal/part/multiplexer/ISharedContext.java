@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.multiplexer;
 
-import org.eclipse.core.components.IServiceProvider;
+import org.eclipse.ui.components.IServiceProvider;
 
 /**
  * Service made available to nested components. Provides the nested

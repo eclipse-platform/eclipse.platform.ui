@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.components;
 
-import org.eclipse.core.components.ServiceFactory;
-import org.eclipse.core.components.FactoryMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -19,6 +17,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.part.Part;
 import org.eclipse.ui.tests.result.AbstractTestLogger;
 import org.eclipse.ui.tests.result.UITestCaseWithResult;

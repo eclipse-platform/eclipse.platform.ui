@@ -2003,70 +2003,71 @@
          </action>
       </objectContribution>
  	</extension>
+ 	
   	<extension
          point="org.eclipse.ui.views">
  		<view
-            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexAllView"
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexAllView"
             category="org.eclipse.ui.examples.components.context"
             name="MultiplexAllView"
             id="org.eclipse.ui.tests.components.MultiplexAllView"/>
             
         <view
-            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexNameView"
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexNameView"
             category="org.eclipse.ui.examples.components.context"
             name="MultiplexNameView"
             id="org.eclipse.ui.tests.components.MultiplexNameView"/>
             
-      <view
-            class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexerTestView"
+        <view
+            class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MultiplexerTestView"
             category="org.eclipse.ui.examples.components.componentExamples"
             name="Test multiplexer"
             id="org.eclipse.ui.tests.components.MultiplexerTestView"/>                              
 
 	</extension>    
     <extension
-          point="org.eclipse.core.components.services">
+          point="org.eclipse.ui.services">
           
           <scope id="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest2"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest2"
              interface="org.eclipse.ui.tests.components.CycleTest2"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest1"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.CycleTest1"
              interface="org.eclipse.ui.tests.components.CycleTest1"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.MissingDependencyView"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.MissingDependencyView"
              interface="org.eclipse.ui.tests.components.MissingDependencyView"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.InstanceCountComponent"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.InstanceCountComponent"
              interface="org.eclipse.ui.tests.components.InstanceCountComponent"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewThatThrowsAnException"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewThatThrowsAnException"
              interface="org.eclipse.ui.tests.components.IInterfaceThatThrowsAnException"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency"
              interface="org.eclipse.ui.tests.components.ValidDependency"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
        <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency2"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ValidDependency2"
              interface="org.eclipse.ui.tests.components.ValidDependency2"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
 	   <component
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.ComponentThatDoesNotExist"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ComponentThatDoesNotExist"
              interface="org.eclipse.ui.tests.components.IInterfaceThatNobodyImplements"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
 	   <component
              interface="org.eclipse.ui.tests.components.ViewScopeDependency"
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewScopeDependency"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.ViewScopeDependency"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>
 	   <component
              interface="org.eclipse.ui.tests.components.WrongScopeDependency"
-             class="org.eclipse.core.components.ReflectionFactory:org.eclipse.ui.tests.components.WrongScopeDependency"
+             class="org.eclipse.ui.components.ReflectionFactory:org.eclipse.ui.tests.components.WrongScopeDependency"
              scope="org.eclipse.ui.tests.components.ErrorTestScope"/>             
        </extension>
 

@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.IServiceProvider;
-import org.eclipse.core.components.IStatusFactory;
-import org.eclipse.core.components.ISystemLog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.Components;
+import org.eclipse.ui.components.IServiceProvider;
 import org.eclipse.ui.part.services.INameable;
 import org.eclipse.ui.part.services.IPartDescriptor;
 import org.eclipse.ui.part.services.ISavedState;
 import org.eclipse.ui.part.services.ISecondaryId;
 import org.eclipse.ui.part.services.ISelectionHandler;
+import org.eclipse.ui.part.services.IStatusFactory;
+import org.eclipse.ui.part.services.ISystemLog;
 import org.osgi.framework.Bundle;
 
 /**

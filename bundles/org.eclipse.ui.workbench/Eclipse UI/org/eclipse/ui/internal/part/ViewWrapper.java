@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.ServiceFactory;
-import org.eclipse.core.components.IServiceProvider;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.Components;
+import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.components.ServiceFactory;
 import org.osgi.framework.Bundle;
 
 /**

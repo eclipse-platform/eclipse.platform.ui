@@ -13,9 +13,9 @@ package org.eclipse.ui.tests.components;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.Container;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.components.Container;
+import org.eclipse.ui.internal.components.ComponentUtil;
 import org.osgi.framework.Bundle;
 
 /**
@@ -50,7 +50,7 @@ public class ComponentTest extends TestCase {
         type = bundle.loadClass(componentTypeName);
         Assert.assertNotNull(type);
         
-        container = new Container(Components.getContext(context));
+        container = new Container(ComponentUtil.getContext(context));
     }
 
     /* (non-Javadoc)

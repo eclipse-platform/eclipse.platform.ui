@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.IDisposable;
-import org.eclipse.core.components.IStatusFactory;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -27,9 +24,12 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
+import org.eclipse.ui.components.Components;
+import org.eclipse.ui.components.IDisposable;
 import org.eclipse.ui.part.interfaces.IFocusable;
 import org.eclipse.ui.part.interfaces.IPersistable;
 import org.eclipse.ui.part.services.INameable;
+import org.eclipse.ui.part.services.IStatusFactory;
 
 /**
  * @since 3.1

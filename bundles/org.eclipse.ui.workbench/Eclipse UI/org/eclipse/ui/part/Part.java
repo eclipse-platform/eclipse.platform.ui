@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.components.IServiceProvider;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.components.IServiceProvider;
 import org.eclipse.ui.part.interfaces.IPersistable;
 
 /**

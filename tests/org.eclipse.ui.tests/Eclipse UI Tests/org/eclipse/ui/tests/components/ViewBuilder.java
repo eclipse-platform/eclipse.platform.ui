@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.components;
 
-import org.eclipse.core.components.ServiceFactory;
-import org.eclipse.core.components.ComponentException;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.part.Part;
 
 /**

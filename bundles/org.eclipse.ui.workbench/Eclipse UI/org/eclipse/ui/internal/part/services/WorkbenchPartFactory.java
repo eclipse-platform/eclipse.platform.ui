@@ -12,10 +12,6 @@ package org.eclipse.ui.internal.part.services;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.components.FactoryMap;
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.ComponentFactory;
-import org.eclipse.core.components.ServiceFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -27,6 +23,10 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.ComponentFactory;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.ViewActionBuilder;
 import org.eclipse.ui.internal.WorkbenchPlugin;

@@ -10,13 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.components.ComponentFactory;
-import org.eclipse.core.components.ComponentHandle;
-import org.eclipse.core.components.ServiceFactory;
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.Container;
-import org.eclipse.core.components.FactoryMap;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
@@ -25,6 +18,14 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.ComponentFactory;
+import org.eclipse.ui.components.ComponentHandle;
+import org.eclipse.ui.components.Components;
+import org.eclipse.ui.components.Container;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.ServiceFactory;
+import org.eclipse.ui.internal.components.ComponentUtil;
 import org.eclipse.ui.internal.part.IWorkbenchScopeConstants;
 import org.eclipse.ui.internal.part.SiteComposite;
 import org.eclipse.ui.internal.part.multiplexer.SiteServices;
@@ -83,7 +84,7 @@ public final class ComponentPart extends Part implements IFocusable {
             control = new SiteComposite(parent);
             control.setLayout(new FillLayout());
         
-            ServiceFactory outputContext = Components.getContext(IWorkbenchScopeConstants.PART_SCOPE);
+            ServiceFactory outputContext = ComponentUtil.getContext(IWorkbenchScopeConstants.PART_SCOPE);
             
             // create the site for this part
             this.container = new SiteServices(new FactoryMap().add(overrides).mapInstance(Composite.class, control));

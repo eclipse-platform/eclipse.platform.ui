@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.FactoryMap;
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.ServiceFactory;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Composite;
@@ -22,6 +19,9 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.part.services.NullEditorInput;
 import org.eclipse.ui.part.Part;
 import org.eclipse.ui.part.services.IPartDescriptor;

@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part;
 
-import org.eclipse.core.components.FactoryMap;
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.ServiceFactory;
-import org.eclipse.core.components.IServiceProvider;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.FactoryMap;
+import org.eclipse.ui.components.IServiceProvider;
+import org.eclipse.ui.components.ServiceFactory;
 import org.eclipse.ui.internal.part.multiplexer.SiteServices;
 import org.eclipse.ui.part.Part;
 import org.osgi.framework.Bundle;

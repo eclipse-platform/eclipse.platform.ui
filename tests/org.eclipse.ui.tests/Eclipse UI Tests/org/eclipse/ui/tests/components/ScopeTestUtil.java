@@ -12,10 +12,10 @@ package org.eclipse.ui.tests.components;
 
 import junit.framework.TestSuite;
 
-import org.eclipse.core.components.Components;
-import org.eclipse.core.components.registry.ClassIdentifier;
-import org.eclipse.core.components.registry.IComponentScope;
-import org.eclipse.core.components.registry.IScopeReference;
+import org.eclipse.ui.components.ClassIdentifier;
+import org.eclipse.ui.internal.components.ComponentUtil;
+import org.eclipse.ui.internal.components.registry.IComponentScope;
+import org.eclipse.ui.internal.components.registry.IScopeReference;
 
 /**
  * @since 3.1
@@ -23,7 +23,7 @@ import org.eclipse.core.components.registry.IScopeReference;
 public class ScopeTestUtil {
     
     public static void addTestsFor(TestSuite suite, String context) {
-        IComponentScope scope = Components.getScope(context);
+        IComponentScope scope = ComponentUtil.getScope(context);
         
         addTestsFor(suite, scope, context);
     }

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.part.services;
 
-import org.eclipse.core.components.ComponentException;
-import org.eclipse.core.components.IServiceProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.components.ComponentException;
+import org.eclipse.ui.components.IServiceProvider;
 import org.eclipse.ui.internal.part.multiplexer.INestedComponent;
 import org.eclipse.ui.internal.part.multiplexer.ISharedContext;
 import org.eclipse.ui.part.services.ISelectionHandler;

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.components;
 
-import org.eclipse.core.components.IDisposable;
+import org.eclipse.ui.components.IDisposable;
 
 /**
  * @since 3.1
