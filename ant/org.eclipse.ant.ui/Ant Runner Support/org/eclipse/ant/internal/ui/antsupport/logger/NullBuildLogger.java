@@ -91,8 +91,8 @@ public class NullBuildLogger implements BuildLogger {
 		handleException(event);
 	}
 
-	/**
-	 * @see BuildListener#messageLogged(BuildEvent)
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
 		logMessage(event.getMessage(), event.getPriority());

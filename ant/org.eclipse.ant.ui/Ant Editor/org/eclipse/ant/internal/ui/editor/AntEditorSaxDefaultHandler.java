@@ -110,9 +110,9 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     /**
      * Creates an AntEditorSaxDefaultHandler, with the specified parameters.
      * 
-     * @param aRowOfCursorPosition the startingRow where the cursor is located in the
+     * @param rowOfCursorPosition the startingRow where the cursor is located in the
      * document. The first startingRow is refered to with an index of '0'.
-     * @param aColumnOfCursorPosition the startingColumn where the cursor is located in
+     * @param columnOfCursorPosition the startingColumn where the cursor is located in
      * the document. The first startingColumn is refered to with an index of '0'.
      */
     public AntEditorSaxDefaultHandler(IDocument document, File fileContainer, int rowOfCursorPosition, int columnOfCursorPosition) throws ParserConfigurationException {
@@ -271,7 +271,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      * the one that opened last. To tell the handler whether the parent should
      * be guessed, <code>guessParent</code> may be specified.
      * 
-     * @param aGuessParentFlag whether the parent should be guessed
+     * @param guessParent whether the parent should be guessed
      * @return the parent element or <code>null</code> if not known.
      */
     public Element getParentElement(boolean guessParent) {
