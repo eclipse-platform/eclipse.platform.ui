@@ -85,7 +85,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 		// getting pushed down so that only there very tops are visible.  Thus,
 		// we have to specify different style constants for the different platforms.
 		int textStyles = SWT.SINGLE | SWT.LEFT;
-		if (SWT.getPlatform().equals("win32")) {  
+		if (SWT.getPlatform().equals("win32")) {  //$NON-NLS-1$
 			textStyles |= SWT.BORDER;
 		}
 		fEditorText = new Text(fComposite, textStyles);

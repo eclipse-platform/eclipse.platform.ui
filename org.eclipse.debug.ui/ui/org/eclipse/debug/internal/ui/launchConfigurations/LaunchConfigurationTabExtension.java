@@ -86,7 +86,7 @@ public class LaunchConfigurationTabExtension {
 	 *  tab is intended for, or <code>null</code> if this tab is generic
 	 */	
 	protected String getTypeIdentifier() {
-		return getConfigurationElement().getAttribute("type");
+		return getConfigurationElement().getAttribute("type"); //$NON-NLS-1$
 	}
 
 }
