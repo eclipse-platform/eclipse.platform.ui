@@ -3359,7 +3359,7 @@ public class TextViewer extends Viewer implements
 	 */
 	private void applyTextPresentation(TextPresentation presentation) {
 	
-		List list= new ArrayList();
+		List list= new ArrayList(presentation.getDenumerableRanges());
 		Iterator e= presentation.getAllStyleRangeIterator();
 		while (e.hasNext()) {
 			StyleRange range= (StyleRange) e.next();

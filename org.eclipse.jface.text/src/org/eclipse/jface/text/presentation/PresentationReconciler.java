@@ -358,7 +358,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 	private TextPresentation createPresentation(IRegion damage, IDocument document) { 
 		try {
 			
-			TextPresentation presentation= new TextPresentation();
+			TextPresentation presentation= new TextPresentation(1000);
 			
 			ITypedRegion[] partitioning= document.computePartitioning(damage.getOffset(), damage.getLength());
 			for (int i= 0; i < partitioning.length; i++) {

@@ -133,7 +133,7 @@ public class TextPresentation {
 	/** The syle information for the range covered by the whole presentation */
 	private StyleRange fDefaultRange;
 	/** The member ranges of the presentation */
-	private ArrayList fRanges= new ArrayList();
+	private ArrayList fRanges;
 	/** A clipping region against which the presentation can be clipped when asked for results */
 	private IRegion fResultWindow;
 	
@@ -142,8 +142,20 @@ public class TextPresentation {
 	 * Creates a new empty text presentation.
 	 */
 	public TextPresentation() {
+		fRanges= new ArrayList(50);
 	}
-		
+	
+	/**
+	 * Creates a new empty text presentation. <code>sizeHint</code>  tells the 
+	 * expected size of this presentation.
+	 * 
+	 * @param sizeHint teh expected size of this presentation
+	 */
+	public TextPresentation(int sizeHint) {
+		Assert.isTrue(sizeHint > 0);
+		fRanges= new ArrayList(sizeHint);
+	}
+	
 	/**
 	 * Sets the result window for this presentation. When dealing with
 	 * this presentation all ranges which are outside the result window 
