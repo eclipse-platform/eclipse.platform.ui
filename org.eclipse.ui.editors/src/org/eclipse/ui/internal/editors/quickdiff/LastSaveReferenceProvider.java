@@ -99,8 +99,10 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		// note that they may serve multiple editors	
 		if (provider != fDocumentProvider || input != fEditorInput) {
 			dispose();
-			fDocumentProvider= provider;
-			fEditorInput= input;
+			synchronized (fLock) {
+				fDocumentProvider= provider;
+				fEditorInput= input;
+			}
 		}
 	}
 
@@ -154,8 +156,8 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 			
 			// update state
 			synchronized (fLock) {
-				if (fDocumentProvider != null) { 
-					// only update state if we have not been disposed in between
+				if (fDocumentProvider == provider && fEditorInput == input) { 
+					// only update state if our provider / input pair has not been updated in between (dispose or setActiveEditor) 
 					fReference= doc;
 					fDocumentRead= true;
 				}
