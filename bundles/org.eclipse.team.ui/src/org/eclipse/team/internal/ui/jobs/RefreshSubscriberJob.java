@@ -18,12 +18,13 @@ import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.IRefreshEvent;
-import org.eclipse.team.internal.ui.synchronize.IRefreshSubscriberListener;
+import org.eclipse.team.ui.synchronize.subscriber.IRefreshEvent;
+import org.eclipse.team.ui.synchronize.subscriber.IRefreshSubscriberListener;
 
 /**
  * Job to refresh a subscriber with its remote state.
@@ -186,7 +187,15 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	}
 	
 	public boolean shouldRun() {
-		return collector != null && getSubscriber() != null;
+		// Ensure that any progress shown as a result of this refresh occurs hidden in a progress group.
+		boolean shouldRun = collector != null && getSubscriber() != null;
+		if(shouldRun) {
+			IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+			group.beginTask(Policy.bind("RefreshSubscriberJob.2", getSubscriber().getName()), 100); //$NON-NLS-1$
+			setProgressGroup(group, 80);
+			collector.setProgressGroup(group, 20);
+		}
+		return shouldRun; 
 	}
 	
 	public boolean belongsTo(Object family) {		
