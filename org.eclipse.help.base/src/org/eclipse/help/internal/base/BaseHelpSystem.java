@@ -117,15 +117,17 @@ public final class BaseHelpSystem {
 			System.out.println("Base Help System is shutting down."); //$NON-NLS-1$
 		}
 		// close any browsers created
-		BrowserManager.getInstance().closeAll();
+		// BrowserManager.getInstance().closeAll();
 
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
 		}
-		// stop the web apps
-		WebappManager.stop("help"); //$NON-NLS-1$
-		if (getMode() != MODE_WORKBENCH)
-			WebappManager.stop("helpControl"); //$NON-NLS-1$
+		if (getInstance().webappStarted) {
+			// stop the web apps
+			WebappManager.stop("help"); //$NON-NLS-1$
+			if (getMode() != MODE_WORKBENCH)
+				WebappManager.stop("helpControl"); //$NON-NLS-1$
+		}
 
 		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Help System is shut down."); //$NON-NLS-1$
