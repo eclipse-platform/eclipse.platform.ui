@@ -13,7 +13,7 @@ package org.eclipse.ui.forms;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.internal.parts.*;
+import org.eclipse.ui.forms.internal.widgets.*;
 
 /**
  * Manages color and underline mode settings for a group of hyperlinks.

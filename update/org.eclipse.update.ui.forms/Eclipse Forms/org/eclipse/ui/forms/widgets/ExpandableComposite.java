@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.parts;
+package org.eclipse.ui.forms.widgets;
 import java.util.Vector;
 
 import org.eclipse.jface.util.Assert;
@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.internal.parts.FormsResources;
+import org.eclipse.ui.forms.internal.widgets.FormsResources;
 
 /**
  * This composite is capable of expanding or collapsing a single client that is

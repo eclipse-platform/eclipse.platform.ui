@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.events;
 
-import org.eclipse.ui.forms.parts.FormEntry;
+import org.eclipse.ui.forms.widgets.FormEntry;
 
 public interface IFormEntryListener {
 	void textValueChanged(FormEntry entry);

@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.parts.Hyperlink;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
 /**
  * Manages a group of hyperlinks. It tracks activation, updates normal and

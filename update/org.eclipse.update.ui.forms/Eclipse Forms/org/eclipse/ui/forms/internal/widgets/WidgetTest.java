@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.internal.parts;
+package org.eclipse.ui.forms.internal.widgets;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -19,9 +19,9 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.parts.*;
+import org.eclipse.ui.forms.widgets.*;
 
-public class PartsTest {
+public class WidgetTest {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
@@ -53,7 +53,7 @@ public class PartsTest {
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		form.setText("Wrapped Form");
-		URL bdURL = PartsTest.class.getResource("form_banner.gif");
+		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
 		form.setBackgroundImage(bd.createImage());
 		form.setBackground(toolkit.getColors().getBackground());
@@ -96,7 +96,7 @@ public class PartsTest {
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		form.setText("Jelly Form");
-		URL bdURL = PartsTest.class.getResource("form_banner.gif");
+		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
 		form.setBackgroundImage(bd.createImage());
 		form.setBackground(toolkit.getColors().getBackground());
@@ -250,10 +250,10 @@ public class PartsTest {
 			}
 		});
 		rtext.setHyperlinkSettings(toolkit.getHyperlinkGroup());
-		URL i1URL = PartsTest.class.getResource("image1.gif");
+		URL i1URL = WidgetTest.class.getResource("image1.gif");
 		ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
 		rtext.setImage("image1", id1.createImage());
-		InputStream is = PartsTest.class.getResourceAsStream("index.xml");
+		InputStream is = WidgetTest.class.getResourceAsStream("index.xml");
 		rtext.setContents(is, true);
 	}
 }

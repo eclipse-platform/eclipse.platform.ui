@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.internal.parts;
+package org.eclipse.ui.forms.internal.widgets;
 
 import java.util.Hashtable;
 

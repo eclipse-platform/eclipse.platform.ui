@@ -4,7 +4,7 @@
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-package org.eclipse.ui.forms.internal.parts;
+package org.eclipse.ui.forms.internal.widgets;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.parts;
+package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -290,6 +290,7 @@ public class FormToolkit {
 		hookDeleteListener(tree);
 		return tree;
 	}
+/*
 	private void deleteKeyPressed(Widget widget) {
 		if (!(widget instanceof Control))
 			return;
@@ -304,6 +305,7 @@ public class FormToolkit {
 			}
 		}
 	}
+*/
 	public void dispose() {
 		if (colors.isShared() == false) {
 			colors.dispose();
@@ -318,7 +320,7 @@ public class FormToolkit {
 			deleteListener = new KeyAdapter() {
 				public void keyPressed(KeyEvent event) {
 					if (event.character == SWT.DEL && event.stateMask == 0) {
-						deleteKeyPressed(event.widget);
+						//deleteKeyPressed(event.widget);
 					}
 				}
 			};

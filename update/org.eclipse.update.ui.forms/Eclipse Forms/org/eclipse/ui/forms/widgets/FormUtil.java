@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.forms.parts;
+package org.eclipse.ui.forms.widgets;
 
 import java.text.BreakIterator;
 
@@ -210,15 +210,14 @@ public class FormUtil {
 		ScrolledComposite scomp,
 		Point controlOrigin,
 		Point controlSize) {
-		Point area = scomp.getContent().getSize();
+		Rectangle area = scomp.getClientArea();
 		Point scompOrigin = scomp.getOrigin();
-		System.out.println("visible: origin="+controlOrigin+", size="+controlSize);
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
 
 		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.x) {
-			x = controlOrigin.x + controlSize.x - area.x;
+			x = controlOrigin.x + controlSize.x - area.width;
 		}
 
 		if (controlOrigin.x < x) {
@@ -226,13 +225,12 @@ public class FormUtil {
 		}
 
 		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.y) {
-			y = controlOrigin.y + controlSize.y - area.y;
+			y = controlOrigin.y + controlSize.y - area.height;
 		}
 
 		if (controlOrigin.y < y) {
 			y = controlOrigin.y;
 		}
-		System.out.println("Origin: "+x+","+y);
 		scomp.setOrigin(x, y);
 	}
 
