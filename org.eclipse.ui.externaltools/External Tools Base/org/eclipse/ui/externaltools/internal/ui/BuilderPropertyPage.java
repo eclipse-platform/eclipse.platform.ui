@@ -400,6 +400,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 			if (code == Dialog.CANCEL) {
 				// If the user cancelled, delete the newly created config
 				config.delete();
+			} else {
+				addConfig(config, builderTable.getItemCount(), true);
 			}
 		} catch (CoreException e) {
 		}
