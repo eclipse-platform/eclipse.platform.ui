@@ -121,12 +121,6 @@ public abstract class PopupInformationControl implements IInformationControl, II
 		shell.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		
-		addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});		
-		
 		GridLayout layout= new GridLayout(1, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
