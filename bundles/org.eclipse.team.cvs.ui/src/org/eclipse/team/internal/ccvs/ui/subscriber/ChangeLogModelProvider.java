@@ -17,6 +17,8 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.synchronize.*;
@@ -24,8 +26,8 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
@@ -52,6 +54,61 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private Map commentRoots = new HashMap();
 	private boolean shutdown = false;
 	private FetchLogEntriesJob fetchLogEntriesJob;
+	private ChangeLogActionGroup sortGroup;
+	private final static String SORT_ORDER_GROUP = "changelog_sort"; //$NON-NLS-1$
+	
+	/**
+	 * Action that allows changing the model providers sort order.
+	 */
+	private class ToggleModelProviderAction extends Action {
+		private int criteria;
+		protected ToggleModelProviderAction(String name, int criteria) {
+			super(name, Action.AS_RADIO_BUTTON);
+			this.criteria = criteria;
+			update();
+		}
+
+		public void run() {
+			StructuredViewer viewer = getViewer();
+			if (viewer != null && !viewer.getControl().isDisposed()) {
+				ChangeLogModelSorter sorter = (ChangeLogModelSorter) viewer.getSorter();
+				if (sorter != null && sorter.getCriteria() != criteria) {
+					viewer.setSorter(new ChangeLogModelSorter(criteria));
+					update();
+				}
+			}
+		}
+		
+		public void update() {
+			StructuredViewer viewer = getViewer();
+			if (viewer != null && !viewer.getControl().isDisposed()) {
+				ChangeLogModelSorter sorter = (ChangeLogModelSorter) viewer.getSorter();
+				if (sorter != null) {
+					setChecked(sorter.getCriteria() == criteria);		
+				}
+			}	
+		}
+	}
+	
+	/**
+	 * Actions for the compare particpant's toolbar
+	 */
+	public class ChangeLogActionGroup extends SynchronizePageActionGroup {
+		public void initialize(ISynchronizePageConfiguration configuration) {
+			super.initialize(configuration);
+			MenuManager sortBy = new MenuManager(Policy.bind("ChangeLogModelProvider.0"));	 //$NON-NLS-1$
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					SORT_ORDER_GROUP, 
+					sortBy);
+			
+			sortBy.add(new ToggleModelProviderAction(Policy.bind("ChangeLogModelProvider.1"), ChangeLogModelSorter.COMMENT)); //$NON-NLS-1$
+			sortBy.add(new ToggleModelProviderAction(Policy.bind("ChangeLogModelProvider.2"), ChangeLogModelSorter.DATE)); //$NON-NLS-1$
+			Action a = new ToggleModelProviderAction(Policy.bind("ChangeLogModelProvider.3"), ChangeLogModelSorter.USER); //$NON-NLS-1$
+			a.setChecked(true);
+			sortBy.add(a);
+		}
+	}
 	
 	public static class DateComment {
 		Date date;
@@ -95,14 +152,15 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			super(parent, info);
 		}
 		public String getName() {
-			return getResource().getFullPath().toString();
+			IResource resource = getResource();
+			return resource.getName() + " - " + resource.getFullPath().toString(); //$NON-NLS-1$
 		}
 	}
 	
 	private class FetchLogEntriesJob extends Job {
 		private Set syncSets = new HashSet();
 		public FetchLogEntriesJob() {
-			super("Retrieving revision histories");  //$NON-NLS-1$;
+			super(Policy.bind("ChangeLogModelProvider.4"));  //$NON-NLS-1$
 			setUser(true);
 		}
 		public boolean belongsTo(Object family) {
@@ -149,12 +207,12 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	};
 	
 	public static class ChangeLogModelProviderDescriptor implements ISynchronizeModelProviderDescriptor {
-		public static final String ID = TeamUIPlugin.ID + ".modelprovider_cvs_changelog";
+		public static final String ID = TeamUIPlugin.ID + ".modelprovider_cvs_changelog"; //$NON-NLS-1$
 		public String getId() {
 			return ID;
 		}		
 		public String getName() {
-			return "Grouped By Comment (useful for browsing incoming changes)";
+			return Policy.bind("ChangeLogModelProvider.5"); //$NON-NLS-1$
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_DATE);
@@ -164,6 +222,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	
 	public ChangeLogModelProvider(ISynchronizePageConfiguration configuration, SyncInfoSet set) {
 		super(configuration, set);
+		configuration.addMenuGroup(ISynchronizePageConfiguration.P_CONTEXT_MENU, SORT_ORDER_GROUP);
+		this.sortGroup = new ChangeLogActionGroup();
+		configuration.addActionContribution(sortGroup);
 	}
 	
 	/* (non-Javadoc)
@@ -314,6 +375,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		if(fetchLogEntriesJob != null && fetchLogEntriesJob.getState() != Job.NONE) {
 			fetchLogEntriesJob.cancel();
 		}
+		getConfiguration().removeActionContribution(sortGroup);
 		super.dispose();
 	}
 
@@ -321,7 +383,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#getViewerSorter()
 	 */
 	public ViewerSorter getViewerSorter() {
-		return new ChangeLogModelSorter();
+		return new ChangeLogModelSorter(ChangeLogModelSorter.USER);
 	}
 
 	/* (non-Javadoc)
