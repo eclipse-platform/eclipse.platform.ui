@@ -216,7 +216,6 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 		if (shell != null) {
 			shell.setDefaultButton(button);
 		}
-		button.setFocus();
 	}
 	button.setFont(parent.getFont());
 	return button;
@@ -300,6 +299,17 @@ protected Control createContents(Composite parent) {
 	// create the dialog area and button bar
 	dialogArea = createDialogArea(composite);
 	buttonBar = createButtonBar(composite);
+	
+	// ensure that one of our controls has focus
+	boolean found = false;
+	Control testControl = composite.getDisplay().getFocusControl();;
+	while (!found && testControl != null) {
+		found = (composite == testControl);
+		testControl = testControl.getParent();
+	}
+	if (!found)
+		composite.setFocus();
+	
 	return composite;
 }
 /**
