@@ -38,7 +38,7 @@ public class MessageLine extends CLabel {
 	 */
 	public MessageLine(Composite parent, int style) {
 		super(parent, style);
-		fNormalMsgAreaBackground= getBackground();
+		fNormalMsgAreaBackground= null;
 		fErrorMsgAreaBackground= null;
 	}
 
