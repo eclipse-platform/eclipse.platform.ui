@@ -20,6 +20,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Dialog;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
@@ -36,20 +48,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
+import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -292,26 +295,27 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
     }
 
     /**
-     * Opens a working set wizard for creating a new working set.
-     */
-    void createWorkingSet() {
-        WorkingSetNewWizard wizard = new WorkingSetNewWizard();
-        WizardDialog dialog = new WizardDialog(getShell(), wizard);
-
-        dialog.create();
-        WorkbenchHelp.setHelp(dialog.getShell(),
-                IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
-        if (dialog.open() == Window.OK) {
-            IWorkingSetManager manager = WorkbenchPlugin.getDefault()
-                    .getWorkingSetManager();
-            IWorkingSet workingSet = wizard.getSelection();
-
-            listViewer.add(workingSet);
-            listViewer.setSelection(new StructuredSelection(workingSet), true);
-            manager.addWorkingSet(workingSet);
-            addedWorkingSets.add(workingSet);
-        }
-    }
+	 * Opens a working set wizard for creating a new working set.
+	 */
+	void createWorkingSet() {
+	    IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+	    IWorkingSetNewWizard wizard = manager.createWorkingSetNewWizard(null);
+	    // the wizard can never be null since we have at least a resource working set
+	    // creation page
+	    WizardDialog dialog = new WizardDialog(getShell(), wizard);
+	
+	    dialog.create();
+	    WorkbenchHelp.setHelp(dialog.getShell(),
+	            IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
+	    if (dialog.open() == Window.OK) {
+	        IWorkingSet workingSet = wizard.getSelection();
+	
+	        listViewer.add(workingSet);
+	        listViewer.setSelection(new StructuredSelection(workingSet), true);
+	        manager.addWorkingSet(workingSet);
+	        addedWorkingSets.add(workingSet);
+	    }
+	}
 
     /**
      * Opens a working set wizard for editing the currently selected 

@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -27,7 +29,7 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * @since 2.0
  * @see org.eclipse.ui.dialog.IWorkingSetPage
  */
-public class WorkingSetNewWizard extends Wizard {
+public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard {
     private WorkingSetTypePage workingSetTypePage;
 
     private IWorkingSetPage workingSetEditPage;
@@ -35,12 +37,25 @@ public class WorkingSetNewWizard extends Wizard {
     private String editPageId;
 
     private IWorkingSet workingSet;
+    
+    private WorkingSetDescriptor[] descriptors;
 
     /**
-     * Creates a new instance of the receiver.
+     * Creates a new instance of the receiver for testing purpose.
      */
-    public WorkingSetNewWizard() {
+    public static WorkingSetNewWizard createTestWizardInstance() {
+    	return new WorkingSetNewWizard(WorkbenchPlugin.getDefault().getWorkingSetRegistry().getWorkingSetDescriptors());
+    }
+    
+    /**
+     * Creates a new instance of the receiver.
+     * 
+     * @param descriptors the choice of descriptors 
+     */
+    public WorkingSetNewWizard(WorkingSetDescriptor[] descriptors) {
         super();
+        Assert.isTrue(descriptors != null && descriptors.length > 0);
+        this.descriptors= descriptors;
         setWindowTitle(WorkbenchMessages.getString("WorkingSetNewWizard.title")); //$NON-NLS-1$
     }
 
@@ -56,9 +71,8 @@ public class WorkingSetNewWizard extends Wizard {
         super.addPages();
 
         IWizardPage page;
-        WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
-                .getWorkingSetRegistry();
-        WorkingSetDescriptor[] descriptors = registry.getNewPageWorkingSetDescriptors();
+        WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+        
         if (descriptors.length > 1) {
             page = workingSetTypePage = new WorkingSetTypePage();
         } else {
@@ -70,7 +84,7 @@ public class WorkingSetNewWizard extends Wizard {
         setForcePreviousAndNextButtons(descriptors.length > 1);
     }
 
-    /**
+	/**
      * Overrides method in Wizard.
      * 
      * @see org.eclipse.jface.wizard.Wizard#canFinish()

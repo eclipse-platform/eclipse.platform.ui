@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
+import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
@@ -443,16 +444,19 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     /**
 	 * {@inheritDoc}
 	 */
-	public IWizard createWorkingSetNewWizard() {
-		WorkingSetDescriptor[] descriptors= WorkbenchPlugin.getDefault().
-			getWorkingSetRegistry().getWorkingSetDescriptors();
+	public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds) {
+		WorkingSetDescriptor[] descriptors= getSupportedDescriptors(workingSetIds);
 		for (int i= 0; i < descriptors.length; i++) {
 			if (descriptors[i].getPageClassName() != null)
-				return new WorkingSetNewWizard();
+				return new WorkingSetNewWizard(descriptors);
 		}
 		return null;
 	}
-    
+
+	public IWizard createWorkingSetNewWizard() {
+		return createWorkingSetNewWizard(null);
+	}	
+	
     //---- working set delta handling -------------------------------------------------
     
 	public synchronized void bundleChanged(BundleEvent event) {
@@ -514,4 +518,27 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     		updater.remove(workingSet);
     	}
     }
+	
+	private static WorkingSetDescriptor[] getSupportedDescriptors(String[] supportedWorkingSetIds) {
+		WorkingSetDescriptor[] allDescriptors= WorkbenchPlugin.getDefault().getWorkingSetRegistry().getWorkingSetDescriptors();
+		if (supportedWorkingSetIds == null)
+			return allDescriptors;
+		List result= new ArrayList(allDescriptors.length);
+		for (int i= 0; i < allDescriptors.length; i++) {
+			WorkingSetDescriptor descriptor= allDescriptors[i];
+			if (isSupported(descriptor, supportedWorkingSetIds)) {
+				result.add(descriptor);
+			}
+		}
+		return (WorkingSetDescriptor[])result.toArray(new WorkingSetDescriptor[result.size()]);
+	}
+
+    private static boolean isSupported(WorkingSetDescriptor descriptor, String[] supportedWorkingSetIds) {
+		final String id= descriptor.getId();
+    	for (int i= 0; i < supportedWorkingSetIds.length; i++) {
+			if (supportedWorkingSetIds[i].equals(id))
+				return true;
+		}
+		return false;
+	}	
 }
