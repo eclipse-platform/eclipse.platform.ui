@@ -184,7 +184,7 @@ public final class KeySequence implements Comparable {
 		while (iterator.hasNext()) {
 			if (i != 0)							
 				// TODO 1.4 Character.toString(KEY_DELIMITER);
-				stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_STROKE_DELIMITER_KEY : null, "" + KEY_STROKE_DELIMITER, false)); //$NON-NLS-1$
+				stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_STROKE_DELIMITER_KEY : null, "" + KEY_STROKE_DELIMITER, false, false)); //$NON-NLS-1$
 	
 			stringBuffer.append(((KeyStroke) iterator.next()).format(localize));
 			i++;

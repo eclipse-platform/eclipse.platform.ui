@@ -301,9 +301,9 @@ public final class KeyStroke implements Comparable {
 	
 		while (iterator.hasNext()) {
 			string = iterator.next().toString();
-			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? string : null, string, false));
+			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? string : null, string, false, false));
 			// TODO 1.4 Character.toString(KEY_DELIMITER);
-			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_DELIMITER_KEY : null, "" + KEY_DELIMITER, false)); //$NON-NLS-1$
+			stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_DELIMITER_KEY : null, "" + KEY_DELIMITER, false, false)); //$NON-NLS-1$
 		}
 
 		String name = naturalKey.toString();
@@ -320,7 +320,7 @@ public final class KeyStroke implements Comparable {
 			string = CR;
 		else if ("\u001b".equals(name)) //$NON-NLS-1$	
 			string = ESC;
-		else if (" ".equals(name)) //$NON-NLS-1$	
+		else if (" ".equals(name)) //$NON-NLS-1$	ss
 			string = SPACE;
 		else if ("+".equals(name)) //$NON-NLS-1$	
 			string = PLUS;
@@ -329,7 +329,7 @@ public final class KeyStroke implements Comparable {
 		else
 			string = name;
 		
-		stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? string : null, string, false));		
+		stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? string : null, string, false, false));		
 		return stringBuffer.toString();
 	}
 }

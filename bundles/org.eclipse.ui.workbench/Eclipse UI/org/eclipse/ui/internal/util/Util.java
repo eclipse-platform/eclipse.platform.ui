@@ -307,22 +307,22 @@ public final class Util {
 	}	
 
 	public static String translateString(ResourceBundle resourceBundle, String key) {
-		return Util.translateString(resourceBundle, key, key, true);
+		return Util.translateString(resourceBundle, key, key, true, true);
 	}
 
-	public static String translateString(ResourceBundle resourceBundle, String key, String string, boolean signal) {
+	public static String translateString(ResourceBundle resourceBundle, String key, String string, boolean signal, boolean trim) {
 		if (resourceBundle != null && key != null)
 			try {
 				final String translatedString = resourceBundle.getString(key);
 				
 				if (translatedString != null)
-					return translatedString.trim();
+					return trim ? translatedString.trim() : translatedString;
 			} catch (MissingResourceException eMissingResource) {
 				if (signal)
 					System.err.println(eMissingResource);
 			}
 
-		return string;
+		return trim ? string.trim() : string;
 	}
 
 	private Util() {
