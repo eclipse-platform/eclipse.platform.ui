@@ -75,7 +75,7 @@ Typically this is used for operations such as Import and Export.
 interface.  Either the class attribute OR 1 or more mapping elements must be specified.  If both are provided then the mapping element(s) will be used.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IPreferenceTransfer"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.preferences.IPreferenceFilter"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -138,7 +138,7 @@ of the transfer engine functionality.
          <attribute name="keys" type="string">
             <annotation>
                <documentation>
-                  an attribute specifing the preference key within the given node to be transferred
+                  an attribute specifing a comma separated list of preference keys within the given node to be transferred
                </documentation>
             </annotation>
          </attribute>
@@ -151,7 +151,7 @@ of the transfer engine functionality.
       </appInfo>
       <documentation>
          &lt;p&gt;
-	Example that export all tranfers, exports all nodes for specified scopes.
+ Example that export all tranfers, exports all nodes for specified scopes.
 &lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
@@ -163,14 +163,14 @@ of the transfer engine functionality.
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
             &lt;mapping scope=&quot;instance&quot;&gt;
             &lt;/mapping&gt;
-			&lt;mapping scope=&quot;configuration&quot;&gt;
+   &lt;mapping scope=&quot;configuration&quot;&gt;
             &lt;/mapping&gt;
             &lt;mapping scope=&quot;project&quot;&gt;
             &lt;/mapping&gt;
-			&lt;description&gt;
-            	Export all tranfer, exports all nodes for specified scopes
-		    &lt;/description&gt;
-	   &lt;/transfer&gt;
+   &lt;description&gt;
+             Export all tranfer, exports all nodes for specified scopes
+      &lt;/description&gt;
+    &lt;/transfer&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -186,7 +186,7 @@ of the transfer engine functionality.
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
             &lt;mapping scope=&quot;instance&quot;&gt;
             &lt;/mapping&gt;
-	   &lt;/transfer&gt;
+    &lt;/transfer&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -207,12 +207,12 @@ of the transfer engine functionality.
                 &lt;entry node=&quot;org.eclipse.ui.ide&quot;/&gt;
                 &lt;entry node=&quot;org.eclipse.core.resources&quot;/&gt;
             &lt;/mapping&gt;
-			&lt;mapping scope=&quot;configuration&quot;&gt;
+   &lt;mapping scope=&quot;configuration&quot;&gt;
             &lt;/mapping&gt;
-			&lt;description&gt;
-            	Export many combinations of keys and nodes
-		    &lt;/description&gt;
-	   &lt;/transfer&gt;
+   &lt;description&gt;
+             Export many combinations of keys and nodes
+      &lt;/description&gt;
+    &lt;/transfer&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
