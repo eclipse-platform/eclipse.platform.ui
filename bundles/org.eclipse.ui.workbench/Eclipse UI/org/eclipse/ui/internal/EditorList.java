@@ -92,10 +92,22 @@ public class EditorList {
 	};
 
 	private IPartListener partListener = new IPartListener() {
+		int counter = 0;
 		private void updateEditorList(IWorkbenchPart part) {
 			if (part instanceof IEditorPart) { 
-				updateItems();
-				notifyEditorListViews();
+				final Display display = window.getShell().getDisplay();
+				final IWorkbenchPart fpart = part;
+				final int TIMER_INTERVAL = 100;
+				counter ++;				
+				display.timerExec(TIMER_INTERVAL, new Runnable() {
+					public void run() {
+						counter --;
+						if (counter == 0) {
+							updateItems();
+							notifyEditorListViews();
+						}
+					}
+				});				
 			}
 		}
 		// select in navigator
