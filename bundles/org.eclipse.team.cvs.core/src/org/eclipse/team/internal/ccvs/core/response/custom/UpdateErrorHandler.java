@@ -70,6 +70,13 @@ public class UpdateErrorHandler extends ResponseHandler {
 					String filename = message.substring(0, message.indexOf(' '));
 					updateMessageListener.fileDoesNotExist(filename);
 				}
+			} else if (message.startsWith("conflict:") && message.endsWith("created independently by second party")) {
+				// cvs server: conflict: folder/file.ext created independently by second party 
+				// If we get the above line, we have conflicting additions and we can expect a server error.
+				// We still get "C foler/file.ext" so we don't need to do anything else
+				if (updateMessageListener != null) {
+					updateMessageListener.expectError();
+				}
 			} else if (!message.startsWith("cannot open directory")
 					&& !message.startsWith("nothing known about")) {
 				errors.add(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null));

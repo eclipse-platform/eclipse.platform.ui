@@ -28,4 +28,8 @@ public interface IUpdateMessageListener {
 	public void fileInformation(char type, String filename) throws CVSException;
 	
 	public void fileDoesNotExist(String filename);
+	/**
+	 * Expect the command to which the listener is associated with to throw a CVSServerException
+	 */
+	public void expectError();
 }

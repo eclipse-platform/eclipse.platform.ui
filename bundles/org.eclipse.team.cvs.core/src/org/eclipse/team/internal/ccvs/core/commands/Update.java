@@ -36,18 +36,6 @@ class Update extends Command {
 	public String getRequestName() {
 		return RequestSender.UPDATE;
 	}
-
-	/**
-	 * MV: Special case handling for the "." argument.
-	 * 
-	 */
-//	protected ICVSResource[] getWorkResources() throws CVSException {
-//		// NIK: Do we need this handling ?
-//		// MV: You tell me!
-//		if ((getArguments().length == 1) && (getArguments()[0].equals(".")))
-//			return new ICVSResource[]{getRoot()};
-//		return super.getWorkResources();
-//	}
 		
 	public void sendRequestsToServer(IProgressMonitor monitor) throws CVSException {
 
@@ -56,7 +44,7 @@ class Update extends Command {
 		// Get the folders we want to work on
 		mWorkResources = getWorkResources();
 		
-		// FIXME other clients send this (wondering if we should as well):
+		// XXX other clients send this. Should we?
 		// requestSender.writeLine("UseUnchanged");
 		// requestSender.writeLine("Case");
 		// requestSender.sendArgument("-u");	

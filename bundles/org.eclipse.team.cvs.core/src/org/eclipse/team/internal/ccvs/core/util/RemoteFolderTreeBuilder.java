@@ -23,6 +23,7 @@ import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
@@ -152,13 +153,20 @@ public class RemoteFolderTreeBuilder {
 			ICVSFile[] files = local.getFiles();
 			for (int i=0;i<files.length;i++) {
 				ICVSFile file = files[i];
-				if (deltas.get(file.getName()) != DELETED) {
+				Object deltaType = deltas.get(file.getName());
+				if (deltaType != DELETED) {
 					ResourceSyncInfo info = file.getSyncInfo();
 					// if there is no sync info then there isn't a remote file for this local file on the
 					// server.
-					if ((info!=null) && (!info.isAdded())) {
-						children.put(file.getName(), new RemoteFile(remote, info));
-					}
+					if (info==null)
+						continue;
+					// There is no remote if the file was added and we didn't get a conflict (C) indicator from the server
+					if (info.isAdded() && (deltaType == null))
+						continue;
+					// There is no remote if the file was deleted and we didn;t get a remove (R) indicator from the server
+					if (info.isDeleted() && (deltaType == null))
+						continue;
+					children.put(file.getName(), new RemoteFile(remote, info));
 				}
 			}
 		}
@@ -234,6 +242,7 @@ public class RemoteFolderTreeBuilder {
 		
 		// Create an listener that will accumulate new and removed files and folders
 		final List newChildDirectories = new ArrayList();
+		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory) {
@@ -266,23 +275,31 @@ public class RemoteFolderTreeBuilder {
 			public void fileDoesNotExist(String filename) {
 				recordDelta(new Path(filename), DELETED);
 			}
+			public void expectError() {
+				expectError[0] = true;
+			}
 		};
 		
 		// Perform a "cvs -n update -d [-r tag] ." in order to get the
 		// messages from the server that will indicate what has changed on the 
 		// server.
-		Client.execute(
-			Client.UPDATE,
-			new String[] {"-n"}, 
-			updateLocalOptions,
-			new String[]{"."}, 
-			root,
-			monitor,
-			getPrintStream(),
-			connection,
-			new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
-			true
-			);
+		try {
+			Client.execute(
+				Client.UPDATE,
+				new String[] {"-n"}, 
+				updateLocalOptions,
+				new String[]{"."}, 
+				root,
+				monitor,
+				getPrintStream(),
+				connection,
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				true
+				);
+		} catch (CVSServerException e) {
+			if (!expectError[0])
+				throw e;
+		}
 					
 		return changedFiles;
 	}
@@ -290,6 +307,7 @@ public class RemoteFolderTreeBuilder {
 	private void fetchNewDirectory(Connection connection, RemoteFolderTree newFolder, IPath localPath, IProgressMonitor monitor) throws CVSException {
 		
 		// Create an listener that will accumulate new files and folders
+		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory) {
@@ -307,22 +325,30 @@ public class RemoteFolderTreeBuilder {
 			}
 			public void fileDoesNotExist(String filename) {
 			}
+			public void expectError() {
+				expectError[0] = true;
+			}
 		};
 
 		// NOTE: Should use the path relative to the remoteRoot
 		IPath path = new Path(newFolder.getRemotePath());
-		Client.execute(
-			Client.UPDATE,
-			new String[] {"-n"}, 
-			updateLocalOptions,
-			new String[] {localPath.toString()}, 
-			remoteRoot,
-			monitor,
-			getPrintStream(),
-			connection,
-			new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
-			false
-			);
+		try {
+			Client.execute(
+				Client.UPDATE,
+				new String[] {"-n"}, 
+				updateLocalOptions,
+				new String[] {localPath.toString()}, 
+				remoteRoot,
+				monitor,
+				getPrintStream(),
+				connection,
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				false
+				);
+		} catch (CVSServerException e) {
+			if (!expectError[0])
+				throw e;
+		}
 	}
 	
 	// Get the file revisions for the given filenames

@@ -12,6 +12,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
+import org.eclipse.team.internal.ccvs.core.resources.CVSFileNotFoundException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
@@ -275,7 +276,12 @@ abstract class Command implements ICommand {
 		} else {
 			result = new ICVSResource[arguments.length - skip];
 			for (int i = skip; i<arguments.length; i++) {
-				result[i - skip] = mRoot.getChild(arguments[i]);
+				try {
+					result[i - skip] = mRoot.getChild(arguments[i]);
+				} catch (CVSFileNotFoundException e) {
+					// XXX Temporary fix to allow non-managed resources to be used as arguments
+					result[i - skip] = mRoot.getFile(arguments[i]);
+				}
 			}
 		}
 				
@@ -345,8 +351,8 @@ abstract class Command implements ICommand {
 					throw new CVSException("Argument " + mWorkResources[i].getName() + "is not managed");
 				}
 			} else {
-				if (!mWorkResources[i].isManaged()) {
-					throw new CVSException("Argument " + mWorkResources[i].getName() + "is not managed");
+				if (!mWorkResources[i].getParent().isCVSFolder()) {
+					throw new CVSException("Argument " + mWorkResources[i].getParent() + "is not managed");
 				}					
 			}	
 		}	

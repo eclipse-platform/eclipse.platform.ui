@@ -134,6 +134,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		// Create the listener for remote files and folders
 		final List errors = new ArrayList();
 		final boolean[] exists = new boolean[] {false};
+		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				exists[0] = true;
@@ -144,6 +145,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				exists[0] = true;
 			}
 			public void fileDoesNotExist(String filename) {
+			}
+			public void expectError() {
+				expectError[0] = true;
 			}
 		};
 		
@@ -172,8 +176,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			return exists[0];
 			
 		} catch (CVSServerException e) {
-			if( ! isNoTagException(errors) || !child.isContainer())
-				throw e;
+			if ( ! isNoTagException(errors) || ! child.isContainer())
+				if (!expectError[0])
+					throw e;
 				// we now know that this is an exception caused by a cvs bug.
 				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
 				// workaround: retry the request with no tag to get the directory names (if any)
@@ -215,6 +220,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		final List errors = new ArrayList();
 		final List newRemoteDirectories = new ArrayList();
 		final List newRemoteFiles = new ArrayList();
+		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory && path.segmentCount() == 1) {
@@ -235,6 +241,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				}
 			}
 			public void fileDoesNotExist(String filename) {
+			}
+			public void expectError() {
+				expectError[0] = true;
 			}
 		};
 		
@@ -281,7 +290,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			}
 			
 		} catch (CVSServerException e) {
-			if( ! isNoTagException(errors) )
+			if ( ! isNoTagException(errors) && ! expectError[0])
 				throw e;
 				// we now know that this is an exception caused by a cvs bug.
 				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
@@ -548,6 +557,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			// Create the listener for remote files and folders
 			final List errors = new ArrayList();
 			final boolean[] exists = new boolean[] {true};
+			final boolean expectError[] = new boolean[] {false};
 			IUpdateMessageListener listener = new IUpdateMessageListener() {
 				public void directoryInformation(IPath path, boolean newDirectory) {
 				}
@@ -562,6 +572,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				public void fileDoesNotExist(String filename) {
 					exists[0] = false;
 				}
+				public void expectError() {
+					expectError[0] = true;
+				}
 			};
 			
 			// Build the local options
@@ -575,17 +588,23 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			Connection c = ((CVSRepositoryLocation)getRepository()).openConnection();
 			try {
 				// Perform a "cvs -n update -d -r tagName fileName" with custom message and error handlers
-				Client.execute(
-					Client.UPDATE,
-					new String[]{Client.NOCHANGE_OPTION}, 
-					(String[])localOptions.toArray(new String[localOptions.size()]), 
-					new String[]{child.getName()}, 
-					this,
-					monitor,
-					getPrintStream(),
-					c,
-					new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
-					true);
+				try {
+					Client.execute(
+						Client.UPDATE,
+						new String[]{Client.NOCHANGE_OPTION}, 
+						(String[])localOptions.toArray(new String[localOptions.size()]), 
+						new String[]{child.getName()}, 
+						this,
+						monitor,
+						getPrintStream(),
+						c,
+						new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+						true);
+				} catch (CVSServerException e) {
+					if (!expectError[0]) {
+						throw e;
+					}
+				}
 	
 				if (!exists[0])
 					return false;
