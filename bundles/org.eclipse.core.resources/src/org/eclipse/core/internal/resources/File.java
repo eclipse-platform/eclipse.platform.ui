@@ -73,9 +73,12 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 		try {
 			workspace.prepareOperation();
 			checkDoesNotExist();
+			Container parent = (Container) getParent();
+			ResourceInfo info = parent.getResourceInfo(false, false);
+			parent.checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
-			IPath location = getLocation();
+			IPath location = getLocalManager().locationFor(this);
 			java.io.File localFile = location.toFile();
 			if (force) {
 				if (!CoreFileSystemLibrary.isCaseSensitive()) {
@@ -98,10 +101,6 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 				}
 			}
 			monitor.worked(Policy.opWork * 40 / 100);
-
-			Container parent = (Container) getParent();
-			ResourceInfo info = parent.getResourceInfo(false, false);
-			parent.checkAccessible(getFlags(info));
 
 			workspace.createResource(this, false);
 			boolean local = content != null;

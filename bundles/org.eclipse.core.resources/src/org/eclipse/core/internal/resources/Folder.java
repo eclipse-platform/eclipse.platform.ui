@@ -43,9 +43,12 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
 		try {
 			workspace.prepareOperation();
 			checkDoesNotExist();
+			Container parent = (Container) getParent();
+			ResourceInfo info = parent.getResourceInfo(false, false);
+			parent.checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
-			IPath location = getLocation();
+			IPath location = getLocalManager().locationFor(this);
 			java.io.File localFile = location.toFile();
 			if (force) {
 				if (!CoreFileSystemLibrary.isCaseSensitive()) {
@@ -67,10 +70,6 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
 				}
 			}
-
-			Container parent = (Container) getParent();
-			ResourceInfo info = parent.getResourceInfo(false, false);
-			parent.checkAccessible(getFlags(info));
 
 			internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
