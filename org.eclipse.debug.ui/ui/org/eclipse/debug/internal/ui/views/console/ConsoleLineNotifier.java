@@ -23,6 +23,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 import org.eclipse.ui.console.PatternMatchEvent;
 
@@ -30,7 +31,7 @@ import org.eclipse.ui.console.PatternMatchEvent;
  * Tracks text appended to the console and notifies listeners in terms of whole
  * lines.
  */
-public class ConsoleLineNotifier implements IPatternMatchListenerDelegate, IPropertyChangeListener {
+public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChangeListener {
 	/**
 	 * Console listeners
 	 */
@@ -156,6 +157,27 @@ public class ConsoleLineNotifier implements IPatternMatchListenerDelegate, IProp
         if(event.getProperty().equals(IOConsole.P_CONSOLE_OUTPUT_COMPLETE)) {
             streamsClosed();
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IPatternMatchListener#getPattern()
+     */
+    public String getPattern() {
+        return ".*\\r(\\n?)|.*\\n"; //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IPatternMatchListener#getCompilerFlags()
+     */
+    public int getCompilerFlags() {
+        return 0;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IPatternMatchListener#getLineQualifier()
+     */
+    public String getLineQualifier() {
+        return null;
     }
 
 }

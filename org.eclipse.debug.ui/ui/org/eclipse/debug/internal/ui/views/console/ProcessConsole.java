@@ -39,6 +39,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
+import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
@@ -84,6 +85,10 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		Color color = fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM);
 		in.setColor(color);
 		
+		IConsoleLineTracker[] lineTrackers = DebugUIPlugin.getDefault().getProcessConsoleManager().getLineTrackers(process);
+		if (lineTrackers.length > 0) {
+		    addPatternMatchListener(new ConsoleLineNotifier());
+		}
 	}
 
 	/**
