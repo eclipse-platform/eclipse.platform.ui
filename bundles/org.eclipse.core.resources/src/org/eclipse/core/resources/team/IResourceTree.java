@@ -28,14 +28,10 @@ public interface IResourceTree {
 
 	/**
 	 * Constant indicating that no file timestamp was supplied.
-	 * <p>
-	 * [FIXME: make this the same as java.io.File#getLastModified
-	 * when the file doesn't exist.]
-	 * </p>
 	 * 
 	 * @see #movedFile
 	 */
-	public static final long NULL_TIMESTAMP = 0;
+	public static final long NULL_TIMESTAMP = 0L;
 
 	/**
 	 * Adds the current state of the given file to the local history.
@@ -54,26 +50,31 @@ public interface IResourceTree {
 	/**
 	 * Returns whether the given resource and its descendants to the given depth 
 	 * are considered to be in sync with the local file system. Returns 
-	 * <code>true</code> if the given resource does not exist in the workspace
-	 * resource tree.
+	 * <code>false</code> if the given resource does not exist in the workspace
+	 * resource tree, but exists in the local file system; and conversely.
 	 * 
 	 * @param resource the resource of interest
 	 * @param depth the depth (one of <code>IResource.DEPTH_ZERO</code>,
 	 *   <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>)
-	 * @return <code>true</code> if the resource is synchronized or does not 
-	 *   exist in the workspace resource tree, <code>false</code> otherwise
+	 * @return <code>true</code> if the resource is synchronized, and
+	 *    <code>false</code> in all other cases
 	 */
 	public boolean isSynchronized(IResource resource, int depth);
 
 	/**
-	 * Returns the timestamp for the given file in the local file system.
-	 * Returns <code>NULL_TIMESTAMP</code> if the file does not
-	 * exist in the workspace or if its location in the local file system cannot
-	 * be determined.
+	 * Computes the timestamp for the given file in the local file system.
+	 * Returns <code>NULL_TIMESTAMP</code> if the timestamp of the file in
+	 * the local file system cannot be determined. The file need not exist in
+	 * the workspace resource tree; however, if the file's project does not
+	 * exist in the workspace resource tree, this method returns
+	 * <code>NULL_TIMESTAMP</code> because the project's local content area
+	 * is indeterminate.
 	 * <p>
-	 * Note that the timestamp stored in the workspace resource tree is not 
-	 * interchangeable with <code>java.io.File</code> last modification time
-	 * (<code>computeTimestamp</code> has higher resolution).
+	 * Note that the timestamps used for workspace resource tree file 
+	 * synchronization are not necessarily interchangeable with 
+	 * <code>java.io.File</code> last modification time.The ones computed by
+	 * <code>computeTimestamp</code> may have a higher resolution in some
+	 * operating environments.
 	 * </p>
 	 * 
 	 * @param file the file of interest
@@ -81,6 +82,57 @@ public interface IResourceTree {
 	 *    <code>NULL_TIMESTAMP</code> if it could not be computed
 	 */
 	public long computeTimestamp(IFile file);
+
+	/**
+	 * Returns the timestamp for the given file as recorded in the workspace
+	 * resource tree. Returns <code>NULL_TIMESTAMP</code> if the given file
+	 * does not exist in the workspace resource tree, or if the timestamp is
+	 * not known.
+	 * <p>
+	 * Note that the timestamps used for workspace resource tree file 
+	 * synchronization are not necessarily interchangeable with 
+	 * <code>java.io.File</code> last modification time.The ones computed by
+	 * <code>computeTimestamp</code> may have a higher resolution in some
+	 * operating environments.
+	 * </p>
+	 * 
+	 * @param file the file of interest
+	 * @return the workspace resource tree timestamp for the file, or 
+	 *    <code>NULL_TIMESTAMP</code> if the file does not exist in the 
+	 *    workspace resource tree, or if the timestamp is not known
+	 */
+	public long getTimestamp(IFile file);
+
+	/**
+	 * Updates the timestamp for the given file in the workspace resource tree.
+	 * The file is the local file system is not affected. Does nothing if the
+	 * given file does not exist in the workspace resource tree.
+	 * <p>
+	 * The given timestamp should be that of the corresponding file in the local
+	 * file system (as computed by <code>computeTimestamp</code>). A discrepency
+	 * between the timestamp of the file in the local file system and the
+	 * timestamp recorded in the workspace resource tree means that the file is
+	 * out of sync (<code>isSynchronized</code> returns <code>false</code>).
+	 * </p>
+	 * <p>
+	 * This operation should be used after <code>movedFile/Folder/Project</code>
+	 * to correct the workspace resource tree record when file timestamps change
+	 * in the course of a move operation.
+	 * </p>
+	 * <p>
+	 * Note that the timestamps used for workspace resource tree file 
+	 * synchronization are not necessarily interchangeable with 
+	 * <code>java.io.File</code> last modification time.The ones computed by
+	 * <code>computeTimestamp</code> may have a higher resolution in some
+	 * operating environments.
+	 * </p>
+	 * 
+	 * @param file the file of interest
+	 * @param timestamp the local file system timestamp for the file, or 
+	 *    <code>NULL_TIMESTAMP</code> if unknown
+	 * @see #computeTimestamp
+	 */
+	public void updateMovedFileTimestamp(IFile file, long timestamp);
 
 	/**
 	 * Declares that the operation has failed for the specified reason.
@@ -143,24 +195,23 @@ public interface IResourceTree {
 	 * given destination in the local file system, and requests that the
 	 * corresponding changes should now be made to the workspace resource tree.
 	 * No action is taken if the given source file does not exist in the 
-	 * workspace resource tree. The given timestamp is that  of the file after
-	 * the move, as computed by <code>computeTimestamp</code>. If the timestamp
-	 * is <code>NULL_TIMESTAMP</code> then the  destination file will be queried
-	 * for its timestamp.
+	 * workspace resource tree.
 	 * <p>
 	 * The destination file must not already exist in the workspace resource
 	 * tree.
 	 * </p>
+	 * <p>
+	 * This operation carries over the file timestamp unchanged. Use 
+	 * <code>setTimestamp</code> to update the timestamp of the file if its
+	 * timestamp changed as a direct consequence of the move.
+	 * (Note that <code>resynchronize</code> cannot be used for this purpose.)
+	 * </p>
 	 * 
 	 * @param source the handle of the source file that was moved
 	 * @param destination the handle of where the file moved to
-	 * @param timestamp the timestamp of the file in the local file system
-	 *    after the move, as determined by  <code>computeTimestamp</code>; 
-	 *    if the timestamp is <code>NULL_TIMESTAMP</code> then the destination
-	 *    file will be queried for its timestamp
 	 * @see #computeTimestamp
 	 */
-	public void movedFile(IFile source, IFile destination, long timestamp);
+	public void movedFile(IFile source, IFile destination);
 
 	/**
 	 * Declares that the given source folder and its descendents have been
@@ -170,9 +221,9 @@ public interface IResourceTree {
 	 * is taken if the given source folder does not exist in the workspace
 	 * resource tree.
 	 * <p>
-	 * This operation assumes the file timestamps are unchanged. Consequently,
-	 * this operation cannot be used if some file timestamps changed in the
-	 * process of moving the files in the local file system.
+	 * This operation carries over file timestamps unchanged. Use 
+	 * <code>updateMovedFileTimestamp</code> to update the timestamp of files
+	 * whose timestamps changed as a direct consequence of the move.
 	 * </p>
 	 * <p>
 	 * The destination folder must not already exist in the workspace resource
@@ -185,57 +236,6 @@ public interface IResourceTree {
 	public void movedFolderSubtree(IFolder source, IFolder destination);
 
 	/**
-	 * Declares the start of a move of the given source folder to the given
-	 * destination folder.
-	 * <p>
-	 * Call this method after the destination folder has been successfully
-	 * created in the local file system; it will create the corresponding folder
-	 * in the workspace  resource tree. No action is taken if the given source
-	 * folder does not exist in the workspace resource tree.
-	 * </p>
-	 * <p>
-	 * Calling this method enables a folder move to be decomposed into a series
-	 * of moves of the folder's members.  After all members have been
-	 * successfully moved,  call <code>endMoveFolder</code> to complete the
-	 * transaction.
-	 * </p>
-	 * <p>
-	 * The destination folder must not already exist in the workspace resource
-	 * tree.
-	 * </p>
-	 * 
-	 * @param source the handle of the source folder that is being moved
-	 * @param destination the handle of where the folder is being moved to
-	 */
-	public void beginMoveFolder(IFolder source, IFolder destination);
-
-	/**
-	 * Declares the end of a successful move of the given source folder to the
-	 * given destination folder that began with an earlier call to
-	 * <code>beginMoveFolder</code>.
-	 * <p>
-	 * Call this method after the members of the source folder have been
-	 * successfully moved to their appropriate spots in the destination folder.
-	 * This method makes the appropriate changes to the workspace resource tree
-	 * required to complete the transaction. These changes affect the
-	 * destination folder (not its descendents), and the source folder.
-	 * No action is taken if either the given source folder or the given
-	 * destination folder does not exist in the workspace resource tree.
-	 * </p>
-	 * <p>
-	 * This method moves any markers, session properties, and persistent
-	 * properties associated with the given source folder to the destination
-	 * source folder. Any markers, session properties, and persistent properties
-	 * associated with any remaining descendents of the given source folder are
-	 * discarded.
-	 * </p>
-	 * 
-	 * @param source the handle of the source folder that is being moved
-	 * @param destination the handle of where the folder is being moved to
-	 */
-	public void endMoveFolder(IFolder source, IFolder destination);
-
-	/**
 	 * Declares that the given source project and its files and folders have 
 	 * been successfully relocated in the local file system if required, and
 	 * requests that the rename and/or relocation should now be made to the
@@ -243,9 +243,10 @@ public interface IResourceTree {
 	 * action is taken if the given project does not exist in the workspace
 	 * resource tree.
 	 * <p>
-	 * This operation assumes the file timestamps are unchanged. Consequently,
-	 * this operation cannot be used if some file timestamps changed in the
-	 * process of moving the files in the local file system.
+	 * This operation carries over file timestamps unchanged. Use 
+	 * <code>updateMovedFileTimestamp</code> to update the timestamp of files whose 
+	 * timestamps changed as a direct consequence of the move.
+	 * </p>
 	 * <p>
 	 * If the project is being renamed, the destination project must not
 	 * already exist in the workspace resource tree.
@@ -258,65 +259,11 @@ public interface IResourceTree {
 	 * 
 	 * @param source the handle of the source project that was moved
 	 * @param description the new project description
+	 * @return <code>true</code> if the move succeeded, and <code>false</code>
+	 *    otherwise
 	 */
-	public void movedProjectSubtree(
+	public boolean movedProjectSubtree(
 		IProject source,
-		IProjectDescription description);
-
-	/**
-	 * Declares the start of a rename/relocate of the given project.
-	 * <p>
-	 * Call this method after the destination project's content area has been
-	 * successfully created in the local file system if required; it will create
-	 * the corresponding project in the workspace resource tree. No action is
-	 * taken if the given project does not exist in the workspace resource tree.
-	 * </p>
-	 * <p>
-	 * Calling this method enables a project rename/relocate to be decomposed
-	 * into a series of moves of its member folders and files.  After all 
-	 * members have been successfully moved,  call <code>endMoveProject</code>
-	 * to complete the transaction.
-	 *</p>
-	 * <p>
-	 * If the project is being renamed, the destination project must not already
-	 * exist in the workspace resource tree.
-	 * </p>
-	 * 
-	 * @param project the handle of the project that is being renamed/relocated
-	 * @param description the new project description
-	 */
-	public void beginMoveProject(
-		IProject project,
-		IProjectDescription description);
-
-	/**
-	 * Declares the end of a successful rename/relocate of the given project that
-	 * began with an earlier call to <code>beginMoveProject</code> .
-	 * <p>
-	 * Call this method after the members of the project have been successfully
-	 * moved to their appropriate spots in the destination project. This method
-	 * makes the appropriate changes to the workspace resource tree to complete
-	 * the transaction. These changes affect the destination project only (not
-	 * its descendents). No action is taken if either the given project or the
-	 * destination folder does not exist in the workspace resource tree.
-	 * </p>
-	 * <p>
-	 * This method moves any markers, session properties, and persistent
-	 * properties associated with the given project to the destination project. 
-	 * Any markers, session properties, and persistent properties associated 
-	 * with any remaining descendents of the given project are discarded.
-	 * </p>
-	 * <p>
-	 * Local history is not preserved when a project is renamed. It is preserved
-	 * when the project's content area is relocated without renaming the
-	 * project.
-	 * </p>
-	 * 
-	 * @param project the handle of the project that is being renamed/relocated
-	 * @param description the new project description
-	 */
-	public void endMoveProject(
-		IProject project,
 		IProjectDescription description);
 
 	/**

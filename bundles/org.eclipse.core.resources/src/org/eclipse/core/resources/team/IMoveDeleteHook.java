@@ -20,12 +20,11 @@ import org.eclipse.core.runtime.IPath;
  * <p>
  * This interface is intended to be implemented by the team component in
  * conjunction with the <code>org.eclipse.core.resources.moveDeleteHook</code>
- * standard extension point. It is not intended to be implemented by other
- * clients. The methods defined on this interface are called from within the 
- * implementations of <code>IResource.move</code> and 
- * <code>IResource.delete</code>. They are not intended to be called from
- * anywhere else (including from classes that implement 
- * <code>IMoveDeleteHook</code>).
+ * standard extension point. Individual team providers may also implement this
+ * interface. It is not intended to be implemented by other clients. The methods
+ * defined on this interface are called from within the implementations of
+ * <code>IResource.move</code> and <code>IResource.delete</code>. They are not
+ * intended to be called from anywhere else.
  * </p>
  * 
  * @since 2.0
@@ -222,12 +221,16 @@ public interface IMoveDeleteHook {
 	 * the receiver is a file. Returns <code>true</code> to accept
 	 * responsibility for implementing this operation as per the API contract.
 	 * <p>
-	 * In broad terms, a full re-implementation should move the file in the local file
-	 * system and then call <code>tree.moveFile</code> to complete the updating of the
-	 * workspace resource tree to reflect this fact. If unsuccessful in moving the file
-	 * in the the local file system, it should instead call <code>tree.failed</code> to
-	 * report the reason for the failure. In either case, it should return
-	 * <code>true</code> to indicate that the operation was attempted.
+	 * On entry to this hook method, the following is guaranteed about the
+	 * workspace resource tree: the source file exists; the destination file
+	 * does not exist; the container of the destination file exists and is
+	 * accessible. In broad terms, a full re-implementation should move the file 
+	 * in the local file system and then call <code>tree.moveFile</code> to
+	 * complete the updating of the workspace resource tree to reflect this
+	 * fact. If unsuccessful in moving the file in the the local file system,
+	 * it should instead call <code>tree.failed</code> to report the reason for
+	 * the failure. In either case, it should return <code>true</code> to
+	 * indicate that the operation was attempted.
 	 * The <code>FORCE</code> update flag needs to be honored: unless 
 	 * <code>FORCE</code> is specified, the implementation must use 
 	 * <code>tree.isSynchronized</code> to determine whether the file is in sync before
@@ -286,10 +289,14 @@ public interface IMoveDeleteHook {
 	 * the receiver is a project. Returns <code>true</code> to accept
 	 * responsibility for implementing this operation as per the API contract.
 	 * <p>
-	 * In broad terms, a full re-implementation should move the directory tree in the
-	 * local file system and then call <code>tree.movedFolder</code> to complete the
-	 * updating of the workspace resource tree to reflect this fact. If unsuccessful 
-	 * in moving the directory or any of its descendents in the the local file system,
+	 * On entry to this hook method, the following is guaranteed about the
+	 * workspace resource tree: the source folder exists; the destination folder
+	 * does not exist; the container of the destination folder exists and is
+	 * accessible. In broad terms, a full re-implementation should move the
+	 * directory tree in the local file system and then call
+	 * <code>tree.movedFolder</code> to complete the updating of the workspace
+	 * resource tree to reflect this fact. If unsuccessful in moving the 
+	 * directory or any of its descendents in the the local file system,
 	 * call <code>tree.failed</code> to report each reason for failure.
 	 * In either case, return <code>true</code> to indicate that the operation
 	 * was attempted.
@@ -300,14 +307,6 @@ public interface IMoveDeleteHook {
 	 * The <code>KEEP_HISTORY</code> update flag needs to be honored as well; use
 	 * <code>tree.addToLocalHistory</code> to capture the contents of any files being
 	 * moved.
-	 * </p>
-	 * <p>
-	 * A re-implementation that needs to undbundle a folder move into recursive moves
-	 * of the descendent files should call <code>tree.beginMovingFolder</code> 
-	 * instead of <code>tree.movedFolder</code>. This starts things off by creating a
-	 * new folder at the destination. After having successfully moved all descendents,
-	 * call <code>tree.endMoving</code> to complete the updating of the workspace
-	 * resource tree to reflect the move.
 	 * </p>
 	 * <p>
 	 * A partial re-implementation should perform whatever pre-processing it needs
@@ -360,18 +359,14 @@ public interface IMoveDeleteHook {
 	 * where the receiver is a project. Returns <code>true</code> to accept
 	 * responsibility for implementing this operation as per the API contracts.
 	 * <p>
-	 * There are a number of cases that must be considered when reimplementing
-	 * this method:
-	 * <ul>
-	 * <li>The project may be being renamed, and its local content area moved.</li>
-	 * <li>The project may be being renamed but its local content area left alone.</li>
-	 * <li>The project may be retaining its name, but its local content area being moved
-	 *       anyway.</li>
-	 * <li>The project may be being renamed and its local content area left alone.</li>
-	 * <li>The project may be open or closed.</li>
-	 * </ul>
-	 * Other than these complications, the ways to move a project are analogous to
-	 * those for moving a folder. 
+	 * On entry to this hook method, the source project is guaranteed to exist
+	 * and be open in the workspace resource tree. If the given description
+	 * contains a different name from that of the given project, then the
+	 * project is being renamed (and its content possibly relocated). If the
+	 * given description contains the same name as the given project, then the
+	 * project is being relocated but not renamed. When the project is being
+	 * renamed, the destination project is guaranteed not to exist in the
+	 * workspace resource tree.
 	 * </p>
 	 * <p>
 	 * Returning <code>false</code> is the easy way for the implementation to
@@ -390,7 +385,7 @@ public interface IMoveDeleteHook {
 	 * @param tree the workspace resource tree; this object is only valid 
 	 *    for the duration of the invocation of this method, and must not be 
 	 *    used after this method has completed
-	 * @param source the handle of the project to move; the receiver of
+	 * @param source the handle of the open project to move; the receiver of
 	 *    <code>IResource.move(IProjectDescription,int,IProgressMonitor)</code>
 	 *    or <code>IResource.move(IPath,int,IProgressMonitor)</code>
 	 * @param description the new description of the project; the first
