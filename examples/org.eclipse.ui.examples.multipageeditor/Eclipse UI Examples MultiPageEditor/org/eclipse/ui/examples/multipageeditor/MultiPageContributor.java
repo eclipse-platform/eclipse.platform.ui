@@ -32,9 +32,8 @@ protected IAction getAction(ITextEditor editor, String actionID) {
 	return (editor == null ? null : editor.getAction(actionID));
 }
 /* (non-JavaDoc)
- * Method declared in AbstractMultiPageEditorActionBarContributor.
+ * Method declared in MultiPageEditorActionBarContributor.
  */
- 
 public void setActivePage(IEditorPart part) {
 	if (activeEditorPart == part)
 		return;
