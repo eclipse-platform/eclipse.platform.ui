@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -43,9 +44,8 @@ public class RefactoringCorePlugin extends Plugin {
 		if (fRefactoringUndoContext == null) {
 			fRefactoringUndoContext= new RefactoringUndoContext();
 			IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
-			if (workspaceContext != null) {
-				// TODO would like to call addMatch but this lives in the
-				// wrong layer
+			if (workspaceContext instanceof ObjectUndoContext) {
+				((ObjectUndoContext)workspaceContext).addMatch(fRefactoringUndoContext);
 			}
 		}
 		return fRefactoringUndoContext;
@@ -88,25 +88,13 @@ public class RefactoringCorePlugin extends Plugin {
 		log(new Status(IStatus.ERROR, getPluginId(), IRefactoringCoreStatusCodes.INTERNAL_ERROR, message, null));
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	/**
-	 * {@inheritDoc}
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		SaveListener.getInstance().startup();
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	/**
-	 * {@inheritDoc}
-	 */
 	public void stop(BundleContext context) throws Exception {
-		SaveListener.getInstance().shutdown();
+		if (fRefactoringUndoContext != null) {
+			IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+			if (workspaceContext instanceof ObjectUndoContext) {
+				((ObjectUndoContext)workspaceContext).removeMatch(fRefactoringUndoContext);
+			}
+		}
 		super.stop(context);
 	}
 }

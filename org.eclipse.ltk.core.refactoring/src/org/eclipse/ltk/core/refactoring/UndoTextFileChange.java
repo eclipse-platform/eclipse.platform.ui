@@ -164,7 +164,7 @@ public class UndoTextFileChange extends Change {
 			buffer= manager.getTextFileBuffer(fFile.getFullPath());
 			IDocument document= buffer.getDocument();
 			UndoEdit redo= fUndo.apply(document, TextEdit.CREATE_UNDO);
-			ContentStamp currentStamp= ContentStamps.get(fFile, true);
+			ContentStamp currentStamp= ContentStamps.get(fFile);
 			if (needsSaving())
 				buffer.commit(pm, false);
 			ContentStamps.set(fFile, fContentStampToRestore);

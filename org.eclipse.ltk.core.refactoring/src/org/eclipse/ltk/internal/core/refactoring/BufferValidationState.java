@@ -128,7 +128,7 @@ class DirtyBufferValidationState extends BufferValidationState {
 					textBuffer.getDocument().removeDocumentListener(fDocumentListener);
 					fDocumentListener= null;
 				}
-				fContentStamp= ContentStamps.get(fFile, true);
+				fContentStamp= ContentStamps.get(fFile);
 			}
 			// end fix https://bugs.eclipse.org/bugs/show_bug.cgi?id=67821
 		}
@@ -202,7 +202,7 @@ class SavedBufferValidationState extends BufferValidationState {
 	
 	public SavedBufferValidationState(IFile file) {
 		super(file);
-		fContentStamp= ContentStamps.get(file, true);
+		fContentStamp= ContentStamps.get(file);
 	}
 
 	public RefactoringStatus isValid() {

@@ -32,6 +32,12 @@ import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
 /**
  * A special {@link TextChange} that operates on a <code>IFile</code>.
  * <p>
+ * As of 3.1 the content stamp managed by a text file change maps to the modification
+ * stamp of its underlying <code>IFile</code>. Undoing a text file change will 
+ * roll back the modification stamp of a resource to its original value using 
+ * the new API {@link org.eclipse.core.resources.IResource#revertModificationStamp(long)}
+ * </p>
+ * <p>
  * The class should be subclassed by clients which need to perform 
  * special operation when acquiring or releasing a document. 
  * </p>
@@ -182,7 +188,7 @@ public class TextFileChange extends TextChange {
 		manager.connect(path, pm);
 		fAquireCount++;
 		fBuffer= manager.getTextFileBuffer(path);
-		fContentStamp= ContentStamps.get(fFile, true);
+		fContentStamp= ContentStamps.get(fFile);
 		return fBuffer.getDocument();
 	}
 	
@@ -192,7 +198,6 @@ public class TextFileChange extends TextChange {
 	protected void commit(IDocument document, IProgressMonitor pm) throws CoreException {
 		if (needsSaving()) {
 			fBuffer.commit(pm, false);
-			ContentStamps.increment(fFile);
 		}
 	}
 	

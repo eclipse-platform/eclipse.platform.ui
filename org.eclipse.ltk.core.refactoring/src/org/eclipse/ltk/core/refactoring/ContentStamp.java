@@ -13,7 +13,7 @@ package org.eclipse.ltk.core.refactoring;
 /**
  * A content stamp object represent the content of an <code>IFile</code>.
  * A content stamp object is updated whenever the content of a file
- * changes. In contrast to a modification stamp a content stamp is reverted
+ * changes. In contrast to a time stamp a content stamp is reverted
  * to its previous value if the content of the file is reverted back by
  * performing a corresponding undo change.
  * <p>
@@ -21,12 +21,13 @@ package org.eclipse.ltk.core.refactoring;
  * stamps. They are managed by the framework itself.
  * </p>
  * <p>
- * Not all files in the workspace are annotated with a content stamp. The 
- * refactoring framework only adds content stamp to those files where necessary.
+ * In version 3.0 not all files in the workspace are annotated with a content stamp. The 
+ * refactoring framework only adds content stamp to those files where necessary. As of
+ * version 3.1 the content stamps are mapped to the resource's modification stamp.
  * </p>
  * <p>
  * Content stamp are to be compared using the <code>equals(Object)</code> method.
- * It is not guaranteed that content stamp are identical for identical files.
+ * It is not guaranteed that content stamps are identical for identical files.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
