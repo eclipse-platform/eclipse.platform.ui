@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.jar.JarEntry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -128,7 +129,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 			
 		// define selector for feature entry files
 		ContentSelector selector = new ContentSelector() {
-			public boolean include(String entry) {
+			public boolean include(JarEntry jarEntry) {
+				String entry = jarEntry.getName();
 				if (entry.startsWith("eclipse/readme/"))
 					return true;
 				else if (entry.startsWith("eclipse/splash/"))
@@ -138,7 +140,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 				else
 					return false;	
 			}
-			public String defineIdentifier(String entry) {
+			public String defineIdentifier(JarEntry jarEntry) {
+				String entry = jarEntry.getName();
 				if (entry.startsWith("eclipse/"))
 					return entry.substring(8);
 				else
@@ -147,10 +150,11 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		};
 		
 		// unpack feature entry files
-		ContentReference[] refs = baseReference.unpack(selector, monitor);
+		File tmpDir = getWorkingDirectory();
+		ContentReference[] refs = baseReference.unpack(tmpDir, selector, monitor);
 		
 		// write out feature manifest (feature.xml);
-		File manifest = UpdateManagerUtils.createLocalFile(null/*key*/,"feature.xml");
+		File manifest = UpdateManagerUtils.createLocalFile(tmpDir, null/*key*/,"feature.xml");
 		ContentReference manifestReference = new ContentReference("feature.xml", manifest);
 		DefaultModelWriter w = new DefaultModelWriter(feature);
 		FileOutputStream os = null;
@@ -173,7 +177,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		
 		// define selector for plugin entry files
 		ContentSelector selector = new ContentSelector() {
-			public boolean include(String entry) {
+			public boolean include(JarEntry jarEntry) {
+				String entry = jarEntry.getName();
 				String id = currentPluginEntry.getVersionIdentifier().getIdentifier();
 				if (id==null)
 					return false;
@@ -182,7 +187,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 				else
 					return false;	
 			}
-			public String defineIdentifier(String entry) {
+			public String defineIdentifier(JarEntry jarEntry) {
+				String entry = jarEntry.getName();
 				int ix = entry.indexOf("/",16);
 				if (ix != -1) {
 					String rest = entry.substring(ix);
@@ -202,7 +208,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		
 		// define selector for non plugin entry files
 		ContentSelector selector = new ContentSelector() {
-			public boolean include(String entry) {
+			public boolean include(JarEntry jarEntry) {
+				String entry = jarEntry.getName();
 				String id = currentNonPluginEntry.getIdentifier();
 				if (!id.equals("root"))
 					return false;
@@ -211,7 +218,8 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 				else
 					return false;	
 			}
-			public String defineIdentifier(String entry) {
+			public String defineIdentifier(JarEntry jarEntry) {
+				String entry = jarEntry.getName();
 				if (entry.startsWith("eclipse/"))
 					return entry.substring(8);
 				else

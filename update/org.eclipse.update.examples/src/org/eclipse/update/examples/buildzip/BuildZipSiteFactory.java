@@ -10,6 +10,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -61,23 +62,24 @@ public class BuildZipSiteFactory extends BaseSiteFactory {
 						return false;
 				}
 			};	
-			File file = new File(url.getFile());
+			File file = new File(URLDecoder.decode(url.getFile()));
 			File[] zips = file.listFiles(filter);
 
-			// create a refernece for each matching zip
+			// create a reference for each matching zip
 			FeatureReferenceModel ref = null;
-			for (int i = 0; i < zips.length; i++) {
+			for (int i = 0; zips != null && i < zips.length; i++) {
 				ref = createFeatureReferenceModel();
 				ref.setType("org.eclipse.update.examples.zip");
 				ref.setSiteModel(site);
-				ref.setURLString(zips[i].toURL().toString());
+				ref.setURLString("file:" + zips[i].getAbsolutePath());
 				ref.setCategoryNames(new String[]{"eclipse-builds"});
 				site.addFeatureReferenceModel(ref);
 			}
+			site.resolve(url,null); // resolve any URLs relative to the site
 		} catch (MalformedURLException e) {
 			throw new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.examples.buildzip",0,"Unable to create site",e));
 		}
-
+		
 		return site;
 	}
 

@@ -61,9 +61,9 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 * @see AbstractFeature#getArchiveID()
 	 */
 	public String[] getFeatureEntryArchiveID() {
-		String[] names = new String[feature.getPluginEntryCount()];
-		IPluginEntry[] entries = feature.getPluginEntries();
-		for (int i = 0; i < feature.getPluginEntryCount(); i++) {
+		String[] names = new String[getFeature().getPluginEntryCount()];
+		IPluginEntry[] entries = getFeature().getPluginEntries();
+		for (int i = 0; i < getFeature().getPluginEntryCount(); i++) {
 			names[i] = getPluginEntryArchiveID(entries[i]);
 		}
 		return names;
@@ -85,7 +85,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 			JarContentReference featureJarReference = (JarContentReference) asLocalReference(featureArchiveReference[0], null);
 
 			// we need to unpack archive locally for UI browser references to be resolved correctly
-			localFeatureFiles = featureJarReference.unpack(null, monitor); // unpack and cache references
+			localFeatureFiles = featureJarReference.unpack(getWorkingDirectory(), null, monitor); // unpack and cache references
 			result = null;
 			for (int i = 0; i < localFeatureFiles.length; i++) {
 				// find the manifest in the unpacked feature files
@@ -107,8 +107,8 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	 * @see IFeatureContentProvider#getArchiveReferences()
 	 */
 	public ContentReference[] getArchiveReferences(InstallMonitor monitor) throws CoreException {
-		IPluginEntry[] entries = feature.getPluginEntries();
-		INonPluginEntry[] nonEntries = feature.getNonPluginEntries();
+		IPluginEntry[] entries = getFeature().getPluginEntries();
+		INonPluginEntry[] nonEntries = getFeature().getNonPluginEntries();
 		List listAllContentRef = new ArrayList();
 		ContentReference[] allContentRef = new ContentReference[0];
 
@@ -142,12 +142,12 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		try {
 			// feature may not be known, 
 			// we may be asked for the manifest before the feature is set
-			String archiveID = (feature != null) ? feature.getVersionIdentifier().toString() : "";
+			String archiveID = (getFeature() != null) ? getFeature().getVersionIdentifier().toString() : "";
 			ContentReference currentReference = new JarContentReference(archiveID, getURL());
 			currentReference = asLocalReference(currentReference, monitor);
 			references[0] = currentReference;
 		} catch (IOException e) {
-			String urlString = (feature == null) ? "NO FEATURE" : "" + feature.getURL();
+			String urlString = (getFeature() == null) ? "NO FEATURE" : "" + getFeature().getURL();
 			throw newCoreException("Error retrieving feature Entry Archive Reference :" + urlString, e);
 		}
 		return references;
@@ -159,7 +159,7 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 		ContentReference[] references = new ContentReference[1];
 		String archiveID = getPluginEntryArchiveID(pluginEntry);
-		URL url = feature.getSite().getSiteContentProvider().getArchiveReference(archiveID);
+		URL url = getFeature().getSite().getSiteContentProvider().getArchiveReference(archiveID);
 
 		// protocol is a file protocol		
 		if ("file".equals(url.getProtocol())) {
@@ -255,13 +255,6 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 				}
 			}
 		return result;
-	}
-
-	/*
-	* @see IFeatureContentProvider#setFeature(IFeature)
-	*/
-	public void setFeature(IFeature feature) {
-		this.feature = feature;
 	}
 
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {

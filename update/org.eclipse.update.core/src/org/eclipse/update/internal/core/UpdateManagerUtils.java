@@ -27,11 +27,6 @@ public class UpdateManagerUtils {
 	private static Map entryMap;
 	private static Stack bufferPool;	
 	private static final int BUFFER_SIZE = 1024;
-	
-	/**
-	 * 
-	 */
-	private static File tmpDir;
 
 
 	/**
@@ -323,20 +318,8 @@ public class UpdateManagerUtils {
 	 * @since 2.0
 	 */
 	// VK: needs to be API (and lookupLocalFile(), removeLocalFile() ??)
-	public static synchronized File createLocalFile(String key, String name) throws IOException {
-		
-		// ensure we have a temp directory
-		if (tmpDir == null) {		
-			String tmpName = System.getProperty("java.io.tmpdir");
-			// in Linux, return '/tmp', we must add '/'
-			if (!tmpName.endsWith(File.separator)) tmpName += File.separator;
-			tmpName += "eclipse" + File.separator + ".update" + File.separator + Long.toString((new Date()).getTime()) + File.separator;
-			tmpDir = new File(tmpName);
-			verifyPath(tmpDir, false);
-			if (!tmpDir.exists())
-				throw new FileNotFoundException(tmpName);
-		}
-		
+	public static synchronized File createLocalFile(File tmpDir, String key, String name) throws IOException {
+			
 		// create the local file
 		File temp;
 		String filePath;
@@ -362,8 +345,24 @@ public class UpdateManagerUtils {
 		
 		return temp;
 	}
-
-
+	
+	/**
+	 * Returns local working directory (in temporary area).
+	 * 
+	 * @since 2.0
+	 */	
+	public static synchronized File createWorkingDirectory() throws IOException {
+		String tmpName = System.getProperty("java.io.tmpdir");
+		// in Linux, returns '/tmp', we must add '/'
+		if (!tmpName.endsWith(File.separator)) tmpName += File.separator;
+		tmpName += "eclipse" + File.separator + ".update" + File.separator + Long.toString((new Date()).getTime()) + File.separator;
+		File tmpDir = new File(tmpName);
+		verifyPath(tmpDir, false);
+		if (!tmpDir.exists())
+			throw new FileNotFoundException(tmpName);
+		return tmpDir;
+	}
+	
 	/**
 	 * Returns local file (in temporary area) matching the
 	 * specified key. Returns null if the entry does not exist.
@@ -375,7 +374,6 @@ public class UpdateManagerUtils {
 			return null;
 		return (File) entryMap.get(key);
 	}
-
 
 	/**
 	 * Removes the specified key from the local file map. The file is
