@@ -7,6 +7,7 @@ package org.eclipse.team.ui.sync;
  
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -27,6 +28,7 @@ public class UnchangedTeamContainer extends DiffNode implements ITeamNode {
 	
 	public UnchangedTeamContainer(IDiffContainer parent, IResource resource, int description) {
 		super(parent, description);
+		setLeft(new ResourceNode(resource));
 		this.resource = resource;
 	}
 	
@@ -54,12 +56,5 @@ public class UnchangedTeamContainer extends DiffNode implements ITeamNode {
 
 	public String getType() {
 		return ITypedElement.FOLDER_TYPE;
-	}
-
-	/**
-	 * For debugging purposes only.
-	 */
-	public String toString() {
-		return "UnchangedTeamContainer(" + resource.getName() + ")";
 	}
 }
