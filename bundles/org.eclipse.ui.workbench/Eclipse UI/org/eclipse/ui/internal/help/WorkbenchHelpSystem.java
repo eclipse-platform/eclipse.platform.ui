@@ -335,9 +335,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		pluggableHelpUI = null;
 		helpCompatibilityWrapper = null;
 		isInitialized = false;
-		handler = null;
 		PlatformUI.getWorkbench().getExtensionTracker()
 				.unregisterRemovalHandler(handler);
+		handler = null;
 	}
 
 	/**
