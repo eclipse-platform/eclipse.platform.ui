@@ -60,6 +60,10 @@ public class UpdateCore extends Plugin {
 	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host"; //$NON-NLS-1$
 	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port"; //$NON-NLS-1$
 	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable"; //$NON-NLS-1$
+	
+	public static final String P_HTTP_HOST = "http.proxyHost"; //$NON-NLS-1$
+	public static final String P_HTTP_PORT = "http.proxyPort";	 //$NON-NLS-1$
+	public static final String P_HTTP_PROXY = "http.proxySet"; //$NON-NLS-1$
 
 	// bundle data
 	private BundleContext context;
@@ -280,10 +284,7 @@ public class UpdateCore extends Plugin {
 			warn("",e); //$NON-NLS-1$
 		}
 		
-		SiteManager.setHttpProxyInfo(
-			getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE),
-			getPluginPreferences().getString(HTTP_PROXY_HOST),
-			getPluginPreferences().getString(HTTP_PROXY_PORT));
+		initProxySettings();
 	}
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
@@ -315,5 +316,23 @@ public class UpdateCore extends Plugin {
 			pkgAdminTracker.open();
 		}
 		return (PackageAdmin)pkgAdminTracker.getService();
+	}
+	
+	private void initProxySettings() {
+		// Get system properties for proxy setup.
+		// If system properties are not set then pick up values from preference store
+		String httpProxyHost = System.getProperty(P_HTTP_HOST) != null ? 
+				System.getProperty(P_HTTP_HOST)
+				: getPluginPreferences().getString(HTTP_PROXY_HOST);
+				
+		String httpProxyPort = System.getProperty(P_HTTP_PORT) != null ?
+				System.getProperty(P_HTTP_PORT)
+				: getPluginPreferences().getString(HTTP_PROXY_PORT);
+				
+		boolean httpProxyEnable = httpProxyHost != null && httpProxyPort != null ? 
+				true
+				: getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE);
+		
+		SiteManager.setHttpProxyInfo(httpProxyEnable, httpProxyHost, httpProxyPort );
 	}
 }

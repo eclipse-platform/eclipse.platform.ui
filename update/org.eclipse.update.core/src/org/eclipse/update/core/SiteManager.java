@@ -41,10 +41,6 @@ public class SiteManager {
 	private static String arch;
 	private static String nl;
 	private static boolean isHttpProxyEnable;
-	
-	private static final String P_HTTP_HOST = "http.proxyHost"; //$NON-NLS-1$
-	private static final String P_HTTP_PORT = "http.proxyPort";	 //$NON-NLS-1$
-	private static final String P_HTTP_PROXY = "http.proxySet"; //$NON-NLS-1$
 
 	private SiteManager() {
 	}
@@ -251,14 +247,14 @@ public class SiteManager {
 	 * @return the HTTP proxy Server 
 	 */
 	public static String getHttpProxyServer() {
-		return System.getProperty(P_HTTP_HOST);
+		return UpdateCore.getPlugin().getPluginPreferences().getString(UpdateCore.HTTP_PROXY_HOST);
 	}
 	/**
 	 * Returns the HTTP Proxy Port or <code>null</code> if none
 	 * @return the HTTP proxy Port 
 	 */
 	public static String getHttpProxyPort() {
-		return System.getProperty(P_HTTP_PORT);
+		return UpdateCore.getPlugin().getPluginPreferences().getString(UpdateCore.HTTP_PROXY_PORT);
 	}
 	/**
 	 * Returns <code>true</code> if the connection should use the 
@@ -286,29 +282,24 @@ public class SiteManager {
 		// if enable is false, or values are null,
 		// we should remove the properties and save the fact that proxy is disable 
 		if (!enable || httpProxyServer == null || httpProxyPort == null) {
-			System.getProperties().remove(P_HTTP_HOST);
-			System.getProperties().remove(P_HTTP_PORT);
-			System.getProperties().remove(P_HTTP_PROXY);
+			System.getProperties().remove(UpdateCore.P_HTTP_HOST);
+			System.getProperties().remove(UpdateCore.P_HTTP_PORT);
+			System.getProperties().remove(UpdateCore.P_HTTP_PROXY);
 			//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
 			UpdateCore.warn("Remove proxy server info"); //$NON-NLS-1$
-			UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, isHttpProxyEnable());
+			UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, enable);
 			UpdateCore.getPlugin().savePluginPreferences();
 			return;
 		}
 		
-		//System.getProperties().put("proxySet", "true");
-		//System.getProperties().put("proxyHost", proxyHost);
-		//System.getProperties().put("proxyPort", proxyPort);
-		
-		System.getProperties().setProperty(P_HTTP_PROXY, enable?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-		System.getProperties().setProperty(P_HTTP_HOST, httpProxyServer);
-		System.getProperties().setProperty(P_HTTP_PORT, httpProxyPort);
+		System.getProperties().setProperty(UpdateCore.P_HTTP_PROXY, enable?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+		System.getProperties().setProperty(UpdateCore.P_HTTP_HOST, httpProxyServer);
+		System.getProperties().setProperty(UpdateCore.P_HTTP_PORT, httpProxyPort);
 		//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
 		UpdateCore.warn("Added proxy server info:" + httpProxyServer + ":" + httpProxyPort); //$NON-NLS-1$ //$NON-NLS-2$
-		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_HOST, getHttpProxyServer());
-		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_PORT, getHttpProxyPort());
-		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, isHttpProxyEnable());
+		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_HOST, httpProxyServer);
+		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_PORT, httpProxyPort);
+		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, enable);
 		UpdateCore.getPlugin().savePluginPreferences();
-
 	}
 }

@@ -238,40 +238,15 @@ public class MainPreferencePage
 		return super.performOk();
 	}
 
-	public void performApply() {
-		super.performApply();
-		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
-			public void run() {
-				SiteManager.setHttpProxyInfo(
-					enableHttpProxy.getSelection(),
-					httpProxyHostText.getText(),
-					httpProxyPortText.getText());
-			}
-		});
-
-		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
-		prefs.setValue(
-			UpdateCore.P_CHECK_SIGNATURE,
-			checkSignatureCheckbox.getSelection());
-		prefs.setValue(UpdateCore.P_HISTORY_SIZE, historySizeText.getText());
-		prefs.setValue(
-			UpdateCore.P_UPDATE_VERSIONS,
-			equivalentButton.getSelection()
-				? EQUIVALENT_VALUE
-				: COMPATIBLE_VALUE);
-		prefs.setValue(
-			UpdateUtils.P_UPDATE_POLICY_URL,
-			updatePolicyText.getText());
-
-		UpdateCore.getPlugin().savePluginPreferences();
-	}
 
 	private void initialize() {
-		enableHttpProxy.setSelection(SiteManager.isHttpProxyEnable());
-		String serverValue = SiteManager.getHttpProxyServer();
+		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
+		
+		enableHttpProxy.setSelection(prefs.getBoolean(UpdateCore.HTTP_PROXY_ENABLE));
+		String serverValue = prefs.getString(UpdateCore.HTTP_PROXY_HOST);
 		if (serverValue != null)
 			httpProxyHostText.setText(serverValue);
-		String portValue = SiteManager.getHttpProxyPort();
+		String portValue = prefs.getString(UpdateCore.HTTP_PROXY_PORT);
 		if (portValue != null)
 			httpProxyPortText.setText(portValue);
 
@@ -280,7 +255,6 @@ public class MainPreferencePage
 		httpProxyPortText.setEnabled(enableHttpProxy.getSelection());
 		httpProxyHostText.setEnabled(enableHttpProxy.getSelection());
 
-		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
 		checkSignatureCheckbox.setSelection(
 			prefs.getBoolean(UpdateCore.P_CHECK_SIGNATURE));
 
