@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.RemoteSyncElement;
@@ -26,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
@@ -119,6 +121,7 @@ public class UpdateMergeAction extends UpdateSyncAction {
 					if(!local.exists()) {
 						((IFolder)local).create(false /*don't force*/, true /*local*/, monitor);
 					}
+					CVSWorkspaceRoot.getCVSFolderFor((IContainer)local).setFolderSyncInfo(((ICVSFolder)remote).getFolderSyncInfo());
 				} else {
 					monitor.beginTask(null, 200);
 					try {
