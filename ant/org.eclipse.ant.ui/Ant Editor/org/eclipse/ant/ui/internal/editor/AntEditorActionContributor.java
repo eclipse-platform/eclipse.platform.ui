@@ -39,8 +39,8 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 	 */
 	public AntEditorActionContributor() {
 		super();
-		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.AntEditorMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
-//        fContentAssistTip= new RetargetTextEditor(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.AntEditorMessages"), "ContentAssistTip."); //$NON-NLS-1$
+		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ant.ui.internal.editor.AntEditorMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
+//        fContentAssistTip= new RetargetTextEditor(ResourceBundle.getBundle("org.eclipse.ant.ui.internal.editor.AntEditorMessages"), "ContentAssistTip."); //$NON-NLS-1$
 	}
 	
 	private void doSetActiveEditor(IEditorPart part) {

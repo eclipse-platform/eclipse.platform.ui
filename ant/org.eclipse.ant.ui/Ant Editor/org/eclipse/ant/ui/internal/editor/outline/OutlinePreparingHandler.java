@@ -31,7 +31,7 @@ import org.eclipse.ant.ui.internal.editor.AntEditorException;
 import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -521,7 +521,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		try {
 			lastExternalEntityOffset= getOffset(locator.getLineNumber(), locator.getColumnNumber()) - 1;
 		} catch (BadLocationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
 		}
 	}
 

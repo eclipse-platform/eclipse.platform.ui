@@ -21,6 +21,7 @@ package org.eclipse.ant.ui.internal.editor.text;
  * after copying.
  */
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -28,7 +29,6 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 public class AntEditorProcInstrScanner extends RuleBasedScanner {
 
@@ -37,7 +37,7 @@ public class AntEditorProcInstrScanner extends RuleBasedScanner {
         IToken procInstr =
             new Token(
                 new TextAttribute(
-                    ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_PROC_INSTR)));
+                    AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_PROC_INSTR)));
 
         //Add rule for processing instructions
         rules[0]= new SingleLineRule("<?", "?>", procInstr); //$NON-NLS-1$ //$NON-NLS-2$

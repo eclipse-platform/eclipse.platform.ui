@@ -22,6 +22,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -51,7 +52,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FileSystemElement;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.StatusDialog;
 import org.eclipse.ui.externaltools.internal.ui.StatusInfo;
@@ -177,7 +177,7 @@ public class AddCustomDialog extends StatusDialog {
 		try {
 			file.close();
 		} catch (IOException e) {
-			ExternalToolsPlugin.getDefault().log(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.Could_not_close_zip_file_{0}_4"), new String[]{file.getName()}), e); //$NON-NLS-1$
+			AntUIPlugin.log(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.Could_not_close_zip_file_{0}_4"), new String[]{file.getName()}), e); //$NON-NLS-1$
 			return false;
 		}
 

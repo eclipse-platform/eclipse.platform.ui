@@ -85,7 +85,7 @@
        		 	relative="org.eclipse.ui.views.ContentOutline" 
     			relationship="stack"
     			visible="false"/> 
-    		<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+    		<viewShortcut id="org.eclipse.ant.ui.views.AntView"/>
 	    </perspectiveExtension>
     	<perspectiveExtension 
     		targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
@@ -93,7 +93,7 @@
        		 	relative="org.eclipse.ui.views.ContentOutline" 
     			relationship="stack"
     			visible="false"/> 
-    		<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+    		<viewShortcut id="org.eclipse.ant.ui.views.AntView"/>
 	    </perspectiveExtension>
     	<perspectiveExtension 
     		targetID="org.eclipse.jdt.ui.JavaPerspective">
@@ -101,7 +101,7 @@
 	        	relative="org.eclipse.ui.views.ContentOutline" 
 	    		relationship="stack"
 	    		visible="false"/> 
-	    	<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    	<viewShortcut id="org.eclipse.ant.ui.views.AntView"/>
 	    </perspectiveExtension>
 	    <perspectiveExtension 
 	    	targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
@@ -109,7 +109,7 @@
 	        	relative="org.eclipse.ui.views.ContentOutline" 
 	    		relationship="stack"
 	    		visible="false"/> 
-	    	<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    	<viewShortcut id="org.eclipse.ant.ui.views.AntView"/>
 	    </perspectiveExtension>
 	    <perspectiveExtension 
 	    	targetID="org.eclipse.debug.ui.DebugPerspective">
@@ -117,7 +117,7 @@
 	        	relative="org.eclipse.ui.views.ContentOutline" 
 	    		relationship="stack"
 	    		visible="false"/> 
-	    	<viewShortcut id="org.eclipse.ui.externaltools.AntView"/>
+	    	<viewShortcut id="org.eclipse.ant.ui.views.AntView"/>
 	    </perspectiveExtension>
 	</extension>
 	

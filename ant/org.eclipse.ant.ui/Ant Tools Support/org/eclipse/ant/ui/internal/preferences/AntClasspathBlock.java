@@ -46,12 +46,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ant.ui.internal.preferences.AntClasspathContentProvider;
-import org.eclipse.ant.ui.internal.preferences.AntClasspathLabelProvider;
-import org.eclipse.ant.ui.internal.preferences.AntPreferencesMessages;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 public class AntClasspathBlock {
 
@@ -78,7 +74,7 @@ public class AntClasspathBlock {
 	private Text antHome;
 	private Button browseAntHomeButton;
 
-	private final IDialogSettings dialogSettings = ExternalToolsPlugin.getDefault().getDialogSettings();
+	private final IDialogSettings dialogSettings = AntUIPlugin.getDefault().getDialogSettings();
 	
 	private boolean initializing = true;
 	

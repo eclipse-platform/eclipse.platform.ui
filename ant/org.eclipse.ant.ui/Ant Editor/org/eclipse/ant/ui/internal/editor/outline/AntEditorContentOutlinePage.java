@@ -16,6 +16,14 @@ package org.eclipse.ant.ui.internal.editor.outline;
 
 import java.util.List;
 
+import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
+import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
+import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
+import org.eclipse.ant.ui.internal.model.AntImageDescriptor;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
+import org.eclipse.ant.ui.internal.views.actions.AntOpenWithMenu;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -48,16 +56,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
-import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
-import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
-import org.eclipse.ant.ui.internal.model.AntUtil;
-import org.eclipse.ant.ui.internal.model.IAntUIConstants;
-import org.eclipse.ant.ui.internal.views.actions.AntOpenWithMenu;
-import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -181,20 +180,20 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				}
 				if (isDefaultTargetNode(tempElement)) {
 					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
-					base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
+					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
 				} else if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) {
-					base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_PRIVATE);
+					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_PRIVATE);
 				} else {
-					base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
+					base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
 				}
-				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));				
+				return AntUIImages.getImage(new AntImageDescriptor(base, flags));				
 			}
 			if("project".equals(tempElement.getName())) { //$NON-NLS-1$
 				return getProjectImage(tempElement);
 			}
 			
 			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
+				return AntUIImages.getImage(IAntUIConstants.IMAGE_ID_PROPERTY);
 			}
 			
 			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
@@ -204,26 +203,26 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 			if (attribute != null && IAntEditorConstants.TYPE_UNKNOWN.equals(attribute.getValue())) {
 				int flags= 0;
-				ImageDescriptor base= ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMAGE_ID_TASK);
+				ImageDescriptor base= AntUIImages.getImageDescriptor(IAntUIConstants.IMAGE_ID_TASK);
 				if (tempElement.isErrorNode()) {
 					flags |= AntImageDescriptor.HAS_ERRORS;
 				}
-				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
+				return AntUIImages.getImage(new AntImageDescriptor(base, flags));
 			}
 
 			if (tempElement.isErrorNode()) {
-				return ExternalToolsImages.getImage(IAntUIConstants.IMG_ANT_TARGET_ERROR);
+				return AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET_ERROR);
 			}
-			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
+			return AntUIImages.getImage(IAntUIConstants.IMAGE_ID_TASK);
 		}
 		
 		private Image getProjectImage(XmlElement tempElement) {
 			int flags = 0;
-			ImageDescriptor base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
+			ImageDescriptor base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
 			if (tempElement.isErrorNode()) {
 				flags = flags | AntImageDescriptor.HAS_ERRORS;
 			}
-			return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
+			return AntUIImages.getImage(new AntImageDescriptor(base, flags));
 		}
         
 		/* (non-Javadoc)

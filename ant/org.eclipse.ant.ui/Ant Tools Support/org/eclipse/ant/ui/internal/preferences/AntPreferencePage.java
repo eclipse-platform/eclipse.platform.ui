@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -48,11 +47,11 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	// Array containing the message to display, the preference key, and the 
 	// default value (initialized in storeInitialValues()) for each color preference
 	private final String[][] fAppearanceColorListModel= new String[][] {
-		{AntPreferencesMessages.getString("AntPreferencePage.&Error__2"), IPreferenceConstants.CONSOLE_ERROR_RGB, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.&Warning__3"), IPreferenceConstants.CONSOLE_WARNING_RGB, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.I&nformation__4"), IPreferenceConstants.CONSOLE_INFO_RGB, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ve&rbose__5"), IPreferenceConstants.CONSOLE_VERBOSE_RGB, null}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Deb&ug__6"), IPreferenceConstants.CONSOLE_DEBUG_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.&Error__2"), IAntUIPreferenceConstants.CONSOLE_ERROR_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.&Warning__3"), IAntUIPreferenceConstants.CONSOLE_WARNING_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.I&nformation__4"), IAntUIPreferenceConstants.CONSOLE_INFO_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Ve&rbose__5"), IAntUIPreferenceConstants.CONSOLE_VERBOSE_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Deb&ug__6"), IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB, null}, //$NON-NLS-1$
 	};
 
 	/**

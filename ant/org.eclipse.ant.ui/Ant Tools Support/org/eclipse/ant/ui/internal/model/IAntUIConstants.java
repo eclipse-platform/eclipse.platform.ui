@@ -59,12 +59,33 @@ public interface IAntUIConstants {
 	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
 	
 	//	Label images
-	 public static final String IMG_ANT_PROJECT= IExternalToolConstants.PLUGIN_ID + ".antProject"; //$NON-NLS-1$
-	 public static final String IMG_ANT_TARGET= IExternalToolConstants.PLUGIN_ID + ".antTarget"; //$NON-NLS-1$
-	 public static final String IMG_ANT_TARGET_PRIVATE = IExternalToolConstants.PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
-	 public static final String IMG_ANT_DEFAULT_TARGET= IExternalToolConstants.PLUGIN_ID + ".antDefaultTarget"; //$NON-NLS-1$
-	 public static final String IMG_ANT_TARGET_ERROR = IExternalToolConstants.PLUGIN_ID + ".antTargetError"; //$NON-NLS-1$
+	 public static final String IMG_ANT_PROJECT= PLUGIN_ID + ".antProject"; //$NON-NLS-1$
+	 public static final String IMG_ANT_TARGET= PLUGIN_ID + ".antTarget"; //$NON-NLS-1$
+	 public static final String IMG_ANT_TARGET_PRIVATE = PLUGIN_ID + ".antPrivateTarget"; //$NON-NLS-1$
+	 public static final String IMG_ANT_DEFAULT_TARGET= PLUGIN_ID + ".antDefaultTarget"; //$NON-NLS-1$
+	 public static final String IMG_ANT_TARGET_ERROR = PLUGIN_ID + ".antTargetError"; //$NON-NLS-1$
 	 
+	/**
+	 * Icon for task proposal.
+	 */
+	public static final String IMAGE_ID_TASK = PLUGIN_ID + ".html_tab_obj"; //$NON-NLS-1$
+	
+	/**
+	 * Icon for property proposal.
+	 */
+	public static final String IMAGE_ID_PROPERTY = IExternalToolConstants.PLUGIN_ID + ".property"; //$NON-NLS-1$
+	
+	// Action images
+	public static final String IMG_REMOVE= PLUGIN_ID + ".remove"; //$NON-NLS-1$
+	public static final String IMG_REMOVE_ALL= PLUGIN_ID + ".removeAll"; //$NON-NLS-1$
+	public static final String IMG_ADD= PLUGIN_ID + ".add"; //$NON-NLS-1$
+	public static final String IMG_RUN= PLUGIN_ID + ".run"; //$NON-NLS-1$
+	public static final String IMG_SEARCH= PLUGIN_ID + ".search"; //$NON-NLS-1$
+	public static final String IMG_TOGGLE= PLUGIN_ID + ".toggle"; //$NON-NLS-1$
+	 
+	//	Overlays
+	 public static final String IMG_OVR_ERROR = IExternalToolConstants.PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
+	
 
 	// ------- Launch configuration types --------
 	/**

@@ -13,13 +13,13 @@ package org.eclipse.ant.ui.internal.preferences;
 
 import java.net.URL;
 
+import org.eclipse.ant.ui.internal.model.AntUIImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Label provider for classpath elements
@@ -82,16 +82,20 @@ public class AntClasspathLabelProvider extends LabelProvider implements ITableLa
 
 	private Image getJarImage() {
 		if (jarImage == null) {
-			ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(AntClasspathLabelProvider.IMG_JAR_FILE);
-			jarImage = desc.createImage();
+			ImageDescriptor desc = AntUIImages.getImageDescriptor(AntClasspathLabelProvider.IMG_JAR_FILE);
+			if (desc != null) {
+				jarImage = desc.createImage();
+			}
 		}
 		return jarImage;
 	}
 
 	public Image getClasspathImage() {
 		if (classpathImage == null) {
-			ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(AntClasspathLabelProvider.IMG_CLASSPATH);
-			classpathImage = desc.createImage();
+			ImageDescriptor desc = AntUIImages.getImageDescriptor(AntClasspathLabelProvider.IMG_CLASSPATH);
+			if (desc != null) {
+				classpathImage = desc.createImage();
+			}
 		}
 		return classpathImage;
 	}

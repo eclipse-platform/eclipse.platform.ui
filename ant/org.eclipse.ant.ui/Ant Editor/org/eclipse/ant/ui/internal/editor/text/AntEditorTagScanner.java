@@ -21,6 +21,7 @@ package org.eclipse.ant.ui.internal.editor.text;
  * after copying.
  */
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -29,7 +30,6 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 public class AntEditorTagScanner extends RuleBasedScanner {
 
@@ -37,7 +37,7 @@ public class AntEditorTagScanner extends RuleBasedScanner {
         IToken string = 
         	new Token(
                 new TextAttribute(
-                    ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_STRING)));
+                    AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_STRING)));
                     
 		IRule[] rules =new IRule[3];
 

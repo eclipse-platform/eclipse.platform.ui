@@ -13,7 +13,6 @@ package org.eclipse.ant.ui.internal.editor.outline;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
-
 /**
  * LocationProvider.java
  */

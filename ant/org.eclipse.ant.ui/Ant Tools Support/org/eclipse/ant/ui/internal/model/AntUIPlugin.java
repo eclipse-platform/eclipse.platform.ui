@@ -16,16 +16,21 @@ import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in.
  */
-public class AntUIPlugin extends Plugin {
+public class AntUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -43,6 +48,8 @@ public class AntUIPlugin extends Plugin {
 	 * for the Ant UI plug-in.
 	 */
 	public static final String PI_ANTUI = "org.eclipse.ant.ui"; //$NON-NLS-1$
+	
+	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 
 	/** 
 	 * Constructs an instance of this plug-in runtime class.
@@ -53,7 +60,7 @@ public class AntUIPlugin extends Plugin {
 	 * </p>
 	 * 
 	 * @param pluginDescriptor the plug-in descriptor for the
-	 *   Ant Core plug-in
+	 *   Ant UI plug-in
 	 */
 	public AntUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -61,9 +68,12 @@ public class AntUIPlugin extends Plugin {
 	}
 
 	/**
-	 * @see Plugin#shutdown()
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
+		super.shutdown();
+		ColorManager.getDefault().dispose();
+		AntUIImages.disposeImageDescriptorRegistry();
 	}
 
 	/**
@@ -85,6 +95,26 @@ public class AntUIPlugin extends Plugin {
 		getDefault().getLog().log(status);
 	}
 	
+	/**
+	 * Writes the message to the plug-in's log
+	 * 
+	 * @param message the text to write to the log
+	 */
+	public static void log(String message, Throwable exception) {
+		IStatus status = newErrorStatus(message, exception);
+		getDefault().getLog().log(status);
+	}
+	
+	/**
+	 * Returns a new <code>IStatus</code> for this plug-in
+	 */
+	public static IStatus newErrorStatus(String message, Throwable exception) {
+		if (message == null) {
+			message= EMPTY_STRING; 
+		}		
+		return new Status(Status.ERROR, IAntUIConstants.PLUGIN_ID, 0, message, exception);
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared in AbstractUIPlugin.
 	 */
@@ -97,6 +127,14 @@ public class AntUIPlugin extends Plugin {
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_STRING, IAntEditorColorConstants.STRING);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_TAG, IAntEditorColorConstants.TAG);
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_XML_COMMENT, IAntEditorColorConstants.XML_COMMENT);
+		
+		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_ERROR_RGB, new RGB(255, 0, 0)); // red - exactly the same as debug Consol
+		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_WARNING_RGB, new RGB(255, 100, 0)); // orange
+		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_INFO_RGB, new RGB(0, 0, 255)); // blue
+		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_VERBOSE_RGB, new RGB(0, 200, 125)); // green
+		PreferenceConverter.setDefault(prefs, IAntUIPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0)); // black
+				
+		
 		AntEditorPreferenceConstants.initializeDefaultValues(prefs);
 	}
 	
@@ -112,5 +150,36 @@ public class AntUIPlugin extends Plugin {
 		}
 		return display;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
+	 */
+	protected ImageRegistry createImageRegistry() {
+		return AntUIImages.initializeImageRegistry();
+	}
+	
+	/**
+	 * Returns the preference color, identified by the given preference.
+	 */
+	public static Color getPreferenceColor(String pref) {
+		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), pref));
+	}	
+	
+	/**
+	* Returns the active workbench page or <code>null</code> if none.
+	*/
+   public static IWorkbenchPage getActivePage() {
+	   IWorkbenchWindow window= getActiveWorkbenchWindow();
+	   if (window != null) {
+		   return window.getActivePage();
+	   }
+	   return null;
+   }
 
+   /**
+	* Returns the active workbench window or <code>null</code> if none
+	*/
+   public static IWorkbenchWindow getActiveWorkbenchWindow() {
+	   return getDefault().getWorkbench().getActiveWorkbenchWindow();
+   }
 }

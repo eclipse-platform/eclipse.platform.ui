@@ -14,7 +14,10 @@ package org.eclipse.ant.ui.internal.views.actions;
 import java.util.Iterator;
 
 import org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchShortcut;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.views.AntView;
 import org.eclipse.ant.ui.internal.views.elements.AntNode;
 import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
@@ -23,10 +26,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -45,7 +45,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	 * determining which target to run.
 	 */
 	public RunTargetAction(AntView view) {
-		super(AntViewActionMessages.getString("RunTargetAction.Run_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN)); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("RunTargetAction.Run_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_RUN)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RunTargetAction.Run_Default")); //$NON-NLS-1$
 		this.view= view;
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.RUN_TARGET_ACTION);
@@ -69,7 +69,7 @@ public class RunTargetAction extends Action implements IUpdate {
 	public void run(TargetNode target) {
 		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
 		if (file == null) {
-			ExternalToolsPlugin.getStandardDisplay().beep();
+			AntUIPlugin.getStandardDisplay().beep();
 			return;
 		}
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();

@@ -26,11 +26,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -123,10 +123,10 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      */
     public AntEditorSaxDefaultHandler(File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
         super();
-		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
+			AntUIPlugin.log("AntEditorSaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
-        if(aRowOfCursorPosition < 0 || aColumnOfCursorPosition < 0) {
+        if (aRowOfCursorPosition < 0 || aColumnOfCursorPosition < 0) {
             throw new IllegalArgumentException(MessageFormat.format(AntEditorMessages.getString("AntEditorSaxDefaultHandler.Invalid_cursor_position"), new String[]{Integer.toString(aRowOfCursorPosition), Integer.toString(aColumnOfCursorPosition)})); //$NON-NLS-1$
         }
         rowOfCursorPosition = aRowOfCursorPosition;
@@ -171,8 +171,8 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
                 if(tempLineNr> rowOfCursorPosition ||
                     (tempLineNr == rowOfCursorPosition && tempColumnNr > columnOfCursorPosition) && !stillOpenElements.isEmpty()) {
                         parentElement = (Element)stillOpenElements.peek();
-                        if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-							ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
+                        if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
+							AntUIPlugin.log("AntEditorSaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
                         }
                         return true;
                     }
@@ -201,8 +201,8 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
          * string as local name.
          */
         
-		 if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		 if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
+			AntUIPlugin.log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
             return;
@@ -235,8 +235,8 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     public void endElement(String aUri, String aLocalName, String aQualifiedName)
         throws SAXException {
 
-		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
+			AntUIPlugin.log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
         if(parsingFinished) {

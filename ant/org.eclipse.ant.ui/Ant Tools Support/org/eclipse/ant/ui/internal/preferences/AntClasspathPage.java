@@ -129,7 +129,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#update()
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#update()
 	 */
 	public void update() {
 		setMessage(null);
@@ -141,24 +141,22 @@ public class AntClasspathPage implements IAntBlockContainer {
 		preferencePage.setValid(valid);
 	}
 	
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setMessage(java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#setMessage(java.lang.String)
 	 */
 	public void setMessage(String message) {
 		preferencePage.setMessage(message);
 	}
 	
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setErrorMessage(java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#setErrorMessage(java.lang.String)
 	 */
 	public void setErrorMessage(String message) {
 		preferencePage.setErrorMessage(message);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
 	public Button createPushButton(Composite parent, String buttonText) {
 		Button button = new Button(parent, SWT.PUSH);

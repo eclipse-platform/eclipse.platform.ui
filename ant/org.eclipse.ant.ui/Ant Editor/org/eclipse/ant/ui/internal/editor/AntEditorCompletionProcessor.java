@@ -45,6 +45,15 @@ import org.apache.tools.ant.taskdefs.Property;
 import org.apache.tools.ant.taskdefs.Sequential;
 import org.apache.tools.ant.taskdefs.UpToDate;
 import org.apache.tools.ant.taskdefs.condition.Condition;
+import org.eclipse.ant.ui.internal.dtd.IAttribute;
+import org.eclipse.ant.ui.internal.dtd.IDfm;
+import org.eclipse.ant.ui.internal.dtd.IElement;
+import org.eclipse.ant.ui.internal.dtd.ISchema;
+import org.eclipse.ant.ui.internal.dtd.ParseError;
+import org.eclipse.ant.ui.internal.dtd.Parser;
+import org.eclipse.ant.ui.internal.editor.utils.ProjectHelper;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -58,16 +67,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ant.ui.internal.dtd.IAttribute;
-import org.eclipse.ant.ui.internal.dtd.IDfm;
-import org.eclipse.ant.ui.internal.dtd.IElement;
-import org.eclipse.ant.ui.internal.dtd.ISchema;
-import org.eclipse.ant.ui.internal.dtd.ParseError;
-import org.eclipse.ant.ui.internal.dtd.Parser;
-import org.eclipse.ant.ui.internal.editor.utils.ProjectHelper;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.part.FileEditorInput;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -498,7 +498,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 }
                  
                 String tempReplacementString = new StringBuffer("${").append(tempPropertyName).append('}').toString();  //$NON-NLS-1$
-                Image tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
+                Image tempImage = AntUIImages.getImage(IAntUIConstants.IMAGE_ID_PROPERTY);
                 
                 ICompletionProposal proposal = 
                     new CompletionProposal(
@@ -534,7 +534,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		// through a child sequence. This works for the Ant
 		// 1.5 DTD but not in general. I kept the assumption. bf
         LinkedList tempProposals = new LinkedList();
-        Image tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
+        Image tempImage = AntUIImages.getImage(IAntUIConstants.IMAGE_ID_TASK);
         
         if (aParentTaskElement == null) {
         	// DTDs do not designate a root element.

@@ -11,11 +11,11 @@
 package org.eclipse.ant.ui.internal.views.actions;
 
 
-import org.eclipse.jface.action.Action;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.views.AntView;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.jface.action.Action;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -23,7 +23,7 @@ public class RemoveAllAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public RemoveAllAction(AntView view) {
-		super(AntViewActionMessages.getString("RemoveAllAction.Remove_All"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE_ALL)); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("RemoveAllAction.Remove_All"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE_ALL)); //$NON-NLS-1$
 		setDescription(AntViewActionMessages.getString("RemoveAllAction.Remove_All")); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RemoveAllAction.Remove_All")); //$NON-NLS-1$
 		this.view= view;

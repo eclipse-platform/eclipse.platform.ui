@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.views.actions;
 
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
+import org.eclipse.ant.ui.internal.views.AntView;
+import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ant.ui.internal.views.AntView;
-import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -31,7 +31,7 @@ public class AddBuildFileAction extends Action {
 	private AntView view;
 
 	public AddBuildFileAction(AntView view) {
-		super(AntViewActionMessages.getString("AddBuildFileAction.Add_Build_File_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ADD)); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("AddBuildFileAction.Add_Build_File_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ADD)); //$NON-NLS-1$
 		this.view= view;
 		setToolTipText(AntViewActionMessages.getString("AddBuildFileAction.Add_Build_File_1")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.ADD_BUILDFILE_ACTION);

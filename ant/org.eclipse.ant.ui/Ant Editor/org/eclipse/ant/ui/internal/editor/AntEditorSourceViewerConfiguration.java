@@ -37,8 +37,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.externaltools.internal.model.ColorManager;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 import org.eclipse.ant.ui.internal.editor.derived.HTMLTextPresenter;
 import org.eclipse.ant.ui.internal.editor.text.XMLAnnotationHover;
@@ -50,6 +48,8 @@ import org.eclipse.ant.ui.internal.editor.text.AntEditorPartitionScanner;
 import org.eclipse.ant.ui.internal.editor.text.AntEditorProcInstrScanner;
 import org.eclipse.ant.ui.internal.editor.text.AntEditorTagScanner;
 import org.eclipse.ant.ui.internal.editor.text.XMLReconcilingStrategy;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.ui.internal.model.ColorManager;
 import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 
 /**
@@ -84,7 +84,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.setContentAssistProcessor(processor, AntEditorPartitionScanner.XML_TAG);
         
-		IPreferenceStore store= ExternalToolsPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		
 		String triggers= store.getString(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS);
 		if (triggers != null) {
@@ -151,7 +151,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
             instructionScanner = new AntEditorProcInstrScanner();
             instructionScanner.setDefaultReturnToken(
                 new Token(
-                    new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
+                    new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
         }
         return instructionScanner;
     }
@@ -160,7 +160,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
         if (tagScanner == null) {
             tagScanner = new AntEditorTagScanner();
             tagScanner.setDefaultReturnToken(
-                new Token(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
+                new Token(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
         }
         return tagScanner;
     }
@@ -178,7 +178,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
         reconciler.setRepairer(dr, AntEditorPartitionScanner.XML_TAG);
 
 		damageRepairer= new NonRuleBasedDamagerRepairer(
-                new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));
+                new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));
         reconciler.setDamager(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
         reconciler.setRepairer(damageRepairer, AntEditorPartitionScanner.XML_COMMENT);
 
@@ -192,13 +192,13 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 	 */
 	public void updateScanners() {
 		tagScanner.setDefaultReturnToken(
-				new Token(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
+				new Token(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_TAG))));
 				
 		instructionScanner.setDefaultReturnToken(
 			   new Token(
-				   new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
+				   new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_DEFAULT))));
 				   
-		damageRepairer.setDefaultTextAttribute(new TextAttribute(ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));				  
+		damageRepairer.setDefaultTextAttribute(new TextAttribute(AntUIPlugin.getPreferenceColor(IAntEditorColorConstants.P_XML_COMMENT)));				  
 	}
 
     /*
@@ -240,7 +240,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
 	}
 	
 	protected void changeConfiguration(PropertyChangeEvent event) {
-		IPreferenceStore store= ExternalToolsPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		String p= event.getProperty();
 
 		ColorManager manager= ColorManager.getDefault();

@@ -20,7 +20,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -142,7 +142,7 @@ public class AntModel {
 			tempParser = new SAXParser();
 			tempParser.setFeature("http://xml.org/sax/features/namespaces", false); //$NON-NLS-1$
 		} catch (SAXException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
 			return null;
 		}
 
@@ -173,7 +173,7 @@ public class AntModel {
 		} catch(SAXParseException e) {
 			tempHandler.fixEndLocations(e);
 		} catch (SAXException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
 			return null;
 		} catch (IOException e) {
 			XmlElement tempElement= tempHandler.getLastOpenElement();

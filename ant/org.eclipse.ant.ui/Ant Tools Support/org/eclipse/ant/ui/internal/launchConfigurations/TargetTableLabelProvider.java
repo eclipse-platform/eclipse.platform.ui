@@ -11,6 +11,7 @@
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.ui.internal.model.AntImageDescriptor;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -20,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 
 /**

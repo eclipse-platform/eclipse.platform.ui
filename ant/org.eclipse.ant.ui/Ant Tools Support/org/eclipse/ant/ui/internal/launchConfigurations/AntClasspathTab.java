@@ -194,28 +194,28 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setMessage(java.lang.String)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setMessage(java.lang.String)
 	 */
 	public void setMessage(String message) {
 		super.setMessage(message);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setErrorMessage(java.lang.String)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setErrorMessage(java.lang.String)
 	 */
 	public void setErrorMessage(String message) {
 		super.setErrorMessage(message);
 	}
 	
 	/* (non-Javadoc)
-	* @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
-	*/
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
+	 */
 	public Button createPushButton(Composite parent, String buttonText) {
 		return super.createPushButton(parent, buttonText, null);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#update()
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#update()
 	 */
 	public void update() {
 		updateLaunchConfigurationDialog();

@@ -26,6 +26,8 @@ import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.ui.internal.model.ColorManager;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
@@ -46,8 +48,6 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.externaltools.internal.model.ColorManager;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
@@ -91,7 +91,7 @@ public class AntEditor extends TextEditor {
     public AntEditor() {
         super();
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
-		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
     }
 
 
@@ -138,8 +138,8 @@ public class AntEditor extends TextEditor {
     private void doSelectionChanged(SelectionChangedEvent aSelectionChangedEvent) {
         IStructuredSelection selection= (IStructuredSelection)aSelectionChangedEvent.getSelection();
 
-        if (!isActivePart() && ExternalToolsPlugin.getActivePage() != null) {
-			ExternalToolsPlugin.getActivePage().bringToTop(this);
+        if (!isActivePart() && AntUIPlugin.getActivePage() != null) {
+			AntUIPlugin.getActivePage().bringToTop(this);
         }
         
         /*
@@ -218,7 +218,7 @@ public class AntEditor extends TextEditor {
                     sourceViewer.setSelectedRange(offset, length); 
                 }
             } catch (IllegalArgumentException x) {
-            	ExternalToolsPlugin.getDefault().log(x);
+            	AntUIPlugin.log(x);
             } finally {
                 if (textWidget != null) {
                     textWidget.setRedraw(true);

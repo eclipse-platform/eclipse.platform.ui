@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.views.AntView;
 import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
-import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -31,7 +31,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 	private AntView view;
 	
 	public RemoveProjectAction(AntView view) {
-		super(AntViewActionMessages.getString("RemoveProjectAction.Remove"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE)); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("RemoveProjectAction.Remove"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_REMOVE)); //$NON-NLS-1$
 		this.view= view;
 		setToolTipText(AntViewActionMessages.getString("RemoveProjectAction.Remove_2")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.REMOVE_PROJECT_ACTION);

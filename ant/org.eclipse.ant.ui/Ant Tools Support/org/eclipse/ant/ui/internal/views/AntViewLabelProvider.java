@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.views;
 
-
+import org.eclipse.ant.ui.internal.model.AntImageDescriptor;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
 import org.eclipse.ant.ui.internal.views.elements.TargetNode;
@@ -23,8 +24,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 
 /**
  * A label provider that provides labels for elements displayed in the
@@ -42,24 +41,24 @@ public class AntViewLabelProvider implements ILabelProvider, IColorProvider {
 			if (project.isErrorNode()) {
 				flags = flags | AntImageDescriptor.HAS_ERRORS;
 			}
-			CompositeImageDescriptor descriptor = new AntImageDescriptor(ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT), flags);
-			return ExternalToolsImages.getImage(descriptor);
+			CompositeImageDescriptor descriptor = new AntImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT), flags);
+			return AntUIImages.getImage(descriptor);
 		} else if (element instanceof TargetNode) {
 			TargetNode target= (TargetNode) element;
 			int flags = 0;
 			ImageDescriptor base = null;
 			if (target.equals(target.getProject().getDefaultTarget())){
 				flags = flags | AntImageDescriptor.DEFAULT_TARGET;
-				base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
+				base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
 			} else if (target.getDescription() == null) {
-				base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_PRIVATE);
+				base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_PRIVATE);
 			} else {
-				base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
+				base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
 			}			
 			if (target.isErrorNode()) {
 				flags = flags | AntImageDescriptor.HAS_ERRORS;
 			}
-			return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
+			return AntUIImages.getImage(new AntImageDescriptor(base, flags));
 		}
 		return null;
 	}
