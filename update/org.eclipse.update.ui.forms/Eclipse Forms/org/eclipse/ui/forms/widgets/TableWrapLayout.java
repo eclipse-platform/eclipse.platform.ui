@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+import java.util.*;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
@@ -51,9 +52,39 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 
 	private boolean initialLayout = true;
 	private Vector grid = null;
+	private Hashtable rowspans;
 	private int[] minColumnWidths, maxColumnWidths;
 	private int widestColumnWidth;
 	private int[] growingColumns;
+	private int[] growingRows;
+	
+	class RowSpan {
+		Control child;
+		int row;
+		int column;
+		int height;
+		int totalHeight;
+		
+		public RowSpan(Control child, int column, int row) {
+			this.child = child;
+			this.column = column;
+			this.row = row;
+		}
+		public void update(int currentRow, int rowHeight) {
+			TableWrapData td = (TableWrapData)child.getLayoutData();
+			if (currentRow - row <= td.rowspan -1) {
+				totalHeight += rowHeight;
+				if (currentRow > row)
+					totalHeight += verticalSpacing;
+			}
+		}
+		public int getRequiredHeightIncrease() {
+			if (totalHeight < height)
+				return height - totalHeight;
+			else
+				return 0;
+		}
+	}
 
 	/**
 	 * Implements ILayoutExtension.
@@ -169,14 +200,35 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					assignExtraSpace(tableWidth, maxWidth, minWidth);
 			}
 		}
-		int x = 0;
 		int y = topMargin;
-		// assign widths
+		int [] rowHeights = computeRowHeights(children, columnWidths, changed);
+
+		for (int i=0; i<grid.size(); i++) {
+			int rowHeight = rowHeights[i];
+			int x = leftMargin;
+			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
+			for (int j = 0; j < numColumns; j++) {
+				TableWrapData td = row[j];
+
+				if (td.isItemData) {
+					Control child = children[td.childIndex];
+					placeControl(child, td, x, y, rowHeights, i);
+				}
+				x += columnWidths[j];
+				if (j < numColumns - 1)
+					x += horizontalSpacing;
+			}
+			y += rowHeight + verticalSpacing;
+		}
+	}
+	
+	int [] computeRowHeights(Control [] children, int [] columnWidths, boolean changed) {
+		int [] rowHeights = new int[grid.size()];
+
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
-			// assign widths, calculate heights
-			int rowHeight = 0;
-			x = leftMargin;
+			rowHeights[i] = 0;
+
 			for (int j = 0; j < numColumns; j++) {
 				TableWrapData td = row[j];
 				if (td.isItemData == false) {
@@ -192,25 +244,46 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 				}
 				Point size = computeSize(child, cwidth, changed);
 				td.compWidth = cwidth;
+				
 				if (td.heightHint != SWT.DEFAULT) {
 					size = new Point(size.x, td.heightHint);
 				}
 				td.compSize = size;
-				rowHeight = Math.max(rowHeight, size.y);
-			}
-			for (int j = 0; j < numColumns; j++) {
-				TableWrapData td = row[j];
-				if (td.isItemData == false) {
-					continue;
+				RowSpan rowspan = (RowSpan)rowspans.get(child);
+				if (rowspan==null) {
+					rowHeights[i] = Math.max(rowHeights[i], size.y);
 				}
-				Control child = children[td.childIndex];
-				placeControl(child, td, x, y, rowHeight);
-				x += td.compWidth;
-				if (j < numColumns - 1)
-					x += horizontalSpacing;
+				else
+					rowspan.height = size.y;
 			}
-			y += rowHeight + verticalSpacing;
+			updateRowSpans(i, rowHeights[i]);
 		}
+		for (Enumeration enum=rowspans.elements(); enum.hasMoreElements();) {
+			RowSpan rowspan = (RowSpan)enum.nextElement();
+			int increase = rowspan.getRequiredHeightIncrease();
+			if (increase==0) continue;
+			TableWrapData td = (TableWrapData)rowspan.child.getLayoutData();
+			int ngrowing = 0;
+			int [] affectedRows = new int [grid.size()];
+
+			for (int i=0; i<growingRows.length; i++) {
+				int growingRow = growingRows[i];
+				if (growingRow>=rowspan.row && growingRow <rowspan.row+td.rowspan) {
+					affectedRows[ngrowing++] = growingRow;
+				}
+			}
+			if (ngrowing==0) {
+				ngrowing = 1;
+				affectedRows[0] = rowspan.row+td.rowspan-1;
+			}
+			increase += increase % ngrowing;
+			int perRowIncrease = increase / ngrowing;
+			for (int i=0; i<ngrowing; i++) {
+				int growingRow = affectedRows[i];
+				rowHeights[growingRow] += perRowIncrease;
+			}
+		}
+		return rowHeights;
 	}
 
 	boolean isGrowingColumn(int col) {
@@ -261,12 +334,24 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		TableWrapData td,
 		int x,
 		int y,
-		int rowHeight) {
+		int [] rowHeights,
+		int row) {
 		int xloc = x + td.indent;
 		int yloc = y;
 		int height = td.compSize.y;
 		int colWidth = td.compWidth;
 		int width = Math.min(td.compSize.x, colWidth);
+		
+		int slotHeight = rowHeights[row];
+		RowSpan rowspan = (RowSpan)rowspans.get(control);
+		if (rowspan!=null) {
+			slotHeight = 0;
+			for (int i=row; i<row+td.rowspan; i++) {
+				if (i>row)
+					slotHeight += verticalSpacing;
+				slotHeight += rowHeights[i];
+			}
+		}
 
 		// align horizontally
 		if (td.align == TableWrapData.CENTER) {
@@ -278,11 +363,11 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		// align vertically
 		if (td.valign == TableWrapData.MIDDLE) {
-			yloc = y + rowHeight / 2 - height / 2;
+			yloc = y + slotHeight / 2 - height / 2;
 		} else if (td.valign == TableWrapData.BOTTOM) {
-			yloc = y + rowHeight - height;
+			yloc = y + slotHeight - height;
 		} else if (td.valign == TableWrapData.FILL) {
-			height = rowHeight;
+			height = slotHeight;
 		}
 		control.setBounds(xloc, yloc, width, height);
 	}
@@ -292,7 +377,8 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		Control[] children;
 		TableWrapData spacerSpec;
 		Vector growingCols = new Vector();
-
+		Vector growingRows = new Vector();
+		rowspans = new Hashtable();
 		// 
 		children = composite.getChildren();
 		if (children.length == 0)
@@ -331,6 +417,9 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 
 			// The vertical span for the item will be at least 1. If it is > 1,
 			// add other rows to the grid.
+			if (spec.rowspan>1) {
+				rowspans.put(child, new RowSpan(child, column, row));
+			}
 			for (int j = 2; j <= spec.rowspan; j++) {
 				if (row + j > grid.size()) {
 					grid.addElement(createEmptyRow());
@@ -346,6 +435,9 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 
 			if (spec.grabHorizontal) {
 				updateGrowingColumns(growingCols, spec, column);
+			}
+			if (spec.grabVertical) {
+				updateGrowingRows(growingRows, spec, row);
 			}
 
 			// Put spacers in the grid to account for the item's vertical and
@@ -387,6 +479,10 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		for (int i = 0; i < growingCols.size(); i++) {
 			growingColumns[i] = ((Integer) growingCols.get(i)).intValue();
 		}
+		this.growingRows = new int[growingRows.size()];
+		for (int i = 0; i < growingRows.size(); i++) {
+			this.growingRows[i] = ((Integer) growingRows.get(i)).intValue();
+		}
 	}
 
 	private void updateGrowingColumns(
@@ -401,6 +497,19 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 		growingColumns.add(new Integer(affectedColumn));
 	}
+	
+	private void updateGrowingRows(
+			Vector growingRows,
+			TableWrapData spec,
+			int row) {
+			int affectedRow = row + spec.rowspan - 1;
+			for (int i = 0; i < growingRows.size(); i++) {
+				Integer irow = (Integer) growingRows.get(i);
+				if (irow.intValue() == affectedRow)
+					return;
+			}
+			growingRows.add(new Integer(affectedRow));
+		}
 
 	private TableWrapData[] createEmptyRow() {
 		TableWrapData[] row = new TableWrapData[numColumns];
@@ -478,7 +587,7 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 			}
 		}
 		int totalHeight = 0;
-		int y = topMargin;
+		int innerHeight = 0;
 		// compute widths
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
@@ -502,12 +611,39 @@ public class TableWrapLayout extends Layout implements ILayoutExtension {
 					Point size = computeSize(child, cwidth, changed);
 					cy = size.y;
 				}
-				rowHeight = Math.max(rowHeight, cy);
+				RowSpan rowspan = (RowSpan)rowspans.get(child);
+				if (rowspan!=null) {
+					// don't take the height of this child into acount
+					// because it spans multiple rows
+					rowspan.height = cy;
+				}
+				else {
+					rowHeight = Math.max(rowHeight, cy);
+				}
 			}
-			y += rowHeight + verticalSpacing;
+			updateRowSpans(i, rowHeight);
+			if (i>0) innerHeight += verticalSpacing;
+			innerHeight += rowHeight;
 		}
-		totalHeight = y + bottomMargin;
+		if (!rowspans.isEmpty())
+			innerHeight = compensateForRowSpans(innerHeight);
+		totalHeight = topMargin + innerHeight + bottomMargin;
 		return new Point(tableWidth, totalHeight);
+	}
+	
+	private void updateRowSpans(int row, int rowHeight) {
+		if (rowspans==null || rowspans.size()==0) return;
+		for (Enumeration enum=rowspans.elements(); enum.hasMoreElements();) {
+			RowSpan rowspan = (RowSpan)enum.nextElement();
+			rowspan.update(row, rowHeight);
+		}
+	}
+	private int compensateForRowSpans(int totalHeight) {
+		for (Enumeration enum=rowspans.elements(); enum.hasMoreElements();) {
+			RowSpan rowspan = (RowSpan)enum.nextElement();
+			totalHeight += rowspan.getRequiredHeightIncrease();
+		}
+		return totalHeight;
 	}
 
 	int internalGetMinimumWidth(Composite parent, boolean changed) {
