@@ -30,13 +30,19 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -56,6 +62,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
@@ -77,15 +84,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private ArrayList imagesToDispose = new ArrayList();
 	private Image builderImage, invalidBuildToolImage;
 	private IDebugModelPresentation debugModelPresentation;
-	private ILaunchConfigurationListener launchConfigurationListener = new ILaunchConfigurationListener() {
-		public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-			addConfig(configuration, builderTable.getSelectionIndex() + 1, true);
-		}
-		public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		}
-		public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		}
-	};
 
 	/**
 	 * Creates an initialized property page
@@ -349,60 +347,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 */
 	private void handleButtonPressed(Button button) {
 		if (button == newButton) {
-			createNewConfig();
+			handleNewButtonPressed();
 		} else if (button == editButton) {
-			TableItem selection = builderTable.getSelection()[0];
-			if (selection != null) {
-				Object data = selection.getData();
-				if (data instanceof ILaunchConfiguration) {
-					ILaunchConfiguration config= (ILaunchConfiguration) data;
-					if (data instanceof ILaunchConfigurationWorkingCopy) {
-						// Warn the user that editing an old config will cause storage migration.
-						if (!MessageDialog.openQuestion(getShell(), "Migrate project builder", "This project builder is stored in a format that is no longer supported. If you wish to edit this builder, it will first be migrated to the new format. If you proceed, this project builder will not be understood by installations running versions 2.0 or earlier of the org.eclipse.ui.externaltools plugin.\n\nProceed with migration?")) {
-							return;
-						}
-						ILaunchConfigurationWorkingCopy workingCopy= (ILaunchConfigurationWorkingCopy) data;
-						workingCopy.setContainer(getBuilderFolder());
-						// Before saving, make sure the name is valid
-						String name= workingCopy.getName();
-						name.replace('/', '.');
-						if (name.charAt(0) == ('.')) {
-							name = name.substring(1);
-						}
-						IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
-						if (!status.isOK()) {
-							name = "ExternalTool"; //$NON-NLS-1$
-						}
-						name = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
-						workingCopy.rename(name);
-						try {
-							config= workingCopy.doSave(); 
-						} catch (CoreException e) {
-							handleException(e);
-							return;
-						}
-						// Replace the working copy in the table with the stored config
-						selection.setData(config);
-					}
-					//DebugUITools.openLaunchConfigurationDialogOnGroup(getShell(), new StructuredSelection(config), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
-					DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
-					updateConfigItem(selection, (ILaunchConfiguration) data);
-				}
-			}
+			handleEditButtonPressed();
 		} else if (button == removeButton) {
-			TableItem[] selection = builderTable.getSelection();
-			if (selection != null) {
-				for (int i = 0; i < selection.length; i++) {
-					Object data= selection[i].getData();
-					if (data instanceof ILaunchConfiguration) {
-						try {
-							((ILaunchConfiguration) data).delete();
-						} catch (CoreException e) {
-						}
-					}
-					selection[i].dispose();
-				}
-			}
+			handleRemoveButtonPressed();
 		} else if (button == upButton) {
 			moveSelectionUp();
 		} else if (button == downButton) {
@@ -411,8 +360,53 @@ public final class BuilderPropertyPage extends PropertyPage {
 		handleTableSelectionChanged();
 		builderTable.setFocus();
 	}
+
+	/**
+	 * The user has pressed the remove button. Delete the selected builder.
+	 */
+	private void handleRemoveButtonPressed() {
+		TableItem[] selection = builderTable.getSelection();
+		if (selection != null) {
+			for (int i = 0; i < selection.length; i++) {
+				Object data= selection[i].getData();
+				if (data instanceof ILaunchConfiguration) {
+					try {
+						((ILaunchConfiguration) data).delete();
+					} catch (CoreException e) {
+						handleException(e);
+					}
+				}
+				selection[i].dispose();
+			}
+		}
+	}
 	
-	private void createNewConfig() {
+	/**
+	 * The user has pressed the new button. Create a new configuration and open
+	 * the launch configuration edit dialog on the new config.
+	 */
+	private void handleNewButtonPressed() {
+		ILaunchConfigurationType type = promptForConfigurationType();
+		if (type == null) {
+			return;
+		}
+		try {
+			ILaunchConfigurationWorkingCopy workingCopy = null;
+			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom("New_Builder");
+			workingCopy = type.newInstance(getBuilderFolder(), name);		
+			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
+			ILaunchConfiguration config = null;
+			config = workingCopy.doSave();
+			int code= DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+			if (code == Dialog.CANCEL) {
+				// If the user cancelled, delete the newly created config
+				config.delete();
+			}
+		} catch (CoreException e) {
+		}
+	}
+	
+	private ILaunchConfigurationType promptForConfigurationType() {
 		ILaunchConfigurationType types[] = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
 		String category = LaunchConfigurationManager.getDefault().getLaunchGroup(IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP).getCategory();
 		List externalToolsTypes = new ArrayList();
@@ -431,28 +425,91 @@ public final class BuilderPropertyPage extends PropertyPage {
 		dialog.open();
 		Object result[] = dialog.getResult();
 		if (result == null || result.length == 0) {
-			return;
+			return null;
 		}
-		ILaunchConfigurationType type = (ILaunchConfigurationType) result[0];
-		ILaunchConfigurationWorkingCopy workingCopy = null;
-		String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom("New_Builder");
-		try {
-			workingCopy = type.newInstance(getBuilderFolder(), name);
-		} catch (CoreException e) {
-			handleException(e);
-			return;
-		}		
-		workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
-		ILaunchConfiguration config = null;
-		try {
-			config = workingCopy.doSave();
-		} catch (CoreException e) {
-			handleException(e);
-			return;
+		return (ILaunchConfigurationType) result[0];
+	}
+	
+	/**
+	 * The user has pressed the edit button. Open the launch configuration edit
+	 * dialog on the selection after migrating the tool if necessary.
+	 */
+	private void handleEditButtonPressed() {
+		TableItem selection = builderTable.getSelection()[0];
+		if (selection != null) {
+			Object data = selection.getData();
+			if (data instanceof ILaunchConfiguration) {
+				ILaunchConfiguration config= (ILaunchConfiguration) data;
+				if (data instanceof ILaunchConfigurationWorkingCopy) {
+					if (!shouldProceedWithMigration()) {
+						return;
+					}
+					try {
+						config= migrateBuilderConfiguration((ILaunchConfigurationWorkingCopy) data);
+					} catch (CoreException e) {
+						handleException(e);
+						return;
+					}
+					// Replace the working copy in the table with the migrated configuration
+					selection.setData(config);
+				}
+				DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+				updateConfigItem(selection, (ILaunchConfiguration) data);
+			}
 		}
-		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(launchConfigurationListener);
-		DebugUITools.openLaunchConfigurationPropertiesDialog(getShell(), config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(launchConfigurationListener);
+	}
+	
+	/**
+	 * Migrates the launch configuration working copy, which is based on an old-
+	 * style external tool builder, to a new, saved launch configuration. The
+	 * returned launch configuration will contain the same attributes as the
+	 * given working copy with the exception of the configuration name, which
+	 * may be changed during the migration. The name of the configuration will
+	 * only be changed if the current name is not a valid name for a saved
+	 * config.
+	 * 
+	 * @param workingCopy the launch configuration containing attributes from an
+	 * old-style project builder.
+	 * @return ILaunchConfiguration a new, saved launch configuration whose
+	 * attributes match those of the given working copy as well as possible
+	 * @throws CoreException if an exception occurs while attempting to save the
+	 * new launch configuration
+	 */
+	private ILaunchConfiguration migrateBuilderConfiguration(ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
+		workingCopy.setContainer(getBuilderFolder());
+		// Before saving, make sure the name is valid
+		String name= workingCopy.getName();
+		name.replace('/', '.');
+		if (name.charAt(0) == ('.')) {
+			name = name.substring(1);
+		}
+		IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
+		if (!status.isOK()) {
+			name = "ExternalTool"; //$NON-NLS-1$
+		}
+		name = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+		workingCopy.rename(name);
+		return workingCopy.doSave();
+	}
+	
+	/**
+	 * Prompts the user to proceed with the migration of a project builder from
+	 * the old format to the new, launch configuration-based, format and returns
+	 * whether or not the user wishes to proceed with the migration.
+	 * 
+	 * @return boolean whether or not the user wishes to proceed with migration
+	 */
+	private boolean shouldProceedWithMigration() {
+		if (!ExternalToolsPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION)) {
+			// User has asked not to be prompted
+			return true;
+		}
+		// Warn the user that editing an old config will cause storage migration.
+		return MessageDialogWithToggle.openQuestion(getShell(), "Migrate project builder",
+			"This project builder is stored in a format that is no longer supported. If you wish to edit this builder, it will first be migrated to the new format. If you proceed, this project builder will not be understood by installations running versions 2.0 or earlier of the org.eclipse.ui.externaltools plugin.\n\nProceed with migration?",
+			IPreferenceConstants.PROMPT_FOR_MIGRATION,
+			"Always prompt before migrating project builders",
+			ExternalToolsPlugin.getDefault().getPreferenceStore());
 	}
 
 	/**
