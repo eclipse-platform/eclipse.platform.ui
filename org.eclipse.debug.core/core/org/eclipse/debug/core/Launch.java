@@ -5,11 +5,7 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.model.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import java.util.*;
+import java.util.*;import org.eclipse.core.runtime.*;import org.eclipse.debug.core.model.*;import org.eclipse.debug.internal.core.DebugCoreUtils;
 
 /**
  * An implementation of <code>ILaunch</code>.
@@ -33,6 +29,8 @@ import java.util.*;
  */
 
 public class Launch extends PlatformObject implements ILaunch {
+	
+	private final String TERMINATE_FAILED= "launch.terminate_failed";
 	/**
 	 * Shared, immutable empty collection used for efficiency.
 	 */
@@ -201,7 +199,8 @@ public class Launch extends PlatformObject implements ILaunch {
 	 * @see ITerminate
 	 */
 	public final void terminate() throws DebugException {
-		MultiStatus status= new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, "Terminate failed", null);
+		MultiStatus status= 
+			new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugCoreUtils.getResourceString(TERMINATE_FAILED), null);
 		IProcess[] ps= getProcesses();
 		
 		// terminate the system processes
