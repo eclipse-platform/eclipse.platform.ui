@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 
@@ -208,4 +209,17 @@ public interface IFileBuffer {
 	 * @since 3.1
 	 */
 	boolean isSynchronizationContextRequested();
+
+	/**
+	 * Returns the content description of this file buffer or
+	 * <code>null</code> if none could be determined.
+	 * <p>
+	 * Not yet for public use. API under construction.
+	 * </p>
+	 * 
+	 * @return the content description or <code>null</code>
+	 * @throws CoreException if reading or accessing the underlying file fails
+	 * @since 3.1
+	 */
+	IContentDescription getContentDescription() throws CoreException;
 }

@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -516,4 +517,11 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		fIsStateValidated= validationState;
 		fStatus= status;
 	}	
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getContentDescription()
+	 */
+	public IContentDescription getContentDescription() throws CoreException {
+		return fFile.getContentDescription();
+	}
 }

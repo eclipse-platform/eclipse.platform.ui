@@ -11,6 +11,8 @@
 package org.eclipse.core.internal.filebuffers;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -18,6 +20,9 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -264,5 +269,24 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 */
 	public void validationStateChanged(boolean validationState, IStatus status) {
 		//nop
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getContentDescription()
+	 */
+	public IContentDescription getContentDescription() throws CoreException {
+		FileInputStream stream= null;
+		try {
+			stream= new FileInputStream(fFile);
+			return Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), IContentDescription.ALL);
+		} catch (IOException x) {
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("JavaFileBuffer.error.queryContentDescription", fFile.getPath()), x)); //$NON-NLS-1$
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException x) {
+			}
+		}
 	}
 }
