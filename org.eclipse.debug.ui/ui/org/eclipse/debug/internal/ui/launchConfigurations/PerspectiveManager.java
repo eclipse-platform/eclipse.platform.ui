@@ -222,14 +222,15 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					public void run() {
 						String targetId = id;
 						IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+						if (window == null) {
+							return;
+						}
 						if (targetId == null) {
-							if (window != null) {
-								IWorkbenchPage page = window.getActivePage();
-								if (page != null) {
-									IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-									if (part == null) {
-										targetId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-									}
+							IWorkbenchPage page = window.getActivePage();
+							if (page != null) {
+								IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+								if (part == null) {
+									targetId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
 								}
 							}
 						}
