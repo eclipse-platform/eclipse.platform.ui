@@ -82,13 +82,9 @@ public void closeAll() {
  * The IEditorPart.dispose method must be called at a higher level.
  */
 public void closeEditor(IEditorPart part) {
-	// Record the close event.
-	Workbench wb = (Workbench)window.getWorkbench();
-	EditorSite site = (EditorSite)part.getEditorSite();
-	wb.getEditorHistory().add(part.getEditorInput(),site.getEditorDescriptor());
-				
 	// Close the pane, action bars, pane, etc.
 	editorPresentation.closeEditor(part);
+	PartSite site = (PartSite)part.getSite();
 	disposeEditorActionBars((EditorActionBars)site.getActionBars());
 	site.dispose();
 }
@@ -358,6 +354,9 @@ private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
 		IReusableEditor reusableEditor = findReusableEditor(desc);
 		if(reusableEditor != null) {
 			reusableEditor.setInput(input);
+			// Record the happy event.
+			Workbench wb = (Workbench)window.getWorkbench();
+			wb.getEditorHistory().add(input, desc);
 			return reusableEditor;
 		}
 		return openInternalEditor(desc, input, true);
@@ -450,8 +449,10 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 				else
 					site.setActionBars(createEmptyEditorActionBars());
 				editorPresentation.openEditor(part,setVisible);
+
+				// Record the happy event.
 				Workbench wb = (Workbench)window.getWorkbench();
-				wb.getEditorHistory().remove(input);
+				wb.getEditorHistory().add(input, desc);
 				page.firePartOpened(part);
 			} catch (PartInitException e) {
 				ex[0] = e;

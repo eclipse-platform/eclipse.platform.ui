@@ -58,8 +58,6 @@ public void fill(Menu menu, int index) {
 			mi.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					Shell windowShell = window.getShell();
-					if(windowShell.getMinimized())
-						windowShell.setMinimized(false);
 					windowShell.forceFocus();
 					windowShell.moveAbove(null);
 				}

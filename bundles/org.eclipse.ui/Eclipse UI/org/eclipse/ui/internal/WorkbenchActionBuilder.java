@@ -54,7 +54,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CycleEditorAction nextEditorAction;
 	private CycleEditorAction prevEditorAction;
 	private ActivateEditorAction activateEditorAction;
-	private WorkbenchEditorsAction workbenchEditorsAction;
+	
 
 	// menus
 	private OpenPerspectiveMenu openPerspMenu;
@@ -259,11 +259,10 @@ private void createMenuBar() {
 		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
-/*	popup.add(activateEditorAction); */  // can't use Esc
+	popup.add(activateEditorAction);
 	popup.add(nextEditorAction);
 	popup.add(prevEditorAction);
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
-	popup.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	popup.add(new Separator());
 	popup.add(openPreferencesAction);

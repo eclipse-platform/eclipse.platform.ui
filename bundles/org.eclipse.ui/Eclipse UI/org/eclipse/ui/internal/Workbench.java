@@ -433,8 +433,8 @@ private void initializeFonts() {
 private void initializeFont(String fontKey,FontRegistry registry,IPreferenceStore store) {
 	if(store.isDefault(fontKey))
 		return;
-	FontData[] font = 
-		PreferenceConverter.getFontDataArray(store,fontKey);
+	FontData[] font = new FontData[1];
+	font[0] = PreferenceConverter.getFontData(store,fontKey);
 	registry.put(fontKey,font);
 }
 /**

@@ -62,19 +62,10 @@ public class FontPreferencePage
 			return text;
 		}
 
-		public void setFont(FontData[] fontData) {
+		public void setFont(FontData fontData) {
 			if (font != null)
 				font.dispose();
-				
-			FontData bestData = 
-				JFaceResources.getFontRegistry().
-					bestData(fontData,text.getDisplay());
-					
-			//If there are no specified values then return.
-			if(bestData == null)
-				return;
-				
-			font = new Font(text.getDisplay(), bestData);
+			font = new Font(text.getDisplay(), fontData);
 			text.setFont(font);
 			//Also set the text here
 			text.setText(WorkbenchMessages.getString("FontsPreference.SampleText"));
@@ -163,7 +154,7 @@ public class FontPreferencePage
 				else{
 					changeFontButton.setEnabled(true);
 					useDefaultsButton.setEnabled(true);
-					updateForFont((FontData[]) idsToFontData.get(selectedFontId));
+					updateForFont((FontData) idsToFontData.get(selectedFontId));
 				}
 			}
 		});
@@ -213,14 +204,11 @@ public class FontPreferencePage
 				String selectedFontId = getSelectedFontId();
 				if (selectedFontId != null) {
 					FontDialog fontDialog = new FontDialog(changeFontButton.getShell());
-					FontData[] currentData = (FontData[]) idsToFontData.get(selectedFontId);
-					fontDialog.setFontData(currentData[0]);
+					fontDialog.setFontData((FontData) idsToFontData.get(selectedFontId));
 					FontData font = fontDialog.open();
 					if (font != null) {
-						FontData[] fonts = new FontData[1];
-						fonts[0] = font;
-						idsToFontData.put(selectedFontId, fonts);
-						updateForFont(fonts);
+						idsToFontData.put(selectedFontId, font);
+						updateForFont(font);
 					}
 
 				}
@@ -246,8 +234,8 @@ public class FontPreferencePage
 				String selectedFontId = getSelectedFontId();
 				if (selectedFontId != null) {
 					FontData[] defaultFontData = JFaceResources.getDefaultFont().getFontData();
-					idsToFontData.put(selectedFontId, defaultFontData);
-					updateForFont(defaultFontData);
+					idsToFontData.put(selectedFontId, defaultFontData[0]);
+					updateForFont(defaultFontData[0]);
 				}
 			}
 		});
@@ -292,9 +280,9 @@ public class FontPreferencePage
 	 * Updates the value label and the previewer to reflect the
 	 * newly selected font.
 	 */
-	private void updateForFont(FontData[] font) {
+	private void updateForFont(FontData font) {
 
-		valueControl.setText(StringConverter.asString(font[0]));
+		valueControl.setText(StringConverter.asString(font));
 		previewer.setFont(font);
 	}
 
@@ -323,15 +311,15 @@ public class FontPreferencePage
 		idsToFontData = new Hashtable();
 		idsToFontData.put(
 			JFaceResources.BANNER_FONT,
-			(JFaceResources.getBannerFont().getFontData()));
+			(JFaceResources.getBannerFont().getFontData())[0]);
 
 		idsToFontData.put(
 			JFaceResources.TEXT_FONT,
-			(JFaceResources.getTextFont().getFontData()));
+			(JFaceResources.getTextFont().getFontData())[0]);
 
 		idsToFontData.put(
 			JFaceResources.HEADER_FONT,
-			(JFaceResources.getHeaderFont().getFontData()));
+			(JFaceResources.getHeaderFont().getFontData())[0]);
 
 	}
 
@@ -345,27 +333,9 @@ public class FontPreferencePage
 
 		while (fontSettingsEnumerator.hasMoreElements()) {
 			String preferenceName = (String) fontSettingsEnumerator.nextElement();
-			FontData[] defaultData =
-				PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), preferenceName);
-				
-			//Now we have the defaults ask the registry which to use of these
-			//values.
-			FontData bestChoice = 
-				JFaceResources.getFontRegistry().
-					bestData(defaultData,valueControl.getDisplay());
-					
-			//The default data was empty so use the system default
-			if(bestChoice == null)
-				defaultData =
-					valueControl.getDisplay().
-						getSystemFont().getFontData();
-			else{
-				defaultData = new FontData[1];
-				defaultData[0] = bestChoice;
-			}
-						
+			FontData defaultData =
+				PreferenceConverter.getDefaultFontData(getPreferenceStore(), preferenceName);
 			idsToFontData.put(preferenceName, defaultData);
-			
 			if (preferenceName.equals(currentSelection))
 				updateForFont(defaultData);
 		}
@@ -385,7 +355,7 @@ public class FontPreferencePage
 			PreferenceConverter.setValue(
 				getPreferenceStore(),
 				preferenceName,
-				(FontData[]) idsToFontData.get(preferenceName));
+				(FontData) idsToFontData.get(preferenceName));
 		}
 		return super.performOk();
 	}

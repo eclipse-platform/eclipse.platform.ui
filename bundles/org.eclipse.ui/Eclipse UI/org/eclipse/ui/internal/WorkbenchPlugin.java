@@ -336,7 +336,7 @@ private void initializeFont(
 	PreferenceConverter.setDefault(
 		store,
 		fontKey,
-		fontData);
+		fontData[0]);
 }
 /**
  * Log the given status to the ISV log.
