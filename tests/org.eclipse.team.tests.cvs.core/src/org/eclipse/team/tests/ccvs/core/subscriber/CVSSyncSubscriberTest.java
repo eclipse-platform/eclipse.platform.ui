@@ -15,16 +15,18 @@ import java.util.*;
 
 import junit.framework.AssertionFailedError;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
+import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedOperation;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
+import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
 
 /**
  * Provides test methods common to CVS sync subscribers
@@ -225,7 +227,14 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	protected void markAsMerged(CVSSyncTreeSubscriber subscriber, IProject project, String[] resourcePaths) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
 		IResource[] resources = getResources(project, resourcePaths);
 		SyncInfo[] infos = createSyncInfos(subscriber, resources);
-		TestMarkAsMergedAction action = new TestMarkAsMergedAction();
-		action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
+		new SubscriberConfirmMergedOperation(null, getElements(infos)).run(DEFAULT_MONITOR);
+	}
+
+	protected IDiffElement[] getElements(SyncInfo[] infos) {
+		SyncInfoModelElement[] elements = new SyncInfoModelElement[infos.length];
+		for (int i = 0; i < elements.length; i++) {
+			elements[i] = new SyncInfoModelElement(null, infos[i]);
+		}
+		return elements;
 	}
 }

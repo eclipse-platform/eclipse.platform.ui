@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
@@ -32,22 +31,74 @@ public class ProgressDialogRunnableContext implements ITeamRunnableContext {
 
 	private Shell shell;
 	private IRunnableContext runnableContext;
+	private ISchedulingRule schedulingRule;
+	private boolean postponeBuild;
 	
 	public ProgressDialogRunnableContext(Shell shell) {
 		this.shell = shell;
 	}
 
 	/**
-	 * Run the given runnable in the context of the receiver. By default, the
-	 * progress is provided by the active workbench windows but subclasses may
-	 * override this to provide progress in some other way (Progress Monitor or
-	 * job).
+	 * Returns whether the auto-build will be postponed while this
+	 * context is executing a runnable.
+	 * @return whether the auto-build will be postponed while this
+	 * context is executing a runnable.
 	 */
-	public void run(String title, ISchedulingRule schedulingRule, boolean postponeBuild, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		getRunnableContext().run(true /* fork */, true /* cancelable */, wrapRunnable(title, schedulingRule, postponeBuild, runnable));
+	public boolean isPostponeBuild() {
+		return postponeBuild;
+	}
+	
+	/**
+	 * Set whether the auto-build will be postponed while this
+	 * context is executing a runnable.
+	 * @param postponeBuild whether to postpone the auto-build.
+	 */
+	public void setPostponeBuild(boolean postponeBuild) {
+		this.postponeBuild = postponeBuild;
+	}
+	
+	/**
+	 * Return the scheduling rule that will be obtained before the context
+	 * executes a runnable or <code>null</code> if no scheduling rule is to be onbtained.
+	 * @return the schedulingRule to be obtained or <code>null</code>.
+	 */
+	public ISchedulingRule getSchedulingRule() {
+		return schedulingRule;
+	}
+	
+	/**
+	 * Set the scheduling rule that will be obtained before the context
+	 * executes a runnable or <code>null</code> if no scheduling rule is to be onbtained.
+	 * @param schedulingRule The schedulingRule to be obtained or <code>null</code>.
+	 */
+	public void setSchedulingRule(ISchedulingRule schedulingRule) {
+		this.schedulingRule = schedulingRule;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSRunnableContext#getShell()
+	 */
+	public Shell getShell() {
+		return shell;
 	}
 
-	protected IRunnableContext getRunnableContext() {
+	/**
+	 * Set the runnable context that is used to execute the runnable. By default,
+	 * the workbench's progress service is used by clients can provide their own.
+	 * @param runnableContext the runnable contentx used to execute runnables.
+	 */
+	public void setRunnableContext(IRunnableContext runnableContext) {
+		this.runnableContext = runnableContext;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.ITeamRunnableContext#run(org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
+	public void run(IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+		getRunnableContext().run(true /* fork */, true /* cancelable */, wrapRunnable(runnable));
+	}
+
+	private IRunnableContext getRunnableContext() {
 		if (runnableContext == null) {
 			return new IRunnableContext() {
 				public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable)
@@ -64,13 +115,12 @@ public class ProgressDialogRunnableContext implements ITeamRunnableContext {
 	 * Return an IRunnableWithProgress that sets the task name for the progress monitor
 	 * and runs in a workspace modify operation if requested.
 	 */
-	private IRunnableWithProgress wrapRunnable(final String title, final ISchedulingRule schedulingRule, final boolean postponeBuild, final IRunnableWithProgress runnable) {
+	private IRunnableWithProgress wrapRunnable(final IRunnableWithProgress runnable) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				monitor.beginTask(title, 100);
 				try {
 					if (schedulingRule == null && !postponeBuild) {
-						runnable.run(Policy.subMonitorFor(monitor, 100));
+						runnable.run(monitor);
 					} else {
 						final Exception[] exception = new Exception[] { null };
 						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
@@ -83,7 +133,7 @@ public class ProgressDialogRunnableContext implements ITeamRunnableContext {
 									exception[0] = e;
 								}
 							}
-						}, schedulingRule, 0 /* allow updates */, Policy.subMonitorFor(monitor, 100));
+						}, schedulingRule, 0 /* allow updates */, monitor);
 						if (exception[0] != null) {
 							if (exception[0] instanceof InvocationTargetException) {
 								throw (InvocationTargetException)exception[0];
@@ -94,32 +144,9 @@ public class ProgressDialogRunnableContext implements ITeamRunnableContext {
 					}
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
 				}
 			}
 		};
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSRunnableContext#getShell()
-	 */
-	public Shell getShell() {
-		return shell;
-	}
-
-	/**
-	 * Set the shell to be used by the owner of this context to prompt the user.
-	 * @param shell
-	 */
-	public void setShell(Shell shell) {
-		this.shell = shell;
-	}
-
-	/**
-	 * @param runnableContext
-	 */
-	public void setRunnableContext(IRunnableContext runnableContext) {
-		this.runnableContext = runnableContext;
 	}
 
 }

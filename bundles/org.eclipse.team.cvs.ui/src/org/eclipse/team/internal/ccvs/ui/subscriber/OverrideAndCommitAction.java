@@ -10,34 +10,27 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.internal.ui.actions.SubscriberAction;
+import org.eclipse.team.internal.ui.actions.SubscriberOperation;
+import org.eclipse.ui.IWorkbenchPart;
 
-public class OverrideAndCommitAction extends SubscriberCommitAction {
+public class OverrideAndCommitAction extends SubscriberAction {
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
+	 * @see org.eclipse.team.internal.ui.actions.SubscriberAction#getSyncInfoFilter()
 	 */
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING});
 	}
-	
-	protected boolean promptForConflictHandling(SyncInfoSet syncSet) {
-		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
-		if (syncSet.hasConflicts() || syncSet.hasIncomingChanges()) {
-			switch (promptForConflicts(syncSet)) {
-				case 0:
-					// Yes, synchronize conflicts as well
-					break;
-				case 1:
-					// No, stop here
-					return false;
-				case 2:
-				default:
-					// Cancel
-					return false;
-			}	
-		}
-		return true;
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.SubscriberAction#getSubscriberOperation(org.eclipse.compare.structuremergeviewer.IDiffElement[])
+	 */
+	protected SubscriberOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
+		return new SubscriberCommitOperation(part, elements, true /* override */);
 	}
+	
 }

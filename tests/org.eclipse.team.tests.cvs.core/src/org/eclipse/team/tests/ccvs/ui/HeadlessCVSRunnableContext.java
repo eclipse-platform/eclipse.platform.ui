@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.actions.ITeamRunnableContext;
@@ -22,7 +21,6 @@ import org.eclipse.team.internal.ui.actions.JobRunnableContext;
 
 public class HeadlessCVSRunnableContext implements ITeamRunnableContext {
 
-	private boolean background;
 	private IJobChangeListener listener;
 
 	public HeadlessCVSRunnableContext() {
@@ -36,14 +34,10 @@ public class HeadlessCVSRunnableContext implements ITeamRunnableContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.ITeamRunnableContext#run(java.lang.String, org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public void run(
-		String title,
-		ISchedulingRule schedulingRule,
-		boolean postponeBuild, IRunnableWithProgress runnable)
-		throws InvocationTargetException, InterruptedException {
+	public void run(IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		
 		if (listener != null) {
-			new JobRunnableContext(listener, null).run("Headless Job", null, true, runnable);
+			new JobRunnableContext("Headless Job", listener, null).run(runnable);
 		} else {
 			runnable.run(new NullProgressMonitor());
 		}

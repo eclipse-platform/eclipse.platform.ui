@@ -66,7 +66,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	 */
 	public synchronized void run() throws CVSException, InterruptedException {
 		try {
-			getCVSRunnableContext().run(getTaskName(), getSchedulingRule(), getPostponeBuild(), this);
+			getCVSRunnableContext().run(this);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (OperationCanceledException e) {
@@ -152,9 +152,15 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 	private ITeamRunnableContext getCVSRunnableContext() {
 		if (cvsRunnableContext == null) {
 			if (canRunAsJob() && areJobsEnabled()) {
-				return new JobRunnableContext();
+				JobRunnableContext context = new JobRunnableContext(getTaskName());
+				context.setPostponeBuild(getPostponeBuild());
+				context.setSchedulingRule(getSchedulingRule());
+				return context;
 			} else {
-				return new ProgressDialogRunnableContext(shell);
+				ProgressDialogRunnableContext context = new ProgressDialogRunnableContext(shell);
+				context.setPostponeBuild(getPostponeBuild());
+				context.setSchedulingRule(getSchedulingRule());
+				return context;
 			}
 		}
 		return cvsRunnableContext;

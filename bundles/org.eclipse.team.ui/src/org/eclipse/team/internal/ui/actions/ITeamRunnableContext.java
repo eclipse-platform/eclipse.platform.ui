@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 
@@ -31,12 +30,7 @@ public interface ITeamRunnableContext {
 	 * override this to provide progress in some other way (Progress Monitor or
 	 * job).
 	 */
-	public abstract void run(
-		String title,
-		ISchedulingRule schedulingRule,
-		boolean postponeBuild, 
-		IRunnableWithProgress runnable)
-		throws InvocationTargetException, InterruptedException;
+	public abstract void run(IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 		
 	/**
 	 * Get a shell that can be used to prompt the user.

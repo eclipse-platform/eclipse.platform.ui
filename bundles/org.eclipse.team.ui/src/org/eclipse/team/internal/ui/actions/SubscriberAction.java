@@ -11,39 +11,28 @@
 package org.eclipse.team.internal.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.viewers.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
 import org.eclipse.ui.*;
 
 /**
  * This action provides utilities for performing operations on selections that
- * contain instances of {@link SyncInfoModelElement}. Subclasses can use this support
- * to:
- * <ul>
- * <li>provides easy filtering of selection
- * <li>provides scheduling action via workbench part (provide feedback via view)
- * <li>provides support for running action in background or foreground
- * <li>provides support for locking workspace resources
- * </ul>
+ * are obtained from a view populated by a 
+ * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider}.
+ * Subclasses can use this support to filter the selection in order to 
+ * determine action enablement and generate the input to a {@link SubscriberOperation}.
  * @see SyncInfo
  * @see SyncInfoSet
- * @see SyncInfoModelElement
+ * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider
+ * @see org.eclipse.team.internal.ui.actions.SubscriberOperation
  * @since 3.0
  */
 public abstract class SubscriberAction implements IObjectActionDelegate, IViewActionDelegate, IEditorActionDelegate {
@@ -57,10 +46,8 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 	public final void run(IAction action) {
 		// TODO: We used to prompt for unsaved changes in any editor. We don't anymore. Would
 		// it be better to prompt for unsaved changes to editors affected by this action?
-		SyncInfoSet syncSet = makeSyncInfoSetFromSelection(getFilteredSyncInfos());
-		if (syncSet == null || syncSet.isEmpty()) return;
 		try {
-			getRunnableContext().run(getJobName(syncSet), getSchedulingRule(syncSet), true, getRunnable(syncSet));
+			getSubscriberOperation(part, getFilteredDiffElements()).run();
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {
@@ -69,52 +56,49 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 	}
 
 	/**
-	 * Subsclasses must override to provide behavior for the action.
-	 * @param syncSet the set of filtered sync info objects on which to perform the action.
-	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 * 		  reporting and cancellation are not desired 
-	 * @throws TeamException if something went wrong running the action
+	 * Return the subscriber operation associated with this action. This operation
+	 * will be run when the action is run. Subclass may implement this method and provide 
+	 * an operation subclass or may override the <code>run(IAction)</code> method directly
+	 * if they choose not to implement a <code>SubscriberOperation</code>.
+	 * @param elements the selected diff element for which this action is enabled.
+	 * @return the subscriber operation to be run by this action.
 	 */
-	protected abstract void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException;
+	protected abstract SubscriberOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements);
 	
-	/**
-	 * Subsclasses may override to perform custom processing on the selection before
-	 * the action is run. This can be used to prompt the user for more information.
-	 * @param infos the 
+	/** 
+	 * Generic error handling code that uses an error dialog to show the error to the 
+	 * user. Subclasses can use this method and/or override it.
+	 * @param e the exception that occurred.
 	 */
-	protected SyncInfoSet makeSyncInfoSetFromSelection(SyncInfo[] infos) {
-		return new SyncInfoSet(infos);		
-	}
-	
 	protected void handle(Exception e) {
 		Utils.handle(e);
 	}
 	
 	/**
-	 * This method returns all instances of SyncInfo that are in the current
-	 * selection. For a tree view, this is any descendants of the selected resource that are
-	 * contained in the view.
+	 * This method returns all instances of IDiffElement that are in the current
+	 * selection.
 	 * 
-	 * @return the selected resources
+	 * @return the selected elements
 	 */
-	protected IDiffElement[] getDiffElements() {
-		return Utils.getDiffNodes(((IStructuredSelection)selection).toArray());
+	protected final IDiffElement[] getSelectedDiffElements() {
+		return Utils.getDiffNodes(selection.toArray());
 	}
 
 	/**
 	 * The default enablement behavior for subscriber actions is to enable
 	 * the action if there is at least one SyncInfo in the selection
-	 * for which the action is enabled (determined by invoking 
-	 * <code>isEnabled(SyncInfo)</code>).
+	 * for which the action's filter passes.
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
 		return (getFilteredDiffElements().length > 0);
 	}
 
 	/**
+	 * Filter uses to filter the user selection to contain only those
+	 * elements for which this action is enabled.
 	 * Default filter includes all out-of-sync elements in the current
-	 * selection.
+	 * selection. Subsclasses may override.
 	 * @return a sync info filter which selects all out-of-sync resources.
 	 */
 	protected FastSyncInfoFilter getSyncInfoFilter() {
@@ -125,8 +109,8 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 	 * Return the selected diff element for which this action is enabled.
 	 * @return the list of selected diff elements for which this action is enabled.
 	 */
-	protected IDiffElement[] getFilteredDiffElements() {
-		IDiffElement[] elements = getDiffElements();
+	protected final IDiffElement[] getFilteredDiffElements() {
+		IDiffElement[] elements = getSelectedDiffElements();
 		List filtered = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			IDiffElement e = elements[i];
@@ -140,127 +124,12 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 		return (IDiffElement[]) filtered.toArray(new IDiffElement[filtered.size()]);
 	}
 	
-	/**
-	 * Return the selected SyncInfo for which this action is enabled.
-	 * @return the selected SyncInfo for which this action is enabled.
-	 */
-	protected SyncInfo[] getFilteredSyncInfos() {
-		IDiffElement[] elements = getFilteredDiffElements();
-		List filtered = new ArrayList();
-		for (int i = 0; i < elements.length; i++) {
-			IDiffElement e = elements[i];
-			if (e instanceof SyncInfoModelElement) {
-				filtered.add(((SyncInfoModelElement)e).getSyncInfo());
-			}
-		}
-		return (SyncInfo[]) filtered.toArray(new SyncInfo[filtered.size()]);
-	}
-	
-	private void markBusy(IDiffElement[] elements, boolean isBusy) {
-		for (int i = 0; i < elements.length; i++) {
-			IDiffElement element = elements[i];
-			if (element instanceof SynchronizeModelElement) {
-				((SynchronizeModelElement)element).setPropertyToRoot(SynchronizeModelElement.BUSY_PROPERTY, isBusy);
-			}
-		}
-	}
-
-	/**
-	 * Uses the {@link #canRunAsJob()} hint to return a {@link ITeamRunnableContext}. 
-	 * 
-	 * @return the runnable context in which to run this action.
-	 */
-	protected ITeamRunnableContext getRunnableContext() {
-		if (canRunAsJob()) {
-			// mark resources that will be affected by job
-			final IDiffElement[] affectedElements = getFilteredDiffElements();
-			markBusy(affectedElements, true);
-			
-			// register to unmark when job is finished
-			IJobChangeListener listener = new JobChangeAdapter() {
-				public void done(IJobChangeEvent event) {
-					markBusy(affectedElements, false);
-				}
-			};
-			return new JobRunnableContext(listener, getSite());
-		} else {
-			return new ProgressDialogRunnableContext(getShell());
-		}
-	}
-
-	/**
-	 * If this action can safely be run in the background, then subclasses can
-	 * override this method and return <code>true</code>. This will make their
-	 * action run in a {@link Job}. 
-	 * 
-	 * @return <code>true</code> if this action can be run in the background and
-	 * <code>false</code> otherwise.
-	 */
-	protected boolean canRunAsJob() {
-		return false;
-	}
-	
-	/**
-	 * Return the job name to be used if the action can run as a job.
-	 * 
-	 * @param syncSet
-	 * @return
-	 */
-	protected String getJobName(SyncInfoSet syncSet) {
-		return ""; //$NON-NLS-1$
-	}
-
-	/**
-	 * Return a scheduling rule that includes all resources that will be operated 
-	 * on by the subscriber action. The default behavior is to include all projects
-	 * effected by the operation. Subclasses may override.
-	 * 
-	 * @param syncSet
-	 * @return
-	 */
-	protected ISchedulingRule getSchedulingRule(SyncInfoSet syncSet) {
-		IResource[] resources = syncSet.getResources();
-		Set set = new HashSet();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			set.add(resource.getProject());
-		}
-		IProject[] projects = (IProject[]) set.toArray(new IProject[set.size()]);
-		if (projects.length == 1) {
-			return projects[0];
-		} else {
-			return new MultiRule(projects);
-		}
-	}
-
-	protected IRunnableWithProgress getRunnable(final SyncInfoSet syncSet) {
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					SubscriberAction.this.run(syncSet, monitor);
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-	}
-	
-	private IWorkbenchSite getSite() {
-		IWorkbenchSite site = null;
-		if(part != null) {
-			site = part.getSite();
-		}
-		return site;
-	}
-	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 		this.part = targetPart;
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
@@ -269,8 +138,8 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 		this.part = view;
 	}
 	
-	/*
-	 * Method declared on IActionDelegate.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
@@ -291,18 +160,7 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 	 * This method can be overridden by subclasses but should not be invoked by them.
 	 */
 	protected void setActionEnablement(IAction action) {
-		try {
-			action.setEnabled(isEnabled());
-		} catch (TeamException e) {
-			if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-				// Enable the action to allow the user to discover the problem
-				action.setEnabled(true);
-			} else {
-				action.setEnabled(false);
-				// We should not open a dialog when determining menu enablements so log it instead
-				TeamPlugin.log(e);
-			}
-		}
+		action.setEnabled(isEnabled());
 	}
 		
 	/* (non-Javadoc)
@@ -315,15 +173,11 @@ public abstract class SubscriberAction implements IObjectActionDelegate, IViewAc
 		// editor actions? Go figure...
 	}
 	
-	protected Shell getShell() {
-		if(part != null) {
-			return part.getSite().getShell();
-		} else {
-			IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
-			if (workbench == null) return null;
-			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-			if (window == null) return null;
-			return window.getShell();
-		}
+	/**
+	 * Returns the workbench part assigned to this action or <code>null</code>.
+	 * @return Returns the part.
+	 */
+	public IWorkbenchPart getPart() {
+		return part;
 	}
 }

@@ -222,6 +222,24 @@ public class Utils {
 		new ProgressMonitorDialog(parent).run(cancelable, cancelable, runnable);
 	}
 
+	public static Shell getShell(IWorkbenchSite site) {
+		if(site != null) {
+			Shell shell = site.getShell();
+			if (!shell.isDisposed())
+				return shell;
+		}
+		IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
+		if (workbench != null) {
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			if (window != null) {
+				return window.getShell();
+			}
+		}
+		// Fallback to using the display
+		Display display = Display.getDefault();
+		if (display.isDisposed()) return null;
+		return new Shell(display);
+	}
 	/*
 	 * This method is only for use by the Target Management feature (see bug
 	 * 16509). @param t

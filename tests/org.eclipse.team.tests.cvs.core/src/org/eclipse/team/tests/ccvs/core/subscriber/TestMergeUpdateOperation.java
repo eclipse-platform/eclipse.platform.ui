@@ -10,32 +10,36 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
+import junit.framework.Assert;
+
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction;
-import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateOperation;
 
 
-class TestMergeUpdateAction extends MergeUpdateAction {
+class TestMergeUpdateOperation extends MergeUpdateOperation {
 	boolean allowOverwrite = false;
 
-	public TestMergeUpdateAction(boolean allowOverwrite) {
+	public TestMergeUpdateOperation(IDiffElement[] elements, boolean allowOverwrite) {
+		super(null, elements, false /* prompt before update */);
 		this.allowOverwrite = allowOverwrite;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#promptForOverwrite(org.eclipse.team.core.synchronize.SyncInfoSet)
+	 */
 	protected boolean promptForOverwrite(SyncInfoSet syncSet) {
 		if (allowOverwrite) return true;
 		if (syncSet.isEmpty()) return true;
 		IResource[] resources = syncSet.getResources();
-		EclipseTest.fail(resources[0].getFullPath().toString() + " failed to merge properly");
+		Assert.fail(resources[0].getFullPath().toString() + " failed to merge properly");
 		return false;
 	}
 	
-	public IRunnableWithProgress getRunnable(SyncInfoSet syncSet) {
-		return super.getRunnable(syncSet);
-	}
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.TeamOperation#canRunAsJob()
+	 */
 	protected boolean canRunAsJob() {
 		return false;
 	}

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,7 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
-import org.eclipse.team.core.variants.*;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -29,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * This update action will update all mergable resources first and then prompt the
@@ -37,63 +39,94 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
  * Subclasses should determine how the update should handle conflicts by implementing 
  * the getOverwriteLocalChanges() method.
  */
-public abstract class SafeUpdateAction extends CVSSubscriberAction {
+public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 
-	private List skippedFiles = new ArrayList();
 	private boolean promptBeforeUpdate = false;
+	
+	private SyncInfoSet skipped = new SyncInfoSet();
+	
+	protected SafeUpdateOperation(IWorkbenchPart part, IDiffElement[] elements, boolean promptBeforeUpdate) {
+		super(part, elements);
+		this.promptBeforeUpdate = promptBeforeUpdate;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		if(! promptIfNeeded()) return;
+		skipped.clear();
+		super.run(monitor);
+		try {
+			handleFailedUpdates(monitor);
+		} catch (TeamException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
 		try {
-			if(! promptIfNeeded(syncSet)) return;
-			// First, remove any known failure cases
-			FastSyncInfoFilter failFilter = getKnownFailureCases();
-			SyncInfo[] willFail = syncSet.getNodes(failFilter);
-			syncSet.rejectNodes(failFilter);
-			skippedFiles.clear();
+			monitor.beginTask(null, 100);
 			
-			monitor.beginTask(null, (syncSet.size() + willFail.length) * 100);
+			// Remove the cases that are known to fail (adding them to skipped list)
+			removeKnownFailureCases(syncSet);
 			
 			// Run the update on the remaining nodes in the set
 			// The update will fail for conflicts that turn out to be non-automergable
-			safeUpdate(syncSet, Policy.subMonitorFor(monitor, syncSet.size() * 100));
+			safeUpdate(syncSet, Policy.subMonitorFor(monitor, 00));
 			
-			// It is possible that some of the conflicting changes were not auto-mergable.
-			// Accumulate all resources that have not been updated so far
-			final SyncInfoSet failedSet = createFailedSet(syncSet, willFail, (IFile[]) skippedFiles.toArray(new IFile[skippedFiles.size()]));
-			
-			// Remove all these from the original sync set
+			// Remove all failed conflicts from the original sync set
 			syncSet.rejectNodes(new FastSyncInfoFilter() {
 				public boolean select(SyncInfo info) {
-					return failedSet.getSyncInfo(info.getLocal()) != null;
+					return skipped.getSyncInfo(info.getLocal()) != null;
 				}
 			});
-						
-			// Handle conflicting files that can't be merged, ask the user what should be done.
-			if(! failedSet.isEmpty()) {
-				if(getOverwriteLocalChanges()) {				
-					// Ask the user if a replace should be performed on the remaining nodes
-					if(promptForOverwrite(failedSet)) {
-						overwriteUpdate(failedSet, Policy.subMonitorFor(monitor, willFail.length * 100));
-						if (!failedSet.isEmpty()) {
-							syncSet.addAll(failedSet);
-						}
-					}
-				} else {
-					// Warn the user that some nodes could not be updated. This can happen if there are
-					// files with conflicts that are not auto-mergeable.					
-					warnAboutFailedResources(failedSet);		
-				}
-			}
 			
+			// Signal for the ones that were updated
 			updated(syncSet.getResources());
 		} finally {
 			monitor.done();
 		}
 	}
 
+	/**
+	 * @param syncSet
+	 * @return
+	 */
+	private SyncInfoSet removeKnownFailureCases(SyncInfoSet syncSet) {
+		// First, remove any known failure cases
+		FastSyncInfoFilter failFilter = getKnownFailureCases();
+		SyncInfo[] willFail = syncSet.getNodes(failFilter);
+		syncSet.rejectNodes(failFilter);
+		for (int i = 0; i < willFail.length; i++) {
+			SyncInfo info = willFail[i];
+			skipped.add(info);
+		}
+		return syncSet;
+	}
+
+	private void handleFailedUpdates(IProgressMonitor monitor) throws TeamException {
+		// Handle conflicting files that can't be merged, ask the user what should be done.
+		if(! skipped.isEmpty()) {
+			if(getOverwriteLocalChanges()) {				
+				// Ask the user if a replace should be performed on the remaining nodes
+				if(promptForOverwrite(skipped)) {
+					overwriteUpdate(skipped, monitor);
+					if (!skipped.isEmpty()) {
+						updated(skipped.getResources());
+					}
+				}
+			} else {
+				// Warn the user that some nodes could not be updated. This can happen if there are
+				// files with conflicts that are not auto-mergeable.					
+				warnAboutFailedResources(skipped);		
+			}
+		}
+	}
+	
 	protected boolean getOverwriteLocalChanges(){
 		return false;
 	}
@@ -160,7 +193,7 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 						break;
 				}
 				if (!willBeAttempted) {
-					skippedFiles.add(resource);
+					skipped.add(syncSet.getSyncInfo(resource));
 				}
 			} else {
 				// Special handling for folders to support shallow operations on files
@@ -194,6 +227,9 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 
 	/**
 	 * Perform an overwrite (unsafe) update on the resources in the provided set.
+	 * The passed sync set may containe resources from multiple projects and
+	 * it cannot be assumed that any scheduling rule is held when this method
+	 * is invoked.
 	 * @param syncSet the set containing the resources to be updated
 	 * @param monitor
 	 */
@@ -330,7 +366,11 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 	protected abstract void updated(IResource[] resources) throws TeamException;
 	
 	private void addSkippedFiles(IFile[] files) {
-		skippedFiles.addAll(Arrays.asList(files));
+		SyncInfoSet set = getSyncInfoSet();
+		for (int i = 0; i < files.length; i++) {
+			IFile file = files[i];
+			skipped.add(set.getSyncInfo(file));
+		}
 	}
 	
 	protected String getErrorTitle() {
@@ -340,7 +380,8 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.sync.SyncInfoSet)
 	 */
-	protected String getJobName(SyncInfoSet syncSet) {
+	protected String getJobName() {
+		SyncInfoSet syncSet = getSyncInfoSet();
 		return Policy.bind("UpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
 	}
 
@@ -352,7 +393,8 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 	 * @return <code>true</code> if the update operation can continue, and <code>false</code>
 	 * if the update has been cancelled by the user.
 	 */
-	private boolean promptIfNeeded(final SyncInfoSet set) {
+	private boolean promptIfNeeded() {
+		final SyncInfoSet set = getSyncInfoSet();
 		final boolean[] result = new boolean[] {true};
 		if(getPromptBeforeUpdate()) {
 			TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {

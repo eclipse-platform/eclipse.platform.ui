@@ -10,30 +10,36 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateOperation;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
-class TestUpdateAction extends WorkspaceUpdateAction {
+class TestUpdateOperation extends WorkspaceUpdateOperation {
+
+	protected TestUpdateOperation(IDiffElement[] elements) {
+		super(null, elements, false);
+	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#warnAboutFailedResources(org.eclipse.team.ui.sync.SyncInfoSet)
+	 * @see org.eclipse.team.internal.ui.actions.TeamOperation#canRunAsJob()
+	 */
+	protected boolean canRunAsJob() {
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateOperation#warnAboutFailedResources(org.eclipse.team.core.synchronize.SyncInfoSet)
 	 */
 	protected void warnAboutFailedResources(SyncInfoSet syncSet) {
 		return;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#promptForOverwrite(org.eclipse.team.core.synchronize.SyncInfoSet)
+	 */
 	protected boolean promptForOverwrite(SyncInfoSet syncSet) {
 		EclipseTest.fail("Should never prompt on update, simply update nodes that are valid.");
-		return false;
-	}
-	
-	public IRunnableWithProgress getRunnable(SyncInfoSet syncSet) {
-		return super.getRunnable(syncSet);
-	}
-	
-	protected boolean canRunAsJob() {
 		return false;
 	}
 }

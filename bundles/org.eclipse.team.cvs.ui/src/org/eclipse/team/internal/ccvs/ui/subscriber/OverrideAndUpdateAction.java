@@ -10,25 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.OverrideAndUpdateOperation;
+import org.eclipse.team.internal.ui.actions.SubscriberAction;
+import org.eclipse.team.internal.ui.actions.SubscriberOperation;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Runs an update command that will prompt the user for overwritting local
  * changes to files that have non-mergeable conflicts. All the prompting logic
  * is in the super class.
  */
-public class OverrideAndUpdateAction extends CVSSubscriberAction {
+public class OverrideAndUpdateAction extends SubscriberAction {
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
@@ -36,39 +32,7 @@ public class OverrideAndUpdateAction extends CVSSubscriberAction {
 		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING});
 	}
 	
-	private FastSyncInfoFilter getConflictingAdditionFilter() {
-		return new FastSyncInfoFilter.AndSyncInfoFilter(
-			new FastSyncInfoFilter[] {
-				new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}), 
-				new FastSyncInfoFilter.SyncInfoChangeTypeFilter(new int[] {SyncInfo.ADDITION})
-			});
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#run(org.eclipse.team.ui.sync.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void run(SyncInfoSet syncSet, IProgressMonitor monitor) throws TeamException {
-		try {
-			if(promptForOverwrite(syncSet)) {
-				SyncInfo[] conflicts = syncSet.getNodes(getConflictingAdditionFilter());
-				List conflictingResources = new ArrayList();
-				for (int i = 0; i < conflicts.length; i++) {
-					SyncInfo info = conflicts[i];
-					conflictingResources.add(info.getLocal());
-				}
-				new OverrideAndUpdateOperation(getShell(), syncSet.getResources(), (IResource[]) conflictingResources.toArray(new IResource[conflictingResources.size()]), null /* tag */, false /* recurse */).run(monitor);
-			}
-		} catch (InvocationTargetException e) {
-			throw CVSException.wrapException(e);
-		} catch (InterruptedException e) {
-			Policy.cancelOperation();
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction#getJobName(org.eclipse.team.ui.synchronize.actions.SyncInfoSet)
-	 */
-	protected String getJobName(SyncInfoSet syncSet) {
-		return Policy.bind("OverrideAndUpdateAction.jobName", new Integer(syncSet.size()).toString()); //$NON-NLS-1$
+	protected SubscriberOperation getSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
+		return new OverrideAndUpdateSubscriberOperation(part, elements);
 	}
 }

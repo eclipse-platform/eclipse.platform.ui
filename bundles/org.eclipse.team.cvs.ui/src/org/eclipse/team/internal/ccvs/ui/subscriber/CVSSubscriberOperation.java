@@ -11,16 +11,16 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.variants.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.PruneFolderVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -28,10 +28,51 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.actions.SubscriberAction;
+import org.eclipse.team.internal.ui.actions.SubscriberOperation;
+import org.eclipse.ui.IWorkbenchPart;
 
-public abstract class CVSSubscriberAction extends SubscriberAction {
+public abstract class CVSSubscriberOperation extends SubscriberOperation {
 	
+	protected CVSSubscriberOperation(IWorkbenchPart part, IDiffElement[] elements) {
+		super(part, elements);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		// Divide the sync info by project
+		final Map projectSyncInfos = getProjectSyncInfoSetMap();
+		for (Iterator iter = projectSyncInfos.keySet().iterator(); iter.hasNext(); ) {
+			final IProject project = (IProject) iter.next();
+			try {
+				// Pass the scheduling rule to the synchronizer so that sync change events
+				// and cache commits to disk are batched
+				EclipseSynchronizer.getInstance().run(
+					project,
+					new ICVSRunnable() {
+						public void run(IProgressMonitor monitor) throws CVSException {
+							try {
+								CVSSubscriberOperation.this.run((SyncInfoSet)projectSyncInfos.get(project), monitor);
+							} catch (TeamException e) {
+								throw CVSException.wrapException(e);
+							}
+						}
+					}, monitor);
+			} catch (TeamException e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+	}
+
+	/**
+	 * Run the operation on the sync info in the given set. The sync info will be all
+	 * from the same project.
+	 * @param set the sync info set
+	 * @param monitor a progress monitor
+	 */
+	protected abstract void run(SyncInfoSet set, IProgressMonitor monitor) throws TeamException;
+
 	/*
 	 * Indicate that the resource is out of sync if the sync state is not IN_SYNC
 	 * or if the local doesn't exist but the remote does.
@@ -133,38 +174,6 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 */
 	protected String getErrorTitle() {
 		return null;
-	}
-
-	/**
-	 * Return an IRunnableWithProgress that will operate on the given sync set.
-	 * This method is invoked by <code>run(IAction)</code> when the action is
-	 * executed from a menu. The default implementation invokes the method
-	 * <code>run(SyncInfoSet, IProgressMonitor)</code>.
-	 * @param syncSet
-	 * @return
-	 */
-	public IRunnableWithProgress getRunnable(final SyncInfoSet syncSet) {
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					// Pass the scheduling rule to the synchronizer so that sync change events
-					// and cache commits to disk are batched
-					EclipseSynchronizer.getInstance().run(
-						getSchedulingRule(syncSet),
-						new ICVSRunnable() {
-							public void run(IProgressMonitor monitor) throws CVSException {
-								try {
-									CVSSubscriberAction.this.run(syncSet, monitor);
-								} catch (TeamException e) {
-									throw CVSException.wrapException(e);
-								}
-							}
-						}, monitor);
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
 	}
 
 	protected boolean canRunAsJob() {
@@ -281,5 +290,25 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 			cvsFolder.mkdir();
 		}
 		return true;
+	}
+	
+	/*
+	 * Divide the sync info for the operation by project
+	 */
+	private Map getProjectSyncInfoSetMap() {
+		Map map = new HashMap();
+		SyncInfoSet all = getSyncInfoSet();
+		SyncInfo[] infos = all.getSyncInfos();
+		for (int i = 0; i < infos.length; i++) {
+			SyncInfo info = infos[i];
+			IProject project = info.getLocal().getProject();
+			SyncInfoSet set = (SyncInfoSet)map.get(project);
+			if (set == null) {
+				set = new SyncInfoSet();
+				map.put(project, set);
+			}
+			set.add(info);
+		}
+		return map;
 	}
 }

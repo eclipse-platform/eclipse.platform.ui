@@ -18,19 +18,20 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.subscribers.ISubscriberChangeEvent;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 /**
@@ -247,39 +248,46 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	}
 	
 	public IResource[] update(IContainer container, String[] hierarchy) throws CoreException, TeamException, InvocationTargetException, InterruptedException {
-		return runSubscriberAction(new TestUpdateAction(), container, hierarchy);
+		IResource[] resources = getResources(container, hierarchy);
+		runSubscriberOperation(new TestUpdateOperation(getElements(resources)));
+		return resources;
 	}
-	
+
 	public IResource[] commit(IContainer container, String[] hierarchy) throws CoreException, TeamException {
-		return runSubscriberAction(new TestCommitAction(), container, hierarchy);
+		IResource[] resources = getResources(container, hierarchy);
+		runSubscriberOperation(new TestCommitOperation(getElements(resources), false /* override */));
+		return resources;
 	}
 
 	public IResource[] overrideAndUpdate(IContainer container, String[] hierarchy, boolean shouldPrompt) throws CoreException, TeamException {
-		TestOverrideAndUpdate action = new TestOverrideAndUpdate();
-		IResource[] resources = runSubscriberAction(action, container, hierarchy);
+		IResource[] resources = getResources(container, hierarchy);
+		TestOverrideAndUpdateOperation action = new TestOverrideAndUpdateOperation(getElements(resources));
+		runSubscriberOperation(action);
 		assertTrue(shouldPrompt == action.isPrompted());			
 		return resources;
 	}
 	
 	public IResource[] overrideAndCommit(IContainer container, String[] hierarchy, boolean shouldPrompt) throws CoreException, TeamException {
-		TestOverrideAndCommit action = new TestOverrideAndCommit();
-		IResource[] resources = runSubscriberAction(action, container, hierarchy);
-		assertTrue(shouldPrompt == action.isPrompted());			
+		IResource[] resources = getResources(container, hierarchy);
+		TestCommitOperation action = new TestCommitOperation(getElements(resources), true /* override */);
+		runSubscriberOperation(action);
+		//assertTrue(shouldPrompt == action.isPrompted());			
 		return resources;
 	}
 	
-	private IResource[] runSubscriberAction(CVSSubscriberAction action, IContainer container, String[] hierarchy) throws CoreException {
-		IResource[] resources = getResources(container, hierarchy);
+	protected IDiffElement[] getElements(IResource[] resources) throws CoreException {
 		SyncInfo[] syncResources = createSyncInfos(resources);
+		return getElements(syncResources);
+	}
+	
+	private void runSubscriberOperation(CVSSubscriberOperation op) throws CoreException {
 		try {
-			action.getRunnable(new SyncInfoSet(syncResources)).run(DEFAULT_MONITOR);
-			return resources;
+			op.run(DEFAULT_MONITOR);
 		} catch (InvocationTargetException e) {
 			throw CVSException.wrapException(e);
 		} catch (InterruptedException e) {
 			fail("Operation was interupted");
 		}
-		return new IResource[0];
 	}
 
 	/******************************************************************
