@@ -54,16 +54,8 @@ public class WorkflowTests extends BenchmarkTest {
 		runWorkflowTests("testBig", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", BenchmarkTestSetup.LOOP_COUNT, false);
 	}
 	
-	public void testSmallWorkflow() throws Exception {
-		runWorkflowTests("testSmall", BenchmarkTestSetup.SMALL_ZIP_FILE, "CVS Small Workflow", BenchmarkTestSetup.LOOP_COUNT, false);
-	}
-
-	public void testTinyWorkflow() throws Exception {
-		runWorkflowTests("testTiny", BenchmarkTestSetup.TINY_ZIP_FILE, "CVS Tiny Workflow", BenchmarkTestSetup.LOOP_COUNT, false);
-	}
-	
 	public void testBigWorkflowForSummary() throws Exception {
-		runWorkflowTests("testBigGlobal", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Big Workflow", 1, true);
+		runWorkflowTests("testBigGlobal", BenchmarkTestSetup.BIG_ZIP_FILE, "CVS Workflow", BenchmarkTestSetup.LOOP_COUNT, true);
 	}
 	
 	/**
@@ -172,6 +164,6 @@ public class WorkflowTests extends BenchmarkTest {
 			replace(new IResource[] { inProject }, null, true);
 			endGroup();
 	    }
-	    commitGroups();
+	    commitGroups(global);
 	}
 }

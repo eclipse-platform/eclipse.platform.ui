@@ -20,7 +20,6 @@ public class SyncTests extends BenchmarkTest {
 	private static final int FILE_SIZE_VARIANCE = 0;
 	private static final int PROB_BINARY = 0;
 	
-	private static final String NO_CHANGES_GROUP_SUFFIX = "NoChanges";
 	private static final String ADDED_GROUP_SUFFIX = "AddedFiles";
 	private static final String REMOVED_GROUP_SUFFIX = "RemovedFiles";
 	private static final String MODIFIED_GROUP_SUFFIX = "ModifiedFiles";
@@ -38,27 +37,16 @@ public class SyncTests extends BenchmarkTest {
 		return suite(SyncTests.class);
 	}
     
-	public void testSync0() throws Exception {
-	    setupGroups(new String[] {NO_CHANGES_GROUP_SUFFIX} );
-		IProject project = setupOutProject();
-		for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
-			startGroup(NO_CHANGES_GROUP_SUFFIX);
-			syncCommitResources(new IResource[] { project }, "");
-			endGroup();
-        }
-		commitGroups();
-	}
-
-    public void testSync1() throws Exception {
-		runTestSync(1, "CVS Synchronize 1");
-	}
-
 	public void testSync10() throws Exception {
-		runTestSync(10, "CVS Synchronize 10");
+		runTestSync(10, "CVS Synchronize 10", false);
 	}
 
 	public void testSync100() throws Exception {
-		runTestSync(100, "CVS Synchronize 100");
+		runTestSync(100, "CVS Synchronize 100", false);
+	}
+	
+	public void testSync100Global() throws Exception {
+		runTestSync(100, "CVS Synchronize", true);
 	}
 
 	protected IProject setupOutProject() throws Exception {
@@ -71,8 +59,8 @@ public class SyncTests extends BenchmarkTest {
 	 * Runs a sequence of operations for the synchronizer tests.
 	 * A parallel project is used to generate incoming changes.
 	 */
-	protected void runTestSync(int size, String globalName) throws Exception {
-	    setupGroups(PERFORMANCE_GROUPS, globalName, false);
+	protected void runTestSync(int size, String globalName, boolean global) throws Exception {
+	    setupGroups(PERFORMANCE_GROUPS, globalName, global);
 	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
 			final SequenceGenerator gen = new SequenceGenerator();
 	
@@ -105,6 +93,6 @@ public class SyncTests extends BenchmarkTest {
 			syncUpdateResources(new IResource[] { inProject });
 			endGroup();
         }
-	    commitGroups();
+	    commitGroups(global);
 	}
 }
