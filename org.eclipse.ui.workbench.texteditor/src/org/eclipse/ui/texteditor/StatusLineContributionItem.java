@@ -178,7 +178,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 */
 	public void fill(Composite parent) {
 		
-		Label sep = new Label(parent, SWT.SEPARATOR);
+		Label sep= new Label(parent, SWT.SEPARATOR);
 		fLabel= new CLabel(parent, SWT.SHADOW_NONE); 
 		
 		fLabel.addDisposeListener(new DisposeListener() {
@@ -191,11 +191,11 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			fLabel.addMouseListener(fMouseListener);
 		}
 
-		StatusLineLayoutData data = new StatusLineLayoutData();
+		StatusLineLayoutData data= new StatusLineLayoutData();
 		data.widthHint= getWidthHint(parent);
 		fLabel.setLayoutData(data);
 		
-		data = new StatusLineLayoutData();
+		data= new StatusLineLayoutData();
 		data.heightHint= getHeightHint(parent);
 		sep.setLayoutData(data);
 		
@@ -260,7 +260,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 */
 	private void updateMessageLabel() {
 		if (fLabel != null && !fLabel.isDisposed()) {
-			Display display = fLabel.getDisplay();
+			Display display= fLabel.getDisplay();
 			if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
 				fLabel.setForeground(JFaceColors.getErrorText(display));
 				fLabel.setText(fErrorText);
