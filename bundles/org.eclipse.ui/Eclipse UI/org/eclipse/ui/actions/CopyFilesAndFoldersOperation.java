@@ -47,7 +47,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
  * </p>
  */
 public class CopyFilesAndFoldersOperation {
-	
+
 	/**
 	 * Status containing the errors detected when running the operation or
 	 * <code>null</code> if no errors detected.
@@ -58,7 +58,7 @@ public class CopyFilesAndFoldersOperation {
 	 * The parent shell used to show any dialogs.
 	 */
 	private Shell parentShell;
-	
+
 	/**
 	 * The destination of the resources to be copied.
 	 */
@@ -68,17 +68,17 @@ public class CopyFilesAndFoldersOperation {
 	 * A list of all resources against which copy errors are reported.
 	 */
 	private ArrayList errorResources = new ArrayList();
-	
+
 	/**
 	 * Whether or not the copy has been canceled by the user.
 	 */
 	private boolean canceled = false;
-	
+
 	/**
 	 * Overwrite all flag.
 	 */
 	private boolean alwaysOverwrite = false;
-	
+
 	/** 
 	 * Creates a new operation initialized with a shell.
 	 * 
@@ -87,7 +87,7 @@ public class CopyFilesAndFoldersOperation {
 	public CopyFilesAndFoldersOperation(Shell shell) {
 		parentShell = shell;
 	}
-		
+
 	/**
 	 * Copies the given resources to the destination. 
 	 * 
@@ -96,17 +96,17 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	public void copyResources(final IResource[] resources, IContainer destination) {
 		final IPath destinationPath = destination.getFullPath();
-	
+
 		String errorMsg = validateDestination(destination, resources);
 		if (errorMsg != null) {
-			displayError(errorMsg); 
+			displayError(errorMsg);
 			return;
 		}
-		
+
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
-				// Checks only required if this is an exisiting container path.
-				monitor.beginTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.operationTitle"),100); //$NON-NLS-1$
+					// Checks only required if this is an exisiting container path.
+	monitor.beginTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.operationTitle"), 100); //$NON-NLS-1$
 				monitor.worked(10); // show some initial progress
 				boolean copyWithAutoRename = false;
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -119,15 +119,15 @@ public class CopyFilesAndFoldersOperation {
 					} else {
 						// If no auto-renaming will be happening, check for
 						// potential name collisions at the target resource
-						if (!validateNoNameCollisions(container, resources ,monitor)) {
-							if (canceled) 
+						if (!validateNoNameCollisions(container, resources, monitor)) {
+							if (canceled)
 								return;
 							displayError(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.nameCollision")); //$NON-NLS-1$
 							return;
 						}
 					}
 				}
-	
+
 				errorStatus = null;
 				boolean opSuccess;
 				if (copyWithAutoRename)
@@ -136,31 +136,25 @@ public class CopyFilesAndFoldersOperation {
 					opSuccess = performCopy(resources, destinationPath, monitor);
 			}
 		};
-	
+
 		try {
 			new ProgressMonitorDialog(parentShell).run(true, true, op);
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-				StatusUtil.newStatus(
-					IStatus.ERROR,
-					null,
-					MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] {getClass().getName(),e.getTargetException()}), //$NON-NLS-1$
-					null));
-			displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
+			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, null, MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
+			null));
+			displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 		}
-	
+
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {
-			ErrorDialog.openError(
-				parentShell, 
-				WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"), //$NON-NLS-1$
-				null, // no special message
-				errorStatus);
+			ErrorDialog.openError(parentShell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"), //$NON-NLS-1$
+			null, // no special message
+			errorStatus);
 			errorStatus = null;
-		} 
+		}
 	}
 	/**
 	 * Paste files and folders on the clipboard to the destination 
@@ -168,28 +162,28 @@ public class CopyFilesAndFoldersOperation {
 	 *  
 	 * @param names destination to which files/folders on the clipboard will be pasted 
 	 */
-	public void copyFiles(final String[] fileNames, IContainer destination){
+	public void copyFiles(final String[] fileNames, IContainer destination) {
 		alwaysOverwrite = false;
-	
+
 		// if it is a project, see if it is open
-		if (destination.getType() == IResource.PROJECT && !((IProject)destination).isOpen()) {
+		if (destination.getType() == IResource.PROJECT && !((IProject) destination).isOpen()) {
 			displayError(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError")); //$NON-NLS-1$
 			return;
 		}
-				
+
 		final IPath destinationPath = destination.getFullPath();
-	
+
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) {
-				// Checks only required if this is an exisiting container path.
-				boolean copyWithAutoRename = false;
+					// Checks only required if this is an exisiting container path.
+	boolean copyWithAutoRename = false;
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				if (root.exists(destinationPath)) {
 					IContainer container = (IContainer) root.findMember(destinationPath);
 					monitor.beginTask("", fileNames.length); //$NON-NLS-1$
 					for (int k = 0; k < fileNames.length; k++)
 						performFileImport(new SubProgressMonitor(monitor, 1), container, fileNames[k]);
-					monitor.done();	
+					monitor.done();
 				}
 			}
 		};
@@ -199,24 +193,18 @@ public class CopyFilesAndFoldersOperation {
 			return;
 		} catch (InvocationTargetException e) {
 			// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-				StatusUtil.newStatus(
-					IStatus.ERROR,
-					null,
-					MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] {getClass().getName(),e.getTargetException()}), //$NON-NLS-1$
-					null));
-			displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
+			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, null, MessageFormat.format("Exception in {0}.performCopy(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
+			null));
+			displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 		}
-	
+
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {
-			ErrorDialog.openError(
-				parentShell, 
-				WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"), //$NON-NLS-1$
-				null, // no special message
+			ErrorDialog.openError(parentShell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"), //$NON-NLS-1$
+			null, // no special message
 			errorStatus);
 			errorStatus = null;
-		} 
+		}
 	}
 
 	/**
@@ -230,10 +218,8 @@ public class CopyFilesAndFoldersOperation {
 	private void displayError(final String message) {
 		parentShell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog.openError(
-					parentShell, 
-					WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"), //$NON-NLS-1$
-					message);
+				MessageDialog.openError(parentShell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copyFailedTitle"), //$NON-NLS-1$
+				message);
 			}
 		});
 	}
@@ -246,80 +232,79 @@ public class CopyFilesAndFoldersOperation {
 	 * @param target container to which the import will be done
 	 * @param filePath path to file that is to be imported
 	 */
-	private void performFileImport(IProgressMonitor monitor,IContainer target, String filePath) {
+	private void performFileImport(IProgressMonitor monitor, IContainer target, String filePath) {
 		File toImport = new File(filePath);
-		if (target.getLocation().equals(toImport)) 
+		if (target.getLocation().equals(toImport))
 			return;
-		
+
 		IOverwriteQuery query = new IOverwriteQuery() {
 			public String queryOverwrite(String pathString) {
 				if (alwaysOverwrite)
 					return ALL;
-			
-				final String returnCode[] = {CANCEL};
-				final String msg = WorkbenchMessages.format("CopyFilesAndFoldersOperation.overwriteQuestion", new Object[] {pathString}); //$NON-NLS-1$
-				final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
+
+				final String returnCode[] = { CANCEL };
+				final String msg = WorkbenchMessages.format("CopyFilesAndFoldersOperation.overwriteQuestion", new Object[] { pathString }); //$NON-NLS-1$
+				final String[] options =
+					{
+						IDialogConstants.YES_LABEL,
+						IDialogConstants.YES_TO_ALL_LABEL,
+						IDialogConstants.NO_LABEL,
+						IDialogConstants.CANCEL_LABEL };
 				parentShell.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						MessageDialog dialog = new MessageDialog(parentShell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.question"), null, msg, MessageDialog.QUESTION, options, 0); //$NON-NLS-1$
 						dialog.open();
 						int returnVal = dialog.getReturnCode();
-						String[] returnCodes = {YES, ALL, NO, CANCEL};
+						String[] returnCodes = { YES, ALL, NO, CANCEL };
 						returnCode[0] = returnVal == -1 ? CANCEL : returnCodes[returnVal];
 					}
 				});
-				if(returnCode[0] == ALL)
+				if (returnCode[0] == ALL)
 					alwaysOverwrite = true;
 				return returnCode[0];
 			}
 		};
-	
-		ImportOperation op = new ImportOperation(
-				target.getFullPath(), 
-				new File(toImport.getParent()), 
-				FileSystemStructureProvider.INSTANCE, 
-				query, 
-				Arrays.asList(new File[] {toImport})); 
+
+		ImportOperation op =
+			new ImportOperation(
+				target.getFullPath(),
+				new File(toImport.getParent()),
+				FileSystemStructureProvider.INSTANCE,
+				query,
+				Arrays.asList(new File[] { toImport }));
 		op.setCreateContainerStructure(false);
 		try {
 			op.run(monitor);
 		} catch (InterruptedException e) {
-			return; 
+			return;
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof CoreException) {
 				final IStatus status = ((CoreException) e.getTargetException()).getStatus();
 				parentShell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						ErrorDialog.openError(
-							parentShell, 
-							WorkbenchMessages.getString("CopyFilesAndFoldersOperation.importErrorDialogTitle"),  //$NON-NLS-1$
-							null,	// no special message
-							status);
+						ErrorDialog.openError(parentShell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.importErrorDialogTitle"), //$NON-NLS-1$
+						null, // no special message
+						status);
 					}
 				});
-			}
-			else {
+			} else {
 				// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-				Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-					StatusUtil.newStatus(
-						IStatus.ERROR,
-						null,
-						MessageFormat.format("Exception in {0}.performFileImport(): {1}", new Object[] {getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
-						null));;
-				displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
+				Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(StatusUtil.newStatus(IStatus.ERROR, null, MessageFormat.format("Exception in {0}.performFileImport(): {1}", new Object[] { getClass().getName(), e.getTargetException()}), //$NON-NLS-1$
+				null));
+				displayError(WorkbenchMessages.format("CopyFilesAndFoldersOperation.internalError", new Object[] { e.getTargetException().getMessage()})); //$NON-NLS-1$
 			}
 			return;
 		}
 		// Special case since ImportOperation doesn't throw a CoreException on
 		// failure.
-		IStatus status= op.getStatus();
+		IStatus status = op.getStatus();
 		if (!status.isOK()) {
 			if (errorStatus == null)
 				errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.problemMessage"), null); //$NON-NLS-1$
 			errorStatus.merge(status);
 		}
 	}
-	
+
 	/**
 	 * Check if the user wishes to overwrite the supplied resource.
 	 * 
@@ -327,30 +312,61 @@ public class CopyFilesAndFoldersOperation {
 	 * @param destination - the resource to be overwritten
 	 * @return true if there is no collision or delete was successful
 	 */
-	private boolean checkOverwrite(
-		final Shell shell,
-		final IResource destination) {
-	
+	private boolean checkOverwrite(final Shell shell, final IResource destination) {
+
 		final boolean[] result = new boolean[1];
-	
+
 		//Run it inside of a runnable to make sure we get to parent off of the shell as we are not
 		//in the UI thread.
-	
+
 		Runnable query = new Runnable() {
 			public void run() {
-				result[0] =
-					MessageDialog.openQuestion(
-						shell,
-						WorkbenchMessages.getString("CopyFilesAndFoldersOperation.resourceExists"), //$NON-NLS-1$
-						WorkbenchMessages.format("CopyFilesAndFoldersOperation.overwriteQuestion", new Object[] {destination.getFullPath().makeRelative()})); //$NON-NLS-1$
+				result[0] = MessageDialog.openQuestion(shell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.resourceExists"), //$NON-NLS-1$
+				WorkbenchMessages.format("CopyFilesAndFoldersOperation.overwriteQuestion", new Object[] { destination.getFullPath().makeRelative()})); //$NON-NLS-1$
 			}
-	
+
 		};
-	
+
 		shell.getDisplay().syncExec(query);
 		return result[0];
 	}
-	
+
+	/**
+	 * Copy the resources to the given destination.  This method is called recursively to
+	 * deal with merging of folders during folder copy.
+	 */
+	private boolean copy(IResource[] resources, IPath destination, IProgressMonitor subMonitor) throws CoreException {
+		for (int i = 0; i < resources.length; i++) {
+			IResource source = resources[i];
+			IPath destinationPath = destination.append(source.getName());
+			IWorkspace workspace = source.getWorkspace();
+			IWorkspaceRoot workspaceRoot = workspace.getRoot();
+			if ((source.getType() == IResource.FOLDER) && (workspaceRoot.findMember(destinationPath) != null)) {
+				// the resource is a folder and it exists in the destination, copy the
+				// children of the folder
+				IResource[] children = ((IContainer) source).members();
+				copy(children, destinationPath, subMonitor);
+			} else {
+				try {
+					// if we're merging folders, we could be overwriting an existing file
+					IResource existing = workspaceRoot.findMember(destinationPath);
+					if (existing != null) {
+						delete(existing, subMonitor);
+					}
+					source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
+				} catch (CoreException e) {
+					recordError(e); // log error
+					return false;
+				}
+				subMonitor.worked(1);
+				if (subMonitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+			}
+		}
+		return true;
+	}
+
 	/**
 	 * Returns a new name for a copy of the resource at the given path in the given
 	 * workspace. This name could be determined either automatically or by querying
@@ -366,24 +382,24 @@ public class CopyFilesAndFoldersOperation {
 		int counter = 1;
 		String resourceName = originalName.lastSegment();
 		IPath leadupSegment = originalName.removeLastSegments(1);
-		
+
 		while (true) {
 			String nameSegment;
-			
+
 			if (counter > 1)
-				nameSegment = WorkbenchMessages.format("CopyFilesAndFoldersOperation.copyNameTwoArgs", new Object[] {new Integer(counter), resourceName}); //$NON-NLS-1$
+				nameSegment = WorkbenchMessages.format("CopyFilesAndFoldersOperation.copyNameTwoArgs", new Object[] { new Integer(counter), resourceName }); //$NON-NLS-1$
 			else
-				nameSegment = WorkbenchMessages.format("CopyFilesAndFoldersOperation.copyNameOneArg", new Object[] {resourceName}); //$NON-NLS-1$
-				
+				nameSegment = WorkbenchMessages.format("CopyFilesAndFoldersOperation.copyNameOneArg", new Object[] { resourceName }); //$NON-NLS-1$
+
 			IPath pathToTry = leadupSegment.append(nameSegment);
-			
+
 			if (!workspace.getRoot().exists(pathToTry))
 				return pathToTry;
-				
+
 			counter++;
 		}
 	}
-	
+
 	/**
 	 * Checks whether the current destination
 	 * is valid for copying the source resources.
@@ -393,22 +409,20 @@ public class CopyFilesAndFoldersOperation {
 	 * @return an error message, or <code>null</code> 
 	 * if the path is valid
 	 */
-	private String validateDestination(IContainer destination,	IResource[] sourceResources) {
+	private String validateDestination(IContainer destination, IResource[] sourceResources) {
 		// if it is a project, see if it is open
-		if (destination.getType() == IResource.PROJECT &&
-				!((IProject)destination).isOpen())
+		if (destination.getType() == IResource.PROJECT && !((IProject) destination).isOpen())
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 
 		for (int i = 0; i < sourceResources.length; i++) {
-			if (!sourceResources[i].equals(destination) 
-				&& isDescendentOf(destination, sourceResources[i])) {
-					return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$;
+			if (!sourceResources[i].equals(destination) && isDescendentOf(destination, sourceResources[i])) {
+				return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns whether moving all of the given source resources to the given
 	 * destination container could be done without causing name collisions.
@@ -422,15 +436,15 @@ public class CopyFilesAndFoldersOperation {
 		IContainer destination,
 		IResource[] sourceResources,
 		IProgressMonitor monitor) {
-	
+
 		List deleteItems = new ArrayList();
-	
+
 		IWorkspaceRoot workspaceRoot = destination.getWorkspace().getRoot();
-	
+
 		for (int i = 0; i < sourceResources.length; i++) {
 			final IResource currentResource = sourceResources[i];
 			final IPath currentPath = destination.getFullPath().append(currentResource.getName());
-	
+
 			IResource newResource = workspaceRoot.findMember(currentPath);
 			if (newResource != null) {
 				// Check to see if we would be overwriting a parent folder
@@ -439,10 +453,8 @@ public class CopyFilesAndFoldersOperation {
 					//in the UI thread.
 					Runnable notice = new Runnable() {
 						public void run() {
-							MessageDialog.openError(
-								parentShell,
-								WorkbenchMessages.getString("CopyFilesAndFoldersOperation.overwriteProblemTitle"), //$NON-NLS-1$
-								WorkbenchMessages.format("CopyFilesAndFoldersOperation.overwriteProblem", new Object[] {currentPath, currentResource.getFullPath()})); //$NON-NLS-1$
+								MessageDialog.openError(parentShell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.overwriteProblemTitle"), //$NON-NLS-1$
+	WorkbenchMessages.format("CopyFilesAndFoldersOperation.overwriteProblem", new Object[] { currentPath, currentResource.getFullPath()})); //$NON-NLS-1$
 						}
 					};
 					parentShell.getDisplay().syncExec(notice);
@@ -450,7 +462,11 @@ public class CopyFilesAndFoldersOperation {
 					return false;
 				} else {
 					if (checkOverwrite(parentShell, newResource)) {
-						deleteItems.add(newResource);
+						// do not delete folders, we want to merge in this case,
+						// not replace.
+						if (newResource.getType() == IResource.FILE) {
+							deleteItems.add(newResource);
+						}
 					} else {
 						canceled = true;
 						return false;
@@ -460,13 +476,13 @@ public class CopyFilesAndFoldersOperation {
 		} //No overwrite issues
 		if (deleteItems.size() == 0)
 			return true;
-	
+
 		//Now try deletions
-	
+
 		IResource[] deleteResources = new IResource[deleteItems.size()];
 		deleteItems.toArray(deleteResources);
 		try {
-		    monitor.subTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.deletingCollision")); //$NON-NLS-1$
+			monitor.subTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.deletingCollision")); //$NON-NLS-1$
 			destination.getWorkspace().delete(
 				deleteResources,
 				IResource.KEEP_HISTORY,
@@ -476,9 +492,9 @@ public class CopyFilesAndFoldersOperation {
 			return false;
 		}
 		return true;
-	
+
 	}
-	
+
 	/**
 	 * Returns whether the given resource is accessible, where files and folders
 	 * are always considered accessible, and where a project is accessible iff it
@@ -490,17 +506,17 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private boolean isAccessible(IResource resource) {
 		switch (resource.getType()) {
-			case IResource.FILE:
+			case IResource.FILE :
 				return true;
-			case IResource.FOLDER:
+			case IResource.FOLDER :
 				return true;
-			case IResource.PROJECT:
-				return ((IProject)resource).isOpen();
-			default:
+			case IResource.PROJECT :
+				return ((IProject) resource).isOpen();
+			default :
 				return false;
 		}
 	}
-	
+
 	/**
 	 * Returns whether the given candidate child resource is a descendent
 	 * of the the given candidate parent resource.
@@ -513,17 +529,17 @@ public class CopyFilesAndFoldersOperation {
 	private boolean isDescendentOf(IResource child, IResource parent) {
 		if (parent.getType() == IResource.FILE)
 			return false;
-	
+
 		if (child.getType() == IResource.PROJECT)
 			return false;
-			
+
 		IResource childParent = child.getParent();
-		if (childParent.equals(parent)) 
-			return true; 
-			
+		if (childParent.equals(parent))
+			return true;
+
 		return isDescendentOf(childParent, parent);
 	}
-	
+
 	/**
 	 * Returns whether any of the given source resources are being recopied to their 
 	 * current container.
@@ -541,7 +557,7 @@ public class CopyFilesAndFoldersOperation {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Copies the given resources to the destination container with the given name.
 	 * <p>
@@ -553,20 +569,16 @@ public class CopyFilesAndFoldersOperation {
 	 * @param destination the path of the destination container
 	 * @return <code>true</code> if the copy operation completed without errors
 	 */
-	private boolean performCopy(
-		final IResource[] resources,
-		final IPath destination,
-		IProgressMonitor monitor) {
-	
+	private boolean performCopy(final IResource[] resources, final IPath destination, IProgressMonitor monitor) {
+
 		try {
 			monitor.subTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copying")); //$NON-NLS-1$
 			ContainerGenerator generator = new ContainerGenerator(destination);
 			generator.generateContainer(new SubProgressMonitor(monitor, 10));
-			resources[0].getWorkspace().copy(
-				resources,
-				destination,
-				false,
-				new SubProgressMonitor(monitor, 75));
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
+			boolean status = copy(resources, destination, subMonitor);
+			if (status == false)
+				return false;
 		} catch (CoreException e) {
 			recordError(e); // log error
 			return false;
@@ -589,45 +601,38 @@ public class CopyFilesAndFoldersOperation {
 	 * @param destination the path of the destination container
 	 * @return <code>true</code> if the copy operation completed without errors.
 	 */
-	private boolean performCopyWithAutoRename(
-		IResource[] resources,
-		IPath destination,
-		IProgressMonitor monitor) {
-	
+	private boolean performCopyWithAutoRename(IResource[] resources, IPath destination, IProgressMonitor monitor) {
+
 		IWorkspace workspace = resources[0].getWorkspace();
-	
+
 		try {
 			ContainerGenerator generator = new ContainerGenerator(destination);
-	
+
 			generator.generateContainer(new SubProgressMonitor(monitor, 10));
-	
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);	
-			subMonitor.beginTask(
-				WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copying"), //$NON-NLS-1$
-				resources.length);
+
+			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
+			subMonitor.beginTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.copying"), //$NON-NLS-1$
+			resources.length);
 
 			for (int i = 0; i < resources.length; i++) {
-				
+
 				IResource currentResource = resources[i];
 				IPath destinationPath = destination.append(currentResource.getName());
-	
+
 				if (workspace.getRoot().exists(destinationPath))
 					destinationPath = getNewNameFor(destinationPath, workspace);
-	
+
 				if (destinationPath != null) {
 					try {
-						currentResource.copy(
-							destinationPath,
-							false,
-							new SubProgressMonitor(subMonitor, 0));
+						currentResource.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
 					} catch (CoreException e) {
 						recordError(e); // log error
 						return false;
 					}
 				}
 
-				subMonitor.worked(1);	
-				if (subMonitor.isCanceled()){
+				subMonitor.worked(1);
+				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 			}
@@ -637,27 +642,9 @@ public class CopyFilesAndFoldersOperation {
 		} finally {
 			monitor.done();
 		}
-	
+
 		return true;
 	}
-
-	/**
-	 * Removes the given resources from the workspace.  
-	 * 
-	 * @param resourcesToDelete array of resources to remove from the workspace
-	 * @param monitor a progress monitor for progress and cancelation
-	 */
-	private void delete(IResource[] resourcesToDelete, IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
-		for (int i = 0; i < resourcesToDelete.length; ++i) {
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
-			}
-			delete(resourcesToDelete[i], new SubProgressMonitor(monitor, 1, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-		}
-		monitor.done();
-	}
-
 	/**
 	 * Removes the given resource from the workspace. 
 	 *  
@@ -670,15 +657,15 @@ public class CopyFilesAndFoldersOperation {
 			// if it's a project, ask whether content should be deleted too
 			IProject project = (IProject) resourceToDelete;
 			project.delete(true, force, monitor);
-		}
-		else {
+		} else {
 			int flags = IResource.KEEP_HISTORY;
-			if (force) flags = flags | IResource.FORCE;
+			if (force)
+				flags = flags | IResource.FORCE;
 			// if it's not a project, just delete it
 			resourceToDelete.delete(flags, monitor);
 		}
 	}
-	
+
 	/**
 	 * Records the core exception to be displayed to the user
 	 * once the action is finished.
@@ -688,10 +675,8 @@ public class CopyFilesAndFoldersOperation {
 	private void recordError(CoreException error) {
 		if (errorStatus == null)
 			errorStatus = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.ERROR, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.problemMessage"), error); //$NON-NLS-1$
-	
+
 		errorStatus.merge(error.getStatus());
 	}
-	
-	
-}
 
+}
