@@ -76,9 +76,8 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 		 
-		IVMInstall vm = setVM(config);
-	
-		setClasspath(config, vm);		
+		setVM(config);
+		setClasspath(config);		
 		
 //				String workingDirectory= workDirectoryField.getText().trim();
 //				if (workingDirectory.length() == 0) {
@@ -99,16 +98,15 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.doSave();
 	}
 
-	private IVMInstall setVM(ILaunchConfigurationWorkingCopy config) {
+	private void setVM(ILaunchConfigurationWorkingCopy config) {
 		IVMInstall vm = JavaRuntime.getDefaultVMInstall();
 		String vmName= vm.getName();
 		String vmTypeID= vm.getVMInstallType().getId();			
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, vmName);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
-		return vm;
 	}
 
-	private void setClasspath(ILaunchConfigurationWorkingCopy config, IVMInstall vm) {
+	private void setClasspath(ILaunchConfigurationWorkingCopy config) {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 			
 		//Path newJavaPath= new Path(vm.getInstallLocation().getAbsolutePath());
