@@ -1,0 +1,24 @@
+Bundle-Name: org.eclipse.update.configurator
+Bundle-GlobalName: org.eclipse.update.configurator
+Bundle-Description: Eclipse Update Configurator
+Bundle-Copyright: Open Source Materials - Eclipse 
+Bundle-Version: 3.0.0
+Bundle-DocUrl: http://www.eclipse.org
+Build-Information: ${build-information}
+Bundle-Activator: 
+ org.eclipse.update.configurator.ConfigurationActivator
+Bundle-ClassPath: 
+ configurator.jar
+Import-Package: 
+ org.osgi.framework,
+ org.osgi.util.tracker,
+ org.osgi.service.startlevel,
+ org.osgi.service.packageadmin,
+ org.eclipse.osgi.service.environment
+Export-Package:
+ org.eclipse.update.configurator
+Provide-Package: 
+ org.eclipse.update.configurator
+Require-Bundle: 
+ org.eclipse.core.runtime.osgi,
+ org.apache.xerces;optional=true

@@ -1,0 +1,8 @@
+# Debugging options for the org.eclipse.update.configurator plugin
+
+# Turn on general debugging for the plugin.
+org.eclipse.update.configurator/debug=false
+
+# Turns on debug for the plugin converter.
+org.eclipse.update.configurator/converter/debug=false
+
