@@ -11,6 +11,9 @@
 package org.eclipse.ui.actions;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -334,5 +337,48 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 */
 	protected List getActionResources() {
 		return getSelectedResources();
+	}
+	
+	/**
+	 * Run the action in the background rather than with the
+	 * progress dialog.
+	 * @param rule The rule to apply to the background job or
+	 * <code>null</code> if there isn't one.
+	 */
+	public void runInBackground(ISchedulingRule rule){
+		
+		Job backgroundJob = new Job(removeMnemonics(getText())){ 
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				
+				monitor.beginTask("", 1); //$NON-NLS-1$
+				// Fix for bug 31768 - Don't provide a task name in beginTask
+				// as it will be appended to each subTask message. Need to
+				// call setTaskName as its the only was to assure the task name is
+				// set in the monitor (see bug 31824)
+				monitor.setTaskName(getOperationMessage());
+				WorkspaceAction.this.execute(monitor);
+				monitor.done();
+				
+				IStatus returnStatus = Status.OK_STATUS;
+				
+				//If errors occurred, open an Error dialog & build a multi status error for it
+				if (errorStatus != null) {
+					returnStatus = errorStatus;
+					errorStatus = null;
+				}
+				return returnStatus;
+			}
+			
+			
+		};
+		
+		if(rule != null)
+			backgroundJob.setRule(rule);
+		backgroundJob.schedule();
+		
+
 	}
 }

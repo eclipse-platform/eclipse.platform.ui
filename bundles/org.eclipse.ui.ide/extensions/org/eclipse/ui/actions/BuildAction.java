@@ -223,7 +223,7 @@ public void run() {
 	// Save all resources prior to doing build
 	saveAllResources();
 
-	super.run();
+	runInBackground(ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
 }
 /**
  * Causes all editors to save any modified resources depending on the user's
