@@ -20,11 +20,13 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -37,6 +39,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -64,8 +67,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDEEncoding;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * Launch configuration tab used to specify the location a launch configuration
@@ -114,6 +121,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private Text fFileText;
     private Button fVariables;
     private Button fAppend;
+    private Button fWorkspaceBrowse;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -206,13 +214,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
         gd.horizontalSpan = 2;
         group.setLayoutData(gd);
-        GridLayout layout = new GridLayout(4, false);
+        GridLayout layout = new GridLayout(5, false);
         group.setLayout(layout);
         group.setFont(parent.getFont());
         
         fConsoleOutput = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.5")); //$NON-NLS-1$
         gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
-        gd.horizontalSpan = 4;
+        gd.horizontalSpan = 5;
         fConsoleOutput.setLayoutData(gd);
         
         fConsoleOutput.addSelectionListener(new SelectionAdapter() {
@@ -223,23 +231,33 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         
         fFileOutput = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.6")); //$NON-NLS-1$
         fFileOutput.setLayoutData(new GridData(SWT.BEGINNING, SWT.NORMAL, false, false));
+        
         fFileText = new Text(group, SWT.SINGLE | SWT.BORDER);
-        fFileText.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, true, false));
-        fVariables = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.9"), null); //$NON-NLS-1$
-        fFileBrowse = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.7"), null); //$NON-NLS-1$
+        gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
+        gd.horizontalSpan = 4;
+        fFileText.setLayoutData(gd);
         
         Label spacer = new Label(group,SWT.NONE);
+        gd = new GridData(SWT.FILL, SWT.NORMAL, true, false);
+        gd.horizontalSpan=2;
+        spacer.setLayoutData(gd);
+        fWorkspaceBrowse = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.12"), null); //$NON-NLS-1$
+        fFileBrowse = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.7"), null); //$NON-NLS-1$
+        fVariables = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.9"), null); //$NON-NLS-1$
+
+        spacer = new Label(group,SWT.NONE);
         spacer.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, false, false));
         fAppend = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.11")); //$NON-NLS-1$
         gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
+        gd.horizontalSpan = 4;
         fAppend.setLayoutData(gd);
-        
         
         fFileOutput.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean enabled = fFileOutput.getSelection();
                 fFileText.setEnabled(enabled);
                 fFileBrowse.setEnabled(enabled);
+                fWorkspaceBrowse.setEnabled(enabled);
                 fVariables.setEnabled(enabled);
                 fAppend.setEnabled(enabled);
                 updateLaunchConfigurationDialog();
@@ -249,6 +267,23 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fAppend.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 updateLaunchConfigurationDialog();
+            }
+        });
+        
+        fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
+                dialog.setTitle(LaunchConfigurationsMessages.getString("CommonTab.13")); //$NON-NLS-1$
+                dialog.setMessage(LaunchConfigurationsMessages.getString("CommonTab.14")); //$NON-NLS-1$
+                dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
+                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+                int buttonId = dialog.open();
+                if (buttonId == IDialogConstants.OK_ID) {
+                    IResource resource = (IResource) dialog.getFirstResult();
+                    String arg = resource.getFullPath().toString();
+                    String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
+                    fFileText.setText(fileLoc);
+                }
             }
         });
         
@@ -446,6 +481,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fFileOutput.setSelection(haveOutputFile);
         fFileText.setEnabled(haveOutputFile);
         fFileBrowse.setEnabled(haveOutputFile);
+        fWorkspaceBrowse.setEnabled(haveOutputFile);
         fVariables.setEnabled(haveOutputFile);
         fAppend.setEnabled(haveOutputFile);
     }
