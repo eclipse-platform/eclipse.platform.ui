@@ -34,7 +34,7 @@ Part 3 discusses how to add
 functionality such as menus, views, and help files.
 </p>
 <p><b>By Ed Burnette, SAS Institute Inc.</b><br>
-<font size="-1">May 3, 2004 - Updated for 3.0M8</font></p>
+<font size="-1">May 24, 2004 - Updated help menu for 3.0M9</font></p>
 <p><i>Note that Eclipse 3 is undergoing constant change so the steps you need to
 take, the APIs, and the results may vary slightly (or not so slightly) from this
 description.</i></p>
@@ -377,8 +377,6 @@ These aren't documented anywhere other than in the Javadoc for
 for their intended order.
 The sample code that accompanies this tutorial was created by looking at the
 <code>IDEWorkbenchAdvisor</code> class used by the Eclipse IDE.
-The Help menu was constructed completely from contributions that reference these
-standard groups.
 </p>
 
 <h2>Help</h2>
@@ -432,9 +430,10 @@ Here's the current list (subject to change in future builds):
 <li><code>org.eclipse.tomcat</code>
 </ul>
 <p>
-Including these plug-ins has the side-effect of contributing a 
-Help Contents action to your Help menu
-that will fire up the help browser like the one shown in figure 2.
+See <code>createHelpMenu()</code> in the example for code
+to add the Help Contents action to your Help menu.
+When you select it, this action will fire up a
+help browser like the one shown in figure 2.
 </p>
 
 <img src="images/help.png">
