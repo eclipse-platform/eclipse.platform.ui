@@ -48,11 +48,11 @@ public class StatusLineContributionItem extends ContributionItem {
 	public void fill(Composite parent) {
 		label = new CLabel(parent, SWT.NONE); //SWT.SHADOW_IN);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
-		Color[] colors = new Color[2];
-		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		colors[1] = label.getBackground();
-		int[] gradient = new int[] { JFaceColors.STATUS_PERCENT };
-		label.setBackground(colors, gradient);
+//		Color[] colors = new Color[2];
+//		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+//		colors[1] = label.getBackground();
+//		int[] gradient = new int[] { JFaceColors.STATUS_PERCENT };
+//		label.setBackground(colors, gradient);
 
 		if (widthHint < 0) {
 			GC gc = new GC(parent);
