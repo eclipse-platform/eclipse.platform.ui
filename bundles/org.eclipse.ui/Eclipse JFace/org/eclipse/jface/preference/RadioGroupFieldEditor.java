@@ -49,13 +49,21 @@ public class RadioGroupFieldEditor extends FieldEditor {
 	 * (before creation and after disposal).
 	 */
 	private Button[] radioButtons;
+	
+	/**
+	 * Whether to use a Group control.
+	 */
+	private boolean useGroup;
 /**
  * Creates a new radio group field editor 
  */
 protected RadioGroupFieldEditor() {
 }
 /**
- * Creates a radio group field editor.
+ * Creates a radio group field editor.  
+ * This constructor does not use a <code>Group</code> to contain the radio buttons.
+ * It is equivalent to using the following constructor with <code>false</code>
+ * for the <code>useGroup</code> argument.
  * <p>
  * Example usage:
  * <pre>
@@ -77,10 +85,39 @@ protected RadioGroupFieldEditor() {
  * @param parent the parent of the field editor's control
  */
 public RadioGroupFieldEditor(String name, String labelText, int numColumns, String[][] labelAndValues, Composite parent) {
+	this(name, labelText, numColumns, labelAndValues, parent, false);
+}
+
+/**
+ * Creates a radio group field editor.
+ * <p>
+ * Example usage:
+ * <pre>
+ *		RadioGroupFieldEditor editor= new RadioGroupFieldEditor(
+ *			"GeneralPage.DoubleClick", resName, 1,
+ *			new String[][] {
+ *				{"Open Browser", "open"},
+ *				{"Expand Tree", "expand"}
+ *			},
+ *          parent,
+ *          true);	
+ * </pre>
+ * </p>
+ * 
+ * @param name the name of the preference this field editor works on
+ * @param labelText the label text of the field editor
+ * @param numColumns the number of columns for the radio button presentation
+ * @param labelAndValues list of radio button [label, value] entries;
+ *  the value is returned when the radio button is selected
+ * @param parent the parent of the field editor's control
+ * @param useGroup whether to use a Group control to contain the radio buttons
+ */
+public RadioGroupFieldEditor(String name, String labelText, int numColumns, String[][] labelAndValues, Composite parent, boolean useGroup) {
 	init(name, labelText);
 	Assert.isTrue(checkArray(labelAndValues));
 	this.labelsAndValues = labelAndValues;
 	this.numColumns = numColumns;
+	this.useGroup = useGroup;
 	createControl(parent);
 }
 /* (non-Javadoc)
@@ -88,7 +125,9 @@ public RadioGroupFieldEditor(String name, String labelText, int numColumns, Stri
  */
 protected void adjustForNumColumns(int numColumns) {
 	Control control = getLabelControl();
-	((GridData)control.getLayoutData()).horizontalSpan = numColumns;
+	if (control != null) {
+		((GridData)control.getLayoutData()).horizontalSpan = numColumns;
+	}
 	((GridData)radioBox.getLayoutData()).horizontalSpan = numColumns;
 }
 /**
@@ -111,16 +150,23 @@ private boolean checkArray(String[][] table) {
  * Method declared on FieldEditor.
  */
 protected void doFillIntoGrid(Composite parent, int numColumns) {
-	Control control = getLabelControl(parent);
-	GridData gd = new GridData();
-	gd.horizontalSpan = numColumns;
-	control.setLayoutData(gd);
+	if (useGroup) {
+		Control control = getRadioBoxControl(parent);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		control.setLayoutData(gd);
+	}
+	else {
+		Control control = getLabelControl(parent);
+		GridData gd = new GridData();
+		gd.horizontalSpan = numColumns;
+		control.setLayoutData(gd);
+		control = getRadioBoxControl(parent);
+		gd = new GridData();
+		gd.horizontalSpan = numColumns;
+		gd.horizontalIndent = indent;
+		control.setLayoutData(gd);
+	}
 
-	radioBox = getRadioBoxControl(parent);
-	gd = new GridData();
-	gd.horizontalSpan = numColumns;
-	gd.horizontalIndent = indent;
-	radioBox.setLayoutData(gd);
 }
 /* (non-Javadoc)
  * Method declared on FieldEditor.
@@ -158,13 +204,26 @@ public int getNumberOfControls() {
  */
 public Composite getRadioBoxControl(Composite parent) {
 	if (radioBox == null) {
-		radioBox = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.horizontalSpacing = HORIZONTAL_GAP;
-		layout.numColumns = numColumns;
-		radioBox.setLayout(layout);
+		if (useGroup) {
+			Group group = new Group(parent, SWT.NONE);
+			String text = getLabelText();
+			if (text != null)
+				group.setText(text);
+			radioBox = group;
+			GridLayout layout = new GridLayout();
+			layout.horizontalSpacing = HORIZONTAL_GAP;
+			layout.numColumns = numColumns;
+			radioBox.setLayout(layout);
+		}
+		else {
+			radioBox = new Composite(parent, SWT.NONE);
+			GridLayout layout = new GridLayout();
+			layout.marginWidth = 0;
+			layout.marginHeight = 0;
+			layout.horizontalSpacing = HORIZONTAL_GAP;
+			layout.numColumns = numColumns;
+			radioBox.setLayout(layout);
+		}
 
 		radioButtons = new Button[labelsAndValues.length];
 		for (int i = 0; i < labelsAndValues.length; i++) {
@@ -204,6 +263,7 @@ public void setIndent(int indent) {
 	else
 		this.indent = indent;
 }
+
 /**
  * Select the radio button that conforms to the given value.
  *
