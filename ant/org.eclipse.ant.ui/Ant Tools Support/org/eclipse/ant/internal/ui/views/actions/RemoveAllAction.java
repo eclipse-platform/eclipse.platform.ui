@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -31,7 +32,10 @@ public class RemoveAllAction extends Action implements IUpdate {
 	}
 	
 	public void run() {
-		view.removeAllProjects();
+		boolean proceed = MessageDialog.openQuestion(view.getViewSite().getShell(), AntViewActionMessages.getString("RemoveAllAction.0"), AntViewActionMessages.getString("RemoveAllAction.1")); //$NON-NLS-1$ //$NON-NLS-2$
+		if (proceed) {
+			view.removeAllProjects();
+		}
 	}
 
 	/* (non-Javadoc)
