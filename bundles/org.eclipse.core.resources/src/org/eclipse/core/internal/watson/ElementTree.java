@@ -109,17 +109,6 @@ public class ElementTree {
 	}
 
 	/**
-	 * Creates a new element tree having as root elements the root
-	 * elements of the given trees.
-	 * This constructor allows element trees to be built bottom-up.
-	 * Note that this is a relatively expensive operation.
-	 */
-	public ElementTree(ElementTree[] children) {
-		DataTreeNode node = nodeForElement(null, null, children);
-		initialize(new DeltaDataTree(node));
-	}
-
-	/**
 	 * Creates a new element tree having a single (root) element with the given 
 	 * name and data.
 	 */
@@ -151,14 +140,6 @@ public class ElementTree {
 	 */
 	protected ElementTree(DeltaDataTree tree) {
 		initialize(tree);
-	}
-
-	/**
-	 * Creates an <code>ElementTree</code> given an ElementSubtree data structure.
-	 */
-	ElementTree(ElementSubtree subtree) {
-		DataTreeNode rootNode = nodeFor(null, null, subtree.getChildren());
-		initialize(new DeltaDataTree(rootNode));
 	}
 
 	/**
@@ -425,17 +406,6 @@ public class ElementTree {
 	}
 
 	/**
-	 * Returns the path of the N'th child of the element
-	 * specified by the given path.
-	 * The given element must be present in this tree, and
-	 * have such a child.
-	 */
-	public IPath getChild(IPath key, int childIndex) {
-		Assert.isNotNull(key);
-		return getChildIDs(key)[childIndex];
-	}
-
-	/**
 	 * Returns the number of children of the element
 	 * specified by the given path.
 	 * The given element must be present in this tree.
@@ -484,19 +454,6 @@ public class ElementTree {
 	}
 
 	/**
-	 * Returns the delta representation for this tree.
-	 * Returns <code>null</code> if this tree does not have
-	 * a delta representation.
-	 */
-	public ElementTreeDelta getDelta() {
-		ElementTree parent = getParent();
-		if (parent == null) {
-			return null;
-		}
-		return new ElementTreeDelta(parent, this, DefaultElementComparator.getComparator());
-	}
-
-	/**
 	 * Returns the element data for the given element identifier.
 	 * The given element must be present in this tree.
 	 */
@@ -513,16 +470,6 @@ public class ElementTree {
 			return lookup.data;
 		elementNotFound(key);
 		return null; // can't get here
-	}
-
-	/**
-	 * Returns the entire tree structure as an ElementSubtree.
-	 *
-	 * @see ElementSubtree
-	 */
-	/*package */ElementSubtree getElementSubtree() {
-		DataTreeNode elementNode = (DataTreeNode) tree.copyCompleteSubtree(tree.rootKey());
-		return new ElementSubtree(elementNode);
 	}
 
 	/**
@@ -799,26 +746,6 @@ public class ElementTree {
 	public synchronized ElementTree newEmptyDelta() {
 		lookupCache = null; // Don't want old trees hanging onto cached infos.
 		return new ElementTree(this);
-	}
-
-	/** 
-	 * Computes the node for an element given its element name, element info and a list
-	 * of ElementTypeSubtrees.
-	 */
-	private DataTreeNode nodeFor(String elementName, Object elementInfo, ElementSubtree[] subtrees) {
-		if (subtrees == null || subtrees.length == 0) {
-			return new DataTreeNode(elementName, elementInfo);
-		}
-		DataTreeNode[] childNodes = new DataTreeNode[subtrees.length];
-		for (int i = subtrees.length; --i >= 0;) {
-			childNodes[i] = nodeFor(subtrees[i]);
-		}
-		AbstractDataTreeNode.sort(childNodes);
-		return new DataTreeNode(elementName, elementInfo, childNodes);
-	}
-
-	private DataTreeNode nodeFor(ElementSubtree subtree) {
-		return nodeFor(subtree.elementName, subtree.elementData, subtree.getChildren());
 	}
 
 	/**

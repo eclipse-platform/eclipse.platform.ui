@@ -891,12 +891,6 @@ public class Project extends Container implements IProject {
 		return status;
 	}
 
-	protected void renameMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
-		java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
-		java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
-		getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, monitor);
-	}
-
 	/* (non-Javadoc)
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 */

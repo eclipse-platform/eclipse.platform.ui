@@ -26,12 +26,6 @@ public class ResourceDeltaInfo {
 		this.comparator = comparator;
 	}
 
-	public void destroy() {
-		workspace = null;
-		allMarkerDeltas = null;
-		comparator = null;
-	}
-
 	public ResourceComparator getComparator() {
 		return comparator;
 	}

@@ -61,44 +61,9 @@ public class HistoryStore2 implements IHistoryStore {
 		}
 	}
 
-	class HistoryMoveVisitor extends Bucket.Visitor {
-		private List changes = new ArrayList();
-		private IPath destination;
-		private IPath source;
-
-		public HistoryMoveVisitor(IPath source, IPath destination) {
-			this.source = source;
-			this.destination = destination;
-		}
-
-		private void applyChanges(HistoryBucket bucket) {
-			if (changes.isEmpty())
-				return;
-
-			for (Iterator i = changes.iterator(); i.hasNext();)
-				bucket.addBlobs((HistoryEntry) i.next());
-		}
-
-		public void beforeSaving(Bucket bucket) {
-			applyChanges((HistoryBucket) bucket);
-			changes.clear();
-		}
-
-		public int visit(Entry sourceEntry) {
-			IPath destinationPath = destination.append(sourceEntry.getPath().removeFirstSegments(source.segmentCount()));
-			HistoryEntry destinationEntry = new HistoryEntry(destinationPath, (HistoryEntry) sourceEntry);
-			// we may be copying to the same source bucket, collect to make change effective later
-			// since we cannot make changes to it while iterating
-			changes.add(destinationEntry);
-			// delete original entry
-			sourceEntry.delete();
-			return CONTINUE;
-		}
-	}
-
 	private BlobStore blobStore;
 	private Set blobsToRemove = new HashSet();
-	private BucketTree tree;
+	BucketTree tree;
 	private Workspace workspace;
 	
 	public HistoryStore2(Workspace workspace, IPath location, int limit) {

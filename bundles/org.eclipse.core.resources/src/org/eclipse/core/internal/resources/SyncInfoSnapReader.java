@@ -12,13 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.osgi.util.NLS;
 
 public class SyncInfoSnapReader {
 	protected Workspace workspace;
@@ -39,22 +33,6 @@ public class SyncInfoSnapReader {
 				return new SyncInfoSnapReader_3(workspace, synchronizer);
 			default :
 				throw new IOException(Messages.resources_format);
-		}
-	}
-
-	public void readPartners(DataInputStream input) throws CoreException {
-		try {
-			int size = input.readInt();
-			Set registry = new HashSet(size);
-			for (int i = 0; i < size; i++) {
-				String qualifier = input.readUTF();
-				String local = input.readUTF();
-				registry.add(new QualifiedName(qualifier, local));
-			}
-			synchronizer.setRegistry(registry);
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.resources_readSync, e);
-			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, message));
 		}
 	}
 

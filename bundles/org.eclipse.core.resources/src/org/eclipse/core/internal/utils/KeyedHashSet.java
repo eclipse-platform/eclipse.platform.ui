@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /** Adapted from a homonym class in org.eclipse.osgi. A hash table of 
  * <code>KeyedElement</code>s.
@@ -27,45 +25,11 @@ public class KeyedHashSet {
 		public int getKeyHashCode();
 	}
 
-	class KeyedHashSetIterator implements Iterator {
-		private int currentIndex = -1;
-		private int found;
-
-		public boolean hasNext() {
-			return found < elementCount;
-		}
-
-		public Object next() {
-			if (!hasNext())
-				throw new NoSuchElementException();
-			while (++currentIndex < elements.length)
-				if (elements[currentIndex] != null) {
-					found++;
-					return elements[currentIndex];
-				}
-			// this would mean we have less elements than we thought
-			throw new NoSuchElementException();
-		}
-
-		public void remove() {
-			// as allowed by the API
-			throw new UnsupportedOperationException();
-		}
-	}
-
 	protected static final int MINIMUM_SIZE = 7;
 	private int capacity;
 	protected int elementCount = 0;
 	protected KeyedElement[] elements;
 	protected boolean replace;
-
-	public KeyedHashSet() {
-		this(MINIMUM_SIZE, true);
-	}
-
-	public KeyedHashSet(boolean replace) {
-		this(MINIMUM_SIZE, replace);
-	}
 
 	public KeyedHashSet(int capacity) {
 		this(capacity, true);
@@ -75,14 +39,6 @@ public class KeyedHashSet {
 		elements = new KeyedElement[Math.max(MINIMUM_SIZE, capacity * 2)];
 		this.replace = replace;
 		this.capacity = capacity;
-	}
-
-	public KeyedHashSet(KeyedHashSet original) {
-		elements = new KeyedElement[original.elements.length];
-		System.arraycopy(original.elements, 0, elements, 0, original.elements.length);
-		elementCount = original.elementCount;
-		replace = original.replace;
-		capacity = original.capacity;
 	}
 
 	/**
@@ -132,50 +88,9 @@ public class KeyedHashSet {
 		return add(element);
 	}
 
-	public void addAll(KeyedElement[] toAdd) {
-		for (int i = 0; i < toAdd.length; i++)
-			add(toAdd[i]);
-	}
-
 	public void clear() {
 		elements = new KeyedElement[Math.max(MINIMUM_SIZE, capacity * 2)];
 		elementCount = 0;
-	}
-
-	public boolean contains(KeyedElement element) {
-		return get(element) != null;
-	}
-
-	public boolean containsKey(Object key) {
-		return getByKey(key) != null;
-	}
-
-	public int countCollisions() {
-		int result = 0;
-		int lastHash = 0;
-		boolean found = false;
-		for (int i = 0; i < elements.length; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				found = false;
-			else {
-				int hash = hash(element);
-				if (found)
-					if (lastHash == hash)
-						result++;
-					else
-						found = false;
-				else {
-					lastHash = hash;
-					found = true;
-				}
-			}
-		}
-		return result;
-	}
-
-	public KeyedElement[] elements() {
-		return (KeyedElement[]) elements(new KeyedElement[elementCount]);
 	}
 
 	public Object[] elements(Object[] result) {
@@ -281,10 +196,6 @@ public class KeyedHashSet {
 		return elementCount == 0;
 	}
 
-	public Iterator iterator() {
-		return new KeyedHashSetIterator();
-	}
-
 	private int keyHash(Object key) {
 		return Math.abs(key.hashCode()) % elements.length;
 	}
@@ -347,41 +258,6 @@ public class KeyedHashSet {
 			}
 		}
 		return false;
-	}
-
-	public void removeAll(KeyedElement[] toRemove) {
-		for (int i = 0; i < toRemove.length; i++)
-			remove(toRemove[i]);
-	}
-
-	public boolean removeByKey(Object key) {
-		if (elementCount == 0)
-			return false;
-		int hash = keyHash(key);
-
-		for (int i = hash; i < elements.length; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return false;
-			if (element.getKey().equals(key)) {
-				rehashTo(i);
-				elementCount--;
-				return true;
-			}
-		}
-
-		for (int i = 0; i < hash - 1; i++) {
-			KeyedElement element = elements[i];
-			if (element == null)
-				return false;
-			if (element.getKey().equals(key)) {
-				rehashTo(i);
-				elementCount--;
-				return true;
-			}
-		}
-
-		return true;
 	}
 
 	private boolean shouldGrow() {

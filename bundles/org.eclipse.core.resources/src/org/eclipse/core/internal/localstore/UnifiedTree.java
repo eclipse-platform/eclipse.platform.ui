@@ -56,10 +56,6 @@ public class UnifiedTree {
 	/** Singleton to indicate no local children */
 	private static final Object[] NO_CHILDREN = new Object[0];
 
-	public UnifiedTree() {
-		super();
-	}
-
 	/**
 	 * The root must only be a file or a folder.
 	 */
@@ -268,17 +264,6 @@ public class UnifiedTree {
 			return null;
 		IResource target = getWorkspace().newResource(childPath, type);
 		return createNode(target, stat, location, childName, false);
-	}
-
-	//XXX: do we still need this method? UnifiedTreeNodes are always created with a valid IResource (which may exist or not)
-	//see #createChildNodeFromFileSystem
-	protected UnifiedTreeNode createNodeFromFileSystem(IPath path, String location, String localName) {
-		long stat = CoreFileSystemLibrary.getStat(location);
-		UnifiedTreeNode node = createNode(null, stat, location, localName, false);
-		int type = node.isFile() ? IResource.FILE : IResource.FOLDER;
-		IResource target = getWorkspace().newResource(path, type);
-		node.setResource(target);
-		return node;
 	}
 
 	/**

@@ -71,9 +71,7 @@ public class ElementDeltaTest extends WatsonTest implements IPathConstants {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ElementDeltaTest.class);
-		suite.addTest(DeltaIteratorTest.suite());
-		return suite;
+		return new TestSuite(ElementDeltaTest.class);
 	}
 
 	/**

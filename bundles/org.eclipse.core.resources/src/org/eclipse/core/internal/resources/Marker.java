@@ -314,8 +314,4 @@ public class Marker extends PlatformObject implements IMarker {
 			workspace.endOperation(null, false, null);
 		}
 	}
-
-	void setId(int value) {
-		id = value;
-	}
 }

@@ -99,10 +99,6 @@ public class SaveContext implements ISaveContext {
 		return needDelta;
 	}
 
-	public boolean isSaveNumberNeeded() {
-		return needSaveNumber;
-	}
-
 	/**
 	 * @see ISaveContext
 	 */

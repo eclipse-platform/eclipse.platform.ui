@@ -247,13 +247,6 @@ public abstract class Bucket {
 	protected abstract String getFileName();
 
 	/**
-	 * Returns the directory where this bucket should be stored.
-	 */
-	public File getLocation() {
-		return location == null ? null : location.getParentFile();
-	}
-
-	/**
 	 * Returns the version number for the file format used to persist this bucket.
 	 */
 	protected abstract byte getVersion();

@@ -33,10 +33,6 @@ public class SafeFileOutputStream extends OutputStream {
 		this(file.getAbsolutePath(), null);
 	}
 
-	public SafeFileOutputStream(String targetName) throws IOException {
-		this(targetName, null);
-	}
-
 	/**
 	 * If targetPath is null, the file will be created in the default-temporary directory.
 	 */

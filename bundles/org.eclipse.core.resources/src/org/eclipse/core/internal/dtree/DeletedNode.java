@@ -34,8 +34,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 		if (parentTree.includes(key))
 			return parentTree.copyCompleteSubtree(key);
-		else
-			return this;
+		return this;
 	}
 
 	/**
@@ -54,27 +53,17 @@ public class DeletedNode extends AbstractDataTreeNode {
 		return null;
 	}
 
-	/**
-	 * Replaces the child with the given local name.
-	 */
-	AbstractDataTreeNode childAtPut(String localName) {
-		/* deleted nodes do not have children */
-		return null;
-	}
-
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
 		/**
 		 * Just because there is a deleted node, it doesn't mean there must
 		 * be a corresponding node in the parent.  Deleted nodes can live
 		 * in isolation.
 		 */
-		if (parent.includes(key)) {
+		if (parent.includes(key)) 
 			return convertToRemovedComparisonNode(parent.copyCompleteSubtree(key), NodeComparison.K_REMOVED);
-		} else {
-			// Node doesn't exist in either tree.  Return an empty comparison.
-			// Empty comparisons are omitted from the delta.
-			return new DataTreeNode(key.lastSegment(), new NodeComparison(null, null, 0, 0));
-		}
+		// Node doesn't exist in either tree.  Return an empty comparison.
+		// Empty comparisons are omitted from the delta.
+		return new DataTreeNode(key.lastSegment(), new NodeComparison(null, null, 0, 0));
 	}
 
 	/**
@@ -98,8 +87,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
 		if (parent.includes(key))
 			return this;
-		else
-			return new NoDataDeltaNode(name);
+		return new NoDataDeltaNode(name);
 	}
 
 	/**

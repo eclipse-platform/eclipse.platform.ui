@@ -336,10 +336,6 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return cachedResource;
 	}
 
-	public boolean hasAffectedChildren() {
-		return children.length > 0;
-	}
-
 	/**
 	 * Returns true if this delta represents a phantom member, and false
 	 * otherwise.

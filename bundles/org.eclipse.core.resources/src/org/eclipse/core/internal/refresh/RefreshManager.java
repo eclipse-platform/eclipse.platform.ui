@@ -62,7 +62,7 @@ public class RefreshManager implements IRefreshResult, IManager, Preferences.IPr
 	 * @see org.eclipse.core.resources.refresh.IRefreshResult#monitorFailed(org.eclipse.core.resources.refresh.IRefreshMonitor, org.eclipse.core.resources.IResource)
 	 */
 	public void monitorFailed(IRefreshMonitor monitor, IResource resource) {
-		//should install polling monitor in this case
+		monitors.monitorFailed(monitor, resource);
 	}
 
 	/**

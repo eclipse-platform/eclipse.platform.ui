@@ -328,22 +328,4 @@ public abstract class AbstractDataTree {
 	void setRootNode(AbstractDataTreeNode node) {
 		throw new Error(Messages.dtree_subclassImplement);
 	}
-
-	public String toDebugString() {
-		StringBuffer buffer = new StringBuffer();
-		toDebugString(getRootNode(), buffer, 0);
-		return buffer.toString();
-	}
-
-	private void toDebugString(AbstractDataTreeNode node, StringBuffer buffer, int depth) {
-		for (int i = 0; i < depth; ++i)
-			buffer.append('\t');
-
-		buffer.append(node.toString());
-		buffer.append('\n');
-
-		AbstractDataTreeNode[] childNodes = node.getChildren();
-		for (int i = 0; i < childNodes.length; ++i)
-			toDebugString(childNodes[i], buffer, depth + 1);
-	}
 }

@@ -41,7 +41,6 @@ import org.eclipse.core.runtime.Path;
  * The second way of navigating element tree deltas is using the DeltaIterator.
  * The client provides an implementation of IDeltaVisitor that specifies
  * the code to be executed for each element of the delta.
- * @see DeltaIterator
  * @see IDeltaVisitor
  *
  * @see ElementTree#computeDeltaWith(ElementTree, IElementComparator)

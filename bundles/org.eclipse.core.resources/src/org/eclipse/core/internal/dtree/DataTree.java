@@ -32,16 +32,6 @@ public class DataTree extends AbstractDataTree {
 	}
 
 	/**
-	 * Creates a new tree.
-	 *
-	 * @param rootNode
-	 *	Root node for new tree.
-	 */
-	public DataTree(DataTreeNode rootNode) {
-		this.rootNode = rootNode;
-	}
-
-	/**
 	 * Returns a copy of the node subtree rooted at the given key.
 	 *
 	 * @param key
@@ -206,9 +196,8 @@ public class DataTree extends AbstractDataTree {
 		if (node == null) {
 			handleNotFound(key);
 			return null;
-		} else {
-			return node.getData();
 		}
+		return node.getData();
 	}
 
 	/**
@@ -221,9 +210,8 @@ public class DataTree extends AbstractDataTree {
 		if (parentNode == null) {
 			handleNotFound(parentKey);
 			return null;
-		} else {
-			return parentNode.namesOfChildren();
 		}
+		return parentNode.namesOfChildren();
 	}
 
 	/**
@@ -250,11 +238,9 @@ public class DataTree extends AbstractDataTree {
 	 */
 	public DataTreeLookup lookup(IPath key) {
 		DataTreeNode node = this.findNodeAt(key);
-		if (node == null) {
+		if (node == null)
 			return DataTreeLookup.newLookup(key, false, null);
-		} else {
-			return DataTreeLookup.newLookup(key, true, node.getData());
-		}
+		return DataTreeLookup.newLookup(key, true, node.getData());
 	}
 
 	/**

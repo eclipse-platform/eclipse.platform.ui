@@ -104,24 +104,6 @@ public class BlobStore {
 		return blobFile.delete();
 	}
 
-	public void deleteAll() {
-		deleteAll(storeLocation);
-	}
-
-	public void deleteAll(File root) {
-		if (root.isDirectory()) {
-			String[] list = root.list();
-			if (list != null)
-				for (int i = 0; i < list.length; i++)
-					deleteAll(new File(root, list[i]));
-		}
-		root.delete();
-	}
-
-	public boolean deleteBlob(String uuid) {
-		return deleteBlob(new UniversalUniqueIdentifier(uuid));
-	}
-
 	/**
 	 * Deletes a blobFile. Returns true if the blob was deleted.
 	 */
@@ -157,20 +139,6 @@ public class BlobStore {
 	public InputStream getBlob(UniversalUniqueIdentifier uuid) throws CoreException {
 		File blobFile = fileFor(uuid);
 		return localStore.read(blobFile);
-	}
-
-	public Set getBlobNames() {
-		Set result = new HashSet(50);
-		String[] folders = storeLocation.list();
-		if (folders != null)
-			for (int i = 0; i < folders.length; i++) {
-				File folder = new File(storeLocation, folders[i]);
-				String[] blobs = folder.list();
-				if (blobs != null)
-					for (int j = 0; j < blobs.length; j++)
-						result.add(blobs[j]);
-			}
-		return result;
 	}
 
 	/**

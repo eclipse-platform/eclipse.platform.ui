@@ -81,17 +81,6 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 		return null;
 	}
 
-	public Object read(IPath location) throws IOException {
-		InputStream file = null;
-		try {
-			file = new BufferedInputStream(new FileInputStream(location.toFile()));
-			return read(file);
-		} finally {
-			if (file != null)
-				file.close();
-		}
-	}
-
 	public Object read(IPath location, IPath tempLocation) throws IOException {
 		SafeFileInputStream file = new SafeFileInputStream(location.toOSString(), tempLocation.toOSString());
 		try {

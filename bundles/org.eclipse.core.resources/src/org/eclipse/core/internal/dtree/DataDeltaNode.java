@@ -21,13 +21,6 @@ import org.eclipse.core.runtime.IPath;
  */
 public class DataDeltaNode extends DataTreeNode {
 	/**
-	 * Returns a new node with the given name and children
-	 */
-	DataDeltaNode(String name, AbstractDataTreeNode[] children) {
-		super(name, null, children);
-	}
-
-	/**
 	 * Creates a node with the given name and data, but with no children.
 	 */
 	DataDeltaNode(String name, Object data) {
@@ -99,11 +92,9 @@ public class DataDeltaNode extends DataTreeNode {
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
 		AbstractDataTreeNode[] simplifiedChildren = simplifyWithParent(children, key, parent, comparer);
 		/* don't compare root nodes */
-		if (!key.isRoot() && comparer.compare(parent.getData(key), data) == 0) {
+		if (!key.isRoot() && comparer.compare(parent.getData(key), data) == 0) 
 			return new NoDataDeltaNode(name, simplifiedChildren);
-		} else {
-			return new DataDeltaNode(name, data, simplifiedChildren);
-		}
+		return new DataDeltaNode(name, data, simplifiedChildren);
 	}
 
 	/**

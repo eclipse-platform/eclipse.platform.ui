@@ -169,15 +169,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		}
 	}
 
-	/**
-	 * Compares the time component of two UUIDs.
-	 * 
-	 * @see Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTime(UniversalUniqueIdentifier other) {
-		return compareTime(this.fBits, other.fBits);
-	}
-	
 	public static int compareTime(byte[] fBits1, byte[] fBits2) {
 		for (int i = TIME_FIELD_STOP; i >= 0; i--) 
 			if (fBits1[i] != fBits2[i])

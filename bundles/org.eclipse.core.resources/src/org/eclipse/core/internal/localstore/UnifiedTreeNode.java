@@ -88,10 +88,6 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 		return CoreFileSystemLibrary.isFolder(stat);
 	}
 
-	public boolean isReadOnly() {
-		return CoreFileSystemLibrary.isReadOnly(stat);
-	}
-
 	public void setExistsWorkspace(boolean exists) {
 		this.existsWorkspace = exists;
 	}

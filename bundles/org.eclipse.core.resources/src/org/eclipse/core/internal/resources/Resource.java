@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -877,17 +875,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (project != null && !project.exists())
 			return null;
 		return getLocalManager().locationFor(this);
-	}
-
-	public URL getLocationURL() {
-		IProject project = getProject();
-		if (project != null && !project.exists())
-			return null;
-		try {
-			return new URL("platform:/resource" + getFullPath()); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			return null;
-		}
 	}
 
 	/* (non-Javadoc)

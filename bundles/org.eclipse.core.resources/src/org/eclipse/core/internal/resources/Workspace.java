@@ -765,14 +765,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return createResource(resource, null, phantom, false, false);
 	}
 
-	public ResourceInfo createResource(IResource resource, boolean phantom, boolean overwrite) throws CoreException {
-		return createResource(resource, null, phantom, overwrite, false);
-	}
-
-	public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite) throws CoreException {
-		return createResource(resource, info, phantom, overwrite, false);
-	}
-
 	public static WorkspaceDescription defaultWorkspaceDescription() {
 		return new WorkspaceDescription("Workspace"); //$NON-NLS-1$
 	}

@@ -26,10 +26,6 @@ public class SafeFileInputStream extends FilterInputStream {
 		this(file.getAbsolutePath(), null);
 	}
 
-	public SafeFileInputStream(String targetName) throws IOException {
-		this(targetName, null);
-	}
-
 	/**
 	 * If targetPath is null, the file will be created in the default-temporary directory.
 	 */

@@ -47,17 +47,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 * The Threads that are currently avoiding notification.
 	 */
 	private Set avoidNotify = new HashSet();
-	/**
-	 * The marker change stamp that was last used to update the build marker
-	 * deltas.
-	 */
-	private long buildMarkerChangeId;
-	/**
-	 * With background autobuild, the marker deltas from POST_CHANGE
-	 * notifications must be accumulated so that they can be reused for the
-	 * autobuild notifications.
-	 */
-	private Map buildMarkerDeltas;
+
 	/**
 	 * Indicates whether a notification is currently in progress. Used to avoid
 	 * causing a notification to be requested as a result of another notification.
@@ -321,20 +311,5 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		// notification manager an initial basis for comparison.
 		lastPostBuildTree = lastPostChangeTree = workspace.getElementTree();
 		workspace.addLifecycleListener(this);
-	}
-
-	/**
-	 * Build delta listeners need to receive marker deltas that are accumulated
-	 * over several post change notifications. This method keeps the set of
-	 * marker deltas for auto-build deltas up to date.
-	 * @param newDeltas the most recently computed marker deltas
-	 * @param changeId the generation id of this new set of marker deltas
-	 */
-	protected void updateMarkerDeltas(Map newDeltas, long changeId) {
-		//just return if we have already seen these changes
-		if (changeId == buildMarkerChangeId)
-			return;
-		buildMarkerChangeId = changeId;
-		buildMarkerDeltas = MarkerDelta.merge(buildMarkerDeltas, lastDelta.getDeltaInfo().getMarkerDeltas());
 	}
 }

@@ -240,14 +240,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	}
 
 	/**
-	 * Returns true if this resource has the potential to be
-	 * (or have been) synchronized.  
-	 */
-	public boolean synchronizing() {
-		return false;
-	}
-
-	/**
 	 * @see IResource#touch(IProgressMonitor)
 	 */
 	public void touch(IProgressMonitor monitor) {

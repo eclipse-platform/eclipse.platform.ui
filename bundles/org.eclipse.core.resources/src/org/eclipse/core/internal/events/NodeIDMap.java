@@ -40,14 +40,6 @@ public class NodeIDMap {
 	}
 
 	/**
-	 * Returns true if the given element is contained in the map,
-	 * and false otherwise.
-	 */
-	public boolean contains(long id) {
-		return getIndex(id) >= 0;
-	}
-
-	/**
 	 * The array isn't large enough so double its size and rehash
 	 * all its current values.
 	 */
@@ -223,64 +215,7 @@ public class NodeIDMap {
 		put(id, null, path);
 	}
 
-	/**
-	 * The element at the given index has been removed so move
-	 * elements to keep the set properly hashed.
-	 */
-	protected void rehashTo(int anIndex) {
-
-		int target = anIndex;
-		int index = anIndex + 1;
-		if (index >= ids.length)
-			index = 0;
-		long id = ids[index];
-		IPath oldPath = oldPaths[index];
-		IPath newPath = newPaths[index];
-		while (id != 0) {
-			int hashIndex = hashFor(id, ids.length);
-			boolean match;
-			if (index < target)
-				match = !(hashIndex > target || hashIndex <= index);
-			else
-				match = !(hashIndex > target && hashIndex <= index);
-			if (match) {
-				ids[target] = id;
-				oldPaths[target] = oldPath;
-				newPaths[target] = newPath;
-				target = index;
-			}
-			index++;
-			if (index >= ids.length)
-				index = 0;
-			id = ids[index];
-			oldPath = oldPaths[index];
-			newPath = newPaths[index];
-		}
-		ids[target] = 0;
-		oldPaths[target] = null;
-		newPaths[target] = null;
-	}
-
-	/**
-	 * Removes the entry from the map with the given node ID. Does
-	 * nothing if no such node exists in the map.
-	 */
-	public void remove(long idToRemove) {
-		int indexToRemove = getIndex(idToRemove);
-		if (indexToRemove < 0)
-			return;
-		rehashTo(indexToRemove);
-		elementCount--;
-	}
-
 	private boolean shouldGrow() {
 		return elementCount > ids.length * LOAD_FACTOR;
-	}
-
-	/**
-	 * Returns the number of elements currently stored in the map.
-	 */
-	public int size() {
-		return elementCount;
 	}
 }

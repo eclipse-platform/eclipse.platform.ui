@@ -269,18 +269,6 @@ public class MarkerManager implements IManager {
 	}
 
 	/**
-	 * Returns true if any of the given markers are persistent,
-	 * and false if all are transient.
-	 */
-	public boolean isPersistent(MarkerInfo[] infos) {
-		for (int i = 0; i < infos.length; i++) {
-			if (isPersistent(infos[i]))
-				return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Returns true if <code>type</code> is a sub type of <code>superType</code>.
 	 */
 	public boolean isSubtype(String type, String superType) {
