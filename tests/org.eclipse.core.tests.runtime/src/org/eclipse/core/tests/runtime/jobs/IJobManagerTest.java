@@ -519,7 +519,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		//finding all jobs from the first family should return an empty array
 		result = manager.find(first);
-		assertTrue("7.2", result.length == 0);
+		assertEquals("7.2", 0, result.length);
 		
 		//finding all jobs from the second family should return all the jobs (they are just sleeping)
 		result = manager.find(second);
@@ -557,11 +557,19 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 		
 		//finding all jobs by supplying the NULL parameter should return 8 jobs (4 from the 3rd family, and 4 from the 5th family)
+		//note that this might find other jobs that are running as a side-effect of the test
+		//suites running, such as snapshot
+		allJobs.addAll(Arrays.asList(jobs));
 		result = manager.find(null);
-		assertTrue("11.0", result.length == 8);
+		assertTrue("11.0", result.length >= 8);
 		for(int i = 0; i < result.length; i++) {
+			//only test jobs that we know about
+			if (allJobs.remove(result[i]))
 				assertTrue("11." +(i+1), (result[i].belongsTo(third) || result[i].belongsTo(fifth)));
 		}
+		
+		assertEquals("11.2", 12, allJobs.size());
+		allJobs.clear();
 		
 		//cancel the fifth family of jobs
 		manager.cancel(fifth);
@@ -575,8 +583,19 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 		
 		//finding all jobs should return an empty array
+		//note that this might find other jobs that are running as a side-effect of the test
+		//suites running, such as snapshot
+		allJobs.addAll(Arrays.asList(jobs));
 		result = manager.find(null);
-		assertTrue("13.0", result.length == 0);
+		assertTrue("13.0", result.length >= 0);
+		
+		for(int i = 0; i < result.length; i++) {
+			//test jobs that we know about should not be found (they should have all been removed)
+			if (allJobs.remove(result[i]))
+				assertTrue("14." + i, false);
+		}
+		assertEquals("15.0", NUM_JOBS, allJobs.size());
+		allJobs.clear();
 	}
 	
 	public void testJobFamilyNULL() {
@@ -706,6 +725,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//cancel the second family of jobs
 		manager.cancel(second);
 		waitForCancel(jobs[1]);
+		waitForCancel(jobs[NUM_JOBS-2]);
 		
 		//all the jobs should now be in the NONE state
 		for(int j = 0; j < NUM_JOBS; j++) {
