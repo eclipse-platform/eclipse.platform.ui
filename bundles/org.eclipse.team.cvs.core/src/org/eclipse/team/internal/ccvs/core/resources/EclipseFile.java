@@ -463,7 +463,18 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				}
 			} else {
 				// reset the file timestamp to the one from the entry line
+			    boolean reset = false;
+			    if (isReadOnly()) {
+			        // We can only set the timestamp if the file is not read-only.
+			        // We will get a situation like this if the timestamp changes due to a time change (e.g. daylight savings)
+			        setReadOnly(false);
+			        reset = true;
+			    }
 				setTimeStamp(timeStamp);
+				if (reset) {
+				    // Make sure we set the file back to read-only
+				    setReadOnly(true);
+				}
 				// (newInfo = null) No need to set the newInfo as there is no sync info change
 			}
 			// (modified = false) the file will be no longer modified
