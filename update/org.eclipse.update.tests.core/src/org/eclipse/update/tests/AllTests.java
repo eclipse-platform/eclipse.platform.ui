@@ -11,7 +11,7 @@ import org.eclipse.update.tests.parser.AllParserTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
 import org.eclipse.update.tests.uivalues.AllCoreUITests;
 
-public class AllTests extends TestCase {
+public class AllTests extends TestSuite {
 public AllTests(String name) {
 	super(name);
 }
