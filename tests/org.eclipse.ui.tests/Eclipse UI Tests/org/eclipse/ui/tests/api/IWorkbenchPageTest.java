@@ -285,7 +285,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(editor.getSite().getId(), id);
 		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(callTrace.contains( "partActivated"), false);
-		assertEquals(callTrace.contains( "partBroughtToTop"), false);
+		assertEquals(callTrace.contains( "partBroughtToTop"), true);
 
 		fActivePage.activate(extra);
 
@@ -397,7 +397,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
 		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
-		assertEquals(listenerCall.contains( "partBroughtToTop"), false);
+		assertEquals(listenerCall.contains( "partBroughtToTop"), true);
 		assertEquals(listenerCall.contains( "partActivated"), false);	
 		assertEquals(editorCall.contains( "gotoMarker"), true);		
 		fActivePage.closeEditor(editor, false);
@@ -430,7 +430,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
 		assertEquals(editorCall.contains( "gotoMarker"), true);
 		assertEquals(listenerCall.contains( "partActivated"), false);
-		assertEquals(listenerCall.contains( "partBroughtToTop"), false);
+		assertEquals(listenerCall.contains( "partBroughtToTop"), true);
 		//do not close the editor this time
 
 		fActivePage.activate(extra);
