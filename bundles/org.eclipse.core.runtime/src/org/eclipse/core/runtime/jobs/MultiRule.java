@@ -108,12 +108,11 @@ public class MultiRule implements ISchedulingRule {
 					return false;
 			}
 			return true;
-		} else {
-			for (int i = 0; i < rules.length; i++)
-				if (rules[i].contains(rule))
-					return true;
-			return false;
 		}
+		for (int i = 0; i < rules.length; i++)
+			if (rules[i].contains(rule))
+				return true;
+		return false;
 	}
 
 	public boolean isConflicting(ISchedulingRule rule) {

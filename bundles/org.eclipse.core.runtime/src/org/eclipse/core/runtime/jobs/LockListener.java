@@ -30,6 +30,9 @@ public class LockListener {
 	/**
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
 	 * Returns whether the thread should be granted immediate access to the lock.
+	 * <p>
+	 * This default implementation always returns <code>false</code>. 
+	 * Subclasses may override.
 	 * 
 	 * @param lockOwner the thread that currently owns the lock this thread is
 	 * waiting for, or <code>null</code> if unknown.
@@ -42,8 +45,11 @@ public class LockListener {
 
 	/**
 	 * Notification that a thread is about to release a lock.
+	 * <p>
+	 * This default implementation does nothing. Subclasses may override.
 	 */
 	public void aboutToRelease() {
+		//do nothing
 	}
 
 	/**
