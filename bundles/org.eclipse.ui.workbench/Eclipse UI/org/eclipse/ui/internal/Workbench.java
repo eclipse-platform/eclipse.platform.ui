@@ -484,6 +484,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		
 		autoBuild = description.isAutoBuilding();
 		if (autoBuild) {
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			store.setValue(IPreferenceConstants.AUTO_BUILD, false);
 			description.setAutoBuilding(false);
 			try {
 				workspace.setDescription(description);
@@ -539,9 +541,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			try {
 				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 					protected void execute(IProgressMonitor monitor) throws CoreException {
+						monitor.setTaskName(WorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
+
 						IWorkspace workspace = ResourcesPlugin.getWorkspace();
 						IWorkspaceDescription description = workspace.getDescription();
-						monitor.setTaskName(WorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
 						description.setAutoBuilding(true);
 						workspace.setDescription(description);
 					}
@@ -555,9 +558,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			} catch (InvocationTargetException exception) {
 				MessageDialog.openError(
 					shell, 
-					WorkbenchMessages.getString("Workspace.problemsTitle"), 	//$NON-NLS-1$
+					WorkbenchMessages.getString("Workspace.problemsTitle"),		//$NON-NLS-1$
 					WorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
-			}							
+			}
+			// update the preference store so that property change listener
+			// get notified of preference change.
+			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+			store.setValue(IPreferenceConstants.AUTO_BUILD, true);
+			updateBuildActions(true);			
 		}
 	}
 	/**
@@ -811,21 +819,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 						IncrementalProjectBuilder.INCREMENTAL_BUILD);
 					action.doBuild();
 				}
-
-				// Update the menu/tool bars for each window.
-				Window[] wins = windowManager.getWindows();
-				for (int i = 0; i < wins.length; i++) {
-					if (autoBuildSetting) {
-						((WorkbenchWindow)wins[i]).getActionBuilder().removeManualIncrementalBuildAction();
-					} else {
-						((WorkbenchWindow)wins[i]).getActionBuilder().addManualIncrementalBuildAction();
-					}
-				}
+				updateBuildActions(newAutoBuildSetting);
 			}
 		}
 	}
-		
-
 	/**
 	 * Initializes the workbench.
 	 *
@@ -1698,5 +1695,24 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	protected final void setActivatedWindow(WorkbenchWindow window) {
 		activatedWindow = window;
+	}
+
+	/**
+	 * Update the action bar of every workbench window to
+	 * add/remove the manual build actions.
+	 * 
+	 * @param autoBuildSetting <code>true</code> auto build is enabled 
+	 * 	<code>false</code> auto build is disabled
+	 */
+	private void updateBuildActions(boolean autoBuildSetting) {
+		// Update the menu/tool bars for each window.
+		Window[] wins = windowManager.getWindows();
+		for (int i = 0; i < wins.length; i++) {
+			if (autoBuildSetting) {
+				((WorkbenchWindow)wins[i]).getActionBuilder().removeManualIncrementalBuildAction();
+			} else {
+				((WorkbenchWindow)wins[i]).getActionBuilder().addManualIncrementalBuildAction();
+			}
+		}
 	}
 }
