@@ -69,7 +69,7 @@ public class CVSLightweightDecorator
 	private static ImageDescriptor newResource;
 	private static ImageDescriptor edited;
 
-	private static ExceptionCollector exceptions;
+	private static ExceptionCollector exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //$NON-NLS-1$;
 
 	/*
 	 * Define a cached image descriptor which only creates the image data once
@@ -127,7 +127,6 @@ public class CVSLightweightDecorator
 		TeamUI.addPropertyChangeListener(this);
 		CVSUIPlugin.addPropertyChangeListener(this);
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
-		exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //$NON-NLS-1$
 	}
 
 	public static boolean isDirty(final ICVSResource cvsResource) {
@@ -241,7 +240,7 @@ public class CVSLightweightDecorator
 
 			// if the resource does not have a location then return. This can happen if the resource
 			// has been deleted after we where asked to decorate it.
-			if(resource.getLocation() == null) {
+			if(!resource.isAccessible() || resource.getLocation() == null) {
 				return;
 			}
 
