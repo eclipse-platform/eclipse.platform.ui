@@ -86,6 +86,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  */
 public class HistoryView extends ViewPart implements ISelectionListener {
 	private IFile file;
+	// cached for efficiency
+	private ILogEntry[] entries;
 	private CVSTeamProvider provider;
 	
 	private TableViewer tableViewer;
@@ -400,6 +402,9 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		TableViewer viewer = new TableViewer(table);
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
+				// Short-circuit to optimize
+				if (entries != null) return entries;
+				
 				if (!(inputElement instanceof ICVSRemoteFile)) return null;
 				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
 				final Object[][] result = new Object[1][];
@@ -407,7 +412,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							try {
-								result[0] = remoteFile.getLogEntries(monitor);
+								entries = remoteFile.getLogEntries(monitor);
+								result[0] = entries;
 							} catch (TeamException e) {
 								throw new InvocationTargetException(e);
 							}
@@ -428,6 +434,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			public void dispose() {
 			}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				entries = null;
 			}
 		});
 		viewer.setLabelProvider(new HistoryLabelProvider());
