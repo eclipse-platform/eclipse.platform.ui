@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 import java.io.File;
+import java.net.*;
 import java.net.URL;
 import java.util.*;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.PendingChange;
 import org.eclipse.update.internal.ui.parts.*;
@@ -45,6 +48,8 @@ public class TargetPage extends BannerPage {
 		"InstallWizard.TargetPage.location.message";
 	private static final String KEY_LOCATION_EMPTY =
 		"InstallWizard.TargetPage.location.empty";
+	private static final String KEY_LOCATION_EXISTS =
+		"InstallWizard.TargetPage.location.exists";
 	private static final String KEY_LOCATION_ERROR_TITLE =
 		"InstallWizard.TargetPage.location.error.title";
 	private static final String KEY_LOCATION_ERROR_MESSAGE =
@@ -429,6 +434,14 @@ public class TargetPage extends BannerPage {
 				csite = config.createLinkedConfiguredSite(file);
 				config.addConfiguredSite(csite);
 			} else {
+				if (!ensureUnique(file, config)) {
+					String title = UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
+					String message = UpdateUI.getFormattedMessage(
+								KEY_LOCATION_EXISTS,
+								file.getPath());
+					MessageDialog.openError(shell, title, message);
+					return null;
+				}
 				csite = config.createConfiguredSite(file);
 				IStatus status = csite.verifyUpdatableStatus();
 				if (status.isOK())
@@ -453,6 +466,24 @@ public class TargetPage extends BannerPage {
 			UpdateUI.logException(e);
 			return null;
 		}
+	}
+	
+	private static boolean ensureUnique(File file, IInstallConfiguration config) {
+		IConfiguredSite [] sites = config.getConfiguredSites();
+		URL fileURL;
+		try {
+			fileURL = new URL("file:"+file.getPath());
+		}
+		catch (MalformedURLException e) {
+			return true;
+		}
+		for (int i=0; i<sites.length; i++) {
+			IConfiguredSite csite = sites[i];
+			URL url = csite.getSite().getURL();
+			if (UpdateManagerUtils.sameURL(fileURL, url))
+				return false;
+		}
+		return true;
 	}
 
 	private void updateStatus(Object element) {

@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 import java.io.File;
+import java.net.*;
 import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.PendingChange;
 import org.eclipse.update.internal.ui.parts.*;
@@ -50,6 +53,8 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		"MultiInstallWizard.TargetPage.location.message";
 	private static final String KEY_LOCATION_EMPTY =
 		"MultiInstallWizard.TargetPage.location.empty";
+	private static final String KEY_LOCATION_EXISTS =
+		"MultiInstallWizard.TargetPage.location.exists";
 	private static final String KEY_LOCATION_ERROR_TITLE =
 		"MultiInstallWizard.TargetPage.location.error.title";
 	private static final String KEY_LOCATION_ERROR_MESSAGE =
@@ -558,6 +563,14 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 				csite = config.createLinkedConfiguredSite(file);
 				config.addConfiguredSite(csite);
 			} else {
+				if (!ensureUnique(file, config)) {
+					String title = UpdateUI.getString(KEY_LOCATION_ERROR_TITLE);
+					String message = UpdateUI.getFormattedMessage(
+								KEY_LOCATION_EXISTS,
+								file.getPath());
+					MessageDialog.openError(shell, title, message);
+					return null;
+				}
 				csite = config.createConfiguredSite(file);
 				IStatus status = csite.verifyUpdatableStatus();
 				if (status.isOK())
@@ -693,5 +706,23 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		if (jobSite != null)
 			return jobSite.targetSite;
 		return null;
+	}
+
+	private static boolean ensureUnique(File file, IInstallConfiguration config) {
+		IConfiguredSite [] sites = config.getConfiguredSites();
+		URL fileURL;
+		try {
+			fileURL = new URL("file:"+file.getPath());
+		}
+		catch (MalformedURLException e) {
+			return true;
+		}
+		for (int i=0; i<sites.length; i++) {
+			IConfiguredSite csite = sites[i];
+			URL url = csite.getSite().getURL();
+			if (UpdateManagerUtils.sameURL(fileURL, url))
+				return false;
+		}
+		return true;
 	}
 }
