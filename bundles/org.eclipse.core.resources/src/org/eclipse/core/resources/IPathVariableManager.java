@@ -49,7 +49,11 @@ public interface IPathVariableManager {
  * and the given value is not <code>null</code>.</p></li>
  * 
  * <li><p>The referred variable will be removed, if a variable with the given
- * name is currently defined and the given value is <code>null</code>.</p></li>
+ * name is currently defined and the given value is <code>null</code> or
+ * an empty path (equivalent to <code>Path.EMPTY</code>). Note if the path
+ * variable is removed by using <code>Path.EMPTY</code>, the value for the
+ * variable in the subsequent <code>IPathVariableChangeEvent</code> will
+ * be <code>null</code>.</p></li>
  *  
  * <li><p>The  call will be ignored, if a variable with the given name is
  * not currently defined and the given value is <code>null</code>, or if it
