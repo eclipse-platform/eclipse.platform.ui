@@ -260,7 +260,7 @@ public IEditorPart openEditor(IFileEditorInput input) throws PartInitException {
 /*
  * @see IWorkbenchPage.
  */
-private IEditorPart openEditor(IFileEditorInput input,boolean setVisible) 
+public IEditorPart openEditor(IFileEditorInput input,boolean setVisible) 
 	throws PartInitException
 {
 	IFile file = input.getFile();

@@ -994,7 +994,7 @@ private IEditorPart openEditor(IFile file, boolean activate)
 	}
 
 	// Otherwise, create a new one.
-	editor = getEditorManager().openEditor(input);
+	editor = getEditorManager().openEditor(input,false);
 	if (editor != null) {
 		firePartOpened(editor);
 		setEditorAreaVisible(true);
