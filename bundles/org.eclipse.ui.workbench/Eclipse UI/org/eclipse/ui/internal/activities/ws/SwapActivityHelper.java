@@ -260,12 +260,7 @@ public class SwapActivityHelper {
 	 */
 	public void updateActivityStates() {
 
-		IWorkbenchActivitySupport support =
-			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
-				IWorkbenchActivitySupport.class);
-		if (support == null)
-			return;
-
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IActivityManager activityManager = support.getActivityManager();
 
 		Set finalState = new HashSet(activityManager.getEnabledActivityIds());

@@ -386,23 +386,20 @@ public static void updatePerspective(IConfigurationElement configElement) {
 	if (finalPersp != null && finalPersp instanceof IPluginContribution) {
         IPluginContribution contribution = (IPluginContribution) finalPersp;
         if (contribution.getPluginId() != null) {            
-        	IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
-
-        	if (workbenchActivitySupport != null) {
-        		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();        	       
-	        	IIdentifier identifier = activityManager
-	                .getIdentifier(
-	                        WorkbenchActivityHelper.createUnifiedId(contribution));
-	            Set idActivities = identifier.getActivityIds();
-	            
-	            if (!idActivities.isEmpty()) {
-	                Set enabledIds = new HashSet(activityManager.getEnabledActivityIds());
-	                
-	                if (enabledIds.addAll(idActivities)) 
-	                	workbenchActivitySupport.setEnabledActivityIds(enabledIds);
-	            }
-        	}
-        }
+        	IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+    		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();        	       
+        	IIdentifier identifier = activityManager
+                .getIdentifier(
+                        WorkbenchActivityHelper.createUnifiedId(contribution));
+            Set idActivities = identifier.getActivityIds();
+            
+            if (!idActivities.isEmpty()) {
+                Set enabledIds = new HashSet(activityManager.getEnabledActivityIds());
+                
+                if (enabledIds.addAll(idActivities)) 
+                	workbenchActivitySupport.setEnabledActivityIds(enabledIds);
+            }
+    	}
 	}
 	else {
 		IDEWorkbenchPlugin.log("Unable to find persective " //$NON-NLS-1$

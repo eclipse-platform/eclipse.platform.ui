@@ -73,9 +73,6 @@ class LayoutHelper {
 
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
-		if (support == null)
-			return;
-
 		IViewDescriptor descriptor = viewFactory.getViewRegistry().find(viewId);
 		if (!(descriptor instanceof IPluginContribution))
 			return;

@@ -62,9 +62,6 @@ class ActivityPersistanceHelper {
 
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 
-		if (support == null)
-			return;
-
 		boolean noRoles =
 			support.getActivityManager().getDefinedCategoryIds().isEmpty();
 
