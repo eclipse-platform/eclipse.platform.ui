@@ -520,7 +520,6 @@ public class RepositoryManager {
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(previousComment);
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 			provider.update(providerResources, IResource.DEPTH_INFINITE, null, true, subMonitor);

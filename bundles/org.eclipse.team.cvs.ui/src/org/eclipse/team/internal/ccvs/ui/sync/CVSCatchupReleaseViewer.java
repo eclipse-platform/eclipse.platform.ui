@@ -18,15 +18,17 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.merge.GetMergeAction;
 import org.eclipse.team.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.ui.sync.MergeResource;
 import org.eclipse.team.ui.sync.SyncView;
 
 public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	// Actions
-	private MergeAction getAction;
+	private GetSyncAction getAction;
 	private CommitMergeAction commitAction;
-
+	private GetMergeAction getMergeAction;
+	
 	public CVSCatchupReleaseViewer(Composite parent, CVSSyncCompareInput model) {
 		super(parent, model);
 		initializeActions(model);
@@ -40,9 +42,13 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			commitAction.update();
 			manager.add(commitAction);
 		}
-		if (syncMode == SyncView.SYNC_INCOMING || syncMode == SyncView.SYNC_BOTH || syncMode == SyncView.SYNC_MERGE) {
+		if (syncMode == SyncView.SYNC_INCOMING || syncMode == SyncView.SYNC_BOTH) {
 			getAction.update();
 			manager.add(getAction);
+		}
+		if (syncMode == SyncView.SYNC_MERGE) {
+			getMergeAction.update();
+			manager.add(getMergeAction);
 		}
 	}
 	
@@ -52,7 +58,8 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 	private void initializeActions(final CVSSyncCompareInput diffModel) {
 		Shell shell = getControl().getShell();
 		commitAction = new CommitMergeAction(diffModel, this, IRemoteSyncElement.OUTGOING, Policy.bind("CVSCatchupReleaseViewer.checkIn"), shell);
-		getAction = new GetMergeAction(diffModel, this, IRemoteSyncElement.INCOMING, Policy.bind("CVSCatchupReleaseViewer.get"), shell);
+		getAction = new GetSyncAction(diffModel, this, IRemoteSyncElement.INCOMING, Policy.bind("CVSCatchupReleaseViewer.get"), shell);
+		getMergeAction = new GetMergeAction(diffModel, this, IRemoteSyncElement.INCOMING, Policy.bind("CVSCatchupReleaseViewer.get"), shell);
 	}
 	
 	/**
