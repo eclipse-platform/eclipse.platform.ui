@@ -7,6 +7,7 @@
 
 	<target name="init" depends="properties">
 		<property name="version.suffix" value="_3.0.0"/>
+		<property name="ant_version.suffix" value="_1.6.1"/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="plugin.destination" value="${basedir}"/>
 		<property name="build.result.folder" value="${basedir}"/>
@@ -25,7 +26,9 @@
 			classpath="${basedir}/../org.eclipse.core.runtime/bin;
 			${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}/runtime.jar;
 			${basedir}/../org.apache.ant/lib/ant.jar;
+			${eclipse.home}/plugins/org.apache.ant${ant_version.suffix}/lib/ant.jar;
 			${basedir}/bin;
+			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
 			${basedir}/../org.eclipse.ant.core/bin">
 			<src path="test support/"/>
 		</javac>
