@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -986,14 +987,14 @@ public class KeysPreferencePage extends
 
         if (activeKeyConfigurationId != null
                 || !preferenceKeySequenceBindingDefinitions.isEmpty()) {
-            MessageBox restoreDefaultsMessageBox = new MessageBox(getShell(),
-                    SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.APPLICATION_MODAL);
-            restoreDefaultsMessageBox.setText(Util.translateString(
-                    RESOURCE_BUNDLE, "restoreDefaultsMessageBoxText")); //$NON-NLS-1$
-            restoreDefaultsMessageBox.setMessage(Util.translateString(
-                    RESOURCE_BUNDLE, "restoreDefaultsMessageBoxMessage")); //$NON-NLS-1$
+            final String title = Util.translateString(RESOURCE_BUNDLE,
+                    "restoreDefaultsMessageBoxText"); //$NON-NLS-1$
+            final String message = Util.translateString(RESOURCE_BUNDLE,
+                    "restoreDefaultsMessageBoxMessage"); //$NON-NLS-1$
+            final boolean confirmed = MessageDialog.openConfirm(getShell(),
+                    title, message);
 
-            if (restoreDefaultsMessageBox.open() == SWT.YES) {
+            if (confirmed) {
                 setKeyConfigurationId(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
                 Iterator iterator = preferenceKeySequenceBindingDefinitions
                         .iterator();
