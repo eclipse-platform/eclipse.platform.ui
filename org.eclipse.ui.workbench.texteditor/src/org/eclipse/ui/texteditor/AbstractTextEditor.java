@@ -65,6 +65,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -858,7 +859,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/** 
 		 * Creates a new scroll action that scroll the given number of lines. If the
-		 * increment is &lt 0, it's scrolling up, if &gt 0 it's scrolling down.
+		 * increment is &lt; 0, it's scrolling up, if &gt; 0 it's scrolling down.
 		 * @param scrollIncrement the number of lines to scroll
 		 */
 		public ScrollLinesAction(int scrollIncrement) {
@@ -4417,6 +4418,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_UNDO));
+		menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_SAVE));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_COPY));		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_PRINT));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));		
@@ -4424,15 +4426,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		menu.add(new Separator(IWorkbenchActionConstants.GROUP_ADD));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_SAVE));
 		
 		if (isEditable()) {
 			addAction(menu, ITextEditorActionConstants.GROUP_UNDO, ITextEditorActionConstants.UNDO);
 			addAction(menu, ITextEditorActionConstants.GROUP_UNDO, ITextEditorActionConstants.REVERT_TO_SAVED);			
+			addAction(menu, ITextEditorActionConstants.GROUP_SAVE, ITextEditorActionConstants.SAVE);
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.CUT);
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.COPY);
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.PASTE);
-			addAction(menu, ITextEditorActionConstants.GROUP_SAVE, ITextEditorActionConstants.SAVE);
 		} else {
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.COPY);
 		}
