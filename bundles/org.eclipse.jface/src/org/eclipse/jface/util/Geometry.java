@@ -29,6 +29,7 @@ public class Geometry {
      * @since 3.0
      */
     private Geometry() {
+    	//This is not instantiated
     }
 
     /**
@@ -503,9 +504,8 @@ public class Geometry {
      */
     public static Rectangle toControl(Control coordinateSystem,
             Rectangle toConvert) {
-        Point start = coordinateSystem.toControl(toConvert.x, toConvert.y);
-        return new Rectangle(start.x, start.y, toConvert.width,
-                toConvert.height);
+    	return(coordinateSystem.getDisplay().map
+    			(null,coordinateSystem,toConvert));
     }
 
     /**
@@ -519,9 +519,9 @@ public class Geometry {
      */
     public static Rectangle toDisplay(Control coordinateSystem,
             Rectangle toConvert) {
-        Point start = coordinateSystem.toDisplay(toConvert.x, toConvert.y);
-        return new Rectangle(start.x, start.y, toConvert.width,
-                toConvert.height);
+    	return(coordinateSystem.getDisplay().map
+    			(coordinateSystem,null,toConvert));   
+
     }
 
     /**
