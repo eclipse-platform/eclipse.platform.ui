@@ -269,7 +269,7 @@ static String createMarkerReport(IMarker[] markers) {
 		buf.append( 
 			TaskListMessages.format("TaskList.reportMarker", //$NON-NLS-1$
 				new Object[] { new Integer(i+1) }));
-		buf.append("\n");
+		buf.append("\n"); //$NON-NLS-1$
 		writeMarker(buf, markers[i]);
 	}
 	return buf.toString();
@@ -986,7 +986,7 @@ void updateTitle() {
  */
 static void writeMarker(StringBuffer buf, IMarker marker) {
 	try {
-		buf.append("  ");
+		buf.append("  "); //$NON-NLS-1$
 		buf.append(
 			TaskListMessages.format("TaskList.reportResourceAndLine", //$NON-NLS-1$
 				new Object[] { marker.getResource().getFullPath(), new Integer(MarkerUtil.getLineNumber(marker)) }));
@@ -1017,7 +1017,7 @@ static void writeMarker(StringBuffer buf, IMarker marker) {
 		buf.append("\n\n"); //$NON-NLS-1$
 	}
 	catch (CoreException e) {
-		buf.append("  ");
+		buf.append("  "); //$NON-NLS-1$
 	    buf.append(e.getStatus().toString());
 		buf.append("\n\n"); //$NON-NLS-1$
 	}
