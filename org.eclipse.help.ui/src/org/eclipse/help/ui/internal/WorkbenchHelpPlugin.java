@@ -4,14 +4,12 @@ package org.eclipse.help.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.appserver.WebappManager;
-import org.eclipse.help.browser.IBrowser;
-import org.eclipse.help.internal.browser.BrowserManager;
+import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.ui.internal.util.*;
-import org.eclipse.help.ui.internal.workingset.HelpWorkingSetSynchronizer;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.help.ui.internal.workingset.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.plugin.*;
 
 /**
   * This class is a UI plugin. This may need to change to regular 
@@ -19,7 +17,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
   */
 public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	private static WorkbenchHelpPlugin plugin;
-	private IBrowser browser;
 	private HelpWorkingSetSynchronizer workingSetListener;
 
 	/**
@@ -42,9 +39,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	 *   this plug-in 
 	 */
 	public void shutdown() throws CoreException {
-		// stop the web app
-		WebappManager.stop("help");
-		BrowserManager.getInstance().closeAll();
+
 		if (HelpSystem.getMode() == HelpSystem.MODE_WORKBENCH) {
 			PlatformUI
 				.getWorkbench()
@@ -75,9 +70,7 @@ public class WorkbenchHelpPlugin extends AbstractUIPlugin {
 	}
 
 	public IBrowser getHelpBrowser() {
-		if (browser == null)
-			browser = BrowserManager.getInstance().createBrowser();
-		return browser;
+		return HelpSystem.getHelpBrowser();
 	}
 
 	public HelpWorkingSetSynchronizer getWorkingSetSynchronizer() {
