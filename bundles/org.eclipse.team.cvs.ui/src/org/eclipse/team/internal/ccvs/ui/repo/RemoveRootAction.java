@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -28,7 +31,9 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.model.RepositoryLocationSchedulingRule;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 
 
@@ -76,8 +81,9 @@ public class RemoveRootAction extends SelectionListenerAction {
 	public void run() {
 		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		if (roots.length == 0) return;
-		CVSProviderPlugin provider = CVSProviderPlugin.getPlugin();
+		final CVSProviderPlugin provider = CVSProviderPlugin.getPlugin();
 		for (int i = 0; i < roots.length; i++) {
+			final ICVSRepositoryLocation root = roots[i];
 			try {	
 				// Check if any projects are shared with the repository
 				IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
@@ -109,17 +115,32 @@ public class RemoveRootAction extends SelectionListenerAction {
 						}
 					});
 				} else {
-					ISchedulingRule rule = new RepositoryLocationSchedulingRule(roots[i]);
-					JobManager.getInstance().beginRule(rule);
+					IProgressManager manager = PlatformUI.getWorkbench().getProgressManager();
 					try {
-						view.getContentProvider().cancelJobs(roots[i]);
-						provider.disposeRepository(roots[i]);
-					} finally {
-						JobManager.getInstance().endRule(rule);
+						manager.busyCursorWhile(new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								ISchedulingRule rule = new RepositoryLocationSchedulingRule(root);
+								try {
+									JobManager.getInstance().beginRule(rule, monitor);
+									view.getContentProvider().cancelJobs(root);
+									provider.disposeRepository(root);
+								} catch (CVSException e) {
+									throw new InvocationTargetException(e);
+								} finally {
+									JobManager.getInstance().endRule(rule);
+								}
+
+							}
+						});
+					} catch (InvocationTargetException e) {
+						throw CVSException.wrapException(e);
+					} catch (InterruptedException e) {
+						// Canceled
+						return;
 					}
 				}
 			} catch (CVSException e) {
-				CVSUIPlugin.log(e);
+				CVSUIPlugin.openError(view.getShell(), null, null, e, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_TEAM_EXCEPTIONS | CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
 			}
 		}
 	}

@@ -233,7 +233,7 @@ public class RemoteTagSynchronizer extends CVSRemoteSynchronizer {
 				try {
 					// Get a scheduling rule on the project since CVS may obtain a lock higher then
 					// the resource itself.
-					JobManager.getInstance().beginRule(rule);
+					JobManager.getInstance().beginRule(rule, monitor);
 					
 					monitor.setTaskName(Policy.bind("RemoteTagSynchronizer.0", resource.getFullPath().makeRelative().toString())); //$NON-NLS-1$
 					
