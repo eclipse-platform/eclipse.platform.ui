@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentDescription;
 
@@ -191,29 +190,23 @@ public class EncodingActionGroup extends ActionGroup {
 			
 		IFile file= ((IFileEditorInput)input).getFile();
 		
-		String format;
-		String encoding= getEncodingFromContent(file);
-		if (encoding == null) {
-			format= FILE_CONTAINER_ENCODING_FORMAT;
-			try {
+		String format= format= FILE_CONTENT_ENCODING_FORMAT;
+		String encoding;
+		try {
+			encoding= getEncodingFromContent(file);
+			if (encoding == null) {
+				format= FILE_CONTAINER_ENCODING_FORMAT;
 				encoding= file.getParent().getDefaultCharset();
-			} catch (CoreException ex) {
-				// should not happen
-				encoding= ResourcesPlugin.getEncoding();
 			}
-		} else
-			format= FILE_CONTENT_ENCODING_FORMAT;
+		} catch (CoreException ex) {
+			return defaultText;
+		}
 		
 		return MessageFormat.format(format, new String[] { encoding });
 	}
 
-	private static String getEncodingFromContent(IFile file) {
-		IContentDescription description;
-		try {
-			description= file.getContentDescription();
-		} catch (CoreException e) {
-			description= null;
-		}
+	private static String getEncodingFromContent(IFile file) throws CoreException {
+		IContentDescription description = file.getContentDescription();
 		if (description != null) {
 			byte[] bom= (byte[])description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 			if (bom == null)
@@ -225,6 +218,7 @@ public class EncodingActionGroup extends ActionGroup {
 			if (bom == IContentDescription.BOM_UTF_16LE)
 				return TextEditorMessages.getString("WorkbenchPreference.encoding.BOM_UTF_16LE"); //$NON-NLS-1$
 		}
+		
 		return null;
 	}
 	
