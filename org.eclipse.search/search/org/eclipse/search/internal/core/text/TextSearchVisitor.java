@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -208,8 +209,13 @@ public class TextSearchVisitor implements IResourceProxyVisitor {
 					String[] args= { file.getCharset(), file.getFullPath().makeRelative().toString()};
 					String message= SearchMessages.getFormattedString("TextSearchVisitor.unsupportedcharset", args); //$NON-NLS-1$
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
+				} catch (IllegalCharsetNameException e) {
+					String[] args= { file.getCharset(), file.getFullPath().makeRelative().toString()};
+					String message= SearchMessages.getFormattedString("TextSearchVisitor.illegalcharset", args); //$NON-NLS-1$
+					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} catch (IOException e) {
-					String message= SearchMessages.getFormattedString("TextSearchVisitor.error", file.getFullPath().makeRelative()); //$NON-NLS-1$
+					String[] args= { e.getMessage(), file.getFullPath().makeRelative().toString()};
+					String message= SearchMessages.getFormattedString("TextSearchVisitor.error", args); //$NON-NLS-1$
 					fStatus.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, Platform.PLUGIN_ERROR, message, e));
 				} finally {
 					if (stream != null) {
