@@ -252,43 +252,21 @@ public class ContextHelpDialog implements Runnable {
 		return contents;
 	}
 	protected Control createInfoArea(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		composite.setLayout(layout);
-		composite.setBackground(backgroundColour);
-
-		GridData data =
-			new GridData(
-				GridData.FILL_BOTH
-					| GridData.HORIZONTAL_ALIGN_CENTER
-					| GridData.VERTICAL_ALIGN_CENTER);
-		composite.setLayoutData(data);
-		
+	
 		// Create the text field.    
 		String styledText = cmgr.getDescription(contexts);
 		if (styledText == null) 
 			// no description found in context objects.
 			styledText = WorkbenchResources.getString("WW002");
-		StyledText text = new StyledText(composite, SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
+		StyledText text = new StyledText(parent, SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
 		StyledLineWrapper content = new StyledLineWrapper(styledText);
 		text.setContent(content);
 		text.setStyleRanges(content.getStyles());
-
-		data = new GridData();
-		data.horizontalAlignment = data.FILL;
-		data.grabExcessHorizontalSpace = true;
-		data.verticalAlignment = data.FILL;
-		data.grabExcessVerticalSpace = true;
-		text.setLayoutData(data);
-			
-		text.pack();
 		
-		return composite;
+		return text;
 	}
 	
 	protected Control createLink(Composite parent, IHelpTopic topic) {
