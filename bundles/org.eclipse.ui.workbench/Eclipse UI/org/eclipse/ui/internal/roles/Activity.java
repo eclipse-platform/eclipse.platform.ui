@@ -119,9 +119,7 @@ public class Activity {
 
 	/**
 	 * Set the enabled state of this activity. If this activity has a parent
-	 * and the enabled state is true then the parent is also activated. TODO:
-	 * how should we do this? Turning off enablement of a child shouldn't
-	 * effect the parent so this behaviour is lopsided.
+	 * and the enabled state is true then the parent is also activated.	 * 
 	 * 
 	 * @param enabled
 	 * @since 3.0

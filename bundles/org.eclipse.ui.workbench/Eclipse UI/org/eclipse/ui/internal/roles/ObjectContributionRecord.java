@@ -24,12 +24,8 @@ package org.eclipse.ui.internal.roles;
  * establishing direct bindings, not the binding mechanism itself.
  * 
  * This class is immutible for efficiency.  
- * 
- * TODO: Is this class entirely necessary?  Could there not be a static key 
- * construction method on ObjectActivityManager that would construct suitable
- * keys for use within the manager?
  */
-public class ObjectContributionRecord {
+class ObjectContributionRecord {
     
     private String pluginId, localId;
     

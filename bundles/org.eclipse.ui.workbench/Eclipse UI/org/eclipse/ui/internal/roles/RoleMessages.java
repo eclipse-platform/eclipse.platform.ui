@@ -22,18 +22,17 @@ public class RoleMessages {
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	/**
-	 * 
+	 * Create the role messages
 	 */
 	private RoleMessages() {
 
-		// TODO Auto-generated constructor stub
 	}
 	/**
+	 * Get the value of String.
 	 * @param key
-	 * @return
+	 * @return String
 	 */
 	public static String getString(String key) {
-		// TODO Auto-generated method stub
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {

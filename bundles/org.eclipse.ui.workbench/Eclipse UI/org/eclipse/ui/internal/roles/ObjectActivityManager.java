@@ -112,7 +112,6 @@ public class ObjectActivityManager implements IActivityListener{
     /**
      * Adds a binding between object-&gt;activity.  If the given activity is not
      * defined in the RoleManager registry then no action is taken.
-     * TODO: should the binding be added if the object doesnt exist?
      * 
      * @param objectId
      * @param activityId
@@ -152,9 +151,8 @@ public class ObjectActivityManager implements IActivityListener{
 
         Object oldObject = objectMap.put(record, object);
 
-        if (oldObject != object) {
+        if (!oldObject.equals(object)) {
             // dirty the cache if the old entry is not the same as the new one.
-            // TODO: would .equals() be more appropriate?
             invalidateCache();
         }            
     }
@@ -217,8 +215,6 @@ public class ObjectActivityManager implements IActivityListener{
 
     /**
      * Return the list of enabled activities as provided by the RoleManager.
-     * TODO: is it worth caching this info?  We can do it with the help of 
-     * activityChanged(ActivityEvent).
      * @return Collection
      */
     private Collection getActivityIds() {
