@@ -19,7 +19,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -46,18 +45,17 @@ import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
 import org.eclipse.ui.keys.ParseException;
 
 import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
-import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
 
