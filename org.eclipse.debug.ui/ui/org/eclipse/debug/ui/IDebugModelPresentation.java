@@ -91,7 +91,7 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * this label provider should use fully qualified type names when rendering elements.
 	 * When set to <code>False</code>,this label provider should use simple names
 	 * when rendering elements.
-	 * @see setAttribute(String, Object)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentation.setAttribute(String, Object)
 	 */
 	public final static String DISPLAY_QUALIFIED_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayQualifiedNames";
 	/** 
@@ -101,7 +101,7 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * variables. When set to <code>False</code>, this label provider 
 	 * should not include the reference type of a variable when rendering
 	 * variables.
-	 * @see setAttribute(String, Object)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentation.setAttribute(String, Object)
 	 */
 	public final static String DISPLAY_VARIABLE_TYPE_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayVariableTypeNames";
 	/**

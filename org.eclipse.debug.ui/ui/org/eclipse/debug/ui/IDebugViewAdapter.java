@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @see IAdaptable
+ * @see org.eclipse.core.runtime.IAdaptable
  * @see IDebugModelPresentation
  */
 
