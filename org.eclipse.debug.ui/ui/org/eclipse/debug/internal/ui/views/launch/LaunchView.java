@@ -11,8 +11,10 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
@@ -30,11 +32,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
@@ -525,13 +529,28 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	private void showViewsForCurrentSelection() {
 		Object selection = ((IStructuredSelection) getViewer().getSelection()).getFirstElement();
-		if (!fAutoManage || !(selection instanceof IStackFrame)) {
+		if (!fAutoManage) {
 			return;
 		}
-		String contextId = contextListener.getDebugModelContext(((IStackFrame) selection).getModelIdentifier());
-		if (contextId != null) {
+		List contextIds= new ArrayList();
+		if (selection instanceof IAdaptable) {
+			IDebugModelProvider context= (IDebugModelProvider) Platform.getAdapterManager().getAdapter(selection, IDebugModelProvider.class);
+			if (context != null) {
+				String[] modelIds= context.getModelIdentifiers();
+				if (modelIds != null) {
+					for (int i = 0; i < modelIds.length; i++) {
+						contextIds.add(contextListener.getDebugModelContext(modelIds[i]));
+					}
+				}
+			}
+		}
+		if (contextIds.isEmpty() && selection instanceof IStackFrame) {
+			String contextId = contextListener.getDebugModelContext(((IStackFrame) selection).getModelIdentifier());
+			contextIds.add(contextId);
+		}
+		if (!contextIds.isEmpty()) {
 			Set set= new HashSet();
-			set.add(contextId);
+			set.addAll(contextIds);
 			contextListener.getContextManager().setEnabledContextIds(set);
 		}
 	}

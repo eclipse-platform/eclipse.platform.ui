@@ -1554,28 +1554,24 @@
         point="org.eclipse.debug.ui.contextViewBindings">
      <contextViewBinding
             viewId="org.eclipse.debug.ui.VariableView"
-            contextId="org.eclipse.debug.ui.debugging"
-            open="true">
+            contextId="org.eclipse.debug.ui.debugging">
      </contextViewBinding>
      <contextViewBinding
             viewId="org.eclipse.debug.ui.DebugView"
-            contextId="org.eclipse.debug.ui.debugging"
-            open="true">
+            contextId="org.eclipse.debug.ui.debugging">
      </contextViewBinding>
      <contextViewBinding
             viewId="org.eclipse.debug.ui.ExpressionView"
             contextId="org.eclipse.debug.ui.debugging"
-            open="false">
+            autoOpen="false">
      </contextViewBinding>
      <contextViewBinding
            viewId="org.eclipse.debug.ui.BreakpointView"
-           contextId="org.eclipse.debug.ui.debugging"
-           open="true">
+           contextId="org.eclipse.debug.ui.debugging">
      </contextViewBinding>
      <contextViewBinding
            viewId="org.eclipse.ui.console.ConsoleView"
-           contextId="org.eclipse.debug.ui.debugging"
-           open="true">
+           contextId="org.eclipse.debug.ui.debugging">
      </contextViewBinding>
   </extension>
 </plugin>

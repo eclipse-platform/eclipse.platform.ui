@@ -140,11 +140,14 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	 * Returns the context id associated with the given debug
 	 * model identifier as specified via extension or <code>null</code>
 	 * if none.
-	 * @param debugModelIdentifier the debug model identifier
+	 * @param debugModelIdentifier the debug model identifier or <code>null</code>.
 	 * @return the context id associated with the given debug model
 	 * 	identifier or <code>null</code> if none.
 	 */
 	public String getDebugModelContext(String debugModelIdentifier) {
+		if (debugModelIdentifier == null) {
+			return null;
+		}
 		return (String) modelsToContext.get(debugModelIdentifier);
 	}
 	
