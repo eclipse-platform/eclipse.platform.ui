@@ -21,8 +21,8 @@
    </library>
 </runtime>
 
-<extension-point id="configurationWizards" name="Configuration Wizards"/>
-<extension-point id="targetConfigWizards" name="Target Site Addition Wizards"/>
+<extension-point id="configurationWizards" name="%configurationWizards"/>
+<extension-point id="targetConfigWizards" name="%targetWizards"/>
 
 <!-- *************** Help **************** -->
    <extension point="org.eclipse.help.contexts"> 
