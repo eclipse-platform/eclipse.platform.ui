@@ -30,7 +30,7 @@ public class TaskMarker extends ConcreteMarker {
 	public TaskMarker(IMarker toCopy) {
 		super(toCopy);
 		
-		priority = Integer.parseInt(Util.getProperty(IMarker.PRIORITY, toCopy));
+		priority = toCopy.getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL);
 		done = -1;
 		if (toCopy.getAttribute(IMarker.USER_EDITABLE, true)) {
 			done = 0;
