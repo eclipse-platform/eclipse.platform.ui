@@ -382,8 +382,7 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	 * @see org.eclipse.jface.text.IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return true;
-		//return control.isFocusControl();
+		return control.isFocusControl();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IInformationControl#setFocus()
