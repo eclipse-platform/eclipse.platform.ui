@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
-import org.eclipse.team.ui.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
+import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 
@@ -35,12 +35,13 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
  * </p>
  * @since 3.0
  */
-public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate {
+public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate, ISynchronizeParticipantListener {
 
 	public final static String NO_DEFAULT_PARTICPANT = "none"; //$NON-NLS-1$
 	private Menu fMenu;
 	private Action synchronizeAction;
 	private IWorkbenchWindow window;
+	private IAction actionProxy;
 
 	class RefreshParticipantAction extends Action {
 		private ISynchronizeParticipantReference participant;
@@ -68,7 +69,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		};
 		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
 		setMenuCreator(this);
-		updateTooltipMessage();
+		TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);
 	}
 
 	/*
@@ -79,6 +80,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
+		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
 	}
 
 	/*
@@ -141,6 +143,8 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			}
 		}
 		synchronizeAction.run();
+		actionProxy = action;
+		updateTooltipText();
 	}
 		
 	private void run(ISynchronizeParticipantReference participant) {
@@ -148,10 +152,38 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		try {
 			p = participant.getParticipant();
 			p.run(null /* no workbench part */);
-			updateTooltipMessage();
+			updateTooltipText();
 		} catch (TeamException e) {
 			Utils.handle(e);
 		}
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipantListener#participantsAdded(org.eclipse.team.ui.sync.ISynchronizeParticipant[])
+	 */
+	public void participantsAdded(ISynchronizeParticipant[] consoles) {
+		Display display = TeamUIPlugin.getStandardDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				updateTooltipText();
+			}
+		});
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.sync.ISynchronizeParticipantListener#participantsRemoved(org.eclipse.team.ui.sync.ISynchronizeParticipant[])
+	 */
+	public void participantsRemoved(ISynchronizeParticipant[] consoles) {
+		Display display = TeamUIPlugin.getStandardDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if (fMenu != null) {
+					fMenu.dispose();
+				}
+				updateTooltipText();
+			}
+		});
 	}
 	
 	/*
@@ -160,9 +192,21 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	 *           org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		actionProxy = action;
 	}
 	
-	protected void updateTooltipMessage() {
-		setToolTipText(Policy.bind("GlobalRefreshAction.4")); //$NON-NLS-1$
+	protected void updateTooltipText() {
+		if (actionProxy != null) {
+			String id = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT);
+			String secondaryId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID);
+			if (!id.equals(NO_DEFAULT_PARTICPANT)) {
+				ISynchronizeParticipantReference ref = TeamUI.getSynchronizeManager().get(id, secondaryId);
+				if (ref != null) {
+					actionProxy.setToolTipText(Policy.bind("GlobalRefreshAction.5", ref.getDisplayName())); //$NON-NLS-1$
+					return;
+				}
+			}
+			actionProxy.setToolTipText(Policy.bind("GlobalRefreshAction.4")); //$NON-NLS-1$
+		}
 	}
 }

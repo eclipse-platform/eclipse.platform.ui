@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
-import org.eclipse.team.ui.*;
+import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class SynchronizePageDropDownAction extends Action implements IMenuCreator, ISynchronizeParticipantListener, IUpdate {
@@ -33,9 +33,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		 * @see org.eclipse.ui.texteditor.IUpdate#update()
 		 */
 		public void update() {
-			ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 			updateTooltipText();
-			IActionBars bars = fView.getViewSite().getActionBars();
 		}
 		
 		protected ISynchronizeParticipantReference[] getParticipants() {
@@ -162,8 +160,9 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		
 		private void updateTooltipText() {
 			ISynchronizeParticipant current = fView.getParticipant();
+			ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 			String text = null;
-			if(current != null) {
+			if(current != null && refs.length > 0) {
 				text = Policy.bind("GlobalRefreshAction.5", current.getName()); //$NON-NLS-1$
 				setToolTipText(text);
 				setText(text);
