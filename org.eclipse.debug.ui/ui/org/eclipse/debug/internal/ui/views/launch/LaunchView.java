@@ -54,6 +54,7 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -514,6 +515,22 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return false;
 	}
 	
+	/**
+	 * Returns whether this view automatically tracks views being
+	 * opened and closed for the purpose of not automatically
+	 * managing those views once they've been opened/closed manually.
+	 * 
+	 * @return whether this view automatically tracks views being
+	 *  opened and closed.
+	 */
+	public boolean isTrackViews() {
+		return DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_TRACK_VIEWS);
+	}
+	
+	/**
+	 * Load the collection of perspectives in which perspectives
+	 * for view management from the preference store.
+	 */
 	private void loadAutoManagePerspectives() {
 		String prefString = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
 		fAutoManagePerspectives= parseList(prefString);
@@ -624,7 +641,14 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			setActive(true);
 			updateObjects();
 			showEditorForCurrentSelection();
-			page.addPartListener(fContextListener);
+			if (isTrackViews()) {
+				page.addPartListener(fContextListener);
+			} else {
+				// Since there are no "part deactivated" notifications...
+				// The context listener could have been registered on 
+				// a previous activation of the page.
+				page.removePartListener(fContextListener);
+			}
 		}
 	}
 
@@ -656,7 +680,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public void partOpened(IWorkbenchPart part) {
 		if (part == this) {		   
             fContextListener= new LaunchViewContextListener(LaunchView.this);
-            fContextListener.init(getMemento());
 			updateContextListener();
 		}
 	}
@@ -1206,6 +1229,16 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 		} else if (property.equals(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES)) {
 			loadAutoManagePerspectives();
+		} else if (property.equals(LaunchViewContextListener.PREF_OPENED_VIEWS) && fContextListener != null) {
+			fContextListener.loadOpenedViews();
+		} else if (property.equals(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN) && fContextListener != null) {
+			fContextListener.loadViewsToNotOpen();
+		} else if (property.equals(IDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
+			if (isTrackViews()) {
+				getSite().getPage().addPartListener(fContextListener);
+			} else {
+				getSite().getPage().removePartListener(fContextListener);
+			}
 		}
 	}
 
@@ -1235,7 +1268,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
 			}
 		}
-		fContextListener.saveState(memento);
 	}
 
 	/**

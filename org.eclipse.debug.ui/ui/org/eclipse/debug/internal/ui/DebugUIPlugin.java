@@ -374,6 +374,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 		//View Management preference page
 		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
+		prefs.setDefault(IDebugUIConstants.PREF_TRACK_VIEWS, true);
 		
 		//ConsolePreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);

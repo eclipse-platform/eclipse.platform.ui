@@ -28,8 +28,9 @@ import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.DebugContextManager;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.IMemento;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -106,6 +107,11 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 * Collection of all views that might be opened or closed automatically.
 	 */
 	private Set managedViewIds= new HashSet();
+	/**
+	 * Collection of views which have been manually closed by the
+	 * user. Views which are in this collection should not be
+	 * automatically opened.
+	 */
 	private Set viewIdsToNotOpen= new HashSet();
 	/**
 	 * Collection of views which have been automatically opened.
@@ -120,6 +126,23 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 * Value: List <EnabledSubmission>
 	 */
 	private Map fContextSubmissions= new HashMap();
+	/**
+	 * String preference specifying which views should not be
+	 * automatically opened by the launch view.
+	 * The value is a comma-separated list of view identifiers.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_VIEWS_TO_NOT_OPEN= IDebugUIConstants.PLUGIN_ID + ".views_to_not_open"; //$NON-NLS-1$
+	/**
+	 * String preference specifying which views have been
+	 * automatically opened by the launch view. Only views which
+	 * have been automatically opened will be automatically closed.
+	 * The value is a comma-separated list of view identifiers.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_OPENED_VIEWS= IDebugUIConstants.PLUGIN_ID + ".opened_views"; //$NON-NLS-1$
 	
 	/**
 	 * Creates a fully initialized context listener.
@@ -131,6 +154,8 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		loadDebugModelContextExtensions();
 		loadDebugModelActivityExtensions();
 		loadContextToViewExtensions(true);
+		loadOpenedViews();
+		loadViewsToNotOpen();
 		PlatformUI.getWorkbench().getContextSupport().getContextManager().addContextManagerListener(this);
 		showDebugActionSet();
 	}
@@ -271,58 +296,69 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		}
 		return allConfigurationElements;		 
 	}
+	
+	/**
+	 * Persist the collection of views to not automatically open.
+	 */
+	private void saveViewsToNotOpen() {
+		saveViewCollection(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
+	}
+	
+	/**
+	 * Persist the collection of views which have been automatically
+	 * opened.
+	 */
+	private void saveOpenedViews() {
+		saveViewCollection(LaunchViewContextListener.PREF_OPENED_VIEWS, openedViewIds);
+	}
 
 	/**
-	 * Persist the view ids that the user has manually
+	 * Persist the view identifiers that the user has manually
 	 * opened/closed so that we continue to not automatically
 	 * open/close them.
-	 * @param memento a memento to save the state into
+	 * @param attribute the preference key in which to store the
+	 *  view id collection
+	 * @param collection the view identifier collection
 	 */
-	public void saveState(IMemento memento) {
+	public void saveViewCollection(String attribute, Set collection) {
 		StringBuffer views= new StringBuffer();
-		Iterator iter= viewIdsToNotOpen.iterator();
-		while(iter.hasNext()) {
+		Iterator iter= collection.iterator();
+		while (iter.hasNext()) {
 			views.append((String) iter.next()).append(',');
 		}
 		if (views.length() > 0) {
-			memento.putString(ATTR_VIEWS_TO_NOT_OPEN, views.toString());
-			views= new StringBuffer();
-		}
-		iter= openedViewIds.iterator();
-		while(iter.hasNext()) {
-			views.append((String) iter.next()).append(',');
-		}
-		if (views.length() > 0) {
-			memento.putString(ATTR_OPENED_VIEWS, views.toString());
+			IPreferenceStore preferenceStore = DebugUITools.getPreferenceStore();
+			preferenceStore.removePropertyChangeListener(launchView);
+			preferenceStore.setValue(attribute, views.toString());
+			preferenceStore.addPropertyChangeListener(launchView);
 		}
 	}
 	
 	/**
-	 * Restore the persisted collections of views to not close and
-	 * views to not open
-	 * 
-	 * @param memento the memento containing the persisted view IDs
+	 * Load the collection of views to not open.
 	 */
-	public void init(IMemento memento) {
-		if (memento == null) {
-			return;
-		}
-		initViewCollection(memento, ATTR_OPENED_VIEWS, openedViewIds);
-		initViewCollection(memento, ATTR_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
+	public void loadViewsToNotOpen() {
+		loadViewCollection(ATTR_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
 	}
 	
 	/**
-	 * Loads a collection of view ids from the given memento keyed to
+	 * Load the collection of views that have been automatically
+	 * opened.
+	 */
+	public void loadOpenedViews() {
+		loadViewCollection(ATTR_OPENED_VIEWS, openedViewIds);
+	}
+	
+	/**
+	 * Loads a collection of view ids from the preferences keyed to
 	 * the given attribute, and stores them in the given collection
-	 * @param memento the memento
+	 * 
 	 * @param attribute the attribute of the view ids
 	 * @param collection the collection to store the view ids into.
 	 */
-	private void initViewCollection(IMemento memento, String attribute, Set collection) {
-		String views = memento.getString(attribute);
-		if (views == null) {
-			return;
-		}
+	public void loadViewCollection(String attribute, Set collection) {
+		collection.clear();
+		String views = DebugUITools.getPreferenceStore().getString(attribute);
 		int startIndex= 0;
 		int endIndex= views.indexOf(',');
 		if (endIndex == -1) {
@@ -393,6 +429,9 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 				DebugUIPlugin.log(e.getStatus());
 			}
 		}
+		if (!viewsToOpen.isEmpty()) {
+			saveOpenedViews();
+		}
 		iterator= viewsToShow.iterator();
 		while (iterator.hasNext()) {
 			boolean activate= true;
@@ -418,7 +457,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 				page.bringToTop(view);
 			}
 		}
-		page.addPartListener(this); // Start listening again for close/open
+		restorePartListener(page);
 	}
 	
 	/**
@@ -473,17 +512,22 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		if (page == null || contexts.size() == 0) {
 			return;
 		}
-		page.removePartListener(this);
 		Set viewsToClose= getViewIdsToClose(contexts);
+		if (viewsToClose.isEmpty()) { 
+			return;
+		}
+		page.removePartListener(this);
 		Iterator iter= viewsToClose.iterator();
 		while (iter.hasNext()) {
 			String viewId= (String) iter.next();
 			IViewReference view = page.findViewReference(viewId);
 			if (view != null) {
 				page.hideView(view);
+				openedViewIds.remove(viewId);
 			}
 		}
-		page.addPartListener(this);
+		saveOpenedViews();
+		restorePartListener(page);
 	}
 	
 	/**
@@ -743,20 +787,6 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	}
 	
 	/**
-	 * Removes all context submissions made by this view.
-	 */
-	protected void removeAllContextSubmissions() {
-		IWorkbenchContextSupport contextSupport= PlatformUI.getWorkbench().getContextSupport();
-		List submissions= new ArrayList();
-		Iterator iterator = fContextSubmissions.values().iterator();
-		while (iterator.hasNext()) {
-			submissions.addAll((List) iterator.next());
-		}
-		contextSupport.removeEnabledSubmissions(submissions);
-		fContextSubmissions.clear();
-	}
-	
-	/**
 	 * Returns the view identifier associated with the given extension
 	 * element or <code>null</code> if none.
 	 * 
@@ -830,21 +860,30 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 * Notifies this listener that the given perspective change
 	 * has occurred.
 	 * 
-	 * Reset context state when the perspective is reset.
+	 * Don't listen to part open/close notifications during reset.
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, String changeId) {
 		if (changeId.equals(IWorkbenchPage.CHANGE_RESET)) {
 			page.removePartListener(this);
-			managedViewIds.clear();
-			openedViewIds.clear();
-			viewIdsToNotOpen.clear();
-			loadContextToViewExtensions(false);
-			removeAllContextSubmissions();
 		} else if (changeId.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE)) {
-			page.addPartListener(this);
+			restorePartListener(page);
 		}
 	}
 	
+	/**
+	 * Restores this view as a part listener on the given
+	 * page as appropriate. Has no effect if the user has
+	 * specified to not track views.
+	 * 
+	 * @param page the page with which the listener will
+	 *  be registered
+	 */
+	private void restorePartListener(IWorkbenchPage page) {
+		if (launchView.isTrackViews()) {
+			page.addPartListener(this);
+		}
+	}
+
 	/**
 	 * When the user opens a view, do not automatically
 	 * close that view in the future.
@@ -853,6 +892,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		if (ref instanceof IViewReference) {
 			String id = ((IViewReference) ref).getId();
 			openedViewIds.remove(id);
+			saveOpenedViews();
 		}
 	}
 	
@@ -869,8 +909,10 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 			if (getActiveWorkbenchPage().findView(id) == null) {
 				if (managedViewIds.contains(id)) {
 					viewIdsToNotOpen.add(id);
+					saveViewsToNotOpen();
 				}
 				openedViewIds.remove(id);
+				saveOpenedViews();
 			}
 		}
 	}

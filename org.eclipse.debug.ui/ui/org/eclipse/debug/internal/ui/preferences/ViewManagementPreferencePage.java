@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
+import org.eclipse.debug.internal.ui.views.launch.LaunchViewContextListener;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -25,11 +27,15 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -45,6 +51,8 @@ import org.eclipse.ui.PlatformUI;
 public class ViewManagementPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private CheckboxTableViewer fPerspectiveViewer;
+	private Button fTrackViewsButton;
+	private Button fResetViewsButton;
 	
 	public ViewManagementPreferencePage() {
 		super();
@@ -63,16 +71,53 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		
 		createPerspectiveViewer(composite);
 		
+		createViewTrackingOptions(composite);
+		
 		Dialog.applyDialogFont(composite);
 		
 		return composite;
 	}
 
 	/**
+	 * @param composite
+	 */
+	private void createViewTrackingOptions(Composite composite) {
+		Group group= new Group(composite, SWT.NONE);
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
+		fTrackViewsButton= new Button(group, SWT.CHECK);
+		fTrackViewsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fTrackViewsButton.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.3")); //$NON-NLS-1$
+		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_TRACK_VIEWS));
+		
+		Label label= new Label(group, SWT.WRAP);
+		label.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.4")); //$NON-NLS-1$
+		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		//fResetViewsButton= new Button(group, SWT.PUSH);
+		//fResetViewsButton.setLayoutData(new GridData());
+		//fResetViewsButton.setText("Reset");
+		fResetViewsButton= SWTUtil.createPushButton(group, DebugPreferencesMessages.getString("ViewManagementPreferencePage.5"), null); //$NON-NLS-1$
+		((GridData) fResetViewsButton.getLayoutData()).horizontalAlignment= GridData.BEGINNING;
+		fResetViewsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getPreferenceStore().setValue(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN, ""); //$NON-NLS-1$
+				getPreferenceStore().setValue(LaunchViewContextListener.PREF_OPENED_VIEWS, ""); //$NON-NLS-1$
+				fResetViewsButton.setEnabled(false);
+			}
+		});
+		// Enable reset if either persisted view collection is not empty.
+		boolean enableReset= !"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN)) || //$NON-NLS-1$
+			!"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_OPENED_VIEWS)); //$NON-NLS-1$
+		fResetViewsButton.setEnabled(enableReset);
+	}
+
+	/**
 	 * @param parent
 	 */
 	private void createPerspectiveViewer(Composite parent) {
-		Label label= new Label(parent, SWT.NONE);
+		Label label= new Label(parent, SWT.WRAP);
 		label.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.2")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
@@ -110,6 +155,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		}
 		
 		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
+		getPreferenceStore().setValue(IDebugUIConstants.PREF_TRACK_VIEWS, fTrackViewsButton.getSelection());
 		return super.performOk();
 	}
 
@@ -118,6 +164,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 */
 	protected void performDefaults() {
 		checkPerspectives(getPreferenceStore().getDefaultString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES));
+		fTrackViewsButton.setSelection(getPreferenceStore().getDefaultBoolean(IDebugUIConstants.PREF_TRACK_VIEWS));
 		super.performDefaults();
 	}
 
