@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoSet;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
@@ -48,7 +50,18 @@ public class SyncSetTests extends CVSSyncSubscriberTest {
 				return 0;
 		}
 		public TestSyncInfo() throws TeamException {
-			super(ResourcesPlugin.getWorkspace().getRoot(), null, null, null);
+			super(ResourcesPlugin.getWorkspace().getRoot(), null, null, new IResourceVariantComparator() {
+				public boolean compare(IResource local, IResourceVariant remote) {
+					return false;
+				}
+				public boolean compare(IResourceVariant base,
+						IResourceVariant remote) {
+					return false;
+				}
+				public boolean isThreeWay() {
+					return false;
+				}
+			});
 		}
 	}
 
