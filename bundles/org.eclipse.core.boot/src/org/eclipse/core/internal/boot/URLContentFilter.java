@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.boot;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.*;
 
@@ -22,9 +27,9 @@ public URLContentFilter(String[] filter) {
 	String entry;
 	for(int i=0; i<filter.length; i++) {
 		entry = filter[i].trim();
-		if (!entry.equals("")) {
+		if (!entry.equals("")) { //$NON-NLS-1$
 			isExported = true;
-			if (entry.equals("*")) isPublic = true;
+			if (entry.equals("*")) isPublic = true; //$NON-NLS-1$
 			else addMask(entry);
 		}
 	}			
@@ -42,8 +47,8 @@ private void addMask(String name) {
 }
 private boolean classMatchesFilter(String name) {
 
-	int i = name.lastIndexOf(".");
-	if (i!=-1 && filterTable.get(name.substring(0,i)+".*")!=null) return true;
+	int i = name.lastIndexOf("."); //$NON-NLS-1$
+	if (i!=-1 && filterTable.get(name.substring(0,i)+".*")!=null) return true; //$NON-NLS-1$
 	else if(filterTable.get(name)!=null) return true;
 	else return false;
 }
@@ -64,21 +69,21 @@ boolean isResourceVisible(String resName, DelegatingURLClassLoader current, Dele
 }
 private boolean resourceMatchesFilter(String name) {
 
-	int i = name.lastIndexOf("/");
+	int i = name.lastIndexOf("/"); //$NON-NLS-1$
 	String tmp = name.replace('/','.');
-	if (i!=-1 && filterTable.get(tmp.substring(0,i)+".*")!=null) return true;
+	if (i!=-1 && filterTable.get(tmp.substring(0,i)+".*")!=null) return true; //$NON-NLS-1$
 	else if(filterTable.get(tmp)!=null) return true;
 	else return false;
 }
 public String toString() {
-	if (isPublic) return "*";
-	if (!isExported) return "<private>";
+	if (isPublic) return "*"; //$NON-NLS-1$
+	if (!isExported) return "<private>"; //$NON-NLS-1$
 	Enumeration keys = filterTable.keys();
-	String mask = "";
-	String sep = "";
+	String mask = ""; //$NON-NLS-1$
+	String sep = ""; //$NON-NLS-1$
 	while(keys.hasMoreElements()) {
 		mask += sep+(String)keys.nextElement();
-		sep = " + ";
+		sep = " + "; //$NON-NLS-1$
 	}
 	return mask;
 }

@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.boot;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.net.*;
 import java.util.*;
@@ -42,7 +47,7 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	public static String[] DEBUG_FILTER_RESOURCE = new String[0];
 	public static String[] DEBUG_FILTER_NATIVE = new String[0];
 	
-	public static final String PLUGIN = "plugin";
+	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 
 	private static boolean isHotSwapEnabled = InternalBootLoader.inDevelopmentMode() & ((VM.class.getModifiers() & java.lang.reflect.Modifier.ABSTRACT) == 0);
 	
@@ -109,7 +114,7 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 		public void printStackTrace(PrintStream output) {
 			synchronized (output) {
 				if (e != null) {
-					output.print("org.eclipse.core.internal.boot.DelegatingLoaderException: ");
+					output.print("org.eclipse.core.internal.boot.DelegatingLoaderException: "); //$NON-NLS-1$
 					e.printStackTrace(output);
 				} else
 					super.printStackTrace(output);
@@ -119,7 +124,7 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 		public void printStackTrace(PrintWriter output) {
 			synchronized (output) {
 				if (e != null) {
-					output.print("org.eclipse.core.internal.boot.DelegatingLoaderException: ");
+					output.print("org.eclipse.core.internal.boot.DelegatingLoaderException: "); //$NON-NLS-1$
 					e.printStackTrace(output);
 				} else
 					super.printStackTrace(output);
@@ -130,34 +135,34 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 private static String[] buildJarVariants() {
 	ArrayList result = new ArrayList();
 	
-	result.add("ws/" + InternalBootLoader.getWS() + "/");
-	result.add("os/" + InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch() + "/");
-	result.add("os/" + InternalBootLoader.getOS() + "/");
+	result.add("ws/" + InternalBootLoader.getWS() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+	result.add("os/" + InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	result.add("os/" + InternalBootLoader.getOS() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 	String nl = InternalBootLoader.getNL();
 	nl = nl.replace('_', '/');
 	while (nl.length() > 0) {
-		result.add("nl/" + nl + "/");
-		int i = nl.lastIndexOf('/');
-		nl = (i < 0) ? "" : nl.substring(0, i);
+		result.add("nl/" + nl + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+		int i = nl.lastIndexOf('/'); //$NON-NLS-1$
+		nl = (i < 0) ? "" : nl.substring(0, i); //$NON-NLS-1$
 	}
-	result.add("");
+	result.add(""); //$NON-NLS-1$
 	return (String[])result.toArray(new String[result.size()]);
 }
 
 private static String[] buildLibraryVariants() {
 	ArrayList result = new ArrayList();
 	
-	result.add("ws/" + InternalBootLoader.getWS() + "/");
-	result.add("os/" + InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch() + "/");
-	result.add("os/" + InternalBootLoader.getOS() + "/");
+	result.add("ws/" + InternalBootLoader.getWS() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+	result.add("os/" + InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	result.add("os/" + InternalBootLoader.getOS() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 	String nl = InternalBootLoader.getNL();
 	nl = nl.replace('_', '/');
 	while (nl.length() > 0) {
-		result.add("nl/" + nl + "/");
+		result.add("nl/" + nl + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 		int i = nl.lastIndexOf('/');
-		nl = (i < 0) ? "" : nl.substring(0, i);
+		nl = (i < 0) ? "" : nl.substring(0, i); //$NON-NLS-1$
 	}
-	result.add ("");
+	result.add (""); //$NON-NLS-1$
 	return (String[])result.toArray(new String[result.size()]);
 }
 
@@ -233,10 +238,10 @@ public void addURLs(URL[] codePath, URLContentFilter[] codeFilters, URL[] resour
  * strip-off jar: protocol
  */ 
 private static URL mungeJarURL(URL url) {
-	if (url.getProtocol().equals("jar")) {
+	if (url.getProtocol().equals("jar")) { //$NON-NLS-1$
 		String file = url.getFile();
-		if (file.startsWith("file:")) {
-			int ix = file.indexOf("!/");
+		if (file.startsWith("file:")) { //$NON-NLS-1$
+			int ix = file.indexOf("!/"); //$NON-NLS-1$
 			if (ix != -1) file = file.substring(0,ix);
 			try {
 				url = new URL(file);
@@ -266,10 +271,10 @@ protected Class checkClassVisibility(Class result, DelegatingURLClassLoader requ
 		return null;
 	if (isClassVisible(result, requestor)) {
 		if (DEBUG && DEBUG_SHOW_SUCCESS && debugClass(result.getName()))
-			debug("found " + result.getName() + " in " + (inCache ? "cache" : getURLforClass(result).toExternalForm()));
+			debug("found " + result.getName() + " in " + (inCache ? "cache" : getURLforClass(result).toExternalForm())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	} else {
 		if (DEBUG && DEBUG_SHOW_ACTIONS && debugClass(result.getName()))
-			debug("skip " + result.getName() + " in " + (inCache ? "cache" : getURLforClass(result).toExternalForm()));
+			debug("skip " + result.getName() + " in " + (inCache ? "cache" : getURLforClass(result).toExternalForm())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return null;
 	}
 	return result;
@@ -283,17 +288,16 @@ protected URL checkResourceVisibility(String name, URL result, DelegatingURLClas
 		return null;
 	if (isResourceVisible(name, result, requestor)) {
 		if (DEBUG && DEBUG_SHOW_SUCCESS && debugResource(name))
-			debug("found " + result);
+			debug("found " + result); //$NON-NLS-1$
 	} else {
 		if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
-			debug("skip " + result);
+			debug("skip " + result); //$NON-NLS-1$
 		result = null;
 	}
 	return result;
 }
 protected void debug(String s) {
-
-	System.out.println(toString()+"^"+Integer.toHexString(Thread.currentThread().hashCode())+" "+s);
+	System.out.println(toString()+"^"+Integer.toHexString(Thread.currentThread().hashCode())+" "+s); //$NON-NLS-1$ //$NON-NLS-2$
 }
 protected boolean debugClass(String name) {
 	
@@ -305,23 +309,23 @@ protected boolean debugClass(String name) {
 protected void debugConstruction() {
 	if (DEBUG && DEBUG_SHOW_CREATE && debugLoader()) {
 		URL[] urls = getURLs();
-		debug("Class Loader Created");
-		debug("> baseURL=" + base);
+		debug("Class Loader Created"); //$NON-NLS-1$
+		debug("> baseURL=" + base); //$NON-NLS-1$
 		if (urls == null || urls.length == 0)
-			debug("> empty search path");
+			debug("> empty search path"); //$NON-NLS-1$
 		else {
 			URLContentFilter filter;
 			for (int i = 0; i < urls.length; i++) {
-				debug("> searchURL=" + urls[i].toString());
+				debug("> searchURL=" + urls[i].toString()); //$NON-NLS-1$
 				filter = (URLContentFilter) filterTable.get(urls[i]);
 				if (filter != null)
-					debug(">    export=" + filter.toString());
+					debug(">    export=" + filter.toString()); //$NON-NLS-1$
 			}
 		}
 	}
 }
 protected String debugId() {
-	return "";
+	return ""; //$NON-NLS-1$
 }
 protected boolean debugLoader() {
 	
@@ -332,7 +336,7 @@ private boolean debugMatchesFilter(String name, String[] filter) {
 	if (filter.length==0) return false;
 	
 	for (int i=0; i<filter.length; i++) {
-		if (filter[i].equals("*")) return true;
+		if (filter[i].equals("*")) return true; //$NON-NLS-1$
 		if (name.startsWith(filter[i])) return true;
 	}
 	return false;
@@ -458,7 +462,7 @@ protected String findLibrary(String libName) {
 	libName = System.mapLibraryName(libName);
 
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libName))
-		debug("findLibrary(" + libName + ")");
+		debug("findLibrary(" + libName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 	if (base == null)
 		return null;
 	String libFileName = null;
@@ -502,7 +506,7 @@ protected URL findResource(String name, DelegatingURLClassLoader requestor, Vect
 		return null;
 
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
-		debug("findResource(" + name + ")");
+		debug("findResource(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	// check the normal class path for self
 	URL result = super.findResource(name);
@@ -547,7 +551,7 @@ private Enumeration findResources(String name, DelegatingURLClassLoader requesto
 		return null;
 
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
-		debug("findResources(" + name + ")");
+		debug("findResources(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	// check own URL search path
 	Enumeration e = null;
@@ -625,12 +629,12 @@ private URL searchVariants (URL[] basePaths, String[] variants, String path) {
 			File file = new File(fileName);
 			if (!file.exists()) {
 				if (DEBUG && DEBUG_SHOW_FAILURE)
-					debug("not found " + file.getAbsolutePath());
+					debug("not found " + file.getAbsolutePath()); //$NON-NLS-1$
 			} else {	
 				if (DEBUG && DEBUG_SHOW_SUCCESS)
-					debug("found " + path + " as " + file.getAbsolutePath());
+					debug("found " + path + " as " + file.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 				try {
-					return new URL ("file:" + fileName);
+					return new URL ("file:" + fileName); //$NON-NLS-1$
 				} catch (MalformedURLException e) {
 					// Intentionally ignore this exception
 					// so we continue looking for a matching
@@ -643,12 +647,12 @@ private URL searchVariants (URL[] basePaths, String[] variants, String path) {
 }
 public URL getResource(String name) {
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
-		debug("getResource(" + name + ")");
+		debug("getResource(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	URL result = super.getResource(name);
 	if (result == null) {
 		if (DEBUG && DEBUG_SHOW_FAILURE && debugResource(name))
-			debug("not found " + name);
+			debug("not found " + name); //$NON-NLS-1$
 	}
 	return result;
 }
@@ -660,7 +664,7 @@ private URL getURLforClass(Class clazz) {
 			return cs.getLocation();
 	}
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugClass(clazz.getName()))
-		debug("*** " + clazz.getName());
+		debug("*** " + clazz.getName()); //$NON-NLS-1$
 	return null;
 }
 public void initializeImportedLoaders() {
@@ -685,7 +689,7 @@ boolean isClassVisible(Class clazz, DelegatingURLClassLoader requestor) {
 		// delegated down the prerequisite chain until we find the
 		// correct loader.
 		if (DEBUG && DEBUG_SHOW_ACTIONS && debugClass(clazz.getName()))
-			debug("*** Unable to find library filter for " + clazz.getName() + " from " + lib);
+			debug("*** Unable to find library filter for " + clazz.getName() + " from " + lib); //$NON-NLS-1$ //$NON-NLS-2$
 		return false;
 	} else
 		return filter.isClassVisible(clazz, this, requestor);
@@ -700,7 +704,7 @@ boolean isResourceVisible(String name, URL resource, DelegatingURLClassLoader re
 		lib = new URL(resource.getProtocol(), resource.getHost(), file.substring(0, file.length() - name.length()));
 	} catch (MalformedURLException e) {
 		if (DEBUG)
-			debug("Unable to determine resource lib for " + name + " from " + resource);
+			debug("Unable to determine resource lib for " + name + " from " + resource); //$NON-NLS-1$ //$NON-NLS-2$
 		return false;
 	}
 
@@ -709,7 +713,7 @@ boolean isResourceVisible(String name, URL resource, DelegatingURLClassLoader re
 	if (filter == null) filter = (URLContentFilter) filterTable.get(mungeJarURL(lib));
 	if (filter == null) {
 		if (DEBUG)
-			debug("Unable to find library filter for " + name + " from " + lib);
+			debug("Unable to find library filter for " + name + " from " + lib); //$NON-NLS-1$ //$NON-NLS-2$
 		return false;
 	} else
 		return filter.isResourceVisible(name, this, requestor);
@@ -722,11 +726,11 @@ boolean isResourceVisible(String name, URL resource, DelegatingURLClassLoader re
  */
 protected Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugClass(name))
-		debug("loadClass(" + name + ")");
+		debug("loadClass(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 	Class result = loadClass(name, resolve, this, null, true);
 	if (result == null) {
 		if (DEBUG && DEBUG_SHOW_FAILURE && debugClass(name))
-			debug("not found " + name);
+			debug("not found " + name); //$NON-NLS-1$
 		throw new ClassNotFoundException(name);
 	}
 	return result;
@@ -771,7 +775,7 @@ private void setHotSwapPath(ClassLoader cl, URL[] urls) {
 			if (file.charAt(file.length() - 1) == '/')
 				file = file.substring(0, file.length() - 1);
 			if (path.length() > 0)
-				path.append(";");
+				path.append(";"); //$NON-NLS-1$
 			path.append(file);
 		}
 	}
@@ -783,16 +787,16 @@ protected void setImportedLoaders(DelegateLoader[] loaders) {
 	imports = loaders;
 	
 	if(DEBUG && DEBUG_SHOW_CREATE && debugLoader()) {
-		debug("Imports");
-		if (imports==null || imports.length==0) debug("> none");
+		debug("Imports"); //$NON-NLS-1$
+		if (imports==null || imports.length==0) debug("> none"); //$NON-NLS-1$
 		else {
 			for (int i=0; i<imports.length; i++) {
-				debug("> " + imports[i].loader.toString() + " export=" + imports[i].isExported);
+				debug("> " + imports[i].loader.toString() + " export=" + imports[i].isExported); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
 }
 public String toString() {
-	return "Loader [" + debugId() + "]";
+	return "Loader [" + debugId() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 }
 }

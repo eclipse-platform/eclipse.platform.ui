@@ -1,13 +1,18 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.boot;
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.*;
@@ -52,76 +57,76 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	static boolean DEBUG = false;
 	
-	private static final String BOOT_XML = "boot.xml";
-	private static final String BOOT_PLUGIN_ID = "org.eclipse.core.boot";
-	private static final String RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime";
-	private static final String XML_PLUGIN_ID = "org.apache.xerces";
+	private static final String BOOT_XML = "boot.xml"; //$NON-NLS-1$
+	private static final String BOOT_PLUGIN_ID = "org.eclipse.core.boot"; //$NON-NLS-1$
+	private static final String RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime"; //$NON-NLS-1$
+	private static final String XML_PLUGIN_ID = "org.apache.xerces"; //$NON-NLS-1$
 
-	private static final String ECLIPSE = "eclipse";
-	private static final String PLUGINS = "plugins";
-	private static final String FEATURES = "features";
-	private static final String CONFIG_DIR = ".config";
-	private static final String CONFIG_FILE = CONFIG_DIR + "/platform.cfg";
-	private static final String CONFIG_FILE_INIT = "install.ini";
-	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock";
-	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp";
-	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak";
-	private static final String CHANGES_MARKER = ".newupdates"; 
-	private static final String LINKS = "links";
-	private static final String PLUGIN_XML = "plugin.xml";
-	private static final String FRAGMENT_XML = "fragment.xml";
-	private static final String FEATURE_XML = "feature.xml";
+	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
+	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
+	private static final String FEATURES = "features"; //$NON-NLS-1$
+	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
+	private static final String CONFIG_FILE = CONFIG_DIR + "/platform.cfg"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
+	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
+	private static final String CHANGES_MARKER = ".newupdates";  //$NON-NLS-1$
+	private static final String LINKS = "links"; //$NON-NLS-1$
+	private static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
+	private static final String FRAGMENT_XML = "fragment.xml"; //$NON-NLS-1$
+	private static final String FEATURE_XML = "feature.xml"; //$NON-NLS-1$
 	
-	private static final String[] BOOTSTRAP_PLUGINS = {"org.eclipse.core.boot"};
-	private static final String CFG_BOOT_PLUGIN = "bootstrap";
-	private static final String CFG_SITE = "site";
-	private static final String CFG_URL = "url";
-	private static final String CFG_POLICY = "policy";
-	private static final String[] CFG_POLICY_TYPE = {"USER-INCLUDE", "USER-EXCLUDE"};
-	private static final String CFG_POLICY_TYPE_UNKNOWN = "UNKNOWN";
-	private static final String CFG_LIST = "list";
-	private static final String CFG_STAMP = "stamp";
-	private static final String CFG_FEATURE_STAMP = "stamp.features";
-	private static final String CFG_PLUGIN_STAMP = "stamp.plugins";
-	private static final String CFG_UPDATEABLE = "updateable";
-	private static final String CFG_LINK_FILE = "linkfile";
-	private static final String CFG_FEATURE_ENTRY = "feature";
-	private static final String CFG_FEATURE_ENTRY_DEFAULT = "feature.default.id";
-	private static final String CFG_FEATURE_ENTRY_ID = "id";
-	private static final String CFG_FEATURE_ENTRY_VERSION = "version";
-	private static final String CFG_FEATURE_ENTRY_APPLICATION = "application";
-	private static final String CFG_FEATURE_ENTRY_ROOT = "root";
+	private static final String[] BOOTSTRAP_PLUGINS = {"org.eclipse.core.boot"}; //$NON-NLS-1$
+	private static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
+	private static final String CFG_SITE = "site"; //$NON-NLS-1$
+	private static final String CFG_URL = "url"; //$NON-NLS-1$
+	private static final String CFG_POLICY = "policy"; //$NON-NLS-1$
+	private static final String[] CFG_POLICY_TYPE = {"USER-INCLUDE", "USER-EXCLUDE"}; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String CFG_POLICY_TYPE_UNKNOWN = "UNKNOWN"; //$NON-NLS-1$
+	private static final String CFG_LIST = "list"; //$NON-NLS-1$
+	private static final String CFG_STAMP = "stamp"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_STAMP = "stamp.features"; //$NON-NLS-1$
+	private static final String CFG_PLUGIN_STAMP = "stamp.plugins"; //$NON-NLS-1$
+	private static final String CFG_UPDATEABLE = "updateable"; //$NON-NLS-1$
+	private static final String CFG_LINK_FILE = "linkfile"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY = "feature"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_DEFAULT = "feature.default.id"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_ID = "id"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_VERSION = "version"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_APPLICATION = "application"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_ROOT = "root"; //$NON-NLS-1$
 	
-	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id";
-	private static final String INIT_DEFAULT_FEATURE_APPLICATION = "feature.default.application";
-	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform";
-	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.workbench";
+	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id"; //$NON-NLS-1$
+	private static final String INIT_DEFAULT_FEATURE_APPLICATION = "feature.default.application"; //$NON-NLS-1$
+	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform"; //$NON-NLS-1$
+	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.workbench"; //$NON-NLS-1$
 	
-	private static final String CFG_VERSION = "version";
-	private static final String CFG_TRANSIENT = "transient";
-	private static final String VERSION = "1.0";
-	private static final String EOF = "eof";
+	private static final String CFG_VERSION = "version"; //$NON-NLS-1$
+	private static final String CFG_TRANSIENT = "transient"; //$NON-NLS-1$
+	private static final String VERSION = "1.0"; //$NON-NLS-1$
+	private static final String EOF = "eof"; //$NON-NLS-1$
 	private static final int CFG_LIST_LENGTH = 10;
 	
 	private static final int DEFAULT_POLICY_TYPE = ISitePolicy.USER_EXCLUDE;
 	private static final String[] DEFAULT_POLICY_LIST = new String[0];
 	
-	private static final String LINK_PATH = "path";
-	private static final String LINK_READ = "r";
-	private static final String LINK_READ_WRITE = "rw";
+	private static final String LINK_PATH = "path"; //$NON-NLS-1$
+	private static final String LINK_READ = "r"; //$NON-NLS-1$
+	private static final String LINK_READ_WRITE = "rw"; //$NON-NLS-1$
 	
-	private static final String CMD_CONFIGURATION = "-configuration";
-	private static final String CMD_FEATURE = "-feature";
-	private static final String CMD_APPLICATION = "-application";
-	private static final String CMD_PLUGINS = "-plugins";
-	private static final String CMD_UPDATE = "-update";
-	private static final String CMD_INITIALIZE = "-initialize";
-	private static final String CMD_FIRSTUSE = "-firstuse";
-	private static final String CMD_NO_UPDATE = "-noupdate";
-	private static final String CMD_NEW_UPDATES = "-newUpdates"; 
-	private static final String CMD_DEV = "-dev"; // triggers -noupdate
+	private static final String CMD_CONFIGURATION = "-configuration"; //$NON-NLS-1$
+	private static final String CMD_FEATURE = "-feature"; //$NON-NLS-1$
+	private static final String CMD_APPLICATION = "-application"; //$NON-NLS-1$
+	private static final String CMD_PLUGINS = "-plugins"; //$NON-NLS-1$
+	private static final String CMD_UPDATE = "-update"; //$NON-NLS-1$
+	private static final String CMD_INITIALIZE = "-initialize"; //$NON-NLS-1$
+	private static final String CMD_FIRSTUSE = "-firstuse"; //$NON-NLS-1$
+	private static final String CMD_NO_UPDATE = "-noupdate"; //$NON-NLS-1$
+	private static final String CMD_NEW_UPDATES = "-newUpdates";  //$NON-NLS-1$
+	private static final String CMD_DEV = "-dev"; // triggers -noupdate //$NON-NLS-1$
 	
-	private static final String RECONCILER_APP = "org.eclipse.update.core.reconciler";
+	private static final String RECONCILER_APP = "org.eclipse.update.core.reconciler"; //$NON-NLS-1$
 	
 	private static final char[] HEX = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
@@ -293,10 +298,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				if (!plugin.exists()) {
 					continue;
 				}
-				features.add(FEATURES + "/" + path.replace(File.separatorChar, '/'));
+				features.add(FEATURES + "/" + path.replace(File.separatorChar, '/')); //$NON-NLS-1$
 			}
 			if (DEBUG) {
-				debug(resolvedURL.toString()+" located  "+features.size()+" feature(s)");
+				debug(resolvedURL.toString()+" located  "+features.size()+" feature(s)"); //$NON-NLS-1$ //$NON-NLS-2$
 			}				
 				
 			return (String[])features.toArray(new String[0]);
@@ -330,10 +335,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					if (!plugin.exists())
 						continue;
 				}
-				plugins.add(PLUGINS + "/" + path.replace(File.separatorChar, '/'));
+				plugins.add(PLUGINS + "/" + path.replace(File.separatorChar, '/')); //$NON-NLS-1$
 			}
 			if (DEBUG) {
-				debug(resolvedURL.toString()+" located  "+plugins.size()+" plugin(s)");
+				debug(resolvedURL.toString()+" located  "+plugins.size()+" plugin(s)"); //$NON-NLS-1$ //$NON-NLS-2$
 			}								
 				
 			return (String[])plugins.toArray(new String[0]);
@@ -376,7 +381,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			featuresChangeStampIsValid = true;
 			if (DEBUG) {
 				long end = (new Date()).getTime();
-				debug(resolvedURL.toString()+" feature stamp: "+featuresChangeStamp+((featuresChangeStamp==lastFeaturesChangeStamp)?" [no changes]":" [was "+lastFeaturesChangeStamp+"]") + " in "+(end-start)+"ms");
+				debug(resolvedURL.toString()+" feature stamp: "+featuresChangeStamp+((featuresChangeStamp==lastFeaturesChangeStamp)?" [no changes]":" [was "+lastFeaturesChangeStamp+"]") + " in "+(end-start)+"ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			}
 		}
 		
@@ -392,7 +397,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			pluginsChangeStampIsValid = true;
 			if (DEBUG) {
 				long end = (new Date()).getTime();
-				debug(resolvedURL.toString()+" plugin stamp: "+pluginsChangeStamp+((pluginsChangeStamp==lastPluginsChangeStamp)?" [no changes]":" [was "+lastPluginsChangeStamp+"]") + " in "+(end-start)+"ms");
+				debug(resolvedURL.toString()+" plugin stamp: "+pluginsChangeStamp+((pluginsChangeStamp==lastPluginsChangeStamp)?" [no changes]":" [was "+lastPluginsChangeStamp+"]") + " in "+(end-start)+"ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			}
 		}
 		
@@ -410,7 +415,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				for (int i=0; i<targets.length; i++)
 					result ^= targets[i].hashCode();
 				if (DEBUG)
-					debug("*WARNING* computing stamp using URL hashcodes only");				
+					debug("*WARNING* computing stamp using URL hashcodes only"); //$NON-NLS-1$
 			} else {
 				// compute stamp across local targets		
 				String rootPath = resolvedURL.getFile().replace('/',File.separatorChar);
@@ -431,7 +436,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		
 		private boolean isExternallyLinkedSite() {
-			return (linkFileName!=null && !linkFileName.trim().equals(""));
+			return (linkFileName!=null && !linkFileName.trim().equals("")); //$NON-NLS-1$
 		}
 		
 		private synchronized void refresh() {
@@ -538,14 +543,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	private class VersionedIdentifier {
-		private String identifier = "";		
+		private String identifier = ""; //$NON-NLS-1$
 		private int major = 0;
 		private int minor = 0;
 		private int service = 0;
-		private String qualifier = "";
+		private String qualifier = ""; //$NON-NLS-1$
 	
-		private static final String VER_SEPARATOR = ".";
-		private static final String ID_SEPARATOR = "_";
+		private static final String VER_SEPARATOR = "."; //$NON-NLS-1$
+		private static final String ID_SEPARATOR = "_"; //$NON-NLS-1$
 		
 		public static final int LESS_THAN = -1;
 		public static final int EQUAL = 0;
@@ -554,7 +559,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		public static final int GREATER_THAN = 3;
 		
 		public VersionedIdentifier(String s) {		
-			if (s==null || (s=s.trim()).equals("")) 
+			if (s==null || (s=s.trim()).equals(""))  //$NON-NLS-1$
 				return;
 		
 			int loc = s.lastIndexOf(ID_SEPARATOR);
@@ -600,7 +605,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}	
 		
 		private void parseVersion(String v) {				
-			if( v == null || (v=v.trim()).equals(""))
+			if( v == null || (v=v.trim()).equals("")) //$NON-NLS-1$
 				return;
 		
 			try{
@@ -719,12 +724,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						elementName = element.substring(0,j);
 						element = element.substring(j);
 						// parse out attributes
-						StringTokenizer t = new StringTokenizer(element,"=\"");
+						StringTokenizer t = new StringTokenizer(element,"=\""); //$NON-NLS-1$
 						boolean isKey = true;
-						String key = "";
+						String key = ""; //$NON-NLS-1$
 						while(t.hasMoreTokens()) {
 							String token = t.nextToken().trim();
-							if (!token.equals("")) {
+							if (!token.equals("")) { //$NON-NLS-1$
 								// collect (key, value) pairs
 								if (isKey) {
 									key = token;
@@ -738,7 +743,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					}
 					// make post-parse selector call
 					if (selector.select(elementName, attributes)) {
-						attributes.put("<element>", elementName);
+						attributes.put("<element>", elementName); //$NON-NLS-1$
 						return attributes;
 					}
 				}			
@@ -773,10 +778,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 			// parse out element tokens	
 			String xmlString = xml.toString();
-			StringTokenizer t = new StringTokenizer(xmlString,"<>");	
+			StringTokenizer t = new StringTokenizer(xmlString,"<>"); //$NON-NLS-1$
 			while(t.hasMoreTokens()) {
 				String token = t.nextToken().trim();
-				if (!token.equals(""))
+				if (!token.equals("")) //$NON-NLS-1$
 					elements.add(token);
 			}
 		}
@@ -820,7 +825,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						
 		// Determine configuration URL to use (based on command line argument)	
 		URL configURL = null;
-		if (configArg != null && !configArg.trim().equals("")) {
+		if (configArg != null && !configArg.trim().equals("")) { //$NON-NLS-1$
 			configURL = new URL(configArg);
 		}
 
@@ -1102,7 +1107,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	public URL[] getPluginPath() {
 		ArrayList path = new ArrayList();
 		if (DEBUG)
-			debug("computed plug-in path:");
+			debug("computed plug-in path:"); //$NON-NLS-1$
 			
 		ISiteEntry[] sites = getConfiguredSites();
 		URL pathURL;
@@ -1113,11 +1118,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					pathURL = new URL(((SiteEntry)sites[i]).getResolvedURL(),plugins[j]);
 					path.add(pathURL);
 					if (DEBUG)
-						debug("   "+pathURL.toString());
+						debug("   "+pathURL.toString()); //$NON-NLS-1$
 				} catch(MalformedURLException e) {
 					// skip entry ...
 					if (DEBUG)
-						debug("   bad URL: "+e);
+						debug("   bad URL: "+e); //$NON-NLS-1$
 				}
 			}
 		}			
@@ -1199,11 +1204,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public synchronized void save(URL url) throws IOException {		
 		if (url == null)
-			throw new IOException(Policy.bind("cfig.unableToSave.noURL"));
+			throw new IOException(Policy.bind("cfig.unableToSave.noURL")); //$NON-NLS-1$
 			
 		PrintWriter w = null;
 		OutputStream os = null;
-		if (!url.getProtocol().equals("file")) {
+		if (!url.getProtocol().equals("file")) { //$NON-NLS-1$
 			// not a file protocol - attempt to save to the URL
 			URLConnection uc = url.openConnection();
 			uc.setDoOutput(true);
@@ -1237,7 +1242,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				tmpProps.load(is);
 				if (!EOF.equals(tmpProps.getProperty(EOF))) {
-					throw new IOException(Policy.bind("cfig.unableToSave",cfigTmp.getAbsolutePath()));
+					throw new IOException(Policy.bind("cfig.unableToSave",cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 				}				
 			} finally {
 				is.close();
@@ -1263,7 +1268,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				// with "tmp" (latest), then "bak" (the previous). We can also end up
 				// here if we failed to rename the current config to "bak". In that
 				// case we will restart with the previous state.
-				throw new IOException(Policy.bind("cfig.unableToSave",cfigTmp.getAbsolutePath()));
+				throw new IOException(Policy.bind("cfig.unableToSave",cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			}	
 		}
 	}
@@ -1334,7 +1339,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				config.save();
 			} catch(IOException e) {
 				if (DEBUG)
-					debug("Unable to save configuration "+e.toString());
+					debug("Unable to save configuration "+e.toString()); //$NON-NLS-1$
 				// will recover on next startup
 			}
 			config.clearConfigurationLock();
@@ -1355,7 +1360,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (createRootSite) 
 				configureSite(getRootSite());
 			if (DEBUG)
-				debug("Initializing configuration " + url.toString());	
+				debug("Initializing configuration " + url.toString()); //$NON-NLS-1$
 			configLocation = url;
 			verifyPath(configLocation);	
 			return;
@@ -1372,13 +1377,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				load(url);
 				if (DEBUG)
-					debug("Using configuration " + url.toString());
+					debug("Using configuration " + url.toString()); //$NON-NLS-1$
 			} catch(IOException e) {
 				cmdFirstUse = true;
 				if (createRootSite)
 					configureSite(getRootSite());
 				if (DEBUG)
-					debug("Creating configuration " + url.toString());			
+					debug("Creating configuration " + url.toString());	//$NON-NLS-1$
 			}
 			configLocation = url;
 			verifyPath(configLocation);	
@@ -1394,9 +1399,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			
 			// first determine configuration location in .metadata
 			metaPath = metaPath.replace(File.separatorChar, '/');
-			if (!metaPath.endsWith("/"))
-				metaPath += "/";			
-			URL cfigURL = new URL("file",null,0,metaPath+CONFIG_FILE);	// if we fail here, return exception			
+			if (!metaPath.endsWith("/")) //$NON-NLS-1$
+				metaPath += "/"; //$NON-NLS-1$
+			URL cfigURL = new URL("file",null,0,metaPath+CONFIG_FILE);	// if we fail here, return exception //$NON-NLS-1$
 
 			// check concurrent use lock
 			concurrentUse = getConfigurationLock(cfigURL);
@@ -1407,7 +1412,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				configLocation = cfigURL;
 				verifyPath(configLocation);	
 				if (DEBUG)
-					debug("Using configuration " + configLocation.toString());
+					debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
 				return;			
 			} catch(IOException e) {
 				cmdFirstUse = true; // we are creating new configuration
@@ -1424,8 +1429,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					configLocation = cfigURL; // config in .metadata is the right URL
 					verifyPath(configLocation);				
 					if (DEBUG) {
-						debug("Using configuration " + configLocation.toString());
-						debug("Initialized from    " + url.toString());
+						debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
+						debug("Initialized from    " + url.toString()); //$NON-NLS-1$
 					}
 					return;			
 				} catch(IOException e) {
@@ -1439,7 +1444,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			configLocation = cfigURL;
 			verifyPath(configLocation);
 			if (DEBUG)
-				debug("Creating configuration " + configLocation.toString());
+				debug("Creating configuration " + configLocation.toString()); //$NON-NLS-1$
 			return;
 		}
 	}
@@ -1447,14 +1452,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private synchronized void initialize(URL url) throws IOException {
 		if (url == null) {
 			if (DEBUG)
-				debug("Creating empty configuration object");
+				debug("Creating empty configuration object"); //$NON-NLS-1$
 			return;
 		}
 			
 		load(url);
 		configLocation = url;
 		if (DEBUG)
-			debug("Using configuration " + configLocation.toString());
+			debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
 	}
 	
 	private ISiteEntry getRootSite() {
@@ -1474,7 +1479,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (configurationInWorkspace(url))
 			return false;
 		
-		if (!url.getProtocol().equals("file"))
+		if (!url.getProtocol().equals("file")) //$NON-NLS-1$
 			return false;
 			
 		verifyPath(url);
@@ -1487,15 +1492,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (cfgLockFile.exists())
 			cfgLockFile.delete();
 		if (cfgLockFile.exists()) {
-			throw new RuntimeException(Policy.bind("cfig.inUse", cfgName, lockName));
+			throw new RuntimeException(Policy.bind("cfig.inUse", cfgName, lockName)); //$NON-NLS-1$
 		}
 		
 		// OK so far ... open the lock file so other instances will fail
 		try {
-			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw");
+			cfgLockFileRAF = new RandomAccessFile(cfgLockFile, "rw"); //$NON-NLS-1$
 			cfgLockFileRAF.writeByte(0);
 		} catch (IOException e) {
-			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName));
+			throw new RuntimeException(Policy.bind("cfig.failCreateLock", cfgName)); //$NON-NLS-1$
 		}
 				
 		return false;
@@ -1560,11 +1565,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return;
 		
 		try {
-			linkURL = new URL(linkURL, LINKS + "/");
+			linkURL = new URL(linkURL, LINKS + "/"); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			// skip bad links ...
 			if (DEBUG)
-				debug("Unable to obtain link URL");
+				debug("Unable to obtain link URL"); //$NON-NLS-1$
 			return;
 		}
 		
@@ -1572,7 +1577,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		File[] links = linkDir.listFiles();
 		if (links==null || links.length==0) {
 			if (DEBUG)
-				debug("No links detected in "+linkURL.toExternalForm());
+				debug("No links detected in "+linkURL.toExternalForm()); //$NON-NLS-1$
 			return;
 		}
 		
@@ -1580,7 +1585,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (links[i].isDirectory())
 				continue;
 			if (DEBUG)
-				debug("Link file "+links[i].getAbsolutePath());	
+				debug("Link file "+links[i].getAbsolutePath()); //$NON-NLS-1$
 			Properties props = new Properties();
 			FileInputStream is = null;
 			try {
@@ -1590,7 +1595,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			} catch(IOException e) {
 				// skip bad links ...
 				if (DEBUG)
-					debug("   unable to load link file "+e);
+					debug("   unable to load link file "+e); //$NON-NLS-1$
 				continue;
 			} finally {
 				if (is != null) {
@@ -1608,7 +1613,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String path = props.getProperty(LINK_PATH);
 		if (path==null) {
 			if (DEBUG)
-				debug("   no path definition");
+				debug("   no path definition"); //$NON-NLS-1$
 			return;
 		}
 		
@@ -1619,10 +1624,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		ISitePolicy linkSitePolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 		
 		// parse out link information
-		if (path.startsWith(LINK_READ+" ")) {
+		if (path.startsWith(LINK_READ+" ")) { //$NON-NLS-1$
 			updateable = false;
 			link = path.substring(2).trim();
-		} else if (path.startsWith(LINK_READ_WRITE+" ")) {
+		} else if (path.startsWith(LINK_READ_WRITE+" ")) { //$NON-NLS-1$
 			link = path.substring(3).trim();
 		} else {
 			link = path;
@@ -1633,14 +1638,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (!link.endsWith(File.separator))
 				link += File.separator;
 			File target = new File(link + ECLIPSE);
-			link = "file:" + target.getAbsolutePath().replace(File.separatorChar,'/');
-			if (!link.endsWith("/"))
-				link += "/"; // sites must be directories
+			link = "file:" + target.getAbsolutePath().replace(File.separatorChar,'/'); //$NON-NLS-1$
+			if (!link.endsWith("/")) //$NON-NLS-1$
+				link += "/"; // sites must be directories //$NON-NLS-1$
 			siteURL = new URL(link);
 		} catch(MalformedURLException e) {
 			// ignore bad links ...
 			if (DEBUG)
-				debug("  bad URL "+e);
+				debug("  bad URL "+e); //$NON-NLS-1$
 			return;
 		}
 			
@@ -1661,7 +1666,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// NOTE: duplicates are not replaced (first one in wins) 
 		configureSite(linkSite);
 		if (DEBUG)
-			debug("   "+(updateable?"R/W -> ":"R/O -> ")+siteURL.toString());
+			debug("   "+(updateable?"R/W -> ":"R/O -> ")+siteURL.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/*
@@ -1681,13 +1686,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			String sitePortion;
 			String pluginPortion;
 			int ix;
-			if (entry.endsWith("/")) {
+			if (entry.endsWith("/")) { //$NON-NLS-1$
 				// assume directory path in the form <site>/plugins/
 				// look for -------------------------------^
 				ix = findEntrySeparator(entry,2); // second from end
 				sitePortion = entry.substring(0,ix+1);
 				pluginPortion = entry.substring(ix+1);
-				if (!pluginPortion.equals("plugins/"))
+				if (!pluginPortion.equals("plugins/")) //$NON-NLS-1$
 					continue; // unsupported entry ... skip it ("fragments/" are handled)
 				pluginPortion = null;
 			} else {
@@ -1703,12 +1708,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			URL siteURL = null;
 			try {
 				siteURL = new URL(sitePortion);
-				if (siteURL.getProtocol().equals("file")) {
+				if (siteURL.getProtocol().equals("file")) { //$NON-NLS-1$
 					File sf = new File(siteURL.getFile());
 					String sfn = sf.getAbsolutePath().replace(File.separatorChar,'/');
-					if (!sfn.endsWith("/"))
-						sfn += "/";
-					siteURL = new URL("file:"+sfn);					
+					if (!sfn.endsWith("/")) //$NON-NLS-1$
+						sfn += "/"; //$NON-NLS-1$
+					siteURL = new URL("file:"+sfn); //$NON-NLS-1$
 				}
 			} catch (MalformedURLException e) {
 				continue; // bad entry ... skip it
@@ -1763,14 +1768,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (!siteRoot.exists()) {
 				unconfigureSite(list[i]);
 				if (DEBUG)
-					debug("Site " + siteURL + " does not exist ... removing from configuration");
+					debug("Site " + siteURL + " does not exist ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
 	
 	private void copyInitializedState(URL source, String target, String dir) {		
 		try {
-			if (!source.getProtocol().equals("file"))
+			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
 				return; // need to be able to do "dir"
 			
 			copy(new File(source.getFile()), new File(target), dir);
@@ -1823,7 +1828,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void load(URL url) throws IOException {		
 		
 		if (url == null) 
-			throw new IOException(Policy.bind("cfig.unableToLoad.noURL"));
+			throw new IOException(Policy.bind("cfig.unableToLoad.noURL")); //$NON-NLS-1$
 		
 		// try to load saved configuration file (watch for failed prior save())
 		Properties props = null;
@@ -1846,7 +1851,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// check version
 		String v = props.getProperty(CFG_VERSION);
 		if (!VERSION.equals(v)) {			
-			throw new IOException(Policy.bind("cfig.badVersion",v));
+			throw new IOException(Policy.bind("cfig.badVersion",v)); //$NON-NLS-1$
 		}
 				
 		// load simple properties
@@ -1854,7 +1859,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		String flag = loadAttribute(props, CFG_TRANSIENT, null);
 		if (flag != null) {
-			if (flag.equals("true"))
+			if (flag.equals("true")) //$NON-NLS-1$
 				transientConfig = true;
 			else
 				transientConfig = false;
@@ -1890,32 +1895,32 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// load bootstrap entries
 		String[] ids = getBootstrapPluginIdentifiers();
 		for (int i=0; i<ids.length; i++) {
-			bootPlugins.put(ids[i], loadAttribute(props, CFG_BOOT_PLUGIN + "." + ids[i], null));
+			bootPlugins.put(ids[i], loadAttribute(props, CFG_BOOT_PLUGIN + "." + ids[i], null)); //$NON-NLS-1$
 		}		
 		
 		// load feature entries
-		IFeatureEntry fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY+".0", null);
+		IFeatureEntry fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY+".0", null); //$NON-NLS-1$
 		for (int i=1; fe != null; i++) {
 			configureFeatureEntry(fe);
-			fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY+"."+i, null);
+			fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY+"."+i, null); //$NON-NLS-1$
 		}
 		
 		// load site properties
-		SiteEntry se = (SiteEntry) loadSite(props, CFG_SITE+".0", null);					
+		SiteEntry se = (SiteEntry) loadSite(props, CFG_SITE+".0", null); //$NON-NLS-1$
 		for (int i=1; se != null; i++) {
 			if (!se.isExternallyLinkedSite())
 				configureSite(se);
 			else
 				// remember external link site state, but do not configure at this point
 				externalLinkSites.put(se.getURL(),se); 
-			se = (SiteEntry) loadSite(props, CFG_SITE+"."+i, null);	
+			se = (SiteEntry) loadSite(props, CFG_SITE+"."+i, null); //$NON-NLS-1$
 		}
 	}
 	
 	private Properties loadProperties(URL url, String suffix) throws IOException {
 		
 		// figure out what we will be loading
-		if (suffix != null && !suffix.equals(""))
+		if (suffix != null && !suffix.equals("")) //$NON-NLS-1$
 			url = new URL(url.getProtocol(),url.getHost(),url.getPort(),url.getFile()+suffix);
 			
 		// try to load saved configuration file
@@ -1926,7 +1931,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			props.load(is);
 			// check to see if we have complete config file
 			if (!EOF.equals(props.getProperty(EOF))) {
-				throw new IOException(Policy.bind("cfig.unableToLoad.incomplete",url.toString()));
+				throw new IOException(Policy.bind("cfig.unableToLoad.incomplete",url.toString())); //$NON-NLS-1$
 			}
 		} finally {
 			if (is!=null) {
@@ -1942,7 +1947,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	
 	private ISiteEntry loadSite(Properties props, String name, ISiteEntry dflt) {
 
-		String urlString = loadAttribute(props, name+"."+CFG_URL, null);
+		String urlString = loadAttribute(props, name+"."+CFG_URL, null); //$NON-NLS-1$
 		if (urlString == null)
 			return dflt;
 			
@@ -1955,7 +1960,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			
 		int policyType;
 		String[] policyList;
-		String typeString = loadAttribute(props, name+"."+CFG_POLICY, null);
+		String typeString = loadAttribute(props, name+"."+CFG_POLICY, null); //$NON-NLS-1$
 		if (typeString == null) {
 			policyType = DEFAULT_POLICY_TYPE;
 			policyList = DEFAULT_POLICY_LIST;
@@ -1971,14 +1976,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				policyList = DEFAULT_POLICY_LIST;
 			} else {
 				policyType = i;
-				policyList = loadListAttribute(props, name+"."+CFG_LIST, new String[0]);
+				policyList = loadListAttribute(props, name+"."+CFG_LIST, new String[0]); //$NON-NLS-1$
 			}
 		}
 
 		ISitePolicy sp = createSitePolicy(policyType, policyList);
 		SiteEntry site = (SiteEntry) createSiteEntry(url,sp);
 		
-		String stamp = loadAttribute(props, name+"."+CFG_STAMP, null);
+		String stamp = loadAttribute(props, name+"."+CFG_STAMP, null); //$NON-NLS-1$
 		if (stamp != null) {
 			try {
 				site.lastChangeStamp = Long.parseLong(stamp);
@@ -1987,7 +1992,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 		}
 		
-		stamp = loadAttribute(props, name+"."+CFG_FEATURE_STAMP, null);
+		stamp = loadAttribute(props, name+"."+CFG_FEATURE_STAMP, null); //$NON-NLS-1$
 		if (stamp != null) {
 			try {
 				site.lastFeaturesChangeStamp = Long.parseLong(stamp);
@@ -1996,7 +2001,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 		}
 		
-		stamp = loadAttribute(props, name+"."+CFG_PLUGIN_STAMP, null);
+		stamp = loadAttribute(props, name+"."+CFG_PLUGIN_STAMP, null); //$NON-NLS-1$
 		if (stamp != null) {
 			try {
 				site.lastPluginsChangeStamp = Long.parseLong(stamp);
@@ -2005,16 +2010,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 		}
 		
-		String flag = loadAttribute(props, name+"."+CFG_UPDATEABLE, null);
+		String flag = loadAttribute(props, name+"."+CFG_UPDATEABLE, null); //$NON-NLS-1$
 		if (flag != null) {
-			if (flag.equals("true"))
+			if (flag.equals("true")) //$NON-NLS-1$
 				site.updateable = true;
 			else
 				site.updateable = false;
 		}
 		
-		String linkname = loadAttribute(props, name+"."+CFG_LINK_FILE, null);
-		if (linkname != null && !linkname.equals("")) {
+		String linkname = loadAttribute(props, name+"."+CFG_LINK_FILE, null); //$NON-NLS-1$
+		if (linkname != null && !linkname.equals("")) { //$NON-NLS-1$
 			site.linkFileName = linkname.replace('/',File.separatorChar);
 		}
 		
@@ -2022,13 +2027,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	private IFeatureEntry loadFeatureEntry(Properties props, String name, IFeatureEntry dflt) {
-		String id = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ID, null);
+		String id = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ID, null); //$NON-NLS-1$
 		if (id == null)
 			return dflt;
-		String version = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_VERSION, null);
-		String application = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_APPLICATION, null);
+		String version = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_VERSION, null); //$NON-NLS-1$
+		String application = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_APPLICATION, null); //$NON-NLS-1$
 		ArrayList rootList = new ArrayList();
-		String rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+".0", null);
+		String rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+".0", null); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i=1; rootString != null; i++) {
 			try {
 				URL rootEntry = new URL(rootString);
@@ -2036,7 +2041,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			} catch(MalformedURLException e) {
 				// skip bad entries ...
 			}
-			rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+"."+i, null);
+			rootString = loadAttribute(props, name+"."+CFG_FEATURE_ENTRY_ROOT+"."+i, null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		URL[] roots = (URL[])rootList.toArray(new URL[0]);
 		return createFeatureEntry(id, version, application, roots);
@@ -2044,13 +2049,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	
 	private String[] loadListAttribute(Properties props, String name, String[] dflt) {
 		ArrayList list = new ArrayList();
-		String value = loadAttribute(props, name+".0",null);
+		String value = loadAttribute(props, name+".0",null); //$NON-NLS-1$
 		if (value == null)
 			return dflt;
 			
 		for (int i=1; value != null; i++) {
 			loadListAttributeSegment(list, value);
-			value = loadAttribute(props, name+"."+i, null);
+			value = loadAttribute(props, name+"."+i, null); //$NON-NLS-1$
 		}
 		return (String[])list.toArray(new String[0]);
 	}
@@ -2059,11 +2064,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		if (value==null) return;
 	
-		StringTokenizer tokens = new StringTokenizer(value, ",");
+		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
 		String token;
 		while (tokens.hasMoreTokens()) {
 			token = tokens.nextToken().trim();
-			if (!token.equals("")) 
+			if (!token.equals(""))  //$NON-NLS-1$
 				list.add(token);
 		}
 		return;
@@ -2096,7 +2101,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			is = initURL.openStream();
 			initProps.load(is);
 			if (DEBUG) 
-				debug("Initializing from "+initURL.toExternalForm());
+				debug("Initializing from "+initURL.toExternalForm()); //$NON-NLS-1$
 		} catch(IOException e) {
 			return; // could not load "first-time" settings
 		} finally {
@@ -2116,9 +2121,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			IFeatureEntry fe = createFeatureEntry(defaultFeature, null, application, null);
 			configureFeatureEntry(fe);
 			if (DEBUG) {
-				debug("    Default primary feature: "+defaultFeature);
+				debug("    Default primary feature: "+defaultFeature); //$NON-NLS-1$
 				if (application != null)
-					debug("    Default application    : "+application);
+					debug("    Default application    : "+application); //$NON-NLS-1$
 			}
 		}
 	}
@@ -2185,7 +2190,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		Selector importSel = new Selector() {
 			// parse out import attributes
 			public boolean select(String element){
-				if (element.startsWith("import"))
+				if (element.startsWith("import")) //$NON-NLS-1$
 					return true;
 				else
 					return false;
@@ -2193,7 +2198,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			public boolean select(String element, HashMap attributes) {
 				if (attributes == null)
 					return false;
-				String plugin = (String) attributes.get("plugin");
+				String plugin = (String) attributes.get("plugin"); //$NON-NLS-1$
 				return fId.equals(plugin);
 			}
 		};			
@@ -2208,7 +2213,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// selector for plugin element	
 		Selector pluginSel = new Selector() {
 			public boolean select(String element){
-				if (element.startsWith("plugin"))
+				if (element.startsWith("plugin")) //$NON-NLS-1$
 					return true;
 				else
 					return false;
@@ -2222,7 +2227,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		final ArrayList libs = new ArrayList();		
 		Selector librarySel = new Selector() {
 			public boolean select(String element){
-				if (element.startsWith("library"))
+				if (element.startsWith("library")) //$NON-NLS-1$
 					return true;
 				else
 					return false;
@@ -2230,7 +2235,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			public boolean select(String element, HashMap attributes) {
 				if (attributes == null)
 					return false;
-				String lib = (String) attributes.get("name");
+				String lib = (String) attributes.get("name"); //$NON-NLS-1$
 				if (lib != null)
 					libs.add(lib);
 				return false; // accumulate all library elements
@@ -2243,19 +2248,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String version = null;		
 		HashMap attributes = p.getElement(pluginSel);
 		if (attributes != null) {
-			id = (String)attributes.get("id");
-			version = (String)attributes.get("version");
+			id = (String)attributes.get("id"); //$NON-NLS-1$
+			version = (String)attributes.get("version"); //$NON-NLS-1$
 		}
 		if (id == null)
-			id = "";
+			id = ""; //$NON-NLS-1$
 		if (version == null)
-			version = "0.0.0";		
+			version = "0.0.0"; //$NON-NLS-1$
 		
 		p.getElement(librarySel);
 		String[] libraries = (String[])libs.toArray(new String[0]);
 				
 		String dir = entry.getFile();
-		int ix = dir.lastIndexOf("/");
+		int ix = dir.lastIndexOf("/"); //$NON-NLS-1$
 		dir = dir.substring(0,ix+1);
 		URL dirURL = null;
 		try {
@@ -2276,17 +2281,17 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		// determine which plugin we are looking for
 		VersionedIdentifier id;
-		String pid = (String) importElement.get("plugin");
-		String version = (String) importElement.get("version");
-		String match = (String) importElement.get("match");
+		String pid = (String) importElement.get("plugin"); //$NON-NLS-1$
+		String version = (String) importElement.get("version"); //$NON-NLS-1$
+		String match = (String) importElement.get("match"); //$NON-NLS-1$
 		if (pid == null)
 			return null; // bad <import> element
 		if (version == null)
 			id = new VersionedIdentifier(pid);
 		else {
-			id = new VersionedIdentifier(pid+"_"+version);
+			id = new VersionedIdentifier(pid+"_"+version); //$NON-NLS-1$
 			if (match == null)
-				match = "compatible";
+				match = "compatible"; //$NON-NLS-1$
 		}
 		
 		// search plugins on all configured sites
@@ -2307,10 +2312,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				if (ix == -1)
 					continue; // bad entry ... skip
 				String pluginDir = plugins[i].substring(ix+1);
-				ix = pluginDir.indexOf("/");
+				ix = pluginDir.indexOf("/"); //$NON-NLS-1$
 				if (ix != -1)
 					pluginDir = pluginDir.substring(0,ix);
-				if (pluginDir.equals(""))
+				if (pluginDir.equals("")) //$NON-NLS-1$
 					continue; // bad entry ... skip
 												
 				// compare the candidate plugin using the matching rule												
@@ -2319,7 +2324,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						
 					// check if we have suffixed directory. If not (eg. self-hosting)
 					// we need to actually parse the plugin.xml to get its version
-					if (pluginDir.indexOf("_") == -1) {
+					if (pluginDir.indexOf("_") == -1) { //$NON-NLS-1$
 						URL xmlURL = null;
 						try {
 							xmlURL = new URL(((SiteEntry)sites[j]).getResolvedURL(), plugins[i]);
@@ -2332,7 +2337,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						Selector versionSel = new Selector() {
 							// parse out plugin attributes
 							public boolean select(String element){
-								if (element.startsWith("plugin"))
+								if (element.startsWith("plugin")) //$NON-NLS-1$
 								return true;
 							else
 								return false;
@@ -2340,7 +2345,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 							public boolean select(String element, HashMap attributes) {
 								if (attributes == null)
 									return false;
-								String plugin = (String) attributes.get("id");
+								String plugin = (String) attributes.get("id"); //$NON-NLS-1$
 								return fpid.equals(plugin);
 							}
 						};			
@@ -2349,25 +2354,25 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						if (attributes == null)
 							continue; // bad xml ... skip
 						String pluginVersion;
-						if ((pluginVersion = (String)attributes.get("version")) == null)
+						if ((pluginVersion = (String)attributes.get("version")) == null) //$NON-NLS-1$
 							continue; // bad xml ... skip
-						pluginDir += "_" + pluginVersion;
+						pluginDir += "_" + pluginVersion; //$NON-NLS-1$
 						vid = new VersionedIdentifier(pluginDir);
 					}					
 					
 					// do the comparison
 					int result;
 					if ((result = vid.compareVersion(savedVid)) >= 0) {
-						if ("greaterOrEqual".equals(match)) {
+						if ("greaterOrEqual".equals(match)) { //$NON-NLS-1$
 							 if (result > VersionedIdentifier.GREATER_THAN) 
 								continue;
-						} else if ("compatible".equals(match)) {
+						} else if ("compatible".equals(match)) { //$NON-NLS-1$
 							 if (result > VersionedIdentifier.COMPATIBLE) 
 								continue;
-						} else if ("equivalent".equals(match)) {
+						} else if ("equivalent".equals(match)) { //$NON-NLS-1$
 							 if (result > VersionedIdentifier.EQUIVALENT) 
 								continue;
-						} else if ("perfect".equals(match)) {
+						} else if ("perfect".equals(match)) { //$NON-NLS-1$
 							 if (result > VersionedIdentifier.EQUAL) 
 							continue;
 						} else if (result > VersionedIdentifier.GREATER_THAN)
@@ -2392,11 +2397,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	
 	private void write(PrintWriter w) {
 		// write header
-		w.println("# "+(new Date()).toString());
+		w.println("# "+(new Date()).toString()); //$NON-NLS-1$
 		writeAttribute(w, CFG_VERSION, VERSION);
 		if (transientConfig)
-			writeAttribute(w,CFG_TRANSIENT,"true");
-		w.println("");
+			writeAttribute(w,CFG_TRANSIENT,"true"); //$NON-NLS-1$
+		w.println(""); //$NON-NLS-1$
 		
 		// write global attributes
 		writeAttribute(w,CFG_STAMP,Long.toString(getChangeStamp()));
@@ -2408,21 +2413,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		for (int i=0; i<ids.length; i++) {
 			String location = (String) bootPlugins.get(ids[i]);
 			if (location != null)
-				writeAttribute(w, CFG_BOOT_PLUGIN + "." + ids[i], location);
+				writeAttribute(w, CFG_BOOT_PLUGIN + "." + ids[i], location); //$NON-NLS-1$
 		}
 		
 		// write out feature entries
-		w.println("");
+		w.println(""); //$NON-NLS-1$
 		writeAttribute(w,CFG_FEATURE_ENTRY_DEFAULT,defaultFeature);
 		IFeatureEntry[] feats = getConfiguredFeatureEntries();
 		for (int i=0; i<feats.length; i++) {
-			writeFeatureEntry(w, CFG_FEATURE_ENTRY + "." + Integer.toString(i), feats[i]);
+			writeFeatureEntry(w, CFG_FEATURE_ENTRY + "." + Integer.toString(i), feats[i]); //$NON-NLS-1$
 		}
 		
 		// write out site entries
 		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
 		for (int i = 0; i < list.length; i++) {
-			writeSite(w, CFG_SITE + "." + Integer.toString(i), list[i]);
+			writeSite(w, CFG_SITE + "." + Integer.toString(i), list[i]); //$NON-NLS-1$
 		}
 		
 		// write end-of-file marker
@@ -2432,16 +2437,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void writeSite(PrintWriter w, String id, SiteEntry entry) {
 		
 		// write site separator
-		w.println("");
+		w.println(""); //$NON-NLS-1$
 		
 		// write out site settings
-		writeAttribute(w, id + "." + CFG_URL, entry.getURL().toString());
-		writeAttribute(w, id + "." + CFG_STAMP,Long.toString(entry.getChangeStamp()));
-		writeAttribute(w, id + "." + CFG_FEATURE_STAMP,Long.toString(entry.getFeaturesChangeStamp()));
-		writeAttribute(w, id + "." + CFG_PLUGIN_STAMP,Long.toString(entry.getPluginsChangeStamp()));
-		writeAttribute(w, id + "." + CFG_UPDATEABLE, entry.updateable?"true":"false");
-		if (entry.linkFileName != null && !entry.linkFileName.trim().equals(""))
-			writeAttribute(w, id + "." + CFG_LINK_FILE, entry.linkFileName.trim().replace(File.separatorChar,'/'));
+		writeAttribute(w, id + "." + CFG_URL, entry.getURL().toString()); //$NON-NLS-1$
+		writeAttribute(w, id + "." + CFG_STAMP,Long.toString(entry.getChangeStamp())); //$NON-NLS-1$
+		writeAttribute(w, id + "." + CFG_FEATURE_STAMP,Long.toString(entry.getFeaturesChangeStamp())); //$NON-NLS-1$
+		writeAttribute(w, id + "." + CFG_PLUGIN_STAMP,Long.toString(entry.getPluginsChangeStamp())); //$NON-NLS-1$
+		writeAttribute(w, id + "." + CFG_UPDATEABLE, entry.updateable?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (entry.linkFileName != null && !entry.linkFileName.trim().equals("")) //$NON-NLS-1$
+			writeAttribute(w, id + "." + CFG_LINK_FILE, entry.linkFileName.trim().replace(File.separatorChar,'/')); //$NON-NLS-1$
 		
 		// write out site policy
 		int type = entry.getSitePolicy().getType();
@@ -2451,23 +2456,23 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		} catch (IndexOutOfBoundsException e) {			
 			// ignore bad attribute ...
 		}
-		writeAttribute(w, id + "." + CFG_POLICY, typeString);
-		writeListAttribute(w, id + "." + CFG_LIST, entry.getSitePolicy().getList());
+		writeAttribute(w, id + "." + CFG_POLICY, typeString); //$NON-NLS-1$
+		writeListAttribute(w, id + "." + CFG_LIST, entry.getSitePolicy().getList()); //$NON-NLS-1$
 	}
 
 	private void writeFeatureEntry(PrintWriter w, String id, IFeatureEntry entry) {
 		
 		// write feature entry separator
-		w.println("");
+		w.println(""); //$NON-NLS-1$
 				
 		// write out feature entry settings
-		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ID, entry.getFeatureIdentifier());
-		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_VERSION, entry.getFeatureVersion());
-		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_APPLICATION, entry.getFeatureApplication());
+		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ID, entry.getFeatureIdentifier()); //$NON-NLS-1$
+		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_VERSION, entry.getFeatureVersion()); //$NON-NLS-1$
+		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_APPLICATION, entry.getFeatureApplication()); //$NON-NLS-1$
 		URL[] roots = entry.getFeatureRootURLs();
 		for (int i=0; i<roots.length; i++) {
 			// write our as individual attributes (is easier for Main.java to read)	
-			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ROOT + "." + i, roots[i].toExternalForm());
+			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ROOT + "." + i, roots[i].toExternalForm()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -2475,29 +2480,29 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (list == null || list.length == 0)
 			return;
 			
-		String value = "";
+		String value = ""; //$NON-NLS-1$
 		int listLen = 0;
 		int listIndex = 0;
 		for (int i = 0; i < list.length; i++) {
 			if (listLen != 0)
-				value += ",";
+				value += ","; //$NON-NLS-1$
 			else
-				value = "";
+				value = ""; //$NON-NLS-1$
 			value += list[i];
 
 			if (++listLen >= CFG_LIST_LENGTH) {
-				writeAttribute(w, id + "." + Integer.toString(listIndex++), value);
+				writeAttribute(w, id + "." + Integer.toString(listIndex++), value); //$NON-NLS-1$
 				listLen = 0;
 			}
 		}
 		if (listLen != 0)
-			writeAttribute(w, id + "." + Integer.toString(listIndex), value);
+			writeAttribute(w, id + "." + Integer.toString(listIndex), value); //$NON-NLS-1$
 	}
 
 	private void writeAttribute(PrintWriter w, String id, String value) {
-		if (value==null || value.trim().equals(""))
+		if (value==null || value.trim().equals("")) //$NON-NLS-1$
 			return;
-		w.println(id + "=" + escapedValue(value));
+		w.println(id + "=" + escapedValue(value)); //$NON-NLS-1$
 	}
 	
 	private String escapedValue(String value) {
@@ -2609,7 +2614,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
 		
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) {
+			if (i == args.length - 1 || args[i + 1].startsWith("-")) { //$NON-NLS-1$
 				continue;
 			}
 		
@@ -2649,7 +2654,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						cmdPlugins = new URL(arg);
 				} catch (MalformedURLException e) {
 					try {
-						cmdPlugins = new URL("file:" + arg.replace(File.separatorChar, '/'));
+						cmdPlugins = new URL("file:" + arg.replace(File.separatorChar, '/')); //$NON-NLS-1$
 					} catch (MalformedURLException e2) {
 						throw e; // rethrow original exception
 					}
@@ -2690,13 +2695,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 	
 	private static String[] stringListToArray(String prop, String separator) {	
-		if (prop == null || prop.trim().equals(""))
+		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
 			return new String[0];
 		ArrayList list = new ArrayList();
 		StringTokenizer tokens = new StringTokenizer(prop, separator);
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals(""))
+			if (!token.equals("")) //$NON-NLS-1$
 				list.add(token);
 		}
 		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
@@ -2704,7 +2709,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	
 	private static boolean supportsDetection(URL url) {
 		String protocol = url.getProtocol();
-		if (protocol.equals("file"))
+		if (protocol.equals("file")) //$NON-NLS-1$
 			return true;
 		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
 			URL resolved = null;
@@ -2713,7 +2718,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			} catch(IOException e) {
 				return false; // we tried but failed to resolve the platform URL
 			}
-			return resolved.getProtocol().equals("file");
+			return resolved.getProtocol().equals("file"); //$NON-NLS-1$
 		} else
 			return false;
 	}
@@ -2721,13 +2726,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static void verifyPath(URL url) {
 		String protocol = url.getProtocol();
 		String path = null;
-		if (protocol.equals("file"))
+		if (protocol.equals("file")) //$NON-NLS-1$
 			path = url.getFile();
 		else if (protocol.equals(PlatformURLHandler.PROTOCOL)) {
 			URL resolved = null;
 			try {
 				resolved = ((PlatformURLConnection)url.openConnection()).getResolvedURL();
-				if (resolved.getProtocol().equals("file"))
+				if (resolved.getProtocol().equals("file")) //$NON-NLS-1$
 					path = resolved.getFile();
 			} catch(IOException e) {
 				// continue ...
@@ -2742,6 +2747,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	}
 
 	private static void debug(String s) {
-		System.out.println("PlatformConfig: " + s);
+		System.out.println("PlatformConfig: " + s); //$NON-NLS-1$
 	}
 }

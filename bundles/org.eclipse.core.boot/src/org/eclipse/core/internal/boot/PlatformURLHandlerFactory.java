@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.boot;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.net.URL;
 import java.net.URLStreamHandler;
@@ -17,7 +22,7 @@ public class PlatformURLHandlerFactory implements URLStreamHandlerFactory {
 
 	private static Hashtable handlers = new Hashtable();
 	
-	private static final String ECLIPSE_HANDLER_FACTORY = "org.eclipse.protocol.handler.factory";
+	private static final String ECLIPSE_HANDLER_FACTORY = "org.eclipse.protocol.handler.factory"; //$NON-NLS-1$
 	
 public PlatformURLHandlerFactory() {
 	super();
@@ -73,8 +78,8 @@ public static void startup(String location) {
 			props.put(ECLIPSE_HANDLER_FACTORY, p);
 			System.setProperties(props);
 			if (BootLoader.inDebugMode()){
-				System.out.println("WARNING: Unable to set URLStreamHandlerFactory.");				
-				System.out.println("WARNING: Starting in toleration mode.");				
+				System.out.println("WARNING: Unable to set URLStreamHandlerFactory."); //$NON-NLS-1$
+				System.out.println("WARNING: Starting in toleration mode."); //$NON-NLS-1$
 			}
 		}
 	}

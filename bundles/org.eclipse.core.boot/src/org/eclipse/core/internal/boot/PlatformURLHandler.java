@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.boot;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.net.*;
 import java.io.IOException;
@@ -18,11 +23,11 @@ public class PlatformURLHandler extends URLStreamHandler {
 	private static Hashtable connectionType = new Hashtable();
 
 	// URL protocol designations
-	public static final String PROTOCOL = "platform";
-	public static final String FILE = "file";
-	public static final String JAR = "jar";
-	public static final String JAR_SEPARATOR = "!/";
-	public static final String PROTOCOL_SEPARATOR = ":";
+	public static final String PROTOCOL = "platform"; //$NON-NLS-1$
+	public static final String FILE = "file"; //$NON-NLS-1$
+	public static final String JAR = "jar"; //$NON-NLS-1$
+	public static final String JAR_SEPARATOR = "!/"; //$NON-NLS-1$
+	public static final String PROTOCOL_SEPARATOR = ":"; //$NON-NLS-1$
 protected PlatformURLHandler() {
 	super();
 }
@@ -31,17 +36,17 @@ public URLConnection openConnection(URL url) throws IOException {
 	//       to enable request delegation from proxy handlers
 
 	String spec = url.getFile().trim();
-	if (spec.startsWith("/")) spec = spec.substring(1);
-	int ix = spec.indexOf("/");
+	if (spec.startsWith("/")) spec = spec.substring(1); //$NON-NLS-1$
+	int ix = spec.indexOf("/"); //$NON-NLS-1$
 	if (ix==-1) {
-		String message = Policy.bind("url.invalidURL", url.toString());
+		String message = Policy.bind("url.invalidURL", url.toString()); //$NON-NLS-1$
 		throw new MalformedURLException(message);
 	}
 
 	String type = spec.substring(0,ix);
 	Constructor construct = (Constructor) connectionType.get(type);
 	if (construct==null) {
-		String message = Policy.bind("url.badVariant", url.toString());
+		String message = Policy.bind("url.badVariant", url.toString()); //$NON-NLS-1$
 		throw new MalformedURLException(message);
 	}
 
@@ -50,7 +55,7 @@ public URLConnection openConnection(URL url) throws IOException {
 		c = (PlatformURLConnection) construct.newInstance(new Object[] { url });
 	}
 	catch(Exception e) {
-		String message = Policy.bind("url.createConnection", url.toString());
+		String message = Policy.bind("url.createConnection", url.toString()); //$NON-NLS-1$
 		throw new IOException(message);
 	}
 	c.setResolvedURL(c.resolve());

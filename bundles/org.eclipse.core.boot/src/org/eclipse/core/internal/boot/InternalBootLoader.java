@@ -57,26 +57,26 @@ public final class InternalBootLoader {
 	private static String os = null;
 	private static String arch = null;
 	
-	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform";
-	private static final String BOOTNAME = "org.eclipse.core.boot";
-	private static final String RUNTIMENAME = "org.eclipse.core.runtime";
-	private static final String PLUGINSDIR = "plugins/";
-	private static final String LIBRARY = "library";
-	private static final String EXPORT = "export";
-	private static final String EXPORT_PUBLIC = "public";
-	private static final String EXPORT_PROTECTED = "protected";
-	private static final String META_AREA = ".metadata";
-	private static final String WORKSPACE = "workspace";	
-	private static final String PLUGIN_PATH = ".plugin-path";
-	private static final String BOOTDIR = PLUGINSDIR + BOOTNAME + "/";
-	private static final String RUNTIMEDIR = PLUGINSDIR + RUNTIMENAME + "/";
-	private static final String OPTIONS = ".options";
+	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform"; //$NON-NLS-1$
+	private static final String BOOTNAME = "org.eclipse.core.boot"; //$NON-NLS-1$
+	private static final String RUNTIMENAME = "org.eclipse.core.runtime"; //$NON-NLS-1$
+	private static final String PLUGINSDIR = "plugins/"; //$NON-NLS-1$
+	private static final String LIBRARY = "library"; //$NON-NLS-1$
+	private static final String EXPORT = "export"; //$NON-NLS-1$
+	private static final String EXPORT_PUBLIC = "public"; //$NON-NLS-1$
+	private static final String EXPORT_PROTECTED = "protected"; //$NON-NLS-1$
+	private static final String META_AREA = ".metadata"; //$NON-NLS-1$
+	private static final String WORKSPACE = "workspace"; //$NON-NLS-1$
+	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
+	private static final String BOOTDIR = PLUGINSDIR + BOOTNAME + "/"; //$NON-NLS-1$
+	private static final String RUNTIMEDIR = PLUGINSDIR + RUNTIMENAME + "/"; //$NON-NLS-1$
+	private static final String OPTIONS = ".options"; //$NON-NLS-1$
 	// While we recognize the SunOS operating system, we change
 	// this internally to be Solaris.
-	private static final String INTERNAL_OS_SUNOS = "SunOS";
+	private static final String INTERNAL_OS_SUNOS = "SunOS"; //$NON-NLS-1$
 	// While we recognize the i386 architecture, we change
 	// this internally to be x86.
-	private static final String INTERNAL_ARCH_I386 = "i386";
+	private static final String INTERNAL_ARCH_I386 = "i386"; //$NON-NLS-1$
 
 	/** 
 	 * Execution options for the Runtime plug-in.  They are defined here because
@@ -84,34 +84,34 @@ public final class InternalBootLoader {
 	 * boot system.  Users should see these options as Runtime options since there
 	 * boot does not figure into normal Platform operation.
 	 */
-	private static final String PI_RUNTIME = "org.eclipse.core.runtime";
-	private static final String OPTION_STARTTIME = PI_RUNTIME + "/starttime";
-	private static final String OPTION_LOADER_DEBUG = PI_RUNTIME + "/loader/debug";
-	private static final String OPTION_LOADER_SHOW_CREATE = PI_RUNTIME + "/loader/debug/create";
-	private static final String OPTION_LOADER_SHOW_ACTIVATE = PI_RUNTIME + "/loader/debug/activateplugin";
-	private static final String OPTION_LOADER_SHOW_ACTIONS = PI_RUNTIME + "/loader/debug/actions";
-	private static final String OPTION_LOADER_SHOW_SUCCESS = PI_RUNTIME + "/loader/debug/success";
-	private static final String OPTION_LOADER_SHOW_FAILURE = PI_RUNTIME + "/loader/debug/failure";
-	private static final String OPTION_LOADER_FILTER_CLASS = PI_RUNTIME + "/loader/debug/filter/class";
-	private static final String OPTION_LOADER_FILTER_LOADER = PI_RUNTIME + "/loader/debug/filter/loader";
-	private static final String OPTION_LOADER_FILTER_RESOURCE = PI_RUNTIME + "/loader/debug/filter/resource";
-	private static final String OPTION_LOADER_FILTER_NATIVE = PI_RUNTIME + "/loader/debug/filter/native";
-	private static final String OPTION_URL_DEBUG = PI_RUNTIME+ "/url/debug";
-	private static final String OPTION_URL_DEBUG_CONNECT = PI_RUNTIME+ "/url/debug/connect";
-	private static final String OPTION_URL_DEBUG_CACHE_LOOKUP = PI_RUNTIME+ "/url/debug/cachelookup";
-	private static final String OPTION_URL_DEBUG_CACHE_COPY = PI_RUNTIME+ "/url/debug/cachecopy";
-	private static final String OPTION_UPDATE_DEBUG = PI_RUNTIME+ "/update/debug";
-	private static final String OPTION_CONFIGURATION_DEBUG = PI_RUNTIME+ "/config/debug";
+	private static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
+	private static final String OPTION_STARTTIME = PI_RUNTIME + "/starttime"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_DEBUG = PI_RUNTIME + "/loader/debug"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_SHOW_CREATE = PI_RUNTIME + "/loader/debug/create"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_SHOW_ACTIVATE = PI_RUNTIME + "/loader/debug/activateplugin"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_SHOW_ACTIONS = PI_RUNTIME + "/loader/debug/actions"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_SHOW_SUCCESS = PI_RUNTIME + "/loader/debug/success"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_SHOW_FAILURE = PI_RUNTIME + "/loader/debug/failure"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_FILTER_CLASS = PI_RUNTIME + "/loader/debug/filter/class"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_FILTER_LOADER = PI_RUNTIME + "/loader/debug/filter/loader"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_FILTER_RESOURCE = PI_RUNTIME + "/loader/debug/filter/resource"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_FILTER_NATIVE = PI_RUNTIME + "/loader/debug/filter/native"; //$NON-NLS-1$
+	private static final String OPTION_URL_DEBUG = PI_RUNTIME+ "/url/debug"; //$NON-NLS-1$
+	private static final String OPTION_URL_DEBUG_CONNECT = PI_RUNTIME+ "/url/debug/connect"; //$NON-NLS-1$
+	private static final String OPTION_URL_DEBUG_CACHE_LOOKUP = PI_RUNTIME+ "/url/debug/cachelookup"; //$NON-NLS-1$
+	private static final String OPTION_URL_DEBUG_CACHE_COPY = PI_RUNTIME+ "/url/debug/cachecopy"; //$NON-NLS-1$
+	private static final String OPTION_UPDATE_DEBUG = PI_RUNTIME+ "/update/debug"; //$NON-NLS-1$
+	private static final String OPTION_CONFIGURATION_DEBUG = PI_RUNTIME+ "/config/debug"; //$NON-NLS-1$
 
 	// command line arguments
-	private static final String DEBUG = "-debug";
-	private static final String DATA = "-data";
-	private static final String INSTALL = "-install";
-	private static final String DEV = "-dev";
-	private static final String WS = "-ws";
-	private static final String OS = "-os";
-	private static final String ARCH = "-arch";
-	private static final String NL = "-nl";
+	private static final String DEBUG = "-debug"; //$NON-NLS-1$
+	private static final String DATA = "-data"; //$NON-NLS-1$
+	private static final String INSTALL = "-install"; //$NON-NLS-1$
+	private static final String DEV = "-dev"; //$NON-NLS-1$
+	private static final String WS = "-ws"; //$NON-NLS-1$
+	private static final String OS = "-os"; //$NON-NLS-1$
+	private static final String ARCH = "-arch"; //$NON-NLS-1$
+	private static final String NL = "-nl"; //$NON-NLS-1$
 	
 /**
  * Private constructor to block instance creation.
@@ -143,26 +143,26 @@ private static PlatformClassLoader configurePlatformLoader() {
  * @see BootLoader
  */
 public static boolean containsSavedPlatform(String location) {
-	return new File(location + "/" + META_AREA).exists();
+	return new File(location + "/" + META_AREA).exists(); //$NON-NLS-1$
 }
 /**
  * convert a list of comma-separated tokens into an array
  */
 private static String[] getArrayFromList(String prop) {
-	if (prop == null || prop.trim().equals(""))
+	if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
 		return new String[0];
 	Vector list = new Vector();
-	StringTokenizer tokens = new StringTokenizer(prop, ",");
+	StringTokenizer tokens = new StringTokenizer(prop, ","); //$NON-NLS-1$
 	while (tokens.hasMoreTokens()) {
 		String token = tokens.nextToken().trim();
-		if (!token.equals(""))
+		if (!token.equals("")) //$NON-NLS-1$
 			list.addElement(token);
 	}
 	return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
 }
 private static boolean getBooleanOption(String option, boolean defaultValue) {
 	String optionValue = options.getProperty(option);
-	return (optionValue == null) ? defaultValue : optionValue.equalsIgnoreCase("true");
+	return (optionValue == null) ? defaultValue : optionValue.equalsIgnoreCase("true"); //$NON-NLS-1$
 }
 /**
  * @see BootLoader#getCommandLineArgs
@@ -191,11 +191,11 @@ public static URL getInstallURL() {
 	//       eclipse/ install directory). However, the new behavior takes into 
 	//       account an update scenario where we may in fact be executing
 	//       InternalBootLoader that was loaded from some other location.
-	if (installLocation != null && !installLocation.trim().equals("")) {
+	if (installLocation != null && !installLocation.trim().equals("")) { //$NON-NLS-1$
 		try {
 			installURL = new URL(installLocation);
 			if (debugRequested) 
-				System.out.println("Install URL:\n    "+installURL.toExternalForm());
+				System.out.println("Install URL:\n    "+installURL.toExternalForm()); //$NON-NLS-1$
 			return installURL;
 		} catch(MalformedURLException e) {
 			//fall through to code below
@@ -207,7 +207,7 @@ public static URL getInstallURL() {
 	// this involves striping off last element (jar or directory) 
 	URL url = InternalBootLoader.class.getProtectionDomain().getCodeSource().getLocation();
 	String path = decode(url.getFile());
-	if (path.endsWith("/"))
+	if (path.endsWith("/")) //$NON-NLS-1$
 		path = path.substring(0, path.length() - 1);
 	int ix = path.lastIndexOf('/');
 	//strip off boot jar/bin, boot plugin and plugins dir.  Be sure to leave a trailing /
@@ -218,12 +218,12 @@ public static URL getInstallURL() {
 	path = path.substring(0, ix + 1);
 
 	try {
-		if (url.getProtocol().equals("jar"))
+		if (url.getProtocol().equals("jar")) //$NON-NLS-1$
 			installURL = new URL(path);
 		else 
 			installURL = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 		if (debugRequested) 
-			System.out.println("Install URL: "+installURL.toExternalForm());
+			System.out.println("Install URL: "+installURL.toExternalForm()); //$NON-NLS-1$
 	} catch (MalformedURLException e) {
 		throw new RuntimeException("Fatal Error: Unable to determine platform installation URL "+e);
 	}
@@ -286,7 +286,7 @@ private static String[] getListOption(String option) {
 	if (filter == null)
 		return new String[0];
 	List result = new ArrayList(5);
-	StringTokenizer tokenizer = new StringTokenizer(filter, " ,\t\n\r\f");
+	StringTokenizer tokenizer = new StringTokenizer(filter, " ,\t\n\r\f"); //$NON-NLS-1$
 	while (tokenizer.hasMoreTokens())
 		result.add(tokenizer.nextToken());
 	return (String[]) result.toArray(new String[result.size()]);
@@ -326,14 +326,14 @@ private static Object[] getPlatformClassLoaderPath() {
 
 	// build a list alternating lib spec and export spec
 	ArrayList libSpecs = new ArrayList(5);
-	String[] exportAll = new String[] { "*" };
+	String[] exportAll = new String[] { "*" }; //$NON-NLS-1$
 
 	// add in any development mode class paths and the export all filter
 	if (DelegatingURLClassLoader.devClassPath != null) {
 		String[] specs = getArrayFromList(DelegatingURLClassLoader.devClassPath);
 		// convert dev class path into url strings
 		for (int j = 0; j < specs.length; j++) {
-			libSpecs.add(execBase + specs[j] + "/");
+			libSpecs.add(execBase + specs[j] + "/"); //$NON-NLS-1$
 			libSpecs.add(exportAll);
 		}
 	}
@@ -351,7 +351,7 @@ private static Object[] getPlatformClassLoaderPath() {
 
 		// convert plugin.xml library entries to url strings
 		String libSpec = execBase + library.replace(File.separatorChar, '/');
-		if (!libSpec.endsWith("/")) {
+		if (!libSpec.endsWith("/")) { //$NON-NLS-1$
 			if (libSpec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
 				libSpec += PlatformURLHandler.JAR_SEPARATOR;
 			else
@@ -431,7 +431,7 @@ public static URL[] getPluginPath(URL pluginPathLocation/*R1.0 compatibility*/) 
 public static IPlatformRunnable getRunnable(String applicationName) throws Exception {
 	assertRunning();
 	Class platform = loader.loadClass(PLATFORM_ENTRYPOINT);
-	Method method = platform.getDeclaredMethod("loaderGetRunnable", new Class[] {String.class});
+	Method method = platform.getDeclaredMethod("loaderGetRunnable", new Class[] {String.class}); //$NON-NLS-1$
 	try {
 		return (IPlatformRunnable) method.invoke(platform, new Object[] {applicationName});
 	} catch (InvocationTargetException e) {
@@ -447,7 +447,7 @@ public static IPlatformRunnable getRunnable(String applicationName) throws Excep
 public static IPlatformRunnable getRunnable(String pluginId, String className, Object args) throws Exception {
 	assertRunning();
 	Class platform = loader.loadClass(PLATFORM_ENTRYPOINT);
-	Method method = platform.getDeclaredMethod("loaderGetRunnable", new Class[] {String.class, String.class, Object.class});
+	Method method = platform.getDeclaredMethod("loaderGetRunnable", new Class[] {String.class, String.class, Object.class}); //$NON-NLS-1$
 	try {
 		return (IPlatformRunnable) method.invoke(platform, new Object[] {pluginId, className, args});
 	} catch (InvocationTargetException e) {
@@ -488,21 +488,21 @@ private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/,
 	// if a platform location was not found in the arguments, compute one.		
 	if (baseLocation == null) {
 		// Default location for the workspace is <user.dir>/workspace/
-		baseLocation = System.getProperty("user.dir");
+		baseLocation = System.getProperty("user.dir"); //$NON-NLS-1$
 		if (!baseLocation.endsWith(File.separator))
 			baseLocation += File.separator;
 		baseLocation += WORKSPACE;
 	}
 	if (debugRequested)
-		System.out.println("Workspace location:\n   " + baseLocation);	
+		System.out.println("Workspace location:\n   " + baseLocation); //$NON-NLS-1$
 
 	// load any debug options
 	loadOptions();
 
 	// initialize eclipse URL handling
 	String metaPath = baseLocation.replace(File.separatorChar, '/');
-	if (!metaPath.endsWith("/"))
-		metaPath += "/";
+	if (!metaPath.endsWith("/")) //$NON-NLS-1$
+		metaPath += "/"; //$NON-NLS-1$
 	metaPath += META_AREA;
 	PlatformURLHandlerFactory.startup(metaPath);
 	PlatformURLBaseConnection.startup(getInstallURL()); // past this point we can use eclipse:/platform/ URLs
@@ -539,10 +539,10 @@ private static void loadOptions() {
 		// default options location is user.dir (install location may be r/o so
 		// is not a good candidate for a trace options that need to be updatable by
 		// by the user)
-		String userDir = System.getProperty("user.dir").replace(File.separatorChar,'/');
-		if (!userDir.endsWith("/"))
-			userDir += "/";
-		debugOptionsFilename = "file:" + userDir + OPTIONS;
+		String userDir = System.getProperty("user.dir").replace(File.separatorChar,'/'); //$NON-NLS-1$
+		if (!userDir.endsWith("/")) //$NON-NLS-1$
+			userDir += "/"; //$NON-NLS-1$
+		debugOptionsFilename = "file:" + userDir + OPTIONS; //$NON-NLS-1$
 	}
 	try {
 		optionsFile = new URL(debugOptionsFilename);
@@ -583,7 +583,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 		// simply enable debug.  Otherwise, assume that that the following arg is
 		// actually the filename of an options file.  This will be processed below.
-		if (args[i].equalsIgnoreCase(DEBUG) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
+		if (args[i].equalsIgnoreCase(DEBUG) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) { //$NON-NLS-1$
 			found = true;
 			debugRequested = true;
 		}
@@ -592,7 +592,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 		// simply enable development mode.  Otherwise, assume that that the following arg is
 		// actually some additional development time class path entries.  This will be processed below.
-		if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
+		if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) { //$NON-NLS-1$
 			inDevelopmentMode = true;
 			found = true;
 			continue;
@@ -604,7 +604,7 @@ private static String[] processCommandLine(String[] args) throws Exception {
 		}
 		// check for args with parameters. If we are at the last argument or if the next one
 		// has a '-' as the first character, then we can't have an arg with a parm so continue.
-		if (i == args.length - 1 || args[i + 1].startsWith("-")) {
+		if (i == args.length - 1 || args[i + 1].startsWith("-")) { //$NON-NLS-1$
 			continue;
 		}
 		String arg = args[++i];
@@ -694,9 +694,9 @@ private static URL[] readPluginPath(InputStream input) {
 	Vector result = new Vector(5);
 	for (Enumeration groups = ini.propertyNames(); groups.hasMoreElements();) {
 		String group = (String) groups.nextElement();
-		for (StringTokenizer entries = new StringTokenizer(ini.getProperty(group), ";"); entries.hasMoreElements();) {
+		for (StringTokenizer entries = new StringTokenizer(ini.getProperty(group), ";"); entries.hasMoreElements();) { //$NON-NLS-1$
 			String entry = (String) entries.nextElement();
-			if (!entry.equals(""))
+			if (!entry.equals("")) //$NON-NLS-1$
 				try {
 					result.addElement(new URL(entry));
 				} catch (MalformedURLException e) {
@@ -826,7 +826,7 @@ public static void shutdown() throws Exception {
 	// no matter what happens, record that its no longer running
 	running = false;
 	Class platform = loader.loadClass(PLATFORM_ENTRYPOINT);
-	Method method = platform.getDeclaredMethod("loaderShutdown", new Class[0]);
+	Method method = platform.getDeclaredMethod("loaderShutdown", new Class[0]); //$NON-NLS-1$
 	try {
 		method.invoke(platform, new Object[0]);
 	} catch (InvocationTargetException e) {
@@ -856,7 +856,7 @@ public static String[] startup(URL pluginPathLocation/*R1.0 compatibility*/, Str
 	commandLine = args;
 	String[] applicationArgs = initialize(pluginPathLocation, location, args);
 	Class platform = loader.loadClass(PLATFORM_ENTRYPOINT);
-	Method method = platform.getDeclaredMethod("loaderStartup", new Class[] { URL[].class, String.class, Properties.class, String[].class, Runnable.class });
+	Method method = platform.getDeclaredMethod("loaderStartup", new Class[] { URL[].class, String.class, Properties.class, String[].class, Runnable.class }); //$NON-NLS-1$
 	try {
 		URL[] pluginPath = getCurrentPlatformConfiguration().getPluginPath();
 		method.invoke(platform, new Object[] { pluginPath, baseLocation, options, args, handler });

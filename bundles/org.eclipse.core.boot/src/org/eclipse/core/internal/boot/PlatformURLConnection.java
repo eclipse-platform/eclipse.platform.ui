@@ -1,9 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.core.internal.boot;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 /**
  * Platform URL support
@@ -34,11 +39,11 @@ public abstract class PlatformURLConnection extends URLConnection {
 	// constants	
 	private static final int BUF_SIZE = 32768;
 	private static final Object NOT_FOUND = new Object();	// marker
-	private static final String CACHE_PROP = ".cache.properties";
-	private static final String CACHE_LOCATION_PROP = "location";
-	private static final String CACHE_INDEX_PROP = "index";
-	private static final String CACHE_PREFIX_PROP = "prefix";
-	private static final String CACHE_INDEX = ".index.properties";
+	private static final String CACHE_PROP = ".cache.properties"; //$NON-NLS-1$
+	private static final String CACHE_LOCATION_PROP = "location"; //$NON-NLS-1$
+	private static final String CACHE_INDEX_PROP = "index"; //$NON-NLS-1$
+	private static final String CACHE_PREFIX_PROP = "prefix"; //$NON-NLS-1$
+	private static final String CACHE_INDEX = ".index.properties"; //$NON-NLS-1$
 	private static final String CACHE_DIR = PlatformURLHandler.PROTOCOL + File.separator;
 
 	// debug tracing
@@ -70,7 +75,7 @@ private synchronized void connect(boolean asLocal) throws IOException {
 		if (connection==null) connection = resolvedURL.openConnection();
 		connected = true;
 		if (DEBUG && DEBUG_CONNECT)
-			debug("Connected as "+connection.getURL());
+			debug("Connected as "+connection.getURL()); //$NON-NLS-1$
 	}
 }
 private void copyToCache() throws IOException {
@@ -119,8 +124,8 @@ private void copyToCache() throws IOException {
 
 	try {
 		if (DEBUG && DEBUG_CACHE_COPY) {
-			if (isJar) debug ("Caching jar as "+tgt);
-			else debug("Caching as "+tgt);
+			if (isJar) debug ("Caching jar as "+tgt); //$NON-NLS-1$
+			else debug("Caching as "+tgt); //$NON-NLS-1$
 		}
 			
 		srcis = src.openStream();
@@ -149,23 +154,21 @@ private void copyToCache() throws IOException {
 		error = true;
 		cacheIndex.put(key,NOT_FOUND);	// mark cache entry for this execution
 		if (DEBUG && DEBUG_CACHE_COPY)
-			debug("Failed to cache due to "+e);
+			debug("Failed to cache due to "+e); //$NON-NLS-1$
 		throw e;		
 	}
 	finally {		
 		if (!error && DEBUG && DEBUG_CACHE_COPY)
-			debug(total + " bytes copied");
+			debug(total + " bytes copied"); //$NON-NLS-1$
 		if (srcis!=null) srcis.close();
 		if (tgtos!=null) tgtos.close();
 	}
 }
 protected void debug(String s) {
-
-	System.out.println("URL "+getURL().toString()+"^"+Integer.toHexString(Thread.currentThread().hashCode())+" "+s);
+	System.out.println("URL "+getURL().toString()+"^"+Integer.toHexString(Thread.currentThread().hashCode())+" "+s); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 private static void debugStartup(String s) {
-
-	System.out.println("URL "+s);
+	System.out.println("URL "+s); //$NON-NLS-1$
 }
 public URL[] getAuxillaryURLs () throws IOException {
 	return null;
@@ -181,7 +184,9 @@ public URL getURLAsLocal() throws IOException {
 	connect(true);	// connect and force caching if necessary
 	URL u = connection.getURL();
 	String up = u.getProtocol();
-	if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR)) throw new IOException("Unable to access URL as local "+url.toString());
+	if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR)) {
+		throw new IOException(Policy.bind("url.noaccess", url.toString())); //$NON-NLS-1$
+	}
 	return u;
 }
 private URL getURLInCache() throws IOException {
@@ -193,7 +198,7 @@ private URL getURLInCache() throws IOException {
 	if (cacheLocation==null | cacheIndex==null) return null;	// not caching
 	
 	// check if we are dealing with a .jar/ .zip
-	String file = "";
+	String file = ""; //$NON-NLS-1$
 	String jarEntry = null;
 	if (isJar) {
 		file = url.getFile();
@@ -224,22 +229,22 @@ private URL getURLInCache() throws IOException {
 	if (tmp!=null) {
 		if (isJar) {
 			if (DEBUG && DEBUG_CACHE_LOOKUP)
-				debug("Jar located in cache as "+tmp);
+				debug("Jar located in cache as "+tmp); //$NON-NLS-1$
 			tmp = PlatformURLHandler.FILE + PlatformURLHandler.PROTOCOL_SEPARATOR + tmp + PlatformURLHandler.JAR_SEPARATOR + jarEntry;
 			cachedURL = new URL(PlatformURLHandler.JAR,null,-1,tmp);
 		}
 		else {
 			if (DEBUG && DEBUG_CACHE_LOOKUP)
-				debug("Located in cache as "+tmp);
+				debug("Located in cache as "+tmp); //$NON-NLS-1$
 			cachedURL = new URL(PlatformURLHandler.FILE,null,-1,tmp);
 		}
 		isInCache = true;
 	}
 	else {
 		// attemp to cache
-		int ix = file.lastIndexOf("/");
+		int ix = file.lastIndexOf("/"); //$NON-NLS-1$
 		tmp = file.substring(ix+1);
-		tmp = cacheLocation + filePrefix + Long.toString((new java.util.Date()).getTime()) + "_" + tmp;
+		tmp = cacheLocation + filePrefix + Long.toString((new java.util.Date()).getTime()) + "_" + tmp; //$NON-NLS-1$
 		tmp = tmp.replace(File.separatorChar,'/');
 		if (isJar) {
 			tmp = PlatformURLHandler.FILE + PlatformURLHandler.PROTOCOL_SEPARATOR + tmp + PlatformURLHandler.JAR_SEPARATOR + jarEntry;
@@ -264,22 +269,22 @@ private String resolvePath(String spec) {
 	if (spec.length() == 0 || spec.charAt(0) != '$')
 		return spec;
 	int i = spec.indexOf('/', 1);
-	String first = "";
-	String rest = "";
+	String first = ""; //$NON-NLS-1$
+	String rest = ""; //$NON-NLS-1$
 	if (i == -1)
 		first = spec;
 	else {	
 		first = spec.substring(0, i);
 		rest = spec.substring(i);
 	}
-	if (first.equalsIgnoreCase("$ws$"))
-		return "ws/" + InternalBootLoader.getWS() + rest;
-	if (first.equalsIgnoreCase("$os$"))
-		return "os/" + InternalBootLoader.getOS() + rest;
-	if (first.equalsIgnoreCase("$nl$")) {
+	if (first.equalsIgnoreCase("$ws$")) //$NON-NLS-1$
+		return "ws/" + InternalBootLoader.getWS() + rest; //$NON-NLS-1$
+	if (first.equalsIgnoreCase("$os$")) //$NON-NLS-1$
+		return "os/" + InternalBootLoader.getOS() + rest; //$NON-NLS-1$
+	if (first.equalsIgnoreCase("$nl$")) { //$NON-NLS-1$
 		String nl = InternalBootLoader.getNL();
 		nl = nl.replace('_', '/');
-		return "nl/" + nl + rest;
+		return "nl/" + nl + rest; //$NON-NLS-1$
 	}
 	return spec;
 }
@@ -291,7 +296,7 @@ protected String getId(String spec) {
 
 protected String getVersion(String spec) {
 	int i = spec.lastIndexOf('_');
-	return i >= 0 ? spec.substring(i + 1, spec.length()) : "";
+	return i >= 0 ? spec.substring(i + 1, spec.length()) : ""; //$NON-NLS-1$
 }
 
 void setResolvedURL(URL url) throws IOException {
@@ -301,7 +306,7 @@ void setResolvedURL(URL url) throws IOException {
 		// Resolved URLs containing !/ separator are assumed to be jar URLs.
 		// If the resolved protocol is not jar, new jar URL is created.
 		if (isJar && !url.getProtocol().equals(PlatformURLHandler.JAR)) 
-			url = new URL(PlatformURLHandler.JAR,"",-1,url.toExternalForm());
+			url = new URL(PlatformURLHandler.JAR,"",-1,url.toExternalForm()); //$NON-NLS-1$
 		resolvedURL=url;
 	}
 }
@@ -380,7 +385,7 @@ static void startup(String location) {
 	if (props==null) {
 		// first time up, or failed to load previous settings
 		props = new Properties();
-		String tmp = System.getProperty("java.io.tmpdir");
+		String tmp = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 		if (!tmp.endsWith(File.separator)) tmp += File.separator;
 		tmp += CACHE_DIR;
 		props.put(CACHE_LOCATION_PROP,tmp);
@@ -413,9 +418,9 @@ static void startup(String location) {
 	cacheLocation = (String)props.get(CACHE_LOCATION_PROP);
 	
 	if (DEBUG) {
-		debugStartup("Cache location: " + cacheLocation);
-		debugStartup("Cache index: " + indexName);
-		debugStartup("Cache file prefix: " + filePrefix);
+		debugStartup("Cache location: " + cacheLocation); //$NON-NLS-1$
+		debugStartup("Cache index: " + indexName); //$NON-NLS-1$
+		debugStartup("Cache file prefix: " + filePrefix); //$NON-NLS-1$
 	}
 
 	// create cache directory structure if needed
@@ -423,7 +428,7 @@ static void startup(String location) {
 		indexName = null;
 		cacheLocation = null;	
 		if (DEBUG)
-			debugStartup("Failed to create cache directory structure. Caching suspended");
+			debugStartup("Failed to create cache directory structure. Caching suspended"); //$NON-NLS-1$
 		return;
 	}
 
@@ -440,7 +445,7 @@ static void startup(String location) {
 		}
 		catch(IOException e) {				
 			if (DEBUG) 
-				debugStartup("Failed to initialize cache");
+				debugStartup("Failed to initialize cache"); //$NON-NLS-1$
 		}
 	}
 }
