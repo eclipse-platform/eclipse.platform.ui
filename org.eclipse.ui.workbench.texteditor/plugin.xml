@@ -626,6 +626,7 @@
       <keyBinding
             locale="zh"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Alt+/">
       </keyBinding>
@@ -774,6 +775,7 @@
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Command+Space">
       </keyBinding>
@@ -1037,6 +1039,7 @@
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Alt+/"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
