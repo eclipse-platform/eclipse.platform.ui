@@ -19,25 +19,33 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.externaltools.group.IGroupDialogPage;
+import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
@@ -50,6 +58,12 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	private Button workspaceLocationButton;
 	private Button fileWorkingDirectoryButton;
 	private Button workspaceWorkingDirectoryButton;
+
+	protected Button runBackgroundButton;
+	protected Text argumentField;
+	private Button variableButton;
+
+	private SelectionAdapter selectionAdapter;
 	
 	private ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
@@ -71,6 +85,9 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setFont(parent.getFont());
 		createLocationComponent(mainComposite);
 		createWorkDirectoryComponent(mainComposite);
+		createArgumentComponent(mainComposite);
+		createVerticalSpacer(mainComposite, 2);
+		createRunBackgroundComponent(mainComposite);
 	}
 	
 	/**
@@ -185,9 +202,80 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * Creates the controls needed to edit the argument and
+	 * prompt for argument attributes of an external tool
+	 *
+	 * @param parent the composite to create the controls in
+	 */
+	protected void createArgumentComponent(Composite parent) {
+		Font font = parent.getFont();
+
+		Composite comp = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 2;
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		comp.setLayout(layout);
+		comp.setLayoutData(data);
+		comp.setFont(font);
+
+		Label label = new Label(comp, SWT.NONE);
+		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.&Arguments___1")); //$NON-NLS-1$
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
+		label.setFont(font);
+
+		argumentField = new Text(comp, SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		argumentField.setLayoutData(data);
+		argumentField.setFont(font);
+		argumentField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		variableButton= createPushButton(comp, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Varia&bles..._2"), null); //$NON-NLS-1$
+		variableButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				VariableSelectionDialog dialog= new VariableSelectionDialog(getShell());
+				if (dialog.open() == SelectionDialog.OK) {
+					argumentField.insert(dialog.getForm().getSelectedVariable());
+				}
+			}
+		});
+
+		Label instruction = new Label(comp, SWT.NONE);
+		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Note__Enclose_an_argument_containing_spaces_using_double-quotes_(__)._Not_applicable_for_variables._3")); //$NON-NLS-1$
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.horizontalSpan = 2;
+		instruction.setLayoutData(data);
+		instruction.setFont(font);
+	}
+
+	/**
+	 * Creates the controls needed to edit the run in background
+	 * attribute of an external tool
+	 *
+	 * @param parent the composite to create the controls in
+	 */
+	protected void createRunBackgroundComponent(Composite parent) {
+		runBackgroundButton = new Button(parent, SWT.CHECK);
+		runBackgroundButton.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Run_tool_in_bac&kground_4")); //$NON-NLS-1$
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		runBackgroundButton.setLayoutData(data);
+		runBackgroundButton.setFont(parent.getFont());
+		runBackgroundButton.addSelectionListener(getSelectionAdapter());
+	}
+	
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 	}
 
 	/**
@@ -196,6 +284,8 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateLocation(configuration);
 		updateWorkingDirectory(configuration);
+		updateArgument(configuration);
+		updateRunBackground(configuration);
 	}
 	
 	private void updateWorkingDirectory(ILaunchConfiguration configuration) {
@@ -221,6 +311,26 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		locationField.addModifyListener(modifyListener);
 	}
 
+	private void updateArgument(ILaunchConfiguration configuration) {
+		String arguments= ""; //$NON-NLS-1$
+		try {
+			arguments= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
+		} catch (CoreException ce) {
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Error_reading_configuration_7"), ce); //$NON-NLS-1$
+		}
+		argumentField.setText(arguments);
+	}
+
+	private void updateRunBackground(ILaunchConfiguration configuration) {
+		boolean  runInBackgroud= true;
+		try {
+			runInBackgroud= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
+		} catch (CoreException ce) {
+			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Error_reading_configuration_7"), ce); //$NON-NLS-1$
+		}
+		runBackgroundButton.setSelection(runInBackgroud);
+	}
+
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
@@ -237,6 +347,15 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String)null);
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, workingDirectory);
+		}
+		
+		setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, configuration, runBackgroundButton.getSelection(), false);
+
+		String arguments= argumentField.getText().trim();
+		if (arguments.length() == 0) {
+			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String)null);
+		} else {
+			configuration.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		}
 	}
 
@@ -384,6 +503,75 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	public Image getImage() {
 		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_MAIN);
+	}
+	
+	/**
+	 * Method getSelectionAdapter.
+	 * @return SelectionListener
+	 */
+	private SelectionListener getSelectionAdapter() {
+		if (selectionAdapter == null) {
+			selectionAdapter= new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					updateLaunchConfigurationDialog();
+				}
+			};
+		}
+		return selectionAdapter;
+	}
+	
+	private class VariableSelectionDialog extends SelectionDialog {
+		private ExternalToolVariableForm form;
+		private VariableSelectionDialog(Shell parent) {
+			super(parent);
+			setTitle(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Select_variable_10")); //$NON-NLS-1$
+		}
+		protected Control createDialogArea(Composite parent) {
+			// Create the dialog area
+			Composite composite= (Composite)super.createDialogArea(parent);
+			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getArgumentVariableRegistry().getArgumentVariables();
+			form= new ExternalToolVariableForm(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.&Choose_a_variable__11"), variables); //$NON-NLS-1$
+			form.createContents(composite, new IGroupDialogPage() {
+				public GridData setButtonGridData(Button button) {
+					GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+					data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+					int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+					data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+					button.setLayoutData(data);
+					return data;
+				}
+
+				public void setMessage(String newMessage, int newType) {
+					VariableSelectionDialog.this.setMessage(newMessage);
+				}
+
+				public void updateValidState() {
+				}
+
+				public int convertHeightHint(int chars) {
+					return convertHeightInCharsToPixels(chars);
+				}
+
+				public String getMessage() {
+					if (!form.isValid()) {
+						return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsOptionTab.Invalid_selection_12"); //$NON-NLS-1$
+					}
+					return null;
+				}
+
+				public int getMessageType() {
+					if (!form.isValid()) {
+						return IMessageProvider.ERROR;
+					}
+					return 0;
+				}
+			});
+			return composite;
+		}
+
+		private ExternalToolVariableForm getForm() {
+			return form;
+		}
 	}
 
 }
