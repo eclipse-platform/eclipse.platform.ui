@@ -96,7 +96,9 @@ public final class ExpressionConverter {
 				if (child == null)
 					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
 						IStatus.ERROR, 
-						ExpressionMessages.getString("Expression.unknown_element"),  //$NON-NLS-1$
+						ExpressionMessages.getFormattedString(
+							"Expression.unknown_element",  //$NON-NLS-1$
+							children[i].getName()),
 						null));
 				result.add(child);
 			}
