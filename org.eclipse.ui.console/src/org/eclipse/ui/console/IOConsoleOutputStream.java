@@ -143,7 +143,6 @@ public class IOConsoleOutputStream extends OutputStream {
         }
         console.streamClosed(this);
         closed = true;
-        console = null;
         partitioner = null;
     }
 

@@ -210,9 +210,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 stream.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_ERROR_STREAM));
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR)) {
-            IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_INPUT_STREAM);
-            if (stream != null) {
-                stream.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM));
+            if (in != null) {
+                in.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM));
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
             setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
@@ -250,18 +249,18 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		super.dispose();
 		fColorProvider.disconnect();
 		closeStreams();
+		disposeStreams();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
 	}
-	
-	private void closeStreams() {
+
+    private void closeStreams() {
 		synchronized(streamListeners) {
 		    for(Iterator i = streamListeners.iterator(); i.hasNext(); ) {
 		        StreamListener listener = (StreamListener) i.next();
-		        listener.dispose();
+		        listener.removeListener();
 		    }
-		    streamListeners.clear();
 		}
 		synchronized (in) {
 			try {
@@ -270,6 +269,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	        }		    
 		}
 	}
+    
+    private void disposeStreams() {
+        synchronized(streamListeners) {
+            for (Iterator i = streamListeners.iterator(); i.hasNext();) {
+                StreamListener listener = (StreamListener) i.next();
+                listener.dispose();
+            }
+        }
+        in = null;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.AbstractConsole#init()
@@ -403,13 +412,14 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     public IRegion getRegion(IConsoleHyperlink link) {
         return super.getRegion(link);
     }
-    
+
     private class StreamListener implements IStreamListener {
 
         private IOConsoleOutputStream stream;
         private IStreamMonitor streamMonitor;
         private String streamId;
         private boolean flushed = false;
+        private boolean listenerRemoved = false;
 
         public StreamListener(String streamIdentifier, IStreamMonitor monitor, IOConsoleOutputStream stream) {
             this.streamId = streamIdentifier;
@@ -452,13 +462,20 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             return streamMonitor;
         }
         
+        public void removeListener() {
+            synchronized (streamMonitor) {
+                streamMonitor.removeListener(this);
+                if (!flushed) {
+                    streamAppended(null, streamMonitor);
+                }
+                listenerRemoved = true;
+            }    
+        }
+        
         public void dispose() {
-        	synchronized (streamMonitor) {
-	            streamMonitor.removeListener(this);
-	            if (!flushed) {
-	        		streamAppended(null, streamMonitor);
-	        	}
-        	}
+            if (!listenerRemoved) {
+                removeListener();
+            }
             try {
                 stream.close();
             } catch (IOException e) {

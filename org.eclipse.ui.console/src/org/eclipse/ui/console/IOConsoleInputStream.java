@@ -257,9 +257,6 @@ public class IOConsoleInputStream extends InputStream {
         }
         closed = true;
         notifyAll();
-        if (console != null) {
-	        console.streamClosed(this);
-	        console = null;
-        }
+        console.streamClosed(this);
     }
 }
