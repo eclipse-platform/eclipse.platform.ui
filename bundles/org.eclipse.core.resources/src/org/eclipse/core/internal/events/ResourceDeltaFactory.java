@@ -11,6 +11,7 @@ import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.events.ResourceDelta;
 import org.eclipse.core.internal.events.ResourceDeltaInfo;
+import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -42,7 +43,29 @@ public static ResourceDelta computeDelta(Workspace workspace, ElementTree oldTre
 	deltaInfo.setNodeMaps(oldNodeIDMap, newNodeIDMap);
 
 	ResourceDelta result = createDelta(workspace, delta, deltaInfo, pathInTree, pathInDelta);
+	// check all the projects and if they were added and opened then tweek the flags
+	// so the delta reports both.
+	int segmentCount = result.getFullPath().segmentCount();
+	if (segmentCount <= 1) 
+		checkForOpen(result, segmentCount);
 	return result;
+}
+/**
+ * Checks to see if added projects were also opens and tweaks the flags
+ * accordingly. Should only be called for root and projects. Pass the segment count
+ * in since we've already calculated it before.
+ */
+protected static void checkForOpen(ResourceDelta delta, int segmentCount) {
+	if (delta.getKind() == IResourceDelta.ADDED)
+		if (delta.newInfo.isSet(ICoreConstants.M_OPEN))
+			delta.status |= IResourceDelta.OPEN;
+	// return for PROJECT
+	if (segmentCount == 1)
+		return;
+	// recurse for ROOT
+	IResourceDelta[] children = delta.children;
+	for (int i = 0; i < children.length; i++)
+		checkForOpen((ResourceDelta) children[i], 1);
 }
 /**
  * Creates the maps from node id to element id for the old and new states.
