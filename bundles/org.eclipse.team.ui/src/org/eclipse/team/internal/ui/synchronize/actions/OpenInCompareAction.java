@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -47,7 +48,8 @@ public class OpenInCompareAction extends Action {
 			if (obj instanceof SyncInfoModelElement) {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
-					openCompareEditor(name, info, false /* don't keep focus */, site);
+				    // Use the open strategy to decide if the editor or the sync view should have focus
+					openCompareEditor(name, info, !OpenStrategy.activateOnOpen(), site);
 				}
 			}
 		}
