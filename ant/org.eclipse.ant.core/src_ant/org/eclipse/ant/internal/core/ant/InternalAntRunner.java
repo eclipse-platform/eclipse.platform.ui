@@ -362,7 +362,9 @@ public class InternalAntRunner {
 			processProperties(getArrayList(extraArguments));
 			
 			setProperties(antProject);
-			
+			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+				new InputHandlerSetter().setInputHandler(antProject, "org.eclipse.ant.internal.core.ant.NullInputHandler"); //$NON-NLS-1$
+			}
 			parseBuildFile(antProject);
 			defaultTarget = antProject.getDefaultTarget();
 			Enumeration projectTargets = antProject.getTargets().elements();
