@@ -24,11 +24,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -57,6 +59,7 @@ import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSCompareRevisionsInput extends CompareEditorInput {
 	IFile resource;
@@ -339,22 +342,39 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	private void initializeActions() {
 		loadAction = new Action(Policy.bind("CVSCompareRevisionsInput.addToWorkspace"), null) {
 			public void run() {
-				IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
-				if (selection.size() != 1) return;
-				VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
-				ResourceEditionNode right = (ResourceEditionNode)node.getRight();
-				ICVSRemoteResource edition = right.getRemoteResource();
-				// Do the load. This just consists of setting the local contents. We don't
-				// actually want to change the base.
 				try {
-					InputStream in = edition.getContents(new NullProgressMonitor());
-					resource.setContents(in, false, true, new NullProgressMonitor());
-				} catch (TeamException e) {
-					handle(e);
+					new ProgressMonitorDialog(shell).run(true, true, new WorkspaceModifyOperation() {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+							if (selection.size() != 1) return;
+							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
+							ResourceEditionNode right = (ResourceEditionNode)node.getRight();
+							ICVSRemoteResource edition = right.getRemoteResource();
+							// Do the load. This just consists of setting the local contents. We don't
+							// actually want to change the base.
+							try {
+								monitor.beginTask(null, 100);
+								InputStream in = edition.getContents(new SubProgressMonitor(monitor, 50));
+								resource.setContents(in, false, true, new SubProgressMonitor(monitor, 50));
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							} finally {
+								monitor.done();
+							}
+						}
+					});
+				} catch (InterruptedException e) {
+					// Do nothing
 					return;
-				} catch (CoreException e) {
-					handle(e);
-					return;
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						handle((TeamException)t);
+					} else if (t instanceof CoreException) {
+						handle((CoreException)t);
+					}
 				}
 				// recompute the labels on the viewer
 				updateCurrentEdition();

@@ -6,11 +6,15 @@ package org.eclipse.team.internal.ccvs.ui;
  */
  
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -19,6 +23,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -65,6 +70,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -167,25 +173,44 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 
 		addAction = new Action(Policy.bind("HistoryView.addToWorkspace")) {
 			public void run() {
-				if (file == null) return;
-				ISelection selection = tableViewer.getSelection();
-				if (!(selection instanceof IStructuredSelection)) return;
-				IStructuredSelection ss = (IStructuredSelection)selection;
-				Object o = ss.getFirstElement();
-				ILogEntry entry = (ILogEntry)o;
-				ICVSRemoteFile remoteFile = entry.getRemoteFile();
-				// Do the load. This just consists of setting the local contents. We don't
-				// actually want to change the base.
 				try {
-					InputStream in = remoteFile.getContents(new NullProgressMonitor());
-					file.setContents(in, false, true, new NullProgressMonitor());				
-				} catch (TeamException e) {
-					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
-					return;
-				} catch (CoreException e) {
-					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
-					CVSUIPlugin.log(e.getStatus());
-					return;
+					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new WorkspaceModifyOperation() {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							if (file == null) return;
+							ISelection selection = tableViewer.getSelection();
+							if (!(selection instanceof IStructuredSelection)) return;
+							IStructuredSelection ss = (IStructuredSelection)selection;
+							Object o = ss.getFirstElement();
+							ILogEntry entry = (ILogEntry)o;
+							ICVSRemoteFile remoteFile = entry.getRemoteFile();
+							// Do the load. This just consists of setting the local contents. We don't
+							// actually want to change the base.
+							monitor.beginTask(null, 100);
+							try {
+								InputStream in = remoteFile.getContents(new SubProgressMonitor(monitor, 50));
+								file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							} finally {
+								monitor.done();
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException)t).getStatus());
+					} else if (t instanceof CoreException) {
+						IStatus status = ((CoreException)t).getStatus();
+						ErrorDialog.openError(getViewSite().getShell(), null, null, status);
+						CVSUIPlugin.log(status);
+					} else {
+						// To do
+					}
+				} catch (InterruptedException e) {
+					// Do nothing
 				}
 			}
 		};
