@@ -56,13 +56,6 @@ if (data.isMozilla()){
 .separator {
 	background-color:ThreeDShadow;
 	border-top:10px solid <%=prefs.getToolbarBackground()%>;
-<% 
-if (data.isMozilla()){
-%>
-	top:10px;
-<%
-}
-%>
 }
 
 .separator_pressed {
