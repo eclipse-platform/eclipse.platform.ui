@@ -90,13 +90,10 @@ import org.eclipse.update.core.SiteManager;
 /**
  * IDE-specified workbench adviser which configures the workbench for use as
  * an IDE.
- * <p>
- * Note: This class replaces <code>org.eclipse.ui.internal.Workbench</code>.
- * </p>
  * 
  * @since 3.0
  */
-public class IDEWorkbenchAdviser extends WorkbenchAdviser {
+/* package */ final class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
 	
@@ -308,7 +305,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			String message;
 			String productName = null;
 			AboutInfo about = IDEApplication.getPrimaryInfo();
-			// @issue performance - reading about info on window close 
 			if (about != null) {
 				productName = about.getProductName();
 			}
@@ -925,7 +921,6 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		
 		String title = null;
 		AboutInfo about = IDEWorkbenchPlugin.getDefault().getPrimaryInfo();
-		// @issue performance - reading about info
 		if (about != null) {
 			title = about.getProductName();
 		}
