@@ -393,12 +393,13 @@ public final class WorkbenchKeyboard {
         try {
             Map attributeValuesByName = command.getAttributeValuesByName();
 
-            if (attributeValuesByName.containsKey("enabled")
+            if (attributeValuesByName.containsKey("enabled") //$NON-NLS-1$
                     && !Boolean.TRUE.equals(attributeValuesByName
-                            .get("enabled")))
+                            .get("enabled"))) { //$NON-NLS-1$
                 return false;
-            else
+            } else {
                 return true;
+            }
         } catch (NotHandledException eNotHandled) {
             return false;
         }
@@ -453,13 +454,6 @@ public final class WorkbenchKeyboard {
                     System.out
                             .println("KEYS >>>     value for 'enabled' attribute = " //$NON-NLS-1$
                                     + attributeValuesByName.get("enabled")); //$NON-NLS-1$
-
-                    if (attributeValuesByName.containsKey("enabled")
-                            && !Boolean.TRUE.equals(attributeValuesByName
-                                    .get("enabled")))
-                        return false;
-                    else
-                        return true;
                 } catch (NotHandledException eNotHandled) {
                     System.out.println(eNotHandled);
                 }
