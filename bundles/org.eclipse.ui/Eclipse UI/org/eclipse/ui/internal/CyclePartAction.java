@@ -78,7 +78,13 @@ protected void updateState() {
 		setEnabled(false);
 		return;
 	}
-	setEnabled(page.getViews().length >= 2);
+	// enable iff there is at least one other part to switch to
+	// (the editor area counts as one entry)
+	int count = page.getViews().length;
+	if (page.getEditors().length > 0) {
+		++count;
+	}
+	setEnabled(count >= 2);
 }
 /**
  * @see Action#run()
@@ -88,8 +94,12 @@ public void run() {
 	try {
 		IWorkbenchPage page = getActivePage();
 		openDialog((WorkbenchPage)page); 
-		if(selection != null)
+		if(selection != null) {
+			if (selection instanceof IEditorPart) {
+				page.setEditorAreaVisible(true);
+			}
 			page.activate(selection);
+		}
 	} finally {
 		forward = direction;
 	}
@@ -110,10 +120,19 @@ private void openDialog(WorkbenchPage page) {
 	tc.setResizable(false);
 	tc.setText(getTableHeader());
 	addItems(table,page);
-	if(forward)
-		table.setSelection(1);
-	else
-		table.setSelection(table.getItemCount() - 1);
+	switch (table.getItemCount()) {
+		case 0:
+			// do nothing;
+			break;
+		case 1:
+			table.setSelection(0);
+			break;
+		default:
+			if(forward)
+				table.setSelection(1);
+			else
+				table.setSelection(table.getItemCount() - 1);
+	}
 	tc.pack();
 	table.pack();
 	dialog.pack();

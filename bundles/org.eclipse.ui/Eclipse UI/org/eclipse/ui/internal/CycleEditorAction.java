@@ -40,6 +40,7 @@ public void updateState() {
 		setEnabled(false);
 		return;
 	}
+	// enable iff there is at least one other editor to switch to
 	setEnabled(page.getEditors().length >= 2);
 }
 
