@@ -14,8 +14,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -35,9 +43,14 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IMutableActivityManager;
+import org.eclipse.ui.activities.ITriggerPointAdvisor;
+import org.eclipse.ui.activities.ITriggerPointManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.ActivityManagerFactory;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
@@ -47,7 +60,8 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  * Implementation of {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
  * @since 3.0
  */
-public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
+public class WorkbenchActivitySupport implements IWorkbenchActivitySupport,
+		IExtensionAdditionHandler, IExtensionRemovalHandler {
     private IMutableActivityManager mutableActivityManager;
 
     private ProxyActivityManager proxyActivityManager;
@@ -55,6 +69,10 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
 	private ImageBindingRegistry activityImageBindingRegistry;
 
 	private ImageBindingRegistry categoryImageBindingRegistry;
+	
+	private ITriggerPointManager triggerPointManager;
+
+	private ITriggerPointAdvisor advisor;
 
 	/**
 	 * Create a new instance of this class.
@@ -276,6 +294,9 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
                                 "Could not update contribution managers", e); //$NON-NLS-1$ 
                     }
                 });
+		triggerPointManager = new TriggerPointManager();
+		PlatformUI.getWorkbench().getExtensionTracker().registerAdditionHandler(this);
+		PlatformUI.getWorkbench().getExtensionTracker().registerRemovalHandler(this);
     }
 
     /* (non-Javadoc)
@@ -356,5 +377,87 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
 			activityImageBindingRegistry.dispose();
 		if (categoryImageBindingRegistry != null)
 			categoryImageBindingRegistry.dispose();
+		
+		PlatformUI.getWorkbench().getExtensionTracker().unregisterAdditionHandler(this);
+		PlatformUI.getWorkbench().getExtensionTracker().unregisterRemovalHandler(this);
+	}
+	
+	/**
+	 * Return the trigger point advisor.
+	 * 
+	 * TODO: should this be part of the interface?
+	 * 
+	 * @return the trigger point advisor
+	 * @since 3.1
+	 */
+	public ITriggerPointAdvisor getTriggerPointAdvisor() {
+		if (advisor != null)
+			return advisor;
+		
+		IProduct product = Platform.getProduct();
+        if (product != null) {
+			TriggerPointAdvisorDescriptor descriptor = TriggerPointAdvisorRegistry
+					.getInstance().getAdvisorForProduct(product.getId());
+			if (descriptor != null) {
+				try {
+					advisor = descriptor.createAdvisor();					
+				} catch (CoreException e) {
+					WorkbenchPlugin.log("could not create trigger point advisor", e); //$NON-NLS-1$
+				}
+			}
+        }
+		
+		if (advisor == null) {
+			advisor = new WorkbenchTriggerPointAdvisor();
+		}
+		
+		return advisor;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.IWorkbenchActivitySupport#getTriggerPointManager()
+	 */
+	public ITriggerPointManager getTriggerPointManager() {
+		return triggerPointManager;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#addInstance(org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker,
+	 *      org.eclipse.core.runtime.IExtension)
+	 */
+	public void addInstance(IExtensionTracker tracker, IExtension extension) {
+		// reset the advisor if it's the "default" advisor.
+		// this will give getAdvisor the chance to find a proper trigger/binding if
+		// it exists.
+		if (advisor != null && advisor.getClass().equals(WorkbenchTriggerPointAdvisor.class)) {
+			advisor = null;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionAdditionHandler#getExtensionPointFilter()
+	 */
+	public IExtensionPoint getExtensionPointFilter() {
+		return Platform.getExtensionRegistry().getExtensionPoint(
+				PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_ACTIVITYSUPPORT);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.dynamicHelpers.IExtensionRemovalHandler#removeInstance(org.eclipse.core.runtime.IExtension,
+	 *      java.lang.Object[])
+	 */
+	public void removeInstance(IExtension extension, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			if (objects[i] == advisor) {
+				advisor = null;
+				break;
+			}
+		}
 	}
 }

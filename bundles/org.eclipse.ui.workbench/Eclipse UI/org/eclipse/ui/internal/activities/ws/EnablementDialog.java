@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.activities.ws;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
@@ -39,6 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.NotDefinedException;
+import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 
 /**
  * Dialog that will prompt the user and confirm that they wish to activate a set
@@ -48,7 +50,7 @@ import org.eclipse.ui.activities.NotDefinedException;
  */
 public class EnablementDialog extends Dialog {
 
-    /**
+	/**
      * The translation bundle in which to look up internationalized text.
      */
     private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
@@ -56,7 +58,7 @@ public class EnablementDialog extends Dialog {
 
     private Button dontAskButton;
 
-    private Collection activitiesToEnable = new HashSet(7);
+    private Set activitiesToEnable = new HashSet(7);
 
     private Collection activityIds;
 
@@ -74,15 +76,19 @@ public class EnablementDialog extends Dialog {
 
     private Text detailsText;
 
+	private Properties strings;
+
     /**
      * Create a new instance of the reciever.
      * 
      * @param parentShell the parent shell
      * @param activityIds the candidate activities
+     * @param strings string overrides
      */
-    public EnablementDialog(Shell parentShell, Collection activityIds) {
+    public EnablementDialog(Shell parentShell, Collection activityIds, Properties strings) {
         super(parentShell);
         this.activityIds = activityIds;
+		this.strings = strings;
     }
 
     /* (non-Javadoc)
@@ -115,14 +121,19 @@ public class EnablementDialog extends Dialog {
                     new Object[] { activityText }));
 
             text = new Label(composite, SWT.NONE);
-            text.setText(RESOURCE_BUNDLE.getString("proceedSingle")); //$NON-NLS-1$
+			text
+					.setText(strings
+							.getProperty(
+									WorkbenchTriggerPointAdvisor.PROCEED_SINGLE,
+									RESOURCE_BUNDLE
+											.getString(WorkbenchTriggerPointAdvisor.PROCEED_SINGLE)));
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             text.setFont(dialogFont);
         } else {
             text.setText(RESOURCE_BUNDLE.getString("requiresMulti")); //$NON-NLS-1$
             Set activityIdsCopy = new HashSet(activityIds);
-            CheckboxTableViewer viewer = new CheckboxTableViewer(composite,
-                    SWT.CHECK | SWT.BORDER | SWT.SINGLE);
+            CheckboxTableViewer viewer = CheckboxTableViewer.newCheckList(
+					composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
             viewer.setContentProvider(new ActivityContentProvider());
             viewer.setLabelProvider(new ActivityLabelProvider(manager));
             viewer.setInput(activityIdsCopy);
@@ -159,7 +170,8 @@ public class EnablementDialog extends Dialog {
             viewer.getControl().setFont(dialogFont);
 
             text = new Label(composite, SWT.NONE);
-            text.setText(RESOURCE_BUNDLE.getString("proceedMulti")); //$NON-NLS-1$
+            text.setText(strings.getProperty(WorkbenchTriggerPointAdvisor.PROCEED_MULTI, RESOURCE_BUNDLE
+					.getString(WorkbenchTriggerPointAdvisor.PROCEED_MULTI))); 
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             text.setFont(dialogFont);
         }
@@ -169,7 +181,9 @@ public class EnablementDialog extends Dialog {
         dontAskButton = new Button(composite, SWT.CHECK);
         dontAskButton.setSelection(false);
         dontAskButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        dontAskButton.setText(RESOURCE_BUNDLE.getString("dontAsk")); //$NON-NLS-1$
+        dontAskButton.setText(strings.getProperty(
+				WorkbenchTriggerPointAdvisor.DONT_ASK, RESOURCE_BUNDLE
+						.getString(WorkbenchTriggerPointAdvisor.DONT_ASK)));
         dontAskButton.setFont(dialogFont);
 
         detailsComposite = new Composite(composite, SWT.NONE);
@@ -200,7 +214,12 @@ public class EnablementDialog extends Dialog {
      */
     protected void setDetails() {
         if (selectedActivity == null) {
-            detailsLabel.setText(RESOURCE_BUNDLE.getString("noDetails")); //$NON-NLS-1$
+            detailsLabel
+					.setText(strings
+							.getProperty(
+									WorkbenchTriggerPointAdvisor.NO_DETAILS,
+									RESOURCE_BUNDLE
+											.getString(WorkbenchTriggerPointAdvisor.NO_DETAILS)));
             detailsText.setText(""); //$NON-NLS-1$
         } else {
             IActivity activity = PlatformUI.getWorkbench().getActivitySupport()
@@ -267,7 +286,7 @@ public class EnablementDialog extends Dialog {
     /**
      * @return Returns the activities to enable
      */
-    public Collection getActivitiesToEnable() {
+    public Set getActivitiesToEnable() {
         return activitiesToEnable;
     }
 

@@ -53,6 +53,8 @@ public interface IWorkbenchConstants {
 
     public static final String PL_NEW = "newWizards"; //$NON-NLS-1$
 
+	public static final String PL_ACTIVITYSUPPORT = "activitySupport"; //$NON-NLS-1$
+
     public static final String PL_ELEMENT_FACTORY = "elementFactories"; //$NON-NLS-1$
 
     public static final String PL_DROP_ACTIONS = "dropActions"; //$NON-NLS-1$

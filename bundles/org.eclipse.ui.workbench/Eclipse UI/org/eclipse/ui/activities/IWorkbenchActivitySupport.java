@@ -61,4 +61,12 @@ public interface IWorkbenchActivitySupport {
      * @since 3.1
      */
     ImageDescriptor getImageDescriptor(ICategory category);
+	
+	/**
+	 * Return the trigger point manager for this instance.
+	 * 
+	 * @return the trigger point manager.  Never <code>null</code>.
+	 * @since 3.1
+	 */
+	ITriggerPointManager getTriggerPointManager();
 }

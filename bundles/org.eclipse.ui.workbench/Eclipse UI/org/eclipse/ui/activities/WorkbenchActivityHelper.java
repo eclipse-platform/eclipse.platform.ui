@@ -14,12 +14,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.activities.ws.EnablementDialog;
+import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 
 /**
  * A utility class that contains helpful methods for interacting with the
@@ -28,67 +25,91 @@ import org.eclipse.ui.internal.activities.ws.EnablementDialog;
  * @since 3.0
  */
 public final class WorkbenchActivityHelper {
+	
+	/**
+	 * Return the identifier that maps to the given contribution.
+	 * 
+	 * @param contribution the contribution
+	 * @return the identifier
+	 * @since 3.1
+	 */
+	public static IIdentifier getIdentifier(IPluginContribution contribution) {
+		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+				.getWorkbench().getActivitySupport();
+		IIdentifier identifier = workbenchActivitySupport.getActivityManager()
+				.getIdentifier(createUnifiedId(contribution));
+		return identifier;
+	}
+	
+    /**
+	 * Answers whether a given contribution is allowed to be used based on
+	 * activity enablement. If it is currently disabled, then a dialog is opened
+	 * and the user is prompted to activate the requried activities. If the user
+	 * declines their activation then false is returned. In all other cases
+	 * <code>true</code> is returned.
+	 * 
+	 * @param object
+	 *            the contribution to test.
+	 * @return whether the contribution is allowed to be used based on activity
+	 *         enablement.
+	 * @deprecated 
+	 * @see #allowUseOf(ITriggerPoint, Object)
+	 */
+    public static boolean allowUseOf(Object object) {
+		return allowUseOf(PlatformUI.getWorkbench().getActivitySupport()
+				.getTriggerPointManager().getTriggerPoint(
+						ITriggerPointManager.UNKNOWN_TRIGGER_POINT_ID), object);
+    }
 
     /**
-     * Answers whether a given contribution is allowed to be used based on 
-     * activity enablement.  If it is currently disabled, then a dialog is 
-     * opened and the user is prompted to activate the requried activities.  If 
-     * the user declines their activation then false is returned.  In all other 
-     * cases <code>true</code> is returned.
-     * 
-     * @param object the contribution to test.
-     * @return whether the contribution is allowed to be used based on activity 
-     * enablement.
-     */
-    public static boolean allowUseOf(Object object) {
+	 * Answers whether a given contribution is allowed to be used based on
+	 * activity enablement. If it is currently disabled, then a dialog is opened
+	 * and the user is prompted to activate the requried activities. If the user
+	 * declines their activation then false is returned. In all other cases
+	 * <code>true</code> is returned.
+	 * 
+	 * @param triggerPoint 
+	 * 			  the trigger point being hit
+	 * @param object
+	 *            the contribution to test.
+	 * @return whether the contribution is allowed to be used based on activity
+	 *         enablement.
+	 */	
+	public static boolean allowUseOf(ITriggerPoint triggerPoint, Object object) {
         if (!isFiltering())
             return true;
+		if (triggerPoint == null)
+			return true;
         if (object instanceof IPluginContribution) {
             IPluginContribution contribution = (IPluginContribution) object;
-            IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-                    .getWorkbench().getActivitySupport();
-            IIdentifier identifier = workbenchActivitySupport
-                    .getActivityManager().getIdentifier(
-                            createUnifiedId(contribution));
-            return allow(identifier);
+            IIdentifier identifier = getIdentifier(contribution);
+            return allow(triggerPoint, identifier);
         }
         return true;
-    }
+	}
 
     /**
      * Answers whether a given identifier is enabled.  If it is not enabled, 
      * then a dialog is opened and the user is prompted to enable the associated 
      * activities.  
      *  
+     * @param triggerPoint thr trigger point to test
      * @param identifier the identifier to test.
      * @return whether the identifier is enabled.
      */
-    private static boolean allow(IIdentifier identifier) {
+    private static boolean allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
         if (identifier.isEnabled()) {
             return true;
         }
-
-        if (!PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
-                IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
-            enableIdentifier(identifier);
-            return true;
-        }
-
-        EnablementDialog dialog = new EnablementDialog(PlatformUI
-                .getWorkbench().getDisplay().getActiveShell(), identifier
-                .getActivityIds());
-        if (dialog.open() == Window.OK) {
-            enabledActivities(dialog.getActivitiesToEnable());
-            if (dialog.getDontAsk()) {
-                PlatformUI.getWorkbench().getPreferenceStore().setValue(
-                        IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
-                        false);
-                WorkbenchPlugin.getDefault().savePluginPreferences();
-            }
-            return true;
-        }
-
-        return false;
+		
+		ITriggerPointAdvisor advisor = ((WorkbenchActivitySupport) PlatformUI
+				.getWorkbench().getActivitySupport()).getTriggerPointAdvisor();
+		Set activitiesToEnable = advisor.allow(triggerPoint, identifier);
+		if (activitiesToEnable == null)
+			return false;
+		
+		enableActivities(activitiesToEnable);
+		return true;
     }
 
     /**
@@ -111,26 +132,12 @@ public final class WorkbenchActivityHelper {
      * 
      * @param activities the activities to enable
      */
-    private static void enabledActivities(Collection activities) {
+    private static void enableActivities(Collection activities) {
         IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench()
                 .getActivitySupport();
         Set newSet = new HashSet(activitySupport.getActivityManager()
                 .getEnabledActivityIds());
         newSet.addAll(activities);
-        activitySupport.setEnabledActivityIds(newSet);
-    }
-
-    /**
-     * Enables the activities associated with the given identifier.
-     * 
-     * @param identifier the identifier to enable
-     */
-    private static final void enableIdentifier(IIdentifier identifier) {
-        IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench()
-                .getActivitySupport();
-        Set newSet = new HashSet(activitySupport.getActivityManager()
-                .getEnabledActivityIds());
-        newSet.addAll(identifier.getActivityIds());
         activitySupport.setEnabledActivityIds(newSet);
     }
 
