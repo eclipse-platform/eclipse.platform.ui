@@ -58,7 +58,7 @@ public class ListenerList {
 	 *
 	 * @param listener a listener
 	 */
-	public void add(Object listener) {
+	public synchronized void add(Object listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();
 		}
@@ -88,7 +88,7 @@ public class ListenerList {
 	 * to the listener list during the notification will have no effect on the
 	 * notification itself.
 	 */
-	public Object[] getListeners() {
+	public synchronized Object[] getListeners() {
 		if (fSize == 0)
 			return EmptyArray;
 		Object[] result= new Object[fSize];
@@ -110,7 +110,7 @@ public class ListenerList {
 	 *
 	 * @param listener a listener
 	 */
-	public void remove(Object listener) {
+	public synchronized void remove(Object listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException();
 		}
