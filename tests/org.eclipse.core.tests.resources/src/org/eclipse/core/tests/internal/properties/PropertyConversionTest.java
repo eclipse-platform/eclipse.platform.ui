@@ -18,9 +18,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.resources.ResourcesCompatibilityHelper;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
+import org.osgi.framework.Bundle;
 
 /**
  * Tests for the conversion from the old to the new local history 
@@ -59,6 +59,10 @@ public class PropertyConversionTest extends ResourceTest {
 	}
 
 	public void testConversion() {
+		Bundle compatibility = Platform.getBundle("org.eclipse.core.resources.compatibility");
+		if (compatibility == null || compatibility.getState() != Bundle.RESOLVED)
+			// compatibility fragment not available
+			return;
 		IPropertyManager original = null;
 		try {
 			IProject project1 = getWorkspace().getRoot().getProject("proj1");

@@ -16,10 +16,12 @@ import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.IHistoryStore;
-import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.resources.FileState;
+import org.eclipse.core.internal.resources.ResourcesCompatibilityHelper;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
+import org.osgi.framework.Bundle;
 
 /**
  * Tests for the conversion from the old to the new local history 
@@ -53,6 +55,10 @@ public class HistoryStoreConversionTest extends ResourceTest {
 	}
 
 	public void testConversion() {
+		Bundle compatibility = Platform.getBundle("org.eclipse.core.resources.compatibility");
+		if (compatibility == null || compatibility.getState() != Bundle.RESOLVED)
+			// compatibility fragment not available
+			return;
 		IPath baseLocation = getRandomLocation();
 		IHistoryStore original = null;
 		boolean success = false;
