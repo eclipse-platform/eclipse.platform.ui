@@ -17,8 +17,6 @@ import java.util.Map;
 
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.ui.DefaultDebugViewContentProvider;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -37,38 +35,36 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 	 */
 	private ITreeContentProvider fDefaultContentProvider;
 	
-	/**
-	 * @see ITreeContentProvider#getChildren(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parent) {
 		return getContentProvider(parent).getChildren(parent);
 	}
 
-	/**
-	 * @see ITreeContentProvider#getParent(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
 		return getContentProvider(element).getParent(element);
 	}
 
-	/**
-	 * @see ITreeContentProvider#hasChildren(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
 		return getContentProvider(element).hasChildren(element);
 	}
 
-	/**
-	 * @see IStructuredContentProvider#getElements(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
 	}
 
-	/**
-	 * Nothing to dispose.
-	 * 
-	 * @see IContentProvider#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
 		if (fDefaultContentProvider != null) {
@@ -83,9 +79,9 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 			fContentProviders.clear();
 		}
 	}
-
-	/**
-	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	}
@@ -129,5 +125,4 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 		}
 		return fDefaultContentProvider;
 	}
-
 }
