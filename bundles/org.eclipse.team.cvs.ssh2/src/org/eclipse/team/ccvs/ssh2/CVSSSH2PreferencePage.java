@@ -161,7 +161,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     ssh2HomeBrowse=new Button(group, SWT.NULL);
     ssh2HomeBrowse.setText(Policy.bind("CVSSSH2PreferencePage.24")); //$NON-NLS-1$
-    gd=new GridData();
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL);
     gd.horizontalSpan=1;
     ssh2HomeBrowse.setLayoutData(gd);
 
@@ -179,7 +179,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     privateKeyAdd=new Button(group, SWT.NULL);
     privateKeyAdd.setText(Policy.bind("CVSSSH2PreferencePage.26")); //$NON-NLS-1$
-    gd=new GridData();
+    gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL);
     gd.horizontalSpan=1;
     privateKeyAdd.setLayoutData(gd);
 
