@@ -34,6 +34,15 @@ public class UIBuildListener implements AntRunnerListener {
 		fMonitor = monitor;
 		fBuildFile = file;
 	}
+	/**
+	 * @deprecated
+	 */
+	public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file) {
+		super();
+		this.runner = runner;
+		fMonitor = monitor;
+		fBuildFile = file;
+	}
 	public void buildFinished(BuildEvent be){
 		fMonitor.done();
 		if (be.getException() != null) {
@@ -75,7 +84,9 @@ public class UIBuildListener implements AntRunnerListener {
 		}
 	}
 	private void handleBuildException(Throwable t) {
-		console.append(Policy.bind("exception.buildException", t.toString()) + "\n");
+		if (console != null)
+			console.append(Policy.bind("exception.buildException", t.toString()) + "\n");
+			
 		if (t instanceof BuildException) {
 			BuildException bex= (BuildException)t;
 			// the build exception has a location that
