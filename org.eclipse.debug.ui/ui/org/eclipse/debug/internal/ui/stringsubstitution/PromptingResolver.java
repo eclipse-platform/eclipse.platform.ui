@@ -103,7 +103,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 			lastValue = dialogResultString;
 		} else {
 			// dialogResultString == null means prompt was cancelled
-			throw new DebugException(new Status(IStatus.CANCEL, DebugUIPlugin.getUniqueIdentifier(), IStatus.CANCEL, MessageFormat.format("Failed to expand {0}. Input was cancelled.", new String[] { variable.getName() }), null));
+			throw new DebugException(new Status(IStatus.CANCEL, DebugUIPlugin.getUniqueIdentifier(), IStatus.CANCEL, MessageFormat.format(StringSubstitutionMessages.getString("PromptingResolver.0"), new String[] { variable.getName() }), null)); //$NON-NLS-1$
 		}
 		return value;
 	}
