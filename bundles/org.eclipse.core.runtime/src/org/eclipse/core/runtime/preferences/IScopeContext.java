@@ -60,7 +60,7 @@ public interface IScopeContext {
 	 * to write files that will have the same sharing/scope properties as
 	 * preferences defined in this scope.
 	 * <p>
-	 * Clients may return <code>null</code> if the location is not known,
+	 * Implementors may return <code>null</code> if the location is not known,
 	 * is unavailable, or is unapplicable to this scope.
 	 * </p>
 	 * @return a writable location in the filesystem or <code>null</code>
