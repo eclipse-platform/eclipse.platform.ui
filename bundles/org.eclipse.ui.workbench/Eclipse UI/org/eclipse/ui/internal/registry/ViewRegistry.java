@@ -74,7 +74,7 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
      */
     public void add(Category desc) {
         /* fix for 1877 */
-		if (findCategory(desc.getId()) == null) {
+		if (internalFindCategory(desc.getId()) == null) {
 			dirtyViewCategoryMappings = true;
 			// Mark categories list as dirty
 			categories.add(desc);
@@ -144,7 +144,18 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
      */
     public Category findCategory(String id) {
     	mapViewsToCategories();
-        Iterator itr = categories.iterator();
+        return internalFindCategory(id);
+    }
+
+    /**
+     * Returns the category with no updating of the view/category mappings.
+     *
+	 * @param id the category id
+	 * @return the Category
+     * @since 3.1
+	 */
+	private Category internalFindCategory(String id) {
+		Iterator itr = categories.iterator();
         while (itr.hasNext()) {
             Category cat = (Category) itr.next();
             if (id.equals(cat.getRootPath())) {
@@ -226,7 +237,7 @@ public class ViewRegistry implements IViewRegistry, IConfigurationElementRemoval
 	            String[] catPath = desc.getCategoryPath();
 	            if (catPath != null) {
 	                String rootCat = catPath[0];
-	                cat = (Category) findCategory(rootCat);
+	                cat = (Category) internalFindCategory(rootCat);
 	            }
 	            if (cat != null) {
 	                if (!cat.hasElement(desc)) {
