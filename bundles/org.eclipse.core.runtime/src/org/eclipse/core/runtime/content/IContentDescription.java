@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.IPlatform;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
- * A content description object contains information about the nature of an 
- * arbitrary set of bytes.
+ * A content description object contains information about the nature of 
+ * arbitrary data.
  * <p>
  * A content description object will always include the content type for the 
  * examined contents, and may also include information on:
@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.QualifiedName;
  * </ol>
  * </p>
  * <p>
- * <cite>Content describers</cite> provided by plug-ins will fill most of the
+ * <cite>Content describers</cite> provided by plug-ins will fill in most of the
  * properties in a content description object, except for the content type, 
- * which is defined by the platform. After a content 
- * description is filled by a content interpreter, it is marked as immutable
+ * what is done by the platform. After a content 
+ * description is filled in by a content interpreter, it is marked as immutable
  * by the platform, so calling any of the mutator methods defined in this 
- * interface will cause an IllegalStateException to be thrown.  
+ * interface will cause an <code>IllegalStateException</code> to be thrown.  
  * </p>  
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -44,28 +44,28 @@ public interface IContentDescription {
 	/**
 	 * Key for the byte order mark property.
 	 */
-	public final static QualifiedName CHARSET = new QualifiedName(IPlatform.PI_RUNTIME, "charset");  //$NON-NLS-1$	
+	public final static QualifiedName CHARSET = new QualifiedName(IPlatform.PI_RUNTIME, "charset"); //$NON-NLS-1$	
 
 	/**
 	 * Key for the byte order mark property.
 	 */
-	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(IPlatform.PI_RUNTIME, "bom");  //$NON-NLS-1$
-	
+	public final static QualifiedName BYTE_ORDER_MARK = new QualifiedName(IPlatform.PI_RUNTIME, "bom"); //$NON-NLS-1$
+
 	/**
 	 * Options constant meaning that all properties should be described. 
 	 */
 	public final static QualifiedName[] ALL = null;
-	
+
 	/**
 	 * Returns whether the given property is requested to be described. This 
 	 * method is intended to allow content describers to determine  which
 	 * properties should be described.
 	 *  
-	 * @param propertyKey a key for the property to be verified 
+	 * @param key a key for the property to be verified 
 	 * @return <code>true</code> if the property is to be described, 
 	 * <code>false</code> otherwise
 	 */
-	public boolean isRequested(QualifiedName propertyKey);
+	public boolean isRequested(QualifiedName key);
 
 	/**
 	 * Returns the content type detected. Returns <code>null</code> if the 
@@ -93,6 +93,11 @@ public interface IContentDescription {
 	 * <p>
 	 * The qualifier part of the property name must be the unique identifier
 	 * of the declaring plug-in (e.g. <code>"com.example.plugin"</code>).
+	 * </p>
+	 * <p>
+	 * This method should not be called by clients other than content 
+	 * describers. An attempt to set a property from other contexts will cause
+	 * an <code>IllegalStateException</code> to be thrown. 
 	 * </p>
 	 * 
 	 * @param key the qualified name of the property 

@@ -18,6 +18,10 @@ import org.eclipse.core.runtime.QualifiedName;
  * Content describers know how to retrieve metadata from 
  * contents.
  * <p>
+ * Describers for text-based content types should implement 
+ * <code>ITextContentDescriber</code> instead.
+ * </p>
+ * <p>
  * Clients may implement this interface.
  * </p>
 
@@ -29,14 +33,14 @@ public interface IContentDescriber {
 	 * Description result constant, indicating the contents are valid for 
 	 * the intended content type.
 	 * 
-	 * @see #describe(InputStream, IContentDescription, int)
+	 * @see #describe
 	 */
 	public final static int VALID = 0;
 	/**
 	 * Description result constant, indicating the contents are invalid for 
 	 * the intended content type.
 	 * 
-	 * @see #describe(InputStream, IContentDescription, int)
+	 * @see #describe
 	 */
 	public final static int INVALID = 1;
 	/**
@@ -44,7 +48,7 @@ public interface IContentDescriber {
 	 * to determine whether the contents were valid for 
 	 * the intended content type.
 	 * 
-	 * @see #describe(InputStream, IContentDescription, int)
+	 * @see #describe
 	 */
 	public final static int INDETERMINATE = -1;
 
@@ -79,7 +83,7 @@ public interface IContentDescriber {
 	 * Returns the properties supported by this describer. 
 	 *   
 	 * @return the supported properties
-	 * @see #describe(InputStream, IContentDescription)
+	 * @see #describe
 	 */
 	public QualifiedName[] getSupportedOptions();
 }
