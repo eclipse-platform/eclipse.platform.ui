@@ -267,9 +267,15 @@ public class InternalSearchUI {
 	public void removeQuery(ISearchQuery query) {
 		cancelSearch(query);
 		getSearchManager().removeQuery(query);
+		fSearchJobs.remove(query);
 	}
 
 	public void addQuery(ISearchQuery query) {
 		getSearchManager().addQuery(query);
+	}
+
+	public void removeAllQueries() {
+		fSearchJobs.clear();
+		getSearchManager().removeAll();
 	}
 }

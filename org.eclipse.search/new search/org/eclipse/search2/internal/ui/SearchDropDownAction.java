@@ -42,6 +42,10 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public void dispose() {
+		disposeMenu();
+	}
+
+	void disposeMenu() {
 		if (fMenu != null)
 			fMenu.dispose();
 	}
@@ -52,8 +56,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 
 	public Menu getMenu(Control parent) {
 		ISearchResult currentSearch= fSearchView.getCurrentSearchResult();
-		if (fMenu != null)
-			fMenu.dispose();
+		disposeMenu();
 		
 		fMenu= new Menu(parent);
 		ISearchQuery[] searches= InternalSearchUI.getInstance().getSearchManager().getQueries();

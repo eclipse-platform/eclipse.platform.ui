@@ -8,7 +8,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
@@ -57,7 +56,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private HashMap fPagesToParts;
 	private HashMap fSearchViewStates;
 	private ExtensionService fSearchViewPageService;
-	private Action fSearchesDropDownAction;
+	private SearchDropDownAction fSearchesDropDownAction;
 	private ISearchResult fCurrentSearch;
 	private DummyPart fDefaultPart;
 	private long fLastUpdateTime= 0;
@@ -298,6 +297,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			partActivated(fDefaultPart);
 		}
 		fSearchViewStates.remove(query.getSearchResult());
+		fSearchesDropDownAction.disposeMenu();
 		fSearchesDropDownAction.setEnabled(InternalSearchUI.getInstance().getSearchManager().getQueries().length != 0);
 	}
 

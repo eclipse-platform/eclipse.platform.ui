@@ -21,6 +21,6 @@ class RemoveAllSearchesAction extends Action {
 	}	
 	
 	public void run() {
-		InternalSearchUI.getInstance().getSearchManager().removeAll();
+		InternalSearchUI.getInstance().removeAllQueries();
 	}
 }
