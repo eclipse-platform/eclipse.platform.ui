@@ -5,7 +5,6 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 
 public class DebugDropDownAction extends LaunchDropDownAction {
@@ -16,14 +15,14 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	}
 
 	/**
-	 * @see LaunchDropDownAction
+	 * @see LaunchDropDownAction#getMode()
 	 */
 	public String getMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
 	
 	/**
-	 * @see LaunchDropDownAction
+	 * @see LaunchDropDownAction#getHistory()
 	 */
 	public LaunchHistoryElement[] getHistory() {
 		return DebugUIPlugin.getDefault().getDebugHistory();

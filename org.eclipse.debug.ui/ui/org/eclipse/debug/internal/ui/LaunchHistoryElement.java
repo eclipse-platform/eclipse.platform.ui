@@ -5,11 +5,8 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILauncher;
-import org.eclipse.ui.model.IWorkbenchAdapter; 
+import org.eclipse.debug.core.ILauncher; 
 
  /**
   * Stores information required to re-launch a
@@ -18,22 +15,22 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class LaunchHistoryElement {
 	
 	/**
-	 * The identifier of the launcher used
+	 * The identifier of the launcher used.
 	 */
 	protected String fLauncherIdentifier= null;
 	
 	/**
-	 * The memento of the launched element
+	 * The memento of the launched element.
 	 */
 	protected String fMemento= null;
 	
 	/**
-	 * The launch mode
+	 * The launch mode.
 	 */
 	protected String fMode=null;
 	
 	/**
-	 * The label of the launch
+	 * The label of the launch.
 	 */
 	protected String fLabel=null;
 	
@@ -61,19 +58,22 @@ public class LaunchHistoryElement {
 	}
 	
 	/**
-	 * Returns the mode of the lanuch.
+	 * Returns the mode of the launch.
 	 */
 	public String getMode() {
 		return fMode;
 	}
 
 	/**
-	 * Returns the label of the launch
+	 * Returns the label of the launch.
 	 */
 	public String getLabel() {
 		return fLabel;
 	}
 	
+	/**
+	 * @see Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object o) {
 		if (o instanceof LaunchHistoryElement) {
 			LaunchHistoryElement e= (LaunchHistoryElement)o;
@@ -85,6 +85,11 @@ public class LaunchHistoryElement {
 		return false;
 	}
 	
+	/**
+	 * Returns the launcher that this history element represents.
+	 * Returns null if no launcher is currently registered with the launch 
+	 * manager that matches the launch identifier of this history element.
+	 */
 	public ILauncher getLauncher() {
 		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();
 		for (int i = 0; i < launchers.length; i++) {
@@ -95,13 +100,17 @@ public class LaunchHistoryElement {
 		return null;
 	}
 	
+	/**
+	 * Returns the launch element as decribed by the element's memento.
+	 * 
+	 * @see org.eclipse.debug.core.model.ILauncherDelegate#getLaunchObject(String)
+	 */
 	public Object getLaunchElement() {
 		ILauncher launcher = getLauncher();
 		if (launcher != null) {
 			return launcher.getDelegate().getLaunchObject(getElementMemento());
 		}
 		return null;
-	}
-	
+	}	
 }
 
