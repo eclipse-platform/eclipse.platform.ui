@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,14 @@ package org.eclipse.jface.text;
  * <code>IDocument</code> objects: the original and the image. The document information mapping
  * can translate document information such as line numbers or character ranges given for the original into
  * the corresponding information of the image and vice versa.
+ * 
+ * In order to provided backward compatibility for clients of <code>IDocumentInformationMapping</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * <ul>
+ * <li> {@link org.eclipse.jface.text.IDocumentInformationMappingExtension} since version 3.0 extending the
+ *      degree of detail of the mapping information.</li>
+ * </ul>
  * 
  * @since 2.1
  */
@@ -44,7 +52,7 @@ public interface IDocumentInformationMapping {
 	 * image document or <code>null</code> if there is no such region.
 	 * 
 	 * @param imageRegion the region of the image document
-	 * @return the minimal region of the original document comprising the given region of the image document
+	 * @return the minimal region of the original document comprising the given region of the image document or <code>null</code>
 	 * @throws BadLocationException if <code>imageRegion</code> is not a valid region of the image document
 	 */
 	IRegion toOriginRegion(IRegion imageRegion) throws BadLocationException;
