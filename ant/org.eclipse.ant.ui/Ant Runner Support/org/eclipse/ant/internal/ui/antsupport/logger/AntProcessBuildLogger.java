@@ -87,9 +87,10 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			name = "null"; //$NON-NLS-1$
 		}
 		Location location = event.getTask().getLocation();
+		StringBuffer column= new StringBuffer();
 		int size = IAntUIConstants.LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
-			fullMessage.append(' ');
+			column.append(' ');
 		}
 		StringBuffer labelBuff= new StringBuffer();
 		labelBuff.append('[');
@@ -104,10 +105,12 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		try {
 			BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
 			String line = r.readLine();
+			fullMessage.append(column);
 			appendAndLink(fullMessage, location, label, offset, line);
 			line = r.readLine();
 			while (line != null) {
 				fullMessage.append(System.getProperty("line.separator")); //$NON-NLS-1$
+				fullMessage.append(column);
 				appendAndLink(fullMessage, location, label, offset, line);
 				line = r.readLine();
 			}
