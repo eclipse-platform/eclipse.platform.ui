@@ -19,12 +19,12 @@ import org.eclipse.core.runtime.*;
  */
 public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
-    protected static final String PAGE_ELEMENT = "page";
-    
-    private static final String TITLE_ATTRIBUTE = "title";
-    private static final String STYLE_ATTRIBUTE = "style";
-    private static final String ALT_STYLE_ATTRIBUTE = "alt-style";
-    
+    protected static final String TAG_PAGE = "page";
+
+    private static final String ATT_TITLE = "title";
+    private static final String ATT_STYLE = "style";
+    private static final String ATT_ALT_STYLE = "alt-style";
+
     private String title;
     private String style;
     private String altStyle;
@@ -60,9 +60,9 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     AbstractIntroPage(IConfigurationElement element) {
         super(element);
-        title = element.getAttribute(TITLE_ATTRIBUTE);
-        style = element.getAttribute(STYLE_ATTRIBUTE);
-        altStyle = element.getAttribute(ALT_STYLE_ATTRIBUTE);
+        title = element.getAttribute(ATT_TITLE);
+        style = element.getAttribute(ATT_STYLE);
+        altStyle = element.getAttribute(ATT_ALT_STYLE);
 
         // Resolve.
         style = IntroModelRoot.getPluginLocation(style, element);
@@ -192,7 +192,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     protected IntroElement getModelChild(IConfigurationElement childElement) {
         IntroElement child = null;
-        if (childElement.getName().equalsIgnoreCase(IntroHead.HEAD_ELEMENT)) {
+        if (childElement.getName().equalsIgnoreCase(IntroHead.TAG_HEAD)) {
             child = new IntroHead(childElement);
             return child;
         }

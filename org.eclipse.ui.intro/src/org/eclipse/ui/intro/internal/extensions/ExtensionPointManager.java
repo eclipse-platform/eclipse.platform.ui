@@ -56,7 +56,7 @@ public class ExtensionPointManager extends BaseExtensionPointManager {
      * Load the intro model given the current intro id.
      */
     private void loadCurrentModel() {
-        currentModel = loadModel(CONFIG_INTRO_ID_ATTRIBUTE, this.introId);
+        currentModel = loadModel(ATT_CONFIG_INTRO_ID, this.introId);
     }
 
     /**
@@ -84,7 +84,7 @@ public class ExtensionPointManager extends BaseExtensionPointManager {
             // we never loaded this model before, or we tried before and we
             // failed. Load it. Get the correct config element based on
             // config id, and log any extra contributions.
-            model = loadModel(ID_ATTRIBUTE, configId);
+            model = loadModel(ATT_ID, configId);
         }
         return model;
     }

@@ -30,13 +30,13 @@ public class BaseExtensionPointManager {
     protected static final String CONFIG_EXTENSION = "org.eclipse.ui.intro.configExtension";
 
     // the attribute in the config element to specify the intro part id.
-    protected static final String CONFIG_INTRO_ID_ATTRIBUTE = "introId";
+    protected static final String ATT_CONFIG_INTRO_ID = "introId";
 
     // the attribute in the config element to specify the intro part id.
-    protected static final String CONFIG_EXTENSION_CONFIG_ID_ATTRIBUTE = "configId";
+    protected static final String ATT_CONFIG_EXTENSION_CONFIG_ID = "configId";
 
     // the id attribute in any intro element.
-    protected static final String ID_ATTRIBUTE = IntroElement.ID_ATTRIBUTE;
+    protected static final String ATT_ID = IntroElement.ATT_ID;
 
     protected Hashtable introModels = new Hashtable();
 
@@ -67,14 +67,14 @@ public class BaseExtensionPointManager {
             // we found matching config. Get all configExtension contributed to
             // this config and pass to model. Load generic config extensions as
             // well.
-            String configId = introConfig.getAttribute(ID_ATTRIBUTE);
+            String configId = introConfig.getAttribute(ATT_ID);
             IConfigurationElement[] introConfigExtensions = null;
             if (configId == null)
                 // if id of config is null, pass empty array.
                 introConfigExtensions = new IConfigurationElement[0];
             else
                 introConfigExtensions = getIntroConfigExtensions(
-                        CONFIG_EXTENSION_CONFIG_ID_ATTRIBUTE, configId);
+                        ATT_CONFIG_EXTENSION_CONFIG_ID, configId);
 
             IntroModelRoot model = new IntroModelRoot(introConfig,
                     introConfigExtensions);

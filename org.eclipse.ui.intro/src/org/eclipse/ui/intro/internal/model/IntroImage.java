@@ -18,44 +18,44 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroImage extends IntroElement {
 
-	protected static final String IMAGE_ELEMENT = "img";
+    protected static final String TAG_IMAGE = "img";
 
-	private static final String SRC_ATTRIBUTE = "src";
-	private static final String ALT_ATTRIBUTE = "alt";
+    private static final String ATT_SRC = "src";
+    private static final String ATT_ALT = "alt";
 
-	private String src;
-	private String alt;
+    private String src;
+    private String alt;
 
-	IntroImage(IConfigurationElement element) {
-		super(element);
-		src = element.getAttribute(SRC_ATTRIBUTE);
-		alt = element.getAttribute(ALT_ATTRIBUTE);
+    IntroImage(IConfigurationElement element) {
+        super(element);
+        src = element.getAttribute(ATT_SRC);
+        alt = element.getAttribute(ATT_ALT);
 
-		// Resolve.
-		src = IntroModelRoot.getPluginLocation(src, element);
-	}
+        // Resolve.
+        src = IntroModelRoot.getPluginLocation(src, element);
+    }
 
-	/**
-	 * @return Returns the alt.
-	 */
-	public String getAlt() {
-		return alt;
-	}
+    /**
+     * @return Returns the alt.
+     */
+    public String getAlt() {
+        return alt;
+    }
 
-	/**
-	 * @return Returns the src.
-	 */
-	public String getSrc() {
-		return src;
-	}
+    /**
+     * @return Returns the src.
+     */
+    public String getSrc() {
+        return src;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.IMAGE;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.IMAGE;
+    }
 
 }

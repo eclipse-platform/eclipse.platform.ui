@@ -14,20 +14,20 @@ package org.eclipse.ui.intro.internal.model;
 import org.eclipse.core.runtime.*;
 
 /**
- * An intro Head element. Head elements are only interpreted for HTML case.
- * They are always inlined. Ignored in UI Forms case.
+ * An intro Head element. Head elements are only interpreted for HTML case. They
+ * are always inlined. Ignored in UI Forms case.
  */
 public class IntroHead extends IntroElement {
 
-    protected static final String HEAD_ELEMENT = "head";
+    protected static final String TAG_HEAD = "head";
 
-    private static final String SRC_ATTRIBUTE = "src";
+    private static final String ATT_SRC = "src";
 
     private String src;
 
     IntroHead(IConfigurationElement element) {
         super(element);
-        src = element.getAttribute(SRC_ATTRIBUTE);
+        src = element.getAttribute(ATT_SRC);
 
         // Resolve.
         src = IntroModelRoot.getPluginLocation(src, element);

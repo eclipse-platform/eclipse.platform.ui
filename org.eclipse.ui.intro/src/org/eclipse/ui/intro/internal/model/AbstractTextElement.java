@@ -37,7 +37,7 @@ public abstract class AbstractTextElement extends IntroElement {
             // There should only be one text element.
             // Since elements where obtained by name, no point validating name.
             IConfigurationElement[] textElements = element
-                    .getChildren(IntroText.TEXT_ELEMENT);
+                    .getChildren(IntroText.TAG_TEXT);
             if (textElements.length == 0)
                 // no contributions. done.
                 return null;

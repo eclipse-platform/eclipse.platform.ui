@@ -21,22 +21,15 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroHomePage extends AbstractIntroPage {
 
-    private static final String URL_ATTRIBUTE = "url";
-
-    private static final String STANDBY_URL_ATTRIBUTE = "standby-url";
-
-    private static final String STANDBY_STYLE_ATTRIBUTE = "standby-style";
-
-    private static final String STANDBY_ALT_STYLE_ATTRIBUTE = "standby-alt-style";
+    private static final String ATT_URL = "url";
+    private static final String ATT_STANDBY_URL = "standby-url";
+    private static final String ATT_STANDBY_STYLE = "standby-style";
+    private static final String ATT_STANDBY_ALT_STYLE = "standby-alt-style";
 
     private String url;
-
     private String standby_url;
-
     private String standby_style;
-
     private String standby_alt_style;
-
     private boolean isDynamic = false;
 
     /**
@@ -44,13 +37,13 @@ public class IntroHomePage extends AbstractIntroPage {
      */
     IntroHomePage(IConfigurationElement element) {
         super(element);
-        url = element.getAttribute(URL_ATTRIBUTE);
+        url = element.getAttribute(ATT_URL);
         if (url == null) {
             // if we do not have a URL attribute, then we have dynamic content.
             isDynamic = true;
-            standby_style = element.getAttribute(STANDBY_STYLE_ATTRIBUTE);
+            standby_style = element.getAttribute(ATT_STANDBY_STYLE);
             standby_alt_style = element
-                    .getAttribute(STANDBY_ALT_STYLE_ATTRIBUTE);
+                    .getAttribute(ATT_STANDBY_ALT_STYLE);
 
             // Resolve standby styles. The ALT style need not be resolved.
             standby_style = IntroModelRoot.getPluginLocation(standby_style,
@@ -58,7 +51,7 @@ public class IntroHomePage extends AbstractIntroPage {
         } else {
             // check the url/standby-url attributes and update accordingly.
             url = IntroModelRoot.resolveURL(url, element);
-            standby_url = element.getAttribute(STANDBY_URL_ATTRIBUTE);
+            standby_url = element.getAttribute(ATT_STANDBY_URL);
             standby_url = IntroModelRoot.resolveURL(standby_url, element);
         }
     }

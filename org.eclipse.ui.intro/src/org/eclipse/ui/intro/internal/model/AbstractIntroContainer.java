@@ -195,22 +195,22 @@ public abstract class AbstractIntroContainer extends IntroElement {
      */
     protected IntroElement getModelChild(IConfigurationElement childElement) {
         IntroElement child = null;
-        if (childElement.getName().equalsIgnoreCase(IntroDiv.DIV_ELEMENT))
+        if (childElement.getName().equalsIgnoreCase(IntroDiv.TAG_DIV))
             child = new IntroDiv(childElement);
         else if (childElement.getName()
-                .equalsIgnoreCase(IntroLink.LINK_ELEMENT))
+                .equalsIgnoreCase(IntroLink.TAG_LINK))
             child = new IntroLink(childElement);
         else if (childElement.getName()
-                .equalsIgnoreCase(IntroText.TEXT_ELEMENT))
+                .equalsIgnoreCase(IntroText.TAG_TEXT))
             child = new IntroText(childElement);
         else if (childElement.getName().equalsIgnoreCase(
-                IntroImage.IMAGE_ELEMENT))
+                IntroImage.TAG_IMAGE))
             child = new IntroImage(childElement);
         else if (childElement.getName()
-                .equalsIgnoreCase(IntroHTML.HTML_ELEMENT))
+                .equalsIgnoreCase(IntroHTML.TAG_HTML))
             child = new IntroHTML(childElement);
         else if (childElement.getName().equalsIgnoreCase(
-                IntroInclude.INCLUDE_ELEMENT))
+                IntroInclude.TAG_INCLUDE))
             child = new IntroInclude(childElement);
         return child;
     }

@@ -19,10 +19,10 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroLink extends AbstractTextElement {
 
-	protected static final String LINK_ELEMENT = "link";
+	protected static final String TAG_LINK = "link";
 
-	private static final String LABEL_ATTRIBUTE = "label";
-	private static final String URL_ATTRIBUTE = "url";
+	private static final String ATT_LABEL = "label";
+	private static final String ATT_URL = "url";
 
 	private String label;
 	private String url;
@@ -33,8 +33,8 @@ public class IntroLink extends AbstractTextElement {
 	 */
 	IntroLink(IConfigurationElement element) {
 		super(element);
-		url = element.getAttribute(URL_ATTRIBUTE);
-		label = element.getAttribute(LABEL_ATTRIBUTE);
+		url = element.getAttribute(ATT_URL);
+		label = element.getAttribute(ATT_LABEL);
 
 		url = IntroModelRoot.resolveURL(url, element);
 		if (url != null) {

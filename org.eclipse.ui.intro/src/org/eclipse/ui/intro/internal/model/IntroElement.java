@@ -110,7 +110,7 @@ public abstract class IntroElement {
             | IMAGE | INCLUDE | MODEL_ROOT | PRESENTATION | TEXT
             | CONTAINER_EXTENSION | HEAD;
 
-    public static final String ID_ATTRIBUTE = "id";
+    public static final String ATT_ID = "id";
     private IntroElement parent;
 
     // cached config element representing this component.
@@ -120,7 +120,7 @@ public abstract class IntroElement {
 
     IntroElement(IConfigurationElement element) {
         this.element = element;
-        id = element.getAttribute(ID_ATTRIBUTE);
+        id = element.getAttribute(ATT_ID);
     }
 
     /**

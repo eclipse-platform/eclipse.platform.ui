@@ -20,9 +20,9 @@ public class IntroContainerExtension extends IntroElement {
 
     protected static final String CONTAINER_EXTENSION_ELEMENT = "extensionContent";
 
-    protected static final String PATH_ATTRIBUTE = "path";
-    private static final String STYLE_ATTRIBUTE = "style";
-    private static final String ALT_STYLE_ATTRIBUTE = "alt-style";
+    protected static final String ATT_PATH = "path";
+    private static final String ATT_STYLE = "style";
+    private static final String ATT_ALT_STYLE = "alt-style";
 
     private String path;
     private String style;
@@ -30,9 +30,9 @@ public class IntroContainerExtension extends IntroElement {
 
     IntroContainerExtension(IConfigurationElement element) {
         super(element);
-        path = element.getAttribute(PATH_ATTRIBUTE);
-        style = element.getAttribute(STYLE_ATTRIBUTE);
-        altStyle = element.getAttribute(ALT_STYLE_ATTRIBUTE);
+        path = element.getAttribute(ATT_PATH);
+        style = element.getAttribute(ATT_STYLE);
+        altStyle = element.getAttribute(ATT_ALT_STYLE);
 
         // Resolve.
         style = IntroModelRoot.getPluginLocation(style, element);

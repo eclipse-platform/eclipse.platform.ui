@@ -136,11 +136,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // If there is more than one presentation, load first one, and log
         // rest.
         IConfigurationElement[] presentationElements = getConfigurationElement()
-                .getChildren(IntroPartPresentation.PRESENTATION_ELEMENT);
+                .getChildren(IntroPartPresentation.TAG_PRESENTATION);
 
         IConfigurationElement presentationElement = ExtensionPointManager
                 .validateSingleContribution(presentationElements,
-                        IntroPartPresentation.HOME_PAGE_ID_ATTRIBUTE);
+                        IntroPartPresentation.ATT_HOME_PAGE_ID);
         return presentationElement;
     }
 
@@ -150,9 +150,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private void loadPages() {
         String homePageId = getPresentation().getHomePageId();
         IConfigurationElement[] pages = getConfigurationElement().getChildren(
-                IntroPage.PAGE_ELEMENT);
+                IntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
-            if (pages[i].getAttribute(IntroPage.ID_ATTRIBUTE).equalsIgnoreCase(
+            if (pages[i].getAttribute(IntroPage.ATT_ID).equalsIgnoreCase(
                     homePageId)) {
                 // Create the model class for the Root Page.
                 homePage = new IntroHomePage(pages[i]);
@@ -182,8 +182,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param element
      */
     private void loadSharedDivs(IConfigurationElement element) {
-        IConfigurationElement[] divs = element
-                .getChildren(IntroDiv.DIV_ELEMENT);
+        IConfigurationElement[] divs = element.getChildren(IntroDiv.TAG_DIV);
         for (int i = 0; i < divs.length; i++) {
             IntroDiv div = new IntroDiv(divs[i]);
             div.setParent(this);
@@ -211,7 +210,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // this extension. No point adding pages that will never be
             // referenced.
             IConfigurationElement[] pages = configExtensionElements[i]
-                    .getChildren(IntroPage.PAGE_ELEMENT);
+                    .getChildren(IntroPage.TAG_PAGE);
             for (int j = 0; j < pages.length; j++) {
                 // Create the model class for an intro Page.
                 IntroPage page = new IntroPage(pages[j]);
@@ -234,7 +233,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // There should only be one container extension.
         IConfigurationElement extension = ExtensionPointManager
                 .validateSingleContribution(containerExtensions,
-                        IntroContainerExtension.PATH_ATTRIBUTE);
+                        IntroContainerExtension.ATT_PATH);
         if (extension == null)
             return false;
         // Create the model class.

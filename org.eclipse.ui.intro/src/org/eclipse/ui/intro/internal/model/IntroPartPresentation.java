@@ -44,13 +44,14 @@ import org.eclipse.ui.intro.internal.util.*;
  */
 public class IntroPartPresentation extends IntroElement {
 
-    protected static final String PRESENTATION_ELEMENT = "presentation";
-    private static final String IMPLEMENTATION_ELEMENT = "implementation";
-    private static final String TITLE_ATTRIBUTE = "title";
-    private static final String STYLE_ATTRIBUTE = "style";
-    private static final String OS_ATTRIBUTE = "os";
-    private static final String WS_ATTRIBUTE = "ws";
-    protected static final String HOME_PAGE_ID_ATTRIBUTE = "home-page-id";
+    protected static final String TAG_PRESENTATION = "presentation";
+    private static final String TAG_IMPLEMENTATION = "implementation";
+
+    private static final String ATT_TITLE = "title";
+    private static final String ATT_STYLE = "style";
+    private static final String ATT_OS = "os";
+    private static final String ATT_WS = "ws";
+    protected static final String ATT_HOME_PAGE_ID = "home-page-id";
 
     private String title;
     private String style;
@@ -70,16 +71,16 @@ public class IntroPartPresentation extends IntroElement {
      */
     IntroPartPresentation(IConfigurationElement element) {
         super(element);
-        title = element.getAttribute(TITLE_ATTRIBUTE);
-        homePageId = element.getAttribute(HOME_PAGE_ID_ATTRIBUTE);
+        title = element.getAttribute(ATT_TITLE);
+        homePageId = element.getAttribute(ATT_HOME_PAGE_ID);
     }
 
     private void updatePresentationAttributes(IConfigurationElement element) {
         if (element != null) {
             // reset (ie: inherit) id and style to be implementation id and
             // style. Then handle HEAD content in the case of HTML Browser.
-            style = element.getAttribute(STYLE_ATTRIBUTE);
-            id = element.getAttribute(ID_ATTRIBUTE);
+            style = element.getAttribute(ATT_STYLE);
+            id = element.getAttribute(ATT_ID);
             // get Head contribution, regardless of implementation class.
             // Implementation class is created lazily by UI.
             head = getHead(element);
@@ -100,7 +101,7 @@ public class IntroPartPresentation extends IntroElement {
             // There should only be one head element. Since elements where
             // obtained by name, no point validating name.
             IConfigurationElement[] headElements = element
-                    .getChildren(IntroHead.HEAD_ELEMENT);
+                    .getChildren(IntroHead.TAG_HEAD);
             if (headElements.length == 0)
                 // no contributions. done.
                 return null;
@@ -216,7 +217,7 @@ public class IntroPartPresentation extends IntroElement {
         // There can be more than one implementation contribution. Add each
         // valid one. First start with OS, then WS then no OS.
         IConfigurationElement[] implementationElements = configElement
-                .getChildren(IMPLEMENTATION_ELEMENT);
+                .getChildren(TAG_IMPLEMENTATION);
         IConfigurationElement implementationElement = null;
 
         if (implementationElements.length == 0)
@@ -229,7 +230,7 @@ public class IntroPartPresentation extends IntroElement {
         // first loop through all to find one with matching OS, with or
         // without WS.
         for (int i = 0; i < implementationElements.length; i++) {
-            String os = implementationElements[i].getAttribute(OS_ATTRIBUTE);
+            String os = implementationElements[i].getAttribute(ATT_OS);
             if (os == null)
                 // no os, no match.
                 continue;
@@ -237,8 +238,7 @@ public class IntroPartPresentation extends IntroElement {
             if (listValueHasValue(os, currentOS)) {
                 // found implementation with correct OS. Now try if WS
                 // matches.
-                String ws = implementationElements[i]
-                        .getAttribute(WS_ATTRIBUTE);
+                String ws = implementationElements[i].getAttribute(ATT_WS);
                 if (ws == null) {
                     // good OS, and they do not care about WS. we have a
                     // match.
@@ -254,12 +254,11 @@ public class IntroPartPresentation extends IntroElement {
         // now loop through all to find one with no OS defined, but with a
         // matching WS.
         for (int i = 0; i < implementationElements.length; i++) {
-            String os = implementationElements[i].getAttribute(OS_ATTRIBUTE);
+            String os = implementationElements[i].getAttribute(ATT_OS);
             if (os == null) {
                 // found implementation with no OS. Now try if WS
                 // matches.
-                String ws = implementationElements[i]
-                        .getAttribute(WS_ATTRIBUTE);
+                String ws = implementationElements[i].getAttribute(ATT_WS);
                 if (ws == null) {
                     // no OS, and they do not care about WS. we have a
                     // match.

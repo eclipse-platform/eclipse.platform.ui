@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroDiv extends AbstractIntroContainer {
 
-    protected static final String DIV_ELEMENT = "div";
+    protected static final String TAG_DIV = "div";
 
-    private static final String LABEL_ATTRIBUTE = "label";
+    private static final String ATT_LABEL = "label";
 
     private String label;
 
@@ -29,7 +29,7 @@ public class IntroDiv extends AbstractIntroContainer {
      */
     IntroDiv(IConfigurationElement element) {
         super(element);
-        label = element.getAttribute(LABEL_ATTRIBUTE);
+        label = element.getAttribute(ATT_LABEL);
     }
 
     /**

@@ -18,59 +18,56 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroInclude extends IntroElement {
 
-	protected static final String INCLUDE_ELEMENT = "include";
+    protected static final String TAG_INCLUDE = "include";
 
-	private static final String CONFIG_ID_ATTRIBUTE = "configId";
-	private static final String PATH_ATTRIBUTE = "path";
-	/**
-	 * boolean attribute, default is false.
-	 */
-	private static final String MERGE_STYLE_ATTRIBUTE = "merge-style";
+    private static final String ATT_CONFIG_ID = "configId";
+    private static final String ATT_PATH = "path";
+    /**
+     * boolean attribute, default is false.
+     */
+    private static final String ATT_MERGE_STYLE = "merge-style";
 
-	private String configId;
-	private String path;
-	private boolean mergeStyle = false;
+    private String configId;
+    private String path;
+    private boolean mergeStyle = false;
 
-	IntroInclude(IConfigurationElement element) {
-		super(element);
-		configId = element.getAttribute(CONFIG_ID_ATTRIBUTE);
-		path = element.getAttribute(PATH_ATTRIBUTE);
-		String mergeStyleString = element.getAttribute(MERGE_STYLE_ATTRIBUTE);
-		mergeStyle =
-			(mergeStyleString != null
-				&& mergeStyleString.equalsIgnoreCase("true"))
-				? true
-				: false;
-	}
+    IntroInclude(IConfigurationElement element) {
+        super(element);
+        configId = element.getAttribute(ATT_CONFIG_ID);
+        path = element.getAttribute(ATT_PATH);
+        String mergeStyleString = element.getAttribute(ATT_MERGE_STYLE);
+        mergeStyle = (mergeStyleString != null && mergeStyleString
+                .equalsIgnoreCase("true")) ? true : false;
+    }
 
-	/**
-	 * @return Returns the configId.
-	 */
-	public String getConfigId() {
-		return configId;
-	}
+    /**
+     * @return Returns the configId.
+     */
+    public String getConfigId() {
+        return configId;
+    }
 
-	/**
-	 * @return Returns the mergeStyle.
-	 */
-	public boolean getMergeStyle() {
-		return mergeStyle;
-	}
+    /**
+     * @return Returns the mergeStyle.
+     */
+    public boolean getMergeStyle() {
+        return mergeStyle;
+    }
 
-	/**
-	 * @return Returns the path.
-	 */
-	public String getPath() {
-		return path;
-	}
+    /**
+     * @return Returns the path.
+     */
+    public String getPath() {
+        return path;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.INCLUDE;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.INCLUDE;
+    }
 
 }

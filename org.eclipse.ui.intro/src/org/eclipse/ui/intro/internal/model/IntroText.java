@@ -18,29 +18,29 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroText extends IntroElement {
 
-	protected static final String TEXT_ELEMENT = "text";
+    protected static final String TAG_TEXT = "text";
 
-	private String text;
+    private String text;
 
-	IntroText(IConfigurationElement element) {
-		super(element);
-		text = element.getValue();
-	}
+    IntroText(IConfigurationElement element) {
+        super(element);
+        text = element.getValue();
+    }
 
-	/**
-	 * @return Returns the description.
-	 */
-	public String getText() {
-		return text;
-	}
+    /**
+     * @return Returns the description.
+     */
+    public String getText() {
+        return text;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.TEXT;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.TEXT;
+    }
 
 }
