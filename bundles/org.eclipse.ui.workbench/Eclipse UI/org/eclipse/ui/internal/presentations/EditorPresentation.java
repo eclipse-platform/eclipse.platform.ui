@@ -132,6 +132,11 @@ public class EditorPresentation extends BasicStackPresentation {
         tabFolder.setMaximizeVisible((flags & SWT.MAX) != 0);
     }
 
+	public void dispose() {
+	    preferenceStore.removePropertyChangeListener(propertyChangeListener);	    
+	    super.dispose();
+	}
+    
     protected void initTab(CTabItem tabItem, IPresentablePart part) {
         tabItem.setText(getLabelText(part, true, (getTabFolder().getStyle() & SWT.MULTI) == 0));
         tabItem.setImage(getLabelImage(part));

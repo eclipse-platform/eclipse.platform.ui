@@ -413,11 +413,14 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#removePart(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
 	public void removePart(IPresentablePart oldPart) {
+	    if (current == oldPart)
+	        current = null;
+	    
 		CTabItem item = getTab(oldPart);
 		if (item == null) {
 			return;
 		}
-		oldPart.setVisible(false);
+		oldPart.setVisible(false);		
 		
 		item.dispose();
 	}

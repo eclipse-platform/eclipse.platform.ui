@@ -857,8 +857,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
      */
     private void updateContainerVisibleTab() {
         LayoutPart[] parts = getChildren();
-        if (parts.length < 1) return;
-
+        
+        if (parts.length < 1) {
+            setSelection(null);
+            return;
+        }
+        
         PartPane selPart = null;
         int topIndex = 0;
         IWorkbenchPartReference sortedPartsArray[] = page.getSortedParts();
