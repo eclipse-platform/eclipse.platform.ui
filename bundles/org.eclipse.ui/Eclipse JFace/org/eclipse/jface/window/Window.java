@@ -536,7 +536,7 @@ public int open() {
 /**
  * Runs the event loop for the given shell.
  *
- * @return the shell
+ * @param shell the shell
  */
 private void runEventLoop(Shell shell) {
 	Display display = Display.getCurrent();
