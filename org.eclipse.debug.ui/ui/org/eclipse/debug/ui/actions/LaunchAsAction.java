@@ -28,6 +28,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+//import org.eclipse.ui.internal.WWinKeyBindingService;
+//import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
@@ -36,6 +38,8 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
  * @since 2.1
  */
 public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
+	
+//	WWinKeyBindingService fKeyBindingService;
 	
 	/**
 	 * Cascading menu 
@@ -131,6 +135,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		if (getCreatedMenu() != null) {
 			getCreatedMenu().dispose();
 		}
+		
 		// Sort the applicable config types alphabetically and add them to the menu
 		setCreatedMenu(new Menu(parent));
 		
@@ -152,6 +157,10 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 */
 	private void populateMenu(LaunchShortcutExtension ext, Menu menu, int menuCount) {
 		LaunchShortcutAction action = new LaunchShortcutAction(getMode(), ext);
+		action.setActionDefinitionId(ext.getId());
+		/*if (fKeyBindingService != null) {
+			fKeyBindingService.registerGlobalAction(action);	
+		}*/
 		createAction(menu, action, menuCount);
 	}
 	
@@ -212,6 +221,9 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
+//		if (window instanceof WorkbenchWindow) {
+//			fKeyBindingService= ((WorkbenchWindow)window).getKeyBindingService();
+//		}
 	}
 
 	/**
@@ -226,6 +238,5 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
-
 }
 
