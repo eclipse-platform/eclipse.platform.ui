@@ -111,7 +111,7 @@ public class TreeFrame extends Frame {
 		for (int i = 0; i < elementMem.length; i++) {
 			String factoryID = elementMem[i].getString(IWorkbenchConstants.TAG_FACTORY_ID);
 			if (factoryID != null) {
-				IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+				IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 				if (factory != null)
 					elements.add(factory.createElement(elementMem[i]));
 			}
@@ -133,7 +133,7 @@ public class TreeFrame extends Frame {
 		String factoryID = childMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 		IAdaptable frameInput = null;
 		if (factoryID != null) {
-			IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+			IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 			if (factory != null)
 				frameInput = factory.createElement(childMem);
 		}
