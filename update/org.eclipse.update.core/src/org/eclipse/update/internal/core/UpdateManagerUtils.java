@@ -21,6 +21,18 @@ public class UpdateManagerUtils {
 	 */
 	private static IOException CANCEL_EXCEPTION;
 
+	/**
+	 * 
+	 */
+	private static Map entryMap;
+	private static Stack bufferPool;	
+	private static final int BUFFER_SIZE = 1024;
+	
+	/**
+	 * 
+	 */
+	private static File tmpDir;
+
 
 	/**
 	 * Static block to initialize the possible CANCEL ERROR
@@ -245,18 +257,6 @@ public class UpdateManagerUtils {
 		return newURL;
 	}	
 	
-	private static Map entryMap;
-
-
-	private static Stack bufferPool;	
-
-
-	private static final int BUFFER_SIZE = 1024;
-
-
-	private static File tmpDir;
-
-
 	/**
 	 * Copies specified input stream to the output stream.
 	 * 
@@ -313,7 +313,8 @@ public class UpdateManagerUtils {
 	 * association is made.
 	 * 
 	 * @since 2.0
-	 */	
+	 */
+	// VK: needs to be API (and lookupLocalFile(), removeLocalFile() ??)
 	public static synchronized File createLocalFile(String key, String name) throws IOException {
 		
 		// ensure we have a temp directory
