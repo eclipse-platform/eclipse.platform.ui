@@ -68,8 +68,8 @@ public class Checkout extends Command {
 	 * On sucessful finish, prune empty directories if 
 	 * the -P option was specified (or is implied by -D or -r)
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
-		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+	protected void commandFinished(Session session, Option[] globalOptions,
+		Option[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
 		boolean succeeded) throws CVSException {
 		// If we didn't succeed, don't do any post processing
 		if (! succeeded) return;

@@ -5,7 +5,11 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
@@ -20,6 +24,7 @@ public class Update extends Command {
 	public static final LocalOption CLEAR_STICKY = new LocalOption("-A"); //$NON-NLS-1$
 	public static final LocalOption IGNORE_LOCAL_CHANGES = new LocalOption("-C"); //$NON-NLS-1$
 	public static final LocalOption RETRIEVE_ABSENT_DIRECTORIES = new LocalOption("-d"); //$NON-NLS-1$
+	public static final LocalOption JOIN = new LocalOption("-j"); //$NON-NLS-1$
 	
 	/*** Default command output listener ***/
 	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new UpdateListener(null);
@@ -69,8 +74,8 @@ public class Update extends Command {
 	/**
 	 * On successful finish, prune empty directories if the -P or -D option was specified.
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
-		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+	protected void commandFinished(Session session, Option[] globalOptions,
+		Option[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
 		boolean succeeded) throws CVSException {
 		// If we didn't succeed, don't do any post processing
 		if (! succeeded) return;
@@ -86,6 +91,25 @@ public class Update extends Command {
 			
 		}	
 	}
+	
+	/*
+	 * @see Command#getDefaultLocalOptions()
+	 */
+	protected LocalOption[] getDefaultLocalOptions(GlobalOption[] globalOptions, LocalOption[] localOptions) {
+		List newOptions = new ArrayList(5);
+		
+		// Always look for absent directories for now
+		if(!RETRIEVE_ABSENT_DIRECTORIES.isElementOf(localOptions)) {
+			newOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
+		}
+		
+		// Prune empty directories if pruning is enabled and the command in not being run in non-update mode
+		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && !PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) {
+			if(!Command.DO_NOT_CHANGE.isElementOf(globalOptions)) {
+				newOptions.add(Update.PRUNE_EMPTY_DIRECTORIES);
+			}
+		}
+		
+		return (LocalOption[]) newOptions.toArray(new LocalOption[newOptions.size()]);
+	}
 }
-
-

@@ -96,7 +96,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
-		throw new CVSException(Policy.bind("RemoteManagedResource.invalidOperation"));
+		// do nothing
 	}
 
 	/*

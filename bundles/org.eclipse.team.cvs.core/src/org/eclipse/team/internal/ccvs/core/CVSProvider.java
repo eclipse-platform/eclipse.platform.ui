@@ -365,7 +365,7 @@ public class CVSProvider implements ICVSProvider {
 			try {
 				IStatus status = Command.IMPORT.execute(s,
 					getDefaultGlobalOptions(),
-					new LocalOption[] {Import.makeMessageOption(message)},
+					new LocalOption[] {Import.makeArgumentOption(Command.MESSAGE_OPTION, message)},
 					new String[] { moduleName, vendor, tag },
 					null,
 					monitor);

@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -80,6 +81,8 @@ public abstract class Command {
 	public static final LocalOption KSUBST_BINARY = new LocalOption("-kb"); //$NON-NLS-1$
 	// valid for: checkout export update
 	public static final LocalOption PRUNE_EMPTY_DIRECTORIES = new LocalOption("-P"); //$NON-NLS-1$
+	// valid for: checkout export update
+	public static final LocalOption MESSAGE_OPTION = new LocalOption("-m"); //$NON-NLS-1$
 
 	/*** Response handler map ***/
 	private static final Hashtable responseHandlers = new Hashtable();
@@ -97,8 +100,11 @@ public abstract class Command {
 		registerResponseHandler(new UpdatedHandler(false));
 		registerResponseHandler(new ValidRequestsHandler());		
 	}
-	private static void registerResponseHandler(ResponseHandler handler) {
+	public static void registerResponseHandler(ResponseHandler handler) {
 		responseHandlers.put(handler.getResponseID(), handler);
+	}
+	public static ResponseHandler getResponseHandler(String responseID) {
+		return (ResponseHandler)responseHandlers.get(responseID);
 	}
 	
 	/*** Default command output listener ***/
@@ -197,8 +203,8 @@ public abstract class Command {
 	 * @param monitor the progress monitor
 	 * @param serverError true iff the server returned the "ok" response
 	 */
-	protected void commandFinished(Session session, GlobalOption[] globalOptions,
-		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
+	protected void commandFinished(Session session, Option[] globalOptions,
+		Option[] localOptions, ICVSResource[] resources, IProgressMonitor monitor,
 		boolean serverError) throws CVSException {
 	}
 
@@ -369,14 +375,10 @@ public abstract class Command {
 			session.setModTime(null);
 	
 			/*** initiate command ***/
-			// send global options
-			for (int i = 0; i < globalOptions.length; ++i) {
-				globalOptions[i].send(session);
-			}
-			// send local options
-			for (int i = 0; i < localOptions.length; ++i) {
-				localOptions[i].send(session);
-			}
+			// send global and local options by first merging any command specific defaults
+			Option[] gOptions = makeAndSendOptions(session, globalOptions, getDefaultGlobalOptions(globalOptions, localOptions));
+			Option[] lOptions = makeAndSendOptions(session, localOptions, getDefaultLocalOptions(globalOptions, localOptions));
+
 			// send local working directory state
 			sendLocalResourceState(session, globalOptions, localOptions,
 				resources, Policy.subMonitorFor(monitor, 10));
@@ -393,7 +395,7 @@ public abstract class Command {
 			IStatus status = processResponses(session, listener, Policy.subMonitorFor(monitor, 70));
 
 			// Finished adds last 5% of work.
-			commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 5),
+			commandFinished(session, gOptions, lOptions, resources, Policy.subMonitorFor(monitor, 5),
 				status.getCode() != CVSStatus.SERVER_ERROR);
 			monitor.worked(5);
 			return status;
@@ -499,6 +501,27 @@ public abstract class Command {
 	}
 	
 	/**
+	 * Calculate and sends the list of global and local options to send to the server.
+	 */
+	private Option[] makeAndSendOptions(Session session, Option[] userOptions, Option[] defaultCommandOptions) throws CVSException {
+		List options = new ArrayList(5);
+
+		// add default options first
+		options.addAll(Arrays.asList(defaultCommandOptions));
+		options.addAll(Arrays.asList(userOptions));
+			
+		Option[] commandOptions = (Option[]) options.toArray(new Option[options.size()]);
+
+		// send global options
+		for (int i = 0; i < commandOptions.length; i++) {
+			commandOptions[i].send(session);
+		}
+		
+		// returned merged options that were sent to server
+		return commandOptions;
+	}
+		
+	/**
 	 * Makes a list of all valid responses; for initializing a session.
 	 * @return a space-delimited list of all valid response strings
 	 */
@@ -529,6 +552,12 @@ public abstract class Command {
 		 */
 		public boolean isElementOf(Option[] array) {
 			return findOption(array, option) != null;
+		}
+		/**
+		 * Returns the option part of the option
+		 */
+		public String getOption() {
+			return option;
 		}
 		/**
 		 * Sends the option to a CVS server
@@ -578,8 +607,8 @@ public abstract class Command {
 	 * Makes a -m log message option.
 	 * Valid for: add commit import
 	 */
-	public static LocalOption makeMessageOption(String message) {
-		return new LocalOption("-m", message);  //$NON-NLS-1$
+	public static LocalOption makeArgumentOption(LocalOption option, String argument) {
+		return new LocalOption(option.getOption(), argument);  //$NON-NLS-1$
 	}
 	
 	/**
@@ -629,5 +658,33 @@ public abstract class Command {
 			}
 		}
 		return (String[]) list.toArray(new String[list.size()]);
+	}
+	
+	/**
+	 * Returns the default global options for all commands. Subclasses can override but
+	 * must call this method and return superclasses global options.
+	 * 
+	 * @param globalOptions are the options already specified by the user.
+	 * @return the default global options that will be sent with every command.
+	 */
+	protected GlobalOption[] getDefaultGlobalOptions(GlobalOption[] globalOptions, LocalOption[] localOptions) {
+		QuietOption option = CVSProviderPlugin.getPlugin().getQuietness();
+		if (option == null)
+			return Command.NO_GLOBAL_OPTIONS;
+		else
+			return new GlobalOption[] {option};		
+	}
+	
+	/**
+	 * Returns the default local options for a command. Subclasses can override but
+	 * must return superclasses default local options.
+	 * 
+	 * @param globalOptions are the options specified by the user
+	 * @param localOptions are the options already specified by the user.
+	 * @return the default local options that will be sent with every command of this
+	 * type.
+	 */
+	protected LocalOption[] getDefaultLocalOptions(GlobalOption[] globalOptions, LocalOption[] localOptions) {
+		return Command.NO_LOCAL_OPTIONS;
 	}
 }

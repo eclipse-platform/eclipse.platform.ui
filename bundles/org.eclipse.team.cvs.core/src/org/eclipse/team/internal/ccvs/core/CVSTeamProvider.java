@@ -39,6 +39,7 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Commit;
 import org.eclipse.team.internal.ccvs.core.client.Diff;
+import org.eclipse.team.internal.ccvs.core.client.ResponseHandler;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Tag;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -254,7 +255,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		try {
 			if (!folders.isEmpty()) {
 				status = Command.ADD.execute(s,
-					getDefaultGlobalOptions(),
+					Command.NO_GLOBAL_OPTIONS,
 					Command.NO_LOCAL_OPTIONS,
 					(String[])folders.toArray(new String[folders.size()]),
 					null,
@@ -265,7 +266,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			}
 			if (!textfiles.isEmpty()) {
 				status = Command.ADD.execute(s,
-					getDefaultGlobalOptions(),
+					Command.NO_GLOBAL_OPTIONS,
 					Command.NO_LOCAL_OPTIONS,
 					(String[])textfiles.toArray(new String[textfiles.size()]),
 					null,
@@ -276,7 +277,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			}
 			if (!binaryfiles.isEmpty()) {
 				status = Command.ADD.execute(s,
-					getDefaultGlobalOptions(),
+					Command.NO_GLOBAL_OPTIONS,
 					new LocalOption[] { Command.KSUBST_BINARY },
 					(String[])binaryfiles.toArray(new String[binaryfiles.size()]),
 					null,
@@ -297,26 +298,27 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public void checkin(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
 			
-		// Build the arguments list
-		String[] arguments = getValidArguments(resources, depth, progress);
-		
 		// Build the local options
 		List localOptions = new ArrayList();
-		localOptions.add(Commit.makeMessageOption(comment));
+		localOptions.add(Commit.makeArgumentOption(Command.MESSAGE_OPTION, comment));
 
 		// If the depth is not infinite, we want the -l option
 		if (depth != IResource.DEPTH_INFINITE) {
 			localOptions.add(Commit.DO_NOT_RECURSE);
 		}
-			
+		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+
+		// Build the arguments list
+		String[] arguments = getValidArguments(resources, commandOptions, progress);
+					
 		// Commit the resources
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
 		s.open(progress);
 		try {
 			status = Command.COMMIT.execute(s,
-			getDefaultGlobalOptions(),
-			(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+			Command.NO_GLOBAL_OPTIONS,
+			commandOptions,
 			arguments, null,
 			progress);
 		} finally {
@@ -410,7 +412,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		s.open(progress);
 		try {
 			status = Command.REMOVE.execute(s,
-			getDefaultGlobalOptions(),
+			Command.NO_GLOBAL_OPTIONS,
 			Command.NO_LOCAL_OPTIONS,
 			(String[])files.toArray(new String[files.size()]),
 			null,
@@ -432,8 +434,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		IProgressMonitor progress) throws TeamException {
 		
 		// Build the arguments list
-		String[] arguments = getValidArguments(resources, Diff.DO_NOT_RECURSE.isElementOf(options) ?
-			IResource.DEPTH_ONE : IResource.DEPTH_INFINITE, progress);
+		String[] arguments = getValidArguments(resources, options, progress);
 
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
@@ -499,7 +500,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 				
 		// Perform an update, ignoring any local file modifications
-		update(resources, depth, tag, true, progress);
+		List options = new ArrayList();
+		options.add(Update.IGNORE_LOCAL_CHANGES);
+		if(depth != IResource.DEPTH_INFINITE) {
+		 options.add(Command.DO_NOT_RECURSE);
+		}
+		LocalOption[] commandOptions = (LocalOption[]) options.toArray(new LocalOption[options.size()]);
+		update(resources, commandOptions, tag, null, progress);
 	}
 	
 	/*
@@ -518,10 +525,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public String getConnectionMethod(IResource resource) throws TeamException {
 		checkIsChild(resource);
 		return getRemoteRoot().getMethod().getName();
-	}
-	
-	private GlobalOption[] getDefaultGlobalOptions() {
-		return CVSProvider.getDefaultGlobalOptions();
 	}
 	
 	/**
@@ -646,7 +649,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	/*
 	 * Get the arguments to be passed to a commit or update
 	 */
-	private String[] getValidArguments(IResource[] resources, int depth, IProgressMonitor progress) throws CVSException {
+	private String[] getValidArguments(IResource[] resources, LocalOption[] options, IProgressMonitor progress) throws CVSException {
+		int depth = Command.DO_NOT_RECURSE.isElementOf(options) ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		List arguments = new ArrayList(resources.length);
 		for (int i=0;i<resources.length;i++) {
 			checkIsChild(resources[i]);
@@ -850,14 +854,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * Tag the resources in the CVS repository with the given tag.
 	 */
 	public void tag(IResource[] resources, int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
-		
-		// XXX These should generate CVSExceptions
+	
 		Assert.isNotNull(tag);
-		Assert.isTrue(tag.getType() == CVSTag.VERSION || tag.getType() == CVSTag.BRANCH);
 		
-		// Build the arguments list
-		String[] arguments = getValidArguments(resources, depth, progress);
-		
+		if(tag.getType() != CVSTag.VERSION && tag.getType() != CVSTag.BRANCH) {
+			throw new TeamException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.tagNotVersionOrBranchError")));
+		}
+						
 		// Build the local options
 		List localOptions = new ArrayList();
 		// If the depth is not infinite, we want the -l option
@@ -865,6 +868,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			localOptions.add(Tag.DO_NOT_RECURSE);
 		if (tag.getType() == CVSTag.BRANCH)
 			localOptions.add(Tag.CREATE_BRANCH);
+		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+				
+		// Build the arguments list
+		String[] arguments = getValidArguments(resources, commandOptions, progress);
 		
 		// The tag name is supposed to be the first argument
 		ArrayList args = new ArrayList();
@@ -877,8 +884,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		s.open(progress);
 		try {
 			status = Command.TAG.execute(s,
-			getDefaultGlobalOptions(),
-			(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+			Command.NO_GLOBAL_OPTIONS,
+			commandOptions,
 			// XXX We should pass the tag to the command
 			arguments,
 			null,
@@ -901,58 +908,49 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	/**
-	 * Generally usefull update.
-	 * 
-	 * For the depth, only IResource.DEPTH_ONE and IResource.DEPTH_INFINITE are meaningfull for folders.
+	 * Generally useful update.
 	 * 
 	 * The tag parameter determines any stickyness after the update is run. If tag is null, any tagging on the
 	 * resources being updated remain the same. If the tag is a branch, version or date tag, then the resources
 	 * will be appropriatly tagged. If the tag is HEAD, then there will be no tag on the resources (same as -A
 	 * clear sticky option).
 	 * 
-	 * The ignoreLocalChanges parameter indicates whether -C should be used. This option only ignores local file 
-	 * modifications. It does not ignore local uncommitted sync changes (such as additions and removals).
 	 */
-	public void update(IResource[] resources, int depth, CVSTag tag, boolean ignoreLocalChanges, IProgressMonitor progress) throws TeamException {
+	public void update(IResource[] resources, LocalOption[] options, CVSTag tag, ResponseHandler handler, IProgressMonitor progress) throws TeamException {
 		// Build the local options
 		List localOptions = new ArrayList();
-		if (ignoreLocalChanges) {
-			localOptions.add(Update.IGNORE_LOCAL_CHANGES);
-		}
+		
 		// Use the appropriate tag options
 		if (tag != null) {
-			if (tag.getType() == CVSTag.HEAD) {
-				localOptions.add(Update.CLEAR_STICKY);
-			} else {
-				localOptions.add(Update.makeTagOption(tag));
-			}
+			localOptions.add(Update.makeTagOption(tag));
 		}
-		// Always look for absent directories
-		localOptions.add(Update.RETRIEVE_ABSENT_DIRECTORIES);
-		// Prune empty directories if pruning is enabled
-		if (CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
-			localOptions.add(Update.PRUNE_EMPTY_DIRECTORIES);
+		
+		// save old handler, to be reset after command is run
+		ResponseHandler oldHandler = null;
+		if(handler!=null) {
+			oldHandler = Command.getResponseHandler(handler.getResponseID());
 		}
-		// If depth = zero or 1, use -l
-		if (depth != IResource.DEPTH_INFINITE) {
-			localOptions.add(Update.DO_NOT_RECURSE);
-		}
-			
+		
 		// Build the arguments list
-		String[] arguments = getValidArguments(resources, depth, progress);
+		localOptions.addAll(Arrays.asList(options));
+		LocalOption[] commandOptions = (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
+		String[] arguments = getValidArguments(resources, commandOptions, progress);
 
 		IStatus status;
 		Session s = new Session(getRemoteRoot(), managedProject);
 		s.open(progress);
 		try {
 			status = Command.UPDATE.execute(s,
-			getDefaultGlobalOptions(),
-			(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
+			Command.NO_GLOBAL_OPTIONS,
+			commandOptions,
 			arguments,
 			null,
 			progress);
 		} finally {
 			s.close();
+			if(oldHandler!=null) {
+				Command.registerResponseHandler(oldHandler);
+			}
 		}
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// XXX diff errors??
