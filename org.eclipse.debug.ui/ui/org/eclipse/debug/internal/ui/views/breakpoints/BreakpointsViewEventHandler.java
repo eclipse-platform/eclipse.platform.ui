@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak - bug 57999
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
@@ -81,6 +82,10 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 								if (viewer.getChecked(breakpoint) != enabled) {
 									viewer.setChecked(breakpoint, breakpoint.isEnabled());								
 								}
+
+                                if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
+                                    viewer.setGrayed(breakpoint, true);
+                                }
 							} catch (CoreException e) {
 								status.add(DebugUIPlugin.newErrorStatus(DebugUIViewsMessages.getString("BreakpointsViewEventHandler.5"),e)); //$NON-NLS-1$
 								DebugUIPlugin.log(e);
