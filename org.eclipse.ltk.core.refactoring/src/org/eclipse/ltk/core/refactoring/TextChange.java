@@ -585,7 +585,7 @@ public abstract class TextChange extends Change {
 		}
 	}
 	
-	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, boolean preview) throws CoreException {
+	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, boolean preview) {
 		if (fEdit == null)
 			return new TextEditProcessor(document, new MultiTextEdit(0,0), flags);
 		List excludes= new ArrayList(0);
@@ -614,7 +614,7 @@ public abstract class TextChange extends Change {
 		}
 	}
 	
-	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, TextEditChangeGroup[] changes) throws CoreException {
+	private TextEditProcessor createTextEditProcessor(IDocument document, int flags, TextEditChangeGroup[] changes) {
 		if (fEdit == null)
 			return new TextEditProcessor(document, new MultiTextEdit(0,0), flags);
 		List includes= new ArrayList(0);
