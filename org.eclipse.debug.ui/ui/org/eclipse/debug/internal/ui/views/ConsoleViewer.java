@@ -46,12 +46,12 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		public void documentChanged(DocumentEvent e) {
 			ConsoleDocument doc= (ConsoleDocument) getDocument();
 			if (doc == null || doc.isClosed()) {
+				getTextWidget().setEditable(false);
 				return;
 			}
 			revealEndOfDocument();
 			if (doc.isReadOnly()) {
-				StyledText widget= getTextWidget();
-				widget.setEditable(false);
+				getTextWidget().setEditable(false);
 			}
 			updateStyleRanges(doc);
 		}
@@ -139,6 +139,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			revealEndOfDocument();
 			document.addDocumentListener(fInternalDocumentListener);
 			document.setConsoleViewer(this);
+		} else {
+			getTextWidget().setEditable(false);
 		}
 	}
 	

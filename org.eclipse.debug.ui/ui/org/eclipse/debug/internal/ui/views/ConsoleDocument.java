@@ -62,15 +62,15 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	public ConsoleDocument(IProcess process) {
 		super();
 		fProcess= process;
-		setTextStore(new ConsoleOutputTextStore(2500));
-		setLineTracker(new DefaultLineTracker());
-		
 		if (process != null) {
 			fProxy= process.getStreamsProxy();			
-		}
-		if (process != null) {
 			DebugPlugin.getDefault().addDebugEventListener(this);
+			setTextStore(new ConsoleOutputTextStore(2500));
+		} else {
+			fClosed= true;
+			setTextStore(new ConsoleOutputTextStore(0));	
 		}
+		setLineTracker(new DefaultLineTracker());
 		completeInitialization();
 	}
 
@@ -392,6 +392,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		if (event.getKind() == DebugEvent.TERMINATE) {
 			Object element= event.getSource();
 			if (element != null && element.equals(fProcess)) {
+				
 				update( new Runnable() {
 					public void run() {
 						fireDocumentChanged(new DocumentEvent(ConsoleDocument.this, 0, 0, null));
@@ -425,4 +426,3 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		fConsoleViewer = viewer;
 	}
 }
-
