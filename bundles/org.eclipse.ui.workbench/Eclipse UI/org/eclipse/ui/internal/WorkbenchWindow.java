@@ -1985,15 +1985,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 
 	/**
-	 * Return whether or not to show the progress indicator.
-	 * @return boolan
-	 */
-	boolean showProgressIndicator() {
-		return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
-			IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
-	}
-
-	/**
 	 * Create the progress indicator for the receiver.
 	 * @param shell	the parent shell
 	 */

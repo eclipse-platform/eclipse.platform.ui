@@ -198,13 +198,10 @@ public interface IWorkbenchConstants {
 	public static final String TAG_FAST_VIEW_SIDE = "fastViewLocation"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEW_DATA = "fastViewData"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEW_ORIENTATION = "orientation"; //$NON-NLS-1$
-	
-	//Progress indicator
-	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	 //$NON-NLS-1$
+	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
 	
 	//Fonts
 	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
-	public static final String TAG_THEME = "theme";//$NON-NLS-1$	
 	
 	//Colors
 	public static final String COLOR_HIGHLIGHT = "org.eclipse.ui.highlight"; //$NON-NLS-1$
