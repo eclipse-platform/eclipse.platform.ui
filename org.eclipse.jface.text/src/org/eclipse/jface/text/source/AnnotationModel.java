@@ -85,7 +85,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * The current annotation model event.
 	 * @since 3.0
 	 */
-	private AnnotationModelEvent fModelEvent= new AnnotationModelEvent(this);
+	private AnnotationModelEvent fModelEvent;
 	
 	
 	
@@ -130,6 +130,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
      */
     public void setLockObject(Object lockObject) {
         getAnnotationMap().setLockObject(lockObject);
+    }
+    
+    private AnnotationModelEvent getAnnotationModelEvent() {
+    	if (fModelEvent == null) {
+    		fModelEvent= createAnnotationModelEvent();
+    		fModelEvent.markWorldChange(false);
+    	}
+    	return fModelEvent;
     }
 
 	/*
@@ -203,7 +211,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			
 			addPosition(fDocument, position);
 			fAnnotations.put(annotation, position);
-			fModelEvent.annotationAdded(annotation);
+			getAnnotationModelEvent().annotationAdded(annotation);
 
 			if (fireModelChanged)
 				fireModelChanged();
@@ -217,7 +225,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (!fAnnotationModelListeners.contains(listener)) {
 			fAnnotationModelListeners.add(listener);
 			if (listener instanceof IAnnotationModelListenerExtension)
-			    ((IAnnotationModelListenerExtension)listener).modelChanged(new AnnotationModelEvent(this));
+			    ((IAnnotationModelListenerExtension)listener).modelChanged(createAnnotationModelEvent());
 			else
 			    listener.modelChanged(this);
 		}
@@ -332,10 +340,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * Informs all annotation model listeners that this model has been changed.
 	 */
 	protected void fireModelChanged() {
-		AnnotationModelEvent event= fModelEvent;
-		fModelEvent= createAnnotationModelEvent();
-		fModelEvent.markWorldChange(false);
-		fireModelChanged(event);
+		if (fModelEvent != null) {
+			fireModelChanged(fModelEvent);
+			fModelEvent= null;
+		}
 	}
 	
 	/**
@@ -529,7 +537,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				Annotation a= (Annotation) e.next();
 				Position p= (Position) fAnnotations.get(a);
 				removePosition(fDocument, p);
-				fModelEvent.annotationRemoved(a);
+				getAnnotationModelEvent().annotationRemoved(a);
 			}
 		}
 		
@@ -562,7 +570,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			}
 				
 			fAnnotations.remove(annotation);
-			fModelEvent.annotationRemoved(annotation);
+			getAnnotationModelEvent().annotationRemoved(annotation);
 			
 			if (fireModelChanged)
 				fireModelChanged();
@@ -609,7 +617,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 					p.setOffset(position.getOffset());
 					p.setLength(position.getLength());
 				}
-				fModelEvent.annotationChanged(annotation);
+				getAnnotationModelEvent().annotationChanged(annotation);
 				if (fireModelChanged)
 					fireModelChanged();
 				
