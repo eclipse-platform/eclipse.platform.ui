@@ -90,6 +90,7 @@ public class BulletParagraph extends Paragraph {
 		int lineHeight,
 		Hashtable resourceTable,
 		HyperlinkSegment selectedLink) {
+		computeRowHeights(gc, width, loc, lineHeight, resourceTable);
 		paintBullet(gc, loc, lineHeight, resourceTable);
 		super.paint(gc, width, loc, lineHeight, resourceTable, selectedLink);
 	}
@@ -100,8 +101,9 @@ public class BulletParagraph extends Paragraph {
 		int lineHeight,
 		Hashtable resourceTable) {
 		int x = loc.x - getIndent() + getBulletIndent();
+		int rowHeight = ((int[])loc.heights.get(0))[0];
 		if (style == CIRCLE) {
-			int y = loc.y + lineHeight / 2 - CIRCLE_DIAM / 2;
+			int y = loc.y + rowHeight / 2 - CIRCLE_DIAM / 2;
 			Color bg = gc.getBackground();
 			Color fg = gc.getForeground();
 			gc.setBackground(fg);
@@ -113,7 +115,7 @@ public class BulletParagraph extends Paragraph {
 		} else if (style == IMAGE && text != null) {
 			Image image = (Image) resourceTable.get(text);
 			if (image != null) {
-				int y = loc.y + lineHeight / 2 - image.getBounds().height / 2;
+				int y = loc.y + rowHeight / 2 - image.getBounds().height / 2;
 				gc.drawImage(image, x, y);
 			}
 		}

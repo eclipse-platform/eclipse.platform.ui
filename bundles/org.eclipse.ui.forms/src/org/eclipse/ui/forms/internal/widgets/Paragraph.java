@@ -57,6 +57,8 @@ public class Paragraph {
 			HyperlinkSettings settings, String fontId) {
 		parseRegularText(text, expandURLs, settings, fontId, null);
 	}
+	
+	
 
 	public void parseRegularText(
 		String text,
@@ -109,6 +111,22 @@ public class Paragraph {
 		hs.setHref(text);
 		addSegment(hs);
 	}
+	
+	protected void computeRowHeights(GC gc, int width, Locator loc, int lineHeight, Hashtable resourceTable) {
+		ParagraphSegment [] segments = getSegments();
+		// compute heights
+		Locator hloc = loc.create();
+		ArrayList heights = new ArrayList();
+		hloc.heights = heights;
+		hloc.rowCounter = 0;
+		for (int j = 0; j<segments.length; j++) {
+			ParagraphSegment segment = segments[j];
+			segment.advanceLocator(gc, width, hloc, resourceTable, true);
+		}
+		hloc.collectHeights(false);
+		loc.heights = heights;
+		loc.rowCounter = 0;
+	}
 
 	public void paint(
 		GC gc,
@@ -123,17 +141,8 @@ public class Paragraph {
 				&& ((TextSegment) segments[0]).isSelectable())
 				loc.x += 1;
 			// compute heights
-			Locator hloc = loc.create();
-			ArrayList heights = new ArrayList();
-			hloc.heights = heights;
-			hloc.rowCounter = 0;
-			for (int j = 0; j<segments.length; j++) {
-				ParagraphSegment segment = segments[j];
-				segment.advanceLocator(gc, width, hloc, resourceTable, true);
-			}
-			hloc.collectHeights(false);
-			loc.heights = heights;
-			loc.rowCounter = 0;
+			if (loc.heights==null)
+				computeRowHeights(gc, width, loc, lineHeight, resourceTable);
 			for (int j = 0; j < segments.length; j++) {
 				ParagraphSegment segment = segments[j];
 				boolean doSelect = false;
