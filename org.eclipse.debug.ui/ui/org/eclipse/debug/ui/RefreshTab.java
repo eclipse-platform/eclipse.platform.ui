@@ -57,7 +57,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * A launch configuration tab which allows the user to specify
  * which resources should be refreshed when the launch
  * terminates.
- * 
+ * <p>
+ * This class may be instantiated; this class is not intended
+ * to be subclassed.
+ * </p>
  * @since 3.0
  */
 public class RefreshTab extends AbstractLaunchConfigurationTab {
