@@ -14,8 +14,11 @@ import java.io.*;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.core.internal.indexing.IndexCursor;
 import org.eclipse.core.internal.indexing.IndexedStoreException;
 import org.eclipse.core.internal.localstore.*;
+import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
@@ -111,7 +114,7 @@ public HistoryStoreTest(String name) {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new HistoryStoreTest("testBug28603"));
+//	suite.addTest(new HistoryStoreTest("testSimultaneousStates"));
 //	return suite;
 	return new TestSuite(HistoryStoreTest.class);
 }
@@ -2126,6 +2129,87 @@ public void testAccept() {
 		verifier.verify();
 	} catch (VerificationFailedException e) {
 		fail("2.2", e);
+	}
+}
+public void testSimultaneousStates(){
+	/* Create common objects. */
+	IProject project = getWorkspace().getRoot().getProject("Project");
+	IFile file = project.getFile("file.txt");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+		file.create(getRandomContents(), true, getMonitor());
+		file.setContents(getRandomContents(), IResource.FORCE | IResource.KEEP_HISTORY, getMonitor());
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+
+	IFileState[] states = null;
+	try {
+		getWorkspace().save(true, null);
+		states = file.getHistory(getMonitor());
+	} catch (CoreException e) {
+		fail("1.1", e);
+	}	
+	assertEquals("1.2", 1, states.length);
+	
+	long lastModifiedTime = states[0].getModificationTime();
+	
+	// Create more states for this file with the same path
+	// and last modification time
+	HistoryStore historyStore = ((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore();
+	historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+	historyStore.addState(file.getFullPath(), file.getLocation(), lastModifiedTime, false);
+	try {
+		states = file.getHistory(getMonitor());
+	} catch (CoreException e) {
+		fail("1.3", e);
+	}
+	assertEquals("1.4", 3, states.length);
+	
+	// Now get all the HistoryStoreEntry's that match these
+	// states and make sure the counter is different for
+	// each one.
+	final String INDEX_FILE = ".index"; //$NON-NLS-1$
+	IPath location = ((Workspace)getWorkspace()).getMetaArea().getHistoryStoreLocation();
+	IndexedStoreWrapper store = new IndexedStoreWrapper(location.append(INDEX_FILE));;
+
+	boolean[] counts = {false, false, false};
+	
+	store = new IndexedStoreWrapper(location.append(INDEX_FILE));
+	byte[] key = HistoryStoreEntry.keyPrefixToBytes(file.getFullPath(), lastModifiedTime);
+	try {
+		IndexCursor cursor = store.getCursor();
+		cursor.find(key);
+		// Check for a prefix match.
+		while (cursor.keyMatches(key)) {
+			byte[] storedKey = cursor.getKey();			
+			// set the boolean for the appropriate counter
+			if (storedKey.length - ILocalStoreConstants.SIZE_COUNTER == key.length) {
+				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
+				int counter = storedEntry.getCount();
+				assertTrue ("1.5", counter < 3);
+				// Make sure we haven't already seen this
+				// counter.
+				assertFalse("1.6", counts[counter]);
+				counts[counter] = true;
+			}
+			cursor.next();
+		}
+		cursor.close();
+	} catch (Exception e) {
+		fail ("1.7");
+	}
+	// Make sure we saw each of the counts once
+	for (int i = 0; i < counts.length; i++) {
+		assertTrue("1.8" + i, counts[i]);
+	}
+	
+	// Clean up
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("1.9", e);
 	}
 }
 }

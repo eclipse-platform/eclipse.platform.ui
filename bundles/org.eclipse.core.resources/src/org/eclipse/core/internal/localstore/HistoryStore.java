@@ -35,11 +35,15 @@ public HistoryStore(Workspace workspace, IPath location, int limit) {
 /**
  * Searches indexed store for key, and invokes visitor's defined behaviour on key matches.
  *
- * @param key key prefix on which to perform search.
+ * @param key key prefix on which to perform search.  This is assumed to be
+ *      a path only unless the flag includeLastModTime is true.
  * @param visitOnPartialMatch indicates whether visitor's definined behavior is to be invoked
- *		on partial or full key matches.
+ *		on partial or full key matches.  Partial key matches are not supported on keys which
+ *      contain a last modified time.
+ * @param includeLastModTime indicates if the key includes a last modified
+ *      time.  If set to false, the key is assumed to have only a path.
  */
-protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnPartialMatch) {
+protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnPartialMatch, boolean includeLastModTime) {
 	try {
 		IndexCursor cursor = store.getCursor();
 		cursor.find(key);
@@ -47,8 +51,9 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 		while (cursor.keyMatches(key)) {
 			byte[] storedKey = cursor.getKey();
 			
+			int bytesToOmit = includeLastModTime ? ILocalStoreConstants.SIZE_COUNTER : ILocalStoreConstants.SIZE_KEY_SUFFIX;
 			// visit if we have an exact match
-			if (storedKey.length - ILocalStoreConstants.SIZE_KEY_SUFFIX == key.length) {
+			if (storedKey.length - bytesToOmit == key.length) {
 				HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
 				if (!visitor.visit(storedEntry))
 					break;
@@ -80,7 +85,7 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 	}
 }
 protected void accept(IPath path, IHistoryStoreVisitor visitor, boolean visitOnPartialMatch) {
-	accept(Convert.toUTF8(path.toString()), visitor, visitOnPartialMatch);
+	accept(Convert.toUTF8(path.toString()), visitor, visitOnPartialMatch, false);
 }
 /**
  * Adds state into history log.
@@ -107,7 +112,7 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
 	// Build partial key for which matches will be found.
 	byte[] keyPrefix = HistoryStoreEntry.keyPrefixToBytes(path, lastModified);
 	CountVisitor visitor = new CountVisitor();
-	accept(keyPrefix, visitor, true);
+	accept(keyPrefix, visitor, false, true);
 	HistoryStoreEntry entryToInsert = new HistoryStoreEntry(path, uuid, lastModified, visitor.getCount());
 	try {
 		// valueToBytes just converts the uuid to byte form
