@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File written by PDE 1.0 -->
+<plugin
+   id="org.eclipse.ui.examples.javaeditor"
+   name="%pluginName"
+   version="1.0"
+   provider-name="Object Technology International, Inc.">
+<requires>
+   <import plugin="org.eclipse.ui"/>
+   <import plugin="org.eclipse.core.resources"/>
+</requires>
+
+<runtime>
+   <library name="javaeditorexample.jar">
+      <export name="*"/>
+   </library>
+</runtime>
+
+<extension
+      point="org.eclipse.ui.editors">
+   <editor
+         name="%javaEditorName"
+         icon="icons/basic/obj16/java.gif"
+         extensions="jav"
+         contributorClass="org.eclipse.ui.examples.javaeditor.JavaActionContributor"
+         class="org.eclipse.ui.examples.javaeditor.JavaEditor"
+         id="org.eclipse.ui.JavaEditor">
+   </editor>
+</extension>
+
+<extension
+      point="org.eclipse.ui.documentProviders">
+   <provider
+         extensions="%javaFileExtension"
+         class="org.eclipse.ui.examples.javaeditor.JavaDocumentProvider"
+         id="org.eclipse.ui.examples.javaeditor.JavaDocumentProvider">
+   </provider>
+</extension>
+
+</plugin>

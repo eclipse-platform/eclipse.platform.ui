@@ -1,0 +1,80 @@
+package org.eclipse.ui.examples.javaeditor.javadoc;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.jface.text.TextAttribute;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
+import org.eclipse.jface.text.rules.WordRule;
+import org.eclipse.ui.examples.javaeditor.util.JavaColorProvider;
+import org.eclipse.ui.examples.javaeditor.util.JavaWhitespaceDetector;
+
+/**
+ * A rule based JavaDoc scanner.
+ */
+public class JavaDocScanner extends RuleBasedScanner {
+
+	/**
+	 * A key word detector.
+	 */
+	static class JavaDocWordDetector implements IWordDetector {
+
+	/* (non-Javadoc)
+	 * Method declared on IWordDetector
+	 */
+		public boolean isWordStart(char c) {
+			return (c == '@');
+		}
+
+		/* (non-Javadoc)
+	 	* Method declared on IWordDetector
+	 	*/
+		public boolean isWordPart(char c) {
+			return Character.isLetter(c);
+		}
+	};
+
+	private static String[] fgKeywords= { "@author", "@deprecated", "@exception", "@param", "@return", "@see", "@serial", "@serialData", "@serialField", "@since", "@throws", "@version" }; //$NON-NLS-12$ //$NON-NLS-11$ //$NON-NLS-10$ //$NON-NLS-7$ //$NON-NLS-9$ //$NON-NLS-8$ //$NON-NLS-6$ //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+
+	/**
+	 * Create a new java doc scanner.
+	 */
+	 public JavaDocScanner(JavaColorProvider provider) {
+		super();
+
+		IToken keyword= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_KEYWORD)));
+		IToken tag= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_TAG)));
+		IToken link= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_LINK)));
+
+		List list= new ArrayList();
+
+		// Add rule for tags.
+		list.add(new SingleLineRule("<", ">", tag)); //$NON-NLS-2$ //$NON-NLS-1$
+
+		// Add rule for links.
+		list.add(new SingleLineRule("{", "}", link)); //$NON-NLS-2$ //$NON-NLS-1$
+
+		// Add generic whitespace rule.
+		list.add(new WhitespaceRule(new JavaWhitespaceDetector()));
+
+		// Add word rule for keywords.
+		WordRule wordRule= new WordRule(new JavaDocWordDetector());
+		for (int i= 0; i < fgKeywords.length; i++)
+			wordRule.addWord(fgKeywords[i], keyword);
+		list.add(wordRule);
+
+		IRule[] result= new IRule[list.size()];
+		list.toArray(result);
+		setRules(result);
+	}
+}
