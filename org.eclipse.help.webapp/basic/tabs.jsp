@@ -57,7 +57,7 @@ function resynch()
 		String viewHref="view.jsp?view="+views[i].getName();
 		// always pass query string to "links view"
 		if("links".equals(views[i].getName())){
-			viewHref=viewHref+"&"+request.getQueryString();
+			viewHref=viewHref+(request.getQueryString()!=null?"&"+request.getQueryString():"");
 		}
 		
 %>
