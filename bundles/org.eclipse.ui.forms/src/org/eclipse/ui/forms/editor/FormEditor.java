@@ -158,9 +158,10 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	public int addPage(IEditorPart editor, IEditorInput input)
 			throws PartInitException {
 		int index = super.addPage(editor, input);
-		if (editor instanceof IFormPage) {
+		if (editor instanceof IFormPage)
 			configurePage(index, (IFormPage) editor);
-		}
+		else
+			registerPage(editor);
 		return index;
 	}
 	/**
