@@ -44,7 +44,7 @@ class QueryManager {
 		synchronized (fQueries) {
 			if (fQueries.contains(query))
 				return;
-			fQueries.add(query);
+			fQueries.add(0, query);
 		}
 		fireAdded(query);
 	}
