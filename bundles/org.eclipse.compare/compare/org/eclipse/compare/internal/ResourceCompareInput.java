@@ -37,7 +37,7 @@ class ResourceCompareInput extends CompareEditorInput {
 	private DiffTreeViewer fDiffViewer;
 	
 	
-	private class MyDiffNode extends DiffNode {
+	class MyDiffNode extends DiffNode {
 		
 		private boolean fDirty= false;
 		private ITypedElement fLastId;
@@ -47,7 +47,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		public MyDiffNode(IDiffContainer parent, int description, ITypedElement ancestor, ITypedElement left, ITypedElement right) {
 			super(parent, description, ancestor, left, right);
 		}
-		protected void fireChange() {
+		public void fireChange() {
 			super.fireChange();
 			setDirty(true);
 			fDirty= true;

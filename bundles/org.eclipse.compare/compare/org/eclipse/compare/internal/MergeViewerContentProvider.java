@@ -95,6 +95,8 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 				}
 				if (left instanceof IEditableContent)
 					((IEditableContent)left).setContent(bytes);
+				if (node instanceof ResourceCompareInput.MyDiffNode)
+					((ResourceCompareInput.MyDiffNode)node).fireChange();
 			} else {
 				node.copy(false);
 			}			
@@ -143,6 +145,8 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 				}
 				if (right instanceof IEditableContent)
 					((IEditableContent)right).setContent(bytes);
+				if (node instanceof ResourceCompareInput.MyDiffNode)
+					((ResourceCompareInput.MyDiffNode)node).fireChange();
 			} else {
 				node.copy(true);
 			}		
