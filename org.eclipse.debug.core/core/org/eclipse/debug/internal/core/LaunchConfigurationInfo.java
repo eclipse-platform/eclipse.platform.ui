@@ -547,5 +547,13 @@ public class LaunchConfigurationInfo {
 		}
 		return false;
 	}
+	
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fType.hashCode() + fAttributes.size();
+	}
+
 }
 
