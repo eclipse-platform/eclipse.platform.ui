@@ -15,11 +15,12 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.core.*;
@@ -88,13 +89,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 		try {
 			EditDialog dialog;
 			dialog = new EditDialog(getShell(), null);
-			dialog.open();
-			ExternalTool tool = dialog.getExternalTool();
-			if (tool == null) {
-				return null;
+			if (dialog.open() == Window.OK) {
+				ExternalTool tool = dialog.getExternalTool();
+				ICommand command = getInputProject().getDescription().newCommand();
+				return tool.toBuildCommand(command);
+			} else {
+				return null;	
 			}
-			ICommand command = getInputProject().getDescription().newCommand();
-			return tool.toBuildCommand(command);
 		} catch(CoreException e) {
 			handleException(e);
 			return null;
@@ -110,9 +111,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 			return;
 		EditDialog dialog;
 		dialog = new EditDialog(getShell(), tool);
-		dialog.open();
-		tool = dialog.getExternalTool();
-		tool.toBuildCommand(command);
+		if (dialog.open() == Window.OK) {
+			tool = dialog.getExternalTool();
+			tool.toBuildCommand(command);
+		}
 	}
 	
 	/**

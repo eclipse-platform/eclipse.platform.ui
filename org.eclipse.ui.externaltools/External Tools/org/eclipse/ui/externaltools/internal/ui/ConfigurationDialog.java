@@ -11,31 +11,14 @@ Contributors:
 **********************************************************************/
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.externaltools.internal.core.ExternalTool;
-import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.externaltools.internal.core.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -193,11 +176,12 @@ public class ConfigurationDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent e) {
 				EditDialog dialog;
 				dialog = new EditDialog(getShell(), null);
-				dialog.open();
-				ExternalTool tool = dialog.getExternalTool();
-				tools.add(tool);
-				listViewer.add(tool);
-				listViewer.setSelection(new StructuredSelection(tool), true);
+				if (dialog.open() == Window.OK) {
+					ExternalTool tool = dialog.getExternalTool();
+					tools.add(tool);
+					listViewer.add(tool);
+					listViewer.setSelection(new StructuredSelection(tool), true);
+				}
 			}
 		});
 
