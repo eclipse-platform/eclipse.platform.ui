@@ -14,7 +14,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
+import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.dialogs.Dialog;
@@ -244,7 +244,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Revert to the previously saved state.
 	 */
 	public boolean performCancel() {
-		ISimpleVariableRegistry registry= getVariableRegistry();
+		ISimpleLaunchVariableRegistry registry= getVariableRegistry();
 		registry.removeVariables(registry.getVariables());
 		registry.addVariables(originalVariableState);
 		return super.performCancel();
@@ -254,7 +254,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * Clear the variables.
 	 */
 	protected void performDefaults() {
-		ISimpleVariableRegistry registry= getVariableRegistry();
+		ISimpleLaunchVariableRegistry registry= getVariableRegistry();
 		registry.removeVariables(registry.getVariables());
 		variableTable.refresh();
 		super.performDefaults();
@@ -273,14 +273,14 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 * variable registry
 	 * @return the singleton instance of the simple variable registry.
 	 */
-	private ISimpleVariableRegistry getVariableRegistry() {
+	private ISimpleLaunchVariableRegistry getVariableRegistry() {
 		return DebugPlugin.getDefault().getSimpleVariableRegistry();
 	}
 	
 	private class SimpleVariableContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ISimpleVariableRegistry) {
-				return ((ISimpleVariableRegistry) inputElement).getVariables();
+			if (inputElement instanceof ISimpleLaunchVariableRegistry) {
+				return ((ISimpleLaunchVariableRegistry) inputElement).getVariables();
 			}
 			return null;
 		}
