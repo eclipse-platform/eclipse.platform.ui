@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import java.util.Iterator;
 
@@ -175,7 +177,9 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			}
 			variable.setValue(newValue);
 		} catch (DebugException de) {
+			cleanup();
 			DebugUIPlugin.errorDialog(shell, ActionMessages.getString("ChangeVariableValue.errorDialogTitle"),ActionMessages.getString("ChangeVariableValue.errorDialogMessage"), de);	//$NON-NLS-2$ //$NON-NLS-1$
+			return;
 		}
 		cleanup();		
 	}
@@ -216,7 +220,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	}
 
 	/**
-	 * @see Action
+	 * @see IAction#run()
 	 */
 	public void run() {
 		Iterator iterator= getStructuredSelection().iterator();
@@ -224,7 +228,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	}
 	
 	/**
-	 * @see SelectionProviderAction
+	 * @see SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		update(sel);
