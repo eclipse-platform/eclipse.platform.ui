@@ -9,8 +9,6 @@ import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.ILaunch
 
 public class LaunchesView extends AbstractDebugView implements ISelectionChangedListener, IDoubleClickListener {
 
-	protected final static String PREFIX= "launches_view.";
-
 	protected SelectionProviderAction fTerminateAction;
 	protected RemoveTerminatedAction fRemoveTerminatedAction;
 	protected TerminateAllAction fTerminateAllAction;
@@ -86,12 +84,16 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 				handleKeyPressed(e);
 			}
 		});
-		setTitleToolTip(getTitleToolTipText(getPrefix()));
+		configureView(parent);
+	}
+
+	protected void configureView(Composite parent) {
+		setTitleToolTip("System Processes");
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.PROCESS_VIEW ));
 	}
-
+	
 	/**
 	 * Configures the toolBar
 	 */
@@ -181,13 +183,6 @@ public class LaunchesView extends AbstractDebugView implements ISelectionChanged
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateButtons();
-	}
-	
-	/**
-	 * Returns the resource bundle prefix for this action
-	 */
-	protected String getPrefix(){
-		return PREFIX;
 	}
 	
 	/**

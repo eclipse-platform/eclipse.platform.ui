@@ -37,8 +37,6 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  */
 public class BreakpointsView extends AbstractDebugView implements IDoubleClickListener {
 	
-	protected final static String PREFIX= "breakpoints_view.";
-	
 	/**
 	 * The various actions of the context menu of this view
 	 */
@@ -70,7 +68,7 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 			}
 		});
 		
-		setTitleToolTip(getTitleToolTipText(PREFIX));
+		setTitleToolTip("Breakpoints in the Workbench");
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.BREAKPOINT_VIEW));

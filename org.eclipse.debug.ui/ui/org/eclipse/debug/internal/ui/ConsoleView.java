@@ -46,8 +46,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class ConsoleView extends ViewPart implements IDocumentListener {
-	
-	protected final static String PREFIX= "console_view.";
 
 	protected ConsoleViewer fConsoleViewer= null;
 	protected ClearOutputAction fClearOutputAction= null;
@@ -80,7 +78,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		fConsoleViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 		fConsoleViewer.addTextInputListener(getTextInputListener());
 		setViewerInput(DebugUIPlugin.getDefault().getCurrentProcess());
-		setTitleToolTip(DebugUIUtils.getResourceString(PREFIX + AbstractDebugView.TITLE_TOOLTIPTEXT));
+		setTitleToolTip("Program Output");
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.CONSOLE_VIEW));

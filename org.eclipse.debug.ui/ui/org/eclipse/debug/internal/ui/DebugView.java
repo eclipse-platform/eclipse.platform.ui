@@ -5,25 +5,45 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.ISourceLocator;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class DebugView extends LaunchesView implements IPartListener {
-	
-	protected final static String PREFIX= "debug_view.";
 
 	protected ControlAction fResumeAction;
 	protected ControlAction fSuspendAction;
@@ -76,8 +96,8 @@ public class DebugView extends LaunchesView implements IPartListener {
 		getSite().getPage().addPartListener(this);
 	}
 	
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
+	protected void configureView(Composite parent) {
+		setTitleToolTip("Debug Sessions and Associated Program Stacks");
 		WorkbenchHelp.setHelp(
 			parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.DEBUG_VIEW ));
@@ -477,13 +497,6 @@ public class DebugView extends LaunchesView implements IPartListener {
 		}
 	}
 	
-	/**
-	 * Returns the resource bundle prefix for this action
-	 */
-	protected String getPrefix(){
-		return PREFIX;
-	}
-
 	/**
 	 * @see IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */

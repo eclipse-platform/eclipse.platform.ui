@@ -30,8 +30,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This view shows variables and their values for a particular stack frame
  */
 public class VariablesView extends AbstractDebugView implements ISelectionListener, IDoubleClickListener {
-	
-	protected final static String PREFIX= "variables_view.";
 
 	protected ShowQualifiedAction fShowQualifiedAction;
 	protected ShowTypesAction fShowTypesAction;
@@ -111,7 +109,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		initializeToolBar();
 	
 		setInitialContent();
-		setTitleToolTip(getTitleToolTipText(PREFIX));
+		setTitleToolTip("Variables and their Values for a Selected Stack Frame");
 		WorkbenchHelp.setHelp(parent,
 			new ViewContextComputer(this, IDebugHelpContextIds.VARIABLE_VIEW ));
 	}

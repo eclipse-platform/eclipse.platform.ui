@@ -27,8 +27,6 @@ import org.eclipse.ui.part.ViewPart;
 
 public abstract class AbstractDebugView extends ViewPart implements IDebugViewAdapter {
 	
-	protected final static String TITLE_TOOLTIPTEXT= "title_toolTipText";
-	
 	protected StructuredViewer fViewer = null;
 
 	/**
@@ -115,13 +113,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 */
 	public void setFocus() {
 		getViewer().getControl().setFocus();
-	}
-	
-	/**
-	 * Returns the title tooltip for the View icon of this view part.
-	 */
-	protected String getTitleToolTipText(String prefix) {
-		return DebugUIUtils.getResourceString(prefix + TITLE_TOOLTIPTEXT);
 	}
 	
 	protected void setViewer(StructuredViewer viewer) {
