@@ -40,15 +40,18 @@ public class WebBrowserView extends ViewPart implements IBrowserViewerContainer 
     }
     
     private int decodeStyle(String secondaryId) {
-        int sep = secondaryId.lastIndexOf(STYLE_SEP);
-        if (sep== -1) return DEFAULT_STYLE;
-        String stoken = secondaryId.substring(sep+1);
-        try {
-            return Integer.parseInt(stoken);
+        if (secondaryId!=null) {
+            int sep = secondaryId.lastIndexOf(STYLE_SEP);
+            if (sep!= -1) {
+                String stoken = secondaryId.substring(sep+1);
+                try {
+                    return Integer.parseInt(stoken);
+                }
+                catch (NumberFormatException e) {
+                }
+            }
         }
-        catch (NumberFormatException e) {
-            return DEFAULT_STYLE;
-        }
+        return DEFAULT_STYLE;
     }
 
 	public void setURL(String url) {

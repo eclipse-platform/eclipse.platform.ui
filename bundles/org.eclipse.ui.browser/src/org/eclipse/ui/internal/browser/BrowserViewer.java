@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.browser;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.CloseWindowListener;
 import org.eclipse.swt.browser.LocationEvent;
@@ -25,6 +26,7 @@ import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.browser.WindowEvent;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -98,6 +100,8 @@ public class BrowserViewer extends Composite {
     protected static java.util.List history;
 
     protected Browser browser;
+    
+    protected BrowserText text;
 
     protected boolean newWindow;
 
@@ -190,12 +194,18 @@ public class BrowserViewer extends Composite {
 
         // create a new SWT Web browser widget, checking once again to make sure
         // we can use it in this environment
-        if (WebBrowserUtil.canUseInternalWebBrowser())
-            this.browser = new Browser(this, SWT.NONE);
-        else {
-            WebBrowserUtil.openError(WebBrowserUIPlugin
+        //if (WebBrowserUtil.canUseInternalWebBrowser())
+        try {
+            //this.browser = new Browser(this, SWT.NONE);
+            text = new BrowserText(this, SWT.V_SCROLL|SWT.H_SCROLL);
+        }
+        catch (SWTError e) {
+            if (e.code!=SWT.ERROR_NO_HANDLES) {
+                WebBrowserUtil.openError(WebBrowserUIPlugin
                     .getResource("%errorCouldNotLaunchInternalWebBrowser"));
-            return;
+                return;
+            }
+            text = new BrowserText(this, SWT.V_SCROLL|SWT.H_SCROLL);
         }
 
         if (showURLbar)
@@ -203,9 +213,13 @@ public class BrowserViewer extends Composite {
         if (showToolbar)
             updateBackNextBusy();
 
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(browser,
-                ContextIds.WEB_BROWSER_WEB);
-        browser.setLayoutData(new GridData(GridData.FILL_BOTH));
+         if (browser!=null) {
+            browser.setLayoutData(new GridData(GridData.FILL_BOTH));
+            PlatformUI.getWorkbench().getHelpSystem().setHelp(browser,
+                    ContextIds.WEB_BROWSER_WEB);            
+        }
+        else
+            text.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
         addBrowserListeners();
     }
@@ -250,8 +264,8 @@ public class BrowserViewer extends Composite {
     }
 
     protected void updateBackNextBusy() {
-        back.setEnabled(browser.isBackEnabled());
-        forward.setEnabled(browser.isForwardEnabled());
+        back.setEnabled(isBackEnabled());
+        forward.setEnabled(isForwardEnabled());
         busy.setBusy(loading);
 
         if (backNextListener != null)
@@ -270,6 +284,7 @@ public class BrowserViewer extends Composite {
      *
      */
     private void addBrowserListeners() {
+        if (browser==null) return;
         // respond to ExternalBrowserInstance StatusTextEvents events by
         // updating the status line
         browser.addStatusTextListener(new StatusTextListener() {
@@ -422,6 +437,8 @@ public class BrowserViewer extends Composite {
      * @see #back
      */
     public boolean forward() {
+        if (browser==null)
+            return false;
         return browser.forward();
     }
 
@@ -441,6 +458,8 @@ public class BrowserViewer extends Composite {
      * @see #forward
      */
     public boolean back() {
+        if (browser==null)
+            return false;
         return browser.back();
     }
 
@@ -460,6 +479,8 @@ public class BrowserViewer extends Composite {
      * @see #back
      */
     public boolean isBackEnabled() {
+        if (browser==null)
+            return false;
         return browser.isBackEnabled();
     }
 
@@ -479,6 +500,8 @@ public class BrowserViewer extends Composite {
      * @see #forward
      */
     public boolean isForwardEnabled() {
+        if (browser==null)
+            return false;
         return browser.isForwardEnabled();
     }
 
@@ -495,7 +518,8 @@ public class BrowserViewer extends Composite {
      *                </ul>
      */
     public void stop() {
-        browser.stop();
+        if (browser!=null)
+            browser.stop();
     }
 
     /**
@@ -507,9 +531,12 @@ public class BrowserViewer extends Composite {
             refresh();
             return true;
         }
-        return browser.setUrl(url);
+        if (browser!=null)
+            return browser.setUrl(url);
+        else 
+            return text.setUrl(url);
     }
-
+ 
     /**
      * Refresh the current page. Convenience method that calls the underlying
      * SWT browser.
@@ -523,7 +550,10 @@ public class BrowserViewer extends Composite {
      *                </ul>
      */
     public void refresh() {
-        browser.refresh();
+        if (browser!=null)
+            browser.refresh();
+        else
+            text.refresh();
     }
 
     private void setURL(String url, boolean browse) {
@@ -586,6 +616,7 @@ public class BrowserViewer extends Composite {
         busy = null;
 
         browser = null;
+        text = null;
     }
 
     private ToolBar createLocationBar(Composite parent) {
@@ -720,14 +751,18 @@ public class BrowserViewer extends Composite {
      * @see #setURL(String)
      */
     public String getURL() {
-        return browser.getUrl();
+        if (browser!=null)
+            return browser.getUrl();
+        return text.getUrl();
     }
 
     public boolean setFocus() {
         if (combo != null)
             combo.setFocus();
-        else
+        else if (browser!=null)
             browser.setFocus();
+        else if (text!=null)
+            text.setFocus();
         updateHistory();
         return super.setFocus();
     }

@@ -30,8 +30,8 @@ public class WebBrowserEditorActionBarContributor extends EditorActionBarContrib
 		public void updateBackNextBusy() {
 			if (back == null)
 				return;
-			back.setEnabled(getWebBrowser().getBrowser().isBackEnabled());
-			forward.setEnabled(getWebBrowser().getBrowser().isForwardEnabled());
+			back.setEnabled(getWebBrowser().isBackEnabled());
+			forward.setEnabled(getWebBrowser().isForwardEnabled());
 			//busy.setBusy(getWebBrowser().loading);
 		}
 	}
