@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.jface.util.Assert;
-
 /**
  * A <code>SubContributionManager</code> is used to define a set of contribution
  * items within a parent manager.  Once defined, the visibility of the entire set can 
@@ -302,17 +300,22 @@ public abstract class SubContributionManager implements IContributionManager {
 	protected SubContributionItem wrap(IContributionItem item) {
 		return new SubContributionItem(item);
 	}
-
+	
 	/**
-	 * Unwrap a contribution item.
-	 */
-	protected IContributionItem unwrap(IContributionItem item) {
-		if (item == null || item instanceof GroupMarker || item instanceof Separator) {
-			return item;
-		}
+     * Unwraps a nested contribution item. If the contribution item is an
+     * instance of <code>SubContributionItem</code>, then its inner item is
+     * returned. Otherwise, the item itself is returned.
+     * 
+     * @param item
+     *            The item to unwrap; may be <code>null</code>.
+     * @return The inner item of <code>item</code>, if <code>item</code> is
+     *         a <code>SubContributionItem</code>;<code>item</code>
+     *         otherwise.
+     */
+    protected IContributionItem unwrap(IContributionItem item) {
+        if (item instanceof SubContributionItem) { return ((SubContributionItem) item)
+                .getInnerItem(); }
 
-		Assert.isTrue(item instanceof SubContributionItem);
-
-		return ((SubContributionItem) item).getInnerItem();
-	}
+        return item;
+    }
 }
