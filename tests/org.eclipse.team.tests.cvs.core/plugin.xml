@@ -26,7 +26,15 @@
       <import plugin="org.eclipse.team.tests.core"/>
    </requires>
 
-
+	<!-- *************** Connection Methods **************** -->
+	<extension id="pserver" point="org.eclipse.team.cvs.core.connectionmethods">
+		<adapter>
+			<run class="org.eclipse.team.tests.ccvs.core.TestConnectionMethod">
+				<parameter name="trace" value="false" /> 
+			</run>
+		</adapter>
+	</extension>
+	
 <!-- **************** TESTS ******************* -->
    <extension
          point="org.eclipse.core.tests.harness.tests">

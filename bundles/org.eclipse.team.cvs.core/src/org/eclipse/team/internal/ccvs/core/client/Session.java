@@ -765,26 +765,25 @@ public class Session {
 	public void sendEntry(byte[] syncBytes, String serverTimestamp) throws CVSException {
 		connection.write("Entry "); //$NON-NLS-1$
 		if (serverTimestamp == null) {
-			connection.writeLine(syncBytes, 0, syncBytes.length);
-		} else {
-			int start = Util.getOffsetOfDelimeter(syncBytes, (byte)'/', 0, 3);
-			if (start == -1) {
-				// something is wrong with the entry line so just send it as is
-				// and let the server report the error.
-				connection.writeLine(syncBytes, 0, syncBytes.length);
-				return;
-			}
-			int end = Util.getOffsetOfDelimeter(syncBytes, (byte)'/', start + 1, 1);
-			if (end == -1) {
-				// something is wrong with the entry line so just send it as is
-				// and let the server report the error.
-				connection.writeLine(syncBytes, 0, syncBytes.length);
-				return;
-			}
-			connection.write(syncBytes, 0, start + 1);
-			connection.write(serverTimestamp);
-			connection.writeLine(syncBytes, end, syncBytes.length - end);
+			serverTimestamp = ""; //$NON-NLS-1$
 		}
+		int start = Util.getOffsetOfDelimeter(syncBytes, (byte)'/', 0, 3);
+		if (start == -1) {
+			// something is wrong with the entry line so just send it as is
+			// and let the server report the error.
+			connection.writeLine(syncBytes, 0, syncBytes.length);
+			return;
+		}
+		int end = Util.getOffsetOfDelimeter(syncBytes, (byte)'/', start + 1, 1);
+		if (end == -1) {
+			// something is wrong with the entry line so just send it as is
+			// and let the server report the error.
+			connection.writeLine(syncBytes, 0, syncBytes.length);
+			return;
+		}
+		connection.write(syncBytes, 0, start + 1);
+		connection.write(serverTimestamp);
+		connection.writeLine(syncBytes, end, syncBytes.length - end);
 	}
 
 	/**

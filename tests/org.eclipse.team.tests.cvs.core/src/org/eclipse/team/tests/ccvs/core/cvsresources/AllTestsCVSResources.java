@@ -19,6 +19,7 @@ public class AllTestsCVSResources extends EclipseTest {
 		suite.addTest(ResourceSyncInfoTest.suite());
 		suite.addTest(EclipseSynchronizerTest.suite());
 		suite.addTest(EclipseFolderTest.suite());
+		suite.addTest(ResourceSyncBytesTest.suite());
     	return suite; 	
 	}	
 	
