@@ -367,7 +367,7 @@
 	<extension point="org.eclipse.ui.externaltools.toolVariables">
 		<variable
 			tag="workspace_loc"
-			description="&workspace_loc.description"
+			description="%workspace_loc.description"
 			expanderClass="org.eclipse.ui.externaltools.variable.WorkspaceExpander">
 		</variable>
 		<variable
