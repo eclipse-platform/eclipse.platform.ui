@@ -73,18 +73,20 @@ final class Command implements Comparable, ICommand {
 		return sortedMap;
 	}
 
+	private boolean active;
 	private String categoryId;
 	private String description;
 	private String id;
 	private String name;
 	private String pluginId;
 	
-	Command(String categoryId, String description, String id, String name, String pluginId) {
+	Command(boolean active, String categoryId, String description, String id, String name, String pluginId) {
 		super();
 		
 		if (id == null || name == null)
 			throw new NullPointerException();
 		
+		this.active = active;
 		this.categoryId = categoryId;
 		this.description = description;
 		this.id = id;
@@ -94,20 +96,24 @@ final class Command implements Comparable, ICommand {
 	
 	public int compareTo(Object object) {
 		Command command = (Command) object;
-		int compareTo = id.compareTo(command.id);
+		int compareTo = active == false ? (command.active == true ? -1 : 0) : 1;
 		
-		if (compareTo == 0) {		
-			compareTo = name.compareTo(command.name);			
+		if (compareTo == 0) {	
+			compareTo = id.compareTo(command.id);
 		
-			if (compareTo == 0) {
-				compareTo = Util.compare(categoryId, command.categoryId);
-				
+			if (compareTo == 0) {		
+				compareTo = name.compareTo(command.name);			
+			
 				if (compareTo == 0) {
-					compareTo = Util.compare(description, command.description);
-
-					if (compareTo == 0)
-						compareTo = Util.compare(pluginId, command.pluginId);								
-				}							
+					compareTo = Util.compare(categoryId, command.categoryId);
+					
+					if (compareTo == 0) {
+						compareTo = Util.compare(description, command.description);
+	
+						if (compareTo == 0)
+							compareTo = Util.compare(pluginId, command.pluginId);								
+					}							
+				}
 			}
 		}
 		
@@ -119,7 +125,7 @@ final class Command implements Comparable, ICommand {
 			return false;
 
 		Command command = (Command) object;	
-		return Util.equals(categoryId, command.categoryId) && Util.equals(description, command.description) && id.equals(command.id) && name.equals(command.name) && Util.equals(pluginId, command.pluginId);
+		return active == command.active && Util.equals(categoryId, command.categoryId) && Util.equals(description, command.description) && id.equals(command.id) && name.equals(command.name) && Util.equals(pluginId, command.pluginId);
 	}
 
 	public String getCategoryId() {
@@ -144,6 +150,7 @@ final class Command implements Comparable, ICommand {
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
+		result = result * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
 		result = result * HASH_FACTOR + Util.hashCode(categoryId);
 		result = result * HASH_FACTOR + Util.hashCode(description);
 		result = result * HASH_FACTOR + id.hashCode();
@@ -152,7 +159,11 @@ final class Command implements Comparable, ICommand {
 		return result;
 	}
 
+	public boolean isActive() {
+		return active;
+	}
+
 	public String toString() {
-		return '[' + id + ',' + name + ',' + categoryId + ',' + description + ',' + pluginId + ']';
+		return '[' + Boolean.toString(active) + ',' + id + ',' + name + ',' + categoryId + ',' + description + ',' + pluginId + ']';
 	}
 }

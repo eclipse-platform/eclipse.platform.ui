@@ -52,7 +52,7 @@ public final class ContextRegistry implements IContextRegistry {
 		super();
 		loadPluginRegistry();
 		loadPreferenceRegistry();
-		updateFromRegistries();
+		update();
 	}
 
 	public void addContextRegistryListener(IContextRegistryListener contextRegistryListener) {
@@ -133,7 +133,7 @@ public final class ContextRegistry implements IContextRegistry {
 		}
 	}
 
-	private void updateFromRegistries() {
+	private void update() {
 		if (pluginRegistry == null)
 			pluginRegistry = new PluginRegistry(Platform.getPluginRegistry());
 		

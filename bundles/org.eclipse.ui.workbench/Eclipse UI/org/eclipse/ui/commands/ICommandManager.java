@@ -82,8 +82,8 @@ public interface ICommandManager {
 		
 		isActive();		
 
-	*/			
-	/*
+
+
 		// also solved, directly taken from above (except perhaps 'List getKeySequences', which needs to encapsulate matching order..)
 		List getKeySequences();
 		Map getImageUrisByStyle();
@@ -91,6 +91,10 @@ public interface ICommandManager {
 		
 		boolean inContext(); ids of getContextBindings() in activeContextIds?		
 	*/	
+
+
+
+
 
 	/**
 	 * Registers an ICommandManagerListener instance with this command manager.
@@ -110,50 +114,25 @@ public interface ICommandManager {
 	/**
 	 * JAVADOC
 	 *
-	 * @return
-	 */
-	SortedMap getCategoriesById();
-	
-	/**
-	 * JAVADOC
-	 *
-	 * @param categoryId
-	 * @return
-	 * @throws NullPointerException
-	 */	
-	ICategoryHandle getCategoryHandle(String categoryId);
-
-	/**
-	 * JAVADOC
-	 *
 	 * @param commandId
 	 * @return
 	 * @throws NullPointerException
 	 */	
 	ICommandHandle getCommandHandle(String commandId);
-	
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedMap getCommandsById();	
 
 	/**
 	 * JAVADOC
 	 *
-	 * @param keyConfigurationId
 	 * @return
-	 * @throws NullPointerException
-	 */	
-	IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId);
-	
+	 */
+	ICommandRegistry getCommandRegistry();
+
 	/**
 	 * JAVADOC
 	 *
 	 * @return
 	 */
-	SortedMap getKeyConfigurationsById();	
+	SortedMap getCommandsById();
 		
 	/**
 	 * Unregisters an ICommandManagerListener instance with this command manager.

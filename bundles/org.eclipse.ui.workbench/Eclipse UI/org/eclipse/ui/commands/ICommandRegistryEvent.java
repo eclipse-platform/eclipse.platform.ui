@@ -24,47 +24,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommand {
+public interface ICommandRegistryEvent {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getCategoryId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isActive();
+	ICommandRegistry getCommandRegistry();
 }

@@ -16,7 +16,7 @@ package org.eclipse.ui.commands;
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,47 +24,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommand {
+public interface ICommandRegistryListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
-	 */	
-	String getCategoryId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isActive();
+	 * @param commandRegistryEvent
+	 */
+	void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent);
 }

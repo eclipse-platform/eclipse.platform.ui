@@ -148,10 +148,6 @@ final class Context implements Comparable, IContext {
 		return pluginId;
 	}
 	
-	public boolean isActive() {
-		return active;
-	}
-
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
@@ -161,6 +157,10 @@ final class Context implements Comparable, IContext {
 		result = result * HASH_FACTOR + Util.hashCode(parentId);
 		result = result * HASH_FACTOR + Util.hashCode(pluginId);
 		return result;
+	}
+
+	public boolean isActive() {
+		return active;
 	}
 
 	public String toString() {
