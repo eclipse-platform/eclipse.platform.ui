@@ -9,12 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.search;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.zip.*;
-
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -24,10 +22,9 @@ import org.eclipse.help.internal.base.util.*;
 import org.eclipse.help.internal.toc.*;
 import org.eclipse.help.internal.util.*;
 import org.osgi.framework.*;
-
 /**
- * Text search index.  Documents added to this index
- * can than be searched against a search query.
+ * Text search index. Documents added to this index can than be searched against
+ * a search query.
  */
 public class SearchIndex {
 	private IndexReader ir;
@@ -39,11 +36,9 @@ public class SearchIndex {
 	private PluginVersionInfo docPlugins;
 	// table of all document names, used during indexing batches
 	private HelpProperties indexedDocs;
-	private static final String INDEXED_CONTRIBUTION_INFO_FILE =
-		"indexed_contributions";
+	private static final String INDEXED_CONTRIBUTION_INFO_FILE = "indexed_contributions";
 	public static final String INDEXED_DOCS_FILE = "indexed_docs";
-	private static final String DEPENDENCIES_VERSION_FILENAME =
-		"indexed_dependencies";
+	private static final String DEPENDENCIES_VERSION_FILENAME = "indexed_dependencies";
 	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene";
 	private File inconsistencyFile;
 	private HTMLDocParser parser;
@@ -55,55 +50,58 @@ public class SearchIndex {
 	private Collection searches = new ArrayList();
 	/**
 	 * Constructor.
-	 * @param locale the locale this index uses
-	 * @param analyzerDesc the analyzer used to index
+	 * 
+	 * @param locale
+	 *            the locale this index uses
+	 * @param analyzerDesc
+	 *            the analyzer used to index
 	 */
-	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc, TocManager tocManager) {
+	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc,
+			TocManager tocManager) {
 		this.locale = locale;
 		this.analyzerDescriptor = analyzerDesc;
 		this.tocManager = tocManager;
-
-		indexDir = new File(HelpBasePlugin.getConfigurationDirectory(), "index/"+locale);
-		
-		inconsistencyFile =
-			new File(indexDir.getParentFile(), locale + ".inconsistent");
+		indexDir = new File(HelpBasePlugin.getConfigurationDirectory(),
+				"index/" + locale);
+		inconsistencyFile = new File(indexDir.getParentFile(), locale
+				+ ".inconsistent");
 		parser = new HTMLDocParser();
 		if (!exists()) {
 			unzipProductIndex();
 		}
 	}
 	/**
-	 * Indexes one document from a stream.
-	 * Index has to be open and close outside of this method
-	 * @param name the document identifier (could be a URL)
-	 * @param url the URL of the document
+	 * Indexes one document from a stream. Index has to be open and close
+	 * outside of this method
+	 * 
+	 * @param name
+	 *            the document identifier (could be a URL)
+	 * @param url
+	 *            the URL of the document
 	 * @return true if success
 	 */
 	public boolean addDocument(String name, URL url) {
 		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out.println(
-				"SearchIndex.addDocument(" + name + ", " + url + ")");
+			System.out.println("SearchIndex.addDocument(" + name + ", " + url
+					+ ")");
 		}
 		try {
 			Document doc = new Document();
 			doc.add(Field.Keyword("name", name));
-
 			try {
 				try {
 					parser.openDocument(url);
 				} catch (IOException ioe) {
-					HelpBasePlugin.logError(
-						HelpBaseResources.getString("ES25", name),
-						null);
+					HelpBasePlugin.logError(HelpBaseResources.getString("ES25",
+							name), null);
 					return false;
 				}
-				ParsedDocument parsed =
-					new ParsedDocument(parser.getContentReader());
-
+				ParsedDocument parsed = new ParsedDocument(parser
+						.getContentReader());
 				doc.add(Field.Text("contents", parsed.newContentReader()));
-				doc.add(
-					Field.Text("exact_contents", parsed.newContentReader()));
-
+				doc
+						.add(Field.Text("exact_contents", parsed
+								.newContentReader()));
 				String title = parser.getTitle();
 				doc.add(Field.UnStored("title", title));
 				doc.add(Field.UnStored("exact_title", title));
@@ -116,19 +114,13 @@ public class SearchIndex {
 			indexedDocs.put(name, "0");
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError(
-				HelpBaseResources.getString(
-					"ES16",
-					name,
-					indexDir.getAbsolutePath()),
-				e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES16", name,
+					indexDir.getAbsolutePath()), e);
 			return false;
 		}
 	}
-
 	/**
-	 * Starts additions.
-	 * To be called before adding documents.
+	 * Starts additions. To be called before adding documents.
 	 */
 	public synchronized boolean beginAddBatch() {
 		try {
@@ -142,16 +134,10 @@ public class SearchIndex {
 				if (!indexDir.exists())
 					return false; // unable to setup index directory
 			}
-			indexedDocs =
-				new HelpProperties(
-					INDEXED_DOCS_FILE,
-					indexDir);
+			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
-			iw =
-				new IndexWriter(
-					indexDir,
-					analyzerDescriptor.getAnalyzer(),
+			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(),
 					create);
 			iw.mergeFactor = 20;
 			iw.maxFieldLength = 1000000;
@@ -162,18 +148,14 @@ public class SearchIndex {
 		}
 	}
 	/**
-	 * Starts deletions.
-	 * To be called before deleting documents.
+	 * Starts deletions. To be called before deleting documents.
 	 */
 	public synchronized boolean beginDeleteBatch() {
 		try {
 			if (ir != null) {
 				ir.close();
 			}
-			indexedDocs =
-				new HelpProperties(
-					INDEXED_DOCS_FILE,
-					indexDir);
+			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
 			ir = IndexReader.open(indexDir);
@@ -185,7 +167,9 @@ public class SearchIndex {
 	}
 	/**
 	 * Deletes a single document from the index.
-	 * @param name - document name
+	 * 
+	 * @param name -
+	 *            document name
 	 * @return true if success
 	 */
 	public boolean removeDocument(String name) {
@@ -197,19 +181,14 @@ public class SearchIndex {
 			ir.delete(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
-			HelpBasePlugin.logError(
-				HelpBaseResources.getString(
-					"ES22",
-					name,
-					indexDir.getAbsolutePath()),
-				e);
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES22", name,
+					indexDir.getAbsolutePath()), e);
 			return false;
 		}
 		return true;
 	}
 	/**
-	 * Finish additions.
-	 * To be called after adding documents.
+	 * Finish additions. To be called after adding documents.
 	 */
 	public synchronized boolean endAddBatch() {
 		try {
@@ -232,8 +211,7 @@ public class SearchIndex {
 		}
 	}
 	/**
-	 * Finish deletions.
-	 * To be called after deleting documents.
+	 * Finish deletions. To be called after deleting documents.
 	 */
 	public synchronized boolean endDeleteBatch() {
 		try {
@@ -256,40 +234,40 @@ public class SearchIndex {
 	}
 	/**
 	 * Checks if index exists and is usable.
+	 * 
 	 * @return true if index exists
 	 */
 	public boolean exists() {
 		return indexDir.exists() && !isInconsistent();
 		// assume index exists if directory does
 	}
-	/** 
-	 * Performs a query search on this index 
-	 * @param fieldNames - Collection of field names of type String (e.g. "h1");
-	 *  the search will be performed on the given fields
-	 * @param fieldSearch - boolean indicating if field only search
-	 *  should be performed; if set to false, default field "contents"
-	 *  and all other fields will be searched
-	 * @param searchResult SearchResult that will contain all the hits
-	 * @return - an array of document ids. 
-	 * Later, we can extend this to return more data (rank, # of occs, etc.)
+	/**
+	 * Performs a query search on this index
+	 * 
+	 * @param fieldNames -
+	 *            Collection of field names of type String (e.g. "h1"); the
+	 *            search will be performed on the given fields
+	 * @param fieldSearch -
+	 *            boolean indicating if field only search should be performed;
+	 *            if set to false, default field "contents" and all other fields
+	 *            will be searched
+	 * @param searchResult
+	 *            SearchResult that will contain all the hits
+	 * @return - an array of document ids. Later, we can extend this to return
+	 *         more data (rank, # of occs, etc.)
 	 */
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector)
-		throws QueryTooComplexException {
+			throws QueryTooComplexException {
 		try {
-			if(closed)
+			if (closed)
 				return;
 			registerSearch(Thread.currentThread());
-			if(closed)
+			if (closed)
 				return;
-
-			QueryBuilder queryBuilder =
-				new QueryBuilder(
-					searchQuery.getSearchWord(),
-					analyzerDescriptor);
-			Query luceneQuery =
-				queryBuilder.getLuceneQuery(
-					searchQuery.getFieldNames(),
-					searchQuery.isFieldSearch());
+			QueryBuilder queryBuilder = new QueryBuilder(searchQuery
+					.getSearchWord(), analyzerDescriptor);
+			Query luceneQuery = queryBuilder.getLuceneQuery(searchQuery
+					.getFieldNames(), searchQuery.isFieldSearch());
 			String highlightTerms = queryBuilder.gethighlightTerms();
 			if (luceneQuery != null) {
 				if (searcher == null) {
@@ -301,12 +279,9 @@ public class SearchIndex {
 		} catch (QueryTooComplexException qe) {
 			throw qe;
 		} catch (Exception e) {
-			HelpBasePlugin.logError(
-				HelpBaseResources.getString(
-					"ES21",
-					searchQuery.getSearchWord()),
-				e);
-		} finally{
+			HelpBasePlugin.logError(HelpBaseResources.getString("ES21",
+					searchQuery.getSearchWord()), e);
+		} finally {
 			unregisterSearch(Thread.currentThread());
 		}
 	}
@@ -314,43 +289,37 @@ public class SearchIndex {
 		return locale;
 	}
 	/**
-	 * Returns the list of all the plugins in this session
-	 * that have declared a help contribution.
+	 * Returns the list of all the plugins in this session that have declared a
+	 * help contribution.
 	 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
-			Collection docPluginsIds =
-				tocManager.getContributingPlugins();
-			docPlugins =
-				new PluginVersionInfo(
-					INDEXED_CONTRIBUTION_INFO_FILE,
-					docPluginsIds,
-					indexDir,
-					!exists());
+			Collection docPluginsIds = tocManager.getContributingPlugins();
+			docPlugins = new PluginVersionInfo(INDEXED_CONTRIBUTION_INFO_FILE,
+					docPluginsIds, indexDir, !exists());
 		}
 		return docPlugins;
 	}
 	/**
-	 * We use HelpProperties, but a list would suffice.
-	 * We only need the key values.
+	 * We use HelpProperties, but a list would suffice. We only need the key
+	 * values.
+	 * 
 	 * @return HelpProperties, keys are URLs of indexed documents
 	 */
 	public HelpProperties getIndexedDocs() {
-		HelpProperties indexedDocs =
-			new HelpProperties(INDEXED_DOCS_FILE, indexDir);
+		HelpProperties indexedDocs = new HelpProperties(INDEXED_DOCS_FILE,
+				indexDir);
 		if (exists())
 			indexedDocs.restore();
 		return indexedDocs;
 	}
 	/**
-	 * Gets properties with versions of Lucene plugin and Analyzer
-	 * used for indexing
+	 * Gets properties with versions of Lucene plugin and Analyzer used for
+	 * indexing
 	 */
 	private HelpProperties getDependencies() {
 		if (dependencies == null) {
-			dependencies =
-				new HelpProperties(
-					DEPENDENCIES_VERSION_FILENAME,
+			dependencies = new HelpProperties(DEPENDENCIES_VERSION_FILENAME,
 					indexDir);
 			dependencies.restore();
 		}
@@ -406,7 +375,7 @@ public class SearchIndex {
 			return true;
 		}
 		return !isLuceneCompatible()
-			|| !analyzerDescriptor.isCompatible(readAnalyzerId());
+				|| !analyzerDescriptor.isCompatible(readAnalyzerId());
 	}
 	/**
 	 * Writes or deletes inconsistency flag file
@@ -414,7 +383,8 @@ public class SearchIndex {
 	public void setInconsistent(boolean inconsistent) {
 		if (inconsistent) {
 			try {
-				// parent directory already created by beginAddBatch on new index
+				// parent directory already created by beginAddBatch on new
+				// index
 				FileOutputStream fos = new FileOutputStream(inconsistencyFile);
 				fos.close();
 			} catch (IOException ioe) {
@@ -422,7 +392,6 @@ public class SearchIndex {
 		} else
 			inconsistencyFile.delete();
 	}
-
 	public void openSearcher() throws IOException {
 		synchronized (searcherCreateLock) {
 			if (searcher == null) {
@@ -458,17 +427,13 @@ public class SearchIndex {
 	 * Finds and unzips prebuild index specified in preferences
 	 */
 	private void unzipProductIndex() {
-		String indexPluginId =
-			HelpBasePlugin.getDefault().getPluginPreferences().getString(
-				"productIndex");
+		String indexPluginId = HelpBasePlugin.getDefault()
+				.getPluginPreferences().getString("productIndex");
 		if (indexPluginId == null || indexPluginId.length() <= 0) {
 			return;
 		}
-		InputStream zipIn =
-			ResourceLocator.openFromPlugin(
-				indexPluginId,
-				"doc_index.zip",
-				getLocale());
+		InputStream zipIn = ResourceLocator.openFromPlugin(indexPluginId,
+				"doc_index.zip", getLocale());
 		if (zipIn == null) {
 			return;
 		}
@@ -503,10 +468,9 @@ public class SearchIndex {
 				fos.close();
 			}
 			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println(
-					"SearchIndex: Prebuilt index restored to " + destDir + ".");
+				System.out.println("SearchIndex: Prebuilt index restored to "
+						+ destDir + ".");
 			}
-
 		} catch (IOException ioe) {
 			if (fos != null) {
 				try {
@@ -524,8 +488,7 @@ public class SearchIndex {
 		}
 	}
 	/**
-	 * Returns true when the index
-	 * must be updated.
+	 * Returns true when the index must be updated.
 	 */
 	public synchronized boolean needsUpdating() {
 		if (!exists()) {
@@ -533,7 +496,6 @@ public class SearchIndex {
 		}
 		return getDocPlugins().detectChange();
 	}
-
 	/**
 	 * @return Returns the tocManager.
 	 */
