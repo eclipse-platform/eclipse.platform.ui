@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2003 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Common Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.ui.keys;
@@ -24,6 +22,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
+
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -66,13 +65,13 @@ public final class KeyStroke implements Comparable {
 	 * given the formal string representation of a modifier key.
 	 */
 	private static SortedMap modifierKeyLookup = new TreeMap();
-	
+
 	/**
 	 * An internal map used to lookup instances of <code>SpecialKey</code>
 	 * given the formal string representation of a special key.
 	 */
 	private static SortedMap specialKeyLookup = new TreeMap();
-	
+
 	static {
 		characterKeyLookup.put(CharacterKey.BS.toString(), CharacterKey.BS);
 		characterKeyLookup.put(CharacterKey.CR.toString(), CharacterKey.CR);
@@ -81,29 +80,19 @@ public final class KeyStroke implements Comparable {
 		characterKeyLookup.put(CharacterKey.FF.toString(), CharacterKey.FF);
 		characterKeyLookup.put(CharacterKey.LF.toString(), CharacterKey.LF);
 		characterKeyLookup.put(CharacterKey.NUL.toString(), CharacterKey.NUL);
-		characterKeyLookup.put(
-			CharacterKey.SPACE.toString(),
-			CharacterKey.SPACE);
+		characterKeyLookup.put(CharacterKey.SPACE.toString(), CharacterKey.SPACE);
 		characterKeyLookup.put(CharacterKey.TAB.toString(), CharacterKey.TAB);
 		characterKeyLookup.put(CharacterKey.VT.toString(), CharacterKey.VT);
 		modifierKeyLookup.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
-		modifierKeyLookup.put(
-			ModifierKey.COMMAND.toString(),
-			ModifierKey.COMMAND);
+		modifierKeyLookup.put(ModifierKey.COMMAND.toString(), ModifierKey.COMMAND);
 		modifierKeyLookup.put(ModifierKey.CTRL.toString(), ModifierKey.CTRL);
 		modifierKeyLookup.put(ModifierKey.SHIFT.toString(), ModifierKey.SHIFT);
-		specialKeyLookup.put(
-			SpecialKey.ARROW_DOWN.toString(),
-			SpecialKey.ARROW_DOWN);
-		specialKeyLookup.put(
-			SpecialKey.ARROW_LEFT.toString(),
-			SpecialKey.ARROW_LEFT);
-		specialKeyLookup.put(
-			SpecialKey.ARROW_RIGHT.toString(),
-			SpecialKey.ARROW_RIGHT);
-		specialKeyLookup.put(
-			SpecialKey.ARROW_UP.toString(),
-			SpecialKey.ARROW_UP);
+		specialKeyLookup.put(SpecialKey.ARROW_DOWN.toString(), SpecialKey.ARROW_DOWN);
+		specialKeyLookup.put(SpecialKey.ARROW_LEFT.toString(), SpecialKey.ARROW_LEFT);
+		specialKeyLookup.put(SpecialKey.ARROW_RIGHT.toString(), SpecialKey.ARROW_RIGHT);
+		specialKeyLookup.put(SpecialKey.ARROW_UP.toString(), SpecialKey.ARROW_UP);
+		specialKeyLookup.put(SpecialKey.BREAK.toString(), SpecialKey.BREAK);
+		specialKeyLookup.put(SpecialKey.CAPS_LOCK.toString(), SpecialKey.CAPS_LOCK);
 		specialKeyLookup.put(SpecialKey.END.toString(), SpecialKey.END);
 		specialKeyLookup.put(SpecialKey.F1.toString(), SpecialKey.F1);
 		specialKeyLookup.put(SpecialKey.F10.toString(), SpecialKey.F10);
@@ -140,10 +129,11 @@ public final class KeyStroke implements Comparable {
 		specialKeyLookup.put(SpecialKey.NUMPAD_SUBTRACT.toString(), SpecialKey.NUMPAD_SUBTRACT);
 		specialKeyLookup.put(SpecialKey.HOME.toString(), SpecialKey.HOME);
 		specialKeyLookup.put(SpecialKey.INSERT.toString(), SpecialKey.INSERT);
-		specialKeyLookup.put(
-			SpecialKey.PAGE_DOWN.toString(),
-			SpecialKey.PAGE_DOWN);
+		specialKeyLookup.put(SpecialKey.PAGE_DOWN.toString(), SpecialKey.PAGE_DOWN);
 		specialKeyLookup.put(SpecialKey.PAGE_UP.toString(), SpecialKey.PAGE_UP);
+		specialKeyLookup.put(SpecialKey.PAUSE.toString(), SpecialKey.PAUSE);
+		specialKeyLookup.put(SpecialKey.PRINT_SCREEN.toString(), SpecialKey.PRINT_SCREEN);
+		specialKeyLookup.put(SpecialKey.SCROLL_LOCK.toString(), SpecialKey.SCROLL_LOCK);
 	}
 
 	/**
@@ -154,8 +144,7 @@ public final class KeyStroke implements Comparable {
 	/**
 	 * An internal constant used only in this object's hash code algorithm.
 	 */
-	private final static int HASH_INITIAL =
-		KeyStroke.class.getName().hashCode();
+	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
 
 	/**
 	 * The delimiter for <code>Key</code> objects in the formal string
@@ -173,8 +162,7 @@ public final class KeyStroke implements Comparable {
 	 * The set of delimiters for <code>Key</code> objects allowed during
 	 * parsing of the formal string representation.
 	 */
-	public final static String KEY_DELIMITERS =
-		KEY_DELIMITER + Util.ZERO_LENGTH_STRING;
+	public final static String KEY_DELIMITERS = KEY_DELIMITER + Util.ZERO_LENGTH_STRING;
 
 	/**
 	 * A comparator to sort modifier keys in the order that they would be
@@ -277,15 +265,11 @@ public final class KeyStroke implements Comparable {
 	 *            the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
-	public static KeyStroke getInstance(
-		ModifierKey modifierKey,
-		NaturalKey naturalKey) {
+	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey naturalKey) {
 		if (modifierKey == null)
 			throw new NullPointerException();
 
-		return new KeyStroke(
-			new TreeSet(Collections.singletonList(modifierKey)),
-			naturalKey);
+		return new KeyStroke(new TreeSet(Collections.singletonList(modifierKey)), naturalKey);
 	}
 
 	/**
@@ -300,13 +284,9 @@ public final class KeyStroke implements Comparable {
 	 *            the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
-	public static KeyStroke getInstance(
-		ModifierKey[] modifierKeys,
-		NaturalKey naturalKey) {
+	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);
-		return new KeyStroke(
-			new TreeSet(Arrays.asList(modifierKeys)),
-			naturalKey);
+		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), naturalKey);
 	}
 
 	/**
@@ -333,9 +313,7 @@ public final class KeyStroke implements Comparable {
 	 *            the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
-	public static KeyStroke getInstance(
-		SortedSet modifierKeys,
-		NaturalKey naturalKey) {
+	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
@@ -356,8 +334,7 @@ public final class KeyStroke implements Comparable {
 
 		SortedSet modifierKeys = new TreeSet();
 		NaturalKey naturalKey = null;
-		StringTokenizer stringTokenizer =
-			new StringTokenizer(string, KEY_DELIMITERS, true);
+		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_DELIMITERS, true);
 		int i = 0;
 
 		while (stringTokenizer.hasMoreTokens()) {
@@ -366,8 +343,7 @@ public final class KeyStroke implements Comparable {
 			if (i % 2 == 0) {
 				if (stringTokenizer.hasMoreTokens()) {
 					token = token.toUpperCase();
-					ModifierKey modifierKey =
-						(ModifierKey) modifierKeyLookup.get(token);
+					ModifierKey modifierKey = (ModifierKey) modifierKeyLookup.get(token);
 
 					if (modifierKey == null || !modifierKeys.add(modifierKey))
 						throw new ParseException();
@@ -449,8 +425,7 @@ public final class KeyStroke implements Comparable {
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
 		this.naturalKey = naturalKey;
 		this.modifierKeysAsArray =
-			(ModifierKey[]) this.modifierKeys.toArray(
-				new ModifierKey[this.modifierKeys.size()]);
+			(ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[this.modifierKeys.size()]);
 	}
 
 	/*
@@ -460,10 +435,7 @@ public final class KeyStroke implements Comparable {
 	 */
 	public int compareTo(Object object) {
 		KeyStroke castedObject = (KeyStroke) object;
-		int compareTo =
-			Util.compare(
-				(Comparable[]) modifierKeysAsArray,
-				(Comparable[]) castedObject.modifierKeysAsArray);
+		int compareTo = Util.compare(modifierKeysAsArray, castedObject.modifierKeysAsArray);
 
 		if (compareTo == 0)
 			compareTo = Util.compare(naturalKey, castedObject.naturalKey);
@@ -502,9 +474,7 @@ public final class KeyStroke implements Comparable {
 		modifierKeys.addAll(this.modifierKeys);
 		StringBuffer stringBuffer = new StringBuffer();
 
-		for (Iterator iterator = modifierKeys.iterator();
-			iterator.hasNext();
-			) {
+		for (Iterator iterator = modifierKeys.iterator(); iterator.hasNext();) {
 			ModifierKey modifierKey = (ModifierKey) iterator.next();
 			stringBuffer.append(modifierKey.format());
 			stringBuffer.append(keyDelimiter);
@@ -573,9 +543,7 @@ public final class KeyStroke implements Comparable {
 		if (string == null) {
 			StringBuffer stringBuffer = new StringBuffer();
 
-			for (Iterator iterator = modifierKeys.iterator();
-				iterator.hasNext();
-				) {
+			for (Iterator iterator = modifierKeys.iterator(); iterator.hasNext();) {
 				ModifierKey modifierKey = (ModifierKey) iterator.next();
 				stringBuffer.append(modifierKey);
 				stringBuffer.append(KEY_DELIMITER);

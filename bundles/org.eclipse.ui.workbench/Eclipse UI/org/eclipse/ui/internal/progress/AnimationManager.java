@@ -478,6 +478,10 @@ class AnimationManager {
 				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 				 */
 				public void done(IJobChangeEvent event) {
+					
+					if(!PlatformUI.isWorkbenchRunning())
+						return;
+					
 					//Only schedule the job if we are showing anything
 					if (isAnimated() && items.size() > 0)
 						animateJob.schedule();

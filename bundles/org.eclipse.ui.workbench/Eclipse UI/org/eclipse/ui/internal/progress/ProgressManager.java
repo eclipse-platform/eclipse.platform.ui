@@ -64,6 +64,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	Object listenerKey = new Object();
 	private WorkbenchMonitorProvider monitorProvider;
 	private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
+	IJobChangeListener changeListener;
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
@@ -266,7 +267,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	ProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
-		Platform.getJobManager().addJobChangeListener(getChangeListener());
+		createChangeListener();
+		Platform.getJobManager().addJobChangeListener(this.changeListener);
 		monitorProvider = new WorkbenchMonitorProvider();
 		URL iconsRoot = Platform.getPlugin(PlatformUI.PLUGIN_ID).find(new Path(ProgressManager.PROGRESS_FOLDER));
 
@@ -292,83 +294,86 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * Return the IJobChangeListener registered with the Job manager. 
 	 * @return IJobChangeListener
 	 */
-	private IJobChangeListener getChangeListener(){
-		return new JobChangeAdapter(){				
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void aboutToRun(IJobChangeEvent event) {
-				JobInfo info = getJobInfo(event.getJob());
-				refresh(info);
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void done(IJobChangeEvent event) {
-
-				JobInfo info = getJobInfo(event.getJob());
-				if (event.getResult().getSeverity() == IStatus.ERROR) {
-					info.setError(event.getResult());
-						UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
-						/*
-						 * (non-Javadoc)
-						 * 
-						 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-						 */
-						public IStatus runInUIThread(IProgressMonitor monitor) {
-
-							IWorkbench workbench = PlatformUI.getWorkbench();
-
-							//Abort on shutdown
-							if (workbench instanceof Workbench && ((Workbench) workbench).isClosing())
-								return Status.CANCEL_STATUS;
-							IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-
-							if (window == null)
-								return Status.CANCEL_STATUS;
-							ProgressManagerUtil.openProgressView(window);
-							return Status.OK_STATUS;
-						}
-					};
-					job.schedule();
-					refresh(info);
-
-				} else {
-					jobs.remove(event.getJob());
-					//Only refresh if we are showing it
-					remove(info);
-
-					//If there are no more left then refresh all on the last displayed one
-					if (hasNoRegularJobInfos() 
-							&& !isNonDisplayableJob(event.getJob(),false))
-						refreshAll();
-				}
-			}
-			
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void scheduled(IJobChangeEvent event) {
-				if (isNeverDisplayedJob(event.getJob()))
-					return;
-
-				if (jobs.containsKey(event.getJob()))
-					refresh(getJobInfo(event.getJob()));
-				else {
-					JobInfo info = new JobInfo(event.getJob());
-					jobs.put(event.getJob(), info);
-					add(info);
-				}
-			}			
+	private void createChangeListener(){
 		
-		};
+		changeListener =
+			new JobChangeAdapter(){				
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+				 */
+				public void aboutToRun(IJobChangeEvent event) {
+					JobInfo info = getJobInfo(event.getJob());
+					refresh(info);
+				}
+	
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+				 */
+				public void done(IJobChangeEvent event) {
+					if(!PlatformUI.isWorkbenchRunning())
+						return;
+					JobInfo info = getJobInfo(event.getJob());
+					if (event.getResult().getSeverity() == IStatus.ERROR) {
+						info.setError(event.getResult());
+							UIJob job = new UIJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
+							/*
+							 * (non-Javadoc)
+							 * 
+							 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+							 */
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+	
+								IWorkbench workbench = PlatformUI.getWorkbench();
+	
+								//Abort on shutdown
+								if (workbench instanceof Workbench && ((Workbench) workbench).isClosing())
+									return Status.CANCEL_STATUS;
+								IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+	
+								if (window == null)
+									return Status.CANCEL_STATUS;
+								ProgressManagerUtil.openProgressView(window);
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
+						refresh(info);
+	
+					} else {
+						jobs.remove(event.getJob());
+						//Only refresh if we are showing it
+						remove(info);
+	
+						//If there are no more left then refresh all on the last displayed one
+						if (hasNoRegularJobInfos() 
+								&& !isNonDisplayableJob(event.getJob(),false))
+							refreshAll();
+					}
+				}
+				
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+				 */
+				public void scheduled(IJobChangeEvent event) {
+					if (isNeverDisplayedJob(event.getJob()))
+						return;
+	
+					if (jobs.containsKey(event.getJob()))
+						refresh(getJobInfo(event.getJob()));
+					else {
+						JobInfo info = new JobInfo(event.getJob());
+						jobs.put(event.getJob(), info);
+						add(info);
+					}
+				}			
+			
+			};
 	}
 
 	/**
@@ -847,6 +852,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
+				
+				//If the platform is not runnin exit
+				if(!PlatformUI.isWorkbenchRunning())
+					return;
 				//If we are deferring try again.
 				if(defer[0]){
 					defer[0] = false;
@@ -856,5 +865,15 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		});
 
 		updateJob.schedule(LONG_OPERATION_MILLISECONDS);
+	}
+	
+	/**
+	 * Shutdown the receiver.
+	 */
+	
+	public void shutdown(){
+		this.listeners.clear();
+		Platform.getJobManager().setProgressProvider(null);
+		Platform.getJobManager().removeJobChangeListener(this.changeListener);
 	}
 }

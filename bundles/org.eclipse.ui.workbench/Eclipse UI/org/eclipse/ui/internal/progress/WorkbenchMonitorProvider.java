@@ -71,8 +71,10 @@ class WorkbenchMonitorProvider {
 		 * (non-Javadoc) @see org.eclipse.core.runtime.IProgressMonitor#done()
 		 */
 		public void done() {
-			refreshJob.clearStatusLine();
-			refreshJob.schedule(100);
+			
+			if(PlatformUI.isWorkbenchRunning())
+				refreshJob.clearStatusLine();
+				refreshJob.schedule(100);
 
 		}
 
@@ -132,7 +134,7 @@ class WorkbenchMonitorProvider {
 		 * Update the message for the receiver.
 		 */
 		private void updateMessage() {
-			if (refreshJob.setMessage(getDisplayString()))
+			if (PlatformUI.isWorkbenchRunning() && refreshJob.setMessage(getDisplayString()))
 				refreshJob.schedule(100);
 		}
 

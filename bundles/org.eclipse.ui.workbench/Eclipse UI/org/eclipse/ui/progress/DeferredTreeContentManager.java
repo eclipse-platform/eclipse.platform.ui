@@ -19,15 +19,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.progress.PendingUpdateAdapter;
 import org.eclipse.ui.internal.progress.ProgressMessages;
@@ -279,7 +275,10 @@ public class DeferredTreeContentManager {
 			}
 		};
 		clearJob.setSystem(true);
-		clearJob.schedule();
+		
+		//Only schedule if there is a workbench
+		if(PlatformUI.isWorkbenchRunning())
+			clearJob.schedule();
 
 	}
 	

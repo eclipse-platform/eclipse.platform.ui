@@ -265,7 +265,10 @@ public boolean close() {
 protected void configureShell(Shell newShell) {
 
 	if (defaultImage != null) {	
-		newShell.setImage(defaultImage);
+		if (defaultImage.isDisposed())  // workaround for bug 46624 - [RCP] Walkback while exiting eclipse (on Mac)
+			System.err.println("Window.configureShell: image disposed"); //$NON-NLS-1$
+		else
+			newShell.setImage(defaultImage);
 	}
 
 	GridLayout layout = new GridLayout();

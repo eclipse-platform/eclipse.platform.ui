@@ -111,8 +111,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 
 /**
- * The workbench class represe
-nts the top of the Eclipse user interface. 
+ * The workbench class represents the top of the Eclipse user interface. 
  * Its primary responsability is the management of workbench windows, dialogs,
  * wizards, and other workbench-related windows.
  * <p>
@@ -1284,7 +1283,7 @@ public final class Workbench implements IWorkbench {
 					// be named "startup".
 					IConfigurationElement startupElement = null;
 					for (int j = 0; j < configElements.length && startupElement == null; j++) {
-						if (configElements[j].getName().equals(IWorkbenchConstants.TAG_CLASS)) {
+						if (configElements[j].getName().equals(IWorkbenchConstants.TAG_STARTUP)) {
 							startupElement = configElements[j];
 						}
 					}
@@ -1661,7 +1660,7 @@ public final class Workbench implements IWorkbench {
 			((DecoratorManager) getDecoratorManager()).shutdown();
 		}
 		activityHelper.shutdown();
-		Platform.getJobManager().shutdown();
+		ProgressManager.getInstance().shutdown();
 	}
 
 	/* (non-Javadoc)

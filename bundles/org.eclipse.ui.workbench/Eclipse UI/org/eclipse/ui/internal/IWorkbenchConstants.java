@@ -161,6 +161,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_HISTORY_LABEL = "historyLabel";//$NON-NLS-1$
 	public static final String TAG_LOCKED = "locked";//$NON-NLS-1$
 	public static final String TAG_OPEN_MODE = "openMode"; //$NON-NLS-1$
+	public static final String TAG_STARTUP = "startup"; //$NON-NLS-1$
 	
 	//Progress indicator
 	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	 //$NON-NLS-1$
