@@ -65,8 +65,8 @@ information.</li>
 
 <li>
 <b>path</b> - a location of the menu starting from the root of the menu
-bar. If omitted, the menu will be added between the Perspective and Window
-menus on the menu bar. Each token in the path must refer to an existing
+bar. If omitted, the menu will be added before the Window
+menu on the menu bar. Each token in the path must refer to an existing
 menu in the workbench, except the last one, which should represent a named
 group in the last menu in the path.</li>
 </ul>
@@ -180,7 +180,7 @@ will be represented in menus by the hoverIcon.</li>
 <li>
 <b>disabledIcon</b> - a relative path of an icon that will be used to visually
 represent the action in its context when the action is disabled. If it
-is omitted the normal icon will simply appear greyed out. The path is relative
+is omitted the normal icon will simply appear grayed out. The path is relative
 to the location of the plugin.xml file of the contributing plug-in. The disabled
 icon will appear in toolbars but not in menus. Icons for disabled actions
 in menus will be supplied by the OS.</li>
@@ -226,7 +226,7 @@ If the retarget attribute is true this attribute should not be supplied.</li>
 <b>retarget - </b>if this attribute is true then a retarget (global) action
 will be created. Parts may supply a handler for this global action using
 the standard mechanism for setting a global action handler on their site
-using this action's id.If this attribute is true, the class attribute should
+using this action's id. If this attribute is true, the class attribute should
 not be supplied.</li>
 
 <li>
@@ -354,7 +354,7 @@ by
 once the action delegate has been instantiated, it may control the action
 enable state directly within its <tt>selectionChanged</tt> method.
 <p>It is important to note that the workbench does not generate menus on
-plug-in's behalf: menu paths must reference menus that already exist.
+plug-ins' behalf: menu paths must reference menus that already exist.
 <p>Action and menu labels may contain special characters that encode mnemonics
 and accelerators using the following rules:
 <ol>
@@ -364,7 +364,7 @@ of a selected character in the translated text. Since ampersand is not
 allowed in XML strings, use <tt>&amp;amp;</tt> character entity.</li>
 
 <li>
-Optional accelerators are specified at the and of the name string, using
+Optional accelerators are specified at the end of the name string, using
 <tt>@</tt>
 followed by a series of modifiers and the final accelerator character (for
 example, <tt>&amp;amp;Save@Ctrl+S</tt>). Modifier can be chained using
@@ -396,7 +396,7 @@ with the existing workbench menus and toolbar.
 <p>Various menu and toolbar items within the workbench window are defined
 algorithmically.&nbsp; In these cases a separate mechanism must be used
 to extend the window.&nbsp; For example, adding a new workbench view results
-in a new menu item appearing in the Perspective menu. Import, Export, and
+in a new menu item appearing in the Window menu. Import, Export, and
 New Wizards extensions are also added automatically to the window.
 <br>&nbsp;
 <p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
