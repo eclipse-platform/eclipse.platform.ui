@@ -174,6 +174,16 @@ public final class Workbench implements IWorkbench {
 	 * ExtensionEventHandler handles extension life-cycle events. 
 	 */
 	private ExtensionEventHandler extensionEventHandler;
+	
+	/**
+     * A count of how many large updates are going on. This tracks nesting of
+     * requests to disable services during a large update -- similar to the
+     * <code>setRedraw</code> functionality on <code>Control</code>. When
+     * this value becomes greater than zero, services are disabled. When this
+     * value becomes zero, services are enabled. Please see
+     * <code>largeUpdateStart()</code> and <code>largeUpdateEnd()</code>.
+     */
+	private int largeUpdates = 0;
 
 	/**
 	 * Creates a new workbench.
@@ -1905,4 +1915,42 @@ public final class Workbench implements IWorkbench {
 	    }
 	    return factoryId;
 	}
+
+	/**
+     * <p>
+     * Indicates the start of a large update within the workbench. This is used
+     * to disable CPU-intensive, change-sensitive services that were temporarily
+     * disabled in the midst of large changes. This method should always be
+     * called in tandem with <code>largeUpdateEnd</code>, and the event loop
+     * should not be allowed to spin before that method is called.
+     * </p>
+     * <p>
+     * Important: always use with <code>largeUpdateEnd</code>!
+     * </p>
+     */
+    public final void largeUpdateStart() {
+        if (largeUpdates++ == 0) {
+            workbenchCommandSupport.setProcessing(false);
+            workbenchContextSupport.setProcessing(false);
+        }
+    }
+
+    /**
+     * <p>
+     * Indicates the end of a large update within the workbench. This is used to
+     * re-enable services that were temporarily disabled in the midst of large
+     * changes. This method should always be called in tandem with
+     * <code>largeUpdateStart</code>, and the event loop should not be
+     * allowed to spin before this method is called.
+     * </p>
+     * <p>
+     * Important: always protect this call by using <code>finally</code>!
+     * </p>
+     */
+    public final void largeUpdateEnd() {
+        if (--largeUpdates == 0) {
+            workbenchCommandSupport.setProcessing(true);
+            workbenchContextSupport.setProcessing(true);
+        }
+    }
 }

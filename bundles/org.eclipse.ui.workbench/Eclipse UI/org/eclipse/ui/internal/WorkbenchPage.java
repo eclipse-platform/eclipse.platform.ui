@@ -75,7 +75,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.WorkbenchException; 
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -2095,13 +2095,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		return result[0];
 	}
 	/**
-	 * See IWorkbenchPage.openEditor
-	 */
-	private IEditorPart busyOpenEditor(
-		IEditorInput input,
-		String editorID,
-		boolean activate)
-		throws PartInitException {
+     * See IWorkbenchPage.openEditor
+     */
+    private IEditorPart busyOpenEditor(IEditorInput input, String editorID,
+            boolean activate) throws PartInitException {
+
+        final Workbench workbench = (Workbench) getWorkbenchWindow()
+                .getWorkbench();
+        workbench.largeUpdateStart();
+
+        try {
+            return busyOpenEditorBatched(input, editorID, activate);
+
+        } finally {
+            workbench.largeUpdateEnd();
+        }
+    }
+
+    /**
+     * Do not call this method.  Use <code>busyOpenEditor</code>.
+     * 
+     * @see IWorkbenchPage#openEditor(IEditorInput, String, boolean)
+     */
+    private IEditorPart busyOpenEditorBatched(IEditorInput input,
+            String editorID, boolean activate) throws PartInitException {
+            
 		// If an editor already exists for the input use it.
 		IEditorPart editor = getEditorManager().findEditor(input);
 		if (editor != null) {

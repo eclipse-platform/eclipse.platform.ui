@@ -190,6 +190,15 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             processHandlerSubmissions(false);
         }
     };
+    
+    /**
+     * Whether the command support should process handler submissions. If it is
+     * not processing handler submissions, then it will update the listeners,
+     * but do no further work. This flag is used to avoid excessive updating
+     * when the workbench is performing some large change (e.g., opening an
+     * editor, starting up, shutting down, switching perspectives, etc.)
+     */
+    private boolean processing = true;
 
     /**
      * The workbench this class is supporting. This value should never be
@@ -352,8 +361,9 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             newWorkbenchSite = null;
         }
 
-        if (force || update
-                || !Util.equals(activeWorkbenchSite, newWorkbenchSite)) {
+        if (processing
+                && (force || update || !Util.equals(activeWorkbenchSite,
+                        newWorkbenchSite))) {
             activeWorkbenchSite = newWorkbenchSite;
             Map handlersByCommandId = new HashMap();
 
@@ -384,12 +394,12 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                     if (bestHandlerSubmission == null)
                         bestHandlerSubmission = handlerSubmission;
                     else {
-                        int compareTo = Util.compare(activeWorkbenchSite2,
+                        int compareTo = Util.compareIdentity(activeWorkbenchSite2,
                                 bestHandlerSubmission
                                         .getActiveWorkbenchPartSite());
 
                         if (compareTo == 0) {
-                            compareTo = Util.compare(activeShell2,
+                            compareTo = Util.compareIdentity(activeShell2,
                                     bestHandlerSubmission.getActiveShell());
 
                             if (compareTo == 0)
@@ -499,5 +509,23 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      */
     public void setActiveContextIds(Map activeContextIds) {
         mutableCommandManager.setActiveContextIds(activeContextIds);
+    }
+    
+    /**
+     * Sets whether the workbench's command support should process handler
+     * submissions. The workbench should not allow the event loop to spin unless
+     * this value is set to <code>true</code>. If the value changes from
+     * <code>false</code> to <code>true</code>, this automatically triggers
+     * a re-processing of the handler submissions.
+     * 
+     * @param processing
+     *            Whether to process handler submissions
+     */
+    public final void setProcessing(final boolean processing) {
+        final boolean reprocess = !this.processing && processing;        
+        this.processing = processing;
+        if (reprocess) {
+            processHandlerSubmissions(true);
+        }
     }
 }

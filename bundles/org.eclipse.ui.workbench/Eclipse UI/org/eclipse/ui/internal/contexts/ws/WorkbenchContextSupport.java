@@ -289,6 +289,15 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             processEnabledSubmissions(false);
         }
     };
+    
+    /**
+     * Whether the context support should process enabled submissions. If it is
+     * not processing enabled submissions, then it will update the listeners,
+     * but do no further work. This flag is used to avoid excessive updating
+     * when the workbench is performing some large change (e.g., opening an
+     * editor, starting up, shutting down, switching perspectives, etc.)
+     */
+    private boolean processing = true;
 
     private ProxyContextManager proxyContextManager;
 
@@ -522,8 +531,9 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             }
         }
 
-        if (force || update
-                || !Util.equals(activeWorkbenchSite, newActiveWorkbenchSite)) {
+        if (processing
+                && (force || update || !Util.equals(activeWorkbenchSite,
+                        newActiveWorkbenchSite))) {
             activeWorkbenchSite = newActiveWorkbenchSite;
             final Set enabledContextIds = new HashSet();
 
@@ -707,5 +717,23 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         }
 
         return false;
+    }
+    
+    /**
+     * Sets whether the workbench's context support should process enabled
+     * submissions. The workbench should not allow the event loop to spin unless
+     * this value is set to <code>true</code>. If the value changes from
+     * <code>false</code> to <code>true</code>, this automatically triggers
+     * a re-processing of the enabled submissions.
+     * 
+     * @param processing
+     *            Whether to process enabled submissions
+     */
+    public final void setProcessing(final boolean processing) {
+        final boolean reprocess = !this.processing && processing;        
+        this.processing = processing;
+        if (reprocess) {
+            processEnabledSubmissions(true);
+        }
     }
 }

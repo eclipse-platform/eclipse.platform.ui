@@ -148,6 +148,32 @@ public final class Util {
             return left.toString().compareTo(right.toString());
     }
 
+    /**
+     * An optimized comparison that uses identity hash codes to perform the
+     * comparison between non- <code>null</code> objects.
+     * 
+     * @param left
+     *            The left-hand side of the comparison; may be <code>null</code>.
+     * @param right
+     *            The right-hand side of the comparison; may be
+     *            <code>null</code>.
+     * @return <code>0</code> if they are the same, <code>-1</code> if left
+     *         is <code>null</code>;<code>1</code> if right is
+     *         <code>null</code>. Otherwise, the left identity hash code
+     *         minus the right identity hash code.
+     */
+    public static final int compareIdentity(Object left, Object right) {
+        if (left == null && right == null)
+            return 0;
+        else if (left == null)
+            return -1;
+        else if (right == null)
+            return 1;
+        else
+            return System.identityHashCode(left)
+                    - System.identityHashCode(right);
+    }
+
     public static void diff(Map left, Map right, Set leftOnly, Set different,
             Set rightOnly) {
         if (left == null || right == null || leftOnly == null

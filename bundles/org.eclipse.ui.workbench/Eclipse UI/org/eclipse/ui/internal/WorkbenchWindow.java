@@ -264,11 +264,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// set the shell style
 		setShellStyle(getWindowConfigurer().getShellStyle());
 		
-		// Fill the action bars	
-		getAdvisor().fillActionBars(
-			this,
-			getWindowConfigurer().getActionBarConfigurer(),
-			FILL_ALL_ACTION_BARS);
+		// Fill the action bars
+		fillActionBars(getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
 	}
 
 	/**
@@ -2282,7 +2279,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @param flags indicate which actions to load and whether its a proxy fill
 	 */
 	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
-		getAdvisor().fillActionBars(this, configurer, flags);
+	    Workbench workbench = getWorkbenchImpl();
+        workbench.largeUpdateStart();
+	    try {
+
+            getAdvisor().fillActionBars(this, configurer, flags);
+
+        } finally {
+            workbench.largeUpdateEnd();
+        }
 	}
 
 
