@@ -15,6 +15,9 @@ package org.eclipse.ui.commands;
  * <p>
  * This interface is not intended to be extended by clients.
  * </p>
+ * 
+ * EXPERIMENTAL
+ * 
  * @since 3.0
  */
 public interface IContextServiceListener {

@@ -17,6 +17,9 @@ import java.util.SortedMap;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
+ * 
+ * EXPERIMENTAL
+ * 
  * @since 3.0
  */
 public interface IActionService {
