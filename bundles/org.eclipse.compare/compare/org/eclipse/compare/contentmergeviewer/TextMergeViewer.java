@@ -995,8 +995,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
 		
-		hsynchViewport(fLeft, fRight);
-		hsynchViewport(fRight, fLeft);
+		hsynchViewport(fAncestor, fLeft, fRight);
+		hsynchViewport(fLeft, fAncestor, fRight);
+		hsynchViewport(fRight, fAncestor, fLeft);
 
 		if (fMarginWidth > 0) {
 			fRightCanvas= new BufferedCanvas(composite, SWT.NONE) {
@@ -1062,19 +1063,25 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		);
 	}
 	
-	private void hsynchViewport(final TextViewer tv1, final TextViewer tv2) {
+	private void hsynchViewport(final TextViewer tv1, final TextViewer tv2, final TextViewer tv3) {
 		final StyledText st1= tv1.getTextWidget();
 		final StyledText st2= tv2.getTextWidget();
+		final StyledText st3= tv3.getTextWidget();
 		final ScrollBar sb1= st1.getHorizontalBar();
-		final ScrollBar sb2= st2.getHorizontalBar();
 		sb1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int max= sb1.getMaximum()-sb1.getThumb();
 				double v= 0.0;
 				if (max > 0)
 					v= (float)sb1.getSelection() / (float)max;
-				max= sb2.getMaximum()-sb2.getThumb();
-				st2.setHorizontalPixel((int)(max * v));
+				if (st2.isVisible()) {
+					ScrollBar sb2= st2.getHorizontalBar();
+					st2.setHorizontalPixel((int)((sb2.getMaximum()-sb2.getThumb()) * v));
+				}
+				if (st3.isVisible()) {
+					ScrollBar sb3= st3.getHorizontalBar();
+					st3.setHorizontalPixel((int)((sb3.getMaximum()-sb3.getThumb()) * v));
+				}
 			}
 		});
 	}
