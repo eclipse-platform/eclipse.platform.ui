@@ -247,13 +247,13 @@ function getPreviousLink(currentLink){
 <%
 		}
 %>
-	<td  title="<%=views[i].getName()%>" 
+	<td  title="<%=title%>" 
 	     align="center"  
 	     valign="middle"
 	     class="tab" 
 	     id="<%=views[i].getName()%>" 
 	     onclick="parent.showView('<%=views[i].getName()%>')" 
-	     onmouseover="window.status='<%=views[i].getName()%>';return true;" 
+	     onmouseover="window.status='<%=title%>';return true;" 
 	     onmouseout="window.status='';">
 	     <a  href='javascript:parent.showView("<%=views[i].getName()%>");' 
 	         onclick='this.blur();return false;' 
