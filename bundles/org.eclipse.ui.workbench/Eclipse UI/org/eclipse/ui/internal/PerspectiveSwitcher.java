@@ -181,7 +181,7 @@ public class PerspectiveSwitcher {
 	    case TOP_RIGHT:
 			topBar.setBottom(null);
 			topBar.setRight(perspectiveCoolBarWrapper.getControl());
- 			topBar.setRightWidth(150);
+ 			topBar.setRightWidth(160);
  			break;
  	    case LEFT:
 			topBar.setBottom(null);
@@ -369,7 +369,7 @@ public class PerspectiveSwitcher {
 		Rectangle area = perspectiveCoolBar.getClientArea();
 		int rowHeight = toolbar.getItem(0).getBounds().height;
 		int rows = rowHeight <= 0 ? 1 : (int)Math.max(1, Math.floor(area.height / rowHeight));
-		if (rows == 1 || (toolbar.getStyle() & SWT.WRAP) == 0) {
+		if (rows == 1 || (toolbar.getStyle() & SWT.WRAP) == 0 || currentLocation == TOP_LEFT) {
 			Point p = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			coolItem.setSize(coolItem.computeSize(p.x, p.y));
 			return;
