@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -53,17 +54,19 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
 
 /**
  * Provides access to the collection of defined editors for resource types.
  */
-public class EditorRegistry implements IEditorRegistry {
+public class EditorRegistry implements IEditorRegistry, IConfigurationElementRemovalHandler {
 
     /*
      * Cached images - these include images from registered editors (via
@@ -108,6 +111,7 @@ public class EditorRegistry implements IEditorRegistry {
     public EditorRegistry() {
         super();
         initializeFromStorage();
+        Workbench.getInstance().getConfigurationElementTracker().registerRemovalHandler(this);
     }
 
     /**
@@ -131,6 +135,7 @@ public class EditorRegistry implements IEditorRegistry {
     public void addEditorFromPlugin(EditorDescriptor editor, List extensions,
             List filenames, boolean bDefault) {
 
+    	Workbench.getInstance().getConfigurationElementTracker().registerObject(editor.getConfigurationElement(), editor);
         // record it in our quick reference list
         sortedEditorsFromPlugins.add(editor);
 
@@ -1075,20 +1080,8 @@ public class EditorRegistry implements IEditorRegistry {
             return new ExternalProgramImageDescriptor(externalProgram);
         }
     }
-
-    //	for dynamic UI
-    public void remove(String id) {
-        IEditorDescriptor desc = findEditor(id);
-        if (id == null)
-            return;
-        sortedEditorsFromPlugins.remove(desc);
-        mapIDtoEditor.remove(id);
-        removeEditorFromMapping(typeEditorMappings.defaultMap, id);
-        removeEditorFromMapping(typeEditorMappings.map, id);
-    }
-
-    //	for dynamic UI
-    private void removeEditorFromMapping(HashMap map, String id) {
+    
+    private void removeEditorFromMapping(HashMap map, IEditorDescriptor desc) {
         Iterator iter = map.values().iterator();
         FileEditorMapping mapping;
         IEditorDescriptor[] editors;
@@ -1096,7 +1089,7 @@ public class EditorRegistry implements IEditorRegistry {
             mapping = (FileEditorMapping) iter.next();
             editors = mapping.getEditors();
             for (int i = 0; i < editors.length; i++)
-                if (editors[i].getId().equals(id)) {
+                if (editors[i] == desc) {
                     mapping.removeEditor((EditorDescriptor) editors[i]);
                     break;
                 }
@@ -1106,4 +1099,20 @@ public class EditorRegistry implements IEditorRegistry {
             }
         }
     }
+
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler#removeInstance(org.eclipse.core.runtime.IConfigurationElement, java.lang.Object)
+	 */
+	public void removeInstance(IConfigurationElement source, Object object) {
+		if (object instanceof EditorDescriptor) {
+			EditorDescriptor desc = (EditorDescriptor) object;
+			
+	        sortedEditorsFromPlugins.remove(desc);	        
+	        mapIDtoEditor.values().remove(desc);
+	        removeEditorFromMapping(typeEditorMappings.defaultMap, desc);
+	        removeEditorFromMapping(typeEditorMappings.map, desc);    	
+
+		}
+	}
 }

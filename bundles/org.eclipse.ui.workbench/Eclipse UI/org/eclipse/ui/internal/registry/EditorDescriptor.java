@@ -68,6 +68,24 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
 
     private transient IConfigurationElement configurationElement;
 
+	public static final String ATT_CLASS = "class";//$NON-NLS-1$
+
+	public static final String ATT_NAME = "name";//$NON-NLS-1$
+
+	public static final String ATT_COMMAND = "command";//$NON-NLS-1$
+
+	public static final String ATT_LAUNCHER = "launcher";//$NON-NLS-1$
+
+	public static final String ATT_DEFAULT = "default";//$NON-NLS-1$
+
+	public static final String ATT_ID = "id";//$NON-NLS-1$
+
+	public static final String ATT_ICON = "icon";//$NON-NLS-1$
+
+	public static final String ATT_EXTENSIONS = "extensions";//$NON-NLS-1$
+
+	public static final String ATT_FILENAMES = "filenames";//$NON-NLS-1$
+
     /**
      * Create a new instance of an editor descriptor. Limited
      * to internal framework calls.
@@ -163,7 +181,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @see IResourceEditorDescriptor
      */
     public String getClassName() {
-        return className;
+    	if (configurationElement == null) {
+    		return className;
+    	}
+    	return configurationElement.getAttribute(ATT_CLASS);
     }
 
     /**
@@ -177,8 +198,12 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @see IResourceEditorDescriptor
      */
     public String getFileName() {
-        if (program == null)
-            return fileName;
+        if (program == null) {
+        	if (configurationElement == null) {
+        		return fileName;
+        	}
+        	return configurationElement.getAttribute(ATT_COMMAND);
+    	}
         return program.getName();
     }
 
@@ -186,8 +211,13 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @see IResourceEditorDescriptor
      */
     public String getId() {
-        if (program == null)
-            return id;
+        if (program == null) {
+        	if (configurationElement == null) {
+        		return id;
+        	}
+        	return configurationElement.getAttribute(ATT_ID);
+        	
+        }
         return program.getName();
     }
 
@@ -219,15 +249,21 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @see IResourceEditorDescriptor
      */
     public String getImageFilename() {
-        return imageFilename;
+    	if (configurationElement == null)
+    		return imageFilename;
+    	return configurationElement.getAttribute(ATT_ICON);
     }
 
     /**
      * @see IResourceEditorDescriptor
      */
     public String getLabel() {
-        if (program == null)
-            return editorName;
+        if (program == null) {
+        	if (configurationElement == null) {
+        		return editorName;        		
+        	}
+        	return configurationElement.getAttribute(ATT_NAME);
+        }
         return program.getName();
     }
 
@@ -235,14 +271,18 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * Returns the class name of the launcher.
      */
     public String getLauncher() {
-        return launcherName;
+    	if (configurationElement == null)
+    		return launcherName;
+    	return configurationElement.getAttribute(EditorDescriptor.ATT_LAUNCHER);
     }
 
     /**
      * @see IResourceEditorDescriptor
      */
     public String getPluginID() {
-        return pluginIdentifier;
+    	if (configurationElement != null)
+    		return configurationElement.getNamespace();
+    	return null;
     }
 
     /**
@@ -458,6 +498,6 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
      * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-        return pluginIdentifier;
+        return getPluginID();
     }
 }

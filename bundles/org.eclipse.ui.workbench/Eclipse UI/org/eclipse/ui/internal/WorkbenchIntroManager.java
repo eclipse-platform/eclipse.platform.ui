@@ -23,9 +23,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
-import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
 import org.eclipse.ui.internal.registry.experimental.IConfigurationElementRemovalHandler;
-import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 
@@ -34,9 +32,7 @@ import org.eclipse.ui.intro.IIntroPart;
  * 
  * @since 3.0
  */
-public class WorkbenchIntroManager implements IIntroManager {
-
-	private final IConfigurationElementTracker tracker = new ConfigurationElementTracker();
+public class WorkbenchIntroManager implements IIntroManager {	
 	
     private final Workbench workbench;
 
@@ -47,10 +43,12 @@ public class WorkbenchIntroManager implements IIntroManager {
      */
     WorkbenchIntroManager(Workbench workbench) {
         this.workbench = workbench;
-        tracker.registerRemovalHandler(new IConfigurationElementRemovalHandler(){
+        workbench.getConfigurationElementTracker().registerRemovalHandler(new IConfigurationElementRemovalHandler(){
 
 			public void removeInstance(IConfigurationElement source, Object object) {
-				closeIntro((IIntroPart) object);				
+				if (object instanceof IIntroPart) {
+					closeIntro((IIntroPart) object);
+				}
 			}});
     }
 
@@ -238,7 +236,7 @@ public class WorkbenchIntroManager implements IIntroManager {
 		introPart = introDescriptor == null ? null
                 : introDescriptor.createIntro();
         if (introPart != null) {
-        	tracker.registerObject(introDescriptor.getConfigurationElement(), introPart);
+        	workbench.getConfigurationElementTracker().registerObject(introDescriptor.getConfigurationElement(), introPart);
         }
     	return introPart;
     }

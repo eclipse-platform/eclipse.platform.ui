@@ -95,6 +95,8 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.registry.experimental.ConfigurationElementTracker;
+import org.eclipse.ui.internal.registry.experimental.IConfigurationElementTracker;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -2072,7 +2074,7 @@ public final class Workbench implements IWorkbench {
      * @see org.eclipse.ui.IWorkbench#getIntroManager()
      */
     public IIntroManager getIntroManager() {
-        return introManager;
+        return getWorkbenchIntroManager();
     }
 
     /** 
@@ -2080,10 +2082,13 @@ public final class Workbench implements IWorkbench {
      * @since 3.0
      */
     /*package*/WorkbenchIntroManager getWorkbenchIntroManager() {
+    	if (introManager == null) {
+    		introManager = new WorkbenchIntroManager(this);
+    	}
         return introManager;
     }
 
-    private WorkbenchIntroManager introManager = new WorkbenchIntroManager(this);
+    private WorkbenchIntroManager introManager;
 
     /** 
      * @return the intro extension for this workbench.
@@ -2101,8 +2106,8 @@ public final class Workbench implements IWorkbench {
      * @since 3.0
      */
     public void setIntroDescriptor(IntroDescriptor descriptor) {
-        if (introManager.getIntro() != null) {
-            introManager.closeIntro(introManager.getIntro());
+        if (getIntroManager().getIntro() != null) {
+        	getIntroManager().closeIntro(getIntroManager().getIntro());
         }
         introDescriptor = descriptor;
     }
@@ -2111,6 +2116,7 @@ public final class Workbench implements IWorkbench {
      * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
      */
     private IntroDescriptor introDescriptor;
+	private IConfigurationElementTracker tracker = new ConfigurationElementTracker();
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbench#getThemeManager()
@@ -2198,4 +2204,11 @@ public final class Workbench implements IWorkbench {
             }
         }
     }
+
+	/**
+	 * @return
+	 */
+	public IConfigurationElementTracker getConfigurationElementTracker() {		
+		return tracker ;
+	}
 }

@@ -404,10 +404,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             unloadView(ext);
             return;
         }
-        if (name.equalsIgnoreCase(IWorkbenchConstants.PL_EDITOR)) {
-            unloadEditor(ext);
-            return;
-        }
+        
         if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PERSPECTIVES)) {
             unloadPerspective(ext);
             return;
@@ -675,31 +672,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
         return true;
     }
 
-    private void unloadEditor(IExtension ext) {
-        MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-                WorkbenchMessages
-                        .getString("EditorManager.problemsSavingEditors"), null); //$NON-NLS-1$
-        EditorRegistry eReg = (EditorRegistry) WorkbenchPlugin.getDefault()
-                .getEditorRegistry();
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-        for (int i = 0; i < elements.length; i++) {
-            String id = elements[i].getAttribute(IWorkbenchConstants.TAG_ID);
-            for (int j = 0; j < windows.length; j++) {
-                WorkbenchWindow window = (WorkbenchWindow) windows[j];
-                IWorkbenchPage[] pages = window.getPages();
-                for (int k = 0; k < pages.length; k++)
-                    closeEditors(pages[k], id, result);
-            }
-            eReg.remove(id);
-        }
-        if (result.getSeverity() != IStatus.OK) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
-                    result);
-        }
-    }
 
     private void closeEditors(IWorkbenchPage page, String id, MultiStatus result) {
         XMLMemento memento = XMLMemento
