@@ -24,18 +24,10 @@ public class InternalSiteManager {
 	private static ISite TEMP_SITE;
 	public static final String TEMP_NAME = "update_tmp";
 
-	private Map sites;
-	private Map sitesTypes;
-	private static InternalSiteManager singleton;
+	private static Map sitesTypes;
 	public static ILocalSite localSite;
 
-	private static void init() throws CoreException {
-		singleton = new InternalSiteManager();
-		singleton.initVariables();
-	}
-
-	private void initVariables() throws CoreException {
-
+	private static void init() {
 		// sites types
 		sitesTypes = new HashMap();
 
@@ -43,6 +35,7 @@ public class InternalSiteManager {
 		sitesTypes.put("http", SiteURLContentProvider.SITE_TYPE);
 		sitesTypes.put("file", SiteFileContentProvider.SITE_TYPE);
 	}
+
 
 	/**
 	 * Returns the LocalSite i.e the different sites
@@ -61,14 +54,22 @@ public class InternalSiteManager {
 	 */
 	public static ISite getSite(URL siteURL, boolean forceCreation) throws CoreException {
 		ISite site = null;
-		if (singleton == null)
-			init();
 
-		// protocol
+		if (siteURL == null) return null;
+
+		// obtain type based on protocol
 		String protocol = siteURL.getProtocol();
 		String type = null;
-		if (singleton.getSitesTypes().containsKey(protocol)) {
-			type = (String) singleton.getSitesTypes().get(protocol);
+		if (getSitesTypes().containsKey(protocol)) {
+			type = (String) getSitesTypes().get(protocol);
+		}
+
+		try {
+		// encode URL if not already encoded
+		if (siteURL.toExternalForm().indexOf("%")==-1)
+			siteURL = UpdateManagerUtils.encode(siteURL);
+		} catch (MalformedURLException e){
+			throw newCoreException("Cannot encode URL:",e);
 		}
 
 		// if error
@@ -87,22 +88,18 @@ public class InternalSiteManager {
 				// we will atemopt to read teh site.xml 
 				// if the site.xml hasn't a specific type in it, then cancel...
 				// otherwise use the type in site.xml to create the *real* site
-				type = (String) singleton.getSitesTypes().get("http");
+				type = (String) getSitesTypes().get("http");
 				site = attemptCreateSite(type, siteURL, forceCreation);
 
 				// same type as we forced ? do not continue
 				if (site!=null && site.getType().equals(type)) {
-					String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-					IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The site.xml does not contain any type and the protocol of the URL is not recognized. protocol:" + protocol, null);
-					throw new CoreException(status);
+					throw newCoreException("The site.xml does not contain any type and the protocol of the URL is not recognized. protocol:" + protocol, null);
 				}
 			}
 
 		} catch (CoreException e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			String siteString = (siteURL!=null)?siteURL.toExternalForm():"<NO URL>";
-			IStatus status = new Status(IStatus.ERROR,id, IStatus.OK, "Cannot create an instance of the Site using URL "+siteURL.toExternalForm()+"\r\n\r\nVerify that the site of type: "+type+" understands the URL. \r\nYou may have to add a '/' or speficy the exact file (i.e site.xml) instead of a directory.\r\n\r\n"+e.getStatus().getMessage(),e);
-			throw new CoreException(status);
+			throw newCoreException("Cannot create an instance of the Site using URL "+siteURL.toExternalForm()+"\r\n\r\nVerify that the site of type: "+type+" understands the URL. \r\nYou may have to add a '/' or speficy the exact file (i.e site.xml) instead of a directory.\r\n\r\n"+e.getStatus().getMessage(),e);
 		}
 
 		return site;
@@ -114,49 +111,29 @@ public class InternalSiteManager {
 	 */
 	public static ISite getTempSite() throws CoreException {
 		if (TEMP_SITE == null) {
-			try {
-				String tempDir = System.getProperty("java.io.tmpdir");
-				if (!tempDir.endsWith(File.separator))
-					tempDir += File.separator;
-				TEMP_SITE = InternalSiteManager.getSite(new URL("file", null, tempDir + TEMP_NAME + '/'),true); // URL must end with '/' if they refer to a path/directory
+			String tempDir = System.getProperty("java.io.tmpdir");
+			if (!tempDir.endsWith(File.separator))
+				tempDir += File.separator;
+			String fileAsURL = (tempDir+TEMP_NAME+"/site.xml").replace(File.separatorChar,'/');
+			try {				
+				URL tempURL = new URL("file",null,fileAsURL);
+				TEMP_SITE = InternalSiteManager.getSite(tempURL,true);
 			} catch (MalformedURLException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create Temporary Site", e);
-				throw new CoreException(status);
+				throw newCoreException("Cannot create Temporary Site:"+fileAsURL, e);
 			}
 		}
 		return TEMP_SITE;
 	}
-	/**
-	 * Gets the sites
-	 * @return Returns a Map
-	 */
-	public Map getSites() {
-		return sites;
-	}
-	/**
-	 * Sets the sites
-	 * @param sites The sites to set
-	 */
-	public void setSites(Map sites) {
-		this.sites = sites;
-	}
-
+		
 	/**
 	 * Gets the sitesTypes
 	 * @return Returns a Map
 	 */
-	public Map getSitesTypes() {
+	public static Map getSitesTypes() {
+		if (sitesTypes==null) init();
 		return sitesTypes;
 	}
-	/**
-	 * Sets the sitesTypes
-	 * @param sitesTypes The sitesTypes to set
-	 */
-	public void setSitesTypes(Map sitesTypes) {
-		this.sitesTypes = sitesTypes;
-	}
-
+	
 	/**
 	 * Attempt to create a site
 	 * if the site guessed is not teh type found,
@@ -182,9 +159,7 @@ public class InternalSiteManager {
 				if (exception.getNewType()==null) throw e;
 				site = createSite(exception.getNewType(), siteURL, forceCreation);
 			} catch (InvalidSiteTypeException e1) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "An error occured when trying to create a Site with the new type", e1);
-				throw new CoreException(status);
+				throw newCoreException("An error occured when trying to create the Site:"+siteURL.toExternalForm()+" with the new type:"+e.getNewType(), e1);
 			}
 		}
 
@@ -216,9 +191,7 @@ public class InternalSiteManager {
 				site = (Site) getSite(siteURL,true);
 				site.save();
 			} catch (MalformedURLException e) {
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create a URL from:" + siteLocation.getAbsolutePath(), e);
-				throw new CoreException(status);
+				throw newCoreException("Cannot create a URL from:" + siteLocation.getAbsolutePath(), e);
 			}
 		}
 		return site;
@@ -240,4 +213,10 @@ public class InternalSiteManager {
 		return new ConfigurationPolicy(policy);
 	}
 
+	/**
+	 * returns a Core Exception
+	 */
+	private static CoreException newCoreException(String s, Throwable e) throws CoreException {
+		return new CoreException(new Status(IStatus.ERROR,"org.eclipse.update.core",0,s,e));
+	}
 }

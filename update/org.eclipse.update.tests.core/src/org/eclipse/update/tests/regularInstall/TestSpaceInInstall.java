@@ -84,7 +84,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
-		String path = UpdateManagerUtils.encode(bundle.getString("HTTP_PATH_3"));
+		String path = bundle.getString("HTTP_PATH_3");
 		ISite remoteSite = SiteManager.getSite(new URL("http",getHttpHost(),getHttpPort(),path));		
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
@@ -104,7 +104,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
 
 			// verify
-			String site = localSite.getURL().getFile();
+			String site = UpdateManagerUtils.decode(localSite.getURL());
 			IPluginEntry[] entries = remoteFeature.getPluginEntries();
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionIdentifier().toString();

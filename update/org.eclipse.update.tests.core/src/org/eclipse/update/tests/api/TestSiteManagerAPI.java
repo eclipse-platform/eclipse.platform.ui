@@ -22,13 +22,9 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	
 	public void testFile() throws Exception {
 		ISite fileSite = SiteManager.getSite(TARGET_FILE_SITE);
-		assertEquals(TARGET_FILE_SITE, fileSite.getURL());
+		String site = URLDecoder.decode(fileSite.getURL().toExternalForm());		
+		assertEquals(TARGET_FILE_SITE.toExternalForm(), site);
 	}
-
-	/*public void testHttp() throws Exception {
-		ISite httpSite = SiteManager.getSite(SOURCE_HTTP_SITE);
-		assertEquals(SOURCE_HTTP_SITE, httpSite.getURL());
-	}*/
 	
 	public void testUnknown() throws Exception {
 		URL url = new URL("ftp://255.255.255.255/");

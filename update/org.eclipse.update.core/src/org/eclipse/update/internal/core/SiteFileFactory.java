@@ -32,8 +32,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 		InputStream siteStream = null;
 		
 		try {		
-			// remove site.xml from teh URL
+			// remove site.xml from the URL
 			url = removeSiteXML(url);
+			
 			SiteFileContentProvider contentProvider = new SiteFileContentProvider(url);
 					
 			try {
@@ -357,9 +358,11 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 */
 	private URL removeSiteXML(URL url) throws MalformedURLException{
 		URL result = url;
+		
+		// No need for decode encode
 		if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
 			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			String newPath = UpdateManagerUtils.encode(url.getFile().substring(0, index));			
+			String newPath = url.getFile().substring(0, index);			
 			result = new URL(url.getProtocol(), url.getHost(), url.getPort(),newPath);
 		}
 		return result;

@@ -25,10 +25,8 @@ public class SiteLocal implements ILocalSite, IWritable {
 	private URL location;
 	private int history = ILocalSite.DEFAULT_HISTORY;
 	public static final String SITE_LOCAL_FILE = "LocalSite.xml";
-	public static final String DEFAULT_CONFIG_LABEL = "Default configuration";
-	public static final String DEFAULT_CONFIG_FILE = "DefaultConfig.xml";
-	public static final String DEFAULT_PRESERVED_CONFIG_LABEL = "Preserved configuration";
-	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "DefaultPreservedConfig.xml";
+	public static final String DEFAULT_CONFIG_FILE = "Config.xml";
+	public static final String DEFAULT_PRESERVED_CONFIG_FILE = "PreservedConfig.xml";
 
 	private List configurations;
 	private List preservedConfigurations;
@@ -153,8 +151,9 @@ public class SiteLocal implements ILocalSite, IWritable {
 			IPlatformConfiguration.ISiteEntry[] siteEntries = BootLoader.getCurrentPlatformConfiguration().getConfiguredSites();
 			for (int siteIndex = 0; siteIndex < siteEntries.length; siteIndex++) {
 	
-				ISite site = SiteManager.getSite(siteEntries[siteIndex].getURL());
-				IInstallConfiguration newDefaultConfiguration = cloneCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
+				URL resolvedURL = Platform.resolve(siteEntries[siteIndex].getURL());
+				ISite site = SiteManager.getSite(resolvedURL);
+				IInstallConfiguration newDefaultConfiguration = cloneCurrentConfiguration(null, null );
 				addConfiguration(newDefaultConfiguration);
 	
 				// notify listeners
@@ -335,7 +334,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 				newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
 			// pass the date onto teh name
 			if (name == null)
-				name = DEFAULT_CONFIG_LABEL + currentDate.getTime();
+				name = currentDate.toString();
 			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
@@ -413,7 +412,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 				URL newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
 				// pass the date onto teh name
 				Date currentDate = configuration.getCreationDate();							
-				String name = DEFAULT_PRESERVED_CONFIG_LABEL + currentDate.getTime();
+				String name =  currentDate.toString();
 				newConfiguration = new InstallConfiguration(configuration, newFile, name);
 				// set teh same date in the installConfig
 				newConfiguration.setCreationDate(currentDate);

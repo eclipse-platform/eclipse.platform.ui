@@ -50,7 +50,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		URL dataURL = UpdateManagerUtils.add(DATA_PATH,resolvedURL);
 		dataPath = UpdateManagerUtils.decode(dataURL);
 		//URL dataURL = new URL(resolvedURL.getProtocol(), resolvedURL.getHost(), resolvedURL.getPort(),dataPath);
-		String homePath = System.getProperty("user.home");
+		String homePath = (System.getProperty("user.home")).replace(File.separatorChar,'/');
 
 		if (bundle == null) {
 			ClassLoader l = new URLClassLoader(new URL[] { dataURL }, null);

@@ -39,7 +39,7 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 			localSite.install(remoteFeature, null);
 
 			// verify
-			String site = localSite.getURL().getFile();
+			String site = UpdateManagerUtils.decode(localSite.getURL());
 			INonPluginEntry[] entries = remoteFeature.getNonPluginEntries();
 			assertTrue("no data entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getIdentifier().toString();

@@ -77,9 +77,11 @@ public class SiteURLFactory extends BaseSiteFactory {
 	 */
 	private URL removeSiteXML(URL url) throws MalformedURLException{
 		URL result = url;
+		
+		// no need for decode encode
 		if (url!=null && url.getFile().endsWith(Site.SITE_XML)){
 			int index = url.getFile().lastIndexOf(Site.SITE_XML);
-			String newPath = UpdateManagerUtils.encode(url.getFile().substring(0, index));
+			String newPath = url.getFile().substring(0, index);	
 			result = new URL(url.getProtocol(), url.getHost(), url.getPort(), newPath);
 		}
 		return result;

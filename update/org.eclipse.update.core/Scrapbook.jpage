@@ -47,7 +47,6 @@ list.addAll(java.util.Arrays.asList(ss));
 list.add("c");
 list.size();
 
-
 java.util.List list = new java.util.ArrayList(0);
 list.add("1");
 list.add("2");

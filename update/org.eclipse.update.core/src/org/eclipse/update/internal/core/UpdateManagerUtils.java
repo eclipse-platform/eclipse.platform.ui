@@ -6,8 +6,6 @@ package org.eclipse.update.internal.core;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -229,62 +227,67 @@ public class UpdateManagerUtils {
 		}
 	}
 	
-	/**
-	 * Method to return the PATH of the URL.
-	 * The path is the file of a URL before any <code>#</code> or <code>?</code>
-	 * This code removes the fragment or the query of the URL file
-	 * A URL is of the form: <code>protocol://host/path#ref</code> or <code> protocol://host/path?query</code>
-	 * 
-	 * @return the path of the URL
-	 */
-	public static String getPath(URL url){
-		/*String result = null;
-		if (url!=null){
-			String file = url.getFile();
-			int index;
-			if ((index = (file.indexOf("#")))!=-1) file = file.substring(0,index);
-			if ((index = (file.indexOf("?")))!=-1) file = file.substring(0,index);
-			result = file;
-		}
-		return result;*/
 		
-		if (url==null) return null;
-		return url.getPath();
-	}
-	
-	
+	/**
+	 * Decode teh file and ref of a URL
+	 */	
 	public static String decode(URL url){
-		String result = null;
-		if (url!=null) result=URLDecoder.decode(url.getFile());
+		String result =  URLDecoder.decode(url).getFile();
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+			UpdateManagerPlugin.getPlugin().debug("decoded:" + url+" into:"+result);
+		}					
 		return result;
 	}
 
+	/**
+	 * Decode a URL and return a File
+	 */
 	public static File decodeFile(URL url){
 		File result = null;
 		if (url!=null) result=new File(decode(url));
 		return result;
 	}
+
+	/**
+	 * Encode a String
+	 */	
+	public static String encode(String url) {
+		String result =  URLEncoder.encode(url);
 	
-	public static String encode(String path){
-		String result = null;
-		path = path.trim();
-		// change any space with %20
-		int index = -1;
-		while ((index = path.indexOf(" "))!=-1){
-			path = path.substring(0,index)+"%20"+path.substring(index+1);
-		}
-		result = path;
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+			UpdateManagerPlugin.getPlugin().debug("encoded:" + url+" into:"+result);
+		}			
 		return result;
-	}
+	}	
 	
+	/**
+	 * Encode the URL
+	 */
+	public static URL encode(URL url) throws MalformedURLException {
+		URL result =  URLEncoder.encode(url);
+		// DEBUG:		
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+			UpdateManagerPlugin.getPlugin().debug("encoded:" + url.toExternalForm()+" into:"+result.toExternalForm());
+		}		
+		return result;
+	}	
+		
+	/**
+	 * adds a path to the file of the URL
+	 */	
 	public static URL add(String path,URL url) throws MalformedURLException{
 		URL newURL = null;
 		if (path!=null && url != null){
+			String file = URLDecoder.decode(url.getFile());
+			String ref = (url.getRef()!=null)?URLDecoder.decode(url.getRef()):null;
+			
 			String protocol = url.getProtocol();
 			String host = url.getHost();
 			int port = url.getPort();
-			String rootPath = UpdateManagerUtils.decode(url);
-			String newPath = UpdateManagerUtils.encode(rootPath+path);			
+			
+			String newPath = URLEncoder.encode(file+path,ref);			
 			newURL = new URL(protocol,host,port,newPath);		
 		}
 		return newURL;
