@@ -1112,48 +1112,10 @@
             keySequence="DEL"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
-<!-- Go to end of line -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.lineEnd"
-            keySequence="END"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Go the end of the file -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.textEnd"
-            platform="carbon"
-            keySequence="END"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Go to beginning of line -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.lineStart"
-            keySequence="HOME"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Go the beginning of the file -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.textStart"
-            platform="carbon"
-            keySequence="HOME"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
 <!-- Toggle overwrite -->
       <keyBinding
             commandId="org.eclipse.ui.edit.text.toggleOverwrite"
             keySequence="INSERT"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Page down -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.pageDown"
-            keySequence="PAGE_DOWN"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Page up -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.pageUp"
-            keySequence="PAGE_UP"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
 <!-- Rename -->
@@ -1814,40 +1776,11 @@
             keySequence="M1+ARROW_DOWN"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
-<!-- Go to the end of the file -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.textEnd"
-            platform="carbon"
-            keySequence="M1+ARROW_DOWN"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Go to the end of the file -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.textEnd"
-            keySequence="M1+END"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            keySequence="M1+END"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
 <!-- Close -->
       <keyBinding
             commandId="org.eclipse.ui.file.close"
             platform="win32"
             keySequence="M1+F4"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Go to the beginning of the file -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.textStart"
-            keySequence="M1+HOME"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            keySequence="M1+HOME"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
 <!-- Copy -->
@@ -1901,13 +1834,6 @@
 <!-- Go to previous member -->
       <keyBinding
             commandId="org.eclipse.jdt.ui.edit.text.java.goto.previous.member"
-            keySequence="M1+ARROW_UP"
-            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
-      </keyBinding>
-<!-- Go to the beginning of the file -->
-      <keyBinding
-            commandId="org.eclipse.ui.edit.text.goto.textStart"
-            platform="carbon"
             keySequence="M1+ARROW_UP"
             keyConfigurationId="org.eclipse.ui.keys.configuration-3.0">
       </keyBinding>
