@@ -86,14 +86,15 @@ public class MergeWizardPage extends CVSWizardPage {
                 updateEndTag(endTagField.getText());
             }
         });
-        TagContentAssistProcessor.createContentAssistant(endTagField, tagSource, TagSelectionArea.INCLUDE_ALL_TAGS);
+        final int endTagIncludeFlags = TagSelectionArea.INCLUDE_VERSIONS | TagSelectionArea.INCLUDE_BRANCHES | TagSelectionArea.INCLUDE_HEAD_TAG;
+        TagContentAssistProcessor.createContentAssistant(endTagField, tagSource, endTagIncludeFlags);
         endTagBrowseButton = createPushButton(parent, Policy.bind("MergeWizardPage.3")); //$NON-NLS-1$
         endTagBrowseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 TagSelectionDialog dialog = new TagSelectionDialog(getShell(), getTagSource(), 
                         Policy.bind("MergeWizardPage.4"), //$NON-NLS-1$
                         Policy.bind("MergeWizardPage.5"), //$NON-NLS-1$
-                        TagSelectionDialog.INCLUDE_ALL_TAGS,
+                        endTagIncludeFlags,
                         false, IHelpContextIds.MERGE_END_PAGE);
                 if (dialog.open() == Dialog.OK) {
                     CVSTag selectedTag = dialog.getResult();
@@ -111,7 +112,7 @@ public class MergeWizardPage extends CVSWizardPage {
                 updateStartTag(startTagField.getText());
             }
         });
-        TagContentAssistProcessor.createContentAssistant(startTagField, tagSource, TagSelectionArea.INCLUDE_VERSIONS | TagSelectionArea.INCLUDE_DATES);
+        TagContentAssistProcessor.createContentAssistant(startTagField, tagSource, TagSelectionArea.INCLUDE_VERSIONS);
         startTagBrowseButton = createPushButton(parent, Policy.bind("MergeWizardPage.7")); //$NON-NLS-1$
         startTagBrowseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

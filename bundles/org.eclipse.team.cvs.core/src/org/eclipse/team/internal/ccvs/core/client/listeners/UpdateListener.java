@@ -260,6 +260,9 @@ public class UpdateListener extends CommandOutputListener {
 						// This is reported from CVS when a tag is used on the update there are no files in the directory
 						// To get the folders, the update request should be re-issued for HEAD
 						return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
+					} else if (message.startsWith("Numeric join") && message.endsWith("may not contain a date specifier")) { //$NON-NLS-1$ //$NON-NLS-2$
+					    // This error indicates a join failed because a date tag was used
+					    return super.errorLine(line, location, commandRoot, monitor);
 					} else {
 						return super.errorLine(line, location, commandRoot, monitor);
 					}

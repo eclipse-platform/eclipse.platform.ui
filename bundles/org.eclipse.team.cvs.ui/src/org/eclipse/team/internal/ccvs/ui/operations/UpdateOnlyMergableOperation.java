@@ -46,7 +46,7 @@ public class UpdateOnlyMergableOperation extends SingleCommandOperation {
 			resources,
 			null, 
 			monitor);
-		if (status.getCode() != IStatus.ERROR) {
+		if (status.getSeverity() != IStatus.ERROR) {
 			addSkippedFiles(update.getSkippedFiles());
 			return OK;
 		} 
