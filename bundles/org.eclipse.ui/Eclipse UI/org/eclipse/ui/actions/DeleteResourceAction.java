@@ -408,7 +408,7 @@ IResource[] getResourcesToDelete() {
 	ReadOnlyStateChecker checker =
 		new ReadOnlyStateChecker(
 			this.shell,
-			WorkbenchMessages.getString("DeleteResourceAction.checkDelete"), //$NON-NLS-1$
+			WorkbenchMessages.getString("DeleteResourceAction.title1"), //$NON-NLS-1$
 			WorkbenchMessages.getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
 	
 	return checker.checkReadOnlyResources(selectedResources);
