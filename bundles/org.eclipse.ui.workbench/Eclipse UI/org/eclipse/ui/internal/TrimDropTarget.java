@@ -96,12 +96,20 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 		}
 		
 		// Handle dropping a view on the border of the workbench (docks the view to the edge).
-		if (draggedObject instanceof ViewPane) {
-			final ViewPane draggedPane = (ViewPane)draggedObject;
+		if (draggedObject instanceof ViewPane
+				|| draggedObject instanceof PartTabFolder) {
+			final LayoutPart draggedPane = (LayoutPart)draggedObject;
 			
 			// We can't drag between workbench windows
 			if (draggedPane.getWorkbenchWindow() != window) {
 				return null;
+			}
+			
+			if (draggedPane instanceof PartTabFolder) {
+				PartTabFolder folder = (PartTabFolder)draggedPane;
+				if (folder.getWindow() != window) {
+					return null;
+				}
 			}
 			
 			// Determine which border we're dragging over
@@ -121,14 +129,19 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
 					// Drop the part on this border
 					window.getActiveWorkbenchPage().getPerspectivePresentation().derefPart(draggedPane);
 					
-					// Create a new folder and add both items
-					PartTabFolder folder = new PartTabFolder(window.getActiveWorkbenchPage());
+					PartTabFolder folder;
+					if (draggedPane instanceof PartTabFolder) {
+						folder = (PartTabFolder)draggedPane;
+					} else {
+						// Create a new folder and add both items
+						folder = new PartTabFolder(window.getActiveWorkbenchPage());
+						folder.add(draggedPane);
+					}
 					sashContainer.addEnhanced(
 						folder,
 						relativePosition,
 						edgeDockRatio,
 						null);
-					folder.add(draggedPane);
 					draggedPane.setFocus();
 				}
 
