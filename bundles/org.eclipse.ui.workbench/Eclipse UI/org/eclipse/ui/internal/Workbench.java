@@ -1307,7 +1307,8 @@ public final class Workbench implements IWorkbench {
                 .createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
         IStatus status = saveState(memento);
         if (status.getSeverity() != IStatus.OK) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
+            // don't use newWindow as parent because it has not yet been opened (bug 76724)
+            ErrorDialog.openError(null, WorkbenchMessages
                     .getString("Workbench.problemsSaving"), //$NON-NLS-1$
                     WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
                     status);
