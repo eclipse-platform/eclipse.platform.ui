@@ -8,7 +8,6 @@ package org.eclipse.debug.internal.ui.views;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -368,12 +367,12 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	 * @see Object#equals(Object)
 	 */
 	public boolean equals(Object obj) {
-			boolean correctInstance= obj instanceof ConsoleDocument;
-			if (fProcess != null) {
-				return correctInstance && fProcess.equals(((ConsoleDocument)obj).fProcess);
-			} else {
-				return correctInstance && ((ConsoleDocument)obj).fProcess == null;
-			}
+		boolean correctInstance= obj instanceof ConsoleDocument;
+		if (fProcess != null) {
+			return correctInstance && fProcess.equals(((ConsoleDocument)obj).fProcess);
+		} else {
+			return correctInstance && ((ConsoleDocument)obj).fProcess == null;
+		}
     }
     
 	/**
