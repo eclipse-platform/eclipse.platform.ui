@@ -52,7 +52,7 @@ import org.eclipse.debug.core.model.IPersistableSourceLocator;
  * (repeatedly) as the API evolves.
  * </p>
  * @see ILaunchConfigurationType
- * @see ILaunchConfigurationDelegate
+ * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate
  * @see ILaunchConfigurationWorkingCopy
  * @since 2.0
  */

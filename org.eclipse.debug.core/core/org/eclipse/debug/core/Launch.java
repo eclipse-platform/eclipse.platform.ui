@@ -143,7 +143,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	}	
 	
 	/**
-	 * @see ITerminate@canTerminate()
+	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public final boolean canTerminate() {
 		return !isTerminated();
@@ -234,7 +234,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	}	
 
 	/**
-	 * @see ITerminate#isTerminated()
+	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public final boolean isTerminated() {
 
@@ -258,7 +258,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	}
 
 	/**
-	 * @see ITerminate#terminate()
+	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public final void terminate() throws DebugException {
 		MultiStatus status= 

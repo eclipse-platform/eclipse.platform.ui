@@ -107,7 +107,7 @@ public abstract class Breakpoint implements IBreakpoint {
 	}
 	
 	/**
-	 * @see IAdaptable#getAdapter(Class adapter)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
 	public Object getAdapter(Class adapter) {		
 		return Platform.getAdapterManager().getAdapter(this, adapter);

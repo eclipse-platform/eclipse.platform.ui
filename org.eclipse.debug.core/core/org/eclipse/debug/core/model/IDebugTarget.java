@@ -36,7 +36,7 @@ import org.eclipse.debug.core.IBreakpointListener;
  * @see ISuspendResume
  * @see IBreakpointListener
  * @see IDisconnect
- * @see IStorageRetrieval
+ * @see IMemoryBlockRetrieval
  * @see org.eclipse.debug.core.ILaunch
  */
 public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume, IBreakpointListener, IDisconnect, IMemoryBlockRetrieval {

@@ -28,7 +28,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
- * @see ILaunchConfigurationType
+ * @see org.eclipse.debug.core.ILaunchConfigurationType
  * @see ILaunchConfiguration
  */
 public interface ILaunchConfigurationDelegate {
