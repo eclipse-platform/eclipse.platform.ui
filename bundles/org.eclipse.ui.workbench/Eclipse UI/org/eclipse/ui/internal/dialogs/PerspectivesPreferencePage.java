@@ -15,46 +15,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPersistentPreferenceStore;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
-
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -140,15 +113,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 		Group buttonComposite = new Group(composite, SWT.LEFT);
 		buttonComposite.setText(OPM_TITLE);
-		FormLayout layout = new FormLayout();
-		layout.marginWidth = 2;
-		layout.marginHeight = 2;
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonComposite.setFont(composite.getFont()); 
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		buttonComposite.setLayoutData(data);
-		buttonComposite.setFont(font);
 
 		openSameWindowButton = new Button(buttonComposite, SWT.RADIO);
 		openSameWindowButton.setText(OPM_SAME_WINDOW);
@@ -170,26 +139,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 			}
 		});
 		
-		attachControls(openSameWindowButton,openNewWindowButton);
 	}
-	
-	/**
-	 * Set the two supplied controls to be beside each other.
-	 */
-
-	private void attachControls(Control leftControl, Control rightControl) {
-
-		FormData leftData = new FormData();
-		leftData.left = new FormAttachment(0, 0);
-
-		FormData rightData = new FormData();
-		rightData.left = new FormAttachment(leftControl, 5);
-
-		leftControl.setLayoutData(leftData);
-		rightControl.setLayoutData(rightData);
-	}
-
-
 	
 	/**
 	 * Create a composite that contains buttons for selecting open view mode.
@@ -201,15 +151,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 		Group buttonComposite = new Group(composite, SWT.LEFT);
 		buttonComposite.setText(OVM_TITLE);
-		FormLayout layout = new FormLayout();
-		layout.marginWidth = 2;
-		layout.marginHeight = 2;
+		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		buttonComposite.setFont(composite.getFont()); 
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		buttonComposite.setLayoutData(data);
-		buttonComposite.setFont(font);
 
 		openEmbedButton = new Button(buttonComposite, SWT.RADIO);
 		openEmbedButton.setText(OVM_EMBED);
@@ -236,8 +182,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 			}
 		});
 		openFastButton.setFont(font);
-		
-		attachControls(openEmbedButton,openFastButton);
+
 	}
 	
 	/**
