@@ -11,8 +11,6 @@ import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -30,6 +28,9 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
@@ -78,6 +79,12 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	private Map fActionMap = null;
 	
 	/**
+	 * The memento that was used to persist the state of this view.
+	 * May be <code>null</code>.
+	 */
+	private IMemento fMemento;
+	
+	/**
 	 * Action id for a view's remove action. Any view
 	 * with a remove action that should be invoked when
 	 * the delete key is pressed should store their
@@ -85,7 +92,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String REMOVE_ACTION = "Remove_ActionId";
+	public static final String REMOVE_ACTION = "Remove_ActionId"; //$NON-NLS-1$
 	
 	/**
 	 * Action id for a view's double-click action. Any view
@@ -95,7 +102,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
-	public static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	
+	public static final String DOUBLE_CLICK_ACTION = "Double_Click_ActionId";	 //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new debug view.
@@ -266,7 +273,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		final IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		configureToolBar(tbm);
 		getViewSite().getActionBars().updateActionBars();
-		
 		// this is in a runnable to be run after this view's pane
 		// is created
 		Runnable r = new Runnable() {
@@ -279,6 +285,9 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 					for (int i = 0; i < items.length; i++) {
 						if (items[i] instanceof ActionContributionItem) {
 							IAction action = ((ActionContributionItem)items[i]).getAction();
+							if (action.getStyle() == IAction.AS_CHECK_BOX && getMemento() != null) {
+								initActionState(getMemento(), action);	
+							}
 							if (action.isChecked()) {
 								action.run();
 							}
@@ -286,15 +295,16 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 					}
 				}
 			}
+			setMemento(null);
 		};
 		if (getViewer().getControl().isDisposed()) {
 			return;
 		}
-		getViewer().getControl().getDisplay().asyncExec(r);
+		asyncExec(r);
 	}
 	
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		StructuredViewer viewer= getViewer();
@@ -419,6 +429,56 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 				ctrl.getDisplay().syncExec(r);
 			}
 		}
-	}		
+	}	
+	
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		//store the memento to be used when this view is created.
+		setMemento(memento);
+	}
+	
+	protected IMemento getMemento() {
+		return fMemento;
+	}
+
+	protected void setMemento(IMemento memento) {
+		fMemento = memento;
+	}
+	
+	/**
+	 * @see IViewPart#saveState(IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
+		IContributionItem[] items= tbm.getItems();
+		for (int i = 0; i < items.length; i++) {
+			IContributionItem iContributionItem = items[i];
+			if (iContributionItem instanceof ActionContributionItem) {
+				ActionContributionItem item= (ActionContributionItem)iContributionItem;
+				IAction action= item.getAction();
+				if (action.getStyle() == IAction.AS_CHECK_BOX) {
+					saveActionState(memento, action);			
+				}
+			}		
+		}
+	}
+	
+	protected void saveActionState(IMemento memento, IAction action) {
+		String id= action.getId();
+		if (id != null) {
+			int state= action.isChecked() ? 1 : 0;
+			memento.putInteger(id, state);
+		}
+	}
+	
+	protected void initActionState(IMemento memento, IAction action) {
+		String id= action.getId();
+		if (id != null) {
+			Integer state= memento.getInteger(id);
+			if (state != null) {
+				action.setChecked(state.intValue() == 1);
+			}
+		}
+	}	
 }	
 
