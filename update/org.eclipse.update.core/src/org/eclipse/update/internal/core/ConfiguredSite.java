@@ -795,7 +795,7 @@ public class ConfiguredSite
 						"ConfiguredSite.MissingPluginsBrokenFeature",
 						values);
 			//$NON-NLS-1$
-			UpdateManagerPlugin.log(msg,new Exception());
+			UpdateManagerPlugin.warn(msg);
 			return createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg,null);
 		}
 		
