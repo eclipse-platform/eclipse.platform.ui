@@ -116,6 +116,12 @@ public class UpdateCommand extends ScriptedCommand {
 	/**
 	 */
 	public boolean run(IProgressMonitor monitor) {
+		// check if the config file has been modifed while we were running
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			UpdateCore.log(status);
+			return false;
+		}
 		try {
 			monitor.beginTask(Policy.bind("Standalone.updating"), 4);  //$NON-NLS-1$
 			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
@@ -169,7 +175,7 @@ public class UpdateCommand extends ScriptedCommand {
 				return false;
 			}
 		} catch (CoreException ce) {
-			IStatus status = ce.getStatus();
+			status = ce.getStatus();
 			if (status != null
 				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
 				// Just show this but do not throw exception

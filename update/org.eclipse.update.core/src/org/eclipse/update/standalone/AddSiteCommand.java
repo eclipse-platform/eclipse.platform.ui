@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.operations.*;
 
 /**
  * Adds a new site.
@@ -60,18 +61,26 @@ public class AddSiteCommand extends ScriptedCommand {
 	/**
 	 */
 	public boolean run(IProgressMonitor monitor) {
-			if (site == null)
-				return false;
+		// check if the config file has been modifed while we were running
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			UpdateCore.log(status);
+			return false;
+		}
+		
+		if (site == null)
+			return false;
 			
-			try {
-				IConfiguredSite csite = getConfiguration().createConfiguredSite(sitePath);
-				getConfiguration().addConfiguredSite(csite);
-				// update the sites array to pick up new site
-				getConfiguration().getConfiguredSites();
-				SiteManager.getLocalSite().save();
-				return true;
-			} catch (CoreException e) {
-				return false;
-			}
+		try {
+			IConfiguredSite csite = getConfiguration().createConfiguredSite(sitePath);
+			getConfiguration().addConfiguredSite(csite);
+			// update the sites array to pick up new site
+			getConfiguration().getConfiguredSites();
+			SiteManager.getLocalSite().save();
+			return true;
+		} catch (CoreException e) {
+			UpdateCore.log(e);
+			return false;
+		}
 	}
 }

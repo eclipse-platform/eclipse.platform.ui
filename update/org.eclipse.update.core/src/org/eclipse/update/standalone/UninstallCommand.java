@@ -100,6 +100,12 @@ public class UninstallCommand extends ScriptedCommand {
 	/**
 	 */
 	public boolean run(IProgressMonitor monitor) {
+		// check if the config file has been modifed while we were running
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			UpdateCore.log(status);
+			return false;
+		}
 		if (InstallRegistry.getInstance().get("feature_"+ feature.getVersionedIdentifier()) == null) { //$NON-NLS-1$
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(Utilities.newCoreException(Policy.bind("UninstallCommand.featureNotInstalledByUM", feature.toString()),null)); //$NON-NLS-1$ //$NON-NLS-2$

@@ -99,8 +99,14 @@ public class DisableCommand extends ScriptedCommand {
 	/**
 	 */
 	public boolean run(IProgressMonitor monitor) {
+		// check if the config file has been modifed while we were running
+		IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+		if (status != null) {
+			UpdateCore.log(status);
+			return false;
+		}
 		if (isVerifyOnly()) {
-			IStatus status =
+			status =
 				OperationsManager.getValidator().validatePendingUnconfig(
 					feature);
 			if (status != null && status.getCode() == IStatus.WARNING)
