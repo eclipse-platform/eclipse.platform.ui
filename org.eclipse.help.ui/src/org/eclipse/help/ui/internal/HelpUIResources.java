@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
-import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
@@ -36,12 +35,7 @@ public class HelpUIResources {
 	 */
 	public static URL getImagePath(String name) {
 		IPath path = new Path("icons/").append(name);
-		URL imageURL = Platform.find(HelpUIPlugin.getDefault().getBundle(), path);
-		try{
-			return Platform.asLocalURL(imageURL);
-		}catch(IOException ioe){
-		}
-		return null;
+		return Platform.find(HelpUIPlugin.getDefault().getBundle(), path);
 	}
 	/**
 	 * Returns a string from a property file
