@@ -18,46 +18,51 @@ import org.eclipse.core.runtime.*;
  */
 public class IntroDiv extends AbstractIntroContainer {
 
-	protected static final String DIV_ELEMENT = "div";
+    protected static final String DIV_ELEMENT = "div";
 
-	private static final String LABEL_ATTRIBUTE = "label";
+    private static final String LABEL_ATTRIBUTE = "label";
 
-	private String label;
+    private String label;
 
-	/**
-	 * @param element
-	 */
-	IntroDiv(IConfigurationElement element) {
-		super(element);
-		label = element.getAttribute(LABEL_ATTRIBUTE);
-	}
+    /**
+     * @param element
+     */
+    IntroDiv(IConfigurationElement element) {
+        super(element);
+        label = element.getAttribute(LABEL_ATTRIBUTE);
+    }
 
-	/**
-	 * @return Returns the label.
-	 */
-	public String getLabel() {
-		return label;
-	}
+    /**
+     * @return Returns the label.
+     */
+    public String getLabel() {
+        return label;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
-	 */
-	public int getType() {
-		return IntroElement.DIV;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.internal.model.IntroElement#getType()
+     */
+    public int getType() {
+        return IntroElement.DIV;
+    }
 
-	// THESE METHODS MIGHT BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
-	public IntroLink[] getLinks() {
-		return (IntroLink[]) getChildrenOfType(IntroElement.LINK);
-	}
+    // THESE METHODS MIGHT BE REMOVED. ADDED HERE FOR BACKWARD COMPATIBILITY.
+    public IntroLink[] getLinks() {
+        return (IntroLink[]) getChildrenOfType(IntroElement.LINK);
+    }
 
-	public String getText() {
-		IntroText[] texts = (IntroText[]) getChildrenOfType(IntroElement.TEXT);
-		if (texts.length == 0)
-			return null;
-		return texts[0].getText();
-	}
+    /**
+     * Returns the first child with the given id.
+     * @return
+     * @todo Generated comment
+     */
+    public String getText() {
+        IntroText text = (IntroText) findChild("page-description");
+        if (text == null)
+            return null;
+        return text.getText();
+    }
 
 }

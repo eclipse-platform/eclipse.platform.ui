@@ -40,7 +40,7 @@ public abstract class AbstractIntroPartImplementation {
 
     private int navigationLocation = 0;
 
-    // REVISIT: revisit this whole history stuff!!
+    // REVISIT: revisit this whole history stuff.
     // state flag.
     private boolean navigation = false;
 

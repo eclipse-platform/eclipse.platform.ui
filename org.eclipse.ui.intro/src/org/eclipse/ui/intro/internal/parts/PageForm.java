@@ -31,10 +31,15 @@ import org.eclipse.ui.intro.internal.util.*;
 public class PageForm implements IIntroConstants, IPropertyListener {
 
     private FormToolkit toolkit = null;
+
     private ScrolledPageBook mainPageBook = null;
+
     private ScrolledPageBook categoryPageBook = null;
+
     private FormStyleManager styleManager;
+
     private IntroModelRoot model = null;
+
     private Form formContent;
 
     // Id to this page. There is only a single instance of this page in the
@@ -52,11 +57,11 @@ public class PageForm implements IIntroConstants, IPropertyListener {
                 parser.getIntroURL().execute();
                 return;
             } else if (parser.hasProtocol()) {
-				Program.launch(introLink.getUrl());
-				return;
-			}
-			DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "
-					+ introLink.getUrl());
+                Program.launch(introLink.getUrl());
+                return;
+            }
+            DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "
+                    + introLink.getUrl());
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -160,9 +165,9 @@ public class PageForm implements IIntroConstants, IPropertyListener {
     }
 
     /**
-     * Handle model property changes. The UI is notified here of a change to
-     * the current page in the model. This happens if an intro URL showPage
-     * method is executed.
+     * Handle model property changes. The UI is notified here of a change to the
+     * current page in the model. This happens if an intro URL showPage method
+     * is executed.
      * 
      * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object,
      *      int)

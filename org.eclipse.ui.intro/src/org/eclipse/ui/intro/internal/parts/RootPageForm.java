@@ -13,7 +13,7 @@ package org.eclipse.ui.intro.internal.parts;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.program.Program;
+import org.eclipse.swt.program.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
@@ -29,9 +29,10 @@ import org.eclipse.ui.intro.internal.util.*;
 public class RootPageForm implements IIntroConstants {
 
     private FormToolkit toolkit = null;
-    private IntroHomePage rootPage = null;
-    private Label descriptionLabel = null;
 
+    private IntroHomePage rootPage = null;
+
+    private Label descriptionLabel = null;
 
     class PageComposite extends Composite {
 
@@ -51,6 +52,7 @@ public class RootPageForm implements IIntroConstants {
 
         // gap between link composite and description label.
         private int VERTICAL_SPACING = 20;
+
         private int LABEL_MARGIN_WIDTH = 5;
 
         /*
@@ -84,10 +86,8 @@ public class RootPageForm implements IIntroConstants {
             Point linksSize = links.computeSize(SWT.DEFAULT, SWT.DEFAULT);
             Point labelSize = label.computeSize(carea.width - 2
                     - LABEL_MARGIN_WIDTH * 2, SWT.DEFAULT);
-
             links.setBounds(carea.width / 2 - linksSize.x / 2, carea.height / 2
                     - linksSize.y / 2, linksSize.x, linksSize.y);
-
             label.setBounds(LABEL_MARGIN_WIDTH, links.getLocation().y
                     + linksSize.y + VERTICAL_SPACING, carea.width
                     - LABEL_MARGIN_WIDTH - LABEL_MARGIN_WIDTH, labelSize.y);
@@ -125,11 +125,11 @@ public class RootPageForm implements IIntroConstants {
                 parser.getIntroURL().execute();
                 return;
             } else if (parser.hasProtocol()) {
-				Program.launch(introLink.getUrl());
-				return;
-			}
-			DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "
-					+ introLink.getUrl());
+                Program.launch(introLink.getUrl());
+                return;
+            }
+            DialogUtil.displayInfoMessage(imageLink.getShell(), "URL is: "
+                    + introLink.getUrl());
         }
 
         public void linkEntered(HyperlinkEvent e) {
@@ -166,7 +166,6 @@ public class RootPageForm implements IIntroConstants {
      */
     public void createPartControl(ScrolledPageBook mainPageBook,
             FormStyleManager shardStyleManager) {
-
         // first, create the root page style manager from shared style manager.
         FormStyleManager rootPageStyleManager = new FormStyleManager(rootPage,
                 shardStyleManager.getProperties());
@@ -179,33 +178,60 @@ public class RootPageForm implements IIntroConstants {
         mainPageBook.registerPage(rootPage.getId(), pageComposite);
         pageComposite.setLayout(new RootPageLayout());
         Util.highlight(pageComposite, SWT.COLOR_DARK_CYAN);
+
+        // create the links composite in the center of the root page.
+        createRootPageLinks(rootPageStyleManager, pageComposite);
+
+        // create description label for links description. Instance var for
+        // reuse.
+        descriptionLabel = createHoverLabel(rootPageStyleManager, pageComposite);
+
+        // Clear memory. No need for style manager any more.
+        rootPageStyleManager = null;
+    }
+
+    /**
+     * Creates links in the root page assuming that root page only has links. If
+     * not use for non-empty div links.
+     */
+    private void createRootPageLinks(FormStyleManager rootPageStyleManager,
+            Composite pageComposite) {
+
         Composite linkComposite = toolkit.createComposite(pageComposite);
 
-        // populate the link composite. Number of columns there is equal to the
-        // number of links.
+        // DONOW: If the root page does not have only links, take the links of
+        // the first non-filtered div for now.
         int numberOfLinks = rootPage.getLinks().length;
+        if (numberOfLinks > 0) {
+            // assume root page only has links, for now. populate the link
+            // composite. Number of columns there is equal to the number of
+            // links.
+            doCreateRootPageLinks(rootPageStyleManager, linkComposite, rootPage
+                    .getLinks());
+            return;
+        }
+    }
+
+    /**
+     * Creates the given links in the root page with the root page style.
+     */
+    private void doCreateRootPageLinks(FormStyleManager rootPageStyleManager,
+            Composite linkComposite, IntroLink[] links) {
+
+        int numberOfLinks = links.length;
         GridLayout layout = new GridLayout();
         // separate links a bit more.
         layout.horizontalSpacing = 20;
         layout.numColumns = numberOfLinks;
         linkComposite.setLayout(layout);
         Util.highlight(linkComposite, SWT.COLOR_CYAN);
-
         // add image hyperlinks for all links.
         for (int i = 0; i < numberOfLinks; i++)
-            createImageHyperlink(linkComposite, rootPage.getLinks()[i],
-                    rootPageStyleManager);
-
+            createImageHyperlink(linkComposite, links[i], rootPageStyleManager);
         // add labels for all links, after adding all links.
         for (int i = 0; i < numberOfLinks; i++)
-            createLinkLabel(linkComposite, rootPage.getLinks()[i]);
+            createLinkLabel(linkComposite, links[i]);
 
-        // now add label for description. Instance var for reuse.
-        descriptionLabel = createHoverLabel(pageComposite, numberOfLinks,
-                rootPageStyleManager);
-
-        // Clear memory. No need for style manager any more.
-        rootPageStyleManager = null;
     }
 
     /**
@@ -239,8 +265,7 @@ public class RootPageForm implements IIntroConstants {
      * 
      * @param body
      */
-    private Label createHoverLabel(Composite body, int columns,
-            FormStyleManager styleManager) {
+    private Label createHoverLabel(FormStyleManager styleManager, Composite body) {
         Label label = toolkit.createLabel(body, "", SWT.WRAP);
         Color fg = styleManager.getColor(toolkit, "rootPage.hover-text.fg");
         if (fg == null)

@@ -22,28 +22,32 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     protected static final String PAGE_ELEMENT = "page";
 
     private static final String TITLE_ATTRIBUTE = "title";
+
     private static final String STYLE_ATTRIBUTE = "style";
+
     private static final String ALT_STYLE_ATTRIBUTE = "alt-style";
 
     private String title;
+
     private String style;
+
     private String altStyle;
 
     /**
      * The vectors to hold all inhertied styles and alt styles from included
      * elements. They are lazily created when children are resolved (ie:
-     * includes are resolved) OR when extensions are resolved and styles need
-     * to be added to the target page.
+     * includes are resolved) OR when extensions are resolved and styles need to
+     * be added to the target page.
      * <p>
      * Style Rules:
      * <ul>
      * <li>For includes, merge-style controls wether or not the enclosing page
      * inherits the styles of the target.
-     * <li>If a page is including a shared div, merging target styles into
-     * this page is ignored. Shared divs do not have styles.</li>
-     * <li>For extensions, if the style or alt-style is not defined, that
-     * means that no style inheritence is needed, and the style of the target
-     * page are not updated.
+     * <li>If a page is including a shared div, merging target styles into this
+     * page is ignored. Shared divs do not have styles.</li>
+     * <li>For extensions, if the style or alt-style is not defined, that means
+     * that no style inheritence is needed, and the style of the target page are
+     * not updated.
      * <li>If an extension is extending a shared div, merging the styles of
      * this extension into the target is ignored. Shared divs do not have
      * styles.</li>
@@ -52,6 +56,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * </ul>
      */
     private Vector styles;
+
     private Hashtable altStyles;
 
     /**
@@ -112,10 +117,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     /**
      * Gets all the inherited alt-styles of this page (ie: styles for the SWT
      * presentation). A hashtable is returned that has inhertied alt-styles as
-     * keys, and plugin descriptors as values. This is needed to be able to
-     * load resources from the inherited target plugin. Note: this call needs
-     * to get all the children of this page, and so its will resolve this page.
-     * might be expensive.
+     * keys, and plugin descriptors as values. This is needed to be able to load
+     * resources from the inherited target plugin. Note: this call needs to get
+     * all the children of this page, and so its will resolve this page. might
+     * be expensive.
      * 
      * @return Returns all the inherited styles of this page. Returns an empty
      *         hashtable if page is not expandable, does not have any includes,
@@ -129,8 +134,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     }
 
     /**
-     * Adds the given style to the list. Style is not added if it already
-     * exists in the list.
+     * Adds the given style to the list. Style is not added if it already exists
+     * in the list.
      * 
      * @param style
      */
@@ -213,15 +218,42 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         return (IntroLink[]) getChildrenOfType(IntroElement.LINK);
     }
 
+    /**
+     * Returns the divs in this page. HTML presentation divs and Navigation
+     * include divs are filtered out, for now.
+     */
     public IntroDiv[] getDivs() {
-        return (IntroDiv[]) getChildrenOfType(IntroElement.DIV);
+        // get real page divs.
+        IntroDiv[] divs = (IntroDiv[]) getChildrenOfType(IntroElement.DIV);
+
+        // filter bad stuff for now.
+        Vector vectorDivs = new Vector(Arrays.asList(divs));
+        for (int i = 0; i < vectorDivs.size(); i++) {
+            IntroDiv aDiv = (IntroDiv) vectorDivs.elementAt(i);
+            if (aDiv.getId().equals("navigation-links")
+                    || aDiv.getId().equals("background-image")
+                    || aDiv.getId().equals("background")) {
+                vectorDivs.remove(aDiv);
+                i--;
+            }
+        }
+
+        // return proper object type.
+        IntroDiv[] filteredDivs = new IntroDiv[vectorDivs.size()];
+        vectorDivs.copyInto(filteredDivs);
+        return filteredDivs;
     }
 
+    /**
+     * Returns the first child with the given id.
+     * @return
+     * @todo Generated comment
+     */
     public String getText() {
-        IntroText[] texts = (IntroText[]) getChildrenOfType(IntroElement.TEXT);
-        if (texts.length == 0)
+        IntroText text = (IntroText) findChild("page-description");
+        if (text == null)
             return null;
-        return texts[0].getText();
+        return text.getText();
     }
 
 }
