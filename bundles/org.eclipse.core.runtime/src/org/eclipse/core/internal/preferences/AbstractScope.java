@@ -44,4 +44,25 @@ public abstract class AbstractScope implements IScopeContext {
 	 */
 	public abstract IPath getLocation();
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof AbstractScope))
+			return false;
+		AbstractScope other = (AbstractScope) obj;
+		if (!getName().equals(other.getName()))
+			return false;
+		IPath location = getLocation();
+		return location == null ? other.getLocation() == null : location.equals(other.getLocation());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getName().hashCode();
+	}
 }
