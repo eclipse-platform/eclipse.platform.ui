@@ -578,8 +578,7 @@ public class Project extends Container implements IProject {
 
 		//clear instantiated builders and natures because they reference the project handle
 		ProjectInfo info = (ProjectInfo) ((Resource) destination).getResourceInfo(false, true);
-		info.setBuilders(null);
-		info.clearNatures();
+		info.clearNaturesAndBuilders();
 
 		//clear session properties and markers for the new project, because they shouldn't be copied.
 		info.setMarkers(null);
@@ -605,8 +604,8 @@ public class Project extends Container implements IProject {
 	 * during workspace restore (i.e., when you cannot do an operation)
 	 */
 	void internalSetDescription(IProjectDescription value, boolean incrementContentId) {
-		ResourceInfo info = getResourceInfo(false, true);
-		((ProjectInfo) info).setDescription((ProjectDescription) value);
+		ProjectInfo info = (ProjectInfo)getResourceInfo(false, true);
+		info.setDescription((ProjectDescription) value);
 		if (incrementContentId) {
 			info.incrementContentId();
 			//if the project is not accessible, stamp will be null and should remain null

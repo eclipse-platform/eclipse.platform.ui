@@ -287,6 +287,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @exception CoreException if the workspace could not be shutdown.
 	 */
 	public void close(IProgressMonitor monitor) throws CoreException {
+		//nothing to do if the workspace failed to open
+		if (!isOpen())
+			return;
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String msg = Policy.bind("resources.closing.0"); //$NON-NLS-1$
@@ -298,21 +301,19 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				prepareOperation(getRoot(), monitor);
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);
-				if (isOpen()) {
-					beginOperation(true);
-					IProject[] projects = getRoot().getProjects();
-					for (int i = 0; i < projects.length; i++) {
-						//notify managers of closing so they can cleanup
-						broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, projects[i]));
-						monitor.worked(1);
-					}
-					//empty the workspace tree so we leave in a clean state
-					deleteResource(getRoot());
-					openFlag = false;
+				beginOperation(true);
+				IProject[] projects = getRoot().getProjects();
+				for (int i = 0; i < projects.length; i++) {
+					//notify managers of closing so they can cleanup
+					broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, projects[i]));
+					monitor.worked(1);
 				}
+				//empty the workspace tree so we leave in a clean state
+				deleteResource(getRoot());
+				openFlag = false;
 				// endOperation not needed here
 			} finally {
-				// Shutdown needs to be executed anyway. Doesn't matter if the workspace was not open.
+				// Shutdown needs to be executed regardless of failures
 				shutdown(Policy.subMonitorFor(monitor, 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 			}
 		} finally {
@@ -1799,35 +1800,39 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	protected void startup(IProgressMonitor monitor) throws CoreException {
 		// ensure the tree is locked during the startup notification
-		_workManager = new WorkManager(this);
-		_workManager.startup(null);
-		fileSystemManager = new FileSystemResourceManager(this);
-		fileSystemManager.startup(monitor);
-		propertyManager = new PropertyManager(this);
-		propertyManager.startup(monitor);
-		pathVariableManager = new PathVariableManager();
-		pathVariableManager.startup(null);
-		natureManager = new NatureManager();
-		natureManager.startup(null);
-		buildManager = new BuildManager(this, getWorkManager().getLock());
-		buildManager.startup(null);
-		notificationManager = new NotificationManager(this);
-		notificationManager.startup(null);
-		markerManager = new MarkerManager(this);
-		markerManager.startup(null);
-		synchronizer = new Synchronizer(this);
-		saveManager = new SaveManager(this);
-		saveManager.startup(null);
-		//must start after save manager, because (read) access to tree is needed
-		aliasManager = new AliasManager(this);
-		aliasManager.startup(null);
-		refreshManager = new RefreshManager(this);
-		refreshManager.startup(null);
-		charsetManager = new CharsetManager(this);
-		charsetManager.startup(null);
-		contentDescriptionManager = new ContentDescriptionManager();
-		contentDescriptionManager.startup(null);
-		treeLocked = null; // unlock the tree.
+		try {
+			_workManager = new WorkManager(this);
+			_workManager.startup(null);
+			fileSystemManager = new FileSystemResourceManager(this);
+			fileSystemManager.startup(monitor);
+			propertyManager = new PropertyManager(this);
+			propertyManager.startup(monitor);
+			pathVariableManager = new PathVariableManager();
+			pathVariableManager.startup(null);
+			natureManager = new NatureManager();
+			natureManager.startup(null);
+			buildManager = new BuildManager(this, getWorkManager().getLock());
+			buildManager.startup(null);
+			notificationManager = new NotificationManager(this);
+			notificationManager.startup(null);
+			markerManager = new MarkerManager(this);
+			markerManager.startup(null);
+			synchronizer = new Synchronizer(this);
+			saveManager = new SaveManager(this);
+			saveManager.startup(null);
+			//must start after save manager, because (read) access to tree is needed
+			aliasManager = new AliasManager(this);
+			aliasManager.startup(null);
+			refreshManager = new RefreshManager(this);
+			refreshManager.startup(null);
+			charsetManager = new CharsetManager(this);
+			charsetManager.startup(null);
+			contentDescriptionManager = new ContentDescriptionManager();
+			contentDescriptionManager.startup(null);
+		} finally {
+			//unlock tree even in case of failure, otherwise shutdown will also fail
+			treeLocked = null;
+		}
 	}
 
 	/** 

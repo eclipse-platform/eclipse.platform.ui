@@ -11,16 +11,12 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
-import java.util.Hashtable;
+import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.properties.PropertyStore;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProjectNature;
 
 public class ProjectInfo extends ResourceInfo {
-	/** The list of builders for this project */
-	protected Hashtable builders = null;
-
-	/** The property store for this resource */
-	protected PropertyStore propertyStore = null;
 
 	/** The description of this object */
 	protected ProjectDescription description = null;
@@ -28,14 +24,20 @@ public class ProjectInfo extends ResourceInfo {
 	/** The list of natures for this project */
 	protected HashMap natures = null;
 
-	public synchronized void clearNatures() {
-		natures = null;
-	}
+	/** The property store for this resource */
+	protected PropertyStore propertyStore = null;
 
-	public Hashtable getBuilders() {
-		if (builders == null)
-			builders = new Hashtable(5);
-		return builders;
+	/**
+	 * Discards any instantiated nature and builder instances associated with
+	 * this project info.
+	 */
+	public synchronized void clearNaturesAndBuilders() {
+		natures = null;
+		if (description != null) {
+			ICommand[] buildSpec = description.getBuildSpec(false);
+			for (int i = 0; i < buildSpec.length; i++)
+				((BuildCommand)buildSpec[i]).setBuilder(null);
+		}
 	}
 
 	/**
@@ -60,14 +62,19 @@ public class ProjectInfo extends ResourceInfo {
 		return propertyStore;
 	}
 
-	public void setBuilders(Hashtable value) {
-		builders = value;
-	}
-
 	/**
 	 * Sets the description associated with this info.  The value may be null.
 	 */
 	public void setDescription(ProjectDescription value) {
+		if (description != null) {
+			//if we already have a description, assign the new
+			//build spec on top of the old one to ensure we maintain
+			//any existing builder instances in the old build commands
+			ICommand[] oldSpec = description.buildSpec;
+			ICommand[] newSpec = value.buildSpec;
+			value.buildSpec = oldSpec;
+			value.setBuildSpec(newSpec);
+		}
 		description = value;
 	}
 

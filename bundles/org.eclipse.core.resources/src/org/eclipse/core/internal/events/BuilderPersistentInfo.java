@@ -15,40 +15,46 @@ import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.IProject;
 
 public class BuilderPersistentInfo {
-	protected String projectName;
 	protected String builderName;
-	protected ElementTree lastBuildTree;
+	/**
+	 * Index of this builder in the build spec. A value of -1 indicates
+	 * that this index is unknown (it was not serialized in older workspace versions).
+	 */
+	private int buildSpecIndex = -1;
 	protected IProject[] interestingProjects = ICoreConstants.EMPTY_PROJECT_ARRAY;
+	protected ElementTree lastBuildTree;
+	protected String projectName;
 
-	public void setProjectName(String name) {
-		projectName = name;
+	public BuilderPersistentInfo(String projectName, String builderName, int buildSpecIndex) {
+		this.projectName = projectName;
+		this.builderName = builderName;
+		this.buildSpecIndex = buildSpecIndex;
 	}
-
-	public void setBuilderName(String name) {
-		builderName = name;
-	}
-
-	public void setLastBuildTree(ElementTree tree) {
-		lastBuildTree = tree;
-	}
-
-	public void setInterestingProjects(IProject[] projects) {
-		interestingProjects = projects;
-	}
-
-	public String getProjectName() {
-		return projectName;
-	}
-
 	public String getBuilderName() {
 		return builderName;
+	}
+
+	public int getBuildSpecIndex() {
+		return buildSpecIndex;
+	}
+
+	public IProject[] getInterestingProjects() {
+		return interestingProjects;
 	}
 
 	public ElementTree getLastBuiltTree() {
 		return lastBuildTree;
 	}
 
-	public IProject[] getInterestingProjects() {
-		return interestingProjects;
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setInterestingProjects(IProject[] projects) {
+		interestingProjects = projects;
+	}
+
+	public void setLastBuildTree(ElementTree tree) {
+		lastBuildTree = tree;
 	}
 }

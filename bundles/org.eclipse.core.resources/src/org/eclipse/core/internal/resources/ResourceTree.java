@@ -259,8 +259,7 @@ class ResourceTree implements IResourceTree {
 
 				// Clear stale state on the destination project.
 				ProjectInfo info = (ProjectInfo) destination.getResourceInfo(false, true);
-				info.clearNatures();
-				info.setBuilders(null);
+				info.clearNaturesAndBuilders();
 				// note that the property store instance will be recreated lazily
 				info.setPropertyStore(null);
 

@@ -258,8 +258,17 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		Assert.isLegal(value != null);
 		//perform a deep copy in case clients perform further changes to the command
 		ICommand[] result = new ICommand[value.length];
-		for (int i = 0; i < result.length; i++)
+		for (int i = 0; i < result.length; i++) {
 			result[i] = (ICommand)((BuildCommand)value[i]).clone();
+			//copy the reference to any builder instance from the old build spec
+			//to preserve builder states if possible.
+			for (int j = 0; j < buildSpec.length; j++) {
+				if (result[i].equals(buildSpec[j])) {
+					((BuildCommand)result[i]).setBuilder(((BuildCommand)buildSpec[j]).getBuilder());
+					break;
+				}
+			}
+		}
 		buildSpec = result;
 	}
 

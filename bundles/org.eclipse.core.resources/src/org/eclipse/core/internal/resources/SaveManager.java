@@ -83,7 +83,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			if (saveParticipants.put(plugin, participant) != null)
 				return null;
 		}
-		String id = plugin.getDescriptor().getUniqueIdentifier();
+		String id = plugin.getBundle().getSymbolicName();
 		SavedState state = (SavedState) savedStates.get(id);
 		if (state != null) {
 			if (isDeltaCleared(id)) {
@@ -189,7 +189,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected void clearSavedDelta() {
 		synchronized (saveParticipants) {
 			for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = ((Plugin) i.next()).getDescriptor().getUniqueIdentifier();
+				String pluginId = ((Plugin) i.next()).getBundle().getSymbolicName();
 				masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true"); //$NON-NLS-1$
 			}
 		}
@@ -216,9 +216,9 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			if (project.isOpen()) {
-				Map builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
+				ArrayList builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
 				if (builderInfos != null) {
-					for (Iterator it = builderInfos.values().iterator(); it.hasNext();) {
+					for (Iterator it = builderInfos.iterator(); it.hasNext();) {
 						BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
 						trees.add(info.getLastBuiltTree());
 					}
@@ -226,7 +226,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			}
 		}
 
-		//no need to collapse if there's no trees at this point
+		//no need to collapse if there are no trees at this point
 		if (trees.isEmpty())
 			return;
 
@@ -239,14 +239,12 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		ElementTree[] treeArray = new ElementTree[trees.size()];
 		trees.toArray(treeArray);
 		ElementTree[] sorted = sortTrees(treeArray);
-		// if there was a problem sorting the tree, bail on trying to collapse.  We will be able to 
-		// GC the layers at a later time.
+		// if there was a problem sorting the tree, bail on trying to collapse.  
+		// We will be able to GC the layers at a later time.
 		if (sorted == null)
 			return;
-
-		for (int i = 1; i < sorted.length; i++) {
+		for (int i = 1; i < sorted.length; i++)
 			sorted[i].collapseTo(sorted[i - 1]);
-		}
 	}
 
 	protected void commit(Map contexts) throws CoreException {
@@ -293,7 +291,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			SaveContext context = (SaveContext) i.next();
 			if (!context.isDeltaNeeded())
 				continue;
-			String pluginId = context.getPlugin().getDescriptor().getUniqueIdentifier();
+			String pluginId = context.getPlugin().getBundle().getSymbolicName();
 			result.put(pluginId, current);
 		}
 		return result;
@@ -393,7 +391,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected void removeClearDeltaMarks() {
 		synchronized (saveParticipants) {
 			for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = ((Plugin) i.next()).getDescriptor().getUniqueIdentifier();
+				String pluginId = ((Plugin) i.next()).getBundle().getSymbolicName();
 				removeClearDeltaMarks(pluginId);
 			}
 		}
@@ -659,7 +657,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected void restoreMetaInfo(Workspace workspace, MultiStatus problems, IProgressMonitor monitor) {
 		if (Policy.DEBUG_RESTORE_METAINFO)
 			System.out.println("Restore workspace metainfo: starting..."); //$NON-NLS-1$
-		// FIXME: read the meta info for the workspace?
 		long start = System.currentTimeMillis();
 		IProject[] roots = workspace.getRoot().getProjects();
 		for (int i = 0; i < roots.length; i++) {
@@ -775,13 +772,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
 			try {
 				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
-				// FIXME: In the future, this code should be removed.
-				// See comments in WorkspaceTreeReader_0.
-				if (reader instanceof WorkspaceTreeReader_0) {
-					// reset the stream
-					input.close();
-					input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
-				}
 				reader.readTree(project, input, Policy.subMonitorFor(monitor, Policy.totalWork));
 			} finally {
 				input.close();
@@ -814,15 +804,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		try {
 			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
 			try {
-				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
-				// FIXME: In the future, this code should be removed.
-				// See comments in WorkspaceTreeReader_0.
-				if (reader instanceof WorkspaceTreeReader_0) {
-					// reset the stream
-					input.close();
-					input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
-				}
-				reader.readTree(input, monitor);
+				WorkspaceTreeReader.getReader(workspace, input.readInt()).readTree(input, monitor);
 			} finally {
 				input.close();
 			}
@@ -953,7 +935,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 * Encapsulates rules for determining when a snapshot is needed.
 	 * This should be called at the end of every top level operation.
 	 */
-	public void snapshotIfNeeded(boolean hasTreeChanges) throws CoreException {
+	public void snapshotIfNeeded(boolean hasTreeChanges) {
 		if (!workspace.internalGetDescription().isSnapshotEnabled() && !snapshotRequested)
 			return;
 		if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
@@ -1119,9 +1101,9 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				for (int i = 0; i < projects.length; i++) {
 					IProject project = projects[i];
 					if (project.isOpen()) {
-						Map infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
+						ArrayList infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
 						if (infos != null)
-							builders.addAll(infos.values());
+							builders.addAll(infos);
 					}
 				}
 				writeBuilderPersistentInfo(output, builders, trees, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
@@ -1177,13 +1159,14 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			boolean wasImmutable = false;
 			try {
 				/**
-				 * Obtain a table of String(builder name) -> BuilderPersistentInfo.
-				 * This includes builders that have never been instantiated
+				 * Obtain a list of BuilderPersistentInfo.
+				 * This list includes builders that have never been instantiated
 				 * but already had a last built state.
 				 */
-				Map builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
-				List builders = builderInfos == null ? new ArrayList(5) : new ArrayList(builderInfos.values());
-				List trees = new ArrayList(builders.size() + 1);
+				ArrayList builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
+				if (builderInfos == null)
+					builderInfos = new ArrayList(5);
+				List trees = new ArrayList(builderInfos.size() + 1);
 				monitor.worked(1);
 
 				/* Make sure the most recent tree is in the array */
@@ -1192,7 +1175,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				current.immutable();
 
 				/* add the tree for each builder to the array */
-				writeBuilderPersistentInfo(output, builders, trees, Policy.subMonitorFor(monitor, 1));
+				writeBuilderPersistentInfo(output, builderInfos, trees, Policy.subMonitorFor(monitor, 1));
 				trees.add(current);
 
 				/* save the forest! */
@@ -1211,7 +1194,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		}
 	}
 
-	protected void writeWorkspaceFields(DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
+	protected void writeWorkspaceFields(DataOutputStream output, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			// save the next node id 
@@ -1651,12 +1634,24 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			visitAndSnap(projects[i]);
 	}
 
+	/**
+	 * Writes out persistent information about all builders for which a last built
+	 * tree is available. File format is:
+	 * int - number of builders
+	 * for each builder:
+	 *    UTF - project name
+	 *    UTF - fully qualified builder extension name
+	 *    int - number of interesting projects for builder
+	 *    For each interesting project:
+	 *       UTF - interesting project name
+	 */
 	protected void writeBuilderPersistentInfo(DataOutputStream output, List builders, List trees, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			// write the number of builders we are saving
-			output.writeInt(builders.size());
-			for (int i = 0; i < builders.size(); i++) {
+			int numBuilders = builders.size();
+			output.writeInt(numBuilders);
+			for (int i = 0; i < numBuilders; i++) {
 				BuilderPersistentInfo info = (BuilderPersistentInfo) builders.get(i);
 				output.writeUTF(info.getProjectName());
 				output.writeUTF(info.getBuilderName());
@@ -1666,13 +1661,9 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				for (int j = 0; j < interestingProjects.length; j++)
 					output.writeUTF(interestingProjects[j].getName());
 				ElementTree last = info.getLastBuiltTree();
-				if (last == null) {
-					//try to be resilient if a builder has no last built tree
-					//this shouldn't happen but save must be robust
-					ResourcesPlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, "Internal Error: builder had null tree:" + info.getBuilderName(), //$NON-NLS-1$ (this is an internal error)
-							new RuntimeException()));
+				//it is not unusual for a builder to have no last built tree (for example after a clean)
+				if (last == null)
 					last = workspace.getElementTree();
-				}
 				trees.add(last);
 			}
 		} finally {

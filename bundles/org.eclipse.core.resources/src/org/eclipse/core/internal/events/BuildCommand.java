@@ -14,9 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.internal.resources.ModelObject;
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 
 public class BuildCommand extends ModelObject implements ICommand {
 	protected HashMap arguments;
+	/**
+	 * The builder instance for this comment. Null if the builder has
+	 * not yet been instantiated.
+	 */
+	protected IncrementalProjectBuilder builder;
 
 	public BuildCommand() {
 		super(""); //$NON-NLS-1$
@@ -29,6 +35,8 @@ public class BuildCommand extends ModelObject implements ICommand {
 		if (result == null)
 			return null;
 		result.setArguments(getArguments());
+		//don't let references to builder instances leak out because they reference trees
+		result.setBuilder(null);
 		return result;
 	}
 
@@ -53,6 +61,10 @@ public class BuildCommand extends ModelObject implements ICommand {
 		return arguments == null ? null : (makeCopy ? (Map) arguments.clone() : arguments);
 	}
 
+	public IncrementalProjectBuilder getBuilder() {
+		return builder;
+	}
+
 	/**
 	 * @see ICommand#getBuilderName()
 	 */
@@ -71,6 +83,10 @@ public class BuildCommand extends ModelObject implements ICommand {
 	public void setArguments(Map value) {
 		// copy parameter for safety's sake
 		arguments = value == null ? null : new HashMap(value);
+	}
+
+	public void setBuilder(IncrementalProjectBuilder builder) {
+		this.builder = builder;
 	}
 
 	/**

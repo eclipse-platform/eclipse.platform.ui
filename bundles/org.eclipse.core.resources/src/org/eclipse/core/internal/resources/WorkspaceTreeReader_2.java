@@ -21,7 +21,15 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class WorkspaceTreeReader_2 extends WorkspaceTreeReader {
+/**
+ * Reads version 2 of the workspace tree file format. 
+ * 
+ * This version differs from version 1 in the amount of information that is persisted
+ * for each builder. Version 1 only stored builder names and trees. Version
+ * 2 stores builder names, project names, trees, and interesting projects for
+ * each builder.
+ */
+public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 
 	public WorkspaceTreeReader_2(Workspace workspace) {
 		super(workspace);
@@ -31,14 +39,15 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader {
 		return ICoreConstants.WORKSPACE_TREE_VERSION_2;
 	}
 
-	protected void readBuildersPersistentInfo(DataInputStream input, List builders, IProgressMonitor monitor) throws IOException {
+	/*
+	 * overwritten from WorkspaceTreeReader_1
+	 */
+	protected void readBuildersPersistentInfo(IProject project, DataInputStream input, List builders, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			int builderCount = input.readInt();
 			for (int i = 0; i < builderCount; i++) {
-				BuilderPersistentInfo info = new BuilderPersistentInfo();
-				info.setProjectName(input.readUTF());
-				info.setBuilderName(input.readUTF());
+				BuilderPersistentInfo info = readBuilderInfo(project, input, i);
 				// read interesting projects
 				int n = input.readInt();
 				IProject[] projects = new IProject[n];
@@ -52,6 +61,9 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader {
 		}
 	}
 
+	/*
+	 * overwritten from WorkspaceTreeReader_1
+	 */
 	public void readTree(IProject project, DataInputStream input, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		String message;
@@ -59,15 +71,9 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader {
 			message = Policy.bind("resources.reading"); //$NON-NLS-1$
 			monitor.beginTask(message, 10);
 
-			/* read in the list of builder names */
+			/* read in the builder infos */
 			List infos = new ArrayList(5);
-			readBuildersPersistentInfo(input, infos, Policy.subMonitorFor(monitor, 1));
-			for (Iterator it = infos.iterator(); it.hasNext();) {
-				// Slam project name in. It might happen that the project was moved
-				// and we have the wrong name in the file.
-				BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
-				info.setProjectName(project.getName());
-			}
+			readBuildersPersistentInfo(project, input, infos, Policy.subMonitorFor(monitor, 1));
 
 			/* read and link the trees */
 			ElementTree[] trees = readTrees(project.getFullPath(), input, Policy.subMonitorFor(monitor, 8));

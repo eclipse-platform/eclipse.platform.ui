@@ -18,7 +18,7 @@ public interface ICoreConstants {
 
 	// Standard resource properties
 	/** map of builders to their last built state. */
-	public static final QualifiedName K_BUILD_MAP = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "BuildMap"); //$NON-NLS-1$
+	public static final QualifiedName K_BUILD_LIST = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "BuildMap"); //$NON-NLS-1$
 
 	// resource info constants
 	static final long I_UNKNOWN_SYNC_INFO = -2;
