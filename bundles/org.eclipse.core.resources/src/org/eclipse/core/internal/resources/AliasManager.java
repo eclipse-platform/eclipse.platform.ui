@@ -254,12 +254,12 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * location, and the resource contains the projects and/or linked resources
 	 * that are rooted at that location.
 	 */
-	private final LocationMap locationsMap = new LocationMap();
+	protected final LocationMap locationsMap = new LocationMap();
 	
 	/**
 	 * The set of IProjects that have aliases.
 	 */
-	private final Set aliasedProjects = new HashSet();
+	protected final Set aliasedProjects = new HashSet();
 	
 	/**
 	 * The set of resources that have had structure changes that might
@@ -279,7 +279,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * A temporary set of aliases.  Used during computeAliases, but maintained
 	 * as a field as an optimization to prevent recreating the set.
 	 */
-	private final HashSet aliases = new HashSet();
+	protected final HashSet aliases = new HashSet();
 	
 	/**
 	 * The Doit class used for finding aliases.
@@ -299,7 +299,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	public IPath suffix;
 	
 	/** the workspace */
-	private final Workspace workspace;
+	protected final Workspace workspace;
 
 	public AliasManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -447,7 +447,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * strings, with the extra condition that the path separator is ordered
 	 * before all other characters. (Ex: "/foo" < "/foo/zzz" < "/fooaaa").
 	 */
-	private Comparator getComparator() {
+	protected Comparator getComparator() {
 		return new Comparator() {
 			public int compare(Object o1, Object o2) {
 				IPath path1 = (IPath) o1;
