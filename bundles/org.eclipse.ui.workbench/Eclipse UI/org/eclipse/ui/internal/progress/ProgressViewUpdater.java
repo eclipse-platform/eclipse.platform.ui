@@ -210,11 +210,14 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-					//Abort the job if there isn't anything
-	if (collectors.length == 0)
+				//Abort the job if there isn't anything
+				if (collectors.length == 0)
 					return Status.CANCEL_STATUS;
 
 				if (currentInfo.updateAll) {
+					synchronized (updateLock) {
+						currentInfo.reset();
+					}
 					for (int i = 0; i < collectors.length; i++) {
 						collectors[i].refresh();
 					}
@@ -231,6 +234,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 						additionItems = currentInfo.additions.toArray();
 						deletionItems = currentInfo.deletions.toArray();
 
+						currentInfo.reset();
 					}
 
 					for (int v = 0; v < collectors.length; v++) {
@@ -245,14 +249,8 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 					}
 				}
 
-				synchronized (updateLock) {
-					currentInfo.reset();
-				}
-
 				return Status.OK_STATUS;
-
 			}
-
 		};
 		updateJob.setSystem(true);
 		updateJob.setPriority(Job.DECORATE);
