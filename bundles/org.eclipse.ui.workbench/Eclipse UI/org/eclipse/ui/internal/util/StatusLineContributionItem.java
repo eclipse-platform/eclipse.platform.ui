@@ -52,7 +52,6 @@ public class StatusLineContributionItem extends ContributionItem {
 		colors[1] = label.getBackground();
 		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
 		label.setBackground(colors, gradient);
-		label.setBackground(colors, gradient);
 		
 		if (widthHint < 0) {
 			GC gc = new GC(parent);
