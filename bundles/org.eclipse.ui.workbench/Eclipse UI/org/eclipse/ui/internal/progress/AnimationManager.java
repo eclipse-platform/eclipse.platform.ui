@@ -20,7 +20,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * The AnimationManager is the class that keeps track of the animation items to
@@ -32,6 +31,9 @@ public class AnimationManager {
 	boolean animated = false;
 	private IJobProgressManagerListener listener;
 	IAnimationProcessor animationProcessor;
+	
+	WorkbenchJob animationStartJob;
+	WorkbenchJob animationDoneJob;
 
 	public static AnimationManager getInstance() {
 		if (singleton == null)
@@ -56,6 +58,37 @@ public class AnimationManager {
 
 		listener = getProgressListener();
 		ProgressManager.getInstance().addListener(listener);
+		
+		animationStartJob = new WorkbenchJob(ProgressMessages
+				.getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if(monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				animationProcessor.animationStarted();
+				return Status.OK_STATUS;
+			}
+		};
+		animationStartJob.setSystem(true);
+		
+		animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.DoneJobName")) { //$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if(monitor.isCanceled())
+					return Status.CANCEL_STATUS;
+				animationProcessor.animationFinished();
+				return Status.OK_STATUS;
+			}
+		};
+		animationDoneJob.setSystem(true);
 
 	}
 	/**
@@ -208,19 +241,8 @@ public class AnimationManager {
 	 * behaviour.
 	 */
 	private void animationStarted() {
-		WorkbenchJob animationStartJob = new WorkbenchJob(ProgressMessages
-				.getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				animationProcessor.animationStarted();
-				return Status.OK_STATUS;
-			}
-		};
-		animationStartJob.setSystem(true);
+		
+		animationDoneJob.cancel();
 		animationStartJob.schedule();
 	}
 	/**
@@ -228,18 +250,8 @@ public class AnimationManager {
 	 * behaviour.
 	 */
 	private void animationFinished() {
-		UIJob animationDoneJob = new WorkbenchJob(ProgressMessages.getString("AnimationManager.DoneJobName")) { //$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				animationProcessor.animationFinished();
-				return Status.OK_STATUS;
-			}
-		};
-		animationDoneJob.setSystem(true);
+		
+		animationStartJob.cancel();
 		animationDoneJob.schedule();
 	}
 	/**
