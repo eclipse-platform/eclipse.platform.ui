@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class RegistryManager implements IRegistryChangeListener {
 	private String elementId;
@@ -92,14 +94,19 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 	}
 	
 	public void registryChanged(IRegistryChangeEvent event) {
+		if (!PlatformUI.isWorkbenchRunning())
+			return;
 		int numDeltas = 0;
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		if (display == null || display.isDisposed())
+			return;
 		try {
 			// Just retrieve any changes relating to the extension point
 			// org.eclipse.ui.perspectives
 			IExtensionDelta delta[] = event.getExtensionDeltas(elementId, extPtId);
 			numDeltas = delta.length;
 			for (int i = 0; i < numDeltas; i++) {
-				add (delta[i]);
+				doAdd (display, delta[i]);
 			}
 		} finally {
 			if (numDeltas > 0) {
@@ -112,6 +119,17 @@ public abstract class RegistryManager implements IRegistryChangeListener {
 		}
 	}
 	
+	private void doAdd(Display display, final IExtensionDelta delta) {
+		Runnable run = new Runnable() {
+			public void run() {
+				if (!PlatformUI.isWorkbenchRunning())
+					return;
+				add (delta);
+			}						
+		};
+		display.syncExec(run);
+	}
+
 	public void add(IExtensionDelta delta) {
 		IExtensionPoint extPt = delta.getExtensionPoint();
 		IExtension ext = delta.getExtension();

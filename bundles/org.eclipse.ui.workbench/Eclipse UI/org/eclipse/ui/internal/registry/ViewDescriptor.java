@@ -60,8 +60,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 		configElement = e;
 		description = desc;
 		loadFromExtension();
-		//TODO:temporarily commented out, need to resolve test failure
-		//registerShowViewHandler();
+		registerShowViewHandler();
 	}
     
 	private void registerShowViewHandler() {
