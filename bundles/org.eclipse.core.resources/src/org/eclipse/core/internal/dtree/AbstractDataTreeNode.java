@@ -12,6 +12,7 @@ package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.StringPool;
 
 /**
  * This class and its subclasses are used to represent nodes of AbstractDataTrees.
@@ -417,12 +418,12 @@ public abstract class AbstractDataTreeNode {
 	 * Returns the index of the specified child's name in the receiver.
 	 */
 	protected int indexOfChild(String localName) {
-		AbstractDataTreeNode[] children = this.children;
+		AbstractDataTreeNode[] nodes = this.children;
 		int left = 0;
-		int right = children.length - 1;
+		int right = nodes.length - 1;
 		while (left <= right) {
 			int mid = (left + right) / 2;
-			int compare = localName.compareTo(children[mid].name);
+			int compare = localName.compareTo(nodes[mid].name);
 			if (compare < 0) {
 				right = mid - 1;
 			} else if (compare > 0) {
@@ -465,49 +466,6 @@ public abstract class AbstractDataTreeNode {
 		for (int i = children.length; --i >= 0;)
 			names[i] = children[i].getName();
 		return names;
-	}
-
-	/**
-	 * Returns an object describing the receiver, which is a node at the
-	 * given key in the given tree.
-	 */
-	NodeInfo nodeInfoAt(AbstractDataTree tree) {
-
-		int numChildren = 0, numDeleted = 0;
-		String children[], deleted[];
-		AbstractDataTreeNode childNode;
-		Object data = null;
-
-		/* do for each of the children of the receiver */
-		for (int i = this.size(); --i >= 0;) {
-			if (this.children[i].isDeleted()) {
-				numDeleted++;
-			} else {
-				numChildren++;
-			}
-		}
-
-		/* allocate arrays */
-		children = new String[numChildren];
-		deleted = new String[numDeleted];
-
-		numChildren = numDeleted = 0;
-		/* do for each child of the receiver */
-		for (int i = 0; i < this.size(); i++) {
-			childNode = this.children[i];
-			if (childNode.isDeleted()) {
-				deleted[numDeleted++] = childNode.getName();
-			} else {
-				children[numChildren++] = childNode.getName();
-			}
-		}
-
-		if (this.hasData()) {
-			data = this.getData();
-		}
-
-		/* create and return the info object */
-		return new NodeInfo(this.type(), data, children, deleted);
 	}
 
 	/**
@@ -611,6 +569,18 @@ public abstract class AbstractDataTreeNode {
 		if (list.length > 1) {
 			quickSort(list, 0, list.length - 1);
 		}
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void storeStrings(StringPool set) {
+		name = set.add(name);
+		//copy children pointer in case of concurrent modification
+		AbstractDataTreeNode[] nodes = children;
+		if (nodes != null)
+			for (int i = nodes.length; --i >= 0;)
+				nodes[i].storeStrings(set);
 	}
 
 	/**

@@ -1609,6 +1609,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				return e.getStatus();
 			}
 		}
+		//finally register a string pool participant
+		Platform.addStringPoolParticipant(saveManager, getRoot());
 		return Status.OK_STATUS;
 	}
 

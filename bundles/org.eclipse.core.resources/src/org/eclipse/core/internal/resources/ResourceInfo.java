@@ -16,17 +16,11 @@ import org.eclipse.core.internal.properties.PropertyStore;
 import org.eclipse.core.internal.utils.ObjectMap;
 import org.eclipse.core.internal.watson.IElementTreeData;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 
-public class ResourceInfo implements IElementTreeData, ICoreConstants {
+public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPoolParticipant {
 	protected static final int LOWER = 0xFFFF;
 	protected static final int UPPER = 0xFFFF0000;
-
-	/** Set of flags which reflect various states of the info (used, derived, ...). */
-	protected int flags = 0;
-
-	/** Unique content identifier */
-	protected int contentId = 0;
 
 	/** 
 	 * This field stores the resource modification stamp in the lower two bytes,
@@ -34,19 +28,37 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	protected volatile int charsetAndModStamp = 0;
 
+	/** Unique content identifier */
+	protected int contentId = 0;
+
+	/** Set of flags which reflect various states of the info (used, derived, ...). */
+	protected int flags = 0;
+
+	/** Local sync info */
+	// thread safety: (Concurrency004)
+	protected volatile long localInfo = I_NULL_SYNC_INFO;
+
 	/**
 	 * This field stores the sync info generation in the lower two bytes, and
 	 * the marker generation count in the upper two bytes.
 	 */
 	protected volatile int markerAndSyncStamp;
 
+	/** The collection of markers for this resource. */
+	protected MarkerSet markers = null;
+
 	/** Unique node identifier */
 	// thread safety: (Concurrency004)
 	protected volatile long nodeId = 0;
 
-	/** Local sync info */
-	// thread safety: (Concurrency004)
-	protected volatile long localInfo = I_NULL_SYNC_INFO;
+	/** 
+	 * The properties which are maintained for the lifecycle of the workspace.
+	 * <p>
+	 * This field is declared as the implementing class rather than the
+	 * interface so we ensure that we get it right since we are making certain
+	 * assumptions about the object type w.r.t. casting.
+	 */
+	protected ObjectMap sessionProperties = null;
 
 	/** 
 	 * The table of sync infos. 
@@ -58,16 +70,26 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	protected ObjectMap syncInfo = null;
 
 	/** 
-	 * The properties which are maintained for the lifecycle of the workspace.
-	 * <p>
-	 * This field is declared as the implementing class rather than the
-	 * interface so we ensure that we get it right since we are making certain
-	 * assumptions about the object type w.r.t. casting.
+	 * Returns the integer value stored in the indicated part of this info's flags.
 	 */
-	protected ObjectMap sessionProperties = null;
+	protected static int getBits(int flags, int mask, int start) {
+		return (flags & mask) >> start;
+	}
 
-	/** The collection of markers for this resource. */
-	protected MarkerSet markers = null;
+	/** 
+	 * Returns the type setting for this info.  Valid values are 
+	 * FILE, FOLDER, PROJECT, 
+	 */
+	public static int getType(int flags) {
+		return getBits(flags, M_TYPE, M_TYPE_START);
+	}
+
+	/** 
+	 * Returns true if all of the bits indicated by the mask are set.
+	 */
+	public static boolean isSet(int flags, int mask) {
+		return (flags & mask) != 0;
+	}
 
 	/** 
 	 * Clears all of the bits indicated by the mask.
@@ -90,13 +112,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 		} catch (CloneNotSupportedException e) {
 			return null; // never gets here.
 		}
-	}
-
-	/** 
-	 * Returns the integer value stored in the indicated part of this info's flags.
-	 */
-	protected static int getBits(int flags, int mask, int start) {
-		return (flags & mask) >> start;
 	}
 
 	public int getCharsetGenerationCount() {
@@ -174,15 +189,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 		return temp.get(name);
 	}
 
-	public synchronized byte[] getSyncInfo(QualifiedName id, boolean makeCopy) {
-		// thread safety: (Concurrency001)
-		byte[] b;
-		if (syncInfo == null)
-			return null;
-		b = (byte[]) syncInfo.get(id);
-		return b == null ? null : (makeCopy ? (byte[]) b.clone() : b);
-	}
-
 	/**
 	 * The parameter to this method is the implementing class rather than the
 	 * interface so we ensure that we get it right since we are making certain
@@ -192,6 +198,15 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 		if (syncInfo == null)
 			return null;
 		return makeCopy ? (ObjectMap) syncInfo.clone() : syncInfo;
+	}
+
+	public synchronized byte[] getSyncInfo(QualifiedName id, boolean makeCopy) {
+		// thread safety: (Concurrency001)
+		byte[] b;
+		if (syncInfo == null)
+			return null;
+		b = (byte[]) syncInfo.get(id);
+		return b == null ? null : (makeCopy ? (byte[]) b.clone() : b);
 	}
 
 	/** 
@@ -208,14 +223,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	public int getType() {
 		return getType(flags);
-	}
-
-	/** 
-	 * Returns the type setting for this info.  Valid values are 
-	 * FILE, FOLDER, PROJECT, 
-	 */
-	public static int getType(int flags) {
-		return getBits(flags, M_TYPE, M_TYPE_START);
 	}
 
 	/** 
@@ -267,13 +274,6 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	public boolean isSet(int mask) {
 		return isSet(flags, mask);
-	}
-
-	/** 
-	 * Returns true if all of the bits indicated by the mask are set.
-	 */
-	public static boolean isSet(int flags, int mask) {
-		return (flags & mask) != 0;
 	}
 
 	public void readFrom(int newFlags, DataInput input) throws IOException {
@@ -400,6 +400,21 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants {
 	 */
 	public void setType(int value) {
 		setBits(M_TYPE, M_TYPE_START, value);
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool set) {
+		ObjectMap map = syncInfo;
+		if (map != null)
+			map.shareStrings(set);
+		map = sessionProperties;
+		if (map != null)
+			map.shareStrings(set);
+		MarkerSet markerSet = markers;
+		if (markerSet != null)
+			markerSet.shareStrings(set);
 	}
 
 	public void writeTo(DataOutput output) throws IOException {

@@ -11,6 +11,8 @@
 package org.eclipse.core.internal.utils;
 
 import java.util.*;
+import org.eclipse.core.runtime.IStringPoolParticipant;
+import org.eclipse.core.runtime.StringPool;
 
 /**
  * A specialized map implementation that is optimized for a 
@@ -18,13 +20,13 @@ import java.util.*;
  * 
  * Implemented as a single array that alternates keys and values.
  */
-public class ObjectMap implements Map {
-	protected Object[] elements = null;
-	protected int count = 0;
+public class ObjectMap implements Map, IStringPoolParticipant {
 
 	// 8 attribute keys, 8 attribute values
 	protected static final int DEFAULT_SIZE = 16;
 	protected static final int GROW_SIZE = 10;
+	protected int count = 0;
+	protected Object[] elements = null;
 
 	/**
 	 * Creates a new object map of default size
@@ -57,6 +59,13 @@ public class ObjectMap implements Map {
 	public void clear() {
 		elements = null;
 		count = 0;
+	}
+
+	/**
+	 * @see java.lang.Object#clone()
+	 */
+	public Object clone() {
+		return new ObjectMap(this);
 	}
 
 	/**
@@ -253,6 +262,23 @@ public class ObjectMap implements Map {
 		return count;
 	}
 
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool set) {
+		//copy elements for thread safety
+		Object[] array = elements;
+		if (array == null)
+			return;
+		for (int i = 0; i < array.length; i++) {
+			Object o = array[i];
+			if (o instanceof String)
+				array[i] = set.add((String) o);
+			if (o instanceof IStringPoolParticipant)
+				((IStringPoolParticipant) o).shareStrings(set);
+		}
+	}
+
 	/**
 	 * Creates a new hash map with the same contents as this map.
 	 */
@@ -280,12 +306,5 @@ public class ObjectMap implements Map {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * @see java.lang.Object#clone()
-	 */
-	public Object clone() {
-		return new ObjectMap(this);
 	}
 }

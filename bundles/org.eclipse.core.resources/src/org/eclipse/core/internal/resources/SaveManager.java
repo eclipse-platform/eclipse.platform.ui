@@ -22,19 +22,15 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
-public class SaveManager implements IElementInfoFlattener, IManager {
-	protected Workspace workspace;
-	protected Properties masterTable;
-	protected ElementTree lastSnap;
-	/**
-	 * The number of non-trivial operations since the last snapshot.
-	 */
-	protected int operationCount = 0;
+public class SaveManager implements IElementInfoFlattener, IManager, IStringPoolParticipant {
+	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_"; //$NON-NLS-1$
+	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_"; //$NON-NLS-1$
+	protected static final int DONE_SAVING = 3;
 
 	/**
-	 * The number of empty (non-changing) operations since the last snapshot.
+	 * The minimum delay, in milliseconds, between workspace snapshots
 	 */
-	protected int noopCount = 0;
+	private static final long MIN_SNAPSHOT_DELAY = 1000 * 30L; //30 seconds
 
 	/**
 	 * The number of empty operations that are equivalent to a single non-
@@ -42,33 +38,37 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 */
 	protected static final int NO_OP_THRESHOLD = 20;
 
-	/**
-	 * The minimum delay, in milliseconds, between workspace snapshots
-	 */
-	private static final long MIN_SNAPSHOT_DELAY = 1000 * 30L; //30 seconds
-
-	protected boolean snapshotRequested;
-
-	protected final DelayedSnapshotJob snapshotJob;
-
-	/** plugins that participate on a workspace save */
-	protected HashMap saveParticipants;
-
-	/** in-memory representation of plugins saved state */
-	protected HashMap savedStates;
-
 	/** constants */
 	protected static final int PREPARE_TO_SAVE = 1;
-	protected static final int SAVING = 2;
-	protected static final int DONE_SAVING = 3;
 	protected static final int ROLLBACK = 4;
 	protected static final String SAVE_NUMBER_PREFIX = "saveNumber_"; //$NON-NLS-1$
-	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_"; //$NON-NLS-1$
-	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_"; //$NON-NLS-1$
+	protected static final int SAVING = 2;
+	protected ElementTree lastSnap;
+	protected Properties masterTable;
+
+	/**
+	 * The number of empty (non-changing) operations since the last snapshot.
+	 */
+	protected int noopCount = 0;
+	/**
+	 * The number of non-trivial operations since the last snapshot.
+	 */
+	protected int operationCount = 0;
 
 	// Count up the time taken for all saves/snaps on markers and sync info
 	protected long persistMarkers = 0l;
 	protected long persistSyncInfo = 0l;
+
+	/** in-memory representation of plugins saved state */
+	protected HashMap savedStates;
+
+	/** plugins that participate on a workspace save */
+	protected HashMap saveParticipants;
+
+	protected final DelayedSnapshotJob snapshotJob;
+
+	protected boolean snapshotRequested;
+	protected Workspace workspace;
 
 	public SaveManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -125,9 +125,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 				final SaveContext context = (SaveContext) entry.getValue();
 				/* Be extra careful when calling lifecycle method on arbitary plugin */
 				ISafeRunnable code = new ISafeRunnable() {
-					public void run() throws Exception {
-						executeLifecycle(lifecycle, participant, context);
-					}
 
 					public void handleException(Throwable e) {
 						String message = Policy.bind("resources.saveProblem"); //$NON-NLS-1$
@@ -136,6 +133,9 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 
 						/* Remove entry for defective plug-in from this save operation */
 						it.remove();
+					}
+					public void run() throws Exception {
+						executeLifecycle(lifecycle, participant, context);
 					}
 				};
 				Platform.run(code);
@@ -385,6 +385,20 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	}
 
 	/**
+	 * @see IElementInfoFlattener#readElement(IPath, DataInput)
+	 */
+	public Object readElement(IPath path, DataInput input) throws IOException {
+		Assert.isNotNull(path);
+		Assert.isNotNull(input);
+		// read the flags and pull out the type.  
+		int flags = input.readInt();
+		int type = (flags & ICoreConstants.M_TYPE) >> ICoreConstants.M_TYPE_START;
+		ResourceInfo info = workspace.newElement(type);
+		info.readFrom(flags, input);
+		return info;
+	}
+
+	/**
 	 * Remove marks from current save participants. This marks prevent them to receive their
 	 * deltas when they register themselves as save participants.
 	 */
@@ -481,30 +495,38 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	}
 
 	/**
-	 * Restores the contents of this project.  Throw
-	 * an exception if the project could not be restored.
+	 * Reset the snapshot mechanism for the non-workspace files. This
+	 * includes the markers and sync info. 
 	 */
-	protected void restore(Project project, IProgressMonitor monitor) throws CoreException {
-		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
-		long start = System.currentTimeMillis();
-		monitor = Policy.monitorFor(monitor);
-		try {
-			monitor.beginTask(null, 40);
-			if (project.isOpen()) {
-				restoreTree(project, Policy.subMonitorFor(monitor, 10));
-			} else {
-				monitor.worked(10);
-			}
-			restoreMarkers(project, true, Policy.subMonitorFor(monitor, 10));
-			restoreSyncInfo(project, Policy.subMonitorFor(monitor, 10));
-			// restore meta info last because it might close a project if its description is not found
-			restoreMetaInfo(project, Policy.subMonitorFor(monitor, 10));
-		} finally {
-			monitor.done();
+	protected void resetSnapshots(IResource resource) throws CoreException {
+		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+		String message;
+
+		// delete the snapshot file, if any
+		java.io.File file = workspace.getMetaArea().getMarkersSnapshotLocationFor(resource).toFile();
+		if (file.exists())
+			file.delete();
+		if (file.exists()) {
+			message = Policy.bind("resources.resetMarkers"); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
 		}
-		if (Policy.DEBUG_RESTORE)
-			System.out.println("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+		// delete the snapshot file, if any
+		file = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(resource).toFile();
+		if (file.exists())
+			file.delete();
+		if (file.exists()) {
+			message = Policy.bind("resources.resetSync"); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
+		}
+
+		// if we have the workspace root then recursive over the projects.
+		// only do open projects since closed ones are saved elsewhere
+		if (resource.getType() == IResource.PROJECT)
+			return;
+		IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
+		for (int i = 0; i < projects.length; i++)
+			resetSnapshots(projects[i]);
 	}
 
 	/**
@@ -557,6 +579,33 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		}
 		if (Policy.DEBUG_RESTORE)
 			System.out.println("Restore workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Restores the contents of this project.  Throw
+	 * an exception if the project could not be restored.
+	 */
+	protected void restore(Project project, IProgressMonitor monitor) throws CoreException {
+		if (Policy.DEBUG_RESTORE)
+			System.out.println("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
+		long start = System.currentTimeMillis();
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(null, 40);
+			if (project.isOpen()) {
+				restoreTree(project, Policy.subMonitorFor(monitor, 10));
+			} else {
+				monitor.worked(10);
+			}
+			restoreMarkers(project, true, Policy.subMonitorFor(monitor, 10));
+			restoreSyncInfo(project, Policy.subMonitorFor(monitor, 10));
+			// restore meta info last because it might close a project if its description is not found
+			restoreMetaInfo(project, Policy.subMonitorFor(monitor, 10));
+		} finally {
+			monitor.done();
+		}
+		if (Policy.DEBUG_RESTORE)
+			System.out.println("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -614,6 +663,27 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	}
 
 	/**
+	 * Restores the state of this workspace by opening the projects
+	 * which were open when it was last saved.
+	 */
+	protected void restoreMetaInfo(MultiStatus problems, IProgressMonitor monitor) {
+		if (Policy.DEBUG_RESTORE_METAINFO)
+			System.out.println("Restore workspace metainfo: starting..."); //$NON-NLS-1$
+		long start = System.currentTimeMillis();
+		IProject[] roots = workspace.getRoot().getProjects();
+		for (int i = 0; i < roots.length; i++) {
+			//fatal to throw exceptions during startup
+			try {
+				restoreMetaInfo((Project) roots[i], monitor);
+			} catch (CoreException e) {
+				problems.merge(e.getStatus());
+			}
+		}
+		if (Policy.DEBUG_RESTORE_METAINFO)
+			System.out.println("Restore workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
 	 * Restores the contents of this project.  Throw an exception if the 
 	 * project description could not be restored.
 	 */
@@ -648,27 +718,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		}
 		if (Policy.DEBUG_RESTORE_METAINFO)
 			System.out.println("Restore metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	/**
-	 * Restores the state of this workspace by opening the projects
-	 * which were open when it was last saved.
-	 */
-	protected void restoreMetaInfo(MultiStatus problems, IProgressMonitor monitor) {
-		if (Policy.DEBUG_RESTORE_METAINFO)
-			System.out.println("Restore workspace metainfo: starting..."); //$NON-NLS-1$
-		long start = System.currentTimeMillis();
-		IProject[] roots = workspace.getRoot().getProjects();
-		for (int i = 0; i < roots.length; i++) {
-			//fatal to throw exceptions during startup
-			try {
-				restoreMetaInfo((Project) roots[i], monitor);
-			} catch (CoreException e) {
-				problems.merge(e.getStatus());
-			}
-		}
-		if (Policy.DEBUG_RESTORE_METAINFO)
-			System.out.println("Restore workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -752,6 +801,36 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	}
 
 	/**
+	 * Reads the contents of the tree rooted by the given resource from the 
+	 * file system. This method is used when restoring a complete workspace 
+	 * after workspace save/shutdown.
+	 * @exception CoreException if the workspace could not be restored.
+	 */
+	protected void restoreTree(IProgressMonitor monitor) throws CoreException {
+		long start = System.currentTimeMillis();
+		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
+		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
+		if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists()) {
+			savedStates = new HashMap(10);
+			return;
+		}
+		try {
+			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
+			try {
+				WorkspaceTreeReader.getReader(workspace, input.readInt()).readTree(input, monitor);
+			} finally {
+				input.close();
+			}
+		} catch (IOException e) {
+			String msg = Policy.bind("resources.readMeta", treeLocation.toOSString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);
+		}
+		if (Policy.DEBUG_RESTORE_TREE) {
+			System.out.println("Restore Tree for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
 	 * Restores the trees for the builders of this project from the local disk.
 	 * Does nothing if the tree file does not exist (this means the
 	 * project has never been saved).  This method is
@@ -787,33 +866,119 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		}
 	}
 
-	/**
-	 * Reads the contents of the tree rooted by the given resource from the 
-	 * file system. This method is used when restoring a complete workspace 
-	 * after workspace save/shutdown.
-	 * @exception CoreException if the workspace could not be restored.
-	 */
-	protected void restoreTree(IProgressMonitor monitor) throws CoreException {
-		long start = System.currentTimeMillis();
-		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
-		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
-		if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists()) {
-			savedStates = new HashMap(10);
-			return;
-		}
-		try {
-			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
-			try {
-				WorkspaceTreeReader.getReader(workspace, input.readInt()).readTree(input, monitor);
-			} finally {
-				input.close();
+	public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
+		String endMessage = null;
+		if (Policy.DEBUG_SAVE) {
+			switch (kind) {
+				case ISaveContext.FULL_SAVE :
+					System.out.println("Full save on workspace: starting..."); //$NON-NLS-1$
+					endMessage = "Full save on workspace: "; //$NON-NLS-1$
+					break;
+				case ISaveContext.SNAPSHOT :
+					System.out.println("Snapshot: starting..."); //$NON-NLS-1$
+					endMessage = "Snapshot: "; //$NON-NLS-1$
+					break;
+				case ISaveContext.PROJECT_SAVE :
+					System.out.println("Save on project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
+					endMessage = "Save on project " + project.getFullPath() + ": "; //$NON-NLS-1$ //$NON-NLS-2$
+					break;
 			}
-		} catch (IOException e) {
-			String msg = Policy.bind("resources.readMeta", treeLocation.toOSString()); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);
 		}
-		if (Policy.DEBUG_RESTORE_TREE) {
-			System.out.println("Restore Tree for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		long start = System.currentTimeMillis();
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = Policy.bind("resources.saving.0"); //$NON-NLS-1$
+			monitor.beginTask(message, 7);
+			message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
+			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
+			ISchedulingRule rule = project != null ? (IResource) project : workspace.getRoot();
+			try {
+				workspace.prepareOperation(rule, monitor);
+				workspace.beginOperation(false);
+				Map contexts = computeSaveContexts(getSaveParticipantPlugins(), kind, project);
+				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));
+				try {
+					broadcastLifecycle(SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
+					switch (kind) {
+						case ISaveContext.FULL_SAVE :
+							// save the complete tree and remember all of the required saved states
+							saveTree(contexts, Policy.subMonitorFor(monitor, 1));
+							// reset the snapshot state.
+							initSnap(null);
+							//save master table right after saving tree to ensure correct tree number is saved
+							cleanMasterTable();
+							// save all of the markers and all sync info in the workspace
+							persistMarkers = 0l;
+							persistSyncInfo = 0l;
+							visitAndSave(workspace.getRoot());
+							monitor.worked(1);
+							if (Policy.DEBUG_SAVE) {
+								Policy.debug("Total Save Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+								Policy.debug("Total Save Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
+							}
+							// reset the snap shot files
+							resetSnapshots(workspace.getRoot());
+							//remove unused files
+							removeUnusedSafeTables();
+							removeUnusedTreeFiles();
+							workspace.getFileSystemManager().getHistoryStore().clean(Policy.subMonitorFor(monitor, 1));
+							// write out all metainfo (e.g., workspace/project descriptions) 
+							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
+							break;
+						case ISaveContext.SNAPSHOT :
+							snapTree(workspace.getElementTree(), Policy.subMonitorFor(monitor, 1));
+							// snapshot the markers and sync info for the workspace
+							persistMarkers = 0l;
+							persistSyncInfo = 0l;
+							visitAndSnap(workspace.getRoot());
+							monitor.worked(1);
+							if (Policy.DEBUG_SAVE) {
+								Policy.debug("Total Snap Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+								Policy.debug("Total Snap Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
+							}
+							collapseTrees();
+							clearSavedDelta();
+							// write out all metainfo (e.g., workspace/project descriptions) 
+							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
+							break;
+						case ISaveContext.PROJECT_SAVE :
+							writeTree(project, IResource.DEPTH_INFINITE);
+							monitor.worked(1);
+							// save markers and sync info 
+							visitAndSave(project);
+							monitor.worked(1);
+							// reset the snapshot file
+							resetSnapshots(project);
+							IStatus result = saveMetaInfo(project, null);
+							if (!result.isOK())
+								warnings.merge(result);
+							monitor.worked(1);
+							break;
+					}
+					// save contexts
+					commit(contexts);
+					if (kind == ISaveContext.FULL_SAVE)
+						removeClearDeltaMarks();
+					//this must be done after commiting save contexts to update participant save numbers
+					saveMasterTable();
+					broadcastLifecycle(DONE_SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
+					if (Policy.DEBUG_SAVE && endMessage != null)
+						System.out.println(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
+					return warnings;
+				} catch (CoreException e) {
+					broadcastLifecycle(ROLLBACK, contexts, warnings, Policy.subMonitorFor(monitor, 1));
+					// rollback ResourcesPlugin master table
+					restoreMasterTable();
+					throw e; // re-throw
+				}
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, false, Policy.monitorFor(null));
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 
@@ -841,26 +1006,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	}
 
 	/**
-	 * Ensures that the project meta-info is saved.  The project meta-info
-	 * is usually saved as soon as it changes, so this is just a sanity check
-	 * to make sure there is something on disk before we shutdown.
-	 * 
-	 * @return Status object containing non-critical warnings, or an OK status.
-	 */
-	protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
-		long start = System.currentTimeMillis();
-		//if there is nothing on disk, write the description
-		if (!workspace.getFileSystemManager().hasSavedProject(project)) {
-			workspace.getFileSystemManager().writeSilently(project);
-			String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName()); //$NON-NLS-1$
-			return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
-		}
-		if (Policy.DEBUG_SAVE_METAINFO)
-			System.out.println("Save metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		return Status.OK_STATUS;
-	}
-
-	/**
 	 * Writes the metainfo (e.g. descriptions) of the given workspace and
 	 * all projects to the local disk.
 	 */
@@ -880,6 +1025,26 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 			}
 		if (Policy.DEBUG_SAVE_METAINFO)
 			System.out.println("Save workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * Ensures that the project meta-info is saved.  The project meta-info
+	 * is usually saved as soon as it changes, so this is just a sanity check
+	 * to make sure there is something on disk before we shutdown.
+	 * 
+	 * @return Status object containing non-critical warnings, or an OK status.
+	 */
+	protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
+		long start = System.currentTimeMillis();
+		//if there is nothing on disk, write the description
+		if (!workspace.getFileSystemManager().hasSavedProject(project)) {
+			workspace.getFileSystemManager().writeSilently(project);
+			String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName()); //$NON-NLS-1$
+			return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
+		}
+		if (Policy.DEBUG_SAVE_METAINFO)
+			System.out.println("Save metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -915,15 +1080,21 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		masterTable.setProperty(DELTA_EXPIRATION_PREFIX + pluginId, new Long(timestamp).toString());
 	}
 
-	protected void setSaveNumber(String pluginId, int number) {
-		masterTable.setProperty(SAVE_NUMBER_PREFIX + pluginId, new Integer(number).toString());
-	}
-
 	/**
 	 * Should only be used for read purposes.
 	 */
 	void setPluginsSavedState(HashMap savedStates) {
 		this.savedStates = savedStates;
+	}
+
+	protected void setSaveNumber(String pluginId, int number) {
+		masterTable.setProperty(SAVE_NUMBER_PREFIX + pluginId, new Integer(number).toString());
+	}
+	/* (non-Javadoc)
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool pool) {
+		lastSnap.shareStrings(pool);
 	}
 
 	public void shutdown(final IProgressMonitor monitor) {
@@ -1071,326 +1242,6 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		java.io.File table = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES).toFile();
 		if (!table.exists())
 			table.getParentFile().mkdirs();
-	}
-
-	protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			monitor.beginTask(null, Policy.totalWork);
-			boolean wasImmutable = false;
-			try {
-				// Create an array of trees to save. Ensure that the current one is in the list
-				ElementTree current = workspace.getElementTree();
-				wasImmutable = current.isImmutable();
-				current.immutable();
-				ArrayList trees = new ArrayList(statesToSave.size() * 2); // pick a number
-				monitor.worked(Policy.totalWork * 10 / 100);
-
-				// write out the workspace fields
-				writeWorkspaceFields(output, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
-
-				// save plugin info
-				long lastTreeTimestamp = System.currentTimeMillis();
-				output.writeInt(statesToSave.size()); // write the number of plugins we are saving
-				for (Iterator i = statesToSave.entrySet().iterator(); i.hasNext();) {
-					Map.Entry entry = (Map.Entry) i.next();
-					String pluginId = (String) entry.getKey();
-					output.writeUTF(pluginId);
-					trees.add(entry.getValue()); // tree
-					setDeltaExpiration(pluginId, lastTreeTimestamp);
-				}
-				monitor.worked(Policy.totalWork * 10 / 100);
-
-				// add builders' trees
-				IProject[] projects = workspace.getRoot().getProjects();
-				List builders = new ArrayList(projects.length * 2);
-				for (int i = 0; i < projects.length; i++) {
-					IProject project = projects[i];
-					if (project.isOpen()) {
-						ArrayList infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
-						if (infos != null)
-							builders.addAll(infos);
-					}
-				}
-				writeBuilderPersistentInfo(output, builders, trees, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
-
-				// add the current tree in the list as the last element
-				trees.add(current);
-
-				/* save the forest! */
-				ElementTreeWriter writer = new ElementTreeWriter(this);
-				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
-				writer.writeDeltaChain(treesToSave, Path.ROOT, ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
-				monitor.worked(Policy.totalWork * 50 / 100);
-			} finally {
-				if (!wasImmutable)
-					workspace.newWorkingTree();
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	protected void writeTree(Project project, int depth) throws CoreException {
-		long start = System.currentTimeMillis();
-		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, true);
-		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
-		try {
-			SafeFileOutputStream safe = new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString());
-			try {
-				DataOutputStream output = new DataOutputStream(safe);
-				output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
-				writeTree(project, output, null);
-			} finally {
-				safe.close();
-			}
-		} catch (IOException e) {
-			String msg = Policy.bind("resources.writeMeta", project.getFullPath().toString()); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, treeLocation, msg, e);
-		}
-		if (Policy.DEBUG_SAVE_TREE)
-			System.out.println("Save tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	}
-
-	/**
-	 * Attempts to save all the trees for this project (the current tree
-	 * plus a tree for each builder with a previously built state).  Throws
-	 * an IOException if anything went wrong during save.  Attempts to close
-	 * the provided stream at all costs.
-	 */
-	protected void writeTree(Project project, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			monitor.beginTask(null, 10);
-			boolean wasImmutable = false;
-			try {
-				/**
-				 * Obtain a list of BuilderPersistentInfo.
-				 * This list includes builders that have never been instantiated
-				 * but already had a last built state.
-				 */
-				ArrayList builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
-				if (builderInfos == null)
-					builderInfos = new ArrayList(5);
-				List trees = new ArrayList(builderInfos.size() + 1);
-				monitor.worked(1);
-
-				/* Make sure the most recent tree is in the array */
-				ElementTree current = workspace.getElementTree();
-				wasImmutable = current.isImmutable();
-				current.immutable();
-
-				/* add the tree for each builder to the array */
-				writeBuilderPersistentInfo(output, builderInfos, trees, Policy.subMonitorFor(monitor, 1));
-				trees.add(current);
-
-				/* save the forest! */
-				ElementTreeWriter writer = new ElementTreeWriter(this);
-				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
-				writer.writeDeltaChain(treesToSave, project.getFullPath(), ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
-				monitor.worked(8);
-			} finally {
-				if (output != null)
-					output.close();
-				if (!wasImmutable)
-					workspace.newWorkingTree();
-			}
-		} finally {
-			monitor.done();
-		}
-	}
-
-	protected void writeWorkspaceFields(DataOutputStream output, IProgressMonitor monitor) throws IOException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			// save the next node id 
-			output.writeLong(workspace.nextNodeId);
-			// save the modification stamp (no longer used)
-			output.writeLong(0L);
-			// save the marker id counter
-			output.writeLong(workspace.nextMarkerId);
-			// save the registered sync partners in the synchronizer
-			((Synchronizer) workspace.getSynchronizer()).savePartners(output);
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/**
-	 * @see IElementInfoFlattener#readElement(IPath, DataInput)
-	 */
-	public Object readElement(IPath path, DataInput input) throws IOException {
-		Assert.isNotNull(path);
-		Assert.isNotNull(input);
-		// read the flags and pull out the type.  
-		int flags = input.readInt();
-		int type = (flags & ICoreConstants.M_TYPE) >> ICoreConstants.M_TYPE_START;
-		ResourceInfo info = workspace.newElement(type);
-		info.readFrom(flags, input);
-		return info;
-	}
-
-	/**
-	 * @see IElementInfoFlattener#writeElement(IPath, Object, DataOutput)
-	 */
-	public void writeElement(IPath path, Object element, DataOutput output) throws IOException {
-		Assert.isNotNull(path);
-		Assert.isNotNull(element);
-		Assert.isNotNull(output);
-		ResourceInfo info = (ResourceInfo) element;
-		output.writeInt(info.getFlags());
-		info.writeTo(output);
-	}
-
-	/**
-	 * Reset the snapshot mechanism for the non-workspace files. This
-	 * includes the markers and sync info. 
-	 */
-	protected void resetSnapshots(IResource resource) throws CoreException {
-		Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
-		String message;
-
-		// delete the snapshot file, if any
-		java.io.File file = workspace.getMetaArea().getMarkersSnapshotLocationFor(resource).toFile();
-		if (file.exists())
-			file.delete();
-		if (file.exists()) {
-			message = Policy.bind("resources.resetMarkers"); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
-		}
-
-		// delete the snapshot file, if any
-		file = workspace.getMetaArea().getSyncInfoSnapshotLocationFor(resource).toFile();
-		if (file.exists())
-			file.delete();
-		if (file.exists()) {
-			message = Policy.bind("resources.resetSync"); //$NON-NLS-1$
-			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
-		}
-
-		// if we have the workspace root then recursive over the projects.
-		// only do open projects since closed ones are saved elsewhere
-		if (resource.getType() == IResource.PROJECT)
-			return;
-		IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
-		for (int i = 0; i < projects.length; i++)
-			resetSnapshots(projects[i]);
-	}
-
-	public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
-		String endMessage = null;
-		if (Policy.DEBUG_SAVE) {
-			switch (kind) {
-				case ISaveContext.FULL_SAVE :
-					System.out.println("Full save on workspace: starting..."); //$NON-NLS-1$
-					endMessage = "Full save on workspace: "; //$NON-NLS-1$
-					break;
-				case ISaveContext.SNAPSHOT :
-					System.out.println("Snapshot: starting..."); //$NON-NLS-1$
-					endMessage = "Snapshot: "; //$NON-NLS-1$
-					break;
-				case ISaveContext.PROJECT_SAVE :
-					System.out.println("Save on project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
-					endMessage = "Save on project " + project.getFullPath() + ": "; //$NON-NLS-1$ //$NON-NLS-2$
-					break;
-			}
-		}
-		long start = System.currentTimeMillis();
-		monitor = Policy.monitorFor(monitor);
-		try {
-			String message = Policy.bind("resources.saving.0"); //$NON-NLS-1$
-			monitor.beginTask(message, 7);
-			message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
-			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
-			ISchedulingRule rule = project != null ? (IResource) project : workspace.getRoot();
-			try {
-				workspace.prepareOperation(rule, monitor);
-				workspace.beginOperation(false);
-				Map contexts = computeSaveContexts(getSaveParticipantPlugins(), kind, project);
-				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));
-				try {
-					broadcastLifecycle(SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
-					switch (kind) {
-						case ISaveContext.FULL_SAVE :
-							// save the complete tree and remember all of the required saved states
-							saveTree(contexts, Policy.subMonitorFor(monitor, 1));
-							// reset the snapshot state.
-							initSnap(null);
-							//save master table right after saving tree to ensure correct tree number is saved
-							cleanMasterTable();
-							// save all of the markers and all sync info in the workspace
-							persistMarkers = 0l;
-							persistSyncInfo = 0l;
-							visitAndSave(workspace.getRoot());
-							monitor.worked(1);
-							if (Policy.DEBUG_SAVE) {
-								Policy.debug("Total Save Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-								Policy.debug("Total Save Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
-							}
-							// reset the snap shot files
-							resetSnapshots(workspace.getRoot());
-							//remove unused files
-							removeUnusedSafeTables();
-							removeUnusedTreeFiles();
-							workspace.getFileSystemManager().getHistoryStore().clean(Policy.subMonitorFor(monitor, 1));
-							// write out all metainfo (e.g., workspace/project descriptions) 
-							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
-							break;
-						case ISaveContext.SNAPSHOT :
-							snapTree(workspace.getElementTree(), Policy.subMonitorFor(monitor, 1));
-							// snapshot the markers and sync info for the workspace
-							persistMarkers = 0l;
-							persistSyncInfo = 0l;
-							visitAndSnap(workspace.getRoot());
-							monitor.worked(1);
-							if (Policy.DEBUG_SAVE) {
-								Policy.debug("Total Snap Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-								Policy.debug("Total Snap Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
-							}
-							collapseTrees();
-							clearSavedDelta();
-							// write out all metainfo (e.g., workspace/project descriptions) 
-							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
-							break;
-						case ISaveContext.PROJECT_SAVE :
-							writeTree(project, IResource.DEPTH_INFINITE);
-							monitor.worked(1);
-							// save markers and sync info 
-							visitAndSave(project);
-							monitor.worked(1);
-							// reset the snapshot file
-							resetSnapshots(project);
-							IStatus result = saveMetaInfo(project, null);
-							if (!result.isOK())
-								warnings.merge(result);
-							monitor.worked(1);
-							break;
-					}
-					// save contexts
-					commit(contexts);
-					if (kind == ISaveContext.FULL_SAVE)
-						removeClearDeltaMarks();
-					//this must be done after commiting save contexts to update participant save numbers
-					saveMasterTable();
-					broadcastLifecycle(DONE_SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
-					if (Policy.DEBUG_SAVE && endMessage != null)
-						System.out.println(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
-					return warnings;
-				} catch (CoreException e) {
-					broadcastLifecycle(ROLLBACK, contexts, warnings, Policy.subMonitorFor(monitor, 1));
-					// rollback ResourcesPlugin master table
-					restoreMasterTable();
-					throw e; // re-throw
-				}
-			} catch (OperationCanceledException e) {
-				workspace.getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				workspace.endOperation(rule, false, Policy.monitorFor(null));
-			}
-		} finally {
-			monitor.done();
-		}
 	}
 
 	/**
@@ -1672,6 +1523,161 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 					last = workspace.getElementTree();
 				trees.add(last);
 			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * @see IElementInfoFlattener#writeElement(IPath, Object, DataOutput)
+	 */
+	public void writeElement(IPath path, Object element, DataOutput output) throws IOException {
+		Assert.isNotNull(path);
+		Assert.isNotNull(element);
+		Assert.isNotNull(output);
+		ResourceInfo info = (ResourceInfo) element;
+		output.writeInt(info.getFlags());
+		info.writeTo(output);
+	}
+
+	protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(null, Policy.totalWork);
+			boolean wasImmutable = false;
+			try {
+				// Create an array of trees to save. Ensure that the current one is in the list
+				ElementTree current = workspace.getElementTree();
+				wasImmutable = current.isImmutable();
+				current.immutable();
+				ArrayList trees = new ArrayList(statesToSave.size() * 2); // pick a number
+				monitor.worked(Policy.totalWork * 10 / 100);
+
+				// write out the workspace fields
+				writeWorkspaceFields(output, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+
+				// save plugin info
+				long lastTreeTimestamp = System.currentTimeMillis();
+				output.writeInt(statesToSave.size()); // write the number of plugins we are saving
+				for (Iterator i = statesToSave.entrySet().iterator(); i.hasNext();) {
+					Map.Entry entry = (Map.Entry) i.next();
+					String pluginId = (String) entry.getKey();
+					output.writeUTF(pluginId);
+					trees.add(entry.getValue()); // tree
+					setDeltaExpiration(pluginId, lastTreeTimestamp);
+				}
+				monitor.worked(Policy.totalWork * 10 / 100);
+
+				// add builders' trees
+				IProject[] projects = workspace.getRoot().getProjects();
+				List builders = new ArrayList(projects.length * 2);
+				for (int i = 0; i < projects.length; i++) {
+					IProject project = projects[i];
+					if (project.isOpen()) {
+						ArrayList infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
+						if (infos != null)
+							builders.addAll(infos);
+					}
+				}
+				writeBuilderPersistentInfo(output, builders, trees, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
+
+				// add the current tree in the list as the last element
+				trees.add(current);
+
+				/* save the forest! */
+				ElementTreeWriter writer = new ElementTreeWriter(this);
+				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
+				writer.writeDeltaChain(treesToSave, Path.ROOT, ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
+				monitor.worked(Policy.totalWork * 50 / 100);
+			} finally {
+				if (!wasImmutable)
+					workspace.newWorkingTree();
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/**
+	 * Attempts to save all the trees for this project (the current tree
+	 * plus a tree for each builder with a previously built state).  Throws
+	 * an IOException if anything went wrong during save.  Attempts to close
+	 * the provided stream at all costs.
+	 */
+	protected void writeTree(Project project, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(null, 10);
+			boolean wasImmutable = false;
+			try {
+				/**
+				 * Obtain a list of BuilderPersistentInfo.
+				 * This list includes builders that have never been instantiated
+				 * but already had a last built state.
+				 */
+				ArrayList builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
+				if (builderInfos == null)
+					builderInfos = new ArrayList(5);
+				List trees = new ArrayList(builderInfos.size() + 1);
+				monitor.worked(1);
+
+				/* Make sure the most recent tree is in the array */
+				ElementTree current = workspace.getElementTree();
+				wasImmutable = current.isImmutable();
+				current.immutable();
+
+				/* add the tree for each builder to the array */
+				writeBuilderPersistentInfo(output, builderInfos, trees, Policy.subMonitorFor(monitor, 1));
+				trees.add(current);
+
+				/* save the forest! */
+				ElementTreeWriter writer = new ElementTreeWriter(this);
+				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
+				writer.writeDeltaChain(treesToSave, project.getFullPath(), ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
+				monitor.worked(8);
+			} finally {
+				if (output != null)
+					output.close();
+				if (!wasImmutable)
+					workspace.newWorkingTree();
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	protected void writeTree(Project project, int depth) throws CoreException {
+		long start = System.currentTimeMillis();
+		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, true);
+		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
+		try {
+			SafeFileOutputStream safe = new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString());
+			try {
+				DataOutputStream output = new DataOutputStream(safe);
+				output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
+				writeTree(project, output, null);
+			} finally {
+				safe.close();
+			}
+		} catch (IOException e) {
+			String msg = Policy.bind("resources.writeMeta", project.getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, treeLocation, msg, e);
+		}
+		if (Policy.DEBUG_SAVE_TREE)
+			System.out.println("Save tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+
+	protected void writeWorkspaceFields(DataOutputStream output, IProgressMonitor monitor) throws IOException {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			// save the next node id 
+			output.writeLong(workspace.nextNodeId);
+			// save the modification stamp (no longer used)
+			output.writeLong(0L);
+			// save the marker id counter
+			output.writeLong(workspace.nextMarkerId);
+			// save the registered sync partners in the synchronizer
+			((Synchronizer) workspace.getSynchronizer()).savePartners(output);
 		} finally {
 			monitor.done();
 		}

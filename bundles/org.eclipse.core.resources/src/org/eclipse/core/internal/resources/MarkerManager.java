@@ -219,7 +219,7 @@ public class MarkerManager implements IManager {
 	 * Passing <code>null</code> for the type specifies a match
 	 * for all types (i.e., <code>null</code> is a wildcard.
 	 */
-	public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) throws CoreException {
+	public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) {
 		ArrayList result = new ArrayList();
 		//optimize the deep searches with an element tree visitor
 		if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
@@ -291,7 +291,7 @@ public class MarkerManager implements IManager {
 
 		// we removed from the source and added to the destination
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				Resource r = (Resource) resource;
 				ResourceInfo info = r.getResourceInfo(false, true);
 				MarkerSet markers = info.getMarkers(false);
@@ -405,7 +405,7 @@ public class MarkerManager implements IManager {
 	/**
 	 * Remove all markers for the given resource to the specified depth.
 	 */
-	public void removeMarkers(IResource resource, int depth) throws CoreException {
+	public void removeMarkers(IResource resource, int depth)  {
 		removeMarkers(resource, null, false, depth);
 	}
 
@@ -414,7 +414,7 @@ public class MarkerManager implements IManager {
 	 * Passing <code>null</code> for the type specifies a match
 	 * for all types (i.e., <code>null</code> is a wildcard.
 	 */
-	public void removeMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) throws CoreException {
+	public void removeMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) {
 		if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
 			visitorRemoveMarkers(target.getFullPath(), type, includeSubtypes);
 		else
@@ -496,7 +496,7 @@ public class MarkerManager implements IManager {
 	/* (non-Javadoc)
 	 * @see IManager#startup(IProgressMonitor)
 	 */
-	public void startup(IProgressMonitor monitor) throws CoreException {
+	public void startup(IProgressMonitor monitor) {
 		// do nothing
 	}
 

@@ -11,6 +11,8 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
+import org.eclipse.core.runtime.IStringPoolParticipant;
+import org.eclipse.core.runtime.StringPool;
 
 /**
  * A specialized map implementation that is optimized for a 
@@ -19,7 +21,7 @@ import java.util.*;
  * 
  * Implemented as a single array that alternates keys and values.
  */
-public class MarkerAttributeMap implements Map {
+public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	protected Object[] elements = null;
 	protected int count = 0;
 
@@ -255,6 +257,23 @@ public class MarkerAttributeMap implements Map {
 	 */
 	public int size() {
 		return count;
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool set) {
+		//copy elements for thread safety
+		Object[] array = elements;
+		if (array == null)
+			return;
+		for (int i = 0; i < array.length; i++) {
+			Object o = array[i];
+			if (o instanceof String)
+				array[i] = set.add((String)o);
+			if (o instanceof IStringPoolParticipant)
+				((IStringPoolParticipant)o).shareStrings(set);
+		}
 	}
 
 	/**

@@ -12,8 +12,8 @@ package org.eclipse.core.internal.watson;
 
 import java.util.HashMap;
 import org.eclipse.core.internal.dtree.*;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -926,6 +926,13 @@ public class ElementTree {
 	 */
 	public void setTreeData(IElementTreeData data) {
 		userData = data;
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool set) {
+		tree.storeStrings(set);
 	}
 
 	/** 

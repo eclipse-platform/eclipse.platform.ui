@@ -12,8 +12,10 @@ package org.eclipse.core.internal.resources;
 
 import java.util.Map;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.runtime.IStringPoolParticipant;
+import org.eclipse.core.runtime.StringPool;
 
-public class MarkerInfo implements IMarkerSetElement, Cloneable {
+public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolParticipant {
 
 	//
 	protected static final long UNDEFINED_ID = -1;
@@ -100,10 +102,8 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable {
 		if (attributes == null) {
 			if (value == null)
 				return;
-			else {
-				attributes = new MarkerAttributeMap();
-				attributes.put(attributeName, value);
-			}
+			attributes = new MarkerAttributeMap();
+			attributes.put(attributeName, value);
 		} else {
 			if (value == null) {
 				attributes.remove(attributeName);
@@ -138,5 +138,15 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable {
 
 	public void setType(String value) {
 		type = value;
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool set) {
+		type = set.add(type);
+		Map map = attributes;
+		if (map instanceof IStringPoolParticipant)
+			((IStringPoolParticipant) map).shareStrings(set);
 	}
 }

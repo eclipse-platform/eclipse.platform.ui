@@ -11,8 +11,8 @@
 package org.eclipse.core.internal.dtree;
 
 import java.security.InvalidParameterException;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -617,20 +617,6 @@ public class DeltaDataTree extends AbstractDataTree {
 		return namesOfChildren;
 	}
 
-	/**
-	 * Returns a node info object describing the specified node
-	 * of the receiver.  Only the receiver's representation is accessed.  If the
-	 * receiver is a delta representation, and the specified node has not been
-	 * modified in the delta, the node info describes the node as missing (the parent
-	 * tree is not consulted).
-	 */
-	public NodeInfo getNodeInfo(IPath key) {
-		AbstractDataTreeNode found = findNodeAt(key);
-		if (found == null)
-			return NodeInfo.missing();
-		return found.nodeInfoAt(this);
-	}
-
 	/** 
 	 * Returns the parent of the tree.
 	 */
@@ -667,7 +653,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	public boolean includes(IPath key) {
 		return searchNodeAt(key) != null;
 	}
-
+	
 	public boolean isEmptyDelta() {
 		return rootNode.getChildren().length == 0;
 	}
@@ -970,5 +956,18 @@ public class DeltaDataTree extends AbstractDataTree {
 		if (parent == null)
 			return;
 		setRootNode(rootNode.simplifyWithParent(rootKey(), parent, comparer));
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void storeStrings(StringPool set) {
+		//copy field to protect against concurrent changes
+		AbstractDataTreeNode root = rootNode;
+		DeltaDataTree dad = parent;
+		if (root != null)
+			root.storeStrings(set);
+		if (dad != null)
+			dad.storeStrings(set);
 	}
 }

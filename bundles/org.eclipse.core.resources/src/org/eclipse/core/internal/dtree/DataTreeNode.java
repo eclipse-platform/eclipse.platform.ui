@@ -12,7 +12,7 @@ package org.eclipse.core.internal.dtree;
 
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 
 /**
  * <code>DataTreeNode</code>s are the nodes of a <code>DataTree</code>.  Their
@@ -335,6 +335,17 @@ public class DataTreeNode extends AbstractDataTreeNode {
 		 See PR 1FH5RYA. */
 		DataTreeNode parentsNode = (DataTreeNode) parent.copyCompleteSubtree(key);
 		return parentsNode.forwardDeltaWith(this, comparer);
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void storeStrings(StringPool set) {
+		super.storeStrings(set);
+		//copy data for thread safety
+		Object o = data;
+		if (o instanceof IStringPoolParticipant)
+			((IStringPoolParticipant)o).shareStrings(set);
 	}
 
 	/**

@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-public class MarkerSet implements Cloneable {
+import org.eclipse.core.runtime.IStringPoolParticipant;
+import org.eclipse.core.runtime.StringPool;
+
+public class MarkerSet implements Cloneable, IStringPoolParticipant {
 	protected static final int MINIMUM_SIZE = 5;
 	protected int elementCount = 0;
 	protected IMarkerSetElement[] elements;
@@ -58,9 +61,9 @@ public class MarkerSet implements Cloneable {
 		add(element);
 	}
 
-	public void addAll(IMarkerSetElement[] elements) {
-		for (int i = 0; i < elements.length; i++)
-			add(elements[i]);
+	public void addAll(IMarkerSetElement[] toAdd) {
+		for (int i = 0; i < toAdd.length; i++)
+			add(toAdd[i]);
 	}
 
 	protected Object clone() {
@@ -209,9 +212,9 @@ public class MarkerSet implements Cloneable {
 		remove(element.getId());
 	}
 
-	public void removeAll(IMarkerSetElement[] elements) {
-		for (int i = 0; i < elements.length; i++)
-			remove(elements[i]);
+	public void removeAll(IMarkerSetElement[] toRemove) {
+		for (int i = 0; i < toRemove.length; i++)
+			remove(toRemove[i]);
 	}
 
 	private boolean shouldGrow() {
@@ -220,5 +223,22 @@ public class MarkerSet implements Cloneable {
 
 	public int size() {
 		return elementCount;
+	}
+
+	/* (non-Javadoc
+	 * Method declared on IStringPoolParticipant
+	 */
+	public void shareStrings(StringPool set) {
+		//copy elements for thread safety
+		Object[] array = elements;
+		if (array == null)
+			return;
+		for (int i = 0; i < array.length; i++) {
+			Object o = array[i];
+			if (o instanceof String)
+				array[i] = set.add((String) o);
+			if (o instanceof IStringPoolParticipant)
+				((IStringPoolParticipant) o).shareStrings(set);
+		}
 	}
 }
