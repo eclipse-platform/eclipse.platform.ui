@@ -197,4 +197,9 @@ public interface IHelp {
 	 * @since 2.0
 	 */
 	public IToc[] getTocs();
+	/**
+	 * Returns <code>true</code> if the context-sensitive help
+	 * window is currently being displayed, <code>false</code> if not.
+	 */
+	public boolean isContextHelpDisplayed();
 }

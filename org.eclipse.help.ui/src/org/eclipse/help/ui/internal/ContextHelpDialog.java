@@ -228,4 +228,7 @@ public class ContextHelpDialog {
 		}
 		return imgRegistry.get(IMAGE_TOPIC);
 	}
+	public boolean isShowing(){
+		return (shell !=null && !shell.isDisposed() && shell.isVisible());
+	}
 }

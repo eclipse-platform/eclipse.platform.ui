@@ -233,6 +233,17 @@ public class DefaultHelp implements IHelp {
 		return HelpSystem.getTocManager().getTocs(Locale.getDefault().toString());
 	}
 
+	/**
+	 * Returns <code>true</code> if the context-sensitive help
+	 * window is currently being displayed, <code>false</code> if not.
+	 */
+	public boolean isContextHelpDisplayed() {
+		if (f1Dialog == null) {
+			return false;
+		}
+		return f1Dialog.isShowing();
+	}
+
 	private String getContextID(IContext context) {
 		if (context instanceof Context)
 			return ((Context) context).getID();
