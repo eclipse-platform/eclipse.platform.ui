@@ -141,8 +141,17 @@ public class NewConfigurationView
 			}
 			if (parent instanceof ConfiguredFeatureAdapter
 				&& showNestedFeaturesAction.isChecked()) {
-				return ((ConfiguredFeatureAdapter) parent).getIncludedFeatures(
-					null);
+				IFeatureAdapter[] nested =
+					((ConfiguredFeatureAdapter) parent).getIncludedFeatures(null);
+				if (showUnconfFeaturesAction.isChecked())
+					return nested;
+				ArrayList result = new ArrayList();
+				for (int i = 0; i < nested.length; i++) {
+					if (((ConfiguredFeatureAdapter) nested[i]).isConfigured())
+						result.add(nested[i]);
+				}
+				return (IFeatureAdapter[]) result.toArray(
+					new IFeatureAdapter[result.size()]);
 			}
 			return new Object[0];
 		}
@@ -518,11 +527,11 @@ public class NewConfigurationView
 		pref.setDefault(STATE_SHOW_UNCONF, false);
 		showUnconfFeaturesAction = new Action() {
 			public void run() {
-				getTreeViewer().refresh();
 				pref.setValue(
 					STATE_SHOW_UNCONF,
 					showUnconfFeaturesAction.isChecked());
 				UpdateUI.getDefault().savePluginPreferences();
+				getTreeViewer().refresh();
 			}
 		};
 		WorkbenchHelp.setHelp(
