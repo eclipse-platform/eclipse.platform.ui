@@ -136,7 +136,7 @@ public class LaunchInfo implements IInstallInfo {
 		public URL getLaunchInfoURL() {
 			return url;
 		}
-
+		
 		public Date getLaunchInfoDate() {
 			/**
 			*  Return history profile creation date, or null (if curent profile)
@@ -240,13 +240,12 @@ private LaunchInfo() {
 }
 
 private LaunchInfo(URL info) throws IOException {
-	this(info, profile == null ? null : profile.baseUrl);
+	this(info, getCurrent().baseUrl);
 }
 
 private LaunchInfo(URL info, URL install) throws IOException {
 	super();
-	if (install == null)
-		throw new IOException();
+	
 	infoUrl = info;
 	baseUrl = install;
 	
@@ -650,9 +649,64 @@ public boolean hasStatus() {
 	else
 		return true;
 }
+
+public boolean installPending(List confList, List compList, List pluginList, List fragList) {
+	
+	if (confList!=null) 
+		for(int i=0; i<confList.size(); i++) {
+			if (!configsPendingDelete.contains(confList.get(i)))
+				configsPendingDelete.add(confList.get(i));
+		}
+			
+	if (compList!=null) 
+		for(int i=0; i<compList.size(); i++) {
+			if (!compsPendingDelete.contains(compList.get(i)))
+				compsPendingDelete.add(compList.get(i));
+		}
+			
+	if (pluginList!=null) 
+		for(int i=0; i<pluginList.size(); i++) {
+			if (!pluginsPendingDelete.contains(pluginList.get(i)))
+				pluginsPendingDelete.add(pluginList.get(i));
+		}
+			
+	if (fragList!=null) 
+		for(int i=0; i<fragList.size(); i++) {
+			if (!fragmentsPendingDelete.contains(fragList.get(i)))
+				fragmentsPendingDelete.add(fragList.get(i));
+		}
+		
+	return checkpoint(); // harden state
+}
+
+public boolean installConfirmed(List confList, List compList, List pluginList, List fragList) {	
+	if (confList!=null) 
+		for(int i=0; i<confList.size(); i++) {
+			configsPendingDelete.remove(confList.get(i));
+		}
+			
+	if (compList!=null) 
+		for(int i=0; i<compList.size(); i++) {
+			compsPendingDelete.remove(compList.get(i));
+		}
+			
+	if (pluginList!=null) 
+		for(int i=0; i<pluginList.size(); i++) {
+			pluginsPendingDelete.remove(pluginList.get(i));
+		}
+			
+	if (fragList!=null) 
+		for(int i=0; i<fragList.size(); i++) {
+			fragmentsPendingDelete.remove(fragList.get(i));
+		}
+		
+	return checkpoint(); // harden state
+}
+
 public boolean isDanglingComponent(VersionedIdentifier component) {
 	return compsDang.contains(component);
 }
+
 public void isDanglingComponent(VersionedIdentifier component, boolean isDangling) {
 	
 	if (!comps.contains(component)) {
@@ -680,6 +734,7 @@ private static boolean isFileProtocol(URL u) {
 public boolean isUpdateEnabled() {
 	return isUpdateEnabled;
 }
+
 
 private ArrayList loadListProperty(Properties props, String name) {
 	return loadListProperty(props,name,VersionedIdentifier.class);
@@ -855,7 +910,7 @@ private static LaunchInfo restoreProfile(URL base) {
 		History[] history = getHistory(info);
 		for(int i=history.length-1; i>=0; i--) {
 			try {
-				li = new LaunchInfo(history[i]);
+				li = new LaunchInfo(history[i].getLaunchInfoURL(),base);
 				li.setNewId();
 				if (DEBUG)
 					debug("Using history profile "+history[i].getIdentifier());
@@ -1079,7 +1134,10 @@ private void setDefaults() {
 }
 
 public void setFragment(VersionedIdentifier fragment) {
-	set(fragment, fragments, fragmentsInact);
+	if (!fragments.contains(fragment)) {
+		fragments.add(fragment);
+		setNewHistory();
+	}
 }
 
 public void setHistoryCount(int count) {
@@ -1141,7 +1199,10 @@ private void setNewId() {
 }
 
 public void setPlugin(VersionedIdentifier plugin) {
-	set(plugin, plugins, pluginsInact);
+	if (!plugins.contains(plugin)) {
+		plugins.add(plugin);
+		setNewHistory();
+	}
 }
 /**
  * @param platform is the directory identifier (incl. version suffix)
