@@ -369,9 +369,9 @@ public class TextUtilities {
 			} catch (BadPartitioningException x) {
 				return IDocument.DEFAULT_CONTENT_TYPE;
 			}
-		} else {
-			return document.getContentType(offset);
-		}		
+		}
+		
+		return document.getContentType(offset);
 	}
 	
 	/**
@@ -396,9 +396,9 @@ public class TextUtilities {
 			} catch (BadPartitioningException x) {
 				return new TypedRegion(0, document.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
 			}
-		} else {
-			return document.getPartition(offset);
-		}	
+		}
+		
+		return document.getPartition(offset);
 	}
 
 	/**
@@ -424,9 +424,9 @@ public class TextUtilities {
 			} catch (BadPartitioningException x) {
 				return new ITypedRegion[0];
 			}
-		} else {
-			return document.computePartitioning(offset, length);
 		}
+		
+		return document.computePartitioning(offset, length);
 	}
 	
 	/**
