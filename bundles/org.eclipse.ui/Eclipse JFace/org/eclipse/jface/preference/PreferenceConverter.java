@@ -8,6 +8,8 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.*;
+
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
@@ -379,37 +381,13 @@ public static void setValue(IPreferenceStore store, String name, FontData value)
  */
 public static void setValue(IPreferenceStore store, String name, FontData[] value) {
 	FontData[] oldValue = getFontDataArray(store, name);
-	if(hasFontDataChanged(oldValue,value)){
+	// see if the font has changed
+	if(!Arrays.equals(oldValue, value)){
 		store.putValue(name, getStoredRepresentation(value));
 		JFaceResources.getFontRegistry().put(name,value);
 		store.firePropertyChangeEvent(name, oldValue, value);
 	}
 }
-
-/**
- * Check of the old value and the new value are the same
- * semantically. Return false if they are semantically the
- * same.
- */
-private static boolean hasFontDataChanged(FontData[] oldData,FontData[] newData){
-	if(oldData == null)
-		return true;
-		
-	if(oldData.length != newData.length)
-		return true;
-	for(int i = 0 ; i < oldData.length; i ++){
-		FontData oldValue = oldData[i];
-		FontData newValue = newData[i];
-		if (oldValue.getName()!= newValue.getName()) 
-			return true;
-		if (oldValue.getHeight() != newValue.getHeight())
-			return true;
-		if (oldValue.getStyle() != newValue.getStyle())
-			return true;
-	}
-	//Nothing has changed
-	return false;
-}               	
 
 /**
  * Return the stored representation of the FontData array.
