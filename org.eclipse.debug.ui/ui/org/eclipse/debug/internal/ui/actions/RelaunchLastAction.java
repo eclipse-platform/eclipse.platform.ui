@@ -15,9 +15,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
- * Re-runs or re-debugs the last launch.
+ * Relaunches the last launch from a history
  */
-public class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
+public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
 	
 	/**
 	 * @see IWorkbenchWindowActionDelegate
@@ -35,20 +35,25 @@ public class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action){
-		final LaunchConfigurationHistoryElement recent= DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch();
-		if (recent == null) {
-			Display.getCurrent().beep();
-		} else {
+		final LaunchConfigurationHistoryElement[] history= getHistory();
+		if (history.length > 0) {
 			if (!DebugUIPlugin.saveAndBuild()) {
 				return;
 			}
 			BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 				public void run() {
-					RelaunchActionDelegate.relaunch(recent);
+					RelaunchActionDelegate.relaunch(history[0]);
 				}
 			});
+		} else {
+			Display.getCurrent().beep();
 		}
 	}
+	
+	/**
+	 * Returns the appropriate history for this relaunch action
+	 */
+	public abstract LaunchConfigurationHistoryElement[] getHistory();
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)

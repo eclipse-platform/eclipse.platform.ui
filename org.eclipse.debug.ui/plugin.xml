@@ -219,17 +219,6 @@
          </separator>
       </menu>
       <action
-            label="%RelaunchLastAction.label"
-            icon="icons/full/elcl16/relaunch_co.gif"
-            disabledIcon="icons/full/dlcl16/relaunch_co.gif"
-            hoverIcon="icons/full/clcl16/relaunch_co.gif"
-            helpContextId="relaunch_last_action_context"
-            tooltip="%RelaunchLastAction.tooltip"
-            class="org.eclipse.debug.internal.ui.actions.RelaunchLastAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
-            id="org.eclipse.debug.internal.ui.actions.RelaunchLastAction">
-      </action>
-      <action
             label="%OpenRunConfigurations.label"
             class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
             menubarPath="org.eclipse.debug.ui.DebugMenu/runGroup"
@@ -248,14 +237,20 @@
             id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
       </action>
       <action
-            label="%RunAction.label"
+            label="%RunLastAction.label"
+            icon="icons/full/elcl116/runlast_co.gif"
+            class="org.eclipse.debug.internal.ui.actions.RunLastAction"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
+            id="org.eclipse.debug.internal.ui.actions.RunLastAction">
+      </action>
+      <action
+            label="%RunDropDownAction.label"
             pulldown="true"
             icon="icons/full/etool16/run_exc.gif"
             disabledIcon="icons/full/dtool16/run_exc.gif"
             hoverIcon="icons/full/ctool16/run_exc.gif"
             helpContextId="run_action_context"
             class="org.eclipse.debug.internal.ui.actions.RunDropDownAction"
-            menubarPath="org.eclipse.debug.ui.DebugMenu/runGroup"
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.actions.RunDropDownAction">
       </action>
@@ -278,14 +273,20 @@
             id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
       </action>
       <action
-            label="%DebugAction.label"
+            label="%DebugLastAction.label"
+            icon="icons/full/elcl116/debuglast_co.gif"
+            class="org.eclipse.debug.internal.ui.actions.DebugLastAction"
+    		menubarPath="org.eclipse.debug.ui.DebugMenu/relaunchGroup"
+            id="org.eclipse.debug.internal.ui.actions.DebugLastAction">
+      </action>
+      <action
+      		label="%DebugDropDownAction.label"
             pulldown="true"
             icon="icons/full/etool16/debug_exc.gif"
             disabledIcon="icons/full/dtool16/debug_exc.gif"
             hoverIcon="icons/full/ctool16/debug_exc.gif"
             helpContextId="debug_action_context"
             class="org.eclipse.debug.internal.ui.actions.DebugDropDownAction"
-    		menubarPath="org.eclipse.debug.ui.DebugMenu/debugGroup"
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction">
       </action>
@@ -486,7 +487,7 @@
 		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.relaunch"
 			menubarPath = "launchGroup"
-			icon = "icons/full/clcl16/relaunch_co.gif"
+			icon = "icons/full/clcl16/runlast_co.gif"
 			helpContextId = "relaunch_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate"
 			label="%RelaunchAction.label">
