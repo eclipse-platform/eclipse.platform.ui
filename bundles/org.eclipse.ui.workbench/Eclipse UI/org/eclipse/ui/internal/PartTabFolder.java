@@ -23,17 +23,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.Gradient;
-import org.eclipse.jface.resource.GradientRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.window.Window;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -52,12 +42,27 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.Gradient;
+import org.eclipse.jface.resource.GradientRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
+
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -68,7 +73,6 @@ import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.TabThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
-import org.eclipse.ui.progress.UIJob;
 
 
 public class PartTabFolder extends LayoutPart implements ILayoutContainer, IPropertyListener, IWorkbenchDragSource {
@@ -1489,39 +1493,37 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 	 * Indicate busy state in the supplied partPane.
 	 * @param partPane PartPane.
 	 */
-	public void showBusy(PartPane partPane) {
-		updateTab(
-			partPane,
-			JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
-	}
-	
-	/**
-	 * Restore the part to the default.
-	 * @param partPane PartPane
-	 */
-	public void clearBusy(PartPane partPane) {
-		updateTab(partPane,partPane.getPartReference().getTitleImage());
-	}
-	
-	/**
-	 * Replace the image on the tab with the supplied image.
-	 * @param part PartPane
-	 * @param image Image
-	 */
-	private void updateTab(PartPane part, final Image image){
-		final CTabItem item = getTab(part);
+	public void showBusy(PartPane partPane, boolean busy) {
+		
+		final CTabItem item = getTab(partPane);
+		
 		if(item != null){
-			UIJob updateJob = new UIJob("Tab Update"){ //$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					item.setImage(image);
-					return Status.OK_STATUS;
+			if(busy)
+				item.setImage(JFaceResources.getImage(ProgressManager.BUSY_OVERLAY_KEY));
+			else
+				item.setImage(partPane.getPartReference().getTitleImage());
+						
+			Control control = getControl();
+			if(control == null)
+				return;
+			
+			if(busy){				
+				//Is this is he selected item?
+				if(tabFolder.indexOf(item) == tabFolder.getSelectionIndex()){
+					tabFolder.setSelectionBackground(null,null);
+					tabFolder.setSelectionBackground(control.getDisplay().
+							getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+					tabFolder.setSelectionForeground(control.getDisplay().
+							getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 				}
-			};
-			updateJob.setSystem(true);
-			updateJob.schedule();
+				item.setBackground(control.getDisplay().
+						getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+			}						
+			else{
+				item.setBackground(control.getDisplay().
+						getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+				drawGradient(active);			
+			}	
 		}
 			
 	}

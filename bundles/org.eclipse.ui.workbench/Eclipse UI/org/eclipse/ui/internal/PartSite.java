@@ -16,12 +16,13 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
@@ -30,8 +31,9 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+
+import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -67,6 +69,7 @@ public class PartSite implements IWorkbenchPartSite {
 	private SubActionBars actionBars;
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
+	private WorkbenchSiteProgressService progressService;
 		
 	/**
 	 * EditorContainer constructor comment.
@@ -89,6 +92,10 @@ public class PartSite implements IWorkbenchPartSite {
 			}
 			menuExtenders = null;
 		}
+		
+		if(progressService != null)
+			progressService.dispose();
+		
 	}
 	/**
 	 * Returns the action bars for the part.
@@ -285,24 +292,6 @@ public class PartSite implements IWorkbenchPartSite {
 		return null;
 	}
 	
-	/**
-	 * Schedule the job. Start by asking for the job listeners
-	 * from the part and the pane and adding them.
-	 * @param job
-	 * @param delay The delay in scheduling the job.
-	 */
-	public void schedule(Job job, long delay) {
-		IJobChangeListener paneListener = getPane().getJobChangeListener();
-				
-		if(paneListener != null)
-			job.addJobChangeListener(paneListener);
-		
-		Object partListener = getPart().getAdapter(IJobChangeListener.class);
-		if(partListener != null)
-			job.addJobChangeListener((IJobChangeListener) partListener);
-		
-		job.schedule(delay);
-	}
 	
 	/**
 	 * Get an adapter for this type.
@@ -317,9 +306,11 @@ public class PartSite implements IWorkbenchPartSite {
 	}
 	/**
 	 * Get a progress service for the receiver.
-	 * @return
+	 * @return WorkbenchSiteProgressService
 	 */
-	private IWorkbenchSiteProgressService getSiteProgressService(){
-		return new WorkbenchSiteProgressService(this);
+	private WorkbenchSiteProgressService getSiteProgressService(){
+		if(progressService == null)
+			progressService = new WorkbenchSiteProgressService(this);
+		return progressService;
 	}
 }

@@ -12,14 +12,7 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
@@ -41,12 +34,20 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.WorkbenchPart;
+
+import org.eclipse.ui.internal.misc.UIStats;
 
 
 /**
@@ -541,46 +542,25 @@ protected void doDock() {
 	// do nothing
 }
 
-/**
- * Return an IJobChangeListener for jobs run in this pane.
- * @return IJobChangeListener or <code>null</code>.
- */
-IJobChangeListener getJobChangeListener(){
-	return new JobChangeAdapter(){
+
+	/**
+	 * Set the busy state of the receiver. Update the 
+	 * tab folder if there is one.
+	 * @param busy
+	 */
+	public void showBusy(boolean busy){
 		
-		/**
-		 * Get the tab folder for the receiver if it is contained
-		 * in one. Otherwise return null.
-		 * @return PartTabFolder or null.
-		 */
-		private PartTabFolder getFolder(){
-			ILayoutContainer layoutContainer = getContainer();
-			if(layoutContainer instanceof PartTabFolder)
-				return (PartTabFolder) container;
-			else
-				return null;
-			
-		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-		 */
-		public void done(IJobChangeEvent event) {
-			PartTabFolder folder = getFolder();
-			if(folder != null)
-				folder.clearBusy(PartPane.this);
-		}
+		PartTabFolder folder = null;
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#running(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-		 */
-		public void running(IJobChangeEvent event) {
-			PartTabFolder folder = getFolder();
-			if(folder != null)
-				folder.showBusy(PartPane.this);
-		}
-	};
-	
-}
+		ILayoutContainer layoutContainer = getContainer();
+		if(layoutContainer instanceof PartTabFolder)
+			folder = (PartTabFolder) container;
+		
+		if(folder == null)
+			return;
+		
+		folder.showBusy(PartPane.this,busy);		
+	}
 	/**
 	 * Set the image to image. item is used for future work where 
 	 * the tab item may be updated.

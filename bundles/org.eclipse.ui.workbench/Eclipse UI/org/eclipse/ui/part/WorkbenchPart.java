@@ -14,20 +14,23 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
+
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -124,8 +127,6 @@ protected void firePropertyChange(final int propertyId) {
  * Platform's adapter manager is consulted).
  */
 public Object getAdapter(Class adapter) {
-	if(IJobChangeListener.class.equals(adapter))
-		return getJobChangeListener();
 	return Platform.getAdapterManager().getAdapter(this, adapter);
 }
 /**
@@ -274,15 +275,15 @@ protected void setTitleToolTip(String text) {
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
 /**
- * Return an IJobChangeListener for jobs that have been
- * designated as running in this part in the IWorkbenchPartProgressService
- * for the PartSite.
- * @return IJobChangeListener or <code>null</code>.
- * @see IWorkbenchSiteProgressService
+ * Show that this part is busy due to a Job running that it 
+ * is listening to.
+ * @param busy boolean to indicate that the busy state has started
+ *  	or ended.
+ * @see IWorkbenchPartProgressService.schedule(Job,int,boolean).
  * @since 3.0
  */
-protected IJobChangeListener getJobChangeListener(){
-	return null;
+public void showBusy(boolean busy){
+	//By default do nothing
 }
 
 }

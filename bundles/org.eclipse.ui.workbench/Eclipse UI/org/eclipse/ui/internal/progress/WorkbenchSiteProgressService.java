@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 
@@ -24,18 +25,95 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 import org.eclipse.ui.internal.PartSite;
 /**
- * The WorkbenchSiteProgressService is the concrete 
- * implementation of the WorkbenchSiteProgressService
- * used by the workbench components.
+ * The WorkbenchSiteProgressService is the concrete implementation of the
+ * WorkbenchSiteProgressService used by the workbench components.
  */
-public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressService {
+public class WorkbenchSiteProgressService
+		implements
+			IWorkbenchSiteProgressService {
 	PartSite site;
+	IJobChangeListener listener;
+	private Cursor waitCursor;
+
+	private class SiteUpdateJob extends WorkbenchJob {
+
+		private boolean busy;
+		private boolean useWaitCursor;
+		Object lock = new Object();
+
+		/**
+		 * Set whether we are updating with the wait or busy cursor.
+		 * 
+		 * @param cursorState
+		 */
+		void setBusy(boolean cursorState) {
+			synchronized (lock) {
+				busy = cursorState;
+			}
+		}
+
+		private SiteUpdateJob() {
+			super(ProgressMessages
+					.getString("WorkbenchSiteProgressService.CursorJob"));//$NON-NLS-1$
+		}
+
+		/**
+		 * Get the wait cursor. Initialize it if required.
+		 * 
+		 * @return Cursor
+		 */
+		private Cursor getWaitCursor(Display display) {
+			if (waitCursor == null) {
+				waitCursor = new Cursor(display, SWT.CURSOR_APPSTARTING);
+			}
+			return waitCursor;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			Control control = site.getPane().getControl();
+			if (control == null || control.isDisposed())
+				return Status.CANCEL_STATUS;
+			synchronized (lock) {
+				//Update cursors if we are doing that
+				if (useWaitCursor) {
+
+					Cursor cursor = null;
+					if (busy)
+						cursor = getWaitCursor(control.getDisplay());
+					control.setCursor(cursor);
+				}
+
+				site.getPane().showBusy(busy);
+
+				IWorkbenchPart part = site.getPart();
+				if (part instanceof WorkbenchPart)
+					((WorkbenchPart) part).showBusy(busy);
+			}
+
+			return Status.OK_STATUS;
+		}
+
+		void clearCursors() {
+			if (waitCursor != null) {
+				waitCursor.dispose();
+				waitCursor = null;
+			}
+		}
+	}
+
 	/**
 	 * Create a new instance of the receiver with a site of partSite
 	 * 
@@ -45,6 +123,14 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	public WorkbenchSiteProgressService(PartSite partSite) {
 		site = partSite;
 	}
+	
+	public void dispose(){
+		if(waitCursor == null)
+			return;
+		waitCursor.dispose();
+		waitCursor = null;
+			
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -52,18 +138,31 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	 *      java.lang.String)
 	 */
 	public IStatus requestInUI(UIJob job, String message) {
-		return site.getWorkbenchWindow().getWorkbench().getProgressService().requestInUI(job,
-				message);
+		return site.getWorkbenchWindow().getWorkbench().getProgressService()
+				.requestInUI(job, message);
 	}
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.progress.IProgressService#busyCursorWhile(org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
-	public void busyCursorWhile(IRunnableWithProgress runnable) throws InvocationTargetException,
-			InterruptedException {
-		site.getWorkbenchWindow().getWorkbench().getProgressService().busyCursorWhile(runnable);
+	public void busyCursorWhile(IRunnableWithProgress runnable)
+			throws InvocationTargetException, InterruptedException {
+		site.getWorkbenchWindow().getWorkbench().getProgressService()
+				.busyCursorWhile(runnable);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#schedule(org.eclipse.core.runtime.jobs.Job,
+	 *      long, boolean)
+	 */
+	public void schedule(Job job, long delay, boolean useHalfBusyCursor) {
+		job.addJobChangeListener(getJobChangeListener(job, useHalfBusyCursor));
+		job.schedule(delay);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -71,79 +170,56 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	 *      int)
 	 */
 	public void schedule(Job job, long delay) {
-		site.schedule(job, delay);
+		schedule(job, delay, false);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#schedule(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public void schedule(Job job) {
-		schedule(job, 0L);
+		schedule(job, 0L, false);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#useHalfBusyCursor(org.eclipse.core.runtime.jobs.Job)
+
+	/**
+	 * Get the job change listener for this site.
+	 * @param job
+	 * @param useHalfBusyCursor
+	 * @return IJobChangeListener
 	 */
-	public void useHalfBusyCursor(Job job) {
-		job.addJobChangeListener(new JobChangeAdapter() {
-			private Cursor waitCursor;
-			
-			/**
-			 * Get the wait cursor. Initialize it if required.
-			 * @return
-			 */
-			private Cursor getWaitCursor(Display display) {
-				if (waitCursor == null) {
-					waitCursor = new Cursor(display, SWT.CURSOR_APPSTARTING);
+	public IJobChangeListener getJobChangeListener(final Job job,
+			boolean useHalfBusyCursor) {
+
+		if (listener == null) {
+			final SiteUpdateJob updateJob = new SiteUpdateJob();
+			updateJob.setSystem(true);
+			updateJob.useWaitCursor = useHalfBusyCursor;
+
+			listener = new JobChangeAdapter() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+				 */
+				public void aboutToRun(IJobChangeEvent event) {
+					updateJob.setBusy(true);
+					updateJob.schedule();
 				}
-				return waitCursor;
-			}
-			
-			/**
-			 * Show the cursor. Use the wait cursor if useWaitCursor is
-			 * true.
-			 * @param useWaitCursor
-			 */
-			private void showCursor(final boolean useWaitCursor) {
-				
-				WorkbenchJob cursorJob = new WorkbenchJob(ProgressMessages.getString("WorkbenchSiteProgressService.CursorJob")){ //$NON-NLS-1$
-					/* (non-Javadoc)
-					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-					 */
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						
-						Control control =  site.getPane().getControl();
-						if(control == null || control.isDisposed())
-							return Status.CANCEL_STATUS;
-						
-						Cursor cursor = null;
-						if(useWaitCursor){
-							cursor = getWaitCursor(control.getDisplay());
-						}
-						
-						control.setCursor(cursor);
-						return Status.OK_STATUS;
-					}
-				};
-				cursorJob.setSystem(true);
-				cursorJob.schedule();
-				
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void aboutToRun(IJobChangeEvent event) {
-				showCursor(true);
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void done(IJobChangeEvent event) {
-				showCursor(false);
-			}
-			
-		});
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+				 */
+				public void done(IJobChangeEvent event) {
+					updateJob.setBusy(false);
+					updateJob.schedule();
+				}
+
+
+			};
+		}
+		return listener;
 	}
 }
