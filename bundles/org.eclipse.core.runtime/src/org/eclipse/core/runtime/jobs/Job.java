@@ -273,10 +273,9 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * has not been scheduled, this method returns immediately.
 	 * 
 	 * <p>
-	 * If the calling thread owns any locks, the locks may be released during the
-	 * wait if necessary to prevent deadlock.  On return from the join, the calling
-	 * thread will once again have exclusive control of any locks that were owned
-	 * upon entering the join.
+	 * Note that there is a deadlock risk when using join.  If the calling thread owns
+	 * a lock or object monitor that the joined thread is waiting for, deadlock 
+	 * will occur.
 	 * </p>
 	 * 
 	 * @exception InterruptedException if this thread is interrupted while waiting
