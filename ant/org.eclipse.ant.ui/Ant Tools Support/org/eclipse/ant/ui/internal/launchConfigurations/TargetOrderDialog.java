@@ -61,6 +61,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		comp.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
+		comp.setFont(parent.getFont());
 		
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.getString("TargetOrderDialog.&Specify_target_execution_order__2")); //$NON-NLS-1$
@@ -147,6 +148,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	private void createTargetList(Composite comp) {
 		fViewer = new TableViewer(comp, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		fViewer.setLabelProvider(new TargetTableLabelProvider());
+		
 		fContentProvider = new AntTargetContentProvider();
 		fViewer.setContentProvider(fContentProvider);
 		fViewer.setInput(fTargets);
@@ -156,6 +158,7 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		gd.heightHint = 200;
 		gd.widthHint = 250;		
 		table.setLayoutData(gd);
+		table.setFont(comp.getFont());
 	}
 	
 	/**
