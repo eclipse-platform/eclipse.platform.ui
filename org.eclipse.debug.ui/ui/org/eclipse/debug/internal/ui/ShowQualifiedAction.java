@@ -19,12 +19,12 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ShowQualifiedAction extends Action {
 
-	protected StructuredViewer fViewer;
+	private StructuredViewer fViewer;
 
 	public ShowQualifiedAction(StructuredViewer viewer) {
 		super(DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_1")); //$NON-NLS-1$
-		fViewer= viewer;
-		setToolTipText(DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_2")); //$NON-NLS-1$
+		setViewer(viewer);
+		setToolTipText(DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_1")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
@@ -41,20 +41,20 @@ public class ShowQualifiedAction extends Action {
 	}
 
 	private void valueChanged(boolean on) {
-		if (fViewer.getControl().isDisposed()) {
+		if (getViewer().getControl().isDisposed()) {
 			return;
 		}		
-		ILabelProvider labelProvider= (ILabelProvider)fViewer.getLabelProvider();
+		ILabelProvider labelProvider= (ILabelProvider)getViewer().getLabelProvider();
 		if (labelProvider instanceof IDebugModelPresentation) {
 			IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)labelProvider;
 			debugLabelProvider.setAttribute(IDebugModelPresentation.DISPLAY_QUALIFIED_NAMES, (on ? Boolean.TRUE : Boolean.FALSE));
-			BusyIndicator.showWhile(fViewer.getControl().getDisplay(), new Runnable() {
+			BusyIndicator.showWhile(getViewer().getControl().getDisplay(), new Runnable() {
 				public void run() {
-					fViewer.refresh();					
+					getViewer().refresh();					
 				}
 			});
 		}
-		setToolTipText(on ? DebugUIMessages.getString("ShowQualifiedAction.Hide_&Qualified_Names_3") : DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_4")); //$NON-NLS-2$ //$NON-NLS-1$
+		setToolTipText(on ? DebugUIMessages.getString("ShowQualifiedAction.Hide_&Qualified_Names_3") : DebugUIMessages.getString("ShowQualifiedAction.Show_&Qualified_Names_1")); //$NON-NLS-2$ //$NON-NLS-1$
 
 	}
 
@@ -64,6 +64,14 @@ public class ShowQualifiedAction extends Action {
 	public void setChecked(boolean value) {
 		super.setChecked(value);
 		valueChanged(value);
+	}
+	
+	protected StructuredViewer getViewer() {
+		return fViewer;
+	}
+
+	protected void setViewer(StructuredViewer viewer) {
+		fViewer = viewer;
 	}
 }
 
