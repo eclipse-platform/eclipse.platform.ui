@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
@@ -28,6 +29,7 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.preferences.MessageDialogWithToggle;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,10 +43,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -56,7 +58,7 @@ import org.eclipse.ui.externaltools.internal.program.launchConfigurations.Backgr
 /**
  * Launch delegate for Ant builds
  */
-public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
+public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	
 	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.AntProcessBuildLogger"; //$NON-NLS-1$
 	private static final String NULL_LOGGER_CLASS = "org.eclipse.ant.internal.ui.antsupport.logger.NullBuildLogger"; //$NON-NLS-1$
@@ -481,4 +483,26 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
+		String scope = null;
+		try {
+			scope = configuration.getAttribute(AntBuildTab.ATTR_BUILD_SCOPE, (String)null);
+		} catch (CoreException e) {
+			return null;
+		}
+		if (scope == null) {
+			return null;
+		}
+		IProject[] projects = AntBuildTab.getBuildProjects(scope);
+		boolean isRef = AntBuildTab.isIncludeReferencedProjects(configuration);
+		if (isRef) {
+			return computeReferencedBuildOrder(projects);
+		}
+		return computeBuildOrder(projects);
+	}
+	
 }

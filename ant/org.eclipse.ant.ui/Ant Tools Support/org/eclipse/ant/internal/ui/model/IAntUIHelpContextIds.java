@@ -68,4 +68,5 @@ public interface IAntUIHelpContextIds {
 	public static final String ANT_PROPERTIES_TAB = PREFIX + "ant_properties_tab_context"; //$NON-NLS-1$
 	public static final String ANT_CLASSPATH_TAB = PREFIX + "ant_classpath_tab_context"; //$NON-NLS-1$
 	public static final String ANT_JRE_TAB = "ant_jre_tab_context"; //$NON-NLS-1$
+	public static final String ANT_BUILD_TAB = PREFIX + "ant_build_tab_context"; //$NON-NLS-1$
 }

@@ -35,6 +35,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new AntMainTab(),
 			new RefreshTab(),
+			new AntBuildTab(),
 			new AntTargetsTab(),
 			new AntClasspathTab(),
 			new AntPropertiesTab(),

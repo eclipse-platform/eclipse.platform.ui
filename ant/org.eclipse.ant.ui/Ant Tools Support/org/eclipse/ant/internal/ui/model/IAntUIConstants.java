@@ -78,6 +78,7 @@ public interface IAntUIConstants {
 	public static final String IMG_SORT_OUTLINE= PLUGIN_ID + ".sortOutline"; //$NON-NLS-1$
 	public static final String IMG_LINK_WITH_EDITOR= PLUGIN_ID + ".linkWithEditor"; //$NON-NLS-1$
 	public static final String IMG_REFRESH = PLUGIN_ID + ".IMG_REFRESH"; //$NON-NLS-1$
+	public static final String IMG_ANT_BUILD_TAB = PLUGIN_ID + ".IMG_BUILD_TAB"; //$NON-NLS-1$
 	
 	public static final String IMG_IMPORT_WIZARD_BANNER = PLUGIN_ID + ".IMG_IMPORT_WIZARD_BANNER"; //$NON-NLS-1$
 	 

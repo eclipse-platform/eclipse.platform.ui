@@ -97,6 +97,15 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	public static void log(Throwable t) {
 		IStatus status= new Status(IStatus.ERROR, PI_ANTUI, INTERNAL_ERROR, "Error logged from Ant UI: ", t); //$NON-NLS-1$
+		log(status);
+	}
+	
+	/**
+	 * Logs the specified status with this plug-in's log.
+	 * 
+	 * @param status status 
+	 */
+	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
 	}
 	
@@ -107,7 +116,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	public static void log(String message, Throwable exception) {
 		IStatus status = newErrorStatus(message, exception);
-		getDefault().getLog().log(status);
+		log(status);
 	}
 	
 	/**

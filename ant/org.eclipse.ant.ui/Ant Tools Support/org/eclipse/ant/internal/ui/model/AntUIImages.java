@@ -88,7 +88,8 @@ public class AntUIImages {
 		declareRegistryImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "defaulttarget_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_TARGET_ERROR, OBJECT + "ant_target_err.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_ANT_MACRODEF, OBJECT + "macrodef_obj.gif"); //$NON-NLS-1$
-        declareRegistryImage(IAntUIConstants.IMG_ANT_IMPORT, OBJECT + "import_obj.gif"); //$NON-NLS-1$ 
+        declareRegistryImage(IAntUIConstants.IMG_ANT_IMPORT, OBJECT + "import_obj.gif"); //$NON-NLS-1$
+        declareRegistryImage(IAntUIConstants.IMG_ANT_BUILD_TAB, OBJECT + "build_tab.gif"); //$NON-NLS-1$
 		//ANT object
 		declareRegistryImage(IAntUIConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_targets.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_TAB_CLASSPATH, OBJECT + "classpath.gif"); //$NON-NLS-1$

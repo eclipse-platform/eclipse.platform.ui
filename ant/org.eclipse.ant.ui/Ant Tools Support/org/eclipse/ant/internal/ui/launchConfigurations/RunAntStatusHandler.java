@@ -26,7 +26,7 @@ public class RunAntStatusHandler implements IStatusHandler {
 	 */
 	public Object handleStatus(IStatus status, Object source) {
 		ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog)source;
-		dialog.setActiveTab(2);
+		dialog.setActiveTab(3);
 		return null;
 	}
 
