@@ -43,6 +43,7 @@ import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
@@ -269,7 +270,7 @@ public class LinkedModeUI {
 	/**
 	 * Listens for shell events and acts upon them.
 	 */
-	private class Closer implements ShellListener {
+	private class Closer implements ShellListener, ITextInputListener {
 
 		public void shellActivated(ShellEvent e) {
 		}
@@ -318,6 +319,19 @@ public class LinkedModeUI {
 
 		public void shellIconified(ShellEvent e) {
 			leave(ILinkedModeListener.EXIT_ALL);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
+			leave(ILinkedModeListener.EXIT_ALL);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
+		 */
+		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		}
 
 	}
@@ -862,7 +876,7 @@ public class LinkedModeUI {
 
 		createAnnotationModel();
 		
-		fCurrentTarget.fWidget.showSelection();
+		showSelection();
 
 		fCurrentTarget.fShell= fCurrentTarget.fWidget.getShell();
 		if (fCurrentTarget.fShell == null)
@@ -870,6 +884,25 @@ public class LinkedModeUI {
 		fCurrentTarget.fShell.addShellListener(fCloser);
 
 		fAssistant.install(viewer);
+		
+		viewer.addTextInputListener(fCloser);
+	}
+
+	/**
+	 * Reveals the selection on the current target's widget, if it is valid.
+	 */
+	private void showSelection() {
+		try {
+			fCurrentTarget.fWidget.showSelection();
+		} catch (IllegalArgumentException e) {
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=66914
+			// if the StyledText is in setRedraw(false) mode, its
+			// selection may not be up2date and calling showSelection
+			// will throw an IAE.
+			// we don't have means to find out whether the selection is valid
+			// or whether the widget is redrawing or not therefore we try
+			// and ignore an IAE.
+		}
 	}
 
 	/**
@@ -986,10 +1019,14 @@ public class LinkedModeUI {
 		disconnect();
 		
 		for (int i= 0; i < fTargets.length; i++) {
-			if (fCurrentTarget.fKeyListener != null) {
-				((ITextViewerExtension) fTargets[i].getViewer()).removeVerifyKeyListener(fCurrentTarget.fKeyListener);
-				fCurrentTarget.fKeyListener= null;
+			LinkedModeUITarget target= fTargets[i];
+			ITextViewer viewer= target.getViewer();
+			if (target.fKeyListener != null) {
+				((ITextViewerExtension) viewer).removeVerifyKeyListener(target.fKeyListener);
+				target.fKeyListener= null;
 			}
+			
+			viewer.removeTextInputListener(fCloser);
 		}
 		
 		for (int i= 0; i < fTargets.length; i++) {
