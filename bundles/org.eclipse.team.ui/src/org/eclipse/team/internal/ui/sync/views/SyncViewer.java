@@ -786,4 +786,15 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			}
 		});
 	}
+
+	public void selectAll() {
+		if (getViewerType() == TABLE_VIEW) {
+			TableViewer table = (TableViewer)getViewer();
+			table.getTable().selectAll();
+		} else {
+			// Select All in a tree doesn't really work well
+//			TreeViewer tree = (TreeViewer)getViewer();
+//			tree.getTree().selectAll();
+		}
+	}
 }

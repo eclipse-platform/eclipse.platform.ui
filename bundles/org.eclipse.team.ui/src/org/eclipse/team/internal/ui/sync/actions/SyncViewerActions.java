@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 /**
  * This class managers the actions associated with the SyncViewer class.
@@ -96,6 +97,18 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 				collapseAll.setEnabled(false);
 			}
 			getSyncView().switchViewerType(viewerType);
+		}
+	}
+	
+	class SelectAllAction extends Action {
+		public boolean isEnabled() {
+			// Always enable the action but selectAll on Tree does nothing
+			// Being smarter would require a refresh of the global command when the 
+			// view switches type (TREE<>TABLE)
+			return true;
+		}
+		public void run() {
+			getSyncView().selectAll();
 		}
 	}
 	
@@ -205,6 +218,9 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		
+		Action selectAllAction = new SelectAllAction();
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
+
 		IToolBarManager manager = actionBars.getToolBarManager();
 		manager.add(chooseSubscriberAction);
 		manager.add(new Separator());
