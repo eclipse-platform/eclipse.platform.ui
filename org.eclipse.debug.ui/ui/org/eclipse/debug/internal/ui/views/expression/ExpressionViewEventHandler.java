@@ -16,10 +16,13 @@ import java.util.List;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionsListener;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -28,6 +31,25 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * Updates the expression view
  */ 
 public class ExpressionViewEventHandler extends VariablesViewEventHandler implements IExpressionsListener {
+
+	/**
+	 * Also update expressions if a target terminates
+	 * 
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesViewEventHandler#doHandleTerminateEvent(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void doHandleTerminateEvent(DebugEvent event) {
+		super.doHandleTerminateEvent(event);
+		if (event.getSource() instanceof IDebugTarget) {
+			IExpression[] expressions = DebugPlugin.getDefault().getExpressionManager().getExpressions();
+			Object context = DebugUITools.getDebugContext();
+			for (int i = 0; i < expressions.length; i++) {
+				IExpression expression = expressions[i];
+				if (expression instanceof IWatchExpression) {
+					((IWatchExpression)expression).setExpressionContext(context);
+				}
+			}			
+		}
+	}
 
 	/**
 	 * Constructs a new event handler on the given view

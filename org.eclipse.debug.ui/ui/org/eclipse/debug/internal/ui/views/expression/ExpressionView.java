@@ -13,6 +13,8 @@ package org.eclipse.debug.internal.ui.views.expression;
  
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -96,11 +98,29 @@ public class ExpressionView extends VariablesView {
 	
 	/** 
 	 * The <code>ExpressionView</code> listens for selection changes in the <code>LaunchesView</code>
-	 * to correctly set the editable state of the details pane.
+	 * to correctly set the editable state of the details pane. Updates the context of
+	 * watch expressions.
 	 *
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (selection instanceof IStructuredSelection) {
+			Object context = null;
+			IStructuredSelection ss = (IStructuredSelection)selection;
+			if (ss.size() < 2) {
+				context = ss.getFirstElement();
+			}
+			// update watch expressions with new context
+			IExpression[] expressions = DebugPlugin.getDefault().getExpressionManager().getExpressions();
+			for (int i = 0; i < expressions.length; i++) {
+				IExpression expression = expressions[i];
+				if (expression instanceof IWatchExpression) {
+					((IWatchExpression)expression).setExpressionContext(context);
+				}
+			}			
+		} 
+
+		// update actions
 		updateAction("ContentAssist"); //$NON-NLS-1$
 	}
 	
