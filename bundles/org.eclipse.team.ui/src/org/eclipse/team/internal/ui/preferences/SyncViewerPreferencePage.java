@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.preferences;
 import java.text.Collator;
 import java.text.DateFormat;
 import java.util.*;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -31,8 +30,6 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	
 	private BooleanFieldEditor compressFolders = null;
 	private BooleanFieldEditor showSyncInLabels = null;
-	private BooleanFieldEditor promptAtEndOfSynchronize = null;
-	private BooleanFieldEditor promptAtEndOfSchduledSynchronize = null;
 	private BooleanFieldEditor useDefaultPerspective = null;
 	private RadioGroupFieldEditor synchronizePerspectiveSwitch = null;
 	
@@ -73,11 +70,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		addField(compressFolders);
 		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, Policy.bind("SyncViewerPreferencePage.19"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
 		addField(showSyncInLabels);	
-		promptAtEndOfSynchronize = new BooleanFieldEditor(SYNCHRONIZING_COMPLETE_SHOW_DIALOG, Policy.bind("SyncViewerPreferencePage.31"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
-		addField(promptAtEndOfSynchronize);
-		promptAtEndOfSchduledSynchronize = new BooleanFieldEditor(SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG, Policy.bind("SyncViewerPreferencePage.12"), SWT.NONE, getFieldEditorParent()); //$NON-NLS-1$
-		addField(promptAtEndOfSchduledSynchronize);
-		
+
 		synchronizePerspectiveSwitch= new RadioGroupFieldEditor(SYNCHRONIZING_COMPLETE_PERSPECTIVE, Policy.bind("SyncViewerPreferencePage.13"), 3,  //$NON-NLS-1$
 				new String[][] {
 								{Policy.bind("SyncViewerPreferencePage.14"), SYNCHRONIZING_COMPLETE_PERSPECTIVE_ALWAYS}, //$NON-NLS-1$

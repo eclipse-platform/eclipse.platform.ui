@@ -129,13 +129,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, TeamSynchronizingPerspective.ID);
-		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WHEN_NO_CHANGES, true);
-		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_PROMPT_WITH_CHANGES, true);
-		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WHEN_NO_CHANGES, false);
-		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_BKG_PROMPT_WITH_CHANGES, true);
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, GlobalRefreshAction.NO_DEFAULT_PARTICPANT);		
-		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_SHOW_DIALOG, true);
-		store.setDefault(IPreferenceIds.SYNCHRONIZING_SCHEDULED_COMPLETE_SHOW_DIALOG, true);
 		store.setDefault(IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE, IPreferenceIds.SYNCHRONIZING_COMPLETE_PERSPECTIVE_PROMPT);		 //$NON-NLS-1$
 	}
 	
