@@ -101,10 +101,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			    	List expanded= new ArrayList();
 			    	IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
 			    	for (int i = 0; i < breakpoints.length; i++) {
-						IBreakpoint breakpoint= breakpoints[i];
-						Object breakpointParent = provider.getParent(breakpoint);
-						if (breakpointParent instanceof IBreakpointContainer && getExpandedState(breakpointParent)) {
-							expanded.add(breakpoint);
+						if (isFullyExpanded(breakpoints[i], provider)) {
+							expanded.add(breakpoints[i]);
 						}
 					}
 			    	provider.recomputeContent();
@@ -118,6 +116,21 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		    		getControl().setRedraw(true);
 		    	}
             }
+		    /**
+		     * Returns whether the given element and all parent elements are expanded.
+		     */
+		    private boolean isFullyExpanded(Object element, ITreeContentProvider provider) {
+		    	Object parent= provider.getParent(element);
+		    	if (parent == null || parent == getRoot()) {
+		    		return getExpandedState(element);
+		    	}
+		    	boolean parentExpanded= getExpandedState(parent);
+		    	if (!parentExpanded) {
+		    		return false;
+		    	} else {
+					return isFullyExpanded(parent, provider);
+		    	}
+		    }
 		};
 		viewer.setContentProvider(fContentProvider);
 		viewer.setSorter(new BreakpointsSorter());
