@@ -43,13 +43,13 @@ import org.eclipse.ui.contexts.NotDefinedException;
  */
 public class LaunchViewContextListener implements IContextListener, IPartListener, IPageListener {
 	
-	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings";
-	public static final String ID_DEBUG_MODEL_CONTEXT_BINDINGS= "debugModelContextBindings";
-	public static final String ATTR_CONTEXT_ID= "contextId";
-	public static final String ATTR_VIEW_ID= "viewId";
-	public static final String ATTR_DEBUG_MODEL_ID= "debugModelId";
-	public static final String ATTR_AUTO_OPEN= "autoOpen";
-	public static final String ATTR_AUTO_CLOSE= "autoClose";
+	public static final String ID_CONTEXT_VIEW_BINDINGS= "contextViewBindings"; //$NON-NLS-1$
+	public static final String ID_DEBUG_MODEL_CONTEXT_BINDINGS= "debugModelContextBindings"; //$NON-NLS-1$
+	public static final String ATTR_CONTEXT_ID= "contextId"; //$NON-NLS-1$
+	public static final String ATTR_VIEW_ID= "viewId"; //$NON-NLS-1$
+	public static final String ATTR_DEBUG_MODEL_ID= "debugModelId"; //$NON-NLS-1$
+	public static final String ATTR_AUTO_OPEN= "autoOpen"; //$NON-NLS-1$
+	public static final String ATTR_AUTO_CLOSE= "autoClose"; //$NON-NLS-1$
 	
 	private Map modelsToContext= new HashMap();
 	private Map contextViews= new HashMap();
