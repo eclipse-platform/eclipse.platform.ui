@@ -111,6 +111,15 @@ The default variable used during expression evaluation is bound to the element v
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>

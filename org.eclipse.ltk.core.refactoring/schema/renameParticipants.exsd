@@ -123,6 +123,15 @@ Java nature and when the type to be renamed is a JUnit test.
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>

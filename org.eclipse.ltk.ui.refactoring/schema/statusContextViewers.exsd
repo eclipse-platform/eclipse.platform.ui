@@ -97,6 +97,15 @@ Variables can be accessed using the &amp;lt;with variable=&quot;...&quot;/&amp;g
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
