@@ -148,7 +148,7 @@ public class InputDialog extends Dialog {
 		errorMessageText = new Text(composite, SWT.READ_ONLY);
 		errorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL));
-	
+		errorMessageText.setBackground(errorMessageText.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
 		applyDialogFont(composite);
 		return composite;
