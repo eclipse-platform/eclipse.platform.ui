@@ -12,13 +12,18 @@ package org.eclipse.ui.wizards.datatransfer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IImportWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -82,17 +87,23 @@ private ImageDescriptor getImageDescriptor(String relativePath) {
 		return null;
 	}
 }
+
 /* (non-Javadoc)
  * Method declared on IWorkbenchWizard.
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.workbench = workbench;
-	selection = currentSelection;
+	this.selection = currentSelection;
+	List selectedResources = IDE.computeSelectedResources(currentSelection);
+	if (selectedResources != null && !selectedResources.isEmpty()) {
+		this.selection = new StructuredSelection(selectedResources);
+	}
 
 	setWindowTitle(DataTransferMessages.getString("DataTransfer.importTitle")); //$NON-NLS-1$
 	setDefaultPageImageDescriptor(getImageDescriptor("wizban/importzip_wiz.gif"));//$NON-NLS-1$
 	setNeedsProgressMonitor(true);
 }
+
 /* (non-Javadoc)
  * Method declared on IWizard.
  */

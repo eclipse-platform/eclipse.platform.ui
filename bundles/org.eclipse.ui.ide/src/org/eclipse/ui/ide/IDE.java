@@ -10,10 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -28,7 +36,9 @@ import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
- * Placeholder for IDE-specific APIs to be factored out of existing workbench.
+ * Collection of IDE-specific APIs factored out of existing workbench.
+ * This class cannot be instantiated; all functionality is provided by 
+ * static methods and fields.
  * 
  * @since 3.0
  */
@@ -82,6 +92,78 @@ public final class IDE {
 	 */
 	private static MarkerHelpRegistry markerHelpRegistry = null;
 
+	/**
+	 * An empty unmodifiable list. Used to avoid garbage creation.
+	 */
+	private static final List emptyUnmodifiableList = Collections.unmodifiableList(new ArrayList(0));
+	
+	/**
+	 * Standard shared images defined by the IDE. These are over and about the
+	 * standard workbench images declared in {@link org.eclipse.ui.ISharedImages
+	 * ISharedImages}.
+	 * <p>
+	 * This interface is not intended to be implemented by clients.
+	 * </p>
+	 * 
+	 * @see org.eclipse.ui.ISharedImages
+	 */
+	public interface SharedImages {
+		/**
+		 * Identifies a project image.
+		 */
+		public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
+
+		/**
+		 * Identifies a closed project image.
+		 */
+		public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
+	
+		/**
+		 * Identifies the image used for "open marker".
+		 */
+		public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
+	
+		/**
+		 * Identifies the default image used to indicate a task.
+		 */
+		public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
+		/**
+		 * Identifies the default image used to indicate a bookmark.
+		 */
+		public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Preferences defined by the IDE workbench.
+	 * <p>
+	 * This interface is not intended to be implemented by clients.
+	 * </p>
+	 */
+	public interface Preferences {
+		/**
+		 * A named preference for how a new perspective should be opened
+		 * when a new project is created.
+		 * <p>
+		 * Value is of type <code>String</code>.  The possible values are defined 
+		 * by the constants <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE, 
+		 * OPEN_PERSPECTIVE_REPLACE, and NO_NEW_PERSPECTIVE</code>.
+		 * </p>
+		 * 
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_WINDOW
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_PAGE
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_REPLACE
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
+		 */
+		public static final String PROJECT_OPEN_NEW_PERSPECTIVE =
+			"PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Block instantiation.
+	 */
+	private IDE() {
+	}
+	
 	/**
 	 * Returns the marker help registry for the workbench.
 	 * 
@@ -305,64 +387,37 @@ public final class IDE {
 	}
 
 	/**
-	 * Standard shared images defined by the IDE. These are over and about the
-	 * standard workbench images declared in {@link org.eclipse.ui.ISharedImages
-	 * ISharedImages}.
-	 * <p>
-	 * This interface is not intended to be implemented by clients.
-	 * </p>
+	 * Extracts and returns the <code>IResource</code>s in the given
+	 * selection or the resource objects they adapts to.
 	 * 
-	 * @see org.eclipse.ui.ISharedImages
+	 * @param originalSelection the original selection, possibly empty
+	 * @return list of resources (element type: <code>IResource</code>), 
+	 *    possibly empty
 	 */
-	public interface SharedImages {
-		/**
-		 * Identifies a project image.
-		 */
-		public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
-
-		/**
-		 * Identifies a closed project image.
-		 */
-		public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
-	
-		/**
-		 * Identifies the image used for "open marker".
-		 */
-		public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
-	
-		/**
-		 * Identifies the default image used to indicate a task.
-		 */
-		public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
-		/**
-		 * Identifies the default image used to indicate a bookmark.
-		 */
-		public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
-	}
-	
-	/**
-	 * Preferences defined by the IDE workbench.
-	 * <p>
-	 * This interface is not intended to be implemented by clients.
-	 * </p>
-	 */
-	public interface Preferences {
-		/**
-		 * A named preference for how a new perspective should be opened
-		 * when a new project is created.
-		 * <p>
-		 * Value is of type <code>String</code>.  The possible values are defined 
-		 * by the constants <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE, 
-		 * OPEN_PERSPECTIVE_REPLACE, and NO_NEW_PERSPECTIVE</code>.
-		 * </p>
-		 * 
-		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_WINDOW
-		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_PAGE
-		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_REPLACE
-		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
-		 */
-		public static final String PROJECT_OPEN_NEW_PERSPECTIVE =
-			"PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
+	public static List computeSelectedResources(IStructuredSelection originalSelection) {
+		List resources = null;
+		for (Iterator e = originalSelection.iterator(); e.hasNext();) {
+			Object next = e.next();
+			Object resource = null;
+			if (next instanceof IResource) {
+				resource = next;
+			} else if (next instanceof IAdaptable) {
+				resource = ((IAdaptable) next).getAdapter(IResource.class);
+			}
+			if (resource != null) {
+				if (resources == null) {
+					// lazy init to avoid creating empty lists
+					// assume selection contains mostly resources most times
+					resources = new ArrayList(originalSelection.size());
+				}
+				resources.add(resource);
+			}
+		}
+		if (resources == null ) {
+			return emptyUnmodifiableList;
+		} else {
+			return resources;
+		}
 	}
 	
 }

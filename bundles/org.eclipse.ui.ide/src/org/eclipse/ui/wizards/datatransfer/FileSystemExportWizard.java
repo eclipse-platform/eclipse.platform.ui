@@ -12,6 +12,7 @@ package org.eclipse.ui.wizards.datatransfer;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Platform;
@@ -20,7 +21,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IExportWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -83,21 +89,27 @@ private ImageDescriptor getImageDescriptor(String relativePath) {
 		return null;
 	}
 }
+
 /* (non-Javadoc)
  * Method declared on IWorkbenchWizard.
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-	//Make it the current selection by default but look it up otherwise
-	selection = currentSelection;
-	
-	if (currentSelection.isEmpty() && workbench.getActiveWorkbenchWindow() != null){
+	this.selection = currentSelection;
+	List selectedResources = IDE.computeSelectedResources(currentSelection);
+	if (selectedResources != null && !selectedResources.isEmpty()) {
+		this.selection = new StructuredSelection(selectedResources);
+	}
+
+	// look it up if current selection (after resource adapting) is empty
+	if (selection.isEmpty() && workbench.getActiveWorkbenchWindow() != null) {
 		IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-		if( page != null){
+		if( page != null) {
 			IEditorPart currentEditor = page.getActiveEditor();
-			if (currentEditor != null){
+			if (currentEditor != null) {
 				Object selectedResource = currentEditor.getEditorInput().getAdapter(IResource.class);
-				if (selectedResource != null)
-				selection = new StructuredSelection(selectedResource);
+				if (selectedResource != null) {
+					selection = new StructuredSelection(selectedResource);
+				}
 			}
 		}
 	}
@@ -106,6 +118,7 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
 	setNeedsProgressMonitor(true);
 }
+
 /* (non-Javadoc)
  * Method declared on IWizard.
  */
