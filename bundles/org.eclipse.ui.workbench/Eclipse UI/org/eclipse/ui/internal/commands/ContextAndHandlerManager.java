@@ -51,6 +51,15 @@ import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.commands.registry.ContextBinding;
+import org.eclipse.ui.internal.commands.registry.CoreRegistry;
+import org.eclipse.ui.internal.commands.registry.IMutableRegistry;
+import org.eclipse.ui.internal.commands.registry.IRegistry;
+import org.eclipse.ui.internal.commands.registry.LocalRegistry;
+import org.eclipse.ui.internal.commands.registry.PreferenceRegistry;
+import org.eclipse.ui.internal.commands.util.KeySupport;
+import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.util.Stroke;
 
 public class ContextAndHandlerManager implements IContextResolver {
 
@@ -420,9 +429,9 @@ public class ContextAndHandlerManager implements IContextResolver {
 	}
 	
 	void reset() {
-		CoreRegistry coreRegistry = CoreRegistry.getInstance();
-		LocalRegistry localRegistry = LocalRegistry.getInstance();
-		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		IRegistry coreRegistry = CoreRegistry.getInstance();
+		IMutableRegistry localRegistry = LocalRegistry.getInstance();
+		IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 			
 		try {
 			coreRegistry.load();

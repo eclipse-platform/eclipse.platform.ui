@@ -9,13 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.internal.commands.util.KeySupport;
+import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.util.Stroke;
+import org.eclipse.ui.internal.commands.util.Util;
 
 final class Persistence {
 

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IMemento;

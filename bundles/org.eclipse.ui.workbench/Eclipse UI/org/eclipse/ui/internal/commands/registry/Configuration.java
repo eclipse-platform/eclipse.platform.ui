@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -18,66 +18,68 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public final class Context implements Comparable {
+import org.eclipse.ui.internal.commands.util.Util;
+
+public final class Configuration implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Context.class.getName().hashCode();
+	private final static int HASH_INITIAL = Configuration.class.getName().hashCode();
 
 	private static Comparator nameComparator;
 	
-	public static Context create(String description, String id, String name, String parent, String plugin)
+	public static Configuration create(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
-		return new Context(description, id, name, parent, plugin);
+		return new Configuration(description, id, name, parent, plugin);
 	}
 
 	public static Comparator nameComparator() {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((Context) left).name, ((Context) right).name);
+					return Collator.getInstance().compare(((Configuration) left).name, ((Configuration) right).name);
 				}	
 			};		
 		
 		return nameComparator;
 	}
 
-	public static SortedMap sortedMapById(List contexts)
+	public static SortedMap sortedMapById(List configurations)
 		throws IllegalArgumentException {
-		if (contexts == null)
+		if (configurations == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = contexts.iterator();
+		Iterator iterator = configurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof Context))
+			if (!(object instanceof Configuration))
 				throw new IllegalArgumentException();
 				
-			Context context = (Context) object;
-			sortedMap.put(context.id, context);									
+			Configuration configuration = (Configuration) object;
+			sortedMap.put(configuration.id, configuration);									
 		}			
 		
 		return sortedMap;
 	}
 
-	public static SortedMap sortedMapByName(List contexts)
+	public static SortedMap sortedMapByName(List configurations)
 		throws IllegalArgumentException {
-		if (contexts == null)
+		if (configurations == null)
 			throw new IllegalArgumentException();
 
 		SortedMap sortedMap = new TreeMap();			
-		Iterator iterator = contexts.iterator();
+		Iterator iterator = configurations.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			
-			if (!(object instanceof Context))
+			if (!(object instanceof Configuration))
 				throw new IllegalArgumentException();
 				
-			Context context = (Context) object;
-			sortedMap.put(context.name, context);									
+			Configuration configuration = (Configuration) object;
+			sortedMap.put(configuration.name, configuration);									
 		}			
 		
 		return sortedMap;
@@ -89,7 +91,7 @@ public final class Context implements Comparable {
 	private String parent;
 	private String plugin;
 	
-	private Context(String description, String id, String name, String parent, String plugin)
+	private Configuration(String description, String id, String name, String parent, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
@@ -104,20 +106,20 @@ public final class Context implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		Context item = (Context) object;
-		int compareTo = id.compareTo(item.id);
+		Configuration configuration = (Configuration) object;
+		int compareTo = id.compareTo(configuration.id);
 		
 		if (compareTo == 0) {		
-			compareTo = name.compareTo(item.name);			
+			compareTo = name.compareTo(configuration.name);			
 		
 			if (compareTo == 0) {
-				Util.compare(description, item.description);
+				Util.compare(description, configuration.description);
 				
 				if (compareTo == 0) {
-					compareTo = Util.compare(parent, item.parent);
+					compareTo = Util.compare(parent, configuration.parent);
 
 					if (compareTo == 0)
-						compareTo = Util.compare(plugin, item.plugin);								
+						compareTo = Util.compare(plugin, configuration.plugin);								
 				}							
 			}
 		}
@@ -126,11 +128,12 @@ public final class Context implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Context))
+		if (!(object instanceof Configuration))
 			return false;
 
-		Context context = (Context) object;	
-		return Util.equals(description, context.description) && id.equals(context.id) && name.equals(context.name) && Util.equals(parent, context.parent) && Util.equals(plugin, context.plugin);
+		Configuration configuration = (Configuration) object;	
+		return Util.equals(description, configuration.description) && id.equals(configuration.id) && name.equals(configuration.name) && Util.equals(parent, configuration.parent) && 
+			Util.equals(plugin, configuration.plugin);
 	}
 
 	public String getDescription() {
@@ -164,6 +167,6 @@ public final class Context implements Comparable {
 	}
 	
 	public String toString() {
-		return name + " (" + id + ')';		 //$NON-NLS-1$
+		return name + " (" + id + ')';	 //$NON-NLS-1$
 	}
 }

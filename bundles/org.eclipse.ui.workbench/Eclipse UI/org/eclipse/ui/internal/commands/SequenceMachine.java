@@ -25,6 +25,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.internal.commands.registry.Configuration;
+import org.eclipse.ui.internal.commands.registry.Context;
+import org.eclipse.ui.internal.commands.registry.SequenceBinding;
+import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.util.Util;
 
 public final class SequenceMachine {
 

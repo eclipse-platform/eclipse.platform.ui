@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -98,7 +98,7 @@ public final class GestureSupport {
 		else if (UP.equals(string))
 			return STROKE_UP;
 		else 
-			return Stroke.create(0); // TODO
+			return Stroke.create(0);
 	}
 
 	public static Sequence recognize(Point[] points, int sensitivity) {

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -217,9 +217,9 @@ public final class CoreRegistry extends AbstractRegistry {
 		}
 	}
 
-	private static CoreRegistry instance;
+	private static IRegistry instance;
 	
-	public static CoreRegistry getInstance() {
+	public static IRegistry getInstance() {
 		if (instance == null)
 			instance = new CoreRegistry();
 	

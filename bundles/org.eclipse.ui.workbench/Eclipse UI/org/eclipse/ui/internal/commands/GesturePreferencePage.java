@@ -65,6 +65,20 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.registry.ActiveConfiguration;
+import org.eclipse.ui.internal.commands.registry.Category;
+import org.eclipse.ui.internal.commands.registry.Command;
+import org.eclipse.ui.internal.commands.registry.Configuration;
+import org.eclipse.ui.internal.commands.registry.Context;
+import org.eclipse.ui.internal.commands.registry.CoreRegistry;
+import org.eclipse.ui.internal.commands.registry.IMutableRegistry;
+import org.eclipse.ui.internal.commands.registry.IRegistry;
+import org.eclipse.ui.internal.commands.registry.LocalRegistry;
+import org.eclipse.ui.internal.commands.registry.PreferenceRegistry;
+import org.eclipse.ui.internal.commands.registry.SequenceBinding;
+import org.eclipse.ui.internal.commands.util.GestureSupport;
+import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.util.Util;
 
 public class GesturePreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
@@ -279,7 +293,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
-		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
 		try {
 			preferenceRegistry.load();
@@ -294,7 +308,7 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 
 	public boolean performOk() {
 		copyFromUI();
-		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 		preferenceRegistry.setActiveGestureConfigurations(preferenceActiveGestureConfigurations);
 		preferenceRegistry.setGestureBindings(preferenceGestureBindings);
 		preferenceRegistry.setGestureConfigurations(preferenceGestureConfigurations);
@@ -314,9 +328,9 @@ public class GesturePreferencePage extends org.eclipse.jface.preference.Preferen
 
 	public void setVisible(boolean visible) {
 		if (visible == true) {
-			CoreRegistry coreRegistry = CoreRegistry.getInstance();
-			LocalRegistry localRegistry = LocalRegistry.getInstance();
-			PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+			IRegistry coreRegistry = CoreRegistry.getInstance();
+			IMutableRegistry localRegistry = LocalRegistry.getInstance();
+			IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 			
 			try {
 				coreRegistry.load();

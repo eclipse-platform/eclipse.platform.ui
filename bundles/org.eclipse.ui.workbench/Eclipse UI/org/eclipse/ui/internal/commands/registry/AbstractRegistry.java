@@ -9,13 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-abstract class AbstractRegistry {
+abstract class AbstractRegistry 
+	implements IRegistry {
 
 	protected List activeGestureConfigurations = Collections.EMPTY_LIST;
 	protected List activeKeyConfigurations = Collections.EMPTY_LIST;

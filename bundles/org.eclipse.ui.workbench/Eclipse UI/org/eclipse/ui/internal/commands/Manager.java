@@ -21,6 +21,21 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.ui.internal.commands.registry.ActiveConfiguration;
+import org.eclipse.ui.internal.commands.registry.Configuration;
+import org.eclipse.ui.internal.commands.registry.Context;
+import org.eclipse.ui.internal.commands.registry.CoreRegistry;
+import org.eclipse.ui.internal.commands.registry.IMutableRegistry;
+import org.eclipse.ui.internal.commands.registry.IRegistry;
+import org.eclipse.ui.internal.commands.registry.LocalRegistry;
+import org.eclipse.ui.internal.commands.registry.PreferenceRegistry;
+import org.eclipse.ui.internal.commands.registry.SequenceBinding;
+import org.eclipse.ui.internal.commands.util.GestureSupport;
+import org.eclipse.ui.internal.commands.util.KeySupport;
+import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.util.Stroke;
+import org.eclipse.ui.internal.commands.util.Util;
+
 public class Manager {
 
 	private static Manager instance;
@@ -73,9 +88,9 @@ public class Manager {
 	}
 
 	public void reset() {
-		CoreRegistry coreRegistry = CoreRegistry.getInstance();		
-		LocalRegistry localRegistry = LocalRegistry.getInstance();
-		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+		IRegistry coreRegistry = CoreRegistry.getInstance();		
+		IMutableRegistry localRegistry = LocalRegistry.getInstance();
+		IMutableRegistry preferenceRegistry = PreferenceRegistry.getInstance();
 
 		try {
 			coreRegistry.load();

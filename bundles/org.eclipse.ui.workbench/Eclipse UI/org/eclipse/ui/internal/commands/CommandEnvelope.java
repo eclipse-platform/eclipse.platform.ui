@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.commands;
 
+import org.eclipse.ui.internal.commands.util.Util;
+
 final class CommandEnvelope implements Comparable {
 
 	static CommandEnvelope create(String command) {

@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ui.internal.commands.util.Util;
+
 public final class State implements Comparable {
 
 	final static int MAXIMUM_PATHS = 8;

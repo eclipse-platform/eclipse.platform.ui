@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,9 +33,9 @@ public final class LocalRegistry extends AbstractMutableRegistry {
 	private final static int RANK_LOCAL = 1;
 	private final static String TAG_ROOT = Persistence.PACKAGE_FULL;
 	
-	public static LocalRegistry instance;
+	public static IMutableRegistry instance;
 	
-	public static LocalRegistry getInstance() {
+	public static IMutableRegistry getInstance() {
 		if (instance == null)
 			instance = new LocalRegistry();
 	

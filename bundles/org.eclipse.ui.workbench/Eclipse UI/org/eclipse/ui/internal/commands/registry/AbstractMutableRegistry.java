@@ -9,12 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import java.io.IOException;
 import java.util.List;
 
-abstract class AbstractMutableRegistry extends AbstractRegistry {
+import org.eclipse.ui.internal.commands.util.Util;
+
+abstract class AbstractMutableRegistry extends AbstractRegistry
+	implements IMutableRegistry {
 
 	protected AbstractMutableRegistry() {
 		super();

@@ -17,6 +17,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ui.internal.commands.util.Util;
+
 public final class Path implements Comparable {
 
 	final static int MAXIMUM_PATH_ITEMS = 16;

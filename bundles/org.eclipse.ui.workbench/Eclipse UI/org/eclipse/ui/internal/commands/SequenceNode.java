@@ -23,6 +23,11 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.ui.internal.commands.registry.SequenceBinding;
+import org.eclipse.ui.internal.commands.util.Sequence;
+import org.eclipse.ui.internal.commands.util.Stroke;
+import org.eclipse.ui.internal.commands.util.Util;
+
 final class SequenceNode {
 
 	static void add(SortedMap tree, SequenceBinding sequenceBinding, State scopeConfiguration, State platformLocale) {

@@ -16,6 +16,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.internal.commands.util.Util;
 
 public final class SimpleHandlerService extends AbstractHandlerService {
 	

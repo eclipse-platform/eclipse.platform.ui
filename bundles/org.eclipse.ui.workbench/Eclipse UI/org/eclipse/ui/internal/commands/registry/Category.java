@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
 import java.text.Collator;
 import java.util.Comparator;
@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.eclipse.ui.internal.commands.util.Util;
 
 public final class Category implements Comparable {
 

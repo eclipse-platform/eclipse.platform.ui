@@ -9,30 +9,33 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.commands.registry;
 
-import java.util.Collections;
+import java.io.IOException;
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.util.Util;
+public interface IRegistry {
 
+	List getActiveGestureConfigurations();
 
-public final class SimpleContextService extends AbstractContextService {
+	List getActiveKeyConfigurations();
+
+	List getCategories();
 	
-	private List contextIds;
+	List getCommands();
+
+	List getContextBindings();
+
+	List getContexts();
+
+	List getGestureBindings();
+
+	List getGestureConfigurations();
 	
-	public SimpleContextService() {
-		super();
-		this.contextIds = Collections.EMPTY_LIST;
-	}
+	List getKeyBindings();
 	
-	public List getContexts() {
-		return contextIds;
-	}
+	List getKeyConfigurations();
 	
-	public void setContexts(List contextIds)
-		throws IllegalArgumentException {
-		this.contextIds = Util.safeCopy(contextIds, String.class);    
-		fireContextServiceChanged(); 
-	}   
-}
+	void load()
+		throws IOException;
+}	
