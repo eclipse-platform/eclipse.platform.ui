@@ -13,17 +13,17 @@ package org.eclipse.ui.ide;
 import org.eclipse.core.resources.IMarker;
 
 /**
- * An adapter that converts the marker information to a postion
- * in the editor, and causes the editor to show that position.
+ * An adapter interface for editors, which allows the editor
+ * to reveal the position of a given marker.
  * 
  * @since 3.0
  */
-public interface IMarkerEditorPositioner {
+public interface IGotoMarker {
 	/**
-	 * Convert the marker information to a position within the
-	 * editor, and cause the editor to show that position.
-	 * 
-	 * @param marker the resource marker
+     * Sets the cursor and selection state for an editor to 
+	 * reveal the position of the given marker.
+	 *  
+	 * @param marker the marker
 	 */
-	public void gotoPosition(IMarker marker);
+	public void gotoMarker(IMarker marker);
 }

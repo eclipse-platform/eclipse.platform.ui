@@ -103,7 +103,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.IMarkerEditorPositioner;
+import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -1329,15 +1329,7 @@ public class TaskList extends ViewPart {
 				if (input instanceof IFileEditorInput) {
 					IFile file = ((IFileEditorInput) input).getFile();
 					if (selectedMarker.getResource().equals(file)) {
-						IMarkerEditorPositioner positioner = null;
-						if (editor instanceof IMarkerEditorPositioner) {
-							positioner = (IMarkerEditorPositioner) editor;
-						} else {
-							positioner = (IMarkerEditorPositioner) editor.getAdapter(IMarkerEditorPositioner.class);
-						}
-						if (positioner != null) {
-							positioner.gotoPosition(selectedMarker);
-						}
+						IDE.gotoMarker(editor, selectedMarker);
 					}
 				}
 			}

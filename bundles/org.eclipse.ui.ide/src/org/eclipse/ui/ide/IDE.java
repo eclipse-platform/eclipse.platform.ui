@@ -95,6 +95,29 @@ public final class IDE {
 		return markerHelpRegistry;
 	}
 	
+	
+	/**
+	 * Sets the cursor and selection state for the given editor to 
+	 * reveal the position of the given marker.
+	 * This is done on a best effort basis.  If the editor does not
+	 * provide an <code>IGotoMarker</code> interface (either directly
+     * or via <code>IAdaptable.getAdapter</code>), this has no effect.
+	 * 
+	 * @param editor the editor
+	 * @param marker the marker
+	 */
+	public static void gotoMarker(IEditorPart editor, IMarker marker) {
+		IGotoMarker gotoMarker = null;
+		if (editor instanceof IGotoMarker) {
+			gotoMarker = (IGotoMarker) editor;
+		} else {
+			gotoMarker = (IGotoMarker) editor.getAdapter(IGotoMarker.class);
+		}
+		if (gotoMarker != null) {
+			gotoMarker.gotoMarker(marker);
+		} 
+	}
+	
 	/**
 	 * Opens an editor on the given file resource.  
 	 * <p>
@@ -230,15 +253,7 @@ public final class IDE {
 		
 		// get the editor to update its position based on the marker
 		if (editor != null) {
-			IMarkerEditorPositioner positioner = null;
-			if (editor instanceof IMarkerEditorPositioner) {
-				positioner = (IMarkerEditorPositioner) editor;
-			} else {
-				positioner = (IMarkerEditorPositioner) editor.getAdapter(IMarkerEditorPositioner.class);
-			}
-			if (positioner != null) {
-				positioner.gotoPosition(marker);
-			}
+			gotoMarker(editor, marker);
 		}
 		
 		return editor;
