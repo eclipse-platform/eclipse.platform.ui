@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -51,47 +53,38 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		return ioResource.length();
 	}
 
-	public void receiveFrom(InputStream in, 
-							 IProgressMonitor monitor, 
-							 long size, 
-							 boolean binary,
-							 boolean readOnly)
-							 
-		throws CVSException {
-		
+	public void receiveFrom(InputStream in, long size, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException {
 		OutputStream out;
 		String title;
-		
-		title = Policy.bind("LocalFile.receiving", 
-							new Object[] {ioResource.getName()});
-		
+
+		title = Policy.bind("LocalFile.receiving", ioResource.getName());
+
 		try {
 			// We don't need to buffer here because the methods used below do
 			out = new FileOutputStream(ioResource);
-			
+
 			try {
 				if (binary) {
-					transferWithProgress(in,out,size,monitor,title);
+					transferWithProgress(in, out, size, title, monitor);
 				} else {
-					transferText(in,out,size,monitor,title,false);
+					transferText(in, out, size, title, false, monitor);
 				}
 			} finally {
 				out.close();
 			}
-			
+
 			if (readOnly) {
 				ioResource.setReadOnly();
 			}
-			
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		}
 	}
-
+	
 	public void sendTo(
 		OutputStream out,
-		IProgressMonitor monitor,
-		boolean binary)
+		boolean binary,
+		IProgressMonitor monitor)
 		throws CVSException {
 		
 		InputStream in;
@@ -110,12 +103,12 @@ public class LocalFile extends LocalResource implements ICVSFile {
 					// Send the size to the server
 					out.write(("" + getSize()).getBytes());
 					out.write(SERVER_NEWLINE.getBytes());
-					transferWithProgress(in,out,size,monitor,title);
+					transferWithProgress(in,out,size,title,monitor);
 				} else {
 					
 					// In this case the size has to be computed.
 					// Therefore we do send the size in transferText
-					transferText(in,out,getSize(),monitor,title,true);
+					transferText(in,out,getSize(),title,true,monitor);
 				}
 			} finally {
 				in.close();
@@ -151,64 +144,36 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		return false;
 	}
 	
-	protected static void transferText(InputStream in,
-											OutputStream out,
-											long size,
-											IProgressMonitor monitor,
-											String title,
-											boolean toServer) 
-											throws IOException {
-												
-		// If we get a file bigger than 2 GigaByte, this does not
-		// work
-		Assert.isTrue(size < Integer.MAX_VALUE);
+	protected static void transferText(InputStream in, OutputStream out, long size, String title, boolean toServer, IProgressMonitor monitor) throws IOException {
 
-		if (size > 25000) {
-			
-			monitor.setTaskName(
-				Policy.bind(
-					"LocalFile.transfer",
-					new Object[]{title,new Long(0),new Long(size/1024)}
-				)
-			);
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		transferWithProgress(in, buffer, size, title, monitor);
 
-		}
-		
-		byte[] buffer = new byte[(int)size];
-
-		// Get the content from the file
-		int num = in.read(buffer);
-		int pos = num;
-		while ((num != -1) && (size - pos > 0)) {
-			Policy.checkCanceled(monitor);
-			num = in.read(buffer, pos, ((int)size) - pos);
-			pos += num;
-		}
-		
-		// care about newlines
+		byte[] contents = null;
+		boolean needEOLConversion = !PLATFORM_NEWLINE.equals(SERVER_NEWLINE);
 		if (toServer) {
-			buffer = Util.replace(buffer,PLATFORM_NEWBYTE,SERVER_NEWBYTE);
+			if (needEOLConversion) {
+				contents = Util.replace(buffer.toByteArray(), PLATFORM_NEWBYTE, SERVER_NEWBYTE);
+			} else {
+				contents = buffer.toByteArray();
+			}
 			// Send the size to the server
-			out.write(("" + buffer.length).getBytes());
+			out.write(("" + contents.length).getBytes());
 			out.write(SERVER_NEWLINE.getBytes());
-
 		} else {
-			buffer = Util.replace(buffer,PLATFORM_NEWBYTE,SERVER_NEWBYTE);
-			buffer = Util.replace(buffer,SERVER_NEWBYTE,PLATFORM_NEWBYTE);
+			if (needEOLConversion) {
+				contents = Util.replace(buffer.toByteArray(), PLATFORM_NEWBYTE, SERVER_NEWBYTE);
+				contents = Util.replace(contents, SERVER_NEWBYTE, PLATFORM_NEWBYTE);
+			} else {
+				contents = buffer.toByteArray();
+			}
 		}
-		
-		out.write(buffer);	
+		out.write(contents);
 	}
 		
-	protected static void transferWithProgress(
-		InputStream in,
-		OutputStream out,
-		long size,
-		IProgressMonitor monitor,
-		String title)
-		throws IOException {
-			
-		byte[] BUFFER = new byte[4096];			
+	protected static void transferWithProgress(InputStream in, OutputStream out, long size, String title, IProgressMonitor monitor) throws IOException {
+
+		byte[] BUFFER = new byte[4096];
 
 		// This special transfer utility will show progress to
 		// the monitor for files that are bigger than 25K
@@ -216,16 +181,15 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		int read = 0;
 		long totalRead = 0;
 		long ksize = size / 1024;
+
+		monitor.subTask(Policy.bind("LocalFile.transferNoSize", title));
+
 		// buffer size is smaller than MAXINT...
 		int toRead = (int) Math.min(BUFFER.length, size);
 		synchronized (BUFFER) {
 			while ((totalRead < size) && (read = in.read(BUFFER, 0, toRead)) != -1) {
 				if (progress && totalRead > 0) {
-					monitor.subTask(
-						Policy.bind(
-							"LocalFile.transfer",
-							new Object[] { title, new Long(totalRead / 1024), new Long(ksize)}));
-					monitor.worked(read);
+					monitor.subTask(Policy.bind("LocalFile.transfer", new Object[] { title, new Long(totalRead / 1024), new Long(ksize)}));
 				}
 				totalRead += read;
 				out.write(BUFFER, 0, read);

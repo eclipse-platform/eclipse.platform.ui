@@ -119,7 +119,7 @@ class Updated extends ResponseHandler {
 		binary = entry.indexOf("/"+ResourceSyncInfo.BINARY_TAG) != -1;
 		readOnly = permissions.indexOf(READ_ONLY_FLAG) == -1;
 		
-		mFile.receiveFrom(in,monitor,size,binary,readOnly);
+		mFile.receiveFrom(in, size, binary, readOnly, monitor);
 		
 		// Set the timestamp in the file, set the result in the fileInfo
 		String timestamp;

@@ -254,39 +254,28 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/**
 	 * @see IManagedFile#sendTo(OutputStream, IProgressMonitor, boolean)
 	 */
-	public void sendTo(
-		OutputStream out,
-		IProgressMonitor monitor,
-		boolean binary)
-		throws CVSException {
-			try {
-				String SERVER_NEWLINE = "\n";
-				// Send the size to the server and no contents
-				out.write(0);
-				out.write(SERVER_NEWLINE.getBytes());				
-			} catch(IOException e) {
-			}				
+	public void sendTo(OutputStream out, boolean binary, IProgressMonitor monitor) throws CVSException {
+		try {
+			String SERVER_NEWLINE = "\n";
+			// Send the size to the server and no contents
+			out.write(0);
+			out.write(SERVER_NEWLINE.getBytes());				
+		} catch(IOException e) {
+		}				
 	}
 
 	/**
 	 * @see IManagedFile#receiveFrom(InputStream, IProgressMonitor, long, boolean)
 	 */
-	public void receiveFrom(
-		InputStream inputStream,
-		IProgressMonitor monitor,
-		long size,
-		boolean binary,
-		boolean readOnly)
-		throws CVSException {
-			
+	public void receiveFrom(InputStream inputStream, long size, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException {
 		// NOTE: This should be changed such that the client or connection handles
 		// the proper transfer
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			if (binary)
-				LocalFile.transferWithProgress(inputStream, bos, (long)size, monitor, "");
+				LocalFile.transferWithProgress(inputStream, bos, (long)size, "", monitor);
 			else
-				LocalFile.transferText(inputStream, bos, (long)size, monitor, "", false);
+				LocalFile.transferText(inputStream, bos, (long)size, "", false, monitor);
 			contents = bos.toByteArray();
 		} catch (IOException ex) {
 			throw CVSException.wrapException(ex);

@@ -258,7 +258,7 @@ public class RequestSender {
 		String progressTitle =
 			Policy.bind("RequestSender.sendModified", file.getName());
 		monitor.subTask(progressTitle);
-		file.sendTo(connection.getRequestStream(),monitor,binary);
+		file.sendTo(connection.getRequestStream(),binary,monitor);
 	}
 
 	

@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
@@ -53,10 +54,11 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSProvider implements ICVSProvider {
 
-	private static final String STATE_FILE = ".cvsProviderState";
+	private static final String STATE_FILE = ".cvsProviderState"; //$NON-NLS-1$
 	
 	private static CVSProvider instance;
 	private PrintStream printStream;
@@ -93,7 +95,7 @@ public class CVSProvider implements ICVSProvider {
 		}
 		
 		// Set or cahce the password
-		String password = configuration.getProperty("password");
+		String password = configuration.getProperty("password"); //$NON-NLS-1$
 		if (password != null) {
 			if (cachePassword)
 				location.storePassword(password);
@@ -153,7 +155,7 @@ public class CVSProvider implements ICVSProvider {
 			// Add the option to load into a directory of a different name
 			String module = project.getName();
 			if (sourceModule != null) {
-				localOptions.add("-d");
+				localOptions.add("-d"); //$NON-NLS-1$
 				localOptions.add(module);
 				module = sourceModule;
 			}
@@ -213,7 +215,7 @@ public class CVSProvider implements ICVSProvider {
 		boolean alreadyExists = isCached(location);
 		addToCache(location);
 		try {
-			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
+			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor); //$NON-NLS-1$
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
@@ -231,28 +233,27 @@ public class CVSProvider implements ICVSProvider {
 	/**
 	 * @see ICVSProvider#checkout(ICVSRemoteResource[], IProject[], IProgressMonitor)
 	 */
-	public void checkout(
-		final ICVSRemoteFolder[] resources,
-		final IProject[] projects,
-		final IProgressMonitor monitor)
-		throws TeamException {
-			
+	public void checkout(final ICVSRemoteFolder[] resources, final IProject[] projects, IProgressMonitor monitor) throws TeamException {
 		final TeamException[] eHolder = new TeamException[1];
 		try {
 			IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor pm) throws CoreException {
 					try {
+						pm.setTaskName(Policy.bind("Checking_out_from_CVS..._5")); //$NON-NLS-1$
+						pm.beginTask(null, 1000 * resources.length);
 						for (int i=0;i<resources.length;i++) {
 							IProject project = null;
 							RemoteFolder resource = (RemoteFolder)resources[i];
 							if (projects != null) 
 								project = projects[i];
-							checkout(resource.getRepository(), project, resource.getRemotePath(), resource.getTag(), monitor);
+							checkout(resource.getRepository(), project, resource.getRemotePath(), resource.getTag(), Policy.subMonitorFor(pm, 1000));
 						}
 					}
 					catch (TeamException e) {
 						// Pass it outside the workspace runnable
 						eHolder[0] = e;
+					} finally {
+						pm.done();
 					}
 					// CoreException and OperationCanceledException are propagated
 				}
@@ -260,13 +261,13 @@ public class CVSProvider implements ICVSProvider {
 			ResourcesPlugin.getWorkspace().run(workspaceRunnable, monitor);
 		} catch (CoreException e) {
 			throw wrapException(e);
-		}
-		
+		} finally {
+			monitor.done();
+		}		
 		// Re-throw the TeamException, if one occurred
 		if (eHolder[0] != null) {
 			throw eHolder[0];
 		}
-		
 	}
 
 	/**
@@ -302,8 +303,8 @@ public class CVSProvider implements ICVSProvider {
 						String extension = resource.getFileExtension();
 						if (extension == null) {
 							result.add(resource.getName());
-						} else if (!("true".equals(registry.getValue(extension, "isAscii")))) {
-							result.add("*." + extension);
+						} else if (!("true".equals(registry.getValue(extension, "isAscii")))) { //$NON-NLS-1$ //$NON-NLS-2$
+							result.add("*." + extension); //$NON-NLS-1$
 						}
 					}
 					// Always return true and let the depth determine if children are visited
@@ -402,7 +403,7 @@ public class CVSProvider implements ICVSProvider {
 		addToCache(location);
 		try {
 			importProject(location, project, configuration, monitor);
-			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
+			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor); //$NON-NLS-1$
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
@@ -418,10 +419,10 @@ public class CVSProvider implements ICVSProvider {
 	}
 		
 	private CVSTag getTagFromProperties(Properties configuration) {
-		String date = configuration.getProperty("date");
-		String tagName = configuration.getProperty("tag");
+		String date = configuration.getProperty("date"); //$NON-NLS-1$
+		String tagName = configuration.getProperty("tag"); //$NON-NLS-1$
 		if (tagName == null)
-			tagName = configuration.getProperty("branch");
+			tagName = configuration.getProperty("branch"); //$NON-NLS-1$
 		if (tagName == null)
 			return CVSTag.DEFAULT;
 		return new CVSTag(tagName, CVSTag.BRANCH);
@@ -437,22 +438,22 @@ public class CVSProvider implements ICVSProvider {
 			ICVSFolder root = Client.getManagedFolder(project.getLocation().toFile());
 	
 			// Get the message
-			String message = configuration.getProperty("message");
+			String message = configuration.getProperty("message"); //$NON-NLS-1$
 			if (message == null)
 				message = Policy.bind("CVSProvider.initialImport");
 				
 			// Get the vendor
-			String vendor = configuration.getProperty("vendor");
+			String vendor = configuration.getProperty("vendor"); //$NON-NLS-1$
 			if (vendor == null)
 				vendor = location.getUsername();
 				
 			// Get the vendor
-			String tag = configuration.getProperty("tag");
+			String tag = configuration.getProperty("tag"); //$NON-NLS-1$
 			if (tag == null)
-				tag = "start";
+				tag = "start"; //$NON-NLS-1$
 				
 			// Get the module name
-			String module = configuration.getProperty("module");
+			String module = configuration.getProperty("module"); //$NON-NLS-1$
 			if (module == null)
 				module = project.getName();
 				
@@ -464,7 +465,7 @@ public class CVSProvider implements ICVSProvider {
 			String[] patterns = getBinaryFilePatterns(project);
 			for (int i=0;i<patterns.length;i++) {
 				localOptions.add(Client.WRAPPER_OPTION);
-				localOptions.add(patterns[i] + " -k 'b'");
+				localOptions.add(patterns[i] + " -k 'b'"); //$NON-NLS-1$
 			}
 	
 			// Perform a import
@@ -498,7 +499,7 @@ public class CVSProvider implements ICVSProvider {
 		// Assume files with no extension are binary
 		if (lastDot == -1) return false;
 		String extension = filename.substring(lastDot + 1);
-		return ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii"))));
+		return ((extension != null) && ("true".equals(registry.getValue(extension, "isAscii")))); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	private void removeFromCache(ICVSRepositoryLocation repository) {
@@ -598,7 +599,7 @@ public class CVSProvider implements ICVSProvider {
 	
 	private void saveState() throws TeamException {
 		IPath pluginStateLocation = CVSProviderPlugin.getPlugin().getStateLocation();
-		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile();
+		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile(); //$NON-NLS-1$
 		File stateFile = pluginStateLocation.append(STATE_FILE).toFile();
 		try {
 			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));

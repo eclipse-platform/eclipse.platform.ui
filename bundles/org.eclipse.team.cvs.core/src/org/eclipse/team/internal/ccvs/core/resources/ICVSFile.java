@@ -29,13 +29,13 @@ public interface ICVSFile extends ICVSResource {
 	 * Transfer the contents of the file to the given output stream. If the file is
 	 * not binary the line-endings may be converted.
 	 */
-	void sendTo(OutputStream outputStream, IProgressMonitor monitor, boolean binary) throws CVSException;
+	void sendTo(OutputStream outputStream, boolean binary, IProgressMonitor monitor) throws CVSException;
 	
 	/**
 	 * Transfer the contents of an input stream to this file. If the file is
 	 * not binary the line-endings may be converted.
 	 */
-	void receiveFrom(InputStream inputStream, IProgressMonitor monitor, long size, boolean binary, boolean readOnly) throws CVSException;	
+	void receiveFrom(InputStream inputStream, long size, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException;	
 
 	/**
 	 * Move the resource to another location. Does overwrite without
