@@ -113,7 +113,7 @@
       <page
             name="%SimpleVariablePreferencePage.name"
             category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.debug.internal.ui.preferences.SimpleVariablePreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.SimpleLaunchVariablePreferencePage"
             id="org.eclipse.debug.ui.SimpleVariablePreferencePage">
       </page>
    </extension>

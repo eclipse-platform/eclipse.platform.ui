@@ -63,7 +63,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * @see org.eclipse.debug.core.variables.ISimpleLaunchVariable
  * @see org.eclipse.debug.core.variables.ISimpleVariableRegistry
  */
-public class SimpleVariablePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class SimpleLaunchVariablePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	private TableViewer variableTable;
 	protected Button envAddButton;
@@ -92,7 +92,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		new ColumnWeightData(50)
 	};
 	
-	public SimpleVariablePreferencePage() {
+	public SimpleLaunchVariablePreferencePage() {
 		setDescription(DebugPreferencesMessages.getString("SimpleVariablePreferencePage.6")); //$NON-NLS-1$
 	}
 
