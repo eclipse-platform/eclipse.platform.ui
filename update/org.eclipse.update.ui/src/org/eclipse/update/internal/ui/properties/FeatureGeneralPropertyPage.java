@@ -98,7 +98,7 @@ public class FeatureGeneralPropertyPage
 			label.setText(property);
 
 			label = new Label(parent, SWT.NONE);
-			label.setText(value);
+			label.setText(getEscapedString(value));
 		}
 
 	}
@@ -127,5 +127,9 @@ public class FeatureGeneralPropertyPage
 				text.setLayoutData(gd);
 			}
 		}
+	}
+	
+	private String getEscapedString(String value) {
+		return value.replaceAll("&", "&&");
 	}
 }
