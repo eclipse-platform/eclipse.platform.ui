@@ -21,29 +21,26 @@ import org.osgi.service.packageadmin.PackageAdmin;
 
 public class TestInstallUtil extends TestCase {
 	static BundleContext context;
-	String location;	
-	
-	public TestInstallUtil(String bundleLocation) {
-		location = bundleLocation;
-	}
-	
+
 	public static void setContext(BundleContext newContext) {
 		context = newContext;
 	}
-	
-	public void installBundle() {
-		Bundle target;
-		try {
-			target = context.installBundle(location);
-			refreshPackages(new Bundle[] {target});			
-		} catch (BundleException e) {
-			e.printStackTrace();
-		}
+
+	public static Bundle installBundle(String pluginLocation) throws BundleException, IllegalStateException {
+		Bundle target = context.installBundle(pluginLocation);
+		int state = target.getState();
+		if (state != Bundle.INSTALLED)
+			throw new IllegalStateException("Bundle " + target + " is in a wrong state: " + state);
+		refreshPackages(new Bundle[]{target});
+		return target;
 	}
 	
-	public void refreshPackages(Bundle[] bundles) {
-		if (bundles.length == 0)
-			return;
+	public static void uninstallBundle(Bundle target) throws BundleException {
+		target.uninstall();
+		refreshPackages(null);
+	}	
+
+	public static void refreshPackages(Bundle[] bundles) {
 		ServiceReference packageAdminRef = context.getServiceReference(PackageAdmin.class.getName());
 		PackageAdmin packageAdmin = null;
 		if (packageAdminRef != null) {
@@ -52,7 +49,7 @@ public class TestInstallUtil extends TestCase {
 				return;
 		}
 
-		final boolean[] flag = new boolean[] {false};
+		final boolean[] flag = new boolean[]{false};
 		FrameworkListener listener = new FrameworkListener() {
 			public void frameworkEvent(FrameworkEvent event) {
 				if (event.getType() == FrameworkEvent.PACKAGES_REFRESHED)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-   id="org.eclipse.newView1"
+   id="newView1"
    name="New View One Plug-In"
    version="3.0.0"
    provider-name="">
@@ -17,7 +17,7 @@
    </requires>
 
    <extension
-         point="org.eclipse.ui.views">
+         point="org.eclipse.ui.views" id="testDynamicViewAddition">
       <view
             name="NewView1"
             class="org.eclipse.newView1.newView1"
