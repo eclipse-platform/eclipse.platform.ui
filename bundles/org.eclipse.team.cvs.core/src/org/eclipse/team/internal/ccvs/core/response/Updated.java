@@ -69,7 +69,12 @@ class Updated extends ResponseHandler {
 		return Util.getRelativePath(connection.getRootDirectory(),
 												resourceName);
 	}
-
+	
+	/**
+	 * This method sets the contents and sync info for a local resource.
+	 * 
+	 * The contents are set before the sync info.
+	 */
 	public void handle(Connection connection, 
 							PrintStream messageOutput,
 							ICVSFolder mRoot,
