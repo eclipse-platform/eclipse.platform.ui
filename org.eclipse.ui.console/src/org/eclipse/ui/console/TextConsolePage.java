@@ -73,7 +73,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     private TextConsole fConsole;
     private IConsoleView fConsoleView;
     private TextConsoleViewer fViewer;
-    private Menu fMenu;
+    private MenuManager fMenuManager;
     protected Map fGlobalActions = new HashMap();
     protected ArrayList fSelectionActions = new ArrayList();
     protected ClearOutputAction fClearOutputAction;
@@ -144,20 +144,20 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		if (getConsole().getType() != null) {
 		    id = getConsole().getType() + "." + id; //$NON-NLS-1$
 		}
-		MenuManager manager= new MenuManager("#TextConsole", id);  //$NON-NLS-1$//$NON-NLS-2$
-		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
+		fMenuManager= new MenuManager("#TextConsole", id);  //$NON-NLS-1$//$NON-NLS-2$
+		fMenuManager.setRemoveAllWhenShown(true);
+		fMenuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager m) {
 				contextMenuAboutToShow(m);
 			}
 		});
-		fMenu = manager.createContextMenu(getControl());
-		getControl().setMenu(fMenu);
+		Menu menu = fMenuManager.createContextMenu(getControl());
+		getControl().setMenu(menu);
 		
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
-		getSite().registerContextMenu(id, manager, fViewer); //$NON-NLS-1$
+		getSite().registerContextMenu(id, fMenuManager, fViewer); //$NON-NLS-1$
 		getSite().setSelectionProvider(fViewer);
 		
 		fViewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
@@ -172,8 +172,8 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
         fConsole.removePropertyChangeListener(this);
         JFaceResources.getFontRegistry().removeListener(this);
         
-        if (fMenu != null && !fMenu.isDisposed()) {
-            fMenu.dispose();
+        if (fMenuManager != null) {
+            fMenuManager.dispose();
         }
         fClearOutputAction = null;
         fSelectionActions.clear();
