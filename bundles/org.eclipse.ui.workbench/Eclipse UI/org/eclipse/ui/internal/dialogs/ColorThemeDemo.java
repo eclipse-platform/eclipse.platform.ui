@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.graphics.Color;
@@ -20,6 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.ColorSchemeService;
+import org.eclipse.ui.internal.WorkbenchColors;
 
 
 /**
@@ -31,8 +31,7 @@ public class ColorThemeDemo {
 
 	Composite sampleComposite;
 	CTabFolder2 sampleTabFolder; 
-	CLabel sampleClabel;
-		
+
 	/**
 	 * Creates an instance of the <code>ColorThemeDemo</code> class.  
 	 * 
@@ -69,7 +68,7 @@ public class ColorThemeDemo {
 		CTabItem2 temp = new CTabItem2(sampleTabFolder, SWT.NONE);
 		temp.setText("Console");
 		Text text = new Text(sampleTabFolder, SWT.MULTI);
-		text.setText("Lorem ipsum dolor sit amet\n");
+		text.setText("Lorem ipsum dolor sit amet\n"); //$NON-NLS-1$
 		temp.setControl(text);
 		sampleTabFolder.setSelection(0);
 		temp = new CTabItem2(sampleTabFolder, SWT.NONE);
@@ -97,7 +96,7 @@ public class ColorThemeDemo {
 	 * @param color
 	 */
 	public void setTabSelectionBGColor(Color color) {
-		sampleTabFolder.setSelectionBackground(color);
+		sampleTabFolder.setSelectionBackground(WorkbenchColors.createGradientArray(sampleTabFolder.getDisplay(), color), WorkbenchColors.getActiveViewGradientPercents(), true); 
 	}
 	
 	/**
@@ -113,7 +112,7 @@ public class ColorThemeDemo {
 	 * @param color
 	 */
 	public void setTabBGColor(Color color) {
-		sampleTabFolder.setBackground(color);	
+		sampleTabFolder.setBackground(WorkbenchColors.createGradientArray(sampleTabFolder.getDisplay(), color), WorkbenchColors.getActiveViewGradientPercents(), true);	
 	}
 
 	/**
