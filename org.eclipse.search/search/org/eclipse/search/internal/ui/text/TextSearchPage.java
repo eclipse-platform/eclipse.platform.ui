@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -547,9 +548,12 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				IResource resource= null;			
 				if (selection instanceof IResource)
 					resource= (IResource)selection;
-				else if (selection instanceof IAdaptable)
-					resource= (IResource)((IAdaptable)selection).getAdapter(IResource.class);
-
+				else if (selection instanceof IAdaptable) {
+					if (isProjectScope)
+						resource= (IProject)((IAdaptable)selection).getAdapter(IProject.class);
+					if (resource == null)
+						resource= (IResource)((IAdaptable)selection).getAdapter(IResource.class);
+				}
 				if (resource != null) {
 
 					if (isProjectScope) {
