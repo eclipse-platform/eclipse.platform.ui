@@ -254,7 +254,8 @@ public class JobManager implements IJobManager {
 	 */
 	protected IProgressMonitor createMonitor(InternalJob job, IProgressMonitor group, int ticks) {
 		synchronized (lock) {
-			if (job.getState() != Job.NONE)
+			//note we still want to allow setting the monitor during ABOUT_TO_RUN
+			if (job.internalGetState() == Job.RUNNING)
 				return null;
 			IProgressMonitor monitor = null;
 			if (progressProvider != null)

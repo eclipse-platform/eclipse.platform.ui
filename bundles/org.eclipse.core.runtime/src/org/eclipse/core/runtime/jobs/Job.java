@@ -370,11 +370,13 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * created by the method <tt>IJobManager.createProgressGroup</tt>
 	 * and must have at least <code>ticks</code> units of available work.
 	 * <p>
-	 * The progress group can only be set when this job is in the <tt>NONE</tt>
-	 * state.  Attempts to set the group while a job is running, waiting,
-	 * or sleeping will be ignored. The group will be used only for
-	 * a single invocation of the job's <tt>run</tt> method, after which
-	 * any association of this job to the group will be lost.
+	 * The progress group can only be set before the job starts running
+	 * Attempts to set the group while a job is running will be ignored. 
+	 * The <tt>Job.shouldRun</tt> method is the last opportunity to 
+	 * set a job's progress group prior to running.
+	 * The group will be used only for a single invocation of the job's 
+	 * <tt>run</tt> method, after which any association of this job to the 
+	 * group will be lost.
 	 * 
 	 * @see IJobManager#createProgressGroup
 	 * @param monitor The progress group to use for this job
@@ -430,7 +432,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * 
 	 * <p>This method is called immediately prior to calling the job's
 	 * run method, so it can be used for last minute pre-condition checking before
-	 * a job is run.  This method must not attempt to schedule or change the
+	 * a job is run.  This method can also be used for setting a job's progress
+	 * group.  This method must not attempt to schedule or change the
 	 * state of any other job.</p>
 	 * 
 	 * <p>Clients may override this method.  This default implementation always returns
