@@ -416,9 +416,9 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#endDTD()
 		 */
 		public void endDTD() throws SAXException {
-//			AntXMLContext context= getContext();
-//			Locator locator= context.getLocator();
-//			getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
+			AntXMLContext context= getContext();
+			Locator locator= context.getLocator();
+			getAntModel().setCurrentElementLength(locator.getLineNumber(), locator.getColumnNumber());
 		}
 
 		/* (non-Javadoc)
@@ -460,9 +460,9 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
 		 */
 		public void startDTD(String name, String publicId, String systemId) throws SAXException {
-//			AntXMLContext context= getContext();
-//			Locator locator= context.getLocator();
-//			getAntModel().addDTD(name, locator.getLineNumber(), locator.getColumnNumber());
+			AntXMLContext context= getContext();
+			Locator locator= context.getLocator();
+			getAntModel().addDTD(name, locator.getLineNumber(), locator.getColumnNumber());
 		}
 	 }
 	

@@ -37,6 +37,7 @@ import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.editor.model.AntCommentNode;
+import org.eclipse.ant.internal.ui.editor.model.AntDTDNode;
 import org.eclipse.ant.internal.ui.editor.model.AntDefiningTaskNode;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntImportNode;
@@ -630,18 +631,18 @@ public class AntModel {
 		computeOffset(fProjectNode, line, column);
 	}
 	
-//	public void addDTD(String name, int line, int column) {
-//		AntDTDNode node= new AntDTDNode(name);
-//		fStillOpenElements.push(node);
-//		//computeOffset(node, line, column);
-//		int offset= -1;
-//		try {
-//			offset= getOffset(line, column);
-//			node.setOffset(offset + 1);
-//		} catch (BadLocationException e) {
-//		}
-//		fNonStructuralNodes.add(node);
-//	}
+	public void addDTD(String name, int line, int column) {
+		AntDTDNode node= new AntDTDNode(name);
+		fStillOpenElements.push(node);
+		//computeOffset(node, line, column);
+		int offset= -1;
+		try {
+			offset= getOffset(line, column);
+			node.setOffset(offset + 1);
+		} catch (BadLocationException e) {
+		}
+		fNonStructuralNodes.add(node);
+	}
 
 	public void addTask(Task newTask, Task parentTask, Attributes attributes, int line, int column) {
 		AntTaskNode taskNode= null;
