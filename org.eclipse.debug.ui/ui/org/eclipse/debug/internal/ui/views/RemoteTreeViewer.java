@@ -301,15 +301,20 @@ public class RemoteTreeViewer extends TreeViewer {
 
 
 
-    public synchronized void prune(Object parent, int offset) {
-        Widget widget = findItem(parent);
-        if (widget != null) {
-    	    Item[] currentChildren = getChildren(widget);
-    	    for (int i = offset; i < currentChildren.length; i++) {
-    	        disassociate(currentChildren[i]);
-    	        currentChildren[i].dispose();
-    	    }
-        }
+    public synchronized void prune(final Object parent, final int offset) {
+        preservingSelection(new Runnable() {
+            public void run() {
+                Widget widget = findItem(parent);
+                if (widget != null) {
+            	    Item[] currentChildren = getChildren(widget);
+            	    for (int i = offset; i < currentChildren.length; i++) {
+            	        disassociate(currentChildren[i]);
+            	        currentChildren[i].dispose();
+            	    }
+                }
+            }
+        });
+
     }
 
     public synchronized void replace(final Object parent, final Object[] children, final int offset) {
