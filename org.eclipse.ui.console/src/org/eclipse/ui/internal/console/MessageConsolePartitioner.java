@@ -27,6 +27,7 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsoleStream;
 
 /**
@@ -60,7 +61,7 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	private boolean killed = false;
 	private boolean updaterThreadStarted = false;
 
-	
+	private IConsoleManager fConsoleManager;
 	/**
 	 * Creates a new paritioner and document, and connects this partitioner
 	 * to the document.
@@ -122,6 +123,7 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	public void connect(IDocument document) {
 		fDocument = document;
 		document.setDocumentPartitioner(this);
+		fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
 	}
 
 	/**
@@ -130,6 +132,7 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	public void disconnect() {
 		fDocument.setDocumentPartitioner(null);
 		killed = true;
+		fConsoleManager = null;
 	}
 
 	/**
@@ -341,6 +344,7 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 								try {
 									fDocument.replace(fDocument.getLength(), 0, streamEntry.text.toString());
 									checkOverflow();
+									fConsoleManager.warnOfContentChange(streamEntry.stream.getConsole());
 								} catch (BadLocationException e) {
 								}
 							}

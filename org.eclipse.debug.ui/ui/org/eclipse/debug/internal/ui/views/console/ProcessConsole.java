@@ -21,8 +21,10 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.console.AbstractConsole;
+import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -132,10 +134,15 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 				Runnable r = new Runnable() {
 					public void run() {
 						setName(computeName());
+						warnOfContentChange();
 					}
 				};	
 				DebugUIPlugin.getStandardDisplay().asyncExec(r);
 			}
 		}
+	}
+	
+	private void warnOfContentChange() {
+		ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(DebugUITools.getConsole(fProcess));
 	}
 }

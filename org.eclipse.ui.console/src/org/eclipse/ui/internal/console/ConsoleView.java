@@ -38,6 +38,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * Page book console view.
@@ -422,7 +423,13 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.console.IConsoleView#warnOfContentChange(org.eclipse.ui.console.IConsole)
 	 */
 	public void warnOfContentChange(IConsole console) {
-		// TODO: implementation
+		IWorkbenchPart part = (IWorkbenchPart)fConsoleToPart.get(console);
+		if (part != null) {
+			IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) part.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+			if (service != null) {
+				service.warnOfContentChange();
+			}
+		}
 	}
 	
 }

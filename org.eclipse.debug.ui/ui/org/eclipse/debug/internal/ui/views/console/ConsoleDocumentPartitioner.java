@@ -30,6 +30,7 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
@@ -48,6 +49,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.console.ConsolePlugin;
 
 /**
  * Default console document partitioner. Partitions a document into
@@ -695,6 +697,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				fLastStreamIdentifier = streamIdentifier;
 				try {
 					fDocument.replace(fDocument.getLength(), 0, text);
+					warnOfContentChange();
 				} catch (BadLocationException e) {
 				}
 				setAppendInProgress(false);
@@ -983,6 +986,10 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			}
 		}
 
+	}
+
+	private void warnOfContentChange() {
+		ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(DebugUITools.getConsole(fProcess));
 	}
 
 }

@@ -226,7 +226,16 @@ public class ConsoleManager implements IConsoleManager {
 	 * @see org.eclipse.ui.console.IConsoleManager#warnOfContentChange(org.eclipse.ui.console.IConsole)
 	 */
 	public void warnOfContentChange(IConsole console) {
-		// TODO: implementation
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page= window.getActivePage();
+			if (page != null) {
+				IConsoleView consoleView= (IConsoleView)page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+				if (consoleView != null) {
+					consoleView.warnOfContentChange(console);
+				}
+			}
+		}
 	}
 	
 }
