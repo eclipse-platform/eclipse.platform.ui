@@ -61,6 +61,23 @@ public void firePerspectiveChanged(final IWorkbenchPage page, final IPerspective
 	}
 }
 /**
+ * Notifies the listener that a part has been affected
+ * in the given perspective.
+ */
+public void firePerspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective, final IWorkbenchPartReference partRef, final String changeId) {
+	Object [] array = listeners.getListeners();
+	for (int nX = 0; nX < array.length; nX ++) {
+		if (array[nX] instanceof IPerspectiveListener2) {
+			final IPerspectiveListener2 l2 = (IPerspectiveListener2) array[nX];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l2.perspectiveChanged(page, perspective, partRef, changeId);
+				}
+			});
+		}
+	}
+}
+/**
  * Removes an IPerspectiveListener from the perspective service.
  */
 public void removePerspectiveListener(IPerspectiveListener l) {

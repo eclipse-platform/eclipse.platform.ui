@@ -67,6 +67,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -821,6 +822,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		String changeId) {
 		perspectiveListeners.firePerspectiveChanged(page, perspective, changeId);
 		perspectiveService.firePerspectiveChanged(page, perspective, changeId);
+	}
+	/**
+	 * Fires perspective changed for an affected part
+	 */
+	void firePerspectiveChanged(
+		IWorkbenchPage page,
+		IPerspectiveDescriptor perspective,
+		IWorkbenchPartReference partRef,
+		String changeId) {
+		perspectiveListeners.firePerspectiveChanged(page, perspective, partRef, changeId);
 	}
 	/**
 	 * Fires perspective closed

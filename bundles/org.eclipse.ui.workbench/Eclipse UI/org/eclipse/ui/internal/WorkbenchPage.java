@@ -503,6 +503,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			this,
 			getPerspective(),
 			CHANGE_FAST_VIEW_ADD);
+		window.firePerspectiveChanged(
+				this,
+				getPerspective(),
+				ref,
+				CHANGE_FAST_VIEW_ADD);
 	}
 	/**
 	 * Adds an IPartListener to the part service.
@@ -764,6 +769,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				this,
 				getPerspective(),
 				CHANGE_VIEW_SHOW);
+			window.firePerspectiveChanged(
+					this,
+					getPerspective(),
+					getReference(view),
+					CHANGE_VIEW_SHOW);
 			// Just in case view was fast.
 			window.updateFastViewBar();
 		}
@@ -906,6 +916,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			getEditorManager().closeEditor(ref);
 			activationList.remove(ref);
 			firePartClosed(ref);
+			window.firePerspectiveChanged(
+				this,
+				getPerspective(),
+				ref,
+				CHANGE_EDITOR_CLOSE);
 			disposePart(ref);
 		}
 
@@ -965,13 +980,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Close the part.
 		getEditorManager().closeEditor(ref);
 		firePartClosed(ref);
+		window.firePerspectiveChanged(
+				this,
+				getPerspective(),
+				ref,
+				CHANGE_EDITOR_CLOSE);
 		disposePart(ref);
 		// Notify interested listeners
 		window.firePerspectiveChanged(
 			this,
 			getPerspective(),
 			CHANGE_EDITOR_CLOSE);
-
 		// Activate new part.
 		if (partWasActive) {
 			IWorkbenchPart top = activationList.getTopEditor();
@@ -1809,6 +1828,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Hide the part.
 		persp.hideView(ref);
 
+		// Notify interested listeners
+		window.firePerspectiveChanged(this, getPerspective(), ref, CHANGE_VIEW_HIDE);
+
 		// If the part is no longer reference then dispose it.
 		boolean exists = viewFactory.hasView(ref);
 		if (!exists) {
@@ -2199,6 +2221,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				this,
 				getPerspective(),
 				CHANGE_EDITOR_OPEN);
+			window.firePerspectiveChanged(
+					this,
+					getPerspective(),
+					ref,
+					CHANGE_EDITOR_OPEN);
 		}
 
 		//	getClientComposite().setRedraw(true);
@@ -2253,6 +2280,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			this,
 			getPerspective(),
 			CHANGE_FAST_VIEW_REMOVE);
+		window.firePerspectiveChanged(
+				this,
+				getPerspective(),
+				ref,
+				CHANGE_FAST_VIEW_REMOVE);
 	}
 	/**
 	 * Removes an IPartListener from the part service.
