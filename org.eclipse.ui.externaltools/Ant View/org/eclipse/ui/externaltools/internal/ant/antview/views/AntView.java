@@ -33,7 +33,6 @@ import org.eclipse.ui.externaltools.internal.ant.antview.core.IAntViewConstants;
 import org.eclipse.ui.externaltools.internal.ant.antview.core.ResourceMgr;
 import org.eclipse.ui.externaltools.internal.ant.antview.events.OpenListener;
 import org.eclipse.ui.externaltools.internal.ant.antview.preferences.Preferences;
-import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
 public class AntView extends ViewPart {
@@ -67,7 +66,7 @@ public class AntView extends ViewPart {
 //		viewer.setUseHashlookup(true);
 		viewContentProvider = new AntViewContentProvider();
 		AntViewLabelProvider viewLabelProvider = new AntViewLabelProvider();
-		DrillDownAdapter drillDownAdapter = new DrillDownAdapter(viewer);
+		//DrillDownAdapter drillDownAdapter = new DrillDownAdapter(viewer);
 		// Connect Components
 		viewer.setContentProvider(viewContentProvider);
 		viewer.setLabelProvider(new DecoratingLabelProvider(viewLabelProvider, viewLabelProvider));
