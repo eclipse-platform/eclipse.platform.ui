@@ -17,6 +17,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
  * The ProgressUtil is a class that contains static utility methods used for
@@ -67,6 +69,11 @@ class ProgressManagerUtil {
 			}
 		};
 	}
+	
+	/**
+	 * Open the progress view in the supplied window.
+	 * @param window
+	 */
 	static void openProgressView(WorkbenchWindow window) {
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null)
@@ -76,5 +83,15 @@ class ProgressManagerUtil {
 		} catch (PartInitException exception) {
 			logException(exception);
 		}
+	}
+	
+	/**
+	 * Return whether or not the progress view is missing.
+	 * @param window
+	 * @return true if there is no progress view.
+	 */
+	static boolean missingProgressView(WorkbenchWindow window){
+		return WorkbenchPlugin.getDefault().getViewRegistry().find(PROGRESS_VIEW_ID) == null;
+		
 	}
 }

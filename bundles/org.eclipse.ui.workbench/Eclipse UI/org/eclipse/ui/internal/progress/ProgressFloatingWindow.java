@@ -305,6 +305,25 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		
 		minimize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.CloseToolTip")); //$NON-NLS-1$
 		
+		createMaximizeButton(buttonBar);		
+		FormData barData = new FormData();
+		barData.right = new FormAttachment(100);
+		barData.top = new FormAttachment(0);
+		buttonBar.setLayoutData(barData);
+		return buttonBar;
+	}
+	/**
+	 * Create the maximize button if there is a progress
+	 * view we can open.
+	 * @param buttonBar
+	 */
+	private void createMaximizeButton(ToolBar buttonBar) {
+		
+		//If there is no progress view do not create the
+		//button.
+		if(ProgressManagerUtil.missingProgressView(window))
+			return;
+		
 		ToolItem maximize = new ToolItem(buttonBar, SWT.NONE);
 		maximize
 				.setImage(JFaceResources.getImage(ProgressManager.MAXIMIZE_KEY));
@@ -321,11 +340,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		});
 		
 		maximize.setToolTipText(ProgressMessages.getString("ProgressFloatingWindow.OpenToolTip")); //$NON-NLS-1$
-		
-		FormData barData = new FormData();
-		barData.right = new FormAttachment(100);
-		barData.top = new FormAttachment(0);
-		buttonBar.setLayoutData(barData);
-		return buttonBar;
+
 	}
 }
