@@ -41,6 +41,31 @@ import org.eclipse.jface.util.Assert;
 		fLines= (String[]) lines.toArray(new String[lines.size()]);
 	}
 	
+	void reverse() {
+		int t= fOldStart;
+		fOldStart= fNewStart;
+		fNewStart= t;
+		
+		t= fOldLength;
+		fOldLength= fNewLength;
+		fNewLength= t;
+		
+		for (int i= 0; i < fLines.length; i++) {
+			String line= fLines[i];
+			char c= line.charAt(0);
+			switch (c) {
+			case '+':
+				fLines[i]= '-' + line.substring(1);
+				break;
+			case '-':
+				fLines[i]= '+' + line.substring(1);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 	/**
 	 * Returns the contents of this hunk.
 	 * Each line starts with a control character. Their meaning is as follows:

@@ -7,6 +7,10 @@ import java.util.*;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.*;
+
+import org.eclipse.compare.structuremergeviewer.Differencer;
+
 
 /**
  * A Patcher 
@@ -15,6 +19,8 @@ import org.eclipse.core.runtime.*;
  * - knows how to apply the patches to files and folders.
  */
 public class Patcher {
+	
+	private static final boolean DEBUG= false;
 	
 	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
 
@@ -100,6 +106,10 @@ public class Patcher {
 	boolean setReversed(boolean reverse) {
 		if (fReverse != reverse) {
 			fReverse= reverse;
+			
+			for (int i= 0; i < fDiffs.length; i++)
+				fDiffs[i].reverse();
+						
 			return true;
 		}
 		return false;
@@ -243,7 +253,7 @@ public class Patcher {
 					int a1= c, a2= 0;
 					if (line.length() > 1)
 						a2= line.charAt(1);
-					System.out.println("char: " + a1 + " " + a2);
+					if (DEBUG) System.out.println("char: " + a1 + " " + a2);
 					break;
 				}
 				return line;
@@ -513,7 +523,7 @@ public class Patcher {
 			if (pos >= 0)
 				path= path.substring(0, pos);
 			if (path2 != null && !path2.equals(path)) {
-				// System.out.println("path mismatch: " + path2);
+				if (DEBUG) System.out.println("path mismatch: " + path2);
 				path= path2;
 			}
 			return new Path(path);
@@ -534,13 +544,13 @@ public class Patcher {
 		pair[0]= pair[1]= -1;
 		int startPos= line.indexOf(start);
 		if (startPos < 0) {
-			System.out.println("parsing error in extractPair: couldn't find \'" + start + "\'");
+			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find \'" + start + "\'");
 			return;
 		}
 		line= line.substring(startPos+1);
 		int endPos= line.indexOf(' ');
 		if (endPos < 0) {
-			System.out.println("parsing error in extractPair: couldn't find end blank");
+			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find end blank");
 			return;
 		}
 		line= line.substring(0, endPos);
@@ -621,11 +631,11 @@ public class Patcher {
 			}
 			
 			if (found) {
-				System.out.println("patched hunk at offset: " + (shift-oldShift));
+				if (DEBUG) System.out.println("patched hunk at offset: " + (shift-oldShift));
 				shift+= doPatch(hunk, lines, shift);
 			} else {
 				if (failedHunks != null) {
-					System.out.println("failed hunk");
+					if (DEBUG) System.out.println("failed hunk");
 					failedHunks.add(hunk);
 				}
 			}
@@ -655,7 +665,7 @@ public class Patcher {
 						return false;
 					pos++;
 				}
-			} else if ((!fReverse && controlChar == '-') || (fReverse && controlChar == '+')) {
+			} else if (controlChar == '-') {
 				// deleted lines
 				while (true) {
 					if (pos < 0 || pos >= lines.size())
@@ -669,7 +679,7 @@ public class Patcher {
 						return false;
 					pos++;
 				}
-			} else if ((!fReverse && controlChar == '+') || (fReverse && controlChar == '-')) {
+			} else if (controlChar == '+') {
 				// added lines
 				// we don't have to do anything for a 'try'
 			} else
@@ -694,7 +704,7 @@ public class Patcher {
 					}
 					pos++;
 				}
-			} else if ((!fReverse && controlChar == '-') || (fReverse && controlChar == '+')) {
+			} else if (controlChar == '-') {
 				// deleted lines				
 				while (true) {
 					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in deleted lines"); //$NON-NLS-1$
@@ -704,7 +714,7 @@ public class Patcher {
 					pos++;
 				}
 				lines.remove(pos);
-			} else if ((!fReverse && controlChar == '+') || (fReverse && controlChar == '-')) {
+			} else if (controlChar == '+') {
 				// added lines
 				lines.add(pos,  line);
 				pos++;
@@ -712,6 +722,153 @@ public class Patcher {
 				Assert.isTrue(false, "doPatch: unknown control charcter: " + controlChar); //$NON-NLS-1$
 		}
 		return hunk.fNewLength - hunk.fOldLength;
+	}
+
+	public void applyAll(IResource target, IProgressMonitor pm) {
+		
+		if (DEBUG) System.out.println("applyAll: start");
+		
+		IContainer container= null;
+		if (target instanceof IContainer)
+			container= (IContainer) target;
+		else {
+			if (DEBUG) System.out.println("applyAll: not yet implemented");
+			return;
+		}
+		
+		for (int i= 0; i < fDiffs.length; i++) {
+			Diff diff= fDiffs[i];
+			if (diff.fIsEnabled) {
+				
+				IPath path= getPath(diff);
+				IFile file= createPath(container, path);
+				
+				int type= diff.getType();
+				switch (type) {
+				case Differencer.ADDITION:
+					if (DEBUG) System.out.println("  add: " + path);
+					updateFile(diff, file, true, pm);
+					break;
+				case Differencer.DELETION:
+					if (DEBUG) System.out.println("  del: " + path);
+					deleteFile(file, pm);
+					break;
+				case Differencer.CHANGE:
+					if (DEBUG) System.out.println("  chg: " + path);
+					updateFile(diff, file, false, pm);
+					break;
+				}
+								
+				/*				
+				String rej= diff.fRejected;
+				if (rej != null) {
+					IPath pp= path.removeLastSegments(1);
+					pp= pp.append(path.lastSegment() + ".rej");
+					createPath(fRoot, rootFolder, pp, diff, true);
+				}
+				*/
+			}
+			if (pm != null)
+				pm.worked(1);
+		}
+		
+		try {
+			target.refreshLocal(IResource.DEPTH_INFINITE, pm);
+		} catch (CoreException ex) {
+			if (DEBUG) System.out.println("refreshLocal: exception " + ex);
+		}
+		if (DEBUG) System.out.println("applyAll: end");
+	}
+	
+	List apply(Diff diff, IFile file, boolean create, List failedHunks) {
+		
+		if (file == null)
+			if (DEBUG) System.out.println("    file == null");
+				
+		List lines= null;
+		if (!create) {
+			// read current contents
+			InputStream is= null;
+			try {
+				is= file.getContents();
+				BufferedReader reader= new BufferedReader(new InputStreamReader(is));
+				lines= new LineReader(reader).readLines();
+				if (DEBUG) System.out.println("    creating reader successful");
+			} catch(CoreException ex) {
+				if (DEBUG) System.out.println("    reading contents: " + ex);
+			} finally {
+				if (is != null)
+					try {
+						is.close();
+					} catch(IOException ex) {
+					}
+			}
+		}
+		
+		if (lines == null)
+			lines= new ArrayList();
+
+		patch(diff, lines, failedHunks);
+		
+		return lines;
+	}
+	
+	private void deleteFile(IFile file, IProgressMonitor pm) {
+		try {
+			file.delete(true, true, pm);
+		} catch (CoreException ex) {
+			System.out.println("deleteFile: exception: " + ex);
+		}
+	}
+
+	private void updateFile(Diff diff, IFile file, boolean create, IProgressMonitor pm) {
+
+		if (DEBUG) System.out.println("  updateFile: start");
+		
+		// patch it and collect rejected hunks
+		List failed= new ArrayList();
+		
+		if (DEBUG) System.out.println("    patching: start");
+		List lines= apply(diff, file, create, failed);
+		if (DEBUG) System.out.println("    patching: end");
+		
+		// convert the result into a String
+		StringBuffer sb= new StringBuffer();
+		Iterator iter= lines.iterator();
+		while (iter.hasNext())
+			sb.append((String)iter.next());
+		String contents= sb.toString();
+		
+		// and save it
+		InputStream is= new ByteArrayInputStream(contents.getBytes());
+		try {
+			if (file.exists()) {
+				file.setContents(is, false, true, pm);
+				if (DEBUG) System.out.println("    setContents: successfull");
+			} else {
+				file.create(is, false, pm);
+				if (DEBUG) System.out.println("    create: successfull");
+			}
+		} catch (CoreException ex) {
+			if (DEBUG) System.out.println("    exception: " + ex);
+		} finally {
+			if (is != null)
+				try {
+					is.close();
+				} catch(IOException ex) {
+				}
+		}
+		if (DEBUG) System.out.println("  updateFile: end");
+	}
+
+	private IFile createPath(IContainer folder, IPath path) {
+		if (path.segmentCount() > 1) {
+			IFolder f= folder.getFolder(path.uptoSegment(1));
+			//System.out.println("createPath: " + f + " " + f.exists());
+			return createPath(f, path.removeFirstSegments(1));
+		}
+		// a leaf
+		return folder.getFile(path);
 	}
 
 	private static String stripWhiteSpace(String s) {

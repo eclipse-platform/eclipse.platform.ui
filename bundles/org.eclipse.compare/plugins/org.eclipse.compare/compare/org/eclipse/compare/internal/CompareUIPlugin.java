@@ -48,7 +48,15 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
  */
 public final class CompareUIPlugin extends AbstractUIPlugin {
-			
+	
+	public static final String DTOOL_NEXT= "dlcl16/next_nav.gif";	//$NON-NLS-1$
+	public static final String CTOOL_NEXT= "clcl16/next_nav.gif";	//$NON-NLS-1$
+	public static final String ETOOL_NEXT= "elcl16/next_nav.gif";	//$NON-NLS-1$
+	
+	public static final String DTOOL_PREV= "dlcl16/prev_nav.gif";	//$NON-NLS-1$
+	public static final String CTOOL_PREV= "clcl16/prev_nav.gif";	//$NON-NLS-1$
+	public static final String ETOOL_PREV= "elcl16/prev_nav.gif";	//$NON-NLS-1$
+				
 	private static boolean NORMALIZE_CASE= true;
 
 	private final static String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
@@ -347,7 +355,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String relativePath) {
-				
+		
 		URL installURL= null;
 		if (fgComparePlugin != null)
 			installURL= fgComparePlugin.getDescriptor().getInstallURL();

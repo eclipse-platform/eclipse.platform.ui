@@ -7,6 +7,8 @@ package org.eclipse.compare.patch;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.jface.util.Assert;
+
 /* package */ class LineReader {
 
 	private boolean fHaveChar= false;
@@ -16,6 +18,7 @@ import java.util.*;
 	
 	/* package */ LineReader(BufferedReader reader) {
 		fReader= reader;
+		Assert.isNotNull(reader);
 	}
 
     /**

@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
@@ -86,28 +87,33 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	 */
 	public boolean performFinish() {
 		
-		CompareConfiguration cc= new CompareConfiguration() {
-			public Image getImage(int kind) {
-				if (kind == Differencer.ADDITION)
-					kind= Differencer.DELETION;
-				else if (kind == Differencer.DELETION)
-					kind= Differencer.ADDITION;
-				return super.getImage(kind);
-			}
-			public Image getImage(Image base, int kind) {
-				if (kind == Differencer.ADDITION)
-					kind= Differencer.DELETION;
-				else if (kind == Differencer.DELETION)
-					kind= Differencer.ADDITION;
-				return super.getImage(base, kind);
-			}
-		};
-		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
-
-		fPatcher.setName(fPatchWizardPage.getPatchName());
-
-		CompareUI.openCompareEditor(new PatchCompareInput(cc, fPatcher, new StructuredSelection(fTarget)));
-
+		if (false) {
+			CompareConfiguration cc= new CompareConfiguration() {
+				public Image getImage(int kind) {
+					if (kind == Differencer.ADDITION)
+						kind= Differencer.DELETION;
+					else if (kind == Differencer.DELETION)
+						kind= Differencer.ADDITION;
+					return super.getImage(kind);
+				}
+				public Image getImage(Image base, int kind) {
+					if (kind == Differencer.ADDITION)
+						kind= Differencer.DELETION;
+					else if (kind == Differencer.DELETION)
+						kind= Differencer.ADDITION;
+					return super.getImage(base, kind);
+				}
+			};
+			cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
+	
+			fPatcher.setName(fPatchWizardPage.getPatchName());
+	
+			CompareUI.openCompareEditor(new PatchCompareInput(cc, fPatcher, new StructuredSelection(fTarget)));
+		} else {
+			fPatcher.setName(fPatchWizardPage.getPatchName());
+			fPatcher.applyAll(getTarget(), new NullProgressMonitor());
+		}
+		
 		// Save the dialog settings
 		if (fHasNewDialogSettings) {
 			IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();

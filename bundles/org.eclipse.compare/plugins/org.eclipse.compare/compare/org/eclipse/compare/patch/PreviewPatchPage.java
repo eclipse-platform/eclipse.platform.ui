@@ -371,7 +371,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 			TreeItem item= children[i];
 			Diff diff= (Diff) item.getData();
 			String error= null;
-											
+			
+			boolean create= false;	
 			IFile file= null;
 			if (diff.getType() == Differencer.ADDITION) {
 				IPath p= diff.fNewPath;
@@ -385,6 +386,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 					diff.fIsEnabled= false;					
 					error= "(file already exists)";
 				}
+				create= true;
 			} else {
 				IPath p= diff.fOldPath;
 				if (strip > 0 && strip < p.segmentCount())
@@ -404,28 +406,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 				
 			ArrayList failedHunks= new ArrayList();		// collect rejected hunks here
 			
-			java.util.List lines= null;
-			InputStream is= null;
-			try {
-				if (file != null) {
-					is= file.getContents();
-					BufferedReader reader= new BufferedReader(new InputStreamReader(is));
-					lines= new LineReader(reader).readLines();
-				}
-			} catch(CoreException ex) {
-				System.out.println("CoreException: " + ex);
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch(IOException ex) {
-					}
-			}
-			
-			if (lines == null)
-				lines= new ArrayList();
-			fPatchWizard.getPatcher().patch(diff, lines, failedHunks);
-			
+			fPatchWizard.getPatcher().apply(diff, file, create, failedHunks);
+
 			if (! failedHunks.isEmpty()) {
 				StringBuffer sb= new StringBuffer();
 				Iterator iter= failedHunks.iterator();
@@ -462,6 +444,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			if (error != null)
 				label+= "    " + error;
 			item.setText(label);
+			item.setImage(getImage(diff));
 			item.setChecked(checked);
 			boolean gray= (checkedSubs > 0 &&  checkedSubs < hunkItems.length);
 			item.setGrayed(gray);

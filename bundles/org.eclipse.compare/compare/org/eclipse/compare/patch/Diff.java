@@ -18,12 +18,29 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	List fHunks= new ArrayList();
 	boolean fIsEnabled= true;
 	String fRejected;
+
 	
  	/* package */ Diff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
 		fOldPath= oldPath;
 		fOldDate= oldPath == null ? 0 : oldDate;
 		fNewPath= newPath;
 		fNewDate= newPath == null ? 0 : newDate;	
+	}
+	
+	void reverse() {
+		IPath tp= fOldPath;
+		fOldPath= fNewPath;
+		fNewPath= tp;
+		
+		long t= fOldDate;
+		fOldDate= fNewDate;
+		fNewDate= t;
+		
+		Iterator iter= fHunks.iterator();
+		while (iter.hasNext()) {
+			Hunk hunk= (Hunk) iter.next();
+			hunk.reverse();
+		}
 	}
 	
 	Hunk[] getHunks() {

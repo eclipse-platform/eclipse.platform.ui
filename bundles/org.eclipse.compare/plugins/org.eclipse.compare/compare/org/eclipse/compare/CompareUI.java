@@ -34,6 +34,16 @@ import org.eclipse.compare.structuremergeviewer.IStructureCreator;
  */
 public final class CompareUI {
 	
+	/** Image descriptors for the 'Next' tool bar button. */
+	public static final ImageDescriptor DESC_DTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.DTOOL_NEXT);
+	public static final ImageDescriptor DESC_CTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.CTOOL_NEXT);
+	public static final ImageDescriptor DESC_ETOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.ETOOL_NEXT);
+	
+	/** Image descriptors for the 'Previous' tool bar button. */
+	public static final ImageDescriptor DESC_DTOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.DTOOL_PREV);
+	public static final ImageDescriptor DESC_CTOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.CTOOL_PREV);
+	public static final ImageDescriptor DESC_ETOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.ETOOL_PREV);
+
 	/**
 	 * Name of the title property of a compare viewer.
  	 * If a property with this name is set
@@ -110,7 +120,7 @@ public final class CompareUI {
 	public static Image getImage(String type) {
 		return CompareUIPlugin.getImage(type);
 	}
-	
+		
 	/**
 	 * Registers the given image for being disposed when this plug-in is shutdown.
 	 *

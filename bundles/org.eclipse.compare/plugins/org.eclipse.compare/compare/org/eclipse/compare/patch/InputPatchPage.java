@@ -165,16 +165,17 @@ import org.eclipse.compare.internal.Utilities;
 		// guess prefix count
 		for (int i= 0; i < diffs.length; i++) {
 			IPath p= diffs[i].fOldPath;
-			int matches= match(p, list);
-			if (matches > 0) {
-				return p.segmentCount() - matches;
+			if (p != null) {
+				int matches= match(p, list);
+				if (matches > 0) {
+					return p.segmentCount() - matches;
+				}
 			}
 		}
 		return 0;
 	}
 	
 	private int match(IPath path, ArrayList list) {
-		System.out.println("match: " + path);
 		Iterator iter= list.iterator();
 		while (iter.hasNext()) {
 			IPath filePath= (IPath) iter.next();
