@@ -18,11 +18,8 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
-import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.DeferredDebugElementWorkbenchAdapter;
-import org.eclipse.jface.preference.IPreferenceStore;
 
 
 /**
@@ -107,28 +104,7 @@ public class DeferredVariable extends DeferredDebugElementWorkbenchAdapter {
 		if (isShowLogicalStructure()) {
 			ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
 			if (types.length > 0) {
-				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-				ILogicalStructureType type = null;
-				boolean exist = false;
-				for (int i = 0; i < types.length; i++) {
-					String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId();
-					int setting = store.getInt(key);
-					// 0 = never used, 1 = on, -1 = off
-					if (setting != 0) {
-						exist = true;
-						if (setting == 1) {
-							type = types[i];
-							break;
-						}
-					} else {
-						store.setValue(key, -1);
-					}
-				}
-				if (type == null && !exist) {
-					type = types[0];
-					// choose first by default
-					store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + type.getId(), 1);
-				}
+                ILogicalStructureType type = DebugPlugin.getSelectedStructureType(types);
 				if (type != null) {
 					try {
 						return type.getLogicalStructure(value);

@@ -10,20 +10,17 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Control;
@@ -99,20 +96,12 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		
 		fMenu= new Menu(parent);
 		ILogicalStructureType[] types = getTypes();
-		boolean exist = false;
-		Action firstAction = null;
-		String firstKey = null;
-		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-        List enabled= new ArrayList();
+        ILogicalStructureType enabledType = LogicalStructureManager.getDefault().getSelectedType(types);
 		if (types != null && types.length > 0) {
 			for (int i = 0; i < types.length; i++) {
                 ILogicalStructureType type= types[i];
-				Action action = new SelectLogicalStructureAction(getView(), type, getValue());
-				String key = VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + types[i].getId();
-				if (i == 0) {
-					firstAction = action;
-					firstKey = key;
-				}
+				Action action = new SelectLogicalStructureAction(getView(), type, getValue(), types);
+                action.setChecked(enabledType == type);
                 StringBuffer label= new StringBuffer();
                 //add the numerical accelerator
                 if (i < 9) {
@@ -121,25 +110,9 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
                     label.append(' ');
                 }
                 label.append(action.getText());
-				int value = store.getInt(key);
-				exist = exist || value != 0;
-                if (value == 1) {
-                    action.setChecked(true);
-                    enabled.add(action);
-                }
                 action.setText(label.toString());
 				addActionToMenu(fMenu, action);
 			}
-		}
-        if (enabled.size() > 1) {
-            Action displayed= ((Action) enabled.get(0));
-            StringBuffer label= new StringBuffer(displayed.getText());
-            label.append(VariablesViewMessages.getString("AvailableLogicalStructuresAction.2")); //$NON-NLS-1$
-            displayed.setText(label.toString());
-        }
-		if (!exist && firstAction != null) {
-			firstAction.setChecked(true);
-			store.setValue(firstKey, 1);
 		}
 		return fMenu;
 	}

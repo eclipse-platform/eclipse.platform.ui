@@ -655,6 +655,10 @@ public class DebugPlugin extends Plugin {
 	public static ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
 		return LogicalStructureManager.getDefault().getLogicalStructureTypes(value);
 	}
+    
+    public static ILogicalStructureType getSelectedStructureType(ILogicalStructureType[] types) {
+        return LogicalStructureManager.getDefault().getSelectedType(types);
+    }
 	
 	/**
 	 * Convenience method that performs a runtime exec on the given command line

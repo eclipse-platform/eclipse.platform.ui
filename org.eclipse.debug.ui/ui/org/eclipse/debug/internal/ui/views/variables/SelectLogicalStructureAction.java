@@ -12,10 +12,9 @@ package org.eclipse.debug.internal.ui.views.variables;
 
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
 
 /**
@@ -26,6 +25,7 @@ public class SelectLogicalStructureAction extends Action {
 	
 	private VariablesView fView;
     private ILogicalStructureType fType;
+    private ILogicalStructureType[] fAvailableTypes;
 
 	/**
 	 * 
@@ -34,9 +34,10 @@ public class SelectLogicalStructureAction extends Action {
 	 * @param value the value for which logical structures are to be chosen
 	 * @param index the offset into the given group that this action enables
 	 */
-	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType type, IValue value) {
+	public SelectLogicalStructureAction(VariablesView view, ILogicalStructureType type, IValue value, ILogicalStructureType[] availableTypes) {
 		super(type.getDescription(value), IAction.AS_CHECK_BOX);
 		setView(view);
+        fAvailableTypes= availableTypes;
 		fType= type;
 	}
 
@@ -53,9 +54,13 @@ public class SelectLogicalStructureAction extends Action {
 		}
 		BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
 			public void run() {
-				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-                int value= isChecked() ? 1 : -1;
-				store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fType.getId(), value);
+                // Checking this action sets the type to fType, unchecking it sets the type
+                // to null ("none selected")
+                ILogicalStructureType type= null;
+                if (isChecked()) {
+                    type= fType;
+                }
+                LogicalStructureManager.getDefault().setEnabledType(fAvailableTypes, type);
 				getView().getViewer().refresh();					
 			}
 		});			
