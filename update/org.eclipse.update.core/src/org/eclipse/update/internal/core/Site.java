@@ -176,9 +176,10 @@ public abstract class Site implements ISite, IWritable {
 		}
 
 		// notify listeners
-		ISiteChangedListener[] siteListeners = (ISiteChangedListener[]) listeners.getListeners();
+		
+		Object[] siteListeners = listeners.getListeners();
 		for (int i = 0; i < siteListeners.length; i++) {
-			siteListeners[i].featureUninstalled(feature);
+			((ISiteChangedListener)siteListeners[i]).featureUninstalled(feature);
 		}
 
 	}

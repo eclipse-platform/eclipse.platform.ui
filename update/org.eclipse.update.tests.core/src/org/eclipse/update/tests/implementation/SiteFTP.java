@@ -6,6 +6,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IPluginEntry;
 
 public class SiteFTP implements ISite {
 
@@ -138,6 +139,12 @@ public class SiteFTP implements ISite {
 	 */
 	public Object getAdapter(Class adapter) {
 		return null;
+	}
+
+	/*
+	 * @see IPluginContainer#remove(IPluginEntry)
+	 */
+	public void remove(IPluginEntry entry) throws CoreException {
 	}
 
 }

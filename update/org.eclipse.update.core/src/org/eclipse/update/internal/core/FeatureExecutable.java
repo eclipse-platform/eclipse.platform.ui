@@ -228,7 +228,7 @@ public class FeatureExecutable extends Feature {
 		if (files != null) // be careful since it can be null
 			for (int i = 0; i < files.length; ++i){
 				if (files[i].isDirectory()){
-					result.add(getFiles(files[i]));
+					result.addAll(getFiles(files[i]));
 				} else {
 					result.add(files[i]);
 				}

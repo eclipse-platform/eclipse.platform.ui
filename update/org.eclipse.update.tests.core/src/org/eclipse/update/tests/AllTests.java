@@ -11,6 +11,7 @@ import org.eclipse.update.tests.configurations.AllConfigurationsTests;
 import org.eclipse.update.tests.core.boot.AllPlatformConfigurationTests;
 import org.eclipse.update.tests.parser.AllParserTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
+import org.eclipse.update.tests.regularRemove.AllRegularRemoveTests;
 import org.eclipse.update.tests.types.AllTypesTests;
 import org.eclipse.update.tests.uivalues.AllCoreUITests;
 
@@ -28,6 +29,7 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllCoreUITests.suite());
 		suite.addTest(AllConfigurationsTests.suite());
 		suite.addTest(AllTypesTests.suite());
+		suite.addTest(AllRegularRemoveTests.suite());		
 		return suite;
 	}
 }
