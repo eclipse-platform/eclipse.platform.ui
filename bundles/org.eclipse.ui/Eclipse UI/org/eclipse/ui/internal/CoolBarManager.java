@@ -137,6 +137,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		coolItem.setMinimumSize(minWidth, coolSize.y);
 		coolItem.setPreferredSize(coolSize);
 		coolItem.setSize(coolSize);
+
+						
+			
 		coolItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				if (event.detail == SWT.ARROW) {
@@ -158,7 +161,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
-	public void dispose(CoolItem coolItem) {
+	protected void dispose(CoolItem coolItem) {
 		if (coolItem != null) {
 			coolItem.setData(null);
 			coolItem.setControl(null);
@@ -295,11 +298,33 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		return index;
 	}
 	/**
+	 *  @return a int array that contains the index of the last item of each row
+	 *  (FH: helper method)
+	 */
+	private int[] getLastItemIndices() {
+		int[] wrapIndices = coolBar.getWrapIndices();
+		int length = wrapIndices.length;
+		if ((length > 0) && (wrapIndices[0] == 0)) {
+			// remove entry for 0 wrap index if it exists
+			System.arraycopy(wrapIndices, 1, wrapIndices, 0, length - 1);
+		}
+		int count = coolBar.getItemCount();
+		if (count > 0) length++;
+		int[] lastIndices = new int [length];
+		for (int i = 0; i < wrapIndices.length; i++) {
+			lastIndices[i] =  wrapIndices[i] - 1;
+		}	
+		if (count > 0) {
+			lastIndices [lastIndices.length - 1] =  count - 1;
+		}
+		return lastIndices;
+	}
+	/**
 	 */
 	public CoolBarLayout getLayout() {
 		if (!coolBarExist())
 			return null;
-
+	
 		CoolBarLayout layout = new CoolBarLayout();
 		CoolItem[] coolItems = coolBar.getItems();
 		ArrayList newItems = new ArrayList(coolItems.length);
@@ -310,9 +335,14 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		layout.items = newItems;
 		layout.itemSizes = coolBar.getItemSizes();
 		layout.itemWrapIndices = coolBar.getWrapIndices();
-
-		//System.out.println("get layout " + layout.toString());
-
+	
+		//FH -> Save the preferred size as actual size for the last item on a row
+		int[] lastIndices = getLastItemIndices();
+		for (int i = 0; i < lastIndices.length; i++) {
+			CoolItem lastItem = coolBar.getItem(lastIndices[i]);	
+			layout.itemSizes [lastIndices[i]] = lastItem.getPreferredSize();		
+		}
+			
 		return layout;
 	}
 	/**
@@ -555,16 +585,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				count++;
 			}
 		}
+		
+		
 
 		coolBar.setRedraw(false);
 		coolBar.setItemLayout(itemOrder, new int[0], itemSizes);
-
-//		System.out.print("old item wraps ");
-//		for (int i=0; i<layout.itemWrapIndices.length; i++) {
-//			System.out.print(layout.itemWrapIndices[i] + " ");
-//		}
-//		System.out.println();
-
 
 		// restore the wrap indices after the new item order is restored, wrap on the same items that 
 		// were specified in the layout
@@ -605,17 +630,9 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		int[] itemWraps = new int[j];
 		System.arraycopy(wrapIndices, 0, itemWraps, 0, j);
 
-//		System.out.print("new item wraps ");
-//		for (int i=0; i<itemWraps.length; i++) {
-//			System.out.print(itemWraps[i] + " ");
-//		}
-//		System.out.println();
-
 		coolBar.setWrapIndices(itemWraps);
 		coolBar.setRedraw(true);
 
-//		System.out.println("layout set");
-//		System.out.println(getLayout().toString());
 	}
 	/**
 	 */
@@ -648,7 +665,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					useRedraw = true;
 					coolBar.setRedraw(false);
 				}
-		
+				
 				for (Iterator e = cbItemsToRemove.iterator(); e.hasNext();) {
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) e.next();
 					dispose(cbItem);
@@ -656,7 +673,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				for (Iterator e = coolItemsToRemove.iterator(); e.hasNext();) {
 					CoolItem coolItem = (CoolItem) e.next();
 					ToolBar tBar = (ToolBar) coolItem.getControl();
-					tBar.setVisible(false);
+						tBar.setVisible(false);
 					dispose(coolItem);
 				}
 
@@ -673,7 +690,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 							if ((toolBar != null) && (!toolBar.isDisposed()) && (toolBar.getItemCount() > 0) && cbItem.hasDisplayableItems()) {
 								if (!changed) {
 									// workaround for 14330
-									changed = true;
+								changed = true;
 									if (coolBar.getLocked()) {
 										coolBar.setLocked(false);
 										relock = true;
@@ -693,5 +710,5 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				if (useRedraw) coolBar.setRedraw(true);
 			}
 		}
-	}
+	}	
 }
