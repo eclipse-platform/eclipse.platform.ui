@@ -24,8 +24,8 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.internal.Policy;
-import org.eclipse.team.core.internal.simpleAccess.SimpleAccessOperations;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
 
 /**
  * A concrete subclass of <code>RepositoryProvider</code> is created for each

@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.internal.Policy;
+import org.eclipse.team.internal.core.Policy;
 
 /**
  * A standard abstract class that provides implementations for interesting 

@@ -1,4 +1,4 @@
-package org.eclipse.team.core.internal;
+package org.eclipse.team.internal.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
@@ -9,30 +9,21 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.core.RepositoryProvider;
 
-public class MoveDeleteManager implements IMoveDeleteHook {
+/**
+ * A class which provides the default behavior for resource deletions and moves.
+ * This class can be overridden by providers to change some or all of the behavior
+ * related to resources deletions or moves.
+ * 
+ * @see org.eclipse.team.core.ResourceProvider#getMoveDeleteHook()
+ */
 
-	private static final IMoveDeleteHook DEFAULT_HOOK = new DefaultMoveDeleteHook();
-	
-	private IMoveDeleteHook getHookFor(IResource resource) {
-		IProject project = resource.getProject();
-		RepositoryProvider provider = RepositoryProvider.getProvider(project);
-		if(provider==null) {
-			return DEFAULT_HOOK; 
-		}
-		IMoveDeleteHook hook = provider.getMoveDeleteHook();
-		if (hook == null) {
-			return DEFAULT_HOOK;
-		}
-		return hook;
-	}
-	
-	/*
+public class DefaultMoveDeleteHook implements IMoveDeleteHook {
+
+	/**
 	 * @see IMoveDeleteHook#deleteFile(IResourceTree, IFile, int, IProgressMonitor)
 	 */
 	public boolean deleteFile(
@@ -40,11 +31,10 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 		IFile file,
 		int updateFlags,
 		IProgressMonitor monitor) {
-		
-		return getHookFor(file).deleteFile(tree, file, updateFlags, monitor);
+		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#deleteFolder(IResourceTree, IFolder, int, IProgressMonitor)
 	 */
 	public boolean deleteFolder(
@@ -52,11 +42,10 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 		IFolder folder,
 		int updateFlags,
 		IProgressMonitor monitor) {
-		
-		return getHookFor(folder).deleteFolder(tree, folder, updateFlags, monitor);
+		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#deleteProject(IResourceTree, IProject, int, IProgressMonitor)
 	 */
 	public boolean deleteProject(
@@ -64,11 +53,10 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 		IProject project,
 		int updateFlags,
 		IProgressMonitor monitor) {
-			
-		return getHookFor(project).deleteProject(tree, project, updateFlags, monitor);
+		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#moveFile(IResourceTree, IFile, IFile, int, IProgressMonitor)
 	 */
 	public boolean moveFile(
@@ -77,11 +65,10 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 		IFile destination,
 		int updateFlags,
 		IProgressMonitor monitor) {
-		
-		return getHookFor(source).moveFile(tree, source, destination, updateFlags, monitor);
+		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#moveFolder(IResourceTree, IFolder, IFolder, int, IProgressMonitor)
 	 */
 	public boolean moveFolder(
@@ -90,11 +77,10 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 		IFolder destination,
 		int updateFlags,
 		IProgressMonitor monitor) {
-			
-		return getHookFor(source).moveFolder(tree, source, destination, updateFlags, monitor);
+		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#moveProject(IResourceTree, IProject, IProjectDescription, int, IProgressMonitor)
 	 */
 	public boolean moveProject(
@@ -103,8 +89,7 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 		IProjectDescription description,
 		int updateFlags,
 		IProgressMonitor monitor) {
-			
-		return getHookFor(source).moveProject(tree, source, description, updateFlags, monitor);
+		return false;
 	}
 
 }

@@ -40,8 +40,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.internal.Policy;
-import org.eclipse.team.core.internal.StringMatcher;
+import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.StringMatcher;
 import org.omg.CORBA.UNKNOWN;
 
 /**

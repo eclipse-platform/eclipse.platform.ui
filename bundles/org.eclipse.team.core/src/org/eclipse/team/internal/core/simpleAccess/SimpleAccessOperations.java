@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.team.core.internal.simpleAccess;
+package org.eclipse.team.internal.core.simpleAccess;
 
 import org.eclipse.team.core.*;
 import org.eclipse.core.resources.IFile;
