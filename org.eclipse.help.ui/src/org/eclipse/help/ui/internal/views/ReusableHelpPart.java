@@ -933,7 +933,10 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			return url;
 		BaseHelpSystem.ensureWebappRunning();
 		String base = getBase();
-		return base + url;
+		if (url.startsWith("/"))
+			return base + url;
+		else
+			return base + "/" + url;
 		// char sep = url.lastIndexOf('?')!= -1 ? '&':'?';
 		// return base + url+sep+"noframes=true"; //$NON-NLS-1$
 	}
