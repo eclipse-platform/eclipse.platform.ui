@@ -63,7 +63,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		separator = toolkit.createCompositeSeparator(container);
 		separator.setVisible(false);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 2;
+		gd.heightHint = 1;
 		separator.setLayoutData(gd);		
 		ScrolledFormText stext = new ScrolledFormText(container, false);
 		stext.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -169,12 +169,10 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		buff.append("</span></p>"); //$NON-NLS-1$
 		for (int i=0; i<results.size(); i++) {
 			EngineResult er = (EngineResult)results.get(i);
-			if (er.hits.size()==0)
-				continue;
-			buff.append("<p>");
+			buff.append("<p><b>");
 			buff.append(er.ed.getLabel());
 			buff.append(" ("+er.hits.size()+" hits)");
-			buff.append("</p>");
+			buff.append("</b></p>");
 			updateResults(er, buff);
 		}
 		buff.append("</form>"); //$NON-NLS-1$
