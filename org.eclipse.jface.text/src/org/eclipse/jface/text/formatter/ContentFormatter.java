@@ -297,8 +297,6 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	private String[] fPartitionManagingCategories;
 	/** The list of references to offset and end offset of all overlapping positions */
 	private List fOverlappingPositionReferences;
-	/** Position updater used for partitioning positions */
-	private IPositionUpdater fPartitioningUpdater;
 	/**
 	 * The document partitioning used by this formatter.
 	 * @since 3.0
@@ -863,31 +861,6 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		}
 	}
 		
-	/**
-	 * Installs those updaters which the formatter needs to keep track of the partitions.
-	 */
-	private void addPartitioningUpdater() {
-		fPartitioningUpdater= new NonDeletingPositionUpdater(PARTITIONING);
-		fDocument.addPositionCategory(PARTITIONING);
-		fDocument.addPositionUpdater(fPartitioningUpdater);
-	}
-	
-	/**
-	 * Removes the formatter's internal position updater and category.
-	 */
-	private void removePartitioningUpdater() {
-		
-		try {
-						
-			fDocument.removePositionUpdater(fPartitioningUpdater);
-			fDocument.removePositionCategory(PARTITIONING);
-			fPartitioningUpdater= null;
-			
-		} catch (BadPositionCategoryException x) {
-			// should not happen
-		}
-	}
-	
 	/**
 	 * Returns the partition managing position categories for the formatted document.
 	 * 
