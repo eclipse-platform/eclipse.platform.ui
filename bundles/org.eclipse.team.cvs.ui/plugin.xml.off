@@ -99,12 +99,6 @@
 				tooltip="%IgnoreAction.tooltip"
 				menubarPath="team.main/group1"
 				class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.branch"
-				label="%BranchAction.label"
-				tooltip="%BranchAction.tooltip"
-				menubarPath="team.main/group1"
-				class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"/>
 			<action
 				id="org.eclipse.team.ccvs.ui.GenerateDiff"
 				label="%GenerateDiff.label"
@@ -140,6 +134,12 @@
 				tooltip="%MergeAction.tooltip"
 				menubarPath="team.main/group1"
 				class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.branch"
+				label="%BranchAction.label"
+				tooltip="%BranchAction.tooltip"
+				menubarPath="team.main/group1"
+				class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"/>
 		</objectContribution>
 		<objectContribution
 			id="org.eclipse.team.ccvs.ui.IContainerContributions"
