@@ -33,7 +33,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 */
 	public Object[] getChildren();
 	/**
-	 * Returns the primary debug target associated with this launch, or <code>null</code>
+	 * Returns the primary (first) debug target associated with this launch, or <code>null</code>
 	 * if no debug target is associated with this launch. All debug targets 
 	 * associated with this launch may be retrieved by
 	 * <code>getDebugTargets()</code>.
