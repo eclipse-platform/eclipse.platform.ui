@@ -1800,7 +1800,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 	
 	
@@ -1813,7 +1813,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		Element siteElement = doc.createElement(CFG_SITE);
 		parent.appendChild(siteElement);
 		
-		siteElement.setAttribute(CFG_URL, site.getURL().toString());
+		if (site.getURL().toString() != null)
+			siteElement.setAttribute(CFG_URL, site.getURL().toString());
 		siteElement.setAttribute(CFG_STAMP, Long.toString(site.getChangeStamp()));
 		siteElement.setAttribute(CFG_FEATURE_STAMP, Long.toString(site.getFeaturesChangeStamp()));
 		siteElement.setAttribute(CFG_PLUGIN_STAMP, Long.toString(site.getPluginsChangeStamp()));
@@ -1854,17 +1855,20 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_PRIMARY, "true");
 		if (feature.getFeatureVersion() != null)
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_VERSION, feature.getFeatureVersion()); 
-		if (feature.getFeatureVersion() != null && !feature.getFeatureVersion().equals(feature.getFeaturePluginVersion()))
+		if (feature.getFeaturePluginVersion() != null && !feature.getFeaturePluginVersion().equals(feature.getFeatureVersion()))
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_VERSION, feature.getFeaturePluginVersion()); 
-		if (feature.getFeatureIdentifier() != null && !feature.getFeatureIdentifier().equals(feature.getFeaturePluginIdentifier()))
+		if (feature.getFeaturePluginIdentifier() != null && !feature.getFeaturePluginIdentifier().equals(feature.getFeatureIdentifier()))
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, feature.getFeaturePluginIdentifier());
 		if (feature.getFeatureApplication() != null)
 			featureElement.setAttribute(CFG_FEATURE_ENTRY_APPLICATION, feature.getFeatureApplication()); 
 		URL[] roots = feature.getFeatureRootURLs();
 		for (int i=0; i<roots.length; i++) {
-			Element rootElement = doc.createElement(CFG_FEATURE_ENTRY_ROOT);
-			rootElement.setNodeValue(roots[i].toExternalForm());
-			featureElement.appendChild(rootElement);
+			String root = roots[i].toExternalForm();
+			if (root != null && root.trim().length() > 0){
+				Element rootElement = doc.createElement(CFG_FEATURE_ENTRY_ROOT);
+				rootElement.appendChild(doc.createTextNode(root));
+				featureElement.appendChild(rootElement);
+			}
 		}
 	}
 }
