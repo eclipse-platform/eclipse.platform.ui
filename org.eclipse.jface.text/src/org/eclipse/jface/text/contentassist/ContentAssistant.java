@@ -715,6 +715,12 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	private IDialogSettings fDialogSettings;
+	/**
+	 * Prefix completion setting.
+	 * 
+	 * @since 3.0
+	 */
+	private boolean fIsPrefixCompletionEnabled= false;
 	
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1295,7 +1301,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	public String showPossibleCompletions() {
 		promoteKeyListener();
-		return fProposalPopup.showProposals(false);
+		if (fIsPrefixCompletionEnabled)
+			return fProposalPopup.incrementalComplete();
+		else
+			return fProposalPopup.showProposals(false);
 	}
 	
 	/*
@@ -1679,20 +1688,20 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	// ------ control's size handling dialog settings ------
 	
 	/**
-	 * Tells this information control manager to open the information
-	 * control with the values contained in the given dialog settings
-	 * and to store the control's last valid size in the given dialog
-	 * settings.
+	 * Tells this information control manager to open the information control
+	 * with the values contained in the given dialog settings and to store the
+	 * control's last valid size in the given dialog settings.
 	 * <p>
 	 * Note: This API is only valid if the information control implements
-	 * {@link IInformationControlExtension3}. Not following this restriction
-	 * will later result in an {@link UnsupportedOperationException}.
+	 * {@link org.eclipse.jface.text.IInformationControlExtension3}. Not
+	 * following this restriction will later result in an
+	 * {@link UnsupportedOperationException}.
 	 * </p>
 	 * <p>
 	 * The constants used to store the values are:
 	 * <ul>
-	 *  <li>{@link ContentAssistant#STORE_SIZE_X}</li>
-	 *	<li>{@link ContentAssistant#STORE_SIZE_Y}</li>
+	 * <li>{@link ContentAssistant#STORE_SIZE_X}</li>
+	 * <li>{@link ContentAssistant#STORE_SIZE_Y}</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -1768,5 +1777,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		}
 		
 		return size;
+	}
+
+	/**
+	 * Sets the prefix completion property. If enabled, content assist delegates
+	 * completion to prefix completion.
+	 * 
+	 * @param enabled <code>true</code> to enable prefix completion,
+	 *        <code>false</code> to disable
+	 */
+	public void enablePrefixCompletion(boolean enabled) {
+		fIsPrefixCompletionEnabled= enabled;
 	}
 }

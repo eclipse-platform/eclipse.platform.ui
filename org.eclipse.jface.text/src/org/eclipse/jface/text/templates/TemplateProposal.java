@@ -318,7 +318,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementString()
 	 */
 	public CharSequence getCompletionText() {
-		return new String();
+		return fTemplate.getName();
 	}
 
 	/*
