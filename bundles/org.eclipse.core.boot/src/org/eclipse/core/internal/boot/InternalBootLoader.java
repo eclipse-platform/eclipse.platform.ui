@@ -938,16 +938,25 @@ private static void setupSystemContext() {
 		StringTokenizer tokenizer = new StringTokenizer(nl, "_"); //$NON-NLS-1$
 		int segments = tokenizer.countTokens();
 		try {
+			Locale userLocale = null;
 			switch (segments) {
+				case 1:
+					// use the 2 arg constructor to maintain compatibility with 1.3.1
+					userLocale = new Locale(tokenizer.nextToken(), ""); //$NON-NLS-1$
+					break;
 				case 2:
-					Locale userLocale = new Locale(tokenizer.nextToken(), tokenizer.nextToken());
-					Locale.setDefault(userLocale);
+					userLocale = new Locale(tokenizer.nextToken(), tokenizer.nextToken());
 					break;
 				case 3:
 					userLocale = new Locale(tokenizer.nextToken(), tokenizer.nextToken(), tokenizer.nextToken());
-					Locale.setDefault(userLocale);
+					break;
+				default:
+					// if the user passed us in a bogus value then log a message and use the default
+					System.err.println(Policy.bind("error.badNL", nl)); //$NON-NLS-1$
+					userLocale = Locale.getDefault();
 					break;
 			}
+			Locale.setDefault(userLocale);
 		} catch (NoSuchElementException e) {
 			// fall through and use the default
 		}
