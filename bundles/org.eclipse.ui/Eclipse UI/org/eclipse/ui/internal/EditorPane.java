@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class EditorPane extends PartPane {
 	private EditorWorkbook workbook;
+	private PinEditorAction pinEditorAction;
 /**
  * Constructs an editor pane for an editor part.
  */
@@ -163,6 +164,34 @@ protected void addMoveItems(Menu moveMenu) {
 		}
 	});
 	item.setEnabled(!isZoomed() && (getContainer() instanceof EditorWorkbook));
+}
+/**
+ * Set the action to pin/unpin an editor. 
+ */
+protected void setPinEditorAction(PinEditorAction action) {
+	pinEditorAction = action;
+}
+/**
+ * Add the pin menu item on the editor system menu
+ */
+protected void addPinEditorItem(Menu parent) {
+		// add fast view item
+	final MenuItem item = new MenuItem(parent, SWT.CHECK);
+	item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			if(pinEditorAction != null) {
+				pinEditorAction.setChecked(!pinEditorAction.isChecked());
+				pinEditorAction.run();
+			}
+		}
+	});
+	if(pinEditorAction == null) {
+		item.setEnabled(false);
+	} else {
+		item.setEnabled(pinEditorAction.isEnabled());
+		item.setSelection(pinEditorAction.isChecked());
+	}
 }
 
 /**

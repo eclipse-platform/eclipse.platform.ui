@@ -42,10 +42,14 @@ protected void updateState() {
 	IEditorPart editor = getActiveEditor();
 	boolean enabled = editor != null;
 	setEnabled(enabled);
-	if(enabled)
-		setChecked(!((EditorSite)editor.getEditorSite()).getReuseEditor());
-	else
+	if(enabled) {
+		EditorSite site = (EditorSite)editor.getEditorSite();
+		EditorPane pane = (EditorPane)site.getPane();
+		pane.setPinEditorAction(this);
+		setChecked(!(site).getReuseEditor());
+	} else {
 		setChecked(false);
+	}
 }
 }
 
