@@ -8,8 +8,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * the API required to get a resource that an object adapts to
  * for use of object contributions, decorators and property
  * pages that have adaptable = true.
- * Implementors of this interface should be registered with the
- * AdapterFactories for lookup via the getAdapter() mechanism.
+ * Implementors of this interface should be registered with an
+ * IAdapterFactory for lookup via the getAdapter() mechanism.
  */
 
 public interface IContributorResourceAdapter {

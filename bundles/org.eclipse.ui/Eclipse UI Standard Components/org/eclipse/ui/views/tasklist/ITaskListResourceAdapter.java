@@ -7,6 +7,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * The ITaskListResourceAdapter is a class that defines
  * the way that objects with markers for the task list
  * supply resources for use by the task list.
+ * Implementors of this interface should be registered with an
+ * IAdapterFactory for lookup via the getAdapter() mechanism.
  */
 
 public interface ITaskListResourceAdapter {
@@ -14,7 +16,7 @@ public interface ITaskListResourceAdapter {
 	/**
 	 * Get the resource that is affected by changed
 	 * to object.
-	 * @return <code>IResource</codee> or <code>null</code> if there
+	 * @return <code>IResource</code> or <code>null</code> if there
 	 * 	is no adapted resource for this type.
 	 * @param IAdaptable the adaptable being queried.
 	 */
