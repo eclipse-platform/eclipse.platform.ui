@@ -30,12 +30,20 @@ public class DirectoryToc {
 
 	}
 	/**
+	 * This public method is to be used after the build of TOCs
+	 * is finished.
+	 * With assumption that TOC model is not modifiable
+	 * after the build, this method caches topics in an array
+	 * and releases objects used only during build.
 	 * @return ITopic[]
 	 */
 	public ITopic[] getExtraTopics() {
 		if (extraTopics == null) {
 			Collection col = createExtraTopics();
 			extraTopics = (ITopic[]) col.toArray(new ITopic[col.size()]);
+			// for memory foot print, release TocFile and dir
+			tocFile=null;
+			dir=null;
 		}
 
 		return extraTopics;

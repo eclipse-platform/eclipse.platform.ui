@@ -12,8 +12,8 @@ import java.util.*;
  */
 abstract class TocNode implements ITocNode {
 	private final static List emptyList = new ArrayList(0);
-	private List children;
-	private List parents;
+	protected List children;
+	protected List parents;
 	
 	
 	/**

@@ -121,14 +121,25 @@ public class Toc extends TocNode implements IToc {
 		return (ITopic) topicMap.get(href);
 	}
 	/**
-	 * Note: assumes the toc has been built....
+	 * This public method is to be used after the build of TOCs
+	 * is finished.
+	 * With assumption that TOC model is not modifiable
+	 * after the build, this method caches subtopics in an array
+	 * and releases objects used only during build.
 	 * @return ITopic[]
 	 */
 	public ITopic[] getTopics() {
 		if (topicArray == null) {
 			List topics = getChildTopics();
+			// create and cache array of children (Topics only)
 			topicArray = new ITopic[topics.size()];
 			topics.toArray(topicArray);
+			// for memory foot print, release list of child
+			// and parent nodes.
+			children = null;
+			parents = null;
+			// after TOC is build, TocFile no longer needed
+			tocFile = null;
 		}
 		return topicArray;
 	}
