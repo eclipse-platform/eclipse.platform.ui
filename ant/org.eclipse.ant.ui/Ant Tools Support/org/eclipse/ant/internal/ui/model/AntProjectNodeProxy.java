@@ -23,7 +23,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 	
 	private String fBuildFileName;
 	private String fDefaultTargetName;
-	private int fRestoredProblemSeverity;
 
 	/**
 	 * Creates a new project node with the given name and the given build file
