@@ -20,6 +20,8 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	
 	private Session session;
 	
+	private ICVSResource currentVisitRoot;
+	
 	public PruneFolderVisitor() {
 	}
 	
@@ -31,6 +33,7 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 		
 		// Visit the resources
 		for (int i = 0; i < resources.length; i++) {
+			currentVisitRoot = resources[i];
 			resources[i].accept(this);
 		}
 	}
@@ -39,6 +42,7 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
 	public void visitFile(ICVSFile file) throws CVSException {
+		pruneParentIfAppropriate(file);
 	}
 
 	/**
@@ -47,12 +51,24 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	public void visitFolder(ICVSFolder folder) throws CVSException {
 		// First prune any empty children
 		folder.acceptChildren(this);
-		// Then prune the folder if it is managed, not the command root and is empty
+		pruneFolderIfAppropriate(folder);
+	}
+	
+	private void pruneFolderIfAppropriate(ICVSFolder folder) throws CVSException {
 		if (folder.isManaged() &&
-		 	! folder.equals(session.getLocalRoot()) &&
-			folder.members(ICVSFolder.ALL_MEMBERS).length == 0) {
+		 		! folder.equals(session.getLocalRoot()) &&
+				folder.members(ICVSFolder.ALL_MEMBERS).length == 0) {
 			folder.delete();
 			folder.unmanage(null);
+			pruneParentIfAppropriate(folder);
+		}
+	}
+	
+	private void pruneParentIfAppropriate(ICVSResource resource) throws CVSException {
+		// If we are visiting the current visit root, prune the parent if appropriate
+		if (resource.equals(currentVisitRoot)) {
+			currentVisitRoot = resource.getParent();
+			pruneFolderIfAppropriate((ICVSFolder)currentVisitRoot);
 		}
 	}
 }
