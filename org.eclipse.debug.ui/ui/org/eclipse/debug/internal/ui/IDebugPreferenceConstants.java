@@ -24,6 +24,7 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_SYS_OUT_RGB= "Console.stdOutColor";
 	public static final String CONSOLE_SYS_IN_RGB= "Console.stdInColor";
 	
+	public static final String CONSOLE_SET_MAX_OUTPUT= "Console.setMaxOutput";
 	public static final String CONSOLE_MAX_OUTPUT_SIZE= "Console.maxOutputSize";	
 			
 	/**

@@ -33,6 +33,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	
 	private int fLastSourceStream= ConsoleDocument.OUT;
 	private int fMaxSysText= 0; // Maximum amount of text displayed from sys.out and sys.err
+	private boolean fSetMaxSysText= false;
 	private boolean fCropping= false;
 	
 	private List fStyleRanges= new ArrayList(2);
@@ -58,14 +59,13 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	public ConsoleDocument(IProcess process) {
 		super();
 		fProcess= process;
+		
 		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
 		store.addPropertyChangeListener(this);
 		fMaxSysText= store.getInt(ConsolePreferencePage.CONSOLE_MAX_OUTPUT_SIZE);
-		if (fMaxSysText > 0) {
-			setTextStore(new ConsoleOutputTextStore(fMaxSysText));
-		} else {			
-			setTextStore(new ConsoleOutputTextStore(2500));
-		}
+		fSetMaxSysText= store.getBoolean(ConsolePreferencePage.CONSOLE_SET_MAX_OUTPUT);	
+		
+		setTextStore(new ConsoleOutputTextStore(2500));
 		setLineTracker(new DefaultLineTracker());
 		
 		if (process != null) {
@@ -199,7 +199,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 				int appendedLength= text.length();
 				int totalSize= getStore().getLength() + appendedLength;
 				fNewStreamWriteEnd= fLastStreamWriteEnd + appendedLength;
-				if (fMaxSysText > 0 && totalSize > fMaxSysText) {
+				if (fSetMaxSysText && totalSize > fMaxSysText) {
 					crop(totalSize - fMaxSysText);
 				}
 				ConsoleDocument.this.replace0(fLastStreamWriteEnd, 0, text, source);
@@ -251,12 +251,12 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	/**
 	 * Crop the contents of the store to fit the specified maximum
 	 * size (fMaxSysText).
-	 * Do nothing if the document has 1 or fewer characters.
+	 * Do nothing if the document has no characters.
 	 */
 	private void cropContentToFit() {
 		int totalSize= getStore().getLength();
 		int amountToLose= totalSize-fMaxSysText;
-		if (fMaxSysText <= 0 || totalSize <= 1 || amountToLose <= 0) {
+		if (!fSetMaxSysText || totalSize <= 0 || amountToLose <= 0) {
 			return;
 		}
 		crop(amountToLose);
@@ -412,10 +412,13 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 		}
 
 		IPreferenceStore store= DebugUIPlugin.getDefault().getPreferenceStore();
+		fSetMaxSysText= store.getBoolean(ConsolePreferencePage.CONSOLE_SET_MAX_OUTPUT);
 		int newMax= store.getInt(ConsolePreferencePage.CONSOLE_MAX_OUTPUT_SIZE);
 		if (newMax != fMaxSysText) {
 			fMaxSysText= newMax;
-			cropContentToFit();
+			if (fSetMaxSysText) {
+				cropContentToFit();
+			}
 		}	
 	}
 

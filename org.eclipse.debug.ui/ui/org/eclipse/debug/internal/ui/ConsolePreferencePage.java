@@ -5,11 +5,9 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,9 +20,11 @@ import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 /**
  * A page to set the preferences for the console
  */
-public class ConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants, ModifyListener {
+public class ConsolePreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
 	
-	Text fMaxOutputField;
+	private Text fMaxOutputField;
+	private Button fMaxOutputButton;
+	private Label fMaxOutputLabel;
 	
 	/**
 	 * Create the console page.
@@ -63,9 +63,9 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		addField(sysin);
 		addField(editor);
 		
-		String defaultText= (new Integer(getConsoleMaxOutputSize())).toString();
-		createLabelledTextArea(parent, defaultText, "Number of characters displayed (enter 0 for no limit):");
-
+		String maxText= (new Integer(getConsoleMaxOutputSize())).toString();
+		boolean set= getSetConsoleMaxOutputSize();
+		createMaxOutputWidget(parent, maxText, set, "Set maximum number of characters displayed:", "Toggle whether a maximum number of characters is set at all");
 	}
 	
 	/**
@@ -84,7 +84,13 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		data.widthHint = 60;
 		text.setLayoutData(data);
 		fMaxOutputField= text;
-		text.addModifyListener(this);
+		text.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (e.widget == fMaxOutputField) {
+					doMaxOutputChanged();
+				}
+			}
+		});
 		return text;
 	}	
 	
@@ -101,36 +107,64 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		GridData data= new GridData();
 		label.setLayoutData(data);
 		
+		setMaxOutputLabel(label);
+		
 		return label;
 	}
 	
+	private Button createButton(Composite parent, boolean enabled, String labelText, String tooltipText) {
+		
+		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
+		button.setText(labelText);
+		button.setToolTipText(tooltipText);
+		button.setSelection(enabled);
+		
+		GridData data= new GridData();
+		button.setLayoutData(data);
+		
+		button.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent se) {
+				setMaxOutputEnabled(fMaxOutputButton.getSelection());
+			}
+			public void widgetDefaultSelected(SelectionEvent se) {
+			}
+		});			
+		
+		setMaxOutputButton(button);
+		
+		return button;
+	}
+	
 	/**
-	 * Creates a text widget with a label
+	 * Creates a text widget with a label and a toggle button
 	 */
-	private Composite createLabelledTextArea(Composite parent, String defaultText, String labelText) {
+	private Composite createMaxOutputWidget(Composite parent, String defaultText, boolean set, String labelText, String tooltipText) {
 		Composite textArea= new Composite(parent, SWT.SHADOW_NONE);
 		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
+		layout.numColumns= 3;
 		textArea.setLayout(layout);
 		
-		Label label= createLabel(textArea, labelText);
+		Button button= createButton(textArea, set, labelText, tooltipText);
 		Text text= createTextBox(textArea, defaultText);
 		
 		GridData data= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan= 2;
 		textArea.setLayoutData(data);
 		
+		setMaxOutputEnabled(set);
+		
 		return textArea;
 	}
 	
 	/**
-	 * @see ModifyListener
+	 * Enable or disable the appropriate fields associated with the "set max output" option
 	 */
-	public void modifyText(ModifyEvent e) {
-		if (e.widget == fMaxOutputField) {
-			doMaxOutputChanged();
+	protected void setMaxOutputEnabled(boolean enabled) {
+		if (!enabled) {
+			fMaxOutputField.clearSelection();
 		}
-	}
+		fMaxOutputField.setEnabled(enabled);
+	}	
 	
 	/**
 	 * @see IPreferencePage
@@ -138,10 +172,15 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	public boolean performOk() {
 		super.performOk(); // store the fields.
 		IPreferenceStore store = getPreferenceStore();		
+		int currentValue= store.getInt(CONSOLE_MAX_OUTPUT_SIZE);
+		int newValue= Integer.parseInt(fMaxOutputField.getText());
+		boolean enabled= fMaxOutputButton.getSelection();
 		
-		int value= Integer.parseInt(fMaxOutputField.getText());
-		store.setValue(CONSOLE_MAX_OUTPUT_SIZE, value);	
-		getPreferenceStore().firePropertyChangeEvent(CONSOLE_MAX_OUTPUT_SIZE, new Integer(0), new Integer(value));
+		store.setValue(CONSOLE_SET_MAX_OUTPUT, enabled);
+		store.setValue(CONSOLE_MAX_OUTPUT_SIZE, newValue);
+	
+		getPreferenceStore().firePropertyChangeEvent(CONSOLE_MAX_OUTPUT_SIZE, new Integer(currentValue), new Integer(newValue));
+
 		return true;
 	}	
 	
@@ -215,6 +254,15 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	}	
 	
 	/**
+	 * Returns whether the console enforces a maximum size
+	 */
+	public static boolean getSetConsoleMaxOutputSize() {
+		IPreferenceStore prefs= DebugUIPlugin.getDefault().getPreferenceStore();
+		boolean set= prefs.getBoolean(CONSOLE_SET_MAX_OUTPUT);
+		return set;
+	}
+	
+	/**
 	 * Initialize the default values of the preferences associated with this page
 	 */
 	public static void initDefaults(IPreferenceStore store) {
@@ -223,6 +271,32 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(store, CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
-		store.setDefault(CONSOLE_MAX_OUTPUT_SIZE, 0);
+		store.setDefault(CONSOLE_MAX_OUTPUT_SIZE, 1024);
+		store.setDefault(CONSOLE_SET_MAX_OUTPUT, false);
 	}	
+	
+	private void setMaxOutputField(Text field) {
+		fMaxOutputField= field;
+	}
+	
+	private Text getMaxOutputField() {
+		return fMaxOutputField;
+	}
+	
+	private void setMaxOutputButton(Button button) {
+		fMaxOutputButton= button;		
+	}
+	
+	private Button getMaxOutputButton() {
+		return fMaxOutputButton;
+	}
+	
+	private void setMaxOutputLabel(Label label) {
+		fMaxOutputLabel= label;
+	}
+	
+	private Label getMaxOutputLabel() {
+		return fMaxOutputLabel;
+	}
+		
 }
