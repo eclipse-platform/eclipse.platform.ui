@@ -110,7 +110,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	 * The factory extension was malformed. Log an appropriate exception
 	 */
 	private void logError() {
-		String msg = Messages.bind(Messages.adapters_badAdapterFactory, element.getDeclaringExtension().getNamespace()); 
+		String msg = NLS.bind(Messages.adapters_badAdapterFactory, element.getDeclaringExtension().getNamespace()); 
 		InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 	}
 }

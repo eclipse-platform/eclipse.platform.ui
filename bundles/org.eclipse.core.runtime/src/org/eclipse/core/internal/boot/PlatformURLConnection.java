@@ -16,6 +16,7 @@ import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Properties;
 import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.core.runtime.NLS;
 
 /**
  * Platform URL support
@@ -214,7 +215,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 		URL u = connection.getURL();
 		String up = u.getProtocol();
 		if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR) && !up.startsWith(PlatformURLHandler.BUNDLE))
-			throw new IOException(Messages.bind(Messages.url_noaccess, up));
+			throw new IOException(NLS.bind(Messages.url_noaccess, up));
 		return u;
 	}
 

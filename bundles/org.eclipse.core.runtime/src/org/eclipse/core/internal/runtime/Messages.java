@@ -9,10 +9,10 @@
  **********************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import org.eclipse.core.runtime.PlatformMessages;
+import org.eclipse.core.runtime.NLS;
 
 // Runtime plugin message catalog
-public class Messages extends PlatformMessages {
+public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.runtime.messages"; //$NON-NLS-1$
 
 	// Adapter manager
@@ -166,30 +166,10 @@ public class Messages extends PlatformMessages {
 
 	static {
 		// load message values from bundle file
-		PlatformMessages.initializeMessages(BUNDLE_NAME, Messages.class);
+		reloadMessages();
 	}
 
-	/**
-	 * Bind the given message's substitution locations with the given string values.
-	 */
-	public static String bind(String message, Object binding) {
-		return PlatformMessages.bind(message, new Object[] {binding});
-	}
-
-	/**
-	 * Bind the given message's substitution locations with the given string values.
-	 */
-	public static String bind(String message, Object binding1, Object binding2) {
-		return PlatformMessages.bind(message, new Object[] {binding1, binding2});
-	}
-
-	/**
-	 * Bind the given message's substitution locations with the given string values.
-	 */
-	public static String bind(String message, Object[] bindings) {
-		return PlatformMessages.bind(message, bindings);
-	}
 	public static void reloadMessages() {
-		PlatformMessages.initializeMessages(BUNDLE_NAME, Messages.class);
+		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
 }

@@ -259,7 +259,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private boolean pluginActivationEnter() throws CoreException {
 		if (deactivated) {
 			// had permanent error on startup
-			String errorMsg = Messages.bind(Messages.plugin_pluginDisabled, getId());
+			String errorMsg = NLS.bind(Messages.plugin_pluginDisabled, getId());
 			throwException(errorMsg, null);
 		}
 		if (active || activePending) {
@@ -351,7 +351,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			try {
 				bundleOsgi.start();
 			} catch (BundleException e) {
-				throwException(Messages.bind(Messages.plugin_startupProblems, e), e);
+				throwException(NLS.bind(Messages.plugin_startupProblems, e), e);
 			}
 		if (pluginObject != null)
 			return;
@@ -396,7 +396,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			else
 				runtimeClass = bundleOsgi.loadClass(pluginClassName);
 		} catch (ClassNotFoundException e) {
-			errorMsg = Messages.bind(Messages.plugin_loadClassError, getId(), pluginClassName);
+			errorMsg = NLS.bind(Messages.plugin_loadClassError, getId(), pluginClassName);
 			throwException(errorMsg, e);
 		}
 
@@ -405,7 +405,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		try {
 			construct = runtimeClass.getConstructor(new Class[] {IPluginDescriptor.class});
 		} catch (NoSuchMethodException eNoConstructor) {
-			errorMsg = Messages.bind(Messages.plugin_instantiateClassError, getId(), pluginClassName);
+			errorMsg = NLS.bind(Messages.plugin_instantiateClassError, getId(), pluginClassName);
 			throwException(errorMsg, eNoConstructor);
 		}
 
@@ -413,10 +413,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 		try {
 			pluginObject = (Plugin) construct.newInstance(new Object[] {this});
 		} catch (ClassCastException e) {
-			errorMsg = Messages.bind(Messages.plugin_notPluginClass, pluginClassName);
+			errorMsg = NLS.bind(Messages.plugin_notPluginClass, pluginClassName);
 			throwException(errorMsg, e);
 		} catch (Exception e) {
-			errorMsg = Messages.bind(Messages.plugin_instantiateClassError, getId(), pluginClassName);
+			errorMsg = NLS.bind(Messages.plugin_instantiateClassError, getId(), pluginClassName);
 			throwException(errorMsg, e);
 		}
 	}

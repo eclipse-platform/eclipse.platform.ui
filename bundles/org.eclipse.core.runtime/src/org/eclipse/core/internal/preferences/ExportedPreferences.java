@@ -70,7 +70,7 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 			try {
 				removeNode();
 			} catch (BackingStoreException e) {
-				String message = Messages.bind(Messages.preferences_removeExported, absolutePath());
+				String message = NLS.bind(Messages.preferences_removeExported, absolutePath());
 				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 				log(status);
 			}

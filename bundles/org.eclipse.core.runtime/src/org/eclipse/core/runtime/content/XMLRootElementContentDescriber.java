@@ -130,7 +130,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 			elementToFind = (String) parameters.get(ELEMENT_TO_FIND);
 		}
 		if (dtdToFind == null && elementToFind == null) {
-			String message = Messages.bind(Messages.content_badInitializationData, XMLRootElementContentDescriber.class.getName());
+			String message = NLS.bind(Messages.content_badInitializationData, XMLRootElementContentDescriber.class.getName());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null));
 		}
 	}

@@ -101,7 +101,7 @@ public class DataArea {
 		// check if the location can be created
 		if (location.toFile().exists()) {
 			if (!location.toFile().isDirectory()) {
-				String message = Messages.bind(Messages.meta_notDir, location);
+				String message = NLS.bind(Messages.meta_notDir, location);
 				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 			}
 		}
@@ -118,11 +118,11 @@ public class DataArea {
 		try {
 			file.mkdirs();
 		} catch (Exception e) {
-			String message = Messages.bind(Messages.meta_couldNotCreate, file.getAbsolutePath());
+			String message = NLS.bind(Messages.meta_couldNotCreate, file.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
 		}
 		if (!file.canWrite()) {
-			String message = Messages.bind(Messages.meta_readonly, file.getAbsolutePath());
+			String message = NLS.bind(Messages.meta_readonly, file.getAbsolutePath());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 		}
 		// set the log file location now that we created the data area

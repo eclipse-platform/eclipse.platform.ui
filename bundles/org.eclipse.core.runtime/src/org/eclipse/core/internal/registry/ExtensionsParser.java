@@ -178,7 +178,7 @@ public class ExtensionsParser extends DefaultHandler {
 				break;
 			case INITIAL_STATE :
 				// shouldn't get here
-				internalError(Messages.bind(Messages.parse_internalStack, elementName));
+				internalError(NLS.bind(Messages.parse_internalStack, elementName));
 				break;
 			case BUNDLE_STATE :
 				if (elementName.equals(manifestType)) {
@@ -295,7 +295,7 @@ public class ExtensionsParser extends DefaultHandler {
 	private void handleInitialState(String elementName, Attributes attributes) {
 		if (!elementName.equals(manifestType)) {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError(Messages.bind(Messages.parse_unknownTopElement, elementName));
+			internalError(NLS.bind(Messages.parse_unknownTopElement, elementName));
 			return;
 		}
 		// new manifests should have the plugin (not fragment) element empty
@@ -335,10 +335,9 @@ public class ExtensionsParser extends DefaultHandler {
 
 		String msg;
 		if (name.equals("")) //$NON-NLS-1$
-			msg = Messages.bind(Messages.parse_error, ex.getMessage());
+			msg = NLS.bind(Messages.parse_error, ex.getMessage());
 		else
-			msg = Messages.bind(Messages.parse_errorNameLineColumn,
-					new Object[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
+			msg = NLS.bind(Messages.parse_errorNameLineColumn, (new Object[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()}));
 		error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
 	}
 
@@ -440,23 +439,23 @@ public class ExtensionsParser extends DefaultHandler {
 	//todo: Are all three methods needed??
 	private void missingAttribute(String attribute, String element) {
 		if (locator == null)
-			internalError(Messages.bind(Messages.parse_missingAttribute, attribute, element));
+			internalError(NLS.bind(Messages.parse_missingAttribute, attribute, element));
 		else
-			internalError(Messages.bind(Messages.parse_missingAttributeLine, new String[] {attribute, element, Integer.toString(locator.getLineNumber())}));
+			internalError(NLS.bind(Messages.parse_missingAttributeLine, (new String[] {attribute, element, Integer.toString(locator.getLineNumber())})));
 	}
 
 	private void unknownAttribute(String attribute, String element) {
 		if (locator == null)
-			internalError(Messages.bind(Messages.parse_unknownAttribute, attribute, element));
+			internalError(NLS.bind(Messages.parse_unknownAttribute, attribute, element));
 		else
-			internalError(Messages.bind(Messages.parse_unknownAttributeLine, new String[] {attribute, element, Integer.toString(locator.getLineNumber())}));
+			internalError(NLS.bind(Messages.parse_unknownAttributeLine, (new String[] {attribute, element, Integer.toString(locator.getLineNumber())})));
 	}
 
 	private void unknownElement(String element, String parent) {
 		if (locator == null)
-			internalError(Messages.bind(Messages.parse_unknownElement, parent, element));
+			internalError(NLS.bind(Messages.parse_unknownElement, parent, element));
 		else
-			internalError(Messages.bind(Messages.parse_unknownElementLine, new String[] {parent, element, Integer.toString(locator.getLineNumber())}));
+			internalError(NLS.bind(Messages.parse_unknownElementLine, (new String[] {parent, element, Integer.toString(locator.getLineNumber())})));
 	}
 
 	private void parseExtensionPointAttributes(Attributes attributes) {
@@ -518,7 +517,7 @@ public class ExtensionsParser extends DefaultHandler {
 			default :
 				stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 				if (!compatibilityMode)
-					internalError(Messages.bind(Messages.parse_unknownTopElement, elementName));
+					internalError(NLS.bind(Messages.parse_unknownTopElement, elementName));
 		}
 	}
 

@@ -38,7 +38,7 @@ public class Worker extends Thread {
 	}
 
 	private IStatus handleException(InternalJob job, Throwable t) {
-		String message = Messages.bind(Messages.jobs_internalError, job.getName());
+		String message = NLS.bind(Messages.jobs_internalError, job.getName());
 		return new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, t);
 	}
 

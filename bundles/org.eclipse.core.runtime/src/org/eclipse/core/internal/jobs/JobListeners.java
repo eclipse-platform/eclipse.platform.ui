@@ -127,7 +127,7 @@ class JobListeners {
 		if (e instanceof OperationCanceledException)
 			return;
 		String pluginId = Platform.PI_RUNTIME;
-		String message = Messages.bind(Messages.meta_pluginProblems, pluginId);
+		String message = NLS.bind(Messages.meta_pluginProblems, pluginId);
 		IStatus status = new Status(IStatus.ERROR, pluginId, Platform.PLUGIN_ERROR, message, e);
 		//we have to be safe, so don't try to log if the platform is not running 
 		//since it will fail - last resort is to print the stack trace on stderr

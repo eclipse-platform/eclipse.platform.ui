@@ -18,9 +18,23 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
  * 
  * @since 3.1
  */
-public abstract class PlatformMessages {
-	public PlatformMessages() {
+public abstract class NLS {
+	public NLS() {
 		super();
+	}
+
+	/**
+	 * Bind the given message's substitution locations with the given string values.
+	 */
+	public static String bind(String message, Object binding) {
+		return bind(message, new Object[] {binding});
+	}
+
+	/**
+	 * Bind the given message's substitution locations with the given string values.
+	 */
+	public static String bind(String message, Object binding1, Object binding2) {
+		return bind(message, new Object[] {binding1, binding2});
 	}
 
 	/**
@@ -33,6 +47,7 @@ public abstract class PlatformMessages {
 			return message;
 		return MessageFormat.format(message, bindings);
 	}
+
 	/**
 	 * Initialize the given class with the values from the specified message bundle.
 	 * <p>

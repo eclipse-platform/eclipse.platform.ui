@@ -14,6 +14,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 
@@ -108,7 +109,7 @@ public class AuthorizationHandler {
 
 	public static void setKeyringFile(String file) {
 		if (keyringFile != null)
-			throw new IllegalStateException(Messages.bind(Messages.meta_keyringFileAlreadySpecified, keyringFile));
+			throw new IllegalStateException(NLS.bind(Messages.meta_keyringFileAlreadySpecified, keyringFile));
 		keyringFile = file;
 	}
 

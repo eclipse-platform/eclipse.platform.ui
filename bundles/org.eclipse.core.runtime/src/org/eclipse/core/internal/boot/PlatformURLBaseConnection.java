@@ -13,6 +13,7 @@ package org.eclipse.core.internal.boot;
 import java.io.IOException;
 import java.net.URL;
 import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.core.runtime.NLS;
 
 /**
  * Platform URL support
@@ -39,7 +40,7 @@ public class PlatformURLBaseConnection extends PlatformURLConnection {
 		if (spec.startsWith("/")) //$NON-NLS-1$
 			spec = spec.substring(1);
 		if (!spec.startsWith(PLATFORM + "/")) { //$NON-NLS-1$
-			String message = Messages.bind(Messages.url_badVariant, url);
+			String message = NLS.bind(Messages.url_badVariant, url);
 			throw new IOException(message);
 		}
 		return spec.length() == PLATFORM.length() + 1 ? installURL : new URL(installURL, spec.substring(PLATFORM.length() + 1));

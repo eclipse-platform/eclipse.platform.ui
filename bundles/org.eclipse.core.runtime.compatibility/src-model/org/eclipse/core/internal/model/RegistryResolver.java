@@ -697,7 +697,7 @@ public class RegistryResolver {
 			// this plugin is not in the registry.
 			if (idmap.get(requires[i].getPlugin()) == null) {
 				// We know this plugin doesn't exist
-				error(Messages.bind(Messages.parse_badPrereqOnFrag, fragment.getName(), requires[i].getPlugin()));
+				error(NLS.bind(Messages.parse_badPrereqOnFrag, fragment.getName(), requires[i].getPlugin()));
 				return false;
 			}
 		}
@@ -716,9 +716,9 @@ public class RegistryResolver {
 				// ignore it.
 				String id, name;
 				if ((id = fragment.getId()) != null)
-					error(Messages.bind(Messages.parse_fragmentMissingAttr, id));
+					error(NLS.bind(Messages.parse_fragmentMissingAttr, id));
 				else if ((name = fragment.getName()) != null)
-					error(Messages.bind(Messages.parse_fragmentMissingAttr, name));
+					error(NLS.bind(Messages.parse_fragmentMissingAttr, name));
 				else
 					error(Messages.parse_fragmentMissingIdName);
 				continue;
@@ -764,7 +764,7 @@ public class RegistryResolver {
 
 			if (plugin == null) {
 				// We couldn't find this fragment's plugin
-				error(Messages.bind(Messages.parse_missingFragmentPd, fragment.getPluginId(), fragment.getId()));
+				error(NLS.bind(Messages.parse_missingFragmentPd, fragment.getPluginId(), fragment.getId()));
 				continue;
 			}
 
@@ -810,9 +810,9 @@ public class RegistryResolver {
 				pluginList[i].setEnabled(false);
 				String id, name;
 				if ((id = pluginList[i].getId()) != null)
-					error(Messages.bind(Messages.parse_pluginMissingAttr, id));
+					error(NLS.bind(Messages.parse_pluginMissingAttr, id));
 				else if ((name = pluginList[i].getName()) != null)
-					error(Messages.bind(Messages.parse_pluginMissingAttr, name));
+					error(NLS.bind(Messages.parse_pluginMissingAttr, name));
 				else
 					error(Messages.parse_pluginMissingIdName);
 				continue;
@@ -933,19 +933,19 @@ public class RegistryResolver {
 
 		PluginDescriptorModel plugin = (PluginDescriptorModel) reg.getPlugin(pluginId);
 		if (plugin == null) {
-			message = Messages.bind(Messages.parse_extPointUnknown, target, ext.getParentPluginDescriptor().getId());
+			message = NLS.bind(Messages.parse_extPointUnknown, target, ext.getParentPluginDescriptor().getId());
 			error(message);
 			return;
 		}
 		if (!plugin.getEnabled()) {
-			message = Messages.bind(Messages.parse_extPointDisabled, target, ext.getParentPluginDescriptor().getId());
+			message = NLS.bind(Messages.parse_extPointDisabled, target, ext.getParentPluginDescriptor().getId());
 			error(message);
 			return;
 		}
 
 		ExtensionPointModel extPt = (ExtensionPointModel) getExtensionPoint(plugin, extPtId);
 		if (extPt == null) {
-			message = Messages.bind(Messages.parse_extPointUnknown, target, ext.getParentPluginDescriptor().getId());
+			message = NLS.bind(Messages.parse_extPointUnknown, target, ext.getParentPluginDescriptor().getId());
 			error(message);
 			return;
 		}
@@ -1003,7 +1003,7 @@ public class RegistryResolver {
 			if (prq.getOptional() && parent != null && child != null)
 				return cookie;
 			if (parent != null)
-				error(Messages.bind(Messages.parse_prereqDisabled, parent.getId(), child));
+				error(NLS.bind(Messages.parse_prereqDisabled, parent.getId(), child));
 			if (DEBUG_RESOLVE)
 				debug("<POP  " + child + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
 			cookie.isOk(false);
@@ -1021,11 +1021,11 @@ public class RegistryResolver {
 					// This is an optional prerequisite.  Ignore the conflict and this
 					// prerequisite.
 					orphans.add(ix.getId());
-					information(Messages.bind(Messages.parse_unsatisfiedOptPrereq, parent.getId(), child));
+					information(NLS.bind(Messages.parse_unsatisfiedOptPrereq, parent.getId(), child));
 					return cookie;
 				} else {
 					// This prerequisite is mandatory.  
-					String message = Messages.bind(Messages.parse_unsatisfiedPrereq, parent.getId(), child);
+					String message = NLS.bind(Messages.parse_unsatisfiedPrereq, parent.getId(), child);
 					error(message);
 					if (DEBUG_RESOLVE)
 						debug("<POP  " + child + " unable to satisfy constraint"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1036,10 +1036,10 @@ public class RegistryResolver {
 				if (prq.getOptional()) {
 					// This is an optional prerequisite.  Ignore the loop, and the
 					// prerequisite
-					information(Messages.bind(Messages.parse_prereqOptLoop, parent.getId(), child));
+					information(NLS.bind(Messages.parse_prereqOptLoop, parent.getId(), child));
 					return cookie;
 				} else {
-					String message = Messages.bind(Messages.parse_prereqLoop, parent.getId(), child);
+					String message = NLS.bind(Messages.parse_prereqLoop, parent.getId(), child);
 					error(message);
 					if (DEBUG_RESOLVE)
 						debug("<POP  " + child + " prerequisite loop"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1095,7 +1095,7 @@ public class RegistryResolver {
 					orphans.add(prereqs[i].getPlugin());
 			}
 			if (parent != null)
-				error(Messages.bind(Messages.parse_prereqDisabled, parent.getId(), child));
+				error(NLS.bind(Messages.parse_prereqDisabled, parent.getId(), child));
 			childPd.setEnabled(false);
 			if (DEBUG_RESOLVE)
 				debug("<POP  " + child + " failed to resolve subtree"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1166,7 +1166,7 @@ public class RegistryResolver {
 				dirty = true;
 				if (getVersionIdentifier(fragmentList[i]).equals(getVersionIdentifier(latestVersion)))
 					// ignore duplicates
-					error(Messages.bind(Messages.parse_duplicateFragment, fragmentId, fragmentList[i].getVersion()));
+					error(NLS.bind(Messages.parse_duplicateFragment, fragmentId, fragmentList[i].getVersion()));
 				if (getVersionIdentifier(fragmentList[i]).isGreaterThan(getVersionIdentifier(latestVersion))) {
 					latestFragments.put(fragmentId, fragmentList[i]);
 				}
@@ -1199,7 +1199,7 @@ public class RegistryResolver {
 						// We know this library name didn't get added to the set.
 						// Ignore the duplicate but indicate an error
 						String[] bindings = {latestFragment.getId(), plugin.getId(), libraries[i].getName()};
-						error(Messages.bind(Messages.parse_duplicateLib, bindings));
+						error(NLS.bind(Messages.parse_duplicateLib, bindings));
 					} else {
 						setSize = libNames.size();
 					}

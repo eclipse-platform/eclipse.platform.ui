@@ -96,9 +96,9 @@ public class RegistryLoader {
 			}
 		} catch (SAXParseException se) {
 			/* exception details logged by parser */
-			factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Messages.bind(Messages.parse_errorProcessing, manifest), null));
+			factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, NLS.bind(Messages.parse_errorProcessing, manifest), null));
 		} catch (Exception e) {
-			factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Messages.bind(Messages.parse_errorProcessing, manifest + ":  " + e.getMessage()), null)); //$NON-NLS-1$
+			factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, NLS.bind(Messages.parse_errorProcessing, manifest + ":  " + e.getMessage()), null)); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -153,21 +153,21 @@ public class RegistryLoader {
 		entry.setVersion(getQualifiedVersion(entry, location)); // check for version qualifier
 		if (entry instanceof PluginDescriptorModel) {
 			if (entry.getId() == null || entry.getVersion() == null) {
-				return parseProblem(Messages.bind(Messages.parse_nullPluginIdentifier, location));
+				return parseProblem(NLS.bind(Messages.parse_nullPluginIdentifier, location));
 			}
 			//skip duplicate entries
 			if (registry.getPlugin(entry.getId(), entry.getVersion()) != null) {
-				return parseProblem(Messages.bind(Messages.parse_duplicatePlugin, entry.getId(), location));
+				return parseProblem(NLS.bind(Messages.parse_duplicatePlugin, entry.getId(), location));
 			}
 			registry.addPlugin((PluginDescriptorModel) entry);
 		} else {
 			if (entry.getId() == null || entry.getVersion() == null) {
-				return parseProblem(Messages.bind(Messages.parse_nullFragmentIdentifier, location));
+				return parseProblem(NLS.bind(Messages.parse_nullFragmentIdentifier, location));
 			}
 			if (entry instanceof PluginFragmentModel) {
 				registry.addFragment((PluginFragmentModel) entry);
 			} else {
-				return parseProblem(Messages.bind(Messages.parse_unknownEntry, location));
+				return parseProblem(NLS.bind(Messages.parse_unknownEntry, location));
 			}
 		}
 		String url = location.toString();
@@ -223,15 +223,15 @@ public class RegistryLoader {
 		int versionLength = version == null ? 0 : version.length();
 
 		if (nameLength <= 0) {
-			parseProblem(Messages.bind(Messages.parse_missingPluginName, location));
+			parseProblem(NLS.bind(Messages.parse_missingPluginName, location));
 			return false;
 		}
 		if (idLength <= 0) {
-			parseProblem(Messages.bind(Messages.parse_missingPluginId, location));
+			parseProblem(NLS.bind(Messages.parse_missingPluginId, location));
 			return false;
 		}
 		if (versionLength <= 0) {
-			parseProblem(Messages.bind(Messages.parse_missingPluginVersion, location));
+			parseProblem(NLS.bind(Messages.parse_missingPluginVersion, location));
 			return false;
 		}
 
@@ -241,11 +241,11 @@ public class RegistryLoader {
 			int pNameLength = pluginName == null ? 0 : pluginName.length();
 			int pNameVersion = pluginVersion == null ? 0 : pluginVersion.length();
 			if (pNameLength <= 0) {
-				parseProblem(Messages.bind(Messages.parse_missingFPName, location));
+				parseProblem(NLS.bind(Messages.parse_missingFPName, location));
 				return false;
 			}
 			if (pNameVersion <= 0) {
-				parseProblem(Messages.bind(Messages.parse_missingFPVersion, location));
+				parseProblem(NLS.bind(Messages.parse_missingFPVersion, location));
 				return false;
 			}
 		}

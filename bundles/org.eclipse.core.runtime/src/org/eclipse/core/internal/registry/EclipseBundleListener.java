@@ -136,7 +136,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		if (is == null)
 			return null;
 		try {
-			String message = Messages.bind(Messages.parse_problems, bundle.getLocation());
+			String message = NLS.bind(Messages.parse_problems, bundle.getLocation());
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, message, null); //$NON-NLS-1$
 			ResourceBundle b = null;
 			try {
@@ -169,7 +169,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 	}
 
 	private void logParsingError(Bundle bundle, Exception e) {
-		String message = Messages.bind(Messages.parse_failedParsingManifest, bundle.getLocation());
+		String message = NLS.bind(Messages.parse_failedParsingManifest, bundle.getLocation());
 		InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, e));
 	}
 }

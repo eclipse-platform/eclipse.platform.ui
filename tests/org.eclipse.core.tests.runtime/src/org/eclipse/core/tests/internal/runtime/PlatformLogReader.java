@@ -43,7 +43,7 @@ public class PlatformLogReader {
 	private static final int UNKNOWN = 32;
 
 	protected void log(Exception ex) {
-		String msg = Messages.bind(Messages.meta_exceptionParsingLog, ex.getMessage());
+		String msg = NLS.bind(Messages.meta_exceptionParsingLog, ex.getMessage());
 		list.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 	}
 

@@ -107,9 +107,9 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	private boolean isComplete(ContentType contentType) {
 		String message = null;
 		if (contentType.getSimpleId() == null)
-			message = Messages.bind(Messages.content_missingIdentifier, contentType.getId());
+			message = NLS.bind(Messages.content_missingIdentifier, contentType.getId());
 		else if (contentType.getName() == null)
-			message = Messages.bind(Messages.content_missingName, contentType.getId());
+			message = NLS.bind(Messages.content_missingName, contentType.getId());
 		if (message == null)
 			return true;
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null);

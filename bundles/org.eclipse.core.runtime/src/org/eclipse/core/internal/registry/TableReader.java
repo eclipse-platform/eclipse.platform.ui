@@ -402,7 +402,7 @@ public class TableReader {
 			}
 			return result;
 		} catch (IOException e) {
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.bind(Messages.meta_regCacheIOExceptionReading, contributionsFile), e));
+			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, NLS.bind(Messages.meta_regCacheIOExceptionReading, contributionsFile), e));
 			return null;
 		} finally {
 			if (namespaceInput != null)

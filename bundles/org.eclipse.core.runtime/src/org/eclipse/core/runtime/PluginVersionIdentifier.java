@@ -87,11 +87,11 @@ public final class PluginVersionIdentifier {
 		// have passed by the assert).
 
 		if (major < 0)
-			Assert.isTrue(false, Messages.bind(Messages.parse_postiveMajor, major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier));
+			Assert.isTrue(false, NLS.bind(Messages.parse_postiveMajor, major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier));
 		if (minor < 0)
-			Assert.isTrue(false, Messages.bind(Messages.parse_postiveMinor, major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier));
+			Assert.isTrue(false, NLS.bind(Messages.parse_postiveMinor, major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier));
 		if (service < 0)
-			Assert.isTrue(false, Messages.bind(Messages.parse_postiveService, major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier));
+			Assert.isTrue(false, NLS.bind(Messages.parse_postiveService, major + SEPARATOR + minor + SEPARATOR + service + SEPARATOR + qualifier));
 		if (qualifier == null)
 			qualifier = ""; //$NON-NLS-1$
 
@@ -156,11 +156,11 @@ public final class PluginVersionIdentifier {
 		if (s.equals("")) //$NON-NLS-1$
 			Assert.isTrue(false, Messages.parse_emptyPluginVersion);
 		if (s.startsWith(SEPARATOR))
-			Assert.isTrue(false, Messages.bind(Messages.parse_separatorStartVersion, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_separatorStartVersion, s));
 		if (s.endsWith(SEPARATOR))
-			Assert.isTrue(false, Messages.bind(Messages.parse_separatorEndVersion, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_separatorEndVersion, s));
 		if (s.indexOf(SEPARATOR + SEPARATOR) != -1)
-			Assert.isTrue(false, Messages.bind(Messages.parse_doubleSeparatorVersion, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_doubleSeparatorVersion, s));
 
 		StringTokenizer st = new StringTokenizer(s, SEPARATOR);
 		Vector elements = new Vector(4);
@@ -171,39 +171,39 @@ public final class PluginVersionIdentifier {
 		int elementSize = elements.size();
 
 		if (elementSize <= 0)
-			Assert.isTrue(false, Messages.bind(Messages.parse_oneElementPluginVersion, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_oneElementPluginVersion, s));
 		if (elementSize > 4)
-			Assert.isTrue(false, Messages.bind(Messages.parse_fourElementPluginVersion, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_fourElementPluginVersion, s));
 
 		int[] numbers = new int[3];
 		try {
 			numbers[0] = Integer.parseInt((String) elements.elementAt(0));
 			if (numbers[0] < 0)
-				Assert.isTrue(false, Messages.bind(Messages.parse_postiveMajor, s));
+				Assert.isTrue(false, NLS.bind(Messages.parse_postiveMajor, s));
 		} catch (NumberFormatException nfe) {
-			Assert.isTrue(false, Messages.bind(Messages.parse_numericMajorComponent, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_numericMajorComponent, s));
 		}
 
 		try {
 			if (elementSize >= 2) {
 				numbers[1] = Integer.parseInt((String) elements.elementAt(1));
 				if (numbers[1] < 0)
-					Assert.isTrue(false, Messages.bind(Messages.parse_postiveMinor, s));
+					Assert.isTrue(false, NLS.bind(Messages.parse_postiveMinor, s));
 			} else
 				numbers[1] = 0;
 		} catch (NumberFormatException nfe) {
-			Assert.isTrue(false, Messages.bind(Messages.parse_numericMinorComponent, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_numericMinorComponent, s));
 		}
 
 		try {
 			if (elementSize >= 3) {
 				numbers[2] = Integer.parseInt((String) elements.elementAt(2));
 				if (numbers[2] < 0)
-					Assert.isTrue(false, Messages.bind(Messages.parse_postiveService, s));
+					Assert.isTrue(false, NLS.bind(Messages.parse_postiveService, s));
 			} else
 				numbers[2] = 0;
 		} catch (NumberFormatException nfe) {
-			Assert.isTrue(false, Messages.bind(Messages.parse_numericServiceComponent, s));
+			Assert.isTrue(false, NLS.bind(Messages.parse_numericServiceComponent, s));
 		}
 
 		// "result" is a 4-element array with the major, minor, service, and qualifier

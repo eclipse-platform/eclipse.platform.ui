@@ -578,7 +578,7 @@ public final class InternalPlatform {
 				} catch (CoreException e) {
 					if (logEntries == null)
 						logEntries = new ArrayList(3);
-					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.bind(Messages.provider_invalid, element.getParent().toString()), 0, e, null));
+					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, NLS.bind(Messages.provider_invalid, element.getParent().toString()), 0, e, null));
 				}
 			}
 		}
@@ -586,7 +586,7 @@ public final class InternalPlatform {
 			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.provider_invalid_general, 0, null, (FrameworkLogEntry[]) logEntries.toArray()));
 		
 		if (!missingProductReported) {
-			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.bind(Messages.product_notFound, productId), 0, null, null));
+			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, NLS.bind(Messages.product_notFound, productId), 0, null, null));
 			missingProductReported = true;
 		}
 		return null;
@@ -675,7 +675,7 @@ public final class InternalPlatform {
 	private void handleException(ISafeRunnable code, Throwable e) {
 		if (!(e instanceof OperationCanceledException)) {
 			String pluginId = Platform.PI_RUNTIME;
-			String message = Messages.bind(Messages.meta_pluginProblems, pluginId);
+			String message = NLS.bind(Messages.meta_pluginProblems, pluginId);
 			IStatus status;
 			if (e instanceof CoreException) {
 				status = new MultiStatus(pluginId, Platform.PLUGIN_ERROR, message, e);

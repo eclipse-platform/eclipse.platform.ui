@@ -90,7 +90,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 			else if (data instanceof Hashtable) {
 				Hashtable parameters = (Hashtable) data;
 				if (!parameters.containsKey(SIGNATURE)) {
-					String message = Messages.bind(Messages.content_badInitializationData, XMLRootElementContentDescriber.class.getName());
+					String message = NLS.bind(Messages.content_badInitializationData, XMLRootElementContentDescriber.class.getName());
 					throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, null));
 				}
 				signature = parseSignature((String) parameters.get(SIGNATURE));
@@ -100,7 +100,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 					required = Boolean.valueOf((String) parameters.get(REQUIRED)).booleanValue();
 			}
 		} catch (NumberFormatException nfe) {
-			String message = Messages.bind(Messages.content_badInitializationData, BinarySignatureDescriber.class.getName());
+			String message = NLS.bind(Messages.content_badInitializationData, BinarySignatureDescriber.class.getName());
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, nfe));
 		}
 	}

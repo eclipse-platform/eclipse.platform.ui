@@ -99,7 +99,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	static void scopeAdded(IConfigurationElement element) {
 		String key = element.getAttribute(ATTRIBUTE_NAME);
 		if (key == null) {
-			String message = Messages.bind(Messages.preferences_missingScopeAttribute, element.getDeclaringExtension().getUniqueIdentifier());
+			String message = NLS.bind(Messages.preferences_missingScopeAttribute, element.getDeclaringExtension().getUniqueIdentifier());
 			log(createStatusWarning(message, null));
 			return;
 		}
@@ -733,7 +733,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 			severity = IStatus.ERROR;
 		else
 			severity = IStatus.WARNING;
-		String msg = Messages.bind(Messages.preferences_incompatible, new Object[] {pref, bundle, installed});
+		String msg = NLS.bind(Messages.preferences_incompatible, (new Object[] {pref, bundle, installed}));
 		return new Status(severity, Platform.PI_RUNTIME, 1, msg, null);
 	}
 }

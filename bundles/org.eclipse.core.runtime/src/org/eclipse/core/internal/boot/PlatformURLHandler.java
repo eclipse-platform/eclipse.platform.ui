@@ -15,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.net.*;
 import java.util.Hashtable;
 import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.core.runtime.NLS;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 
 /**
@@ -44,18 +45,18 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 			spec = spec.substring(1);
 		int ix = spec.indexOf("/"); //$NON-NLS-1$
 		if (ix == -1)
-			throw new MalformedURLException(Messages.bind(Messages.url_invalidURL, url.toExternalForm()));
+			throw new MalformedURLException(NLS.bind(Messages.url_invalidURL, url.toExternalForm()));
 
 		String type = spec.substring(0, ix);
 		Constructor construct = (Constructor) connectionType.get(type);
 		if (construct == null)
-			throw new MalformedURLException(Messages.bind(Messages.url_badVariant, type));
+			throw new MalformedURLException(NLS.bind(Messages.url_badVariant, type));
 
 		PlatformURLConnection connection = null;
 		try {
 			connection = (PlatformURLConnection) construct.newInstance(new Object[] {url});
 		} catch (Exception e) {
-			throw new IOException(Messages.bind(Messages.url_createConnection, e.getMessage()));
+			throw new IOException(NLS.bind(Messages.url_createConnection, e.getMessage()));
 		}
 		connection.setResolvedURL(connection.resolve());
 		return connection;

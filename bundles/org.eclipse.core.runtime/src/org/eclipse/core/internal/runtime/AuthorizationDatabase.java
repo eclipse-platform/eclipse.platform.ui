@@ -261,9 +261,9 @@ public class AuthorizationDatabase {
 				input.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Messages.bind(Messages.meta_unableToReadAuthorization, file), e));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, NLS.bind(Messages.meta_unableToReadAuthorization, file), e));
 		} catch (ClassNotFoundException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, Messages.bind(Messages.meta_unableToReadAuthorization, file), e));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, NLS.bind(Messages.meta_unableToReadAuthorization, file), e));
 		}
 	}
 
@@ -303,7 +303,7 @@ public class AuthorizationDatabase {
 		try {
 			file.delete();
 			if ((!file.getParentFile().exists() && !file.getParentFile().mkdirs()) || !canWrite(file.getParentFile()))
-				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Messages.bind(Messages.meta_unableToWriteAuthorization, file), null));
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, NLS.bind(Messages.meta_unableToWriteAuthorization, file), null));
 			file.createNewFile();
 			FileOutputStream out = new FileOutputStream(file);
 			try {
@@ -312,7 +312,7 @@ public class AuthorizationDatabase {
 				out.close();
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Messages.bind(Messages.meta_unableToWriteAuthorization, file), e));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, NLS.bind(Messages.meta_unableToWriteAuthorization, file), e));
 		}
 		needsSaving = false;
 	}

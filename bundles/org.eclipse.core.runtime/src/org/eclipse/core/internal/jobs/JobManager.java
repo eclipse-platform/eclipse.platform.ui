@@ -631,7 +631,7 @@ public class JobManager implements IJobManager {
 		//spin until all jobs are completed
 		try {
 			monitor.beginTask(Messages.jobs_blocked0, jobCount);
-			monitor.subTask(Messages.bind(Messages.jobs_waitFamSub, Integer.toString(jobCount)));
+			monitor.subTask(NLS.bind(Messages.jobs_waitFamSub, Integer.toString(jobCount)));
 			reportBlocked(monitor, blocking);
 			int jobsLeft;
 			int reportedWorkDone = 0;
@@ -642,7 +642,7 @@ public class JobManager implements IJobManager {
 				if (reportedWorkDone < actualWorkDone) {
 					monitor.worked(actualWorkDone - reportedWorkDone);
 					reportedWorkDone = actualWorkDone;
-					monitor.subTask(Messages.bind(Messages.jobs_waitFamSub, Integer.toString(jobsLeft)));
+					monitor.subTask(NLS.bind(Messages.jobs_waitFamSub, Integer.toString(jobsLeft)));
 				}
 				if (Thread.interrupted())
 					throw new InterruptedException();
@@ -670,7 +670,7 @@ public class JobManager implements IJobManager {
 				try {
 					monitor = progressProvider.getDefaultMonitor();
 				} catch (Exception e) {
-					String msg = Messages.bind(Messages.meta_pluginProblems, Platform.PI_RUNTIME);
+					String msg = NLS.bind(Messages.meta_pluginProblems, Platform.PI_RUNTIME);
 					InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, msg, e));
 				}
 			}
@@ -749,7 +749,7 @@ public class JobManager implements IJobManager {
 		if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
 			reason = new Status(IStatus.INFO, Platform.PI_RUNTIME, 1, Messages.jobs_blocked0, null);
 		} else {
-			String msg = Messages.bind(Messages.jobs_blocked1, blockingJob.getName());
+			String msg = NLS.bind(Messages.jobs_blocked1, blockingJob.getName());
 			reason = new JobStatus(IStatus.INFO, (Job) blockingJob, msg);
 		}
 		((IProgressMonitorWithBlocking) monitor).setBlocked(reason);
