@@ -44,9 +44,9 @@ import org.eclipse.ui.ide.IDE;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
-	private Button fullBuildButton;
+	private Button afterClean;
 	private Button autoBuildButton;
-	private Button incrementalBuildButton;
+	private Button manualBuild;
 	private Button workingSetButton;
 	private Button specifyResources;
 	protected Button fLaunchInBackgroundButton;
@@ -57,7 +57,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
 		public void widgetSelected(SelectionEvent e) {
-			boolean enabled= autoBuildButton.getSelection() || incrementalBuildButton.getSelection();
+			boolean enabled= autoBuildButton.getSelection() || manualBuild.getSelection();
 			workingSetButton.setEnabled(enabled);
 			specifyResources.setEnabled(enabled && workingSetButton.getSelection());
 			updateLaunchConfigurationDialog();
@@ -104,8 +104,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		Label label= new Label(parent, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Run_this_builder_for__1")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
-		fullBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full"), 2); //$NON-NLS-1$ //$NON-NLS-2$
-		incrementalBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+		afterClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full"), 2); //$NON-NLS-1$ //$NON-NLS-2$
+		manualBuild= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc"), 2); //$NON-NLS-1$ //$NON-NLS-2$
 		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto"), 2); //$NON-NLS-1$ //$NON-NLS-2$
 				
 		createVerticalSpacer(parent, 2);
@@ -151,8 +151,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		
-		fullBuildButton.setSelection(false);
-		incrementalBuildButton.setSelection(false);
+		afterClean.setSelection(false);
+		manualBuild.setSelection(false);
 		autoBuildButton.setSelection(false);
 
 		String buildKindString= null;
@@ -174,17 +174,17 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		for (int i = 0; i < buildTypes.length; i++) {
 			switch (buildTypes[i]) {
 				case IncrementalProjectBuilder.FULL_BUILD:
-					fullBuildButton.setSelection(true);
+					afterClean.setSelection(true);
 					break;
 				case IncrementalProjectBuilder.INCREMENTAL_BUILD:
-					incrementalBuildButton.setSelection(true);
+					manualBuild.setSelection(true);
 					break;
 				case IncrementalProjectBuilder.AUTO_BUILD:
 					autoBuildButton.setSelection(true);
 					break;
 			}
 		}
-		boolean enabled= autoBuildButton.getSelection() || incrementalBuildButton.getSelection();
+		boolean enabled= autoBuildButton.getSelection() || manualBuild.getSelection();
 		workingSetButton.setEnabled(enabled);
 		specifyResources.setEnabled(enabled && workingSetButton.getSelection());
 		updateRunInBackground(configuration);
@@ -215,10 +215,10 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		StringBuffer buffer= new StringBuffer();
-		if (fullBuildButton.getSelection()) {
+		if (afterClean.getSelection()) {
 			buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
 		} 
-		if (incrementalBuildButton.getSelection()){
+		if (manualBuild.getSelection()){
 			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(','); 
 		} 
 		if (autoBuildButton.getSelection()) {
@@ -256,7 +256,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		
-		boolean buildKindSelected= fullBuildButton.getSelection() || incrementalBuildButton.getSelection() || autoBuildButton.getSelection();
+		boolean buildKindSelected= afterClean.getSelection() || manualBuild.getSelection() || autoBuildButton.getSelection();
 		if (!buildKindSelected) {
 			setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.buildKindError")); //$NON-NLS-1$
 			return false;
