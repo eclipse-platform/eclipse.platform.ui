@@ -550,6 +550,18 @@ public void restoreState(IMemento memento) {
 	descriptor = new PerspectiveDescriptor(null,null,null);
 	descriptor.restoreState(memento);
 	
+	IMemento boundsMem = memento.getChild(IWorkbenchConstants.TAG_WINDOW);
+	if(boundsMem != null) {
+		Rectangle r = new Rectangle(0,0,0,0);
+		r.x = boundsMem.getInteger(IWorkbenchConstants.TAG_X).intValue();
+		r.y = boundsMem.getInteger(IWorkbenchConstants.TAG_Y).intValue();
+		r.height = boundsMem.getInteger(IWorkbenchConstants.TAG_HEIGHT).intValue();
+		r.width = boundsMem.getInteger(IWorkbenchConstants.TAG_WIDTH).intValue();
+		if(page.getWorkbenchWindow().getPages().length == 0) {
+			page.getWorkbenchWindow().getShell().setBounds(r);
+		}
+	}
+	
 	// Create an empty presentation..
 	RootLayoutContainer mainLayout = new RootLayoutContainer(page.getMouseDownListener());
 	PerspectivePresentation pres = new PerspectivePresentation(page, mainLayout);
@@ -714,7 +726,15 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	p.saveState(memento);
-
+	if(!saveInnerViewState) {
+		Rectangle bounds = page.getWorkbenchWindow().getShell().getBounds();
+		IMemento boundsMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
+		boundsMem.putInteger(IWorkbenchConstants.TAG_X,bounds.x);
+		boundsMem.putInteger(IWorkbenchConstants.TAG_Y,bounds.y);
+		boundsMem.putInteger(IWorkbenchConstants.TAG_HEIGHT,bounds.height);
+		boundsMem.putInteger(IWorkbenchConstants.TAG_WIDTH,bounds.width);
+	}
+	
 	// Save the action sets.
 	Iterator enum = visibleActionSets.iterator();
 	while (enum.hasNext()) {
