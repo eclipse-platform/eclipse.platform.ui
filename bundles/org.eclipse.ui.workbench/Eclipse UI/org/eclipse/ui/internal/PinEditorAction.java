@@ -11,80 +11,97 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchWindow;
 
+/**
+ * Action to toggle the pin state of an editor. If an editor is
+ * pinned, then it is not reused.
+ */
 public class PinEditorAction extends ActiveEditorAction {
+	private IPropertyListener propListener = new IPropertyListener() {
+		public void propertyChanged(Object source, int propId) {
+			if (propId == EditorSite.PROP_REUSE_EDITOR) {
+				EditorSite site = (EditorSite) ((IEditorPart) source).getEditorSite();
+				setChecked(!site.getReuseEditor());
+			}
+		}
+	};
+	
+	/**
+	 * Creates a PinEditorAction.
+	 */
+	public PinEditorAction(IWorkbenchWindow window) {
+		super(WorkbenchMessages.getString("PinEditorAction.text"), window); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.getString("PinEditorAction.toolTip")); //$NON-NLS-1$
+		setId("org.eclipse.ui.internal.PinEditorAction"); //$NON-NLS-1$
+		// @issue need help constant for this?
+		//	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
+		setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
+		setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
+		setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IAction.
+	 */
+	public void run() {
+		if (getWorkbenchWindow() == null) {
+			// action has been dispose
+			return;
+		}
+		IEditorPart editor = getActiveEditor();
+		if (editor != null) {
+			((EditorSite) editor.getEditorSite()).setReuseEditor(!isChecked());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ActiveEditorAction.
+	 */
+	protected void updateState() {
+		if (getWorkbenchWindow() == null || getActivePage() == null) {
+			setChecked(false);
+			setEnabled(false);
+			return;
+		}
 
-	private boolean visible = false;
+		IEditorPart editor = getActiveEditor();
+		boolean enabled = (editor != null);
+		setEnabled(enabled);
+		if (enabled) {
+			EditorSite site = (EditorSite) editor.getEditorSite();
+			setChecked(!site.getReuseEditor());
+		} else {
+			setChecked(false);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ActiveEditorAction#editorActivated(org.eclipse.ui.IEditorPart)
+	 */
+	protected void editorActivated(IEditorPart part) {
+		super.editorActivated(part);
+		if (part != null) {
+			part.addPropertyListener(propListener);
+		}
+	}
 
-/**
- * Creates a PinEditorAction.
- */
-public PinEditorAction(IWorkbenchWindow window) {
-	super(WorkbenchMessages.getString("PinEditorAction.text"), window); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("PinEditorAction.toolTip")); //$NON-NLS-1$
-	setId("org.eclipse.ui.internal.PinEditorAction"); //$NON-NLS-1$
-//	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
-	setImageDescriptor(
-		WorkbenchImages.getImageDescriptor(
-			IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
-	setHoverImageDescriptor(
-		WorkbenchImages.getImageDescriptor(
-			IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
-	setDisabledImageDescriptor(
-		WorkbenchImages.getImageDescriptor(
-			IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));
-}
-/**
- * Returns true if the action should be visible in the toolbar or menu.
- */
-public boolean getVisible() {
-	return visible;
-}
-/**
- * Sets if the action should be visible or not.
- */
-public void setVisible(boolean visible) {
-	this.visible = visible;
-}
-/* (non-Javadoc)
- * Method declared on IAction.
- */
-public void run() {
-	if (getWorkbenchWindow() == null) {
-		// action has been dispose
-		return;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ActiveEditorAction#editorDeactivated(org.eclipse.ui.IEditorPart)
+	 */
+	protected void editorDeactivated(IEditorPart part) {
+		super.editorDeactivated(part);
+		if (part != null) {
+			part.removePropertyListener(propListener);
+		}
 	}
-	IEditorPart editor = getActiveEditor();
-	((EditorSite)editor.getEditorSite()).setReuseEditor(!isChecked());
-}
-/* (non-Javadoc)
- * Method declared on ActiveEditorAction.
- */
-protected void updateState() {
-	if(getWorkbenchWindow() == null) {
-		setChecked(false);
-		setEnabled(false);
-		return;
-	}
-	IWorkbenchPage page = getActivePage();
-	if (page == null) {
-		setChecked(false);
-		setEnabled(false);
-		return;
-	}
-	IEditorPart editor = getActiveEditor();
-	boolean enabled = (editor != null);
-	setEnabled(enabled);
-	if (enabled) {
-		EditorSite site = (EditorSite) editor.getEditorSite();
-		EditorPane pane = (EditorPane) site.getPane();
-		pane.setPinEditorAction(this);
-		setChecked(!(site).getReuseEditor());
-	} else {
-		setChecked(false);
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
+	 */
+	public void dispose() {
+		editorDeactivated(getActiveEditor());
+		super.dispose();
 	}
 }
-}
-

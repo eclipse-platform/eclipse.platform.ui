@@ -27,7 +27,7 @@ import org.eclipse.ui.part.WorkbenchPart;
  */
 public class EditorPane extends PartPane {
 	private EditorWorkbook workbook;
-	private PinEditorAction pinEditorAction;
+
 /**
  * Constructs an editor pane for an editor part.
  */
@@ -196,31 +196,35 @@ protected void addMoveItems(Menu moveMenu) {
 		item.setEnabled(wbCount > 1);
 }
 /**
- * Set the action to pin/unpin an editor. 
- */
-protected void setPinEditorAction(PinEditorAction action) {
-	pinEditorAction = action;
-}
-/**
  * Add the pin menu item on the editor system menu
  */
 protected void addPinEditorItem(Menu parent) {
-		// add fast view item
-	if(pinEditorAction == null || !pinEditorAction.getVisible())
+	boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+	if (!reuseEditor) {
 		return;
-			
+	}
+
+	IWorkbenchPart part = getPartReference().getPart(false);
+	if (part == null) {
+		return;
+	}
+	
 	final MenuItem item = new MenuItem(parent, SWT.CHECK);
 	item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			if(pinEditorAction != null) {
-				pinEditorAction.setChecked(!pinEditorAction.isChecked());
-				pinEditorAction.run();
+			IWorkbenchPart part = getPartReference().getPart(true);
+			if (part == null) {
+				// this should never happen
+				item.setSelection(false);
+				item.setEnabled(false);
+			} else {
+				((EditorSite) part.getSite()).setReuseEditor(!item.getSelection());
 			}
 		}
 	});
-	item.setEnabled(pinEditorAction.isEnabled());
-	item.setSelection(pinEditorAction.isChecked());
+	item.setEnabled(true);
+	item.setSelection(!((EditorSite) part.getSite()).getReuseEditor());
 }
 
 /**

@@ -13,10 +13,12 @@ package org.eclipse.ui.actions;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ChangeToPerspectiveMenu;
+import org.eclipse.ui.internal.PinEditorAction;
 import org.eclipse.ui.internal.ReopenEditorMenu;
 import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
+import org.eclipse.ui.internal.actions.PinEditorContributionItem;
 
 /**
  * Access to standard contribution items provided by the workbench.
@@ -80,6 +82,23 @@ public abstract class ContributionItemFactory {
 		return contributionItemId;
 	}
 
+	/**
+	 * Workbench action (id "pinEditor"): Toggle whether the editor is pinned.
+	 * This action maintains its enablement state.
+	 */
+	public static final ContributionItemFactory PIN_EDITOR = new ContributionItemFactory("pinEditor") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			PinEditorAction action = new PinEditorAction(window);
+			action.setId(getId());
+			IContributionItem item = new PinEditorContributionItem(action);
+			return item;
+		}
+	};
+		
 	/**
 	 * Workbench contribution item (id "openWindows"): A list of windows
 	 * currently open in the workbench. Selecting one of the items makes the

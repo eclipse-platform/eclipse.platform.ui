@@ -30,7 +30,6 @@ import org.eclipse.ui.internal.LockToolBarAction;
 import org.eclipse.ui.internal.MaximizePartAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
-import org.eclipse.ui.internal.PinEditorAction;
 import org.eclipse.ui.internal.QuitAction;
 import org.eclipse.ui.internal.ResetPerspectiveAction;
 import org.eclipse.ui.internal.SaveAction;
@@ -197,22 +196,6 @@ public abstract class ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new CloseAllSavedAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-		
-	/**
-	 * Workbench action (id "pinEditor"): Toggle whether the editor is pinned.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory PIN_EDITOR = new ActionFactory("pinEditor") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new PinEditorAction(window);
 			action.setId(getId());
 			return action;
 		}

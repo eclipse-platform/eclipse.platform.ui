@@ -50,6 +50,7 @@ package org.eclipse.ui;
  */
 public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 
+	// List of public property ids. See EditorSite for internal ones.
 	/**
 	 * The property id for <code>isDirty</code>.
 	 */
@@ -59,7 +60,7 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 	 * The property id for <code>getEditorInput</code>.
 	 */
 	public static final int PROP_INPUT = 0x102;
-	
+
 	/**
 	 * Returns the input for this editor.  If this value changes the part must 
 	 * fire a property listener event with <code>PROP_INPUT</code>.

@@ -97,7 +97,7 @@ public void dispose() {
  *
  * @param propertyId the id of the property that changed
  */
-protected void firePropertyChange(final int propertyId) {
+public final void firePropertyChange(final int propertyId) {
 	Object [] array = propChangeListeners.getListeners();
 	for (int nX = 0; nX < array.length; nX ++) {
 		final IPropertyListener l = (IPropertyListener)array[nX];

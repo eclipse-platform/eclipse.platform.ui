@@ -23,6 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchPreferences;
@@ -363,9 +364,10 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 			transferTypes.add(tranfer);
 			Transfer[] transfers = new Transfer[transferTypes.size()];
 			transferTypes.toArray(transfers);
-			WorkbenchPage[] pages = (WorkbenchPage[]) window.getPages();
+			IWorkbenchPage[] pages = window.getPages();
 			for (int i = 0; i < pages.length; i++) {
-				DropTarget dropTarget = ((EditorArea) pages[i].getEditorPresentation().getLayoutPart()).getDropTarget();
+				WorkbenchPage page = (WorkbenchPage) pages[i];
+				DropTarget dropTarget = ((EditorArea) page.getEditorPresentation().getLayoutPart()).getDropTarget();
 				if (dropTarget != null) {
 					dropTarget.setTransfer(transfers);
 				}
@@ -379,9 +381,10 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	public void configureEditorAreaDropListener(DropTargetListener dropTargetListener) {
 		if (dropTargetListener != null) {
 			this.dropTargetListener = dropTargetListener;
-			WorkbenchPage[] pages = (WorkbenchPage[]) window.getPages();
+			IWorkbenchPage[] pages = window.getPages();
 			for (int i = 0; i < pages.length; i++) {
-				DropTarget dropTarget = ((EditorArea) pages[i].getEditorPresentation().getLayoutPart()).getDropTarget();
+				WorkbenchPage page = (WorkbenchPage) pages[i];
+				DropTarget dropTarget = ((EditorArea) page.getEditorPresentation().getLayoutPart()).getDropTarget();
 				if (dropTarget != null) {
 					dropTarget.addDropListener(this.dropTargetListener);
 				}

@@ -12,13 +12,14 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.part.WorkbenchPart;
 
 /**
  * An editor container manages the services for an editor.
  */
-public class EditorSite extends PartSite
-	implements IEditorSite
-{
+public class EditorSite extends PartSite implements IEditorSite {
+	/* package */ static final int PROP_REUSE_EDITOR = -0x101;
+	
 	private EditorDescriptor desc;
 	private boolean reuseEditor = true;
 	
@@ -81,6 +82,7 @@ public boolean getReuseEditor() {
 	
 public void setReuseEditor(boolean reuse) {
 	reuseEditor = reuse;
+	((WorkbenchPart) getPart()).firePropertyChange(PROP_REUSE_EDITOR);
 }
 protected String getInitialScopeId() {
 	return "org.eclipse.ui.textEditorScope"; //$NON-NLS-1$
