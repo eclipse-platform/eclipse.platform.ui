@@ -16,6 +16,8 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 
@@ -228,6 +230,26 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			return null;
 		}
 		return (String)fAttributes.get(key);
+	}
+	
+	/**
+	 * @see IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IProcess.class)) {
+			return this;
+		}
+		if (adapter.equals(IDebugTarget.class)) {
+			ILaunch launch = getLaunch();
+			if (launch != null) {
+				IDebugTarget target = launch.getDebugTarget();
+				if (target != null && this.equals(target.getProcess())) {
+					return target;
+				}
+			}
+			return null;
+		}
+		return super.getAdapter(adapter);
 	}
 }
 
