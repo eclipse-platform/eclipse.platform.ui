@@ -14,7 +14,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ChangeToPerspectiveMenu;
 import org.eclipse.ui.internal.ReopenEditorMenu;
-import org.eclipse.ui.internal.ShowFastViewContribution;
+import org.eclipse.ui.internal.ShowInMenu;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.SwitchToWindowMenu;
 
@@ -81,7 +81,7 @@ public abstract class ContributionItemFactory {
 	}
 
 	/**
-	 * Workbench contribution item (id "openWindows"): An list of windows
+	 * Workbench contribution item (id "openWindows"): A list of windows
 	 * currently open in the workbench. Selecting one of the items makes the
 	 * corresponding window the active window.
 	 * This action dynamically maintains the list of windows.
@@ -98,7 +98,7 @@ public abstract class ContributionItemFactory {
 	};
 	
 	/**
-	 * Workbench contribution item (id "viewsShortlist"): An list of views
+	 * Workbench contribution item (id "viewsShortlist"): A list of views
 	 * available to be opened in the window, arranged as a shortlist of 
 	 * promising views and an "Other" subitem. Selecting
 	 * one of the items opens the corresponding view in the active window.
@@ -116,7 +116,25 @@ public abstract class ContributionItemFactory {
 	};
 		
 	/**
-	 * Workbench contribution item (id "reopenEditors"): An list of recent
+	 * Workbench contribution item (id "viewsShowIn"): A list of views
+	 * available to be opened in the window, arranged as a list of 
+	 * alternate views to show the same item currently selected. Selecting
+	 * one of the items opens the corresponding view in the active window.
+	 * This action dynamically maintains the view list.
+	 */
+	public static final ContributionItemFactory VIEWS_SHOW_IN = new ContributionItemFactory("viewsShowIn") { //$NON-NLS-1$
+		/* (non-javadoc) method declared on ContributionItemFactory */
+		public IContributionItem create(IWorkbenchWindow window) {
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IContributionItem item = new ShowInMenu(window, getId());
+			return item;
+		}
+	};
+		
+	/**
+	 * Workbench contribution item (id "reopenEditors"): A list of recent
 	 * editors (with inputs) available to be reopened in the window. Selecting
 	 * one of the items reopens the corresponding editor on its input in the
 	 * active window. This action dynamically maintains the list of editors.
@@ -133,7 +151,7 @@ public abstract class ContributionItemFactory {
 	};
 	
 	/**
-	 * Workbench contribution item (id "perspectivesShortlist"): An list of
+	 * Workbench contribution item (id "perspectivesShortlist"): A list of
 	 * perspectives available to be opened, arranged as a shortlist of 
 	 * promising perspectives and an "Other" subitem. Selecting
 	 * one of the items makes the corresponding perspective active. Should a 

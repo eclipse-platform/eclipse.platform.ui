@@ -65,7 +65,8 @@ private IMenuListener menuListener = new IMenuListener() {
  *
  * @param window the window containing the menu
  */
-public ShowInMenu(IWorkbenchWindow window) {
+public ShowInMenu(IWorkbenchWindow window, String id) {
+	super(id);
 	this.window = window;
 }
 
