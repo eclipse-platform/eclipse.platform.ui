@@ -129,12 +129,12 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				line = r.readLine();
 			}
 		} catch (IOException e) {
-			fullMessage.append(label).append(event.getMessage());
+			fullMessage.append(label.toString()).append(event.getMessage());
 		}
 	}
 	
 	private void appendAndLink(StringBuffer fullMessage, String name, Location location, StringBuffer label, IRegion region, String line) {
-		fullMessage.append(label);
+		fullMessage.append(label.toString());
 		fullMessage.append(line);
 		if (location != null) {
 			TaskLinkManager.addTaskHyperlink(getAntProcess(null), getTaskLink(location), region, name);
