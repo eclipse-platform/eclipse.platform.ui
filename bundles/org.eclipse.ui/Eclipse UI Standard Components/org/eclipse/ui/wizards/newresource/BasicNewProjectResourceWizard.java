@@ -141,14 +141,22 @@ private IProject createNewProject() {
 		return null;
 	}
 	catch (InvocationTargetException e) {
-		// ie.- one of the steps resulted in a core exception
+		// ie.- one of the steps resulted in a core exception	
 		Throwable t = e.getTargetException();
 		if (t instanceof CoreException) {
-			ErrorDialog.openError(
-				getShell(), 
-				ResourceMessages.getString("NewProject.errorMessage"),  //$NON-NLS-1$
-				null, // no special message
-			 	((CoreException) t).getStatus());
+			if (((CoreException)t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+				MessageDialog.openError(
+					getShell(), 
+					ResourceMessages.getString("NewProject.errorMessage"),  //$NON-NLS-1$
+					ResourceMessages.getString("NewProject.caseVariantExistsError")  //$NON-NLS-1$,
+					);	
+			} else {
+				ErrorDialog.openError(
+					getShell(), 
+					ResourceMessages.getString("NewProject.errorMessage"),  //$NON-NLS-1$
+					null, // no special message
+			 		((CoreException) t).getStatus());
+			}
 		} else {
 			// CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
 			Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
