@@ -38,12 +38,12 @@ import org.eclipse.swt.widgets.Text;
  * Shows the properties of a new or existing task, or a problem.
  */
 public class BookmarkPropertiesDialog extends Dialog {
-		
+
 	/**
 	 * The task or problem being shown, or <code>null</code> for a new task.
 	 */
 	private IMarker marker = null;
-	
+
 	/**
 	 * The resource on which to create a new task.
 	 */
@@ -53,27 +53,27 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 * The initial attributes to use when creating a new task.
 	 */
 	private Map initialAttributes = null;
-	
+
 	/**
 	 * The text control for the Description field.
 	 */
 	private Text descriptionText;
-	
+
 	/**
 	 * The control for the Creation Time field.
 	 */
 	private Label creationTime;
-		
+
 	/**
 	 * The control for the Severity field.
 	 */
 	private Label severityLabel;
-	
+
 	/**
 	 * The text control for the Resource field.
 	 */
 	private Text resourceText;
-	
+
 	/**
 	 * The text control for the Folder field.
 	 */
@@ -83,12 +83,12 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 * The text control for the Location field.
 	 */
 	private Text locationText;
-	
+
 	/**
 	 * Dirty flag.  True if any changes have been made.
 	 */
 	private boolean dirty;
-	
+
 	private String title;
 
 	/**
@@ -102,16 +102,16 @@ public class BookmarkPropertiesDialog extends Dialog {
 	public BookmarkPropertiesDialog(Shell parentShell) {
 		super(parentShell);
 	}
-	
+
 	public BookmarkPropertiesDialog(Shell parentShell, String title) {
 		super(parentShell);
 		this.title = title;
 	}
-	
+
 	public void create() {
 		super.create();
 	}
-	
+
 	/**
 	 * Sets the marker to show or modify.
 	 * 
@@ -121,7 +121,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		this.marker = marker;
 		resource = marker.getResource();
 	}
-	
+
 	/**
 	 * Returns the marker being created or modified.
 	 * For a new marker, this returns <code>null</code> until
@@ -130,7 +130,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 	public IMarker getMarker() {
 		return marker;
 	}
-	
+
 	/**
 	 * Sets the resource to use when creating a new task.
 	 * If not set, the new task is created on the workspace root.
@@ -138,7 +138,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 	public void setResource(IResource resource) {
 		this.resource = resource;
 	}
-	
+
 	/**
 	 * Returns the resource to use when creating a new task,
 	 * or <code>null</code> if none has been set.
@@ -147,7 +147,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 	public IResource getResource() {
 		return resource;
 	}
-	
+
 	/**
 	 * Sets initial attributes to use when creating a new task.
 	 * If not set, the new task is created with default attributes.
@@ -155,7 +155,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 	public void setInitialAttributes(Map initialAttributes) {
 		this.initialAttributes = initialAttributes;
 	}
-	
+
 	/**
 	 * Returns the initial attributes to use when creating a new task,
 	 * or <code>null</code> if not set.
@@ -164,18 +164,20 @@ public class BookmarkPropertiesDialog extends Dialog {
 	public Map getInitialAttributes() {
 		return initialAttributes;
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Window.
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		if (title == null)
-			newShell.setText(BookmarkMessages.getString("PropertiesDialogTitle.text"));//$NON-NLS-1$
+			newShell.setText(
+				BookmarkMessages.getString("PropertiesDialogTitle.text"));
+		//$NON-NLS-1$
 		else
 			newShell.setText(title);
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
@@ -184,12 +186,12 @@ public class BookmarkPropertiesDialog extends Dialog {
 		initializeDialogUnits(composite);
 		createDescriptionArea(composite);
 		createCreationTimeArea(composite);
-	//	if (isTask()) {
-	//		createPriorityAndStatusArea(composite);
-	//	}
-	//	else {
-	//		createSeverityArea(composite);
-	//	}
+		//	if (isTask()) {
+		//		createPriorityAndStatusArea(composite);
+		//	}
+		//	else {
+		//		createSeverityArea(composite);
+		//	}
 		createResourceArea(composite);
 		updateDialogFromMarker();
 		return composite;
@@ -204,24 +206,32 @@ public class BookmarkPropertiesDialog extends Dialog {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		
+
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(BookmarkMessages.getString("MarkerCreationTime.text"));//$NON-NLS-1$
+		label.setText(BookmarkMessages.getString("MarkerCreationTime.text")); //$NON-NLS-1$
 		label.setFont(font);
-		
+
 		creationTime = new Label(composite, SWT.NONE);
-		creationTime.setFont(font);	
+		creationTime.setFont(font);
 	}
-	
+
 	/**
 	 * Creates only the OK button if showing problem properties, otherwise creates
 	 * both OK and Cancel buttons.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		createButton(
+			parent,
+			IDialogConstants.OK_ID,
+			IDialogConstants.OK_LABEL,
+			true);
+		createButton(
+			parent,
+			IDialogConstants.CANCEL_ID,
+			IDialogConstants.CANCEL_LABEL,
+			false);
 	}
-	
+
 	/**
 	 * Creates the area for the Description field.
 	 */
@@ -241,7 +251,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		descriptionText.setLayoutData(gridData);
 		descriptionText.setFont(font);
 	}
-	
+
 	/**
 	 * Creates the area for the Resource field.
 	 */
@@ -253,32 +263,41 @@ public class BookmarkPropertiesDialog extends Dialog {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-		
+
 		Label resourceLabel = new Label(composite, SWT.NONE);
 		resourceLabel.setText(BookmarkMessages.getString("ColumnResource.text")); //$NON-NLS-1$
 		resourceLabel.setFont(font);
-		resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+		resourceText =
+			new Text(
+				composite,
+				SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		resourceText.setLayoutData(gridData);
 		resourceText.setFont(font);
-		
+
 		Label folderLabel = new Label(composite, SWT.NONE);
 		folderLabel.setText(BookmarkMessages.getString("ColumnFolder.text")); //$NON-NLS-1$
 		folderLabel.setFont(font);
-		folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+		folderText =
+			new Text(
+				composite,
+				SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		folderText.setLayoutData(gridData);
 		folderText.setFont(font);
-		
+
 		Label locationLabel = new Label(composite, SWT.NONE);
 		locationLabel.setText(BookmarkMessages.getString("ColumnLocation.text")); //$NON-NLS-1$
 		locationLabel.setFont(font);
-		locationText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
+		locationText =
+			new Text(
+				composite,
+				SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		locationText.setLayoutData(gridData);
 		locationText.setFont(font);
 	}
-	
+
 	/**
 	 * Updates the dialog from the marker state.
 	 */
@@ -289,13 +308,14 @@ public class BookmarkPropertiesDialog extends Dialog {
 		folderText.setText(MarkerUtil.getContainerName(marker));
 		int line = MarkerUtil.getLineNumber(marker);
 		if (line < 0)
-			locationText.setText("");//$NON-NLS-1$
-		else 
-			locationText.setText(BookmarkMessages.getString("LineIndicator.text") + ' ' + line);//$NON-NLS-1$
-			
+			locationText.setText("");
+		//$NON-NLS-1$
+		else
+			locationText.setText(BookmarkMessages.getString("LineIndicator.text") + ' ' + line); //$NON-NLS-1$
+
 		descriptionText.selectAll();
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on Dialog
 	 */
@@ -303,15 +323,15 @@ public class BookmarkPropertiesDialog extends Dialog {
 		saveChanges();
 		super.okPressed();
 	}
-	
+
 	private void markDirty() {
 		dirty = true;
 	}
-	
+
 	private boolean isDirty() {
 		return dirty;
 	}
-	
+
 	/**
 	 * Saves the changes made in the dialog if needed.
 	 * Creates a new task if needed.
@@ -321,17 +341,17 @@ public class BookmarkPropertiesDialog extends Dialog {
 	private void saveChanges() {
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
+				public void run(IProgressMonitor monitor)
+					throws CoreException {
 					createOrUpdateMarker();
 				}
 			}, null);
-		} 
-		catch (CoreException e) {
-			ErrorDialog.openError(getShell(), BookmarkMessages.getString("Error"), null, e.getStatus());//$NON-NLS-1$
+		} catch (CoreException e) {
+			ErrorDialog.openError(getShell(), BookmarkMessages.getString("Error"), null, e.getStatus()); //$NON-NLS-1$
 			return;
 		}
 	}
-	
+
 	/**
 	 * Creates or updates the marker.  Must be called within a workspace runnable.
 	 */
@@ -347,7 +367,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 				marker.setAttributes(initialAttrs);
 			}
 		}
-		
+
 		// Set the marker attributes from the current dialog field values.
 		// Do not use setAttributes(Map) as that overwrites any attributes
 		// not covered by the dialog.
@@ -358,7 +378,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 			marker.setAttribute(key, val);
 		}
 	}
-	
+
 	/**
 	 * Returns the marker attributes to save back to the marker, 
 	 * based on the current dialog fields.
