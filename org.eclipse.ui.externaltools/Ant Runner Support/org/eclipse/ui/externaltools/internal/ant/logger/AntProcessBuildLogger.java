@@ -20,7 +20,6 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.util.FileUtils;
-import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -82,14 +81,13 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 				IFile file = getFileForLocation(fileName);
 				if (file != null) {
 					FileLink link = new FileLink(file, null,  -1, -1, -1);
-					TaskLinkManager.addTaskHyperlink(fProcess, link, new Region(11 + StringUtils.LINE_SEP.length(), fileName.length()), fileName);
+					TaskLinkManager.addTaskHyperlink(fProcess, link, new Region(11 + System.getProperty("line.separator").length(), fileName.length()), fileName);
 					fBuildFileParent= file.getLocation().toFile().getParentFile();
 				}
 			}
 		}
 		
-		StringBuffer fullMessage= new StringBuffer();
-		fullMessage.append(StringUtils.LINE_SEP);
+		StringBuffer fullMessage= new StringBuffer(System.getProperty("line.separator"));
 		
 		if (event.getTask() != null && !fEmacsMode) {
 			getAdornedMessage(event, fullMessage);
@@ -306,7 +304,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (Project.MSG_INFO > getMessageOutputLevel()) {
 			return;
 		}
-		StringBuffer msg= new StringBuffer(StringUtils.LINE_SEP);
+		StringBuffer msg= new StringBuffer(System.getProperty("line.separator"));
 		msg.append(event.getTarget().getName());
 		msg.append(':');
 		logMessage(msg.toString(), event, Project.MSG_INFO);
