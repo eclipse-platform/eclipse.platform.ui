@@ -12,17 +12,14 @@ import org.eclipse.debug.core.ILaunch;import org.eclipse.debug.core.ILaunchMana
  */
 public class RelaunchHistoryLaunchAction extends Action {
 
-	protected static final DelegatingModelPresentation fgPresentation= new DelegatingModelPresentation();
-	protected ILaunch fLaunch;
-	protected String fMode;
+	protected LaunchHistoryElement fLaunch;
 	
-	public RelaunchHistoryLaunchAction(ILaunch launch, String mode) {
+	public RelaunchHistoryLaunchAction(LaunchHistoryElement launch) {
 		super();
 		fLaunch= launch;
-		fMode= mode;
-		setText(fgPresentation.getLaunchText(launch));
+		setText(launch.getLabel());
 		ImageDescriptor descriptor= null;
-		if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
+		if (launch.getMode().equals(ILaunchManager.DEBUG_MODE)) {
 			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
 		} else {
 			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
@@ -42,7 +39,7 @@ public class RelaunchHistoryLaunchAction extends Action {
 	public void run() {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
-				RelaunchActionDelegate.relaunch(fLaunch, fMode);
+				RelaunchActionDelegate.relaunch(fLaunch);
 			}
 		});
 	}

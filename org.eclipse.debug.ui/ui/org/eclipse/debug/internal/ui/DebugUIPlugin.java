@@ -10,8 +10,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.*;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugUIEventFilter;
+import org.eclipse.debug.ui.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -29,17 +28,23 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChangedListener, 
+public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChangedListener,
 															   IDebugEventListener, 
 															   ISelectionListener, 
 															   IDocumentListener, 
 															   ILaunchListener,
 															   IResourceChangeListener {
 															   	
+										   	
 	/**
 	 * The singleton debug plugin instance
 	 */
 	private static DebugUIPlugin fgDebugUIPlugin= null;
+	
+	/**
+	 * A utility presentation used to obtain labels
+	 */
+	protected static IDebugModelPresentation fgPresentation = null;
 
 	/**
 	 * The selection providers for the debug UI
@@ -81,26 +86,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	/**
 	 * The most recent debug launches
 	 */
-	protected ILaunch[] fDebugHistory = new ILaunch[MAX_HISTORY_SIZE];
+	protected Vector fDebugHistory = new Vector(MAX_HISTORY_SIZE);
 	
-	/**
-	 * The launched resources for the most recent debug launches.
-	 * The position of each resource corresponds to the position of the 
-	 * associated launch in fDebugHistory.
-	 */
-	protected IResource[] fDebugHistoryResources = new IResource[MAX_HISTORY_SIZE];
-
 	/**
 	 * The most recent run launches
 	 */
-	protected ILaunch[] fRunHistory = new ILaunch[MAX_HISTORY_SIZE];
-	
-	/**
-	 * The launched resources for the most recent run launches
-	 * The position of each resource corresponds to the position of the 
-	 * associated launch in fRunHistory.
-	 */
-	protected IResource[] fRunHistoryResources = new IResource[MAX_HISTORY_SIZE];
+	protected Vector fRunHistory = new Vector(MAX_HISTORY_SIZE);
 	
 	/**
 	 * Event filters for the debug UI
@@ -581,7 +572,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	public static DebugUIPlugin getDefault() {
 		return fgDebugUIPlugin;
 	}
-
+
+	public static IDebugModelPresentation getModelPresentation() {
+		if (fgPresentation == null) {
+			fgPresentation = new DelegatingModelPresentation();
+		}
+		return fgPresentation;
+	}
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
@@ -1106,8 +1103,8 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 *
 	 * @return an array of launches
 	 */	
-	public ILaunch[] getDebugHistory() {
-		return fDebugHistory;
+	public LaunchHistoryElement[] getDebugHistory() {
+		return getHistoryArray(fDebugHistory);
 	}	
 	
 	/**
@@ -1115,8 +1112,14 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 *
 	 * @return an array of launches
 	 */
-	public ILaunch[] getRunHistory() {
-		return fRunHistory;
+	public LaunchHistoryElement[] getRunHistory() {
+		return getHistoryArray(fRunHistory);
+	}
+	
+	protected LaunchHistoryElement[] getHistoryArray(Vector history) {
+		LaunchHistoryElement[] array = new LaunchHistoryElement[history.size()];
+		history.copyInto(array);
+		return array;
 	}
 	
 	/**
@@ -1133,24 +1136,30 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * Adjust all histories for the given deleted resource.
 	 */
 	protected void updateHistoriesForDeletedResource(IResource deletedResource) {
-		updateHistoryForDeletedResource(deletedResource, fDebugHistory, fDebugHistoryResources);
-		updateHistoryForDeletedResource(deletedResource, fRunHistory,   fRunHistoryResources);
+		updateHistoryForDeletedResource(deletedResource, fDebugHistory);
+		updateHistoryForDeletedResource(deletedResource, fRunHistory);
 	}	
 	
 	/**
 	 * Remove the given resource from the resource history, and remove the corresponding
 	 * launch from the launch history.
 	 */
-	protected void updateHistoryForDeletedResource(IResource deletedResource, ILaunch[] launchHistory, IResource[] resourceHistory) {
-		int resourceLength = resourceHistory.length;
-		for (int i = 0; i < resourceLength; i++) {
-			if (deletedResource.equals(resourceHistory[i])) {
-				if (i < resourceLength - 1) {
-					System.arraycopy(resourceHistory, i + 1, resourceHistory, i, resourceLength - (i + 1));
-					System.arraycopy(launchHistory, i + 1, launchHistory, i, resourceLength - (i + 1));					
+	protected void updateHistoryForDeletedResource(IResource deletedResource, Vector history) {
+		List remove = null;
+		Iterator iter = history.iterator();
+		while (iter.hasNext()) {
+			LaunchHistoryElement element = (LaunchHistoryElement)iter.next();
+			if (deletedResource.equals(element.getResource())) {
+				if (remove == null) {
+					remove = new ArrayList(1);
 				}
-				resourceHistory[resourceLength - 1]= null;
-				launchHistory[resourceLength - 1]= null;			
+				remove.add(element);
+			}
+		}
+		if (remove != null) {
+			iter = remove.iterator();
+			while (iter.hasNext()) {
+				history.remove(iter.next());
 			}
 		}
 	}
@@ -1160,61 +1169,51 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 */
 	protected void updateHistories(ILaunch launch) {
 		if (isVisible(launch.getLauncher())) {
+			String elementMemento = launch.getLauncher().getDelegate().getLaunchMemento(launch.getElement());
+			if (elementMemento == null) {
+				return;
+			}
 			IResource resource= getResourceForLaunch(launch);
-			String launchMode= launch.getLaunchMode();
-			String otherLaunchMode= launchMode == ILaunchManager.DEBUG_MODE ? ILaunchManager.RUN_MODE : ILaunchManager.DEBUG_MODE;
-			ILaunch[] history= launchMode == ILaunchManager.DEBUG_MODE ? fDebugHistory : fRunHistory;
-			ILaunch[] otherHistory= otherLaunchMode == ILaunchManager.RUN_MODE ? fRunHistory : fDebugHistory;			
-			IResource[] resourceHistory= launchMode == ILaunchManager.DEBUG_MODE ? fDebugHistoryResources : fRunHistoryResources;
-			IResource[] otherResourceHistory= otherLaunchMode == ILaunchManager.RUN_MODE ? fRunHistoryResources : fDebugHistoryResources;			
-			updateHistory(history, launchMode, launch, resource, resourceHistory);
-			updateHistory(otherHistory, otherLaunchMode, launch, resource, otherResourceHistory);		
+			updateHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch, resource, elementMemento);
+			updateHistory(ILaunchManager.RUN_MODE, fRunHistory, launch, resource, elementMemento);
 		}
 	}
 	
 	/**
-	 * Add the given launch to the given history (whose mode is specified by 
-	 * historyMode) if the launcher used by the launch supports the history mode.  
+	 * Add the given launch to the debug history if the
+	 * launcher supports the debug mode.  
 	 */
-	protected void updateHistory(ILaunch[] history, String historyMode, ILaunch launch, IResource resource, IResource[] resourceHistory) {
+	protected void updateHistory(String mode, Vector history, ILaunch launch, IResource resource, String memento) {
 		
 		// First make sure the launcher used supports the mode of the history list
 		ILauncher launcher= launch.getLauncher();
 		Set supportedLauncherModes= launcher.getModes();
-		if (!supportedLauncherModes.contains(historyMode)) {
+		if (!supportedLauncherModes.contains(mode)) {
 			return;
 		}
 		
-		// Look for the launch in the history list
+		// create new history item
+		LaunchHistoryElement item= new LaunchHistoryElement(launcher.getIdentifier(), memento, mode, getModelPresentation().getText(launch), resource);
+		
+		// Look for an equivalent launch in the history list
 		int index;
 		boolean found= false;
-		for (index= 0; index < history.length; index++) {
-			ILaunch historyLaunch= history[index];
-			if (historyLaunch != null && historyLaunch.getElement().equals(launch.getElement()) &&
-			    launcher.equals(historyLaunch.getLauncher())) { 
-					found= true;
-					break;
-			}
-		}
+
+		index = history.indexOf(item);
 		
 		//It's already listed as the most recent launch, so nothing to do
-		if (index == 0 && found) {
+		if (index == 0) {
 			return;
 		}
 		
 		// It's in the history, but not the most recent, so make it the most recent
-		if (found) {
-			//removes from old position
-			System.arraycopy(history, index + 1, history, index, history.length - (index + 1));
-			System.arraycopy(resourceHistory, index + 1, resourceHistory, index, resourceHistory.length - (index + 1));
+		if (index > 0) {
+			history.remove(item);
 		} 			
-		
-		// It's not in the history, so add it to the beginning, removing the last 
-		// launch in the list if the list is already at maximum size	
-		System.arraycopy(history, 0, history, 1, history.length - 1);
-		System.arraycopy(resourceHistory, 0, resourceHistory, 1, resourceHistory.length - 1);
-		history[0]= launch;	
-		resourceHistory[0]= resource;
+		history.add(0, item);
+		if (history.size() > MAX_HISTORY_SIZE) {
+			history.remove(history.size() - 1);
+		}	
 	}	
 	
 	/**

@@ -24,7 +24,7 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	/**
 	 * @see LaunchDropDownAction
 	 */
-	public ILaunch[] getHistory() {
+	public LaunchHistoryElement[] getHistory() {
 		return DebugUIPlugin.getDefault().getRunHistory();
 	}
 }

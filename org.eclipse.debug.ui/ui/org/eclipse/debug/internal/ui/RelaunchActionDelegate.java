@@ -6,9 +6,7 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
-
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jface.action.IAction;
@@ -26,40 +24,54 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate
 	 */
 	protected void doAction(Object object) {
-		relaunch(object, null);
-	}
-
-	/**
-	 * Re-launches the launch of the given object.
-	 */
-	public static void relaunch(Object object) {
-		relaunch(object, null);
+		if (object instanceof IDebugElement) {
+			relaunch((IDebugElement)object);
+		} else if (object instanceof ILaunch) {
+			relaunch((ILaunch)object);
+		} else if (object instanceof IProcess) {
+			relaunch((IProcess)object);
+		}
 	}
 
 	/**
 	 * Re-launches the launch of the given object in the specified mode.
 	 */
-	public static void relaunch(Object object, String mode) {
-		ILaunch launch= null;
-		if (object instanceof IDebugElement) {
-			launch= ((IDebugElement)object).getLaunch();
-		} else if (object instanceof ILaunch) {
-			launch= (ILaunch)object;
-		} else if (object instanceof IProcess) {
-			launch= ((IProcess)object).getLaunch();
-		}
-		if (launch != null) {
-			ILauncher launcher= launch.getLauncher();
-			Object element= launch.getElement();
-			String launchMode= (mode == null) ? launch.getLaunchMode() : mode;
-			boolean ok= launcher.launch(new Object[]{element}, launchMode);
-			if (!ok) {
-				String string= DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE);
-				String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
-				MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), message);	
-			}				
+	public static void relaunch(ILauncher launcher, String mode, Object element) {
+		boolean ok= launcher.launch(new Object[]{element}, mode);
+		if (!ok) {
+			String string= DebugUIUtils.getResourceString(LAUNCH_ERROR_MESSAGE);
+			String message= MessageFormat.format(string, new String[] {launcher.getLabel()});
+			MessageDialog.openError(DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell(), DebugUIUtils.getResourceString(LAUNCH_ERROR_TITLE), message);	
+		}				
+	}
+	
+	public static void relaunch(LaunchHistoryElement history) {
+		ILauncher[] launchers = DebugPlugin.getDefault().getLaunchManager().getLaunchers();
+		for (int i = 0; i < launchers.length; i++) {
+			if (launchers[i].getIdentifier().equals(history.getLauncherIdentifier())) {
+				Object element = launchers[i].getDelegate().getLaunchObject(history.getElementMemento());
+				relaunch(launchers[i], history.getMode(), element);
+				return;
+			}
 		}
 	}
+	
+	public static void relaunch(IDebugElement element) {
+		relaunch(element.getLaunch());
+	}
+	
+	public static void relaunch(IProcess process) {
+		relaunch(process.getLaunch());
+	}
+	
+	public static void relaunch(ILaunch launch) {
+		relaunch(launch.getLauncher(), launch.getLaunchMode(), launch.getElement());
+	}
+	
+	public static void relaunch(ILaunch launch, String mode) {
+		relaunch(launch.getLauncher(), mode, launch.getElement());
+	}
+	
 
 	/**
 	 * @see ControlActionDelegate

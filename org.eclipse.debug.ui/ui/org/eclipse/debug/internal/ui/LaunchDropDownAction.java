@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.MenuItem;
  */
 public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDelegate {
 	
+
 	private ExecutionAction fLaunchAction;
 	
 	/**
@@ -47,15 +48,13 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 */
 	public Menu getMenu(Control parent) {
 		Menu menu= new Menu(parent);
-		ILaunch[] historyList= getHistory();
+		LaunchHistoryElement[] historyList= getHistory();
 		int count= 0;
 		for (int i = 0; i < historyList.length; i++) {
-			ILaunch launch= historyList[i];
-			if (launch != null) {
-				RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch, getMode());
-				createMenuForAction(menu, newAction);
-				count++;
-			}
+			LaunchHistoryElement launch= historyList[i];
+			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
+			createMenuForAction(menu, newAction);
+			count++;
 		}
 		if (count > 0) {
 			new MenuItem(menu, SWT.SEPARATOR);
@@ -87,11 +86,12 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	/**
 	 * Returns an array of previous launches applicable to this drop down
 	 */
-	public abstract ILaunch[] getHistory();
+	public abstract LaunchHistoryElement[] getHistory();
 	
 	/**
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down
 	 */
 	public abstract String getMode();
+
 }
 

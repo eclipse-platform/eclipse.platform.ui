@@ -10,6 +10,7 @@ import org.eclipse.debug.core.ILaunchManager;
 
 public class DebugDropDownAction extends LaunchDropDownAction {
 
+
 	public DebugDropDownAction() {
 		super(new DebugAction());
 	}
@@ -20,12 +21,14 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	public String getMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
-
+	
 	/**
 	 * @see LaunchDropDownAction
 	 */
-	public ILaunch[] getHistory() {
+	public LaunchHistoryElement[] getHistory() {
 		return DebugUIPlugin.getDefault().getDebugHistory();
 	}
+	
+	
 }
 
