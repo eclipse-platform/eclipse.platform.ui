@@ -4,12 +4,7 @@ package org.eclipse.update.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.widgets.*;
-import java.io.File;
-import org.eclipse.update.internal.core.*;
+import java.io.File;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Shell;import org.eclipse.update.internal.core.UpdateManagerStrings;
 /**
  * The class will verify the Component and return a JarVerifierResult object
  * to the sender. The result contains a returnCode.
@@ -30,9 +25,9 @@ public class JarVerificationService {
 
 	/**
 	 * The result object
-	 */ 	
+	 */
 	private JarVerificationResult result;
-	
+
 	/**
 	 * The JarVerifier is a instance variable
 	 * bacause we want to reuse it upon multiple calls
@@ -43,131 +38,130 @@ public class JarVerificationService {
 	 * the Shell
 	 */
 	private Shell shell;
-/**
- * If no shell, create a new shell 
- */
-public JarVerificationService() {
-	this(null);
-}
-/**
- * 
- */
-public JarVerificationService(Shell aShell) {
-	jarVerifier = new JarVerifier();
-	shell = aShell;
-
-	// find the default display and get the active shell
-	if (shell == null) {
-		final Display disp = Display.getDefault();
-		if (disp == null) {
-			shell = new Shell(new Display());
-		} else {
-			disp.syncExec(new Runnable() {
-				public void run() {
-					shell = disp.getActiveShell();
-				}
-			});
-		}
-
+	/**
+	 * If no shell, create a new shell 
+	 */
+	public JarVerificationService() {
+		this(null);
 	}
-}
-/**
- * 
- * @return JarVerificationResult
- */
-public JarVerificationResult getResult() {
-	if (result==null){
-		result = new JarVerificationResult();
-	}
-		
-	return result;
-}
-/**
- * 
- */
-private void jarVerifierError(final String errorMessage) {
-/*
-	shell.getDisplay().syncExec(new Runnable() {
-		public void run() {
-			MessageDialog diag =
-				new MessageDialog(
-					shell,
-					errorMessage + ": " + UpdateManagerStrings.getString("S_The_installation_process_will_be_aborted"),
-					null,
-					jarVerifier.getResultException().getMessage(),
-					MessageDialog.ERROR,
-					new String[] { UpdateManagerStrings.getString("S_OK") },
-					0);
+	/**
+	 * 
+	 */
+	public JarVerificationService(Shell aShell) {
+		jarVerifier = new JarVerifier();
+		shell = aShell;
 
-			diag.open();
-
-
-		}
-	});
-*/	
-	MessageDialog.openError(shell, UpdateManagerStrings.getString("S_Verification"), errorMessage + "\n"+ UpdateManagerStrings.getString("S_The_installation_process_will_be_aborted"));
-	getResult().setResultCode(JarVerificationResult.CANCEL_INSTALL);
-	getResult().setResultException(jarVerifier.getResultException());
-}
-/**
- * returns an JarVerificationResult
- * The monitor can be null.
- */
-public JarVerificationResult okToInstall(final File jarFile, final String id, final String componentName, final String providerName, IProgressMonitor monitor) {
-
-	jarVerifier.setMonitor(monitor);
-	final int verificationResult = jarVerifier.verify(jarFile);
-
-	switch (verificationResult) {
-		case JarVerifier.UNKNOWN_ERROR :
-			{
-				jarVerifierError(UpdateManagerStrings.getString("S_Error_occurred_during_verification"));
-				break;
+		// find the default display and get the active shell
+		if (shell == null) {
+			final Display disp = Display.getDefault();
+			if (disp == null) {
+				shell = new Shell(new Display());
 			}
-		case JarVerifier.VERIFICATION_CANCELLED :
-			{
-				jarVerifierError(UpdateManagerStrings.getString("S_Verification_cancelled"));
-				break;
-			}
-		case JarVerifier.SOURCE_VERIFIED :
-			{
-				getResult().setResultCode(JarVerificationResult.OK_TO_INSTALL);
-				getResult().setResultException(null);
-				break;
-			}
-			// if the JAR is not signed, corrupted or not validated
-			// ask the user for confirmation.
-		default :
-			{
-				shell.getDisplay().syncExec(new Runnable() {
+			else {
+				disp.syncExec(new Runnable() {
 					public void run() {
-						getResult().setResultCode(openWizard(jarFile, id, componentName, providerName, verificationResult));
-						getResult().setResultException(null);
+						shell = disp.getActiveShell();
 					}
 				});
 			}
+
+		}
 	}
+	/**
+	 */
+	public JarVerificationResult getResult() {
+		if (result == null) {
+			result = new JarVerificationResult();
+		}
 
-	return getResult();
-}
-/**
- * 
- */
-private int openWizard(File jarFile, String id, String componentName, String providerName, int verificationResult) {
+		return result;
+	}
+	/**
+	 * 
+	 */
+	private void jarVerifierError(final String errorMessage) {
+		/*
+			shell.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					MessageDialog diag =
+						new MessageDialog(
+							shell,
+							errorMessage + ": " + UpdateManagerStrings.getString("S_The_installation_process_will_be_aborted"),
+							null,
+							jarVerifier.getResultException().getMessage(),
+							MessageDialog.ERROR,
+							new String[] { UpdateManagerStrings.getString("S_OK") },
+							0);
+		
+					diag.open();
+		
+		
+				}
+			});
+		*/
+		MessageDialog.openError(shell, UpdateManagerStrings.getString("S_Verification"), errorMessage + "\n" + UpdateManagerStrings.getString("S_The_installation_process_will_be_aborted"));
+		getResult().setResultCode(JarVerificationResult.CANCEL_INSTALL);
+		getResult().setResultException(jarVerifier.getResultException());
+	}
+	/**
+	 * returns an JarVerificationResult
+	 * The monitor can be null.
+	 */
+	public JarVerificationResult okToInstall(final File jarFile, final String id, final String componentName, final String providerName, IProgressMonitor monitor) {
 
-	int code;
+		jarVerifier.setMonitor(monitor);
+		final int verificationResult = jarVerifier.verify(jarFile);
 
-	//	JarVerifierWizard wizard = new JarVerifierWizard(jarFile, componentName, verificationResult);
-	//	WizardDialog dialog = new WizardDialog(shell, wizard);
+		switch (verificationResult) {
+			case JarVerifier.UNKNOWN_ERROR :
+				{
+					jarVerifierError(UpdateManagerStrings.getString("S_Error_occurred_during_verification"));
+					break;
+				}
+			case JarVerifier.VERIFICATION_CANCELLED :
+				{
+					jarVerifierError(UpdateManagerStrings.getString("S_Verification_cancelled"));
+					break;
+				}
+			case JarVerifier.SOURCE_VERIFIED :
+				{
+					getResult().setResultCode(JarVerificationResult.OK_TO_INSTALL);
+					getResult().setResultException(null);
+					break;
+				}
+				// if the JAR is not signed, corrupted or not validated
+				// ask the user for confirmation.
+			default :
+				{
+					shell.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							getResult().setResultCode(openWizard(jarFile, id, componentName, providerName, verificationResult));
+							getResult().setResultException(null);
+						}
+					});
+				}
+		}
 
-	JarVerificationDialog dialog = new JarVerificationDialog( shell, id, componentName, providerName, jarFile, verificationResult);
-	dialog.open();
+		return getResult();
+	}
+	/**
+	 * 
+	 */
+	private int openWizard(File jarFile, String id, String componentName, String providerName, int verificationResult) {
 
-	if (JarVerificationDialog.COMPONENT_TO_INSTALL)
-		code = JarVerificationResult.OK_TO_INSTALL;
-	else
-		code = JarVerificationResult.CANCEL_INSTALL;
+		int code;
 
-	return code;
-}
+		//	JarVerifierWizard wizard = new JarVerifierWizard(jarFile, componentName, verificationResult);
+		//	WizardDialog dialog = new WizardDialog(shell, wizard);
+
+		JarVerificationDialog dialog = new JarVerificationDialog(shell, id, componentName, providerName, jarFile, verificationResult);
+		dialog.open();
+
+		if (JarVerificationDialog.COMPONENT_TO_INSTALL)
+			code = JarVerificationResult.OK_TO_INSTALL;
+		else
+			code = JarVerificationResult.CANCEL_INSTALL;
+
+		return code;
+	}
 }

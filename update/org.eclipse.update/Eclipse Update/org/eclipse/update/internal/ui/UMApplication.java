@@ -25,21 +25,21 @@ import java.util.Vector;
 
 public class UMApplication extends Main {
 	private static final String DEFAULT_APPLICATION = "org.eclipse.update.internal.ui.updateManager";
-public UMApplication() {
-	super();
-	application = DEFAULT_APPLICATION;
-}
-public static void main(String[] args) {
-
-	int iReturnCode = 0;
-
-	try {
-		new UMApplication().run(args);
+	public UMApplication() {
+		super();
+		application = DEFAULT_APPLICATION;
 	}
+	public static void main(String[] args) {
 
-	catch (Exception e) {
+		int iReturnCode = 0;
+
+		try {
+			new UMApplication().run(args);
+		}
+
+		catch (Exception e) {
+		}
+
+		System.exit(0);
 	}
-
-	System.exit(0);
-}
 }

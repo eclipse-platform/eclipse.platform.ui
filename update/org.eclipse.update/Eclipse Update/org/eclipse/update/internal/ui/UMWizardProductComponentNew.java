@@ -7,8 +7,7 @@ package org.eclipse.update.internal.ui;
 /**
  * The new products and components wizard
  */
-import org.eclipse.update.internal.core.*;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.update.internal.core.UpdateManagerPlugin;import org.eclipse.update.internal.core.UpdateManagerStrings;
 
 public class UMWizardProductComponentNew extends UMWizard
 {
@@ -18,7 +17,6 @@ public class UMWizardProductComponentNew extends UMWizard
 	protected UMWizardPageComplete    _pageComplete              = null;
 
 /**
- * ScriptNewWizard constructor comment.
  */
 public UMWizardProductComponentNew(UMDialog dialog) {
 	
@@ -47,8 +45,6 @@ public void addPages() {
 	addPage(_pageComplete);
 }
 /**
- * 
- * @return boolean
  */
 public boolean performCancel() {
 /*
