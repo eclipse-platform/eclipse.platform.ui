@@ -552,7 +552,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					return Status.CANCEL_STATUS;
 
 				if (reference == null)
-					return signalDone();
+					return Status.OK_STATUS;
 
 				fReferenceListener.installDocument(reference);
 				SortedMap map= DiffInitializer.initializeDiffer(monitor, reference, actual);
@@ -561,7 +561,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// set line table
 				synchronized (DocumentLineDiffer.this) {
 					if (fInitializationJob != this)
-						return signalDone();
+						return Status.OK_STATUS;
 				
 					fInitializationJob= null;
 		
@@ -580,13 +580,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				}
 				
 				fireModelChanged();
-				return signalDone();
-			}
-			
-			private IStatus signalDone() {
 				return Status.OK_STATUS;
-//				done(ASYNC_FINISH);
-//				return ASYNC_FINISH;
 			}
 			
 		};
