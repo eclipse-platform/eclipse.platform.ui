@@ -9,7 +9,6 @@
    <runtime>
       <library name="cvstests.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.team.tests.ccvs.core, org.eclipse.team.tests.ccvs.ui"/>
       </library>
    </runtime>
    <requires>

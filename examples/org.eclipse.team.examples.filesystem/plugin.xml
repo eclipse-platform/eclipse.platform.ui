@@ -17,7 +17,6 @@
 <runtime>
 	<library name="teamfilesystem.jar">
     	<export name="*"/>
-       	<packages prefixes="org.eclipse.team.examples.filesystem"/>
 	</library>
 </runtime>
    

@@ -10,7 +10,6 @@
    <runtime>
       <library name="team.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.team.core, org.eclipse.team.internal.core"/>
       </library>
    </runtime>
    <requires>
