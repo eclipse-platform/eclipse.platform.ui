@@ -89,4 +89,9 @@ public class Utils {
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
+	
+	public static void debug(String s) {
+		if (ConfigurationActivator.DEBUG)
+			System.out.println("PlatformConfig: " + s); //$NON-NLS-1$
+	}
 }

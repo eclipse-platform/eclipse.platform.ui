@@ -8,17 +8,37 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.configurator;
+package org.eclipse.update.internal.configurator;
 
-import java.io.IOException;
-import java.net.URL;
+import java.net.*;
 
 
-public class PlatformConfigurationFactory implements IPlatformConfigurationFactory {
-	public IPlatformConfiguration getCurrentPlatformConfiguration() {
-		return PlatformConfiguration.getCurrent();
+public class BootDescriptor {
+	private String id;
+	private String version;
+	private String[] libs;
+	private URL dir;
+
+	public BootDescriptor(String id, String version, String[] libs, URL dir) {
+		this.id = id;
+		this.version = version;
+		this.libs = libs;
+		this.dir = dir;
 	}
-	public IPlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
-		return new PlatformConfiguration(url);
+
+	public String getId() {
+		return id;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public String[] getLibraries() {
+		return libs;
+	}
+
+	public URL getPluginDirectoryURL() {
+		return dir;
 	}
 }

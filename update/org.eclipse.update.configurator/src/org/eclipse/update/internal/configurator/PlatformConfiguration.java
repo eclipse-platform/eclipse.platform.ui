@@ -8,26 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.configurator;
+package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.configurator.IPlatformConfiguration.*;
+import org.eclipse.update.internal.configurator.*;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static PlatformConfiguration currentPlatformConfiguration = null;
 
 	private URL configLocation;
-	private URL rootLocation;
 	private HashMap sites;
 	private HashMap externalLinkSites; // used to restore prior link site state
 	private HashMap cfgdFeatures;
 	private HashMap bootPlugins;
 	private String defaultFeature;
-	private long lastChangeStamp;
 	private long changeStamp;
 	private boolean changeStampIsValid = false;
 	private long lastFeaturesChangeStamp;
@@ -51,15 +52,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static boolean cmdNoUpdate = false;
 	private static boolean cmdDev = false;
 
-	static boolean DEBUG = false;
-
-	private static final String BOOT_XML = "boot.xml"; //$NON-NLS-1$
-	private static final String BOOT_PLUGIN_ID = "org.eclipse.core.boot"; //$NON-NLS-1$
-	private static final String RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime"; //$NON-NLS-1$
-
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
-	private static final String PLUGINS = "plugins"; //$NON-NLS-1$
-	private static final String FEATURES = "features"; //$NON-NLS-1$
+
 	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
 	private static final String CONFIG_NAME = "platform.cfg"; //$NON-NLS-1$
 	private static final String CONFIG_FILE = CONFIG_DIR + "/" + CONFIG_NAME; //$NON-NLS-1$
@@ -69,13 +63,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
 	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
-	private static final String PLUGIN_XML = "plugin.xml"; //$NON-NLS-1$
-	private static final String FRAGMENT_XML = "fragment.xml"; //$NON-NLS-1$
-	private static final String FEATURE_XML = "feature.xml"; //$NON-NLS-1$
-	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct"; //$NON-NLS-1$
-	private static final String PRODUCT_SITE_ID = "id"; //$NON-NLS-1$
-	private static final String PRODUCT_SITE_VERSION = "version"; //$NON-NLS-1$
 
+	private static final String RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = { "org.eclipse.core.boot" }; //$NON-NLS-1$
 	private static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
 	private static final String CFG_SITE = "site"; //$NON-NLS-1$
@@ -118,7 +107,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String LINK_READ = "r"; //$NON-NLS-1$
 	private static final String LINK_READ_WRITE = "rw"; //$NON-NLS-1$
 
-	private static final String CMD_CONFIGURATION = "-configuration"; //$NON-NLS-1$
 	private static final String CMD_FEATURE = "-feature"; //$NON-NLS-1$
 	private static final String CMD_APPLICATION = "-application"; //$NON-NLS-1$
 	private static final String CMD_PLUGINS = "-plugins"; //$NON-NLS-1$
@@ -129,739 +117,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CMD_NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
 	private static final String CMD_DEV = "-dev"; // triggers -noupdate //$NON-NLS-1$
 
-	protected static final String RECONCILER_APP = "org.eclipse.update.core.reconciler"; //$NON-NLS-1$
+	public static final String RECONCILER_APP = "org.eclipse.update.core.reconciler"; //$NON-NLS-1$
 
 	private static final char[] HEX = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
 	private static URL installURL;
-
-	public class SiteEntry implements IPlatformConfiguration.ISiteEntry {
-
-		private URL url; // this is the external URL for the site
-		private URL resolvedURL; // this is the resolved URL used internally
-		private ISitePolicy policy;
-		private boolean updateable = true;
-		private ArrayList features;
-		private ArrayList plugins;
-		private PlatformConfiguration parent;
-		private long lastChangeStamp;
-		private long changeStamp;
-		private boolean changeStampIsValid = false;
-		private long lastFeaturesChangeStamp;
-		private long featuresChangeStamp;
-		private boolean featuresChangeStampIsValid = false;
-		private long lastPluginsChangeStamp;
-		private long pluginsChangeStamp;
-		private boolean pluginsChangeStampIsValid = false;
-		private String linkFileName = null;
-
-		private SiteEntry() {
-		}
-		private SiteEntry(URL url, ISitePolicy policy, PlatformConfiguration parent) {
-			if (url == null)
-				throw new IllegalArgumentException();
-
-			if (policy == null)
-				throw new IllegalArgumentException();
-
-			if (parent == null)
-				throw new IllegalArgumentException();
-
-			this.url = url;
-			this.policy = policy;
-			this.parent = parent;
-			this.features = null;
-			this.plugins = null;
-			this.resolvedURL = this.url;
-			if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
-				try {
-					resolvedURL = resolvePlatformURL(url); // 19536
-				} catch (IOException e) {
-					// will use the baseline URL ...
-				}
-			}
-		}
-
-		/*
-		 * @see ISiteEntry#getURL()
-		 */
-		public URL getURL() {
-			return url;
-		}
-
-		/*
-		* @see ISiteEntry#getSitePolicy()
-		*/
-		public ISitePolicy getSitePolicy() {
-			return policy;
-		}
-
-		/*
-		 * @see ISiteEntry#setSitePolicy(ISitePolicy)
-		 */
-		public synchronized void setSitePolicy(ISitePolicy policy) {
-			if (policy == null)
-				throw new IllegalArgumentException();
-			this.policy = policy;
-		}
-
-		/*
-		 * @see ISiteEntry#getFeatures()
-		 */
-		public String[] getFeatures() {
-			return getDetectedFeatures();
-		}
-
-		/*
-		 * @see ISiteEntry#getPlugins()
-		 */
-		public String[] getPlugins() {
-
-			ISitePolicy policy = getSitePolicy();
-
-			if (policy.getType() == ISitePolicy.USER_INCLUDE)
-				return policy.getList();
-
-			if (policy.getType() == ISitePolicy.USER_EXCLUDE) {
-				ArrayList detectedPlugins = new ArrayList(Arrays.asList(getDetectedPlugins()));
-				String[] excludedPlugins = policy.getList();
-				for (int i = 0; i < excludedPlugins.length; i++) {
-					if (detectedPlugins.contains(excludedPlugins[i]))
-						detectedPlugins.remove(excludedPlugins[i]);
-				}
-				return (String[]) detectedPlugins.toArray(new String[0]);
-			}
-
-			// bad policy type
-			return new String[0];
-		}
-
-		/*
-		 * @see ISiteEntry#getChangeStamp()
-		 */
-		public long getChangeStamp() {
-			if (!changeStampIsValid)
-				computeChangeStamp();
-			return changeStamp;
-		}
-
-		/*
-		 * @see ISiteEntry#getFeaturesChangeStamp()
-		 */
-		public long getFeaturesChangeStamp() {
-			if (!featuresChangeStampIsValid)
-				computeFeaturesChangeStamp();
-			return featuresChangeStamp;
-		}
-
-		/*
-		 * @see ISiteEntry#getPluginsChangeStamp()
-		 */
-		public long getPluginsChangeStamp() {
-			if (!pluginsChangeStampIsValid)
-				computePluginsChangeStamp();
-			return pluginsChangeStamp;
-		}
-
-		/*
-		 * @see ISiteEntry#isUpdateable()
-		 */
-		public boolean isUpdateable() {
-			return updateable;
-		}
-
-		/*
-		 * @see ISiteEntry#isNativelyLinked()
-		 */
-		public boolean isNativelyLinked() {
-			return isExternallyLinkedSite();
-		}
-
-		private String[] detectFeatures() {
-
-			// invalidate stamps ... we are doing discovery
-			changeStampIsValid = false;
-			featuresChangeStampIsValid = false;
-			parent.changeStampIsValid = false;
-			parent.featuresChangeStampIsValid = false;
-
-			features = new ArrayList();
-
-			if (!supportsDetection(resolvedURL))
-				return new String[0];
-
-			// locate feature entries on site
-			File siteRoot = new File(resolvedURL.getFile().replace('/', File.separatorChar));
-			File root = new File(siteRoot, FEATURES);
-
-			String[] list = root.list();
-			String path;
-			File plugin;
-			for (int i = 0; list != null && i < list.length; i++) {
-				path = list[i] + File.separator + FEATURE_XML;
-				plugin = new File(root, path);
-				if (!plugin.exists()) {
-					continue;
-				}
-				features.add(FEATURES + "/" + path.replace(File.separatorChar, '/')); //$NON-NLS-1$
-			}
-			if (DEBUG) {
-				debug(resolvedURL.toString() + " located  " + features.size() + " feature(s)"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			return (String[]) features.toArray(new String[0]);
-		}
-
-		private String[] detectPlugins() {
-
-			// invalidate stamps ... we are doing discovery
-			changeStampIsValid = false;
-			pluginsChangeStampIsValid = false;
-			parent.changeStampIsValid = false;
-			parent.pluginsChangeStampIsValid = false;
-
-			plugins = new ArrayList();
-
-			if (!supportsDetection(resolvedURL))
-				return new String[0];
-
-			// locate plugin entries on site
-			File root = new File(resolvedURL.getFile().replace('/', File.separatorChar) + PLUGINS);
-			String[] list = root.list();
-			String path;
-			File plugin;
-			for (int i = 0; list != null && i < list.length; i++) {
-				path = list[i] + File.separator + PLUGIN_XML;
-				plugin = new File(root, path);
-				if (!plugin.exists()) {
-					path = list[i] + File.separator + FRAGMENT_XML;
-					plugin = new File(root, path);
-					if (!plugin.exists())
-						continue;
-				}
-				plugins.add(PLUGINS + "/" + path.replace(File.separatorChar, '/')); //$NON-NLS-1$
-			}
-			if (DEBUG) {
-				debug(resolvedURL.toString() + " located  " + plugins.size() + " plugin(s)"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
-			return (String[]) plugins.toArray(new String[0]);
-		}
-
-		private synchronized String[] getDetectedFeatures() {
-			if (features == null)
-				return detectFeatures();
-			else
-				return (String[]) features.toArray(new String[0]);
-		}
-
-		private synchronized String[] getDetectedPlugins() {
-			if (plugins == null)
-				return detectPlugins();
-			else
-				return (String[]) plugins.toArray(new String[0]);
-		}
-
-		private URL getResolvedURL() {
-			return resolvedURL;
-		}
-
-		private void computeChangeStamp() {
-			computeFeaturesChangeStamp();
-			computePluginsChangeStamp();
-			changeStamp = resolvedURL.hashCode() ^ featuresChangeStamp ^ pluginsChangeStamp;
-			changeStampIsValid = true;
-		}
-
-		private synchronized void computeFeaturesChangeStamp() {
-			if (featuresChangeStampIsValid)
-				return;
-
-			long start = 0;
-			if (DEBUG)
-				start = (new Date()).getTime();
-			String[] features = getFeatures();
-			featuresChangeStamp = computeStamp(features);
-			featuresChangeStampIsValid = true;
-			if (DEBUG) {
-				long end = (new Date()).getTime();
-				debug(resolvedURL.toString() + " feature stamp: " + featuresChangeStamp + ((featuresChangeStamp == lastFeaturesChangeStamp) ? " [no changes]" : " [was " + lastFeaturesChangeStamp + "]") + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-			}
-		}
-
-		private synchronized void computePluginsChangeStamp() {
-			if (pluginsChangeStampIsValid)
-				return;
-
-			long start = 0;
-			if (DEBUG)
-				start = (new Date()).getTime();
-			String[] plugins = getPlugins();
-			pluginsChangeStamp = computeStamp(plugins);
-			pluginsChangeStampIsValid = true;
-			if (DEBUG) {
-				long end = (new Date()).getTime();
-				debug(resolvedURL.toString() + " plugin stamp: " + pluginsChangeStamp + ((pluginsChangeStamp == lastPluginsChangeStamp) ? " [no changes]" : " [was " + lastPluginsChangeStamp + "]") + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-			}
-		}
-
-		private long computeStamp(String[] targets) {
-
-			long result = 0;
-			if (!supportsDetection(resolvedURL)) {
-				// NOTE:  this path should not be executed until we support running
-				//        from an arbitrary URL (in particular from http server). For
-				//        now just compute stamp across the list of names. Eventually
-				//        when general URLs are supported we need to do better (factor
-				//        in at least the existence of the target). However, given this
-				//        code executes early on the startup sequence we need to be
-				//        extremely mindful of performance issues.
-				for (int i = 0; i < targets.length; i++)
-					result ^= targets[i].hashCode();
-				if (DEBUG)
-					debug("*WARNING* computing stamp using URL hashcodes only"); //$NON-NLS-1$
-			} else {
-				// compute stamp across local targets
-				String rootPath = resolvedURL.getFile().replace('/', File.separatorChar);
-				if (!rootPath.endsWith(File.separator))
-					rootPath += File.separator;
-				File rootFile = new File(rootPath);
-				if (rootFile.exists()) {
-					File f = null;
-					for (int i = 0; i < targets.length; i++) {
-						f = new File(rootFile, targets[i]);
-						if (f.exists())
-							result ^= f.getAbsolutePath().hashCode() ^ f.lastModified() ^ f.length();
-					}
-				}
-			}
-
-			return result;
-		}
-
-		private boolean isExternallyLinkedSite() {
-			return (linkFileName != null && !linkFileName.trim().equals("")); //$NON-NLS-1$
-		}
-
-		private synchronized void refresh() {
-			// reset computed values. Will be updated on next access.
-			lastChangeStamp = changeStamp;
-			lastFeaturesChangeStamp = featuresChangeStamp;
-			lastPluginsChangeStamp = pluginsChangeStamp;
-			changeStampIsValid = false;
-			featuresChangeStampIsValid = false;
-			pluginsChangeStampIsValid = false;
-			features = null;
-			plugins = null;
-		}
-
-	}
-
-	public class SitePolicy implements IPlatformConfiguration.ISitePolicy {
-
-		private int type;
-		private String[] list;
-
-		private SitePolicy() {
-		}
-		private SitePolicy(int type, String[] list) {
-			if (type != ISitePolicy.USER_INCLUDE && type != ISitePolicy.USER_EXCLUDE)
-				throw new IllegalArgumentException();
-			this.type = type;
-
-			if (list == null)
-				this.list = new String[0];
-			else
-				this.list = list;
-		}
-
-		/*
-		 * @see ISitePolicy#getType()
-		 */
-		public int getType() {
-			return type;
-		}
-
-		/*
-		* @see ISitePolicy#getList()
-		*/
-		public String[] getList() {
-			return list;
-		}
-
-		/*
-		 * @see ISitePolicy#setList(String[])
-		 */
-		public synchronized void setList(String[] list) {
-			if (list == null)
-				this.list = new String[0];
-			else
-				this.list = list;
-		}
-
-	}
-
-	public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry {
-		private String id;
-		private String version;
-		private String pluginVersion;
-		private String application;
-		private URL[] root;
-		private boolean primary;
-		private String pluginIdentifier;
-
-		private FeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
-			if (id == null)
-				throw new IllegalArgumentException();
-			this.id = id;
-			this.version = version;
-			this.pluginVersion = pluginVersion;
-			this.pluginIdentifier = pluginIdentifier;
-			this.primary = primary;
-			this.application = application;
-			this.root = (root == null ? new URL[0] : root);
-		}
-
-		private FeatureEntry(String id, String version, String pluginVersion, boolean primary, String application, URL[] root) {
-			this(id, version, id, pluginVersion, primary, application, root);
-		}
-
-		/*
-		 * @see IFeatureEntry#getFeatureIdentifier()
-		 */
-		public String getFeatureIdentifier() {
-			return id;
-		}
-
-		/*
-		 * @see IFeatureEntry#getFeatureVersion()
-		 */
-		public String getFeatureVersion() {
-			return version;
-		}
-
-		/*
-		 * @see IFeatureEntry#getFeaturePluginVersion()
-		 */
-		public String getFeaturePluginVersion() {
-			return pluginVersion;
-		}
-
-		/*
-		 * @see IFeatureEntry#getFeatureApplication()
-		 */
-		public String getFeatureApplication() {
-			return application;
-		}
-
-		/*
-		 * @see IFeatureEntry#getFeatureRootURLs()
-		 */
-		public URL[] getFeatureRootURLs() {
-			return root;
-		}
-
-		/*
-		 * @see IFeatureEntry#canBePrimary()
-		 */
-		public boolean canBePrimary() {
-			return primary;
-		}
-		/*
-		 * @see IFeatureEntry#getFeaturePluginIdentifier()
-		 */
-		public String getFeaturePluginIdentifier() {
-			return pluginIdentifier;
-		}
-
-	}
-
-	private class VersionedIdentifier {
-		private String identifier = ""; //$NON-NLS-1$
-		private int major = 0;
-		private int minor = 0;
-		private int service = 0;
-		private String qualifier = ""; //$NON-NLS-1$
-
-		private static final String VER_SEPARATOR = "."; //$NON-NLS-1$
-		private static final String ID_SEPARATOR = "_"; //$NON-NLS-1$
-
-		public static final int LESS_THAN = -1;
-		public static final int EQUAL = 0;
-		public static final int EQUIVALENT = 1;
-		public static final int COMPATIBLE = 2;
-		public static final int GREATER_THAN = 3;
-
-		public VersionedIdentifier(String s) {
-			if (s == null || (s = s.trim()).equals("")) //$NON-NLS-1$
-				return;
-
-			int loc = s.lastIndexOf(ID_SEPARATOR);
-			if (loc != -1) {
-				this.identifier = s.substring(0, loc);
-				String version = s.substring(loc + 1);
-				parseVersion(version);
-			} else
-				this.identifier = s;
-		}
-
-		public boolean equalIdentifiers(VersionedIdentifier id) {
-			if (id == null)
-				return identifier == null;
-			else
-				return id.identifier.equals(identifier);
-		}
-
-		public int compareVersion(VersionedIdentifier id) {
-
-			if (id == null) {
-				if (major == 0 && minor == 0 && service == 0)
-					return -1;
-				else
-					return 1;
-			}
-
-			if (major > id.major)
-				return GREATER_THAN;
-			if (major < id.major)
-				return LESS_THAN;
-			if (minor > id.minor)
-				return COMPATIBLE;
-			if (minor < id.minor)
-				return LESS_THAN;
-			if (service > id.service)
-				return EQUIVALENT;
-			if (service < id.service)
-				return LESS_THAN;
-			return compareQualifiers(qualifier, id.qualifier);
-		}
-
-		private int compareQualifiers(String q1, String q2) {
-			int result = q1.compareTo(q2);
-			if (result < 0)
-				return LESS_THAN;
-			else if (result > 0)
-				return EQUIVALENT;
-			else
-				return EQUAL;
-		}
-
-		private void parseVersion(String v) {
-			if (v == null || (v = v.trim()).equals("")) //$NON-NLS-1$
-				return;
-
-			try {
-				StringTokenizer st = new StringTokenizer(v, VER_SEPARATOR);
-				ArrayList elements = new ArrayList(4);
-
-				while (st.hasMoreTokens()) {
-					elements.add(st.nextToken());
-				}
-
-				if (elements.size() >= 1)
-					this.major = (new Integer((String) elements.get(0))).intValue();
-				if (elements.size() >= 2)
-					this.minor = (new Integer((String) elements.get(1))).intValue();
-				if (elements.size() >= 3)
-					this.service = (new Integer((String) elements.get(2))).intValue();
-				if (elements.size() >= 4)
-					this.qualifier = removeWhiteSpace((String) elements.get(3));
-
-			} catch (Exception e) {
-				// use what we got so far ...
-			}
-		}
-
-		private String removeWhiteSpace(String s) {
-			char[] chars = s.trim().toCharArray();
-			boolean whitespace = false;
-			for (int i = 0; i < chars.length; i++) {
-				if (Character.isWhitespace(chars[i])) {
-					chars[i] = '_';
-					whitespace = true;
-				}
-			}
-			return whitespace ? new String(chars) : s;
-		}
-	}
-
-	/*
-	 * Element selector for use with "tiny" parser. Parser callers supply
-	 * concrete selectors
-	 */
-	public interface Selector {
-
-		/*
-		 * Method is called to pre-select a specific xml type. Pre-selected
-		 * elements are then fully parsed and result in calls to full
-		 * select method.
-		 * @return <code>true</code> is the element should be considered,
-		 * <code>false</code> otherwise
-		 */
-		public boolean select(String entry);
-
-		/*
-		 * Method is called with a fully parsed element.
-		 * @return <code>true</code> to select this element and terminate the parse,
-		 * <code>false</code> otherwise
-		 */
-		public boolean select(String element, HashMap attributes);
-	}
-
-	/*
-	 * "Tiny" xml parser. Performs a rudimentary parse of a well-formed xml file.
-	 * Is specifically geared to parsing plugin.xml files of "bootstrap" plug-ins
-	 * during the platform startup sequence before full xml plugin is available.
-	 */
-	public static class Parser {
-
-		private ArrayList elements = new ArrayList();
-
-		/*
-		 * Construct parser for the specified file
-		 */
-		public Parser(File file) {
-			try {
-				load(new FileInputStream(file));
-			} catch (Exception e) {
-				// continue ... actual parsing will report errors
-			}
-		}
-
-		/*
-		 * Construct parser for the specified URL
-		 */
-		public Parser(URL url) {
-			try {
-				load(url.openStream());
-			} catch (Exception e) {
-				// continue ... actual parsing will report errors
-			}
-		}
-
-		/*
-		 * Return selected elements as an (attribute-name, attribute-value) map.
-		 * The name of the selected element is returned as the value of entry with
-		 * name "<element>".
-		 * @return attribute map for selected element, or <code>null</code>
-		 */
-		public HashMap getElement(Selector selector) {
-			if (selector == null)
-				return null;
-
-			String element;
-			for (int i = 0; i < elements.size(); i++) {
-				// make pre-parse selector call
-				element = (String) elements.get(i);
-				if (selector.select(element)) {
-					// parse selected entry
-					HashMap attributes = new HashMap();
-					String elementName;
-					int j;
-					// parse out element name
-					for (j = 0; j < element.length(); j++) {
-						if (Character.isWhitespace(element.charAt(j)))
-							break;
-					}
-					if (j >= element.length()) {
-						elementName = element;
-					} else {
-						elementName = element.substring(0, j);
-						element = element.substring(j);
-						// parse out attributes
-						StringTokenizer t = new StringTokenizer(element, "=\""); //$NON-NLS-1$
-						boolean isKey = true;
-						String key = ""; //$NON-NLS-1$
-						while (t.hasMoreTokens()) {
-							String token = t.nextToken().trim();
-							if (!token.equals("")) { //$NON-NLS-1$
-								// collect (key, value) pairs
-								if (isKey) {
-									key = token;
-									isKey = false;
-								} else {
-									attributes.put(key, token);
-									isKey = true;
-								}
-							}
-						}
-					}
-					// make post-parse selector call
-					if (selector.select(elementName, attributes)) {
-						attributes.put("<element>", elementName); //$NON-NLS-1$
-						return attributes;
-					}
-				}
-			}
-			return null;
-		}
-
-		private void load(InputStream is) {
-			if (is == null)
-				return;
-
-			// read file
-			StringBuffer xml = new StringBuffer(4096);
-			char[] iobuf = new char[4096];
-			InputStreamReader r = null;
-			try {
-				r = new InputStreamReader(is);
-				int len = r.read(iobuf, 0, iobuf.length);
-				while (len != -1) {
-					xml.append(iobuf, 0, len);
-					len = r.read(iobuf, 0, iobuf.length);
-				}
-			} catch (Exception e) {
-				return;
-			} finally {
-				if (r != null)
-					try {
-						r.close();
-					} catch (IOException e) {
-						// ignore
-					}
-			}
-
-			// parse out element tokens
-			String xmlString = xml.toString();
-			StringTokenizer t = new StringTokenizer(xmlString, "<>"); //$NON-NLS-1$
-			while (t.hasMoreTokens()) {
-				String token = t.nextToken().trim();
-				if (!token.equals("")) //$NON-NLS-1$
-					elements.add(token);
-			}
-		}
-	}
-
-	public static class BootDescriptor {
-		private String id;
-		private String version;
-		private String[] libs;
-		private URL dir;
-
-		public BootDescriptor(String id, String version, String[] libs, URL dir) {
-			this.id = id;
-			this.version = version;
-			this.libs = libs;
-			this.dir = dir;
-		}
-
-		public String getId() {
-			return id;
-		}
-
-		public String getVersion() {
-			return version;
-		}
-
-		public String[] getLibraries() {
-			return libs;
-		}
-
-		public URL getPluginDirectoryURL() {
-			return dir;
-		}
-	}
+	
 
 	private PlatformConfiguration(String configPath, URL pluginPath) throws IOException {
 		this.sites = new HashMap();
@@ -912,21 +173,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#createSiteEntry(URL, ISitePolicy)
 	 */
 	public ISiteEntry createSiteEntry(URL url, ISitePolicy policy) {
-		return new PlatformConfiguration.SiteEntry(url, policy, this);
+		return new SiteEntry(url, policy, this);
 	}
 
 	/*
 	 * @see IPlatformConfiguration#createSitePolicy(int, String[])
 	 */
 	public ISitePolicy createSitePolicy(int type, String[] list) {
-		return new PlatformConfiguration.SitePolicy(type, list);
+		return new SitePolicy(type, list);
 	}
 
 	/*
 	 * @see IPlatformConfiguration#createFeatureEntry(String, String, String, boolean, String, URL)
 	 */
 	public IFeatureEntry createFeatureEntry(String id, String version, String pluginVersion, boolean primary, String application, URL[] root) {
-		return new PlatformConfiguration.FeatureEntry(id, version, pluginVersion, primary, application, root);
+		return new FeatureEntry(id, version, pluginVersion, primary, application, root);
 	}
 
 	/*
@@ -934,7 +195,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * String, boolean, String, URL)
 	 */
 	public IFeatureEntry createFeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
-		return new PlatformConfiguration.FeatureEntry(id, version, pluginIdentifier, pluginVersion, primary, application, root);
+		return new FeatureEntry(id, version, pluginIdentifier, pluginVersion, primary, application, root);
 	}
 
 	/*
@@ -1157,8 +418,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public URL[] getPluginPath() {
 		ArrayList path = new ArrayList();
-		if (DEBUG)
-			debug("computed plug-in path:"); //$NON-NLS-1$
+		Utils.debug("computed plug-in path:"); //$NON-NLS-1$
 
 		ISiteEntry[] sites = getConfiguredSites();
 		URL pathURL;
@@ -1168,12 +428,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				try {
 					pathURL = new URL(((SiteEntry) sites[i]).getResolvedURL(), plugins[j]);
 					path.add(pathURL);
-					if (DEBUG)
-						debug("   " + pathURL.toString()); //$NON-NLS-1$
+					Utils.debug("   " + pathURL.toString()); //$NON-NLS-1$
 				} catch (MalformedURLException e) {
 					// skip entry ...
-					if (DEBUG)
-						debug("   bad URL: " + e); //$NON-NLS-1$
+					Utils.debug("   bad URL: " + e); //$NON-NLS-1$
 				}
 			}
 		}
@@ -1234,7 +492,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			 ((SiteEntry) sites[i]).refresh();
 		}
 		// reset configuration entry.
-		lastChangeStamp = changeStamp;
 		lastFeaturesChangeStamp = featuresChangeStamp;
 		lastPluginsChangeStamp = pluginsChangeStamp;
 		changeStampIsValid = false;
@@ -1336,7 +593,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return null;
 	}
 
-	static PlatformConfiguration getCurrent() {
+	public static PlatformConfiguration getCurrent() {
 		return currentPlatformConfiguration;
 	}
 
@@ -1349,7 +606,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @param r10apps application identifies as passed on the BootLoader.run(...)
 	 * method. Supported for R1.0 compatibility.
 	 */
-	static synchronized String[] startup(String[] cmdArgs, URL r10plugins, String r10app, URL installURL, String configPath) throws Exception {
+	public static synchronized String[] startup(String[] cmdArgs, URL r10plugins, String r10app, URL installURL, String configPath) throws Exception {
 		PlatformConfiguration.installURL = installURL;
 
 		// if BootLoader was invoked directly (rather than via Main), it is possible
@@ -1378,7 +635,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		return passthruArgs;
 	}
 
-	static synchronized void shutdown() throws IOException {
+	public static synchronized void shutdown() throws IOException {
 
 		// save platform configuration
 		PlatformConfiguration config = getCurrent();
@@ -1386,8 +643,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			try {
 				config.save();
 			} catch (IOException e) {
-				if (DEBUG)
-					debug("Unable to save configuration " + e.toString()); //$NON-NLS-1$
+				Utils.debug("Unable to save configuration " + e.toString()); //$NON-NLS-1$
 				// will recover on next startup
 			}
 			config.clearConfigurationLock();
@@ -1413,8 +669,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			resetInitializationConfiguration(url); // [20111]
 			if (createRootSite)
 				configureSite(getRootSite());
-			if (DEBUG)
-				debug("Initializing configuration " + url.toString()); //$NON-NLS-1$
+			Utils.debug("Initializing configuration " + url.toString()); //$NON-NLS-1$
 			configLocation = url;
 			verifyPath(configLocation);
 			return;
@@ -1438,8 +693,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			// try loading the configuration
 			try {
 				load(configFileURL);
-				if (DEBUG)
-					debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
+				Utils.debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
 			} catch (IOException e) {
 				// failed to load, see if we can find pre-initialized configuration.
 				// Don't attempt this initialization when self-hosting (is unpredictable)
@@ -1453,8 +707,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					// Only copy if the default config location is not the install location
 					if (!sharedConfigDirURL.equals(configDirURL)) {
 						copyInitializedState(sharedConfigDirURL, configPath);
-						if (DEBUG)
-							debug("Configuration initialized from    " + sharedConfigDirURL.toString()); //$NON-NLS-1$
+						Utils.debug("Configuration initialized from    " + sharedConfigDirURL.toString()); //$NON-NLS-1$
 					}
 					return;
 				} catch (IOException ioe) {
@@ -1467,22 +720,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		} finally {
 			configLocation = configFileURL;
 			verifyPath(configLocation);
-			if (DEBUG)
-				debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
+			Utils.debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
 		}
 	}
 
 	private synchronized void initialize(URL url) throws IOException {
 		if (url == null) {
-			if (DEBUG)
-				debug("Creating empty configuration object"); //$NON-NLS-1$
+			Utils.debug("Creating empty configuration object"); //$NON-NLS-1$
 			return;
 		}
 
 		load(url);
 		configLocation = url;
-		if (DEBUG)
-			debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
+		Utils.debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
 	}
 
 	private ISiteEntry getRootSite() {
@@ -1607,24 +857,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			linkURL = new URL(linkURL, LINKS + "/"); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			// skip bad links ...
-			if (DEBUG)
-				debug("Unable to obtain link URL"); //$NON-NLS-1$
+			Utils.debug("Unable to obtain link URL"); //$NON-NLS-1$
 			return;
 		}
 
 		File linkDir = new File(linkURL.getFile());
 		File[] links = linkDir.listFiles();
 		if (links == null || links.length == 0) {
-			if (DEBUG)
-				debug("No links detected in " + linkURL.toExternalForm()); //$NON-NLS-1$
+			Utils.debug("No links detected in " + linkURL.toExternalForm()); //$NON-NLS-1$
 			return;
 		}
 
 		for (int i = 0; i < links.length; i++) {
 			if (links[i].isDirectory())
 				continue;
-			if (DEBUG)
-				debug("Link file " + links[i].getAbsolutePath()); //$NON-NLS-1$
+			Utils.debug("Link file " + links[i].getAbsolutePath()); //$NON-NLS-1$
 			Properties props = new Properties();
 			FileInputStream is = null;
 			try {
@@ -1633,8 +880,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				configureExternalLinkSites(links[i], props);
 			} catch (IOException e) {
 				// skip bad links ...
-				if (DEBUG)
-					debug("   unable to load link file " + e); //$NON-NLS-1$
+				Utils.debug("   unable to load link file " + e); //$NON-NLS-1$
 				continue;
 			} finally {
 				if (is != null) {
@@ -1651,8 +897,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void configureExternalLinkSites(File linkFile, Properties props) {
 		String path = props.getProperty(LINK_PATH);
 		if (path == null) {
-			if (DEBUG)
-				debug("   no path definition"); //$NON-NLS-1$
+			Utils.debug("   no path definition"); //$NON-NLS-1$
 			return;
 		}
 
@@ -1683,29 +928,24 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			siteURL = new URL(link);
 		} catch (MalformedURLException e) {
 			// ignore bad links ...
-			if (DEBUG)
-				debug("  bad URL " + e); //$NON-NLS-1$
+			Utils.debug("  bad URL " + e); //$NON-NLS-1$
 			return;
 		}
 
 		// process the link
 		linkSite = (SiteEntry) externalLinkSites.get(siteURL);
-		if (linkSite != null) {
-			// we already have a site for this link target, update it if needed
-			linkSite.updateable = updateable;
-			linkSite.linkFileName = linkFile.getAbsolutePath();
-		} else {
+		if (linkSite == null) {
 			// this is a link to a new target so create site for it
 			linkSite = (SiteEntry) createSiteEntry(siteURL, linkSitePolicy);
-			linkSite.updateable = updateable;
-			linkSite.linkFileName = linkFile.getAbsolutePath();
 		}
+		// update site entry if needed
+		linkSite.setUpdateable(updateable);
+		linkSite.setLinkFileName(linkFile.getAbsolutePath());
 
 		// configure the new site
 		// NOTE: duplicates are not replaced (first one in wins)
 		configureSite(linkSite);
-		if (DEBUG)
-			debug("   " + (updateable ? "R/W -> " : "R/O -> ") + siteURL.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Utils.debug("   " + (updateable ? "R/W -> " : "R/O -> ") + siteURL.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/*
@@ -1807,8 +1047,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			File siteRoot = new File(siteURL.getFile().replace('/', File.separatorChar));
 			if (!siteRoot.exists()) {
 				unconfigureSite(list[i]);
-				if (DEBUG)
-					debug("Site " + siteURL + " does not exist ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
+				Utils.debug("Site " + siteURL + " does not exist ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
@@ -1911,16 +1150,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				transientConfig = false;
 		}
 
-		String stamp = loadAttribute(props, CFG_STAMP, null);
-		if (stamp != null) {
-			try {
-				lastChangeStamp = Long.parseLong(stamp);
-			} catch (NumberFormatException e) {
-				// ignore bad attribute ...
-			}
-		}
-
-		stamp = loadAttribute(props, CFG_FEATURE_STAMP, null);
+		String stamp = loadAttribute(props, CFG_FEATURE_STAMP, null);
 		if (stamp != null) {
 			try {
 				lastFeaturesChangeStamp = Long.parseLong(stamp);
@@ -2040,19 +1270,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		ISitePolicy sp = createSitePolicy(policyType, policyList);
 		SiteEntry site = (SiteEntry) createSiteEntry(url, sp);
 
-		String stamp = loadAttribute(props, name + "." + CFG_STAMP, null); //$NON-NLS-1$
+		String stamp = loadAttribute(props, name + "." + CFG_FEATURE_STAMP, null); //$NON-NLS-1$
 		if (stamp != null) {
 			try {
-				site.lastChangeStamp = Long.parseLong(stamp);
-			} catch (NumberFormatException e) {
-				// ignore bad attribute ...
-			}
-		}
-
-		stamp = loadAttribute(props, name + "." + CFG_FEATURE_STAMP, null); //$NON-NLS-1$
-		if (stamp != null) {
-			try {
-				site.lastFeaturesChangeStamp = Long.parseLong(stamp);
+				site.setLastFeaturesChangeStamp(Long.parseLong(stamp));
 			} catch (NumberFormatException e) {
 				// ignore bad attribute ...
 			}
@@ -2061,7 +1282,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		stamp = loadAttribute(props, name + "." + CFG_PLUGIN_STAMP, null); //$NON-NLS-1$
 		if (stamp != null) {
 			try {
-				site.lastPluginsChangeStamp = Long.parseLong(stamp);
+				site.setLastPluginsChangeStamp(Long.parseLong(stamp));
 			} catch (NumberFormatException e) {
 				// ignore bad attribute ...
 			}
@@ -2070,14 +1291,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String flag = loadAttribute(props, name + "." + CFG_UPDATEABLE, null); //$NON-NLS-1$
 		if (flag != null) {
 			if (flag.equals("true")) //$NON-NLS-1$
-				site.updateable = true;
+				site.setUpdateable(true);
 			else
-				site.updateable = false;
+				site.setUpdateable(false);
 		}
 
 		String linkname = loadAttribute(props, name + "." + CFG_LINK_FILE, null); //$NON-NLS-1$
 		if (linkname != null && !linkname.equals("")) { //$NON-NLS-1$
-			site.linkFileName = linkname.replace('/', File.separatorChar);
+			site.setLinkFileName(linkname.replace('/', File.separatorChar));
 		}
 
 		return site;
@@ -2171,8 +1392,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			URL initURL = new URL(url, CONFIG_FILE_INIT);
 			is = initURL.openStream();
 			initProps.load(is);
-			if (DEBUG)
-				debug("Defaults from " + initURL.toExternalForm()); //$NON-NLS-1$
+			Utils.debug("Defaults from " + initURL.toExternalForm()); //$NON-NLS-1$
 		} catch (IOException e) {
 			return; // could not load default settings
 		} finally {
@@ -2204,225 +1424,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				fe = createFeatureEntry(initId, fe.getFeatureVersion(), fe.getFeaturePluginIdentifier(), fe.getFeaturePluginVersion(), fe.canBePrimary(), application, fe.getFeatureRootURLs());
 			configureFeatureEntry(fe);
 			defaultFeature = initId;
-			if (DEBUG) {
-				debug("    Default primary feature: " + defaultFeature); //$NON-NLS-1$
+			if (ConfigurationActivator.DEBUG) {
+				Utils.debug("    Default primary feature: " + defaultFeature); //$NON-NLS-1$
 				if (application != null)
-					debug("    Default application    : " + application); //$NON-NLS-1$
+					Utils.debug("    Default application    : " + application); //$NON-NLS-1$
 			}
-		}
-	}
-
-	private HashMap getImport(URL entry, String id) {
-		if (id == null)
-			return null;
-		final String fId = id;
-
-		// parse out the import element attributes
-		Selector importSel = new Selector() {
-				// parse out import attributes
-	public boolean select(String element) {
-				if (element.startsWith("import")) //$NON-NLS-1$
-					return true;
-				else
-					return false;
-			}
-			public boolean select(String element, HashMap attributes) {
-				if (attributes == null)
-					return false;
-				String plugin = (String) attributes.get("plugin"); //$NON-NLS-1$
-				return fId.equals(plugin);
-			}
-		};
-		Parser p = new Parser(entry);
-		return p.getElement(importSel);
-	}
-
-	private BootDescriptor createPluginBootDescriptor(URL entry) {
-		if (entry == null)
-			return null;
-
-		// selector for plugin element
-		Selector pluginSel = new Selector() {
-			public boolean select(String element) {
-				if (element.startsWith("plugin")) //$NON-NLS-1$
-					return true;
-				else
-					return false;
-			}
-			public boolean select(String element, HashMap attributes) {
-				return true;
-			}
-		};
-
-		// selector for library elements
-		final ArrayList libs = new ArrayList();
-		Selector librarySel = new Selector() {
-			public boolean select(String element) {
-				if (element.startsWith("library")) //$NON-NLS-1$
-					return true;
-				else
-					return false;
-			}
-			public boolean select(String element, HashMap attributes) {
-				if (attributes == null)
-					return false;
-				String lib = (String) attributes.get("name"); //$NON-NLS-1$
-				if (lib != null)
-					libs.add(lib);
-				return false; // accumulate all library elements
-			}
-		};
-
-		// parse out descriptor information
-		Parser p = new Parser(entry);
-		String id = null;
-		String version = null;
-		HashMap attributes = p.getElement(pluginSel);
-		if (attributes != null) {
-			id = (String) attributes.get("id"); //$NON-NLS-1$
-			version = (String) attributes.get("version"); //$NON-NLS-1$
-		}
-		if (id == null)
-			id = ""; //$NON-NLS-1$
-		if (version == null)
-			version = "0.0.0"; //$NON-NLS-1$
-
-		p.getElement(librarySel);
-		String[] libraries = (String[]) libs.toArray(new String[0]);
-
-		String dir = entry.getFile();
-		int ix = dir.lastIndexOf("/"); //$NON-NLS-1$
-		dir = dir.substring(0, ix + 1);
-		URL dirURL = null;
-		try {
-			dirURL = new URL(entry.getProtocol(), entry.getHost(), entry.getPort(), dir);
-		} catch (MalformedURLException e) {
-			// continue ...
-		}
-
-		// return boot descriptor for the plugin
-		return new BootDescriptor(id, version, libraries, dirURL);
-	}
-
-	private URL getPluginPath(HashMap importElement) {
-		// return the plugin path element for the specified import element
-
-		if (importElement == null)
-			return null;
-
-		// determine which plugin we are looking for
-		VersionedIdentifier id;
-		String pid = (String) importElement.get("plugin"); //$NON-NLS-1$
-		String version = (String) importElement.get("version"); //$NON-NLS-1$
-		String match = (String) importElement.get("match"); //$NON-NLS-1$
-		if (pid == null)
-			return null; // bad <import> element
-		if (version == null)
-			id = new VersionedIdentifier(pid);
-		else {
-			id = new VersionedIdentifier(pid + "_" + version); //$NON-NLS-1$
-			if (match == null)
-				match = "compatible"; //$NON-NLS-1$
-		}
-
-		// search plugins on all configured sites
-		ISiteEntry[] sites = getConfiguredSites();
-		if (sites == null || sites.length == 0)
-			return null;
-
-		VersionedIdentifier savedVid = id; // initialize with baseline we are looking for
-		String savedEntry = null;
-		URL savedURL = null;
-		for (int j = 0; j < sites.length; j++) {
-			String[] plugins = sites[j].getPlugins();
-			for (int i = 0; plugins != null && i < plugins.length; i++) {
-				// look for best match.
-				// The entries are in the form <path>/<pluginDir>/plugin.xml
-				// look for -------------------------^
-				int ix = findEntrySeparator(plugins[i], 2); // second from end
-				if (ix == -1)
-					continue; // bad entry ... skip
-				String pluginDir = plugins[i].substring(ix + 1);
-				ix = pluginDir.indexOf("/"); //$NON-NLS-1$
-				if (ix != -1)
-					pluginDir = pluginDir.substring(0, ix);
-				if (pluginDir.equals("")) //$NON-NLS-1$
-					continue; // bad entry ... skip
-
-				// compare the candidate plugin using the matching rule
-				VersionedIdentifier vid = new VersionedIdentifier(pluginDir);
-				if (vid.equalIdentifiers(id)) {
-
-					// check if we have suffixed directory. If not (eg. self-hosting)
-					// we need to actually parse the plugin.xml to get its version
-					if (pluginDir.indexOf("_") == -1) { //$NON-NLS-1$
-						URL xmlURL = null;
-						try {
-							xmlURL = new URL(((SiteEntry) sites[j]).getResolvedURL(), plugins[i]);
-						} catch (MalformedURLException e) {
-							continue; // bad URL ... skip
-						}
-
-						// parse out the plugin element attributes
-						final String fpid = pid;
-						Selector versionSel = new Selector() {
-								// parse out plugin attributes
-	public boolean select(String element) {
-								if (element.startsWith("plugin")) //$NON-NLS-1$
-									return true;
-								else
-									return false;
-							}
-							public boolean select(String element, HashMap attributes) {
-								if (attributes == null)
-									return false;
-								String plugin = (String) attributes.get("id"); //$NON-NLS-1$
-								return fpid.equals(plugin);
-							}
-						};
-						Parser p = new Parser(xmlURL);
-						HashMap attributes = p.getElement(versionSel);
-						if (attributes == null)
-							continue; // bad xml ... skip
-						String pluginVersion;
-						if ((pluginVersion = (String) attributes.get("version")) == null) //$NON-NLS-1$
-							continue; // bad xml ... skip
-						pluginDir += "_" + pluginVersion; //$NON-NLS-1$
-						vid = new VersionedIdentifier(pluginDir);
-					}
-
-					// do the comparison
-					int result;
-					if ((result = vid.compareVersion(savedVid)) >= 0) {
-						if ("greaterOrEqual".equals(match)) { //$NON-NLS-1$
-							if (result > VersionedIdentifier.GREATER_THAN)
-								continue;
-						} else if ("compatible".equals(match)) { //$NON-NLS-1$
-							if (result > VersionedIdentifier.COMPATIBLE)
-								continue;
-						} else if ("equivalent".equals(match)) { //$NON-NLS-1$
-							if (result > VersionedIdentifier.EQUIVALENT)
-								continue;
-						} else if ("perfect".equals(match)) { //$NON-NLS-1$
-							if (result > VersionedIdentifier.EQUAL)
-								continue;
-						} else if (result > VersionedIdentifier.GREATER_THAN)
-							continue; // use the latest
-						savedVid = vid;
-						savedEntry = plugins[i];
-						savedURL = ((SiteEntry) sites[j]).getResolvedURL();
-					}
-				}
-			}
-		}
-
-		if (savedEntry == null)
-			return null;
-
-		try {
-			return new URL(savedURL, savedEntry);
-		} catch (MalformedURLException e) {
-			return null;
 		}
 	}
 
@@ -2475,9 +1481,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		writeAttribute(w, id + "." + CFG_STAMP, Long.toString(entry.getChangeStamp())); //$NON-NLS-1$
 		writeAttribute(w, id + "." + CFG_FEATURE_STAMP, Long.toString(entry.getFeaturesChangeStamp())); //$NON-NLS-1$
 		writeAttribute(w, id + "." + CFG_PLUGIN_STAMP, Long.toString(entry.getPluginsChangeStamp())); //$NON-NLS-1$
-		writeAttribute(w, id + "." + CFG_UPDATEABLE, entry.updateable ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (entry.linkFileName != null && !entry.linkFileName.trim().equals("")) //$NON-NLS-1$
-			writeAttribute(w, id + "." + CFG_LINK_FILE, entry.linkFileName.trim().replace(File.separatorChar, '/')); //$NON-NLS-1$
+		writeAttribute(w, id + "." + CFG_UPDATEABLE, entry.isUpdateable() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (entry.isExternallyLinkedSite()) //$NON-NLS-1$
+			writeAttribute(w, id + "." + CFG_LINK_FILE, entry.getLinkFileName().trim().replace(File.separatorChar, '/')); //$NON-NLS-1$
 
 		// write out site policy
 		int type = entry.getSitePolicy().getType();
@@ -2585,8 +1591,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (cmdFirstUse)
 				newArgs[2] = CMD_FIRSTUSE;
 			System.arraycopy(args, 0, newArgs, newArgCnt, args.length);
-			if (DEBUG)
-				debug("triggering reconciliation ..."); //$NON-NLS-1$
+			Utils.debug("triggering reconciliation ..."); //$NON-NLS-1$
 			return newArgs;
 		}
 	}
@@ -2730,20 +1735,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		return -1;
 	}
 
-	private static String[] stringListToArray(String prop, String separator) {
-		if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
-			return new String[0];
-		ArrayList list = new ArrayList();
-		StringTokenizer tokens = new StringTokenizer(prop, separator);
-		while (tokens.hasMoreTokens()) {
-			String token = tokens.nextToken().trim();
-			if (!token.equals("")) //$NON-NLS-1$
-				list.add(token);
-		}
-		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
-	}
-
-	private static boolean supportsDetection(URL url) {
+	public static boolean supportsDetection(URL url) {
 		String protocol = url.getProtocol();
 		if (protocol.equals("file")) //$NON-NLS-1$
 			return true;
@@ -2782,7 +1774,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private static URL resolvePlatformURL(URL url) throws IOException {
+	public static URL resolvePlatformURL(URL url) throws IOException {
 		// 19536
 		if (url.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
 			URLConnection connection = url.openConnection();
@@ -2795,10 +1787,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			}
 		}
 		return url;
-	}
-
-	private static void debug(String s) {
-		System.out.println("PlatformConfig: " + s); //$NON-NLS-1$
 	}
 
 	private void resetUpdateManagerState(URL url) throws IOException {
@@ -2829,5 +1817,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static URL getInstallURL() {
 		return installURL;
+	}
+	
+	public void invalidateFeaturesChangeStamp() {
+		changeStampIsValid = false;
+		featuresChangeStampIsValid = false;
+	}
+	
+	public void invalidatePluginsChangeStamp() {
+		changeStampIsValid = false;
+		pluginsChangeStampIsValid = false;
 	}
 }
