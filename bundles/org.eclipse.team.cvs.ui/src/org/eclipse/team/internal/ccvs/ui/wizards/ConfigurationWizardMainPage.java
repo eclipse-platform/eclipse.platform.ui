@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -41,6 +42,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -488,6 +490,18 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			return;
 		}
 
+		try {
+			CVSRepositoryLocation l = CVSRepositoryLocation.fromProperties(createProperties());
+			if (KnownRepositories.getInstance().isKnownRepository(l.getLocation())) {
+				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.0")); //$NON-NLS-1$
+				setPageComplete(false);
+				return;
+			}
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e);
+			// Let it pass. Creation should fail
+		}
+		
 		// Everything passed so we're good to go
 		setErrorMessage(null);
 		setPageComplete(true);
@@ -521,7 +535,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	public static final int INVALID_FIELD_CONTENTS = 1;
 	public static final IStatus validateUserName(String user) {
 		if (user.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "User Name Required", null);
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.1"), null); //$NON-NLS-1$
 		}
 		if ((user.indexOf('@') != -1) || (user.indexOf(':') != -1)) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
@@ -531,7 +545,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	}
 	public static final IStatus validateHost(String host) {
 		if (host.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "Host Required", null);
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.2"), null); //$NON-NLS-1$
 		}
 		if (host.indexOf(':') != -1) {
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
@@ -541,7 +555,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	}
 	public static final IStatus validatePort(String port) {
 		if (port.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "Port Required", null);
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.3"), null); //$NON-NLS-1$
 		}
 		try {
 			Integer.parseInt(port);
@@ -553,7 +567,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	}
 	public static final IStatus validatePath(String pathString) {
 		if (pathString.length() == 0) {
-			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, "Repository Path Required", null);
+			return new Status(IStatus.ERROR, CVSUIPlugin.ID, REQUIRED_FIELD, Policy.bind("ConfigurationWizardMainPage.4"), null); //$NON-NLS-1$
 		}
 		IPath path = new Path(pathString);
 		String[] segments = path.segments();
