@@ -2336,19 +2336,31 @@ private void setPerspective(Perspective newPersp) {
 	
 	//Update visibility state of all views.
 	HashSet set = new HashSet();
-	IWorkbenchPartReference refs[] = oldPersp.getViewReferences();
-	for (int i = 0; i < refs.length; i++)
-		set.add(((WorkbenchPartReference)refs[i]).getPane());
-	refs = newPersp.getViewReferences();
-	for (int i = 0; i < refs.length; i++)
-		set.add(((WorkbenchPartReference)refs[i]).getPane());
-	PerspectivePresentation pres = newPersp.getPresentation();	
-	for (Iterator iter = set.iterator(); iter.hasNext();) {
-		PartPane pane = (PartPane) iter.next();
-		boolean isVisible = pres.isPartVisible(pane.getID());
-		pane.setVisible(isVisible);
+	IWorkbenchPartReference[] refs;
+	if (oldPersp != null) {
+		refs = oldPersp.getViewReferences();
+		for (int i = 0; i < refs.length; i++)
+			set.add(((WorkbenchPartReference) refs[i]).getPane());
+	}
+	if (newPersp != null) {
+		refs = newPersp.getViewReferences();
+		for (int i = 0; i < refs.length; i++)
+			set.add(((WorkbenchPartReference) refs[i]).getPane());
+		PerspectivePresentation pres = newPersp.getPresentation();
+		for (Iterator iter = set.iterator(); iter.hasNext();) {
+			PartPane pane = (PartPane) iter.next();
+			boolean isVisible = pres.isPartVisible(pane.getID());
+			pane.setVisible(isVisible);
+		}
+	}
+	else {
+		for (Iterator iter = set.iterator(); iter.hasNext();) {
+			PartPane pane = (PartPane) iter.next();
+			pane.setVisible(false);
+		}
 	}
 }
+
 private void activateOldPart(Perspective newPersp) {
 	if (newPersp != null) {
 		String oldID = newPersp.getOldPartID();
