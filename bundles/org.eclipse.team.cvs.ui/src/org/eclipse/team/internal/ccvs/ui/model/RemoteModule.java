@@ -146,7 +146,7 @@ public class RemoteModule
   return true;
  }
 
- public ISchedulingRule getRule() {
-  return new BatchSimilarSchedulingRule("org.eclipse.team.ui.cvs.remotemodule"); //$NON-NLS-1$
+ public ISchedulingRule getRule(Object element) {
+  return new RepositoryLocationSchedulingRule(folder.getRepository()); //$NON-NLS-1$
  }
 }

@@ -367,7 +367,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 
 	protected void refreshViewer() {
 		if (viewer == null) return;
-		//((RemoteContentProvider)viewer.getContentProvider()).clearCache();
+		((RemoteContentProvider)viewer.getContentProvider()).cancelJobs(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryRoots());
 		CVSUIPlugin.getPlugin().getRepositoryManager().purgeCache();
 		updateWorkingSetMenu();
 		viewer.refresh();

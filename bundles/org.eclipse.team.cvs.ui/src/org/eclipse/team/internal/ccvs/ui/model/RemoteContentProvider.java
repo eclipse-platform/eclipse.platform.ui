@@ -14,10 +14,12 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
@@ -112,5 +114,22 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 				((CVSModelElement)object).setWorkingSet(getWorkingSet());
 		}
 		return children;
+	}
+
+	public void cancelJobs(RepositoryRoot[] roots) {
+		if (manager != null) {
+			for (int i = 0; i < roots.length; i++) {
+				RepositoryRoot root = roots[i];
+				cancelJobs(root.getRoot());
+			}
+		}
+	}
+	
+	/**
+	 * Cancel any jobs that are fetching content from the given location.
+	 * @param location
+	 */
+	public void cancelJobs(ICVSRepositoryLocation location) {
+		manager.cancel(location);
 	}
 }

@@ -11,19 +11,19 @@
 package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 
 /**
- * A simple job scheduling rule for serializing jobs that shouldn't be run
- * concurrently.
+ * A simple job scheduling rule for serializing jobs for an ICVSRepositoryLocation
  */
-public class BatchSimilarSchedulingRule implements ISchedulingRule {
-	public String id;
-	public BatchSimilarSchedulingRule(String id) {
-		this.id = id;
+public class RepositoryLocationSchedulingRule implements ISchedulingRule {
+	ICVSRepositoryLocation location;
+	public RepositoryLocationSchedulingRule(ICVSRepositoryLocation location) {
+		this.location = location;
 	}		
 	public boolean isConflicting(ISchedulingRule rule) {
-		if(rule instanceof BatchSimilarSchedulingRule) {
-			return ((BatchSimilarSchedulingRule)rule).id.equals(id);
+		if(rule instanceof RepositoryLocationSchedulingRule) {
+			return ((RepositoryLocationSchedulingRule)rule).location.equals(location);
 		}
 		return false;
 	}

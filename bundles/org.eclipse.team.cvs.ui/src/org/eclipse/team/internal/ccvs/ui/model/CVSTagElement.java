@@ -126,8 +126,8 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 		}
 	}
 
-	public ISchedulingRule getRule() {
-		return new BatchSimilarSchedulingRule("org.eclipse.team.cvs.ui.model.tagelement"); //$NON-NLS-1$
+	public ISchedulingRule getRule(Object element) {
+		return new RepositoryLocationSchedulingRule(root); //$NON-NLS-1$
 	}
 	
 	public boolean isContainer() {

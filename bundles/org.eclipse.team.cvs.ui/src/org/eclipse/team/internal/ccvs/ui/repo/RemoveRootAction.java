@@ -13,8 +13,10 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
@@ -24,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.model.RepositoryLocationSchedulingRule;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialogWithProjects;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -34,10 +37,12 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
  */
 public class RemoveRootAction extends SelectionListenerAction {
 	private IStructuredSelection selection;
-	private Shell shell;
+	/* internal use only */ Shell shell;
+	private RepositoriesView view;
 	
-	public RemoveRootAction(Shell shell) {
+	public RemoveRootAction(Shell shell, RepositoriesView view) {
 		super(Policy.bind("RemoteRootAction.label")); //$NON-NLS-1$
+		this.view = view;
 		this.shell = shell;
 	}
 	
@@ -104,7 +109,14 @@ public class RemoveRootAction extends SelectionListenerAction {
 						}
 					});
 				} else {
-					provider.disposeRepository(roots[i]);
+					ISchedulingRule rule = new RepositoryLocationSchedulingRule(roots[i]);
+					JobManager.getInstance().beginRule(rule);
+					try {
+						view.getContentProvider().cancelJobs(roots[i]);
+						provider.disposeRepository(roots[i]);
+					} finally {
+						JobManager.getInstance().endRule(rule);
+					}
 				}
 			} catch (CVSException e) {
 				CVSUIPlugin.log(e);

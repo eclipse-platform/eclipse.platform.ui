@@ -20,6 +20,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -29,7 +30,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class RemoteFolderElement extends RemoteResourceElement implements IDeferredWorkbenchAdapter {
-
 
     /**
      * Overridden to append the version name to remote folders which
@@ -83,11 +83,18 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
         }
     }
 
-    public ISchedulingRule getRule() {
-        return new BatchSimilarSchedulingRule("org.eclipse.team.ui.cvs.remotefolderelement"); //$NON-NLS-1$
+    public ISchedulingRule getRule(Object element) {
+    	ICVSRepositoryLocation location = getRepositoryLocation(element);
+        return new RepositoryLocationSchedulingRule(location); //$NON-NLS-1$
     }
 
-    public boolean isContainer() {
+	private ICVSRepositoryLocation getRepositoryLocation(Object o) {
+		if (!(o instanceof ICVSRemoteFolder))
+			return null;
+		return ((ICVSRemoteFolder)o).getRepository();
+	}
+
+	public boolean isContainer() {
         return true;
     }
 }

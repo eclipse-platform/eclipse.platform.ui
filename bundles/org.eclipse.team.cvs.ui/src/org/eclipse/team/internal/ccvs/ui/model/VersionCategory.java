@@ -169,7 +169,7 @@ public class VersionCategory
   return true;
  }
 
- public ISchedulingRule getRule() {
-  return new BatchSimilarSchedulingRule("org.eclipse.team.cvs.ui.versioncategory"); //$NON-NLS-1$
+ public ISchedulingRule getRule(Object element) {
+  return new RepositoryLocationSchedulingRule(repository); //$NON-NLS-1$
  }
 }
