@@ -108,8 +108,6 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     public void select() {
         if (workbenchPage.getPerspective() != perspective) {
             workbenchPage.setPerspective(perspective);
-            update();
-            getParent().update(true);
         } else
             toolItem.setSelection(true);
     }
