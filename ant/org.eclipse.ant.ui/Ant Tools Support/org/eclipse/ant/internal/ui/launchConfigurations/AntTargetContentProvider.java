@@ -13,8 +13,10 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -23,6 +25,9 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 
 	protected List elements = new ArrayList();
 	protected TableViewer viewer;
+	private boolean fFilterInternalTargets= false;
+	private int fNumFiltered= 0;
+	private int fNumTargets= 0;
 
 	public void add(Object o) {
 		elements.add(o);
@@ -38,11 +43,43 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	}
 
 	public Object[] getElements(Object inputElement) {
-		if (elements.isEmpty()) {
+		fNumTargets= elements.size();
+		fNumFiltered= 0;
+		if (fNumTargets == 0) {
 			return new Object[0];
 		} else {
-			return elements.toArray(new Object[elements.size()]);
+			if (!fFilterInternalTargets) {
+				return elements.toArray(new Object[fNumTargets]);
+			}
+			Iterator iter= elements.iterator();
+			while (iter.hasNext()) { 
+				if (isInternal((TargetInfo) iter.next())) {
+					fNumTargets--;
+					fNumFiltered++;
+				}
+			}
+			Object[] targets= new Object[fNumTargets];
+			iter= elements.iterator();
+			int i= 0;
+			while (iter.hasNext()) {
+				TargetInfo target= (TargetInfo) iter.next(); 
+				if (!isInternal(target)) {
+					targets[i++]= target;  
+				}
+			}
+			return targets;
 		}
+	}
+	
+	/**
+	 * Returns whether the given target is an internal target. Internal
+	 * targets are targets which has no description. The default target
+	 * is never considered internal.
+	 * @param target the target to examine
+	 * @return whether the given target is an internal target
+	 */
+	private boolean isInternal(TargetInfo target) {
+		return !target.isDefault() && target.getDescription() == null;
 	}
 
 	public void inputChanged(Viewer newViewer, Object oldInput, Object newInput) {
@@ -94,5 +131,36 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 		}
 		elements.set(index, elements.get(index + 1));
 		elements.set(index + 1, target);
+	}
+	
+	/**
+	 * Returns the number of targets filtered out of the list
+	 * of targets last returned by this content provider
+	 * @return the number of targets filtered out of the last request
+	 *  for targets
+	 */
+	public int getNumFiltered() {
+		return fNumFiltered;
+	}
+	
+	/**
+	 * Returns the number of targets returned the last time this content
+	 * provider was queried. If targets were filtered out, those targets are
+	 * not included in this count.
+	 * @return the number of targets returned the last time targets
+	 *  were requested
+	 */
+	public int getNumTargets() {
+		return fNumTargets;
+	}
+	
+	/**
+	 * Sets whether this content provider should filter out internal targets.
+	 * Internal targets are targets which have no description. If set <code>true</code>,
+	 * targets with no description will not be returned when getElements() is called.
+	 * @param filter sets whether internal targets should be filtered out
+	 */
+	public void setFilterInternalTargets(boolean filter) {
+		fFilterInternalTargets= filter;
 	}
 }

@@ -53,6 +53,13 @@ public interface IAntLaunchConfigurationConstants {
 	 * be set 
 	 */
 	public static final String ATTR_ANT_HOME = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_HOME"; //$NON-NLS-1$
+	/**
+	 * Boolean attribute indicating whether or not internal targets (targets with no
+	 * description) should be hidden from the user in the launch configuration dialog.
+	 * Default value is <code>false</code> which indicates that all targets will be
+	 * displayed.
+	 */
+	public static final String ATTR_HIDE_INTERNAL_TARGETS = IExternalToolConstants.PLUGIN_ID + ".ATTR_HIDE_INTERNAL_TARGETS"; //$NON-NLS-1$
 
 
 	// ------- Launch configuration types --------

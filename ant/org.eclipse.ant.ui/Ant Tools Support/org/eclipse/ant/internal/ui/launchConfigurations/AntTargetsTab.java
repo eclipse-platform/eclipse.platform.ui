@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
@@ -71,8 +72,10 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private Label fSelectionCountLabel = null;
 	private Text fTargetOrderText = null;
 	private Button fOrderButton = null;
+	private Button fFilterInternalTargets;
 	
 	private ILaunchConfiguration fLaunchConfiguration;
+	private AntTargetContentProvider fTargetContentProvider;
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -89,6 +92,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		comp.setLayoutData(gd);
 		comp.setFont(font);
+		
+		createFilterInternalTargets(comp);
 		
 		Label label = new Label(comp, SWT.NONE);
 		label.setFont(font);
@@ -137,6 +142,39 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	/**
+	 * @param comp
+	 */
+	private void createFilterInternalTargets(Composite parent) {
+		fFilterInternalTargets= new Button(parent, SWT.CHECK);
+		fFilterInternalTargets.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.12")); //$NON-NLS-1$
+		fFilterInternalTargets.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleFilterTargetsSelected();
+			}
+		});
+	}
+	
+	private void handleFilterTargetsSelected() {
+		boolean filter= fFilterInternalTargets.getSelection();
+		fTargetContentProvider.setFilterInternalTargets(filter);
+		if (filter) {
+			ListIterator iter= fOrderedTargets.listIterator();
+			while (iter.hasNext()) {
+				TargetInfo target= (TargetInfo) iter.next();
+				if (target.getDescription() == null) {
+					iter.remove();
+				}
+			}
+		}
+		fTableViewer.refresh();
+		// Must refresh before updating selection count because the selection
+		// count's "hidden" reporting needs the content provider to be queried
+		// first to count how many targets are hidden.
+		updateSelectionCount();
+		updateLaunchConfigurationDialog();
+	}
+
 	private void handleOrderPressed() {
 		TargetOrderDialog dialog = new TargetOrderDialog(getShell(), fOrderedTargets.toArray());
 		int ok = dialog.open();
@@ -178,7 +216,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
-		fTableViewer.setContentProvider(new AntTargetContentProvider());
+		fTargetContentProvider= new AntTargetContentProvider();
+		fTableViewer.setContentProvider(fTargetContentProvider);
 		
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
@@ -200,6 +239,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
+	/**
+	 * Updates the ordered targets list in response to an element being checked
+	 * or unchecked. When the element is checked, it's added to the list. When
+	 * unchecked, it's removed.
+	 * 
+	 * @param element the element in question
+	 * @param checked whether the element has been checked or unchecked
+	 */
 	private void updateOrderedTargets(Object element , boolean checked) {
 		if (checked) {
 			 fOrderedTargets.add(element);
@@ -210,15 +257,21 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		updateLaunchConfigurationDialog();	
 	}
 	
+	/**
+	 * Updates the selection count widget to display how many targets are
+	 * selected (example, "1 out of 6 selected").
+	 */
 	private void updateSelectionCount() {
 		Object[] checked = fTableViewer.getCheckedElements();
 		String numSelected = Integer.toString(checked.length);
-		int length= 0;
-		if (fAllTargets != null) {
-			length= fAllTargets.length;
-		}
+		int length= fTargetContentProvider.getNumTargets();
 		String total = Integer.toString(length);
-		fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.{0}_out_of_{1}_selected_7"), new String[]{numSelected, total})); //$NON-NLS-1$
+		int numHidden= fTargetContentProvider.getNumFiltered();
+		if (numHidden > 0) {
+			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.13"), new String[]{numSelected, total, String.valueOf(numHidden)})); //$NON-NLS-1$
+		} else {
+			fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab.{0}_out_of_{1}_selected_7"), new String[]{numSelected, total})); //$NON-NLS-1$
+		}
 		
 		fOrderButton.setEnabled(checked.length > 1);
 		
@@ -294,6 +347,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fLaunchConfiguration= configuration;
 		setErrorMessage(null);
 		setMessage(null);
+		boolean hideInternal= false;
+		try {
+			hideInternal = fLaunchConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, false);
+		} catch (CoreException e) {
+			AntUIPlugin.log(e);
+		}
+		fFilterInternalTargets.setSelection(hideInternal);
+		fTargetContentProvider.setFilterInternalTargets(hideInternal);
 		String configTargets= null;
 		String newLocation= null;
 		fOrderedTargets = new ArrayList();
@@ -360,7 +421,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {		
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {	
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, fFilterInternalTargets.getSelection());
 		if (fOrderedTargets.size() == 1) {
 			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
@@ -368,6 +430,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				return;
 			}
 		} else if (fOrderedTargets.size() == 0) {
+			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
 			return;
 		}
 		

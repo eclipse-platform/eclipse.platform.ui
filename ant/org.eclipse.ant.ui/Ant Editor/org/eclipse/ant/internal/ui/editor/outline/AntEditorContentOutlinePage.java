@@ -15,8 +15,8 @@
 package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.ant.internal.ui.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.internal.ui.editor.xml.XmlAttribute;
@@ -127,14 +127,16 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		public Object[] getChildren(Object parentNode) {
 			XmlElement tempParentElement = (XmlElement)parentNode;
 			List tempChilds = new ArrayList();
-			tempChilds.addAll(tempParentElement.getChildNodes());
-			if (isFilterInternalTargets()) {
+			List children= tempParentElement.getChildNodes();
+			if (!isFilterInternalTargets()) {
+				tempChilds.addAll(children);
+			} else {
 				// Filter out private targets
-				ListIterator iter= tempChilds.listIterator();
+				Iterator iter= children.iterator();
 				while (iter.hasNext()) {
 					XmlElement element = (XmlElement) iter.next();
-					if ("target".equals(element.getName()) && element.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) { //$NON-NLS-1$
-						iter.remove();
+					if (!isInternalTarget(element)) {
+						tempChilds.add(element);
 					}
 				}
 			}
@@ -143,6 +145,17 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				tempChildObjects[i] = tempChilds.get(i);
 			}
 			return tempChildObjects;
+		}
+		
+		/**
+		 * Returns whether the given target is an internal target. Internal
+		 * targets are targets which have no description. The default target
+		 * is never considered internal.
+		 * @param element the target to examine
+		 * @return whether the given target is an internal target
+		 */
+		private boolean isInternalTarget(XmlElement element) {
+			return !isDefaultTargetNode(element) && "target".equals(element.getName()) && element.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null; //$NON-NLS-1$
 		}
 
 

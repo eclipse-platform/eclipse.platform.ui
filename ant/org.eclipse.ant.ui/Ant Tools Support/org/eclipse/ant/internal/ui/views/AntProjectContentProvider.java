@@ -95,13 +95,24 @@ public class AntProjectContentProvider implements ITreeContentProvider {
 			List filteredTargets= new ArrayList();
 			for (int i = 0; i < targets.length; i++) {
 				TargetNode node = targets[i];
-				if (node.getDescription() != null) {
+				if (!isInternal(node)) {
 					filteredTargets.add(node);
 				}
 			}
 			return filteredTargets.toArray();
 		}
 		return null;
+	}
+
+	/**
+	 * Returns whether the given target is an internal target. Internal
+	 * targets are targets which has no description. The default target
+	 * is never considered internal.
+	 * @param target the target to examine
+	 * @return whether the given target is an internal target
+	 */
+	private boolean isInternal(TargetNode target) {
+		return target != target.getProject().getDefaultTarget() && target.getDescription() == null;
 	}
 	
 	/**

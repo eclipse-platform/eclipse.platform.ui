@@ -506,9 +506,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		init(site);
 		restoreRoot(memento);
-		IMemento child= memento.getChild(TAG_FILTER_INTERNAL_TARGETS);
-		if (child != null) {
-			restoredFilterInternalTargets= Boolean.valueOf(child.getString(KEY_VALUE)).booleanValue();
+		if (memento != null) {
+			IMemento child= memento.getChild(TAG_FILTER_INTERNAL_TARGETS);
+			if (child != null) {
+				restoredFilterInternalTargets= Boolean.valueOf(child.getString(KEY_VALUE)).booleanValue();
+			}
 		}
 	}
 
