@@ -189,9 +189,18 @@ public class CleanDialog extends MessageDialog {
 	protected void doClean(boolean cleanAll, IProgressMonitor monitor) throws CoreException {
 		if (cleanAll)
 			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-		else
-			for (int i = 0; i < selection.length; i++)
-				((IProject)selection[i]).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+		else {
+			  try {
+			    monitor.beginTask(IDEWorkbenchMessages.getString("CleanDialog.taskName"),    
+			      selection.length); //$NON-NLS-1$
+			    for (int i = 0; i < selection.length; i++)
+			      ((IProject)selection[i]).build(
+			        IncrementalProjectBuilder.CLEAN_BUILD, 
+			        new SubProgressMonitor(monitor, 1));
+			  } finally {
+			    monitor.done();
+			  }
+		}
 	}
 	/**
 	 * Fills in the name of the project in the text area.
