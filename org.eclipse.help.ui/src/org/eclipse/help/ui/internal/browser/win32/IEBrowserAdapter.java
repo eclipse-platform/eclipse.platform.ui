@@ -294,6 +294,9 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
 		IPluginDescriptor pfd =
 			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
+		if (pfd == null) 
+			return null; // no primary feature installed
+			
 		URL aboutURL = pfd.find(new Path("about.ini"));
 		if (aboutURL == null)
 			return null;
@@ -328,6 +331,8 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		String primaryFeatureId = c.getPrimaryFeatureIdentifier();
 		IPluginDescriptor pfd =
 			Platform.getPluginRegistry().getPluginDescriptor(primaryFeatureId);
+		if (pfd == null)
+			return ""; // no primary feature installed
 		return pfd.getLabel();
 	}
 }
