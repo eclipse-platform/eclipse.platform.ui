@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ui.jobs;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -78,28 +78,28 @@ class JobStateCategory implements IJobChangeListener {
 		Platform.getJobManager().removeJobChangeListener(this);
 	}
 	
-	public void aboutToRun(Job job) {
-		handleJobChange(job);
+	public void aboutToRun(IJobChangeEvent event) {
+		handleJobChange(event.getJob());
 	}
 	
-	public void awake(Job job) {
-		handleJobChange(job);
+	public void awake(IJobChangeEvent event) {
+		handleJobChange(event.getJob());
 	}
 	
-	public void done(Job job, IStatus result) {
-		handleJobChange(new JobDoneElement(job, result));
+	public void done(IJobChangeEvent event) {
+		handleJobChange(new JobDoneElement(event.getJob(), event.getResult()));
 	}
 	
-	public void running(Job job) {
-		handleJobChange(job);
+	public void running(IJobChangeEvent event) {
+		handleJobChange(event.getJob());
 	}
 	
-	public void scheduled(Job job) {
-		handleJobChange(job);
+	public void scheduled(IJobChangeEvent event) {
+		handleJobChange(event.getJob());
 	}
 	
-	public void sleeping(Job job) {
-		handleJobChange(job);
+	public void sleeping(IJobChangeEvent event) {
+		handleJobChange(event.getJob());
 	}
 	
 	synchronized protected void handleJobChange(Object object) {

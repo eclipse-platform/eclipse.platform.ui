@@ -18,6 +18,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -97,6 +98,7 @@ public class JobsView extends ViewPart {
 		manager.add(clearDone);
 		cancelJob.setEnabled(cancelJob.isEnabled());
 		manager.add(cancelJob);
+		manager.add(new Separator("Additions"));
 	}
 
 	public void setFocus() {		

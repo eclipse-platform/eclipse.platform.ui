@@ -21,10 +21,9 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -701,30 +700,30 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 * IJobChangeListener overrides. The only one of interest is done so that we can
 	 * change the icon of the view when the refresh jobis running.
 	 */
-	public void done(Job job, IStatus result) {
-		if(job.belongsTo(RefreshSubscriberJob.getFamily())) {
+	public void done(IJobChangeEvent event) {
+		if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
 			viewImage = initialImg;
 			fireSavePropertyChange(IWorkbenchPart.PROP_TITLE);
 		}
 	}
 
-	public void running(Job job) {
-		if(job.belongsTo(RefreshSubscriberJob.getFamily())) {
+	public void running(IJobChangeEvent event) {
+		if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
 			viewImage = refreshingImg;
 			fireSavePropertyChange(IWorkbenchPart.PROP_TITLE);
 		}
 	}
 
-	public void scheduled(Job job) {	
+	public void scheduled(IJobChangeEvent event) {	
 	}
 
-	public void sleeping(Job job) {
+	public void sleeping(IJobChangeEvent event) {
 	}
 
-	public void aboutToRun(Job job) {
+	public void aboutToRun(IJobChangeEvent event) {
 	}
 
-	public void awake(Job job) {
+	public void awake(IJobChangeEvent event) {
 	}
 	
 	private void fireSavePropertyChange(final int property) {
