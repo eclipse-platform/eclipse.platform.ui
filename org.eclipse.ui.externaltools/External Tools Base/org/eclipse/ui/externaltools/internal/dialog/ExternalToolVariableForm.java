@@ -192,6 +192,7 @@ public class ExternalToolVariableForm {
 			}
 		}
 		variableComposite.setVisible(enabled);
+		setComponentVisible(activeComponentIndex);
 	}
 	
 	private void updateVariableComposite(String value, boolean setValue) {
