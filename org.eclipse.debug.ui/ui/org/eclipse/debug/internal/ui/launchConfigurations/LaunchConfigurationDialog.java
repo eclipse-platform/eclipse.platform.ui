@@ -471,9 +471,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * management actions - New, Duplicate & Delete.
 	 */
 	protected void fillContextMenu(IMenuManager menu) {	
-		menu.add(getButtonActionNew());
-		menu.add(getButtonActionDuplicate());
-		menu.add(getButtonActionDelete());
+		if (getButtonActionNew().isEnabled()) {
+			menu.add(getButtonActionNew());
+		}
+		if (getButtonActionDuplicate().isEnabled()) {
+			menu.add(getButtonActionDuplicate());
+		}
+		if (getButtonActionDelete().isEnabled()) {
+			menu.add(getButtonActionDelete());
+		}
 	}	
 	
 	/**
