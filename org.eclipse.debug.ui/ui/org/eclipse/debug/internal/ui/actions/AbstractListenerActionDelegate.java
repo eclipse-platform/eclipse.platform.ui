@@ -60,6 +60,9 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	public void partOpened(IWorkbenchPart part) {
 	}
 	
+	/**
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
 	public void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 		getWindow().removePageListener(this);

@@ -63,6 +63,7 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 	
 	/**
 	 * Remove all actions do care nothing about the current selection
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!fInitialized) {
