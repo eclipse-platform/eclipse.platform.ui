@@ -23,25 +23,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class SearchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
-	/*
-	 * XXX: Need to subclass due to bug: 18183: setEnabled(...) for FieldEditors
-	 */	
-	private class ColorEditor extends ColorFieldEditor {
-		public ColorEditor(String name, String labelText, Composite parent) {
-			super(name, labelText, parent);
-		}		
-		void setEnabled(boolean state) {
-			getLabelControl().setEnabled(state);
-			getChangeControl(getFieldEditorParent()).setEnabled(state);
-		}
-	}
-
-
 	public static final String EMPHASIZE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.emphasize"; //$NON-NLS-1$
 	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
 	public static final String REUSE_EDITOR= "org.eclipse.search.reuseEditor"; //$NON-NLS-1$
 
-	private ColorEditor fColorEditor;
+	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
 	private Composite fParent;
 
@@ -91,17 +77,17 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			getFieldEditorParent());
 		addField(fEmphasizedCheckbox);
 
-		fColorEditor= new ColorEditor(
+		fColorEditor= new ColorFieldEditor(
 			POTENTIAL_MATCH_FG_COLOR,
 			SearchMessages.getString("SearchPreferencePage.potentialMatchFgColor"), //$NON-NLS-1$
 			getFieldEditorParent()
         );
 		addField(fColorEditor);
-		fColorEditor.setEnabled(arePotentialMatchesEmphasized());
+		fColorEditor.setEnabled(arePotentialMatchesEmphasized(), getFieldEditorParent());
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue());
+		fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
 	}
 
 	public void init(IWorkbench workbench) {
@@ -109,6 +95,6 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 
 	protected void performDefaults() {
 		super.performDefaults();
-		fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue());
+		fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
 	}
 }
