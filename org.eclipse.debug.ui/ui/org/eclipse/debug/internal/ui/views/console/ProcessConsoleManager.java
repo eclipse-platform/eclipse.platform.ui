@@ -144,45 +144,41 @@ public class ProcessConsoleManager implements ILaunchListener {
      * @see ILaunchListener#launchChanged(ILaunch)
      */
     public void launchChanged(final ILaunch launch) {
-        DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
-            public void run() {
-                IProcess[] processes= launch.getProcesses();
-                boolean consolesAdded = false;
-                for (int i= 0; i < processes.length; i++) {
-                    if (getConsoleDocument(processes[i]) == null) {
-                        IProcess process = processes[i];
-                        if (process.getStreamsProxy() == null) {
-                            continue;
-                        }
-                        //create a new console.
-                        IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
-                        String encoding = null;
-                        try {
-                            encoding = launch.getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
-                        } catch (CoreException e) {
-                        }
-                        ProcessConsole pc = new ProcessConsole(process, colorProvider, encoding);
-                        pc.setAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS, process);
-                        //add new console to console manager.
-                        ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
-                        consolesAdded = true;
-                    }
+        IProcess[] processes= launch.getProcesses();
+        boolean consolesAdded = false;
+        for (int i= 0; i < processes.length; i++) {
+            if (getConsoleDocument(processes[i]) == null) {
+                IProcess process = processes[i];
+                if (process.getStreamsProxy() == null) {
+                    continue;
                 }
-                if (consolesAdded) {
-                    //To avoid flashing in console view, only remove terminated consoles 
-                    //after the new consoles have been added.
-                    removeTerminatedLaunches(launch);
+                //create a new console.
+                IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
+                String encoding = null;
+                try {
+                    encoding = launch.getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_CONSOLE_ENCODING, (String)null);
+                } catch (CoreException e) {
                 }
-                List removed = getRemovedProcesses(launch);
-                if (removed != null) {
-                    Iterator iterator = removed.iterator();
-                    while (iterator.hasNext()) {
-                        IProcess p = (IProcess) iterator.next();
-                        removeProcess(p);
-                    }
-                }
+                ProcessConsole pc = new ProcessConsole(process, colorProvider, encoding);
+                pc.setAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS, process);
+                //add new console to console manager.
+                ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[]{pc});
+                consolesAdded = true;
             }
-        });
+        }
+        if (consolesAdded) {
+            //To avoid flashing in console view, only remove terminated consoles 
+            //after the new consoles have been added.
+            removeTerminatedLaunches(launch);
+        }
+        List removed = getRemovedProcesses(launch);
+        if (removed != null) {
+            Iterator iterator = removed.iterator();
+            while (iterator.hasNext()) {
+                IProcess p = (IProcess) iterator.next();
+                removeProcess(p);
+            }
+        }
     }
     
     /**
