@@ -375,6 +375,11 @@ private void createTree(Composite parent) {
 				}
 			});
 		}
+		public void widgetDefaultSelected(final SelectionEvent event) {
+			TreeItem[] selection = tree.getSelection();
+			if (selection.length > 0) 
+				selection[0].setExpanded(!selection[0].getExpanded());
+		}
 	});
 	IPreferenceNode node = preferenceManager.getRoot();
 	IPreferenceNode[] subnodes = node.getSubNodes();
