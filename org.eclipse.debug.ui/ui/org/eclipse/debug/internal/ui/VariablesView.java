@@ -111,8 +111,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	 */
 	public void dispose() {
 		// listen to selection in debug view
-		ISelectionProvider provider = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		provider.removeSelectionChangedListener(this);		
+		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);	
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		super.dispose();
@@ -195,8 +194,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		createDetailContextMenu(getDetailTextViewer().getTextWidget());
 		
 		// listen to selection in debug view
-		ISelectionProvider provider = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		provider.addSelectionChangedListener(this);
+		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
 		
 		return vv;
 	}
@@ -272,8 +270,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		fLastSashWeights = weights;
 	}
 
-	protected void setInitialContent(ISelectionProvider provider) {
-		ISelection selection = provider.getSelection();
+	protected void setInitialContent(ISelection selection) {
 		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
 			setViewerInput((IStructuredSelection) selection);
 		}
@@ -338,8 +335,8 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 		updateAction(ITextEditorActionConstants.FIND);
 		
 		// set initial content here, as viewer has to be set
-		ISelectionProvider provider = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		setInitialContent(provider);
+		ISelection selection = DebugSelectionManager.getDefault().getSelection(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		setInitialContent(selection);
 	} 
 
 	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {

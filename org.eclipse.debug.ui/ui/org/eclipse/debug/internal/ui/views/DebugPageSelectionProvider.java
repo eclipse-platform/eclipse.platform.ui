@@ -141,11 +141,12 @@ public class DebugPageSelectionProvider extends AbstractDebugSelectionProvider i
 	/**
 	 * Sets the debug view for this selection provider
 	 */
-	protected void setDebugView(IDebugViewAdapter view) {
+	private void setDebugView(IDebugViewAdapter view) {
 		if (fDebugView != null) {
 			// remove myself as a listener from the existing
 			// debug view
 			Viewer v = fDebugView.getViewer();
+			// the viewer can be null if not yet realized
 			if (v != null) {
 				v.removeSelectionChangedListener(this);	
 			}			
@@ -153,6 +154,9 @@ public class DebugPageSelectionProvider extends AbstractDebugSelectionProvider i
 		fDebugView = view;
 		if (view != null) {
 			Viewer v = fDebugView.getViewer();
+			// The viewer can be null if not yet realized.
+			// The view will register when it is created
+			// (@see DebugSelectionManager.registerView(IDebugViewAdapter)
 			if (v != null) {
 				v.addSelectionChangedListener(this);	
 			}

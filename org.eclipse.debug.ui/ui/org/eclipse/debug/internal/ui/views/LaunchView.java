@@ -128,10 +128,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		IAction qAction = new ShowQualifiedAction(viewer);
 		qAction.setChecked(false);
 		setAction("ShowQualifiedNames", qAction);	 //$NON-NLS-1$
-
-		// XXX: Temp Hack to get the debug viewer set properly
-		DebugPageSelectionProvider dpsp = (DebugPageSelectionProvider)DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		dpsp.setDebugView(this);
 				
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the

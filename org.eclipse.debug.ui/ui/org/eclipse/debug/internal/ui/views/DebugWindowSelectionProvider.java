@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.ui.views;
  * All Rights Reserved.
  */
 
+import java.util.Map;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -60,8 +61,7 @@ public class DebugWindowSelectionProvider extends AbstractDebugSelectionProvider
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
-		ISelectionProvider sp = DebugSelectionManager.getDefault().getSelectionProvider(page, getViewId());
-		sp.addSelectionChangedListener(this);
+		DebugSelectionManager.getDefault().addSelectionChangedListener(this, page, getViewId());
 	}
 	
 	/**
@@ -94,6 +94,10 @@ public class DebugWindowSelectionProvider extends AbstractDebugSelectionProvider
 	 * @see AbstractDebugSelectionProvider#getSelectionProvider()
 	 */
 	protected ISelectionProvider getSelectionProvider() {
-		return DebugSelectionManager.getDefault().getSelectionProvider(getWindow().getActivePage(), getViewId());
+		Map map = DebugSelectionManager.getDefault().getSelectionProviders(getWindow().getActivePage());
+		if (map != null) {
+			return (ISelectionProvider)map.get(getViewId());
+		}
+		return null;
 	}	
 }

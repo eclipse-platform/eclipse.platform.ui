@@ -69,8 +69,7 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 		getSite().setSelectionProvider(cv.getSelectionProvider());
 		
 		// listen to selection changes in the debug view
-		ISelectionProvider sp = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		sp.addSelectionChangedListener(this);			
+		DebugSelectionManager.getDefault().addSelectionChangedListener(this,getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
 		return cv;
 	}
 	
@@ -257,8 +256,7 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 	}
 	
 	public void dispose() {
-		ISelectionProvider sp = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		sp.removeSelectionChangedListener(this);		
+		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
 		if (getConsoleViewer() != null) {
 			getConsoleViewer().dispose();
 		}

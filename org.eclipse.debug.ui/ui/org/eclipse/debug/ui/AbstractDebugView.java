@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -166,6 +167,9 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		if (viewer instanceof StructuredViewer) {
 			((StructuredViewer)viewer).addDoubleClickListener(this);	
 		}
+		// notify the selection manager that a debug view has been
+		// created/realized.
+		DebugSelectionManager.getDefault().registerView(this);
 	}	
 	/**
 	 * Creates and returns this view's underlying viewer.
