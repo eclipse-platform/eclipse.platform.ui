@@ -115,7 +115,6 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
 		initialize(action);		
-		boolean enabled = false;
 			
 		if (getView() == null) {
 			// global action - update with debug view selection
