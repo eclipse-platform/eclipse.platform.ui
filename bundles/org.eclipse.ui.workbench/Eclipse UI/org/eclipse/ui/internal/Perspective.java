@@ -971,10 +971,28 @@ public IStatus restoreState() {
 	// Load the action sets.
 	IMemento [] actions = memento.getChildren(IWorkbenchConstants.TAG_ACTION_SET);
 	ArrayList actionsArray = new ArrayList(actions.length);
+	String knownActionSetIds = null;
 	for (int x = 0; x < actions.length; x ++) {
 		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
 		actionsArray.add(actionSetID);
+		knownActionSetIds += " " + actionSetID + " ";
 	}
+	
+	// Now go through the registry to ensure we pick up any new action sets
+	// that have been added but not yet considered by this perspective.
+	ActionSetRegistry reg =
+		WorkbenchPlugin.getDefault().getActionSetRegistry();
+	IActionSetDescriptor[] array = reg.getActionSets();
+	int count = array.length;
+	for (int i = 0; i < count; i++) {
+		IActionSetDescriptor desc = array[i];
+		String searchId = " " + desc.getId() + " ";
+		if ( (knownActionSetIds.indexOf(searchId) == -1) &&
+		     (desc.isInitiallyVisible()) ) {
+			addActionSet(desc);
+		}
+	}
+	
 	createInitialActionSets(actionsArray);
 
 	// Load the always on action sets.
