@@ -290,11 +290,17 @@ protected final Widget findItem(Object element) {
  * @see IDoubleClickListener#doubleClick
  */
 protected void fireDoubleClick(DoubleClickEvent event) {
+	System.out.println("fireDoubleClick");
 	Object[] listeners = doubleClickListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
 		((IDoubleClickListener) listeners[i]).doubleClick(event);
 	}
 }
+protected void fireSelectionChanged(SelectionChangedEvent event) {
+	System.out.println("fireSelectionChanged");
+	super.fireSelectionChanged(event);
+}
+
 /**
  * Notifies any selection-activated listeners that a selection has been activated.
  * Only listeners registered at the time this method is called are notified.
@@ -304,6 +310,7 @@ protected void fireDoubleClick(DoubleClickEvent event) {
  * @see ISelectionActivatedListener#doubleClick
  */
 protected void fireSelectionActivated(SelectionActivatedEvent event) {
+		System.out.println("fireSelectionActivated");
 	Object[] listeners = selectionActivatedListeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
 		((ISelectionActivatedListener) listeners[i]).selectionActivated(event);
@@ -502,9 +509,10 @@ protected void handleSelect(SelectionEvent event) {
 	// handle case where an earlier selection listener disposed the control.
 	Control control = getControl();
 	if (control != null && !control.isDisposed()) {
-		updateSelection(getSelection());
+		ISelection selection = getSelection();
+		updateSelection(selection);
 		if(activateSelectionOnClick)
-			fireSelectionActivated(new SelectionActivatedEvent(this, getSelection()));
+			fireSelectionActivated(new SelectionActivatedEvent(this, selection));
 	}
 }
 /**
