@@ -267,10 +267,14 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				// Reset selection to the next config
 				TreeItem[] configItems= getTreeViewer().getTree().getItems()[typeIndex].getItems();
 				int numItems= configItems.length;
+				Object data= null;
 				if (numItems > configIndex) { // Select the item at the same index as the deleted
-					newSelection= new StructuredSelection(configItems[configIndex].getData());
+					data= configItems[configIndex].getData();
 				} else if (numItems > 0) { // Deleted the last item(s). Select the last item
-					newSelection= new StructuredSelection(configItems[numItems - 1].getData());
+					data= configItems[numItems - 1].getData();
+				}
+				if (data != null) {
+					newSelection= new StructuredSelection(data);
 				}
 			}
 			if (newSelection == null && type != null) {
