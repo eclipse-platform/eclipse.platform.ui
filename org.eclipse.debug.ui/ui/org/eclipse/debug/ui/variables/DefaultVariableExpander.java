@@ -50,7 +50,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * @see IVariableExpander#getResources(String, String, ExpandVariableContext)
 	 */
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("DefaultVariableExpander.No_expander_class_defined_for_the_variable_{0}_2"), new String[] {varTag})); //$NON-NLS-1$
+		throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("DefaultVariableExpander.No_expander_class_defined_for_the_variable_{0}_1"), new String[] {varTag})); //$NON-NLS-1$
 		return null;
 	}
 
@@ -58,7 +58,7 @@ public class DefaultVariableExpander implements IVariableExpander {
 	 * @see IVariableExpander#getText(String, String, ExpandVariableContext)
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("DefaultVariableExpander.No_expander_class_defined_for_the_variable_{0}_3"), new String[] {varTag})); //$NON-NLS-1$
+		throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("DefaultVariableExpander.No_expander_class_defined_for_the_variable_{0}_1"), new String[] {varTag})); //$NON-NLS-1$
 		return null;
 	}
 	
