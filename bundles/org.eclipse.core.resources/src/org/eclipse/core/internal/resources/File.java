@@ -84,7 +84,7 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 				if (!CoreFileSystemLibrary.isCaseSensitive()) {
 					if (localFile.exists()) {
 						String name = getLocalManager().getLocalName(localFile);
-						if (localFile.getName().equals(name)) {
+						if (name == null || localFile.getName().equals(name)) {
 							delete(true, null);
 						} else {
 							// The file system is not case sensitive and there is already a file
