@@ -39,6 +39,7 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
+import org.apache.tools.ant.taskdefs.Definer;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
@@ -110,6 +111,9 @@ public class AntModel implements IAntModel {
 	
 	private Map fProperties= null;
 	private List fPropertyFiles= null;
+    
+	private Map fDefinersToText;
+    private Map fPreviousDefinersToText;
 	
 	public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider) {
 		init(document, problemRequestor, locationProvider);
@@ -246,6 +250,10 @@ public class AntModel implements IAntModel {
 		fLastNode= null;
 		
 		fNonStructuralNodes= new ArrayList(1);
+        if (fDefinersToText != null) {
+            fPreviousDefinersToText= new HashMap(fDefinersToText);
+            fDefinersToText= null;
+        }
 	}
 	
 	private void parseDocument(IDocument input) {
@@ -1472,6 +1480,33 @@ public class AntModel implements IAntModel {
     public void setPropertyFiles(String[] propertyFiles) {
         if (propertyFiles != null) {
             fPropertyFiles= Arrays.asList(propertyFiles);
+        }
+    }
+    
+    public void setDefiningTaskNodeText(AntDefiningTaskNode node) {
+        if (fDefinersToText == null) {
+            fDefinersToText= new HashMap();
+        }
+        Definer definer= (Definer)node.getRealTask();
+        Object key= definer.getName();
+        if (key == null) {
+            key= definer.getResource();
+            if (key == null) {
+                key= definer.getFile();
+            }
+        }
+        String nodeText= null;
+        if (fPreviousDefinersToText != null) {
+            nodeText= (String) fPreviousDefinersToText.get(key);
+        }
+        String newNodeText= getText(node.getOffset(), node.getLength());
+        if (nodeText != null) {
+            if (nodeText.equals(newNodeText)) {
+                node.needsToBeConfigured(false);
+            }
+        }
+        if (newNodeText != null) {
+            fDefinersToText.put(key, newNodeText);
         }
     }
 }

@@ -206,26 +206,23 @@ public interface IAntModel {
      */
     void warning(Exception e);
 
-    /**
-     * @param e
-     * @param element
-     * @param lineNumber
-     * @param columnNumber
-     */
     void errorFromElement(Exception e, AntElementNode element, int lineNumber, int columnNumber);
 
-    /**
-     * @param e
-     * @param offset
-     * @param columnNumber
-     */
     void errorFromElementText(Exception e, int offset, int columnNumber);
 
     /**
      * Returns the text in the document of this Ant model for the given offset and length
+     * 
      * @param offset the offset within the document
      * @param length the length of text to retrieve
      * @return the text at the given offset of <code>null</code> if not contained within the document range
      */
     String getText(int offset, int length);
+    
+    /**
+     * Caches the text from the provided defining node so that the node definitions are only
+     * updated if the text changes on reconciliation
+     * @param node the defining task node to cache the associated text
+     */
+    void setDefiningTaskNodeText(AntDefiningTaskNode node);
 }

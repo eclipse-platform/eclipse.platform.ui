@@ -30,6 +30,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class AntDefiningTaskNode extends AntTaskNode {
 	
+    private boolean fNeedsToBeConfigured= true;
+    
 	public AntDefiningTaskNode(Task task, String label) {
 		super(task, label);
 	}
@@ -46,6 +48,9 @@ public class AntDefiningTaskNode extends AntTaskNode {
 	 * Execute the defining task.
 	 */
 	public boolean configure(boolean validateFully) {
+        if (!fNeedsToBeConfigured) {
+            return false;
+        }
 		IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
 		boolean enabled= store.getBoolean(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS);
 		if (enabled) {
@@ -120,4 +125,16 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		}
 		return false;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.model.AntElementNode#setLength(int)
+     */
+    public void setLength(int length) {
+       super.setLength(length);
+       getAntModel().setDefiningTaskNodeText(this);
+    }
+
+    protected void needsToBeConfigured(boolean configure) {
+       fNeedsToBeConfigured= configure;
+    }
 }
