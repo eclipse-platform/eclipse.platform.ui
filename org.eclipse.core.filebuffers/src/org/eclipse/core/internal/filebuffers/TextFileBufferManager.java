@@ -28,6 +28,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -206,18 +207,45 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		Assert.isNotNull(location);
 		location= FileBuffers.normalizeLocation(location);
 		
-		IDocumentFactory factory= fRegistry.getDocumentFactory(location);
-		
-		IDocument document= null;
-		if (factory != null)
-			document= factory.createDocument();
+		final IDocument[] runnableResult= new IDocument[1];
+		final IDocumentFactory factory= fRegistry.getDocumentFactory(location);
+		if (factory != null) {
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					runnableResult[0]= factory.createDocument();
+				}
+				public void handleException(Throwable t) {
+					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("TextFileBufferManager.error.documentFactoryFailed"), t); //$NON-NLS-1$
+					FileBuffersPlugin.getDefault().getLog().log(status);
+					if (t instanceof VirtualMachineError)
+						throw (VirtualMachineError)t;
+				}
+			};
+			Platform.run(runnable);
+		}
+		final IDocument document;
+		if (runnableResult[0] != null)
+			document= runnableResult[0];
 		else
 			document= new Document();
 			
-		IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location);
+		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location);
 		if (participants != null) {
-			for (int i= 0; i < participants.length; i++)
-				participants[i].setup(document);
+			for (int i= 0; i < participants.length; i++) {
+				final IDocumentSetupParticipant participant= participants[i];
+				ISafeRunnable runnable= new ISafeRunnable() {
+					public void run() throws Exception {
+						participant.setup(document);
+					}
+					public void handleException(Throwable t) {
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("TextFileBufferManager.error.documentSetupFailed"), t); //$NON-NLS-1$
+						FileBuffersPlugin.getDefault().getLog().log(status);
+						if (t instanceof VirtualMachineError)
+							throw (VirtualMachineError)t;
+					}
+				};
+				Platform.run(runnable);
+			}
 		}
 		
 		return document;
