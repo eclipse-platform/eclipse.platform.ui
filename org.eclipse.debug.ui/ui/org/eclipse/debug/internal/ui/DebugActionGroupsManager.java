@@ -192,16 +192,18 @@ public class DebugActionGroupsManager implements IMenuListener {
 				String viewActionSetId = (String) fDebugActionGroupActionIds.get(id);
 				if (viewActionSetId != null) {
 					DebugActionGroup actionSet = (DebugActionGroup) fDebugActionGroups.get(viewActionSetId);
-					iContributionItem.setVisible(actionSet.isVisible());
-					visibilityChanged = true;
-					DebugActionGroupAction action= new DebugActionGroupAction(id, item.getAction().getText(), viewName, viewId, item.getAction().getImageDescriptor(), toolbarAction);
-					List actions= (List)fDebugActionGroupActions.get(id);
-					if (actions == null) {
-						actions= new ArrayList(1);
-						actions.add(action);
-						fDebugActionGroupActions.put(id, actions);
-					} else if (!actions.contains(action)) {
-						actions.add(action);
+					if (actionSet != null) {
+						iContributionItem.setVisible(actionSet.isVisible());
+						visibilityChanged = true;
+						DebugActionGroupAction action= new DebugActionGroupAction(id, item.getAction().getText(), viewName, viewId, item.getAction().getImageDescriptor(), toolbarAction);
+						List actions= (List)fDebugActionGroupActions.get(id);
+						if (actions == null) {
+							actions= new ArrayList(1);
+							actions.add(action);
+							fDebugActionGroupActions.put(id, actions);
+						} else if (!actions.contains(action)) {
+							actions.add(action);
+						}
 					}
 				}
 			}
