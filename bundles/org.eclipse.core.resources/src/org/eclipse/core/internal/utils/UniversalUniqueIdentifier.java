@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.utils;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import java.io.*;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -105,7 +105,7 @@ Java class <code>HexConverter</code>.
 */
 public UniversalUniqueIdentifier(String string) {
 	// Check to ensure it is a String of the right length.
-	Assert.isTrue(string.length() == PrintStringSize, "String: '"+string+"' is incorrect length");
+	Assert.isTrue(string.length() == PrintStringSize, Policy.bind("utils.wrongLength", string));
 
 	char[] newChars = string.toCharArray();
 
@@ -144,7 +144,7 @@ public Object clone() {
 	try {
 		return super.clone();
 	} catch (CloneNotSupportedException e) {
-		Assert.isTrue(false, "Clone not supported");
+		Assert.isTrue(false, Policy.bind("utils.clone"));
 		return null;
 	}
 }
@@ -214,7 +214,7 @@ protected static byte[] getIPAddress() {
 	try {
 		return InetAddress.getLocalHost().getAddress();
 	} catch (UnknownHostException e) {
-		Assert.isTrue(false, "Local host address cannot be found");
+		Assert.isTrue(false, Policy.bind("utils.address"));
 		return null;
 	}
 }
@@ -322,7 +322,7 @@ public void print(DataOutputStream outStream) {
 	try {
 		outStream.writeBytes(toString());
 	} catch (IOException e) {
-		Assert.isTrue(false, "Failed to print UUID");
+		Assert.isTrue(false, Policy.bind("utils.print"));
 	}
 }
 private void setClockSequence(int clockSeq) {

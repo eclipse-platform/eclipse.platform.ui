@@ -1,13 +1,14 @@
 package org.eclipse.core.internal.dtree;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import java.util.Enumeration;
 
 /**
@@ -36,62 +37,61 @@ public class DeltaDataTree extends AbstractDataTree {
 	private AbstractDataTreeNode rootNode;
 	private DeltaDataTree parent;
 
+/**
+ * Creates a new empty tree.
+ */
+public DeltaDataTree() {
+	this.empty();
+}
+/**
+ * Creates a new tree.
+ * @param rootNode
+ *	root node of new tree.
+ */
+public DeltaDataTree(AbstractDataTreeNode rootNode) {
+	this.rootNode = rootNode;
+	this.parent = null;
+}
+protected DeltaDataTree(AbstractDataTreeNode rootNode, DeltaDataTree parent) {
+	this.rootNode = rootNode;
+	this.parent = parent;
+}
+/**
+ * Adds a child to the tree.
+ *
+ * @param parentKey parent for new child.
+ * @param localName name of child.
+ * @param childNode child node.
+ */
+protected void addChild (IPath parentKey, String localName, 
+	AbstractDataTreeNode childNode) {
+	
+	if (!includes(parentKey)) {
+		handleNotFound(parentKey);
+	}
+	
+	childNode.setName(localName);
+	this.assembleNode(
+		parentKey, 
+		new NoDataDeltaNode(parentKey.lastSegment(), childNode));
+}
+/**
+ * Returns the tree as a backward delta.  If the delta is applied to the tree it
+ * will produce its parent. The receiver must have a forward 
+ * delta representation. I.e.:  Call the receiver's parent A, 
+ * and the receiver B.  The receiver's representation is A->B.
+ * Returns the delta A<-B.  The result is equivalent to A, but has B as its parent.
+ */
+DeltaDataTree asBackwardDelta() {
+	
+	if (getParent() == null) {
+		return newEmptyDeltaTree();
+	}
 
-	/**
-	 * Creates a new empty tree.
-	 */
-	public DeltaDataTree() {
-		this.empty();
-	}
-	/**
-	 * Creates a new tree.
-	 * @param rootNode
-	 *	root node of new tree.
-	 */
-	public DeltaDataTree(AbstractDataTreeNode rootNode) {
-		this.rootNode = rootNode;
-		this.parent = null;
-	}
-	protected DeltaDataTree(AbstractDataTreeNode rootNode, DeltaDataTree parent) {
-		this.rootNode = rootNode;
-		this.parent = parent;
-	}
-	/**
-	 * Adds a child to the tree.
-	 *
-	 * @param parentKey parent for new child.
-	 * @param localName name of child.
-	 * @param childNode child node.
-	 */
-	protected void addChild (IPath parentKey, String localName, 
-		AbstractDataTreeNode childNode) {
-		
-		if (!includes(parentKey)) {
-			handleNotFound(parentKey);
-		}
-		
-		childNode.setName(localName);
-		this.assembleNode(
-			parentKey, 
-			new NoDataDeltaNode(parentKey.lastSegment(), childNode));
-	}
-	/**
-	 * Returns the tree as a backward delta.  If the delta is applied to the tree it
-	 * will produce its parent. The receiver must have a forward 
-	 * delta representation. I.e.:  Call the receiver's parent A, 
-	 * and the receiver B.  The receiver's representation is A->B.
-	 * Returns the delta A<-B.  The result is equivalent to A, but has B as its parent.
-	 */
-	DeltaDataTree asBackwardDelta() {
-		
-		if (getParent() == null) {
-			return newEmptyDeltaTree();
-		}
-
-		return new DeltaDataTree(
-			getRootNode().asBackwardDelta (this, getParent(), rootKey()),
-			this);
-	}
+	return new DeltaDataTree(
+		getRootNode().asBackwardDelta (this, getParent(), rootKey()),
+		this);
+}
 /**
  * This method can only be called on a comparison tree created
  * using DeltaDataTree.compareWith().  This method flips the orientation
@@ -134,30 +134,30 @@ public DeltaDataTree asReverseComparisonTree(IComparator comparator) {
 protected void assembleNode(IPath key, AbstractDataTreeNode deltaNode) {
 	rootNode = rootNode.assembleWith(deltaNode, key, 0);
 }
-	/**
-	 * Assembles the receiver with the given delta tree and answer 
-	 * the resulting, mutable source tree.  The given delta tree must be a 
-	 * forward delta based on the receiver (i.e. missing information is taken from 
-	 * the receiver).  This operation is used to coalesce delta trees.
-	 *
-	 * <p>In detail, suppose that c is a forward delta over source tree a.
-	 * Let d := a assembleWithForwardDelta: c.
-	 * d has the same content as c, and is represented as a delta tree
-	 * whose parent is the same as a's parent.
-	 *
-	 * <p>In general, if c is represented as a chain of deltas of length n,
-	 * then d is represented as a chain of length n-1.
-	 *
-	 * <p>So if a is a complete tree (i.e., has no parent, length=0), then d
+/**
+ * Assembles the receiver with the given delta tree and answer 
+ * the resulting, mutable source tree.  The given delta tree must be a 
+ * forward delta based on the receiver (i.e. missing information is taken from 
+ * the receiver).  This operation is used to coalesce delta trees.
+ *
+ * <p>In detail, suppose that c is a forward delta over source tree a.
+ * Let d := a assembleWithForwardDelta: c.
+ * d has the same content as c, and is represented as a delta tree
+ * whose parent is the same as a's parent.
+ *
+ * <p>In general, if c is represented as a chain of deltas of length n,
+ * then d is represented as a chain of length n-1.
+ *
+ * <p>So if a is a complete tree (i.e., has no parent, length=0), then d
  	 * will be a complete tree too.
-	 *
-	 * <p>Corollary: (a assembleWithForwardDelta: (a forwardDeltaWith: b)) = b
-	 */
-	public DeltaDataTree assembleWithForwardDelta (DeltaDataTree deltaTree) {
-		return new DeltaDataTree(
-			getRootNode().assembleWith(deltaTree.getRootNode()),
-			this);
-	}
+ *
+ * <p>Corollary: (a assembleWithForwardDelta: (a forwardDeltaWith: b)) = b
+ */
+public DeltaDataTree assembleWithForwardDelta (DeltaDataTree deltaTree) {
+	return new DeltaDataTree(
+		getRootNode().assembleWith(deltaTree.getRootNode()),
+		this);
+}
 /**
  * Compares this tree with another tree, starting from the given path.  The
  * given path will be the root node of the returned tree.  Both this
@@ -272,136 +272,137 @@ public DeltaDataTree compareWith(DeltaDataTree other, IComparator comparator, IP
 		}
 	}
 }
-	/**
-	 * Returns a copy of the tree which shares its instance variables.
-	 */
-	protected AbstractDataTree copy () {
-		return new DeltaDataTree(rootNode, parent);
-	}
-	/**
-	 * Returns a complete node containing the contents of a subtree of the tree.
-	 *
-	 * @param key
-	 *	key of subtree to copy
-	 */
-	public AbstractDataTreeNode copyCompleteSubtree (IPath key) {
+/**
+ * Returns a copy of the tree which shares its instance variables.
+ */
+protected AbstractDataTree copy () {
+	return new DeltaDataTree(rootNode, parent);
+}
+/**
+ * Returns a complete node containing the contents of a subtree of the tree.
+ *
+ * @param key
+ *	key of subtree to copy
+ */
+public AbstractDataTreeNode copyCompleteSubtree (IPath key) {
 
-		AbstractDataTreeNode node = searchNodeAt(key);
-		if (node == null) {
-			// not found
-			handleNotFound(key);
-		}
-		if (node.isDelta()) {
-			return naiveCopyCompleteSubtree(key);
-		} else {
-			//copy the node in case the user wants to hammer the subtree name
-			return node.copy();
-		}
+	AbstractDataTreeNode node = searchNodeAt(key);
+	if (node == null) {
+		// not found
+		handleNotFound(key);
 	}
+	if (node.isDelta()) {
+		return naiveCopyCompleteSubtree(key);
+	} else {
+		//copy the node in case the user wants to hammer the subtree name
+		return node.copy();
+	}
+}
 /**
  * @see AbstractDataTree#createChild
  */
 public void createChild(IPath parentKey, String localName) {
 	createChild(parentKey, localName, null);
 }
-	/**
-	 * @see AbstractDataTree#createChild
-	 */
-	public void createChild (IPath parentKey, String localName, Object data) {
+/**
+ * @see AbstractDataTree#createChild
+ */
+public void createChild (IPath parentKey, String localName, Object data) {
 
-		if (isImmutable()) {
-			handleImmutableTree();
-		}		
-		addChild(
-			parentKey, 
-			localName, 
-			new DataTreeNode(localName, data));
-	}
-	/**
-	 * Returns a delta data tree that represents an empty delta.
-	 * (i.e. it represents a delta on another (unspecified) tree, 
-	 * but introduces no changes).
-	 */
-	static DeltaDataTree createEmptyDelta () {
+	if (isImmutable()) {
+		handleImmutableTree();
+	}		
+	addChild(
+		parentKey, 
+		localName, 
+		new DataTreeNode(localName, data));
+}
+/**
+ * Returns a delta data tree that represents an empty delta.
+ * (i.e. it represents a delta on another (unspecified) tree, 
+ * but introduces no changes).
+ */
+static DeltaDataTree createEmptyDelta () {
 
-		DeltaDataTree newTree = new DeltaDataTree();
-		newTree.emptyDelta();
-		return newTree;
-	}
-	/**
-	 * Creates and returns an instance of the receiver.
-	 * @see AbstractDataTree#createInstance
-	 */
-	protected AbstractDataTree createInstance() {
-		return new DeltaDataTree();
-	}
-	/**
-	 * @see AbstractDataTree#createSubtree
-	 */
-	public void createSubtree (IPath key, AbstractDataTreeNode node) {
+	DeltaDataTree newTree = new DeltaDataTree();
+	newTree.emptyDelta();
+	return newTree;
+}
+/**
+ * Creates and returns an instance of the receiver.
+ * @see AbstractDataTree#createInstance
+ */
+protected AbstractDataTree createInstance() {
+	return new DeltaDataTree();
+}
+/**
+ * @see AbstractDataTree#createSubtree
+ */
+public void createSubtree (IPath key, AbstractDataTreeNode node) {
 
-		if (isImmutable()) {
-			handleImmutableTree();
-		}
-				
-		if (key.isRoot()) {
-			setParent(null);
-			setRootNode(node);
-		} else {
-			addChild (key.removeLastSegments(1), key.lastSegment(), node);
-		}
+	if (isImmutable()) {
+		handleImmutableTree();
 	}
-	/**
-	 * @see AbstractDataTree#deleteChild
-	 */
-	public void deleteChild (IPath parentKey, String localName) {
+			
+	if (key.isRoot()) {
+		setParent(null);
+		setRootNode(node);
+	} else {
+		addChild (key.removeLastSegments(1), key.lastSegment(), node);
+	}
+}
+/**
+ * @see AbstractDataTree#deleteChild
+ */
+public void deleteChild (IPath parentKey, String localName) {
 
-		if (isImmutable()) {
-			handleImmutableTree();
-		}
-		
-		/* If the child does not exist */
-		IPath childKey = parentKey.append(localName);
-		if (!includes(childKey)) {
-			handleNotFound(childKey);
-		}
+	if (isImmutable()) {
+		handleImmutableTree();
+	}
+	
+	/* If the child does not exist */
+	IPath childKey = parentKey.append(localName);
+	if (!includes(childKey)) {
+		handleNotFound(childKey);
+	}
 
-		assembleNode(
-			parentKey,
-			new NoDataDeltaNode(parentKey.lastSegment(), new DeletedNode(localName)));
+	assembleNode(
+		parentKey,
+		new NoDataDeltaNode(parentKey.lastSegment(), new DeletedNode(localName)));
+}
+/**
+ * Initializes the receiver so that it is a complete, empty tree. 
+ * @see AbstractDataTree#empty
+ */
+public void empty() {
+	rootNode = new DataTreeNode(null, null);
+	parent = null;
+}
+/**
+ * Initializes the receiver so that it represents an empty delta.
+ * (i.e. it represents a delta on another (unspecified) tree, 
+ * ut introduces no changes).  The parent is left unchanged.
+ */
+void emptyDelta() {
+	rootNode = new NoDataDeltaNode(null);
+}
+/**
+ * Returns a node of the tree if it is present, otherwise returns null
+ *
+ * @param key
+ *	key of node to find
+ */
+public AbstractDataTreeNode findNodeAt (IPath key) {
+	
+	AbstractDataTreeNode node = rootNode;
+	String[] segments = key.segments();
+	for (int i = 0; i < segments.length; i++) {
+		node = node.childAtOrNull(segments[i]);
+		if (node == null)
+			return null;
 	}
-	/**
-	 * Initializes the receiver so that it is a complete, empty tree. 
-	 * @see AbstractDataTree#empty
-	 */
-	public void empty() {
-		rootNode = new DataTreeNode(null, null);
-		parent = null;
-	}
-	/**
-	 * Initializes the receiver so that it represents an empty delta.
-	 * (i.e. it represents a delta on another (unspecified) tree, 
-	 * ut introduces no changes).  The parent is left unchanged.
-	 */
-	void emptyDelta() {
-		rootNode = new NoDataDeltaNode(null);
-	}
-	/**
-	 * Returns a node of the tree if it is present, otherwise returns null
-	 *
-	 * @param key
-	 *	key of node to find
-	 */
-	public AbstractDataTreeNode findNodeAt (IPath key) {
-		
-		AbstractDataTreeNode node = rootNode;
-		String[] segments = key.segments();
-		for (int i = 0; i < segments.length; i++) {
-			node = node.childAtOrNull(segments[i]);
-			if (node == null) return null;
-		}
-		return node;
-	}
+	return node;
+}
 /**
  * Returns a forward delta between the receiver and the given source tree,
  * using the given comparer to compare data objects.  
@@ -453,239 +454,235 @@ public DeltaDataTree forwardDeltaWith(DeltaDataTree sourceTree, IComparator comp
 	newTree.immutable();
 	return newTree;
 }
-	/**
-	 * @see AbstractDataTree#getChildCount
-	 */
-	 public int getChildCount(IPath parentKey) {
-		return getChildNodes(parentKey).length;
-	}
-	/**
-	 * Returns the child nodes of a node in the tree.
-	 */
-	protected AbstractDataTreeNode[] getChildNodes(IPath parentKey) {
+/**
+ * @see AbstractDataTree#getChildCount
+ */
+ public int getChildCount(IPath parentKey) {
+	return getChildNodes(parentKey).length;
+}
+/**
+ * Returns the child nodes of a node in the tree.
+ */
+protected AbstractDataTreeNode[] getChildNodes(IPath parentKey) {
 
-		/* Algorithm:
-		 *   for each delta in chain (going backwards),
-		 *     get list of child nodes, if any in delta
-		 *     assemble with previously seen list, if any
-		 *     break when complete tree found, 
-		 *   report error if parent is missing or has been deleted
-		 */
-		 
-		AbstractDataTreeNode[] childNodes = null;
-		
-		for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
-			AbstractDataTreeNode node = tree.rootNode;
-			boolean complete = !node.isDelta();
-			String[] keyNames = parentKey.segments();
-			for (int i = 0; i < keyNames.length; i++) {
-				node = node.childAtOrNull(keyNames[i]);
-				if (node == null) {
-					break;
-				}
-				if (!node.isDelta()) {
-					complete = true;
-				}
+	/* Algorithm:
+	 *   for each delta in chain (going backwards),
+	 *     get list of child nodes, if any in delta
+	 *     assemble with previously seen list, if any
+	 *     break when complete tree found, 
+	 *   report error if parent is missing or has been deleted
+	 */
+	 
+	AbstractDataTreeNode[] childNodes = null;
+	
+	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
+		AbstractDataTreeNode node = tree.rootNode;
+		boolean complete = !node.isDelta();
+		String[] keyNames = parentKey.segments();
+		for (int i = 0; i < keyNames.length; i++) {
+			node = node.childAtOrNull(keyNames[i]);
+			if (node == null) {
+				break;
 			}
-			if (node != null) {
-				if (node.isDeleted()) {
-					break;
-				}
-				if (childNodes == null) {
-					childNodes = node.children;
-				}
-				else {
-					// Be sure to assemble(old, new) rather than (new, old).
-					// Keep deleted nodes if we haven't encountered the complete node yet.
-					childNodes = AbstractDataTreeNode.assembleWith(node.children, childNodes, !complete);
-				}
+			if (!node.isDelta()) {
+				complete = true;
 			}
-			if (complete) {
-				if (childNodes != null) {
-					return childNodes;
-				}
-				// Not found, but complete node encountered, so should not check parent tree.
+		}
+		if (node != null) {
+			if (node.isDeleted()) {
+				break;
+			}
+			if (childNodes == null) {
+				childNodes = node.children;
+			} else {
+				// Be sure to assemble(old, new) rather than (new, old).
+				// Keep deleted nodes if we haven't encountered the complete node yet.
+				childNodes = AbstractDataTreeNode.assembleWith(node.children, childNodes, !complete);
+			}
+		}
+		if (complete) {
+			if (childNodes != null) {
+				return childNodes;
+			}
+			// Not found, but complete node encountered, so should not check parent tree.
+			break;
+		}
+	}
+	if (childNodes != null) {
+		// Some deltas carry info about children, but there is
+		// no complete node against which they describe deltas.
+		Assert.isTrue(false, Policy.bind("dtree.malformedTree"));
+	}
+
+	// Node is missing or has been deleted.
+	handleNotFound(parentKey);
+	return null;//should not get here
+}
+/**
+ * @see AbstractDataTree#getChildren
+ */
+public IPath[] getChildren(IPath parentKey) {
+
+	AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
+	int len = childNodes.length;
+	IPath[] answer = new IPath[len];
+	for (int i = 0; i < len; ++i) {
+		answer[i] = parentKey.append(childNodes[i].name);
+	}
+	return answer;
+}
+/**
+ * Returns the data at a node of the tree.
+ *
+ * @param key
+ *	key of node for which to return data.
+ */
+public Object getData (IPath key) {
+
+	/* Algorithm:
+	 *   for each delta in chain (going backwards),
+	 *     get node, if any in delta
+	 *	   if it carries data, return it
+	 *     break when complete tree found
+	 *   report error if node is missing or has been deleted
+	 */
+	
+	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
+		AbstractDataTreeNode node = tree.rootNode;
+		boolean complete = !node.isDelta();
+		String[] keyNames = key.segments();
+		for (int i = 0; i < keyNames.length; i++) {
+			node = node.childAtOrNull(keyNames[i]);
+			if (node == null) {
+				break;
+			}
+			if (!node.isDelta()) {
+				complete = true;
+			}
+		}
+		if (node != null) {
+			if (node.hasData()) {
+				return node.getData();
+			} else if (node.isDeleted()) {
 				break;
 			}
 		}
-		if (childNodes != null) {
-			// Some deltas carry info about children, but there is
-			// no complete node against which they describe deltas.
-			Assert.isTrue(false, "Malformed tree");
+		if (complete) {
+			// Not found, but complete node encountered, so should not check parent tree.
+			break;
 		}
-
-		// Node is missing or has been deleted.
-		handleNotFound(parentKey);
-		return null;//should not get here
 	}
-	/**
-	 * @see AbstractDataTree#getChildren
-	 */
-	public IPath[] getChildren(IPath parentKey) {
+	handleNotFound(key);
+	return null; //can't get here
+}
+/**
+ * @see AbstractDataTree#getNameOfChild
+ */
+public String getNameOfChild(IPath parentKey, int index) {
 
-		AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
-		int len = childNodes.length;
-		IPath[] answer = new IPath[len];
-		for (int i = 0; i < len; ++i) {
-			answer[i] = parentKey.append(childNodes[i].name);
+	AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
+	return childNodes[index].name;
+}
+/**
+ * Returns the local names for the children of a node of the tree.
+ *
+ * @see AbstractDataTree#getNamesOfChildren
+ */
+public String[] getNamesOfChildren (IPath parentKey) {
+
+	AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
+	int len = childNodes.length;
+	String[] namesOfChildren = new String[len];
+	for (int i = 0; i < len; ++i) {
+		namesOfChildren[i] = childNodes[i].name;
+	}
+	return namesOfChildren;
+}
+/**
+ * Returns a node info object describing the specified node
+ * of the receiver.  Only the receiver's representation is accessed.  If the
+ * receiver is a delta representation, and the specified node has not been
+ * modified in the delta, the node info describes the node as missing (the parent
+ * tree is not consulted).
+ */
+public NodeInfo getNodeInfo (IPath key) {
+	
+	AbstractDataTreeNode found = findNodeAt (key);
+	if (found == null) {
+		return NodeInfo.missing();
+	}
+	
+	return found.nodeInfoAt(this);
+}
+/** 
+ * Returns the parent of the tree.
+ */
+public DeltaDataTree getParent() {
+	return parent;
+}
+/**
+ * Returns the root node of the tree.
+ */
+protected AbstractDataTreeNode getRootNode() {
+	return rootNode;
+}
+/**
+ * Returns true if the receiver's parent has the specified ancestor
+ *
+ * @param ancestor the ancestor in question
+ */
+protected boolean hasAncestor (DeltaDataTree ancestor) {
+	
+	DeltaDataTree parent = this;
+	while ((parent = parent.getParent()) != null) {
+		if (parent == ancestor) {
+			return true;
 		}
-		return answer;
 	}
-	/**
-	 * Returns the data at a node of the tree.
-	 *
-	 * @param key
-	 *	key of node for which to return data.
-	 */
-	public Object getData (IPath key) {
 
-		/* Algorithm:
-		 *   for each delta in chain (going backwards),
-		 *     get node, if any in delta
-		 *	   if it carries data, return it
-		 *     break when complete tree found
-		 *   report error if node is missing or has been deleted
-		 */
-		
-		for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
-			AbstractDataTreeNode node = tree.rootNode;
-			boolean complete = !node.isDelta();
-			String[] keyNames = key.segments();
-			for (int i = 0; i < keyNames.length; i++) {
-				node = node.childAtOrNull(keyNames[i]);
-				if (node == null) {
-					break;
-				}
-				if (!node.isDelta()) {
-					complete = true;
-				}
+	return false;
+}
+/**
+ * Returns true if the receiver includes a node with
+ * the given key, false otherwise.
+ */
+public boolean includes (IPath key) {
+	return searchNodeAt(key) != null;
+}
+/**
+ * Returns an object containing:
+ *  - the node key
+ * 	- a flag indicating whether the specified node was found
+ *  - the data for the node, if it was found
+ *
+ * @param key  key of node for which we want to retrieve data.
+ */
+public DataTreeLookup lookup(IPath key) {
+	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
+		AbstractDataTreeNode node = tree.rootNode;
+		boolean complete = !node.isDelta();
+		String[] keyNames = key.segments();
+		for (int i = 0; i < keyNames.length; i++) {
+			node = node.childAtOrNull(keyNames[i]);
+			if (node == null) {
+				break;
 			}
-			if (node != null) {
-				if (node.hasData()) {
-					return node.getData();
-				}
-				else if (node.isDeleted()) {
-					break;
-				}
-			}
-			if (complete) {
-				// Not found, but complete node encountered, so should not check parent tree.
+			complete |= !node.isDelta();
+		}
+		if (node != null) {
+			if (node.hasData()) {
+				return new DataTreeLookup(key, true, node.getData(), tree==this);
+			} else if (node.isDeleted()) {
 				break;
 			}
 		}
-		handleNotFound(key);
-		return null; //can't get here
-	}
-	/**
-	 * @see AbstractDataTree#getNameOfChild
-	 */
-	public String getNameOfChild(IPath parentKey, int index) {
-
-		AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
-		return childNodes[index].name;
-	}
-	/**
-	 * Returns the local names for the children of a node of the tree.
-	 *
-	 * @see AbstractDataTree#getNamesOfChildren
-	 */
-	public String[] getNamesOfChildren (IPath parentKey) {
-
-		AbstractDataTreeNode[] childNodes = getChildNodes(parentKey);
-		int len = childNodes.length;
-		String[] namesOfChildren = new String[len];
-		for (int i = 0; i < len; ++i) {
-			namesOfChildren[i] = childNodes[i].name;
+		if (complete) {
+			// Not found, but complete node encountered, so should not check parent tree.
+			break;
 		}
-		return namesOfChildren;
 	}
-	/**
-	 * Returns a node info object describing the specified node
-	 * of the receiver.  Only the receiver's representation is accessed.  If the
-	 * receiver is a delta representation, and the specified node has not been
-	 * modified in the delta, the node info describes the node as missing (the parent
-	 * tree is not consulted).
-	 */
-	public NodeInfo getNodeInfo (IPath key) {
-		
-		AbstractDataTreeNode found = findNodeAt (key);
-		if (found == null) {
-			return NodeInfo.missing();
-		}
-		
-		return found.nodeInfoAt(this);
-	}
-	/** 
-	 * Returns the parent of the tree.
-	 */
-	public DeltaDataTree getParent() {
-		return parent;
-	}
-	/**
-	 * Returns the root node of the tree.
-	 */
-	protected AbstractDataTreeNode getRootNode() {
-		return rootNode;
-	}
-	/**
-	 * Returns true if the receiver's parent has the specified ancestor
-	 *
-	 * @param ancestor the ancestor in question
-	 */
-	protected boolean hasAncestor (DeltaDataTree ancestor) {
-		
-		DeltaDataTree parent = this;
-		while ((parent = parent.getParent()) != null) {
-			if (parent == ancestor) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-	/**
-	 * Returns true if the receiver includes a node with
-	 * the given key, false otherwise.
-	 */
-	public boolean includes (IPath key) {
-
-		return searchNodeAt(key) != null;
-	}
-	/**
-	 * Returns an object containing:
-	 *  - the node key
-	 * 	- a flag indicating whether the specified node was found
-	 *  - the data for the node, if it was found
-	 *
-	 * @param key  key of node for which we want to retrieve data.
-	 */
-	public DataTreeLookup lookup(IPath key) {
-		for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
-			AbstractDataTreeNode node = tree.rootNode;
-			boolean complete = !node.isDelta();
-			String[] keyNames = key.segments();
-			for (int i = 0; i < keyNames.length; i++) {
-				node = node.childAtOrNull(keyNames[i]);
-				if (node == null) {
-					break;
-				}
-				complete |= !node.isDelta();
-			}
-			if (node != null) {
-				if (node.hasData()) {
-					return new DataTreeLookup(key, true, node.getData(), tree==this);
-				}
-				else if (node.isDeleted()) {
-					break;
-				}
-			}
-			if (complete) {
-				// Not found, but complete node encountered, so should not check parent tree.
-				break;
-			}
-		}
-		return new DataTreeLookup(key, false, null);
-	}
+	return new DataTreeLookup(key, false, null);
+}
 /**
  * Converts this tree's representation to be a complete tree, not a delta.
  * This disconnects this tree from its parents.
@@ -702,59 +699,59 @@ public void makeComplete() {
 	setRootNode(assembled);
 	setParent(null);
 }
-	/**
-	 * Returns a complete node containing the contents of the subtree 
-	 * rooted at @key in the receiver.  Uses the public API.
-	 *
-	 * @param key
-	 *	key of subtree whose contents we want to copy.
-	 */
-	protected AbstractDataTreeNode naiveCopyCompleteSubtree (IPath key) {
+/**
+ * Returns a complete node containing the contents of the subtree 
+ * rooted at @key in the receiver.  Uses the public API.
+ *
+ * @param key
+ *	key of subtree whose contents we want to copy.
+ */
+protected AbstractDataTreeNode naiveCopyCompleteSubtree (IPath key) {
 
-		String[] childNames = getNamesOfChildren (key);
-		AbstractDataTreeNode[] childNodes = new AbstractDataTreeNode[childNames.length];
+	String[] childNames = getNamesOfChildren (key);
+	AbstractDataTreeNode[] childNodes = new AbstractDataTreeNode[childNames.length];
+
+	/* do for each child */
+	for (int i = childNames.length; --i >= 0;) {
+		childNodes[i] = copyCompleteSubtree(key.append(childNames[i]));
+	}
 	
-		/* do for each child */
-		for (int i = childNames.length; --i >= 0;) {
-			childNodes[i] = copyCompleteSubtree(key.append(childNames[i]));
-		}
-		
-		return new DataTreeNode(key.lastSegment(), getData(key), childNodes);
+	return new DataTreeNode(key.lastSegment(), getData(key), childNodes);
+}
+/**
+ * Returns a new tree which represents an empty, mutable delta on the
+ * receiver.  It is not possible to obtain a new delta tree if the receiver is
+ * not immutable, as subsequent changes to the receiver would affect the
+ * resulting delta.
+ */
+public DeltaDataTree newEmptyDeltaTree() {
+	
+	if (!isImmutable()) {
+		throw new IllegalArgumentException(Policy.bind("dtree.notImmutable"));
 	}
-	/**
-	 * Returns a new tree which represents an empty, mutable delta on the
-	 * receiver.  It is not possible to obtain a new delta tree if the receiver is
-	 * not immutable, as subsequent changes to the receiver would affect the
-	 * resulting delta.
-	 */
-	public DeltaDataTree newEmptyDeltaTree() {
-		
-		if (!isImmutable()) {
-			throw new IllegalArgumentException("Tree must be immutable");
-		}
-		
-		DeltaDataTree newTree = (DeltaDataTree) this.copy();
-		newTree.setParent(this);
-		newTree.emptyDelta();
-		return newTree;
-	}
-	/**
-	 * Makes the receiver the root tree in the list of trees on which it is based.
-	 * The receiver's representation becomes a complete tree, while its parents'
-	 * representations become backward deltas based on the receiver.
-	 * It is not possible to reroot a source tree that is not immutable, as this
-	 * would require that its parents be expressed as deltas on a source tree
-	 * which could still change.
-	 *
-	 * @exception InvalidParameterException
-	 *	receiver is not immutable
-	 */
-	public DeltaDataTree reroot() {
-		
-		/* self mutex critical region */
-		reroot(this);
-		return this;
-	}
+	
+	DeltaDataTree newTree = (DeltaDataTree) this.copy();
+	newTree.setParent(this);
+	newTree.emptyDelta();
+	return newTree;
+}
+/**
+ * Makes the receiver the root tree in the list of trees on which it is based.
+ * The receiver's representation becomes a complete tree, while its parents'
+ * representations become backward deltas based on the receiver.
+ * It is not possible to reroot a source tree that is not immutable, as this
+ * would require that its parents be expressed as deltas on a source tree
+ * which could still change.
+ *
+ * @exception InvalidParameterException
+ *	receiver is not immutable
+ */
+public DeltaDataTree reroot() {
+	
+	/* self mutex critical region */
+	reroot(this);
+	return this;
+}
 /**
  * Makes the given source tree the root tree in the list of trees on which it is based.
  * The source tree's representation becomes a complete tree, while its parents'
@@ -770,7 +767,7 @@ public void makeComplete() {
  */
 protected void reroot(DeltaDataTree sourceTree) {
 	if (!sourceTree.isImmutable()) {
-		throw new IllegalArgumentException("Parent trees must be immutable");
+		throw new IllegalArgumentException(Policy.bind("dtree.parentsNotImmutable"));
 	}
 	DeltaDataTree parent = sourceTree.getParent();
 	if (parent == null) {
@@ -784,76 +781,75 @@ protected void reroot(DeltaDataTree sourceTree) {
 	sourceTree.setRootNode(complete.getRootNode());
 	sourceTree.setParent(null);
 }
-	/**
-	 * Returns the specified node.  Search in the parent if necessary.  Return null
-	 * if the node is not found or if it has been deleted
-	 */
-	protected AbstractDataTreeNode searchNodeAt (IPath key) {
-		for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
-			AbstractDataTreeNode node = tree.rootNode;
-			boolean complete = !node.isDelta();
-			String[] keyNames = key.segments();
-			for (int i = 0; i < keyNames.length; i++) {
-				node = node.childAtOrNull(keyNames[i]);
-				if (node == null) {
-					break;
-				}
-				if (!node.isDelta()) {
-					complete = true;
-				}
-			}
-			if (node != null) {
-				if (node.isDeleted()) {
-					break;
-				}
-				else {
-					return node;
-				}
-			}
-			if (complete) {
-				// Not found, but complete node encountered, so should not check parent tree.
+/**
+ * Returns the specified node.  Search in the parent if necessary.  Return null
+ * if the node is not found or if it has been deleted
+ */
+protected AbstractDataTreeNode searchNodeAt (IPath key) {
+	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
+		AbstractDataTreeNode node = tree.rootNode;
+		boolean complete = !node.isDelta();
+		String[] keyNames = key.segments();
+		for (int i = 0; i < keyNames.length; i++) {
+			node = node.childAtOrNull(keyNames[i]);
+			if (node == null) {
 				break;
 			}
+			if (!node.isDelta()) {
+				complete = true;
+			}
 		}
-		return null;
+		if (node != null) {
+			if (node.isDeleted()) {
+				break;
+			} else {
+				return node;
+			}
 		}
-	/**
-	 * @see AbstractDataTree#setData 
-	 */
-	public void setData (IPath key, Object data) {
-		
-		if (isImmutable()) {
-			handleImmutableTree();
-		}		
+		if (complete) {
+			// Not found, but complete node encountered, so should not check parent tree.
+			break;
+		}
+	}
+	return null;
+	}
+/**
+ * @see AbstractDataTree#setData 
+ */
+public void setData (IPath key, Object data) {
+	
+	if (isImmutable()) {
+		handleImmutableTree();
+	}		
 
-		if (!includes(key)) {
-			handleNotFound(key);
-		}
-		assembleNode(key, new DataDeltaNode(key.lastSegment(), data));
+	if (!includes(key)) {
+		handleNotFound(key);
 	}
-	/**
-	 * Sets the parent of the tree.
-	 */
-	public void setParent (DeltaDataTree aTree) {
-		parent = aTree;
+	assembleNode(key, new DataDeltaNode(key.lastSegment(), data));
+}
+/**
+ * Sets the parent of the tree.
+ */
+public void setParent (DeltaDataTree aTree) {
+	parent = aTree;
+}
+/**
+ * Sets the root node of the tree
+ */
+void setRootNode (AbstractDataTreeNode aNode) {
+	rootNode = aNode;
+}
+/**
+ * Simplifies the receiver:
+ *	- replaces any DataDelta nodes with the same data as the parent 
+ *	  with a NoDataDelta node
+ *	- removes any empty (leaf NoDataDelta) nodes
+ */
+protected void simplify(IComparator comparer) {
+	
+	if (parent == null) {
+		return;
 	}
-	/**
-	 * Sets the root node of the tree
-	 */
-	void setRootNode (AbstractDataTreeNode aNode) {
-		rootNode = aNode;
-	}
-	/**
-	 * Simplifies the receiver:
-	 *	- replaces any DataDelta nodes with the same data as the parent 
-	 *	  with a NoDataDelta node
-	 *	- removes any empty (leaf NoDataDelta) nodes
-	 */
-	protected void simplify(IComparator comparer) {
-		
-		if (parent == null) {
-			return;
-		}
-		setRootNode(rootNode.simplifyWithParent(rootKey(), parent, comparer));
-	}
+	setRootNode(rootNode.simplifyWithParent(rootKey(), parent, comparer));
+}
 }

@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.events;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2001
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -194,8 +193,7 @@ public void remove(IResourceChangeListener listener) {
 			if (size == 1) {
 				listeners = null;
 				size = 0;
-			}
-			else {
+			} else {
 				System.arraycopy(listeners, i + 1, listeners, i, --size - i);
 				listeners[size] = null;
 			}

@@ -1,11 +1,12 @@
 package org.eclipse.core.internal.dtree;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import java.io.DataOutput;
@@ -168,7 +169,7 @@ public void writeTree(AbstractDataTree tree, IPath path, int depth, DataOutput o
 		}
 	}
 
-	Assert.isTrue(currentPath.equals(path), "Error navigating path in DeltaTreeWriter.writeTo()");
+	Assert.isTrue(currentPath.equals(path), Policy.bind("dtree.navigationError"));
 
 	/* recursively write the subtree we're interested in */
 	writeNode(node, path, depth);

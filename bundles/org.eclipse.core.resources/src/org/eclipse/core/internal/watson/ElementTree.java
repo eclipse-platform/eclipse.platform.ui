@@ -1,14 +1,15 @@
 package org.eclipse.core.internal.watson;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import java.util.*;
 
 /**
@@ -246,7 +247,7 @@ private ElementTree collapsing(int depth) {
 
 public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator) {
 	if (olderTree == null || comparator == null) {
-		throw new IllegalArgumentException("Null argument to ElementTree.computeDeltaWith()");
+		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith"));
 	}
 	
 	return new ElementTreeDelta((ElementTree) olderTree, this, comparator);
@@ -272,7 +273,7 @@ public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparat
 
 public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator, IPath path) {
 	if (olderTree == null || comparator == null) {
-		throw new IllegalArgumentException("Null argument to ElementTree.computeDeltaWith()");
+		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith"));
 	}
 	if (path.isRoot()) {
 		/* can optimize certain cases when computing deltas on the whole tree */
@@ -326,7 +327,7 @@ public void createElement(IPath key, Object data) {
 public void createSubtree(IPath key, ElementTree subtree) {
 	/* don't allow creating subtrees at the root */
 	if (key.isRoot()) {
-		throw new IllegalArgumentException("Cannot modify implicit root node");
+		throw new IllegalArgumentException(Policy.bind("watson.noModify"));
 	}
 	
 	// Clear the child IDs cache in case it's referring to this parent.
@@ -339,7 +340,7 @@ public void createSubtree(IPath key, ElementTree subtree) {
 		/* don't copy the implicit root node of the subtree */
 		IPath[] children = subtree.getChildren(subtree.getRoot());
 		if (children.length != 1) {
-			throw new IllegalArgumentException("Illegal subtree passed to createSubtree");
+			throw new IllegalArgumentException(Policy.bind("watson.illegalSubtree"));
 		}
 		
 		/* get the subtree for the specified key */
@@ -395,7 +396,7 @@ public int deltaDepth() {
  * Complains that an element was not found
  */
 protected void elementNotFound(IPath key) {
-	throw new IllegalArgumentException("Element not found: " + key);
+	throw new IllegalArgumentException(Policy.bind("watson.elementNotFound", key.toString()));
 }
 /**
  * Given an array of element trees, returns the index of the 
@@ -686,12 +687,12 @@ public void makeComplete() {
  */
 public ElementTree mergeDeltaChain(IPath path, ElementTree[] trees) {
 	if (path == null || trees == null) {
-		throw new IllegalArgumentException("null argument to ElementTree.mergeDeltaChain");
+		throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.mergeDeltaChain"));
 	}
 
 	/* The tree has to be open */
 	if (isImmutable()) {
-		throw new IllegalArgumentException("Attempted to modify an immutable tree");
+		throw new IllegalArgumentException(Policy.bind("watson.immutable"));
 	}
 	ElementTree current = this;
 	if (trees.length > 0) {

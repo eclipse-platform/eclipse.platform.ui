@@ -1,14 +1,15 @@
 package org.eclipse.core.internal.watson;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 /**
  * A class for performing operations on each element in an element tree.
  * For example, this can be used to print the contents of a tree.
@@ -65,8 +66,7 @@ public ElementTreeIterator() {
  * @param order the traversal order
  */
 public ElementTreeIterator(int order) {
-	Assert.isTrue (order == PRE_ORDER || order == POST_ORDER, 
-		"invalid traversal order");
+	Assert.isTrue (order == PRE_ORDER || order == POST_ORDER, Policy.bind("watson.traversal"));
 	this.order = order;
 }
 /**

@@ -1,17 +1,14 @@
 package org.eclipse.core.internal.events;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.resources.ModelObject;
 import org.eclipse.core.resources.ICommand;
 import java.util.*;
-/**
- *
- */
 public class BuildCommand extends ModelObject implements ICommand {
 	protected HashMap arguments;
 public BuildCommand() {

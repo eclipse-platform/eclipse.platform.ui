@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.watson;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.IPath;
 import java.io.*;
 /** 
@@ -19,8 +19,7 @@ public interface IElementInfoFlattener {
  * @return the object associated with the given elementPath,
  *   which may be <code>null</code>.
  */	
-public Object readElement(IPath elementPath, DataInput input)
-	throws IOException;
+public Object readElement(IPath elementPath, DataInput input) throws IOException;
 /**
  * Writes the given element to the output stream.
  * <p> N.B. The bytes written must be sufficient for the
@@ -29,6 +28,5 @@ public Object readElement(IPath elementPath, DataInput input)
  * @param element the object associated with the given path,
  *   which may be <code>null</code>.
  */	
-public void writeElement(IPath elementPath, Object element, DataOutput output)
-	throws IOException;
+public void writeElement(IPath elementPath, Object element, DataOutput output) throws IOException;
 }

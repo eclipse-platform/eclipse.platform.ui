@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.events;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
@@ -57,7 +57,7 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 						String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
 						String message = e.getMessage();
 						if (message == null)
-							message = e.getClass().getName() + " encountered while running " + currentBuilder.getClass().getName();
+							message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
 						status.add(new Status(Status.WARNING, pluginId, IResourceStatus.INTERNAL_ERROR, message, e));
 					}
 				}
@@ -97,7 +97,7 @@ void basicBuild(final IProject project, final int trigger, final MultiStatus sta
 			// builder exceptions in core exceptions if required.
 			String message = e.getMessage();
 			if (message == null)
-				message = e.getClass().getName() + " encountered while running " + currentBuilder.getClass().getName();
+				message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName());
 			status.add(new Status(Status.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 		}
 	};
@@ -112,7 +112,7 @@ void basicBuild(IProject project, int trigger, String builderName, Map args, Mul
 		return;
 	}
 	if (builder == null) {
-		String message = Policy.bind("instantiate", new String[] { builderName });
+		String message = Policy.bind("events.instantiate.1", builderName);
 		status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), message));
 		return;
 	}
@@ -122,11 +122,11 @@ void basicBuild(IProject project, int trigger, String builderName, Map args, Mul
 	if (extension != null) {
 		String name = extension.getLabel();
 		if (name != null) {
-			message = Policy.bind("invoking", new String[] { name + " on " + project.getFullPath() });
+			message = Policy.bind("events.invoking.2", name, project.getFullPath().toString());
 		}
 	}
 	if (message == null)
-		message = Policy.bind("invoking", new String[] {"builder on " + project.getFullPath()});
+		message = Policy.bind("events.invoking.1", project.getFullPath().toString());
 	monitor.subTask(message);
 	basicBuild(project, trigger, builder, args, status, monitor);
 }
@@ -135,7 +135,7 @@ public void build(IProject project, int trigger, IProgressMonitor monitor) throw
 		return;
 	try {
 		building = true;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
 		basicBuild(project, trigger, status, monitor);
 		if (!status.isOK())
 			throw new ResourceException(status);
@@ -146,13 +146,13 @@ public void build(IProject project, int trigger, IProgressMonitor monitor) throw
 public void build(IProject project, int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("building", new String[] { project.getFullPath().toString()});
+		String message = Policy.bind("events.building.1", project.getFullPath().toString());
 		monitor.beginTask(message, 1);
 		if (!canRun(kind))
 			return;
 		try {
 			building = true;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
 			basicBuild(project, kind, builderName, args, status, Policy.subMonitorFor(monitor, 1));
 			if (!status.isOK())
 				throw new ResourceException(status);
@@ -252,7 +252,7 @@ public Map getBuildersPersistentInfo(IProject project) throws CoreException {
  */
 private Hashtable getBuilders(IProject project) {
 	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, false);
-	Assert.isNotNull(info, Policy.bind("noProject", new String[] {project.getName()}));
+	Assert.isNotNull(info, Policy.bind("events.noProject", project.getName()));
 	return info.getBuilders();
 }
 public IResourceDelta getDelta(IProject project) {
@@ -307,7 +307,7 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProj
 		}
 		return builder;
 	} catch (CoreException e) {
-		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), "Unable to instantiate builder", e);
+		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.0"), e);
 	}
 }
 public void opening(IProject project) {
@@ -343,7 +343,7 @@ public void startup(IProgressMonitor monitor) {
 void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("building", new String[] { project.getFullPath().toString()});
+		String message = Policy.bind("events.building.1", project.getFullPath().toString());
 		monitor.beginTask(message, Math.max(1, commands.length));
 		for (int i = 0; i < commands.length; i++) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
@@ -358,7 +358,7 @@ void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus 
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("Building workspace.", Policy.totalWork);
+		monitor.beginTask(Policy.bind("events.building.0"), Policy.totalWork);
 		if (!canRun(trigger))
 			return;
 		try {
@@ -370,7 +370,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 			leftover.removeAll(Arrays.asList(ordered));
 			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
 			int num = ordered.length + unordered.length;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("events.errors"), null);
 			for (int i = 0; i < ordered.length; i++)
 				if (ordered[i].isAccessible())
 					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));

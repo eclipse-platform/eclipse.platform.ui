@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.utils;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import java.io.*;
 import java.util.*;
 /**
@@ -48,14 +48,14 @@ private ResourceStats() {
 public static void buildException(Exception e) {
 	if (currentPlugin == null) {
 		if (DEBUG) {
-			System.out.println("CoreStats got build exception without start build");
+			System.out.println(Policy.bind("utils.buildException"));
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println("PluginStats is missing for plugin: " + currentPlugin);
+			System.out.println(Policy.bind("utils.missing", currentPlugin));
 		}
 		return;
 	}
@@ -89,39 +89,34 @@ public static void dumpStats(PrintWriter out) {
 	}
 	//dump stats
 	out.println("---------------------------------------------------------------");
-	out.println(Integer.toString(snapshotCount) + " snapshots took: " + snapshotTime + "ms");
+	out.println(Policy.bind("utils.snapshots", Integer.toString(snapshotCount), Long.toString(snapshotTime)));
 	for (Enumeration e = pluginTable.elements(); e.hasMoreElements();) {
 		PluginStats stats = (PluginStats)e.nextElement();
-		out.println("Stats for: " + stats.getName());
+		out.println(Policy.bind("utils.stats", stats.getName()));
 
 		int notifyCount = stats.getNotifyCount();
 		if (notifyCount > 0) {
-			out.println("  Notifications: " + notifyCount + " (" 
-				+ (int)((float)notifyCount * 100.0 / (float)totalNotifications) + "% of total)");
+			out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int)((float)notifyCount * 100.0 / (float)totalNotifications))));
 		}
 
 		long notifyTime = stats.getNotifyRunningTime();
 		if (notifyTime > 0) {
-			out.println("  Notification time (ms): " + notifyTime + " (" 
-				+ (int)((float)notifyTime * 100.0 / (float)totalNotifyTime) + "% of total)");
+			out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int)((float)notifyTime * 100.0 / (float)totalNotifyTime))));
 		}
 
 		int buildCount = stats.getBuildCount();
 		if (buildCount > 0) {
-			out.println("  Builds: " + buildCount + " (" 
-				+ (int)((float)buildCount * 100.0 / (float)totalBuilds) + "% of total)");
+			out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int)((float)buildCount * 100.0 / (float)totalBuilds))));
 		}
 
 		long buildTime = stats.getBuildRunningTime();
 		if (buildTime > 0) {
-			out.println("  Build time (ms): " + buildTime + " (" 
-				+ (int)((float)buildTime * 100.0 / (float)totalBuildTime) + "% of total)");
+			out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int)((float)buildTime * 100.0 / (float)totalBuildTime))));
 		}
 
 		int exceptions = stats.getExceptionCount();
-		if (exceptions > 0) {		
-			out.println("  Exceptions: " + exceptions + " (" 
-				+ (int)((float)exceptions * 100.0 / (float)totalExceptions) + "% of total)");
+		if (exceptions > 0) {
+			out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int)((float)exceptions * 100.0 / (float)totalExceptions))));
 		}
 		out.println("");
 	}
@@ -130,14 +125,14 @@ public static void endBuild() {
 	long end = System.currentTimeMillis();
 	if (currentPlugin == null || currentStart == -1) {
 		if (DEBUG) {
-			System.err.println("CoreStats got endBuild without startBuild");
+			System.err.println(Policy.bind("utils.endBuild"));
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println("PluginStats is missing for plugin: " + currentPlugin);
+			System.out.println(Policy.bind("utils.missing", currentPlugin.toString()));
 		}
 		return;
 	}
@@ -148,14 +143,14 @@ public static void endNotify() {
 	long end = System.currentTimeMillis();
 	if (currentPlugin == null || currentStart == -1) {
 		if (DEBUG) {
-			System.err.println("CoreStats got endNotify without startNotify");
+			System.err.println(Policy.bind("utils.endNotify"));
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println("PluginStats is missing for plugin: " + currentPlugin);
+			System.out.println(Policy.bind("utils.missing", currentPlugin.toString()));
 		}
 		return;
 	}
@@ -181,14 +176,14 @@ private static PluginStats getStats(String pluginID) {
 public static void notifyException(Exception e) {
 	if (currentPlugin == null) {
 		if (DEBUG) {
-			System.out.println("CoreStats got build exception without start build");
+			System.out.println(Policy.bind("utils.buildException"));
 		}
 		return;
 	}
 	PluginStats stats = getStats(currentPlugin);
 	if (stats == null) {
 		if (DEBUG) {
-			System.out.println("PluginStats is missing for plugin: " + currentPlugin);
+			System.out.println(Policy.bind("utils.missing", currentPlugin.toString()));
 		}
 		return;
 	}

@@ -1,14 +1,15 @@
 package org.eclipse.core.internal.watson;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import java.io.*;
 
 /** <code>ElementTreeReader</code> is the standard implementation
@@ -73,7 +74,7 @@ public ElementTreeReader getReader(int formatVersion) throws IOException {
 		case 1:
 			return new ElementTreeReaderImpl_1(elementInfoFlattener);
 		default:
-			throw new IOException("Unknown format");
+			throw new IOException(Policy.bind("watson.unknown"));
 	}
 }
 /**

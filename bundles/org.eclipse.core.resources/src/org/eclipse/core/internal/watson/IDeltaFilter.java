@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.watson;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * A DeltaFilter is used to allow the user of an ElementTreeDelta
  * to navigate through the delta in a selective manner.

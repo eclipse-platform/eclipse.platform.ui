@@ -1,12 +1,11 @@
 package org.eclipse.core.internal.dtree;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.core.runtime.IPath;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -22,8 +21,7 @@ public interface IDataFlattener {
  * @return the object associated with the given path,
  *   which may be <code>null</code>.
  */	
-public Object readData(IPath path, DataInput input)
-	throws IOException;
+public Object readData(IPath path, DataInput input) throws IOException;
 /**
  * Writes the given data to the output stream.
  * <p> N.B. The bytes written must be sufficient for the
@@ -32,6 +30,5 @@ public Object readData(IPath path, DataInput input)
  * @param data the object associated with the given path,
  *   which may be <code>null</code>.
  */	
-public void writeData(IPath path, Object data, DataOutput output)
-	throws IOException;
+public void writeData(IPath path, Object data, DataOutput output) throws IOException;
 }

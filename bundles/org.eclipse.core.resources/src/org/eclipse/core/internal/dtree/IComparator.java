@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.dtree;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * An interface for comparing two data tree objects.  Provides information
  * on how an object has changed from one tree to another.

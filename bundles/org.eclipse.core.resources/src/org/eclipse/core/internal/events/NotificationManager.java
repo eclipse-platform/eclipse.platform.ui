@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.events;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
@@ -81,7 +81,7 @@ protected ResourceChangeListenerList.ListenerEntry[] getListeners() {
 	return result;
 }
 private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners, final IResourceChangeEvent event, boolean lockTree) {
-	String message = Policy.bind("notification.2");
+	String message = Policy.bind("events.notification");
 	int type = event.getType();
 	for (int i = 0; i < resourceListeners.length; i++) {
 		if ((type & resourceListeners[i].eventMask) != 0) {

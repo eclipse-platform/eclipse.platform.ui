@@ -1,13 +1,14 @@
 package org.eclipse.core.internal.dtree;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.utils.Assert;
+import org.eclipse.core.internal.utils.Policy;
 import java.io.DataInput;
 import java.io.IOException;
 /**
@@ -93,7 +94,7 @@ protected AbstractDataTreeNode readNode(IPath parentPath) throws IOException {
 		case AbstractDataTreeNode.NoDataDeltaNodeType:
 			return new NoDataDeltaNode(name, children);
 		default:
-			Assert.isTrue(false, "Switch error in DeltaTreeReader.readNode()");
+			Assert.isTrue(false, Policy.bind("dtree.switchError"));
 			return null;
 	}
 }
