@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -181,7 +182,7 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 						// do a direct save vs. using page.saveEditor, so that 
 						// progress dialogs do not flash up on the screen multiple 
 						// times
-						editor.doSave(null);
+						editor.doSave(new NullProgressMonitor());
 					}
 					page.closeEditor(editor, false);
 				}
