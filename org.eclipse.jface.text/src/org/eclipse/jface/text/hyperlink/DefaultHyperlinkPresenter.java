@@ -327,13 +327,13 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		Point maxLocation= getMaximumLocation(text, offset, length);
 
 		int x1= minLocation.x;
-		int x2= minLocation.x + maxLocation.x - minLocation.x - 1;
+		int x2= maxLocation.x - 1;
 		int y= minLocation.y + text.getLineHeight() - 1;
 		
 		GC gc= event.gc;
 		if (fColor != null && !fColor.isDisposed())
 			gc.setForeground(fColor);
-		else if (fColor == null) {
+		else if (fColor == null && !(offset < 0 && offset >= text.getCharCount())) {
 			StyleRange style= text.getStyleRangeAtOffset(offset);
 			if (style != null)
 				gc.setForeground(style.foreground);
@@ -342,11 +342,14 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	}
 	
 	private Point getMinimumLocation(StyledText text, int offset, int length) {
-		Point minLocation= new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
-
+		int max= text.getCharCount();
+		Point minLocation= new Point(max, max);
 		for (int i= 0; i <= length; i++) {
-			Point location= text.getLocationAtOffset(offset + i);
+			int k= offset + i;
+			if (k < 0 || k > max)
+				break;
 			
+			Point location= text.getLocationAtOffset(k);
 			if (location.x < minLocation.x)
 				minLocation.x= location.x;			
 			if (location.y < minLocation.y)
@@ -357,11 +360,14 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	}
 
 	private Point getMaximumLocation(StyledText text, int offset, int length) {
-		Point maxLocation= new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
+		Point maxLocation= new Point(0, 0);
 
 		for (int i= 0; i <= length; i++) {
-			Point location= text.getLocationAtOffset(offset + i);
+			int k= offset + i;
+			if (k < 0 || k > text.getCharCount())
+				break;
 			
+			Point location= text.getLocationAtOffset(k);
 			if (location.x > maxLocation.x)
 				maxLocation.x= location.x;			
 			if (location.y > maxLocation.y)
