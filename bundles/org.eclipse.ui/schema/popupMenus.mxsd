@@ -1,0 +1,652 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.ui" id="popupMenus" name="Pop-up Menus"/>
+   </appInfo>
+   <documentation>
+      This extension point is used to add new actions to pop-up 
+menus owned by other plug-ins.  Action contribution may 
+be made against a specific object type (objectContribution) 
+or against a specific popup menu. When registered for an 
+object type, a contribution will appear in all viewers 
+where objects of the specified type are selected. In 
+contrast, registration against a popup menu will only 
+appear in the specified menu, regardless of the selection. 
+
+When selection is heterogeneous, contribution will 
+be applied if registered against a common type of the 
+selection, if possible. If a direct match is not 
+possible, matching against superclasses and 
+superinterfaces will be attempted. 
+
+Selection can be further constrained through the 
+use of a name filter. If used, all the objects in 
+the selection must match the filter in order to apply 
+the contribution. 
+
+Individual actions in an object contribution can use 
+attribute enablesFor to specify if it should only apply 
+for a single, multiple, or any other selection type. 
+
+If these filtering mechanisms are inadequate an 
+action contribution may use the filter mechanism.  In 
+this case the attributes of the target object are 
+described in a series of key value pairs.  The attributes 
+which apply to the selection are type specific and 
+beyond the domain of the workbench itself, so the 
+workbench will delegate filtering at this level to 
+the actual selection.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="objectContribution"/>
+            <element ref="viewerContribution"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique extension point identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension identifier
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional extension name
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="objectContribution">
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="filter"/>
+               <element ref="menu"/>
+               <element ref="action"/>
+            </choice>
+            <element ref="visibility" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference this contribution
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="objectClass" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class or interface that all the objects in the 
+selection must subclass or implement.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="nameFilter" type="string">
+            <annotation>
+               <documentation>
+                  an optional filter that will be applied against each object in the selection. 
+No contribution will take place if there is no match.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="adaptable" type="boolean">
+            <annotation>
+               <documentation>
+                  a flag that indicates if types that adapt to IResource should use this object contribution.
+This flag is used only if objectClass adapts to IResource.  Default value is false.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewerContribution">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="menu"/>
+            <element ref="action"/>
+         </choice>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference this contribution
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="targetID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique ID of a popup menu inside a view, editor or viewer.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menu">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="separator" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference this submenu
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the text label of the new menu. The label should include mnemonic information.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  the location of the submenu starting from the pop-up menu as a root. If omitted, the menu will 
+be added at the end of the pop-up menu.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="separator">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the separator that can later be referenced as the last token in the action path. 
+Therefore, separators serve as named groups into which actions can be added.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="action">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label" icon="icon"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used as a reference for this action.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a translatable name that will be used for a pop-up menu item label. The label can 
+contain JFace-encoded mnemonic and accelerator (see example).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="menubarPath" type="string">
+            <annotation>
+               <documentation>
+                  a slash-delimited path ('/') that is used to specify the location of the action in the pop-up menu. 
+Each token in the path except the last one represents an existing submenu in the hierarchy. 
+The last token represents the named separator group into which the action will be added. 
+If the path is omitted, the action will be added at the end.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  a relative path for an icon that will be used to visually represent the action in the pop-up menu. 
+The path is relative to the location of the &lt;samp&gt;plugin.xml&lt;/samp&gt; file of the contributing plug-in.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="enablesFor" type="string">
+            <annotation>
+               <documentation>
+                  a value indicating the selection count which must be met to enable the action.  If this attribute 
+is specified and the condition is met the action is enabled.  If the condition is not met the 
+action is disabled.  If no attribute is specified the action is enabled for any number of items selected.  
+The following attribute formats are supported: 
+&lt;ul&gt;            
+          &lt;br&gt;! - 0 items selected 
+          &lt;br&gt;? - 0 or 1 items selected 
+          &lt;br&gt;+ - 1 or more items selected 
+          &lt;br&gt;multiple, 2+ - 2 or more items selected 
+          &lt;br&gt;n - a precise number of items selected.  Example: 4. 
+          &lt;br&gt;* - any number of items selected
+&lt;/ul&gt;
+The enablement criteria for an action extension are initially defined 
+by &lt;samp&gt;enablesFor&lt;/samp&gt; and selection.  However, once the action
+delegate has been instantiated it may control the action enable state directly 
+within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="state" type="boolean">
+            <annotation>
+               <documentation>
+                  an optional attribute indicating that the action should be of a toggle type. 
+ When added to a pop-up menu, it will manifest itself as a check box item.. 
+ If defined, attribute value will be used as the initial state (either &lt;samp&gt;true&lt;/samp&gt; 
+ or &lt;samp&gt;false&lt;/samp&gt;) .
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filter">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an object attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the value of an object attribute.  In combination with 
+the name attribute, the name value pair is used to 
+define the target object for an object action contribution.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="visibility">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="and">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="or">
+      <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="and"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="not">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="objectClass"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="objectClass">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class.  The expression is evaluated as true only if the selection implements this class.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="systemProperty">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the system property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the required value of the system property.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="pluginState">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  an id of a plug-in which may or may not be registered in the plug-in registry.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" use="required">
+            <annotation>
+               <documentation>
+                  the required state of the plugin.  Currently two states are supported: installed and activated.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="installed">
+                  </enumeration>
+                  <enumeration value="activated">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="objectState">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an object attribute.  Acceptable values for this string reflect the object type, and should
+be publicly declared by the plugin where the object type is declared.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the required value of the object attribute.  The acceptable values for the object attribute should be publicly declared.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="enablement">
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectClass"/>
+            <element ref="objectState"/>
+            <element ref="systemProperty"/>
+            <element ref="pluginState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="selection">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class or interface that each object in the selectoin must subclass or implement in order to enable the action.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  a wild card filter for the name that can optionally be applied to objects in the selection.
+If this filter is specified and the match fails, the actin will be disabled.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a pop-up menu extension point: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.ui.popupMenus"&gt; 
+      &lt;objectContribution 
+         id="com.xyz.C1" 
+         objectClass="org.eclipse.core.resources.IFile" 
+         nameFilter=*.java"&gt; 
+         &lt;menu id="com.xyz.xyzMenu" 
+               path="additions" 
+               label="&amp;amp;XYZ Java Tools"&gt; 
+            &lt;separator name="group1"/&gt; 
+         &lt;/menu&gt; 
+         &lt;action id="com.xyz.runXYZ" 
+              label="&amp;amp;Run XYZ Tool" 
+              menubarPath="com.xyz.xyzMenu/group1" 
+              icon="icons/runXYZ.gif" 
+              helpContextId="com.xyz.run_action_context" 
+              class="com.xyz.actions.XYZToolActionDelegate" 
+              enablesFor="1"&gt; 
+          &lt;/action&gt; 
+        &lt;/objectContribution&gt; 
+        &lt;viewerContribution 
+           id="com.xyz.C2" 
+           targetID="org.eclipse.ui.views.TaskList"&gt; 
+           &lt;action id="com.xyz.showXYZ" 
+                   label="&amp;amp;Show XYZ" 
+                   menubarPath="additions" 
+                   icon="icons/showXYZ.gif" 
+                   helpContextId="com.xyz.show_action_context" 
+                   class="com.xyz.actions.XYZShowActionDelegate"&gt; 
+           &lt;/action&gt; 
+        &lt;/viewerContribution&gt; 
+     &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+In the example above, the specified action will only enable 
+for a single selection (&lt;samp&gt;enablesFor&lt;/samp&gt; attribute). 
+In addition, each object in the selection must 
+implement the specified interface (&lt;samp&gt;IFile&lt;/samp&gt;) 
+and must be a Java file. This action will be added 
+into a submenu previously created. This contribution 
+will be effective in any view that has the required 
+selection. 
+&lt;p&gt;
+In contrast, the viewer contribution above will only 
+appear in the Tasks view, and will not be affected by 
+the selection in the view. 
+&lt;p&gt;
+The following is an example of the filter mechanism.  
+In this case the action will only appear for &lt;p&gt;IMarker&lt;/p&gt; 
+objects which are completed and have high priority. 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension point="org.eclipse.ui.popupMenus"&gt; 
+      &lt;objectContribution 
+         id="com.xyz.C1" 
+         objectClass="org.eclipse.core.resources.IMarker"&gt; 
+         &lt;filter name="done" value="true"/&gt; 
+         &lt;filter name="priority" value="2"/&gt; 
+         &lt;action id="com.xyz.runXYZ" 
+              label="High Priority Completed Action Tool" 
+              icon="icons/runXYZ.gif" 
+              class="com.xyz.actions.MarkerActionDelegate"&gt; 
+          &lt;/action&gt; 
+        &lt;/objectContribution&gt; 
+     &lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the action attribute &lt;samp&gt;class&lt;/samp&gt;
+must be a fully qualified class name of a Java class 
+that implements &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt;
+in the case of object contributions, 
+&lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt;
+for contributions to viewers that belong to views, 
+or &lt;samp&gt;org.eclipse.ui.IEditorActionDelegate&lt;/samp&gt;
+for contributions to viewers that belong to editors.  
+In all cases, the implementing class is loaded as late 
+as possible to avoid loading the entire plug-in before 
+it is really needed. 
+&lt;p&gt;
+Note: For backwards compatability, 
+&lt;samp&gt;org.eclipse.ui.IActionDelegate&lt;/samp&gt; may be 
+implemented for object contributions. 
+&lt;p&gt;
+Popup menu extension within a part is only possible 
+when the target part publishes a menu for extension.  
+This is heartily encouraged, as it improves the 
+extensability of the product.  To accomplish this 
+each part should publish any popup menus which are 
+defined by calling 
+&lt;samp&gt;IWorkbenchPartSite.registerContextMenu&lt;/samp&gt;.  
+Once this has been done the workbench will 
+automatically insert any action extensions which exist. 
+&lt;p&gt;
+A menu id must be provided for each registered menu.  
+For consistency across parts the following strategy 
+should be adopted by all part implementors. 
+&lt;p&gt;
+If the target part has only one context menu it 
+should be registered with id == part id.  This can be 
+done easily by calling 
+&lt;samp&gt;registerContextMenu(MenuManager, ISelectionProvider)&lt;/samp&gt;.  
+Extenders may use the part id itself as the targetID for 
+the action extension. 
+If the target part has more than one context menu a 
+unique id should be defined for each.  Prefix each id 
+with the view id and publish these id's within 
+the javadoc for the target part.  Register each 
+menu at runtime by calling 
+&lt;samp&gt;registerContextMenu(String, MenuManager, ISelectionProvider)&lt;/samp&gt;. 
+Extenders will use the unique menu id as the targetID 
+for the action extension. 
+Any pop-up menu which is registered with the workbench 
+also should contain a standard insertion point with id 
+&lt;samp&gt;IWorkbenchActionConstants.MB_ADDITIONS&lt;/samp&gt;.  
+Other plug-ins will use this value as a reference 
+point for insertion.  The insertion point may be 
+defined by adding a GroupMarker to the menu at an 
+appropriate location for insertion. 
+&lt;p&gt;
+An object in the workbench which is the selection 
+in a context menu may define an 
+&lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.  This is a 
+filtering strategy which can perform type specific 
+filtering.  The workbench will retrieve the filter 
+for the selection by testing to see if it implements 
+&lt;samp&gt;IActionFilter&lt;/samp&gt;.  If that fails, the 
+workbench will ask for a filter through the 
+&lt;samp&gt;IAdaptable&lt;/samp&gt; mechanism.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The workbench view have built-in pop-up menus 
+that already come loaded with a number of actions. 
+Plug-ins can contribute to these menus. If a viewer 
+has reserved slots for these contributions and they 
+are made public, slot names can be used as paths. 
+Otherwise, actions and submenus will be added at 
+the end of the pop-up menu.
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.ui" id="actionSetPartAssociations" name="Action Set Part Associations"/>
+   </appInfo>
+   <documentation>
+      Thsi extension point is used to define an action set which should be added to a perspective when a part (view or editor) is opened in the perspective.
+In the case of an editor, the action set will remain visible while the editor is the current editor.
+In the case of a view, the action set will be visible when the view is the active part.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="actionSetPartAssociation" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="actionSetPartAssociation">
+      <complexType>
+         <sequence>
+            <element ref="part" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="targetID" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique identifier of the action set (as specified in the
+registry) which is to be associated with particular workbench
+views and/or editors.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="part">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the unique identifier of the part (view or editor) to be associated with the action set.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of an action set part association (note the subelement and the way attributes are used):
+
+&lt;p&gt;
+&lt;pre&gt;
+	&lt;extension point="org.eclipse.ui.actionSetPartAssociations"&gt;
+		&lt;actionSetPartAssociation targetID="org.eclipse.jdt.ui.refactoring.actionSet"&gt;
+			&lt;part id="org.eclipse.jdt.ui.PackageExplorer"/&gt;
+			&lt;part id="org.eclipse.jdt.ui.CompilationUnitError"/&gt;
+		&lt;/actionSetPartAssociation&gt;
+	&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, a view or editor are associated with the refactoring action set.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The user may override these associations using the customize perspective dialog.  Regardless of these associations,
+action sets which the user turns off will never appear and action sets which the user turns on will always be visible.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>
