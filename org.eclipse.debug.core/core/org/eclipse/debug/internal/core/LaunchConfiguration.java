@@ -195,7 +195,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			} else {
 				// delete the resource using IFile API such that
 				// resource deltas are fired.
-				IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(getLocation());
+				IResource file = getFile();
 				if (file != null) {
 					file.delete(true, null);
 				} else {
@@ -251,9 +251,36 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * 
 	 * @return file or <code>null</code> if local
 	 */	
-	private IFile getFile() {
+	protected IFile getFile() {
 		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(getLocation());
 	}
 
+	/**
+	 * Returns whether this configuration is equal to the
+	 * given configuration. Two configurations are equal if
+	 * they are stored in the same location (and neither one
+	 * is a working copy).
+	 * 
+	 * @return whether this configuration is equal to the
+	 *  given configuration
+	 * @see Object.equals(Object)
+	 */
+	public boolean equals(Object object) {
+		if (object instanceof ILaunchConfiguration) {
+			if (isWorkingCopy()) {
+				return this == object;
+			} else {
+				return  ((ILaunchConfiguration)object).getLocation().equals(getLocation());
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		return getLocation().hashCode();
+	}
 }
 

@@ -342,7 +342,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						File file = path.toFile();				
 						stream = new FileInputStream(file);
 					} else {
-						IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(config.getLocation());
+						IFile file = ((LaunchConfiguration) config).getFile();
 						stream = file.getContents();
 					}
 					Element root = null;

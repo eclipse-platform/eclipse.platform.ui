@@ -180,7 +180,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			}
 		} else {
 			// use resource API to update configuration file
-			IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(getLocation());
+			IFile file = getFile();
 			IFolder dir = (IFolder)file.getParent();
 			if (!dir.exists()) {
 				dir.create(false, true, null);
@@ -443,32 +443,5 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		return null;
 	}	
 	
-	/**
-	 * Returns whether this configuration is equal to the
-	 * given configuration. Two configurations are equal if
-	 * they are stored in the same location (and neither one
-	 * is a working copy).
-	 * 
-	 * @return whether this configuration is equal to the
-	 *  given configuration
-	 * @see Object.equals(Object)
-	 */
-	public boolean equals(Object object) {
-		if (object instanceof ILaunchConfiguration) {
-			if (isWorkingCopy()) {
-				return this == object;
-			} else {
-				return  ((ILaunchConfiguration)object).getLocation().equals(getLocation());
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * @see Object#hashCode()
-	 */
-	public int hashCode() {
-		return getLocation().hashCode();
-	}
 }
 
