@@ -72,6 +72,14 @@ public class IterateExpression extends CompositeExpression {
 	
 	public IterateExpression(IConfigurationElement configElement) throws CoreException {
 		String opValue= configElement.getAttribute(ATT_OPERATOR);
+		initializeOperatorValue(opValue);
+	}
+	
+	public IterateExpression(String opValue) throws CoreException {
+		initializeOperatorValue(opValue);
+	}
+	
+	private void initializeOperatorValue(String opValue) throws CoreException {
 		if (opValue == null) {
 			fOperator= AND;
 		} else {
@@ -83,7 +91,7 @@ public class IterateExpression extends CompositeExpression {
 			}
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see Expression#evaluate(IVariablePool)
 	 */

@@ -34,8 +34,16 @@ public class CountExpression extends Expression {
 	
 	public CountExpression(IConfigurationElement configElement) {
 		String size = configElement.getAttribute(ATT_VALUE);
+		initializeSize(size);
+	}
+	
+	public CountExpression(String size) {
+		initializeSize(size);
+	}
+	
+	private void initializeSize(String size) {
 		if (size == null)
-			size = "*"; //$NON-NLS-1$
+			size= "*"; //$NON-NLS-1$
 		if (size.equals("*")) //$NON-NLS-1$
 			fMode= ANY_NUMBER;
 		else if (size.equals("?")) //$NON-NLS-1$
@@ -53,7 +61,7 @@ public class CountExpression extends Expression {
 			}
 		}
 	}
-	
+
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object var= context.getDefaultVariable();
 		Expressions.checkCollection(var, this);
@@ -64,6 +72,8 @@ public class CountExpression extends Expression {
 				return EvaluationResult.FALSE;
 			case NONE:
 				return EvaluationResult.valueOf(size == 0);
+			case NONE_OR_ONE:
+				return EvaluationResult.valueOf(size == 0 || size == 1);
 			case ONE_OR_MORE:
 				return EvaluationResult.valueOf(size >= 1);
 			case EXACT:

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -27,9 +30,11 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.IVariableResolver;
 import org.eclipse.core.internal.expressions.AdaptExpression;
+import org.eclipse.core.internal.expressions.CountExpression;
 import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.Expressions;
 import org.eclipse.core.internal.expressions.InstanceofExpression;
+import org.eclipse.core.internal.expressions.IterateExpression;
 import org.eclipse.core.internal.expressions.SystemTestExpression;
 
 
@@ -187,6 +192,199 @@ public class ExpressionTests extends TestCase {
 		exp= new EqualsExpression("name");
 		context= new EvaluationContext(null, Boolean.TRUE);
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));		
+	}
+	
+	public void testCountExpressionAnyNumber() throws Exception {
+		CountExpression exp= new CountExpression("*");
+		
+		List list= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		list.add("two");
+		list.add("three");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+	
+	public void testCountExpressionExact() throws Exception {
+		CountExpression exp= new CountExpression("2");
+		
+		List list= new ArrayList();
+		list.add("one");
+		EvaluationContext context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		list.add("two");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		list.add("two");
+		list.add("three");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
+	public void testCountExpressionNoneOrOne() throws Exception {
+		CountExpression exp= new CountExpression("?");
+		
+		List list= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		list.add("two");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
+	public void testCountExpressionOneOrMore() throws Exception {
+		CountExpression exp= new CountExpression("+");
+		
+		List list= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		list.add("two");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+	
+	public void testCountExpressionNone() throws Exception {
+		CountExpression exp= new CountExpression("!");
+		
+		List list= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+		
+		list.clear();
+		list.add("one");
+		list.add("two");
+		context= new EvaluationContext(null, list);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
+	public void testInstanceofTrue() throws Exception {
+		B b= new B();
+		EvaluationContext context= new EvaluationContext(null, b);
+		
+		InstanceofExpression exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.B");
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+
+		exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.A");
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		
+		exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.I");
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+	
+	public void testInstanceofFalse() throws Exception {
+		A a= new A();
+		EvaluationContext context= new EvaluationContext(null, a);
+		
+		InstanceofExpression exp= new InstanceofExpression("org.eclipse.core.internal.expressions.tests.B");
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
+	public void testIterateExpressionAndTrue() throws Exception {
+		final List result= new ArrayList();
+		Expression myExpression= new Expression() {
+			public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				result.add(context.getDefaultVariable());
+				return EvaluationResult.TRUE;
+			}
+		};
+		IterateExpression exp= new IterateExpression("and");
+		exp.add(myExpression);
+		List input= new ArrayList();
+		input.add("one");
+		input.add("two");
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		assertTrue(result.equals(input));
+	}
+	
+	public void testIterateExpressionAndFalse() throws Exception {
+		final List result= new ArrayList();
+		Expression myExpression= new Expression() {
+			public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				result.add(context.getDefaultVariable());
+				return EvaluationResult.FALSE;
+			}
+		};
+		IterateExpression exp= new IterateExpression("and");
+		exp.add(myExpression);
+		List input= new ArrayList();
+		input.add("one");
+		input.add("two");
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+		assertTrue(result.size() == 1 && result.get(0).equals("one"));
+	}
+	
+	public void testIterateExpressionOrTrue() throws Exception {
+		final List result= new ArrayList();
+		Expression myExpression= new Expression() {
+			public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				result.add(context.getDefaultVariable());
+				return EvaluationResult.TRUE;
+			}
+		};
+		IterateExpression exp= new IterateExpression("or");
+		exp.add(myExpression);
+		List input= new ArrayList();
+		input.add("one");
+		input.add("two");
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+		assertTrue(result.size() == 1 && result.get(0).equals("one"));
+	}
+	
+	public void testIterateExpressionOrFalse() throws Exception {
+		final List result= new ArrayList();
+		Expression myExpression= new Expression() {
+			public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				result.add(context.getDefaultVariable());
+				return EvaluationResult.FALSE;
+			}
+		};
+		IterateExpression exp= new IterateExpression("or");
+		exp.add(myExpression);
+		List input= new ArrayList();
+		input.add("one");
+		input.add("two");
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+		assertTrue(result.equals(input));
 	}
 	
 	public void testReadXMLExpression() throws Exception {
