@@ -1,5 +1,6 @@
 package org.eclipse.team.internal.ui.target;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,18 +16,21 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.Site;
+import org.eclipse.team.internal.core.target.UrlUtil;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class MappingSelectionPage extends TargetWizardPage {
-	private IPath path;
+	private IPath path = Path.EMPTY;
 	private Site site;
 	private TreeViewer viewer;
-	Text textPath;
+	private Text textPath;
 	
 	public MappingSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -57,10 +61,16 @@ public class MappingSelectionPage extends TargetWizardPage {
 				
 		textPath = createTextField(composite);
 		
+		textPath.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event e) {
+				MappingSelectionPage.this.path = new Path(textPath.getText());
+			}
+		});
+
 		setControl(composite);
 		setPageComplete(true);
 	}
-
+	
 	/**
 	 * Method updateTextPath.
 	 */
@@ -72,10 +82,19 @@ public class MappingSelectionPage extends TargetWizardPage {
 			while(it.hasNext()) {
 				Object o = it.next();
 				if(o instanceof RemoteResourceElement) {
-					try {
-						textPath.setText(((RemoteResourceElement)o).getRemoteResource().getURL().toExternalForm());
-					} catch (TeamException e) {
-					}
+						RemoteResourceElement element = (RemoteResourceElement) o;
+						URL remoteResourceURL;
+						try {
+							remoteResourceURL = element.getRemoteResource().getURL();
+						} catch(TeamException e) {
+							TeamUIPlugin.handle(e);
+							return;
+						}
+						
+						this.path = UrlUtil.getTrailingPath(
+							remoteResourceURL,
+							this.site.getURL());
+						textPath.setText(this.path.toString());
 					return;
 				}
 			}
@@ -83,7 +102,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 	}
 
 	public IPath getMapping() {
-		return new Path(textPath.getText());
+		return this.path;
 	}
 	/**
 	 * @see IWizardPage#setPreviousPage(IWizardPage)
@@ -108,4 +127,5 @@ public class MappingSelectionPage extends TargetWizardPage {
 			TeamUIPlugin.log(e.getStatus());
 		}
 	}
+
 }
