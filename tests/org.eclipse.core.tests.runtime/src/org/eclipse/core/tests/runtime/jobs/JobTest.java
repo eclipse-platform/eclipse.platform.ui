@@ -10,13 +10,12 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.*;
+
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.tests.harness.TestBarrier;
+import org.eclipse.core.tests.harness.TestJob;
 
 /**
  * Tests the implemented get/set methods of the abstract class Job
@@ -139,34 +138,34 @@ public class JobTest extends TestCase {
 		longJob.schedule(100000);
 		//create a thread that will join the test job
 		final int[] status = new int[1];
-		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = StatusChecker.STATUS_START;
+				status[0] = TestBarrier.STATUS_START;
 				try {
 					longJob.join();
 				} catch (InterruptedException e) {
 					Assert.fail("0.99");
 				}
-				status[0] = StatusChecker.STATUS_DONE;
+				status[0] = TestBarrier.STATUS_DONE;
 			}
 		});
 		t.start();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_START);
-		assertEquals("1.0", StatusChecker.STATUS_START, status[0]);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
 		//putting the job to sleep should not affect the join call
 		longJob.sleep();
 		//give a chance for the sleep to take effect
 		sleep(100);
-		assertEquals("1.0", StatusChecker.STATUS_START, status[0]);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
 		//similarly waking the job up should not affect the join
 		longJob.wakeUp(100000);
 		sleep(100);
-		assertEquals("1.0", StatusChecker.STATUS_START, status[0]);
+		assertEquals("1.0", TestBarrier.STATUS_START, status[0]);
 		
 		//finally canceling the job will cause the join to return
 		longJob.cancel();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 	}
 
 	private void sleep(long duration) {
@@ -370,7 +369,7 @@ public class JobTest extends TestCase {
 	
 	//see bug #43566
 	public void testAsynchJob() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START};
 				
 		//execute a job asynchronously and check the result
 		AsynchTestJob main = new AsynchTestJob("Test Asynch Finish", status, 0);
@@ -379,29 +378,29 @@ public class JobTest extends TestCase {
 		assertTrue("2.0", main.getResult() == null);
 		//schedule the job to run
 		main.schedule();
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 		assertTrue("3.0", main.getState() == Job.RUNNING);
 		//the asynchronous process that assigns the thread the job is going to run in has not been started yet
 		//the job is running in the thread provided to it by the manager
 		assertTrue("3.1" + main.getThread().getName(), main.getThread() instanceof Worker);
 		
-		status[0] = StatusChecker.STATUS_START;
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_START, 100);
+		status[0] = TestBarrier.STATUS_START;
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_START);
 		
 		//the asynchronous process has been started, but the set thread method has not been called yet
 		assertTrue("3.2", main.getThread() instanceof Worker);
 		
-		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
 				
 		//make sure the job has set the thread it is going to run in
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 			
-		assertTrue("3.3", status[0] == StatusChecker.STATUS_RUNNING);
+		assertTrue("3.3", status[0] == TestBarrier.STATUS_RUNNING);
 		assertTrue("3.4", main.getThread() instanceof AsynchExecThread);
 		
 		//let the job run
-		status[0] = StatusChecker.STATUS_WAIT_FOR_DONE;
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 		waitForState(main, Job.NONE);
 		
 		//after the job is finished, the thread should be reset
@@ -410,35 +409,35 @@ public class JobTest extends TestCase {
 		assertTrue("4.2", main.getThread() == null);
 		
 		//reset status
-		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		
 		//schedule the job to run again
 		main.schedule();
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 		assertTrue("5.0", main.getState() == Job.RUNNING);
 		
 		//the asynchronous process that assigns the thread the job is going to run in has not been started yet
 		//job is running in the thread provided by the manager
 		assertTrue("5.1", main.getThread() instanceof Worker);
 		
-		status[0] = StatusChecker.STATUS_START;
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_START, 100);
+		status[0] = TestBarrier.STATUS_START;
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_START);
 		
 		//the asynchronous process has been started, but the set thread method has not been called yet
 		assertTrue("5.2", main.getThread() instanceof Worker);
 		
-		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
 		
 		//make sure the job has set the thread it is going to run in
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 		
-		assertTrue("5.3",status[0] == StatusChecker.STATUS_RUNNING);
+		assertTrue("5.3",status[0] == TestBarrier.STATUS_RUNNING);
 		assertTrue("5.4", main.getThread() instanceof AsynchExecThread);
 		
 		//cancel the job, then let the job get the cancellation request
 		main.cancel();
-		status[0] = StatusChecker.STATUS_WAIT_FOR_DONE;
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 		waitForState(main, Job.NONE);
 		
 		//thread should be reset to null after cancellation
@@ -448,11 +447,11 @@ public class JobTest extends TestCase {
 	}
 	
 	public void testAsynchJobComplex() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START, 
-								StatusChecker.STATUS_WAIT_FOR_START,
-								StatusChecker.STATUS_WAIT_FOR_START,
-								StatusChecker.STATUS_WAIT_FOR_START,
-								StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START, 
+								TestBarrier.STATUS_WAIT_FOR_START,
+								TestBarrier.STATUS_WAIT_FOR_START,
+								TestBarrier.STATUS_WAIT_FOR_START,
+								TestBarrier.STATUS_WAIT_FOR_START};
 				
 		//test the interaction of several asynchronous jobs
 		AsynchTestJob[] jobs = new AsynchTestJob[5];
@@ -462,7 +461,7 @@ public class JobTest extends TestCase {
 			assertTrue("1." + i, jobs[i].getThread() == null);
 			assertTrue("2." + i, jobs[i].getResult() == null);
 			jobs[i].schedule();
-			//status[i] = StatusChecker.STATUS_START;
+			//status[i] = TestBarrier.STATUS_START;
 		}
 		//all the jobs should be running at the same time
 		waitForStart(jobs, status);
@@ -471,35 +470,35 @@ public class JobTest extends TestCase {
 		for(int i = 0; i < status.length; i++) {
 			assertTrue("3." + i, jobs[i].getState() == Job.RUNNING);
 			assertTrue("4." + i, jobs[i].getThread() instanceof Worker);
-			status[i] = StatusChecker.STATUS_START;
+			status[i] = TestBarrier.STATUS_START;
 		}
 		
 		for(int i = 0; i < status.length; i++) 
-			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_WAIT_FOR_START, 100);
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_WAIT_FOR_START);
 		
 		//every job should now be waiting for the STATUS_WAIT_FOR_RUN flag
 		for(int i = 0; i < status.length; i++) {
 			assertTrue("5. " + i, jobs[i].getThread() instanceof Worker);
-			status[i] = StatusChecker.STATUS_WAIT_FOR_RUN;
+			status[i] = TestBarrier.STATUS_WAIT_FOR_RUN;
 		}
 		
 		//wait until all jobs are in the running state
 		for(int i = 0; i < status.length; i++) 
-			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
 		
 		//let the jobs execute
 		for(int i = 0; i < status.length; i++) {
 			assertTrue("6. " + i, jobs[i].getThread() instanceof AsynchExecThread);
-			status[i] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			status[i] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		}
 		
 		for(int i = 0; i < status.length; i++)
-			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_DONE, 100);
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_DONE);
 		
 		//the status for every job should be STATUS_OK
 		//the threads should have been reset to null
 		for(int i = 0; i < status.length; i++) {
-			assertEquals("7." + i, StatusChecker.STATUS_DONE, status[i]);
+			assertEquals("7." + i, TestBarrier.STATUS_DONE, status[i]);
 			assertEquals("8." + i, Job.NONE, jobs[i].getState());
 			assertEquals("9." + i, Status.OK, jobs[i].getResult().getSeverity());
 			assertNull("10." + i, jobs[i].getThread());
@@ -507,11 +506,11 @@ public class JobTest extends TestCase {
 	}
 
 	public void testAsynchJobConflict() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START, 
-								StatusChecker.STATUS_WAIT_FOR_START,
-								StatusChecker.STATUS_WAIT_FOR_START,
-								StatusChecker.STATUS_WAIT_FOR_START,
-								StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START, 
+								TestBarrier.STATUS_WAIT_FOR_START,
+								TestBarrier.STATUS_WAIT_FOR_START,
+								TestBarrier.STATUS_WAIT_FOR_START,
+								TestBarrier.STATUS_WAIT_FOR_START};
 				
 		//test the interaction of several asynchronous jobs when a conflicting rule is assigned to some of them
 		AsynchTestJob[] jobs = new AsynchTestJob[5];
@@ -537,25 +536,25 @@ public class JobTest extends TestCase {
 		
 		//these 3 jobs should be waiting for the STATUS_START flag
 		for(int i = 0; i < 3; i++) {
-			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
 			assertTrue("3." + i, jobs[i].getState() == Job.RUNNING);
 			assertTrue("4." + i, jobs[i].getThread() instanceof Worker);
-			status[i] = StatusChecker.STATUS_START;
+			status[i] = TestBarrier.STATUS_START;
 		}
 		
 		//all the jobs should be running at the same time
 		//by the time the third job changes the status flag, the other jobs should have already done so
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_WAIT_FOR_START, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_START);
 				
 		//the 3 jobs should now be waiting for the STATUS_WAIT_FOR_RUN flag
 		for(int i = 0; i < 3; i++) {
 			assertTrue("5. " + i, jobs[i].getThread() instanceof Worker);
-			status[i] = StatusChecker.STATUS_WAIT_FOR_RUN;
+			status[i] = TestBarrier.STATUS_WAIT_FOR_RUN;
 		}
 
 		//wait until jobs block on running state
 		for(int i = 0; i < 3; i++) 
-			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
 		
 		//schedule the 2 remaining jobs
 		jobs[3].schedule();
@@ -571,10 +570,10 @@ public class JobTest extends TestCase {
 		//let the two non-conflicting jobs execute together
 		for(int i = 0; i < 2; i++) {
 			assertTrue("7. " + i, jobs[i].getThread() instanceof AsynchExecThread);
-			status[i] = StatusChecker.STATUS_WAIT_FOR_DONE;
+			status[i] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		}
 		//wait until the non-conflicting jobs are done
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_DONE);
 		
 		//the third job should still be in the running state
 		assertEquals("8.1", Job.RUNNING, jobs[2].getState());
@@ -584,37 +583,37 @@ public class JobTest extends TestCase {
 		
 		//let the third job finish execution
 		assertTrue("8.4", jobs[2].getThread() instanceof AsynchExecThread);
-		status[2] = StatusChecker.STATUS_WAIT_FOR_DONE;
+		status[2] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		
 		//wait until the third job is done
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_DONE);
 		
 		//the fourth job should now start running, the fifth job should still be waiting
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_RUNNING, 100);
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_RUNNING);
 		assertEquals("9.1", Job.RUNNING, jobs[3].getState());
 		assertEquals("9.2", Job.WAITING, jobs[4].getState());
 		
 		//let the fourth job run, the fifth job is still waiting
-		status[3] = StatusChecker.STATUS_START;
+		status[3] = TestBarrier.STATUS_START;
 		assertEquals("9.3", Job.WAITING, jobs[4].getState());
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_WAIT_FOR_START, 100);
-		status[3] = StatusChecker.STATUS_WAIT_FOR_RUN;
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_WAIT_FOR_START);
+		status[3] = TestBarrier.STATUS_WAIT_FOR_RUN;
 		assertEquals("9.4", Job.WAITING, jobs[4].getState());
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_RUNNING, 100);
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_RUNNING);
 		assertEquals("9.5", Job.WAITING, jobs[4].getState());
 		
 		//cancel the fifth job, finish the fourth job
 		jobs[4].cancel();
 		assertTrue("9.6", jobs[3].getThread() instanceof AsynchExecThread);
-		status[3] = StatusChecker.STATUS_WAIT_FOR_DONE;
+		status[3] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		
 		//wait until the fourth job is done
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_DONE);
 				
 		//the status for the first 4 jobs should be STATUS_OK
 		//the threads should have been reset to null
 		for(int i = 0; i < status.length - 1; i++) {
-			assertEquals("10." + i, StatusChecker.STATUS_DONE, status[i]);
+			assertEquals("10." + i, TestBarrier.STATUS_DONE, status[i]);
 			assertEquals("11." + i, Job.NONE, jobs[i].getState());
 			assertEquals("12." + i, Status.OK, jobs[i].getResult().getSeverity());
 			assertNull("13." + i, jobs[i].getThread());
@@ -622,7 +621,7 @@ public class JobTest extends TestCase {
 		
 		//the fifth job should have null as its status (it never finished running)
 		//the thread for it should have also been reset
-		assertEquals("14.1", StatusChecker.STATUS_WAIT_FOR_START, status[4]);
+		assertEquals("14.1", TestBarrier.STATUS_WAIT_FOR_START, status[4]);
 		assertEquals("14.2", Job.NONE, jobs[4].getState());
 		assertNull("14.3", jobs[4].getResult());
 		assertNull("14.4", jobs[4].getThread());
@@ -643,20 +642,20 @@ public class JobTest extends TestCase {
 		//create a thread that will join the job
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = StatusChecker.STATUS_START;
+				status[0] = TestBarrier.STATUS_START;
 				try {
 					shortJob.join();
 				} catch (InterruptedException e) {
 					Assert.fail("0.99");
 				}
-				status[0] = StatusChecker.STATUS_DONE;
+				status[0] = TestBarrier.STATUS_DONE;
 			}
 		});
 		//schedule the job and then fork the thread to join it
 		shortJob.schedule();
 		t.start();
 		//wait until the join succeeds
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 
 	}
 
@@ -717,13 +716,13 @@ public class JobTest extends TestCase {
 	 * Schedule a job to run, and then reschedule it
 	 */
 	public void testRescheduleSimple() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		Job job = new Job("testRescheduleSimple") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, StatusChecker.STATUS_RUNNING);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
 				} finally {
 					monitor.done();
@@ -733,20 +732,20 @@ public class JobTest extends TestCase {
 		};
 		//schedule the job, reschedule when it is running
 		job.schedule();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		job.schedule();
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//wait until the job runs again
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		waitForState(job, Job.NONE);
 		
 		//the job should only run once the second time around
 		job.schedule();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//wait until the job truly finishes and has a chance to be rescheduled (it shouldn't reschedule)
 		try {
 			Thread.sleep(100);
@@ -758,14 +757,14 @@ public class JobTest extends TestCase {
 	 * Reschedule a running job with a delay
 	 */
 	public void testRescheduleDelay() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		final int[] runCount = new int[] {0};
 		Job job = new Job("Testing") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, StatusChecker.STATUS_RUNNING);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
 				} finally {
 					runCount[0]++;
@@ -776,9 +775,9 @@ public class JobTest extends TestCase {
 		};
 		//schedule the job, reschedule when it is running
 		job.schedule();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		job.schedule(1000000);
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//now wait until the job is scheduled again and put to sleep
 		waitForState(job, Job.SLEEPING);
 		assertEquals("1.0", 1, runCount[0]);
@@ -787,8 +786,8 @@ public class JobTest extends TestCase {
 		job.schedule();
 		//wake up the currently sleeping job
 		job.wakeUp();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
-		status[0] = StatusChecker.STATUS_RUNNING;
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//make sure the job was not rescheduled while the executing job was sleeping
 		waitForState(job, Job.NONE);
 		assertTrue("1.0", job.getState() == Job.NONE);
@@ -798,15 +797,15 @@ public class JobTest extends TestCase {
 	 * Reschedule a waiting job.
 	 */
 	public void testRescheduleWaiting() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		final int[] runCount = new int[] {0};
 		final ISchedulingRule rule = new IdentityRule();
 		Job first = new Job("Testing1") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
 				} finally {
 					monitor.done();
@@ -818,8 +817,8 @@ public class JobTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
 				} finally {
 					runCount[0]++;
@@ -832,17 +831,17 @@ public class JobTest extends TestCase {
 		first.setRule(rule);
 		first.schedule();
 		second.setRule(rule);
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 		second.schedule();
 		waitForState(second, Job.WAITING);
 		//reschedule the second job while it is waiting
 		second.schedule();
 		//let the first job finish
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//the second job will start
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the second job finish
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		
 		//make sure the second job was not rescheduled
 		waitForState(second, Job.NONE);
@@ -855,14 +854,14 @@ public class JobTest extends TestCase {
 	 * only remembers the last reschedule request
 	 */
 	public void testRescheduleComplex() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		final int[] runCount = new int[] {0};
 		Job job = new Job("Testing") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, StatusChecker.STATUS_RUNNING);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
 				} finally {
 					runCount[0]++;
@@ -873,18 +872,18 @@ public class JobTest extends TestCase {
 		};
 		//schedule the job, reschedule when it is running
 		job.schedule();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//the last schedule value should win
 		job.schedule(1000000);
 		job.schedule(3000);
 		job.schedule(200000000);
 		job.schedule();
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//wait until the job runs again
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		assertEquals("1.0", 1, runCount[0]);
 		//let the job finish
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		waitForState(job, Job.NONE);
 		assertEquals("1.0", 2, runCount[0]);
 	}
@@ -892,13 +891,13 @@ public class JobTest extends TestCase {
 	 * Test that a cancelled job is rescheduled
 	 */
 	public void testRescheduleCancel() {
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		Job job = new Job("Testing") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, StatusChecker.STATUS_RUNNING);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
 				} finally {
 					monitor.done();
@@ -908,15 +907,15 @@ public class JobTest extends TestCase {
 		};
 		//schedule the job, cancel it, then reschedule
 		job.schedule();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		job.cancel();
 		job.schedule();
 		//let the first iteration of the job finish
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//wait until the job runs again
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		waitForState(job, Job.NONE);
 	}
 	
@@ -943,7 +942,7 @@ public class JobTest extends TestCase {
 	 */
 	private void waitForStart(Job[] jobs, int [] status) {
 		for (int i = 0; i < jobs.length; i++) 
-			StatusChecker.waitForStatus(status, i, StatusChecker.STATUS_RUNNING, 100);
+			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_RUNNING);
 	}
 		
 	

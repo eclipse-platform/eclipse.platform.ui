@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.tests.harness.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 /**
@@ -771,7 +772,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testJobFamilyJoin() {
 		//test the join method on a family of jobs
 		final int[] status = new int[1];
-		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create two different families of jobs
@@ -798,25 +799,25 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = StatusChecker.STATUS_START;
+				status[0] = TestBarrier.STATUS_START;
 				try {
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
-					status[0] = StatusChecker.STATUS_RUNNING;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(first, null);
 				} catch (OperationCanceledException e) {
 					
 				} catch (InterruptedException e) {
 					
 				}
-				status[0] = StatusChecker.STATUS_DONE;
+				status[0] = TestBarrier.STATUS_DONE;
 				
 			}
 		});
 		
 		//start the thread that will join the first family of jobs and be blocked until they finish execution		
 		t.start();
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
-		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
+		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
 		//wake up the first family of jobs
 		manager.wakeUp(first);
 				
@@ -824,11 +825,11 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (; i < 100; i++) {
 			Job[] result = manager.find(first);
 			
-			if (status[0] == StatusChecker.STATUS_DONE)
+			if (status[0] == TestBarrier.STATUS_DONE)
 				break;
 			
 			//the thread is either blocked, or it is done
-			assertTrue("2." + i, ((result.length > 0) || (status[0] == StatusChecker.STATUS_RUNNING)));
+			assertTrue("2." + i, ((result.length > 0) || (status[0] == TestBarrier.STATUS_RUNNING)));
 			
 			try {
 				Thread.sleep(100);
@@ -851,7 +852,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testJobFamilyJoinCancelManager() {
 		//test the join method on a family of jobs, then cancel the call
 		final int[] status = new int[1];
-		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create a progress monitor to cancel the join call
@@ -878,10 +879,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = StatusChecker.STATUS_START;
+				status[0] = TestBarrier.STATUS_START;
 				try {
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
-					status[0] = StatusChecker.STATUS_RUNNING;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(first, canceller);
 					
 				} catch (OperationCanceledException e) {
@@ -889,28 +890,28 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				} catch (InterruptedException e) {
 					
 				}
-				status[0] = StatusChecker.STATUS_DONE;
+				status[0] = TestBarrier.STATUS_DONE;
 			}
 		});
 		
 		//start the thread that will join the first family of jobs
 		//it will be blocked until the cancel call is made to the thread
 		t.start();
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
-		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;		
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
+		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;		
 		waitForStart(jobs[0]);
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 				
 		assertState("2.0", jobs[0], Job.RUNNING);
-		assertTrue("2.1", status[0] == StatusChecker.STATUS_RUNNING);
+		assertTrue("2.1", status[0] == TestBarrier.STATUS_RUNNING);
 		
 		//cancel the monitor that is attached to the join call
 		canceller.setCanceled(true);
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 		
 		//the first job in the first family should still be running
 		assertState("2.2", jobs[0], Job.RUNNING);
-		assertTrue("2.3", status[0] == StatusChecker.STATUS_DONE);
+		assertTrue("2.3", status[0] == TestBarrier.STATUS_DONE);
 		assertTrue("2.4", manager.find(first).length > 0);
 		
 		//cancel the second family of jobs
@@ -930,7 +931,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testJobFamilyJoinCancelJobs() {
 		//test the join method on a family of jobs, then cancel the jobs that are blocking the join call
 		final int[] status = new int[1];
-		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create two different families of jobs
@@ -955,10 +956,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = StatusChecker.STATUS_START;
+				status[0] = TestBarrier.STATUS_START;
 				try {
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
-					status[0] = StatusChecker.STATUS_RUNNING;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(first, null);
 					
 				} catch (OperationCanceledException e) {
@@ -966,25 +967,25 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				} catch (InterruptedException e) {
 					
 				}
-				status[0] = StatusChecker.STATUS_DONE;
+				status[0] = TestBarrier.STATUS_DONE;
 			}
 		});
 		
 		//start the thread that will join the first family of jobs
 		//it will be blocked until the all jobs in the first family finish execution or are cancelled
 		t.start();
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
-		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;		
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
+		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;		
 		waitForStart(jobs[0]);
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);		
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);		
 			
 		assertState("2.0", jobs[0], Job.RUNNING);
-		assertTrue("2.1", status[0] == StatusChecker.STATUS_RUNNING);
+		assertTrue("2.1", status[0] == TestBarrier.STATUS_RUNNING);
 		
 		//cancel the first family of jobs
 		//the join call should be unblocked when all the jobs are cancelled
 		manager.cancel(first);
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 		
 		//all jobs in the first family should be removed from the manager
 		assertTrue("2.2", manager.find(first).length == 0);
@@ -1002,7 +1003,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testJobFamilyJoinSimple() {
 		//test the join method on a family of jobs that is empty
 		final int[] status = new int[1];
-		status[0] = StatusChecker.STATUS_WAIT_FOR_START;
+		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
 		//create three different families of jobs
@@ -1028,10 +1029,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		
 		Thread t = new Thread(new Runnable() {
 			public void run() {
-				status[0] = StatusChecker.STATUS_START;
+				status[0] = TestBarrier.STATUS_START;
 				try {
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
-					status[0] = StatusChecker.STATUS_RUNNING;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(third, null);
 					
 				} catch (OperationCanceledException e) {
@@ -1040,7 +1041,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					
 				}
 				
-				status[0] = StatusChecker.STATUS_DONE;
+				status[0] = TestBarrier.STATUS_DONE;
 				
 			}
 		});
@@ -1051,14 +1052,14 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		t.start();
 		
 		//let the thread execute the join call
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
-		assertTrue("1.0", status[0] == StatusChecker.STATUS_START);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
+		assertTrue("1.0", status[0] == TestBarrier.STATUS_START);
 		long startTime = System.currentTimeMillis();
-		status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
+		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
 		long endTime = 	System.currentTimeMillis();	
 
-		assertTrue("2.0", status[0] == StatusChecker.STATUS_DONE);
+		assertTrue("2.0", status[0] == TestBarrier.STATUS_DONE);
 		assertTrue("2.1", endTime > startTime);		
 
 		//the join call should take no actual time (join call should not block thread at all)

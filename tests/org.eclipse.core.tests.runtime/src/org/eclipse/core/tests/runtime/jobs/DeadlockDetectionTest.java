@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.tests.harness.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 import org.eclipse.core.tests.harness.TestProgressMonitor;
 
@@ -78,7 +79,7 @@ public class DeadlockDetectionTest extends TestCase {
 		}
 		
 		public void setBlocked(IStatus reason) {
-			status[index] = StatusChecker.STATUS_BLOCKED;
+			status[index] = TestBarrier.STATUS_BLOCKED;
 		}
 
 		public void clearBlocked() {
@@ -197,47 +198,47 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final ILock lock = manager.newLock();
 		final ISchedulingRule rule = new IdentityRule();
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		
 		Thread first = new Thread("Test1") {
 			public void run() {
 				lock.acquire();
-				status[0] = StatusChecker.STATUS_START;
+				status[0] = TestBarrier.STATUS_START;
 				assertTrue("1.0", manager.getLockManager().isLockOwner());
-				StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+				TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 				manager.beginRule(rule, null);
 				assertTrue("2.0", manager.getLockManager().isLockOwner());
 				manager.endRule(rule);
 				lock.release();
-				status[0] = StatusChecker.STATUS_DONE;
+				status[0] = TestBarrier.STATUS_DONE;
 			}
 		};
 		
 		Thread second = new Thread("Test2") {
 			public void run() {
 				manager.beginRule(rule, null);
-				status[1] = StatusChecker.STATUS_START;
+				status[1] = TestBarrier.STATUS_START;
 				assertTrue("1.0", manager.getLockManager().isLockOwner());
-				StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+				TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 				lock.acquire();
 				assertTrue("2.0", manager.getLockManager().isLockOwner());
 				lock.release();
 				manager.endRule(rule);
-				status[1] = StatusChecker.STATUS_DONE;
+				status[1] = TestBarrier.STATUS_DONE;
 			}
 		};
 		
 		first.start();
 		second.start();
 		
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
 		
-		status[0] = StatusChecker.STATUS_RUNNING;
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_DONE);
 		waitForThreadDeath(first);
 		waitForThreadDeath(second);
 		assertTrue("3.0", !first.isAlive());
@@ -251,7 +252,7 @@ public class DeadlockDetectionTest extends TestCase {
 	 */
 	public void testJobRuleLockInteraction() {
 		final JobManager manager = JobManager.getInstance();
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		final ISchedulingRule rule1 = new IdentityRule();
 		final ISchedulingRule rule2 = new IdentityRule();
 		final ILock lock = manager.newLock();
@@ -261,13 +262,13 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					assertTrue("1.0", manager.getLockManager().isLockOwner());
 					monitor.beginTask("Testing", 1);
-					status[0] = StatusChecker.STATUS_START;
+					status[0] = TestBarrier.STATUS_START;
 					lock.acquire();
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					assertTrue("2.0", manager.getLockManager().isLockOwner());
 					lock.release();
 					monitor.worked(1);
-					status[0] = StatusChecker.STATUS_DONE;
+					status[0] = TestBarrier.STATUS_DONE;
 				} finally {
 					monitor.done();
 				}
@@ -280,13 +281,13 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					assertTrue("1.0", manager.getLockManager().isLockOwner());
 					monitor.beginTask("Testing", 1);
-					status[1] = StatusChecker.STATUS_START;
+					status[1] = TestBarrier.STATUS_START;
 					lock.acquire();
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					assertTrue("2.0", manager.getLockManager().isLockOwner());
 					lock.release();
 					monitor.worked(1);
-					status[1] = StatusChecker.STATUS_DONE;
+					status[1] = TestBarrier.STATUS_DONE;
 				} finally {
 					monitor.done();
 				}
@@ -299,14 +300,14 @@ public class DeadlockDetectionTest extends TestCase {
 		first.schedule();
 		second.schedule();
 		
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
 		
-		status[0] = StatusChecker.STATUS_RUNNING;
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_DONE, 100);
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_DONE);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_DONE);
 		waitForCompletion(first);
 		waitForCompletion(second);
 		
@@ -324,7 +325,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
-		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
+		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
 		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		final ILock[] locks = {manager.newLock(), manager.newLock()};
 		Job[] jobs = new Job[NUM_JOBS];
@@ -334,8 +335,8 @@ public class DeadlockDetectionTest extends TestCase {
 					try {
 						monitor.beginTask("Testing", 1);
 						manager.beginRule(rules[0], null);
-						status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-						StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+						status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+						TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 						manager.endRule(rules[0]);
 						monitor.worked(1);
 					} finally {
@@ -350,12 +351,12 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					locks[0].acquire();
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
 					manager.beginRule(rules[1], new BlockingMonitor(status, 1));
-					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
+					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					locks[1].acquire();
 					locks[1].release();
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[1]);
 					locks[0].release();
 					monitor.worked(1);
@@ -371,10 +372,10 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					locks[1].acquire();
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
 					manager.beginRule(rules[2], new BlockingMonitor(status, 2));
-					status[2] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_RUNNING, 100);
+					status[2] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);
 					locks[1].release();
 					monitor.worked(1);
@@ -391,29 +392,29 @@ public class DeadlockDetectionTest extends TestCase {
 			jobs[i].schedule();
 		}
 		//wait until the first job starts
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//now let the second job start
-		status[1] = StatusChecker.STATUS_START;
+		status[1] = TestBarrier.STATUS_START;
 		//wait until it blocks on the beginRule call
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_BLOCKED);
 		
 		//let the third job start, and wait until it too blocks
-		status[2] = StatusChecker.STATUS_START;
+		status[2] = TestBarrier.STATUS_START;
 		//wait until it blocks on the beginRule call
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_BLOCKED);
 		
 		//end the first job
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 				
 		//wait until the second job gets the rule
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		
 		//now wait until the third job gets the rule 
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[2] = StatusChecker.STATUS_RUNNING;
+		status[2] = TestBarrier.STATUS_RUNNING;
 		
 		for(int i = 0; i < jobs.length; i++) {
 			waitForCompletion(jobs[i]);
@@ -434,7 +435,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
-		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
+		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
 		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		final ILock lock = manager.newLock();
 		Job[] jobs = new Job[NUM_JOBS];
@@ -444,8 +445,8 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					manager.beginRule(rules[1], null);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[1]);
 					monitor.worked(1);
 				} finally {
@@ -460,10 +461,10 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					lock.acquire();
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
 					manager.beginRule(rules[0], new BlockingMonitor(status, 1));
-					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[0]);
 					lock.release();
 					monitor.worked(1);
@@ -478,10 +479,10 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
 					manager.beginRule(rules[2], null);
-					status[2] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_RUNNING, 100);
+					status[2] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_RUNNING);
 					lock.acquire();
 					lock.release();
 					manager.endRule(rules[2]);
@@ -497,26 +498,26 @@ public class DeadlockDetectionTest extends TestCase {
 			jobs[i].schedule();
 		}
 		//wait until the first job starts
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//now let the third job start
-		status[2] = StatusChecker.STATUS_START;
+		status[2] = TestBarrier.STATUS_START;
 		//wait until it gets the rule
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_RUN);
 		
 		//let the second job start
-		status[1] = StatusChecker.STATUS_START;
+		status[1] = TestBarrier.STATUS_START;
 		//wait until it blocks on the beginRule call
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_BLOCKED);
 		
 		//let the third job try for the lock
-		status[2] = StatusChecker.STATUS_RUNNING;
+		status[2] = TestBarrier.STATUS_RUNNING;
 		//end the first job
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 				
 		//wait until the second job gets the rule
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		//wait until all jobs are done
 		for(int i = 0; i < jobs.length; i++) {
 			waitForCompletion(jobs[i]);
@@ -537,7 +538,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 3;
 		final int[] status = new int[NUM_JOBS];
-		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
+		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
 		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		final IProgressMonitor first = new BlockingMonitor(status, 1);
 		final IProgressMonitor second = new BlockingMonitor(status, 2);
@@ -548,8 +549,8 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					manager.beginRule(rules[0], null);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[0]);
 					monitor.worked(1);
 				} finally {
@@ -563,11 +564,11 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
 					manager.beginRule(rules[1], first);
 					monitor.worked(1);
 				} finally {
-					status[1] = StatusChecker.STATUS_DONE;
+					status[1] = TestBarrier.STATUS_DONE;
 					manager.endRule(rules[1]);
 					monitor.done();
 				}
@@ -579,11 +580,11 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
 					manager.beginRule(rules[2], second);
 					monitor.worked(1);
 				} finally {
-					status[2] = StatusChecker.STATUS_DONE;
+					status[2] = TestBarrier.STATUS_DONE;
 					manager.endRule(rules[2]);
 					monitor.done();
 				}
@@ -595,24 +596,24 @@ public class DeadlockDetectionTest extends TestCase {
 			jobs[i].schedule();
 		}
 		//wait until the first job starts
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//now let the other two jobs start
-		status[1] = StatusChecker.STATUS_START;
-		status[2] = StatusChecker.STATUS_START;
+		status[1] = TestBarrier.STATUS_START;
+		status[2] = TestBarrier.STATUS_START;
 		//wait until both are blocked on the beginRule call
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_BLOCKED, 100);
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_BLOCKED);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_BLOCKED);
 		
 		//cancel the blocked jobs
 		first.setCanceled(true);
 		second.setCanceled(true);
 		
 		//wait until both jobs are done
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_DONE);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_DONE);
 		
 		//end the first job
-		status[0] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
 		//wait until all jobs are done
 		for(int i = 0; i < jobs.length; i++) {
 			waitForCompletion(jobs[i]);
@@ -630,20 +631,20 @@ public class DeadlockDetectionTest extends TestCase {
 		final ISchedulingRule rule1 = new PathRule("/A");
 		final ISchedulingRule rule2 = new PathRule("/A/B");
 		
-		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
+		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		final IProgressMonitor canceller = new FussyProgressMonitor();
 		
 		Job ruleOwner = new Job("Test1") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					status[0] = StatusChecker.STATUS_START;
+					status[0] = TestBarrier.STATUS_START;
 					manager.beginRule(rule1, null);
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 1000);
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rule1);
 					monitor.worked(1);
 				} finally {
 					monitor.done();
-					status[0] = StatusChecker.STATUS_DONE;
+					status[0] = TestBarrier.STATUS_DONE;
 				}
 				return Status.OK_STATUS;
 			}
@@ -652,20 +653,20 @@ public class DeadlockDetectionTest extends TestCase {
 		Job ruleWait = new Job("Test2") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					status[1] = StatusChecker.STATUS_RUNNING;
+					status[1] = TestBarrier.STATUS_RUNNING;
 					manager.beginRule(rule2, canceller);
 					monitor.worked(1);
 				} finally {
 					manager.endRule(rule2);
 					monitor.done();
-					status[1] = StatusChecker.STATUS_DONE;
+					status[1] = TestBarrier.STATUS_DONE;
 				}
 				return Status.OK_STATUS;
 			}
 		};
 		
 		ruleOwner.schedule();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_START);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
 		
 		//schedule a job that is going to begin a conflicting rule and then cancel the wait
 		ruleWait.schedule();
@@ -676,11 +677,11 @@ public class DeadlockDetectionTest extends TestCase {
 		//cancel the wait for the rule
 		canceller.setCanceled(true);
 		//wait until the job completes
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_DONE);
 		
 		//let the first job finish
-		status[0] = StatusChecker.STATUS_RUNNING;
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+		status[0] = TestBarrier.STATUS_RUNNING;
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 		int i = 0;
 		waitForCompletion(ruleOwner);
 		//the underlying graph should now be empty
@@ -694,7 +695,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 4;
 		final int[] status = new int[NUM_JOBS];
-		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
+		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
 		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C"), new PathRule("/A/B/D")};
 		Job[] jobs = new Job[NUM_JOBS];
 		
@@ -703,8 +704,8 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					manager.beginRule(rules[3], null);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[3]);
 					monitor.worked(1);
 				} finally {
@@ -719,8 +720,8 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					manager.beginRule(rules[2], null);
-					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);
 					monitor.worked(1);
 				} finally {
@@ -734,10 +735,10 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
 					manager.beginRule(rules[0], new BlockingMonitor(status, 2));
-					status[2] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_RUNNING, 100);
+					status[2] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[0]);
 					monitor.worked(1);
 				} finally {
@@ -751,10 +752,10 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_START);
 					manager.beginRule(rules[1], new BlockingMonitor(status, 3));
-					status[3] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_RUNNING, 100);
+					status[3] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[1]);
 					monitor.worked(1);
 				} finally {
@@ -768,31 +769,31 @@ public class DeadlockDetectionTest extends TestCase {
 			jobs[i].schedule();
 		}
 		//wait until the first 2 jobs start
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//now let the third job start
-		status[2] = StatusChecker.STATUS_START;
+		status[2] = TestBarrier.STATUS_START;
 		//wait until it blocks on the beginRule call
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_BLOCKED);
 		
 		//let the fourth job start
-		status[3] = StatusChecker.STATUS_START;
+		status[3] = TestBarrier.STATUS_START;
 		//wait until it blocks on the beginRule call
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_BLOCKED);
 		
 		//end the first 2 jobs
-		status[0] = StatusChecker.STATUS_RUNNING;
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		
 		//wait until the third job gets the rule
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[2] = StatusChecker.STATUS_RUNNING;
+		status[2] = TestBarrier.STATUS_RUNNING;
 		
 		//wait until the fourth job gets the rule
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the job finish
-		status[3] = StatusChecker.STATUS_RUNNING;
+		status[3] = TestBarrier.STATUS_RUNNING;
 		
 		//wait until all jobs are done
 		for(int i = 0; i < jobs.length; i++) {
@@ -814,7 +815,7 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_JOBS = 5;
 		final int[] status = new int[NUM_JOBS];
-		Arrays.fill(status, StatusChecker.STATUS_WAIT_FOR_START);
+		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
 		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C")};
 		Job[] jobs = new Job[NUM_JOBS];
 		
@@ -823,8 +824,8 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					manager.beginRule(rules[1], null);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 100);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[1]);
 					monitor.worked(1);
 				} finally {
@@ -838,10 +839,10 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
 					manager.beginRule(rules[2], null);
-					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);
 					monitor.worked(1);
 				} finally {
@@ -855,10 +856,10 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
 					manager.beginRule(rules[0], new BlockingMonitor(status, 2));
-					status[2] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_RUNNING, 100);
+					status[2] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[0]);
 					monitor.worked(1);
 				} finally {
@@ -872,10 +873,10 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_START);
 					manager.beginRule(rules[2], new BlockingMonitor(status, 3));
-					status[3] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_RUNNING, 100);
+					status[3] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);
 					monitor.worked(1);
 				} finally {
@@ -889,10 +890,10 @@ public class DeadlockDetectionTest extends TestCase {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask("Testing", 1);
-					StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_START, 100);
+					TestBarrier.waitForStatus(status, 4, TestBarrier.STATUS_START);
 					manager.beginRule(rules[2], new BlockingMonitor(status, 4));
-					status[4] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_RUNNING, 100);
+					status[4] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 4, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);
 					monitor.worked(1);
 				} finally {
@@ -906,44 +907,44 @@ public class DeadlockDetectionTest extends TestCase {
 			jobs[i].schedule();
 		}
 		//wait until the first job starts
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//now let the second job start
-		status[1] = StatusChecker.STATUS_START;
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		status[1] = TestBarrier.STATUS_START;
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 		
 		//let the third job register the wait
-		status[2] = StatusChecker.STATUS_START;
+		status[2] = TestBarrier.STATUS_START;
 		//wait until the job is blocked on the scheduling rule
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_BLOCKED);
 		
 		//let the fourth job register the wait
-		status[3] = StatusChecker.STATUS_START;
+		status[3] = TestBarrier.STATUS_START;
 		//wait until the job is blocked on the scheduling rule
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_BLOCKED, 100);
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_BLOCKED);
 		
 		//end the first job, and the second job
-		status[0] = StatusChecker.STATUS_RUNNING;
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[0] = TestBarrier.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		
 		//wait until the third job gets the rule
-		StatusChecker.waitForStatus(status, 2, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_WAIT_FOR_RUN);
 		
 		//let the fifth job start its wait
-		status[4] = StatusChecker.STATUS_START;
-		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_BLOCKED, 100);
+		status[4] = TestBarrier.STATUS_START;
+		TestBarrier.waitForStatus(status, 4, TestBarrier.STATUS_BLOCKED);
 		
 		//let the third job finish
-		status[2] = StatusChecker.STATUS_RUNNING;
+		status[2] = TestBarrier.STATUS_RUNNING;
 		
 		//wait until the fourth job gets the rule
-		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the fourth job end
-		status[3] = StatusChecker.STATUS_RUNNING;
+		status[3] = TestBarrier.STATUS_RUNNING;
 		
 		//wait until the fifth job gets the rule
-		StatusChecker.waitForStatus(status, 4, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 4, TestBarrier.STATUS_WAIT_FOR_RUN);
 		//let the fifth job end
-		status[4] = StatusChecker.STATUS_RUNNING;
+		status[4] = TestBarrier.STATUS_RUNNING;
 		
 		for(int i = 0; i < jobs.length; i++) {
 			waitForCompletion(jobs[i]);
@@ -1028,7 +1029,7 @@ public class DeadlockDetectionTest extends TestCase {
 	public void _testComplexRuleLockInteraction() {
 		final JobManager manager = JobManager.getInstance();
 		final int NUM_LOCKS = 5;
-		final int [] status = {StatusChecker.STATUS_WAIT_FOR_START};
+		final int [] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		final ISchedulingRule[] rules = {new PathRule("/A"), new PathRule("/A/B"), new PathRule("/A/C"), new PathRule("/A/B/D"), new PathRule("/A/C/E")};
 		final ILock[] locks = {manager.newLock(), manager.newLock(), manager.newLock(), manager.newLock(), manager.newLock()};
 		Job[] jobs = new Job[NUM_LOCKS*3];
@@ -1039,7 +1040,7 @@ public class DeadlockDetectionTest extends TestCase {
 				protected IStatus run(IProgressMonitor monitor) {
 					try {
 						monitor.beginTask("Testing", IProgressMonitor.UNKNOWN);
-						while(status[0] != StatusChecker.STATUS_DONE) {
+						while(status[0] != TestBarrier.STATUS_DONE) {
 							int indexRule = random.nextInt(NUM_LOCKS);
 							int indexLock = random.nextInt(NUM_LOCKS);
 							int secondIndex = random.nextInt(NUM_LOCKS);
@@ -1080,7 +1081,7 @@ public class DeadlockDetectionTest extends TestCase {
 			
 		}
 		
-		status[0] = StatusChecker.STATUS_DONE;
+		status[0] = TestBarrier.STATUS_DONE;
 		
 		for(int i = 0; i < jobs.length; i++) {
 			int j = 0;
@@ -1109,18 +1110,18 @@ public class DeadlockDetectionTest extends TestCase {
 	public void _testJobRuleCancellation() {
 		final JobManager manager = JobManager.getInstance();
 		final ISchedulingRule rule = new IdentityRule();
-		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START};
+		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START};
 		
 		Job first = new Job("Test1") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					assertTrue("1.0", manager.getLockManager().isLockOwner());
-					status[0] = StatusChecker.STATUS_START;
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_RUNNING, 1000);
+					status[0] = TestBarrier.STATUS_START;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_RUNNING);
 					monitor.worked(1);
 				} finally {
 					monitor.done();
-					status[0] = StatusChecker.STATUS_DONE;
+					status[0] = TestBarrier.STATUS_DONE;
 				}
 				return Status.OK_STATUS;
 			}
@@ -1142,7 +1143,7 @@ public class DeadlockDetectionTest extends TestCase {
 		second.setRule(rule);
 		
 		first.schedule();
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_START);
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
 				
 		//schedule a job with the same rule and then cancel it
 		second.schedule();
@@ -1151,8 +1152,8 @@ public class DeadlockDetectionTest extends TestCase {
 		} catch (InterruptedException e) {
 		}
 		second.cancel();
-		status[0] = StatusChecker.STATUS_RUNNING;
-		StatusChecker.waitForStatus(status, StatusChecker.STATUS_DONE);
+		status[0] = TestBarrier.STATUS_RUNNING;
+		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 		waitForCompletion(first);
 		//the underlying graph should now be empty
 		assertTrue("Cancelled job not removed from graph.", manager.getLockManager().isEmpty());
@@ -1165,14 +1166,14 @@ public class DeadlockDetectionTest extends TestCase {
 		final JobManager manager = JobManager.getInstance();
 		final ISchedulingRule rule = new IdentityRule();
 		final ILock lock = manager.newLock();
-		final int[] status = {StatusChecker.STATUS_WAIT_FOR_START, StatusChecker.STATUS_WAIT_FOR_START};
+		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		
 		Job first = new Job("Test1") {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					manager.beginRule(rule, null);
-					status[0] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_START, 100);
+					status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_START);
 					lock.acquire();
 					lock.release();
 					manager.endRule(rule);
@@ -1191,13 +1192,13 @@ public class DeadlockDetectionTest extends TestCase {
 					lock.acquire();
 					lock.acquire();
 					lock.acquire();
-					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_START, 100);
+					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
 					manager.beginRule(rule, null);
 					manager.endRule(rule);
 					lock.release();
-					status[1] = StatusChecker.STATUS_WAIT_FOR_RUN;
-					StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_RUNNING, 100);
+					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
+					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					lock.release();
 					lock.release();
 					lock.release();
@@ -1212,21 +1213,21 @@ public class DeadlockDetectionTest extends TestCase {
 		first.schedule();
 		second.schedule();
 		//wait until one gets a rule, and the other acquires a lock
-		StatusChecker.waitForStatus(status, 0, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 		
 		//let the deadlock happen
-		status[0] = StatusChecker.STATUS_START;
-		status[1] = StatusChecker.STATUS_START;
+		status[0] = TestBarrier.STATUS_START;
+		status[1] = TestBarrier.STATUS_START;
 		
 		//wait until it is resolved and the second job releases the lock once
-		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_WAIT_FOR_RUN, 100);
+		TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_WAIT_FOR_RUN);
 		
 		//the underlying graph should not be empty yet
 		assertTrue("Held lock removed from graph.", !manager.getLockManager().isEmpty());
 		
 		//wait until the jobs are done
-		status[1] = StatusChecker.STATUS_RUNNING;
+		status[1] = TestBarrier.STATUS_RUNNING;
 		waitForCompletion(first);
 		waitForCompletion(second);
 		//the underlying graph should now be empty
