@@ -11,7 +11,6 @@
 
 package org.eclipse.ant.internal.ui.preferences;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -41,18 +40,9 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		if (obj instanceof ClasspathEntry) {
-			ClasspathEntry other= (ClasspathEntry)obj;
-			if (entry != null) {
-				return entry.equals(other.entry);
-			}
-			if (getURL() != null && other.getURL() != null) {
-				File file= new File(getURL().getFile());
-				File otherFile= new File(other.getURL().getFile());
-				return otherFile.equals(file);
-			} else if (getVariableString() != null && other.getVariableString() != null) {
-				return getVariableString().equals(other.getVariableString());
-			}
+		if (obj instanceof IAntClasspathEntry) {
+			IAntClasspathEntry other= (IAntClasspathEntry)obj;
+			return other.getLabel().equals(getLabel());
 		}
 		return false;
 		
@@ -62,13 +52,7 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		if (entry != null) {
-			return entry.getLabel().hashCode();
-		}
-		if (getURL() != null) {
-			return getURL().hashCode();
-		} 
-		return getVariableString().hashCode();
+		return getLabel().hashCode();
 	}
 
 	/* (non-Javadoc)

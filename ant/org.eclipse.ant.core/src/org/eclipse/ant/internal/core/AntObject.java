@@ -40,6 +40,7 @@ public abstract class AntObject {
 	/**
 	 * Gets the library.
 	 * @return Returns a URL
+	 * @deprecated use #getLibraryEntry()
 	 */
 	public URL getLibrary() {
 		if (fLibrary != null) {

@@ -49,4 +49,23 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 	public AntClasspathEntry(String entryString) {
 		this.entryString= entryString;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj instanceof IAntClasspathEntry) {
+			IAntClasspathEntry other= (IAntClasspathEntry)obj;
+			return entryString.equals(other.getLabel());
+		}
+		return false;
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return entryString.hashCode();
+	}
 }

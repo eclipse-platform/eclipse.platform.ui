@@ -183,13 +183,7 @@ public abstract class AntPage {
 			return null;
 		}
 		List entries= getPreferencePage().getLibraryEntries();
-		List URLs= new ArrayList(entries.size());
-		Iterator iter= entries.iterator();
-		while (iter.hasNext()) {
-			IClasspathEntry entry = (IClasspathEntry) iter.next();
-			URLs.add(entry.getEntryURL());
-			
-		}
+		
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
 		List contents= new ArrayList(elements.length);
 		Object element;
@@ -199,10 +193,10 @@ public abstract class AntPage {
 			if (element instanceof AntObject) {
 				antObject= (AntObject)element;
 				if (forDisplay) {
-					if (!antObject.isDefault() && !URLs.contains(antObject.getLibrary())) {
+					if (!antObject.isDefault() && !entries.contains(antObject.getLibraryEntry())) {
 						continue;
 					}
-				} else if (antObject.isDefault() || !URLs.contains(antObject.getLibrary())) {
+				} else if (antObject.isDefault() || !entries.contains(antObject.getLibraryEntry())) {
 					continue;
 				}
 			}
