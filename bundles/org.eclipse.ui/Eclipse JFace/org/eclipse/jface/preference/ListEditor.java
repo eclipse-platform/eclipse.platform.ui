@@ -109,10 +109,10 @@ protected void adjustForNumColumns(int numColumns) {
  * @param buttonBox the box for the buttons
  */
 private void createButtons(Composite buttonBox) {
-	addButton = createPushButton(buttonBox, "openAdd");//$NON-NLS-1$
-	removeButton = createPushButton(buttonBox, "remove");//$NON-NLS-1$
-	upButton = createPushButton(buttonBox, "up");//$NON-NLS-1$
-	downButton = createPushButton(buttonBox, "down");//$NON-NLS-1$
+	addButton = createPushButton(buttonBox, "ListEditor.add");//$NON-NLS-1$
+	removeButton = createPushButton(buttonBox, "ListEditor.remove");//$NON-NLS-1$
+	upButton = createPushButton(buttonBox, "ListEditor.up");//$NON-NLS-1$
+	downButton = createPushButton(buttonBox, "ListEditor.down");//$NON-NLS-1$
 }
 /**
  * Combines the given list of items into a single string.
