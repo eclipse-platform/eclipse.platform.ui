@@ -152,7 +152,11 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			for (int i = 0; i < plugins.length; i++) {
 				String location = plugins[i].toExternalForm();
 				try {
-					location = "reference:" + location.substring(0, location.lastIndexOf('/')+1);
+					// TODO this is only because of PDE writing "plugin.xml" in platform.xml
+					if(location.endsWith(".xml"))
+						location = location.substring(0, location.lastIndexOf('/')+1);
+					//
+					location = "reference:" + location;
 					if (!isInstalled(location)) {
 						if (DEBUG)
 							Utils.debug("Installing " + location);
@@ -201,8 +205,11 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			boolean found = false;
 			for (int j=0; !found && j<newPlugins.length; j++) {
 				String newPluginLocation = newPlugins[j].toExternalForm();
-				// TODO check for *.jar files when supported
-				newPluginLocation = "reference:" + newPluginLocation.substring(0, newPluginLocation.lastIndexOf('/')+1);
+				// TODO this is only because of PDE writing "plugin.xml" in platform.xml
+				if(newPluginLocation.endsWith(".xml"))
+					newPluginLocation = newPluginLocation.substring(0, newPluginLocation.lastIndexOf('/')+1);
+				//
+				newPluginLocation = "reference:" + newPluginLocation;
 				if (newPluginLocation.equals(cachedBundleLocation))
 					found = true;
 				else if (isWindows && newPluginLocation.equalsIgnoreCase(cachedBundleLocation))

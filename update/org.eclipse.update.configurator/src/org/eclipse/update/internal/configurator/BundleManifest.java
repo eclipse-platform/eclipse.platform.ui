@@ -20,6 +20,7 @@ public class BundleManifest implements IConfigurationConstants {
 	private File manifestFile;
 	private PluginEntry pluginEntry;
 	private IOException exception;
+	private String bundleURL;
 	/**
 	 * Constructor for local file
 	 */
@@ -27,21 +28,31 @@ public class BundleManifest implements IConfigurationConstants {
 		super();
 		manifestFile = manifest;
 		if (manifest.exists() && !manifest.isDirectory()) {
+			FileInputStream fos = null;
 			try {
-				parse(new FileInputStream(manifest));
+				fos = new FileInputStream(manifest);
+				parse(fos);
 			} catch (IOException ioe) {
+			} finally {
+				if (fos != null) {
+					try {
+						fos.close();
+					} catch (IOException e) {
+					}
+				}
 			}
 		}
 	}
-	//	/**
-	//	 * Constructor for local file
-	//	 */
-	//	public BundleManifest(InputStream input) {
-	//		super();
-	//		if (input != null) {
-	//			parse(input);
-	//		}
-	//	}
+		/**
+		 * Constructor for local file
+		 */
+		public BundleManifest(InputStream input, String bundleUrl) {
+			super();
+			bundleURL = bundleUrl;
+			if (input != null) {
+				parse(input);
+			}
+		}
 	/**
 	 * Parses manifest, creates PluginEntry if manifest is valid, stores
 	 * exception if any occurs
@@ -57,7 +68,7 @@ public class BundleManifest implements IConfigurationConstants {
 			// plugin id
 			String id = a.getValue(Constants.BUNDLE_SYMBOLICNAME);
 			if (id == null) {
-				// In Eclipse manifest must have Bundle-GlobalName attribute
+				// In Eclipse manifest must have Bundle-SymbolicName attribute
 				return;
 			}
 			String version = a.getValue(Constants.BUNDLE_VERSION);
@@ -68,12 +79,17 @@ public class BundleManifest implements IConfigurationConstants {
 			pluginEntry.isFragment(hostPlugin != null
 					&& hostPlugin.length() > 0);
 			// Set URL
-			File pluginDir = manifestFile.getParentFile();
-			if (pluginDir != null) {
-				pluginDir = pluginDir.getParentFile();
+			if(bundleURL!=null){
+				pluginEntry.setURL(bundleURL);
+			}else{
+				File pluginDir = manifestFile.getParentFile();
+				if (pluginDir != null) {
+					pluginDir = pluginDir.getParentFile();
+				}
+				if (pluginDir != null){
+					pluginEntry.setURL(PLUGINS + "/" + pluginDir.getName() + "/");
+				}
 			}
-			if (pluginDir != null)
-				pluginEntry.setURL(PLUGINS + "/" + pluginDir.getName() + "/");
 			//
 		} catch (IOException ioe) {
 			exception = ioe;

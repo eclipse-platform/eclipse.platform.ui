@@ -13,6 +13,7 @@ package org.eclipse.update.internal.configurator;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.zip.*;
 
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.runtime.*;
@@ -230,53 +231,138 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			return;
 
 		// locate plugin entries on site
-		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
-		File pluginsDir = new File(root, PLUGINS);
-
-		if (pluginsDir.exists()) {
+		File pluginsDir = new File(resolvedURL.getFile(), PLUGINS);
+		
+		if (pluginsDir.exists() && pluginsDir.isDirectory()) {
 			File[] files = pluginsDir.listFiles();
 			for (int i = 0; i < files.length; i++) {
-				long dirTimestamp = files[i].lastModified();
-				File pluginFile = new File(files[i], META_MANIFEST_MF);
-				try {
-					// First, check if has valid bundle manifest				
-					BundleManifest bundleManifest = new BundleManifest(pluginFile);
-					if(bundleManifest.exists()){
-						if (dirTimestamp <= pluginsChangeStamp && pluginFile.lastModified() <= pluginsChangeStamp)
-							continue;
-						PluginEntry entry=bundleManifest.getPluginEntry();
-						addPluginEntry(entry);
-					}else{
-						// no bundle manifest, check for plugin.xml or fragment.xml
-						pluginFile = new File(files[i], PLUGIN_XML);
-						if (!pluginFile.exists()) { //$NON-NLS-1$
-							pluginFile = new File(files[i], FRAGMENT_XML); //$NON-NLS-1$
-						}
-						
-						if (pluginFile.exists() && !pluginFile.isDirectory()) {
-						
-							// TODO in the future, assume that the timestamps are not reliable,
-							// or that the user manually modified an existing plugin, so
-							// the apparently modifed plugin may actually be configured already.
-							// We will need to double check for this. END to do.
-							
-							if (dirTimestamp <= pluginsChangeStamp && pluginFile.lastModified() <= pluginsChangeStamp)
-								continue;
-							PluginEntry entry =	pluginParser.parse(pluginFile);
-							addPluginEntry(entry);
-						}
-					}
-				} catch (IOException e) {
-					String pluginFileString = pluginFile.getAbsolutePath();
-					Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing",pluginFileString)); //$NON-NLS-1$
-				} catch (SAXException e) {
-					String pluginFileString = pluginFile.getAbsolutePath();
-					Utils.log(Messages.getString("InstalledSiteParser.ErrorParsingFile", pluginFileString)); //$NON-NLS-1$
+				if(files[i].isDirectory()){
+					detectUnpackedPlugin(files[i]);
+				}else if(files[i].getName().endsWith(".jar")){
+					detectPackedPlugin(files[i]);
+				}else{
+					// not bundle file
 				}
 			}
 		} 
 		
 		Utils.debug(resolvedURL.toString() + " located  " + pluginEntries.size() + " plugin(s)"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	/**
+	 * @param file
+	 *            a plugin jar
+	 */
+	private void detectPackedPlugin(File file) {
+		// plugin to run directly from jar
+		long jarTimestamp = file.lastModified();
+		if (jarTimestamp <= pluginsChangeStamp) {
+			return;
+		}
+		String entryName = META_MANIFEST_MF;
+		ZipFile z = null;
+		InputStream bundleManifestIn = null;
+		InputStream pluginManifestIn = null;
+		String pluginURL = PLUGINS + "/" + file.getName();
+		try {
+			// First, check if has valid bundle manifest
+			z = new ZipFile(file);
+			if (z.getEntry(entryName) != null) {
+				bundleManifestIn = z.getInputStream(new ZipEntry(entryName));
+				BundleManifest manifest = new BundleManifest(bundleManifestIn,
+						pluginURL);
+				if (manifest.exists()) {
+					addPluginEntry(manifest.getPluginEntry());
+					return;
+				}
+			}
+			// no bundle manifest, check for plugin.xml or fragment.xml
+			entryName = PLUGIN_XML;
+			if (z.getEntry(entryName) == null) {
+				entryName = FRAGMENT_XML;
+			}
+			if (z.getEntry(entryName) != null) {
+				pluginManifestIn = z.getInputStream(new ZipEntry(entryName));
+				PluginEntry entry1 = pluginParser.parse(pluginManifestIn,
+						pluginURL);
+				addPluginEntry(entry1);
+			}
+		} catch (IOException e5) {
+			String pluginFileString2 = pluginURL + "!" + entryName;
+			Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing",
+					pluginFileString2)); //$NON-NLS-1$
+		} catch (SAXException e3) {
+			String pluginFileString1 = pluginURL + "!" + entryName;
+			Utils.log(Messages.getString(
+					"InstalledSiteParser.ErrorParsingFile", pluginFileString1)); //$NON-NLS-1$
+		} finally {
+			if (bundleManifestIn != null) {
+				try {
+					bundleManifestIn.close();
+				} catch (IOException e4) {
+				}
+			}
+			if (pluginManifestIn != null) {
+				try {
+					pluginManifestIn.close();
+				} catch (IOException e2) {
+				}
+			}
+			if (z != null) {
+				try {
+					z.close();
+				} catch (IOException e1) {
+				}
+			}
+		}
+	}
+	/**
+	 * @param file
+	 *            a plugin directory
+	 */
+	private void detectUnpackedPlugin(File file) {
+		// unpacked plugin
+		long dirTimestamp = file.lastModified();
+		File pluginFile = new File(file, META_MANIFEST_MF);
+		try {
+			// First, check if has valid bundle manifest
+			BundleManifest bundleManifest = new BundleManifest(pluginFile);
+			if (bundleManifest.exists()) {
+				if (dirTimestamp <= pluginsChangeStamp
+						&& pluginFile.lastModified() <= pluginsChangeStamp)
+					return;
+				PluginEntry entry = bundleManifest.getPluginEntry();
+				addPluginEntry(entry);
+			} else {
+				// no bundle manifest, check for plugin.xml or fragment.xml
+				pluginFile = new File(file, PLUGIN_XML);
+				if (!pluginFile.exists()) { //$NON-NLS-1$
+					pluginFile = new File(file, FRAGMENT_XML); //$NON-NLS-1$
+				}
+				if (pluginFile.exists() && !pluginFile.isDirectory()) {
+					// TODO in the future, assume that the timestamps are not
+					// reliable,
+					// or that the user manually modified an existing plugin,
+					// so
+					// the apparently modifed plugin may actually be configured
+					// already.
+					// We will need to double check for this. END to do.
+					if (dirTimestamp <= pluginsChangeStamp
+							&& pluginFile.lastModified() <= pluginsChangeStamp)
+						return;
+					PluginEntry entry = pluginParser.parse(pluginFile);
+					addPluginEntry(entry);
+				}
+			}
+		} catch (IOException e) {
+			String pluginFileString = pluginFile.getAbsolutePath();
+			Utils.log(Messages.getString("InstalledSiteParser.ErrorAccessing",
+					pluginFileString)); //$NON-NLS-1$
+		} catch (SAXException e) {
+			String pluginFileString = pluginFile.getAbsolutePath();
+			Utils.log(Messages.getString(
+					"InstalledSiteParser.ErrorParsingFile", pluginFileString)); //$NON-NLS-1$
+		}
 	}
 
 	/**
