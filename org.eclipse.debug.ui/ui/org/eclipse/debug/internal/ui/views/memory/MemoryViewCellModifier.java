@@ -113,7 +113,7 @@ public class MemoryViewCellModifier implements ICellModifier
 				
 
 				//Ask for label provider
-				byte[] memory = line.getByteArray(offset, end);
+				MemoryByte[] memory = line.getBytes(offset, end);
 
 				IBaseLabelProvider labelProvider = ((MemoryViewTab)fViewTab).getTableViewer().getLabelProvider();
 				if(labelProvider instanceof AbstractTableViewTabLabelProvider)
@@ -128,7 +128,7 @@ public class MemoryViewCellModifier implements ICellModifier
 						BigInteger address = new BigInteger(((MemoryViewLine)element).getAddress(), 16);
 						address = address.add(BigInteger.valueOf(offset)); 
 						
-						return renderer.getString(fViewTab.getRenderingId(), address, memory);
+						return renderer.getString(fViewTab.getRenderingId(), address, memory, line.getPaddedString());
 					}
 					else
 					{
@@ -190,7 +190,7 @@ public class MemoryViewCellModifier implements ICellModifier
 					int offsetToLine = Integer.valueOf(property, 16).intValue();
 					int end = offsetToLine + fViewTab.getColumnSize();
 					
-					byte[] oldArray= line.getByteArray(offsetToLine, end);
+					MemoryByte[] oldArray= line.getBytes(offsetToLine, end);
 					
 					BigInteger address = new BigInteger(line.getAddress(), 16);
 					address = address.add(BigInteger.valueOf(offsetToLine)); 

@@ -301,7 +301,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 		 */
 		public void widgetDefaultSelected(SelectionEvent e)
 		{
-			// TODO Auto-generated method stub
+ 
 			
 		}
 		
@@ -690,7 +690,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		// TODO Auto-generated method stub
+		 
 		return null;
 	}
 
@@ -698,7 +698,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
-		// TODO Auto-generated method stub
+		 
 		
 	}
 
@@ -706,7 +706,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
 	protected IWorkbenchPart getBootstrapPart() {
-		// TODO Auto-generated method stub
+		 
 		return null;
 	}
 
@@ -714,7 +714,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected boolean isImportant(IWorkbenchPart part) {
-		// TODO Auto-generated method stub
+		 
 		return false;
 	}
 
@@ -722,7 +722,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.debug.ui.IDebugView#getViewer()
 	 */
 	public Viewer getViewer() {
-		// TODO Auto-generated method stub
+		 
 		return null;
 	}
 
@@ -730,7 +730,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
-		// TODO Auto-generated method stub
+		 
 		return null;
 	}
 
@@ -738,7 +738,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.debug.ui.IDebugView#setAction(java.lang.String, org.eclipse.jface.action.IAction)
 	 */
 	public void setAction(String actionID, IAction action) {
-		// TODO Auto-generated method stub
+		 
 		
 	}
 
@@ -746,7 +746,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.debug.ui.IDebugView#add(org.eclipse.ui.texteditor.IUpdate)
 	 */
 	public void add(IUpdate updatable) {
-		// TODO Auto-generated method stub
+		 
 		
 	}
 
@@ -754,7 +754,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.debug.ui.IDebugView#remove(org.eclipse.ui.texteditor.IUpdate)
 	 */
 	public void remove(IUpdate updatable) {
-		// TODO Auto-generated method stub
+		 
 		
 	}
 
@@ -762,7 +762,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 	 * @see org.eclipse.debug.ui.IDebugView#getAction(java.lang.String)
 	 */
 	public IAction getAction(String actionID) {
-		// TODO Auto-generated method stub
+		 
 		return null;
 	}
 

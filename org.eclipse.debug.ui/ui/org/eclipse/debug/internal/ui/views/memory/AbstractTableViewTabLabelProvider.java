@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+import org.eclipse.debug.internal.core.memory.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -102,18 +103,11 @@ abstract public class AbstractTableViewTabLabelProvider extends LabelProvider im
 			int end = start + fViewTab.getColumnSize();
 			MemoryViewLine line = (MemoryViewLine)element;
 
-			byte[] bytes = ((MemoryViewLine)element).getByteArray(start, end);
+			MemoryByte[] bytes = ((MemoryViewLine)element).getBytes(start, end);
 			BigInteger address = new BigInteger(((MemoryViewLine)element).getAddress(), 16);
 			address = address.add(BigInteger.valueOf(start)); 
 			
-			columnLabel = fRenderer.getString(fViewTab.getRenderingId(), address, bytes);
-			
-			// if not the entire range is available
-			// pad it with padded string
-			if (!line.isAvailable(start, end))
-			{				
-				columnLabel = line.getPaddedString(start, end);
-			}
+			columnLabel = fRenderer.getString(fViewTab.getRenderingId(), address, bytes, line.getPaddedString());
 		}
 		return columnLabel;
 	}

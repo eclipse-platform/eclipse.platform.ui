@@ -982,10 +982,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	protected void updateSelectedAddress(TableItem row, int col)
 	{
-		// get cursor position
-		// TODO: nothing is done with this - is this call needed?
-		fTableViewer.getTable().indexOf(row);
-		
+	
 		// get row address
 		String temp = ((MemoryViewLine)row.getData()).getAddress();
 		BigInteger rowAddress = new BigInteger(temp, 16);
@@ -1010,7 +1007,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetDefaultSelected(SelectionEvent e) {
-		// TODO Auto-generated method stub
+		 
 		
 	}
 
@@ -1019,7 +1016,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
 	 */
 	public void controlMoved(ControlEvent e) {
-		// TODO Auto-generated method stub
+		 
 		
 	}
 
@@ -1234,32 +1231,13 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			// number of lines is number of visible lines + buffered lines
 			numLines = getNumberOfVisibleLines()+TABLE_PREBUFFER+TABLE_POSTBUFFER;
 		}
-		else
-		{
-			// otherwise, ask memory block how many lines it's capable of
-			// TODO: nothing is done with the length - why call the method?
-			fMemoryBlock.getLength();
-			numLines = numLines/getBytesPerLine();
-		}
 
-		// get current top buffered address
-		// TODO: nothing is done with the old buffer address or top addresss
-		contentProvider.getBufferTopAddress();
-		getTopVisibleAddress();
 
 		// tell content provider to get memory and refresh
 		contentProvider.getMemoryToFitTable(topBufferAddress, numLines, updateDelta);
 		contentProvider.forceRefresh();
 		
-		// get new top buffered address
-		// TODO: nothing is done with this result
-		contentProvider.getBufferTopAddress();
-		
-		// restore selection
-		// no need to restore for IMemoryBlock
-		// TODO: nothing is done with these results
-		getTopVisibleAddress().add(BigInteger.valueOf(getBytesPerLine()*getNumberOfVisibleLines()));
-		getTopVisibleAddress();
+
 		if (fMemoryBlock instanceof IExtendedMemoryBlock)
 		{
 			int topIdx = findAddressIndex(topAddress);
@@ -1340,11 +1318,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 * @return true if cursor is visible, false otherwise
 	 */
 	private boolean updateCursorPosition()
-	{
-		// get address size
-		// TODO: nothing is done with this result
-		contentProvider.getAddressSize(fSelectedAddress);
-				
+	{			
 		// selected address is out of range, simply return false
 		if (fSelectedAddress.compareTo(contentProvider.getBufferTopAddress()) < 0)
 			return false;
@@ -2133,7 +2107,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 */
 	public void scrollBarSelectionChanged(int newSelection)
 	{
-		// TODO Auto-generated method stub
+		 
 		
 	}
 

@@ -65,7 +65,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	 * @see org.eclipse.jface.action.IAction#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
-		// TODO Auto-generated method stub
+		 
 		super.setEnabled(enabled);
 	}
 

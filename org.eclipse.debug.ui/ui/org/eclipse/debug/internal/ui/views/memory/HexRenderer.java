@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+import org.eclipse.debug.internal.core.memory.MemoryByte;
 
 
 /**
@@ -21,28 +22,39 @@ import java.math.BigInteger;
 public class HexRenderer extends AbstractMemoryRenderer implements IFixedLengthOutputRenderer {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractMemoryRenderer#getString(java.lang.String, java.math.BigInteger, byte[])
+	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryRenderer#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.internal.core.memory.MemoryByte[], java.lang.String)
 	 */
 	public String getString(
 		String dataType,
 		BigInteger address,
-		byte[] data) {
+		MemoryByte[] data, String paddedStr) {
 
-		String str;
-		str = convertByteArrayToHexString(data);
-		str = str.toUpperCase();
+		StringBuffer strBuffer = new StringBuffer();
 		
-		return str;
+		for (int i=0; i<data.length; i++)
+		{
+			if ((data[i].flags & MemoryByte.VALID) != 0)
+			{
+				strBuffer.append(new String(convertByteToCharArray(data[i].value)));
+			}
+			else
+			{
+				// pad with padded string
+				strBuffer.append(paddedStr);
+			}
+		}
+		
+		return strBuffer.toString().toUpperCase();
 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractMemoryRenderer#getBytes(java.lang.String, java.math.BigInteger, java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryRenderer#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.internal.core.memory.MemoryByte[], java.lang.String)
 	 */
 	public byte[] getBytes(
 		String dataType,
 		BigInteger address,
-		byte[] currentValues, String data) {
+		MemoryByte[] currentValues, String data) {
 
 		byte[] bytes = convertHexStringToByteArray(data);
 		
@@ -50,18 +62,7 @@ public class HexRenderer extends AbstractMemoryRenderer implements IFixedLengthO
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.FixedLengthDataRenderer#getString(java.lang.String, java.math.BigInteger, byte[], int)
-	 */
-	public String getString(String renderingId, BigInteger address, byte[] data, int columnSize) {
-		String str;
-		str = convertByteArrayToHexString(data);
-		str = str.toUpperCase();
-		
-		return str;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.FixedLengthDataRenderer#getNumCharPerByte()
+	 * @see org.eclipse.debug.internal.ui.views.memory.IFixedLengthOutputRenderer#getNumCharPerByte()
 	 */
 	public int getNumCharPerByte() {
 		return 2;
@@ -75,18 +76,26 @@ public class HexRenderer extends AbstractMemoryRenderer implements IFixedLengthO
 	static public String convertByteArrayToHexString(byte[] byteArray)
 	{
 		StringBuffer strBuffer = new StringBuffer();
-		char charArray[] = new char[2]; 
+		char charArray[];
 		
 		for (int i=0; i<byteArray.length;i ++)
 		{
-			int val = byteArray[i];
-			if (val < 0) val += 256;
-			charArray[0] = Character.forDigit(val / 16, 16);
-			charArray[1] = Character.forDigit(val % 16, 16);
+			charArray = convertByteToCharArray(byteArray[i]);
 			strBuffer.append(charArray);			
 		}
 		
 		return strBuffer.toString();
+	}
+	
+	static private char[] convertByteToCharArray(byte aByte)
+	{
+		char charArray[] = new char[2];
+		int val = aByte;
+		if (val<0) val += 256;
+		charArray[0] = Character.forDigit(val/16, 16);
+		charArray[1] = Character.forDigit(val%16, 16);
+		
+		return charArray;
 	}
 
 	/**

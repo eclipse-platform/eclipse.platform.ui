@@ -37,7 +37,7 @@ public class ViewTabEnablementManager implements SelectionListener {
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetDefaultSelected(SelectionEvent e) {
-		// TODO Auto-generated method stub
+		 
 		
 	}
 	

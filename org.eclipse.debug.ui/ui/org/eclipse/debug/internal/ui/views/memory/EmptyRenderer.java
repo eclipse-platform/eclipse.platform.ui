@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+import org.eclipse.debug.internal.core.memory.MemoryByte;
 
 /**
  * When a MemoryViewTab is created without a renderer defined, use
@@ -22,26 +23,25 @@ import java.math.BigInteger;
 public class EmptyRenderer extends AbstractMemoryRenderer {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractMemoryRenderer#getString(java.lang.String, java.math.BigInteger, byte[])
+	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryRenderer#getString(java.lang.String, java.math.BigInteger, org.eclipse.debug.internal.core.memory.MemoryByte[], java.lang.String)
 	 */
 	public String getString(
 		String dataType,
 		BigInteger address,
-		byte[] data) {
+		MemoryByte[] data, String paddedStr) {
 		
 		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractMemoryRenderer#getBytes(java.lang.String, java.math.BigInteger, byte[], java.lang.String)
+	 * @see org.eclipse.debug.internal.ui.views.memory.AbstractMemoryRenderer#getBytes(java.lang.String, java.math.BigInteger, org.eclipse.debug.internal.core.memory.MemoryByte[], java.lang.String)
 	 */
 	public byte[] getBytes(
 		String dataType,
 		BigInteger address,
-		byte[] currentValues,
+		MemoryByte[] currentValues,
 		String data) {
 		
 		return new byte[0];
 	}
-
 }

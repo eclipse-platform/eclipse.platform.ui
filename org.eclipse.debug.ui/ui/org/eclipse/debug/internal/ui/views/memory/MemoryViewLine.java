@@ -124,7 +124,11 @@ public class MemoryViewLine extends Object {
 		}
 		return buf.toString();
 	}
-
+	
+	public String getPaddedString()
+	{
+		return fPaddedString;
+	}
 
 	/**
 	 * @param start
