@@ -214,6 +214,14 @@ public interface IDebugUIConstants {
 	public static final String PREF_ACTIVATE_WORKBENCH= PLUGIN_ID + ".activate_workbench"; //$NON-NLS-1$
 	
 	/**
+	 * Boolean preference controlling whether the debugger will force activate the debug
+	 * view when a breakpoint is hit.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_ACTIVATE_DEBUG_VIEW= PLUGIN_ID + ".activate_debug_view"; //$NON-NLS-1$
+	
+	/**
 	 * String preference controlling whether the debugger waits for a currently
 	 * pending (running or waiting) background build to complete before launching.
 	 * Valid values are either "always", "never", or "prompt".

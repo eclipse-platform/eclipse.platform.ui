@@ -28,8 +28,11 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -235,10 +238,19 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	protected void updateForDebugEvents(DebugEvent[] events) {
 		super.updateForDebugEvents(events);
-		if (isViewVisible()) {
-			return;
+		if (!isViewVisible()) {
+			if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+				IWorkbenchPage page = getActivePage();
+				if (page != null) {
+					try {
+						page.showView(IDebugUIConstants.ID_DEBUG_VIEW, null, IWorkbenchPage.VIEW_VISIBLE);
+					} catch (PartInitException e) {
+						DebugUIPlugin.log(e);
+					}
+				}
+			}
+			doHandleDebugEvents(events);
 		}
-		doHandleDebugEvents(events);
 	}
 	
 	/**
