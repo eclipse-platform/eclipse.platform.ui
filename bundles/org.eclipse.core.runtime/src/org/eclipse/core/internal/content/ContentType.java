@@ -133,7 +133,7 @@ public final class ContentType implements IContentType {
 			return ""; //$NON-NLS-1$
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < list.length; i++) {
-			result.append(list);
+			result.append(list[i]);
 			result.append(',');
 		}
 		// ignore last comma

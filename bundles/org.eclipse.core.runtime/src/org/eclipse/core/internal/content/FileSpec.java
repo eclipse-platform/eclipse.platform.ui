@@ -56,4 +56,8 @@ class FileSpec {
 	public static String getMappingKeyFor(String fileSpecText) {
 		return fileSpecText.toLowerCase();
 	}
+	
+	public String toString() {
+		return getText();
+	}	
 }
