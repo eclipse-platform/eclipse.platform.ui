@@ -9,7 +9,7 @@
    <runtime>
       <library name="ui.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.ui"/>
+         <packages prefixes="org.eclipse.ui.internal"/>
       </library>
    </runtime>
    <requires>
