@@ -152,25 +152,25 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		ILaunchConfiguration lastLaunched = getLastLaunch();
 		String tooltip = null;
 		if (lastLaunched == null) {
-			tooltip = getLaunchHistory().getLaunchGroup().getLabel();
-			int index= tooltip.indexOf('&');
-			if (index == 0) {
-				tooltip= tooltip.substring(1);
-			} else if (index > 0 && index < (tooltip.length() - 1)) {
-				StringBuffer temp= new StringBuffer(tooltip.substring(0, index));
-				temp.append(tooltip.substring(index + 1));
-				tooltip= temp.toString();
-			}		
+			tooltip = getLaunchHistory().getLaunchGroup().getShellTitle();
 		} else {
-			String mode = getMode();
-			String launchName = lastLaunched.getName();
-			if (mode.equals(ILaunchManager.RUN_MODE)) {
-				tooltip = MessageFormat.format(ActionMessages.getString("AbstractLaunchHistoryAction.Run_{0}_1"), new String[]{launchName}); //$NON-NLS-1$
-			} else {
-				tooltip = MessageFormat.format(ActionMessages.getString("AbstractLaunchHistoryAction.Debug_{0}_2"), new String[]{launchName}); //$NON-NLS-1$
-			}
+			tooltip= getToolTip(lastLaunched);
 		}
 		getAction().setToolTipText(tooltip);
+	}
+	
+	protected String getToolTip(ILaunchConfiguration lastLaunched) {
+		String launchName= lastLaunched.getName();
+		String mode= getMode();
+		String label;
+		if (mode.equals(ILaunchManager.RUN_MODE)) {
+			label= ActionMessages.getString("AbstractLaunchHistoryAction.1"); //$NON-NLS-1$
+		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
+			label= ActionMessages.getString("AbstractLaunchHistoryAction.2"); //$NON-NLS-1$
+		} else {
+			label= ActionMessages.getString("AbstractLaunchHistoryAction.3"); //$NON-NLS-1$
+		}
+		return MessageFormat.format(ActionMessages.getString("AbstractLaunchHistoryAction.0"), new String[] {label, launchName}); //$NON-NLS-1$
 	}
 	
 	/**
