@@ -29,14 +29,14 @@ import org.eclipse.ui.internal.console.ConsolePatternMatcher;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * An abstract console that supports regular expression matching.
+ * An abstract text console that supports regular expression matching.
  * <p>
  * Pattern match listeners can be registered with a console programmatically
  * or via the <code>org.eclipse.ui.console.consolePatternMatchListeners</code>
  * extension point. Listeners are notified of matches in the console.
  * </p>
  * <p>
- * Subclasses must provide a document partitioner.
+ * Clients may subclass this class. Subclasses must provide a document partitioner.
  * </p>
  * @since 3.1
  */
@@ -123,6 +123,12 @@ public abstract class TextConsole extends AbstractConsole {
     
 	/**
 	 * Returns this console's document.
+     * <p>
+     * Note that a console may or may not support direct manipulation of its document.
+     * For example, an I/O console document and its partitions are produced from the
+     * streams connected to it, and clients are not intended to modify the document's
+     * contents.
+     * </p>
 	 * 
 	 * @return this console's document
 	 */
@@ -234,17 +240,24 @@ public abstract class TextConsole extends AbstractConsole {
      *      perspective, autoscroll can not be set on the console itself. It would not be 
      *      desirable to change the state of scroll lock in every console view.
      *      This method will be deleted before 3.1.
+     * TODO: delete this method
 	 */
 	public void setAutoScroll(boolean scroll) {
 	}
 	
     /**
      * Clears the console.
+     * <p>
+     * Since a console may or may not support direct manipulation
+     * of its document's contents, this method should be called to clear a text console's
+     * document. The default implementation sets this console's document content
+     * to the empty string directly. Subclasses should override as required.
+     * </p>
      */
     public void clearConsole() {
-        IConsoleDocumentPartitioner partitioner = getPartitioner();
-        if (partitioner != null) {
-            partitioner.clearBuffer();
+        IDocument document = getDocument();
+        if (document != null) {
+            document.set(""); //$NON-NLS-1$
         }
     }
 

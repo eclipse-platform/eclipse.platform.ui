@@ -228,7 +228,14 @@ public class IOConsole extends TextConsole {
 		}
     }
     
-
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.TextConsole#clearConsole()
+     */
+    public void clearConsole() {
+        if (partitioner != null) {
+            partitioner.clearBuffer();
+        }
+    }
     
     /**
      * Disposes this console.
