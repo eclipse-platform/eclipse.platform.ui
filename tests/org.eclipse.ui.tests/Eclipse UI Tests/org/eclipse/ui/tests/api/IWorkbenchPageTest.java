@@ -711,6 +711,69 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(callTrace.contains("dispose"), true);
 	}
 
+	public void testCloseEditors() throws Throwable {
+		int total = 5;
+		final IFile[] files = new IFile[total];
+		IEditorPart[] editors = new IEditorPart[total];
+		IEditorReference[] editorRefs = new IEditorReference[total];
+		CallHistory[] callTraces = new CallHistory[total];
+		MockEditorPart[] mocks = new MockEditorPart[total];
+
+		proj = FileUtil.createProject("testCloseEditors");
+		for (int i = 0; i < total; i++)
+			files[i] = FileUtil.createFile(i + ".mock2", proj);
+
+		/*
+			javadoc: If the page has open editors with unsaved content and save is true, the user will be given the opportunity to save them.
+		*/
+		//close all clean editors with confirmation
+		for (int i = 0; i < total; i++) {
+			editors[i] = IDE.openEditor(fActivePage, files[i], true);
+			callTraces[i] = ((MockEditorPart) editors[i]).getCallHistory();
+		}
+		
+		editorRefs = fActivePage.getEditorReferences();
+		assertEquals(fActivePage.closeEditors(editorRefs, true), true);
+		for (int i = 0; i < total; i++) {
+			assertEquals(callTraces[i].contains("isDirty"), true);
+			assertEquals(callTraces[i].contains("doSave"), false);
+			callTraces[i].clear();
+		}
+
+		//close all dirty editors with confirmation
+		//can't be tested		
+
+		//close all dirty editors discarding them		
+		for (int i = 0; i < total; i++) {
+			editors[i] = IDE.openEditor(fActivePage, files[i], true);
+			mocks[i] = (MockEditorPart) editors[i];
+			mocks[i].setDirty(true);
+			callTraces[i] = mocks[i].getCallHistory();
+		}
+		editorRefs = fActivePage.getEditorReferences();
+		assertEquals(fActivePage.closeEditors(editorRefs, false), true);
+		for (int i = 0; i < total; i++) {
+			assertEquals(callTraces[i].contains("doSave"), false);
+		}
+		
+		//close empty array of editors
+		total = 1;
+		for (int i = 0; i < total; i++) {
+			editors[i] = IDE.openEditor(fActivePage, files[i], true);
+			mocks[i] = (MockEditorPart) editors[i];
+			mocks[i].setDirty(true);
+			callTraces[i] = mocks[i].getCallHistory();
+		}
+		// empty array test
+		editorRefs = new IEditorReference[0];
+		assertEquals(fActivePage.closeEditors(editorRefs, true), true);
+		for (int i = 0; i < total; i++) {
+				assertEquals(callTraces[i].contains("isDirty"), true);
+				assertEquals(callTraces[i].contains("doSave"), false);
+				callTraces[i].clear();
+		}
+	}
+	
 	public void testCloseAllEditors() throws Throwable {
 		int total = 5;
 		final IFile[] files = new IFile[total];
