@@ -493,6 +493,13 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		if (layout == null) {
 			coolBar.setRedraw(false);
 			CoolItem[] coolItems = coolBar.getItems();
+			int[] newItemOrder = new int[coolItems.length];
+			// reset the coolitem order to the creation order
+			for (int i = 0; i < coolItems.length; i++) {
+				newItemOrder[i]=i;
+			}
+			coolBar.setItemLayout(newItemOrder, new int[] {}, coolBar.getItemSizes());
+			// after the order and rows have been set, reset the item sizes
 			for (int i = 0; i < coolItems.length; i++) {
 				CoolItem coolItem = coolItems[i];
 				ToolBar toolBar = (ToolBar) coolItem.getControl();
@@ -503,7 +510,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				coolItem.setPreferredSize(coolSize);
 				coolItem.setMinimumSize(minWidth, coolItem.getMinimumSize().y);
 			}
-			coolBar.setWrapIndices(new int[] {});
 			coolBar.setRedraw(true);
 			return;
 		}
