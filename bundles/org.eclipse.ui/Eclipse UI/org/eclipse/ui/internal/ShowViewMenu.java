@@ -11,6 +11,7 @@ import org.eclipse.ui.part.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.*;
+import java.text.Collator;
 import java.util.*;
 
 /**
@@ -19,11 +20,21 @@ import java.util.*;
  * from the Perspective Customize dialog. 
  */
 public class ShowViewMenu extends ShortcutMenu implements IPartListener {
+	private Comparator actionComparator = new Comparator() {
+		Collator collator = Collator.getInstance();
+		public int compare(Object o1, Object o2) {
+			IAction a1 = (IAction) o1;
+			IAction a2 = (IAction) o2;
+			return collator.compare(a1.getText(), a2.getText());
+		}
+	};
+	
 	private Action showDlgAction = new Action(WorkbenchMessages.getString("ShowView.title")) { //$NON-NLS-1$
 		public void run() {
 			showOther();
 		}
 	};
+		
 	private Map actions = new HashMap(21);
 	
 	//Maps pages to a list of opened views
@@ -65,19 +76,22 @@ protected void fillMenu() {
 		return;
 		
 	// Get visible actions.
-	List actions = ((WorkbenchPage) page).getShowViewActions();
-	actions = addOpenedViews(actions);
-	if (actions != null) {
-		for (Iterator i = actions.iterator(); i.hasNext();) {
-			String id = (String) i.next();
-			IAction action = getAction(id);
-			if (action != null) {
-				innerMgr.add(action);
-			}
+	List viewIds = ((WorkbenchPage) page).getShowViewActions();
+	viewIds = addOpenedViews(viewIds);
+	List actions = new ArrayList(viewIds.size());
+	for (Iterator i = viewIds.iterator(); i.hasNext();) {
+		String id = (String) i.next();
+		IAction action = getAction(id);
+		if (action != null) {
+			actions.add(action);
 		}
 	}
+	Collections.sort(actions, actionComparator);
+	for (Iterator i = actions.iterator(); i.hasNext();) {
+		innerMgr.add((IAction) i.next());
+	}
 
-	// Add other ..
+	// Add Other ..
 	innerMgr.add(new Separator());
 	innerMgr.add(showDlgAction);
 }
