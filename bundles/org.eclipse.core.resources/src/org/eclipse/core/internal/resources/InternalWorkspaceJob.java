@@ -29,25 +29,22 @@ public abstract class InternalWorkspaceJob extends Job {
 	public final IStatus run(IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, Policy.totalWork);
 			int depth = -1;
 			try {
 				workspace.prepareOperation(null, monitor);
 				workspace.beginOperation(true);
 				depth = workspace.getWorkManager().beginUnprotected();
-				return runInWorkspace(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+				return runInWorkspace(monitor);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				return Status.CANCEL_STATUS;
 			} finally {
 				if (depth >= 0)
 					workspace.getWorkManager().endUnprotected(depth);
-				workspace.endOperation(null, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				workspace.endOperation(null, false, monitor);
 			}
 		} catch (CoreException e) {
 			return e.getStatus();
-		} finally {
-			monitor.done();
 		}
 	}
 
