@@ -16,6 +16,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
@@ -66,22 +67,44 @@ class GotoMarkerAction extends Action {
 			editorId= desc.getId();
 
 		IEditorPart editor= page.findEditor(input);
-		if (editor == null) {
-				if (fEditor != null && !fEditor.isDirty() && !isPinned(fEditor))
-					page.closeEditor(fEditor, false);
-			try {
-				editor= page.openEditor(input, editorId, false);
-			} catch (PartInitException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openEditor.title"), SearchMessages.getString("Search.Error.openEditor.message")); //$NON-NLS-2$ //$NON-NLS-1$
-				return;
+		if (editor != null)
+			page.bringToTop(editor);
+		else {
+			boolean isOpen= false;
+			if (fEditor != null) {
+				IEditorReference[] parts= page.getEditorReferences();
+				int i= 0;
+				while (!isOpen && i < parts.length)
+					isOpen= fEditor == parts[i++].getEditor(false);
 			}
 
-		} else {
-			page.bringToTop(editor);
+			boolean canBeReused= isOpen && !fEditor.isDirty() && !isPinned(fEditor);
+			boolean showsSameInputType= fEditor != null && fEditor.getSite().getId().equals(editorId);
+
+			if (canBeReused && !showsSameInputType) {
+				page.closeEditor(fEditor, false);
+				fEditor= null;
+			}
+			
+			if (canBeReused && showsSameInputType) {
+				((IReusableEditor)fEditor).setInput(input);
+				page.bringToTop(fEditor);
+				editor= fEditor;
+			} else
+				try {
+					editor= page.openEditor(input, editorId, false);
+					if (editor instanceof IReusableEditor)
+						fEditor= editor;
+					else
+						fEditor= null;
+				} catch (PartInitException ex) {
+					ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openEditor.title"), SearchMessages.getString("Search.Error.openEditor.message")); //$NON-NLS-2$ //$NON-NLS-1$
+					return;
+				}
 		}
+		
 		if (editor != null) {
 			editor.gotoMarker(marker);
-			fEditor= editor;
 		}
 	}
 
