@@ -19,6 +19,8 @@ package org.eclipse.ui.ide;
  * 
  * @issue want to move IDE-specific stuff out of IWorkbenchActionConstants.
  *   There's still some cleanup to be done here (and there).
+ * 
+ * @since 3.0
  */
 public interface IIDEActionConstants {
 
