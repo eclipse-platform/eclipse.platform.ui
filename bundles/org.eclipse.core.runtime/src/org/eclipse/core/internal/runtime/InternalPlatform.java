@@ -40,6 +40,7 @@ public final class InternalPlatform {
 	private static String keyringFile = null;
 	private static String password = "";
 	private static boolean inDevelopmentMode = false;
+	private static boolean splashDown = false;
 
 	// default plugin data
 	private static final String PI_XML = "org.apache.xerces";
@@ -200,6 +201,25 @@ private static void createXMLClassLoader() {
 	// ensure that the URLs on its class path are raw as opposed to eclipse:
 	xmlClassLoader = (PluginClassLoader) descriptor.getPluginClassLoader(false);
 }
+/**
+ * @see Platform
+ */
+public static void endSplash() {
+	if (splashDown) 
+		return;
+	String[] args = BootLoader.getCommandLineArgs();
+	String splash = null;
+	for (int i = 0; i < args.length; i++)
+        if (args[i].equalsIgnoreCase("-endsplash") && (i + 1) < args.length)
+            splash = args[i + 1];
+	if (splash != null)
+	try {
+		splashDown = true;
+		Runtime.getRuntime().exec(splash);
+	} catch (Exception e) {
+	}
+}
+
 /**
  * @see Platform
  */

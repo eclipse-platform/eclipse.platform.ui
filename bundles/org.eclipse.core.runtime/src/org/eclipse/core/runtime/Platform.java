@@ -187,6 +187,14 @@ public static void addProtectionSpace(URL resourceUrl, String realm) throws Core
 public static URL asLocalURL(URL url) throws IOException {
 	return InternalPlatform.asLocalURL(url);
 }
+
+/**
+ * Takes down the splash screen if one was put up.
+ */
+public static void endSplash() {
+	InternalPlatform.endSplash();
+}
+
 /**
  * Removes the authorization information for the specified protection
  * space and given authorization scheme. The protection space is defined
