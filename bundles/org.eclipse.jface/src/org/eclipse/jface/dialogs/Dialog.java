@@ -10,18 +10,29 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
 
 /**
  * A dialog is a specialized window used for narrow-focused communication
@@ -837,16 +848,9 @@ public abstract class Dialog extends Window {
 	 */
 	protected static boolean dialogFontIsDefault() {
 		
-		FontData[] dialogFontData = JFaceResources.getDialogFont().getFontData();
-		FontData[] defaultFontData = JFaceResources.getDefaultFont().getFontData();
-		if(dialogFontData.length != defaultFontData.length)
-			return false;
-		for(int i = 0; i < defaultFontData.length; i++){
-			if(dialogFontData[i].equals(defaultFontData[i]))
-				continue;
-			return false;
-		}
-		return true;
+		FontData[] dialogFontData = JFaceResources.getFontRegistry().getFontData(JFaceResources.DIALOG_FONT);
+		FontData[] defaultFontData = JFaceResources.getFontRegistry().getFontData(JFaceResources.DEFAULT_FONT);
+		return Arrays.equals(dialogFontData, defaultFontData);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()

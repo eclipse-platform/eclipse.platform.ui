@@ -399,9 +399,9 @@ public class FontRegistry extends ResourceRegistry {
 	}
 	
 	/**
-	 * Returns the default font.
+	 * Calculates the default font and returns the result
 	 */
-	Font defaultFont() {
+	Font calculateDefaultFont() {
 		Display current = Display.getCurrent();
 		if (current == null) {
 			Shell shell = new Shell();
@@ -413,18 +413,32 @@ public class FontRegistry extends ResourceRegistry {
 	}
 	
 	/**
+	 * Returns the default font data.  Creates it if necessary.
+	 * @return Font
+	 */
+	public Font defaultFont() {
+		return defaultFontRecord().getBaseFont();
+	}
+	
+	/**
 	 * Returns the default font record.
 	 */
 	private FontRecord defaultFontRecord() {
-		Font defaultFont = defaultFont();
-		return new FontRecord(defaultFont,defaultFont.getFontData());
+		
+		FontRecord record = (FontRecord) stringToFontRecord.get(JFaceResources.DEFAULT_FONT);
+		if(record == null){
+			Font defaultFont = calculateDefaultFont();
+			record = createFont(JFaceResources.DEFAULT_FONT,defaultFont.getFontData());
+			stringToFontRecord.put(JFaceResources.DEFAULT_FONT,record);
+		}
+		return record;
 	}
 	
 	/**
 	 * Returns the default font data.  Creates it if necessary.
 	 */
 	private FontData[] defaultFontData() {
-		return defaultFont().getFontData();
+		return defaultFontRecord().baseData;
 	}
 	
 	/**
@@ -642,7 +656,7 @@ public class FontRegistry extends ResourceRegistry {
 			fireMappingChanged(symbolicName,existing,fontData);
 
 		if (oldFont != null)
-			oldFont.addAllocatedFontsToStale(defaultFont());
+			oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
 	}
 	/**
 	 * Reads the resource bundle.  This puts FontData[] objects
