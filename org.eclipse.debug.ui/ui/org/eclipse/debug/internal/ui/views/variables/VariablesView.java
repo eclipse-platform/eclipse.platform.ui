@@ -1070,7 +1070,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			} 
 		} catch (DebugException de) {
 			DebugUIPlugin.log(de);
-			getDetailDocument().set(VariablesViewMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
+            DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    getDetailDocument().set(VariablesViewMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
+                }
+            });
 		}				
 	}
 	
