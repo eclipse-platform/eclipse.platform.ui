@@ -541,6 +541,8 @@ public class EditorCoolBar {
 	}
 	
 	private void openShortcutList(EditorShortcut[] shortcuts) {
+		if(shortcutListComposite != null)
+			return;
 		Shell parent = window.getShell();
 		Display display = parent.getDisplay();
 		shortcutListComposite = new ViewForm(parent, SWT.BORDER);
@@ -563,6 +565,7 @@ public class EditorCoolBar {
 		TableItem[] items = shortcutTable.getItems();
  		if (items.length == 0) {
  			shortcutListComposite.dispose();
+ 			shortcutListComposite = null;
  			return;
  		}
  		shortcutListComposite.setContent(shortcutListControl);
