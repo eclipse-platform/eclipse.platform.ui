@@ -10,57 +10,85 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.preference.*;
+import java.util.Collection;
+
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.*;
+
+import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * This dialog is created and shown when 'Properties'
- * action is performed while an object is selected.
- * It shows one or more pages registered for object's type.
+ * This dialog is created and shown when 'Properties' action is performed while
+ * an object is selected. It shows one or more pages registered for object's
+ * type.
  */
 public class PropertyDialog extends PreferenceDialog {
-	private ISelection selection;	
-	
-	//The id of the last page that was selected
-	private static String lastPropertyId = null;
-	
-/**
- * The constructor.
- */
+    private ISelection selection;
 
-public PropertyDialog(Shell parentShell, PreferenceManager mng, ISelection selection) {
-	super(parentShell, mng);
-	setSelection(selection);
-}
-/**
- * Returns selection in the "Properties" action context.
- */
+    //The id of the last page that was selected
+    private static String lastPropertyId = null;
 
-public ISelection getSelection() {
-	return selection;
-}
-/**
- * Sets the selection that will be used to
- * determine target object.
- */
+    /**
+	 * The constructor.
+	 */
+    public PropertyDialog(Shell parentShell, PreferenceManager mng, ISelection selection) {
+        super(parentShell, mng);
+        setSelection(selection);
+    }
+    /**
+	 * Returns selection in the "Properties" action context.
+	 */
 
-public void setSelection(ISelection newSelection) {
-	selection = newSelection;
-}
+    public ISelection getSelection() {
+        return selection;
+    }
+    /**
+	 * Sets the selection that will be used to determine target object.
+	 */
 
-/**
- * Get the name of the selected item preference
- */
-protected String getSelectedNodePreference(){
-	return lastPropertyId;
-}
+    public void setSelection(ISelection newSelection) {
+        selection = newSelection;
+    }
 
-/**
- * Get the name of the selected item preference
- */
-protected void setSelectedNodePreference(String pageId){
-	lastPropertyId = pageId;
-}
+    /**
+	 * Get the name of the selected item preference
+	 */
+    protected String getSelectedNodePreference() {
+        return lastPropertyId;
+    }
 
+    /**
+	 * Get the name of the selected item preference
+	 */
+    protected void setSelectedNodePreference(String pageId) {
+        lastPropertyId = pageId;
+    }
+
+    /**
+	 * Checks whether the given property node (based on its
+	 * RegistryPageContributor) should be filtered from view (as specified by
+	 * the preference page ObjectActivityManager). Note that if a given node is
+	 * filtered out of the view, then its subnodes are filtered out as well.
+	 * 
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget,
+	 *      org.eclipse.jface.preference.IPreferenceNode)
+	 */
+    protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
+        IObjectActivityManager propManager =
+            WorkbenchPlugin.getDefault().getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PROPERTY_PAGES, false);
+        if (propManager != null) {
+            Collection activeContributions = propManager.getActiveObjects();
+            if (node instanceof PropertyPageNode && !activeContributions.contains(((PropertyPageNode) node).getContributor())) {
+                return;
+            }
+        }
+        super.createTreeItemFor(parent, node);
+    }
 }
