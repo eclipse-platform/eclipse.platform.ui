@@ -181,7 +181,6 @@ public class Messages extends NLS {
 	public static String resources_folderOverFile;
 	public static String resources_format;
 	public static String resources_getResourceAttributesFailed;
-	public static String resources_ignored;
 	public static String resources_initHook;
 	public static String resources_initTeamHook;
 	public static String resources_initValidator;
@@ -245,8 +244,6 @@ public class Messages extends NLS {
 	public static String resources_resetMarkers;
 	public static String resources_resetSync;
 	public static String resources_resourcePath;
-	public static String resources_restoring;
-	public static String resources_running;
 	public static String resources_saveOp;
 	public static String resources_saveProblem;
 	public static String resources_saveWarnings;
