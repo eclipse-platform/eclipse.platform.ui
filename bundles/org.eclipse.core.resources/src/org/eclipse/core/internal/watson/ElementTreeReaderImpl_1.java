@@ -43,8 +43,14 @@ public ElementTree readDelta(ElementTree parentTree, DataInput input) throws IOE
 		return parentTree;
 
 	DeltaDataTree reconstructed = complete.assembleWithForwardDelta(delta);
-
 	ElementTree tree = new ElementTree(reconstructed);
+	
+	//copy the user data forward
+	IElementTreeData data = parentTree.getTreeData();
+	if (data != null) {
+		tree.setTreeData((IElementTreeData)data.clone());
+	}
+
 	//make the underlying data tree immutable
 	//can't call immutable() on the ElementTree because
 	//this would attempt to reroot.
