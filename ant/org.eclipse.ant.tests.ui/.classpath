@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="Ant Editor Tests/"/>
-    <classpathentry kind="src" path="Ant View Tests"/>
     <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="src" path="/org.junit"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
