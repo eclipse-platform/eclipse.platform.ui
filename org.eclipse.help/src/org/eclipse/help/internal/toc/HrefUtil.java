@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
-
 public class HrefUtil {
 	/**
 	 * Creates /pluginid/directory from directory name
@@ -45,7 +44,9 @@ public class HrefUtil {
 		if (href.startsWith("/"))
 			// already normalized
 			return href;
-		if (href.startsWith("http:")|| href.startsWith("file:"))
+		if (href.startsWith("http:")
+			|| href.startsWith("file:")
+			|| href.startsWith("jar:"))
 			// external doc
 			return href;
 		if (href.startsWith("../")) {

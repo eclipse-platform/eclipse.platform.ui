@@ -59,7 +59,8 @@ public class EclipseConnector {
 			String url = getURL(req);
 			if (url == null)
 				return;
-			if (url.toLowerCase().startsWith("file:/")) {
+			if (url.toLowerCase().startsWith("file:/")
+				|| url.toLowerCase().startsWith("jar:")) {
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
@@ -73,10 +74,16 @@ public class EclipseConnector {
 
 			URLConnection con = openConnection(url, req);
 			resp.setContentType(con.getContentType());
-			resp.setHeader(
-				"Cache-Control",
-				"max-age="
-					+ (con.getExpiration() - System.currentTimeMillis()));
+
+			long maxAge = 0;
+			try {
+				// getExpiration() throws NullPointerException when URL is jar:file:...
+				long expiration = con.getExpiration();
+				maxAge = expiration - System.currentTimeMillis();
+			} catch (Exception e) {
+			}
+			resp.setHeader("Cache-Control", "max-age=" + maxAge);
+			
 			InputStream is;
 			try {
 				is = con.getInputStream();
@@ -154,7 +161,8 @@ public class EclipseConnector {
 		URL helpURL = new URL(url);
 		String protocol = helpURL.getProtocol();
 		if (!("help".equals(protocol)
-			|| "file".equals(protocol))) {
+			|| "file".equals(protocol)
+			|| "jar".equals(protocol))) {
 			throw new IOException();
 		}
 		con = helpURL.openConnection();

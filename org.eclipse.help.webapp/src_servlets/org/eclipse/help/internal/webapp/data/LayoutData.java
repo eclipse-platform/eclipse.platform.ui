@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 public class LayoutData extends RequestData {
 
@@ -37,7 +36,7 @@ public class LayoutData extends RequestData {
 		if (banner == null || banner.trim().length() == 0) {
 			banner = "about:blank";
 		} else if (banner.startsWith("http:/")) {
-		} else if (banner.startsWith("file:/")) {
+		} else if (banner.startsWith("file:/") || banner.startsWith("jar:")) {
 			banner = "topic/" + banner;
 		} else {
 			banner = "topic" + banner;
