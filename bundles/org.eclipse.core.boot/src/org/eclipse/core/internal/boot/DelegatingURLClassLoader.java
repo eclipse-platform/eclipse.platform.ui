@@ -102,6 +102,30 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 		public Throwable getException() {
 			return e;
 		}
+		
+		public void printStackTrace() {
+			printStackTrace(System.err);
+		}
+		
+		public void printStackTrace(PrintStream output) {
+			synchronized (output) {
+				if (e != null) {
+					output.print("org.eclipse.core.internal.boot.DelegatingLoaderException: ");
+					e.printStackTrace(output);
+				} else
+					super.printStackTrace(output);
+			}
+		}
+		
+		public void printStackTrace(PrintWriter output) {
+			synchronized (output) {
+				if (e != null) {
+					output.print("org.eclipse.core.internal.boot.DelegatingLoaderException: ");
+					e.printStackTrace(output);
+				} else
+					super.printStackTrace(output);
+			}
+		}
 	}
 
 public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent) {

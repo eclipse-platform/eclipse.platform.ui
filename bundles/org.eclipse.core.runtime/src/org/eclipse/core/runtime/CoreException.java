@@ -5,6 +5,8 @@ package org.eclipse.core.runtime;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 2000
  */
+import java.io.PrintStream;
+import java.io.PrintWriter;
 /**
  * A checked expection representing a failure.
  * <p>
@@ -36,4 +38,41 @@ public CoreException(IStatus status) {
 public final IStatus getStatus() {
 	return status;
 }
+/**
+ * Prints a stack trace out for the exception, and
+ * any nested exception that it may have embedded in
+ * its Status object.
+ */
+public void printStackTrace() {
+	printStackTrace(System.err);
+}
+/**
+ * Prints a stack trace out for the exception, and
+ * any nested exception that it may have embedded in
+ * its Status object.
+ */
+public void printStackTrace(PrintStream output) {
+	synchronized (output) {
+		if (status.getException() != null) {
+			output.print("org.eclipse.core.runtime.CoreException: ");
+			status.getException().printStackTrace(output);
+		} else
+			super.printStackTrace(output);
+	}
+}
+/**
+ * Prints a stack trace out for the exception, and
+ * any nested exception that it may have embedded in
+ * its Status object.
+ */
+public void printStackTrace(PrintWriter output) {
+	synchronized (output) {
+		if (status.getException() != null) {
+			output.print("org.eclipse.core.runtime.CoreException: ");
+			status.getException().printStackTrace(output);
+		} else
+			super.printStackTrace(output);
+	}
+}
+
 }
