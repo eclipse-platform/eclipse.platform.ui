@@ -21,7 +21,7 @@ import java.util.*;
  */
 public class NewWizardMenu extends ShortcutMenu {
 	private Action showDlgAction = new NewWizardAction();
-	private Action newProjectAction = new NewProjectAction();
+	private Action newProjectAction;
 	private Map actions = new HashMap(21);
 	private NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
 	private boolean enabled = true;
@@ -43,6 +43,7 @@ public class NewWizardMenu extends ShortcutMenu {
  */
 public NewWizardMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean register) {
 	super(innerMgr, window, register);
+	this.newProjectAction = new NewProjectAction(window);
 	fillMenu(); // Must be done after constructor to ensure field initialization.
 }
 /* (non-Javadoc)
