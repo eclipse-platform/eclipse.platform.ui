@@ -570,9 +570,9 @@
             </selection>
          </action>
          <action
-               label="%DetailPaneWrodWrapAction.label"
+               label="%DetailPaneWordWrapAction.label"
                helpContextId="java_variables_detail_pane_word_wrap_action_context"
-               tooltip="%DetailPaneWrodWrapAction.tooltip"
+               tooltip="%DetailPaneWordWrapAction.tooltip"
                class="org.eclipse.debug.internal.ui.views.variables.JavaVariablesDetailPaneWordWrapAction"
                menubarPath="viewActions"
                id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap">
