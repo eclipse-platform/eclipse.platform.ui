@@ -66,6 +66,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -728,4 +729,34 @@ public class DebugUITools {
 	public static IPopupInformationControlAdapter newExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp) {
 		return new ExpressionInformationControlAdapter(page, exp);
 	}
+	
+	/**
+	 * Returns the console associated with the given process, or 
+	 * <code>null</code> if none.
+	 * 
+	 * @param process a process
+	 * @return console associated with the given process, or 
+	 * <code>null</code> if none
+	 * @since 3.0
+	 */
+	public IConsole getConsole(IProcess process) {
+		return DebugUIPlugin.getDefault().getConsoleDocumentManager().getConsole(process);
+	}
+	
+	/**
+	 * Returns the console associated with the given debug element, or 
+	 * <code>null</code> if none.
+	 * 
+	 * @param element a debug model element
+	 * @return console associated with the given element, or 
+	 * <code>null</code> if none
+	 * @since 3.0
+	 */
+	public IConsole getConsole(IDebugElement element) {
+		IProcess process = element.getDebugTarget().getProcess();
+		if (process != null) {
+			return getConsole(process);
+		}
+		return null;
+	}	
 }
