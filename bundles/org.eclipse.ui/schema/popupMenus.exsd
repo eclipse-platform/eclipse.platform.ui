@@ -202,6 +202,11 @@ The path is relative to the location of the plugin.xml file of the contributing 
         &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
         &lt;td valign=&quot;top&quot;&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
+      &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;pulldown&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- as a cascading style menu item.&lt;/td&gt;
+      &lt;/tr&gt;
     &lt;/table&gt;
                </documentation>
             </annotation>
@@ -212,6 +217,8 @@ The path is relative to the location of the plugin.xml file of the contributing 
                   <enumeration value="radio">
                   </enumeration>
                   <enumeration value="toggle">
+                  </enumeration>
+                  <enumeration value="pulldown">
                   </enumeration>
                </restriction>
             </simpleType>
