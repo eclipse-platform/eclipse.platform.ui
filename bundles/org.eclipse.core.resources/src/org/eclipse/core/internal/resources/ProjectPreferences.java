@@ -111,7 +111,8 @@ public class ProjectPreferences extends EclipsePreferences {
 				IPath prefsPath = new Path(ProjectScope.SCOPE).append(project).append(qualifier);
 				IEclipsePreferences node = Platform.getPreferencesService().getRootNode().node(prefsPath);
 				try {
-					node.sync();
+					if (node instanceof ProjectPreferences)
+						((ProjectPreferences) node).load();
 				} catch (BackingStoreException e) {
 					String message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
 					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
@@ -126,7 +127,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		IResourceChangeListener result = new IResourceChangeListener() {
 			public void resourceChanged(IResourceChangeEvent event) {
 				switch (event.getType()) {
-					case IResourceChangeEvent.PRE_BUILD :
+					case IResourceChangeEvent.POST_CHANGE :
 						handleDelta(event);
 						break;
 					case IResourceChangeEvent.PRE_DELETE :
@@ -169,7 +170,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	private static void addListener() {
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_BUILD);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE);
 	}
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {

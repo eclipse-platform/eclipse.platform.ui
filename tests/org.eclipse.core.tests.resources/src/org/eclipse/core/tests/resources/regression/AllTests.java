@@ -48,8 +48,10 @@ public class AllTests extends TestCase {
 		suite.addTest(Bug_28981.suite());
 		suite.addTest(Bug_29116.suite());
 		suite.addTest(Bug_29671.suite());
+		suite.addTest(Bug_29851.suite());
 		suite.addTest(Bug_32076.suite());
 		suite.addTest(Bug_44106.suite());
+		suite.addTest(Bug_61277.suite());
 		return suite;
 	}
 }
