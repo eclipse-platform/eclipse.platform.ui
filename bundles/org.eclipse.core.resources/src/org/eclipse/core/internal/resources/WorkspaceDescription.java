@@ -98,7 +98,6 @@ public boolean isSnapshotEnabled() {
 public void setAutoBuilding(boolean value) {
 	dirty = true;
 	autoBuilding = value;
-	Policy.setupAutoBuildProgress(value);
 }
 /**
  * @see IWorkspaceDescription
