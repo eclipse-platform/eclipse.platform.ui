@@ -17,12 +17,15 @@ import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.editors.text.ILocationProvider;
 
 /**
  * Action delegate to launch Ant on a build file.
@@ -124,10 +127,14 @@ public class AntRunTargetAction extends Action {
 	public void run() {
 		selectedFile= null;
 		selectedTarget= null;
-		if (page.getSite().getPage().getActiveEditor().getEditorInput() instanceof IFileEditorInput) {
+		IEditorInput editorInput= page.getSite().getPage().getActiveEditor().getEditorInput();
+		IPath filePath= null;
+		if (editorInput instanceof IFileEditorInput) {
 			selectedFile = ((IFileEditorInput) page.getSite().getPage().getActiveEditor().getEditorInput()).getFile();
+	    } else if (editorInput instanceof ILocationProvider) {
+	    	filePath= ((ILocationProvider)editorInput).getPath(editorInput);
 	    }
-		if (selectedFile == null) {
+		if (selectedFile == null && filePath == null) {
 			return;
 		}
 		ISelection selection= page.getSelection();
@@ -148,6 +155,10 @@ public class AntRunTargetAction extends Action {
 		}
 		AntLaunchShortcut shortcut = new AntLaunchShortcut();
 		shortcut.setShowDialog(mode.isDialogDisplayed());
-		shortcut.launch(selectedFile, ILaunchManager.RUN_MODE, selectedTarget);
+		if (selectedFile != null) {
+			shortcut.launch(selectedFile, ILaunchManager.RUN_MODE, selectedTarget);
+		} else { //external buildfile
+			shortcut.launch(filePath, ILaunchManager.RUN_MODE, selectedTarget);
+		}
 	}
 }
