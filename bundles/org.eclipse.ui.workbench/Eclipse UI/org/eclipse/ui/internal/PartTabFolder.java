@@ -121,7 +121,7 @@ public void add(LayoutPart child) {
  * folder so no need for one from the parts.
  */
 public boolean allowsBorder() {
-	return mapTabToPart.size() <= 1;
+	return false;
 }
 private TabInfo[] arrayAdd(TabInfo[] array, TabInfo item, int index) {
 
@@ -813,12 +813,7 @@ public void setBounds(Rectangle r) {
 private void setControlSize() {
 	if (current == null || tabFolder == null) 
 		return;
-	Rectangle bounds;
-	if (mapTabToPart.size() > 1)
-		bounds = calculatePageBounds(tabFolder);
-	else
-		bounds = tabFolder.getBounds();
-	current.setBounds(bounds);
+	current.setBounds(calculatePageBounds(tabFolder));
 	current.moveAbove(tabFolder);
 }
 
