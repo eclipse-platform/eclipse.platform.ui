@@ -986,7 +986,7 @@ public final class Platform {
      * @return the array of Bundles with the specified name that match the 
      * specified version and match rule, or <tt>null</tt> if no bundles are found.
      */
-	public Bundle[] getBundles(String symbolicName, String version) {
+	public static Bundle[] getBundles(String symbolicName, String version) {
 		return InternalPlatform.getDefault().getBundles(symbolicName, version);
 	}
 	
