@@ -131,10 +131,12 @@ public abstract class ResizableDialog extends Dialog {
 			try {
 				loc.x= bounds.getInt(X);
 			} catch (NumberFormatException e) {
+				// silently ignored
 			}
 			try {
 				loc.y= bounds.getInt(Y);
 			} catch (NumberFormatException e) {
+				// silently ignored
 			}
 		}
 		return loc;

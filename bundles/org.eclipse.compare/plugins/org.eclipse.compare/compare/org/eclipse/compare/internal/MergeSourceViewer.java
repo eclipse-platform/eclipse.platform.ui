@@ -170,7 +170,7 @@ public class MergeSourceViewer extends SourceViewer
 		}
 	}
 	
-	/**
+	/*
 	 * Returns number of lines in document region.
 	 */
 	public int getLineCount() {
@@ -215,7 +215,7 @@ public class MergeSourceViewer extends SourceViewer
 		return 0;
 	}
 	
-	/**
+	/*
 	 * Returns lines
 	 */
 	public int getDocumentRegionOffset() {
@@ -237,7 +237,7 @@ public class MergeSourceViewer extends SourceViewer
 		return getTopInset() - ((getDocumentRegionOffset()*lineHeight) + st.getTopPixel());
 	}
 
-	/**
+	/*
 	 * Returns the start line and the number of lines which correspond to the given position.
 	 * Starting line number is 0 based.
 	 */
@@ -288,7 +288,7 @@ public class MergeSourceViewer extends SourceViewer
 		return region;
 	}
 	
-	/**
+	/*
 	 * Scroll TextPart to the given line.
 	 */
 	public void vscroll(int line) {
@@ -367,7 +367,7 @@ public class MergeSourceViewer extends SourceViewer
 		}
 	}
 		
-	/**
+	/*
 	 * Allows the viewer to add menus and/or tools to the context menu.
 	 */
 	public void menuAboutToShow(IMenuManager menu) {

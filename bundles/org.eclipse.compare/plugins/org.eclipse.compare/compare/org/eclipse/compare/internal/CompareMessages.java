@@ -20,6 +20,7 @@ public class CompareMessages {
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
 	private CompareMessages() {
+		// nothing to do
 	}
 
 	public static String getString(String key) {

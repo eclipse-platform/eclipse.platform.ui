@@ -61,7 +61,7 @@ public class ImageMergeViewer extends ContentMergeViewer {
 		setInput(fRight, right);
 	}
 	
-	/**
+	/*
 	 * We can't modify the contents of either side we just return null.
 	 */
 	protected byte[] getContents(boolean left) {

@@ -71,7 +71,7 @@ public class RangeDifference {
 	 * Creates a new <code>RangeDifference</code> with the given change kind
 	 * and left and right ranges.
 	 *
-	 * @param changeKind the kind of change
+	 * @param kind the kind of change
 	 * @param rightStart start index of entity on right side
 	 * @param rightLength number of entities on right side
 	 * @param leftStart start index of entity on left side
@@ -89,7 +89,7 @@ public class RangeDifference {
 	 * Creates a new <code>RangeDifference</code> with the given change kind
 	 * and left, right, and ancestor ranges.
 	 *
-	 * @param changeKind the kind of change
+	 * @param kind the kind of change
 	 * @param rightStart start index of entity on right side
 	 * @param rightLength number of entities on right side
 	 * @param leftStart start index of entity on left side

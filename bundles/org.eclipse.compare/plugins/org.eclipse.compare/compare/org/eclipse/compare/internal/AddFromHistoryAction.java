@@ -29,6 +29,7 @@ public class AddFromHistoryAction extends BaseCompareAction {
 	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.AddFromHistoryAction"; //$NON-NLS-1$
 
 	public AddFromHistoryAction() {
+		// empty default implementation
 	}
 	
 	protected boolean isEnabled(ISelection selection) {

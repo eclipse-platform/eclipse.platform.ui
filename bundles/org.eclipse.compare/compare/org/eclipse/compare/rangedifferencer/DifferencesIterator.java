@@ -24,7 +24,7 @@ import java.util.List;
 	RangeDifference[] fArray;	
 	RangeDifference fDifference;
 	
-	/**
+	/*
 	 * Creates a differences iterator on an array of <code>RangeDifference</code>s.
 	 */
 	DifferencesIterator(RangeDifference[] differenceRanges) {
@@ -38,14 +38,14 @@ import java.util.List;
 			fDifference= null;
 	}
 
-	/**
+	/*
 	  * Returns the number of RangeDifferences
 	  */
 	int getCount() {
 		return fRange.size();
 	}
 
-	/**
+	/*
 	 * Appends the edit to its list and moves to the next <code>RangeDifference</code>.
 	 */
 	void next() {
@@ -58,7 +58,7 @@ import java.util.List;
 		}
 	}
 
-	/**
+	/*
 	 * Difference iterators are used in pairs.
 	 * This method returns the other iterator.
 	 */
@@ -68,7 +68,7 @@ import java.util.List;
 		return right;
 	}
 
-	/**
+	/*
 	  * Removes all <code>RangeDifference</code>s
 	  */
 	void removeAll() {

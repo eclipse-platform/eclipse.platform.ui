@@ -49,7 +49,7 @@ public class TextStreamMerger implements IStreamMerger {
             t= new LineComparator(target, targetEncoding);
             o= new LineComparator(other, otherEncoding);
         } catch (UnsupportedEncodingException e) {
-            return new Status(Status.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.getString("TextAutoMerge.inputEncodingError"), e); //$NON-NLS-1$
+            return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.getString("TextAutoMerge.inputEncodingError"), e); //$NON-NLS-1$
         }
 
         try {
@@ -79,7 +79,7 @@ public class TextStreamMerger implements IStreamMerger {
                     break;
 
                 case RangeDifference.CONFLICT:
-                    return new Status(Status.ERROR, CompareUI.PLUGIN_ID, CONFLICT, MergeMessages.getString("TextAutoMerge.conflict"), null); //$NON-NLS-1$
+                    return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, CONFLICT, MergeMessages.getString("TextAutoMerge.conflict"), null); //$NON-NLS-1$
 
                 default:
                     break;
@@ -87,9 +87,9 @@ public class TextStreamMerger implements IStreamMerger {
             }
  
         } catch (UnsupportedEncodingException e) {
-            return new Status(Status.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.getString("TextAutoMerge.outputEncodingError"), e); //$NON-NLS-1$
+            return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.getString("TextAutoMerge.outputEncodingError"), e); //$NON-NLS-1$
         } catch (IOException e) {
-            return new Status(Status.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.getString("TextAutoMerge.outputIOError"), e); //$NON-NLS-1$
+            return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.getString("TextAutoMerge.outputIOError"), e); //$NON-NLS-1$
         }
 
         return Status.OK_STATUS;

@@ -20,6 +20,7 @@ class MergeMessages {
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
 	private MergeMessages() {
+		// nothing to do
 	}
 
 	public static String getString(String key) {

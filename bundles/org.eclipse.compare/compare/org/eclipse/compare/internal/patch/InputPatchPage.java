@@ -64,7 +64,7 @@ import org.eclipse.core.runtime.*;
 		setMessage(PatchMessages.getString("InputPatchPage.message")); //$NON-NLS-1$
 	}
 	
-	/**
+	/*
 	 * Get a path from the supplied text widget.
 	 * @return org.eclipse.core.runtime.IPath
 	 */
@@ -193,7 +193,7 @@ import org.eclipse.core.runtime.*;
 		fPatchFileBrowseButton.setEnabled(enable);
 	}
 
-	/**
+	/*
 	 *	Create the group for selecting the patch file
 	 */
 	private void buildPatchFileGroup(Composite parent) {
@@ -507,7 +507,7 @@ import org.eclipse.core.runtime.*;
 		return ""; //$NON-NLS-1$
 	} 
 
-	/**
+	/*
 	 * Adds an entry to a history, while taking care of duplicate history items
 	 * and excessively long histories. The assumption is made that all histories
 	 * should be of length <code>COMBO_HISTORY_LENGTH</code>.

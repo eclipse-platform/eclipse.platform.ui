@@ -285,7 +285,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		return parent;
 	}
 	
-	/**
+	/*
 	 * Feeds selection from member viewer to edition viewer.
 	 */
 	private void handleMemberSelect(Widget w) {
@@ -317,7 +317,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 			fCurrentFileHistory= null;
 	}
 	
-	/**
+	/*
 	 * Adds the given Pair to the edition tree.
 	 * It takes care of creating tree nodes for different dates.
 	 */
@@ -367,7 +367,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		}
 	}
 						
-	/**
+	/*
 	 * Returns the number of s since Jan 1st, 1970.
 	 * The given date is converted to GMT and daylight saving is taken into account too.
 	 */
@@ -380,7 +380,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		return (date + localTimeOffset) / ONE_DAY_MS;
 	}
 	
-	/**
+	/*
 	 * Feeds the tree viewer's selection to the contentviewer
 	 */
 	private void feedContent(Widget w) {
@@ -424,7 +424,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
-	/**
+	/*
 	 * Returns true if the pathname of f1 comes after f2
 	 */
 	private static boolean greaterThan(IFile f1, IFile f2) {

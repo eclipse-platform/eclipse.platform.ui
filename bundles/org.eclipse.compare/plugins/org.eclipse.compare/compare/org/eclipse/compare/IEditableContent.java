@@ -48,20 +48,23 @@ public interface IEditableContent {
 	 * <TABLE>
 	 * <TR>
 	 * 	<TD>add:</TD>
-	 *  <TD>child == null</TD>
-	 *  <TD>other != null</TD>
+	 *  <TD>dest == null</TD>
+	 *  <TD>src != null</TD>
 	 * </TR>
 	 * <TR>
 	 * 	<TD>remove:</TD>
-	 *  <TD>child != null</TD>
-	 *  <TD>other == null</TD>
+	 *  <TD>dest != null</TD>
+	 *  <TD>src == null</TD>
 	 * </TR>
 	 * <TR>
 	 * 	<TD>copy:</TD>
-	 *  <TD>child != null</TD>
-	 *  <TD>other != null</TD>
+	 *  <TD>dest != null</TD>
+	 *  <TD>src != null</TD>
 	 * </TR>
 	 * </TABLE>
+	 * @param dest the existing child of this object to be replaced; if <code>null</null> a new child can be added.
+	 * @param src the new child to be added or replaced; if <code>null</code> an existing child can be removed.
+	 * @return the argument <code>dest</code>
 	 */
-	ITypedElement replace(ITypedElement child, ITypedElement other);
+	ITypedElement replace(ITypedElement dest, ITypedElement src);
 }

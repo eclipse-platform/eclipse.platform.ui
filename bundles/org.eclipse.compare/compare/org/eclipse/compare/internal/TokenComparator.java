@@ -32,7 +32,7 @@ public class TokenComparator implements ITokenComparator {
 	/**
 	 * Creates a <code>TokenComparator</code> for the given string.
 	 *
-	 * @param string the string that is split into token
+	 * @param text the string that is split into token
 	 */
 	public TokenComparator(String text) {
 		
@@ -69,11 +69,11 @@ public class TokenComparator implements ITokenComparator {
 	/**
 	 * Creates a <code>TokenComparator</code> for the given string.
 	 *
-	 * @param string the string that is split into token
+	 * @param text the string that is split into token
 	 * @param shouldEscape
 	 */
-	public TokenComparator(String s, boolean shouldEscape) {
-		this(s);
+	public TokenComparator(String text, boolean shouldEscape) {
+		this(text);
 		fShouldEscape= shouldEscape;
 	}
 
@@ -124,9 +124,8 @@ public class TokenComparator implements ITokenComparator {
 		return false;
 	}
 
-	/**
+	/*
 	 * Aborts the comparison if the number of tokens is too large.
-	 *
 	 * @return <code>true</code> to abort a token comparison
 	 */
 	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {

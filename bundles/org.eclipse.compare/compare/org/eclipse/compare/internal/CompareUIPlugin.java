@@ -36,6 +36,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.osgi.framework.BundleContext;
 
 
 /**
@@ -56,15 +57,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
     
     static class CompareRegistry {
         
-		private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
+    		private final static String ID_ATTRIBUTE= "id"; //$NON-NLS-1$
     		private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
-       	private final static String CONTENT_TYPE_ID_ATTRIBUTE= "contentTypeId"; //$NON-NLS-1$
+    		private final static String CONTENT_TYPE_ID_ATTRIBUTE= "contentTypeId"; //$NON-NLS-1$
  
-
-
-        private HashMap fIdMap;
-        private HashMap fExtensionMap;
-        private HashMap fContentTypeBindings;		// maps content type bindings to datas
+    		private HashMap fIdMap;
+    		private HashMap fExtensionMap;
+    		private HashMap fContentTypeBindings;		// maps content type bindings to datas
         
  
 	    	void register(IConfigurationElement element, Object data) {
@@ -190,13 +189,14 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	private ResourceBundle fResourceBundle;
 
+	private boolean fRegistriesInitialized;
 	private CompareRegistry fStreamMergers= new CompareRegistry();
 	private CompareRegistry fStructureCreators= new CompareRegistry();
 	private CompareRegistry fStructureMergeViewers= new CompareRegistry();
 	private CompareRegistry fContentViewers= new CompareRegistry();
 	private CompareRegistry fContentMergeViewers= new CompareRegistry();
 
-	private Map fStructureViewerAliases= new Hashtable(10);
+	private Map fStructureViewerAliases;
 	private CompareFilter fFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
 	
@@ -207,31 +207,18 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * <p>
 	 * Note that instances of plug-in runtime classes are automatically created 
 	 * by the platform in the course of plug-in activation.
-	 * </p>
-	 *
-	 * @param descriptor the plug-in descriptor
 	 */
-	public CompareUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-				
+	public CompareUIPlugin() {
+		super();
 		Assert.isTrue(fgComparePlugin == null);
 		fgComparePlugin= this;
-		
-		ComparePreferencePage.initDefaults(getPreferenceStore());		
-		
-		fResourceBundle= descriptor.getResourceBundle();
-		registerExtensions();
-		initPreferenceStore();
 	}
-	
-//	/**
-//	 * @see AbstractUIPlugin#initializeDefaultPreferences
-//	 */
-//	protected void initializeDefaultPreferences(IPreferenceStore store) {
-//		super.initializeDefaultPreferences(store);
-//		ComparePreferencePage.initDefaults(store);		
-//	}
-		
+
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		ComparePreferencePage.initDefaults(getPreferenceStore());
+	}
+			
 	/**
 	 * Returns the singleton instance of this plug-in runtime class.
 	 *
@@ -247,7 +234,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @return the plugin's resource bundle
 	 */
 	public ResourceBundle getResourceBundle() {
-		return getDefault().fResourceBundle;
+		if (fResourceBundle == null)
+			fResourceBundle= Platform.getResourceBundle(getBundle());
+		return fResourceBundle;
 	}
 	
 	/**
@@ -256,15 +245,22 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @return the plugin's unique identifier
 	 */
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
+	private void initializeRegistries() {
+		if (!fRegistriesInitialized) {
+			registerExtensions();
+			fRegistriesInitialized= true;
+		}
+	}
+	
 	/**
 	 * Registers all stream mergers, structure creators, content merge viewers, and structure merge viewers
 	 * that are found in the XML plugin files.
 	 */
 	private void registerExtensions() {
-		IPluginRegistry registry= Platform.getPluginRegistry();
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		
 		// collect all IStreamMergers
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(PLUGIN_ID, STREAM_MERGER_EXTENSION_POINT);
@@ -400,39 +396,16 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			fgDisposeOnShutdownImages.add(image);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on Plugin.
-	 * Frees all resources of the compare plug-in.
-	 */
-	public void shutdown() throws CoreException {
-			
-		/*
-		 * Converts the aliases into a single string before they are stored
-		 * in the preference store.
-		 * The format is:
-		 * <key> '.' <alias> ' ' <key> '.' <alias> ...
-		 */
+	public void stop(BundleContext context) throws Exception {
+		
 		IPreferenceStore ps= getPreferenceStore();
-		if (ps != null) {
-			StringBuffer sb= new StringBuffer();
-			Iterator iter= fStructureViewerAliases.keySet().iterator();
-			while (iter.hasNext()) {
-				String key= (String) iter.next();
-				String alias= (String) fStructureViewerAliases.get(key);
-				sb.append(key);
-				sb.append('.');
-				sb.append(alias);
-				sb.append(' ');
-			}
-			ps.setValue(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME, sb.toString());
-			
-			if (fPropertyChangeListener != null) {
-				ps.removePropertyChangeListener(fPropertyChangeListener);
-				fPropertyChangeListener= null;
-			}
+		rememberAliases(ps);	
+		if (fPropertyChangeListener != null) {
+			ps.removePropertyChangeListener(fPropertyChangeListener);
+			fPropertyChangeListener= null;
 		}
 		
-		super.shutdown();
+		super.stop(context);
 		
 		if (fgDisposeOnShutdownImages != null) {
 			Iterator i= fgDisposeOnShutdownImages.iterator();
@@ -444,7 +417,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			fgImages= null;
 		}
 	}
-	
+		
 	/**
 	 * Performs the comparison described by the given input and opens a
 	 * compare editor on the result.
@@ -495,7 +468,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		}
 	}
 	
-	/**
+	/*
 	 * @return <code>true</code> if compare result is OK to show, <code>false</code> otherwise
 	 */
 	private boolean compareResultOK(CompareEditorInput input) {
@@ -526,7 +499,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return false;
 	}
 		
-	/**
+	/*
 	 * Registers an image for the given type.
 	 */
 	private static void registerImage(String type, Image image, boolean dispose) {
@@ -549,8 +522,10 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getImageDescriptor(String relativePath) {
 		
 		URL installURL= null;
-		if (fgComparePlugin != null)
-			installURL= fgComparePlugin.getDescriptor().getInstallURL();
+		if (fgComparePlugin != null) {
+			//installURL= fgComparePlugin.getDescriptor().getInstallURL();
+			installURL= fgComparePlugin.getBundle().getEntry("/"); //$NON-NLS-1$
+		}
 					
 		if (installURL != null) {
 			try {
@@ -663,6 +638,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 *   descriptor has been registered
 	 */
 	public StructureCreatorDescriptor getStructureCreator(String type) {
+		initializeRegistries();
 		return (StructureCreatorDescriptor) fStructureCreators.search(type);
 	}
 	
@@ -674,6 +650,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 *   stream merger has been registered
 	 */
 	public IStreamMerger createStreamMerger(String type) {
+		initializeRegistries();
 		StreamMergerDescriptor descriptor= (StreamMergerDescriptor) fStreamMergers.search(type);
 		if (descriptor != null)
 			return descriptor.createStreamMerger();
@@ -688,6 +665,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 *   stream merger has been registered
 	 */
 	public IStreamMerger createStreamMerger(IContentType type) {
+		initializeRegistries();
 		StreamMergerDescriptor descriptor= (StreamMergerDescriptor) fStreamMergers.search(type);
 		if (descriptor != null)
 			return descriptor.createStreamMerger();
@@ -716,6 +694,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		// content type search
 		IContentType ctype= getCommonType(getContentTypes(input));
 		if (ctype != null) {
+			initializeRegistries();
 		    Viewer viewer= getViewer(fStructureMergeViewers.search(ctype), oldViewer, parent, configuration);
 		    if (viewer != null)
 		        return viewer;
@@ -726,9 +705,10 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		String type= null;
 		if (isHomogenous(types)) {
 			type= normalizeCase(types[0]);
+			initializeRegistries();
 			IViewerDescriptor vd= (IViewerDescriptor) fStructureMergeViewers.search(type);
 			if (vd == null) {
-				String alias= (String) fStructureViewerAliases.get(type);
+				String alias= getStructureViewerAlias(type);
 				if (alias != null)
 					vd= (IViewerDescriptor) fStructureMergeViewers.search(alias);
 			}
@@ -740,6 +720,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		// now we try to find a structurecreator for the generic StructureDiffViewer
 		
 		StructureCreatorDescriptor scc= null;
+		initializeRegistries();
 		Object desc= fStructureCreators.search(ctype);	// search for content type
 		if (desc instanceof StructureCreatorDescriptor)
 		    scc= (StructureCreatorDescriptor) desc;
@@ -764,9 +745,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * If no viewer descriptor can be found <code>null</code> is returned.
 	 *
 	 * @param oldViewer a new viewer is only created if this old viewer cannot show the given input
-	 * @param input the input object for which to find a content viewer
+	 * @param in the input object for which to find a content viewer
 	 * @param parent the SWT parent composite under which the new viewer is created
-	 * @param configuration a configuration which is passed to a newly created viewer
+	 * @param cc a configuration which is passed to a newly created viewer
 	 * @return the compare viewer which is suitable for the given input object or <code>null</code>
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, Object in, Composite parent, CompareConfiguration cc) {
@@ -779,6 +760,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			    		    
 			    IContentType ct= getContentType(tin);
 				if (ct != null) {
+					initializeRegistries();
 					Viewer viewer= getViewer(fContentViewers.search(ct), oldViewer, parent, cc);
 					if (viewer != null)
 						return viewer;
@@ -789,6 +771,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 					type= ty;
 			}
 			
+			initializeRegistries();
 			Viewer viewer= getViewer(fContentViewers.search(type), oldViewer, parent, cc);
 			if (viewer != null)
 				return viewer;
@@ -803,6 +786,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		
 		IContentType ctype= getCommonType(getContentTypes(input));
 		if (ctype != null) {
+			initializeRegistries();
 			Viewer viewer= getViewer(fContentMergeViewers.search(ctype), oldViewer, parent, cc);
 			if (viewer != null)
 				return viewer;
@@ -829,6 +813,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		}
 		
 		if (type != null) {
+			initializeRegistries();
 			Viewer viewer= getViewer(fContentMergeViewers.search(type), oldViewer, parent, cc);
 			if (viewer != null)
 				return viewer;
@@ -846,6 +831,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			else
 				type= BINARY_TYPE;
 			
+			initializeRegistries();
 			IViewerDescriptor vd= (IViewerDescriptor) fContentMergeViewers.search(type);
 			if (vd != null)
 				return vd.createViewer(oldViewer, parent, cc);
@@ -919,20 +905,22 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	    		        try {
 	    		            ct= fgContentTypeManager.findContentTypeFor(is, name);
                     } catch (IOException e) {
+                    		// silently ignored
                     }
 	    		        try {
 	    		            	bis.close();
                     } catch (IOException e2) {
-                        // silently ignored
+                			// silently ignored
                     }
     		    		}
             } catch (CoreException e1) {
+            		// silently ignored
             }
 		}
         return ct;
 	}
 	
-	/**
+	/*
 	 * Returns true if the given types are homogenous.
 	 */
 	private static boolean isHomogenous(String[] types) {
@@ -947,7 +935,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return false;
 	}
 	
-	/**
+	/*
 	 * Returns the most specific content type that is common to the given inputs or null.
 	 */
 	private static IContentType getCommonType(IContentType[] types) {
@@ -988,7 +976,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	    return set;
 	}
 	
-	/**
+	/*
 	 * Guesses the file type of the given input.
 	 * Returns ITypedElement.TEXT_TYPE if none of the first 10 lines is longer than 1000 bytes.
 	 * Returns ITypedElement.UNKNOWN_TYPE otherwise.
@@ -1043,12 +1031,18 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	//---- alias mgmt
 	
-	private void initPreferenceStore() {
-		//System.out.println("initPreferenceStore");
-		final IPreferenceStore ps= getPreferenceStore();
-		if (ps != null) {
-			String aliases= ps.getString(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME);
-			//System.out.println("  <" + aliases + ">");
+	private String getStructureViewerAlias(String type) {
+		return (String) getStructureViewerAliases().get(type);
+	}
+
+	public void addStructureViewerAlias(String type, String alias) {
+		getStructureViewerAliases().put(normalizeCase(alias), normalizeCase(type));
+	}
+	
+	private Map getStructureViewerAliases() {
+		if (fStructureViewerAliases == null) {
+			fStructureViewerAliases= new Hashtable(10);
+			String aliases= getPreferenceStore().getString(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME);
 			if (aliases != null && aliases.length() > 0) {
 				StringTokenizer st= new StringTokenizer(aliases, " ");	//$NON-NLS-1$
 				while (st.hasMoreTokens()) {
@@ -1058,27 +1052,16 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						String key= pair.substring(0, pos);
 						String alias= pair.substring(pos+1);
 						fStructureViewerAliases.put(key, alias);
-						//System.out.println("<" + key + "><" + alias + ">");
 					}
 				}
 			}
-			fFilter= new CompareFilter();
-			fFilter.setFilters(ps.getString(ComparePreferencePage.PATH_FILTER));
-			fPropertyChangeListener= new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					if (ComparePreferencePage.PATH_FILTER.equals(event.getProperty()))
-						fFilter.setFilters(ps.getString(ComparePreferencePage.PATH_FILTER));
-				}
-			};
-			ps.addPropertyChangeListener(fPropertyChangeListener);
 		}
-	}
-	
-	public void addStructureViewerAlias(String type, String alias) {
-		fStructureViewerAliases.put(normalizeCase(alias), normalizeCase(type));
+		return fStructureViewerAliases;
 	}
 	
 	public void removeAllStructureViewerAliases(String type) {
+		if (fStructureViewerAliases == null)
+			return;
 		String t= normalizeCase(type);
 		Set entrySet= fStructureViewerAliases.entrySet();
 		for (Iterator iter= entrySet.iterator(); iter.hasNext(); ) {
@@ -1087,6 +1070,48 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				iter.remove();
 		}
 	}
+	
+	/*
+	 * Converts the aliases into a single string before they are stored
+	 * in the preference store.
+	 * The format is:
+	 * <key> '.' <alias> ' ' <key> '.' <alias> ...
+	 */
+	private void rememberAliases(IPreferenceStore ps) {
+		if (fStructureViewerAliases == null)
+			return;
+		StringBuffer buffer= new StringBuffer();
+		Iterator iter= fStructureViewerAliases.keySet().iterator();
+		while (iter.hasNext()) {
+			String key= (String) iter.next();
+			String alias= (String) fStructureViewerAliases.get(key);
+			buffer.append(key);
+			buffer.append('.');
+			buffer.append(alias);
+			buffer.append(' ');
+		}
+		ps.setValue(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME, buffer.toString());
+	}
+
+	//---- filters
+	
+	public boolean filter(String name, boolean isFolder, boolean isArchive) {
+	    if (fFilter == null) {
+			fFilter= new CompareFilter();
+			final IPreferenceStore ps= getPreferenceStore();
+			fFilter.setFilters(ps.getString(ComparePreferencePage.PATH_FILTER));
+			fPropertyChangeListener= new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (ComparePreferencePage.PATH_FILTER.equals(event.getProperty()))
+						fFilter.setFilters(ps.getString(ComparePreferencePage.PATH_FILTER));
+				}
+			};
+			ps.addPropertyChangeListener(fPropertyChangeListener);
+	    }
+	    return fFilter.filter(name, isFolder, isArchive);
+	}
+
+	//---- more utilities
 	
 	/**
 	 * Returns an array of all editors that have an unsaved content. If the identical content is 
@@ -1116,12 +1141,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
 	}
 		
-	public boolean filter(String name, boolean isFolder, boolean isArchive) {
-	    if (fFilter != null)
-	        return fFilter.filter(name, isFolder, isArchive);
-	    return false;
-	}
-
 	public static void logErrorMessage(String message) {
 		if (message == null)
 			message= ""; //$NON-NLS-1$

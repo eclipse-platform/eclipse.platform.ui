@@ -25,14 +25,14 @@ public class StructureCreatorDescriptor {
     
 	private IConfigurationElement fElement;
 	
-	/**
+	/*
 	 * Creates a new sorter node with the given configuration element.
 	 */
 	public StructureCreatorDescriptor(IConfigurationElement element) {
 		fElement= element;
 	}
 
-	/**
+	/*
 	 * Creates a new sorter from this node.
 	 */
 	public IStructureCreator createStructureCreator() {
@@ -48,7 +48,7 @@ public class StructureCreatorDescriptor {
 		}
 	}
 
-	/**
+	/*
 	 * Returns the structure creator's extensions.
 	 */
 	public String getExtension() {

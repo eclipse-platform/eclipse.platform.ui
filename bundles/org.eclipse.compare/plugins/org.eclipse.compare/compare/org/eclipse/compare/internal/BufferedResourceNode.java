@@ -34,7 +34,7 @@ public class BufferedResourceNode extends ResourceNode {
 		super(resource);
 	}
 	
-    /**
+    /*
      * Returns <code>true</code> if buffer contains uncommitted changes.
      */
 	public boolean isDirty() {
@@ -50,7 +50,7 @@ public class BufferedResourceNode extends ResourceNode {
 		super.setContent(contents);
 	}	
 
-	/**
+	/*
 	 * Commits buffered contents to resource.
 	 */
 	public void commit(IProgressMonitor pm) throws CoreException {

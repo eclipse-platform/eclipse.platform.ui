@@ -49,14 +49,14 @@ public class KeyValuePairStructureCreator implements IStructureCreator {
 			return fValue;
 		}
 				
-		/**
+		/*
 		 * @see ITypedElement#getName
 		 */
 		public String getName() {
 			return this.getId();
 		}
 
-		/**
+		/*
 		 * Every key/value pair is of type "kvtxt". We register a TextMergeViewer for it. 
 		 * @see ITypedElement#getType
 		 */
@@ -64,7 +64,7 @@ public class KeyValuePairStructureCreator implements IStructureCreator {
 			return "kvtxt"; //$NON-NLS-1$
 		}
 		
-		/**
+		/*
 		 * @see ITypedElement#getImage
 		 */
 		public Image getImage() {
@@ -74,16 +74,17 @@ public class KeyValuePairStructureCreator implements IStructureCreator {
 		
 		
 	public KeyValuePairStructureCreator() {
+		// nothing to do
 	}
 	
-	/**
+	/*
 	 * This title will be shown in the title bar of the structure compare pane.
 	 */
 	public String getName() {
 		return Util.getString("KeyValuePairStructureCreator.title"); //$NON-NLS-1$
 	}
 
-	/**
+	/*
 	 * Returns a node.
 	 */
 	public IStructureComparator getStructure(Object input) {

@@ -109,12 +109,9 @@ public class ResourceNode extends BufferedContent
 		return CompareUI.getImage(fResource);
 	}
 
-	/**
+	/*
 	 * Returns <code>true</code> if the other object is of type <code>ITypedElement</code>
 	 * and their names are identical. The content is not considered.
-	 */
-	/* (non Javadoc)
-	 * see IStructureComparator.equals
 	 */
 	public boolean equals(Object other) {
 		if (other instanceof ITypedElement) {
@@ -126,9 +123,7 @@ public class ResourceNode extends BufferedContent
 	
 	/**
 	 * Returns the hash code of the name.
-	 */
-	/* (non Javadoc)
-	 * see IStructureComparator.hashCode
+     * @return a hash code value for this object.
 	 */
 	public int hashCode() {
 		return getName().hashCode();

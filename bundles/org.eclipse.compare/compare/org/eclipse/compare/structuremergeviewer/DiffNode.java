@@ -180,9 +180,7 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 	 * Otherwise both names are concatenated (separated with a slash ('/')).
 	 * <p>
 	 * Subclasses may re-implement to provide a different name for this node.
-	 */
-	/* (non Javadoc)
-	 * see ITypedElement.getName
+	 * @return the name of this node.
 	 */
 	public String getName() {
 		String right= null;

@@ -43,6 +43,7 @@ public abstract class DiffElement implements IDiffElement {
 	 * The <code>DiffElement</code> implementation of this <code>ITypedInput</code>
 	 * method returns <code>null</code>. Subclasses may re-implement to provide
 	 * an image for this element.
+	 * @return <code>null</code>.
 	 */
 	public Image getImage() {
 		return null;
@@ -52,6 +53,7 @@ public abstract class DiffElement implements IDiffElement {
 	 * The <code>DiffElement</code> implementation of this <code>ITypedElement</code>
 	 * method returns <code>ITypedElement.UNKNOWN_TYPE</code>. Subclasses may
 	 * re-implement to provide a type for this element.
+	 * @return <code>ITypedElement.UNKNOWN_TYPE</code>.
 	 */
 	public String getType() {
 		return ITypedElement.UNKNOWN_TYPE;

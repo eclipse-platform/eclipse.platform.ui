@@ -60,12 +60,9 @@ public abstract class DiffContainer extends DiffElement implements IDiffContaine
 		diff.setParent(this);
 	}
 
-	/**
+	/*
 	 * Removes the given child from this container.
 	 * If the container becomes empty it is removed from its container.
-	 */
-	/* (non Javadoc)
-	 * see IDiffContainer.removeToRoot
 	 */
 	public void removeToRoot(IDiffElement child) {
 		if (fChildren != null) {

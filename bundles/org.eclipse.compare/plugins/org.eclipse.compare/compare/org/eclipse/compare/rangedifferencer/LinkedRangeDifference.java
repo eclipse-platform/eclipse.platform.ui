@@ -17,7 +17,7 @@ package org.eclipse.compare.rangedifferencer;
 
 	LinkedRangeDifference fNext;
 
-	/**
+	/*
 	 * Creates a LinkedRangeDifference an initializes it to the error state
 	 */
 	LinkedRangeDifference() {
@@ -25,7 +25,7 @@ package org.eclipse.compare.rangedifferencer;
 		fNext= null;
 	}
 
-	/**
+	/*
 	 * Constructs and links a LinkeRangeDifference to another LinkedRangeDifference
 	 */
 	LinkedRangeDifference(LinkedRangeDifference next, int operation) {
@@ -33,7 +33,7 @@ package org.eclipse.compare.rangedifferencer;
 		fNext= next;
 	}
 
-	/**
+	/*
 	 * Follows the next link
 	 */
 	LinkedRangeDifference getNext() {
@@ -48,7 +48,7 @@ package org.eclipse.compare.rangedifferencer;
 		return kind() == INSERT;
 	}
 
-	/**
+	/*
 	 * Sets the next link of this LinkedRangeDifference
 	 */
 	void setNext(LinkedRangeDifference next) {

@@ -23,6 +23,7 @@ public class OverlayPreferenceStore  implements IPreferenceStore {
 	
 	public static final class TypeDescriptor {
 		private TypeDescriptor() {
+			// nothing to do
 		}
 	}
 	

@@ -62,9 +62,10 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 	
 	
 	public CompareEditor() {
+		// empty default implementation
 	}
 	
-	/** (non-Javadoc)
+	/* (non-Javadoc)
 	 * Method declared on IAdaptable
 	 */
 	public Object getAdapter(Class key) {
@@ -185,14 +186,15 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 			((CompareEditorInput)input).setFocus();
 	}
 	
-	/**
-	 * Returns false because the editor doesn't support "Save As...".
+	/*
+	 * @see IEditorPart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 	
 	public void gotoMarker(IMarker marker) {
+		// empty default implemenatation
 	}
 	
 	/**

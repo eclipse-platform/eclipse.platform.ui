@@ -39,5 +39,6 @@ public abstract class MergeViewerAction extends Action implements IUpdate {
 	}
 	
 	public void update() {
+		// empty default implementation
 	}
 }

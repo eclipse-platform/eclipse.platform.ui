@@ -78,7 +78,7 @@ import java.util.List;
 		}
 	}
 
-	/**
+	/*
 	 * Returns the contents of this hunk.
 	 * Each line starts with a control character. Their meaning is as follows:
 	 * <ul>
@@ -100,7 +100,7 @@ import java.util.List;
 		return sb.toString();
 	}
 	
-	/**
+	/*
 	 * Returns a descriptive String for this hunk.
 	 * It is in the form old_start,old_length -> new_start,new_length.
 	 */

@@ -23,14 +23,14 @@ class StreamMergerDescriptor {
     
 	private IConfigurationElement fElement;
 	
-	/**
+	/*
 	 * Creates a new sorter node with the given configuration element.
 	 */
 	public StreamMergerDescriptor(IConfigurationElement element) {
 		fElement= element;
 	}
 
-	/**
+	/*
 	 * Creates a new stream merger from this node.
 	 */
 	public IStreamMerger createStreamMerger() {

@@ -447,6 +447,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	/**
 	 * The <code>ContentMergeViewer</code> implementation of this 
 	 * <code>Viewer</code> method returns the empty selection. Subclasses may override.
+	 * @return empty selection.
 	 */
 	public ISelection getSelection() {
 		return new ISelection() {
@@ -456,11 +457,11 @@ public abstract class ContentMergeViewer extends ContentViewer
 		};
 	}
 	
-	/**
+	/*
 	 * The <code>ContentMergeViewer</code> implementation of this 
 	 * <code>Viewer</code> method does nothing. Subclasses may reimplement.
 	 */
-	public void setSelection(ISelection s, boolean reveal) {
+	public void setSelection(ISelection selection, boolean reveal) {
 		// empty implementation
 	}
 
@@ -793,7 +794,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		return fComposite;
 	}
 	
-	/**
+	/*
 	 * Called on the viewer disposal.
 	 * Unregisters from the compare configuration.
 	 * Clients may extend if they have to do additional cleanup.
@@ -1003,7 +1004,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 	}
 	
-	/**
+	/*
 	 * Save the viewers's content.
 	 * Note: this method is for internal use only. Clients should not call this method. 
 	 * @since 2.0

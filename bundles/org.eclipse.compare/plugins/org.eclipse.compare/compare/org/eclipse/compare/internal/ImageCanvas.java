@@ -23,7 +23,7 @@ class ImageCanvas extends Canvas {
 
 	private Image fImage;
 
-	/**
+	/*
 	 * Create a new ImageCanvas with the given SWT stylebits.
 	 * (SWT.H_SCROLL and SWT.V_SCROLL are automtically added).
 	 */
@@ -59,7 +59,7 @@ class ImageCanvas extends Canvas {
 		});
 	}
 
-	/**
+	/*
 	 * Set the SWT Image to use as the ImageCanvas contents.
 	 */
 	public void setImage(Image img) {
@@ -82,9 +82,6 @@ class ImageCanvas extends Canvas {
 		}
 	}
 
-	/**
-	 * @private
-	 */
 	void paint(GC gc) {
 		if (fImage != null) {
 			Rectangle bounds= fImage.getBounds();

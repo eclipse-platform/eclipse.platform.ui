@@ -44,7 +44,8 @@ public final class RangeDifferencer {
 	/* (non Javadoc)
 	 * Non instantiatiable!
 	 */
-	private RangeDifferencer() { 
+	private RangeDifferencer() {
+		// nothing to do
 	}
 	
 	/**
@@ -93,8 +94,8 @@ public final class RangeDifferencer {
 		int row, col;
 
 		// find common prefix
-		for (row= 0; row < rightSize && row < leftSize && rangesEqual(right, row, left, row) == true; ++row)
-			;
+		for (row= 0; row < rightSize && row < leftSize && rangesEqual(right, row, left, row) == true;)
+			row++;
 
 		lastDiagonal[origin]= row;
 		script[origin]= null;
@@ -381,7 +382,7 @@ public final class RangeDifferencer {
 
 	//---- private methods
 
-	/**
+	/*
 	 * Creates a Vector of DifferencesRanges out of the LinkedRangeDifference.
 	 * It coalesces adjacent changes.
 	 * In addition, indices are changed such that the ranges are 1) open, i.e,
@@ -445,18 +446,12 @@ public final class RangeDifferencer {
 		return (RangeDifference[]) result.toArray(EMPTY_RESULT);
 	}
 
-	/**
+	/*
 	 * Creates a <code>RangeDifference3</code> given the
 	 * state of two DifferenceIterators.
 	 */
-	private static RangeDifference createRangeDifference3(
-		DifferencesIterator myIter, 
-		DifferencesIterator yourIter, 
-		List diff3, 
-		IRangeComparator right, 
-		IRangeComparator left, 
-		int changeRangeStart, 
-		int changeRangeEnd) {
+	private static RangeDifference createRangeDifference3(DifferencesIterator myIter, DifferencesIterator yourIter, List diff3, 
+		IRangeComparator right, IRangeComparator left, int changeRangeStart,  int changeRangeEnd) {
 
 		int rightStart, rightEnd;
 		int leftStart, leftEnd;
@@ -498,14 +493,14 @@ public final class RangeDifferencer {
 		return new RangeDifference(kind, rightStart, rightEnd - rightStart, leftStart, leftEnd - leftStart, changeRangeStart, changeRangeEnd - changeRangeStart);
 	}
 
-	/**
+	/*
 	 * Tests if two ranges are equal
 	 */
 	private static boolean rangesEqual(IRangeComparator a, int ai, IRangeComparator b, int bi) {
 		return a.rangesEqual(ai, b, bi);
 	}
 
-	/**
+	/*
 	 * Tests whether <code>right</code> and <code>left</left> changed in the same way
 	 */
 	private static boolean rangeSpansEqual(IRangeComparator right, int rightStart, int rightLen, IRangeComparator left, int leftStart, int leftLen) {
@@ -521,7 +516,7 @@ public final class RangeDifferencer {
 		return false;
 	}
 
-	/**
+	/*
 	 * Reverses the range differences
 	 */
 	private static LinkedRangeDifference reverseDifferences(LinkedRangeDifference start) {

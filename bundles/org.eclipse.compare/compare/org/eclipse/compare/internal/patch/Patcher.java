@@ -67,6 +67,7 @@ public class Patcher {
 	
 	
 	Patcher() {
+		// nothing to do
 	}
 	
 	//---- options
@@ -79,7 +80,7 @@ public class Patcher {
 		return fName;
 	}
 	
-	/**
+	/*
 	 * Returns an array of Diffs after a sucessfull call to <code>parse</code>.
 	 * If <code>parse</code> hasn't been called returns <code>null</code>.
 	 */
@@ -94,7 +95,7 @@ public class Patcher {
 		return path;
 	}
 
-	/**
+	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	boolean setStripPrefixSegments(int strip) {
@@ -109,7 +110,7 @@ public class Patcher {
 		return fStripPrefixSegments;
 	}
 	
-	/**
+	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	boolean setFuzz(int fuzz) {
@@ -120,7 +121,7 @@ public class Patcher {
 		return false;
 	}
 	
-	/**
+	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	boolean setReversed(boolean reverse) {
@@ -135,7 +136,7 @@ public class Patcher {
 		return false;
 	}
 		
-	/**
+	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	boolean setIgnoreWhitespace(boolean ignoreWhitespace) {
@@ -195,7 +196,7 @@ public class Patcher {
 		fDiffs= (Diff[]) diffs.toArray(new Diff[diffs.size()]);
 	}
 
-	/**
+	/*
 	 * Returns the next line that does not belong to this diff
 	 */
 	private String readUnifiedDiff(List diffs, LineReader reader, String line, String args, String fileName) throws IOException {
@@ -290,7 +291,7 @@ public class Patcher {
 		}
 	}
 	
-	/**
+	/*
 	 * Returns the next line that does not belong to this diff
 	 */
 	private String readContextDiff(List diffs, LineReader reader, String line, String args, String fileName) throws IOException {
@@ -380,7 +381,7 @@ public class Patcher {
 		}
 	}
 	
-	/**
+	/*
 	 * Creates a List of lines in the unified format from
 	 * two Lists of lines in the 'classic' format.
 	 */
@@ -502,7 +503,7 @@ public class Patcher {
 		return result;
 	}
 	
-	/**
+	/*
 	 * Breaks the given string into tab separated substrings.
 	 * Leading and trailing whitespace is removed from each token.
 	 */ 
@@ -517,7 +518,7 @@ public class Patcher {
 		return (String[]) l.toArray(new String[l.size()]);
 	}
 	
-	/**
+	/*
 	 * @return the parsed time/date in milliseconds or -1 on error
 	 */
 	private long extractDate(String[] args, int n) {
@@ -537,7 +538,7 @@ public class Patcher {
 		return -1;
 	}
 	
-	/**
+	/*
 	 * Returns null if file name is "/dev/null".
 	 */
 	private IPath extractPath(String[] args, int n, String path2) {
@@ -557,7 +558,7 @@ public class Patcher {
 		return null;
 	}
 	
-	/**
+	/*
 	 * Tries to extract two integers separated by a comma.
 	 * The parsing of the line starts at the position after
 	 * the first occurrence of the given character start an ends
@@ -592,7 +593,7 @@ public class Patcher {
 	
 	//---- applying a patch file
 	
-	/**
+	/*
 	 * Tries to patch the given lines with the specified Diff.
 	 * Any hunk that couldn't be applied is returned in the list failedHunks.
 	 */
@@ -607,7 +608,7 @@ public class Patcher {
 		}
 	}
 
-	/**
+	/*
 	 * Tries to apply the specified hunk to the given lines.
 	 * If the hunk cannot be applied at the original position
 	 * the methods tries Fuzz lines before and after.
@@ -654,7 +655,7 @@ public class Patcher {
 		return shift;
 	}
 	
-	/**
+	/*
 	 * Tries to apply the given hunk on the specified lines.
 	 * The parameter shift is added to the line numbers given
 	 * in the hunk.
@@ -846,7 +847,7 @@ public class Patcher {
 		}
 	}
 	
-	/**
+	/*
 	 * Reads the contents from the given file and returns them as
 	 * a List of lines.
 	 */
@@ -894,7 +895,7 @@ public class Patcher {
 		return lines;
 	}
 	
-	/**
+	/*
 	 * Converts the string into bytes and stores them in the given file.
 	 */
 	private void store(String contents, IFile file, IProgressMonitor pm) throws CoreException {
@@ -924,7 +925,7 @@ public class Patcher {
 		}
 	}
 
-	/**
+	/*
 	 * Concatenates all strings found in the given List.
 	 */
 	private String createString(List lines) {
@@ -965,7 +966,7 @@ public class Patcher {
 		return sb.toString();
 	}
 	
-	/**
+	/*
 	 * Ensures that a file with the given path exists in
 	 * the given container. Folder are created as necessary.
 	 */
@@ -980,7 +981,7 @@ public class Patcher {
 		return container.getFile(path);
 	}
 
-	/**
+	/*
 	 * Returns the given string with all whitespace characters removed.
 	 * Whitespace is defined by <code>Character.isWhitespace(...)</code>.
 	 */
@@ -995,7 +996,7 @@ public class Patcher {
 		return sb.toString();
 	}
 	
-	/**
+	/*
 	 * Compares two strings.
 	 * If fIgnoreWhitespace is true whitespace is ignored.
 	 */
@@ -1012,7 +1013,7 @@ public class Patcher {
 		return line1.equals(line2);
 	}
 	
-	/**
+	/*
 	 * Returns the length (exluding a line delimiter CR, LF, CR/LF)
 	 * of the given string.
 	 */

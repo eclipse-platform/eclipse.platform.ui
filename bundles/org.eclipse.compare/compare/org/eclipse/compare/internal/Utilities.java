@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.action.IAction;
@@ -142,7 +143,7 @@ public class Utilities {
 		return tmp;
 	}
 	
-	/**
+	/*
 	 * Convenience method: extract all accessible <code>IResources</code> from given selection.
 	 * Never returns null.
 	 */
@@ -151,7 +152,7 @@ public class Utilities {
 		return (IResource[]) tmp.toArray(new IResource[tmp.size()]);
 	}
 	
-	/**
+	/*
 	 * Convenience method: extract all accessible <code>IFiles</code> from given selection.
 	 * Never returns null.
 	 */
@@ -189,7 +190,7 @@ public class Utilities {
 		return "icons/full/";	//$NON-NLS-1$
 	}
 	
-	/**
+	/*
 	 * Initialize the given Action from a ResourceBundle.
 	 */
 	public static void initAction(IAction a, ResourceBundle bundle, String prefix) {
@@ -383,7 +384,7 @@ public class Utilities {
 	 */
 	private static final int VALIDATE_EDIT_PROBLEM= 10004;	
 	
-	/**
+	/*
 	 * Makes the given resources committable. Committable means that all
 	 * resources are writeable and that the content of the resources hasn't
 	 * changed by calling <code>validateEdit</code> for a given file on
@@ -399,7 +400,7 @@ public class Utilities {
 		return validateResources(new IResource[] { resource }, shell, title);
 	}
 	
-	/**
+	/*
 	 * Makes the given resources committable. Committable means that all
 	 * resources are writeable and that the content of the resources hasn't
 	 * changed by calling <code>validateEdit</code> for a given file on
@@ -416,7 +417,7 @@ public class Utilities {
 		return validateResources(r, shell, title);
 	}
 	
-	/**
+	/*
 	 * Makes the given resources committable. Committable means that all
 	 * resources are writeable and that the content of the resources hasn't
 	 * changed by calling <code>validateEdit</code> for a given file on
@@ -478,7 +479,8 @@ public class Utilities {
 		List readOnlyFiles= new ArrayList();
 		for (int i= 0; i < resources.length; i++) {
 			IResource resource= resources[i];
-			if (resource.getType() == IResource.FILE && resource.isReadOnly())	
+			ResourceAttributes resourceAttributes= resource.getResourceAttributes();
+			if (resource.getType() == IResource.FILE && resourceAttributes != null && resourceAttributes.isReadOnly())	
 				readOnlyFiles.add(resource);
 		}
 		return readOnlyFiles;
@@ -513,7 +515,7 @@ public class Utilities {
 	
 	// encoding
 	
-	/**
+	/*
 	 * Returns null if an error occurred.
 	 */
 	public static String readString(InputStream is, String encoding) {

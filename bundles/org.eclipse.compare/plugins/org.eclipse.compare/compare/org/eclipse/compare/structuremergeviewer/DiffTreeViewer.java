@@ -57,6 +57,7 @@ public class DiffTreeViewer extends TreeViewer {
 	class DiffViewerContentProvider implements ITreeContentProvider {
 			
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// empty implementation
 		}
 	
 		public boolean isDeleted(Object element) {
@@ -243,8 +244,9 @@ public class DiffTreeViewer extends TreeViewer {
 					fillContextMenu(mm2);
 					if (mm2.isEmpty()) {
 						if (fEmptyMenuAction == null) {
-							fEmptyMenuAction=
-								new Action(Utilities.getString(fBundle, "emptyMenuItem")) {};	//$NON-NLS-1$
+							fEmptyMenuAction= new Action(Utilities.getString(fBundle, "emptyMenuItem")) {	//$NON-NLS-1$
+								// left empty
+							};
 							fEmptyMenuAction.setEnabled(false);
 						}
 						mm2.add(fEmptyMenuAction);
@@ -289,6 +291,7 @@ public class DiffTreeViewer extends TreeViewer {
 	 * Called on the viewer disposal.
 	 * Unregisters from the compare configuration.
 	 * Clients may extend if they have to do additional cleanup.
+	 * @param event dispose event that triggered call to this method
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
@@ -305,8 +308,10 @@ public class DiffTreeViewer extends TreeViewer {
 	/**
 	 * Tracks property changes of the configuration object.
 	 * Clients may extend to track their own property changes.
+	 * @param event property change event that triggered call to this method
 	 */
 	protected void propertyChange(PropertyChangeEvent event) {
+		// empty default implementation
 	}
 	
 	protected void inputChanged(Object in, Object oldInput) {
@@ -334,6 +339,8 @@ public class DiffTreeViewer extends TreeViewer {
 
 	/**
 	 * Overridden to avoid expanding <code>DiffNode</code>s that shouldn't expand.
+     * @param node the node to expand
+     * @param level non-negative level, or <code>ALL_LEVELS</code> to collapse all levels of the tree
 	 */
 	protected void internalExpandToLevel(Widget node, int level) {
 				
@@ -491,7 +498,7 @@ public class DiffTreeViewer extends TreeViewer {
 	 * Called to copy one side of the given node to the other.
 	 * This default implementation delegates the call to <code>ICompareInput.copy(...)</code>.
 	 * Clients may override. 
-	 * 
+	 * @param node the node to copy
 	 * @param leftToRight if <code>true</code> the left side is copied to the right side.
 	 * If <code>false</code> the right side is copied to the left side
 	 */
@@ -525,6 +532,7 @@ public class DiffTreeViewer extends TreeViewer {
 	 * Clients may override. 
 	 *
 	 * @param next if <code>true</code> the next node is selected, otherwise the previous node
+	 * @param fireOpen if <code>true</code> an open event is fired.
 	 * @return <code>true</code> if at end (or beginning)
 	 */
 	private boolean internalNavigate(boolean next, boolean fireOpen) {
@@ -606,7 +614,7 @@ public class DiffTreeViewer extends TreeViewer {
 			}
 			
 			// go up
-			return parent;
+			item= parent;
 					
 		} else {
 			item.setExpanded(true);

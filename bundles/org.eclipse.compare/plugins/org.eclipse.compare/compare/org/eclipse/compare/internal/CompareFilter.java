@@ -26,9 +26,10 @@ public class CompareFilter {
 
 	
 	public CompareFilter() {
+		// nothing to do
 	}
 
-	/**
+	/*
 	 * Returns true if path matches filter, that is if path should be filtered.
 	 */
 	public boolean filter(String path0, boolean folder, boolean isArchive) {

@@ -241,7 +241,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		Dialog.applyDialogFont(composite);		
 	}
 	
-	/**
+	/*
 	 *	Create the group for setting various patch options
 	 */
 	private void buildPatchOptionsGroup(Composite parent) {
@@ -530,13 +530,12 @@ import org.eclipse.compare.structuremergeviewer.*;
 		return null;
 	}
 	
-	/**
+	/*
 	 * Returns true if path completely matches the end of fullpath
 	 */
 	private boolean matches(IPath fullpath, IPath path) {
 		
-		for (IPath p= fullpath; path.segmentCount() <= p.segmentCount();
-												p= p.removeFirstSegments(1)) {
+		for (IPath p= fullpath; path.segmentCount() <= p.segmentCount(); p= p.removeFirstSegments(1)) {
 			if (p.equals(path))
 				return true;
 		}
@@ -633,7 +632,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		setPageComplete(updateModel());
 	}
 	
-	/**
+	/*
 	 * Updates the gray state of the given diff and the checked state of its children.
 	 */
 	private void updateCheckedState(TreeItem diffItem) {
@@ -658,7 +657,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		setPageComplete(updateModel());
 	}
 	
-	/**
+	/*
 	 * Updates the gray state of the given items parent.
 	 */
 	private void updateGrayedState(TreeItem hunk) {

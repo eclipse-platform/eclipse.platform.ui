@@ -67,6 +67,7 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
 	 */
 	public void contributeToMenu(IMenuManager menuManager) {
+		// empty implementation
 	}
 
 	public void setActiveEditor(IEditorPart targetEditor) {

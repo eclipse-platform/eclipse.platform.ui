@@ -851,11 +851,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * The <code>TextMergeViewer</code> implementation of this method returns a 
 	 * tokenizer that breaks a line into words separated by whitespace.
 	 * Subclasses may reimplement to provide a specific tokenizer.
-	 *
+	 * @param line the line for which to create the <code>ITokenComparator</code>
 	 * @return a ITokenComparator which is used for a second level token compare.
 	 */
-	protected ITokenComparator createTokenComparator(String s) {
-		return new TokenComparator(s);
+	protected ITokenComparator createTokenComparator(String line) {
+		return new TokenComparator(line);
 	}
 	
 	/**
@@ -878,6 +878,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * Called on the viewer disposal.
 	 * Unregisters from the compare configuration.
 	 * Clients may extend if they have to do additional cleanup.
+	 * @param event
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
@@ -954,7 +955,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	//--- internal ------------------------------------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------------------------------
 	
-	/**
+	/*
 	 * Creates the specific SWT controls for the content areas.
 	 * Clients must not call or override this method.
 	 */
@@ -1312,7 +1313,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fBirdsEyeCanvas.redraw();
 	}
 	
-	/**
+	/*
 	 * Called whenever setFocus() is called on the ContentViewer's top level SWT Composite.
 	 * This implementation sets the focus to the first enabled text widget.
 	 */
@@ -1348,7 +1349,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 	
-	/**
+	/*
 	 * Creates the central Canvas.
 	 * Called from ContentMergeViewer.
 	 */
@@ -1420,7 +1421,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return fButtonDiff != null;
 	}
 	
-	/**
+	/*
 	 * Returns width of central canvas.
 	 * Overridden from ContentMergeViewer.
 	 */
@@ -1430,7 +1431,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return super.getCenterWidth();
 	}
 
-	/**
+	/*
 	 * Creates and initializes a text part.
 	 */
 	private MergeSourceViewer createPart(Composite parent) {
@@ -1553,7 +1554,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;
 	}
 	
-	/**
+	/*
 	 * Returns true if the given inputs map to the same documents
 	 */
 	boolean sameDoc(char type, Object newInput, Object oldInput) {
@@ -1605,7 +1606,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;
 	}
 		
-	/**
+	/*
 	 * Initializes the text viewers of the three content areas with the given input objects.
 	 * Subclasses may extend.
 	 */
@@ -1791,7 +1792,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return false;
 	}
 	
-	/**
+	/*
 	 * Called whenver one of the documents changes.
 	 * Sets the dirty state of this viewer and updates the lines.
 	 * Implements IDocumentListener.
@@ -1809,7 +1810,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		updateLines(doc);
 	}
 		
-	/**
+	/*
 	 * This method is called if a range of text on one side is copied into an empty subdocument
 	 * on the other side. The method returns the position where the subdocument is placed into the base document.
 	 * This default implementation determines the position by using the text range differencer.
@@ -1896,7 +1897,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fHasErrors= true;
 	}
 	
-	/**
+	/*
 	 * Returns true if a new Document could be installed.
 	 */
 	private boolean setDocument(MergeSourceViewer tp, char type, Object o) {
@@ -2153,7 +2154,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 
-	/**
+	/*
 	 * Lays out everything.
 	 */
   	protected final void handleResizeLeftRight(int x, int y, int width1, int centerWidth, int width2,  int height) {
@@ -2228,7 +2229,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		refreshBirdsEyeView();
 	}
 							
-	/**
+	/*
 	 * Track selection changes to update the current Diff.
 	 */
 	private void handleSelectionChanged(MergeSourceViewer tw) {
@@ -2530,7 +2531,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;
 	}
 	
-	/**
+	/*
 	 * Returns true if kind of change should be shown.
 	 */
 	private boolean useChange(int kind) {
@@ -2552,7 +2553,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return tc.getTokenStart(start + length);
 	}
 
-	/**
+	/*
 	 * Returns the content of lines in the specified range as a String.
 	 * This includes the line separators.
 	 *
@@ -2593,7 +2594,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
+	/*
 	 * Performs a token based 3-way diff on the character range specified by the given baseDiff.
 	 */
 	private void simpleTokenDiff(final Diff baseDiff,
@@ -2653,7 +2654,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 	
-	/**
+	/*
 	 * Performs a "smart" token based 3-way diff on the character range specified by the given baseDiff.
 	 * It is "smart" because it tries to minimize the number of token diffs by merging them.
 	 */
@@ -2940,7 +2941,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 									Integer.toString(endLine) } );
 	}
 	
-	/**
+	/*
 	 * Returns a description of the cursor position.
 	 * 
 	 * @return a description of the cursor position
@@ -2986,7 +2987,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		updateControls();
 	}
 
-	/**
+	/*
 	 * Creates the two items for copying a difference range from one side to the other 
 	 * and adds them to the given toolbar manager.
 	 */
@@ -3204,9 +3205,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	//---- painting lines
 	
-	/**
-	 * 
-	 */
 	private void updateLines(IDocument d) {
 
 		boolean left= false;
@@ -3619,7 +3617,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	//---- Navigating and resolving Diffs
 	
-	/**
+	/*
 	 * Returns true if end (or beginning) of document reached.
 	 */
 	private boolean navigate(boolean down, boolean wrap, boolean deep) {
@@ -3688,7 +3686,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return false;
 	}
 	
-	/**
+	/*
 	 * Find the Diff that overlaps with the given TextPart's text range.
 	 * If the range doesn't overlap with any range <code>null</code>
 	 * is returned.
@@ -3799,7 +3797,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		refreshBirdsEyeView();
 	}
 	
-	/**
+	/*
 	 * Smart determines whether 
 	 */
 	private void revealDiff(Diff d, boolean smart) {
@@ -4094,7 +4092,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 	//---- scrolling
 
-	/**
+	/*
 	 * Calculates virtual height (in lines) of views by adding the maximum of corresponding diffs.
 	 */
 	private int getVirtualHeight() {
@@ -4109,7 +4107,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return h;
 	}
 	
-	/**
+	/*
 	 * Calculates height (in lines) of right view by adding the height of the right diffs.
 	 */
 	private int getRightHeight() {
@@ -4124,7 +4122,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return h;
 	}
 	
-	/**
+	/*
 	 * The height of the TextEditors in lines.
 	 */
 	private int getViewportHeight() {
@@ -4146,7 +4144,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return vh / te.getLineHeight();
 	}
 	
-	/**
+	/*
 	 * Returns the virtual position for the given view position.
 	 */
 	private int realToVirtualPosition(MergeSourceViewer w, int vpos) {
@@ -4232,7 +4230,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fRightCanvas.repaint();
 	}
 		
-	/**
+	/*
 	 * Updates Scrollbars with viewports.
 	 */
 	private void syncViewport(MergeSourceViewer w) {
@@ -4270,7 +4268,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}			
 	}
 	
-	/**
+	/*
 	 * maps given virtual position into a real view position of this view.
 	 */
 	private int virtualToRealPosition(MergeSourceViewer part, int v) {

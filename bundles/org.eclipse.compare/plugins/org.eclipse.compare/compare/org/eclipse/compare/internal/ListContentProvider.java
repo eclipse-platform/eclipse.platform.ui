@@ -22,6 +22,7 @@ public class ListContentProvider implements IStructuredContentProvider {
 	List fContents;	
 
 	public ListContentProvider() {
+		// nothing to do
 	}
 	
 	public Object[] getElements(Object input) {
@@ -39,6 +40,7 @@ public class ListContentProvider implements IStructuredContentProvider {
 	}
 
 	public void dispose() {
+		// empty default implementation
 	}
 	
 	public boolean isDeleted(Object o) {

@@ -33,7 +33,7 @@ public class Util {
 		}
 	}
 
-	/**
+	/*
 	 * Reads the contents of the given input stream into a string.
 	 * The function assumes that the input stream uses the platform's default encoding
 	 * (<code>ResourcesPlugin.getEncoding()</code>).
@@ -55,6 +55,7 @@ public class Util {
 			return buffer.toString();
 			
 		} catch (IOException ex) {
+			// silently ignored
 		} finally {
 			if (reader != null) {
 				try {

@@ -94,7 +94,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	/**
+	/*
 	 * Creates an compare editor input for the given selection.
 	 */
 	ResourceCompareInput(CompareConfiguration config) {
@@ -162,7 +162,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	/**
+	/*
 	 * Returns true if compare can be executed for the given selection.
 	 */
 	public boolean isEnabled(ISelection s) {
@@ -212,14 +212,14 @@ class ResourceCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	/**
+	/*
 	 * Returns true if both resources are either structured or unstructured.
 	 */
 	private boolean comparable(IResource c1, IResource c2) {
 		return hasStructure(c1) == hasStructure(c2);
 	}
 	
-	/**
+	/*
 	 * Returns true if the given argument has a structure.
 	 */
 	private boolean hasStructure(IResource input) {
@@ -239,7 +239,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		return false;
 	}
 	
-	/**
+	/*
 	 * Creates a <code>IStructureComparator</code> for the given input.
 	 * Returns <code>null</code> if no <code>IStructureComparator</code>
 	 * can be found for the <code>IResource</code>.
@@ -260,7 +260,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		return null;
 	}
 	
-	/**
+	/*
 	 * Performs a two-way or three-way diff on the current selection.
 	 */
 	public Object prepareInput(IProgressMonitor pm) throws InvocationTargetException {

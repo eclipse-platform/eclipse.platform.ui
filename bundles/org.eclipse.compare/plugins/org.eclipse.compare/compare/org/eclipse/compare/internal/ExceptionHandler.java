@@ -33,7 +33,7 @@ public class ExceptionHandler {
 
 	private static ExceptionHandler fgInstance= new ExceptionHandler();
 	
-	/**
+	/*
 	 * Logs the given exception using the platform's logging mechanism. The exception is
 	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
 	 */

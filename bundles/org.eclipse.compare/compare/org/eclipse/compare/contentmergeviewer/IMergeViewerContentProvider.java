@@ -56,7 +56,7 @@ public interface IMergeViewerContentProvider extends IContentProvider {
 
 	/**
 	 * Returns whether the ancestor side of the given input element should be shown.
-	 *
+	 * @param input the merge viewer's input
 	 * @return <code>true</code> if the ancestor side of the given input element should be shown
 	 */
 	boolean showAncestor(Object input);

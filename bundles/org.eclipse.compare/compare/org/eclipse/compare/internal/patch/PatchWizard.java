@@ -38,7 +38,7 @@ import org.eclipse.compare.internal.*;
 	private IResource fTarget;
 
 		
-	/**
+	/*
 	 * Creates a wizard for applying a patch file to the workspace.
 	 */
 	/* package */ PatchWizard(ISelection selection) {

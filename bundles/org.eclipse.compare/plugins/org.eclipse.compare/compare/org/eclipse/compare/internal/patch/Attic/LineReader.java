@@ -103,7 +103,8 @@ import org.eclipse.jface.util.Assert;
 		}
 		return null;
 	}
-	/**
+	
+	/*
 	 * Returns the number of characters in the given string without
 	 * counting a trailing line separator.
 	 */

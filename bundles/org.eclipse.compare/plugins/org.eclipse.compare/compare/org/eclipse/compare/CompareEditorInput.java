@@ -658,7 +658,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * <p>
 	 * Subclasses may override to implement a different strategy.
 	 * </p>
-	 *
+	 * @param oldViewer a new viewer is only created if this old viewer cannot show the given input
+	 * @param input the input object for which to find a structure viewer
+	 * @param parent the SWT parent composite under which the new viewer is created
 	 * @return a compare viewer which is suitable for the given input object or <code>null</code>
 	 */
 	public Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
@@ -676,7 +678,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * <p>
 	 * Subclasses may override to implement a different strategy.
 	 * </p>
-	 *
+	 * @param oldViewer a new viewer is only created if this old viewer cannot show the given input
+	 * @param input the input object for which to find a structure viewer
+	 * @param parent the SWT parent composite under which the new viewer is created
 	 * @return a compare viewer which is suitable for the given input object or <code>null</code>
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
@@ -776,6 +780,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @deprecated Override method saveChanges instead.
 	 */
 	public void save(IProgressMonitor pm) {
+		// empty default implementation
 	}
 	
 	/**
@@ -785,6 +790,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * calling <code>ISavable.save</code> on them.
 	 *
 	 * @param pm an <code>IProgressMonitor</code> that the implementation of save may use to show progress
+	 * @throws CoreException
 	 * @since 2.0
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {

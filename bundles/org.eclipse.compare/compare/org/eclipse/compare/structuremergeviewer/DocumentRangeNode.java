@@ -213,6 +213,8 @@ public class DocumentRangeNode
 
 	/**
 	 * Implementation based on <code>getID</code>.
+     * @param other the object to compare this <code>DocumentRangeNode</code> against.
+     * @return <code>true</code> if the <code>DocumentRangeNodes</code>are equal; <code>false</code> otherwise.
 	 */
 	public boolean equals(Object other) {
 		if (other != null && other.getClass() == getClass()) {
@@ -224,12 +226,13 @@ public class DocumentRangeNode
 
 	/**
 	 * Implementation based on <code>getID</code>.
+	 * @return a hashcode for this object.
 	 */
 	public int hashCode() {
 		return fID.hashCode();
 	}
 
-	/**
+	/*
 	 * Find corresponding position
 	 */
 	private Position findCorrespondingPosition(DocumentRangeNode otherParent, DocumentRangeNode child) {
@@ -342,6 +345,7 @@ public class DocumentRangeNode
 	 * see IEditableContent.setContent
 	 */
 	public void setContent(byte[] content) {
+		// empty default implementation
 	}
 
 	/* (non-Javadoc)

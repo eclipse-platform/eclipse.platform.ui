@@ -112,6 +112,7 @@ public class Differencer {
 		Object fRight;
 		
 		Node() {
+			// nothing to do
 		}
 		Node(Node parent, Object ancestor, Object left, Object right) {
 			parent.add(this);
@@ -188,6 +189,7 @@ public class Differencer {
 	 * Creates a new differencing engine.
 	 */
 	public Differencer() {
+		// nothing to do
 	}
 	
 	/**
@@ -222,7 +224,7 @@ public class Differencer {
 		return null;
 	}
 	
-	/**
+	/*
 	 * Traverse tree in postorder.
 	 */
 	private int traverse(boolean threeWay, Node parent, IProgressMonitor pm, Object ancestor, Object left, Object right) {
@@ -331,7 +333,7 @@ public class Differencer {
 		return new DiffNode((IDiffContainer) data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
 	}
 	
-	/**
+	/*
 	 * Performs a 2-way or 3-way compare of the given leaf elements and returns an integer
 	 * describing the kind of difference.
 	 */
@@ -377,9 +379,9 @@ public class Differencer {
 						boolean ay= contentsEqual(ancestor, left);
 						boolean am= contentsEqual(ancestor, right);
 						
-						if (ay && am)
-							;
-						else if (ay && !am) {
+						if (ay && am) {
+							// empty
+						} else if (ay && !am) {
 							description= RIGHT | CHANGE;
 						} else if (!ay && am) {
 							description= LEFT | CHANGE;
@@ -470,7 +472,7 @@ public class Differencer {
 		return false;
 	}
 	
-	/**
+	/*
 	 * Tries to return an InputStream for the given object.
 	 * Returns <code>null</code> if the object not an IStreamContentAccessor
 	 * or an error occured.
@@ -496,6 +498,7 @@ public class Differencer {
 	 * </p>
 	 *
 	 * @param input the object for which to return children
+	 * @return the children of the given input or <code>null</code> if there are no children.
 	 */
 	protected Object[] getChildren(Object input) {
 		if (input instanceof IStructureComparator)

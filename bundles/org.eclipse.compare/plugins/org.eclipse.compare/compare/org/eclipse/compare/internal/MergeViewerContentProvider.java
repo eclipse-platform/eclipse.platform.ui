@@ -38,6 +38,7 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 	}
 	
 	public void dispose() {
+		// empty default implementation
 	}
 	
 	public void inputChanged(Viewer v, Object o1, Object o2) {

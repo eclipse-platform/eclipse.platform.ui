@@ -20,6 +20,7 @@ public class PatchMessages {
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
 	private PatchMessages() {
+		// nothing to do
 	}
 
 	public static String getString(String key) {

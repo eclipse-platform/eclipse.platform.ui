@@ -57,7 +57,7 @@ public abstract class BufferedCanvas extends Canvas {
 		}
 	}
 
-	/**
+	/*
 	 * Double buffer drawing.
 	 */
 	void doubleBufferPaint(GC dest) {

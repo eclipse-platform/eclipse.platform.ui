@@ -119,6 +119,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	
 	/**
 	 * Reimplemented to get the descriptive title for this viewer from the <code>IStructureCreator</code>.
+	 * @return the viewer's name
 	 */
 	public String getTitle() {
 		if (fStructureCreator != null)
@@ -136,8 +137,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		return fRoot;
 	}
 	
-	/**
-	 * Overridden to create the comparable structures from the input object
+    /*
+     * (non-Javadoc) Method declared on StructuredViewer.
+     * Overridden to create the comparable structures from the input object
 	 * and to feed them through the differencing engine. Note: for this viewer
 	 * the value from <code>getInput</code> is not identical to <code>getRoot</code>.
 	 */
@@ -167,6 +169,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	
 	/**
 	 * Recreates the comparable structures for the input sides.
+	 * @param input this viewer's new input
 	 */
 	protected void compareInputChanged(ICompareInput input) {
 		ITypedElement t= null;
@@ -226,6 +229,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	
 	/**
 	 * Calls <code>diff</code> whenever the byte contents changes.
+	 * @param changed the object that sent out the notification
 	 */
 	protected void contentChanged(IContentChangeNotifier changed) {
 		
@@ -321,7 +325,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		// we do nothing here
 	}
 	
-	/**
+	/*
 	 * Performs a byte compare on the given objects.
 	 * Called from the difference engine.
 	 * Returns <code>null</code> if no structure creator has been set.
@@ -342,6 +346,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 * Tracks property changes of the configuration object.
 	 * Clients may override to track their own property changes.
 	 * In this case they must call the inherited method.
+	 * @param event the property changed event that triggered the call to this method
 	 */
 	protected void propertyChange(PropertyChangeEvent event) {
 		String key= event.getProperty();

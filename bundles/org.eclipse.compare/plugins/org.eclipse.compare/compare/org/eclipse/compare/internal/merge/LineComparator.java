@@ -30,6 +30,7 @@ class LineComparator implements IRangeComparator {
             while ((line = br.readLine()) != null)
                 ar.add(line);
         } catch (IOException e) {
+        		// silently ignored
         }
 //        try {
 //            is.close();
