@@ -132,7 +132,7 @@ public class ExtensionTracker implements IExtensionTracker, IRegistryChangeListe
 		}
 
 		// Find the objects that have not been gc'ed, and notify the handlers
-		for (int i = 0; i < removedObjects.length; i++) {
+		for (int i = 0; i < handlersCopy.length; i++) {
 			applyRemove((IExtensionRemovalHandler) handlersCopy[i], removedExtension, removedObjects);
 		}
 	}
