@@ -44,9 +44,10 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private WebBrowser webBrowser;
 	private IEResources ieResources;
 	private IEStore store;
-	boolean opened = false;
 	ToolItem backItem, forwardItem;
 	int x, y, w, h;
+	private boolean closing = false;
+	Thread inputReader;
 	/**
 	 * Constructor
 	 */
@@ -58,7 +59,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		createImages();
 		createShell();
 		// Start command interpreter
-		Thread inputReader = new Thread(this);
+		inputReader = new Thread(this);
 		inputReader.setDaemon(true);
 		inputReader.setName("IE Command Interpreter");
 		inputReader.start();
@@ -103,9 +104,10 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		}
 		IEHost ie = new IEHost();
 		ie.runUI();
+		ie.dispose();
 	}
 	/**
-	 * Creates the toolbar images
+	 * Creates images
 	 */
 	private void createImages() {
 		try {
@@ -127,6 +129,21 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 				.createFromURL(ieResources.getImagePath("forward_icon"))
 				.createImage();
 	}
+	/**
+	 * Disposes of resources
+	 */
+	private void dispose() {
+		if (shellImg != null) {
+			shellImg.dispose();
+		}
+		if (backImg != null) {
+			backImg.dispose();
+		}
+		if (forwardImg != null) {
+			forwardImg.dispose();
+		}
+		display.dispose();
+	}
 
 	/**
 	 * Creates hosting shell.
@@ -137,6 +154,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 			shell.setImage(shellImg);
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
+				closing = true;
+				// save preferences
 				store.put(BROWSER_X, Integer.toString(x));
 				store.put(BROWSER_Y, Integer.toString(y));
 				store.put(BROWSER_WIDTH, Integer.toString(w));
@@ -145,16 +164,13 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 					BROWSER_MAXIMIZED,
 					(new Boolean(shell.getMaximized()).toString()));
 				store.save();
-				if (shellImg != null) {
-					shellImg.dispose();
-				}
-				if (backImg != null) {
-					backImg.dispose();
-				}
-				if (forwardImg != null) {
-					forwardImg.dispose();
-				}
-				shell.close();
+				// wait for command thread to stop
+				if (inputReader.isAlive()) {
+					try {
+						inputReader.join(5000);
+					} catch (InterruptedException ie) {
+					}
+				};
 			}
 		});
 		shell.addControlListener(new ControlListener() {
@@ -198,7 +214,6 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		if (store.getBoolean(BROWSER_MAXIMIZED))
 			shell.setMaximized(true);
 		shell.open();
-		opened = true;
 	}
 	/**
 	 * Populates shell control with toolbar and ActiveX IE.
@@ -272,18 +287,19 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		// Run command loop
 		String line;
 		try {
-			while (null != (line = reader.readLine())) {
+			while (!closing && null != (line = reader.readLine())) {
 				if (line.length() > 0) {
 					executeCommand(line);
 					// this is required, otherwise shell stops responding
-					while (System.in.available() <= 0) {
+					while (!closing && System.in.available() <= 0) {
 						try {
-							Thread.currentThread().sleep(30);
+							Thread.currentThread().sleep(200);
 						} catch (InterruptedException ie) {
 						}
 					}
 				}
 			}
+			reader.close();
 		} catch (IOException e) {
 			System.err.println(ieResources.getString("WE026", e.getMessage()));
 			return;
