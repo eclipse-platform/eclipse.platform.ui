@@ -59,6 +59,11 @@ public class CompressedFolderContentProvider extends SyncSetTreeContentProvider 
 		if (roots.length == 0) return;
 		Set projects = new HashSet();
 		for (int i = 0; i < roots.length; i++) {
+			if (roots[i].getType() == IResource.PROJECT) {
+				// when a project is involved, refresh the whole tree
+				tree.refresh();
+				return;
+			}
 			projects.add(getModelObject(roots[i].getProject()));
 		}
 		for (Iterator iter = projects.iterator(); iter.hasNext();) {
