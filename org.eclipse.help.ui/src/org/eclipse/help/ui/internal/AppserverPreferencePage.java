@@ -154,7 +154,19 @@ public class AppserverPreferencePage
 		label = new Label(mainComposite, SWT.NONE);
 		label.setText(
 			HelpUIResources.getString("AppserverPreferencePage.Note"));
-		label.setFont(JFaceResources.getBannerFont());
+		// Make this bold
+		FontData[] fontData = font.getFontData();
+		for (int i = 0; i < fontData.length; i++) {
+			fontData[i].setStyle(fontData[i].getStyle() | SWT.BOLD);
+		}
+		final Font boldFont = new Font(label.getDisplay(), fontData);
+		label.setFont(boldFont);
+		label.addDisposeListener(new DisposeListener(){
+			public void widgetDisposed(DisposeEvent e){
+				boldFont.dispose();
+			}
+		});
+		//
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		//data.horizontalSpan = 2;
 		label.setLayoutData(data);
