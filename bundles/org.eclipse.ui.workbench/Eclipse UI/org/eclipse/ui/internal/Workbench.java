@@ -326,9 +326,10 @@ public final class Workbench implements IWorkbench {
 	public final void disableKeyFilter() {
 		synchronized (keyFilterMutex) {
 			Display currentDisplay = getDisplay();
-			Listener keyFilter = keyboard.getFilter();
+			Listener keyFilter = keyboard.getKeyDownFilter();
 			currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
 			currentDisplay.removeFilter(SWT.Traverse, keyFilter);
+			currentDisplay.removeFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 			keyFilterDisabled = true;
 		}
 	}
@@ -336,9 +337,10 @@ public final class Workbench implements IWorkbench {
 	public final void enableKeyFilter() {
 		synchronized (keyFilterMutex) {
 			Display currentDisplay = getDisplay();
-			Listener keyFilter = keyboard.getFilter();
+			Listener keyFilter = keyboard.getKeyDownFilter();
 			currentDisplay.addFilter(SWT.KeyDown, keyFilter);
 			currentDisplay.addFilter(SWT.Traverse, keyFilter);
+			currentDisplay.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 			keyFilterDisabled = false;
 		}
 	}
@@ -831,10 +833,11 @@ public final class Workbench implements IWorkbench {
 		});
 
 		workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
-		Listener keyFilter = keyboard.getFilter();
+		Listener keyFilter = keyboard.getKeyDownFilter();
 		display.addFilter(SWT.Traverse, keyFilter);
 		display.addFilter(SWT.KeyDown, keyFilter);
 		display.addFilter(SWT.FocusOut, keyFilter);
+		display.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 		addWindowListener(workbenchActivitiesCommandsAndRoles.windowListener);
 		workbenchActivitiesCommandsAndRoles.updateActiveCommandIdsAndActiveActivityIds();
 

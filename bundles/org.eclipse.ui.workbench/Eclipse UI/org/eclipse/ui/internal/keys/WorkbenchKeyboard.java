@@ -25,10 +25,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IStatusLineManager;
-
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.KeySupport;
@@ -37,9 +33,7 @@ import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.commands.CommandManager;
-import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
  * <p>
@@ -153,27 +147,31 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
+	 * The listener that clears the state during focus changes.
+	 */
+	final Listener focusListener = new Listener() {
+		public void handleEvent(Event event) {
+			state.setCollapseFully(true);
+			state.reset();
+		}
+	};
+
+	/**
 	 * The listener that runs key events past the global key bindings.
 	 */
-	final Listener keySequenceBindingFilter = new Listener() {
+	final Listener keyDownFilter = new Listener() {
 		public void handleEvent(Event event) {
 			filterKeySequenceBindings(event);
 		}
 	};
 
 	/**
-	 * The mode is the current state of the key binding architecture. In the
-	 * case of multi-stroke key bindings, this can be a partially complete key
-	 * binding.
+	 * The listener that checks to see whether all of the modifier keys have
+	 * been released.
 	 */
-	private KeySequence mode = KeySequence.getInstance();
-
-	/**
-	 * The listener that clears the mode during focus changes.
-	 */
-	final Listener modeCleaner = new Listener() {
+	final Listener keyUpFilter = new Listener() {
 		public void handleEvent(Event event) {
-			setMode(KeySequence.getInstance());
+			checkModifierKeys(event);
 		}
 	};
 
@@ -191,9 +189,16 @@ public class WorkbenchKeyboard {
 		new OutOfOrderVerifyListener(outOfOrderListener);
 
 	/**
+	 * The mode is the current state of the key binding architecture. In the
+	 * case of multi-stroke key bindings, this can be a partially complete key
+	 * binding.
+	 */
+	private final KeyBindingState state;
+
+	/**
 	 * The workbench on which this keyboard interface should act.
 	 */
-	final Workbench workbench;
+	private final Workbench workbench;
 
 	/**
 	 * Constructs a new instance of <code>WorkbenchKeyboard</code> associated
@@ -204,6 +209,22 @@ public class WorkbenchKeyboard {
 	 */
 	public WorkbenchKeyboard(Workbench associatedWorkbench) {
 		workbench = associatedWorkbench;
+		state = new KeyBindingState(associatedWorkbench);
+	}
+
+	/**
+	 * Checks to see if the modifier keys are all released now. If they are all
+	 * released, then the state will be allowed to collapse fully, and the
+	 * state will reset itself.
+	 * 
+	 * @param event
+	 *            The event to check for modifier keys; must not be <code>null</code>.
+	 */
+	private void checkModifierKeys(Event event) {
+		if ((event.type == SWT.KeyUp) && (event.stateMask == event.keyCode)) {
+			state.setCollapseFully(true);
+			state.reset();
+		}
 	}
 
 	/**
@@ -268,23 +289,22 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
-	 * An accessor for the filter that processes key events on the display.
+	 * An accessor for the filter that processes key down and traverse events
+	 * on the display.
 	 * 
-	 * @return The global key binding filter; never <code>null</code>.
+	 * @return The global key down and traverse filter; never <code>null</code>.
 	 */
-	public Listener getFilter() {
-		return keySequenceBindingFilter;
+	public Listener getKeyDownFilter() {
+		return keyDownFilter;
 	}
 
 	/**
-	 * The current internal state of the key binding architecture, which
-	 * represents the partial key sequence entered by the user.
+	 * An accessor for the filter that processes key up events on the display.
 	 * 
-	 * @return The current partial match entered by the user; never <code>null</code>,
-	 *         but may contain no strokes.
+	 * @return The global key up filter; never <code>null</code>.
 	 */
-	private KeySequence getMode() {
-		return mode;
+	public Listener getKeyUpFilter() {
+		return keyUpFilter;
 	}
 
 	/**
@@ -344,18 +364,19 @@ public class WorkbenchKeyboard {
 	 */
 	// TODO remove event parameter once key-modified actions are removed
 	public boolean press(List potentialKeyStrokes, Event event) {
-		KeySequence modeBeforeKeyStroke = getMode();
+		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
-			KeySequence modeAfterKeyStroke =
-				KeySequence.getInstance(modeBeforeKeyStroke, (KeyStroke) iterator.next());
+			KeySequence sequenceAfterKeyStroke =
+				KeySequence.getInstance(sequenceBeforeKeyStroke, (KeyStroke) iterator.next());
 
-			if (isPartialMatch(modeAfterKeyStroke)) {
-				setMode(modeAfterKeyStroke);
+			if (isPartialMatch(sequenceAfterKeyStroke)) {
+				state.setCollapseFully(false);
+				state.setCurrentSequence(sequenceAfterKeyStroke);
 				return true;
 
-			} else if (isPerfectMatch(modeAfterKeyStroke)) {
-				String commandId = getPerfectMatch(modeAfterKeyStroke);
+			} else if (isPerfectMatch(sequenceAfterKeyStroke)) {
+				String commandId = getPerfectMatch(sequenceAfterKeyStroke);
 				Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
 				org.eclipse.ui.commands.IAction action =
 					(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
@@ -371,13 +392,13 @@ public class WorkbenchKeyboard {
 					}
 				}
 
-				setMode(KeySequence.getInstance());
-				return action != null || modeBeforeKeyStroke.isEmpty();
+				state.reset();
+				return action != null || sequenceBeforeKeyStroke.isEmpty();
 
 			}
 		}
 
-		setMode(KeySequence.getInstance());
+		state.reset();
 		return false;
 	}
 
@@ -406,53 +427,6 @@ public class WorkbenchKeyboard {
 					}
 
 			event.type = SWT.NONE;
-		}
-	}
-
-	/**
-	 * A mutator for the current internal key binding state.
-	 * 
-	 * @param sequence
-	 *            The current key sequence
-	 */
-	private void setMode(KeySequence sequence) {
-		if (mode == null)
-			throw new NullPointerException();
-
-		mode = sequence;
-		updateModeStatusLines();
-	}
-
-	/**
-	 * Updates the text of the given window's mode line with the given text.
-	 * 
-	 * @param window
-	 *            the window
-	 * @param text
-	 *            the text
-	 */
-	private void updateModeLine(IWorkbenchWindow window, String text) {
-		if (window instanceof WorkbenchWindow) {
-			IStatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
-			// @issue implicit dependency on IDE's action builder
-			IContributionItem item = statusLine.find("ModeContributionItem"); //$NON-NLS-1$
-			if (item instanceof StatusLineContributionItem) {
-				((StatusLineContributionItem) item).setText(text);
-			}
-		}
-	}
-
-	/**
-	 * Updates the text of the mode lines with the current mode.
-	 */
-	private void updateModeStatusLines() {
-		// Format the mode into text.
-		String text = getMode().format();
-
-		// Update each open window's status line.
-		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			updateModeLine(windows[i], text);
 		}
 	}
 }
