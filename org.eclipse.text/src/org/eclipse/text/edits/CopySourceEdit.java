@@ -258,7 +258,7 @@ public final class CopySourceEdit extends TextEdit {
 			root.internalSetChildren(internalGetChildren());
 			fSourceContent= document.get(getOffset(), getLength());
 			fSourceRoot= PartialCopier.perform(root);
-			fSourceRoot.moveTree(-getOffset());
+			fSourceRoot.internalMoveTree(-getOffset());
 			if (fSourceRoot.hasChildren()) {
 				EditDocument subDocument= new EditDocument(fSourceContent);
 				TextEditProcessor subProcessor= TextEditProcessor.createSourceComputationProcessor(subDocument, fSourceRoot, TextEdit.NONE);

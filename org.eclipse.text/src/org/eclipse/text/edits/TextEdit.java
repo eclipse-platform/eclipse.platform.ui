@@ -243,6 +243,19 @@ public abstract class TextEdit {
 	}
 	
 	/**
+	 * Move all offsets in the tree by the given delta. This node must be a
+	 * root node.
+	 * 
+	 * @param delta the delta
+	 * @since 3.1
+	 */
+	public final void moveTree(int delta) {
+		Assert.isTrue(fParent == null);
+		Assert.isTrue(getOffset() + delta >= 0);
+		internalMoveTree(delta);
+	}
+	
+	/**
 	 * Returns <code>true</code> if the edit covers the given edit
 	 * <code>other</code>. It is up to the concrete text edit to 
 	 * decide if a edit of length zero can cover another edit.
@@ -894,11 +907,11 @@ public abstract class TextEdit {
 	
 	/* package */ abstract boolean deleteChildren();
 
-	/* package */ void moveTree(int delta) {
+	/* package */ void internalMoveTree(int delta) {
 		adjustOffset(delta);
 		if (fChildren != null) {
 			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-				((TextEdit)iter.next()).moveTree(delta);
+				((TextEdit)iter.next()).internalMoveTree(delta);
 			}
 		}
 	}

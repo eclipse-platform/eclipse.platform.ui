@@ -155,7 +155,7 @@ public final class MoveTargetEdit extends TextEdit {
 		
 		MultiTextEdit sourceRoot= fSource.getSourceRoot();
 		if (sourceRoot != null) {
-			sourceRoot.moveTree(getOffset());
+			sourceRoot.internalMoveTree(getOffset());
 			TextEdit[] sourceChildren= sourceRoot.removeChildren();
 			List children= new ArrayList(sourceChildren.length);
 			for (int i= 0; i < sourceChildren.length; i++) {
@@ -181,7 +181,7 @@ public final class MoveTargetEdit extends TextEdit {
 		if (delete) {
 			deleteTree();
 		} else {
-			moveTree(accumulatedDelta);
+			internalMoveTree(accumulatedDelta);
 		}
 		return accumulatedDelta + fDelta;
 	}

@@ -229,7 +229,7 @@ public final class MoveSourceEdit extends TextEdit {
 				EditDocument subDocument= new EditDocument(content);
 				fSourceRoot= new MultiTextEdit(getOffset(), getLength());
 				fSourceRoot.addChildren(children);
-				fSourceRoot.moveTree(-getOffset());
+				fSourceRoot.internalMoveTree(-getOffset());
 				int processingStyle= getStyle(processor);
 				TextEditProcessor subProcessor= TextEditProcessor.createSourceComputationProcessor(subDocument, fSourceRoot, processingStyle);
 				subProcessor.performEdits();
