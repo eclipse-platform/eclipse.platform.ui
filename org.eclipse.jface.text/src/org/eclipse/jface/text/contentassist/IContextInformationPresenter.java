@@ -39,7 +39,6 @@ public interface IContextInformationPresenter {
 	 * at the given document position. Returns whether update changed the
 	 * presentation.
 	 *
-	 * @param information the context information to be styled
 	 * @param documentPosition the current position within the document
 	 * @param presentation the presentation to be updated
 	 * @return <code>true</code> if the given presentation has been changed
