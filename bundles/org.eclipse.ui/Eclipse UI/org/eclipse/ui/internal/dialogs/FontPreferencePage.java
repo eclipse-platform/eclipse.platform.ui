@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
@@ -211,6 +212,8 @@ public class FontPreferencePage
 		changeFontButton = new Button(parent, SWT.PUSH);
 
 		changeFontButton.setText(changeButtonLabel); //$NON-NLS-1$
+		setButtonLayoutData(changeFontButton);
+		
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				String selectedFontId = getSelectedFontId();
@@ -242,8 +245,9 @@ public class FontPreferencePage
 		String useSystemLabel) {
 
 		useDefaultsButton = new Button(parent, SWT.PUSH | SWT.CENTER);
-
 		useDefaultsButton.setText(useSystemLabel); //$NON-NLS-1$
+		setButtonLayoutData(useDefaultsButton);
+		
 		useDefaultsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				String selectedFontId = getSelectedFontId();
@@ -391,6 +395,21 @@ public class FontPreferencePage
 				(FontData[]) idsToFontData.get(preferenceName));
 		}
 		return super.performOk();
+	}
+	
+	/**
+	 * Return the GridData that sets the height of the
+	 * button to maintain the Eclipse look and feel.
+	 * Set the text before this method is called so that
+	 * the width calculation takes it into account.
+	 */
+	
+	private void setButtonLayoutData(Button button){
+		GridData data = new GridData();
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		button.setLayoutData(data);
 	}
 
 }
