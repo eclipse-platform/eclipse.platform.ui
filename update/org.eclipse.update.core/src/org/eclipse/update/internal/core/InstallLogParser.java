@@ -55,11 +55,18 @@ public class InstallLogParser {
 		try {
 			InstallConfiguration[] configs = (InstallConfiguration[])SiteManager.getLocalSite().getConfigurationHistory();
 			for (int i=0;i<configs.length; i++){
-				installConfigMap.put(configs[i].getCreationDate().toString(), configs[i]);
-			}	
+				if (!configs[i].isCurrent())
+					installConfigMap.put(configs[i].getCreationDate().toString(), configs[i]);
+			}
+			// Need to make a copy of the current config instead
+			InstallConfiguration config = getConfigCopy((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration());
+			installConfigMap.put(config.getCreationDate().toString(), config);
+			
 		} catch (CoreException e) {
 			UpdateCore.log(e);
-		} 
+		} catch (MalformedURLException e){
+			UpdateCore.log(e);
+		}
 		comparator = new Comparator(){
 			public int compare(Object e1, Object e2) {
 				Date date1 = ((InstallConfiguration)e1).getCreationDate();
@@ -68,7 +75,11 @@ public class InstallLogParser {
 			}
 		};
 	}
-
+	private InstallConfiguration getConfigCopy(InstallConfiguration origConfig) throws CoreException, MalformedURLException{
+		InstallConfiguration config = new InstallConfiguration(origConfig, origConfig.getURL(), origConfig.getLabel() );
+		config.setCreationDate(origConfig.getCreationDate());
+		return config;
+	}
 	public void parseInstallationLog(){
 		try {
 			openLog();
