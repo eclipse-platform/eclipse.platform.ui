@@ -120,11 +120,13 @@ public class AboutFeaturesDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		String title = aboutInfo.getAppName();
+		String title = aboutInfo.getProductName();
+		if (title != null) { 
 		newShell.setText(
 			WorkbenchMessages.format(
 				"AboutFeaturesDialog.shellTitle",	//$NON-NLS-1$
 				new Object[] {title}));
+		}
 		WorkbenchHelp.setHelp(
 			newShell,
 			IHelpContextIds.ABOUT_FEATURES_DIALOG);

@@ -74,11 +74,13 @@ public class AboutPluginsDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		String title = aboutInfo.getAppName();
+		String title = aboutInfo.getProductName();
+		if (title != null) { 
 		newShell.setText(
 			WorkbenchMessages.format(
 				"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$
 				new Object[] {title}));
+		}
 		WorkbenchHelp.setHelp(
 			newShell,
 			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
