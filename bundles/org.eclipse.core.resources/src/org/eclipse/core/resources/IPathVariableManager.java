@@ -79,7 +79,7 @@ public interface IPathVariableManager {
 	 * 
 	 * @param name the name of the variable to return the value for  
 	 * @return the value for the variable, or <code>null</code> if there is no
-	 *    variable  defined with the given name
+	 *    variable defined with the given name
 	 */
 	public IPath getValue(String name);
 
@@ -115,10 +115,13 @@ public interface IPathVariableManager {
 	 * variable reference as its first segment, replacing the variable reference (if
 	 * any) with the variable's value (which is a concrete path). If the given path
 	 * is absolute or has a non-<code>null</code> device then no variable
-	 * substitution is done and that path is returned as is.
+	 * substitution is done and that path is returned as is.  If the given path
+	 * is relative and has a <code>null</code> device, but the first segment
+	 * does not correspond to a defined variable, then the path is returned as
+	 * is.
 	 * <p>
 	 * If the given path is <code>null</code> then <code>null</code> will be
-	 * returned.
+	 * returned.  In all other cases the result will be non-<code>null</code>.
 	 * </p>
 	 * 
 	 * <p>
@@ -135,7 +138,8 @@ public interface IPathVariableManager {
 	 * <p>TEMP  => c:/temp</p>
 	 * <p>TEMP/foo  => c:/temp/foo</p>
 	 * <p>BACKUP  => /tmp/backup</p>
-	 * <p>BACKUP/bar.txt  => /tmp/backup/bar.txt</p></p>
+	 * <p>BACKUP/bar.txt  => /tmp/backup/bar.txt</p>
+	 * <p>SOMEPATH/foo => SOMEPATH/foo</p></p>
 	 * 
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
