@@ -3,7 +3,7 @@
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
@@ -31,7 +31,7 @@ public class RegistryCacheWriter {
 	// like a plugin descriptor, extension, extension point, etc.  The integer 
 	// index value will be used in the cache to allow cross-references in the 
 	// cached registry.
-	HashMap objectTable = null;
+	ArrayList objectTable = null;
 	
 	public MultiStatus cacheWriteProblems = null;
 	
@@ -42,22 +42,12 @@ public RegistryCacheWriter() {
 }
 public int addToObjectTable(Object object) {
 	if (objectTable == null) {
-		objectTable = new HashMap();
+		objectTable = new ArrayList();
 	}
-	// the current size of the table is the index of the object which is written. 
-	// Note that this is 0 based.
-	int intResult = objectTable.size();
-	objectTable.put(object, new Integer(intResult));	
-	return intResult;
-}
-public int getFromObjectTable(Object object) {
-	if (objectTable != null) {
-		Object objectResult = objectTable.get(object);
-		if (objectResult != null) {
-			return ((Integer) objectResult).intValue();
-		}
-	}
-	return -1;
+	objectTable.add(object);
+	// return the index of the object just added (i.e. size - 1)
+	return (objectTable.size() - 1);
+
 }
 public void writeLabel(byte labelValue, DataOutputStream out) {
 	try {
@@ -75,7 +65,7 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, D
 		// Check to see if this configuration element already exists in the
 		// objectTable.  If it is there, it has already been written to the 
 		// cache so just write out the index.
-		int configElementIndex = getFromObjectTable(configElement);
+		int configElementIndex = objectTable.indexOf(configElement);
 		if (configElementIndex != -1) {
 			// this extension is already there
 			writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_INDEX_LABEL, out);
@@ -125,7 +115,7 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, D
 		// Add the index to the registry object for this plugin
 		Object parent = configElement.getParent();
 		writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_PARENT_LABEL, out);
-		out.writeInt(getFromObjectTable(parent));
+		out.writeInt(objectTable.indexOf(parent));
 
 		writeLabel(RegistryCacheReader.CONFIGURATION_ELEMENT_END_LABEL, out);
 	} catch (IOException ioe) {
@@ -161,7 +151,7 @@ public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 		// Check to see if this extension already exists in the objectTable.  If it
 		// is there, it has already been written to the cache so just write out
 		// the index.
-		int extensionIndex = getFromObjectTable(extension);
+		int extensionIndex = objectTable.indexOf(extension);
 		if (extensionIndex != -1) {
 			// this extension is already there
 			writeLabel(RegistryCacheReader.EXTENSION_INDEX_LABEL, out);
@@ -204,7 +194,7 @@ public void writeExtension(ExtensionModel extension, DataOutputStream out) {
 
 		// Now worry about the parent plugin descriptor or plugin fragment
 		PluginModel parent = extension.getParent();
-		int parentIndex = getFromObjectTable(parent);
+		int parentIndex = objectTable.indexOf(parent);
 		writeLabel(RegistryCacheReader.EXTENSION_PARENT_LABEL, out);
 		if (parentIndex != -1) {
 			// We have already written this plugin or fragment.  Just use the index.
@@ -258,7 +248,7 @@ public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream o
 		// already written this plugin or fragment to the cache
 		PluginModel parent = extPoint.getParent();
 		if (parent != null) {
-			int parentIndex = getFromObjectTable(parent);
+			int parentIndex = objectTable.indexOf(parent);
 			if (parentIndex != -1) {
 				writeLabel(RegistryCacheReader.EXTENSION_POINT_PARENT_LABEL, out);
 				out.writeInt(parentIndex);
@@ -274,7 +264,7 @@ public void writeExtensionPoint(ExtensionPointModel extPoint, DataOutputStream o
 			writeLabel(RegistryCacheReader.EXTENSION_POINT_EXTENSIONS_LABEL, out);
 			for (int i = 0; i < extLength; i++) {
 				// Check to see if the extension exists in the objectTable first
-				int extensionIndex = getFromObjectTable(extensions[i]);
+				int extensionIndex = objectTable.indexOf(extensions[i]);
 				if (extensionIndex != -1) {
 					// Already in the objectTable and written to the cache
 					writeLabel(RegistryCacheReader.EXTENSION_INDEX_LABEL, out);
@@ -346,7 +336,7 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 	try {
 		// Check to see if this plugin already exists in the objectTable.  If it is there,
 		// it has already been written to the cache so just write out the index.
-		int pluginIndex = getFromObjectTable(plugin);
+		int pluginIndex = objectTable.indexOf(plugin);
 		if (pluginIndex != -1) {
 			// this plugin is already there
 			writeLabel(RegistryCacheReader.PLUGIN_INDEX_LABEL, out);
@@ -436,7 +426,7 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 		PluginRegistryModel parentRegistry = plugin.getRegistry();
 		writeLabel(RegistryCacheReader.PLUGIN_PARENT_LABEL, out);
 		// We can assume that the parent registry is already written out.
-		out.writeInt(getFromObjectTable(parentRegistry));
+		out.writeInt(objectTable.indexOf(parentRegistry));
 
 		writeLabel(RegistryCacheReader.PLUGIN_END_LABEL, out);
 	} catch (IOException ioe) {
@@ -448,7 +438,7 @@ public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream o
 	try {
 		// Check to see if this fragment already exists in the objectTable.  If it is there,
 		// it has already been written to the cache so just write out the index.
-		int fragmentIndex = getFromObjectTable(fragment);
+		int fragmentIndex = objectTable.indexOf(fragment);
 		if (fragmentIndex != -1) {
 			// this fragment is already there
 			writeLabel(RegistryCacheReader.FRAGMENT_INDEX_LABEL, out);
@@ -536,7 +526,7 @@ public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream o
 		PluginRegistryModel parentRegistry = fragment.getRegistry();
 		writeLabel(RegistryCacheReader.PLUGIN_PARENT_LABEL, out);
 		// We can assume that the parent registry is already written out.
-		out.writeInt(getFromObjectTable(parentRegistry));
+		out.writeInt(objectTable.indexOf(parentRegistry));
 
 		writeLabel(RegistryCacheReader.FRAGMENT_END_LABEL, out);
 	} catch (IOException ioe) {
@@ -598,7 +588,7 @@ public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream o
 		// Check to see if this registry already exists in the objectTable.  If it is there,
 		// it has already been written to the cache so just write out the index.
 		if (objectTable != null) {
-			int registryIndex = getFromObjectTable(registry);
+			int registryIndex = objectTable.indexOf(registry);
 			if (registryIndex != -1) {
 				// this plugin is already there
 				writeLabel(RegistryCacheReader.REGISTRY_INDEX_LABEL, out);
