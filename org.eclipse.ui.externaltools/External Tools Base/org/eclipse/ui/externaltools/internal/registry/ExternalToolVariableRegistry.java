@@ -9,7 +9,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
-import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -45,10 +46,10 @@ public class ExternalToolVariableRegistry {
 
 
 	/**
-	 * Table of variables where the key is the variable tag
+	 * Sorted map of variables where the key is the variable tag
 	 * and the value is the corresponding variable.
 	 */
-	private HashMap variables;
+	private SortedMap variables;
 	
 	/**
 	 * The extension point id to read the variables from
@@ -103,7 +104,7 @@ public class ExternalToolVariableRegistry {
 	 * Load the available variables
 	 */
 	private void loadVariables() {
-		variables = new HashMap();
+		variables = new TreeMap();
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(IExternalToolConstants.PLUGIN_ID, extensionPointId);
 		if (point != null) {
