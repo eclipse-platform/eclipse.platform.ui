@@ -16,7 +16,6 @@ import org.eclipse.debug.core.model.IProcess;
 
 public interface IProcessFactory {
 	
-	
 	/**
 	 * Creates and returns a new process representing the given
 	 * <code>java.lang.Process</code>. A streams proxy is created
