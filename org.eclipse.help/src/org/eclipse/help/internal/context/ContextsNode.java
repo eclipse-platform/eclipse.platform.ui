@@ -16,10 +16,14 @@ public abstract class ContextsNode {
 	public static final String RELATED_ELEM = "topic";
 	public static final String RELATED_HREF = "href";
 	public static final String RELATED_LABEL = "label";
-	public static final String BOLD_CLOSE_TAG =
-		"</" + Resources.getString("bold_tag_name") + ">";
-	public static final String BOLD_TAG =
-		"<" + Resources.getString("bold_tag_name") + ">";
+	/**
+	 * Internal representation of &lt;b&gt; - unlikely to occur in a text
+	 */
+	public static final String BOLD_CLOSE_TAG = "</@#$b>";
+	/**
+	 * Internal representation of &lt;b&gt; - unlikely to occur in a text
+	 */
+	public static final String BOLD_TAG = "<@#$b>";
 	public static final String DESC_TXT_BOLD = Resources.getString("bold_tag_name");
 	protected List children = new ArrayList();
 	/**
