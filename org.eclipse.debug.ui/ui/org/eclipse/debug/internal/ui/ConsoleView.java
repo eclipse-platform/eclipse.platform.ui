@@ -5,12 +5,12 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.*;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.widgets.Composite;
+import java.util.*;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.*;import org.eclipse.jface.text.DocumentEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.IActionBars;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.ViewPart;import org.eclipse.ui.texteditor.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class ConsoleView extends ViewPart {
+public class ConsoleView extends ViewPart implements IDocumentListener {
 	
 	protected final static String PREFIX= "console_view.";
 
@@ -174,7 +174,13 @@ public class ConsoleView extends ViewPart {
 	
 	protected final ITextInputListener getTextInputListener() {
 		return new ITextInputListener() {
-				public void inputDocumentAboutToBeChanged(IDocument doc, IDocument doc2) {
+				public void inputDocumentAboutToBeChanged(IDocument old, IDocument nw) {
+					if (old != null) {
+						old.removeDocumentListener(ConsoleView.this);
+					}
+					if (nw != null) {
+						nw.addDocumentListener(ConsoleView.this);
+					}
 				}
 				public void inputDocumentChanged(IDocument doc, IDocument doc2) {
 					updateAction(ITextEditorActionConstants.FIND);
@@ -200,6 +206,18 @@ public class ConsoleView extends ViewPart {
 			fConsoleViewer= null;
 		}
 		super.dispose();
+	}
+	/**
+	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
+	 */
+	public void documentAboutToBeChanged(DocumentEvent arg0) {
+	}
+
+	/**
+	 * @see IDocumentListener#documentChanged(DocumentEvent)
+	 */
+	public void documentChanged(DocumentEvent arg0) {
+		updateAction(ITextEditorActionConstants.FIND);
 	}
 }
 
