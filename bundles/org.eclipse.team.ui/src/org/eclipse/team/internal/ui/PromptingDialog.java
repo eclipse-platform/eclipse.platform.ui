@@ -31,28 +31,40 @@ public class PromptingDialog {
 	private IPromptCondition condition;
 	private String title;
 	private boolean hasMultipleResources;
+	private boolean allOrNothing;
 
 	/**
 	 * Prompt for the given resources using the specific condition. The prompt dialog will
 	 * have the title specified.
 	 */
 	public PromptingDialog(Shell shell, IResource[] resources, IPromptCondition condition, String title) {
+		this(shell, resources, condition, title, false /* all or nothing */);		 
+	}
+	
+	public PromptingDialog(Shell shell, IResource[] resources, IPromptCondition condition, String title, boolean allOrNothing) {
 		this.condition = condition;
 		this.resources = resources;
 		this.title = title;
 		this.shell = shell;
 		this.hasMultipleResources = resources.length > 1;
+		this.allOrNothing = allOrNothing;
 		if (hasMultipleResources) {
-			buttons = new String[] {
-				IDialogConstants.YES_LABEL, 
-				IDialogConstants.YES_TO_ALL_LABEL, 
-				IDialogConstants.NO_LABEL, 
-				IDialogConstants.CANCEL_LABEL};
+			if (allOrNothing) {
+				buttons = new String[] {
+					IDialogConstants.YES_LABEL, 
+					IDialogConstants.YES_TO_ALL_LABEL,
+					IDialogConstants.CANCEL_LABEL};
+			} else {
+				buttons = new String[] {
+					IDialogConstants.YES_LABEL, 
+					IDialogConstants.YES_TO_ALL_LABEL, 
+					IDialogConstants.NO_LABEL, 
+					IDialogConstants.CANCEL_LABEL};
+			}
 		} else {
 			buttons = new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL};
 		}			 
 	}
-		
 	/**
 	 * Call to calculate and show prompt. If no resources satisfy the prompt condition
 	 * a dialog won't be shown. The resources for which the user confirmed the action
@@ -98,7 +110,10 @@ public class PromptingDialog {
 				case 1://Yes to all
 					confirmOverwrite = false; 
 					return true;
-				case 2://No
+				case 2://No (or CANCEL for all-or-nothing)
+					if (allOrNothing) {
+						throw new InterruptedException();
+					}
 					return false;
 				case 3://Cancel
 				default:

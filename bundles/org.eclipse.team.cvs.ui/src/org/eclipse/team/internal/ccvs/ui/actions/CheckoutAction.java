@@ -19,7 +19,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
@@ -27,12 +29,14 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
 
 /**
- * The purpose of the CheckoutAction is to allow the checkout of module aliases into the
+ * Checkout a remote module into the workspace ensuring that the user is prompted for
+ * any overwrites that may occur.
  */
 public class CheckoutAction extends CVSAction {
 	
@@ -40,42 +44,18 @@ public class CheckoutAction extends CVSAction {
 	 * @see CVSAction#execute(IAction)
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		
-		// Fetch the module expansions for the folder
-		final ICVSRemoteFolder[] remoteFolders = getSelectedRemoteFolders();
-		final String[][] expansions = new String[1][0];
-		expansions[0] = null;
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					expansions[0] = CVSWorkspaceRoot.getExpansions(remoteFolders, monitor);
+					ICVSRemoteFolder[] remoteFolders = getSelectedRemoteFolders();
+					String taskName = getTaskName(remoteFolders);
+					monitor.beginTask(taskName, 100);
+					monitor.setTaskName(taskName);
+					String[] expansions = getExpansions(remoteFolders, Policy.subMonitorFor(monitor, 10));
+					if (!checkValidExpansions(expansions)) return;
+					if (!promptForOverwrite(expansions)) return;
+					checkoutModules(remoteFolders, Policy.subMonitorFor(monitor, 90));
 				} catch (CVSException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		}, true /* cancelable */, PROGRESS_DIALOG);
-		if (expansions[0] == null) return;
-		
-		// If the folder exists, inform the user that it will be overridden
-		Set targetProjects = new HashSet();
-		for (int i = 0; i < expansions[0].length; i++) {
-			String string = expansions[0][i];
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(string).segment(0));
-			targetProjects.add(project);
-		}
-		IResource[] projects = (IResource[]) targetProjects.toArray(new IResource[targetProjects.size()]);
-		PromptingDialog prompt = new PromptingDialog(getShell(), projects, 
-													  getOverwriteLocalAndFileSystemPrompt(), 
-													  Policy.bind("ReplaceWithAction.confirmOverwrite"));//$NON-NLS-1$
-		if (prompt.promptForMultiple().length != projects.length) return;
-		
-		run(new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					monitor.beginTask(getTaskName(remoteFolders), 100);
-					monitor.setTaskName(getTaskName(remoteFolders));						
-					CVSWorkspaceRoot.checkout(remoteFolders, null, Policy.subMonitorFor(monitor, 100));
-				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
@@ -84,11 +64,70 @@ public class CheckoutAction extends CVSAction {
 		}, true /* cancelable */, PROGRESS_DIALOG);
 	}
 
+	/*
+	 * Get the module expansions for the selected remote modules.
+	 */
+	private String[] getExpansions(ICVSRemoteFolder[] remoteFolders, IProgressMonitor monitor) throws CVSException {
+		return CVSWorkspaceRoot.getExpansions(remoteFolders, monitor);
+	}
+	
+	/*
+	 * Ensure that the expansions are valid and non-overlapping
+	 */
+	private boolean checkValidExpansions(String[] expansions) throws CVSException {
+		if (expansions == null) return false;
+		// Ensure that the expansions are unique
+		Set unique = new HashSet();
+		for (int i = 0; i < expansions.length; i++) {
+			String expansion = expansions[i];
+			if (unique.contains(expansion)) {
+				throw new CVSException(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("CheckoutAction.overlappingModuleExpansions", expansion), null)); //$NON-NLS-1$
+			}
+			unique.add(expansion);
+		}
+		return true;
+	}
+	
+	/*
+	 * Prompt the user to overwrite any projects that overlap with the module expansions.
+	 * 
+	 * This is an all or nothing prompt. If the user says no to one project overwrite
+	 * then the whole operation must be aborted. This is because there is no easy way to
+	 * map the module expansions back to their remote modules.
+	 */
+	private boolean promptForOverwrite(String[] expansions) throws InterruptedException {
+
+		// If the target project exists, prompt the user for overwrite
+		Set targetProjects = new HashSet();
+		for (int i = 0; i < expansions.length; i++) {
+			String string = expansions[i];
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(string).segment(0));
+			targetProjects.add(project);
+		}
+		IResource[] projects = (IResource[]) targetProjects.toArray(new IResource[targetProjects.size()]);
+		PromptingDialog prompt = new PromptingDialog(getShell(), projects, 
+													  getOverwriteLocalAndFileSystemPrompt(), 
+													  Policy.bind("ReplaceWithAction.confirmOverwrite"),
+													  true /* all or nothing*/);//$NON-NLS-1$
+		return (prompt.promptForMultiple().length == projects.length);
+	}
+	
+	/*
+	 * Peform the checkout of the remote modules
+	 */
+	protected void checkoutModules(ICVSRemoteFolder[] remoteFolders, IProgressMonitor monitor) throws InvocationTargetException {
+		try {					
+			CVSWorkspaceRoot.checkout(remoteFolders, null, monitor);
+		} catch (TeamException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
+	
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		return getSelectedRemoteFolders().length == 1;
+		return getSelectedRemoteFolders().length > 0;
 	}
 
 	protected static String getTaskName(ICVSRemoteFolder[] remoteFolders) {
@@ -127,5 +166,12 @@ public class CheckoutAction extends CVSAction {
 				return new File(resource.getParent().getLocation().toFile(), resource.getName());
 			}
 		};
+	}
+	
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
+	 */
+	protected String getErrorTitle() {
+		return Policy.bind("AddToWorkspaceAction.checkoutFailed"); //$NON-NLS-1$
 	}
 }

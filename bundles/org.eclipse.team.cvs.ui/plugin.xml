@@ -392,12 +392,12 @@
                id="org.eclipse.team.ccvs.ui.checkoutAs">
          </action>
          <action
-               label="%AddToWorkspaceAction.label"
-               tooltip="%AddToWorkspaceAction.tooltip"
+               label="%CheckoutAction.label"
+               tooltip="%CheckoutAction.tooltip"
                menubarPath="checkoutGroup"
-               class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAction"
                helpContextId="org.eclipse.team.cvs.ui.checkout_as_project_action_context"
-               id="org.eclipse.team.ccvs.ui.addToWorkspace">
+               id="org.eclipse.team.ccvs.ui.checkout">
          </action>
 	     <action
 				id="org.eclipse.team.ccvs.ui.configureTagsOnRemoteFolder"
@@ -433,17 +433,6 @@
                helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                id="org.eclipse.team.ccvs.ui.showHistory">
          </action>
-      </objectContribution>
-          <objectContribution
-            objectClass="org.eclipse.team.internal.ccvs.core.resources.RemoteModule"
-            id="org.eclipse.team.ccvs.ui.RemoteModuleContributions">
-         <action
-               label="%CheckoutAction.label"
-               tooltip="%CheckoutAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAction"
-               helpContextId="org.eclipse.team.cvs.ui.checkout_module_action_context"
-               id="org.eclipse.team.ccvs.ui.checkout">
-         </action>       
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ILogEntry"
