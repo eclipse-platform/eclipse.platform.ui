@@ -347,6 +347,13 @@ public class ResourceNavigator
 	 * Initializes the linking enabled setting from the preference store.
 	 */
 	private void initLinkingEnabled() {
+		// Try the dialog settings first, which remember the last choice.
+		String setting = settings.get(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR);
+		if (setting != null) {
+			linkingEnabled = setting.equals("true");  //$NON-NLS-1$
+			return;
+		}
+		// If not in the dialog settings, check the preference store for the default setting. 
 		// Use the UI plugin's preference store since this is a public preference.
 		AbstractUIPlugin uiPlugin =
 			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
@@ -1035,6 +1042,11 @@ public class ResourceNavigator
 	 */
 	public void setLinkingEnabled(boolean enabled) {
 		this.linkingEnabled = enabled;
+
+		// remember the last setting in the dialog settings		
+		settings.put(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, enabled);
+		
+		// if turning linking on, update the selection to correspond to the active editor
 		if (enabled) {
 			IEditorPart editor = getSite().getPage().getActiveEditor();
 			if (editor != null) {
