@@ -445,7 +445,7 @@ public class PerspectiveSwitcher {
 		
 		// update the height in the case that we need to resize smaller.  In that 
 		// case the client area might be too high
-		area.height = topBar.getLeft().getBounds().height;
+		area.height = topBar.getLeft() == null ? 0 : topBar.getLeft().getBounds().height;
 		int rows = rowHeight <= 0 ? 1 : (int)Math.max(1, Math.floor(area.height / rowHeight));
 		if (rows == 1 || (toolbar.getStyle() & SWT.WRAP) == 0 || currentLocation == TOP_LEFT) {
 			Point p = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
