@@ -6,15 +6,17 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  */
  
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -23,10 +25,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
@@ -146,27 +150,26 @@ public class ForceCommitSyncAction extends MergeAction {
 				}				
 			}
 
-			// Handle any incomming folder deletions
+			// Handle any real incomming deletions by unmanaging them before adding
 			Iterator it = incoming.iterator();
+			Set incomingDeletions = new HashSet(incoming.size());
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
-				if (node instanceof ChangedTeamContainer 
-						&& node.getChangeDirection() == ITeamNode.INCOMING 
-						&& node.getChangeType() == Differencer.DELETION) {
-					handleIncomingFolderDeletion((CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement(), monitor);
-				}
+				collectIncomingDeletions(node, incomingDeletions, monitor);
 			}
-			
-			// Make any incoming file changes or deletions into outgoing changes before committing.
-			it = incoming.iterator();
+			it = incomingDeletions.iterator();
 			while (it.hasNext()) {
 				ITeamNode node = (ITeamNode)it.next();
+				CVSRemoteSyncElement syncElement;
 				if (node instanceof TeamFile) {
-					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
-					element.makeOutgoing(monitor);
+					syncElement = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+				} else {
+					syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
 				}
+				additions.add(syncElement.getLocal());
+				CVSWorkspaceRoot.getCVSResourceFor(syncElement.getLocal()).unmanage(null);
 			}
-			
+
 			if (additions.size() != 0) {
 				manager.add((IResource[])additions.toArray(new IResource[0]), monitor);
 			}
@@ -178,18 +181,6 @@ public class ForceCommitSyncAction extends MergeAction {
 			}
 			manager.commit(changedResources, comment, monitor);
 			
-			// This code will prune empty folders (even if they were recommited deletions!)
-			// XXX It will need to be changed if we allow backing out of folder deletions
-			it = incoming.iterator();
-			while (it.hasNext()) {
-				ITeamNode node = (ITeamNode)it.next();
-				if (node instanceof ChangedTeamContainer) {
-					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
-					element.makeIncoming(monitor);
-					element.getLocal().delete(true, monitor);
-				}
-			}
-			
 		} catch (final TeamException e) {
 			getShell().getDisplay().syncExec(new Runnable() {
 				public void run() {
@@ -197,15 +188,8 @@ public class ForceCommitSyncAction extends MergeAction {
 				}
 			});
 			return null;
-		} catch (final CoreException e) {
-			getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus());
-					CVSUIPlugin.log(e.getStatus());
-				}
-			});
-			return null;
 		}
+		
 		return syncSet;
 	}
 	
@@ -291,9 +275,42 @@ public class ForceCommitSyncAction extends MergeAction {
 	 * If there isn't, we need to unmanage the local resource and then add the folder
 	 * Unfortunately, unmanaging may effect the state of the children which are also incoming deletions
 	 */
-	private void handleIncomingFolderDeletion(CVSRemoteSyncElement element, IProgressMonitor monitor) throws TeamException {
-		ILocalSyncElement[] members = element.members(monitor);
-		if (members.length != 0) {
+	private void collectIncomingDeletions(ITeamNode node, Set additions, IProgressMonitor monitor) throws TeamException {
+		if (isIncomingDeletion(node) && ! additions.contains(node) && ! existsRemotely(node, monitor)) {
+			
+			// Make sure that the parent is handled
+			IDiffContainer parent = node.getParent();
+			if (isIncomingDeletion((ITeamNode)parent)) {
+				collectIncomingDeletions((ITeamNode)parent, additions, monitor);
+			}
+			
+			// Add the node to the list
+			additions.add(node);
 		}
+	}
+	
+	private boolean isIncomingDeletion(ITeamNode node) {
+		return (node.getChangeDirection() == ITeamNode.INCOMING && node.getChangeType() == Differencer.DELETION);
+	}
+	
+	/*
+	 * For files, use the remote of the sync element to determine whether there is a remote or not.
+	 * For folders, if there is no remote in the tree check remotely in case the folder was pruned
+	 */
+	private boolean existsRemotely(ITeamNode node, IProgressMonitor monitor) throws TeamException {
+		
+		CVSRemoteSyncElement syncElement;
+		if (node instanceof TeamFile) {
+			syncElement = (CVSRemoteSyncElement)((TeamFile)node).getMergeResource().getSyncElement();
+		} else {
+			syncElement = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
+		}
+		if (syncElement.getRemote() != null) {
+			return true;
+		}
+		if (syncElement.getLocal().getType() == IResource.FILE) {
+			return false;
+		}
+		return CVSWorkspaceRoot.getRemoteResourceFor(syncElement.getLocal()).exists(monitor);
 	}
 }
