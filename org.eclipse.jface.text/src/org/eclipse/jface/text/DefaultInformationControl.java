@@ -13,6 +13,7 @@ package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -38,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
  * 
  * @since 2.0
  */
-public class DefaultInformationControl implements IInformationControl, IInformationControlExtension {
+public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
 	
 	/**
 	 * An information presenter determines the style presentation
@@ -179,11 +180,12 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 			statusField.setLayoutData(gd);
 
-			// Regarding the color see bug 41128
 			statusField.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
 
 			statusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
+		
+		addDisposeListener(this);
 	}
 
 	/**
@@ -267,17 +269,24 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
+		if (fShell != null && !fShell.isDisposed())
+			fShell.dispose();
+		else
+			widgetDisposed(null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void widgetDisposed(DisposeEvent event) {
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
 		
-		if (fShell != null) {
-			if (!fShell.isDisposed())
-				fShell.dispose();
-			fShell= null;
-			fText= null;
-		}
+		fShell= null;
+		fText= null;
+		fStatusTextFont= null;
 	}
-	
+
 	/*
 	 * @see IInformationControl#setSize(int, int)
 	 */
