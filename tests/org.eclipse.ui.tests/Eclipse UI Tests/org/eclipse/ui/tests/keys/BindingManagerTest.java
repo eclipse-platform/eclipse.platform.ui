@@ -330,7 +330,8 @@ public final class BindingManagerTest extends UITestCase {
 	 * Tests that this method returns the expected list of sequences for a
 	 * couple of scenarios. In the first scenario, there is one perfect match
 	 * bindings and a partial match binding. In the second scenario, there are
-	 * two partial match bindings.
+	 * two partial match bindings. In the third scenario, we are checking that
+	 * all bindings match an empty trigger sequence.
 	 * 
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
@@ -350,12 +351,11 @@ public final class BindingManagerTest extends UITestCase {
 		contextManager.setActiveContextIds(activeContextIds);
 
 		// SCENARIO 1
-		final KeySequence perfectMatch = KeySequence
-				.getInstance("CTRL+F CTRL+F");
+		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
 		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
 				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
 		final KeySequence partialMatch1 = KeySequence
-				.getInstance("CTRL+F CTRL+F CTRL+F");
+				.getInstance("CTRL+F CTRL+F");
 		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
 				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
 		final Set bindings = new HashSet();
@@ -369,9 +369,9 @@ public final class BindingManagerTest extends UITestCase {
 
 		// SCENARIO 2
 		final KeySequence partialMatch2 = KeySequence
-				.getInstance("CTRL+F CTRL+F CTRL+F CTRL+F");
+				.getInstance("CTRL+F CTRL+F CTRL+F");
 		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
-				"partial", "na", "na", null, null, null, Binding.SYSTEM);
+				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
 		bindings.clear();
 		bindings.add(partialMatchBinding1);
 		bindings.add(partialMatchBinding2);
@@ -379,6 +379,23 @@ public final class BindingManagerTest extends UITestCase {
 		partialMatches = bindingManager.getPartialMatches(perfectMatch);
 		assertEquals("There should be two partial matches", 2, partialMatches
 				.size());
+		assertSame("The partial match should be the one defined",
+				partialMatchBinding1.getCommandId(), partialMatches
+						.get(partialMatch1));
+		assertSame("The partial match should be the one defined",
+				partialMatchBinding2.getCommandId(), partialMatches
+						.get(partialMatch2));
+
+		// SCENARIO 3
+		bindings.add(perfectMatchBinding);
+		bindingManager.setBindings(bindings);
+		partialMatches = bindingManager.getPartialMatches(KeySequence
+				.getInstance());
+		assertEquals("There should be three partial matches", 3, partialMatches
+				.size());
+		assertSame("The partial match should be the one defined",
+				perfectMatchBinding.getCommandId(), partialMatches
+						.get(perfectMatch));
 		assertSame("The partial match should be the one defined",
 				partialMatchBinding1.getCommandId(), partialMatches
 						.get(partialMatch1));
