@@ -350,7 +350,13 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	public void paintControl(PaintEvent e) {
 		if (fHyperLink != null) {
 			IDocument doc = getDocument();
+			if (doc == null) {
+				return;
+			}
 			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)getDocument().getDocumentPartitioner();
+			if (partitioner == null) {
+				return;
+			}
 			IRegion linkRegion = partitioner.getRegion(fHyperLink);
 			if (linkRegion != null) {
 				int start = linkRegion.getOffset();
