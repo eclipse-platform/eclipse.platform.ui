@@ -7,7 +7,7 @@
 	name= "Search Support"
 	id= "org.eclipse.search"
 	version= "0.9"
-	vendor-name= "Object Technology International, Inc."
+	provider-name= "Object Technology International, Inc."
 	class= "org.eclipse.search.internal.ui.SearchPlugin">
 
 <requires>
