@@ -414,6 +414,7 @@ public class OperationsManager implements IAdaptable {
 		IStatus status = UpdateManager.getValidator().validateCurrentState();
 		if (status != null) {
 			revert(site, feature, isConfigured);
+			UpdateManager.log(status,false);
 			throw new CoreException(status);
 		} else {
 			// do a restart
@@ -441,12 +442,41 @@ public class OperationsManager implements IAdaptable {
 				return restartNeeded;
 			} catch (CoreException e) {
 				revert(site, feature, isConfigured);
-				// let the caller log the exception
-				//UpdateManager.logException(e);
+				UpdateManager.logException(e);
 				throw e;
 			}
 		}
+	}
 
+	/**
+	 * Returns true if a restart is needed
+	 * @param site
+	 * @return
+	 * @throws CoreException
+	 */
+	public boolean toggleSiteState(IConfiguredSite site) throws CoreException {
+		if (site == null)
+			return false;
+		boolean oldValue = site.isEnabled();
+		site.setEnabled(!oldValue);
+		IStatus status = UpdateManager.getValidator().validateCurrentState();
+		if (status != null) {
+			site.setEnabled(oldValue);
+			UpdateManager.log(status, false);
+			throw new CoreException(status);
+		} else {
+			try {
+				SiteManager.getLocalSite().save();
+				UpdateManager.getOperationsManager().fireObjectChanged(
+					site,
+					"");
+				return true; // will restart
+			} catch (CoreException e) {
+				site.setEnabled(oldValue);
+				UpdateManager.logException(e);
+				throw e;
+			}
+		}
 	}
 
 	private void toggle(
