@@ -1514,7 +1514,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			case EXPAND_ALL:
 				return isProjectionMode();
 			case TOGGLE:
-				return !isSegmented();
+				return isProjectionMode() || !isSegmented();
 		}
 		
 		return super.canDoOperation(operation);
