@@ -29,10 +29,11 @@ public class ZoomTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public ZoomTestSuite() {
-        addTest(new TestSuite(ActivateTest.class));
-        addTest(new TestSuite(CloseEditorTest.class));
-        addTest(new TestSuite(HideViewTest.class));
-        addTest(new TestSuite(OpenEditorTest.class));
+        addTest(new TestSuite(ZoomedEditorActivateTest.class));
+        addTest(new TestSuite(ZoomedViewActivateTest.class));
+        addTest(new TestSuite(ZoomedEditorCloseTest.class));
+        addTest(new TestSuite(ZoomedViewCloseTest.class));
         addTest(new TestSuite(ShowViewTest.class));
+        addTest(new TestSuite(OpenEditorTest.class));
     }
 }
