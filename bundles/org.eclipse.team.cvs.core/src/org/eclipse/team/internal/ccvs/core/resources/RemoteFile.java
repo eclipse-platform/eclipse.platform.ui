@@ -16,12 +16,15 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.ccvs.core.*;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -31,6 +34,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -85,7 +89,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		// use the contents of the file on disk so that the server can calculate the relative
 		// sync state. This is a trick to allow the server to calculate sync state for us.
 		InputStream is = managed.getInputStream();
-		OutputStream os = file.getOutputStream(ICVSFile.UPDATED);
+		OutputStream os = file.getOutputStream(ICVSFile.UPDATED, false);
 		try {		
 			FileUtil.transfer(is, os);
 		} catch(IOException e) {			
@@ -190,7 +194,9 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		IStatus status;
 		Session s = new Session(getRepository(), parent, false);
 		s.open(monitor);
+		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
 		try {
+			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
 			status = Command.LOG.execute(s,
 			Command.NO_GLOBAL_OPTIONS,
 			Command.NO_LOCAL_OPTIONS,
@@ -198,6 +204,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 			new LogListener(this, entries),
 			monitor);
 		} finally {
+			CVSProviderPlugin.getPlugin().setQuietness(quietness);
 			s.close();
 		}
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
@@ -310,7 +317,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/*
 	 * @see ICVSFile#getOutputStream()
 	 */
-	public OutputStream getOutputStream(int responseType) throws CVSException {
+	public OutputStream getOutputStream(int responseType, boolean keepLocalHistory) throws CVSException {
 		// stores the contents of the file when the stream is closed
 		// could perhaps be optimized in some manner to avoid excessive array copying
 		return new ByteArrayOutputStream() {
