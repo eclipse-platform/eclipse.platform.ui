@@ -13,7 +13,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * A launch configuration tab group is used to edit/view attributes
  * of a specific type of launch configuration. Launch
  * configurations are presented in a dialog, with a tab folder.
- * Each tab manipulates one ore more attributes of a launch
+ * Each tab manipulates one or more attributes of a launch
  * configuration. The tab group controls which tabs are
  * displayed for a specific type of launch configuration,
  * and provides a mechanism for overriding configuration
@@ -52,7 +52,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  *   &lt;launchConfigurationTabGroup 
  *      id="com.example.ExampleTabGroup"
  *      type="com.example.ExampleLaunchConfigurationTypeIdentifier"
- *      class="com.example.ExampleLaunchConfigurationTabGroupClass"
+ *      class="com.example.ExampleLaunchConfigurationTabGroupClass"&gt;
  *   &lt;/launchConfigurationTabGroup&gt;
  * &lt;/extension&gt;
  * </pre>
@@ -63,8 +63,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * <li><code>type</code> specifies launch configuration type that this tab
  *  group is applicable to (corresponds to the id of a launch configuration type
  *  extension).</li>
- * <li><code>class</code>specifies a fully qualified name of a Java class
- *  that implements <code>ILanuchConfigurationTabGroup</code>.</li>
+ * <li><code>class</code> specifies a fully qualified name of a Java class
+ *  that implements <code>ILaunchConfigurationTabGroup</code>.</li>
  * </ul>
  * </p>
  * <p>
@@ -98,7 +98,7 @@ public interface ILaunchConfigurationTabGroup {
 
 	/**
 	 * Notifies this launch configuration tab group that it has
-	 * been disposed, and diposes this group's tabs. Marks the end
+	 * been disposed, and disposes this group's tabs. Marks the end
 	 * of this tab group's lifecycle, allowing this tab group to
 	 * perform any cleanup required.
 	 */
@@ -134,7 +134,7 @@ public interface ILaunchConfigurationTabGroup {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration);
 	
 	/**
-	 * Notifies this tab that the specified configuration has been
+	 * Notifies this tab that a configuration has been
 	 * launched, resulting in the given launch. This method can be
 	 * called when a tab's control does not exist, to support single-click
 	 * launching.
