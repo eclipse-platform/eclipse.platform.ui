@@ -14,10 +14,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -372,5 +373,11 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 	public ICVSRemoteFolder forTag(String tagName) {
 		return new RemoteFolder(repository, repositoryRelativePath, tagName);
 	}
+	
+	/*
+	 * @see IRemoteResource#members(IProgressMonitor)
+	 */
+	public IRemoteResource[] members(IProgressMonitor progress) throws TeamException {
+		return getMembers(progress);
+	}
 }
-

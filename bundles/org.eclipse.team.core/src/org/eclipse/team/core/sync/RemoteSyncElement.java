@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
@@ -88,7 +89,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 			
 		IResource[] localChildren;			
 		try {	
-			if( local.getType() != IResource.FILE ) {
+			if( local.getType() != IResource.FILE && local.exists() ) {
 				localChildren = ((IContainer)local).members();
 			} else {
 				localChildren = new IResource[0];
@@ -320,7 +321,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	
 	protected InputStream getContents(IRemoteResource remote) {
 		try {
-			return new BufferedInputStream(remote.getContents(null));
+			return new BufferedInputStream(remote.getContents(new NullProgressMonitor()));
 		} catch (TeamException exception) {
 			// The remote node has gone away.
 			return null;	

@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.LocalSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
@@ -66,6 +67,10 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 				return false;
 			} else {
 				try {
+					FileProperties info = ((IManagedFile)cvsResource).getFileInfo();
+					if(info == null) {
+						return false;
+					}
 					return ((IManagedFile)cvsResource).isDirty();
 				} catch(CVSException e) {
 					return true;

@@ -354,12 +354,12 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 	}
 	
 	IDiffElement collectResourceChanges(IDiffContainer parent, IRemoteSyncElement tree, IProgressMonitor pm) {
-		int type = tree.getSyncKind(IRemoteSyncElement.GRANULARITY_TIMESTAMP, new NullProgressMonitor());
+		int type = tree.getSyncKind(IRemoteSyncElement.GRANULARITY_CONTENTS, new NullProgressMonitor());
 		MergeResource mergeResource = new MergeResource(tree);
 	
 		if (tree.isContainer()) {
 			IDiffContainer element = new ChangedTeamContainer(this, parent, mergeResource, type);
-			try {
+			try {				
 				ILocalSyncElement[] children = tree.members(pm);
 				for (int i = 0; i < children.length; i++) {
 					collectResourceChanges(element, (IRemoteSyncElement)children[i], pm);

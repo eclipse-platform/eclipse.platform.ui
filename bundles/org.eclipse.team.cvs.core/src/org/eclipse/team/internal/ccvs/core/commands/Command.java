@@ -76,6 +76,7 @@ abstract class Command implements ICommand {
 		
 		try {
 			
+			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(Policy.bind("Command.server"), 100);			
 			Policy.checkCanceled(monitor);
 			

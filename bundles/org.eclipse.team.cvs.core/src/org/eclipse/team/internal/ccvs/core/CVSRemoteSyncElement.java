@@ -13,9 +13,11 @@ import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.LocalSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class CVSRemoteSyncElement extends RemoteSyncElement {
 
@@ -45,27 +47,39 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 	 * @see IRemoteSyncElement#isOutOfDate()
 	 */
 	public boolean isOutOfDate() {
-		
+				
 		// XXX gender changes?
-		
-		boolean hasBase = localSync.getCVSResource() != null;
+		if(isContainer()) {
+			return false;
+		}
+				
+		boolean hasBase = false;
+
+		IManagedResource cvsResource = localSync.getCVSResource();
+		if(cvsResource != null && !cvsResource.isFolder()) {
+			try {
+				FileProperties info = ((IManagedFile)cvsResource).getFileInfo();
+				if(info != null) {
+					hasBase = true;
+				}
+			} catch(CVSException e) {
+				return true;
+			}
+		}
 		boolean hasRemote = remote != null;
 		
 		if(hasBase && hasRemote) {
-			if(remote.isContainer()) {
-				return false;
-			} else {
-				IManagedFile file = (IManagedFile)localSync.getCVSResource();
-				try {
-					return ! ((ICVSRemoteFile)remote).getRevision().equalsIgnoreCase(file.getFileInfo().getVersion());
-				} catch(CVSException e) {
-					return true;
-				} catch(TeamException e) {
-					return true;
-				}
+			IManagedFile file = (IManagedFile)localSync.getCVSResource();
+			try {
+				// at this point remote and file can't be null
+				Assert.isNotNull(remote);
+				Assert.isNotNull(file);
+				return ! ((ICVSRemoteFile)remote).getRevision().equalsIgnoreCase(file.getFileInfo().getVersion());
+			} catch(CVSException e) {
+				return true;
+			} catch(TeamException e) {
+				return true;
 			}
-		} else if(!hasBase && hasRemote) {
-			return true;
 		} else if(hasBase && !hasRemote) {
 			return true;
 		} else {
