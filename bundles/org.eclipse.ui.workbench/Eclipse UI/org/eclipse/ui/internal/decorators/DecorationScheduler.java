@@ -323,12 +323,17 @@ public class DecorationScheduler {
 						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
 					monitor.beginTask(WorkbenchMessages.getString("DecorationScheduler.UpdatingTask"), elements.length + 20); //$NON-NLS-1$
 					pendingUpdate.clear();
-					monitor.worked(20);
+					monitor.worked(15);
 					decoratorManager.fireListeners(
 						new LabelProviderChangedEvent(
 							decoratorManager,
 							elements));
 					monitor.worked(elements.length);
+					//Other decoration requests may have occured due to
+					//updates. Only clear the results if there are none pending.
+					if (awaitingDecoration.isEmpty())
+						resultCache.clear();
+					monitor.worked(5);
 					monitor.done();
 				}
 				return Status.OK_STATUS;
@@ -340,8 +345,7 @@ public class DecorationScheduler {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				//Other decoration requests may have occured due to
-				//updates. Only clear the results if there are none pending.
+				//Double check in case we did not finish the update job
 				if (awaitingDecoration.isEmpty())
 					resultCache.clear();
 			}
