@@ -10,7 +10,7 @@ import org.eclipse.ui.internal.*;
 /**
  * Tests the IPageService class.
  */
-public class IPageServiceTest extends TestCase 
+public class IPageServiceTest extends AbstractTestCase 
 	implements IPageListener, org.eclipse.ui.IPerspectiveListener
 {
 	private IWorkbenchWindow fWindow;
@@ -24,8 +24,7 @@ public class IPageServiceTest extends TestCase
 	}
 
 	protected void setUp() {
-		IWorkbench wb = PlatformUI.getWorkbench();
-		fWindow = wb.getActiveWorkbenchWindow();
+		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 	}
 	

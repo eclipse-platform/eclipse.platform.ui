@@ -7,7 +7,7 @@ import org.eclipse.ui.*;
 /**
  * Tests the IPageListener class.
  */
-public class IPageListenerTest extends TestCase 
+public class IPageListenerTest extends AbstractTestCase 
 	implements IPageListener
 {
 	private IWorkbenchWindow fWindow;
@@ -23,15 +23,15 @@ public class IPageListenerTest extends TestCase
 		super(testName);
 	}
 
-	protected void setUp() {
-		IWorkbench wb = PlatformUI.getWorkbench();
-		fWindow = wb.getActiveWorkbenchWindow();
+	public void setUp() {
+		fWindow = openTestWindow();
 		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWindow.addPageListener(this);
 	}
 	
-	protected void tearDown() {
+	public void tearDown() {
 		fWindow.removePageListener(this);
+		super.tearDown();
 	}
 
 	/**
