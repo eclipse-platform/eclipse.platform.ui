@@ -220,7 +220,7 @@ AbstractDataTreeNode getRootNode() {
  * an unchecked exception.
  */
 static void handleImmutableTree() {
-	throw new ObjectNotFoundException(Policy.bind("dtree.immutable"));
+	throw new RuntimeException(Policy.bind("dtree.immutable"));
 }
 /**
  * Handles the case where an attempt was made to manipulate
