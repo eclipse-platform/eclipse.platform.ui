@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  */
 public interface IWorkbenchPartSite extends IWorkbenchSite {
 	
-
 /**
  * Returns the part registry extension id for this workbench site's part.
  * <p>
@@ -31,6 +30,7 @@ public interface IWorkbenchPartSite extends IWorkbenchSite {
  *
  * @return the registry extension id
  */
+	
 public String getId();
 /**
  * Returns the unique identifier of the plug-in that defines this workbench
@@ -113,13 +113,4 @@ public void registerContextMenu(MenuManager menuManager,
  * @since 2.1
  */
 public IKeyBindingService getKeyBindingService();
-
-/**
- * Returns the mutable activity service for the workbench part site.
- * 
- * @return the mutable activity service for the workbench part site. Guaranteed 
- * 		   not to be <code>null</code>.
- * @since 3.0
- */
-//public IMutableActivityService getMutableActivityService();
 }

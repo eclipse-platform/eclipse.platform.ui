@@ -12,7 +12,6 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -37,7 +36,7 @@ import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationServ
  * @see IEditorPart
  * @see IViewPart
  */
-public interface IWorkbenchPage extends IPartService, ISelectionService {
+public interface IWorkbenchPage extends IAdaptable, IPartService, ISelectionService {
 	/**
 	 * An optional attribute within a workspace marker (<code>IMarker</code>) which
 	 * identifies the preferred editor type to be opened when 
@@ -555,13 +554,4 @@ public void setEditorReuseThreshold(int openEditors);
  * @since 2.1
  */
 public INavigationHistory getNavigationHistory();
-
-/**
- * Returns the compound activity service for the workbench page.
- * 
- * @return the compound activity service for the workbench page. Guaranteed not 
- * 		   to be <code>null</code>.
- * @since 3.0
- */
-public ICompoundContextActiviationService getCompoundContextActivationService();
 }

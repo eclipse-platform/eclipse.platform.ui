@@ -66,7 +66,7 @@ public class WorkbenchPreferenceNode
 			ErrorDialog.openError((Shell) null, WorkbenchMessages.getString("PreferenceNode.errorTitle"), //$NON-NLS-1$
 			WorkbenchMessages.getString("PreferenceNode.errorMessage"), //$NON-NLS-1$
 			e.getStatus());
-			page = new EmptyPreferencePage();
+            page = new ErrorPreferencePage();
 		}
 
 		page.init(workbench);

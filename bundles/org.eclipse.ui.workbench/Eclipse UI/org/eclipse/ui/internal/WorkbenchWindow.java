@@ -22,7 +22,16 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
@@ -49,18 +58,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
-import org.eclipse.jface.window.ColorSchemeService;
-
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
@@ -80,10 +77,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.contexts.activationservice.IContextActivationService;
+import org.eclipse.ui.contexts.ContextActivationServiceFactory;
+import org.eclipse.ui.contexts.IMutableContextActivationService;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchWindowContextSupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
@@ -259,15 +259,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// let the application do further configuration
 		getAdvisor().preWindowOpen(getWindowConfigurer());
 		// Fill the action bars	
-		getAdvisor().fillActionBars(
-			this,
-			getWindowConfigurer().getActionBarConfigurer(),
-			FILL_ALL_ACTION_BARS);
-
-		workbenchWindowContextActivationService = new WorkbenchWindowContextActivationService(this);
-		workbenchWindowContextActivationService.start();
+		getAdvisor().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
+				
+		workbenchWindowContextSupport = new WorkbenchWindowContextSupport(this);		
 	}
-
 	/**
 	 * Return the style bits for the fastView bar.
 	 * @return int
@@ -275,7 +270,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected int fastViewBarStyle() {
 		return SWT.FLAT | SWT.WRAP | SWT.VERTICAL;
 	}
-
 	/**
 	 * Return the style bits for the shortcut bar.
 	 * @return int
@@ -283,13 +277,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected int perspectiveBarStyle() {
 		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL;
 	}
-
-	private WorkbenchWindowContextActivationService workbenchWindowContextActivationService;
-
-	public IContextActivationService getContextActivationService() {
-		return workbenchWindowContextActivationService;
-	}	
-
+	
 	private SortedMap actionsForActionSets = new TreeMap();
 	private SortedMap actionsForGlobalActions = new TreeMap();
 
@@ -319,19 +307,17 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			}
 		}
 
-		getWorkbenchImpl()
-			.workbenchActivitiesCommandsAndRoles
-			.updateActiveCommandIdsAndActiveActivityIds();
+		getWorkbenchImpl().workbenchCommandsAndContexts.updateActiveIds();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
 		String command = globalAction.getActionDefinitionId();
 
 		if (command != null)
-			actionsForGlobalActions.put(command, new ActionHandler(globalAction));
-		getWorkbenchImpl()
-			.workbenchActivitiesCommandsAndRoles
-			.updateActiveCommandIdsAndActiveActivityIds();
+			actionsForGlobalActions.put(
+				command,
+				new ActionHandler(globalAction));
+		getWorkbenchImpl().workbenchCommandsAndContexts.updateActiveIds();
 	}
 
 	/*
@@ -918,12 +904,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
+			IMutableContextActivationService mutableContextActivationService =
+				ContextActivationServiceFactory
+					.getMutableContextActivationService();
+			IWorkbenchContextSupport workbenchContextSupport =
+				(IWorkbenchContextSupport) getWorkbenchImpl().getAdapter(IWorkbenchContextSupport
+					.class);
+			workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(mutableContextActivationService);			
 			keyBindingService =
 				new KeyBindingService(
-					getWorkbenchImpl().workbenchActivitiesCommandsAndRoles.getActionService(),
 					getWorkbenchImpl()
-						.workbenchActivitiesCommandsAndRoles
-						.getContextActivationService());
+						.workbenchCommandsAndContexts
+						.getActionService(),
+					mutableContextActivationService);
 			updateActiveActions();
 		}
 
@@ -1020,14 +1013,19 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return PlatformUI.getWorkbench();
 	}
 	public String getToolbarLabel(String actionSetId) {
-		ActionSetRegistry registry = WorkbenchPlugin.getDefault().getActionSetRegistry();
+		ActionSetRegistry registry =
+			WorkbenchPlugin.getDefault().getActionSetRegistry();
 		IActionSetDescriptor actionSet = registry.findActionSet(actionSetId);
 		if (actionSet != null) {
 			return actionSet.getLabel();
 		} else {
-			if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(actionSetId))
+			if (IWorkbenchActionConstants
+				.TOOLBAR_FILE
+				.equalsIgnoreCase(actionSetId))
 				return WorkbenchMessages.getString("WorkbenchWindow.FileToolbar"); //$NON-NLS-1$
-			if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(actionSetId))
+			if (IWorkbenchActionConstants
+				.TOOLBAR_NAVIGATE
+				.equalsIgnoreCase(actionSetId))
 				return WorkbenchMessages.getString("WorkbenchWindow.NavigateToolbar"); //$NON-NLS-1$
 		}
 		return null;
@@ -1866,15 +1864,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
 		getAdvisor().fillActionBars(this, configurer, flags);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#initializeBounds()
-	 */
-	protected void initializeBounds() {
-		super.initializeBounds();
-		setLayoutDataForContents();
+	
+	private IWorkbenchWindowContextSupport workbenchWindowContextSupport;
+	
+	public Object getAdapter(Class adapter) {
+		if (IWorkbenchWindowContextSupport.class.equals(adapter))
+			return workbenchWindowContextSupport;
+		else
+			return null;
 	}
 
 	/**

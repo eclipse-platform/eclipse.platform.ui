@@ -31,10 +31,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
-import org.eclipse.ui.activities.IMutableActivityManager;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Utility class that will create controls (two lists and swap buttons) for
@@ -52,10 +52,8 @@ public class SwapActivityHelper {
 		private ListViewer sourceViewer, destinationViewer;
 
 		/**
-		 * @param sourceViewer
-		 *            the source viewer.
-		 * @param destinationViewer
-		 *            the destination viewer.
+		 * @param sourceViewer the source viewer.
+		 * @param destinationViewer the destination viewer.
 		 * @since 3.0
 		 */
 		public SwapSelectionListener(
@@ -99,23 +97,32 @@ public class SwapActivityHelper {
 	/**
 	 * Answers whether the given activity id is bound to a category.
 	 * 
-	 * @param activityId
-	 *            the activity id to test.
+	 * @param activityId the activity id to test.
 	 * @return whether the given activity is bound to a category.
 	 * @since 3.0
 	 */
 	private boolean belongsToACategory(String activityId) {
-		IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
-		
-		for (Iterator categoryItr = activityManager.getDefinedCategoryIds().iterator();
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return false;
+
+		IActivityManager activityManager = support.getActivityManager();
+
+		for (Iterator categoryItr =
+			activityManager.getDefinedCategoryIds().iterator();
 			categoryItr.hasNext();
 			) {
-			ICategory category = activityManager.getCategory((String) categoryItr.next());
-			
-			for (Iterator bindingItr = category.getCategoryActivityBindings().iterator();
+			ICategory category =
+				activityManager.getCategory((String) categoryItr.next());
+
+			for (Iterator bindingItr =
+				category.getCategoryActivityBindings().iterator();
 				bindingItr.hasNext();
 				) {
-				ICategoryActivityBinding binding = (ICategoryActivityBinding) bindingItr.next();
+				ICategoryActivityBinding binding =
+					(ICategoryActivityBinding) bindingItr.next();
 				if (binding.getActivityId().equals(activityId)) {
 					return true;
 				}
@@ -128,14 +135,11 @@ public class SwapActivityHelper {
 	/**
 	 * Create a swap button.
 	 * 
-	 * @param parent
-	 *            the parent control.
-	 * @param source
-	 *            the ListViewer to copy selections from.
-	 * @param destination
-	 *            the ListViewer to copy selections to.
-	 * @param leftToRight
-	 *            whether the arrow on the Button should face to the right.
+	 * @param parent the parent control.
+	 * @param source the ListViewer to copy selections from.
+	 * @param destination the ListViewer to copy selections to.
+	 * @param leftToRight whether the arrow on the Button should face to the
+	 *            right.
 	 * @since 3.0
 	 */
 	private void createButton(
@@ -155,8 +159,7 @@ public class SwapActivityHelper {
 	/**
 	 * Create the List controls and the Buttons.
 	 * 
-	 * @param parent
-	 *            the parent control.
+	 * @param parent the parent control.
 	 * @since 3.0
 	 */
 	public void createControl(Composite parent) {
@@ -172,8 +175,13 @@ public class SwapActivityHelper {
 
 		createSwapButtons(swapComposite);
 
-		IActivityManager activityManager =
-			PlatformUI.getWorkbench().getActivityManager();
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return;
+
+		IActivityManager activityManager = support.getActivityManager();
 		Set activityIds = activityManager.getDefinedActivityIds();
 
 		List active = new ArrayList(), potential = new ArrayList();
@@ -193,8 +201,7 @@ public class SwapActivityHelper {
 	}
 
 	/**
-	 * @param parent
-	 *            the middle section of the main composite area.
+	 * @param parent the middle section of the main composite area.
 	 * 
 	 * @since 3.0
 	 */
@@ -214,8 +221,7 @@ public class SwapActivityHelper {
 	/**
 	 * Create a ListViewer with the given Label (as provided by a Group box).
 	 * 
-	 * @param label
-	 *            the label to give to the viewer.
+	 * @param label the label to give to the viewer.
 	 * @return @since 3.0
 	 */
 	private ListViewer createViewer(String label) {
@@ -226,9 +232,15 @@ public class SwapActivityHelper {
 		group.setLayoutData(data);
 		group.setLayout(new FillLayout());
 		ListViewer viewer = new ListViewer(group);
-		viewer.setLabelProvider(
-			new ActivityLabelProvider(
-				PlatformUI.getWorkbench().getActivityManager()));
+
+		IActivityManager manager = null;
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support != null)
+			manager = support.getActivityManager();
+
+		viewer.setLabelProvider(new ActivityLabelProvider(manager));
 		viewer.setContentProvider(new ActivityContentProvider());
 		viewer.setSorter(new ViewerSorter());
 		return viewer;
@@ -250,11 +262,14 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
 	public void updateActivityStates() {
-		// TODO cast
-		IMutableActivityManager activityManager =
-			(IMutableActivityManager) PlatformUI
-				.getWorkbench()
-				.getActivityManager();
+
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return;
+
+		IActivityManager activityManager = support.getActivityManager();
 
 		Set finalState = new HashSet(activityManager.getEnabledActivityIds());
 
@@ -268,6 +283,6 @@ public class SwapActivityHelper {
 			finalState.add(((IActivity) i.next()).getId());
 		}
 
-		activityManager.setEnabledActivityIds(finalState);
+		support.setEnabledActivityIds(finalState);
 	}
 }

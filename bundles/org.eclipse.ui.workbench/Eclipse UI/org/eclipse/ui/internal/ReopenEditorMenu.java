@@ -10,16 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.SafeRunnable;
+
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 
 /**
  * A dynamic menu item which supports to switch to other Windows.
@@ -29,24 +41,17 @@ public class ReopenEditorMenu extends ContributionItem {
 	private EditorHistory history;
 	private boolean showSeparator;
 	private boolean dirty = true;
-	private int itemsToShow = 0;
-
+	private IMenuListener menuListener = new IMenuListener() {
+		public void menuAboutToShow(IMenuManager manager) {
+			manager.markDirty();
+			dirty = true;
+		}
+	};
+	
 	// the maximum length for a file name; must be >= 4
 	private static final int MAX_TEXT_LENGTH = 40;
 	// only assign mnemonic to the first nine items 
 	private static final int MAX_MNEMONIC_SIZE = 9;
-	
-	// preference store listener
-	private final IPropertyChangeListener prefListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
-				itemsToShow = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.RECENT_FILES);
-				dirty = true;
-				getParent().markDirty();
-				getParent().update(false);
-			}
-		}
-	};
 	
 	/**
 	 * Create a new instance.
@@ -55,9 +60,7 @@ public class ReopenEditorMenu extends ContributionItem {
 		super(id);
 		this.window = window;
 		this.showSeparator = showSeparator;
-		
-		// listen for the preference changing
-		WorkbenchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(prefListener);
+		history = ((Workbench) window.getWorkbench()).getEditorHistory();
 	}
 	
 	/**
@@ -169,20 +172,23 @@ public class ReopenEditorMenu extends ContributionItem {
 			return;
 		}
 
+		if(getParent() instanceof MenuManager) {
+			((MenuManager) getParent()).addMenuListener(menuListener);
+		}
+		
+		int itemsToShow = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.RECENT_FILES);
 		if (itemsToShow == 0) {
 			return;
 		}
 		
 		// Get items.
-		history = ((Workbench) PlatformUI.getWorkbench()).getEditorHistory();
-		EditorHistoryItem[] array = history.getItems();
+		EditorHistoryItem[] historyItems = history.getItems();
 
-		// If no items return.
-		if (array.length <= 0) {
+		int n = Math.min(itemsToShow, historyItems.length);
+		if (n <= 0) {
 			return;
 		}
 
-		// Add separator.
 		if (showSeparator) {
 			new MenuItem(menu, SWT.SEPARATOR, index);
 			++index;
@@ -190,9 +196,8 @@ public class ReopenEditorMenu extends ContributionItem {
 
 		final int menuIndex[] = new int[]{index};
 		
-		// Add one item for each item.
-		for (int i = 0; i < itemsToShow; i++) {
-			final EditorHistoryItem item = array[i];
+		for (int i = 0; i < n; i++) {
+			final EditorHistoryItem item = historyItems[i];
 			final int historyIndex = i;
 			Platform.run(new SafeRunnable() {
 				public void run() throws Exception {
@@ -254,14 +259,6 @@ public class ReopenEditorMenu extends ContributionItem {
 				history.remove(item);
 			}
 		}
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#dispose()
-	 */
-	public void dispose() {
-		// remove the preference change listener
-		WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(prefListener);
-		super.dispose();
 	}
 
 }

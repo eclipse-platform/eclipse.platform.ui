@@ -938,10 +938,10 @@ public class KeysPreferencePage
 		// TODO remove the dependancy on Workbench. have Workbench rely on
 		// events from CommandManager.
 		if (workbench instanceof Workbench) {
-			((Workbench) workbench).workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
+			((Workbench) workbench).workbenchCommandsAndContexts.updateActiveContextIds();
 			((Workbench) workbench)
-				.workbenchActivitiesCommandsAndRoles
-				.updateActiveWorkbenchWindowMenuManager();
+				.workbenchCommandsAndContexts
+				.updateActiveWorkbenchWindowMenuManager(true);
 		}
 
 		return super.performOk();

@@ -45,7 +45,15 @@ public class LockToolBarAction
 		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("LockToolBarAction.toolTip")); //$NON-NLS-1$
 		setEnabled(false);
-		setChecked(false);
+		// queue the update for the checked state since this action is created 
+		// before the coolbar
+		window.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (workbenchWindow != null) {
+					setChecked(((WorkbenchWindow) workbenchWindow).isToolBarLocked());
+				}
+			}
+		});
 		WorkbenchHelp.setHelp(this, IHelpContextIds.LOCK_TOOLBAR_ACTION);
 		this.workbenchWindow.getWorkbench().addWindowListener(this);
 	}
@@ -94,11 +102,6 @@ public class LockToolBarAction
 	 * Method declared on ActionFactory.IWorkbenchAction.
 	 */
 	public void dispose() {
-		if (workbenchWindow == null) {
-			// already disposed
-			return;
-		}
-		workbenchWindow.getWorkbench().removeWindowListener(this);
 		workbenchWindow = null;
 	}
 

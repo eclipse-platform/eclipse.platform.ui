@@ -406,6 +406,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// from JFaceColors
 		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
 		
+
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable single click

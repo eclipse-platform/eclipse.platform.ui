@@ -22,12 +22,6 @@ import org.eclipse.ui.PlatformUI;
 public final class WorkbenchActivityHelper {
 
 	/**
-	 * Not intended to be instantiated.
-	 */
-	private WorkbenchActivityHelper() {
-	}
-
-	/**
 	 * Utility method to create a <code>String</code> containing the plugin
 	 * and local ids of a contribution.
 	 * 
@@ -56,14 +50,17 @@ public final class WorkbenchActivityHelper {
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
 			if (contribution.getPluginId() != null) {
-				IIdentifier identifier =
-					PlatformUI
-						.getWorkbench()
-						.getActivityManager()
-						.getIdentifier(
-						createUnifiedId(contribution));
-				if (!identifier.isEnabled())
-					return true;
+				IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+
+				if (workbenchActivitySupport != null) {
+					IIdentifier identifier =
+					workbenchActivitySupport
+							.getActivityManager()
+							.getIdentifier(
+							createUnifiedId(contribution));
+					if (!identifier.isEnabled())
+						return true;
+				}
 			}
 		}
 		return false;
@@ -74,10 +71,21 @@ public final class WorkbenchActivityHelper {
 	 *         activity categories).
 	 */
 	public static final boolean isFiltering() {
-		return !PlatformUI
-			.getWorkbench()
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return false;
+		
+		return !support
 			.getActivityManager()
 			.getDefinedCategoryIds()
 			.isEmpty();
+	}
+
+	/**
+	 * Not intended to be instantiated.
+	 */
+	private WorkbenchActivityHelper() {
 	}
 }

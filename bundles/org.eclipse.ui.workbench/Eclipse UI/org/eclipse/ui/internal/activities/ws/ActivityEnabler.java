@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.ICategory;
-import org.eclipse.ui.activities.IMutableActivityManager;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * A simple control provider that will allow the user to toggle on/off the
@@ -45,7 +45,7 @@ import org.eclipse.ui.activities.IMutableActivityManager;
  */
 public class ActivityEnabler {
 	private ListViewer activitiesViewer;
-	private IMutableActivityManager activityManager;
+	private IWorkbenchActivitySupport activitySupport;
 
 	private CheckboxTableViewer categoryViewer;
 	private Set checkedInSession = new HashSet(7),
@@ -56,30 +56,27 @@ public class ActivityEnabler {
 	/**
 	 * Create a new instance.
 	 * 
-	 * @param activityManager
-	 *            the activity manager that will be used.
+	 * @param activityManager the activity manager that will be used.
 	 */
-	public ActivityEnabler(
-		IMutableActivityManager activityManager) {
-		this.activityManager = activityManager;
+	public ActivityEnabler(IWorkbenchActivitySupport activityManager) {
+		this.activitySupport = activityManager;
 	}
 
 	/**
-	 * @param categoryId
-	 *            the id to check.
+	 * @param categoryId the id to check.
 	 * @return whether all activities in the category are enabled.
 	 */
 	private boolean categoryEnabled(String categoryId) {
 		Collection categoryActivities = getCategoryActivities(categoryId);
-		Set enabledActivities = activityManager.getEnabledActivityIds();
+		Set enabledActivities =
+			activitySupport.getActivityManager().getEnabledActivityIds();
 		return enabledActivities.containsAll(categoryActivities);
 	}
 
 	/**
 	 * Create the controls.
 	 * 
-	 * @param parent
-	 *            the parent in which to create the controls.
+	 * @param parent the parent in which to create the controls.
 	 * @return the composite in which the controls exist.
 	 */
 	public Control createControl(Composite parent) {
@@ -94,15 +91,17 @@ public class ActivityEnabler {
 		label.setText(ActivityMessages.getString("ActivityEnabler.activities")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		{			
+		{
 			categoryViewer =
 				CheckboxTableViewer.newCheckList(mainComposite, SWT.BORDER);
 			categoryViewer.getControl().setLayoutData(
 				new GridData(GridData.FILL_BOTH));
 			categoryViewer.setContentProvider(new CategoryContentProvider());
-			categoryViewer.setLabelProvider(new CategoryLabelProvider(activityManager));
+			categoryViewer.setLabelProvider(
+				new CategoryLabelProvider(
+					activitySupport.getActivityManager()));
 			categoryViewer.setSorter(new ViewerSorter());
-			categoryViewer.setInput(activityManager);
+			categoryViewer.setInput(activitySupport.getActivityManager());
 			categoryViewer.setSelection(new StructuredSelection());
 			setCategoryStates();
 		}
@@ -113,7 +112,8 @@ public class ActivityEnabler {
 				new GridData(GridData.FILL_BOTH));
 			activitiesViewer.setContentProvider(new ActivityContentProvider());
 			activitiesViewer.setLabelProvider(
-				new ActivityLabelProvider(activityManager));
+				new ActivityLabelProvider(
+					activitySupport.getActivityManager()));
 			activitiesViewer.setSorter(new ViewerSorter());
 			activitiesViewer.setInput(Collections.EMPTY_SET);
 			activitiesViewer.getControl().setEnabled(false);
@@ -132,8 +132,8 @@ public class ActivityEnabler {
 						lastCategory = categoryId;
 						activitiesViewer.setInput(
 							getCategoryActivities(categoryId));
+					}
 				}
-			}
 			}
 		});
 
@@ -164,16 +164,17 @@ public class ActivityEnabler {
 	}
 
 	/**
-	 * @param categoryId
-	 *            the id to fetch.
+	 * @param categoryId the id to fetch.
 	 * @return all activity ids in the category.
 	 */
 	private Collection getCategoryActivities(String categoryId) {
-		ICategory category = activityManager.getCategory(categoryId);
+		ICategory category =
+			activitySupport.getActivityManager().getCategory(categoryId);
 		Set activityBindings = category.getCategoryActivityBindings();
 		List categoryActivities = new ArrayList(10);
 		for (Iterator j = activityBindings.iterator(); j.hasNext();) {
-			ICategoryActivityBinding binding = (ICategoryActivityBinding) j.next();
+			ICategoryActivityBinding binding =
+				(ICategoryActivityBinding) j.next();
 			String activityId = binding.getActivityId();
 			categoryActivities.add(activityId);
 		}
@@ -184,7 +185,8 @@ public class ActivityEnabler {
 	 * Set the enabled category states based on current activity enablement.
 	 */
 	private void setCategoryStates() {
-		Set categories = activityManager.getDefinedCategoryIds();
+		Set categories =
+			activitySupport.getActivityManager().getDefinedCategoryIds();
 		List enabledCategories = new ArrayList(10);
 		for (Iterator i = categories.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
@@ -202,7 +204,8 @@ public class ActivityEnabler {
 	 */
 	public void updateActivityStates() {
 		Set enabledActivities =
-			new HashSet(activityManager.getEnabledActivityIds());
+			new HashSet(
+				activitySupport.getActivityManager().getEnabledActivityIds());
 
 		for (Iterator i = uncheckedInSession.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
@@ -214,6 +217,6 @@ public class ActivityEnabler {
 			enabledActivities.addAll(getCategoryActivities(categoryId));
 		}
 
-		activityManager.setEnabledActivityIds(enabledActivities);
+		activitySupport.setEnabledActivityIds(enabledActivities);
 	}
 }
