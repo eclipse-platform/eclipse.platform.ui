@@ -40,6 +40,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.AntCoreUtil;
@@ -279,6 +280,7 @@ public class AntModel implements IAntModel {
     	} catch(BuildException e) {
 			handleBuildException(e, null);
     	} finally {
+            processAntHome(true);
     		Thread.currentThread().setContextClassLoader(originalClassLoader);
     		if (parsed) {
     			resolveBuildfile();
@@ -314,6 +316,7 @@ public class AntModel implements IAntModel {
 	}
 
 	private void initializeProject(Project project, ClassLoader loader) {
+        processAntHome(false);
 		project.init();
 		setProperties(project);
 		setTasks(project, loader);
@@ -406,10 +409,23 @@ public class AntModel implements IAntModel {
     }
 
     private void setBuiltInProperties(Project project) {
-		//note also see processAntHome for system properties that are set
+        //set processAntHome for other properties set as system properties
 		project.setUserProperty("ant.file", getEditedFile().getAbsolutePath()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
 	}
+    
+    private void processAntHome(boolean finished) {
+        AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+        String antHome= prefs.getAntHome();
+        if (finished) {
+            System.getProperties().remove("ant.home"); //$NON-NLS-1$
+            System.getProperties().remove("ant.library.dir"); //$NON-NLS-1$
+        } else {
+            System.setProperty("ant.home", antHome); //$NON-NLS-1$
+            File antLibDir= new File(antHome, "lib"); //$NON-NLS-1$
+            System.setProperty("ant.library.dir", antLibDir.getAbsolutePath()); //$NON-NLS-1$
+        }
+    }
 	
 	private void setGlobalProperties(Project project) {
 		List properties= AntCorePlugin.getPlugin().getPreferences().getProperties();

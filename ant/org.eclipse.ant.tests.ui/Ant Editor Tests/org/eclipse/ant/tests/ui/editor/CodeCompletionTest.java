@@ -195,6 +195,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	assertContains("ant.version", proposals);
     	assertContains("ant.project.name", proposals);
     	assertContains("basedir", proposals);
+        assertContains("ant.home", proposals);
+        assertContains("ant.library.dir", proposals);
     }
     
     /**
