@@ -139,4 +139,22 @@ public class FrameworkTests extends AbstractAntTest {
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
 		restorePreferenceDefaults();
 	}
+	
+	/**
+	 * Tests setting ANT_HOME
+	 */
+	public void testSettingAntHome() throws CoreException {
+		try {
+			AntCorePlugin.getPlugin().getPreferences().setAntHome(getAntHome());
+			run("echoing.xml");
+			assertTrue("ANT_HOME not set correctly", getAntHome().equals(System.getProperty("ant.home")));
+			AntCorePlugin.getPlugin().getPreferences().setAntHome("");
+			run("echoing.xml");
+			assertTrue("ANT_HOME not set correctly", "".equals(System.getProperty("ant.home")));
+		} finally {
+			restorePreferenceDefaults();
+		}
+		
+		
+	}
 }
