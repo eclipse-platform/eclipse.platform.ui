@@ -11,7 +11,11 @@
 
 package org.eclipse.ant.internal.ui.editor.templates;
 
+import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
@@ -39,12 +43,11 @@ public class AntContext extends DocumentTemplateContext {
 		if (templateBuffer == null) {
 			return null;
 		}
-		//TODO bug 55356 
-//		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER)) {
-//			FormattingPreferences prefs = new FormattingPreferences();
-//			XmlDocumentFormatter formatter= new XmlDocumentFormatter();
-//			formatter.format(templateBuffer, this, prefs);
-//		}
+		//TODO Not enabled see bug 55356
+		if (false && AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER)) {
+			FormattingPreferences prefs = new FormattingPreferences();
+			XmlFormatter.format(templateBuffer, this, prefs);
+		}
 		return templateBuffer;
 	}
 	

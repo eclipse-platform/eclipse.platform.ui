@@ -10,14 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.formatter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
 import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
+import org.eclipse.jface.text.templates.TemplateBuffer;
+import org.eclipse.jface.text.templates.TemplateVariable;
 
 /**
  * Utility class for using the ant code formatter in contexts where an IDocument
@@ -38,32 +53,40 @@ public class XmlFormatter {
      */
     public static String format(String text, FormattingPreferences prefs) {
         
-        Assert.isNotNull(text);
-        
-        FormattingPreferences applyPrefs;
-        if(prefs == null) {
-            applyPrefs = new FormattingPreferences();
-        } else {
-            applyPrefs = prefs;
-        }
-        
-        IDocument doc = new Document();
-        doc.set(text);
-        new AntDocumentSetupParticipant().setup(doc);
+      return format(text, prefs, -1);
+    }
+    
+    private static String format(String text, FormattingPreferences prefs, int indent) {
+    	 Assert.isNotNull(text);
+         
+         FormattingPreferences applyPrefs;
+         if(prefs == null) {
+             applyPrefs = new FormattingPreferences();
+         } else {
+             applyPrefs = prefs;
+         }
+         
+         IDocument doc = new Document();
+         doc.set(text);
+         new AntDocumentSetupParticipant().setup(doc);
 
-        MultiPassContentFormatter formatter = new MultiPassContentFormatter(
+         format(applyPrefs, doc, indent);
+
+         return doc.get();
+    }
+
+	private static void format(FormattingPreferences prefs, IDocument doc, int indent) {
+		MultiPassContentFormatter formatter = new MultiPassContentFormatter(
                 IDocumentExtension3.DEFAULT_PARTITIONING,
                 IDocument.DEFAULT_CONTENT_TYPE);
 
-        formatter.setMasterStrategy(new XmlDocumentFormattingStrategy(applyPrefs));
-        formatter.setSlaveStrategy(new XmlElementFormattingStrategy(applyPrefs),
+        formatter.setMasterStrategy(new XmlDocumentFormattingStrategy(prefs, indent));
+        formatter.setSlaveStrategy(new XmlElementFormattingStrategy(prefs),
                 AntEditorPartitionScanner.XML_TAG);
         formatter.format(doc, new Region(0, doc.getLength()));
+	}
 
-        return doc.get();
-    }
-
-    /**
+	/**
      * Format the text using the ant code formatter using the preferences
      * settings in the plug-in preference store.
      * 
@@ -73,5 +96,176 @@ public class XmlFormatter {
      */
     public static String format(String text) {
         return format(text,null);
+    }
+    
+    public static void format(TemplateBuffer templateBuffer, AntContext antContext, FormattingPreferences prefs) {	
+    	String templateString= templateBuffer.getString();
+    	IDocument fullDocument= new Document(antContext.getDocument().get());
+    	
+    	int completionOffset= antContext.getCompletionOffset();
+    	try {
+    		//trim any starting whitespace
+			IRegion lineRegion= fullDocument.getLineInformationOfOffset(completionOffset);
+			String lineString= fullDocument.get(lineRegion.getOffset(), lineRegion.getLength());
+			lineString= trimBegin(lineString);
+			fullDocument.replace(lineRegion.getOffset(), lineRegion.getLength(), lineString);
+		} catch (BadLocationException e1) {
+			return;
+		}
+    	TemplateVariable[] variables= templateBuffer.getVariables();
+		int[] offsets= variablesToOffsets(variables, completionOffset);
+		
+		IDocument origTemplateDoc= new Document(fullDocument.get());
+		try {
+			origTemplateDoc.replace(completionOffset, antContext.getCompletionLength(), templateString);
+		} catch (BadLocationException e) {
+			return; // don't format if the document has changed
+		}
+		
+    	IDocument templateDocument= createDocument(origTemplateDoc.get(), createPositions(offsets));
+    	
+    	String leadingText= getLeadingText(fullDocument, antContext.getAntModel(), completionOffset);
+    	String newTemplateString= leadingText + templateString;
+    	int indent= XmlDocumentFormatter.computeIndent(leadingText, prefs.getTabWidth());
+    	
+    	newTemplateString= format(newTemplateString, prefs, indent);
+    	
+    	try {
+    		templateDocument.replace(completionOffset, templateString.length(), newTemplateString);
+		} catch (BadLocationException e) {
+			return;
+		}
+		
+    	offsetsToVariables(offsets, variables, completionOffset);
+    	templateBuffer.setContent(newTemplateString, variables);
+    }
+    
+    private static Document createDocument(String string, Position[] positions) throws IllegalArgumentException {
+		Document doc= new Document(string);
+		try {
+			if (positions != null) {
+				final String POS_CATEGORY= "tempAntFormatterCategory"; //$NON-NLS-1$
+				
+				doc.addPositionCategory(POS_CATEGORY);
+				doc.addPositionUpdater(new DefaultPositionUpdater(POS_CATEGORY) {
+					protected boolean notDeleted() {
+						if (fOffset < fPosition.offset && (fPosition.offset + fPosition.length < fOffset + fLength)) {
+							fPosition.offset= fOffset + fLength; // deleted positions: set to end of remove
+							return false;
+						}
+						return true;
+					}
+				});
+				for (int i= 0; i < positions.length; i++) {
+					try {
+						doc.addPosition(POS_CATEGORY, positions[i]);
+					} catch (BadLocationException e) {
+						throw new IllegalArgumentException("Position outside of string. offset: " + positions[i].offset + ", length: " + positions[i].length + ", string size: " + string.length());   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+					}
+				}
+			}
+		} catch (BadPositionCategoryException cannotHappen) {
+			// can not happen: category is correctly set up
+		}
+		return doc;
+	}
+    
+    private static String trimBegin(String toBeTrimmed) {
+		
+		int i= 0;
+		while ((i != toBeTrimmed.length()) && Character.isWhitespace(toBeTrimmed.charAt(i))) {
+			i++;
+		}
+
+		return toBeTrimmed.substring(i);
+	}
+    
+    private static int[] variablesToOffsets(TemplateVariable[] variables, int start) {
+		List list= new ArrayList();
+		for (int i= 0; i != variables.length; i++) {
+		    int[] offsets= variables[i].getOffsets();
+		    for (int j= 0; j != offsets.length; j++) {
+				list.add(new Integer(offsets[j]));
+		    }
+		}
+		
+		int[] offsets= new int[list.size()];
+		for (int i= 0; i != offsets.length; i++) {
+			offsets[i]= ((Integer) list.get(i)).intValue() + start;
+		}
+
+		Arrays.sort(offsets);
+
+		return offsets;	    
+	}
+	
+	private static void offsetsToVariables(int[] allOffsets, TemplateVariable[] variables, int start) {
+		int[] currentIndices= new int[variables.length];
+		for (int i= 0; i != currentIndices.length; i++) {
+			currentIndices[i]= 0;
+		}
+
+		int[][] offsets= new int[variables.length][];
+		for (int i= 0; i != variables.length; i++) {
+			offsets[i]= variables[i].getOffsets();
+		}
+		
+		for (int i= 0; i != allOffsets.length; i++) {
+
+			int min= Integer.MAX_VALUE;
+			int minVariableIndex= -1;
+			for (int j= 0; j != variables.length; j++) {
+			    int currentIndex= currentIndices[j];
+			    
+			    // determine minimum
+				if (currentIndex == offsets[j].length)
+					continue;
+					
+				int offset= offsets[j][currentIndex];
+
+				if (offset < min) {
+				    min= offset;
+					minVariableIndex= j;
+				}		
+			}
+
+			offsets[minVariableIndex][currentIndices[minVariableIndex]]= allOffsets[i] - start + 3;
+			currentIndices[minVariableIndex]++;
+		}
+
+		for (int i= 0; i != variables.length; i++) {
+			variables[i].setOffsets(offsets[i]);	
+		}
+	}
+	
+	/**
+	 * Returns the indentation level at the position of code completion.
+	 */
+	private static String getLeadingText(IDocument document, AntModel model, int completionOffset) {
+		AntProjectNode project= model.getProjectNode(false);
+		if (project == null) {
+			return ""; //$NON-NLS-1$
+		}
+		AntElementNode node= project.getNode(completionOffset);// - fAccumulatedChange);
+		if (node == null) {
+			return ""; //$NON-NLS-1$
+		}
+		
+		StringBuffer buf= new StringBuffer();
+		buf.append(XmlDocumentFormatter.getLeadingWhitespace(node.getOffset(), document));
+		buf.append(XmlDocumentFormatter.createIndent());
+		return buf.toString();
+	}
+	
+	 private static Position[] createPositions(int[] positions) {
+    	Position[] p= null;
+		
+		if (positions != null) {
+			p= new Position[positions.length];
+			for (int i= 0; i < positions.length; i++) {
+				p[i]= new Position(positions[i], 0);
+			}
+		}
+		return p;
     }
 }

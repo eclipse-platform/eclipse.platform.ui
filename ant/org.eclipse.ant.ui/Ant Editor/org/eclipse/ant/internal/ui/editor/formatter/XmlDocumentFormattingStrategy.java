@@ -28,13 +28,16 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
 	/** access to the preferences store * */
 	private FormattingPreferences prefs; 
 	
+	private int indent= -1;
+	
 	public XmlDocumentFormattingStrategy() {
 	    this.prefs = new FormattingPreferences();
     }
  
-	public XmlDocumentFormattingStrategy(FormattingPreferences prefs) {
+	public XmlDocumentFormattingStrategy(FormattingPreferences prefs, int indent) {
 	    Assert.isNotNull(prefs);
 	    this.prefs = prefs;
+	    this.indent= indent;
 	}
 	
 	/* (non-Javadoc)
@@ -48,6 +51,9 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
 	        // TODO allow formatting of regions, not just the entire document
 	        String documentText = document.get();
 	        XmlDocumentFormatter formatter = new XmlDocumentFormatter();
+	        if (indent != -1) {
+	        	formatter.setInitialIndent(indent);
+	        }
 	        String formattedText = formatter.format(documentText, this.prefs);
 	        if (formattedText != null && !formattedText.equals(documentText)) {
 	        	document.set(formattedText);
