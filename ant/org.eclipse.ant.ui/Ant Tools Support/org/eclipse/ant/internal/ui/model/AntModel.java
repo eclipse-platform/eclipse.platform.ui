@@ -58,9 +58,7 @@ public class AntModel extends AntModelLite {
 				AntUIPlugin.getDefault().getPluginPreferences().setToDefault(AntEditorPreferenceConstants.PROBLEM);
 				AntUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(fUIPropertyChangeListener);
 			} else if (property.equals(AntEditorPreferenceConstants.CODEASSIST_USER_DEFINED_TASKS)) {
-				if (((Boolean)event.getNewValue()).booleanValue()) {
-					reconcileForPropertyChange(false);		
-				}
+				reconcileForPropertyChange(false);
 			}
 		}
 	};
