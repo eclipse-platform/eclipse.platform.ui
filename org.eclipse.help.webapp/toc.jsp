@@ -44,13 +44,7 @@
 </head>
 
 <body onload="onloadHandler('<%=label%>')">
-	<span style="white-space: nowrap;">
-      <!-- use nobr for IE5.0 only... -->
-      <nobr>
-    <img src="images/return.gif" alt="Bookshelf" title="Bookshelf">
-	<a href="tocs.jsp" target=_self>Back to bookshelf</a>
-      </nobr>
-	</span>
+
 <%
 	// Generate the tree
 	if (selectedTOC != null)

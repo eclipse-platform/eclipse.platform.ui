@@ -57,8 +57,29 @@ function turnToFrame(nav)
    				iframes[i].src = getFrameInput(nav);
    		}
  	}
+ 	
+ 	// set title
+ 	if (nav == "search")
+ 		setToolbarTitle("Search");
+ 	else if (nav == "links")
+ 		setToolbarTitle("Links");
+ 	else if (nav == "toc")
+ 		setToolbarTitle(lastTitle);		
 }
  
+// lastTitle is a bit of a workaround for setting the title of 
+// the bookshelf or the selected toc.
+var lastTitle = null;
+
+function setToolbarTitle(title)
+{
+	if (title != "Search" && title != "Links")
+		lastTitle = title;
+	if (title == null && lastTitle != null)
+		parent.ToolbarFrame.setToc(title);
+	else
+		parent.ToolbarFrame.setToc(title);
+}
 
 /**
  * Returns the input source for a frame

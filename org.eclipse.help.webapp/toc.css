@@ -2,6 +2,7 @@
           background-color: Window;
 		  /*font: 9pt ms sans serif,sans-serif;*/
 		  font: 8pt Tahoma;
+		  cursor:default;
       }
  
       A   {
@@ -11,21 +12,23 @@
           padding: 2px 5px;
 /* this works in ie5.5, but not in ie5.0  */
           white-space: nowrap;
+          cursor:default;
       }
       A:hover { 
           text-decoration:underline; 
-      }
-
-     .active { 
-          color:HighlightText;
-          background:Highlight;  
+          cursor:default;
       }
 
      UL { 
      	border-width:0; 
 	    margin-left:20px; 
       }
-
+      
+     .active { 
+          color:HighlightText;
+          background:Highlight;  
+      }
+      
      .leaf { 
         list-style-image: url("images/topic.gif");
       }
@@ -41,9 +44,9 @@
          list-style-image: url("images/minus.gif");
          display:block; 
       }
-	  .selected {
-	  	list-style-image: url("images/topicfolder.gif");
-		color:HighlightText;
-        background:Highlight;  
-	  }
+      
+      .bookshelf
+      {
+         list-style-image: url("images/home.gif");
+      }
 	

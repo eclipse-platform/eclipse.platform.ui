@@ -124,7 +124,7 @@ function mouseClickHandler(e) {
   	
   var treeNode = getContentNode(clickedNode);
 
-  if (treeNode != null) {
+  if (treeNode != null && treeNode.parentNode.tagName != "BODY") {
     if (isCollapsed(treeNode)) {
    	 expand(treeNode);
   	}
@@ -203,7 +203,7 @@ function selectTopic(topic)
  */
 function onloadHandler(title)
 {
-	parent.parent.ToolbarFrame.setToc(title);
+	parent.setToolbarTitle(title);
 }
 
 // listen for clicks

@@ -120,6 +120,10 @@ public class Tocs
 	private void genToc(Element toc, Writer out) throws IOException
 	{
 		out.write("<ul class='expanded'>");
+		
+		// ** NL: TO DO: Load "bookshelf" from resources
+		out.write("<li class='bookshelf'><a target='_self' href='tocs.jsp'><nobr>Bookshelf</nobr></a></li>");
+		
 		NodeList topics = toc.getChildNodes();
 		for (int i = 0; i < topics.getLength(); i++)
 		{

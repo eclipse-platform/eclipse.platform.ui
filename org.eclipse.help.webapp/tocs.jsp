@@ -55,11 +55,11 @@ function selectTopic(topic)
 		if (tocNodes[i] == selectedTOC)
 		{
 %>
-		<li class='node'><a class="selected" href='javascript:selectTOC("<%=id%>")' onmouseover='window.status="<%=label%>"'> <nobr> <%=label%> </nobr> </a></li>
+		<li class='node'><a class="active" href='javascript:selectTOC("<%=id%>")' xonmouseover='window.status="<%=label%>"'> <nobr> <%=label%> </nobr> </a></li>
 <%
 		}else{
 %>
-		<li class='node'><a href='javascript:selectTOC("<%=id%>");' onmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></li>
+		<li class='node'><a href='javascript:selectTOC("<%=id%>");' xonmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></li>
 <%
 		}		
 	}

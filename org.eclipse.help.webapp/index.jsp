@@ -72,7 +72,7 @@
 
 
 <!-- frames -->
-<frameset  rows="24,*,26">
+<frameset  rows="23,*,26">
 	<frame name="ToolbarFrame" src="toolbar.html" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
     <frameset id="contentFrameset" cols="25%,*">
         <frame name="NavFrame" src="<%=srcNavFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
