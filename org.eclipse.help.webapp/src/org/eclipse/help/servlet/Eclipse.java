@@ -5,11 +5,13 @@ package org.eclipse.help.servlet;
  */
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.*;
-import java.util.ResourceBundle;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.util.Properties;
 
-import javax.servlet.*;
-import org.eclipse.help.internal.proxy.protocol.ProxyHandler;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 /**
  * Eclipse launcher
@@ -91,7 +93,7 @@ public class Eclipse {
 
 		try {
 			// need to handle conflicts on setting url stream handlers
-			ProxyHandler.initialize();
+			initializeHandlers();
 			
 			if (context.getAttribute("platformRunnable") == null) {
 				//System.out.println("getting boot loader");
@@ -126,6 +128,20 @@ public class Eclipse {
 			context.log("Problem occured initializing Eclipse", e);
 			throw new ServletException(e);
 		}
+	}
+	
+	private void initializeHandlers() {		
+		// register proxy handlers
+		Properties props = System.getProperties();
+		String propName = "java.protocol.handler.pkgs";
+		String pkgs = System.getProperty(propName);
+		String proxyPkgs = "org.eclipse.help.internal.proxy.protocol";
+		if (pkgs != null) 
+			pkgs = pkgs + "|" + proxyPkgs;
+		else 
+			pkgs = proxyPkgs;
+		props.put(propName,pkgs);
+		System.setProperties(props);
 	}
 
 }

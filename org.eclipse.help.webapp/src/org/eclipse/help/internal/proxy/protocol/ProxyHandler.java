@@ -23,25 +23,10 @@ public class ProxyHandler extends URLStreamHandler {
 	// NOTE: the property name must match the value declared 
 	//       in org.eclipse.core.internal.boot.PlatformURLHandleFactory
 	private static final String ECLIPSE_HANDLER_FACTORY = "org.eclipse.protocol.handler.factory";
-	
-	public static void initialize() {
-		// register proxy handlers
-		Properties props = System.getProperties();
-		String propName = "java.protocol.handler.pkgs";
-		String pkgs = System.getProperty(propName);
-		String proxyPkgs = "org.eclipse.help.internal.proxy.protocol";
-		if (pkgs != null) 
-			pkgs = pkgs + "|" + proxyPkgs;
-		else 
-			pkgs = proxyPkgs;
-		props.put(propName,pkgs);
-		System.setProperties(props);
 		
-		// create singleton delegating proxy
-		proxy = new ProxyHandler();
-	}
-	
 	public static URLConnection open(URL url) throws IOException {
+		if (proxy == null)
+			proxy = new ProxyHandler();
 		return proxy.openConnection(url);		
 	}
 	
