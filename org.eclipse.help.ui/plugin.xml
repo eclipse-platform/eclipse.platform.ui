@@ -101,6 +101,11 @@
 			factoryclass="org.eclipse.help.ui.internal.browser.hpux.NetscapeFactory"
 			name="%netscape4" />
 	</extension>
+	<extension point="org.eclipse.help.ui.browser">
+		<browser id="org.eclipse.help.ui.defaultBrowserMacOSX"
+			factoryclass="org.eclipse.help.ui.internal.browser.macosx.DefaultBrowserFactory"
+			name="%defaultBrowser" />
+	</extension>
 
 	<!-- Search Page -->
 	<extension point="org.eclipse.search.searchPages">
