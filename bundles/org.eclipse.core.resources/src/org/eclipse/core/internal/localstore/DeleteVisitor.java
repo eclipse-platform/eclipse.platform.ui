@@ -49,7 +49,7 @@ protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean kee
 		// if it is a folder in the file system, delete its children first
 		if (target.getType() == IResource.FOLDER) {
 			for (Enumeration children = node.getChildren(); children.hasMoreElements();)
-				delete((UnifiedTreeNode) children.nextElement(), deleteLocalFile, keepHistory);
+				delete((UnifiedTreeNode) children.nextElement(), deleteLocalFile, keepHistory);			
 			node.removeChildrenFromTree();
 			delete(node.existsInWorkspace() ? target : null, localFile);
 			return;
@@ -66,9 +66,9 @@ protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean kee
 //XXX: in which situation would delete be called with (null, null)? It happens (see bug 29445), but why?
 protected void delete(Resource target, java.io.File localFile) {
 	if (target != null) {
-		if (localFile != null && !target.isLinked() && !target.getLocalManager().getStore().delete(localFile, status))
-			return;
 		try {
+			if (localFile != null && !target.isLinked())
+				target.getLocalManager().getStore().delete(localFile);
 			target.deleteResource(convertToPhantom, status);
 		} catch (CoreException e) {
 			status.add(e.getStatus());

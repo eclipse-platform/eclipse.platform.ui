@@ -380,7 +380,7 @@ public void deletedProject(IProject target) {
  */
 public void failed(IStatus reason) {
 	Assert.isLegal(isValid);
-	status.merge(reason);
+	status.add(reason);
 }
 /**
  * Return <code>true</code> if there is a change in the name of the project.
@@ -558,7 +558,7 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 			if (ce.getStatus() != null)
 				status.merge(ce.getStatus());
 			failed(status);
-			success = false;
+			return;
 		}
 
 		// If the folder was successfully deleted from the file system the
@@ -703,17 +703,17 @@ public void standardDeleteProject(IProject project, int updateFlags, IProgressMo
 				try {
 					FileSystemResourceManager localManager = ((Project) project).getLocalManager();
 					localManager.delete(project, force, false, false, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
-					success = defaultLocation ? Workspace.clear(projectLocation) : Workspace.clearChildren(projectLocation);
+					// if the project location is not the default we want to keep the root directory (it is empty now)
+					if (defaultLocation)
+						success = Workspace.clear(projectLocation);
 				} catch (CoreException ce) {
 					message = Policy.bind("localstore.couldnotDelete", project.getFullPath().toString()); //$NON-NLS-1$					
 					MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
 					if (ce.getStatus() != null)
 						status.merge(ce.getStatus());
 					failed(status);
-					success = false;
-				}
-				if (!success)
 					return;
+				}
 			} else {
 				success = defaultLocation ? Workspace.clear(projectLocation) : Workspace.clearChildren(projectLocation);
 				monitor.worked(Policy.totalWork * 3 / 4);
@@ -850,7 +850,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 			failed(status);
 			// if so, we should proceed
 			if (!failedDeletingSource)
-			return;
+				return;
 		}
 		movedFile(source, destination);
 		updateMovedFileTimestamp(destination, computeTimestamp(destination));
@@ -910,7 +910,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 			failed(status);
 			// if so, we should proceed
 			if (!failedDeletingSource)
-			return;
+				return;
 		}
 		boolean success = destinationFile.exists();
 		if (success) {
