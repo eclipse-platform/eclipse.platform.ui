@@ -99,11 +99,12 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 		try {
 
 			IDocument document= fViewer.getDocument();
-			int lineNumber= document.getLineOfOffset(getModelCaret());
+			int modelCaret= getModelCaret();
+			int lineNumber= document.getLineOfOffset(modelCaret);
 						
 			// redraw if the current line number is different from the last line number we painted
 			// initially fLastLineNumber is -1
-			if (lineNumber != fLastLineNumber) {
+			if (lineNumber != fLastLineNumber || !fCurrentLine.overlapsWith(modelCaret, 0)) {
 				
 				fLastLine.offset= fCurrentLine.offset;
 				fLastLine.length= fCurrentLine.length;

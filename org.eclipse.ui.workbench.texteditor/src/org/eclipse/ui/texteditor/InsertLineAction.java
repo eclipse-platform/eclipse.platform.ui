@@ -13,9 +13,13 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.custom.StyledText;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * This action implements smart return.
@@ -72,6 +76,15 @@ public class InsertLineAction extends TextEditorAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
+		/*
+		 * Implemenation note: instead of computing any indentations needed
+		 * (which we can't at this generic level), we simply insert a new
+		 * line delimiter either at the end of the current line (normal) or
+		 * the end of the previous line (reverse). By operating directly on
+		 * the text widget, any auto-indent strategies can pick up on the
+		 * delimiter and perform any content-dependent modifications.
+		 */
+		
 		ITextEditor ed= getTextEditor();
 		if (!(ed instanceof AbstractTextEditor))
 			return;
@@ -84,94 +97,84 @@ public class InsertLineAction extends TextEditorAction {
 		if (sv == null)
 			return;
 		
+		IDocument document= sv.getDocument();
+		if (document == null)
+			return;
+		
 		StyledText st= sv.getTextWidget();
 		if (st == null || st.isDisposed())
 			return;
 
-		// get current line 
-		int caretOffset= st.getCaretOffset();
-		int lineNumber= st.getLineAtOffset(caretOffset);
-		int lineOffset= st.getOffsetAtLine(lineNumber);
-		int lineLength= getLineLength(st, lineNumber, lineOffset);
+		try {
+			// get current line 
+			int widgetOffset= st.getCaretOffset();
+			int offset= AbstractTextEditor.widgetOffset2ModelOffset(sv, widgetOffset);
+			int currentLineNumber= document.getLineOfOffset(offset);
+			IRegion currentLine= document.getLineInformation(currentLineNumber);
 
-		// insert a new line relative to the current, depending on fAbove
-		String line= st.getTextRange(lineOffset, lineLength);
-		boolean whiteSpace= isWhitespace(line);
-		String delimiter= st.getLineDelimiter();
+			int insertionOffset= -1;
+			if (fAbove) {
+				if (currentLineNumber != 0) {
+					IRegion previousLine= document.getLineInformation(currentLineNumber - 1);
+					insertionOffset= previousLine.getOffset() + previousLine.getLength();
+				}
+			} else {
+				insertionOffset= currentLine.getOffset() + currentLine.getLength();
+			}
+			
+			boolean updateCaret= true;
+			int widgetInsertionOffset= AbstractTextEditor.modelOffset2WidgetOffset(sv, insertionOffset);
+			if (widgetInsertionOffset == -1 && fAbove) {
+				// assume that the previous line was not accessible 
+				// (e.g. folded, or we are on line 0)
+				// -> we insert the newline at the beginning of the current line, after any leading WS
+				insertionOffset= currentLine.getOffset() + getIndentationLength(document, currentLine);
+				widgetInsertionOffset= AbstractTextEditor.modelOffset2WidgetOffset(sv, insertionOffset);
+				updateCaret= false;
+			}
+			if (widgetInsertionOffset == -1)
+				return;
+			
+			// mark caret
+			Position caret= new Position(insertionOffset, 0);
+			document.addPosition(caret);
+			st.setSelectionRange(widgetInsertionOffset, 0);
 
-		int insertionPoint; // where the new line should be inserted
+			// operate directly on the widget
+			st.replaceTextRange(widgetInsertionOffset, 0, st.getLineDelimiter());
 
-		if (fAbove) {
-			if (whiteSpace)
-				insertionPoint= caretOffset;
-			else
-				insertionPoint= lineOffset + getIndentationLength(line);
-		} else {
-			insertionPoint= lineOffset + lineLength;
-		}
+			// restore caret unless an auto-indenter has already moved the caret
+			// then leave it alone
+			document.removePosition(caret);
+			if (updateCaret && st.getSelection().x == widgetInsertionOffset) {
+				int widgetCaret= AbstractTextEditor.modelOffset2WidgetOffset(sv, caret.getOffset());
+				if (widgetCaret != -1)
+					st.setSelectionRange(widgetCaret, 0);
+				st.showSelection();
+			}
 
-		// operating directly on the widget we get all the auto-indentation for free
-		st.replaceTextRange(insertionPoint, 0, delimiter);
-
-		int newCaretOffset= -1;
-		if (fAbove && !whiteSpace) {
-			newCaretOffset=
-				st.getOffsetAtLine(lineNumber) + getLineLength(st, lineNumber, lineOffset);
-		} else if (fAbove || !whiteSpace) {
-			int nextLine= lineNumber + 1;
-			int nextLineOffset= st.getOffsetAtLine(nextLine);
-			int nextLineLength= getLineLength(st, nextLine, nextLineOffset);
-			newCaretOffset= nextLineOffset + nextLineLength;
-		}
-		if (newCaretOffset != -1) {
-			st.setCaretOffset(newCaretOffset);
-			st.showSelection();
+		} catch (BadLocationException e) {
+			// ignore
 		}
 	}
 
 	/**
-	 * Determines the length of a line without the terminating line delimiter
-	 * @param st the StyledText widget
-	 * @param lineNumber the number of the line
-	 * @param lineOffset the line's offset 
-	 * @return the length of the line without terminating delimiter
+	 * Computes the indentation length of a line.
+	 * 
+	 * @param document the document
+	 * @param line the line
+	 * @return the number of whitespace characters at the beginning of
+	 *         <code>line</code>
+	 * @throws BadLocationException on document access error
 	 */
-	private int getLineLength(StyledText st, int lineNumber, int lineOffset) {
-		int lineLength;
-		if (st.getLineCount() == lineNumber + 1) { // end of display area, no next line
-			lineLength= st.getCharCount() - lineOffset;
-		} else {
-			lineLength= st.getOffsetAtLine(lineNumber + 1); // next line offset
-			lineLength -= lineOffset;
-			lineLength -= st.getLineDelimiter().length(); // subtract line delimiter
-		}
-		return lineLength;
-	}
-
-	/**
-	 * Computes the indentation of a line. 
-	 * @param line - a non <code>null</code> string
-	 * @return the number of whitespace characters at the beginning of <code>line</code>
-	 */
-	private int getIndentationLength(String line) {
-		Assert.isNotNull(line);
-		int pos;
-		for (pos= 0; pos < line.length(); pos++) {
-			if (!Character.isWhitespace(line.charAt(pos)))
+	private int getIndentationLength(IDocument document, IRegion line) throws BadLocationException {
+		int pos= line.getOffset();
+		int max= pos + line.getLength();
+		while (pos < max) {
+			if (!Character.isWhitespace(document.getChar(pos)))
 				break;
+			pos++;
 		}
-		return pos;
-	}
-
-	/**
-	 * Checks if a string consists only of whitespace.
-	 * @param string
-	 * @return <code>true</code> if <code>string</code> consists of whitespace only,
-	 * <code>false</code> otherwise.
-	 */
-	private boolean isWhitespace(String string) {
-		if (string == null)
-			return true;
-		return string.trim().length() == 0;
+		return pos - line.getOffset();
 	}
 }
