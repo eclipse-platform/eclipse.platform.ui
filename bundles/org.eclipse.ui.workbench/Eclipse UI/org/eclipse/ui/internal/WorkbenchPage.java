@@ -1483,7 +1483,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	/**
 	 * Answer the perspective presentation.
 	 */
-	public PerspectivePresentation getPerspectivePresentation() {
+	public PerspectiveHelper getPerspectivePresentation() {
 		if (getActivePerspective() != null)
 			return getActivePerspective().getPresentation();
 		return null;
@@ -2772,7 +2772,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 				if (pane != null)
 					set.add(pane);
 			}
-			PerspectivePresentation pres = newPersp.getPresentation();
+			PerspectiveHelper pres = newPersp.getPresentation();
 			for (Iterator iter = set.iterator(); iter.hasNext();) {
 				PartPane pane = (PartPane) iter.next();
 				String secondaryId = null;

@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * manipulation (drag & drop). If a part is removed, we leave a placeholder
  * behind to indicate where it goes should the part be added back.
  */
-public class PerspectivePresentation {
+public class PerspectiveHelper {
 	private WorkbenchPage page;
 	private Composite parentWidget;
 	private ViewSashContainer mainLayout;
@@ -115,7 +115,7 @@ public class PerspectivePresentation {
 	/**
 	 * Constructs a new object.
 	 */
-	public PerspectivePresentation(
+	public PerspectiveHelper(
 		WorkbenchPage workbenchPage,
 		ViewSashContainer mainLayout) {
 		this.page = workbenchPage;

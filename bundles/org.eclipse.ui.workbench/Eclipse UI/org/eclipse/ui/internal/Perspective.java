@@ -75,7 +75,7 @@ public class Perspective
 	private HashMap showInTimes = new HashMap();
 	private IViewReference activeFastView;
 	private IMemento memento;
-	protected PerspectivePresentation presentation;
+	protected PerspectiveHelper presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 	private FastViewPane fastViewPane = new FastViewPane();
 	
@@ -308,7 +308,7 @@ public ArrayList getPerspectiveActionIds() {
 /**
  * Returns the presentation.
  */
-public PerspectivePresentation getPresentation() {
+public PerspectiveHelper getPresentation() {
 	return presentation;
 }
 /**
@@ -666,7 +666,7 @@ private void loadPredefinedPersp(
 	fixed = layout.isFixed();
 	
 	// Create presentation.	
-	presentation = new PerspectivePresentation(page, container);
+	presentation = new PerspectiveHelper(page, container);
 
 	// Hide editor area if requested by factory
 	if (!layout.isEditorAreaVisible())
@@ -854,7 +854,7 @@ public IStatus restoreState() {
 	
 	// Create an empty presentation..
 	ViewSashContainer mainLayout = new ViewSashContainer(page);
-	PerspectivePresentation pres = new PerspectivePresentation(page, mainLayout);
+	PerspectiveHelper pres = new PerspectiveHelper(page, mainLayout);
 
 	// Read the layout.
 	result.merge(pres.restoreState(memento.getChild(IWorkbenchConstants.TAG_LAYOUT)));
