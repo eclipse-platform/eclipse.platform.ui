@@ -11,14 +11,10 @@
 package org.eclipse.team.internal.core;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileModificationValidator;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.core.RepositoryProvider;
@@ -106,29 +102,8 @@ public class FileModificationValidatorManager implements IFileModificationValida
 	
 	private synchronized IFileModificationValidator getDefaultValidator() {
 	    if (defaultValidator == null) {
-	        loadDefaultValidator();
+	        defaultValidator = new DefaultFileModificationValidator();
 	    }
 	    return defaultValidator;
 	}
-
-    private void loadDefaultValidator() {
-        defaultValidator = new DefaultFileModificationValidator();
-        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.DEFAULT_FILE_MODIFICATION_VALIDATOR_EXTENSION);
-		if (extension != null) {
-			IExtension[] extensions =  extension.getExtensions();
-			if (extensions.length > 0) {
-				IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
-				if (configElements.length > 0) {
-					try {
-                        Object o = configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
-                        if (o instanceof IFileModificationValidator) {
-                            defaultValidator = (IFileModificationValidator)o;
-                        }
-                    } catch (CoreException e) {
-                        TeamPlugin.log(e);
-                    }
-				}
-			}
-		}
-    }
 }

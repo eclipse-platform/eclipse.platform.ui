@@ -10,67 +10,26 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectNature;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import java.io.*;
+import java.util.*;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Commit;
-import org.eclipse.team.internal.ccvs.core.client.Diff;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.client.listeners.AdminKSubstListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.EditorsListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.MoveDeleteHook;
-import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
-import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.core.streams.CRLFtoLFInputStream;
 import org.eclipse.team.internal.core.streams.LFtoCRLFInputStream;
 
@@ -148,25 +107,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 	// property used to indicate whether the project is configured to use Watch/edit
 	private final static QualifiedName WATCH_EDIT_PROP_KEY = 
 		new QualifiedName("org.eclipse.team.cvs.core", "watch_edit");  //$NON-NLS-1$  //$NON-NLS-2$
-
-	private static IFileModificationValidator getPluggedInValidator() {
-		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_FILE_MODIFICATION_VALIDATOR).getExtensions();
-		if (extensions.length == 0)
-			return null;
-		IExtension extension = extensions[0];
-		IConfigurationElement[] configs = extension.getConfigurationElements();
-		if (configs.length == 0) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$
-			return null;
-		}
-		try {
-			IConfigurationElement config = configs[0];
-			return (IFileModificationValidator) config.createExecutableExtension("run");//$NON-NLS-1$
-		} catch (CoreException ex) {
-			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$
-			return null;
-		}
-	}
 				
 	/**
 	 * No-arg Constructor for IProjectNature conformance
@@ -725,10 +665,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
 		if (CVSTeamProvider.fileModificationValidator == null) {
-			CVSTeamProvider.fileModificationValidator = CVSTeamProvider.getPluggedInValidator();
-			if (CVSTeamProvider.fileModificationValidator == null) {
-				CVSTeamProvider.fileModificationValidator =super.getFileModificationValidator();
-			}
+			CVSTeamProvider.fileModificationValidator = new CVSCoreFileModificationValidator();
 		}
 		return CVSTeamProvider.fileModificationValidator;
 	}

@@ -11,117 +11,33 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.CVSCoreFileModificationValidator;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.actions.EditorsAction;
 
 /**
  * IFileModificationValidator that is pluged into the CVS Repository Provider
  */
-public class FileModificationValidator implements ICVSFileModificationValidator {
-
-	public static final IStatus OK = new Status(IStatus.OK, CVSUIPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
+public class FileModificationValidator extends CVSCoreFileModificationValidator {
 	
 	public FileModificationValidator() {
 	}
 	
-	/**
-	 * @see org.eclipse.core.resources.IFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile, java.lang.Object)
-	 */
-	public IStatus validateEdit(IFile[] files, Object context) {
-	    IFile[] unmanagedReadOnlyFiles = getUnmanagedReadOnlyFiles(files);
-	    if (unmanagedReadOnlyFiles.length > 0) {
-	        IStatus status = setWritable(unmanagedReadOnlyFiles);
-	        if (!status.isOK()) {
-	            return status;
-	        }
-	    }
-		IFile[] readOnlyFiles = getManagedReadOnlyFiles(files);
-		if (readOnlyFiles.length == 0) return OK;
-		return edit(readOnlyFiles, getShell(context));
-	}
-
-    /**
-	 * @see org.eclipse.core.resources.IFileModificationValidator#validateSave(org.eclipse.core.resources.IFile)
-	 */
-	public IStatus validateSave(IFile file) {
-		if (!needsCheckout(file)) {
-		    if (file.isReadOnly()) {
-		        setWritable(new IFile[] { file } );
-		    }
-		    return OK;
-		}
-		return edit(new IFile[] {file}, (Shell)null);
-	}
-
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.ICVSFileModificationValidator#validateMoveDelete(org.eclipse.core.resources.IFile[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus validateMoveDelete(IFile[] files, IProgressMonitor monitor) {
-		IFile[] readOnlyFiles = getManagedReadOnlyFiles(files);
-		if (readOnlyFiles.length == 0) return OK;
-
-		try {
-			edit(readOnlyFiles, monitor);
-			return OK;
-		} catch (CVSException e) {
-			return e.getStatus();
-		}
-	}
-	
-    private IFile[] getUnmanagedReadOnlyFiles(IFile[] files) {
-		List readOnlys = new ArrayList();
-		for (int i = 0; i < files.length; i++) {
-			IFile iFile = files[i];
-			if (iFile.isReadOnly() && !needsCheckout(iFile)) {
-				readOnlys.add(iFile);
-			}
-		}
-		return (IFile[]) readOnlys.toArray(new IFile[readOnlys.size()]);
+	/* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.core.CVSCoreFileModificationValidator#edit(org.eclipse.core.resources.IFile[], java.lang.Object)
+     */
+    protected IStatus edit(IFile[] readOnlyFiles, Object context) {
+        return edit(readOnlyFiles, getShell(context));
     }
     
-	private IFile[] getManagedReadOnlyFiles(IFile[] files) {
-		List readOnlys = new ArrayList();
-		for (int i = 0; i < files.length; i++) {
-			IFile iFile = files[i];
-			if (needsCheckout(iFile)) {
-				readOnlys.add(iFile);
-			}
-		}
-		return (IFile[]) readOnlys.toArray(new IFile[readOnlys.size()]);
-	}
-	
-	private boolean needsCheckout(IFile file) {
-		try {
-			if (file.isReadOnly()) {
-				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
-				boolean managed = cvsFile.isManaged();
-                return managed;
-			}
-		} catch (CVSException e) {
-			// Log the exception and assume we don't need a checkout
-			CVSUIPlugin.log(e);
-		}
-		return false;
-	}
-	
-	private CVSTeamProvider getProvider(IFile[] files) {
-		CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(files[0].getProject(), CVSProviderPlugin.getTypeId());
-		return provider;
-	}
-	
 	private Shell getShell(Object context) {
 		if (context instanceof Shell)
 			return (Shell)context;
@@ -152,7 +68,7 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 				IRunnableWithProgress editRunnable = new IRunnableWithProgress() {
 		        	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		        		try {
-		        			edit(files, monitor);
+		        			performEdit(files, monitor);
 		        		} catch (CVSException e) {
 		        			new InvocationTargetException(e);
 		        		}
@@ -179,25 +95,9 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 			return setWritable(files);
 		}
 
-		return OK;
+		return Status.OK_STATUS;
 		
 	}
-
-    private IStatus setWritable(final IFile[] files) {
-        for (int i = 0; i < files.length; i++) {
-        	IFile file = files[i];
-        	ResourceAttributes attributes = file.getResourceAttributes();
-        	if (attributes != null) {
-        		attributes.setReadOnly(false);
-        	}
-        	try {
-        		file.setResourceAttributes(attributes);
-        	} catch (CoreException e) {
-        		return CVSException.wrapException(e).getStatus();
-        	}
-        }
-        return Status.OK_STATUS;
-    }
 
     private boolean isRunningInUIThread() {
         return Display.getCurrent() != null;
@@ -264,9 +164,5 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 
 	private boolean isAlwaysPrompt() {
 		return ICVSUIConstants.PREF_EDIT_PROMPT_ALWAYS.equals(CVSUIPlugin.getPlugin().getPreferenceStore().getString(ICVSUIConstants.PREF_EDIT_PROMPT));
-	}	
-	
-	private void edit(IFile[] files, IProgressMonitor monitor) throws CVSException {
-		getProvider(files).edit(files, false /* recurse */, true /* notify server */, ICVSFile.NO_NOTIFICATION, monitor);
 	}
 }
