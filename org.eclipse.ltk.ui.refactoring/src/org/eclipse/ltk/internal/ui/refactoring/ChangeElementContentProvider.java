@@ -37,6 +37,9 @@ import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
 /**
  * A default content provider to present a hierarchy of <code>IChange</code>
  * objects in a tree viewer.
+ * 
+ * TODO should remove dependency to JDT/Core 
+ *      (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=61312)
  */
 class ChangeElementContentProvider  implements ITreeContentProvider {
 	

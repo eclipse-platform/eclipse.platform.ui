@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IAdaptable;
 
-import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.core.resources.IFile;
 
 import org.eclipse.swt.graphics.Image;
 
@@ -53,7 +53,7 @@ class ChangeElementLabelProvider extends LabelProvider {
 			return doGetImage(element);
 		} else if (object instanceof PseudoJavaChangeElement) {
 			PseudoJavaChangeElement element= (PseudoJavaChangeElement)object;
-			IJavaElement jElement= element.getJavaElement();
+			IAdaptable jElement= element.getJavaElement();
 			IWorkbenchAdapter adapter= (IWorkbenchAdapter)jElement.getAdapter(IWorkbenchAdapter.class);
 			if (adapter != null) {
 				return manageImageDescriptor(adapter.getImageDescriptor(jElement));
@@ -91,7 +91,7 @@ class ChangeElementLabelProvider extends LabelProvider {
 			return result;
 		} else if (object instanceof PseudoJavaChangeElement) {
 			PseudoJavaChangeElement element= (PseudoJavaChangeElement)object;
-			IJavaElement jElement= element.getJavaElement();
+			IAdaptable jElement= element.getJavaElement();
 			IWorkbenchAdapter adapter= (IWorkbenchAdapter)jElement.getAdapter(IWorkbenchAdapter.class);
 			if (adapter != null) {
 				return adapter.getLabel(jElement);

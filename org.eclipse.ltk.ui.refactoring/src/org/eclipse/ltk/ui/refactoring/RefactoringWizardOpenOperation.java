@@ -12,6 +12,9 @@ package org.eclipse.ltk.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.IJobManager;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.swt.widgets.Shell;
@@ -96,13 +99,16 @@ public class RefactoringWizardOpenOperation {
 	 */
 	public int run(Shell parent, String dialogTitle) throws InterruptedException {
 		Assert.isNotNull(dialogTitle);
-		Refactoring refactoring= fWizard.getRefactoring();
-		
-		// IJobManager manager= Platform.getJobManager();
+		final Refactoring refactoring= fWizard.getRefactoring();
+		final IJobManager manager= Platform.getJobManager();
 		try {
-			// manager.beginRule(ResourcesPlugin.getWorkspace().getRoot(), null);
-			// manager.suspend();
-			// manager.join(null, new NullProgressMonitor());
+			// we are getting the block dialog for free if we pass in null
+//			try {
+//				manager.suspend(ResourcesPlugin.getWorkspace().getRoot(), null);
+//			} catch(OperationCanceledException e) {
+//				throw new InterruptedException(e.getMessage());
+//			}
+			
 			fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
 			if (fInitialConditions.hasFatalError()) {
 				String message= fInitialConditions.getMessageMatchingSeverity(RefactoringStatus.FATAL);
@@ -114,8 +120,7 @@ public class RefactoringWizardOpenOperation {
 				return dialog.open();
 			} 
 		} finally {
-			// manager.resume();
-			// manager.endRule(ResourcesPlugin.getWorkspace().getRoot());
+//			manager.resume(ResourcesPlugin.getWorkspace().getRoot());
 		}		
 	}
 	

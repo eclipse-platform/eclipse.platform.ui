@@ -29,6 +29,10 @@ import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
+/**
+ * TODO should remove dependency to JDT/Core 
+ *      (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=61312)
+ */ 
 /* package */ class PseudoJavaChangeElement extends ChangeElement {
 
 	private IJavaElement fJavaElement;
