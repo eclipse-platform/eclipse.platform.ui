@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import junit.framework.TestCase;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -18,7 +19,7 @@ import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-public class TestInstallUtil {
+public class TestInstallUtil extends TestCase {
 	static BundleContext context;
 	String location;	
 	

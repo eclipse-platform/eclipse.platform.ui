@@ -20,6 +20,7 @@ import org.eclipse.ui.tests.commands.CommandsTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
+import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
@@ -62,7 +63,7 @@ public class UiTestSuite extends TestSuite {
         addTest(new PreferencesTestSuite());
         addTest(new KeysTestSuite());
         addTest(new MultiPageEditorTestSuite());
-        //addTest(new DynamicPluginsTestSuite());
+        addTest(new DynamicPluginsTestSuite());
         addTest(new ActivitiesTestSuite());
         addTest(new CommandsTestSuite());
         addTest(new ContextsTestSuite());

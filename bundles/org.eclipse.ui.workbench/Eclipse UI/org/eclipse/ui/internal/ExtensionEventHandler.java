@@ -117,10 +117,11 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 				if (delta[i].getKind() == IExtensionDelta.ADDED) {
 					if (id.equals(IWorkbenchConstants.PL_ACTION_SETS))
 						appearList.add(0, delta[i]);
-					else if (id.equals(IWorkbenchConstants.PL_PERSPECTIVES)) {
-						appearList.add(delta[i]);
-						numPerspectives++;
-					} else
+					else if (!id.equals(IWorkbenchConstants.PL_PERSPECTIVES)&& !id.equals(IWorkbenchConstants.PL_VIEWS))
+//					else if (id.equals(IWorkbenchConstants.PL_PERSPECTIVES)) {
+//						appearList.add(delta[i]);
+//						numPerspectives++;
+//					} else
 						appearList.add(appearList.size()-numPerspectives,delta[i]);
 				} else {
 					if (delta[i].getKind() == IExtensionDelta.REMOVED) {
