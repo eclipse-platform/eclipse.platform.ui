@@ -11,6 +11,8 @@
 
 package org.eclipse.ant.internal.ui.preferences;
 
+import java.util.List;
+
 public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	private String name;
 	
@@ -44,5 +46,13 @@ public class GlobalClasspathEntries extends AbstractClasspathEntry {
 	
 	public boolean canBeRemoved() {
 		return canBeRemoved;
+	}
+
+	/**
+     * Set the child entries of this classpath entry.
+	 * @param entries The child entries.
+	 */
+	public void setEntries(List entries) {
+		childEntries= entries;
 	}
 }

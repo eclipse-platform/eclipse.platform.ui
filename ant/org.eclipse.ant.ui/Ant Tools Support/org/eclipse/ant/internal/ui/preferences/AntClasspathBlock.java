@@ -136,13 +136,13 @@ public class AntClasspathBlock {
 		upButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.upButtonTitle")); //$NON-NLS-1$;
 		upButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleMove(true, treeViewer);
+				handleMoveUp();
 			}
 		});
 		downButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.downButtonTitle")); //$NON-NLS-1$;
 		downButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleMove(false, treeViewer);
+				handleMoveDown();
 			}
 		});
 		removeButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.removeButtonTitle")); //$NON-NLS-1$;
@@ -203,21 +203,71 @@ public class AntClasspathBlock {
 		}
 		antContentProvider.setRefreshEnabled(true);
 	}
-
-	private void handleMove(boolean up, TreeViewer viewer) {
-		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
-		Iterator selected= null;
-		if (up) {
-			List list= sel.toList();
-			Collections.reverse(list);
-			selected= list.iterator();
-		} else {
-			selected= sel.toList().iterator();
+	
+	/**
+	 * Returns the selected items in the list, in the order they are
+	 * displayed.
+	 * 
+	 * @return targets for an action
+	 */
+	private List getOrderedSelection(IClasspathEntry parent) {
+		List targets = new ArrayList();
+		List selection = ((IStructuredSelection)treeViewer.getSelection()).toList();
+		IAntClasspathEntry[] entries = parent.getEntries();
+		for (int i = 0; i < entries.length; i++) {
+			IAntClasspathEntry target = entries[i];
+			if (selection.contains(target)) {
+				targets.add(target);
+			}
 		}
-		while (selected.hasNext()) {
-			IClasspathEntry entry =  (IClasspathEntry) selected.next();
-			((AntClasspathContentProvider) viewer.getContentProvider()).handleMove(up, entry);
+		return targets;		
+	}
+	
+	private void handleMoveDown() {
+		List targets = getOrderedSelection(currentParent);
+		if (targets.isEmpty()) {
+			return;
 		}
+		List list= new ArrayList(Arrays.asList(currentParent.getEntries()));
+		int bottom = list.size() - 1;
+		int index = 0;
+		for (int i = targets.size() - 1; i >= 0; i--) {
+			Object target = targets.get(i);
+			index = list.indexOf(target);
+			if (index < bottom) {
+				bottom = index + 1;
+				Object temp = list.get(bottom);
+				list.set(bottom, target);
+				list.set(index, temp);
+			}
+			bottom = index;
+		} 
+		AntClasspathContentProvider viewerContentProvider = (AntClasspathContentProvider) treeViewer.getContentProvider();
+		viewerContentProvider.setEntries(currentParent, list);
+		treeViewer.refresh();
+		treeViewer.setSelection(treeViewer.getSelection());
+		updateContainer();
+	}
+	private void handleMoveUp() {
+		List targets = getOrderedSelection(currentParent);
+		int top = 0;
+		int index = 0;
+		List list= new ArrayList(Arrays.asList(currentParent.getEntries()));
+		Iterator entries = targets.iterator();
+		while (entries.hasNext()) {
+			Object target = entries.next();
+			index = list.indexOf(target);
+			if (index > top) {
+				top = index - 1;
+				Object temp = list.get(top);
+				list.set(top, target);
+				list.set(index, temp);
+			}
+			top = index;
+		}
+		
+		AntClasspathContentProvider viewerContentProvider = (AntClasspathContentProvider) treeViewer.getContentProvider();
+		viewerContentProvider.setEntries(currentParent, list);
 		treeViewer.refresh();
 		treeViewer.setSelection(treeViewer.getSelection());
 		updateContainer();

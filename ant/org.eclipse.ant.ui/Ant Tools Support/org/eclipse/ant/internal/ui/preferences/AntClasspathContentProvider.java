@@ -182,11 +182,6 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 	public Object[] getGlobalAntClasspathEntries() {
 		return model.getEntries(ClasspathModel.ANT_HOME);
 	}
-	
-	public void handleMove(boolean direction, IClasspathEntry entry) {
-		IClasspathEntry parent = (IClasspathEntry)getParent(entry);
-		parent.moveChild(direction, entry);
-	}
 
 	public ClasspathModel getModel() {
 		return model;
@@ -198,5 +193,16 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		if (refreshEnabled && refreshRequested) {
 			refresh();
 		}
+	}
+
+	/**
+	 * @param currentParent
+	 */
+	public void setEntries(IClasspathEntry currentParent, List entries) {
+		if (currentParent instanceof GlobalClasspathEntries) {
+			GlobalClasspathEntries group= (GlobalClasspathEntries) currentParent;
+			group.setEntries(entries);
+		}
+		
 	}
 }
