@@ -169,7 +169,7 @@ public void writeTree(AbstractDataTree tree, IPath path, int depth, DataOutput o
 		}
 	}
 
-	Assert.isTrue(currentPath.equals(path), Policy.bind("dtree.navigationError"));
+	Assert.isTrue(currentPath.equals(path), "dtree.navigationError");
 
 	/* recursively write the subtree we're interested in */
 	writeNode(node, path, depth);
