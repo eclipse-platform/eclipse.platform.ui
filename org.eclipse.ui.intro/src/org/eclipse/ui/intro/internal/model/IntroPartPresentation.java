@@ -313,6 +313,9 @@ public class IntroPartPresentation extends IntroElement {
     }
 
     /**
+     * Returns the the Customizable Intro Part. may return null if init() has
+     * not been called yet on the presentation.
+     * 
      * @return Returns the introPart.
      */
     public IIntroPart getIntroPart() {

@@ -128,7 +128,7 @@ public class IntroURL {
         else if (action.equals(SHOW_PAGE))
             // display an Intro Page.
             showPage(getParameter(KEY_ID));
-        
+
         else if (action.equals(SHOW_MESSAGE))
             showMessage(getParameter(KEY_MESSAGE));
     }
@@ -148,7 +148,7 @@ public class IntroURL {
      */
     private void handleStandbyStateChanged(String partId, String input) {
         // set intro to standby mode. we know we have a customizable part.
-        CustomizableIntroPart introPart = getCustomizableIntroPart();
+        CustomizableIntroPart introPart = getCustomizableIntroPart(true);
         PlatformUI.getWorkbench().setIntroStandby(introPart, true);
         StandbyPart standbyPart = introPart.getStandbyPart();
 
@@ -183,15 +183,28 @@ public class IntroURL {
      */
     private void setStandbyState(String state) {
         boolean standby = state.equals("true") ? true : false;
-        CustomizableIntroPart introPart = getCustomizableIntroPart();
-        // should rely on Workbench api.
+        CustomizableIntroPart introPart = getCustomizableIntroPart(standby);
+        // should rely on Workbench api. If the Intro part was not open when
+        // this method was called, the following line simply resets the part
+        // into standby.
         PlatformUI.getWorkbench().setIntroStandby(introPart, standby);
     }
 
-    private CustomizableIntroPart getCustomizableIntroPart() {
-        // rely on model to get part.
-        return (CustomizableIntroPart) IntroPlugin.getDefault()
-                .getIntroModelRoot().getPresentation().getIntroPart();
+    /**
+     * Utility method to return the Intro part, if it is open. If it is not, then opens the 
+     * Intro part with the given state. This is needed to avoid flicker if states need to be changed.
+     * @param standby
+     * @return
+     * @todo Generated comment
+     */
+    private CustomizableIntroPart getCustomizableIntroPart(boolean standby) {
+        // do not rely on model presentation to get part because Intro may be
+        // closed.
+        CustomizableIntroPart intro = (CustomizableIntroPart) IntroPlugin
+                .getIntroPart();
+        if (intro == null)
+            intro = (CustomizableIntroPart) IntroPlugin.showIntroPart(standby);
+        return intro;
     }
 
     /**

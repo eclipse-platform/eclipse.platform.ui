@@ -14,6 +14,8 @@ import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.intro.*;
 import org.eclipse.ui.intro.internal.extensions.*;
 import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.ui.intro.internal.util.*;
@@ -98,6 +100,26 @@ public class IntroPlugin extends AbstractUIPlugin {
      */
     public IntroModelRoot getIntroModelRoot() {
         return getExtensionPointManager().getCurrentModel();
+    }
+
+    /**
+     * Returns the Intro Part. If the Intro part is not shown already, it is
+     * opened.
+     *  
+     */
+    public static IIntroPart getIntroPart() {
+        IIntroPart introPart = PlatformUI.getWorkbench().getIntro();
+        return introPart;
+    }
+
+    /**
+     * Returns the Intro Part after forcing an open on it.
+     *  
+     */
+    public static IIntroPart showIntroPart(boolean standby) {
+        IIntroPart introPart = PlatformUI.getWorkbench().showIntro(
+                PlatformUI.getWorkbench().getActiveWorkbenchWindow(), false);
+        return introPart;
     }
 
 }
