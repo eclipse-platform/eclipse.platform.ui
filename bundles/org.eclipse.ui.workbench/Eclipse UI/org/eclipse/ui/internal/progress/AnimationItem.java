@@ -11,122 +11,29 @@
 
 package org.eclipse.ui.internal.progress;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashSet;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 
 public class AnimationItem {
 
 	IWorkbenchWindow window;
-	private static final String PROGRESS_FOLDER = "icons/full/progress/"; //$NON-NLS-1$
-	private static final String RUNNING_ICON = "running.gif"; //$NON-NLS-1$
-	private static final String BACKGROUND_ICON = "back.gif"; //$NON-NLS-1$
-	private static final String ERROR_ICON = "error.gif"; //$NON-NLS-1$
-
-	private ImageData[] animatedData;
-	private ImageData[] disabledData;
-	private ImageData[] errorData;
-
-	private Image disabledImage;
-	private Image animatedImage;
-	private Image errorImage;
-	
-	Color background;
-
 	Canvas imageCanvas;
 	GC imageCanvasGC;
-	private ImageLoader runLoader = new ImageLoader();
-	private ImageLoader errorLoader = new ImageLoader();
-	boolean animated = false;
-	Job animateJob;
-	boolean showingError = false;
-	private IJobProgressManagerListener listener;
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param animatedPath
-	 * @param disabledPath
+	 * @param workbenchWindow the window being created
+	 * @param manager the AnimationManager that will run this item.
 	 */
 
-	public AnimationItem(IWorkbenchWindow workbenchWindow) {
-
+	public AnimationItem(
+		IWorkbenchWindow workbenchWindow) {
 		this.window = workbenchWindow;
-
-		//Get the progress manager started if it hasn't already
-		JobProgressManager.getInstance();
-		URL iconsRoot =
-			Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
-				new Path(PROGRESS_FOLDER));
-
-		try {
-			URL runningRoot = new URL(iconsRoot, RUNNING_ICON);
-			URL backRoot = new URL(iconsRoot, BACKGROUND_ICON);
-			URL errorRoot = new URL(iconsRoot, ERROR_ICON);
-
-			animatedData = getImageData(runningRoot, runLoader);
-			if (animatedData != null)
-				animatedImage = getImage(animatedData[0]);
-
-			disabledData = getImageData(backRoot, runLoader);
-			if (disabledData != null)
-				disabledImage = getImage(disabledData[0]);
-
-			errorData = getImageData(errorRoot, errorLoader);
-			if (errorData != null)
-				errorImage = getImage(errorData[0]);
-
-			getImageData(backRoot, errorLoader);
-
-			listener = getProgressListener();
-			JobProgressManager.getInstance().addListener(listener);
-		} catch (MalformedURLException exception) {
-			ProgressUtil.logException(exception);
-		}
-	}
-
-	/**
-	 * Returns the image descriptor with the given relative path.
-	 * @param source
-	 * @return Image
-	 */
-	private Image getImage(ImageData source) {
-		ImageData mask = source.getTransparencyMask();
-		return new Image(null, source, mask);
-	}
-
-	/**
-	 * Returns the image descriptor with the given relative path.
-	 * @param fileSystemPath The URL for the file system to the image.
-	 * @param loader - the loader used to get this data
-	 * @return ImageData[]
-	 */
-	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
-		try {
-			InputStream stream = fileSystemPath.openStream();
-			ImageData[] result = loader.load(stream);
-			stream.close();
-			return result;
-		} catch (FileNotFoundException exception) {
-			ProgressUtil.logException(exception);
-			return null;
-		} catch (IOException exception) {
-			ProgressUtil.logException(exception);
-			return null;
-		}
 	}
 
 	/**
@@ -135,8 +42,8 @@ public class AnimationItem {
 	 */
 	public void createControl(Composite parent) {
 
-		this.background = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 
+		final AnimationManager manager = AnimationManager.getInstance();
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
 		imageCanvas.setBackground(
@@ -145,7 +52,7 @@ public class AnimationItem {
 
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
-				paintImage(event, getImage(), getImageData()[0]);
+				paintImage(event, manager.getImage(), manager.getImageData()[0]);
 			}
 		});
 
@@ -183,7 +90,7 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.AccessibleControlEvent)
 			 */
 			public void getValue(AccessibleControlEvent arg0) {
-				if (animated)
+				if (manager.isAnimated())
 					arg0.result = ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
 				else
 					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
@@ -199,35 +106,9 @@ public class AnimationItem {
 
 			}
 		});
+		
+		manager.addItem(this);
 
-	}
-
-	/**
-	 * Get the current ImageData for the receiver.
-	 * @return ImageData[]
-	 */
-	ImageData[] getImageData() {
-		if (animated) {
-			if (showingError)
-				return errorData;
-			else
-				return animatedData;
-		} else
-			return disabledData;
-	}
-
-	/**
-	 * Get the current Image for the receiver.
-	 * @return Image
-	 */
-	Image getImage() {
-		if (animated) {
-			if (showingError)
-				return errorImage;
-			else
-				return animatedImage;
-		} else
-			return disabledImage;
 	}
 
 	/**
@@ -253,28 +134,6 @@ public class AnimationItem {
 			w,
 			h);
 	}
-	/**
-	 * Return whether or not the current state is animated.
-	 * @return boolean
-	 */
-	boolean isAnimated() {
-		return animated;
-	}
-
-	/**
-	 * Set whether or not the receiver is animated.
-	 * @param boolean
-	 */
-	void setAnimated(final boolean bool) {
-
-		animated = bool;
-		if (bool) {
-			ImageData[] imageDataArray = getImageData();
-			if (isAnimated() && imageDataArray.length > 1) {
-				getAnimateJob().schedule();
-			}
-		}
-	}
 
 	/**
 	 * Get the SWT control for the receiver.
@@ -283,298 +142,13 @@ public class AnimationItem {
 	public Control getControl() {
 		return imageCanvas;
 	}
-
-	/**
-	 * Dispose the images in the receiver.
-	 */
-	void dispose() {
-		disabledImage.dispose();
-		errorImage.dispose();
-		animatedImage.dispose();
-		JobProgressManager.getInstance().removeListener(listener);
-	}
-
-	/**
-	 * Loop through all of the images in a multi-image file
-	 * and display them one after another.
-	 * @param monitor The monitor supplied to the job
-	 */
-	void animateLoop(IProgressMonitor monitor) {
-		// Create an off-screen image to draw on, and a GC to draw with.
-		// Both are disposed after the animation.
-
-		if (getControl().isDisposed())
-			return;
-			
-		boolean startErrorState = showingError;
-		Display display = imageCanvas.getDisplay();
-		ImageData[] imageDataArray = getImageData();
-		ImageData imageData = imageDataArray[0];
-		Image image = getImage(imageData);
-		int imageDataIndex = 0;
-		
-		ImageLoader loader = getLoader();
-
-		Image offScreenImage =
-			new Image(
-				display,
-				loader.logicalScreenWidth,
-				loader.logicalScreenHeight);
-		GC offScreenImageGC = new GC(offScreenImage);
-			
-
-		try {		
-
-			if (getControl().isDisposed())
-				return;			
-				
-			// Fill the off-screen image with the background color of the canvas.
-			offScreenImageGC.setBackground(background);
-			offScreenImageGC.fillRectangle(
-				0,
-				0,
-				loader.logicalScreenWidth,
-				loader.logicalScreenHeight);
-
-			// Draw the current image onto the off-screen image.
-			offScreenImageGC.drawImage(
-				image,
-				0,
-				0,
-				imageData.width,
-				imageData.height,
-				imageData.x,
-				imageData.y,
-				imageData.width,
-				imageData.height);
-
-			if (loader.repeatCount > 0) {
-				while (isAnimated()
-					&& !monitor.isCanceled()
-					&& (startErrorState == showingError)) {
-					if (getControl().isDisposed())
-						return;
-					if (imageData.disposalMethod == SWT.DM_FILL_BACKGROUND) {
-						// Fill with the background color before drawing.
-						Color bgColor = null;
-						int backgroundPixel = loader.backgroundPixel;
-						if (backgroundPixel != -1) {
-							// Fill with the background color.
-							RGB backgroundRGB =
-								imageData.palette.getRGB(backgroundPixel);
-							bgColor = new Color(null, backgroundRGB);
-						}
-						try {
-							offScreenImageGC.setBackground(
-								bgColor != null ? bgColor : background);
-							offScreenImageGC.fillRectangle(
-								imageData.x,
-								imageData.y,
-								imageData.width,
-								imageData.height);
-						} finally {
-							if (bgColor != null)
-								bgColor.dispose();
-						}
-					} else if (
-						imageData.disposalMethod == SWT.DM_FILL_PREVIOUS) {
-						// Restore the previous image before drawing.
-						offScreenImageGC.drawImage(
-							image,
-							0,
-							0,
-							imageData.width,
-							imageData.height,
-							imageData.x,
-							imageData.y,
-							imageData.width,
-							imageData.height);
-					}
-
-					// Get the next image data.
-					imageDataIndex =
-						(imageDataIndex + 1) % imageDataArray.length;
-					imageData = imageDataArray[imageDataIndex];
-					image.dispose();
-					image = new Image(display, imageData);
-
-					// Draw the new image data.
-					offScreenImageGC.drawImage(
-						image,
-						0,
-						0,
-						imageData.width,
-						imageData.height,
-						imageData.x,
-						imageData.y,
-						imageData.width,
-						imageData.height);
-
-					if(imageCanvasGC.isDisposed())
-						return;
-					// Draw the off-screen image to the screen.
-					imageCanvasGC.drawImage(offScreenImage, 0, 0);
-
-					// Sleep for the specified delay time before drawing again.
-					try {
-						Thread.sleep(visibleDelay(imageData.delayTime * 10));
-					} catch (InterruptedException e) {
-					}
-
-				}
-			}
-		} finally {
-			image.dispose();
-			offScreenImage.dispose();
-			offScreenImageGC.dispose();
-		}
-	}
-
-
-	/**
-	 * Return the specified number of milliseconds.
-	 * If the specified number of milliseconds is too small
-	 * to see a visual change, then return a higher number.
-	 * @param ms The suggested delay
-	 * @return int
-	 */
-	int visibleDelay(int ms) {
-		if (ms < 20)
-			return ms + 30;
-		if (ms < 30)
-			return ms + 10;
-		return ms;
-	}
-
+	
 	/**
 	 * Get the bounds of the image being displayed here.
 	 * @return Rectangle
 	 */
 	public Rectangle getImageBounds() {
-		return disabledImage.getBounds();
+		return AnimationManager.getInstance().getImageBounds();
 	}
 
-	private IJobProgressManagerListener getProgressListener() {
-		return new IJobProgressManagerListener() {
-
-			HashSet jobs = new HashSet();
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
-			 */
-			public void add(JobInfo info) {
-				incrementJobCount(info.getJob());
-
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
-			 */
-			public void refresh(JobInfo info) {
-				if (info.getErrorStatus() != null)
-					showingError = true;
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
-			 */
-			public void refreshAll() {
-				JobProgressManager manager = JobProgressManager.getInstance();
-				showingError = manager.hasErrorsDisplayed();
-				jobs.clear();
-				Object[] currentJobs = manager.getJobs();
-				for (int i = 0; i < currentJobs.length; i++) {
-					jobs.add(currentJobs[i]);
-				}
-				setAnimated(showingError);
-
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
-			 */
-			public void remove(JobInfo info) {
-				if (jobs.contains(info.getJob())) {
-					decrementJobCount(info.getJob());
-				}
-
-			}
-
-			private void incrementJobCount(Job job) {
-				//Don't count the animate job itself
-				if (job.isSystem())
-					return;
-				if (jobs.size() == 0)
-					setAnimated(true);
-				jobs.add(job);
-			}
-
-			private void decrementJobCount(Job job) {
-				//Don't count the animate job itself
-				if (job.isSystem())
-					return;
-				jobs.remove(job);
-				if (jobs.isEmpty())
-					setAnimated(false);
-			}
-		};
-	}
-
-	private Job getAnimateJob() {
-		if (animateJob == null) {
-				animateJob = new Job(ProgressMessages.getString("AnimateJob.JobName")) {//$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				public IStatus run(IProgressMonitor monitor) {
-					try {
-						animateLoop(monitor);
-						return Status.OK_STATUS;
-					} catch (SWTException exception) {
-						return ProgressUtil.exceptionStatus(exception);
-					}
-				}
-			};
-			animateJob.setSystem(true);
-			animateJob.setPriority(Job.DECORATE);
-			animateJob.addJobChangeListener(new JobChangeAdapter() {
-				/* (non-Javadoc)
-				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-				 */
-				public void done(IJobChangeEvent event) {
-					if (isAnimated())
-						animateJob.schedule();
-					else {
-						//Clear the image
-
-						UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
-						/* (non-Javadoc)
-						 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-						 */
-							public IStatus runInUIThread(IProgressMonitor monitor) {
-								if (!imageCanvas.isDisposed())
-									imageCanvas.redraw();
-								return Status.OK_STATUS;
-							}
-						};
-						clearJob.setSystem(true);
-						clearJob.schedule();
-					}
-				}
-			});
-
-		}
-		return animateJob;
-	}
-
-	/**
-	 * Return the loader currently in use.
-	 * @return ImageLoader
-	 */
-	ImageLoader getLoader() {
-		if (showingError)
-			return errorLoader;
-		else
-			return runLoader;
-	}
 }
