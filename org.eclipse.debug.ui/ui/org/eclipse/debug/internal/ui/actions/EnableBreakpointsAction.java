@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import java.util.Iterator;
 
@@ -117,14 +119,15 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		}
 		
 		Iterator enum= sel.iterator();
-		IBreakpoint bp= (IBreakpoint)enum.next();
-		if (!enum.hasNext()) {
-			//single selection
+		boolean allEnabled= true;
+		boolean allDisabled= true;
+		while (enum.hasNext()) {
+			IBreakpoint bp= (IBreakpoint)enum.next();
 			try {
 				if (bp.isEnabled()) {
-					action.setEnabled(!isEnableAction());
+					allDisabled= false;
 				} else {
-					action.setEnabled(isEnableAction());
+					allEnabled= false;
 				}
 			} catch (CoreException ce) {
 				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -134,6 +137,12 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 					DebugUIPlugin.log(ce);
 				}
 			}
+		}
+			
+		if (isEnableAction()) {
+			action.setEnabled(!allEnabled);
+		} else {
+			action.setEnabled(!allDisabled);
 		}
 	}
 	
@@ -151,7 +160,6 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
 	}
-	
 	
 	/**
 	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
@@ -235,6 +243,5 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	 */
 	public void partOpened(IWorkbenchPart part) {
 	}
-
 }
 
