@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -42,18 +43,19 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private Button saveSelected;
 	private Button closeSelected;
 
-	private boolean showActivePersp;
+	private boolean showAllPersp;
 	private boolean showHistory;
 	private int sortColumn;
 	private List elements = new ArrayList();
-	private HashMap imageCache = new HashMap();
+	private HashMap imageCache = new HashMap(11);
+	private HashMap disabledImageCache = new HashMap(11);
 	private boolean reverse = false;
 	private Collator collator = Collator.getInstance();
 	private Rectangle bounds;
 	
 	private static final String SORT = "sort";
 	private static final String HISTORY = "history";
-	private static final String ACTIVEPERSP = "activePersp";
+	private static final String ALLPERSP = "allPersp";
 	private static final String BOUNDS = "bounds";
 	
 	private SelectionListener headerListener = new SelectionAdapter() {
@@ -77,12 +79,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		IDialogSettings s = getDialogSettings();
-		if(s.get(ACTIVEPERSP) == null) {
-			showActivePersp = false;
+		if(s.get(ALLPERSP) == null) {
+			showAllPersp = true;
 			showHistory = true;
 			sortColumn = 0;			
 		} else {
-			showActivePersp = s.getBoolean(ACTIVEPERSP);
+			showAllPersp = s.getBoolean(ALLPERSP);
 			showHistory = s.getBoolean(HISTORY);
 			sortColumn = s.getInt(SORT);
 			String[] b = s.getArray(BOUNDS);
@@ -126,23 +128,21 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		editorsTable.setHeaderVisible(true);
 		
 		final GridData tableData = new GridData(GridData.FILL_BOTH);
-		tableData.heightHint = 22 * editorsTable.getItemHeight();; 
-		tableData.widthHint = (int)(1.5 * tableData.heightHint);
+		tableData.heightHint = 16 * editorsTable.getItemHeight();
+		tableData.widthHint = (int) (2.5 * tableData.heightHint);
 		
 		editorsTable.setLayoutData(tableData);
 		editorsTable.setLayout(new Layout() {
-			protected Point computeSize (Composite composite, int wHint, int hHint, boolean flushCache){
-				return new Point(tableData.widthHint,tableData.heightHint);
+			protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache){
+				return new Point(tableData.widthHint, tableData.heightHint);
 			}
-			protected void layout (Composite composite, boolean flushCache){
+			protected void layout(Composite composite, boolean flushCache){
 				TableColumn c[] = editorsTable.getColumns();
-				int w = editorsTable.getBounds().width;
+				int w = editorsTable.getClientArea().width;
 				c[0].setWidth(w * 2 / 8);
 				c[1].setWidth(w * 3 / 8);
 				c[2].setWidth(w - c[0].getWidth() - c[1].getWidth());
 				editorsTable.setLayout(null);
-				tableData.heightHint = 3 * editorsTable.getItemHeight();
-				tableData.widthHint = (int)(1.5 * tableData.heightHint);
 			}
 		});
 		//Name column
@@ -183,7 +183,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		});
 		//Show history check box
 		final Button showHistoryButton = new Button(dialogArea,SWT.CHECK);
-		showHistoryButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showHistory"));
+		showHistoryButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.includeRecentlyUsed"));
 		showHistoryButton.setSelection(showHistory);
 		showHistoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -192,12 +192,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
 		});
 		//Show only active perspective button
-		final Button showActivePerspButton = new Button(dialogArea,SWT.CHECK);
-		showActivePerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showActivePerspButton"));
-		showActivePerspButton.setSelection(showActivePersp);
-		showActivePerspButton.addSelectionListener(new SelectionAdapter() {
+		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
+		showAllPerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showAllPersp"));
+		showAllPerspButton.setSelection(showAllPersp);
+		showAllPerspButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				showActivePersp = showActivePerspButton.getSelection();
+				showAllPersp = showAllPerspButton.getSelection();
 				updateItems();
 			}
 		});
@@ -219,34 +219,45 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 					Image i = (Image)images.next();
 					i.dispose();
 				}
+				for (Iterator images = disabledImageCache.values().iterator(); images.hasNext();) {
+					Image i = (Image)images.next();
+					i.dispose();
+				}
 			}
 		});
 		editorsTable.setFocus();
 		return dialogArea;
 	}
-	/*
-	 * Update buttons stated (enabled/disabled)
+	/**
+	 * Updates the button state (enabled/disabled)
 	 */
 	private void updateButtons() {
 		TableItem items[] = editorsTable.getSelection();
+		boolean hasDirty = false;
 		for (int i = 0; i < items.length; i ++) {
 			Adapter editor = (Adapter)items[i].getData();
 			if(editor.isDirty()) {
-				saveSelected.setEnabled(true);
+				hasDirty = true;
 				break;
 			}
-			saveSelected.setEnabled(false);
 		}
+		boolean isOpened = false;
+		saveSelected.setEnabled(hasDirty);
 		for (int i = 0; i < items.length; i ++) {
 			Adapter editor = (Adapter)items[i].getData();
 			if(editor.isOpened()) {
-				closeSelected.setEnabled(true);	
+				isOpened = true;
 				break;
 			}
 		}
+		closeSelected.setEnabled(isOpened);
+		Button ok = getOkButton();
+		if (ok != null) {
+			ok.setEnabled(items.length == 1);
+		}
 	}
-	/*
-	 * Close the specified editors
+	/**
+	 * Closes the specified editors
 	 */
 	private void closeItems(TableItem items[]) {
 		if(items.length == 0)
@@ -257,8 +268,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		}
 		updateItems();
 	}
-	/*
-	 * Save the specified editors
+	/**
+	 * Saves the specified editors
 	 */
 	private void saveItems(TableItem items[],IProgressMonitor monitor) {
 		if(items.length == 0)
@@ -273,18 +284,20 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		pmd.close();
 		updateItems();
 	}
-	/*
-	 * Update the specified item
+	/**
+	 * Updates the specified item
 	 */
 	private void updateItem(TableItem item,Adapter editor) {
 		item.setData(editor);
 		item.setText(editor.getText());
 		Image images[] = editor.getImage();
-		item.setImage(0,images[0]);
-		item.setImage(2,images[2]); 
+		for (int i = 0; i < images.length; i++) {
+			if (images[i] != null)
+				item.setImage(i, images[i]);
+		}
 	}
-	/*
-	 * Add all editors to elements
+	/**
+	 * Adds all editors to elements
 	 */
 	private void updateEditors(IWorkbenchPage[] pages) {
 		for (int j = 0; j < pages.length; j++) {
@@ -294,20 +307,21 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
 		}
 	}
-	/*
-	 * Update all items in the table
+	/**
+	 * Updates all items in the table
 	 */
 	private void updateItems() {
-		boolean showAllPerspectives = !showActivePersp;
 		editorsTable.removeAll();
 		elements = new ArrayList();
-		if(showAllPerspectives) {
+		if(showAllPersp) {
 			IWorkbenchWindow windows[] = window.getWorkbench().getWorkbenchWindows();
 			for (int i = 0; i < windows.length; i++)
 				updateEditors(windows[i].getPages());
 		} else {
 			IWorkbenchPage page = window.getActivePage();
-			updateEditors(new IWorkbenchPage[]{page});
+			if (page != null) {
+				updateEditors(new IWorkbenchPage[]{page});
+			}
 		}
 		if(showHistory) {
 			Workbench wb = (Workbench)window.getWorkbench();
@@ -327,9 +341,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			if((selection != null) && (selection == e.editor))
 				editorsTable.setSelection(new TableItem[]{item});
 		}
+		// update the buttons, because the selection may have changed
+		updateButtons();
 	}
-	/*
-	 * Sort all the editors according to the table header
+	/**
+	 * Sorts all the editors according to the table header
 	 */
 	private void sort() {
 		Adapter a[] = new Adapter[elements.size()];
@@ -342,11 +358,26 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
      */
 	protected void okPressed() {
 		TableItem items[] = editorsTable.getSelection();
-		if(items.length != 1)
+		if(items.length != 1) {
+			super.okPressed();
 			return;
+		}
 		
+		saveDialogSettings();
+						
+		Adapter selection = (Adapter)items[0].getData();	
+		//It would be better to activate before closing the
+		//dialog but it does not work when the editor is in other
+		//window. Must investigate.
+		super.okPressed();
+		selection.activate();
+	}
+	/**
+	 * Saves the dialog settings.
+	 */
+	private void saveDialogSettings() {
 		IDialogSettings s = getDialogSettings();
-		s.put(ACTIVEPERSP,showActivePersp);
+		s.put(ALLPERSP,showAllPersp);
 		s.put(HISTORY,showHistory);
 		s.put(SORT,sortColumn);
 		bounds = getShell().getBounds();
@@ -356,15 +387,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		b[2] = String.valueOf(bounds.width);
 		b[3] = String.valueOf(bounds.height);
 		s.put(BOUNDS,b);
-				
-		Adapter selection = (Adapter)items[0].getData();	
-		//It would be better to activate before closing the
-		//dialog but it does not work when the editor is in other
-		//window. Must investigate.
-		super.okPressed();
-		selection.activate();
 	}
-	/*
+
+	/**
 	 * Return a dialog setting section for this dialog
 	 */
 	private IDialogSettings getDialogSettings() {
@@ -374,7 +399,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			thisSettings = settings.addNewSection(getClass().getName());
 		return thisSettings;
 	}
-	/*
+	/**
 	 * A helper inner class to adapt EditorHistoryItem and IEditorPart
 	 * in the same type.
 	 */
@@ -424,7 +449,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			} else {	
 				text[0] = input.getName();
 				text[1] = input.getToolTipText();
-				text[2] = WorkbenchMessages.getString("WorkbenchEditorsDialog.closed");
+				text[2] = WorkbenchMessages.getString("WorkbenchEditorsDialog.recentlyUsed");
 			}
 			return text;
 		}
@@ -447,17 +472,23 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				ImageDescriptor image = null;
 				if(desc != null)
 					image = desc.getImageDescriptor();
-				if(image == null)
-					image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE);
-				images[2] = (Image)imageCache.get(image);
-				if(images[2] == null) {
-					images[2] = image.createImage();
-					Image disabled = new Image(editorsTable.getDisplay(), images[2], SWT.IMAGE_DISABLE);
-					images[2].dispose();
-					images[2] = disabled;
-					imageCache.put(image,images[2]);
+				if(image == null) {
+					IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
+					image = registry.getImageDescriptor(input.getName());
+					if (image == null) {
+						image = registry.getDefaultEditor().getImageDescriptor();
+					}
 				}
-				images[0] = images[2];
+				if (image != null) {
+					images[0] = (Image)disabledImageCache.get(image);
+					if(images[0] == null) {
+						Image enabled = image.createImage();
+						Image disabled = new Image(editorsTable.getDisplay(), enabled, SWT.IMAGE_DISABLE);
+						enabled.dispose();
+						disabledImageCache.put(image, disabled);
+						images[0] = disabled;
+					}
+				}
 			}
 			return images;
 		}
