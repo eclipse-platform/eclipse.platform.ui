@@ -53,7 +53,7 @@ public void run() {
 		IEditorPart activeEditor = page.getActiveEditor();
 		if (activeEditor != null) {
 			try {
-				IViewPart view= page.showView(IPageLayout.ID_RES_NAV);
+				IViewPart view= page.showView(getNavigator().getViewSite().getId());
 				ISelection selection= new StructuredSelection(activeEditor.getEditorInput());
 				((ISetSelectionTarget)view).selectReveal(selection);
 			} catch(PartInitException e) {
