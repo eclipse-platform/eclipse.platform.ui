@@ -100,6 +100,7 @@ public class BranchWizardPage extends CVSWizardPage {
 		});
 		
 		setControl(composite);
+		updateEnablement();
 	}
 	public String getBranchTag() {
 		return branchTag;
@@ -115,7 +116,13 @@ public class BranchWizardPage extends CVSWizardPage {
 		}
 	}
 	private void updateEnablement() {
-		IStatus status = CVSTag.validateTagName(branchText.getText());
+		String branch = branchText.getText();
+		if (branch.length() == 0) {
+			setErrorMessage(null);
+			setPageComplete(false);
+			return;
+		}
+		IStatus status = CVSTag.validateTagName(branch);
 		if (status.isOK()) {
 			setErrorMessage(null);
 		} else {
