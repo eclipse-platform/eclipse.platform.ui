@@ -43,6 +43,11 @@ public class SearchScope implements ISearchScope {
 			fElements.add(resources[i]);
 	}
 	
+	public void setDescription(String description) {
+		Assert.isNotNull(description);
+		fDescription= description;
+	}
+	
 	/*
 	 * @see ISearchScope#add(IResource)
 	 */
