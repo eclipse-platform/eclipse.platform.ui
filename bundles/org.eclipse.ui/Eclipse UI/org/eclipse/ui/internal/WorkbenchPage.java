@@ -1077,10 +1077,10 @@ protected Listener getMouseDownListener() {
  * Returns the new wizard actions the page.
  * This is List of Strings.
  */
-public ArrayList getNewWizardActions() {
+public ArrayList getNewWizardActionIds() {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
-		return persp.getNewWizardActions();
+		return persp.getNewWizardActionIds();
 	else
 		return new ArrayList();
 }
@@ -1106,10 +1106,10 @@ public IPerspectiveDescriptor getPerspective() {
  * Returns the perspective actions for this page.
  * This is List of Strings.
  */
-public ArrayList getPerspectiveActions() {
+public ArrayList getPerspectiveActionIds() {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
-		return persp.getPerspectiveActions();
+		return persp.getPerspectiveActionIds();
 	else
 		return new ArrayList();
 }
@@ -1134,10 +1134,10 @@ public ISelection getSelection(String partId) {
  * Returns the show view actions the page.
  * This is List of Strings.
  */
-public ArrayList getShowViewActions() {
+public ArrayList getShowViewActionIds() {
 	Perspective persp = getActivePerspective();
 	if (persp != null)
-		return persp.getShowViewActions();
+		return persp.getShowViewActionIds();
 	else
 		return new ArrayList();
 }

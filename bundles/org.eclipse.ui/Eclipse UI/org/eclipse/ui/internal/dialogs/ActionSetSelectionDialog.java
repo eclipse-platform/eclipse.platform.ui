@@ -56,7 +56,7 @@ private void checkInitialSelections() {
 			actionSetViewer.setChecked(actionSets[i],true);
 	}
 
-	ArrayList actions = perspective.getShowViewActions();
+	ArrayList actions = perspective.getShowViewActionIds();
 	if (actions != null) {
 		for (int nX = 0; nX < actions.size(); nX ++) {
 			String id = (String)actions.get(nX);
@@ -64,7 +64,7 @@ private void checkInitialSelections() {
 		}
 	}
 
-	actions = perspective.getPerspectiveActions();
+	actions = perspective.getPerspectiveActionIds();
 	if (actions != null) {
 		for (int nX = 0; nX < actions.size(); nX ++) {
 			String id = (String)actions.get(nX);
@@ -72,7 +72,7 @@ private void checkInitialSelections() {
 		}
 	}
 
-	actions = perspective.getNewWizardActions();
+	actions = perspective.getNewWizardActionIds();
 	if (actions != null) {
 		for (int nX = 0; nX < actions.size(); nX ++) {
 			String id = (String)actions.get(nX);
@@ -254,9 +254,9 @@ protected void okPressed() {
 		}
 	}
 
-	perspective.setShowViewActions(viewActions);
-	perspective.setPerspectiveActions(perspActions);
-	perspective.setNewWizardActions(wizardActions);
+	perspective.setShowViewActionIds(viewActions);
+	perspective.setPerspectiveActionIds(perspActions);
+	perspective.setNewWizardActionIds(wizardActions);
 
 	IActionSetDescriptor [] actionSetArray = new IActionSetDescriptor[actionSets.size()];
 	actionSetArray = (IActionSetDescriptor [])actionSets.toArray(actionSetArray);

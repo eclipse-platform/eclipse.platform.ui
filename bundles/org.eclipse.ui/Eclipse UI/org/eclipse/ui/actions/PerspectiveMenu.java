@@ -175,7 +175,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		if (page == null)
 			return list;
 
-		ArrayList ids = ((WorkbenchPage) page).getPerspectiveActions();
+		ArrayList ids = ((WorkbenchPage) page).getPerspectiveActionIds();
 		if (ids == null)
 			return list;
 

@@ -126,6 +126,14 @@ public interface IPageLayout {
  */
 public void addActionSet(String actionSetId);
 /**
+ * Adds the view with the given id to the page layout as a fast view.  
+ * The id must name a view contributed to the workbench's view extension
+ * point (named <code>"org.eclipse.ui.views"</code>).
+ * 
+ * @param id the id of the view to be added
+ */
+public void addFastView(String id);
+/**
  * Adds a creation wizard to the File New menu.
  * The id must name a new wizard extension contributed to the 
  * workbench's extension point (named <code>"org.eclipse.ui.newWizards"</code>).

@@ -86,7 +86,7 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 			return;
 
 		// Get visible actions.
-		List viewIds = ((WorkbenchPage) page).getShowViewActions();
+		List viewIds = ((WorkbenchPage) page).getShowViewActionIds();
 		viewIds = addOpenedViews(page, viewIds);
 		List actions = new ArrayList(viewIds.size());
 		for (Iterator i = viewIds.iterator(); i.hasNext();) {

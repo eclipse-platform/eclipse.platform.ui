@@ -62,7 +62,7 @@ protected void fillMenu() {
 		List actions = null;
 		IWorkbenchPage page = getWindow().getActivePage();
 		if (page != null)
-			actions = ((WorkbenchPage) page).getNewWizardActions();
+			actions = ((WorkbenchPage) page).getNewWizardActionIds();
 		if (actions != null) {
 			for (Iterator i = actions.iterator(); i.hasNext();) {
 				String id = (String) i.next();

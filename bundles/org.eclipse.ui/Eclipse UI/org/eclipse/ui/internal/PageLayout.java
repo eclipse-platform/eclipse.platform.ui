@@ -10,11 +10,11 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
  
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.EditorPresentation;
-import org.eclipse.ui.internal.registry.*;
 import java.util.*;
+
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.part.ViewPart;
 
 /**
  * This factory is used to define the initial layout of a part sash container.
@@ -52,9 +52,10 @@ public class PageLayout implements IPageLayout {
 	private Map mapIDtoPart = new HashMap(10);
 	private Map mapIDtoFolder = new HashMap(10);
 	private ArrayList actionSets = new ArrayList(3);
-	private ArrayList newWizardActions = new ArrayList(3);
-	private ArrayList showViewActions = new ArrayList(3);
-	private ArrayList perspectiveActions = new ArrayList(3);
+	private ArrayList newWizardActionIds = new ArrayList(3);
+	private ArrayList showViewActionIds = new ArrayList(3);
+	private ArrayList perspectiveActionIds = new ArrayList(3);
+	private ArrayList fastViews = new ArrayList(3);
 	//Number of open editors before reusing. If < 0, use the 
 	//user preference settings.
 	private int reuseEditors = -1;
@@ -95,6 +96,22 @@ public void addActionSet(String actionSetID) {
 	}
 }
 /**
+ * @see IPageLayout
+ */
+public void addFastView(String id) {
+	if (checkPartInLayout(id))
+		return;
+	if (id != null) {
+		try {
+			ViewPane pane = viewFactory.createView(id);
+			IViewPart part = pane.getViewPart();
+			fastViews.add(part);
+		} catch(PartInitException e) {
+			WorkbenchPlugin.log(e.getMessage());	
+		}
+	}
+}
+/**
  * Adds a creation wizard to the File New menu.
  * The id must name a new wizard extension contributed to the 
  * workbench's extension point (named <code>"org.eclipse.ui.newWizards"</code>).
@@ -102,8 +119,8 @@ public void addActionSet(String actionSetID) {
  * @param id the wizard id
  */
 public void addNewWizardShortcut(String id) {	
-	if (!newWizardActions.contains(id)) {
-		newWizardActions.add(id);
+	if (!newWizardActionIds.contains(id)) {
+		newWizardActionIds.add(id);
 	}
 }
 /**
@@ -135,8 +152,8 @@ private void addPart(LayoutPart newPart, String partId, int relationship, float 
  * @param id the perspective id
  */
 public void addPerspectiveShortcut(String id) {
-	if (!perspectiveActions.contains(id)) {
-		perspectiveActions.add(id);
+	if (!perspectiveActionIds.contains(id)) {
+		perspectiveActionIds.add(id);
 	}
 }
 /**
@@ -158,8 +175,8 @@ public void addPlaceholder(String viewId, int relationship, float ratio, String 
  * @param id the view id
  */
 public void addShowViewShortcut(String id) {	
-	if (!showViewActions.contains(id)) {
-		showViewActions.add(id);
+	if (!showViewActionIds.contains(id)) {
+		showViewActionIds.add(id);
 	}
 }
 /**
@@ -185,6 +202,10 @@ public void addView(String viewId, int relationship, float ratio, String refId) 
 	if (getRefPart(partId) != null) {
 		WorkbenchPlugin.log("Part already exists in page layout: " + partId);//$NON-NLS-1$
 		return true;
+	}
+	for(int i = 0; i<fastViews.size(); i++) {
+		if(((IViewPart)fastViews.get(i)).getSite().getId().equals(partId))
+			return true;
 	}
 	
 	return false;
@@ -250,11 +271,17 @@ public String getEditorArea() {
 	return ID_EDITOR_AREA;
 }
 /**
+ * Returns the fast views.
+ */
+public ArrayList getFastViews() {
+	return fastViews;
+}
+/**
  * Returns the new wizard actions the page.
  * This is List of Strings.
  */
-public ArrayList getNewWizardActions() {
-	return newWizardActions;
+public ArrayList getNewWizardActionIds() {
+	return newWizardActionIds;
 }
 /**
  * Answer the part sash container const for a layout value.
@@ -266,8 +293,8 @@ private int getPartSashConst(int nRelationship) {
  * Returns the perspective actions.
  * This is List of Strings.
  */
-public ArrayList getPerspectiveActions() {
-	return perspectiveActions;
+public ArrayList getPerspectiveActionIds() {
+	return perspectiveActionIds;
 }
 /**
  * Answer the part for a given ID.
@@ -293,8 +320,8 @@ public RootLayoutContainer getRootLayoutContainer() {
  * Returns the show view actions the page.
  * This is List of Strings.
  */
-public ArrayList getShowViewActions() {
-	return showViewActions;
+public ArrayList getShowViewActionIds() {
+	return showViewActionIds;
 }
 /**
  * Answer the label for a view.

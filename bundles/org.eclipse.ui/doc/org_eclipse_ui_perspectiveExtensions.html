@@ -19,8 +19,7 @@ selected.&nbsp; Optional additions by other plug-ins are appended to the
 initial definition.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT perspectiveExtension (actionSet | viewShortcut
-| perspectiveShortcut |</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; newWizardShortcut | view)*></tt>
+| perspectiveShortcut | newWizardShortcut | view)*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST perspectiveExtension</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; targetID&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
@@ -93,6 +92,7 @@ The relationship between these two views is defined by <tt>relationship</tt>.</l
 <tt>relative</tt>.&nbsp; The following values are supported:</li>
 
 <ul>&nbsp;
+<br><b>fast</b> - the view extension will be created as a fast view.
 <br><b>stack</b> - the view extension will be stacked with the relative
 view in a folder.
 <br><b>left, right, top, bottom</b> - the view extension will be placed
@@ -141,7 +141,7 @@ and perspective shortcut are contributed to the initial contents of the
 Resource Perspective.&nbsp; In addition, the Package Explorer view is stacked
 on the Resource Navigator view and the Type Hierarchy view is added beside the
 Resource Navigator view.
-<p><b><i>Additional Notes: </i></b>The items defined within the perspective
+<p><b><i>API Information: </i></b>The items defined within the perspective
 extension are contributed to the initial contents of the target perspective.&nbsp;
 Following this, the user may remove any contribution or add others to a
 perspective from within the workbench user interface.

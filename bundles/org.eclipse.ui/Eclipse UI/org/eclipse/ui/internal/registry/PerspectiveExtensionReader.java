@@ -1,9 +1,14 @@
 package org.eclipse.ui.internal.registry;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
@@ -33,6 +38,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
 	private static final String VAL_TOP="top";//$NON-NLS-1$
 	private static final String VAL_BOTTOM="bottom";//$NON-NLS-1$
 	private static final String VAL_STACK="stack";//$NON-NLS-1$
+	private static final String VAL_FAST="fast";//$NON-NLS-1$
 /**
  * RegistryViewReader constructor comment.
  */
@@ -110,6 +116,7 @@ private boolean processView(IConfigurationElement element) {
 
 	// Get relationship details.
 	boolean stack = false;
+	boolean fast = false;
 	int intRelation = 0;
 	if (relationship.equals(VAL_LEFT))
 		intRelation = IPageLayout.LEFT;
@@ -121,12 +128,20 @@ private boolean processView(IConfigurationElement element) {
 		intRelation = IPageLayout.BOTTOM;
 	else if (relationship.equals(VAL_STACK)) 
 		stack = true;
+	else if (relationship.equals(VAL_FAST))
+		fast = true;
 	else
 		return false;
 
 	// If stack ..
 	if (stack) {
 		pageLayout.stackView(id, relative);
+		return true;
+	}
+	
+	// If fast ..
+	if (fast) {
+		pageLayout.addFastView(id);
 		return true;
 	}
 

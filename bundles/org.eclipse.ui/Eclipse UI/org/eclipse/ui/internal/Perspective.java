@@ -35,9 +35,9 @@ public class Perspective
 	private ArrayList visibleActionSets;
 	private ArrayList alwaysOnActionSets;
 	private ArrayList alwaysOffActionSets;
-	private ArrayList newWizardActions;
-	private ArrayList showViewActions;
-	private ArrayList perspectiveActions;
+	private ArrayList newWizardActionIds;
+	private ArrayList showViewActionIds;
+	private ArrayList perspectiveActionIds;
 	private ArrayList fastViews;
 	private IViewPart activeFastView;
 	protected PerspectivePresentation presentation;
@@ -296,8 +296,8 @@ public IViewPart [] getFastViews() {
  * Returns the new wizard actions the page.
  * This is List of Strings.
  */
-public ArrayList getNewWizardActions() {
-	return newWizardActions;
+public ArrayList getNewWizardActionIds() {
+	return newWizardActionIds;
 }
 /**
  * Returns the pane for a view.
@@ -310,8 +310,8 @@ private ViewPane getPane(IViewPart view) {
  * Returns the perspective actions for this page.
  * This is List of Strings.
  */
-public ArrayList getPerspectiveActions() {
-	return perspectiveActions;
+public ArrayList getPerspectiveActionIds() {
+	return perspectiveActionIds;
 }
 /**
  * Returns the presentation.
@@ -336,8 +336,8 @@ private float getFastViewWidthRatio(String id) {
  * Returns the show view actions the page.
  * This is List of Strings.
  */
-public ArrayList getShowViewActions() {
-	return showViewActions;
+public ArrayList getShowViewActionIds() {
+	return showViewActionIds;
 }
 /**
  * Returns the toolbar layout for this perspective.
@@ -523,10 +523,13 @@ private void loadPredefinedPersp(
 	// Create action sets.
 	createInitialActionSets(layout.getActionSets());
 	alwaysOnActionSets.addAll(visibleActionSets);
-	newWizardActions = layout.getNewWizardActions();
-	showViewActions = layout.getShowViewActions();
-	perspectiveActions = layout.getPerspectiveActions();
+	newWizardActionIds = layout.getNewWizardActionIds();
+	showViewActionIds = layout.getShowViewActionIds();
+	perspectiveActionIds = layout.getPerspectiveActionIds();
 	
+	// Create fast views
+	fastViews = layout.getFastViews();
+		
 	// Create presentation.	
 	presentation = new PerspectivePresentation(page, container);
 
@@ -564,6 +567,7 @@ protected void onActivate() {
 			pane.createControl(getClientComposite());
 			ctrl = pane.getControl();
 		}
+		presentation.enableDrag(pane);		
 		ctrl.setEnabled(false); // Remove focus support.
 	}
 	
@@ -583,6 +587,7 @@ protected void onDeactivate() {
 	// Update fast views.
 	for (int i = 0; i < fastViews.size(); i++){
 		ViewPane pane = getPane((IViewPart)fastViews.get(i));
+		presentation.disableDrag(pane);
 		Control ctrl = pane.getControl();
 		if (ctrl != null)
 			ctrl.setEnabled(true); // Add focus support.
@@ -746,26 +751,26 @@ public void restoreState(IMemento memento) {
 
 	// Load "show view actions".
 	actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
-	showViewActions = new ArrayList(actions.length);
+	showViewActionIds = new ArrayList(actions.length);
 	for (int x = 0; x < actions.length; x ++) {
 		String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-		showViewActions.add(id);
+		showViewActionIds.add(id);
 	}
 	
 	// Load "new wizard actions".
 	actions = memento.getChildren(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
-	newWizardActions = new ArrayList(actions.length);
+	newWizardActionIds = new ArrayList(actions.length);
 	for (int x = 0; x < actions.length; x ++) {
 		String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-		newWizardActions.add(id);
+		newWizardActionIds.add(id);
 	}
 	
 	// Load "perspective actions".
 	actions = memento.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE_ACTION);
-	perspectiveActions = new ArrayList(actions.length);
+	perspectiveActionIds = new ArrayList(actions.length);
 	for (int x = 0; x < actions.length; x ++) {
 		String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-		perspectiveActions.add(id);
+		perspectiveActionIds.add(id);
 	}
 	
 	// Save presentation.	
@@ -888,7 +893,7 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	}
 
 	// Save "show view actions"
-	enum = showViewActions.iterator();
+	enum = showViewActionIds.iterator();
 	while (enum.hasNext()) {
 		String str = (String)enum.next();
 		IMemento child = memento.createChild(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
@@ -896,7 +901,7 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	}
 
 	// Save "new wizard actions".
-	enum = newWizardActions.iterator();
+	enum = newWizardActionIds.iterator();
 	while (enum.hasNext()) {
 		String str = (String)enum.next();
 		IMemento child = memento.createChild(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
@@ -904,7 +909,7 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	}
 	
 	// Save "perspective actions".
-	enum = perspectiveActions.iterator();
+	enum = perspectiveActionIds.iterator();
 	while (enum.hasNext()) {
 		String str = (String)enum.next();
 		IMemento child = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVE_ACTION);
@@ -1046,22 +1051,22 @@ private void setAllPinsVisible(boolean visible) {
  * Sets the new wizard actions for the page.
  * This is List of Strings.
  */
-public void setNewWizardActions(ArrayList newList ) {
-	newWizardActions = newList;
+public void setNewWizardActionIds(ArrayList newList ) {
+	newWizardActionIds = newList;
 }
 /**
  * Sets the perspective actions for this page.
  * This is List of Strings.
  */
-public void setPerspectiveActions(ArrayList list) {
-	perspectiveActions = list;
+public void setPerspectiveActionIds(ArrayList list) {
+	perspectiveActionIds = list;
 }
 /**
  * Sets the show view actions for the page.
  * This is List of Strings.
  */
-public void setShowViewActions(ArrayList list) {
-	showViewActions = list;
+public void setShowViewActionIds(ArrayList list) {
+	showViewActionIds = list;
 }
 /**
  * Sets the toolbar layout for this perspective.
