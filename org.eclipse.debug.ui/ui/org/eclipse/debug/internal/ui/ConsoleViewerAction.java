@@ -7,8 +7,9 @@ package org.eclipse.debug.internal.ui;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleViewerAction extends Action {
+public class ConsoleViewerAction extends Action implements IUpdate {
 
 	private int fOperationCode= -1;
 	private ITextOperationTarget fOperationTarget;
