@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class FontPreferencePage
@@ -27,22 +28,22 @@ public class FontPreferencePage
 		createFieldEditor(
 			JFaceResources.getBannerFont(),
 			JFaceResources.BANNER_FONT,
-			"Banner Font: ",
+			WorkbenchMessages.getString("FontsPreference.BannerFont"),
 			editorParent);
 		createFieldEditor(
 			JFaceResources.getDialogFont(),
 			JFaceResources.DIALOG_FONT,
-			"Dialog Font: ",
+			WorkbenchMessages.getString("FontsPreference.DialogFont"),
 			editorParent);
 		createFieldEditor(
 			JFaceResources.getTerminalFont(),
 			JFaceResources.TERMINAL_FONT,
-			"Terminal Font: ",
+			WorkbenchMessages.getString("FontsPreference.TerminalFont"),
 			editorParent);
 		createFieldEditor(
 			JFaceResources.getTextFont(),
 			JFaceResources.TEXT_FONT,
-			"Text Font: ",
+			WorkbenchMessages.getString("FontsPreference.TextFont"),
 			editorParent);
 	}
 
