@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.texteditor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -153,7 +154,9 @@ public final class HippieCompletionEngine {
 	}
 	
 	/**
-	 * Search for possible completions in the backward direction.
+	 * Search for possible completions in the backward direction. If there
+     * is a possible completion that begins before <code>firstPosition</code>
+     * but ends after that position, it will be included in the resutls.
 	 * 
 	 * @param document the document to be scanned
 	 * @param prefix the completion prefix
@@ -171,27 +174,30 @@ public final class HippieCompletionEngine {
         if (firstPosition == 0) {
             return res;
         }
-        firstPosition--;
 		
 		FindReplaceDocumentAdapter searcher= new FindReplaceDocumentAdapter(document);
 		
 		// search only at word boundaries 
 		String searchPattern= "\\b" + asRegPattern(prefix); //$NON-NLS-1$
 		
-		IRegion reg= searcher.find(firstPosition, searchPattern, false, CASE_SENSITIVE, false, true);
+		IRegion reg= searcher.find(0, searchPattern, true, CASE_SENSITIVE, false, true);
 		while (reg != null) {
 			// try to complete to a word. case is of no matter here
 			IRegion word= searcher.find(reg.getOffset(), COMPLETION_WORD_REGEX, true, true, false, true);
+            if (word.getOffset() > firstPosition) {
+                break;
+            }
 			if (word.getLength() > reg.getLength() ) { // empty suggestion will be added later
 				String found= document.get(word.getOffset(), word.getLength());
 				res.add(found.substring(prefix.length()));
 			}
-			int nextPos= word.getOffset() - 1;
-			if (nextPos < 0 ) {
-				break;
-			}
-			reg= searcher.find(nextPos, searchPattern, false, CASE_SENSITIVE, false, true);
+            int nextPos= word.getOffset() + word.getLength();
+            if (nextPos >= firstPosition ) { // for efficiency only
+                break;
+            }
+			reg= searcher.find(nextPos, searchPattern, true, CASE_SENSITIVE, false, true);
 		}
+        Collections.reverse(res);
 		
 		return res;
 	}

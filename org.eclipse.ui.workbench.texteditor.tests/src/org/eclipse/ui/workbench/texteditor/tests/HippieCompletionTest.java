@@ -125,8 +125,9 @@ public class HippieCompletionTest extends TestCase {
 			
 			list = fEngine.getCompletionsBackwards(documents[0], 
 					"pri", documents[0].get().indexOf("println") + 1);
-			assertEquals(list.size(), 1);
-			assertEquals(list.get(0), "nt");
+			assertEquals(list.size(), 2);
+			assertEquals(list.get(0), "ntln");
+            assertEquals(list.get(1), "nt");
 			
 		} catch (BadLocationException e) {
 			assertTrue("Got out of document bounds", false);
