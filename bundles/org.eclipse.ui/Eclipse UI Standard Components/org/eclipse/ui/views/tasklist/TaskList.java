@@ -71,6 +71,7 @@ public class TaskList extends ViewPart {
 	private TaskAction selectAllAction;
 	private TaskAction resolveMarkerAction;
 	private TaskAction filtersAction;
+	private TaskAction markCompletedAction;
 	
 	private Clipboard clipboard;
 	 
@@ -463,6 +464,7 @@ void fillContextMenu(IMenuManager menu) {
 	menu.add(removeTaskAction);
 	menu.add(gotoTaskAction);
 	menu.add(new Separator());
+	menu.add(markCompletedAction);
 	menu.add(purgeCompletedAction);
 	menu.add(new Separator());
 	menu.add(resolveMarkerAction);
@@ -666,7 +668,13 @@ void makeActions() {
 	removeTaskAction.setDisabledImageDescriptor(MarkerUtil.getImageDescriptor("remtsk_disabled")); //$NON-NLS-1$
 	removeTaskAction.setEnabled(false);
 
-	// delete completed tasks
+	//mark completed task
+	markCompletedAction = new MarkCompletedAction(this,"markCompleted");
+	markCompletedAction.setText(TaskListMessages.getString("MarkCompleted.text"));
+	markCompletedAction.setToolTipText(TaskListMessages.getString("MarkCompleted.tooltip")); //$NON-NLS-1$
+	markCompletedAction.setEnabled(false);
+	
+	//delete completed task
 	purgeCompletedAction = new PurgeCompletedAction(this, "deleteCompleted"); //$NON-NLS-1$
 	purgeCompletedAction.setText(TaskListMessages.getString("PurgeCompleted.text")); //$NON-NLS-1$
 	purgeCompletedAction.setToolTipText(TaskListMessages.getString("PurgeCompleted.tooltip")); //$NON-NLS-1$
