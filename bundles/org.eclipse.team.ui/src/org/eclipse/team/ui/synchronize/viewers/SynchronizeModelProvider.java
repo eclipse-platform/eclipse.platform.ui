@@ -115,7 +115,14 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 *            input.
 	 */
 	public SynchronizeModelProvider(SyncInfoSet set) {
-		this(new UnchangedResourceModelElement(null, ResourcesPlugin.getWorkspace().getRoot()), set);
+		this(new UnchangedResourceModelElement(null, ResourcesPlugin.getWorkspace().getRoot()) {
+			/* 
+			 * Override to ensure that the diff viewer will appear in CompareEditorInputs
+			 */
+			public boolean hasChildren() {
+				return true;
+			}
+		}, set);
 	}
 
 	public SynchronizeModelProvider(SynchronizeModelElement parent, SyncInfoSet set) {
