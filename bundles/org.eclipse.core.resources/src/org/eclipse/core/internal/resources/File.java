@@ -218,13 +218,8 @@ public class File extends Resource implements IFile {
 		IContentDescription description = getContentDescription();
 		if (description == null)
 			return getParent().getDefaultCharset();
-		byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-		if (bom == IContentDescription.BOM_UTF_8)
-			return "UTF-8"; //$NON-NLS-1$
-		else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
-			// UTF-16 will properly recognize the BOM
-			return "UTF-16"; //$NON-NLS-1$
-		return description.getProperty(IContentDescription.CHARSET) == null ? getParent().getDefaultCharset() : (String) description.getProperty(IContentDescription.CHARSET);
+		String contentCharset = description.getCharset();
+		return contentCharset == null ? getParent().getDefaultCharset() : contentCharset;
 	}
 
 	/*
