@@ -31,7 +31,7 @@ public class TypeTests extends AbstractAntTest {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls= prefs.getExtraClasspathURLs();
 		Type newType= new Type();
-		newType.setLibraryEntry(new AntClasspathEntry(urls[0].getFile()));
+		newType.setLibraryEntry(new AntClasspathEntry(urls[0]));
 		newType.setTypeName("anttestpath");
 		newType.setClassName("org.eclipse.ant.tests.core.support.types.AntTestPath");
 		prefs.setCustomTypes(new Type[]{newType});
