@@ -7,9 +7,6 @@
    provider-name="%providerName">
 
 <runtime>
-   <library name="boot.jar">
-      <packages prefixes="org.eclipse.core"/>
-   </library>
+	<library name="boot.jar"/>
 </runtime>
-
 </plugin>

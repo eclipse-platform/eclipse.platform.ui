@@ -1,0 +1,1 @@
+The features provided by this plug-in moved to org.eclipse.core.runtime, org.eclipse.core.runtime.compatiblilty or org.eclipse.update.configurator.
