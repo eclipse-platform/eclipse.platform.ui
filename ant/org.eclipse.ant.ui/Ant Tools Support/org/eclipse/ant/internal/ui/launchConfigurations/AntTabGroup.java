@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
@@ -60,7 +61,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 				name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 				configuration.rename(name);
 				configuration.setAttribute(IExternalToolConstants.ATTR_LOCATION,
-					DebugPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
+						VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString())); //$NON-NLS-1$
 			}		
 		}
 	}	

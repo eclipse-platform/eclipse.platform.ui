@@ -27,7 +27,7 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -443,7 +443,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			
 			String location = null;
 			try {
-				location = DebugPlugin.getDefault().getStringVariableManager().performStringSubstitution(fLocation);
+				location = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fLocation);
 			} catch (CoreException e1) {
 				setErrorMessage(e1.getMessage());
 			}
