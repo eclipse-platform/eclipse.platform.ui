@@ -102,8 +102,8 @@ public interface IContentTypeManager {
 	 * given listener argument must not be <code>null</code>.
 	 * 
 	 * @param listener the content type change listener to register
-	 * @see #removeContentTypeChangeListener(IContentTypeChangeListener)
-	 * @see IContentTypeChangeListener
+	 * @see #removeContentTypeChangeListener(IContentTypeManager.IContentTypeChangeListener)
+	 * @see IContentTypeManager.IContentTypeChangeListener
 	 */
 	public void addContentTypeChangeListener(IContentTypeChangeListener listener);
 
@@ -246,8 +246,8 @@ public interface IContentTypeManager {
 	 * effect. The given listener argument must not be <code>null</code>.
 	 * 
 	 * @param listener the content type change listener to remove
-	 * @see #addContentTypeChangeListener(IContentTypeChangeListener)
-	 * @see IContentTypeChangeListener
+	 * @see #addContentTypeChangeListener(IContentTypeManager.IContentTypeChangeListener)
+	 * @see IContentTypeManager.IContentTypeChangeListener
 	 */
 	public void removeContentTypeChangeListener(IContentTypeChangeListener listener);
 }

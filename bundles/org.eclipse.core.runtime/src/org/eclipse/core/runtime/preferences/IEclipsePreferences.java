@@ -32,7 +32,7 @@ public interface IEclipsePreferences extends Preferences {
 	 * preference node hierarchy. The child node is the one which 
 	 * was added or removed.
 	 * 
-	 * @see INodeChangeListener
+	 * @see IEclipsePreferences.INodeChangeListener
 	 * @since 3.0
 	 */
 	public final class NodeChangeEvent extends EventObject {
@@ -90,7 +90,7 @@ public interface IEclipsePreferences extends Preferences {
 		 * The given event must not be <code>null</code>.
 		 * 
 		 * @param event an event specifying the details about the new node
-		 * @see NodeChangeEvent
+		 * @see IEclipsePreferences.NodeChangeEvent
 		 * @see IEclipsePreferences#addNodeChangeListener(IEclipsePreferences.INodeChangeListener)
 		 * @see IEclipsePreferences#removeNodeChangeListener(IEclipsePreferences.INodeChangeListener)
 		 */
@@ -101,7 +101,7 @@ public interface IEclipsePreferences extends Preferences {
 		 * The given event must not be <code>null</code>.
 		 * 
 		 * @param event an event specifying the details about the removed node
-		 * @see NodeChangeEvent
+		 * @see IEclipsePreferences.NodeChangeEvent
 		 * @see IEclipsePreferences#addNodeChangeListener(IEclipsePreferences.INodeChangeListener)
 		 * @see IEclipsePreferences#removeNodeChangeListener(IEclipsePreferences.INodeChangeListener)
 		 */
@@ -112,7 +112,7 @@ public interface IEclipsePreferences extends Preferences {
 	 * An event object describing the details of a change to a preference
 	 * in the preference store.
 	 * 
-	 * @see IPreferenceChangeListener
+	 * @see IEclipsePreferences.IPreferenceChangeListener
 	 * @since 3.0
 	 */
 	public final class PreferenceChangeEvent extends EventObject {

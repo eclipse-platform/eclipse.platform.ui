@@ -148,7 +148,7 @@ public class Preferences {
 	 * Clients cannot instantiate or subclass this class.
 	 * </p>
 	 *
-	 * @see Preferences#addPropertyChangeListener(IPropertyChangeListener)
+	 * @see Preferences#addPropertyChangeListener(Preferences.IPropertyChangeListener)
 	 * @see Preferences.IPropertyChangeListener
 	 */
 	public static class PropertyChangeEvent extends EventObject {
