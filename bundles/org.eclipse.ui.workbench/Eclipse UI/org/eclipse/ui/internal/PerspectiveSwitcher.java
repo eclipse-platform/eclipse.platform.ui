@@ -186,7 +186,7 @@ public class PerspectiveSwitcher {
         showPerspectiveBar();
         if(newLocation == TOP_LEFT || newLocation == TOP_RIGHT) {
         	updatePerspectiveBar();
-        	setCoolItemSize(coolItem);
+        	updateBarParent();
         }
 	}
 
@@ -339,13 +339,8 @@ public class PerspectiveSwitcher {
 						.equals(propertyChangeEvent.getProperty())) {
 					if (perspectiveBar == null)
 						return;
-					IContributionItem[] items = perspectiveBar.getItems();
-					for (int i = 0; i < items.length; i++) {
-						items[i].update();
-					}
-					perspectiveBar.update(true);
-					setCoolItemSize(coolItem);
-					
+					updatePerspectiveBar();
+					updateBarParent();
 				}
 			}
 		};
@@ -420,12 +415,11 @@ public class PerspectiveSwitcher {
 		ToolBar toolbar = perspectiveBar.getControl();
 		if (toolbar == null) 
 			return;
-
-		int rowHeight = toolbar.getItem(0).getBounds().height;
 		
-		// This gets the height of the tallest item.
-		for (int i = 1; i < perspectiveBar.getControl().getItemCount(); i++) {
-			rowHeight = Math.max(rowHeight, perspectiveBar.getControl().getItem(i).getBounds().height);
+		int rowHeight = 0;
+		ToolItem[] toolItems = perspectiveBar.getControl().getItems();
+		for (int i = 0; i < toolItems.length; i++) {
+			rowHeight = Math.max(rowHeight, toolItems[i].getBounds().height);
 		}
 		
 		Rectangle area = perspectiveCoolBar.getClientArea();
@@ -621,8 +615,6 @@ public class PerspectiveSwitcher {
 				boolean preference = showtextMenuItem.getSelection();
                 PrefUtil.getAPIPreferenceStore()
                         .setValue(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, preference);
-                setCoolItemSize(coolItem);
-                updatePerspectiveBar();
 			}
 		});
 	}
@@ -673,7 +665,31 @@ public class PerspectiveSwitcher {
 			items[i].update();
 		// make sure the selected item is visible
 		perspectiveBar.arrangeToolbar();
+		setCoolItemSize(coolItem);
 		perspectiveBar.getControl().redraw();
 	}
 
+	/**
+	 * Updates the height of the CBanner if the perspective bar
+	 * is docked on the top right
+	 */
+	public void updateBarParent() {
+		if (perspectiveBar == null || perspectiveBar.getControl() == null)
+			return;
+
+		// TOP_LEFT and LEFT need only relayout in this case, however TOP_RIGHT
+		// will need to set the minimum height of the CBanner as it might have changed.
+		if (currentLocation == TOP_RIGHT && topBar != null) {
+				// This gets the height of the tallest tool item.
+			int maxRowHeight = 0;
+			ToolItem[] toolItems = perspectiveBar.getControl().getItems();
+			for (int i = 0; i < toolItems.length; i++) {
+				maxRowHeight = Math.max(maxRowHeight, toolItems[i].getBounds().height);
+			}
+			// This sets the CBanner's minimum height to support large fonts
+			topBar.setRightMinimumSize(new Point(SWT.DEFAULT, maxRowHeight));
+		}
+		
+		LayoutUtil.resize(perspectiveBar.getControl());
+	}
 }
