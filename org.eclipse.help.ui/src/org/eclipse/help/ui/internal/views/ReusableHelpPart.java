@@ -679,6 +679,10 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 	public void showURL(String url, boolean replace) {
 		if (url==null) return;
+		if (url.startsWith("nw:")) {
+			replace=false;
+			url = url.substring(3);
+		}
 		if (replace) {
 			showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 			BrowserPart bpart = (BrowserPart)findPart(IHelpUIConstants.HV_BROWSER);
@@ -696,11 +700,15 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		//}
 		//catch (MalformedURLException e) {
 		//}
+		showExternalURL(url);
+	}
+	
+	public void showExternalURL(String url) {
 		if (isHelpResource(url))
 			WorkbenchHelp.displayHelpResource(url);
 		else {
 			try {
-				BaseHelpSystem.getHelpBrowser(true).displayURL(url);
+				BaseHelpSystem.getHelpBrowser(true).displayURL(toAbsoluteURL(url));
 			}
 			catch (Exception e) {
 				HelpUIPlugin.logError("Error opening browser", e);
@@ -719,12 +727,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		return null;
 	}
 	
-	private boolean isHelpResource(String url) {
-		if (url==null || url.indexOf("://")!= -1) //$NON-NLS-1$
+	public boolean isHelpResource(String url) {
+		if (url==null || url.indexOf("://")== -1) //$NON-NLS-1$
 			return true;
 		return false;
 	}
-	
+
 	private String toAbsoluteURL(String url) {
 		if (url==null || url.indexOf("://")!= -1) //$NON-NLS-1$
 			return url;
@@ -765,7 +773,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			openAction.setTarget(target);
 			openInHelpAction.setTarget(target);
 			manager.add(openAction);
-			manager.add(openInHelpAction);
+			if (!href.startsWith("nw:"))
+				manager.add(openInHelpAction);
 			return true;
 		}
 		return false;

@@ -30,7 +30,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	private ReusableHelpPart parent;
@@ -192,7 +191,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		String url = (String) href;
 
 		if (url.startsWith("nw:")) { //$NON-NLS-1$
-			WorkbenchHelp.displayHelpResource(url.substring(3));
+			parent.showExternalURL(url.substring(3));
 		} else
 			parent.showURL(url);
 	}
