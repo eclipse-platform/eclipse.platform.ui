@@ -11,15 +11,28 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 
+import java.util.Date;
+
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
 
 public class CVSEntryLineTag extends CVSTag {
+	
+	private static String getNameInInternalFormat(CVSTag tag) {
+		if(tag.getType() == DATE){
+			String s = CVSDateFormatter.tagNametoInternalName(tag.getName());
+			if(s != null){
+				return s;
+			}
+		}
+		return tag.getName();
+	}
 	
 	/*
 	 * The parameter tag must not be null.
 	 */
 	public CVSEntryLineTag(CVSTag tag) {
-		super(tag.getName(), tag.getType());
+		super(getNameInInternalFormat(tag), tag.getType());
 	}
 	
 	public CVSEntryLineTag(String entryLineTag) {
@@ -35,6 +48,13 @@ public class CVSEntryLineTag extends CVSTag {
 	 * Returns the tag name
 	 */
 	public String getName() {
+		if (getType() == DATE) {
+			// Use same format as CVSTag when the name is requested
+			Date date = asDate();
+			if(date != null){
+				return CVSDateFormatter.dateToTagName(date);
+			}
+		}
 		return name;
 	}
 	/*
@@ -53,12 +73,19 @@ public class CVSEntryLineTag extends CVSTag {
 			return "D" + name;//$NON-NLS-1$
 		return "";//$NON-NLS-1$
 	}
-	
+
 	/*
 	 * For debugging purposes.
 	 */
 	public String toString() {
 		return toEntryLineFormat(false);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.CVSTag#asDate()
+	 */
+	public Date asDate() {
+		return CVSDateFormatter.parseEntryLineName(name);
 	}
 }
 

@@ -43,7 +43,7 @@ public class CVSTag {
 	}
 	//Write a date in local date tag format
 	public CVSTag(Date date) {
-		this (CVSDateFormatter.dateTagOfLocalFormat(date), DATE);
+		this(CVSDateFormatter.dateToTagName(date), DATE);
 	}
 
 	public boolean equals(Object other) {
@@ -69,7 +69,13 @@ public class CVSTag {
 		return name.hashCode();
 	}
 	
-	public int compareTo(CVSTag other) {		
+	public int compareTo(CVSTag other) {
+		if(getType() == DATE && other.getType()== DATE){
+			Date date1 = asDate();
+			Date date2 = other.asDate();
+			if(date1 == null || date2 == null)return -1;
+			return date1.compareTo(date2);
+		}
 		return getName().compareTo(other.getName());
 	}
 	
@@ -101,7 +107,7 @@ public class CVSTag {
 	 * @return the date of the tag or <code>null</code>
 	 */
 	public Date asDate(){
-		return CVSDateFormatter.parseTagName(name);
+		return CVSDateFormatter.tagNameToDate(name);
 	}
 
 }

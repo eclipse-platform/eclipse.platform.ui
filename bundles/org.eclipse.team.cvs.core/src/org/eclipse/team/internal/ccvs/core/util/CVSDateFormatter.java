@@ -32,21 +32,22 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 public class CVSDateFormatter {
 	
 	private static final String ENTRYLINE_FORMAT = "E MMM dd HH:mm:ss yyyy"; //$NON-NLS-1$
-	private static final String DATE_AND_TIME_FORMAT = "dd MMM yyyy HH:mm:ss";//$NON-NLS-1$
-	private static final String DATE_ONLY_FORMAT = "dd MMM yyyy";
+	private static final String DATE_TAG_NAME_FORMAT = "dd MMM yyyy HH:mm:ss Z";//$NON-NLS-1$
+	private static final String REPO_VIEW_LONG_FORAMT = "dd MMM yyyy HH:mm:ss";
+	private static final String REPO_VIEW_SHORT_FORMAT = "dd MMM yyyy";
 	private static final String TIME_ONLY_DOT_FORMAT = "HH.mm.ss";
 	private static final String TIME_ONLY_COLUMN_FORMAT = "HH:mm:ss";
-	private static final String DATE_TAG_NAME_FORMAT = "yyyy.MM.dd.HH.mm.ss";
-	private static String DATE_DACORATOR_FORMAT = "yyyy/MM/dd HH:mm:ss";
+	private static final String DATE_TAG_INTERNAL_NAME_FORMAT = "yyyy.MM.dd.HH.mm.ss";
+	private static String DACORATOR_FORMAT = "yyyy/MM/dd HH:mm:ss";
 	private static final int ENTRYLINE_TENS_DAY_OFFSET = 8;
 	
-	private static final SimpleDateFormat serverFormat = new SimpleDateFormat(DATE_AND_TIME_FORMAT, Locale.US);
+	private static final SimpleDateFormat serverFormat = new SimpleDateFormat(DATE_TAG_NAME_FORMAT, Locale.US);
 	private static SimpleDateFormat entryLineFormat = new SimpleDateFormat(ENTRYLINE_FORMAT, Locale.US);
-	private static SimpleDateFormat localLongFormat = new SimpleDateFormat(DATE_AND_TIME_FORMAT,Locale.getDefault());
-	private static SimpleDateFormat localShortFormat = new SimpleDateFormat(DATE_ONLY_FORMAT,Locale.getDefault());
+	private static SimpleDateFormat localLongFormat = new SimpleDateFormat(REPO_VIEW_LONG_FORAMT,Locale.getDefault());
+	private static SimpleDateFormat localShortFormat = new SimpleDateFormat(REPO_VIEW_SHORT_FORMAT,Locale.getDefault());
 	private static SimpleDateFormat timeColumnFormat = new SimpleDateFormat(TIME_ONLY_COLUMN_FORMAT, Locale.getDefault());
-	private static SimpleDateFormat tagNameFormat = new SimpleDateFormat(DATE_TAG_NAME_FORMAT);
-	private static SimpleDateFormat decorateFormatter = new SimpleDateFormat(DATE_DACORATOR_FORMAT, Locale.getDefault());
+	private static SimpleDateFormat tagNameInternalFormat = new SimpleDateFormat(DATE_TAG_INTERNAL_NAME_FORMAT, Locale.getDefault());
+	private static SimpleDateFormat decorateFormatter = new SimpleDateFormat(DACORATOR_FORMAT, Locale.getDefault());
 	
 	static {
 		entryLineFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
@@ -55,11 +56,6 @@ public class CVSDateFormatter {
 		serverFormat.setTimeZone(getTimeZone(text));
 		Date date = serverFormat.parse(text);
 		return date;
-	}
-
-	static synchronized public String dateToServerStamp(Date date) {
-		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
-		return serverFormat.format(date) + " -0000"; //$NON-NLS-1$
 	}
 	
 	static synchronized public String repoViewTimeStamp(Date date){
@@ -73,10 +69,19 @@ public class CVSDateFormatter {
 	static synchronized public String decoratorTimeStamp(Date date){
 		return decorateFormatter.format(date);
 	}
-	static synchronized public String dateTagOfLocalFormat(Date date){
-		return tagNameFormat.format(date);
+	static synchronized public String dateToTagName(Date date){
+		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
+		return serverFormat.format(date); //$NON-NLS-1$
 	}
-
+	static public Date tagNameToDate(String name){
+		if (name == null) return null;		
+		try {
+			return serverFormat.parse(name);
+		} catch (ParseException e) {
+			CVSProviderPlugin.log(wrapException(name, DATE_TAG_NAME_FORMAT, e));
+			return null;
+		}
+	}
 	static synchronized public Date entryLineToDate(String text) throws ParseException {
 		try {
 			if (text.charAt(ENTRYLINE_TENS_DAY_OFFSET) == ' ') {
@@ -89,7 +94,14 @@ public class CVSDateFormatter {
 		}
 		return entryLineFormat.parse(text);
 	}
-
+	static synchronized public Date parseEntryLineName(String text){
+		try {
+			 return tagNameInternalFormat.parse(text);
+		} catch (ParseException e) {
+			CVSProviderPlugin.log(wrapException(text, DATE_TAG_INTERNAL_NAME_FORMAT, e));
+			return null;
+		}		
+	}
 	static synchronized public String dateToEntryLine(Date date) {
 		if (date == null) return ""; //$NON-NLS-1$
 		String passOne = entryLineFormat.format(date);
@@ -98,7 +110,19 @@ public class CVSDateFormatter {
 		passTwo.setCharAt(ENTRYLINE_TENS_DAY_OFFSET, ' ');
 		return passTwo.toString();
 	}
-	
+
+	static synchronized public String tagNametoInternalName(String text){
+		if(text.length() == DATE_TAG_INTERNAL_NAME_FORMAT.length())return text;
+		Date date = null;
+		try {
+			date = serverFormat.parse(text);
+		} catch (ParseException e) {
+			CVSProviderPlugin.log(wrapException(text, DATE_TAG_NAME_FORMAT, e));
+			return null;
+		}
+		tagNameInternalFormat.setTimeZone(TimeZone.getDefault());
+		return tagNameInternalFormat.format(date);
+	}
 	static synchronized public String dateToNotifyServer(Date date) {
 		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
 		return serverFormat.format(date) + " GMT"; //$NON-NLS-1$
@@ -130,15 +154,10 @@ public class CVSDateFormatter {
 		return TimeZone.getTimeZone("GMT");//$NON-NLS-1$
 	}
 	
-	static public Date parseTagName(String name){
-		if (name == null) return null;		
-		if(name.length()== DATE_TAG_NAME_FORMAT.length()){
-			try {
-				return tagNameFormat.parse(name);
-			} catch (ParseException e) {
-				CVSProviderPlugin.log(CVSException.wrapException(e));
-			}
-		}
-		return null;
+	static private CVSException wrapException(String string, String format, Throwable t){
+		return new CVSException("Cannot parse " + string 
+					+ ", format " + format 
+					+ "is expected\n", t);
 	}
+	
 }
