@@ -75,18 +75,24 @@ public class ReviewPage
 			IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
 			IFeature feature = job.getFeature();
 
+			String text = null;
 			switch (column) {
 				case 0 :
-					return feature.getLabel();
+					text = feature.getLabel();
+					break;
 				case 1 :
-					return feature
+					text = feature
 						.getVersionedIdentifier()
 						.getVersion()
 						.toString();
+					break;
 				case 2 :
-					return feature.getProvider();
+					text = feature.getProvider();
+					break;
 			}
-			return ""; //$NON-NLS-1$
+			if (text == null)
+				text = ""; //$NON-NLS-1$
+			return text;
 		}
 		public Image getColumnImage(Object obj, int column) {
 			if (column == 0) {
