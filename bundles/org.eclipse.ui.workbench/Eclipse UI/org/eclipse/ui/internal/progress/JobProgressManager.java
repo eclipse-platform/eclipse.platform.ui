@@ -10,22 +10,25 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.IProgressProvider;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 
 /**
  * JobProgressManager provides the progress monitor to the 
  * job manager and informs any ProgressContentProviders of changes.
  */
-public class JobProgressManager implements IProgressProvider {
+public class JobProgressManager
+	extends JobChangeAdapter
+	implements IProgressProvider {
 
 	private ArrayList providers = new ArrayList();
 	private static JobProgressManager singleton;
+	private Map jobs = Collections.synchronizedMap(new HashMap());
+	private Collection updates = Collections.synchronizedSet(new HashSet());
+	private boolean updateAll = false;
+	boolean debug = false;
 
 	/**
 	 * Get the progress manager currently in use.
@@ -55,13 +58,12 @@ public class JobProgressManager implements IProgressProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 		 */
-		public void beginTask(String name, int totalWork) {
-			Iterator iterator = providers.iterator();
-			while (iterator.hasNext()) {
-				ProgressContentProvider provider =
-					(ProgressContentProvider) iterator.next();
-				provider.beginTask(job, name, totalWork);
-			}
+		public void beginTask(String taskName, int totalWork) {
+			if (isNonDisplayableJob(job))
+				return;
+			JobInfo info = getJobInfo(job);
+			info.beginTask(taskName, totalWork);
+			refreshViewers(info);
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
@@ -73,12 +75,7 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
 		 */
 		public void internalWorked(double work) {
-			Iterator iterator = providers.iterator();
-			while (iterator.hasNext()) {
-				ProgressContentProvider provider =
-					(ProgressContentProvider) iterator.next();
-				provider.worked(job, work);
-			}
+			worked((int) work);
 
 		}
 		/* (non-Javadoc)
@@ -98,19 +95,35 @@ public class JobProgressManager implements IProgressProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
 		 */
-		public void setTaskName(String name) {
+		public void setTaskName(String taskName) {
+			if (isNonDisplayableJob(job))
+				return;
+
+			JobInfo info = getJobInfo(job);
+			if (info.hasTaskInfo())
+				info.setTaskName(taskName);
+			else {
+				beginTask(taskName, 100);
+				return;
+			}
+
+			info.clearChildren();
+			refreshViewers(info);
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
 		 */
 		public void subTask(String name) {
-				Iterator iterator = providers.iterator();
-			while (iterator.hasNext()) {
-				ProgressContentProvider provider =
-					(ProgressContentProvider) iterator.next();
-				provider.subTask(job, name);
-			}
+			if (isNonDisplayableJob(job))
+				return;
+			if (name.length() == 0)
+				return;
+			JobInfo info = getJobInfo(job);
+
+			info.clearChildren();
+			info.addSubTask(name);
+			refreshViewers(info);
 
 		}
 
@@ -118,11 +131,13 @@ public class JobProgressManager implements IProgressProvider {
 		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
 		 */
 		public void worked(int work) {
-			Iterator iterator = providers.iterator();
-			while (iterator.hasNext()) {
-				ProgressContentProvider provider =
-					(ProgressContentProvider) iterator.next();
-				provider.worked(job, work);
+			if (isNonDisplayableJob(job))
+				return;
+
+			JobInfo info = getJobInfo(job);
+			if (info.hasTaskInfo()) {
+				info.addWork(work);
+				refreshViewers(info);
 			}
 		}
 	}
@@ -132,6 +147,7 @@ public class JobProgressManager implements IProgressProvider {
 	 */
 	JobProgressManager() {
 		Platform.getJobManager().setProgressProvider(this);
+		Platform.getJobManager().addJobChangeListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -157,4 +173,101 @@ public class JobProgressManager implements IProgressProvider {
 		providers.remove(provider);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void scheduled(IJobChangeEvent event) {
+		if (!isNonDisplayableJob(event.getJob())) {
+			jobs.put(event.getJob(), new JobInfo(event.getJob()));
+			refreshViewers(null);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void aboutToRun(IJobChangeEvent event) {
+		if (!isNonDisplayableJob(event.getJob())) {
+			JobInfo info = getJobInfo(event.getJob());
+			info.setRunning();
+			refreshViewers(null);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+	 */
+	public void done(IJobChangeEvent event) {
+		if (!isNonDisplayableJob(event.getJob())) {
+			if (event.getResult().getCode() == IStatus.ERROR) {
+				JobInfo info = getJobInfo(event.getJob());
+				info.setError(event.getResult());
+			} else {
+				jobs.remove(event.getJob());
+			}
+			refreshViewers(null);
+		}
+
+	}
+
+	/**
+		 * Get the JobInfo for the job. If it does not exist
+		 * create it.
+		 * @param job
+		 * @return
+		 */
+	private JobInfo getJobInfo(Job job) {
+		JobInfo info = (JobInfo) jobs.get(job);
+		if (info == null) {
+			info = new JobInfo(job);
+			jobs.put(job, info);
+		}
+		return info;
+	}
+
+	/**
+	 * Refresh the content providers as a result of a change in info.
+	 * @param info
+	 */
+	public void refreshViewers(JobInfo info) {
+		Iterator iterator = providers.iterator();
+		while (iterator.hasNext()) {
+			ProgressContentProvider provider =
+				(ProgressContentProvider) iterator.next();
+			provider.refreshViewer(info);
+		}
+
+	}
+
+	/**
+	 * Return whether or not this job is displayable.
+	 * @param job
+	 * @return
+	 */
+	private boolean isNonDisplayableJob(Job job) {
+		if (job == null)
+			return true;
+		return !debug && job.isSystem();
+	}
+
+	/**
+	 * Get the jobs currently being held onto.
+	 * @return Object[]
+	 */
+	public Object[] getJobs() {
+		return jobs.values().toArray();
+	}
+
+	/**
+	 * Clear the job out of the list of those being displayed.
+	 * Only do this for jobs that are an error.
+	 * @param job
+	 */
+	void clearJob(Job job) {
+		JobInfo info = (JobInfo) jobs.get(job);
+		if (info != null && info.getStatus().getCode() == IStatus.ERROR) {
+			jobs.remove(job);
+			refreshViewers(null);
+		}
+	}
 }

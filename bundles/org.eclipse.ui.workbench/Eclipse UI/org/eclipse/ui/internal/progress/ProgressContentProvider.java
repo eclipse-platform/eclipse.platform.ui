@@ -13,12 +13,9 @@ package org.eclipse.ui.internal.progress;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * The ProgressContentProvider is the content provider used for
@@ -26,58 +23,12 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
  */
 public class ProgressContentProvider implements ITreeContentProvider {
 
-	private Map jobs = Collections.synchronizedMap(new HashMap());
-	IJobChangeListener listener;
 	private TreeViewer viewer;
 	private Collection updates = Collections.synchronizedSet(new HashSet());
 	private boolean updateAll = false;
-	private Job updateJob;
-	
-	boolean debug = false;
+	private Job updateJob; 
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
-		listener = new JobChangeAdapter() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#scheduled(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void scheduled(IJobChangeEvent event) {
-				if (!isNonDisplayableJob(event.getJob())) {
-					jobs.put(event.getJob(), new JobInfo(event.getJob()));
-					refreshViewer(null);
-				}
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void aboutToRun(IJobChangeEvent event) {
-				if (!isNonDisplayableJob(event.getJob())) {
-					JobInfo info = getJobInfo(event.getJob());
-					info.setRunning();
-					refreshViewer(null);
-				}
-			}
-						
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void done(IJobChangeEvent event) {
-				if (!isNonDisplayableJob(event.getJob())) {
-					if (event.getResult().getCode() == IStatus.ERROR) {
-						JobInfo info = getJobInfo(event.getJob());
-						info.setError(event.getResult());
-					} else {
-						jobs.remove(event.getJob());
-					}
-					refreshViewer(null);
-				}
-
-			}
-
-		};
-		Platform.getJobManager().addJobChangeListener(listener);
 		viewer = mainViewer;
 		JobProgressManager.getInstance().addProvider(this);
 	}
@@ -106,16 +57,14 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return jobs.values().toArray();
+		return JobProgressManager.getInstance().getJobs();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		Platform.getJobManager().removeJobChangeListener(listener);
 		JobProgressManager.getInstance().removeProvider(this);
-
 	}
 
 	/* (non-Javadoc)
@@ -123,99 +72,8 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 */
 	public void inputChanged(Viewer updateViewer, Object oldInput, Object newInput) {
 	}
-
-	/**
-	 * A task has begun on job so create a new JobInfo for it.
-	 * @param job
-	 * @param taskName
-	 * @param totalWork
-	 */
-	public void beginTask(Job job, String taskName, int totalWork) {
-		if (isNonDisplayableJob(job))
-			return;
-		JobInfo info = getJobInfo(job);
-		info.beginTask(taskName, totalWork);
-		refreshViewer(info);
-	}
-
-	/**
-	 * Get the JobInfo for the job. If it does not exist
-	 * create it.
-	 * @param job
-	 * @return
-	 */
-	private JobInfo getJobInfo(Job job) {
-		JobInfo info = (JobInfo) jobs.get(job);
-		if (info == null) {
-			info = new JobInfo(job);
-			jobs.put(job, info);
-		}
-		return info;
-	}
-	/**
-	 * Return whether or not this job is displayable.
-	 * @param job
-	 * @return
-	 */
-	private boolean isNonDisplayableJob(Job job) {
-		if(job == null)
-			return true;
-		return !debug && job.isSystem();
-	}
-	/**
-	 * Reset the name of the task to task name.
-	 * @param job
-	 * @param taskName
-	 * @param totalWork
-	 */
-	public void setTaskName(Job job, String taskName, int totalWork) {
-		if (isNonDisplayableJob(job))
-			return;
-
-		JobInfo info = getJobInfo(job);
-		if (info.hasTaskInfo()) 
-			info.setTaskName(taskName);
-		else{
-			beginTask(job, taskName, totalWork);
-			return;
-		}
-
-		info.clearChildren();
-		refreshViewer(info);
-	}
-
-	/**
-	 * Create a new subtask on jg
-	 * @param job
-	 * @param name
-	 */
-	public void subTask(Job job, String name) {
-		if (isNonDisplayableJob(job))
-			return;
-		if (name.length() == 0)
-			return;
-		JobInfo info = getJobInfo(job);
-
-		info.clearChildren();
-		info.addSubTask(name);
-		refreshViewer(info);
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.IProgressListener#worked(org.eclipse.core.runtime.jobs.Job, int)
-	 */
-	public void worked(Job job, double work) {
-		if (isNonDisplayableJob(job))
-			return;
-
-		JobInfo info = getJobInfo(job);
-		if (info.hasTaskInfo()) {
-			info.addWork(work);
-			refreshViewer(info);
-		}
-	}
-
+	
+	
 	/**
 	 * Refresh the viewer as a result of a change in info.
 	 * @param info
@@ -232,19 +90,6 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			
 		//Add in a 100ms delay so as to keep priority low
 		updateJob.schedule(100);			
-	}
-
-	/**
-	 * Clear the job out of the list of those being displayed.
-	 * Only do this for jobs that are an error.
-	 * @param job
-	 */
-	void clearJob(Job job) {
-		JobInfo info = (JobInfo) jobs.get(job);
-		if (info != null && info.getStatus().getCode() == IStatus.ERROR) {
-			jobs.remove(job);
-			viewer.refresh(null);
-		}
 	}
 	
 	private void createUpdateJob(){

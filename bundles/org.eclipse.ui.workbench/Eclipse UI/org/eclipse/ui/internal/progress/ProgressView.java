@@ -108,17 +108,18 @@ public class ProgressView extends ViewPart implements IViewPart {
 		IMenuManager menuMgr =
 			((ViewSite) getSite()).getActionBars().getMenuManager();
 		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), IAction.AS_CHECK_BOX) { //$NON-NLS-1$
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
 			public void run() {
-				ProgressContentProvider provider = (ProgressContentProvider) viewer.getContentProvider();
+				JobProgressManager provider =
+					(JobProgressManager) viewer.getContentProvider();
 				provider.debug = !provider.debug;
 				setChecked(provider.debug);
-				provider.refreshViewer(null);
+				provider.refreshViewers(null);
 			}
-			
+
 		});
 
 	}
@@ -203,11 +204,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 			public void run() {
 				JobInfo element = getSelectedInfo();
-				(
-					(ProgressContentProvider) viewer
-						.getContentProvider())
-						.clearJob(
-					element.getJob());
+				JobProgressManager.getInstance().clearJob(element.getJob());
 			}
 		};
 	}
