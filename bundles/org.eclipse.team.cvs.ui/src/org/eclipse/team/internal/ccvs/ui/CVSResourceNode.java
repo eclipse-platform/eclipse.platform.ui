@@ -5,14 +5,18 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
 import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.core.TeamException;
@@ -87,5 +91,15 @@ public class CVSResourceNode extends ResourceNode {
 	
 	protected IStructureComparator createChild(IResource child) {
 		return new CVSResourceNode(child);
+	}
+	/*
+	 * @see BufferedContent#setContent(byte[])
+	 */
+	public void setContent(byte[] contents) {
+		try {
+			((IFile)getResource()).setContents(new ByteArrayInputStream(contents), false, true, new NullProgressMonitor());
+		} catch (CoreException e) {
+			CVSUIPlugin.log(e.getStatus());
+		}
 	}
 }

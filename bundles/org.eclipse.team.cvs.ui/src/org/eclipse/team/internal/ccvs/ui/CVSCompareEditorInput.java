@@ -5,19 +5,25 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
+import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.ResourceNode;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSTag;
@@ -49,6 +55,42 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	
 	// provider for the project being compared
 	CVSTeamProvider cvsProvider = null;
+	
+	class ResourceDiffNode extends DiffNode {
+		public ResourceDiffNode(IDiffContainer parent, int kind, ITypedElement ancestor, ITypedElement left, ITypedElement right) {
+			super(parent, kind, ancestor, left, right);
+		}
+		/*
+		 * @see ICompareInput#copy(boolean)
+		 */
+		public void copy(boolean leftToRight) {
+			if (leftToRight) return;
+			ITypedElement right = getRight();
+			ITypedElement left = getLeft();
+			if (left == null) {
+				// Addition
+				ResourceDiffNode parent = (ResourceDiffNode)getParent();
+				IContainer parentResource = (IContainer)((CVSResourceNode)parent.getLeft()).getResource();
+				IFile resource = parentResource.getFile(new Path(right.getName()));
+				try {
+					resource.create(new ByteArrayInputStream(new byte[0]), false, null);
+				} catch (CoreException e) {
+					CVSUIPlugin.log(e.getStatus());
+				}
+				left = new CVSResourceNode(resource);
+				setLeft(left);
+			} else {
+				// Deletion
+				try {
+					((IFile)((CVSResourceNode)left).getResource()).delete(false, true, null);
+				} catch (CoreException e) {
+					CVSUIPlugin.log(e.getStatus());
+				}
+				setLeft(null);
+			}
+			super.copy(leftToRight);
+		}
+	};
 	
 	/**
 	 * Creates a new CVSCompareEditorInput.
@@ -257,6 +299,13 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 						return children;
 				}
 				return null;
+			}
+			protected Object visit(Object data, int result, Object ancestor, Object left, Object right) {
+				if (CVSCompareEditorInput.this.left instanceof CVSResourceNode) {
+					return new ResourceDiffNode((IDiffContainer) data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
+				} else {
+					return new DiffNode((IDiffContainer) data, result, (ITypedElement)ancestor, (ITypedElement)left, (ITypedElement)right);
+				}
 			}
 		};
 		
