@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IValue;
@@ -200,11 +199,6 @@ public class DebugPlugin extends Plugin {
 	private int fDispatching = 0;
 	
 	/**
-	 * Sync lock for async scheduling
-	 */
-	private Object fLock = new Object();
-	
-	/**
 	 * Queue of runnables to execute after event dispatch is
 	 * complete.
 	 * 
@@ -326,19 +320,15 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public void asyncExec(Runnable r) {
-		synchronized (fLock) {
-			if (fRunnables == null) {
-				// initialize runnables and async job
-				fRunnables= new Vector(10);
-				fAsynchJob = new AsynchJob();
-				fRunnables.add(r);
-				if (!isDispatching()) {
-					fAsynchJob.schedule();
-				}
-			} else {
-				fRunnables.add(r);
-			}
+		if (fRunnables == null) {
+			// initialize runnables and async job
+			fRunnables= new Vector(5);
+			fAsynchJob = new AsynchJob();
 		}
+		fRunnables.add(r);
+		if (!isDispatching()) {
+			fAsynchJob.schedule();
+		} 
 	}
 	
 	/**
@@ -829,7 +819,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @since 3.0
 	 */
-	class AsynchJob extends Job implements ISchedulingRule {
+	class AsynchJob extends Job {
 		
 		public AsynchJob() {
 			super(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1")); //$NON-NLS-1$
@@ -850,17 +840,13 @@ public class DebugPlugin extends Plugin {
 		public IStatus run(IProgressMonitor monitor) {
 			// Executes runnables and empties the queue
 			Vector v = null;
-			synchronized (fLock) {
+			synchronized (fRunnables) {
 				v = fRunnables;
-				fRunnables = null;
-				fAsynchJob= null;
+				fRunnables = new Vector(5);
 			}
 			monitor.beginTask(DebugCoreMessages.getString("DebugPlugin.Debug_async_queue_1"), v.size()); //$NON-NLS-1$
 			Iterator iter = v.iterator();
-			while (iter.hasNext() && !fShuttingDown) {
-				if (monitor.isCanceled()) {
-					break;
-				}
+			while (iter.hasNext() && !fShuttingDown && !monitor.isCanceled()) {
 				Runnable r = (Runnable)iter.next();
 				try {
 					r.run();
@@ -870,20 +856,6 @@ public class DebugPlugin extends Plugin {
 				monitor.worked(1);
 			}
 			return Status.OK_STATUS;
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean contains(ISchedulingRule rule) {
-			return isConflicting(rule);
-		}
-
-		/*
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean isConflicting(ISchedulingRule rule) {
-			return rule instanceof AsynchJob;
 		}
 
 	}
