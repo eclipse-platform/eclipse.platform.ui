@@ -18,8 +18,7 @@ public interface IAnnotationAccess {
 	/**
 	 * Returns the type of the given annotation.
 	 * @param annotation the annotation
-	 * @return the type of the given annotation or <code>null</code> if the type
-	 * is unknown
+	 * @return the type of the given annotation or <code>null</code> if it has none.
 	 */
 	Object getType(Annotation annotation);
 
