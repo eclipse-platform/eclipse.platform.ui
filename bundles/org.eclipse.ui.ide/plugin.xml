@@ -321,6 +321,12 @@
             id="org.eclipse.ui.preferencePages.Fonts">
       </page>
       <page
+            name="%PreferencePages.Colors"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.colors.ColorsPreferencePage"
+            id="org.eclipse.ui.preferencePages.Colors">
+      </page>      
+      <page
             name="%PreferencePages.Decorators"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage"

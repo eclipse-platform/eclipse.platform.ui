@@ -14,10 +14,9 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * Utility methods to access JFace-specific resources.
@@ -29,6 +28,7 @@ import org.eclipse.jface.util.Assert;
  * The following global state is also maintained by this class:
  * <ul>
  *   <li>a font registry</li>
+ *	 <li>a color registry</li>
  *   <li>an image registry</li>
  *   <li>a resource bundle</li>
  * </ul>
@@ -45,7 +45,14 @@ public class JFaceResources {
 	/**
 	 * The JFace resource bundle; eagerly initialized.
 	 */
-	private static final ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.jface.messages"); //$NON-NLS-1$
+	private static final ResourceBundle bundle =
+		ResourceBundle.getBundle("org.eclipse.jface.messages"); //$NON-NLS-1$
+
+	/**
+	 * The JFace color registry; <code>null</code> until
+	 * lazily initialized or explicitly set.
+	 */
+	private static ColorRegistry colorRegistry;
 
 	/**
 	 * The symbolic font name for the standard font 
@@ -87,15 +94,13 @@ public class JFaceResources {
 	/**
 	 * The symbolic font name for the viewer font 
 	 * (value <code>"org.eclipse.jface.viewerfont"</code>).
-	 * 
-	 * @deprecated This font is not in use
+		* @deprecated This font is not in use
 	 */
 	public static final String VIEWER_FONT = "org.eclipse.jface.viewerfont"; //$NON-NLS-1$
 
 	/**
 	 * The symbolic font name for the window font 
 	 * (value <code>"org.eclipse.jface.windowfont"</code>).
-	 * 
 	 * @deprecated This font is not in use
 	 */
 	public static final String WINDOW_FONT = "org.eclipse.jface.windowfont"; //$NON-NLS-1$
@@ -140,6 +145,20 @@ public class JFaceResources {
 	public static ResourceBundle getBundle() {
 		return bundle;
 	}
+
+	/**
+	 * Returns the color registry for JFace itself. If the value has not been 
+	 * established by an earlier call to <code>setColorRegistry</code>, is it
+	 * initialized to <code>new ColorRegistry()</code>.
+	 * <p>
+	 * @return the <code>ColorRegistry</code>.
+	 * @since 3.0
+	 */
+	public static ColorRegistry getColorRegistry() {
+		if (colorRegistry == null)
+			colorRegistry = new ColorRegistry();
+		return colorRegistry;
+	}
 	
 	/**
 	 * Returns the JFace's standard font.
@@ -153,7 +172,6 @@ public class JFaceResources {
 	public static Font getDefaultFont() {
 		return getFontRegistry().defaultFont();
 	}
-	
 	/**
 	 * Returns the JFace's dialog font.
 	 * Convenience method equivalent to
@@ -166,7 +184,6 @@ public class JFaceResources {
 	public static Font getDialogFont() {
 		return getFontRegistry().get(DIALOG_FONT);
 	}
-	
 	/**
 	 * Returns the font in JFace's font registry with the given
 	 * symbolic font name.
@@ -183,7 +200,6 @@ public class JFaceResources {
 	public static Font getFont(String symbolicName) {
 		return getFontRegistry().get(symbolicName);
 	}
-	
 	/**
 	 * Returns the font registry for JFace itself.
 	 * If the value has not been established by an earlier
@@ -215,7 +231,7 @@ public class JFaceResources {
 	public static Font getHeaderFont() {
 		return getFontRegistry().get(HEADER_FONT);
 	}
-	
+
 	/**
 	 * Returns the image in JFace's image registry with the given key, 
 	 * or <code>null</code> if none.
@@ -230,7 +246,6 @@ public class JFaceResources {
 	public static Image getImage(String key) {
 		return getImageRegistry().get(key);
 	}
-	
 	/**
 	 * Returns the image registry for JFace itself.
 	 * <p>
@@ -243,7 +258,6 @@ public class JFaceResources {
 			imageRegistry = new ImageRegistry();
 		return imageRegistry;
 	}
-	
 	/**
 	 * Returns the resource object with the given key in
 	 * JFace's resource bundle. If there isn't any value under
@@ -259,7 +273,6 @@ public class JFaceResources {
 			return key;
 		}
 	}
-	
 	/**
 	 * Returns a list of string values corresponding to the
 	 * given list of keys. The lookup is done with <code>getString</code>.
@@ -289,7 +302,6 @@ public class JFaceResources {
 	public static Font getTextFont() {
 		return getFontRegistry().get(TEXT_FONT);
 	}
-	
 	/**
 	 * Returns the JFace's viewer font.
 	 * Convenience method equivalent to
@@ -303,7 +315,6 @@ public class JFaceResources {
 	public static Font getViewerFont() {
 		return getFontRegistry().get(VIEWER_FONT);
 	}
-	
 	/**
 	 * Sets JFace's font registry to the given value.
 	 * This method may only be called once; the call must occur
@@ -321,6 +332,5 @@ public class JFaceResources {
 	 * Declare a private constructor to block instantiation.
 	 */
 	private JFaceResources() {
-		//no-op
 	}
 }

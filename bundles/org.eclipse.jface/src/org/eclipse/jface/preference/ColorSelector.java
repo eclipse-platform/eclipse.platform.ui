@@ -11,6 +11,9 @@
 package org.eclipse.jface.preference;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -35,11 +38,21 @@ import org.eclipse.swt.widgets.Display;
  * a selected <code>Color</code> and allows the user to change the selection.
  */
 public class ColorSelector {
+
+	/**
+	 * Property name that signifies the selected color of this 
+	 * <code>ColorSelector</code> has changed.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PROP_COLORCHANGE = "colorValue"; //$NON-NLS-1$
 	private Button fButton;
 	private Color fColor;
 	private RGB fColorValue;
 	private Point fExtent;
 	private Image fImage;
+
+	private ListenerList listeners;
 
 	/**
 	 * Create a new instance of the reciever and the
@@ -48,6 +61,7 @@ public class ColorSelector {
 	 * @param parent. The parent of the button.
 	 */
 	public ColorSelector(Composite parent) {
+		listeners = new ListenerList();
 
 		fButton = new Button(parent, SWT.PUSH);
 		fExtent = computeImageSize(parent);
@@ -65,7 +79,24 @@ public class ColorSelector {
 				colorDialog.setRGB(fColorValue);
 				RGB newColor = colorDialog.open();
 				if (newColor != null) {
+					RGB oldValue = fColorValue;
 					fColorValue = newColor;
+					final Object[] listeners =
+						ColorSelector.this.listeners.getListeners();
+					if (listeners.length > 0) {
+						PropertyChangeEvent pEvent =
+							new PropertyChangeEvent(
+								this,
+								PROP_COLORCHANGE,
+								oldValue,
+								newColor);
+						for (int i = 0; i < listeners.length; ++i) {
+							IPropertyChangeListener listener =
+								(IPropertyChangeListener) listeners[i];
+							listener.propertyChange(pEvent);
+						}
+					}
+
 					updateColorImage();
 				}
 			}
@@ -95,12 +126,24 @@ public class ColorSelector {
 	}
 
 	/**
+	 * Adds a property change listener to this <code>ColorSelector</code>.  
+	 * Events are fired when the color in the control changes via the user 
+	 * clicking an selecting a new one in the color dialog.  No event is fired 
+	 * in the case where <code>setColorValue(RGB)</code> is invoked.
+	 * 
+	 * @param listener a property change listener
+	 * @since 3.0
+	 */
+	public void addListener(IPropertyChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	/**
 	 * Compute the size of the image to be displayed.
 	 * 
 	 * @param window - the window used to calculate
 	 * @return <code>Point</code>
 	 */
-
 	private Point computeImageSize(Control window) {
 		GC gc = new GC(window);
 		Font f =
@@ -128,6 +171,17 @@ public class ColorSelector {
 	 */
 	public RGB getColorValue() {
 		return fColorValue;
+	}
+
+	/**
+	 * Removes the given listener from this <code>ColorSelector</code>. Has no 
+	 * affect if the listener is not registered.
+	 * 
+	 * @param listener a property change listener
+	 * @since 3.0
+	 */
+	public void removeListener(IPropertyChangeListener listener) {
+		listeners.remove(listener);
 	}
 
 	/**
