@@ -12,14 +12,12 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
@@ -138,55 +136,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @return LabelProvider the shortened text.
 	 */
 	private LabelProvider viewerLabelProvider() {
-		return new LabelProvider() {
-			private String ellipsis = ProgressMessages
-					.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
-			public String getText(Object element) {
-				JobTreeElement info = (JobTreeElement) element;
-				return shortenText(info.getCondensedDisplayString(), viewer
-						.getControl().getDisplay());
-			}
-			/**
-			 * Shorten the given text <code>t</code> so that its length
-			 * doesn't exceed the given width. The default implementation
-			 * replaces characters in the center of the original string with an
-			 * ellipsis ("..."). Override if you need a different strategy.
-			 */
-			protected String shortenText(String textValue, Display display) {
-				if (textValue == null)
-					return null;
-				GC gc = new GC(display);
-				int maxWidth = viewer.getControl().getBounds().width;
-				if (gc.textExtent(textValue).x < maxWidth) {
-					gc.dispose();
-					return textValue;
-				}
-				int length = textValue.length();
-				int ellipsisWidth = gc.textExtent(ellipsis).x;
-				int pivot = length / 2;
-				int start = pivot;
-				int end = pivot + 1;
-				while (start >= 0 && end < length) {
-					String s1 = textValue.substring(0, start);
-					String s2 = textValue.substring(end, length);
-					int l1 = gc.textExtent(s1).x;
-					int l2 = gc.textExtent(s2).x;
-					if (l1 + ellipsisWidth + l2 < maxWidth) {
-						gc.dispose();
-						return s1 + ellipsis + s2;
-					}
-					start--;
-					end++;
-				}
-				gc.dispose();
-				return textValue;
-			}
-		};
+		return new ProgressViewerLabelProvider(viewer.getControl());
 	}
 	
 	

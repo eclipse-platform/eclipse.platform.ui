@@ -17,6 +17,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -144,9 +145,19 @@ public class ProgressViewer extends StructuredViewer {
 				
 				GC gc = event.gc;
 				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
-				for (int i = 0; i < displayedItems.length; i++) {
+				
+				int itemCount = displayedItems.length;
+				int yOffset = 0;
+				if(numShowItems == 1){//If there is a single item try to center it
+					Rectangle clientArea = canvas.getParent().getClientArea();
+					int size = clientArea.height;
+					yOffset = size - (fontMetrics.getHeight() * itemCount);
+					yOffset = yOffset / 2;
+				}
+				
+				for (int i = 0; i < itemCount; i++) {
 					String string = labelProvider.getText(displayedItems[i]);
-					gc.drawString(string,0,i * fontMetrics.getHeight(),true);
+					gc.drawString(string,2,yOffset + (i * fontMetrics.getHeight()),true);
 				}
 			}
 		});

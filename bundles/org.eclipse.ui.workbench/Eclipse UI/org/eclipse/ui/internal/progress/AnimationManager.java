@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeEvent;
@@ -34,11 +36,15 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
@@ -53,18 +59,28 @@ public class AnimationManager {
 	private ImageData[] disabledData;
 	private static String DISABLED_IMAGE_NAME = "ANIMATION_DISABLED_IMAGE"; //$NON-NLS-1$
 	private static String ANIMATED_IMAGE_NAME = "ANIMATION_ANIMATED_IMAGE"; //$NON-NLS-1$
-	Color background;
 	private ImageLoader runLoader = new ImageLoader();
 	boolean animated = false;
 	Job animateJob;
 	Job clearJob;
 	private IJobProgressManagerListener listener;
 	List items = Collections.synchronizedList(new ArrayList());
+	Color background;
 	public static AnimationManager getInstance() {
 		if (singleton == null)
 			singleton = new AnimationManager();
 		return singleton;
 	}
+	
+	/**
+	 * Get the background color to be used.
+	 * @param control The source of the display.
+	 * @return Color
+	 */
+	static Color getItemBackgroundColor(Control control){
+		return control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);		
+	}
+	
 	AnimationManager() {
 		URL iconsRoot = Platform.getPlugin(PlatformUI.PLUGIN_ID).find(
 				new Path(ProgressManager.PROGRESS_FOLDER));
@@ -93,7 +109,7 @@ public class AnimationManager {
 	void addItem(final AnimationItem item) {
 		items.add(item);
 		if (background == null)
-			background = item.getControl().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+			background = getItemBackgroundColor(item.getControl());
 		item.getControl().addDisposeListener(new DisposeListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)

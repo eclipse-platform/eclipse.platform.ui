@@ -22,19 +22,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.CoolBarManager;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
@@ -58,6 +46,21 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.ApplicationWindow;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -82,12 +85,13 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.progress.AnimationItem;
 import org.eclipse.ui.internal.progress.AnimationManager;
+import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -119,7 +123,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	
 	private TrimLayout layout = new TrimLayout(); 
 	
-	AnimationItem animationItem;
+	ProgressRegion progressRegion;
 
 	private Label noOpenPerspective;
 	private Rectangle normalBounds;
@@ -1920,8 +1924,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private void createProgressIndicator(Shell shell) {
 		if (getWindowConfigurer().getShowProgressIndicator()) {
-			animationItem = new AnimationItem(this);
-			animationItem.createControl(shell);
+			progressRegion = new ProgressRegion();
+			progressRegion.createContents(shell,this);
 		}
 
 	}
@@ -2166,20 +2170,20 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		}
 		
 		if (getWindowConfigurer().getShowProgressIndicator()) {
-			if (animationItem.getControl().getLayoutData() == null) {
+			if (progressRegion.getControl().getLayoutData() == null) {
 				TrimLayoutData animationData = new TrimLayoutData(false, 
-						animationItem.getPreferredWidth(), 
+						progressRegion.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).x, 
 						getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 	
-				animationItem.getControl().setLayoutData(animationData);
+				progressRegion.getControl().setLayoutData(animationData);
 			}
-			layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null);
-			animationItem.getControl().setVisible(true);
+			layout.addTrim(progressRegion.getControl(), SWT.BOTTOM, null);
+			progressRegion.getControl().setVisible(true);
 		}
 		else {
-			if (animationItem != null) {
-				layout.removeTrim(animationItem.getControl());
-				animationItem.getControl().setVisible(false);
+			if (progressRegion != null) {
+				layout.removeTrim(progressRegion.getControl());
+				progressRegion.getControl().setVisible(false);
 			}
 		}
 		layout.setCenterControl(getClientComposite());	
@@ -2271,7 +2275,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 *
 	 */
 	public void closeFloatingWindow(){
-		animationItem.closeFloatingWindow();
+		progressRegion.getAnimationItem().closeFloatingWindow();
 	}
 	
 }

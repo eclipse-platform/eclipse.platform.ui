@@ -63,8 +63,7 @@ public class AnimationItem {
 		final AnimationManager manager = AnimationManager.getInstance();
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
-		imageCanvas.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
+		imageCanvas.setBackground(AnimationManager.getItemBackgroundColor(getControl()));
 		imageCanvas.setToolTipText(ProgressMessages
 				.getString("AnimationItem.HoverHelp")); //$NON-NLS-1$
 		imageCanvas.addPaintListener(new PaintListener() {
@@ -110,9 +109,7 @@ public class AnimationItem {
 					/*
 					 * (non-Javadoc)
 					 * 
-					 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.A
-					 * 
-					 * ccessibleControlEvent)
+					 * @see org.eclipse.swt.accessibility.AccessibleControlAdapter#getValue(org.eclipse.swt.accessibility.AccessibleControlEvent)
 					 */
 					public void getValue(AccessibleControlEvent arg0) {
 						if (manager.isAnimated())
@@ -146,11 +143,7 @@ public class AnimationItem {
 	 *            The array of ImageData. Required to show an animation.
 	 */
 	void paintImage(PaintEvent event, Image image, ImageData imageData) {
-		Image paintImage = image;
-		int w = imageData.width;
-		int h = imageData.height;
-		event.gc.drawImage(paintImage, 0, 0, imageData.width, imageData.height,
-				imageData.x, imageData.y, w, h);
+		event.gc.drawImage(image, 0, 0);
 	}
 	/**
 	 * Get the SWT control for the receiver.
@@ -184,8 +177,8 @@ public class AnimationItem {
 			floatingWindow = new ProgressFloatingWindow(window, imageCanvas);
 		}
 		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages
-				.getString("AnimationItem.openFloatingWindowJob")) {
-			//$NON-NLS-1$
+				.getString("AnimationItem.openFloatingWindowJob")) {//$NON-NLS-1$
+			
 			/*
 			 * (non-Javadoc)
 			 * 
