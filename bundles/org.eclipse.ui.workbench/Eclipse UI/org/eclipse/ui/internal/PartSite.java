@@ -29,6 +29,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.activities.ActivityServiceFactory;
+import org.eclipse.ui.activities.IMutableActivityService;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
@@ -81,6 +83,12 @@ public class PartSite implements IWorkbenchPartSite {
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 	}
 
+	private final IMutableActivityService mutableActivityService = ActivityServiceFactory.getMutableActivityService();
+
+	public IMutableActivityService getMutableActivityService() {
+		return mutableActivityService;
+	}	
+	
 	private IActionService actionService;
 
 	public IActionService getActionService() {

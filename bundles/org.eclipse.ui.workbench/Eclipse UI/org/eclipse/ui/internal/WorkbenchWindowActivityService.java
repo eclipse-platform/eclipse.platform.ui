@@ -12,7 +12,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.AbstractActivityService;
 import org.eclipse.ui.activities.ActivityServiceEvent;
 import org.eclipse.ui.activities.IActivityService;
@@ -83,12 +82,12 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 	
 	private Set activeActivityIds = new HashSet();
 	private boolean started;
-	private IWorkbench workbench;
-	private IWorkbenchPage workbenchPage;
-	private IWorkbenchPartSite workbenchPartSite;
-	private IWorkbenchWindow workbenchWindow;
+	private IWorkbench workbench;	
+	private IActivityService workbenchPageCompoundActivityService;
+	private IActivityService workbenchPartSiteMutableActivityService;			
+	private WorkbenchWindow workbenchWindow;
 	
-	WorkbenchWindowActivityService(IWorkbenchWindow workbenchWindow) {		
+	WorkbenchWindowActivityService(WorkbenchWindow workbenchWindow) {		
 		if (workbenchWindow == null)
 			throw new NullPointerException();
 		
@@ -116,6 +115,8 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 			IActivityService workbenchActivityService = workbench.getCompoundActivityService();					
 			workbenchActivityService.addActivityServiceListener(activityServiceListener);					
 			workbenchWindow.addPageListener(pageListener);
+			workbenchWindow.getPartService().addPartListener(partListener);
+			workbenchWindow.getPerspectiveService().addPerspectiveListener(internalPerspectiveListener);					
 			update();
 		}
 	}
@@ -126,6 +127,8 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 			IActivityService workbenchActivityService = workbench.getCompoundActivityService();					
 			workbenchActivityService.removeActivityServiceListener(activityServiceListener);						
 			workbenchWindow.removePageListener(pageListener);
+			workbenchWindow.getPartService().removePartListener(partListener);
+			workbenchWindow.getPerspectiveService().removePerspectiveListener(internalPerspectiveListener);					
 			update();
 		}
 	}
@@ -141,58 +144,55 @@ final class WorkbenchWindowActivityService extends AbstractActivityService {
 		}
 	}
 	
-	private void update() {	
-		/*
+	private void update() {
 		IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
+		IActivityService workbenchPageCompoundActivityService = null;
+		IWorkbenchPart workbenchPart = null;
 		IWorkbenchPartSite workbenchPartSite = null;
+		IActivityService workbenchPartSiteMutableActivityService = null;		
 		
-		if (workbenchPage != null)
-			workbenchPartSite = workbenchPage.getActivePart();
+		if (workbenchPage != null) {
+			workbenchPageCompoundActivityService = workbenchPage.getCompoundActivityService();
+			workbenchPart = workbenchPage.getActivePart();
+		}
 		
+		if (workbenchPart != null)
+			workbenchPartSite = workbenchPart.getSite();
 		
-		if (workbenchPage instanceof WorkbenchPage) {		
-			IActivityService activityService = ((WorkbenchPage) workbenchPage).getCompoundActivityService();
-			activityService.removeActivityServiceListener(activityServiceListener);			
+		if (workbenchPartSite != null)
+			// TODO remove cast
+			workbenchPartSiteMutableActivityService = ((PartSite) workbenchPartSite).getMutableActivityService();
+		
+		if (this.workbenchPageCompoundActivityService != workbenchPageCompoundActivityService) {
+			if (this.workbenchPageCompoundActivityService != null)
+				this.workbenchPageCompoundActivityService.removeActivityServiceListener(activityServiceListener);
+			
+			this.workbenchPageCompoundActivityService = workbenchPageCompoundActivityService;
 		}
 
-		workbench = null;
-		workbenchWindow = null;
-		workbenchPage = null;
+		if (this.workbenchPartSiteMutableActivityService != workbenchPartSiteMutableActivityService) {
+			if (this.workbenchPartSiteMutableActivityService != null)
+				this.workbenchPartSiteMutableActivityService.removeActivityServiceListener(activityServiceListener);
+			
+			this.workbenchPartSiteMutableActivityService = workbenchPartSiteMutableActivityService;
+		}
+		
 		Set activeActivityIds = new HashSet();
 		
 		if (started) {
-			workbench = PlatformUI.getWorkbench();
-					
-			if (workbenchWindow != null) 
-				workbenchPage = workbenchWindow.getActivePage();
+			activeActivityIds.addAll(workbench.getCompoundActivityService().getActiveActivityIds());
 			
-			if (workbench instanceof Workbench) {		
-				IActivityService activityService = ((Workbench) workbench).getCompoundActivityService();
-				activityService.addActivityServiceListener(activityServiceListener);			
-				activeActivityIds.addAll(activityService.getActiveActivityIds());
-			}		
-			
-			if (workbenchWindow != null) 
-				workbenchWindow.addPageListener(pageListener);
-			
-			if (workbenchWindow instanceof WorkbenchWindow) {
-				IActivityService activityService = ((WorkbenchWindow) workbenchWindow).getCompositeActivityService();
-				activityService.addActivityServiceListener(activityServiceListener);			
-			 
-				try {
-					activeActivityIds.addAll(activityService.getActiveActivityIds());
-				} catch (DisposedException eDisposed) {
-				}			
+			if (this.workbenchPageCompoundActivityService != null) {
+				this.workbenchPageCompoundActivityService.addActivityServiceListener(activityServiceListener);
+				activeActivityIds.addAll(workbenchPageCompoundActivityService.getActiveActivityIds());
 			}
-			
-			if (workbenchPage instanceof WorkbenchPage) {		
-				IActivityService activityService = ((WorkbenchPage) workbenchPage).getCompoundActivityService();
-				activityService.addActivityServiceListener(activityServiceListener);						
-				activeActivityIds.addAll(activityService.getActiveActivityIds());
+
+			if (this.workbenchPartSiteMutableActivityService != null) {
+				this.workbenchPartSiteMutableActivityService.addActivityServiceListener(activityServiceListener);			
+				activeActivityIds.addAll(workbenchPartSiteMutableActivityService.getActiveActivityIds());
 			}
 		}
-
-		workbench.getCommandManager().setActiveActivityIds(activeActivityIds);
-		*/
+		
+		setActiveActivityIds(activeActivityIds);
 	}
 }

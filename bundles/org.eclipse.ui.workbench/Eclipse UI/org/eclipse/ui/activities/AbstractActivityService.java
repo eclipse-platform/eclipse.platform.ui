@@ -22,7 +22,7 @@ public abstract class AbstractActivityService implements IActivityService {
 	private List activityServiceListeners;
 
 	/**
-	 * TODO javadoc
+	 * Constructs an instance of <code>AbstractActivityService</code>.
 	 */
 	protected AbstractActivityService() {
 	}
