@@ -33,14 +33,13 @@ public PropertyManagerTest(String name) {
 	super(name);
 }
 public static Test suite() {
-	//TestSuite suite = new TestSuite();
-	//suite.addTest(new PropertyManagerTest("testSimpleUpdate"));
-	//return suite;
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new PropertyManagerTest("testConcurrentDelete"));
+//	return suite;
 	return new TestSuite(PropertyManagerTest.class);
 }
 /**
- * This test currently skipped because the property store is not
- * thread safe.
+ * Tests concurrent acces to the property store.
  */
 public void testConcurrentAccess() {
 
@@ -56,51 +55,109 @@ public void testConcurrentAccess() {
 	final int N = 50;
 	final QualifiedName[] names = new QualifiedName[N];
 	final String[] values = new String[N];
-	for (int i = 0; i < N; i++) {
-		names[i] = new QualifiedName("org.eclipse.core.tests", "prop" + i);
-		values[i] = "property value" + i;
-	}
-
-	// create properties
-	for (int i = 0; i < N; i++) {
-		try {
-			target.setPersistentProperty(names[i], values[i]);
-		} catch (CoreException e) {
-			fail("1." + i, e);
-		}
-	}
+	createProperties(target, names, values);
+	
 	final int THREAD_COUNT = 3;
 	final CoreException[] errorPointer = new CoreException[1];
-	Thread[] threads = new Thread[THREAD_COUNT];
-	for (int i = 0; i < THREAD_COUNT; i++) {
-		final String id = "GetSetProperty" + i;
-		threads[i] = new Thread(new Runnable() {
-			public void run() {
-				try {
-					doGetSetProperties(target, id, names, values);
-				} catch (CoreException e) {
-					errorPointer[0] = e;
-					return;
-				}
-			}
-		}, id);
-		threads[i].start();
-	}
-	for (int i = 0; i < threads.length; i++) {
-		try {
-			threads[i].join();
-		} catch (InterruptedException e) {
-		}
-	}
+	Thread[] threads = createThreads(target, names, values, errorPointer);
+	join(threads);
 	if (errorPointer[0] != null)
 		fail("2.0", errorPointer[0]);
-
 
 	// remove trash
 	try {
 		target.delete(true, getMonitor());
 	} catch (CoreException e) {
 		fail("20.0", e);
+	}
+}
+/**
+ * Tests concurrent access to the property store while the project is being
+ * deleted.
+ */
+public void testConcurrentDelete() {
+	Thread[] threads;
+	final IFile target = projects[0].getFile("target");
+	final int REPEAT = 8;
+	for (int i = 0; i < REPEAT;i++) {
+		// create common objects
+		ensureExistsInWorkspace(projects[0], true);
+		ensureExistsInWorkspace(target, true);
+	
+		// prepare keys and values
+		final int N = 50;
+		final QualifiedName[] names = new QualifiedName[N];
+		final String[] values = new String[N];
+		createProperties(target, names, values);
+		
+		final CoreException[] errorPointer = new CoreException[1];
+		threads = createThreads(target, names, values, errorPointer);
+		try {
+			//give the threads a chance to start
+			Thread.sleep(10);
+		} catch (InterruptedException e1) {
+		}
+		try {
+			//delete the project while the threads are still running
+			target.getProject().delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99." + i);
+		}
+		join(threads);
+		if (errorPointer[0] != null)
+			fail("2.0." + i, errorPointer[0]);
+	}
+	// remove trash
+	try {
+		target.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("20.0", e);
+	}
+}
+private void join(Thread[] threads) {
+	//wait for all threads to finish
+	for (int j = 0; j < threads.length; j++) {
+		try {
+			threads[j].join();
+		} catch (InterruptedException e) {
+		}
+	}
+}
+private Thread[] createThreads(final IFile target, final QualifiedName[] names, final String[] values, final CoreException[] errorPointer) {
+	final int THREAD_COUNT = 3;
+	Thread[] threads = new Thread[THREAD_COUNT];
+	for (int j = 0; j < THREAD_COUNT; j++) {
+		final String id = "GetSetProperty" + j;
+		threads[j] = new Thread(new Runnable() {
+			public void run() {
+				try {
+					doGetSetProperties(target, id, names, values);
+				} catch (CoreException e) {
+					//ignore failure if the project has been deleted
+					if (target.exists()) {
+						e.printStackTrace();
+						errorPointer[0] = e;
+						return;
+					}
+				}
+			}
+		}, id);
+		threads[j].start();
+	}
+	return threads;
+}
+private void createProperties(IFile target, QualifiedName[] names, String[] values) {
+	for (int i = 0; i < names.length; i++) {
+		names[i] = new QualifiedName("org.eclipse.core.tests", "prop" + i);
+		values[i] = "property value" + i;
+	}
+	// create properties
+	for (int i = 0; i < names.length; i++) {
+		try {
+			target.setPersistentProperty(names[i], values[i]);
+		} catch (CoreException e) {
+			fail("1." + i, e);
+		}
 	}
 }
 protected void doGetSetProperties(IFile target, String threadID, QualifiedName[] names, String[] values) throws CoreException {
@@ -157,8 +214,8 @@ public void testCopy() throws Throwable {
 	assertTrue("1.12", manager.getProperty(destFile, propName).equals(propValue));
 
 	// do the same thing but copy at the folder level
-	manager.deleteProperties(source);
-	manager.deleteProperties(destination);
+	manager.deleteProperties(source, IResource.DEPTH_INFINITE);
+	manager.deleteProperties(destination, IResource.DEPTH_INFINITE);
 	assertNull("2.0", manager.getProperty(source, propName));
 	assertNull("2.1", manager.getProperty(sourceFolder, propName));
 	assertNull("2.2", manager.getProperty(sourceFile, propName));
@@ -197,7 +254,7 @@ public void testDeleteProperties() throws Throwable {
 	manager.setProperty(target, propName, propValue);
 	assertTrue("1.1", manager.getProperty(target, propName).equals(propValue));
 	/* delete */
-	manager.deleteProperties((Resource) target);
+	manager.deleteProperties((Resource) target, IResource.DEPTH_INFINITE);
 	assertTrue("1.3", manager.getProperty(target, propName) == null);
 
 	//test deep deletion of project properties	
@@ -287,7 +344,7 @@ public void testProperties() throws Throwable {
 		manager.setProperty(target, prop.getName(), prop.getStringValue());
 		assertTrue("1.0." + prop.getName(), prop.getStringValue().equals(manager.getProperty(target, prop.getName())));
 	}
-	manager.deleteProperties((Resource) target);
+	manager.deleteProperties((Resource) target, IResource.DEPTH_INFINITE);
 
 	// remove trash
 	target.delete(false, monitor);
