@@ -12,9 +12,11 @@
 package org.eclipse.jface.text.source;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -161,6 +163,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @since 3.0
 	 */
 	private IAnnotationHover fHover;
+	/**
+	 * The cached annotations.
+	 * @since 3.0
+	 */
+	private List fCachedAnnotations= new ArrayList();
 	
 	
 	/**
@@ -515,28 +522,51 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		Point dimension= fCanvas.getSize();
 		int shift= fCachedTextViewer.getTopInset();
 
+		int vOffset= getInclusiveTopIndexStartOffset();
+		IRegion coverage= extension.getModelCoverage();
+		int vLength= coverage.getOffset() + coverage.getLength() - vOffset;		
+
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);
-		int maxLayer= 1;	// loop at least once through layers.
 		ReusableRegion range= new ReusableRegion();
+		
+		int minLayer= Integer.MAX_VALUE, maxLayer= Integer.MIN_VALUE;
+		fCachedAnnotations.clear();
+		Iterator iter= fModel.getAnnotationIterator();
+		while (iter.hasNext()) {
+			Annotation annotation= (Annotation) iter.next();
+			
+			if (skip(annotation))
+				continue;
+			
+			Position position= fModel.getPosition(annotation);
+			if (position == null)
+				continue;
 
-		for (int layer= 0; layer < maxLayer; layer++) {
-			Iterator iter= fModel.getAnnotationIterator();
-			while (iter.hasNext()) {
-				Annotation annotation= (Annotation) iter.next();
+			if (!position.overlapsWith(vOffset, vLength))
+				continue;
+			
+			int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
+			if (annotationAccessExtension != null)
+				lay= annotationAccessExtension.getLayer(annotation);
+			
+			minLayer= Math.min(minLayer, lay);
+			maxLayer= Math.max(maxLayer, lay);
+			fCachedAnnotations.add(annotation);
+		}
+
+		for (int layer= minLayer; layer <= maxLayer; layer++) {
+			for (int i= 0, n= fCachedAnnotations.size(); i < n; i++) {
+				Annotation annotation= (Annotation) fCachedAnnotations.get(i);
 				
-				if (skip(annotation))
+				Position position= fModel.getPosition(annotation);
+				if (position == null)
 					continue;
 				
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (annotationAccessExtension != null)
 					lay= annotationAccessExtension.getLayer(annotation);
-				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
 				if (lay != layer)	// wrong layer: skip annotation
-					continue;
-
-				Position position= fModel.getPosition(annotation);
-				if (position == null)
 					continue;
 
 				range.update(position.getOffset(), position.getLength());
@@ -564,6 +594,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					annotationAccessExtension.paint(annotation, gc, fCanvas, r);
 			}
 		}
+		
+		fCachedAnnotations.clear();
 	}
 
 	
