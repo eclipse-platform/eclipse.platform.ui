@@ -42,7 +42,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
 	private PartListenerList partListeners = new PartListenerList();
-	private SelectionService selectionService = new SelectionService();
+	private PageSelectionService selectionService = new PageSelectionService(this);
 	private IActionBars actionBars;
 	private Perspective activePersp;
 	private ViewFactory viewFactory;
@@ -155,12 +155,23 @@ public void addFastView(IViewPart view) {
 public void addPartListener(IPartListener l) {
 	partListeners.addPartListener(l);
 }
+
 /*
- * Adds an ISelectionListener to the service.
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
  */
-public void addSelectionListener(ISelectionListener l) {
-	selectionService.addSelectionListener(l);
+public void addSelectionListener(ISelectionListener listener) {
+	selectionService.addSelectionListener(listener);
 }
+
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
+ */
+public void addSelectionListener(String partId, ISelectionListener listener) {
+	selectionService.addSelectionListener(partId, listener);
+}
+
 /**
  * Moves a part forward in the Z order of a perspective so it is visible.
  *
@@ -325,12 +336,9 @@ private IViewPart busyShowView(String viewID, boolean activate)
 		zoomOut();
 		
 	// Show the view.  
-	boolean exists = viewFactory.hasView(viewID);
 	view = getPersp().showView(viewID);
 	if (view != null) {
 		// If it view is new then fire an open event.		
-		if (!exists)
-			firePartOpened(view);
 		if (activate)
 			activate(view);
 		else
@@ -586,6 +594,7 @@ public void dispose() {
 	window.getClientComposite().removeControlListener(resizeListener);
 	composite.dispose();
 }
+
 /**
  * Dispose a perspective.
  */
@@ -657,6 +666,7 @@ public IViewPart findView(String id) {
  * Fire part activation out.
  */
 private void firePartActivated(IWorkbenchPart part) {
+//	System.out.println("page.firePartActivated(" + part.getSite().getId() + ")");
 	partListeners.firePartActivated(part);
 	selectionService.partActivated(part);
 }
@@ -664,6 +674,7 @@ private void firePartActivated(IWorkbenchPart part) {
  * Fire part brought to top out.
  */
 private void firePartBroughtToTop(IWorkbenchPart part) {
+//	System.out.println("page.firePartBroughtToTop(" + part.getSite().getId() + ")");
 	partListeners.firePartBroughtToTop(part);
 	selectionService.partBroughtToTop(part);
 }
@@ -671,6 +682,7 @@ private void firePartBroughtToTop(IWorkbenchPart part) {
  * Fire part close out.
  */
 private void firePartClosed(IWorkbenchPart part) {
+//	System.out.println("page.firePartClosed(" + part.getSite().getId() + ")");
 	partListeners.firePartClosed(part);
 	selectionService.partClosed(part);
 }
@@ -678,6 +690,7 @@ private void firePartClosed(IWorkbenchPart part) {
  * Fire part deactivation out.
  */
 private void firePartDeactivated(IWorkbenchPart part) {
+//	System.out.println("page.firePartDeactivated(" + part.getSite().getId() + ")");
 	partListeners.firePartDeactivated(part);
 	selectionService.partDeactivated(part);
 }
@@ -685,6 +698,7 @@ private void firePartDeactivated(IWorkbenchPart part) {
  * Fire part open out.
  */
 public void firePartOpened(IWorkbenchPart part) {
+//	System.out.println("page.firePartOpened(" + part.getSite().getId() + ")");
 	partListeners.firePartOpened(part);
 	selectionService.partOpened(part);
 }
@@ -817,12 +831,24 @@ public ArrayList getPerspectiveActions() {
 	else
 		return new ArrayList();
 }
+
 /*
- * Returns the selection within the <code>IWorkbenchPage</code>
+ * (non-Javadoc)
+ * Method declared on ISelectionService
  */
 public ISelection getSelection() {
 	return selectionService.getSelection();
 }
+
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionService
+ */
+public ISelection getSelection(String partId) {
+	return selectionService.getSelection(partId);
+}
+
+
 /**
  * Returns the show view actions the page.
  * This is List of Strings.
@@ -1273,12 +1299,23 @@ public void removeFastView(IViewPart view) {
 public void removePartListener(IPartListener l) {
 	partListeners.removePartListener(l);
 }
+
 /*
- * Removes an ISelectionListener from the service.
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
  */
-public void removeSelectionListener(ISelectionListener l) {
-	selectionService.removeSelectionListener(l);
+public void removeSelectionListener(ISelectionListener listener) {
+	selectionService.removeSelectionListener(listener);
 }
+
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
+ */
+public void removeSelectionListener(String partId, ISelectionListener listener) {
+	selectionService.removeSelectionListener(partId, listener);
+}
+
 /**
  * This method is called when a part is activated by clicking within it.
  * In response, the part, the pane, and all of its actions will be activated.
@@ -1350,11 +1387,6 @@ private void restoreState(IMemento memento) {
 		IViewPart view = activePerspective.findView(activePartID);
 		if (view != null)
 			activePart = view;
-	}
-	
-	IEditorPart editors[] = getEditorManager().getEditors();
-	for (int i = 0; i < editors.length; i++){
-		firePartOpened(editors[i]);
 	}
 }
 /**
@@ -1877,4 +1909,5 @@ class ActivationList {
 		return null;
 	}
 }
+
 }

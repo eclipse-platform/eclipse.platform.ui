@@ -454,7 +454,6 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 				editorPresentation.openEditor(part,setVisible);
 				Workbench wb = (Workbench)window.getWorkbench();
 				wb.getEditorHistory().remove(input);
-				page.firePartOpened(part);
 			} catch (PartInitException e) {
 				ex[0] = e;
 			}

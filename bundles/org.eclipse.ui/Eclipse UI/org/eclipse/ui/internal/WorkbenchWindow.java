@@ -45,7 +45,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
-	private WWinPartService partService = new WWinPartService();
+	private WWinPartService partService = new WWinPartService(this);
 	private IMemento deferredRestoreState;
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
@@ -463,6 +463,7 @@ private IContributionItem findShortcut(IWorkbenchPage page) {
  * Fires page activated
  */
 private void firePageActivated(IWorkbenchPage page) {
+//	System.out.println("window.firePageActivated(" + page.getLabel() + ")");
 	pageListeners.firePageActivated(page);
 	partService.pageActivated(page);
 }
@@ -470,6 +471,7 @@ private void firePageActivated(IWorkbenchPage page) {
  * Fires page closed
  */
 private void firePageClosed(IWorkbenchPage page) {
+//	System.out.println("window.firePageClosed(" + page.getLabel() + ")");
 	pageListeners.firePageClosed(page);
 	partService.pageClosed(page);
 }
@@ -477,6 +479,7 @@ private void firePageClosed(IWorkbenchPage page) {
  * Fires page opened
  */
 private void firePageOpened(IWorkbenchPage page) {
+//	System.out.println("window.firePageOpened(" + page.getLabel() + ")");
 	pageListeners.firePageOpened(page);
 	partService.pageOpened(page);
 }
@@ -484,6 +487,7 @@ private void firePageOpened(IWorkbenchPage page) {
  * Fires perspective activated
  */
 void firePerspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+//	System.out.println("window.firePerspectiveActivated(" + page.getLabel() + ", " + perspective.getId() + ")");
 	perspectiveListeners.firePerspectiveActivated(page, perspective);
 	perspectiveService.firePerspectiveActivated(page, perspective);
 }
@@ -491,12 +495,14 @@ void firePerspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspe
  * Fires perspective changed
  */
 void firePerspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+//	System.out.println("window.firePerspectiveChanged(" + page.getLabel() + ", " + perspective.getId() + "," + changeId + ")");
 	perspectiveListeners.firePerspectiveChanged(page, perspective, changeId);
 }
 /**
  * Fires perspective reset
  */
 void firePerspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+//	System.out.println("window.firePerspectiveReset(" + page.getLabel() + ", " + perspective.getId() + ")");
 	perspectiveService.firePerspectiveReset(page, perspective);
 }
 /**

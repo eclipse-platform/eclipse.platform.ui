@@ -1,25 +1,43 @@
 package org.eclipse.ui.internal;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
 
 /**
- * A part service for the workbench window.
+ * A part service for a workbench window.
  */
 public class WWinPartService implements IPartService, IPageListener, IPartListener
 {
+	private IWorkbenchWindow window;
 	private PartListenerList listeners = new PartListenerList();
-	private SelectionService selectionService = new SelectionService();
+	private WindowSelectionService selectionService;
 	private IWorkbenchPage activePage;
+	
 /**
- * Constructor comment.
+ * Creates a new part service for a workbench window.
  */
-public WWinPartService() {
-	super();
+public WWinPartService(IWorkbenchWindow window) {
+	setWindow(window);
+	selectionService = new WindowSelectionService(window);
 }
+	
+/**
+ * Sets the window.
+ */
+private void setWindow(IWorkbenchWindow window) {
+	this.window = window;
+}
+
+/**
+ * Returns the window.
+ */
+protected IWorkbenchWindow getWindow() {
+	return window;
+}
+
 /*
  * Adds an IPartListener to the part service.
  */
