@@ -227,7 +227,7 @@ public final class IDE {
 				positioner = (IMarkerEditorPositioner) editor.getAdapter(IMarkerEditorPositioner.class);
 			}
 			if (positioner != null) {
-				positioner.gotoPosition(marker, editor);
+				positioner.gotoPosition(marker);
 			}
 		}
 		
@@ -298,6 +298,31 @@ public final class IDE {
 		 * Identifies the new wizard image in the disabled state.
 		 */
 		public final static String IMG_TOOL_NEW_WIZARD_DISABLED = "IMG_TOOL_NEW_WIZARD_DISABLED"; //$NON-NLS-1$
-	
 	}
+	
+	/**
+	 * Preferences defined by the IDE workbench.
+	 * <p>
+	 * This interface is not intended to be implemented by clients.
+	 * </p>
+	 */
+	public interface Preferences {
+		/**
+		 * A named preference for how a new perspective should be opened
+		 * when a new project is created.
+		 * <p>
+		 * Value is of type <code>String</code>.  The possible values are defined 
+		 * by the constants <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE, 
+		 * OPEN_PERSPECTIVE_REPLACE, and NO_NEW_PERSPECTIVE</code>.
+		 * </p>
+		 * 
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_WINDOW
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_PAGE
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#OPEN_PERSPECTIVE_REPLACE
+		 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
+		 */
+		public static final String PROJECT_OPEN_NEW_PERSPECTIVE =
+			"PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
+	}
+	
 }
