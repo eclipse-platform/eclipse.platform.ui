@@ -131,7 +131,7 @@ private static String[] buildJarVariants() {
 	ArrayList result = new ArrayList();
 	
 	result.add("ws/" + InternalBootLoader.getWS() + "/");
-	result.add("os/" + InternalBootLoader.getOS() + "/" + System.getProperty("os.arch") + "/");
+	result.add("os/" + InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch() + "/");
 	result.add("os/" + InternalBootLoader.getOS() + "/");
 	String nl = InternalBootLoader.getNL();
 	nl = nl.replace('_', '/');
@@ -148,7 +148,7 @@ private static String[] buildLibraryVariants() {
 	ArrayList result = new ArrayList();
 	
 	result.add("ws/" + InternalBootLoader.getWS() + "/");
-	result.add("os/" + InternalBootLoader.getOS() + "/" + System.getProperty("os.arch") + "/");
+	result.add("os/" + InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch() + "/");
 	result.add("os/" + InternalBootLoader.getOS() + "/");
 	String nl = InternalBootLoader.getNL();
 	nl = nl.replace('_', '/');
