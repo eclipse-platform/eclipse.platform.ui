@@ -93,8 +93,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 	 * Creates the control for the step list
 	 */
 	private void createStepGroup(Composite parent) {
-		initializeDialogUnits(parent);
-		stepGroup = new WizardStepGroup(convertWidthInCharsToPixels(2));
+		stepGroup = new WizardStepGroup();
 		stepGroup.createContents(parent);
 	}
 
@@ -412,6 +411,7 @@ public class MultiStepConfigureWizardPage extends WizardPage {
 			currentPage.setVisible(true);
 			if (oldPage != null)
 				oldPage.setVisible(false);
+			page.getControl().setBounds(pageSite.getClientArea());
 		
 			// update the dialog controls
 			wizardDialog.updateAll();

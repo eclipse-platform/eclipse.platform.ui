@@ -39,8 +39,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 public class WizardStepGroup {
 	private Image doneImage;
 	private Image currentImage;
-	private int numberColWidth = 8;
 	private WizardStep currentStep;
+	private Composite parentComposite;
 	private TableViewer stepViewer;
 	private ISelectionChangedListener selectionListener;
 
@@ -49,9 +49,8 @@ public class WizardStepGroup {
 	 * 
 	 * @param numberColWidth the width in pixel for the number column
 	 */
-	public WizardStepGroup(int numberColWidth) {
+	public WizardStepGroup() {
 		super();
-		this.numberColWidth = numberColWidth;
 	}
 
 	/**
@@ -59,10 +58,12 @@ public class WizardStepGroup {
 	 * with a label above it.
 	 */
 	public Control createContents(Composite parent) {
+		parentComposite = parent;
+		
 		// Create a composite to hold everything together
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		composite.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				if (doneImage != null) {
@@ -83,19 +84,8 @@ public class WizardStepGroup {
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);
 		
-		// Create the table for the viewer
-		Table table = new Table(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-		new TableColumn(table, SWT.NULL);	// done icon
-		new TableColumn(table, SWT.NULL);	// step number
-		new TableColumn(table, SWT.NULL);	// step label
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnPixelData(16, false));
-		layout.addColumnData(new ColumnPixelData(numberColWidth, false));
-		layout.addColumnData(new ColumnWeightData(100, false));
-		table.setLayout(layout);
-		
 		// Table viewer of all the steps
-		stepViewer = new TableViewer(table);
+		stepViewer = new TableViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		data = new GridData(GridData.FILL_BOTH);
 		stepViewer.getTable().setLayoutData(data);
 		stepViewer.setContentProvider(getStepProvider());
@@ -195,6 +185,11 @@ public class WizardStepGroup {
 				stepViewer.update(oldStep, null);
 			if (currentStep != null)
 				stepViewer.update(currentStep, null);
+				
+			// Update the layout so that there is enough
+			// room for the icon now.
+			if (oldStep == null && currentStep != null)
+				parentComposite.layout(true);
 		}
 	}
 	
@@ -219,8 +214,10 @@ public class WizardStepGroup {
 	 * @param steps the collection of steps
 	 */
 	public void setSteps(WizardStep[] steps) {
-		if (stepViewer != null)
+		if (stepViewer != null) {
 			stepViewer.setInput(new StepRoot(steps));
+			parentComposite.layout(true);
+		}
 	}
 	
 	/**
@@ -245,46 +242,26 @@ public class WizardStepGroup {
 	/**
 	 * Label provider for step table viewer
 	 */
-	private class StepLabelProvider extends LabelProvider implements ITableLabelProvider {
-		public String getColumnText(Object element, int columnIndex) {
-			String label = ""; //$NON-NLS-1$
+	private class StepLabelProvider extends LabelProvider {
+		public String getText(Object element) {
 			if (element instanceof WizardStep) {
 				WizardStep step = (WizardStep) element;
-				switch (columnIndex) {
-					case 0 :	// Done image column
-						break;
-					case 1 :	// Step number column
-						label = String.valueOf(step.getNumber());
-						break;
-					case 2 :	// Step label column
-						label = step.getLabel();
-					default :
-						break;
-				}
+				return String.valueOf(step.getNumber()) + ". " + step.getLabel();
 			}
 			
-			return label;
+			return ""; //$NON-NLS-1$
 		}
-		public Image getColumnImage(Object element, int columnIndex) {
-			Image image = null;
+		
+		public Image getImage(Object element) {
 			if (element instanceof WizardStep) {
 				WizardStep step = (WizardStep) element;
-				switch (columnIndex) {
-					case 0 :	// Done image column
-						if (step.isDone())
-							image = getDoneImage();
-						else if (step == currentStep)
-							image = getCurrentImage();
-						break;
-					case 1 :	// Step number column
-						break;
-					case 2 :	// Step label column
-					default :
-						break;
-				}
+				if (step.isDone())
+					return getDoneImage();
+				if (step == currentStep)
+					return getCurrentImage();
 			}
 			
-			return image;
+			return null;
 		}
 	}
 }

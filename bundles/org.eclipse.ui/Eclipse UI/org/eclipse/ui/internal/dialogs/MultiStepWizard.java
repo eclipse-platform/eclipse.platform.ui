@@ -140,7 +140,7 @@ public abstract class MultiStepWizard extends Wizard {
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
-	public final boolean performFinish() {
+	public boolean performFinish() {
 		// Does nothing as each step is responsible
 		// to complete its work then its wizard is
 		// done.

@@ -178,6 +178,17 @@ public class NewProjectWizard extends MultiStepWizard implements INewWizard {
 		initialSelectedCategories = categories;
 	}
 	
+	/* (non-Javadoc)
+	 * Method declared on IWizard.
+	 */
+	public boolean performFinish() {
+		if (newProject != null) {
+			BasicNewResourceWizard.selectAndReveal(newProject, workbench.getActiveWorkbenchWindow());
+		}
+		
+		return true;
+	}
+	
 	/**
 	 * Sets the initial project capabilities to be selected.
 	 * 

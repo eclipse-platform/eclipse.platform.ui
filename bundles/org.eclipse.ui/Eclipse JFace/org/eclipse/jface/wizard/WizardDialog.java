@@ -872,8 +872,7 @@ public void showPage(IWizardPage page) {
 	if (page.getControl() == null) {
 		page.createControl(pageContainer);
 		// ensure the dialog is large enough for this page
-		updateSizeForPage(page);
-		pageContainerLayout.layoutPage(page.getControl());
+		updateSize(page);
 	}
 
 	// make the new page visible
@@ -1016,15 +1015,15 @@ private void setShellSize(int width, int height) {
  * its shell if nessessary. Also causes the container to refresh its
  * layout.
  * 
+ * @param page the wizard page to use to resize the dialog
  * @since 2.0
  */
-protected void updateSize() {
-	if (currentPage == null)
+protected void updateSize(IWizardPage page) {
+	if (page == null || page.getControl() == null)
 		return;
 	
-	updateSizeForPage(currentPage);
-//	pageContainerLayout.layoutPage(currentPage.getControl());
-	pageContainer.layout(true);
+	updateSizeForPage(page);
+	pageContainerLayout.layoutPage(page.getControl());
 }
 /**
  * Computes the correct dialog size for the given page and resizes 

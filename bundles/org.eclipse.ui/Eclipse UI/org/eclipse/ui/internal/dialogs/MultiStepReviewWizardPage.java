@@ -110,8 +110,7 @@ public class MultiStepReviewWizardPage extends WizardPage {
 	 * Creates the control for the step list
 	 */
 	private void createStepGroup(Composite parent) {
-		initializeDialogUnits(parent);
-		stepGroup = new WizardStepGroup(convertWidthInCharsToPixels(2));
+		stepGroup = new WizardStepGroup();
 		stepGroup.createContents(parent);
 		stepGroup.setSelectionListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

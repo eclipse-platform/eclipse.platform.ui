@@ -103,6 +103,6 @@ public class MultiStepWizardDialog extends WizardDialog {
 	 * Updates the layout of the dialog
 	 */
 	/* package */ void updateLayout() {
-		super.updateSize();
+		super.updateSize(getCurrentPage());
 	}
 }
