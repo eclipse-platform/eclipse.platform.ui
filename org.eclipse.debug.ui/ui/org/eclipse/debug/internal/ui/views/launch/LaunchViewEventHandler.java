@@ -164,7 +164,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				// Refresh the thread label when a timed out evaluation finishes.
 				// This is necessary because the timeout updates
 				// the label when it occurs
-				refresh(thread);
+				updateRunningThread(thread);
 			}
 			// Don't refresh fully for evaluation completion.
 			return;
