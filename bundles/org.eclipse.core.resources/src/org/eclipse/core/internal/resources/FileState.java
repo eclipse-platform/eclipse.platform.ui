@@ -112,8 +112,11 @@ public class FileState extends PlatformObject implements IFileState {
 	 */
 	public String toString() {
 		StringBuffer s = new StringBuffer();
-		s.append("uuid: ").append(uuid.toString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		s.append("lastModified: ").append(lastModified).append("\n\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		s.append("IFileState(uuid: "); //$NON-NLS-1$
+		s.append(uuid.toString());
+		s.append(", lastModified: "); //$NON-NLS-1$
+		s.append(lastModified);
+		s.append(')');
 		return s.toString();
 	}
 }
