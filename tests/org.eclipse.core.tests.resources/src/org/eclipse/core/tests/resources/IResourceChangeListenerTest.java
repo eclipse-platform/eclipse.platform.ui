@@ -18,7 +18,6 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
-import org.eclipse.core.tests.internal.builders.SortBuilder;
 
 /**
  * Tests behavior of IResourceChangeListener, including validation

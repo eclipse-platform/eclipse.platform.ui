@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.Map;
-import org.eclipse.core.internal.events.InternalBuilder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -12,8 +12,8 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.util.*;
 import junit.framework.Assert;
-import org.eclipse.core.internal.events.InternalBuilder;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.*;
 
 /**
