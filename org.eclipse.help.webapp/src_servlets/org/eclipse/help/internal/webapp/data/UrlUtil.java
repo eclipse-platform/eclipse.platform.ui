@@ -200,13 +200,17 @@ public class UrlUtil {
 	}
 
 	public static String getSafariVersion(HttpServletRequest request) {
+		String version = "0"; //$NON-NLS-1$
 		String agent = request.getHeader("User-Agent").toLowerCase(); //$NON-NLS-1$
 		Matcher m = safariPatern.matcher(agent);
 		boolean matched = m.find();
 		if (matched) {
-			return m.group(1);
+			version = m.group(1);
+			while (version.length() < 3) {
+				version = "0" + version;
+			}
 		}
-		return "0"; //$NON-NLS-1$
+		return version;
 	}
 	/**
 	 * 
