@@ -89,7 +89,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return newResources;
 	}
 	
-	public void appendText(IResource resource, String text, boolean prepend) throws CoreException, IOException {
+	public void appendText(IResource resource, String text, boolean prepend) throws CoreException, IOException, CVSException {
 		IFile file = (IFile)resource;
 		InputStream in = file.getContents();
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -107,7 +107,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		} finally {
 			in.close();
 		}
-		file.setContents(new ByteArrayInputStream(bos.toByteArray()), false, false, DEFAULT_MONITOR);
+		setContentsAndEnsureModified(file, bos.toString());
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			IResource resource = container.findMember(hierarchy[i]);
 			if (resource.getType() == IResource.FILE) {
 				changedResources.add(resource);
-				((IFile)resource).setContents(getRandomContents(), false, false, null);
+				setContentsAndEnsureModified((IFile)resource);
 			}
 		}
 		IResource[] resources = (IResource[])changedResources.toArray(new IResource[changedResources.size()]);
@@ -547,7 +547,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		getProvider(project).add((IResource[]) resourcesToAdd.toArray(new IResource[resourcesToAdd.size()]), IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		// Pause to ensure that future operations happen later than timestamp of committed resources
-		JUnitTestCase.waitMsec(1500);
+		waitMsec(1500);
 	}
 	
 	/**
@@ -556,6 +556,32 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 */
 	public InputStream getRandomContents() {
 		return getRandomContents(RANDOM_CONTENT_SIZE);
+	}
+	
+	protected void setContentsAndEnsureModified(IFile file) throws CoreException, CVSException {
+		setContentsAndEnsureModified(file, getRandomContents().toString());
+	}
+	
+	protected void setContentsAndEnsureModified(IFile file, String contents) throws CoreException, CVSException {
+		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+		int count = 0;
+		if (contents == null) contents ="";
+		do {
+			file.setContents(new ByteArrayInputStream(contents.getBytes()), false, false, null);
+			assertTrue("Timestamp granularity is too small. Increase test wait factor", count <= CVSTestSetup.WAIT_FACTOR);
+			if (!cvsFile.isModified()) {
+				waitMsec(1500);
+				count++;
+			}
+		} while (!cvsFile.isModified());
+	}
+	
+	public void waitMsec(int msec) {	
+		try {
+			Thread.currentThread().sleep(msec);
+		} catch(InterruptedException e) {
+			fail("wait-problem");
+		}
 	}
 }
 

@@ -141,17 +141,6 @@ public class ModuleTest extends EclipseTest {
 		}
 		return project;
 	}
-	
-	/**
-	 * wait milliseconds to continou the execution
-	 */
-	protected static void waitMsec(int msec) {	
-		try {
-			Thread.currentThread().sleep(msec);
-		} catch(InterruptedException e) {
-			fail("wait-problem");
-		}
-	}
 
 	/*
 	 * Test the following definition

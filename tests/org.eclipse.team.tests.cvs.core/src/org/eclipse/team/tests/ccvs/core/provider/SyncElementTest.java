@@ -138,12 +138,9 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, "-copy");
-		IFile file = copy.getFile("folder1/a.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
 		addResources(copy, new String[] { "folder2/folder3/add.txt" }, false);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, false);
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 		// Get the sync tree for the project
@@ -191,9 +188,7 @@ public class SyncElementTest extends EclipseTest {
 		IProject project = createProject("testIncomingChanges", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		
 		// Make some modifications
-		IFile file = project.getFile("folder1/a.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
 		addResources(project, new String[] { "folder2/folder3/add.txt" }, false);
 		deleteResources(project, new String[] {"folder1/b.txt"}, false);
 
@@ -285,20 +280,13 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Checkout a copy and make some modifications
 		IProject copy = checkoutCopy(project, "-copy");
-		IFile file = copy.getFile("file1.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		appendText(file, "prefix\n", true);
-		file = copy.getFile("folder1/a.txt");
-		file.setContents(new ByteArrayInputStream("Use a custom string to avoid intermitant errors!".getBytes()), false, false, null);
+		appendText(copy.getFile("file1.txt"), "prefix\n", true);
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), "Use a custom string to avoid intermitant errors!");
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 		// Make the same modifications to the original (We need to test both M and C!!!)
-		file = project.getFile("file1.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		appendText(file, "\npostfix", false); // This will test merges (M)
-		file = project.getFile("folder1/a.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null); // This will test conflicts (C)
+		appendText(project.getFile("file1.txt"), "\npostfix", false); // This will test merges (M)
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
 
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -444,24 +432,17 @@ public class SyncElementTest extends EclipseTest {
 		IFile file = project.getFile("delete1.txt"); // WARNING: This does a "cvs remove"!!!
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete2.txt"}, false);
-		file = project.getFile("delete3.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(project.getFile("delete3.txt"));
 		file = project.getFile("delete4.txt");
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete5.txt"}, false);
 		
 		// Checkout a copy and commit the deletion
 		IProject copy = checkoutCopy(project, "-copy");
-		file = copy.getFile("delete1.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
-		file = copy.getFile("delete2.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(copy.getFile("delete1.txt"));
+		setContentsAndEnsureModified(copy.getFile("delete2.txt"));
 		deleteResources(copy, new String[] {"delete3.txt", "delete4.txt", "delete5.txt"}, false);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-
 		
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
@@ -498,25 +479,18 @@ public class SyncElementTest extends EclipseTest {
 		file = project.getFile("delete1.txt");
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete2.txt"}, false);
-		file = project.getFile("delete3.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(project.getFile("delete3.txt"));
 		file = project.getFile("delete4.txt");
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete5.txt"}, false);
 		
 		// Checkout a copy and commit the deletion
 		copy = checkoutCopy(project, "-copy");
-		file = copy.getFile("delete1.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
-		file = copy.getFile("delete2.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(copy.getFile("delete1.txt"));
+		setContentsAndEnsureModified(copy.getFile("delete2.txt"));
 		deleteResources(copy, new String[] {"delete3.txt", "delete4.txt", "delete5.txt"}, false);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
-		
 		// Get the sync tree for the project
 		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testDeletionConflictsB", tree, 
@@ -690,20 +664,14 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Checkout a copy and make some modifications
 		IProject copy = checkoutCopy(project, "-copy");
-		IFile file = copy.getFile("file1.txt");
-		appendText(file, "", true);
-		file = copy.getFile("folder1/a.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		appendText(copy.getFile("file1.txt"), "", true);
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 		// Make the same modifications to the original
-		file = project.getFile("file1.txt");
-		appendText(file, "", false);
-		file = project.getFile("folder1/a.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(new ByteArrayInputStream("unique text".getBytes()), false, false, null);
-
+		appendText(project.getFile("file1.txt"), "", false);
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"), "unique text");
+		
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertSyncEquals("testGranularityContents", tree, 
@@ -723,9 +691,7 @@ public class SyncElementTest extends EclipseTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		
 		// Make some modifications
-		IFile file = project.getFile("folder1/a.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
 		addResources(project, new String[] { "folder1/add.txt" }, false);
 		deleteResources(project, new String[] {"folder1/b.txt"}, false);
 		
@@ -752,7 +718,6 @@ public class SyncElementTest extends EclipseTest {
 		// make changes on the branch		
 		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
-		JUnitTestCase.waitMsec(1500);
 		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
 		
 		// make change to workspace working on HEAD
@@ -786,7 +751,6 @@ public class SyncElementTest extends EclipseTest {
 
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, branch);
-		JUnitTestCase.waitMsec(1500);
 		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
 		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);

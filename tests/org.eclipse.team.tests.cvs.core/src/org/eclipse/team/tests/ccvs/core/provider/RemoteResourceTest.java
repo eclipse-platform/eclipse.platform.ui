@@ -80,9 +80,7 @@ public class RemoteResourceTest extends EclipseTest {
 		
 		// Make some changes to the copy and commit
 		IResource[] newResources = buildResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
-		IFile file = copy.getFile("changed.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(copy.getFile("changed.txt"));
 		CVSTeamProvider provider = getProvider(copy);
 		provider.add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		provider.delete(new IResource[] {copy.getFile("deleted.txt")}, DEFAULT_MONITOR);
@@ -149,9 +147,7 @@ public class RemoteResourceTest extends EclipseTest {
 
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, "-copy");
-		IFile file = copy.getFile("folder2/folder3/c.txt");
-		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(copy.getFile("folder2/folder3/c.txt"));
 		addResources(copy, new String[] { "folder2/folder3/add.txt" }, false);
 		getProvider(copy).delete(new IResource[] {copy.getFile("folder2/folder3/b.txt")}, DEFAULT_MONITOR);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
@@ -211,8 +207,7 @@ public class RemoteResourceTest extends EclipseTest {
 	 	// Create a project with an empty file
 		IProject project = createProject("testEmptyFile", new String[] { "file.txt"});
 		IFile file = project.getFile("file.txt");
-		JUnitTestCase.waitMsec(1500);
-		file.setContents(new ByteArrayInputStream(new byte[0]), false, false, DEFAULT_MONITOR);
+		setContentsAndEnsureModified(file, "");
 		commitResources(project, new String[] {"file.txt"});
 		
 		ICVSRemoteResource remote = CVSWorkspaceRoot.getRemoteResourceFor(file);
@@ -231,15 +226,12 @@ public class RemoteResourceTest extends EclipseTest {
 	 	
 	 	// Create a project with an empty file
 		IProject project = createProject("testFileRevisions", new String[] { "file.txt"});
-		IFile file = project.getFile("file.txt");
-		JUnitTestCase.waitMsec(1500);
-		file.setContents(new ByteArrayInputStream("hi there".getBytes()), false, false, DEFAULT_MONITOR);
+		setContentsAndEnsureModified(project.getFile("file.txt"), "hi there");
 		commitResources(project, new String[] {"file.txt"});
-		JUnitTestCase.waitMsec(1500);
-		file.setContents(new ByteArrayInputStream("bye there".getBytes()), false, false, DEFAULT_MONITOR);
+		setContentsAndEnsureModified(project.getFile("file.txt"), "bye there");
 		commitResources(project, new String[] {"file.txt"});
 
-		ICVSRemoteFile remote = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
+		ICVSRemoteFile remote = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file.txt"));
 		ILogEntry[] entries = remote.getLogEntries(DEFAULT_MONITOR);
 		for (int i=0;i<entries.length;i++) {
 			InputStream in = entries[i].getRemoteFile().getContents(DEFAULT_MONITOR);

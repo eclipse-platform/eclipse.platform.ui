@@ -114,9 +114,7 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Perform some operations on the project
 		IResource[] newResources = buildResources(project, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
-		IFile file = project.getFile("changed.txt");
-		JUnitTestCase.waitMsec(1500);
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(project.getFile("changed.txt"));
 		getProvider(project).add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		getProvider(project).delete(new IResource[] {project.getFile("deleted.txt")}, DEFAULT_MONITOR);
 		assertIsModified("testDeepCheckin: ", newResources);
@@ -153,9 +151,7 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Perform some operations on the copy
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
-		IFile file = copy.getFile("changed.txt");
-		JUnitTestCase.waitMsec(1500);
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(copy.getFile("changed.txt"));
 		getProvider(copy).delete(new IResource[] {copy.getFile("deleted.txt")}, DEFAULT_MONITOR);
 		
 		// Commit the copy and update the project
@@ -171,7 +167,6 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Perform some operations on the copy and commit
 		IProject copy = checkoutCopy(project, "-copy");
-		JUnitTestCase.waitMsec(1500);
 		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		changeResources(copy, new String[] {"changed.txt"}, false);
 		deleteResources(copy, new String[] {"deleted.txt"}, false);
@@ -257,9 +252,7 @@ public class CVSProviderTest extends EclipseTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		//addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		deleteResources(copy, new String[] {"deleted.txt"}, false);
-		IFile file = copy.getFile("changed.txt");
-		JUnitTestCase.waitMsec(1500);
-		file.setContents(getRandomContents(), false, false, null);
+		setContentsAndEnsureModified(copy.getFile("changed.txt"));
 
 		// get the remote conetns
 		getProvider(copy).get(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
@@ -349,7 +342,7 @@ public class CVSProviderTest extends EclipseTest {
 		map.put(project.getFile("folder1/a.xtxt"), ksubst);
 		map.put(project.getFile("added.xtxt"), ksubst);
 		
-		JUnitTestCase.waitMsec(1500);
+		waitMsec(1500);
 		IStatus status = getProvider(project).setKeywordSubstitution(map, null);
 		assertTrue("Status should be ok, was: " + status.toString(), status.isOK());
 		assertHasKSubstOption(project, "binary.xbin", ksubst);
