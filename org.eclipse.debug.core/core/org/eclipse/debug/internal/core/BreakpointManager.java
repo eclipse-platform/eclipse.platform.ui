@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -656,12 +655,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					}
 				}
 				return;
-			} else {
-				try {
-					loadBreakpoints(project);
-				} catch (CoreException e) {
-					DebugPlugin.log(e);
-				}
+			} 
+			try {
+				loadBreakpoints(project);
+			} catch (CoreException e) {
+				DebugPlugin.log(e);
 			}
 		}		
 	}
@@ -930,7 +928,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		private final IWorkspaceRunnable fRunnable;
 
 		public BreakpointManagerJob (IWorkspaceRunnable wRunnable) {
-			super("breakpoint manager job");
+			super("breakpoint manager job"); //$NON-NLS-1$
 			fRunnable= wRunnable;
 			setSystem(true);
 		}
