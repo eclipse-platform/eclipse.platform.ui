@@ -126,6 +126,12 @@ public void setLocation(IPath location);
  * Setting the name on a description and then setting the 
  * description on the project has no effect; the new name is ignored.
  * </p>
+ * <p>
+ * Creating a new project with a description name which doesn't
+ * match the project handle name results in the description name
+ * being ignored, the project will be creating using the name
+ * in the handle.
+ * </p>
  *
  * @param projectName the name of the described project
  * @see IProject#setDescription
