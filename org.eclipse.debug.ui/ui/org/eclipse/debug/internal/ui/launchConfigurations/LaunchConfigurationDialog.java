@@ -100,19 +100,19 @@ public class LaunchConfigurationDialog extends Dialog {
 	/**
 	 * A launch configuration dialog overrides this method
 	 * to create a custom set of buttons in the button bar.
-	 * This dialog has 'Save & Lanuch', 'Lanuch', and 'Cancel'
+	 * This dialog has 'Save & Launch', 'Launch', and 'Cancel'
 	 * buttons.
 	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
+	 * @see Dialog#createButtonsForButtonBar(Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, "S&ave and Launch", false);
-		createButton(parent, ID_LAUNCH_BUTTON, "&Launch", true);
+		createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.S&ave_and_Launch_1"), false); //$NON-NLS-1$
+		createButton(parent, ID_LAUNCH_BUTTON, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Launch_2"), true); //$NON-NLS-1$
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}	
 
 	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
+	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		GridData gd;
@@ -137,10 +137,10 @@ public class LaunchConfigurationDialog extends Dialog {
 	
 		// Build the launch configuration edit area
 		// and put it into the composite.
-		Composite launchConfigrationEditArea = createLaunchConfigurationEditArea(composite);
+		Composite launchConfigurationEditArea = createLaunchConfigurationEditArea(composite);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		gd.widthHint = 300;
-		launchConfigSelectionArea.setLayoutData(gd);
+		launchConfigurationEditArea.setLayoutData(gd);
 			
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -177,13 +177,13 @@ public class LaunchConfigurationDialog extends Dialog {
 		GridData gd;
 		
 		Label scopeLabel = new Label(c, SWT.HORIZONTAL | SWT.LEFT);
-		scopeLabel.setText("Show Launch Configurations from:");
+		scopeLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Show_Launch_Configurations_from__3")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 3;
 		scopeLabel.setLayoutData(gd);
 
 		Button projectButton = new Button(c, SWT.RADIO | SWT.LEFT);
-		projectButton.setText("&Project:");
+		projectButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Project__4")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 1;
 		projectButton.setLayoutData(gd);
@@ -228,7 +228,7 @@ public class LaunchConfigurationDialog extends Dialog {
 		);
 		
 		Button browseProjectsButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		browseProjectsButton.setText("&Browse...");
+		browseProjectsButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Browse..._5")); //$NON-NLS-1$
 		gd = new GridData(GridData.END);
 		gd.horizontalSpan = 1;
 		browseProjectsButton.setLayoutData(gd);
@@ -242,7 +242,7 @@ public class LaunchConfigurationDialog extends Dialog {
 						ResourcesPlugin.getWorkspace().getRoot(),
 						new WorkbenchContentProvider(),
 						new WorkbenchLabelProvider(),
-						"Choose a project"
+						LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Choose_a_project_6") //$NON-NLS-1$
 					);
 					dialog.open();
 					Object[] result = dialog.getResult();
@@ -254,7 +254,7 @@ public class LaunchConfigurationDialog extends Dialog {
 		);
 				
 		Button workspaceButton = new Button(c, SWT.RADIO | SWT.LEFT);
-		workspaceButton.setText("&Workspace");
+		workspaceButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Workspace_7")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 3;
 		workspaceButton.setLayoutData(gd);	
@@ -297,19 +297,19 @@ public class LaunchConfigurationDialog extends Dialog {
 		setTreeViewer(tree);
 		
 		Button newButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		newButton.setText("&New");
+		newButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&New_8")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 1;
 		newButton.setLayoutData(gd);
 		
 		Button removeButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		removeButton.setText("&Delete");
+		removeButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Delete_9")); //$NON-NLS-1$
 		gd = new GridData(GridData.CENTER);
 		gd.horizontalSpan = 1;
 		removeButton.setLayoutData(gd);			
 		
 		Button copyButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		copyButton.setText("&Copy");
+		copyButton.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Copy_10")); //$NON-NLS-1$
 		gd = new GridData(GridData.END);
 		gd.horizontalSpan = 1;
 		copyButton.setLayoutData(gd);		
@@ -328,7 +328,7 @@ public class LaunchConfigurationDialog extends Dialog {
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		Composite c = new Composite(parent, SWT.NONE);
 		c.setLayout(new GridLayout());
-		createButton(c, 2000, "edit area", false);
+		createButton(c, 2000, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.edit_area_11"), false); //$NON-NLS-1$
 		return c;
 	}	
 	
@@ -339,7 +339,7 @@ public class LaunchConfigurationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Launch Configurations");
+		newShell.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configurations_12")); //$NON-NLS-1$
 		newShell.setSize(400, 400);
 	}
 	
@@ -443,7 +443,7 @@ public class LaunchConfigurationDialog extends Dialog {
 	}
 	
 	/**
-	 * Retruns the button used to select a project from a list
+	 * Returns the button used to select a project from a list
 	 * 
 	 * @return the button used to select a project from a list
 	 */
@@ -461,7 +461,7 @@ public class LaunchConfigurationDialog extends Dialog {
 	}
 	
 	/**
-	 * Retruns the (raido) button used to select a project
+	 * Returns the (radio) button used to select a project
 	 * 
 	 * @return the button used to select a project
 	 */
@@ -469,7 +469,7 @@ public class LaunchConfigurationDialog extends Dialog {
 		return fProjectButton;
 	}	
 	/**
-	 * Content prodiver for launch configuration tree
+	 * Content provider for launch configuration tree
 	 */
 	class LaunchConfigurationContentProvider implements ITreeContentProvider {
 		
@@ -490,7 +490,7 @@ public class LaunchConfigurationDialog extends Dialog {
 						return getLaunchManager().getLaunchConfigurations(getProject(), type);
 					}
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
+					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_13"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations._14"), e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 				}
 			} else {
 				return getLaunchManager().getLaunchConfigurationTypes();
@@ -506,7 +506,7 @@ public class LaunchConfigurationDialog extends Dialog {
 				try {
 					return ((ILaunchConfiguration)element).getType();
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
+					DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_15"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations._16"), e.getStatus()); //$NON-NLS-2$ //$NON-NLS-1$
 				}
 			} else if (element instanceof ILaunchConfigurationType) {
 				return getContext();
@@ -532,13 +532,13 @@ public class LaunchConfigurationDialog extends Dialog {
 			return getLaunchManager().getLaunchConfigurationTypes();
 		}
 
-		/*
+		/**
 		 * @see IContentProvider#dispose()
 		 */
 		public void dispose() {
 		}
 
-		/*
+		/**
 		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
@@ -581,4 +581,3 @@ public class LaunchConfigurationDialog extends Dialog {
 		return null;
 	}
 }
-

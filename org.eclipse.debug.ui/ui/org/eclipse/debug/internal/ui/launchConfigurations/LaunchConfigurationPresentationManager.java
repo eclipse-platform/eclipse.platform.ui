@@ -37,7 +37,7 @@ public class LaunchConfigurationPresentationManager {
 	 * The key associated with launch configuration tab extensions
 	 * that are applicable to all launch configurations.
 	 */
-	protected static String GENERIC_TABS = "*";
+	protected static String GENERIC_TABS = "*"; //$NON-NLS-1$
 	
 	/**
 	 * Collection of launch configuration tab extensions
@@ -129,7 +129,7 @@ public class LaunchConfigurationPresentationManager {
 				if (lct == null) {
 					IExtension ext = tabs[i].getDeclaringExtension();
 					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format("Launch configuration tab extension {0} refers to non-existant launch configuration type {1}", (new String[] {ext.getUniqueIdentifier(), typeId})), null);
+					 MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchConfigurationPresentationManager.Launch_configuration_tab_extension_{0}_refers_to_non-existant_launch_configuration_type_{1}_2"), (new String[] {ext.getUniqueIdentifier(), typeId})), null); //$NON-NLS-1$
 					DebugUIPlugin.logError(new CoreException(status));
 				}
 			}
