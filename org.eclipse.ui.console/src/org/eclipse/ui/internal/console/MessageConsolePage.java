@@ -234,9 +234,7 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 		IActionBars actionBars= getSite().getActionBars();
 		TextViewerAction action= new TextViewerAction(getViewer(), ITextOperationTarget.COPY);
 		action.configureAction(ConsoleMessages.getString("MessageConsolePage.&Copy@Ctrl+C_6"), ConsoleMessages.getString("MessageConsolePage.Copy_7"), ConsoleMessages.getString("MessageConsolePage.Copy_7")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		action.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-		action.setHoverImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY_HOVER));		
+		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));		
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		action= new TextViewerAction(getViewer(), ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.getString("MessageConsolePage.Select_&All@Ctrl+A_12"), ConsoleMessages.getString("MessageConsolePage.Select_All"), ConsoleMessages.getString("MessageConsolePage.Select_All")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
