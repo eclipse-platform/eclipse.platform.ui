@@ -111,6 +111,8 @@ public class ResourceTranslator {
 		ManifestElement[] classpathElements;
 		try {
 			classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) b.getHeaders().get(Constants.BUNDLE_CLASSPATH));
+			if(classpathElements == null)
+				return;
 			for (int i = 0; i < classpathElements.length; i++) {
 				URL classpathEntry = b.getEntry(classpathElements[i].getValue());
 				if (classpathEntry != null)
