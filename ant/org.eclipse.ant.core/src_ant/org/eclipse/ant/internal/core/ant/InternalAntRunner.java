@@ -208,7 +208,7 @@ public class InternalAntRunner {
 	private void setProperties(Project project) {
 		project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true"); //$NON-NLS-1$
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
-		project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
+		project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		Property[] properties= prefs.getCustomProperties();
@@ -800,11 +800,11 @@ public class InternalAntRunner {
 			targets.add(executionTargets[i]);
 		}
 	}
-
-	private String getAntVersion() throws BuildException {
-		return Main.getAntVersion();
-	}
 	
+	/**
+	 * Returns a String representation of the Ant version number as specified
+	 * in the version.txt file.
+	 */
 	private String getAntVersionNumber() throws BuildException {
 		if (antVersionNumber == null) {
 			try {
@@ -823,6 +823,11 @@ public class InternalAntRunner {
 		return antVersionNumber;
 	}
 	
+	/**
+	 * Returns whether the given version is compatible with the
+	 * current Ant version. A version is compatible if it is less
+	 * than or equal to the current version. 
+	 */
 	private boolean isVersionCompatible(String comparison) {
 		String version= getAntVersionNumber();
 		return version.compareTo(comparison) >= 0;
@@ -1121,7 +1126,7 @@ public class InternalAntRunner {
 	 * fronts.
 	 */
 	private void printVersion() {
-		logMessage(getCurrentProject(), getAntVersion(), Project.MSG_INFO);
+		logMessage(getCurrentProject(), Main.getAntVersion(), Project.MSG_INFO);
 	}
 
 	/**
