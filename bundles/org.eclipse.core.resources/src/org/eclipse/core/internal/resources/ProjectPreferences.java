@@ -108,8 +108,8 @@ public class ProjectPreferences extends EclipsePreferences {
 
 				String project = path.segment(0);
 				String qualifier = path.removeFileExtension().lastSegment();
-				IPath prefsPath = new Path(ProjectScope.SCOPE).append(project).append(qualifier);
-				IEclipsePreferences node = Platform.getPreferencesService().getRootNode().node(prefsPath);
+				Preferences root = Platform.getPreferencesService().getRootNode();
+				Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
 				try {
 					if (node instanceof ProjectPreferences)
 						((ProjectPreferences) node).load();
@@ -219,7 +219,7 @@ public class ProjectPreferences extends EclipsePreferences {
 				Policy.debug("Not saving preferences since there is no file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		Properties table = convertToProperties(new Properties(), Path.EMPTY);
+		Properties table = convertToProperties(new Properties(), ""); //$NON-NLS-1$
 		if (table.isEmpty()) {
 			// nothing to save. delete existing file if one exists.
 			if (localFile.exists()) {

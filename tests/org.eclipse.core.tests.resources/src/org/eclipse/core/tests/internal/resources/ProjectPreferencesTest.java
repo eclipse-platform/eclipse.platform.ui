@@ -30,9 +30,9 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 	public static Test suite() {
 		// all test methods are named "test..."
 		return new TestSuite(ProjectPreferencesTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new ProjectPreferencesTest("testSimple"));
-		//		return suite;
+		//				TestSuite suite = new TestSuite();
+		//				suite.addTest(new ProjectPreferencesTest("test_55410"));
+		//				return suite;
 	}
 
 	public ProjectPreferencesTest(String name) {
@@ -199,22 +199,13 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("3.1", e);
 		}
-		// wait for notification to happen
-		try {
-			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-		} catch (OperationCanceledException e) {
-			fail("3.2", e);
-		} catch (InterruptedException e) {
-			fail("3.3", e);
-		}
 
 		// validate new settings
 		actual = node.get(key, null);
 		assertNotNull("4.0", actual);
 		assertEquals("4.1", value, actual);
 		actual = node.get(newKey, null);
-		assertNotNull("4.2", actual);
-		assertEquals("4.3", newValue, actual);
+		assertEquals("4.2", newValue, actual);
 	}
 
 	/**
@@ -262,7 +253,7 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 	 * directly to disk. We need to convert to use Resource APIs so changes
 	 * show up in the workspace immediately.
 	 */
-	public void test60925() {
+	public void test_60925() {
 		// setup
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
@@ -293,4 +284,166 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		assertTrue("2.0", file.exists());
 		assertTrue("2.1", file.isSynchronized(IResource.DEPTH_ZERO));
 	}
+
+	/**
+	 * Bug 55410 - [runtime] prefs: keys and valid chars
+	 *
+	 * Problems with a dot "." as a key name
+	 */
+	public void test_55410() {
+		IWorkspace workspace = getWorkspace();
+		IProject project1 = workspace.getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {project1}, true);
+		Preferences node = new ProjectScope(project1).getNode(ResourcesPlugin.PI_RESOURCES).node("subnode");
+		String key1 = ".";
+		String key2 = "x";
+		String value1 = getUniqueString();
+		String value2 = getUniqueString();
+		node.put(key1, value1);
+		node.put(key2, value2);
+		assertEquals("0.8", value1, node.get(key1, null));
+		assertEquals("0.9", value2, node.get(key2, null));
+		IFile prefsFile = project1.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs");
+		assertTrue("1.0", !prefsFile.exists());
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.1", e);
+		}
+		assertTrue("1.1", prefsFile.exists());
+		Properties props = new Properties();
+		InputStream contents = null;
+		try {
+			contents = prefsFile.getContents();
+		} catch (CoreException e) {
+			fail("1.2", e);
+		}
+		try {
+			props.load(contents);
+		} catch (IOException e) {
+			fail("1.3", e);
+		} finally {
+			if (contents != null)
+				try {
+					contents.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		assertEquals("2.0", value2, props.getProperty("subnode/" + key2));
+		assertEquals("2.1", value1, props.getProperty("subnode/" + key1));
+	}
+
+	/**
+	 * Bug 61277 - preferences and project moves
+	 *
+	 * Investigate what happens with project preferences when the
+	 * project is moved.
+	 */
+	public void test_61277a() {
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		IProject destProject = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+		ensureDoesNotExistInWorkspace(destProject);
+		IScopeContext context = new ProjectScope(project);
+		String qualifier = getUniqueString();
+		Preferences node = context.getNode(qualifier);
+		String key = getUniqueString();
+		String value = getUniqueString();
+		node.put(key, value);
+		assertEquals("1.0", value, node.get(key, null));
+
+		try {
+			// save the prefs
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.1", e);
+		}
+
+		// rename the project
+		try {
+			project.move(destProject.getFullPath(), true, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		context = new ProjectScope(destProject);
+		node = context.getNode(qualifier);
+		assertEquals("3.0", value, node.get(key, null));
+	}
+
+	/**
+	 * Bug 61277 - preferences and project moves
+	 *
+	 * Investigate what happens with project preferences when the
+	 * project is moved.
+	 */
+	public void test_61277b() {
+		IWorkspace workspace = getWorkspace();
+		IProject project1 = workspace.getRoot().getProject(getUniqueString());
+		IProject project2 = workspace.getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {project1}, true);
+		Preferences node = new ProjectScope(project1).getNode(ResourcesPlugin.PI_RESOURCES);
+		node.put("key", "value");
+		assertTrue("1.0", !project1.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs").exists());
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.99", e);
+		}
+		assertTrue("1.1", project1.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs").exists());
+		// move project and ensures charsets settings are preserved
+		try {
+			project1.move(project2.getFullPath(), false, null);
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertTrue("2.0", project2.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs").exists());
+		node = new ProjectScope(project2).getNode(ResourcesPlugin.PI_RESOURCES);
+		assertEquals("2.1", "value", node.get("key", null));
+	}
+
+	/**
+	 * Bug 61277 - preferences and project moves
+	 *
+	 * Investigate what happens with project preferences when the
+	 * project is moved.
+	 * 
+	 * Problems with a key which is the empty string.
+	 */
+	public void test_61277c() {
+		IWorkspace workspace = getWorkspace();
+		IProject project1 = workspace.getRoot().getProject(getUniqueString());
+		IProject project2 = null;
+		ensureExistsInWorkspace(new IResource[] {project1}, true);
+		Preferences node = new ProjectScope(project1).getNode(ResourcesPlugin.PI_RESOURCES);
+		String key1 = "key";
+		String emptyKey = "";
+		String value1 = getUniqueString();
+		String value2 = getUniqueString();
+		node.put(key1, value1);
+		node.put(emptyKey, value2);
+		assertTrue("1.0", !project1.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs").exists());
+
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.1", e);
+		}
+		assertTrue("1.2", project1.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs").exists());
+
+		// move project and ensures charsets settings are preserved
+		project2 = workspace.getRoot().getProject(getUniqueString());
+		try {
+			project1.move(project2.getFullPath(), false, null);
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertTrue("2.0", project2.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs").exists());
+
+		node = new ProjectScope(project2).getNode(ResourcesPlugin.PI_RESOURCES);
+		assertEquals("2.1", value1, node.get(key1, null));
+		assertEquals("2.2", value2, node.get(emptyKey, null));
+	}
+
 }
