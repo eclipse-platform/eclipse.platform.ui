@@ -49,6 +49,7 @@ public void testProjectDeletion() throws Throwable {
 	Workspace.clear(project.getLocation().toFile());
 
 	// run synchronize
+	//FIXME: The .project file has been deleted, so this will fail
 	project.refreshLocal(IResource.DEPTH_INFINITE, null);
 
 	/* project should still exists */
