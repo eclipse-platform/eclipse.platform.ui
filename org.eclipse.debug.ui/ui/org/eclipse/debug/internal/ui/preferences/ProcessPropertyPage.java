@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.preferences;
 
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ProcessPropertyPage extends PropertyPage {
 
@@ -36,6 +38,10 @@ public class ProcessPropertyPage extends PropertyPage {
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite ancestor) {
+		WorkbenchHelp.setHelp(
+			ancestor,
+			IDebugHelpContextIds.PROCESS_PROPERTY_PAGE);
+					
 		Font font = ancestor.getFont();
 		noDefaultAndApplyButton();
 		
