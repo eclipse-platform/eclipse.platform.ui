@@ -267,6 +267,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 * the <code>ISharedImages</code> understands.
 	 * 
 	 * @param symbolicImageName the symbolic system image name to be translated
+	 * @return the shared image name
 	 * @since 3.0
 	 */
 	private String translateSymbolicImageName(String symbolicImageName) {
@@ -274,7 +275,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	}
 	
 	/**
-	 * Retuns the image for the given annotation and the given annotation preferences or
+	 * Returns the image for the given annotation and the given annotation preferences or
 	 * <code>null</code> if there is no such image.
 	 * 
 	 * @param annotation the annotation
