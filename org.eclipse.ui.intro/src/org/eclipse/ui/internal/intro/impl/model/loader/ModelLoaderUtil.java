@@ -84,7 +84,7 @@ public class ModelLoaderUtil {
     public static String getLogString(IConfigurationElement element,
             String logAttribute) {
         StringBuffer buffer = new StringBuffer("Bundle:"); //$NON-NLS-1$
-        buffer.append(element.getDeclaringExtension().getNamespace());
+        buffer.append(element.getNamespace());
         buffer.append("  Extension:"); //$NON-NLS-1$
         buffer.append(element.getDeclaringExtension()
                 .getExtensionPointUniqueIdentifier());
@@ -198,7 +198,7 @@ public class ModelLoaderUtil {
 
     public static Bundle getBundleFromConfigurationElement(
             IConfigurationElement cfg) {
-        return Platform.getBundle(cfg.getDeclaringExtension().getNamespace());
+        return Platform.getBundle(cfg.getNamespace());
     }
 
     /**
