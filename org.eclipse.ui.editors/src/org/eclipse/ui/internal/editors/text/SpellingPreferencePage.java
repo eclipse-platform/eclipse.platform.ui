@@ -13,7 +13,10 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
+
 
 /**
  * Spelling preference page.
@@ -52,7 +55,7 @@ public class SpellingPreferencePage extends AbstractConfigurationBlockPreference
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
 	protected String getHelpId() {
-		return null; // FIXME: Needs help context ID
+		return ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE;
 	}
 
 	/*

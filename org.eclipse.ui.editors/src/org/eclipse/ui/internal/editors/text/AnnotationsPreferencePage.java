@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.editors.text;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 
 /**
@@ -30,7 +31,7 @@ public class AnnotationsPreferencePage extends AbstractConfigurationBlockPrefere
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
 	protected String getHelpId() {
-		return null; // FIXME: Needs help context ID
+		return ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE;
 	}
 
 	/*
