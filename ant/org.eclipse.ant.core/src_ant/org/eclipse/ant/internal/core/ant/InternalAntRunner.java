@@ -131,7 +131,7 @@ public class InternalAntRunner {
 	
 	protected boolean scriptExecuted= false;
 	
-	protected List propertyFiles= null;
+	protected List propertyFiles= new ArrayList();
 	
 	/**
      * The Ant InputHandler class.  There may be only one input
@@ -165,6 +165,14 @@ public class InternalAntRunner {
 	 */
 	public void addUserProperties(Map properties) {
 		userProperties = properties;
+	}
+	
+	/**
+	 * Adds user property files.
+	 * @since 2.1
+	 */
+	public void addPropertyFiles(String[] propertyFiles) {
+		this.propertyFiles.addAll(Arrays.asList(propertyFiles));
 	}
 
 	protected void addBuildListeners(Project project) {
@@ -995,9 +1003,7 @@ public class InternalAntRunner {
 				logMessage(currentProject, message, Project.MSG_ERR); 
 				throw new BuildException(message);
 			} 
-			if (propertyFiles == null) {
-				propertyFiles= new ArrayList();
-			}
+			
 			propertyFiles.add(args[0]);
 			args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		}

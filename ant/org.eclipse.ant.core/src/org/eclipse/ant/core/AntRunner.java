@@ -31,6 +31,7 @@ public class AntRunner implements IPlatformRunnable {
 	protected String buildLoggerClassName;
 	protected String inputHandlerClassName;
 	protected String[] arguments;
+	protected String[] propertyFiles;
 
 	/** 
 	 * Constructs an instance of this class.
@@ -286,6 +287,13 @@ public class AntRunner implements IPlatformRunnable {
 				Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] { Map.class }); //$NON-NLS-1$
 				addUserProperties.invoke(runner, new Object[] { userProperties });
 			}
+			
+			// add property files
+			if (propertyFiles != null) {
+				Method addPropertyFiles = classInternalAntRunner.getMethod("addPropertyFiles", new Class[] { String[].class }); //$NON-NLS-1$
+				addPropertyFiles.invoke(runner, new Object[] { propertyFiles });
+			}
+			
 			// set message output level
 			Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
 			setMessageOutputLevel.invoke(runner, new Object[] { new Integer(messageOutputLevel)});
@@ -409,10 +417,18 @@ public class AntRunner implements IPlatformRunnable {
 	 * input handler will be used to respond to <input> requests
 	 * Only one input handler is permitted for any build.
 	 * 
-	 *
 	 * @param className an input handler class name
 	 */
 	public void setInputHandler(String className) {
 		inputHandlerClassName= className;
+	}
+	
+	/**
+	 * Sets the user specified property files.
+	 * @param array of property file paths
+	 * @since 2.1
+	 */
+	public void setPropertyFiles(String[] propertyFiles) {
+		this.propertyFiles= propertyFiles;
 	}
 }
