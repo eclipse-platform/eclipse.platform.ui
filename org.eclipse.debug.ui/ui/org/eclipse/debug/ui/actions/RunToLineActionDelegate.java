@@ -28,22 +28,24 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
- * A run to line action that can be contributed to a an editor. The action
- * will perform the "run to line" operation for editors that provide
+ * A run to line action that can be contributed to a an editor or view. The action
+ * will perform the "run to line" operation for parts that provide
  * an appropriate <code>IRunToLineTarget</code> adapter.
  * <p>
- * Clients may reference/contribute this class as an editor action delegate
+ * Clients may reference/contribute this class as an action delegate
  * in plug-in XML. This class is not intended to be subclassed.
  * </p>
  * @since 3.0
  */
-public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2 {
+public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2, IViewActionDelegate {
 	
-	private IEditorPart fActivePart = null;
+	private IWorkbenchPart fActivePart = null;
 	private IRunToLineTarget fPartTarget = null;
 	private IAction fAction = null;
 	private ISelectionListener fSelectionListener = new DebugSelectionListener();
@@ -142,22 +144,38 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 */
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 		init(action);
-		if (fActivePart != null && !fActivePart.equals(targetEditor)) {
+		bindTo(targetEditor);	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
+	public void init(IViewPart view) {
+		bindTo(view);
+	}
+	
+	/**
+	 * Binds this action to operate on the given part's run to line adapter.
+	 *  
+	 * @param part
+	 */
+	private void bindTo(IWorkbenchPart part) {
+		if (fActivePart != null && !fActivePart.equals(part)) {
 			fActivePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
 		}
 		fPartTarget = null;
-		fActivePart = targetEditor;
-		if (targetEditor != null) {
-			targetEditor.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
-			fPartTarget  = (IRunToLineTarget) targetEditor.getAdapter(IRunToLineTarget.class);
+		fActivePart = part;
+		if (part != null) {
+			part.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener);
+			fPartTarget  = (IRunToLineTarget) part.getAdapter(IRunToLineTarget.class);
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on
-				if (adapterManager.hasAdapter(targetEditor, IRunToLineTarget.class.getName())) {
-					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(targetEditor, IRunToLineTarget.class.getName());
+				if (adapterManager.hasAdapter(part, IRunToLineTarget.class.getName())) {
+					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(part, IRunToLineTarget.class.getName());
 				}
 			}
 		}
-		update();		
+		update();			
 	}
 }
