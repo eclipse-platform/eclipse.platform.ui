@@ -148,9 +148,10 @@ public class DefaultPartPresentation extends StackPresentation {
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 */
 		public void handleEvent(Event event) {
-			Point pos = new Point(event.x, event.y);
-
-			showSystemMenu(pos);
+			Point globalPos = new Point(event.x, event.y);
+			CTabItem clickedItem = tabFolder.getItem(tabFolder.getControl().toControl(globalPos));
+			if (clickedItem != null)
+				showSystemMenu(globalPos);
 		}
 	};
 	
