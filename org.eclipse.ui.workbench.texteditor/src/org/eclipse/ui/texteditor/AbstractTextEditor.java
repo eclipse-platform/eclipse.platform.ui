@@ -222,9 +222,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				 * @see VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
 				 */
 				public void verifyText(VerifyEvent e) {
-					if (! validateEditorInputState())
+					IDocument document= getDocumentProvider().getDocument(getEditorInput());
+					final boolean[] documentChanged= new boolean[1];
+					IDocumentListener listener= new IDocumentListener() {
+						public void documentAboutToBeChanged(DocumentEvent event) {
+						}
+						public void documentChanged(DocumentEvent event) {
+							documentChanged[0]= true;
+						}
+					};
+					try {
+						if (document != null)
+							document.addDocumentListener(listener);
+						if (! validateEditorInputState() || documentChanged[0])
 							e.doit= false;
+					} finally {
+						if (document != null)
+							document.removeDocumentListener(listener);
 					}
+				}
 			}
 		
 		/**

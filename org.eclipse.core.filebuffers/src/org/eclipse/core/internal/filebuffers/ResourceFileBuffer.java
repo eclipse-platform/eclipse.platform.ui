@@ -328,6 +328,8 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			if (fFile.isReadOnly()) {
 				IWorkspace workspace= fFile.getWorkspace();
 				fStatus= workspace.validateEdit(new IFile[] { fFile }, computationContext);
+				if (fStatus.isOK())
+					handleFileContentChanged();
 			}
 			fIsStateValidated= true;
 			fManager.fireStateValidationChanged(this, fIsStateValidated);
