@@ -1845,8 +1845,13 @@ private void setActivePart(IWorkbenchPart newPart) {
 	if (persp != null)
 		persp.partActivated(newPart);
 	
-	// Set active part.
+	// Deactivate old part
 	IWorkbenchPart oldPart = activePart;
+	if (oldPart != null) {
+		deactivatePart(oldPart, false, false);
+	}
+	
+	// Set active part.
 	activePart = newPart;
 	if (newPart != null) {	
 		activationList.setActive(newPart);
