@@ -65,6 +65,38 @@ import org.eclipse.ui.internal.util.Util;
  * @since 3.0
  */
 public class WorkbenchActivitiesCommandsAndRoles {
+	
+	/**
+	 * The current mode of the workbench.  A mode contains the key sequence that
+	 * is currently waiting in the system.  A key sequence is waiting if there
+	 * are key bindings which partially match, or if the key sequence perfectly 
+	 * matches a key binding and a command is executing.  The command name is 
+	 * the name of the currently executing command, if any.
+	 */
+	private class Mode {
+		/**
+		 * The key sequence waiting in the system.  This value should never be
+		 * <code>null</code>.
+		 */
+		private KeySequence keySequence;
+		/**
+		 * The currently executing command; <code>null</code> if none.
+		 */
+		private String executingCommandName;
+		
+		Mode(KeySequence sequence, String commandName) {
+			keySequence = sequence;
+			executingCommandName = commandName;
+		}
+		
+		KeySequence getKeySequence() {
+			return keySequence;
+		}
+		
+		String getExecutingCommandName() {
+			return executingCommandName;
+		}
+	}
 
 	/**
 	 * A listener that makes sure that global key bindings are processed if no
