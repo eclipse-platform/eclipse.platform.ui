@@ -2435,7 +2435,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Hook method for setting the document provider for the given input.
-	 * This default implementation does notthing. Clients may
+	 * This default implementation does nothing. Clients may
 	 * reimplement.
 	 * 
 	 * @param input the input of this editor.
