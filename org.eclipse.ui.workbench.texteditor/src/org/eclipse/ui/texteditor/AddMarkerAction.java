@@ -234,8 +234,23 @@ public class AddMarkerAction extends TextEditorAction {
 		try {
 			
 			
-			if (length > 0)
-				return document.get(offset, Math.min(length, MAX_LABEL_LENGTH));
+			if (length > 0) {
+
+				// find first white char but skip leading white chars
+				int i= 0;
+				boolean skip= true;
+				while (i < length) {
+					boolean isWhitespace= Character.isWhitespace(document.getChar(offset + i));
+					if (!skip && isWhitespace)
+						break;
+					if (skip && !isWhitespace)
+						skip= false;
+					i++;
+				}
+				
+				String label= document.get(offset, i);
+				return label.trim();
+			}
 				
 			
 			char ch;
