@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream;
  * that supports <code>IFile</code>.
  */
 public class ReadmeDropActionDelegate implements IDropActionDelegate {
-	public static final String ID = "org_eclipse_ui_examples_readmetool_drop_actions";
+	public static final String ID = "org_eclipse_ui_examples_readmetool_drop_actions"; //$NON-NLS-1$
 /** (non-Javadoc)
  * Method declared on IDropActionDelegate
  */
@@ -26,7 +26,7 @@ public boolean run(Object source, Object target) {
 		try {
 			file.appendContents(new ByteArrayInputStream((byte[])source), false, true, null);
 		} catch (CoreException e) {
-			System.out.println("Exception in readme drop adapter: " + e.getStatus().getMessage());
+			System.out.println(MessageUtil.getString("Exception_in_readme_drop_adapter") + e.getStatus().getMessage()); //$NON-NLS-1$
 			return false;
 		}
 		return true;

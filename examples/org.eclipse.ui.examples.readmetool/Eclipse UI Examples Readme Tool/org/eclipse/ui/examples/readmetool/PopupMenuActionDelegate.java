@@ -22,8 +22,8 @@ public class PopupMenuActionDelegate implements IObjectActionDelegate {
 public void run(IAction action) {
 	MessageDialog.openInformation(
 		this.part.getSite().getShell(),
-		"Readme Example",
-		"Popup Menu Action executed");
+		MessageUtil.getString("Readme_Example"), //$NON-NLS-1$
+		MessageUtil.getString("Popup_Menu_Action_executed")); //$NON-NLS-1$
 }
 /** (non-Javadoc)
  * Method declared on IActionDelegate

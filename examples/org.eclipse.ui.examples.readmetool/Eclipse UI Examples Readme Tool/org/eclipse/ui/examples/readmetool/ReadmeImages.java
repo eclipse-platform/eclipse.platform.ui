@@ -34,23 +34,23 @@ public class ReadmeImages {
 		else
 			iconPath = "icons/basic/";//$NON-NLS-1$
 		
-		String prefix = iconPath + "ctool16/";
-		EDITOR_ACTION1_IMAGE = createImageDescriptor(prefix + "action1.gif");
-		EDITOR_ACTION2_IMAGE = createImageDescriptor(prefix + "action2.gif");
-		EDITOR_ACTION3_IMAGE = createImageDescriptor(prefix + "action3.gif");
+		String prefix = iconPath + "ctool16/"; //$NON-NLS-1$
+		EDITOR_ACTION1_IMAGE = createImageDescriptor(prefix + "action1.gif"); //$NON-NLS-1$
+		EDITOR_ACTION2_IMAGE = createImageDescriptor(prefix + "action2.gif"); //$NON-NLS-1$
+		EDITOR_ACTION3_IMAGE = createImageDescriptor(prefix + "action3.gif"); //$NON-NLS-1$
 
-		prefix = iconPath + "dtool16/";
-		EDITOR_ACTION1_IMAGE_DISABLE = createImageDescriptor(prefix + "action1.gif");
-		EDITOR_ACTION2_IMAGE_DISABLE = createImageDescriptor(prefix + "action2.gif");
-		EDITOR_ACTION3_IMAGE_DISABLE = createImageDescriptor(prefix + "action3.gif");
+		prefix = iconPath + "dtool16/"; //$NON-NLS-1$
+		EDITOR_ACTION1_IMAGE_DISABLE = createImageDescriptor(prefix + "action1.gif"); //$NON-NLS-1$
+		EDITOR_ACTION2_IMAGE_DISABLE = createImageDescriptor(prefix + "action2.gif"); //$NON-NLS-1$
+		EDITOR_ACTION3_IMAGE_DISABLE = createImageDescriptor(prefix + "action3.gif"); //$NON-NLS-1$
 		
-		prefix = iconPath + "etool16/";
-		EDITOR_ACTION1_IMAGE_ENABLE = createImageDescriptor(prefix + "action1.gif");
-		EDITOR_ACTION2_IMAGE_ENABLE = createImageDescriptor(prefix + "action2.gif");
-		EDITOR_ACTION3_IMAGE_ENABLE = createImageDescriptor(prefix + "action3.gif");
+		prefix = iconPath + "etool16/"; //$NON-NLS-1$
+		EDITOR_ACTION1_IMAGE_ENABLE = createImageDescriptor(prefix + "action1.gif"); //$NON-NLS-1$
+		EDITOR_ACTION2_IMAGE_ENABLE = createImageDescriptor(prefix + "action2.gif"); //$NON-NLS-1$
+		EDITOR_ACTION3_IMAGE_ENABLE = createImageDescriptor(prefix + "action3.gif"); //$NON-NLS-1$
 		
-		prefix = iconPath + "wizban/";
-		README_WIZARD_BANNER = createImageDescriptor(prefix + "newreadme_wiz.gif");
+		prefix = iconPath + "wizban/"; //$NON-NLS-1$
+		README_WIZARD_BANNER = createImageDescriptor(prefix + "newreadme_wiz.gif"); //$NON-NLS-1$
 	}
 /**
  * Utility method to create an <code>ImageDescriptor</code>

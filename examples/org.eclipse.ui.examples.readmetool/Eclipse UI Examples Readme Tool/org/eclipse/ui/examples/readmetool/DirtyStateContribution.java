@@ -24,7 +24,7 @@ public class DirtyStateContribution extends ControlContribution
  * Creates a new DirtyStateContribution.
  */
 protected DirtyStateContribution() {
-	super("DirtyState");
+	super("DirtyState"); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on ControlContribution
@@ -78,8 +78,8 @@ private void updateState() {
 	if (activeEditor != null)
 		saveNeeded = activeEditor.isDirty();
 	if (saveNeeded)
-		label.setText("Save Needed");
+		label.setText(MessageUtil.getString("Save_Needed")); //$NON-NLS-1$
 	else
-		label.setText("Clean");
+		label.setText(MessageUtil.getString("Clean")); //$NON-NLS-1$
 }
 }

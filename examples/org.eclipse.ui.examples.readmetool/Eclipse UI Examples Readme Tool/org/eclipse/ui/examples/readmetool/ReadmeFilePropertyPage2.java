@@ -100,15 +100,15 @@ protected Label createLabel(Composite parent, String text) {
  * @param panel  the panel in which to create the page
  */
 protected void createPageOne(Composite panel) {
-	Label l = createLabel(panel, "Additional Readme properties not available.");
+	Label l = createLabel(panel, MessageUtil.getString("Additional_Readme_properties_not_available.")); //$NON-NLS-1$
 	GridData gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
-	l = createLabel(panel, "This illustrates a property page that is dynamically determined");
+	l = createLabel(panel, MessageUtil.getString("This_illustrates_a_property_page_that_is_dynamically_determined")); //$NON-NLS-1$
 	gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
-	l = createLabel(panel, "not to be available based on the state of the object.");
+	l = createLabel(panel, MessageUtil.getString("not_to_be_available_based_on_the_state_of_the_object.")); //$NON-NLS-1$
 	gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
@@ -120,23 +120,23 @@ protected void createPageOne(Composite panel) {
  * @param panel  the panel in which to create the page
  */
 protected void createPageTwo(Composite panel) {
-	Label l = createLabel(panel, "The size of the Readme file is at least 256 bytes.");
+	Label l = createLabel(panel, MessageUtil.getString("The_size_of_the_Readme_file_is_at_least_256_bytes.")); //$NON-NLS-1$
 	GridData gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
-	l = createLabel(panel, "Had it been less than 256 bytes, this page would be a placeholder page.");
+	l = createLabel(panel, MessageUtil.getString("Had_it_been_less_than_256_bytes,_this_page_would_be_a_placeholder_page.")); //$NON-NLS-1$
 	gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
-	l = createLabel(panel, "Additional information about the Readme file can go here.");
+	l = createLabel(panel, MessageUtil.getString("Additional_information")); //$NON-NLS-1$
 	gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
-	l = createLabel(panel, "This illustrates a property page that is dynamically determined");
+	l = createLabel(panel, MessageUtil.getString("This_illustrates_a_property_page_that_is_dynamically_determined")); //$NON-NLS-1$
 	gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;
-	l = createLabel(panel, "to be available based on the state of the object.");
+	l = createLabel(panel, MessageUtil.getString("to_be_available_based_on_the_state_of_the_object.")); //$NON-NLS-1$
 	gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;
 	gd.grabExcessHorizontalSpace = true;

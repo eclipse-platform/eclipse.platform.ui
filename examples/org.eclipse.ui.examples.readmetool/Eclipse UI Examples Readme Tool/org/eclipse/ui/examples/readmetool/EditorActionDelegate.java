@@ -25,8 +25,8 @@ public EditorActionDelegate() {
  */
 public void run(IAction action) {
 	MessageDialog.openInformation(editor.getSite().getShell(),
-		"Readme Editor", 
-		"Editor Action executed");
+		MessageUtil.getString("Readme_Editor"),  //$NON-NLS-1$
+		MessageUtil.getString("Editor_Action_executed")); //$NON-NLS-1$
 }
 /** 
  * The <code>EditorActionDelegate</code> implementation of this

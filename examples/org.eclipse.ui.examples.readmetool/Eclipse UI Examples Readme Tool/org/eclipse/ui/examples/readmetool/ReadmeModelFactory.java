@@ -147,7 +147,7 @@ private void processParserElement(IConfigurationElement element) {
 		parser = (IReadmeFileParser)element.createExecutableExtension(IReadmeConstants.ATT_CLASS);
 	} catch (CoreException e) {
 		// since this is an example just write to the console
-		System.out.println("Unable to create file parser." + e.getStatus().getMessage());
+		System.out.println(MessageUtil.getString("Unable_to_create_file_parser") + e.getStatus().getMessage()); //$NON-NLS-1$
 		parser = null;
 	}
 }

@@ -56,22 +56,22 @@ public Control createContents(Composite parent) {
 	IResource resource = (IResource) getElement();
 	IStatus result = null;
 	if (resource.getType() == IResource.FILE) {
-		Label l = createLabel(panel, "File name:");
+		Label l = createLabel(panel, MessageUtil.getString("File_name")); //$NON-NLS-1$
 		l = createLabel(panel, resource.getName());
 		grabExcessSpace(l);
 
 		//
-		createLabel(panel, "Path: ");
+		createLabel(panel, MessageUtil.getString("Path")); //$NON-NLS-1$
 		l = createLabel(panel, resource.getFullPath().setDevice(null).toString());
 		grabExcessSpace(l);
 
 		//
-		createLabel(panel, "Size: ");
+		createLabel(panel, MessageUtil.getString("Size")); //$NON-NLS-1$
 		InputStream contentStream = null;
 		try {
 			IFile file = (IFile) resource;
 			if (!file.isLocal(IResource.DEPTH_ZERO))
-				l = createLabel(panel,"<file contents not local>");
+				l = createLabel(panel,MessageUtil.getString("<file_contents_not_local>")); //$NON-NLS-1$
 			else {
 				contentStream = file.getContents();
 				Reader in = new InputStreamReader(contentStream);
@@ -92,11 +92,11 @@ public Control createContents(Composite parent) {
 			result = e.getStatus();
 			String message = result.getMessage();
 			if (message == null)
-				l = createLabel(panel, "<Unknown>");
+				l = createLabel(panel, MessageUtil.getString("<Unknown>")); //$NON-NLS-1$
 			else
 				l = createLabel(panel, message);
 		} catch (IOException e) {
-			l = createLabel(panel, "<Unknown>");
+			l = createLabel(panel, MessageUtil.getString("<Unknown>")); //$NON-NLS-1$
 		} finally {
 			if (contentStream != null) {
 				try {
@@ -106,7 +106,7 @@ public Control createContents(Composite parent) {
 			}
 		}
 		grabExcessSpace(l);
-		createLabel(panel, "Number of sections:");
+		createLabel(panel, MessageUtil.getString("Number_of_sections")); //$NON-NLS-1$
 		// We will get the sections property and simply
 		// report number of elements found.
 		IAdaptable sections = getSections(resource);
@@ -118,7 +118,7 @@ public Control createContents(Composite parent) {
 	}
 
 	//
-	Label l = createLabel(panel, "Additional information about the Readme file can go here.");
+	Label l = createLabel(panel, MessageUtil.getString("Additional_information")); //$NON-NLS-1$
 	grabExcessSpace(l);
 	GridData gd = (GridData) l.getLayoutData();
 	gd.horizontalSpan = 2;

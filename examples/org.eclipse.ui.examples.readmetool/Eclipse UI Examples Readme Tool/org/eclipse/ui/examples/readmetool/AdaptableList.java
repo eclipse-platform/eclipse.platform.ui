@@ -84,7 +84,7 @@ public ImageDescriptor getImageDescriptor(Object object) {
  * Method declared on IWorkbenchAdapter
  */
 public String getLabel(Object object) {
-	return object == null ? "" : object.toString();
+	return object == null ? "" : object.toString(); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on IWorkbenchAdapter

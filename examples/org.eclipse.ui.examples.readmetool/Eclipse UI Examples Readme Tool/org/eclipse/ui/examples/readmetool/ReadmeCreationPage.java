@@ -40,9 +40,9 @@ public class ReadmeCreationPage extends WizardNewFileCreationPage {
  * @param selection  the current selection
  */
 public ReadmeCreationPage(IWorkbench workbench, IStructuredSelection selection) {
-	super("sampleCreateReadmePage1", selection);
-	this.setTitle("Create Readme File");
-	this.setDescription("Create a new Readme file resource.");
+	super("sampleCreateReadmePage1", selection); //$NON-NLS-1$
+	this.setTitle(MessageUtil.getString("Create_Readme_File")); //$NON-NLS-1$
+	this.setDescription(MessageUtil.getString("Create_a_new_Readme_file_resource")); //$NON-NLS-1$
 	this.workbench = workbench;
 }
 /** (non-Javadoc)
@@ -56,24 +56,24 @@ public void createControl(Composite parent) {
 	WorkbenchHelp.setHelp(composite, new String[] {IReadmeConstants.CREATION_WIZARD_PAGE_CONTEXT});
 	
 	GridData data = (GridData)composite.getLayoutData();
-	this.setFileName("sample" + nameCounter + ".readme");
+	this.setFileName("sample" + nameCounter + ".readme"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	new Label(composite,SWT.NONE);	// vertical spacer
 
 	// sample section generation group
 	Group group = new Group(composite,SWT.NONE);
 	group.setLayout(new GridLayout());
-	group.setText("Automatic sample section generation");
+	group.setText(MessageUtil.getString("Automatic_sample_section_generation")); //$NON-NLS-1$
 	group.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 
 	// sample section generation checkboxes
 	sectionCheckbox = new Button(group,SWT.CHECK);
-	sectionCheckbox.setText("Generate sample section titles");
+	sectionCheckbox.setText(MessageUtil.getString("Generate_sample_section_titles")); //$NON-NLS-1$
 	sectionCheckbox.setSelection(true);
 	sectionCheckbox.addListener(SWT.Selection,this);
 	
 	subsectionCheckbox = new Button(group,SWT.CHECK);
-	subsectionCheckbox.setText("Generate sample subsection titles");
+	subsectionCheckbox.setText(MessageUtil.getString("Generate_sample_subsection_titles")); //$NON-NLS-1$
 	subsectionCheckbox.setSelection(true);
 	subsectionCheckbox.addListener(SWT.Selection,this);
 
@@ -81,7 +81,7 @@ public void createControl(Composite parent) {
 
 	// open file for editing checkbox
 	openFileCheckbox = new Button(composite,SWT.CHECK);
-	openFileCheckbox.setText("Open file for editing when done");
+	openFileCheckbox.setText(MessageUtil.getString("Open_file_for_editing_when_done")); //$NON-NLS-1$
 	openFileCheckbox.setSelection(true);
 
 	setPageComplete(validatePage());
@@ -129,24 +129,24 @@ protected InputStream getInitialContents() {
 		return null;
 
 	StringBuffer sb = new StringBuffer();
-	sb.append("\n\n     SAMPLE README FILE\n\n");
-	sb.append("1. SECTION 1\n");
-	sb.append("This text is a placeholder for the section body.\n");
+	sb.append(MessageUtil.getString("SAMPLE_README_FILE")); //$NON-NLS-1$
+	sb.append(MessageUtil.getString("SECTION_1")); //$NON-NLS-1$
+	sb.append(MessageUtil.getString("SECTION_1_BODY_1")); //$NON-NLS-1$
 	
 	if (subsectionCheckbox.getSelection()) {
-		sb.append("   1.1 Subsection\n");
-		sb.append("   This text is a placeholder for the subsection body\n");
+		sb.append(MessageUtil.getString("Subsection_1_1")); //$NON-NLS-1$
+		sb.append(MessageUtil.getString("Subsection_1_1_Body_1")); //$NON-NLS-1$
 	}
 	
-	sb.append("2. SECTION 2\n");
-	sb.append("This text is a placeholder for the section body. It is\n");
-	sb.append("a bit longer in order to span two lines.\n");
+	sb.append(MessageUtil.getString("SECTION_2")); //$NON-NLS-1$
+	sb.append(MessageUtil.getString("SECTION_2_BODY_1")); //$NON-NLS-1$
+	sb.append(MessageUtil.getString("SECTION_2_BODY_2")); //$NON-NLS-1$
 	
 	if (subsectionCheckbox.getSelection()) {
-		sb.append("   2.1 Subsection\n");
-		sb.append("   This text is a placeholder for the subsection body\n");
-		sb.append("   2.2 Subsection\n");
-		sb.append("   This text is a placeholder for the subsection body\n");
+		sb.append(MessageUtil.getString("Subsection_2_1")); //$NON-NLS-1$
+		sb.append(MessageUtil.getString("Subsection_2_1_BODY_1")); //$NON-NLS-1$
+		sb.append(MessageUtil.getString("Subsection_2_2")); //$NON-NLS-1$
+		sb.append(MessageUtil.getString("Subsection_2_2_BODY_1")); //$NON-NLS-1$
 	}
 	
 	return new ByteArrayInputStream(sb.toString().getBytes());
@@ -155,7 +155,7 @@ protected InputStream getInitialContents() {
  * Method declared on WizardNewFileCreationPage.
  */
 protected String getNewFileLabel() {
-	return "Readme file name:";
+	return MessageUtil.getString("Readme_file_name"); //$NON-NLS-1$
 }
 /** (non-Javadoc)
  * Method declared on WizardNewFileCreationPage.

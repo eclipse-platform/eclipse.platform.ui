@@ -39,13 +39,12 @@ public class ReadmeEditorActionBarContributor extends BasicTextEditorActionContr
 			this.shell = shell;
 		}
 		public void run() {
-			String editorName = "Empty";
+			String editorName = MessageUtil.getString("Empty_Editor_Name"); //$NON-NLS-1$
 			if (activeEditor != null)
 				editorName = activeEditor.getTitle();
 			MessageDialog.openInformation(shell,
-				"Readme Editor", 
-				"Readme Editor Action executed: " + getText() +
-				" for: " + editorName);
+				MessageUtil.getString("Readme_Editor"),  //$NON-NLS-1$
+				MessageUtil.format("ReadmeEditorActionExecuted", new Object[] {getText(), editorName})); //$NON-NLS-1$
 		}
 		public void setActiveEditor(IEditorPart part) {
 			activeEditor = part;
@@ -56,22 +55,22 @@ public class ReadmeEditorActionBarContributor extends BasicTextEditorActionContr
  */
 public ReadmeEditorActionBarContributor() {
 	ImageRegistry registry = ReadmePlugin.getDefault().getImageRegistry();
-	action1 = new EditorAction("&Editor Action1");
-	action1.setToolTipText("Readme Editor Action1");
+	action1 = new EditorAction(MessageUtil.getString("Editor_Action1")); //$NON-NLS-1$
+	action1.setToolTipText(MessageUtil.getString("Readme_Editor_Action1")); //$NON-NLS-1$
 	action1.setDisabledImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE_DISABLE);
 	action1.setImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE_ENABLE);
 	action1.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION1_IMAGE);
 	WorkbenchHelp.setHelp(action1, new String[] {IReadmeConstants.EDITOR_ACTION1_CONTEXT});
 	
-	action2 = new EditorAction("&Editor Action2");
-	action2.setToolTipText("Readme Editor Action2");
+	action2 = new EditorAction(MessageUtil.getString("Editor_Action2")); //$NON-NLS-1$
+	action2.setToolTipText(MessageUtil.getString("Readme_Editor_Action2")); //$NON-NLS-1$
 	action2.setDisabledImageDescriptor(ReadmeImages.EDITOR_ACTION2_IMAGE_DISABLE);
 	action2.setImageDescriptor(ReadmeImages.EDITOR_ACTION2_IMAGE_ENABLE);
 	action2.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION2_IMAGE);
 	WorkbenchHelp.setHelp(action2, new String[] {IReadmeConstants.EDITOR_ACTION2_CONTEXT});
 	
-	action3 = new EditorAction("&Editor Action3");
-	action3.setToolTipText("Readme Editor Action3");
+	action3 = new EditorAction(MessageUtil.getString("Editor_Action3")); //$NON-NLS-1$
+	action3.setToolTipText(MessageUtil.getString("Readme_Editor_Action3")); //$NON-NLS-1$
 	action3.setDisabledImageDescriptor(ReadmeImages.EDITOR_ACTION3_IMAGE_DISABLE);
 	action3.setImageDescriptor(ReadmeImages.EDITOR_ACTION3_IMAGE_ENABLE);
 	action3.setHoverImageDescriptor(ReadmeImages.EDITOR_ACTION3_IMAGE);
@@ -87,12 +86,12 @@ public void contributeToMenu(IMenuManager menuManager) {
 	super.contributeToMenu(menuManager);
 	
 	// Editor-specitic menu
-	MenuManager readmeMenu = new MenuManager("&Readme");
+	MenuManager readmeMenu = new MenuManager(MessageUtil.getString("Readme_Menu")); //$NON-NLS-1$
 	// It is important to append the menu to the
 	// group "additions". This group is created
 	// between "Project" and "Tools" menus
 	// for this purpose.
-	menuManager.insertAfter("additions", readmeMenu);
+	menuManager.insertAfter("additions", readmeMenu); //$NON-NLS-1$
 	readmeMenu.add(action1);
 	readmeMenu.add(action2);
 	readmeMenu.add(action3);
@@ -105,7 +104,7 @@ public void contributeToStatusLine(IStatusLineManager statusLineManager) {
 	super.contributeToStatusLine(statusLineManager);
 
 	// Test status line.	
-	statusLineManager.setMessage("Editor is active");
+	statusLineManager.setMessage(MessageUtil.getString("Editor_is_active")); //$NON-NLS-1$
 	statusLineManager.add(dirtyStateContribution);
 }
 /** (non-Javadoc)
@@ -116,7 +115,7 @@ public void contributeToToolBar(IToolBarManager toolBarManager) {
 	super.contributeToToolBar(toolBarManager);
 	
 	// Add toolbar stuff.
-	toolBarManager.add(new Separator("ReadmeEditor"));
+	toolBarManager.add(new Separator("ReadmeEditor")); //$NON-NLS-1$
 	toolBarManager.add(action1);
 	toolBarManager.add(action2);
 	toolBarManager.add(action3);

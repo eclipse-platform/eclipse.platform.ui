@@ -18,9 +18,9 @@ import java.util.Vector;
 public class MarkElementProperties implements IPropertySource {
 	protected MarkElement element;
 
-	protected static final String PROPERTY_LINECOUNT = "lineno";
-	protected static final String PROPERTY_START = "start";
-	protected static final String PROPERTY_LENGTH = "length";
+	protected static final String PROPERTY_LINECOUNT = "lineno"; //$NON-NLS-1$
+	protected static final String PROPERTY_START = "start"; //$NON-NLS-1$
+	protected static final String PROPERTY_LENGTH = "length"; //$NON-NLS-1$
 /**
  * Creates a new MarkElementProperties.
  *
@@ -46,11 +46,11 @@ public IPropertyDescriptor[] getPropertyDescriptors() {
 	// Add each property supported.
 	PropertyDescriptor descriptor;
 
-	descriptor = new PropertyDescriptor(PROPERTY_LINECOUNT, "Line count");
+	descriptor = new PropertyDescriptor(PROPERTY_LINECOUNT, MessageUtil.getString("Line_count")); //$NON-NLS-1$
 	propertyDescriptors[0] = descriptor;
-	descriptor = new PropertyDescriptor(PROPERTY_START, "Title start");
+	descriptor = new PropertyDescriptor(PROPERTY_START, MessageUtil.getString("Title_start")); //$NON-NLS-1$
 	propertyDescriptors[1] = descriptor;
-	descriptor = new PropertyDescriptor(PROPERTY_LENGTH, "Title length");
+	descriptor = new PropertyDescriptor(PROPERTY_LENGTH, MessageUtil.getString("Title_length")); //$NON-NLS-1$
 	propertyDescriptors[2] = descriptor;
 
 	// Return it.

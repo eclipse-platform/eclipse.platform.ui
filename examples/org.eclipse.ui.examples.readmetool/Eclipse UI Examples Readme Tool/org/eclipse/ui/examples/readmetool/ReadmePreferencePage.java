@@ -76,34 +76,34 @@ protected Control createContents(Composite parent)
 	
 	//composite_textField << parent
 	Composite composite_textField = createComposite(parent, 2);
-	Label label_textField = createLabel(composite_textField, "Text Field");	
+	Label label_textField = createLabel(composite_textField, MessageUtil.getString("Text_Field"));	 //$NON-NLS-1$
 	textField = createTextField(composite_textField);
-	pushButton_textField = createPushButton(composite_textField, "Change");
+	pushButton_textField = createPushButton(composite_textField, MessageUtil.getString("Change")); //$NON-NLS-1$
 
 	//composite_tab << parent
 	Composite composite_tab = createComposite(parent, 2);
-	Label label1 = createLabel(composite_tab, "Radio Button Options");
+	Label label1 = createLabel(composite_tab, MessageUtil.getString("Radio_Button_Options")); //$NON-NLS-1$
 
 	//
 	tabForward(composite_tab);
 	//radio button composite << tab composite
 	Composite composite_radioButton = createComposite(composite_tab, 1);
-	radioButton1 = createRadioButton(composite_radioButton, "Radio button 1");
-	radioButton2 = createRadioButton(composite_radioButton, "Radio button 2");
-	radioButton3 = createRadioButton(composite_radioButton, "Radio button 3");
+	radioButton1 = createRadioButton(composite_radioButton, MessageUtil.getString("Radio_button_1")); //$NON-NLS-1$
+	radioButton2 = createRadioButton(composite_radioButton, MessageUtil.getString("Radio_button_2")); //$NON-NLS-1$
+	radioButton3 = createRadioButton(composite_radioButton, MessageUtil.getString("Radio_button_3")); //$NON-NLS-1$
 
 
 	//composite_tab2 << parent
 	Composite composite_tab2 = createComposite(parent, 2);
-	Label label2 = createLabel(composite_tab2, "Check Box Options");
+	Label label2 = createLabel(composite_tab2, MessageUtil.getString("Check_Box_Options")); //$NON-NLS-1$
 
 	//
 	tabForward(composite_tab2);
 	//composite_checkBox << composite_tab2
 	Composite composite_checkBox = createComposite(composite_tab2, 1);
-	checkBox1 = createCheckBox(composite_checkBox, "Check box 1");
-	checkBox2 = createCheckBox(composite_checkBox, "Check box 2");
-	checkBox3 = createCheckBox(composite_checkBox, "Check box 3");
+	checkBox1 = createCheckBox(composite_checkBox, MessageUtil.getString("Check_box_1")); //$NON-NLS-1$
+	checkBox2 = createCheckBox(composite_checkBox, MessageUtil.getString("Check_box_2")); //$NON-NLS-1$
+	checkBox3 = createCheckBox(composite_checkBox, MessageUtil.getString("Check_box_3")); //$NON-NLS-1$
 
 	initializeValues();
 

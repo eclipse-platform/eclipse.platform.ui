@@ -30,8 +30,8 @@ public void init(IViewPart view) {
  */
 public void run(org.eclipse.jface.action.IAction action) {
 	MessageDialog.openInformation(view.getSite().getShell(),
-		"Readme Editor", 
-		"View Action executed");
+		MessageUtil.getString("Readme_Editor"),  //$NON-NLS-1$
+		MessageUtil.getString("View_Action_executed")); //$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on IActionDelegate

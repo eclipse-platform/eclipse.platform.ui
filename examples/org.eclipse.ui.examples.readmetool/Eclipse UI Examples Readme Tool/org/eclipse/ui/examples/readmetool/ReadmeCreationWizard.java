@@ -30,7 +30,7 @@ public void addPages() {
 public void init(IWorkbench workbench,IStructuredSelection selection) {
 	this.workbench = workbench;
 	this.selection = selection;
-	setWindowTitle("New Readme File");
+	setWindowTitle(MessageUtil.getString("New_Readme_File")); //$NON-NLS-1$
 	setDefaultPageImageDescriptor(ReadmeImages.README_WIZARD_BANNER);
 }
 /** (non-Javadoc)

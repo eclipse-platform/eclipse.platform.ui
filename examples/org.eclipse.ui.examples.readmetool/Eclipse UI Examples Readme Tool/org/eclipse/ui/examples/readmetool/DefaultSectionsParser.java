@@ -56,7 +56,7 @@ protected String getText(IFile file) {
 	} catch (CoreException e) {
 	} catch (IOException e) {
 	}
-	return "";
+	return ""; //$NON-NLS-1$
 }
 /**
  * Parses the input given by the argument.
