@@ -17,7 +17,6 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -30,7 +29,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 	private ColorFieldEditor commandColorEditor;
 	private ColorFieldEditor messageColorEditor;
 	private ColorFieldEditor errorColorEditor;
-	private Button autoOpenCheckBox;
 
 	/**
 	 * Creates composite control and sets the default layout data.
@@ -45,7 +43,7 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		//GridLayout
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
-		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		layout.numColumns = numColumns;
 		composite.setLayout(layout);
 
@@ -71,29 +69,12 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		errorColorEditor = createColorFieldEditor(ICVSUIConstants.PREF_CONSOLE_ERROR_COLOR,
 			Policy.bind("ConsolePreferencePage.errorColor"), composite); //$NON-NLS-1$
 	
-		autoOpenCheckBox = createCheckBox(composite, Policy.bind("ConsolePreferencePage.autoOpen")); //$NON-NLS-1$
-		
 		initializeValues();
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}
-	/**
-	 * Creates an new checkbox instance and sets the default
-	 * layout data.
-	 *
-	 * @param group  the composite in which to create the checkbox
-	 * @param label  the string to set into the checkbox
-	 * @return the new checkbox
-	 */
-	private Button createCheckBox(Composite group, String label) {
-		Button button = new Button(group, SWT.CHECK | SWT.LEFT);
-		button.setText(label);
-		GridData data = new GridData();
-		data.horizontalSpan = 3;
-		button.setLayoutData(data);
-		return button;
-	}
+
 	/**
 	 * Utility method that creates a label instance
 	 * and sets the default layout data.
@@ -106,7 +87,7 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
 		GridData data = new GridData();
-		data.horizontalSpan = 3;
+		data.horizontalSpan = 2;
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData(data);
 		return label;
@@ -118,7 +99,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		ColorFieldEditor editor = new ColorFieldEditor(preferenceName, label, parent);
 		editor.setPreferencePage(this);
 		editor.setPreferenceStore(getPreferenceStore());
-		new Label(parent, SWT.NONE); // fill in 3rd column
 		return editor;
 	}
 	
@@ -130,7 +110,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		commandColorEditor.load();
 		messageColorEditor.load();
 		errorColorEditor.load();
-		autoOpenCheckBox.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN));
 	}
 
 	/**
@@ -149,7 +128,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		commandColorEditor.store();
 		messageColorEditor.store();
 		errorColorEditor.store();
-		store.setValue(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN, autoOpenCheckBox.getSelection());
 		return true;
 	}
 
@@ -163,7 +141,6 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		commandColorEditor.loadDefault();
 		messageColorEditor.loadDefault();
 		errorColorEditor.loadDefault();
-		autoOpenCheckBox.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN));
 	}
 
 	/**
