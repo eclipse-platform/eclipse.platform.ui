@@ -259,14 +259,15 @@ public abstract class AbstractUIPlugin extends Plugin {
 			final Object[] list = listeners.getListeners();
 			final PropertyChangeEvent event =
 				new PropertyChangeEvent(this, name, oldValue, newValue);
-			Platform.run(new SafeRunnable(JFaceResources.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
-				public void run() {
-					for (int i = 0; i < list.length; i++) {
-						((IPropertyChangeListener) list[i]).propertyChange(
-							event);
+			for (int i = 0; i < list.length; i++) {
+				final IPropertyChangeListener listener = (IPropertyChangeListener) list[i];
+				Platform.run(new SafeRunnable(JFaceResources.getString("PreferenceStore.changeError")) { //$NON-NLS-1$
+					public void run() {
+						listener.propertyChange(
+								event);
 					}
-				}
-			});
+				});
+			}
 
 		}
 
