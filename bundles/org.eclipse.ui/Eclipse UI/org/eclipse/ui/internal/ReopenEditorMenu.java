@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.*;
 
@@ -49,57 +50,82 @@ public class ReopenEditorMenu extends ContributionItem {
 		if (mnemonic <= MAX_MNEMONIC_SIZE) {
 			sb.insert(sb.length() - (mnemonic + "").length(), '&');
 		}
-		sb.append(' ');
+		sb.append(" ");
 
-		String suffix = item.getInput().getToolTipText();
-		if (suffix.length() <= MAX_TEXT_LENGTH) {
-			// entire file name fits within maximum length
-			sb.append(suffix);
-		} else {
-			// need to shorten the file name
-			IPath path = new Path(suffix);
-			String last = path.lastSegment();
-			int length = last.length();
-			
-			// Add first n segments that fit
+		// If the input text is a path, get the filename from the
+		// path's last segment; otherwise, use the input name.
+		String fileName;
+		String pathName = item.getInput().getToolTipText();
+		IPath path = new Path(pathName);
+		if (path.segmentCount() > 1) {
+			fileName = path.lastSegment();
 			path = path.removeLastSegments(1);
-			int segmentCount = path.segmentCount();
-			int i = 0;
-			while (i < segmentCount) {
-				String segment = path.segment(i);
-				length += segment.length();
-				if (length < MAX_TEXT_LENGTH) {
-					sb.append(segment);
-					sb.append(path.SEPARATOR);
-					i++;
-				} else {
-					i = segmentCount;
-					length -= segment.length();
-				}
+			pathName = path.toString();
+		} else {
+			fileName = item.getInput().getName();
+		}
+		
+		if ((fileName.length() + pathName.length()) <= MAX_TEXT_LENGTH) {
+			// entire item name fits within maximum length
+			sb.append(fileName);
+			if (path.segmentCount() != 0) {
+				sb.append("  [");
+				sb.append(pathName);
+				sb.append("]");
 			}
-			sb.append("...");
-			sb.append(path.SEPARATOR);
-			
-			// Add last n segments that fit
-			i = segmentCount - 1;
-			while (i > 0) {			
-				String segment = path.segment(i);
-				length += segment.length();
-				if (length < MAX_TEXT_LENGTH) {
-					sb.append(segment);
-					sb.append(path.SEPARATOR);
-					i--;
-				} else {
-					i = 0;
+		} else {
+			// need to shorten the item name
+			int length = fileName.length();
+			if (length > MAX_TEXT_LENGTH) {
+				// file name does not fit within length, truncate it
+				sb.append(fileName.substring(0, MAX_TEXT_LENGTH));
+				sb.append("...");
+			} else {				
+				sb.append(fileName);
+				int segmentCount = path.segmentCount();
+				if (segmentCount > 0) {
+					sb.append("  [");
 				}
-			}
-			
-			// Add the filename
-			if (last.length() <= MAX_TEXT_LENGTH) {
-				sb.append(last);
-			} else {
-				sb.append(last.substring(0, MAX_TEXT_LENGTH));
-				sb.append("..."); //$NON-NLS-1$
+				// Add first n segments that fit
+				int i = 0;
+				while (i < segmentCount) {
+					String segment = path.segment(i);
+					length += segment.length();
+					if (length < MAX_TEXT_LENGTH) {
+						sb.append(segment);
+						sb.append(path.SEPARATOR);
+						i++;
+					} else if (i == 0) {
+						// append at least part of the first segment
+						sb.append(segment.substring(0, MAX_TEXT_LENGTH - (length - segment.length())));
+						i = segmentCount;
+						length = MAX_TEXT_LENGTH;
+					} else {
+						i = segmentCount;
+						length -= segment.length();
+					}
+				}
+				if (segmentCount > 0) {
+					sb.append("...");	
+				}			
+				i = segmentCount - 1;
+				if (i > 0) {
+					// Add last n segments that fit
+					while (i > 0) {			
+						String segment = path.segment(i);
+						length += segment.length();
+						if (length < MAX_TEXT_LENGTH) {
+							sb.append(path.SEPARATOR);
+							sb.append(segment);
+							i--;
+						} else {
+							i = 0;
+						}
+					}
+				}
+				if (segmentCount > 0) {
+					sb.append("]");
+				}
 			}
 		}
 		return sb.toString();
@@ -169,6 +195,9 @@ public class ReopenEditorMenu extends ContributionItem {
 					page.openEditor(input, desc.getId());
 				}
 			} catch (PartInitException e2) {
+				String title = WorkbenchMessages.getString("OpenRecent.errorTitle");
+				MessageDialog.openWarning(fWindow.getShell(), title, e2.getMessage());
+				history.remove(item.getInput());
 			}
 		}
 	}
