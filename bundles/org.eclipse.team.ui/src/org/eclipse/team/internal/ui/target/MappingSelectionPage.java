@@ -95,11 +95,14 @@ public class MappingSelectionPage extends TargetWizardPage {
 					if (newFolder == null)
 						return;
 
+					RemoteResourceElement newFolderUIElement = new RemoteResourceElement(newFolder);
+
 					viewer.refresh(currentSelection);
 					viewer.setExpandedState(currentSelection, true);
-					viewer.setSelection(new StructuredSelection(currentSelection));
+					viewer.setSelection(new StructuredSelection(newFolderUIElement));
 				} catch (TeamException e) {
 					TeamUIPlugin.handle(e);
+					return;
 				}
 			}			
 		});

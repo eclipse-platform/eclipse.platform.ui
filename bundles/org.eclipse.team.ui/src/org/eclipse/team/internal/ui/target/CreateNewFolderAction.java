@@ -104,19 +104,22 @@ public class CreateNewFolderAction extends TargetAction {
 	}
 	
 	protected static String getSuggestedFolderName(IRemoteTargetResource parent, IProgressMonitor monitor, String defaultName) throws TeamException {		
-		String suggestedFolderName = defaultName;
 		IRemoteResource[] members;
 		monitor.subTask(Policy.bind("CreateNewFolderAction.suggestedNameProgress")); //$NON-NLS-1$
 		members = parent.members(monitor);
-		int numNewFolders = 0;
-		for (int i = 0; i < members.length; i++) {
-			if(members[i].getName().equals(defaultName)) {
-				numNewFolders++;
-			}							
+
+		String suggestedFolderName = defaultName;
+		
+		while(true) {
+			boolean nameUsed = false;
+			for (int i = 0; i < members.length && !nameUsed; i++) {
+				if(members[i].getName().equals(suggestedFolderName)) {
+					nameUsed = true;
+				}							
+			}
+			if(!nameUsed)
+				return suggestedFolderName;
+			suggestedFolderName = Policy.bind("CreateNewFolderAction.suggestedNameConcat", suggestedFolderName, String.valueOf(1)); //$NON-NLS-1$
 		}
-		if(numNewFolders != 0) {
-			suggestedFolderName = Policy.bind("CreateNewFolderAction.suggestedNameConcat", defaultName, String.valueOf(numNewFolders)); //$NON-NLS-1$
-		}
-		return suggestedFolderName;
 	}
 }
