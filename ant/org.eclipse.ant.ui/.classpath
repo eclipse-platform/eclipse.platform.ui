@@ -5,10 +5,9 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.ant.core"/>
-    <classpathentry kind="var"
-        path="TARGET/org.eclipse.ui/workbench.jar" sourcepath="TARGET/org.eclipse.ui/workbenchsrc.zip"/>
-    <classpathentry kind="var" path="TARGET/org.eclipse.swt/swt.jar" sourcepath="TARGET/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="src" path="src"/>
-    <classpathentry kind="lib" path="/org.apache.ant/ant.jar"/>
+    <classpathentry kind="src" path="/org.eclipse.swt"/>
+    <classpathentry kind="src" path="/org.eclipse.ui"/>
+    <classpathentry kind="src" path="/org.apache.ant"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
