@@ -76,12 +76,13 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	public void testFolderSync() throws CoreException, CVSException {
 		// Workspace root
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-//		FolderSyncInfo info = sync.getFolderSync(root);
-//		assertNull(info);
-//		sync.deleteFolderSync(root);
-//		sync.setFolderSync(root, dummyFolderSync(root));
-//		info = sync.getFolderSync(root);
-//		assertNull(info);
+		// Setting should not be an error but sync info should always be null
+		FolderSyncInfo info = sync.getFolderSync(root);
+		assertNull(info);
+		sync.deleteFolderSync(root);
+		sync.setFolderSync(root, dummyFolderSync(root));
+		info = sync.getFolderSync(root);
+		assertNull(info);
 
 		// Non-existant project
 		IProject project = root.getProject(getName() + "-" + System.currentTimeMillis());
