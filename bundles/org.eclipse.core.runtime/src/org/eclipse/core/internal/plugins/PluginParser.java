@@ -764,9 +764,6 @@ public void parseLibraryAttributes(Attributes attributes) {
 		else
 			if (attrName.equals(LIBRARY_TYPE))
 				current.setType(attrValue.toLowerCase());
-			else
-				if (attrName.equals(LIBRARY_SOURCE))
-					current.setSource(attrValue);
 	}
 }
 public void parsePluginAttributes(Attributes attributes) {

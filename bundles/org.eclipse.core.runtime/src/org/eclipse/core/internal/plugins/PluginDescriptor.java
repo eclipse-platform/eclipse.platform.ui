@@ -341,8 +341,8 @@ private Object[] getPluginClassLoaderPath(boolean platformURLFlag) {
 	ILibrary[] list = getRuntimeLibraries();
 	for (int i = 0; i < list.length; i++) {
 		ILibrary library = list[i];
-		// if the library path is empty or the library is source lib, skip it.
-		if (library.getPath().isEmpty() || library.getType().equals(ILibrary.SOURCE))
+		// if the library path is empty, skip it.
+		if (library.getPath().isEmpty())
 			continue;
 		String[] filters = library.isFullyExported() ? exportAll : library.getContentFilters();
 		// add in the plugin.jars entries

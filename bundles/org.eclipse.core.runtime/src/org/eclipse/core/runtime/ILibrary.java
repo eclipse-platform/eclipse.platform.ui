@@ -14,8 +14,8 @@ import org.eclipse.core.runtime.model.LibraryModel;
  * considered to be relative to the containing plug-in.  
  * <p>
  * Libraries are typed.  The type is used to determine to which search path the library's
- * contribution should be added.  The valid types are: <code>CODE</code>, 
- * <code>RESOURCE</code> and <code>SOURCE</code>.  
+ * contribution should be added.  The valid types are: <code>CODE</code> and
+ * <code>RESOURCE</code>.  
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -36,12 +36,6 @@ public interface ILibrary {
 	 */
 	public static final String RESOURCE = LibraryModel.RESOURCE;
 	
-	/**
-	 * Constant string (value "source") indicating the source library type.
-	 * @see LibraryModel#SOURCE
-	 */
-	public static final String SOURCE = LibraryModel.SOURCE;
-
 /**
  * Returns the content filters, or <code>null</code>.
  * Each content filter identifies a specific class, or
@@ -63,20 +57,11 @@ public String[] getContentFilters();
  */
 public IPath getPath();
 /**
- * Returns the path to this library's source or <code>null</code>.  The source
- * for value is not relevant (is <code>null</code>) for libraries of type <code>RESOURCE</code>.
- *
- * @return the path to this library's source.  May be <code>null</code>.
- */
-public String getSource();
-/**
  * Returns this library's type.
  *
- * @return the type of this library.   The valid types are: <code>CODE</code>, <code>RESOURCE</code>, 
- * <code>SOURCE</code>.
+ * @return the type of this library.   The valid types are: <code>CODE</code> and <code>RESOURCE</code>.
  * @see #CODE
  * @see #RESOURCE
- * @see #SOURCE
  */
 public String getType();
 /**

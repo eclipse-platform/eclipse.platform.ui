@@ -12,8 +12,8 @@ package org.eclipse.core.runtime.model;
  * considered to be relative to the containing plug-in.  
  * <p>
  * Libraries are typed.  The type is used to determine to which search path the library's
- * contribution should be added.  The valid types are: <code>CODE</code>, 
- * <code>RESOURCE</code> and <code>SOURCE</code>.  
+ * contribution should be added.  The valid types are: <code>CODE</code> and
+ * <code>RESOURCE</code>.  
  * </p>
  * <p>
  * This class may be instantiated, or further subclassed.
@@ -24,7 +24,6 @@ public class LibraryModel extends PluginModelObject {
 	// DTD properties (included in plug-in manifest)
 	private String[] exports = null;
 	private String type = CODE;
-	private String source = null;
 
 	// transient properties (not included in plug-in manifest)
 	private boolean isExported = false;
@@ -40,10 +39,6 @@ public class LibraryModel extends PluginModelObject {
 	 */
 	public static final String RESOURCE = "resource";
 	
-	/**
-	 * Constant string (value "source") indicating the source library type.
-	 */
-	public static final String SOURCE = "source";
 /**
  * Creates a new library model in which all fields
  * are <code>null</code>.
@@ -58,21 +53,11 @@ public String[] getExports() {
 	return exports;
 }
 /**
- * Returns the path to this library's source or <code>null</code>.  
- *
- * @return the path to this library's source.  May be <code>null</code>.
- */
-public String getSource() {
-	return source;
-}
-/**
  * Returns this library's type.  
  *
- * @return the type of this library.  The valid types are: <code>CODE</code>, <code>RESOURCE</code>, 
- * <code>SOURCE</code>.
+ * @return the type of this library.  The valid types are: <code>CODE</code> and <code>RESOURCE</code>.
  * @see #CODE
  * @see #RESOURCE
- * @see #SOURCE
  */
 public String getType() {
 	return type;
@@ -115,36 +100,16 @@ public void setExports(String[] value) {
 	}
 }
 /**
- * Sets the location of this library's source.  This method has no effect if
- * this library is of type <code>RESOURCE</code>.
- * This object must not be read-only.
- *
- * @param value the location of this library's source.  May be <code>null</code>.
- */
-public void setSource(String value) {
-	assertIsWriteable();
-	// cannot set the source for a library of type resource.
-	if (type != null && type.equals(RESOURCE))
-		return;
-	source = value;
-}
-/**
- * Sets this library's type. The valid types are: <code>CODE</code>, <code>RESOURCE</code>, 
- * <code>SOURCE</code>.  Setting this library to type <code>RESOURCE</code>
- * clears the <code>source</code> field of this library.  The given type value is canonicalized
- * before being set.
+ * Sets this library's type. The valid types are: <code>CODE</code> and <code>RESOURCE</code>.
+ * The given type value is canonicalized before being set.
  * This object must not be read-only.
  *
  * @param value the type of this library.
  * @see #CODE
  * @see #RESOURCE
- * @see #SOURCE
  */
 public void setType(String value) {
 	assertIsWriteable();
 	type = value.toLowerCase();
-	// if this is to be a resource library, there should not be a source value.
-	if (type.equals(RESOURCE))
-		source = null;
 }
 }
