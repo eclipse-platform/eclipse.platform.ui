@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -24,9 +26,11 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -36,6 +40,9 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.themes.IThemeDescriptor;
+import org.eclipse.ui.themes.ITheme;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * The ViewsPreferencePage is the page used to set preferences for the look of the
@@ -83,6 +90,8 @@ public class ViewsPreferencePage
 	 */
 	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
 	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
+
+    private Combo themeCombo;
 
 	/**
 	 * Create a composite that for creating the tab toggle buttons.
@@ -135,6 +144,22 @@ public class ViewsPreferencePage
 		layout.marginHeight = 0;
 		//layout.verticalSpacing = 10;
 		composite.setLayout(layout);
+		
+		GridData data =
+			new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(WorkbenchMessages.getString("ViewsPreference.currentTheme")); //$NON-NLS-1$
+		label.setLayoutData(data);
+		
+		data =
+			new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		
+		themeCombo = new Combo(composite, SWT.READ_ONLY);
+        themeCombo.setLayoutData(data);
+		refreshThemeCombo();
 
 		Composite colorIconsComposite = new Composite(composite, SWT.NONE);
 		colorIconsComposite.setFont(font);
@@ -158,7 +183,7 @@ public class ViewsPreferencePage
 		colorComposite.setText(WorkbenchMessages.getString("ViewsPreference.ColorsTitle")); //$NON-NLS-1$
 		colorComposite.setFont(font);
 
-		GridData data =
+		data =
 			new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		colorComposite.setLayoutData(data);
@@ -189,6 +214,32 @@ public class ViewsPreferencePage
 	}
 	
 	/**
+     * 
+     */
+    private void refreshThemeCombo() {
+        themeCombo.removeAll();
+        ITheme currentTheme = WorkbenchPlugin.getDefault().getWorkbench().getThemeManager().getCurrentTheme();
+		
+		IThemeDescriptor [] descs = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
+		int selection = 0;
+		String themeString = WorkbenchMessages.getString("ViewsPreference.defaultTheme"); //$NON-NLS-1$
+		if (currentTheme.getId() == null) {
+		    themeString = MessageFormat.format(WorkbenchMessages.getString("ViewsPreference.currentThemeFormat"), new Object [] {themeString}); //$NON-NLS-1$
+		}
+		themeCombo.add(themeString);
+		
+		for (int i = 0; i < descs.length; i++) {
+		    themeString = descs[i].getLabel();
+			if (descs[i].getId().equals(currentTheme.getId())) {
+			    themeString = MessageFormat.format(WorkbenchMessages.getString("ViewsPreference.currentThemeFormat"), new Object [] {themeString}); //$NON-NLS-1$
+			    selection = i + 1;
+			}
+            themeCombo.add(themeString);
+        }
+		
+		themeCombo.select(selection);
+    }
+    /**
 	 * Create the button and text that support setting the preference for showing
 	 * text labels on the perspective switching bar
 	 */
@@ -289,6 +340,17 @@ public class ViewsPreferencePage
 				ColorSchemeService.setSchemeColors(windows[i].getShell());
 			}
 		}
+			
+		int idx = themeCombo.getSelectionIndex();
+		if (idx == 0) {		    
+		    Workbench.getInstance().getThemeManager().setCurrentTheme(IThemeManager.DEFAULT_THEME);
+		}
+		else {
+		    Workbench.getInstance().getThemeManager().setCurrentTheme(WorkbenchPlugin.getDefault().getThemeRegistry().getThemes()[idx - 1].getId());
+		}
+		
+		refreshThemeCombo();
+		
 		return true;
 	}
 }

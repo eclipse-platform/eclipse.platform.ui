@@ -8,12 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.themes;
+package org.eclipse.ui.themes;
 
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.ui.internal.themes.ITabThemeDescriptor;
 
 /**
  * 
@@ -50,13 +51,42 @@ public interface ITheme {
 	 */
     String getId();
     
-    public ColorRegistry getColorRegistry();
+	/**
+	 * Returns the label of this theme.
+	 * 
+	 * @return the label of this theme.
+	 */    
+    String getLabel();
     
+    /**
+     * Return this themes color registry.
+     * 
+     * @return this themes color registry
+     */
+    public ColorRegistry getColorRegistry();
+
+    /**
+     * Return this themes font registry.
+     * 
+     * @return this themes font registry
+     */
     public FontRegistry getFontRegistry();
     
+    /**
+     * Return this themes gradient registry.
+     * 
+     * @return this themes gradient registry
+     */
     public GradientRegistry getGradientRegistry();
 
+    /**
+     * Dispose of this theme.
+     */
     public void dispose();
     
+    /**
+     * TODO: Remove
+     * @return
+     */
     public ITabThemeDescriptor getTabTheme();
 }

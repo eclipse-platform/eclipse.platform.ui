@@ -22,13 +22,16 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.themes.*;
+import org.eclipse.ui.themes.IThemeManager;
+
 
 /**
  * Theme manager for the Workbench.
  *
  * @since 3.0
  */
-public class WorkbenchThemeManager {
+public class WorkbenchThemeManager implements IThemeManager {
 
 	private Map themeEntries = new HashMap(11);
 	private IThemeRegistry themeRegistry;
@@ -321,7 +324,7 @@ public class WorkbenchThemeManager {
     private IPropertyChangeListener myListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent event) {
-            firePropertyChange(event.getProperty(), (ITheme) event.getSource());            
+            firePropertyChange(event.getProperty(), (ITheme) event.getSource(), (ITheme) event.getSource());            
         }        
     };
     
@@ -335,14 +338,21 @@ public class WorkbenchThemeManager {
             setCurrentTheme(null);
         return currentTheme;
     }
+
+    public void setCurrentTheme(String id) {
+	    ITheme oldTheme = currentTheme;
+	    if (WorkbenchThemeManager.getInstance().doSetCurrentTheme(id)) {
+	        firePropertyChange(CHANGE_CURRENT_THEME, oldTheme, getCurrentTheme());
+	    }
+    }
     
-    public boolean setCurrentTheme(String id) {
+    public boolean doSetCurrentTheme(String id) {
         ITheme oldTheme = currentTheme;
         ITheme newTheme = getTheme(id); 
         if (oldTheme != newTheme) {
 	        currentTheme = newTheme;
             return true;
-        }
+        }       
         
         return false;
     }
@@ -351,10 +361,11 @@ public class WorkbenchThemeManager {
     
 	protected void firePropertyChange(
 			String changeId,
-			ITheme theme) {
+			ITheme oldTheme,
+			ITheme newTheme) {
 			Object[] listeners = propertyChangeListeners.getListeners();
 			PropertyChangeEvent event =
-				new PropertyChangeEvent(theme, changeId, theme, theme);
+				new PropertyChangeEvent(this, changeId, oldTheme, newTheme);
 
 			for (int i = 0; i < listeners.length; i++) {
 				((IPropertyChangeListener) listeners[i]).propertyChange(event);

@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.themes.*;
 
 
 /**
@@ -28,7 +29,7 @@ import org.eclipse.swt.graphics.RGB;
  */
 public final class ThemeElementHelper {
 
-    public static void populateRegistry(FontRegistry registry, FontDefinition [] definitions, IPreferenceStore store) {
+    public static void populateRegistry(ITheme theme, FontDefinition [] definitions, IPreferenceStore store) {
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
 		FontDefinition [] copyOfDefinitions = new FontDefinition[definitions.length];
@@ -37,7 +38,7 @@ public final class ThemeElementHelper {
 
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			FontDefinition definition = copyOfDefinitions[i];
-			installFont(definition, registry, store);
+			installFont(definition, theme, store);
 		}
     }
     
@@ -47,9 +48,12 @@ public final class ThemeElementHelper {
      * @param registry
      * @param store
      */
-    private static void installFont(FontDefinition definition, FontRegistry registry, IPreferenceStore store) {
-		String id = definition.getId();
-		FontData [] prefFont = store != null ? PreferenceConverter.getFontDataArray(store, id) : null;
+    private static void installFont(FontDefinition definition, ITheme theme, IPreferenceStore store) {
+        FontRegistry registry = theme.getFontRegistry();
+		
+        String id = definition.getId();
+        String key = createPreferenceKey(theme, id);
+		FontData [] prefFont = store != null ? PreferenceConverter.getFontDataArray(store, key) : null;
 		FontData [] defaultFont = null;
 		if (definition.getValue() != null)
 		        defaultFont = new FontData [] {StringConverter.asFontData(definition.getValue(), PreferenceConverter.FONTDATA_DEFAULT_DEFAULT)};
@@ -57,7 +61,7 @@ public final class ThemeElementHelper {
 		    defaultFont = registry.getFontData(definition.getDefaultsTo());
 		else {
 		    // values pushed in from jface property files.  Very ugly.
-		    defaultFont = registry.getFontData(id);
+		    defaultFont = registry.getFontData(key);
 		}
 		    
 		
@@ -68,7 +72,7 @@ public final class ThemeElementHelper {
 		if (defaultFont != null && store != null) {
 			PreferenceConverter.setDefault(
 					store, 
-					id, 
+					key, 
 					defaultFont);
 		}
 
@@ -79,9 +83,9 @@ public final class ThemeElementHelper {
     }
 
 
-    public static void populateRegistry(GradientRegistry registry, GradientDefinition [] definitions, IPreferenceStore store) {		
+    public static void populateRegistry(ITheme theme, GradientDefinition [] definitions, IPreferenceStore store) {		
 		for (int i = 0; i < definitions.length; i++) {
-			installGradient(definitions[i], registry, store);
+			installGradient(definitions[i], theme, store);
 		}        
     }
         
@@ -91,9 +95,13 @@ public final class ThemeElementHelper {
      * @param registry
      * @param store
      */
-    private static void installGradient(GradientDefinition definition, GradientRegistry registry, IPreferenceStore store) {
-		String id = definition.getId();
-		GradientData prefGradient = store != null ? PreferenceConverter.getGradient(store, id) : null;
+    private static void installGradient(GradientDefinition definition, ITheme theme, IPreferenceStore store) {
+        
+        GradientRegistry registry = theme.getGradientRegistry();
+        
+        String id = definition.getId();
+        String key = createPreferenceKey(theme, id);
+		GradientData prefGradient = store != null ? PreferenceConverter.getGradient(store, key) : null;
 		
         RGB [] rgbs = definition.getValues();
 
@@ -106,7 +114,7 @@ public final class ThemeElementHelper {
 		if (defaultGradient != null && store != null) {
 			PreferenceConverter.setDefault(
 					store, 
-					id, 
+					key, 
 					defaultGradient);
 		}
 		
@@ -115,16 +123,17 @@ public final class ThemeElementHelper {
 		}
     }
 
-    public static void populateRegistry(ColorRegistry registry, ColorDefinition [] definitions, IPreferenceStore store) {
+    public static void populateRegistry(ITheme theme, ColorDefinition [] definitions, IPreferenceStore store) {
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
+        
 		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];
 		System.arraycopy(definitions, 0, copyOfDefinitions, 0, definitions.length);
 		Arrays.sort(copyOfDefinitions, new IThemeRegistry.HierarchyComparator(definitions));
 
 		for (int i = 0; i < copyOfDefinitions.length; i++) {
 			ColorDefinition definition = copyOfDefinitions[i];
-			installColor(definition, registry, store);
+			installColor(definition, theme, store);
 		}        
     }
     
@@ -140,11 +149,14 @@ public final class ThemeElementHelper {
 	 */
 	private static void installColor(
 		ColorDefinition definition,
-		ColorRegistry registry,
+		ITheme theme,
 		IPreferenceStore store) {
-				
-		String id = definition.getId();
-		RGB prefColor = store != null ? PreferenceConverter.getColor(store, id) : null;
+
+	    ColorRegistry registry = theme.getColorRegistry();
+	    		
+	    String id = definition.getId();
+        String key = createPreferenceKey(theme, id);
+		RGB prefColor = store != null ? PreferenceConverter.getColor(store, key) : null;
 		RGB defaultColor = null;
 		if (definition.getValue() != null)
 		    defaultColor = definition.getValue();
@@ -158,7 +170,7 @@ public final class ThemeElementHelper {
 		if (defaultColor != null && store != null) {
 			PreferenceConverter.setDefault(
 					store, 
-					id, 
+					key, 
 					defaultColor);
 		}
 
@@ -169,6 +181,20 @@ public final class ThemeElementHelper {
 	}
 
     
+    /**
+     * @param theme
+     * @param id
+     * @return
+     */
+    public static String createPreferenceKey(ITheme theme, String id) {        
+        String themeId = theme.getId();
+        if (themeId == null)
+            return id;
+        
+        return themeId + '.' + id;
+    }
+
+
     /**
      * Not intended to be instantiated.
      */

@@ -26,8 +26,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.Gradient;
 import org.eclipse.jface.resource.GradientData;
+import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -73,6 +76,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.themes.*;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * Preference page for management of system colors, gradients and fonts.
@@ -102,11 +107,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
          * 
          */
         public PresentationLabelProvider() {
+            hookListeners();
+        }
+    	
+        /**
+         * Hook the listeners onto the various registries.
+         */
+        public void hookListeners() {
             colorRegistry.addListener(listener);        
             fontRegistry.addListener(listener);
             gradientRegistry.addListener(listener);
         }
-    	
+
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
          */
@@ -370,6 +382,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
     private final IThemeRegistry themeRegistry;
 
+    private ITheme currentTheme;
+
+    private PresentationLabelProvider labelProvider;
+
 	/**
 	 * Create a new instance of the receiver. 
 	 */
@@ -402,7 +418,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;		
 		label.setLayoutData(data);    	
-        categoryCombo = new Combo(mainColumn, SWT.NONE | SWT.READ_ONLY);
+        categoryCombo = new Combo(mainColumn, SWT.READ_ONLY);
         myApplyDialogFont(categoryCombo);
         
         ThemeElementCategory [] categories = themeRegistry.getCategories();
@@ -620,8 +636,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		presentationList =
 			new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		presentationList.setContentProvider(new ArrayContentProvider());
-		PresentationLabelProvider provider = new PresentationLabelProvider();
-		presentationList.setLabelProvider(provider);
+		labelProvider = new PresentationLabelProvider();
+        presentationList.setLabelProvider(labelProvider);
 		presentationList.setSorter(new ViewerSorter());
 		
 		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
@@ -662,6 +678,17 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     public void dispose() {        
         super.dispose();
         
+        clearPreviews();
+        
+        colorRegistry.dispose();
+        fontRegistry.dispose();
+        gradientRegistry.dispose();
+    }
+
+	/**
+     * Clear all previews.
+     */
+    private void clearPreviews() {
         for (Iterator i = previewSet.iterator(); i.hasNext();) {
             IPresentationPreview preview = (IPresentationPreview) i.next();
             try {
@@ -672,12 +699,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
             }
         }
         
-        colorRegistry.dispose();
-        fontRegistry.dispose();
-        gradientRegistry.dispose();
+        previewSet.clear();
     }
 
-	/**
+    /**
 	 * Get the ancestor of the given color, if any.
 	 * 
 	 * @param definition the descendant <code>ColorDefinition</code>.
@@ -719,7 +744,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (updatedRGB == null) {
 			updatedRGB = (RGB) colorValuesToSet.get(id);
 			if (updatedRGB == null)
-				updatedRGB = JFaceResources.getColorRegistry().getRGB(id);
+				updatedRGB = currentTheme.getColorRegistry().getRGB(id);
 		}
 		return updatedRGB;
 	}
@@ -819,7 +844,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (updatedFD == null) {
 			updatedFD = (FontData []) fontValuesToSet.get(id);
 			if (updatedFD == null)
-				updatedFD = JFaceResources.getFontRegistry().getFontData(id);
+				updatedFD = currentTheme.getFontRegistry().getFontData(id);
 		}
 		return updatedFD;
     }
@@ -851,13 +876,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         categoryCombo.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
-                int index = categoryCombo.getSelectionIndex();
-                if (index == categoryCombo.getItemCount() - 1)
-                    updateCategorySelection(null);
-                else 
-                    updateCategorySelection(themeRegistry.getCategories()[index].getId()); 
-                
-                updateColorControls(null);
+                refreshCategory();
             }
         });        
 	    
@@ -977,12 +996,54 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 */
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(workbench.getPreferenceStore());
-	    colorRegistry = new CascadingColorRegistry(
-	    		JFaceResources.getColorRegistry());
+		
+		final IThemeManager themeManager = workbench.getThemeManager();
+        themeManager.addPropertyChangeListener(new IPropertyChangeListener() {
+
+            /* (non-Javadoc)
+             * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+             */
+            public void propertyChange(PropertyChangeEvent event) {
+                if (event.getProperty().equals(IThemeManager.CHANGE_CURRENT_THEME)) {
+                    updateThemeInfo(themeManager); 
+                    refreshCategory();
+                }
+            }});
+		
+		updateThemeInfo(themeManager);
+	}
+	
+	private void updateThemeInfo(IThemeManager manager) {
+	    
+	    clearPreviews();
+	    
+	    if (labelProvider != null)
+	        labelProvider.dispose(); // nuke the old cache
+	    
+        if (colorRegistry != null)
+            colorRegistry.dispose();
+        if (fontRegistry != null)                    
+            fontRegistry.dispose();
+        if (gradientRegistry != null)                    
+            gradientRegistry.dispose();
+        
+        currentTheme = manager.getCurrentTheme();
+        
+        colorRegistry = new CascadingColorRegistry(
+	            currentTheme.getColorRegistry());
 	    fontRegistry = new CascadingFontRegistry(
-	            JFaceResources.getFontRegistry());
+	            currentTheme.getFontRegistry());
 	    gradientRegistry = new CascadingGradientRegistry(
-	            JFaceResources.getGradientRegistry());	            
+	            currentTheme.getGradientRegistry());
+	    
+	    fontPreferencesToSet.clear();
+	    fontValuesToSet.clear();
+	    
+	    colorPreferencesToSet.clear();
+	    colorValuesToSet.clear();
+	    
+	    if (labelProvider != null)
+	        labelProvider.hookListeners(); // rehook the listeners	    
 	}
 
 	/**
@@ -1116,14 +1177,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private boolean performColorOk() {
         for (Iterator i = colorPreferencesToSet.keySet().iterator(); i.hasNext();) {
 			String id = (String) i.next();
+			String key = ThemeElementHelper.createPreferenceKey(currentTheme, id);
 			RGB rgb = (RGB) colorPreferencesToSet.get(id);
 			String rgbString = StringConverter.asString(rgb);
-			String storeString = getPreferenceStore().getString(id);
+			String storeString = getPreferenceStore().getString(key);
 
 			if (!rgbString.equals(storeString)) {
-				JFaceResources.getColorRegistry().put(id, rgb);
+				currentTheme.getColorRegistry().put(id, rgb);
 				colorValuesToSet.remove(id); // already taken care of.
-				getPreferenceStore().setValue(id, rgbString);
+				getPreferenceStore().setValue(key, rgbString);
 			}
 		}
 
@@ -1133,7 +1195,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			String id = (String) i.next();
 			RGB rgb = (RGB) colorValuesToSet.get(id);
 
-			JFaceResources.getColorRegistry().put(id, rgb);
+			currentTheme.getColorRegistry().put(id, rgb);
 		}
 
 		colorValuesToSet.clear();
@@ -1173,10 +1235,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private boolean performFontOk() {
         for (Iterator i = fontPreferencesToSet.keySet().iterator(); i.hasNext();) {
 			String id = (String) i.next();
+			String key = ThemeElementHelper.createPreferenceKey(currentTheme, id);
+			
 			FontData [] fd = (FontData []) fontPreferencesToSet.get(id);
-			JFaceResources.getFontRegistry().put(id, fd);
+			currentTheme.getFontRegistry().put(id, fd);
 			fontValuesToSet.remove(id); // remove from the value list because it's already been set.
-			getPreferenceStore().setValue(id, PreferenceConverter.getStoredRepresentation(fd));
+			getPreferenceStore().setValue(key, PreferenceConverter.getStoredRepresentation(fd));
 		}
 
 		fontPreferencesToSet.clear();
@@ -1185,7 +1249,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			String id = (String) i.next();
 			FontData [] fd = (FontData []) fontValuesToSet.get(id);
 
-			JFaceResources.getFontRegistry().put(id, fd);
+			currentTheme.getFontRegistry().put(id, fd);
 		}
 
 		fontValuesToSet.clear();
@@ -1199,6 +1263,22 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	public boolean performOk() {
 		return performColorOk() && performFontOk();
 	}
+	
+    /**
+     * Refreshes teh category.
+     */
+    private void refreshCategory() {
+        int index = categoryCombo.getSelectionIndex();
+        if (index == categoryCombo.getItemCount() - 1)
+            updateCategorySelection(null);
+        else 
+            updateCategorySelection(themeRegistry.getCategories()[index].getId()); 
+        
+        updateColorControls(null);
+        updateFontControls(null);
+        updateGradientControls(null);
+    }
+	
 
     /**
 	 * Resets the supplied definition to its default value.
@@ -1423,7 +1503,49 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	                    previewControl = new Composite(previewComposite, SWT.NONE);
 	                    previewControl.setLayout(new FillLayout());
 	                    myApplyDialogFont(previewControl);
-	                    preview.createControl(previewControl, colorRegistry, fontRegistry, gradientRegistry);
+	                    ITheme theme = new ITheme() {
+
+                            public void addPropertyChangeListener(IPropertyChangeListener listener) {
+                                // TODO confirm
+                                currentTheme.addPropertyChangeListener(listener);
+                            }
+
+                            public void removePropertyChangeListener(IPropertyChangeListener listener) {
+                                // TODO confirm
+                                currentTheme.removePropertyChangeListener(listener);
+                            }
+
+                            public String getId() {
+                                return currentTheme.getId();
+                            }
+
+                            public String getLabel() {
+                                return currentTheme.getLabel();
+                            }
+
+                            public ColorRegistry getColorRegistry() {
+                                return colorRegistry;
+                            }
+
+                            public FontRegistry getFontRegistry() {
+                                return fontRegistry;
+                            }
+
+                            public GradientRegistry getGradientRegistry() {
+                                return gradientRegistry;
+                            }
+
+                            public void dispose() {
+                                // TODO: confirm
+                                
+                            }
+
+                            public ITabThemeDescriptor getTabTheme() {
+                                return null;
+                            }
+	                        
+	                    };
+	                    preview.createControl(previewControl, theme);
 	                    previewSet.add(preview);
                     }
                 } catch (CoreException e) {
@@ -1563,7 +1685,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (updatedGD == null) {
 			updatedGD = (GradientData) gradientValuesToSet.get(id);
 			if (updatedGD == null)
-				updatedGD = JFaceResources.getGradientRegistry().getGradientData(id);
+				updatedGD = currentTheme.getGradientRegistry().getGradientData(id);
 		}
 		return updatedGD;
     }
@@ -1574,14 +1696,15 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
      */
     private boolean isDefault(GradientDefinition definition) {
 		String id = definition.getId();
+		String key = ThemeElementHelper.createPreferenceKey(currentTheme, id);
 
         if (gradientPreferencesToSet.containsKey(id)) {			
 		    GradientData ourFontValue = (GradientData) gradientPreferencesToSet.get(id);
-		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), id)))
+		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), key)))
 		    	return true;
 		} else {			
 		    GradientData ourFontValue = getGradientValue(definition);
-		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), id))) 
+		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), key))) 
 		        return true;
 		}
 		return false;

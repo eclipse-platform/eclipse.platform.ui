@@ -45,11 +45,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
@@ -108,7 +105,6 @@ import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.GradientDefinition;
-import org.eclipse.ui.internal.themes.ITheme;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.intro.IIntroPart;
@@ -116,6 +112,7 @@ import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -920,13 +917,6 @@ public final class Workbench implements IWorkbench {
 		workbenchCommandSupport.setProcessingHandlerSubmissions(true);
 		workbenchContextSupport.setProcessingEnabledSubmissions(true);
 		
-		WorkbenchThemeManager.getInstance().addPropertyChangeListener(new IPropertyChangeListener() {
-
-            public void propertyChange(PropertyChangeEvent event) {
-                firePropertyChange(event.getProperty(), event.getOldValue(), event.getNewValue());
-                
-            }});
-		
 		return true;
 	}
 
@@ -938,10 +928,10 @@ public final class Workbench implements IWorkbench {
 	 */
 	private void initializeApplicationColors() {
 		ColorDefinition[] colorDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getColors();
-		ThemeElementHelper.populateRegistry(JFaceResources.getColorRegistry(), colorDefinitions, getPreferenceStore());
+		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), colorDefinitions, getPreferenceStore());
 		
 		GradientDefinition [] gradientDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getGradients();
-		ThemeElementHelper.populateRegistry(JFaceResources.getGradientRegistry(), gradientDefinitions, getPreferenceStore());
+		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), gradientDefinitions, getPreferenceStore());
 	}
 
 	private void initializeSingleClickOption() {
@@ -965,7 +955,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	private void initializeFonts() {
 	    FontDefinition[] fontDefinitions = WorkbenchPlugin.getDefault().getThemeRegistry().getFonts();
-		ThemeElementHelper.populateRegistry(JFaceResources.getFontRegistry(), fontDefinitions, getPreferenceStore());
+		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), fontDefinitions, getPreferenceStore());
 	}
 
 	/*
@@ -2124,62 +2114,9 @@ public final class Workbench implements IWorkbench {
 	private IntroDescriptor introDescriptor;
 
     /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbench#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+     * @see org.eclipse.ui.IWorkbench#getThemeManager()
      */
-    public void addPropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.add(listener);        
+    public IThemeManager getThemeManager() {
+        return WorkbenchThemeManager.getInstance();
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbench#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
-     */
-    public void removePropertyChangeListener(IPropertyChangeListener listener) {
-        propertyChangeListeners.remove(listener);        
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbench#getTheme(java.lang.String)
-     */
-    public ITheme getTheme(String id) {
-        return WorkbenchThemeManager.getInstance().getTheme(id);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbench#getCurrentTheme()
-     */
-    public ITheme getCurrentTheme() {
-        return WorkbenchThemeManager.getInstance().getCurrentTheme();
-    }  
-    
-    public void setCurrentTheme(String id) {
-        ITheme oldTheme = getCurrentTheme();
-        if (WorkbenchThemeManager.getInstance().setCurrentTheme(id)) {
-            firePropertyChange(CHANGE_CURRENT_THEME, oldTheme, getCurrentTheme());
-        }
-    }
-    
-    /**
-	 * Notify property change listeners about a property change.
-	 * 
-	 * @param changeId
-	 *            the change id
-	 * @param oldValue
-	 *            old property value
-	 * @param newValue
-	 *            new property value
-	 */
-	private void firePropertyChange(
-		String changeId,
-		Object oldValue,
-		Object newValue) {
-		Object[] listeners = propertyChangeListeners.getListeners();
-		PropertyChangeEvent event =
-			new PropertyChangeEvent(this, changeId, oldValue, newValue);
-
-		for (int i = 0; i < listeners.length; i++) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
-		}
-	}    
-    
-    private ListenerList propertyChangeListeners = new ListenerList();
 }

@@ -31,7 +31,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
@@ -77,6 +76,8 @@ import org.eclipse.ui.internal.themes.GradientDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
+import org.eclipse.ui.themes.ITheme;
+import org.eclipse.ui.themes.IThemeManager;
 
 class ExtensionEventHandler implements IRegistryChangeListener {
 	
@@ -250,7 +251,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		
 		Collection fonts = reader.getFontDefinitions();
 		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);
-		ThemeElementHelper.populateRegistry(JFaceResources.getFontRegistry(), fontDefs, workbench.getPreferenceStore());		
+		ThemeElementHelper.populateRegistry(workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME), fontDefs, workbench.getPreferenceStore());		
 		
 		((FontDefinition.FontPreferenceListener)FontDefinition.getPreferenceListener()).clearCache();		
     }
@@ -265,15 +266,17 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		
 		Collection colors = reader.getColorDefinitions();
 		ColorDefinition [] colorDefs = (ColorDefinition []) colors.toArray(new ColorDefinition [colors.size()]);
-		ThemeElementHelper.populateRegistry(JFaceResources.getColorRegistry(), colorDefs, workbench.getPreferenceStore());
+		
+		ITheme theme = workbench.getThemeManager().getTheme(IThemeManager.DEFAULT_THEME);
+        ThemeElementHelper.populateRegistry(theme, colorDefs, workbench.getPreferenceStore());
 
 		Collection gradients = reader.getGradientDefinitions();
 		GradientDefinition [] gradientDefs = (GradientDefinition []) gradients.toArray(new ColorDefinition [gradients.size()]);
-		ThemeElementHelper.populateRegistry(JFaceResources.getGradientRegistry(), gradientDefs, workbench.getPreferenceStore());
+		ThemeElementHelper.populateRegistry(theme, gradientDefs, workbench.getPreferenceStore());
 		
 		Collection fonts = reader.getFontDefinitions();
 		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new ColorDefinition [fonts.size()]);
-		ThemeElementHelper.populateRegistry(JFaceResources.getFontRegistry(), fontDefs, workbench.getPreferenceStore());		
+		ThemeElementHelper.populateRegistry(theme, fontDefs, workbench.getPreferenceStore());		
 		
 		((FontDefinition.FontPreferenceListener)FontDefinition.getPreferenceListener()).clearCache();
 	}

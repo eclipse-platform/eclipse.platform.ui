@@ -99,7 +99,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getFontOverrides()
      */
     public FontDefinition[] getFonts() {       
-	    FontDefinition [] defs = (FontDefinition []) fonts.toArray(new GradientDefinition [colors.size()]);
+	    FontDefinition [] defs = (FontDefinition []) fonts.toArray(new FontDefinition [fonts.size()]);
 	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
 	    return defs;
     }	
@@ -108,7 +108,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
 	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
 	 */
 	public GradientDefinition[] getGradients() {
-	    GradientDefinition [] defs = (GradientDefinition []) gradients.toArray(new GradientDefinition [colors.size()]);
+	    GradientDefinition [] defs = (GradientDefinition []) gradients.toArray(new GradientDefinition [gradients.size()]);
 	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
 	    return defs;
 	}	
