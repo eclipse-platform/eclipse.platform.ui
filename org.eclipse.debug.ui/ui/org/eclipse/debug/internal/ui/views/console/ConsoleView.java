@@ -68,7 +68,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * The current process being viewed, or <code>null</code.
 	 */
 	private IProcess fProcess;
-	
+	
+
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
@@ -216,7 +217,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		mgr.add(fClearOutputAction);
-	}
+	}
+
 	/**
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
 	 */
@@ -243,7 +245,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-
+
+
 	/**
 	 * @see WorkbenchPart#getAdapter(Class)
 	 */
@@ -256,7 +259,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		}
 		return super.getAdapter(required);
 	}
-
+
+
 	protected final ISelectionChangedListener getSelectionChangedListener() {
 		return new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
@@ -381,4 +385,5 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setViewerInput(DebugUITools.getCurrentProcess());
 	}
 }
-
+
+
