@@ -421,6 +421,7 @@ public class InternalAntRunner {
 				processProperties(argList);
 			}
 			
+			setProperties(getCurrentProject());
 			addBuildListeners(getCurrentProject());
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
@@ -882,7 +883,6 @@ public class InternalAntRunner {
 				commands.remove(args[i]);
 			}
 		}
-		setProperties(getCurrentProject());
 	}
 
 	/**
