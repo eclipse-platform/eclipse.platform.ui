@@ -64,7 +64,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	/**
 	 * @see IPluginDescriptor
 	 */
-	public IExtensionPoint getExtensionPoint(String extensionPointId) { //TODO This code only works if the underlying bundle as a symbolicName
+	public IExtensionPoint getExtensionPoint(String extensionPointId) {
 		return InternalPlatform.getDefault().getRegistry().getExtensionPoint(getId(), extensionPointId);
 	}
 
