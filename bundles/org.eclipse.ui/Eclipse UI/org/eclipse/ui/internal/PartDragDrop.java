@@ -248,6 +248,18 @@ private LayoutPart getTargetPart(Control target) {
 	return null;
 }
 /**
+ * Returns whether the mouse has moved enough to warrant
+ * opening a tracker.
+ */
+protected boolean hasMovedEnough(MouseEvent e) {
+	int dx= e.x - xAnchor;
+	int dy= e.y - yAnchor;
+	if (Math.abs(dx) < HYSTERESIS && Math.abs(dy) < HYSTERESIS)
+		return false;
+	else
+		return true;	
+}
+/**
  * @see MouseListener::mouseDoubleClick
  */
 public void mouseDoubleClick(MouseEvent e) {
@@ -285,9 +297,7 @@ public void mouseMove(MouseEvent e) {
 	// receive focus on a MouseDown.
 	if (!mouseDown || (e.stateMask & SWT.BUTTON1) == 0)
 		return;
-	int dx= e.x - xAnchor;
-	int dy= e.y - yAnchor;
-	if (Math.abs(dx) < HYSTERESIS && Math.abs(dy) < HYSTERESIS)
+	if (!hasMovedEnough(e))
 		return;
 
 	// If the source part is not in a state to allow drag & drop

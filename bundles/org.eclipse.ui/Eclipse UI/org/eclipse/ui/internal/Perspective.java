@@ -11,8 +11,7 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -40,6 +39,7 @@ public class Perspective
 	private ArrayList perspectiveActionIds;
 	private ArrayList fastViews;
 	private IViewPart activeFastView;
+	private IViewPart previousActiveFastView;
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 	
@@ -144,7 +144,11 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
 public void addFastView(IViewPart view) {
 	ViewPane pane = getPane(view);
 	if (!isFastView(view)) {
-		presentation.removePart(pane);
+		// Only remove the part from the presentation if it
+		// is actually in the presentation.
+		if (presentation.hasPlaceholder(pane.getID()) ||
+			pane.getContainer() != null)
+				presentation.removePart(pane);
 		// We are drag-enabling the pane because it has been disabled
 		// when it was removed from the perspective presentation.
 		presentation.enableDrag(pane);
@@ -153,6 +157,10 @@ public void addFastView(IViewPart view) {
 		Control ctrl = pane.getControl();
 		if (ctrl != null)
 			ctrl.setEnabled(false); // Remove focus support.
+		
+		// Enable dragging of the icon for the new fast view.
+		WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
+		window.enableDragShortcutBarPart();
 	}
 }
 /**
@@ -283,6 +291,19 @@ public IPerspectiveDescriptor getDesc() {
 	return descriptor;
 }
 /**
+ * Returns the bounds of the given fast view.
+ */
+/*package*/ Rectangle getFastViewBounds(IViewPart part) {
+	// Copy the bounds of the page composite
+	Rectangle bounds = page.getClientComposite().getBounds();
+	ViewPane pane = (ViewPane)((ViewSite)part.getSite()).getPane();
+	// get the width ratio of the fast view
+	float ratio = getFastViewWidthRatio(pane.getID());
+	// Compute the actual width of the fast view.
+	bounds.width = (int)(ratio*(float)getClientComposite().getSize().x);
+	return bounds;
+}
+/**
  * Returns the docked views.
  */
 public IViewPart [] getFastViews() {
@@ -345,6 +366,12 @@ public ArrayList getShowViewActionIds() {
  */
 public CoolBarLayout getToolBarLayout() {
 	return toolBarLayout;
+}
+/**
+ * Returns the last active fast view.
+ */
+/*package*/ IViewPart getPreviousActiveFastView() {
+	return previousActiveFastView;	
 }
 /**
  * Returns the view factory.
@@ -1037,6 +1064,10 @@ public IViewPart getActiveFastView() {
 /*package*/ void setActiveFastView(IViewPart view, int steps) {
 	if (activeFastView == view)
 		return;
+		
+	if (activeFastView != null)
+		previousActiveFastView = activeFastView;
+		
 	if (activeFastView != null) {
 		hideFastView(activeFastView, steps);
 	}
@@ -1134,11 +1165,7 @@ private void showFastView(IViewPart part) {
 	// Show pane fast.
 	ctrl.setEnabled(true); // Add focus support.
 	Composite parent = ctrl.getParent();
-	Rectangle bounds = parent.getClientArea();
-
-	// show fast view at proper ratio to window size
-	float ratio = getFastViewWidthRatio(pane.getID());
-	bounds.width = (int)(ratio*(float)getClientComposite().getSize().x);
+	Rectangle bounds = getFastViewBounds(part);
 
 	pane.setBounds(bounds);
 	pane.moveAbove(null);
@@ -1186,12 +1213,9 @@ public IViewPart showView(String viewID)
 	 * }
 	 */
 	else {
-		pane.setFast(true);
 		showFastView(part);
+		addFastView(part);
 		//Refresh the part as there might have been an error when showing
-		part = pane.getViewPart();
-		fastViews.add(part);
-		presentation.enableDrag(pane);
 	}
 	return part;
 }

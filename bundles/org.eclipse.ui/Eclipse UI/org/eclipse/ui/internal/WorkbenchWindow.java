@@ -1,9 +1,12 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+**********************************************************************/
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -42,6 +45,7 @@ public class WorkbenchWindow extends ApplicationWindow
 	private PageList pageList = new PageList();
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
+	private IPartDropListener partDropListener;
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
 	private WWinKeyBindingService keyBindingService;
 	private WWinPartService partService = new WWinPartService(this);
@@ -51,6 +55,8 @@ public class WorkbenchWindow extends ApplicationWindow
 	private Label separator2;
 	private Label separator3;
 	private ToolBarManager shortcutBar;
+	private ShortcutBarPart shortcutBarPart;
+	private ShortcutBarPartDragDrop shortcutDND;
 	private WorkbenchActionBuilder builder;
 	private boolean updateDisabled = true;
 	private boolean closing = false;
@@ -235,6 +241,21 @@ public WorkbenchWindow(Workbench workbench, int number) {
 			break;
 		}
 	}
+	
+	this.partDropListener = new IPartDropListener() {
+		public void dragOver(PartDropEvent e) {
+			WorkbenchPage page = getActiveWorkbenchPage();
+			Perspective persp = page.getActivePerspective();
+			PerspectivePresentation presentation = persp.getPresentation();
+			presentation.onPartDragOver(e);
+		};
+		public void drop(PartDropEvent e) {
+			WorkbenchPage page = getActiveWorkbenchPage();
+			Perspective persp = page.getActivePerspective();
+			PerspectivePresentation presentation = persp.getPresentation();
+			presentation.onPartDrop(e);
+		};
+	};
 }
 /**
  * Configures this window to have a cool bar.
@@ -469,7 +490,7 @@ private void createShortcutBar(Shell shell) {
 	shortcutBar.createControl(shell);
 
 	// Define shortcut part.  This is for drag and drop.
-	new ShortcutBarPart(shortcutBar);
+	shortcutBarPart = new ShortcutBarPart(shortcutBar);
 	
 	// Add right mouse button support.
 	ToolBar tb = shortcutBar.getControl();
@@ -554,6 +575,18 @@ protected Control createToolBarControl(Shell shell) {
 		return ((CoolBarManager)manager).createControl(shell);
 	}
 	return null;
+}
+/**
+ * Enables fast view icons to be dragged and dropped using the given IPartDropListener.
+ */
+/*package*/ void enableDragShortcutBarPart() {
+	Control control = shortcutBarPart.getControl();
+	if (control != null && shortcutDND == null) {
+		// Only one ShortcutBarPartDragDrop per WorkbenchWindow.
+		shortcutDND = new ShortcutBarPartDragDrop(shortcutBarPart, control);
+		// Add the listener only once.
+		shortcutDND.addDropListener(partDropListener);
+	}
 }
 /**
  * Returns the shortcut for a page.
@@ -732,6 +765,12 @@ public boolean getShellActivated() {
  */
 public ToolBarManager getShortcutBar() {
 	return shortcutBar;
+}
+/**
+ * Returns the PartDragDrop for the shortcut bar part.
+ */
+/*package*/ShortcutBarPartDragDrop getShortcutDND() {
+	return shortcutDND;	
 }
 /**
  * Returns the status line manager for this window (if it has one).

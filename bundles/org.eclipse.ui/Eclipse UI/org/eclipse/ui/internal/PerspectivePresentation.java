@@ -7,13 +7,14 @@ are made available under the terms of the Common Public License v0.5
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
-import java.util.*;
-
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.ViewPart;
+
+import java.util.*;
+import java.util.List;
 
 /**
  * A perspective presentation is a collection of parts with a layout.
@@ -39,6 +40,10 @@ public class PerspectivePresentation {
 	 * private boolean detachable = false;
 	 */
 	private boolean active = false;
+	// Flag used during drag and drop to specify if a fast
+	// view was active when the drag started.
+	private boolean wasFastViewActive = false;
+	
 	private Map dragParts = new HashMap();  // key is the LayoutPart object, value is the PartDragDrop object
 	private IPartDropListener partDropListener;
 
@@ -903,20 +908,50 @@ private void movePart(LayoutPart part, int position, LayoutPart relativePart) {
 }
 /**
  * Notification sent during drag and drop operation.
- * Only allow views and tab folders to participate
+ * Only allow views, tab folders, and fast view icons to participate
  * in the drag. Only allow the drop on a view, tab
  * folder, the shortcut bar, or editor area.
  */
-private void onPartDragOver(PartDropEvent e) {
-	// If the drag source is the active fast view, minimize it when
-	// it is dragged. This is to allow it to be dropped somewhere in
-	// the page layout that it was covering.
-	if (e.dragSource instanceof ViewPane) {
-		IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPart();
-		Perspective persp = page.getActivePerspective();
-		if (part == persp.getActiveFastView()) {
-			persp.setActiveFastView(null, 0);
+/*package*/ void onPartDragOver(PartDropEvent e) {
+	
+	// If a fast view is active, and the dragged element is the active
+	// fast view or an icon for a fast view, minimize the active fast
+	// view when the drag begins. This is to allow it to be dropped
+	// somewhere that the active fast view was covering.
+	Perspective persp = page.getActivePerspective();
+	if (persp.getActiveFastView() != null) {
+		if (e.dragSource instanceof ViewPane) {
+			IViewPart part = (ViewPart)((ViewPane)e.dragSource).getPart();
+			if (part == persp.getActiveFastView()) {
+				persp.setActiveFastView(null, 0);
+			}
+		} 
+		else if (e.dragSource instanceof ShortcutBarPart) {
+			if (persp.getActiveFastView() != null) {
+				WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
+				ToolItem icon = window.getShortcutDND().getDraggedItem();
+				IViewPart view = (IViewPart)icon.getData(ShowFastViewContribution.FAST_VIEW);
+				// If the dragged element is an icon for the active 
+				// fast view, remove it instantly. It will be reactivated
+				// if the icon is dropped somewhere invalid.
+				if (view == persp.getActiveFastView())
+					persp.setActiveFastView(null, 0);
+				// If the dragged element is an icon for a different
+				// fast view, scroll the active fast view off the page,
+				// just like any other instance when the active fast
+				// view loses focus.
+				else
+					persp.setActiveFastView(null); // slide the fast view off the page.
+				// Set flag to tell that a fast view was active when the drag began.
+				wasFastViewActive = true; 
+			}
 		}
+	}
+	
+	// Handle the case of an icon being dragged.
+	if (e.dragSource instanceof ShortcutBarPart) {
+		onFastViewIconDrag(e);
+		return;		
 	}
 	
 	/*
@@ -1018,7 +1053,7 @@ private void onPartDragOver(PartDropEvent e) {
 		return;
 	}
 
-	// If drop source is view ..
+	// If drag source is view ..
 	if (e.dragSource instanceof ViewPane) {
 		if (e.dragSource == e.dropTarget) {
 			// Reject stack onto same view
@@ -1104,24 +1139,56 @@ private void onPartDragOver(PartDropEvent e) {
 	e.relativePosition = offScreenPosition;
 }
 /**
+ * A fast view icon is the dragged element.
+ */
+private void onFastViewIconDrag(PartDropEvent e) {
+	// If the drop target is not a view, folder, or the
+	// editor area, we can not drop.
+	if (!(e.dropTarget instanceof ViewPane || 
+		  e.dropTarget instanceof PartTabFolder ||
+		  e.dropTarget instanceof EditorArea)) {
+			e.dropTarget = null;
+			e.relativePosition = PartDragDrop.INVALID;
+	}
+	// If the drop target is the editor area, we can not drop
+	// in the center.
+	if (e.dropTarget instanceof EditorArea &&
+	    e.relativePosition == PartDragDrop.CENTER) {
+			e.dropTarget = null;
+			e.relativePosition = PartDragDrop.INVALID;
+	}
+}
+/**
  * Notification sent when drop happens. Only views and
  * tab folders were allowed to participate.
  */
-private void onPartDrop(PartDropEvent e) {
-	// If invalid drop position ignore.
+/*package*/ void onPartDrop(PartDropEvent e) {
+	// If invalid drop position ignore the drop (except for possibly reactivating previous 
+	// active fast view.
 	if (e.relativePosition == PartDragDrop.INVALID) {
-		// If the drag source is a fast view, make it the active
-		// fast view when it is dropped somewhere valid. This is
-		// because it was minimized when it was dragged.
+		Perspective persp = page.getActivePerspective();
 		if (e.dragSource instanceof ViewPane) {
 			IViewPart view = (IViewPart)((ViewPane)(e.dragSource)).getPart();
-			if (isFastView(view)) {
-				Perspective persp = page.getActivePerspective();
+			// If the view is a fast view, then it must have been the active fast view.
+			// Make it the active fast view again if it is dropped somewhere invalid.
+			if (isFastView(view)) 
 				persp.setActiveFastView(view);
-			}
-		}	
+		} else if (e.dragSource instanceof ShortcutBarPart) {
+			WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
+			ToolItem icon = window.getShortcutDND().getDraggedItem();
+			IViewPart view = (IViewPart)icon.getData(ShowFastViewContribution.FAST_VIEW);
+			// If the icon being dropped is the icon for a fast view that was active when
+			// the drag began, reactivate the fast view when the icon is dropped somewhere invalid.
+			if (view == persp.getPreviousActiveFastView() && wasFastViewActive)
+				persp.setActiveFastView(view);
+		}
+		// Reset the flag that determines if a fast view was active when the drag began			
+		wasFastViewActive = false;	
 		return;
 	}
+		
+	// Reset the flag that determines if a fast view was active when the drag began
+	wasFastViewActive = false; 
 	
 	// If the drag source is a fast view, make it a regular view
 	// when it is dropped somewhere valid.
@@ -1130,6 +1197,17 @@ private void onPartDrop(PartDropEvent e) {
 		if (isFastView(view)) {
 			page.removeFastView(view);
 		}
+	}
+	
+	// If the dragged element is a fast view icon, set the dragSource to be the
+	// view represented by the icon before it is dropped into the page layout,
+	// and remove the view from the fast view list.
+	if (e.dragSource instanceof ShortcutBarPart) {
+		WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
+		ToolItem icon = window.getShortcutDND().getDraggedItem();
+		IViewPart view = (IViewPart)icon.getData(ShowFastViewContribution.FAST_VIEW);
+		e.dragSource = ((ViewSite)view.getSite()).getPane();
+		page.removeFastView(view);		
 	}
 		
 	switch (e.relativePosition) {
