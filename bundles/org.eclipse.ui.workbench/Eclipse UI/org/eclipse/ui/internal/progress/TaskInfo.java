@@ -106,9 +106,14 @@ public class TaskInfo extends SubTaskInfo {
 
     /**
      * Return an integer representing the amount of work completed.
-     * @return
+     * If progress is indeterminate return IProgressMonitor.UNKNOWN.
+     * @return int IProgressMonitor.UNKNOWN or a value between
+     * 	0 and 100.
      */
     int getPercentDone() {
+    	if(totalWork == IProgressMonitor.UNKNOWN)
+    		return IProgressMonitor.UNKNOWN;
+    	
         return Math.min((int) (preWork * 100 / totalWork), 100);
     }
 
