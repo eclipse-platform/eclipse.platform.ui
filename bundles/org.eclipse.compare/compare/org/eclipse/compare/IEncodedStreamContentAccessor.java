@@ -13,12 +13,12 @@ package org.eclipse.compare;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Extension interface for <code>IStreamContentAccessor</code>. Extends the original
+ * Extension for <code>IStreamContentAccessor</code>. Extends the original
  * concept of a <code>IStreamContentAccessor</code> to answer the Charset (encoding) used for the stream.
  * 
- * @deprecated Use <code>IEncodedStreamContentAccessor</code> instead
+ * @since 3.0
  */
-public interface IStreamContentAccessorExtension2 extends IStreamContentAccessor {
+public interface IEncodedStreamContentAccessor extends IStreamContentAccessor {
 	
 	/**
 	 * @return The character encoding of the stream returned by <code>getContents()</code>.
