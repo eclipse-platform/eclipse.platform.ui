@@ -19,6 +19,7 @@ import java.util.Enumeration;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -157,7 +158,12 @@ class JSchSession {
 				public void setUsername(String username) {
 				}
 			};
-			authenticator.promptForUserInfo(includeLocation ? location : null, info,	message);
+			try{
+				authenticator.promptForUserInfo(includeLocation ? location : null, info,	message);
+			}
+			catch(OperationCanceledException e){
+				_password[0]=null;
+			}
 			return _password[0];	
 		}
 		public boolean promptPassphrase(String message) {
@@ -211,6 +217,9 @@ class JSchSession {
 																prompt,   
 																echo);   
 				return result;
+			}
+			catch(OperationCanceledException e){
+				return null;
 			}
 			catch(CVSException e){
 				return null;
@@ -300,6 +309,9 @@ class JSchSession {
 			return session;
 		} catch (JSchException e) {
 			pool.remove(key);
+			if(e.toString().indexOf("Auth cancel")!=-1){  //$NON-NLS-1$
+				throw new OperationCanceledException(""); //$NON-NLS-1$
+			}
 			throw e;
 		}
 	}
