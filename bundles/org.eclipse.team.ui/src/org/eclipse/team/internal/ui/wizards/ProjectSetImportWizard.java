@@ -156,6 +156,11 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 			if (target instanceof Error) {
 				throw (Error)target;
 			}
+			if (target instanceof SAXException) {
+			    ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("ProjectSetImportWizard.0", target.getMessage()), target)); //$NON-NLS-1$
+			    return false;
+			}
+			ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("ProjectSetImportWizard.1", target.getMessage()), target)); //$NON-NLS-1$
 		}
 		return result[0];
 	}
