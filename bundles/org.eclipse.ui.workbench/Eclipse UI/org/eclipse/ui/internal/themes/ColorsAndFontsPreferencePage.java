@@ -1321,6 +1321,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 		}
 
+        colorValuesToSet.clear();
 		colorPreferencesToSet.clear();
 		return true;
     }
@@ -1368,6 +1369,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 		}
 
+        fontValuesToSet.clear();
         fontPreferencesToSet.clear();		
 		return true;
     }
