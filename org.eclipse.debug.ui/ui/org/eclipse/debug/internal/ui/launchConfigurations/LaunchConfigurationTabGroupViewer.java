@@ -643,14 +643,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		String description = null;
 		if(configType != null) {
 			String mode = fDialog.getMode();
-			LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
-			LaunchConfigurationTabGroupExtension extension = manager.getExtension(configType.getAttribute("id"), mode); //$NON-NLS-1$
-			description = extension.getDescription(mode);
-		}
-	
+			description = LaunchConfigurationPresentationManager.getDefault().getDescription(configType, mode);
+		}	
 		if (description == null)
 			description = ""; //$NON-NLS-1$
-		
 		return description;
 	}
 	

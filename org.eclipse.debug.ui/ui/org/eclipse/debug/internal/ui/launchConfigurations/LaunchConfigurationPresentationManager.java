@@ -178,5 +178,19 @@ public class LaunchConfigurationPresentationManager {
 		} 
 		return ext.getHelpContextId();		
 	}
+	
+	/**
+	 * Returns the description of the given configuration type
+	 * in the specified mode or <code>null</code> if none.
+	 * 
+	 * @param configType the config type
+	 * @param mode the launch mode
+	 * @return the description of the given configuration type, possible <code>null</code>
+	 */
+	public String getDescription(ILaunchConfigurationType configType, String mode) {
+		LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
+		LaunchConfigurationTabGroupExtension extension = manager.getExtension(configType.getAttribute("id"), mode); //$NON-NLS-1$
+		return extension.getDescription(mode);
+	}	
 }
 
