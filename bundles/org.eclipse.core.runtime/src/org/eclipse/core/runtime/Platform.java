@@ -922,6 +922,44 @@ public final class Platform {
 	public static void setKeyringLocation(String keyringFile) throws IllegalStateException {
 		InternalPlatform.getDefault().setKeyringLocation(keyringFile);
 	}
+	
+	/**
+	 * Returns the currently registered bundle group providers
+	 * @return the currently registered bundle group providers
+	 * @since 3.0
+	 */
+	public IBundleGroupProvider[] getBundleGroupProviders() {
+		return InternalPlatform.getDefault().getBundleGroupProviders();
+	}
+
+	/**
+	 * Returns the product which was selected when running this Eclipse instance
+	 * or null if none
+	 * @return the current product or null if none
+	 * @since 3.0
+	 */
+	public IProduct getProduct() {
+		return InternalPlatform.getDefault().getProduct();
+	}
+
+	/**
+	 * Registers the given bundle group provider with the platform
+	 * @param provider a provider to register
+	 * @since 3.0
+	 */
+	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
+		InternalPlatform.getDefault().registerBundleGroupProvider(provider);		
+	}
+	
+	/**
+	 * Deregisters the given bundle group provider with the platform
+	 * @param provider a provider to deregister
+	 * @since 3.0
+	 */
+	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
+		InternalPlatform.getDefault().unregisterBundleGroupProvider(provider);		
+	}
+
 	/**
 	 * Returns the location in the filesystem of the configuration information 
 	 * used to run this instance of Eclipse.  The configuration area typically
@@ -935,4 +973,5 @@ public final class Platform {
 	public IPath getConfigurationMetadataLocation() {
 		return InternalPlatform.getDefault().getConfigurationMetadataLocation();
 	}
+
 }

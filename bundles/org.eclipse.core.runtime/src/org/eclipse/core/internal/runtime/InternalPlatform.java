@@ -73,17 +73,11 @@ public final class InternalPlatform implements IPlatform {
 	// the default workspace directory name
 	static final String WORKSPACE = "workspace"; //$NON-NLS-1$	
 
-	private static boolean consoleLogEnabled = false;
 	private static ILogListener consoleLog = null;
 
 	private static boolean splashDown = false;
 	private static String pluginCustomizationFile = null;
 	private static URL installLocation = null;
-
-	/**
-	 * Whether to perform the workspace metadata version check.
-	 */
-	private static boolean doVersionCheck = true;
 
 	/**
 	 * Whether to write the version.ini file on shutdown.
@@ -114,11 +108,11 @@ public final class InternalPlatform implements IPlatform {
 	private static final String OPTION_DEBUG_PREFERENCES = PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
 
 	// command line options
-	private static final String ARG_APPLICATION = "-application"; //$NON-NLS-1$	
-	private static final String ARG_DATA = "-data"; //$NON-NLS-1$	
-	private static final String ARG_NO_DATA = "-noData"; //$NON-NLS-1$
-	private static final String ARG_NO_DEFAULT_DATA = "-noDefaultData"; //$NON-NLS-1$
-	private static final String ARG_INSTALL = "-install"; //$NON-NLS-1$	
+	private static final String NO_DEFAULT_DATA = "-noDefaultData"; //$NON-NLS-1$
+	private static final String NO_DATA = "-noData"; //$NON-NLS-1$
+	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
+	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
+	private static final String DATA = "-data"; //$NON-NLS-1$	
 	private static final String LOG = "-consolelog"; //$NON-NLS-1$
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	protected static final String PASSWORD = "-password"; //$NON-NLS-1$
@@ -141,14 +135,20 @@ public final class InternalPlatform implements IPlatform {
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
 
-	public static final String INSTALL_LOCATION = "osgi.installLocation";
 	
 	private static final String METADATA_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final int METADATA_VERSION_VALUE = 1;
 
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
-	private static final String NO_DATA = "eclipse.noData"; //$NON-NLS-1$
-	private static final String NO_DEFAULT_DATA = "eclipse.noDefaultData"; //$NON-NLS-1$
+
+	// System Properties
+	public static final String INSTALL_LOCATION = "osgi.installLocation";
+	public static final String PROP_PRODUCT = "eclipse.product";
+	public static final String PROP_APPLICATION = "eclipse.application";
+	public static final String PROP_DATA = "eclipse.instanceData";
+
+	public static final String PROP_NO_DATA = "eclipse.noData"; //$NON-NLS-1$
+	public static final String PROP_NO_DEFAULT_DATA = "eclipse.noDefaultData"; //$NON-NLS-1$
 	
 	private static final InternalPlatform singleton = new InternalPlatform();
 
@@ -381,7 +381,8 @@ public final class InternalPlatform implements IPlatform {
 	 */
 	public boolean loaderCheckVersion() {
 		// if not doing the version check, then proceed with no check or prompt
-		boolean proceed = !doVersionCheck || checkVersionPrompt();
+		boolean noVersionCheck = "true".equals(System.getProperty("eclipse.noVersionCheck")); //$NON-NLS-1$
+		boolean proceed = noVersionCheck || checkVersionPrompt();
 		// remember whether to write the version on exit;
 		// don't write it if the user cancelled
 		writeVersion = proceed;
@@ -455,7 +456,7 @@ public final class InternalPlatform implements IPlatform {
 		initialized = true;
 		platformLog = new PlatformLogWriter(getMetaArea().getLogLocation().toFile());
 		addLogListener(platformLog);
-		if (consoleLogEnabled) {
+		if ("true".equals(System.getProperty("eclipse.consoleLog"))) {
 			consoleLog = new PlatformLogWriter(System.out);
 			addLogListener(consoleLog);
 		}
@@ -465,8 +466,8 @@ public final class InternalPlatform implements IPlatform {
 	 * 
 	 */
 	private void processSystemProperties() {
-		noData = "true".equalsIgnoreCase(System.getProperties().getProperty(NO_DATA));
-		noDefaultData = "true".equalsIgnoreCase(System.getProperties().getProperty(NO_DEFAULT_DATA));
+		noData = "true".equalsIgnoreCase(System.getProperties().getProperty(PROP_NO_DATA));
+		noDefaultData = "true".equalsIgnoreCase(System.getProperties().getProperty(PROP_NO_DEFAULT_DATA));
 	}
 
 	private Runnable getSplashHandler() {
@@ -643,20 +644,20 @@ public final class InternalPlatform implements IPlatform {
 
 			// look for the log flag
 			if (args[i].equalsIgnoreCase(LOG)) {
-				consoleLogEnabled = true;
+				System.setProperty("eclipse.consoleLog", "true"); //$NON-NLS-1$
 				found = true;
 			}
 
 			// look for the no registry cache flag
 			if (args[i].equalsIgnoreCase(NOREGISTRYCACHE)) {
-				cacheRegistry = false;
+				System.setProperty("eclipse.noRegistryCache", "true"); //$NON-NLS-1$
 				found = true;
 			}
 
 			// check to see if we should NOT be lazily loading plug-in definitions from the registry cache file.
 			// This will be processed below.
 			if (args[i].equalsIgnoreCase(NO_LAZY_REGISTRY_CACHE_LOADING)) {
-				lazyRegistryCacheLoading = false;
+				System.setProperty("eclipse.noLazyRegistryCacheLoading", "true"); //$NON-NLS-1$
 				found = true;
 			}
 
@@ -668,28 +669,30 @@ public final class InternalPlatform implements IPlatform {
 			}
 			
 			// look for the flag to run without workspace 
-			if (args[i].equalsIgnoreCase(ARG_NO_DATA)) {
-				System.setProperty(NO_DATA, "true");
+			if (args[i].equalsIgnoreCase(NO_DATA)) {
+				System.setProperty(PROP_NO_DATA, "true");
 				found = true;
 			}
 			
 			// look for the flag to run with a workspace specified programmatically
-			if (args[i].equalsIgnoreCase(ARG_NO_DEFAULT_DATA)) {
-				System.setProperty(NO_DEFAULT_DATA, "true");
+			if (args[i].equalsIgnoreCase(NO_DEFAULT_DATA)) {
+				System.setProperty(PROP_NO_DEFAULT_DATA, "true");
 				found = true;
 			}
 			
 			// look for the flag to turn off the workspace metadata version check
 			if (args[i].equalsIgnoreCase(NO_VERSION_CHECK)) {
-				doVersionCheck = false;
+				System.setProperty("eclipse.noVersionCheck", "true"); //$NON-NLS-1$
 				found = true;
 			}
 
+			// look for the flag to turn off using package prefixes
+			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES))
+				found = true;  				// ignored
+
 			// this option (may have and argument) comes from InternalBootLoader.processCommandLine
-			if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) {
-				// ignored
-				found = true;
-			}
+			if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) 
+				found = true;				// ignored
 
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
@@ -702,7 +705,7 @@ public final class InternalPlatform implements IPlatform {
 			String arg = args[++i];
 
 			// look for the default data location
-			if (args[i - 1].equalsIgnoreCase(ARG_DATA)) {
+			if (args[i - 1].equalsIgnoreCase(DATA)) {
 				location = new Path(arg);
 				found = true;
 			}
@@ -719,8 +722,14 @@ public final class InternalPlatform implements IPlatform {
 				found = true;
 			}
 
+			// look for the product to run
+			if (args[i - 1].equalsIgnoreCase(PRODUCT)) {
+				System.setProperty("eclipse.product", arg); //$NON-NLS-1$
+				found = true;
+			}
+
 			// look for the application to run.  
-			if (args[i - 1].equalsIgnoreCase(ARG_APPLICATION)) {
+			if (args[i - 1].equalsIgnoreCase(APPLICATION)) {
 				System.setProperty("eclipse.application", arg); //$NON-NLS-1$
 				found = true;
 			}
@@ -1047,7 +1056,7 @@ public final class InternalPlatform implements IPlatform {
 	public URL getInstallURL() {
 		if (installLocation == null)
 			try {
-				installLocation = new URL((String) System.getProperty(INSTALL_LOCATION)); //$NON-NLS-1$
+				installLocation = new URL(System.getProperty(INSTALL_LOCATION)); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				//This can't fail because the location was set coming in
 			}
@@ -1236,6 +1245,9 @@ public final class InternalPlatform implements IPlatform {
 	public void setKeyringLocation(String keyringFile) {
 		getMetaArea().setKeyringFile(keyringFile);
 	}
+	public void setInstanceLocation(IPath location) throws IllegalStateException {
+		getMetaArea().setInstanceDataLocation(location);	
+	}
 	public IPath getInstanceLocation() throws IllegalStateException {
 		assertInitialized();
 		if (! metaArea.isInstanceDataLocationInitiliazed()) {
@@ -1250,19 +1262,11 @@ public final class InternalPlatform implements IPlatform {
 			} 
 		}
 		return metaArea.getInstanceDataLocation();
-	}
-	public void setInstanceLocation(IPath location) throws IllegalStateException {
-		getMetaArea().setInstanceDataLocation(location);	
-	}
+	}	
 	public IBundleGroupProvider[] getBundleGroupProviders() {
 		return (IBundleGroupProvider[])groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
-	}	
-	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.remove(provider);		
-	}	
-	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.add(provider);		
 	}
+
 	public IProduct getProduct() {
 		if (product != null)
 			return product;
@@ -1276,4 +1280,12 @@ public final class InternalPlatform implements IPlatform {
 		product = new Product(entries[0]);
 		return product;
 	}	
+
+	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
+		groupProviders.add(provider);		
+	}
+	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
+		groupProviders.remove(provider);		
+	}
+	
 }

@@ -93,7 +93,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 
 	private void startRegistry(BundleContext context) {
 		boolean fromCache = true;
-		if (InternalPlatform.cacheRegistry) {
+		if (!"true".equals(System.getProperty("eclipse.noRegistryCache"))) {
 			// Try to read the registry from the cache first. If that fails, create a new registry
 			MultiStatus problems = new MultiStatus(IPlatform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
 			Factory factory = new Factory(problems);
@@ -101,7 +101,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			long start = 0;
 			if (InternalPlatform.DEBUG)
 				start = System.currentTimeMillis();
-			registry = new RegistryCacheReader(cacheFile, factory, InternalPlatform.lazyRegistryCacheLoading).loadCache();
+			boolean lazyLoading = !"true".equals(System.getProperty("eclipse.noLazyRegistryCacheLoading")); //$NON-NLS-1$
+			registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache();
 
 			if (InternalPlatform.DEBUG && registry != null)
 				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start));

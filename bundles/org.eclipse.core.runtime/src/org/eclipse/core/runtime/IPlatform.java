@@ -539,6 +539,34 @@ public interface IPlatform {
 	public PlatformAdmin getPlatformAdmin();
 	
 	/**
+	 * Returns the currently registered bundle group providers
+	 * @return the currently registered bundle group providers
+	 * @since 3.0
+	 */
+	public IBundleGroupProvider[] getBundleGroupProviders();
+	/**
+	 * Returns the product which was selected when running this Eclipse instance
+	 * or null if none
+	 * @return the current product or null if none
+	 * @since 3.0
+	 */
+	public IProduct getProduct();
+
+	/**
+	 * Registers the given bundle group provider with the platform
+	 * @param provider a provider to register
+	 * @since 3.0
+	 */
+	public void registerBundleGroupProvider(IBundleGroupProvider provider);	
+
+	/**
+	 * Deregisters the given bundle group provider with the platform
+	 * @param provider a provider to deregister
+	 * @since 3.0
+	 */
+	public void unregisterBundleGroupProvider(IBundleGroupProvider provider);
+	
+	/**
 	 * Returns the location of the platform working directory (also known as instance data).  
 	 * This corresponds to the <i>-data</i> command line argument if
 	 * present or, to the value set using @see #setInstanceLocation(IPath), or if 
@@ -586,3 +614,4 @@ public interface IPlatform {
 	 */
 	public void setKeyringLocation(String keyringFile) throws IllegalStateException;
 }
+
