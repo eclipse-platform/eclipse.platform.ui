@@ -59,6 +59,12 @@ public class CVSTag {
 		return getName().compareTo(other.getName());
 	}
 	
+	public static boolean equalTags(CVSTag tag1, CVSTag tag2) {
+		if (tag1 == null) tag1 = CVSTag.DEFAULT;
+		if (tag2 == null) tag2 = CVSTag.DEFAULT;
+		return tag1.equals(tag2);
+	}
+	
 	public static IStatus validateTagName(String tagName) {
 		if (tagName == null)
 			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.nullName")); //$NON-NLS-1$
