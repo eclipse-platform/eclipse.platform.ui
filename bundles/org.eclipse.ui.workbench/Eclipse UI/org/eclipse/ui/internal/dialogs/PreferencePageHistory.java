@@ -1,0 +1,257 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.ui.internal.dialogs;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.ToolBarManager;
+
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ActionHandler;
+import org.eclipse.ui.commands.HandlerSubmission;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.Priority;
+
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
+
+/**
+ * History for navigating preference pages.
+ * 
+ * @since 3.1
+ */
+class PreferencePageHistory {
+
+	/**
+	 * The history toolbar.
+	 */
+	private ToolBarManager historyToolbar;
+	/**
+	 * A list of preference history domain elements that stores the history of
+	 * the visited preference pages.
+	 */
+	private List history= new ArrayList();
+	/**
+	 * Stores the current entry into <code>history</code> and
+	 * <code>historyLabels</code>.
+	 */
+	private int historyIndex= -1;
+	/**
+	 * The preference dialog we implement the history for.
+	 */
+	private final WorkbenchPreferenceDialog dialog;
+	
+	/**
+	 * Creates a new history for the given dialog.
+	 * 
+	 * @param dialog the preference dialog to create a history for
+	 */
+	public PreferencePageHistory(WorkbenchPreferenceDialog dialog) {
+		this.dialog= dialog;
+	}
+	
+	/**
+	 * Returns the preference page path (for now: its id) for the history at
+	 * <code>index</code>.
+	 * 
+	 * @param index the index into the history
+	 * @return the preference page path at <code>index</code> or
+	 *         <code>null</code> if <code>index</code> is not a valid
+	 *         history index
+	 */
+	private PreferenceHistoryEntry getHistoryEntry(int index) {
+		if (index >= 0 && index < history.size())
+			return (PreferenceHistoryEntry) history.get(index);
+		return null;
+	}
+	/**
+	 * Adds the preference page path and its label to the page history.
+	 * 
+	 * @param entry the preference page history entry
+	 */
+	public void addHistoryEntry(PreferenceHistoryEntry entry) {
+		if (historyIndex == -1 || !history.get(historyIndex).equals(entry)) {
+			history.subList(historyIndex + 1, history.size()).clear();
+			history.add(entry);
+			historyIndex++;
+			updateHistoryControls();
+		}
+	}
+	/**
+	 * Sets the current page to be the one corresponding to the given index
+	 * in the page history.
+	 * 
+	 * @param index the index into the page history
+	 */
+	private void jumpToHistory(int index) {
+		if (index >= 0 && index < history.size()) {
+			historyIndex= index;
+			dialog.setCurrentPageId(getHistoryEntry(index).getId());
+		}
+		updateHistoryControls();
+	}
+	/**
+	 * Updates the history controls.
+	 * 
+	 */
+	private void updateHistoryControls() {
+		historyToolbar.update(false);
+		IContributionItem[] items= historyToolbar.getItems();
+		for (int i= 0; i < items.length; i++) {
+			items[i].update(IAction.ENABLED);
+			items[i].update(IAction.TOOL_TIP_TEXT);
+		}
+	}
+	/**
+	 * Creates the history toolbar and initializes <code>historyToolbar</code>.
+	 * 
+	 * @param composite the composite to add the toolbar to
+	 * @return the control of the history toolbar
+	 */
+	public Control createHistoryControls(Composite composite) {
+		ToolBar historyBar= new ToolBar(composite, SWT.FLAT | SWT.HORIZONTAL);
+		
+		historyToolbar= new ToolBarManager(historyBar);
+		
+		/**
+		 * Superclass of the two for-/backward actions for the history.
+		 */
+		abstract class HistoryNavigationAction extends Action implements IMenuCreator {
+			private Menu lastMenu;
+			protected final static int MAX_ENTRIES= 5;
+			HistoryNavigationAction() {
+				super("", IAction.AS_DROP_DOWN_MENU); //$NON-NLS-1$
+			}
+			public IMenuCreator getMenuCreator() {
+				return this;
+			}
+			public void dispose() {
+				if (lastMenu != null) {
+					lastMenu.dispose();
+					lastMenu= null;
+				}
+			}
+			public Menu getMenu(Control parent) {
+				if (lastMenu != null) {
+					lastMenu.dispose();
+				}
+				lastMenu= new Menu(parent);
+				createEntries(lastMenu);
+				return lastMenu;
+	
+			}
+			public Menu getMenu(Menu parent) {
+				return null;
+			}
+			protected void addActionToMenu(Menu parent, IAction action) {
+				ActionContributionItem item= new ActionContributionItem(action);
+				item.fill(parent, -1);
+			}
+			protected abstract void createEntries(Menu menu);
+		}
+		
+		/**
+		 * Menu entry for the toolbar dropdowns. Instances are direct-jump
+		 * entries in the navigation history.
+		 */
+		class HistoryItemAction extends Action {
+	
+			private final int index;
+	
+			HistoryItemAction(int index, String label) {
+				super(label, IAction.AS_PUSH_BUTTON);
+				this.index= index;
+			}
+			
+			public void run() {
+				jumpToHistory(index);
+			}
+		}
+		
+		HistoryNavigationAction backward= new HistoryNavigationAction() {
+			public void run() {
+				jumpToHistory(historyIndex - 1);
+			}
+			public boolean isEnabled() {
+				boolean enabled= historyIndex > 0;
+				if (enabled)
+					setToolTipText(WorkbenchMessages.format("NavigationHistoryAction.backward.toolTipName", new String[] { getHistoryEntry(historyIndex - 1).getLabel() })); //$NON-NLS-1$
+				return enabled;
+			}
+			protected void createEntries(Menu menu) {
+				int limit= Math.max(0, historyIndex - MAX_ENTRIES);
+				for(int i= historyIndex - 1; i >= limit; i--) {
+					IAction action= new HistoryItemAction(i, getHistoryEntry(i).getLabel());
+					addActionToMenu(menu, action);
+				}
+			}
+		};
+		backward.setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
+		backward.setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
+		backward.setImageDescriptor(WorkbenchPlugin.getDefault().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+		registerKeybindings(backward);
+		historyToolbar.add(backward);
+		
+		HistoryNavigationAction forward= new HistoryNavigationAction() {
+			public void run() {
+				jumpToHistory(historyIndex + 1);
+			}
+			public boolean isEnabled() {
+				boolean enabled= historyIndex < history.size() - 1;
+				if (enabled)
+					setToolTipText(WorkbenchMessages.format("NavigationHistoryAction.forward.toolTipName", new String[] { getHistoryEntry(historyIndex + 1).getLabel() })); //$NON-NLS-1$
+				return enabled;
+			}
+			protected void createEntries(Menu menu) {
+				int limit= Math.min(history.size(), historyIndex + MAX_ENTRIES + 1);
+				for(int i= historyIndex + 1; i < limit; i++) {
+					IAction action= new HistoryItemAction(i, getHistoryEntry(i).getLabel());
+					addActionToMenu(menu, action);
+				}
+			}
+		};
+		forward.setText(WorkbenchMessages.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
+		forward.setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
+		forward.setImageDescriptor(WorkbenchPlugin.getDefault().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+		registerKeybindings(forward);
+		historyToolbar.add(forward);
+		
+		historyToolbar.createControl(composite);
+		historyToolbar.update(false);
+		
+		return historyBar;
+	}
+
+	/**
+	 * Registers the given action with the workbench command support.
+	 * 
+	 * @param action the action to register.
+	 */
+	private void registerKeybindings(IAction action) {
+		IHandler handler= new ActionHandler(action);
+		HandlerSubmission sub= new HandlerSubmission(null, dialog.getShell(), null, action.getActionDefinitionId(), handler, Priority.MEDIUM);
+		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(sub);
+	}
+}

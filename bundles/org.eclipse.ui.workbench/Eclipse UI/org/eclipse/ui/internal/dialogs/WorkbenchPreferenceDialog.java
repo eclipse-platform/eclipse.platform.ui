@@ -29,6 +29,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -104,7 +105,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
                 parentShell = null;
             }
 
-            // Create the dialog and open it.
+            // Create the dialog
             final PreferenceManager preferenceManager = PlatformUI
                     .getWorkbench().getPreferenceManager();
             dialog = new WorkbenchPreferenceDialog(parentShell,
@@ -132,6 +133,13 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
         return dialog;
     }
 
+    /**
+     * The preference page history.
+     * 
+     * @since 3.1
+     */
+	private PreferencePageHistory history;
+
 	/**
 	 * Creates a new preference dialog under the control of the given preference
 	 * manager.
@@ -149,7 +157,13 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
                         "There cannot be two preference dialogs at once in the workbench."); //$NON-NLS-1$
         instance = this;
 
+        history= getHistory();
     }
+
+	private PreferencePageHistory getHistory() {
+		// TODO get a workbench-global history to keep it over sessions.
+		return new PreferencePageHistory(this);
+	}
 
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
@@ -191,10 +205,18 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 				.getString("WorkbenchPreferenceDialog.load"), false); //$NON-NLS-1$
 		createButton(parent, SAVE_ID, WorkbenchMessages
 				.getString("WorkbenchPreferenceDialog.save"), false); //$NON-NLS-1$
+
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Control historyControl= history.createHistoryControls(parent);
+		historyControl.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+
+		l = new Label(parent, SWT.NONE);
+		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		GridLayout layout = (GridLayout) parent.getLayout();
-		layout.numColumns++;
+		layout.numColumns+= 3;
 		layout.makeColumnsEqualWidth = false;
 
 		super.createButtonsForButtonBar(parent);
@@ -382,4 +404,16 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
             showPage(node);
         }
     }
+
+	/*
+	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
+	 * @since 3.1
+	 */
+	protected boolean showPage(IPreferenceNode node) {
+		final boolean success= super.showPage(node);
+		if (success) {
+			history.addHistoryEntry(new PreferenceHistoryEntry(node.getId(), node.getLabelText(), null));
+		}
+		return success;
+	}
 }
