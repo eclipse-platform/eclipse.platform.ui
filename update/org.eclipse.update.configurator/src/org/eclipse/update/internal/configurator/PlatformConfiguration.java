@@ -352,7 +352,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 //		if (!changeStampIsValid)
 //			computeChangeStamp();
 //		return changeStamp;
-		return 0;
+		return config.getDate().getTime();
 	}
 
 	/*
