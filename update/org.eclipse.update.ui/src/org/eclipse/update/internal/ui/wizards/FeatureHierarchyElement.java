@@ -48,7 +48,7 @@ public class FeatureHierarchyElement {
 	 */
 	public boolean isEditable() {
 		// cannot uncheck non-optional features
-		if (!isOptional() == false)
+		if (isOptional() == false)
 			return false;
 		// cannot uncheck optional feature that
 		// has already been installed
