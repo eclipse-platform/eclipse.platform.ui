@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -129,6 +130,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction rebuildProjectAction;
 	private RetargetAction openProjectAction;
 	private RetargetAction closeProjectAction;
+	
+	private KeyBindingMenu keyBindingMenu;
 // end menu reorg	
 
 	/**
@@ -582,6 +585,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// about should always be at the bottom
 		menu.add(new Separator());
 		menu.add(aboutAction);
+		menu.add(keyBindingMenu = new KeyBindingMenu(window));
 		return menu;
 	}
 	

@@ -11,6 +11,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IPropertyListener;
@@ -43,6 +45,8 @@ public class WWinKeyBindingService {
 	private KeyBindingService activeService;
 	/* The window this service is managing the accelerators for.*/
 	private WorkbenchWindow window;
+	
+	private Menu acceleratorsMenu;
 	/**
 	 * Create an instance of WWinKeyBindingService and initializes it.
 	 */			
@@ -164,42 +168,31 @@ public class WWinKeyBindingService {
 	 */	
    	public void update(KeyBindingService service) {
    		IWorkbenchPart part = window.getActivePage().getActivePart();
-   		if(part instanceof IEditorPart) {
-   			KeyBindingService currServ = (KeyBindingService)((IEditorPart)part).getEditorSite().getKeyBindingService();
-   			if(currServ == service)
-   				update(part);
-   		}
+		KeyBindingService currServ = (KeyBindingService)part.getSite().getKeyBindingService();
+		if(currServ == service)
+			update(part);
    	}
 	/**
 	 * Remove or restore the accelerators in the menus.
 	 */
    	private void update(IWorkbenchPart part) {
+   		acceleratorsAllowed = false;
    		if(part==null)
    			return;
-   		boolean oldAllowed = acceleratorsAllowed;
+   			
    		AcceleratorScope oldScope = null;
    		if(activeService != null)
    			oldScope = activeService.getActiveAcceleratorScope();
    			
-    	IWorkbenchPartSite site = part.getSite();
-    	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
+    	WorkbenchWindow w = (WorkbenchWindow) getWindow();
     	MenuManager menuManager = w.getMenuManager();
-    	if(part instanceof IViewPart) {
-    		activeService = null;
-    		acceleratorsAllowed = true;
-    	} else if(part instanceof IEditorPart) {
-    		activeService = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
-    		AcceleratorConfiguration config = ((Workbench)w.getWorkbench()).getActiveAcceleratorConfiguration();
-    		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID)))
-    			acceleratorsAllowed = !activeService.isParticipating();
-	   		else
-    			acceleratorsAllowed = true;
-    	}
+    	setActiveService((KeyBindingService)part.getSite().getKeyBindingService());
+
    		AcceleratorScope newScope = null;
    		if(activeService != null)
    			newScope = activeService.getActiveAcceleratorScope();
 
-    	if((oldAllowed != acceleratorsAllowed) || (oldScope != newScope))
+    	if(oldScope != newScope)
  			menuManager.update(IAction.TEXT);
     }
     public boolean acceleratorsAllowed() {
@@ -231,5 +224,41 @@ public class WWinKeyBindingService {
 		if(acc == null)
 			return null;
 		return acc.getAccelerators();
-    }     
+    }
+    
+    public void setAcceleratorsMenu(Menu acceleratorsMenu) {
+    	this.acceleratorsMenu = acceleratorsMenu;
+    }
+    
+    private static int ACCEL_MASK = ~0xFFFF;
+    
+    public void setActiveService(KeyBindingService service) {
+    	acceleratorsAllowed = false;
+    	if(acceleratorsMenu == null)
+    		return;
+    	activeService = service;
+    	final AcceleratorScope scope = activeService.getActiveAcceleratorScope();
+		int count = 0;
+		MenuItem items[] = acceleratorsMenu.getItems();
+		for (int i = 0; i < items.length; i++) {
+			items[i].dispose();
+		}
+		int[] accs = scope.getAllAccelerators();
+		Arrays.sort(accs);
+		for (int i = 0; i < accs.length; i++) {
+			final int acc = accs[i];
+			if((acc & ACCEL_MASK) != 0) {
+				count++;
+				MenuItem item = new MenuItem(acceleratorsMenu,SWT.PUSH);
+				item.setText(Action.convertAccelerator(acc));
+				item.setAccelerator(acc);
+				item.addListener(SWT.Selection, new Listener() {
+					public void handleEvent (Event event) {
+						scope.processKey(activeService,event,acc);
+					}
+				});
+			}
+		}
+		System.out.println("MENU ITEMS: " + count);
+    }
 }

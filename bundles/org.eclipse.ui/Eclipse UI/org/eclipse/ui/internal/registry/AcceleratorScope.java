@@ -3,11 +3,14 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.*;
 import java.util.HashMap;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.internal.*;
 
 /**
@@ -28,6 +31,8 @@ public class AcceleratorScope {
 	private HashMap defaultActionToAccelerator = new HashMap();
 	private HashMap defaultAcceleratorToAction = new HashMap();
 	
+	private Control oldFocus;
+	private Control focusThief;
 	
 	private static AcceleratorMode currentMode;
 	private static AcceleratorMode defaultMode;
@@ -135,12 +140,38 @@ public class AcceleratorScope {
 			currentMode = defaultMode;
 			if(getStatusLineManager(service)!=null)
 				getStatusLineManager(service).setMessage("");	 //$NON-NLS-1$
+			AcceleratorScope scope = service.getActiveAcceleratorScope();
+			if(scope.oldFocus != null) {
+				scope.oldFocus.forceFocus();
+				scope.oldFocus = null;
+			}
+			if(scope.focusThief != null) {
+				scope.focusThief.dispose();
+				scope.focusThief = null;
+			}
 		}
 	}
 	/**
 	 * Set the current mode and service
 	 */
-	private static void setCurrentMode(KeyBindingService service,AcceleratorMode mode) {
+	private static void setCurrentMode(final KeyBindingService service,AcceleratorMode mode) {
+		final AcceleratorScope scope = service.getActiveAcceleratorScope();
+		Shell shell = service.getWindow().getShell();
+		if(currentMode == defaultMode) {
+			scope.oldFocus = shell.getDisplay().getFocusControl();
+			if(scope.focusThief == null) {
+				scope.focusThief = new Label(shell,SWT.NONE);
+				scope.focusThief.moveBelow(null);
+				scope.focusThief.setBounds(100,100,100,100);
+				scope.focusThief.addListener(SWT.KeyDown,new Listener() {
+					public void handleEvent(Event event) {
+						scope.processKey(service,new KeyEvent(event));	
+					}
+				});
+			}
+			scope.focusThief.forceFocus();
+		}	
+		
 		if(service == currentService)
 			currentMode = mode;
 		else 
@@ -234,6 +265,19 @@ public class AcceleratorScope {
 		}
 		return event.stateMask | event.keyCode | upper;
 	}
+	
+	private static Event toEvent(KeyEvent key) {
+		Event e = new Event();
+		e.type = SWT.KeyDown;
+		e.display = key.display;
+		e.widget = key.widget;
+		e.time = key.time;
+		e.keyCode = key.keyCode;
+		e.stateMask = key.stateMask;
+		e.character = key.character;
+		e.data = key.data;
+		return e;
+	}
     /**
      * Process a key event. Find a action associated with the event
      * and run the action. Returns true if an action was found otherwise
@@ -244,9 +288,18 @@ public class AcceleratorScope {
 			return false;
 		verifyService(service);
 		int event = convertEvent(e);
-		AcceleratorAction a = currentMode.getAction(event);
+		return processKeyEvent(service,toEvent(e), event);
+	}
+	public boolean processKey(KeyBindingService service, Event e, int acc) {
+	//	if(isModifierOnly(e))
+	//		return false;
+		verifyService(service);
+		return processKeyEvent(service,e, acc);
+	}	
+	private boolean processKeyEvent(KeyBindingService service,Event e,int acc) {
+		AcceleratorAction a = currentMode.getAction(acc);
 		if(a == null) {
-			a = (AcceleratorAction)defaultAcceleratorToAction.get(new Integer(event));
+			a = (AcceleratorAction)defaultAcceleratorToAction.get(new Integer(acc));
 			resetMode(service);	
 		}
 		if(a == null) {
@@ -255,9 +308,43 @@ public class AcceleratorScope {
 			resetMode(service);
 			return true;
 		}
-		a.run(service,e);
+		a.run(service,e,acc);
 		return true;
 	}
+	
+	public int[] getAllAccelerators() {
+		HashSet accs = new HashSet();
+		getAccelerators(accs,defaultMode);
+		int result[] = new int[accs.size()];
+		int index = 0;
+		for (Iterator iter = accs.iterator(); iter.hasNext();) {
+			Integer element = (Integer)iter.next();
+			result[index] = element.intValue();
+			index++;
+		}
+		return result;
+	}
+	
+	public int[] getAccelerators() {
+		Integer modeAccs[] = currentMode.getAccelerators();
+		int result[] = new int[modeAccs.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = modeAccs[i].intValue();
+		}
+		return result;
+	}
+	
+	private void getAccelerators(HashSet accs,AcceleratorMode mode) {
+		Integer modeAccs[] = mode.getAccelerators();
+		accs.addAll(Arrays.asList(modeAccs));
+		for (int i = 0; i < modeAccs.length; i++) {
+			AcceleratorAction a = mode.getAction(modeAccs[i].intValue());
+			if(a.isMode()) {
+				getAccelerators(accs,(AcceleratorMode)a);
+			}
+		}
+	}
+	
 	private static IStatusLineManager getStatusLineManager(KeyBindingService service) {
 		WorkbenchWindow window = (WorkbenchWindow)service.getWindow();
 		if (window != null)
@@ -278,11 +365,11 @@ public class AcceleratorScope {
 		public boolean isMode() {
 			return false;
 		}
-		public void run(KeyBindingService service,KeyEvent e) {
+		public void run(KeyBindingService service,Event e,int acc) {
 			IAction a = service.getAction(id);
-			if((a != null) && (a.isEnabled()))
-				a.run();
-				//a.runWithEvent(e);
+			if((a != null) && (a.isEnabled())) {
+				a.runWithEvent(e);
+			}
 			resetMode(service);
 		}
 	}
@@ -313,16 +400,17 @@ public class AcceleratorScope {
 		public boolean isMode() {
 			return true;
 		}	
-		public void run(KeyBindingService service,KeyEvent e) {
-			setStatusLineMessage(service, e);
+		public void run(KeyBindingService service,Event e,int acc) {
+			if(e != null)
+				setStatusLineMessage(service, acc);
 			setCurrentMode(service,this);
 		}
 		/*
 		 * Displays the appropriate message for the current mode on the status
 		 * line.
 		 */
-		private void setStatusLineMessage(KeyBindingService service, KeyEvent e) {
-			String keyString = Action.convertAccelerator(convertEvent(e));
+		private void setStatusLineMessage(KeyBindingService service, int acc) {
+			String keyString = Action.convertAccelerator(acc);
 			if(currentMode==defaultMode) {
 				getStatusLineManager(service).setMessage(keyString);
 				previousMessage = keyString;
@@ -336,6 +424,11 @@ public class AcceleratorScope {
 		}
 		public void addAction(int keyCode,AcceleratorAction acc) {
 			acceleratorToAction.put(new Integer(keyCode),acc);
+		}
+		public Integer[] getAccelerators() {
+			Set keys = acceleratorToAction.keySet();
+			Integer result[] = new Integer[keys.size()];
+			return (Integer[])keys.toArray(result);
 		}
 	}
 }

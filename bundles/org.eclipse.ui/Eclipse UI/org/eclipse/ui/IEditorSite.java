@@ -25,16 +25,4 @@ public interface IEditorSite extends IWorkbenchPartSite {
  * @return the editor action bar contributor, or <code>null</code> if none exists
  */
 public IEditorActionBarContributor getActionBarContributor();
-/**
- * Returns the key binding service in use.
- * <p>
- * The editor part will access this service to register
- * all of its actions, to set the active scope, and to
- * forward key events.
- * </p>
- * 
- * @return the key binding service in use
- * @since 2.0
- */
-public IKeyBindingService getKeyBindingService();
 }
