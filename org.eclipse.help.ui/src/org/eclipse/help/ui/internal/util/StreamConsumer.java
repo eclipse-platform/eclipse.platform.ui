@@ -13,6 +13,7 @@ public class StreamConsumer extends Thread {
 	BufferedReader bReader;
 	public StreamConsumer(InputStream inputStream) {
 		super();
+		setDaemon(true);
 		bReader = new BufferedReader(new InputStreamReader(inputStream));
 	}
 	public void run() {
