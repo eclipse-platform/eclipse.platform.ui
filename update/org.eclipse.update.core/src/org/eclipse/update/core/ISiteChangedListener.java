@@ -4,8 +4,17 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 public interface ISiteChangedListener {
+	/**
+	 * @since 2.0 
+	 */
 	void featureUpdated(IFeature feature);
+	/**
+	 * @since 2.0 
+	 */
 	void featureInstalled(IFeature feature);
+	/**
+	 * @since 2.0 
+	 */
 	void featureUninstalled(IFeature feature);
 }
 

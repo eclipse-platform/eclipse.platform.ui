@@ -40,19 +40,25 @@ public interface ICategory {
 	 * are defined Category.
 	 * 
 	 * @return the identifier of the category
+	 * @since 2.0 
 	 */
+
 	String getName();
 	
 	/**
 	 * returns the translated Label of this category.
 	 * @return the translated, user-friendly, name of the category.
+	 * @since 2.0 
 	 */
+
 	String getLabel();
 	
 	/** 
 	 * returns the description associated with the category
 	 * @return teh description of the category
+	 * @since 2.0 
 	 */
+
 	IInfo getDescription();
 }
 

@@ -23,32 +23,42 @@ public interface IPluginContainer {
 	 * 
 	 * @return the accessible plug-ins. Returns an empty array
 	 * if there are no plug-ins.
+	 * @since 2.0 
 	 */
+
 	IPluginEntry [] getPluginEntries()  ;
 	
 	/**
 	 * Returns the number of managed plug-ins
 	 * @return the number of plug-ins
+	 * @since 2.0 
 	 */
+
 	int getPluginEntryCount() ;
 	
 	/**
 	 * Size of the archives in Kilo-Bytes
 	 * @return the size of the archive to be downloaded
+	 * @since 2.0 
 	 */
+
 	int getDownloadSize(IPluginEntry entry) ;
 	
 	/**
 	 * Size of the plug-in in KiloBytes
 	 * @return the size of the plug-in when installed
+	 * @since 2.0 
 	 */
+
 	int getInstallSize(IPluginEntry entry) ;
 
 	/**
 	 * Adds a pluginEntry to the list of managed pluginEntry
 	 * 
 	 * @param entry the plugin entry
-	 */	
+	 * @since 2.0 
+	 */
+	
 	void addPluginEntry(IPluginEntry pluginEntry);
 	
 	/**
@@ -57,7 +67,9 @@ public interface IPluginContainer {
 	 * @param entry the plugin entry
 	 * @param name the file to be created in the plugin
 	 * @param inStream the content of the remote file to be transfered in the new file
+	 * @since 2.0 
 	 */
+
 	void store(IPluginEntry entry, String name, InputStream inStream) throws CoreException;
 	
 }

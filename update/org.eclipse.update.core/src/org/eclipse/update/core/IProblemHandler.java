@@ -12,7 +12,9 @@ public interface IProblemHandler {
 	
 	/**
 	 * 
+	 * @since 2.0 
 	 */
+
 	boolean reportProblem(String problemText);
 		
 }

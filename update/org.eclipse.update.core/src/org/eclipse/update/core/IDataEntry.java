@@ -14,7 +14,9 @@ public interface IDataEntry {
 	 * Returns the identifier of this data entry
 	 * 
 	 * @return the identifier of the data entry
+	 * @since 2.0 
 	 */
+
 	String getIdentifier();
 	
 	/**
@@ -24,7 +26,9 @@ public interface IDataEntry {
 	 *  in KBytes of the referenced data archive.
 	 *  If not specified, the download size is not known 
 	 * @return Returns a int
+	 * @since 2.0 
 	 */
+
 	int getDownloadSize();
 
 
@@ -35,7 +39,9 @@ public interface IDataEntry {
 	 *  KBytes of the referenced data archive.
 	 *  If not specified, the install size is not known 	 * 
 	 * @return Returns a int
+	 * @since 2.0 
 	 */
+
 	int getInstallSize(); 
 	
 }

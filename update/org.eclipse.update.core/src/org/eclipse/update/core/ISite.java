@@ -16,7 +16,9 @@ public interface ISite extends IPluginContainer {
 	 * 
 	 * @return the list of features. Returns an empty array
 	 * if there are no feature.
+	 * @since 2.0 
 	 */
+
 	IFeatureReference [] getFeatureReferences() ;
 	
 	/**
@@ -24,27 +26,42 @@ public interface ISite extends IPluginContainer {
 	 * returns the newly created feature reference
 	 * @param feature the Feature to install
 	 * @param monitor the Progress Monitor
+	 * @since 2.0 
 	 */
+
 	IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * 
 	 * @param feature the Feature to remove
 	 * @param monitor the Progress Monitor
+	 * @since 2.0 
 	 */
+
 	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	
 	
+	/**
+	 * @since 2.0 
+	 */
 	void addSiteChangedListener(ISiteChangedListener listener);
+	/**
+	 * @since 2.0 
+	 */
 	void removeSiteChangedListener(ISiteChangedListener listener);
 
 	/**
 	 * 
 	 * @return teh URL of the site
+	 * @since 2.0 
 	 */
+
 	URL getURL() ;
 	
 	
+	/**
+	 * @since 2.0 
+	 */
 	URL getInfoURL();
 
 	/**
@@ -52,7 +69,9 @@ public interface ISite extends IPluginContainer {
 	 * 
 	 * @return the list of categories. Returns an empty array
 	 * if there are no categories.
+	 * @since 2.0 
 	 */
+
 	ICategory[] getCategories()  ;
 
 	/**
@@ -60,18 +79,24 @@ public interface ISite extends IPluginContainer {
 	 * 
 	 * @return the list of archives. Returns an empty array
 	 * if there are no archive.
+	 * @since 2.0 
 	 */
+
 	IInfo[] getArchives();
 	
 	/**
 	 * Creates a new categoy within the Site
 	 * The validity of the Category is not checked
+	 * @since 2.0 
 	 */
+
 	void addCategory(ICategory category);
 	
 	/**
 	 * Saves the site in a persitent form
+	 * @since 2.0 
 	 */
+
 	void save() throws CoreException;
 	
 	

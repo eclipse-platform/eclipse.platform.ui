@@ -18,14 +18,18 @@ public interface IInfo {
 	 * The text is intended to be translated.
 	 * 
 	 * @return the short description
+	 * @since 2.0 
 	 */
+
 	String getText();
 	
 	/**
 	 * Returns a URL containing more information
 	 * 
 	 * @return the URL pointing to the longer description
+	 * @since 2.0 
 	 */
+
 	URL getURL();
 }
 

@@ -10,6 +10,9 @@ public class VersionedIdentifier {
 	private Version version;
 	private static final String	SEPARATOR = "_";
 	
+/**
+* @since 2.0 
+	 */
 	public VersionedIdentifier(String idWithVersion) {
 		
 		if (idWithVersion==null || (idWithVersion=idWithVersion.trim()).equals("")) {
@@ -28,6 +31,9 @@ public class VersionedIdentifier {
 		}
 	}
 	
+/**
+* @since 2.0 
+	 */
 	public VersionedIdentifier(String id, String versionName) {
 		if (id==null || (id=id.trim()).equals("") || versionName==null)
 				throw new IllegalArgumentException();
@@ -35,19 +41,31 @@ public class VersionedIdentifier {
 		this.version = new Version(versionName);
 	}
 	
+/**
+* @since 2.0 
+	 */
 	public String getIdentifier() {
 		return id;
 	}
 	
+/**
+* @since 2.0 
+	 */
 	public Version getVersion() {
 		return version;
 	}
 	
+/**
+* @since 2.0 
+	 */
 	public String toString(){
 		return id.equals("")?"":id+SEPARATOR+version.toString();
 	}
 	
 
+/**
+* @since 2.0 
+	 */
 	public boolean equals(VersionedIdentifier vid) {
 		if (!this.id.equals(vid.id)) return false;
 		return this.version.equals(vid.version);

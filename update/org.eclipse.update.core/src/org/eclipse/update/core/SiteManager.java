@@ -16,6 +16,9 @@ import org.eclipse.update.internal.core.*;
 public class SiteManager {
 	
 
+	/**
+	 * @since 2.0 
+	 */
 	private SiteManager() {
 		//  Blocking instance creation
 	}
@@ -25,7 +28,9 @@ public class SiteManager {
 	 * the user has access to (either read only or read write)
 	 * 
 	 * @return the local site
-	 */	
+	 * @since 2.0 
+	 */
+	
 	public static ILocalSite getLocalSite() throws CoreException{
 		return InternalSiteManager.getLocalSite();
 	}
@@ -45,7 +50,9 @@ public class SiteManager {
 	 * The site is not created in the LocalSite.
 	 * 
 	 * @return the site which maps to this URL
-	 */	
+	 * @since 2.0 
+	 */
+	
 	public static ISite getSite(URL siteURL) throws CoreException {
 		return InternalSiteManager.getSite(siteURL);
 	}
@@ -57,7 +64,9 @@ public class SiteManager {
 	 * being installed.
 	 * 
 	 * @return the temporary site
+	 * @since 2.0 
 	 */
+
 	public static ISite getTempSite() throws CoreException {
 		return InternalSiteManager.getTempSite();
 	}
@@ -76,7 +85,9 @@ public class SiteManager {
 	 * @throws IOException if the remote URL canot be found
 	 * @throws MalformedURLException if the local URL cannot be created
 	 * @throws CoreException	 if we cannot access the local TEMP directory
+	 * @since 2.0 
 	 */
+
 	public static URL resolveAsLocal(URL url) throws IOException, MalformedURLException, CoreException {
 		return UpdateManagerUtils.resolveAsLocal(url);
 	}
@@ -89,7 +100,9 @@ public class SiteManager {
 	 * 
 	 * @param siteLocation
 	 * @throws CoreException
+	 * @since 2.0 
 	 */
+
 	public static ISite createSite(File siteLocation) throws CoreException {
 		return InternalSiteManager.createSite(siteLocation);	
 	}
@@ -97,7 +110,9 @@ public class SiteManager {
 	/**
 	 * Creates a Configuration Site for an  ISite
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 * @since 2.0 
 	 */
+
 	public static IConfigurationSite createConfigurationSite(ISite site,int policy){
 		return InternalSiteManager.createConfigurationSite(site,policy);
 	}
@@ -105,7 +120,9 @@ public class SiteManager {
 	/**
 	 * Creates a Configuration policy
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 * @since 2.0 
 	 */
+
 	public static IConfigurationPolicy createConfigurationPolicy(int policy){
 		return InternalSiteManager.createConfigurationPolicy(policy);
 	}

@@ -13,7 +13,9 @@ public interface IPluginEntry {
 	/**
 	 * Returns <code>true</code> if the plugin is a fragment
 	 * @return true if handles a fragment
+	 * @since 2.0 
 	 */
+
 	boolean isFragment();
 	
 	/**
@@ -21,14 +23,18 @@ public interface IPluginEntry {
 	 * 
 	 * @see IPluginContainer
 	 * @return the plugin container
+	 * @since 2.0 
 	 */
+
 	IPluginContainer getContainer();
 	
 	/** 
 	 * Returns the identifier of this plugin entry
 	 * 
 	 * @return the identifier of the plugin entry
+	 * @since 2.0 
 	 */
+
 	VersionedIdentifier getIdentifier();
 	
 	/**
@@ -43,7 +49,9 @@ public interface IPluginEntry {
 	 *
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the operating system specification.
+	 * @since 2.0 
 	 */
+
 	String getOS();
 	
 	/**
@@ -58,7 +66,9 @@ public interface IPluginEntry {
 	 * 
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the windowing system specification.
+	 * @since 2.0 
 	 */
+
 	String getWS();
 	
 	/**
@@ -73,7 +83,9 @@ public interface IPluginEntry {
 	 *  support (user can force installation of feature regardless of this setting).
 	 * 
 	 * @return the locale specification.
+	 * @since 2.0 
 	 */
+
 	String getNL();
 	
 	
@@ -84,7 +96,9 @@ public interface IPluginEntry {
 	 *  in KBytes of the referenced data archive.
 	 *  If not specified, the download size is not known 
 	 * @return Returns a int
+	 * @since 2.0 
 	 */
+
 	int getDownloadSize();
 
 
@@ -95,7 +109,9 @@ public interface IPluginEntry {
 	 *  KBytes of the referenced data archive.
 	 *  If not specified, the install size is not known 
 	 * @return Returns a int
+	 * @since 2.0 
 	 */
+
 	int getInstallSize(); 
 	
 }

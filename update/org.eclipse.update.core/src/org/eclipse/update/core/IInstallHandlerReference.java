@@ -12,7 +12,9 @@ public interface IInstallHandlerReference {
 	/**
 	 * optional URL used for browser-triggered
 	 *  installation handling. 
+	 * @since 2.0 
 	 */
+
 	URL getURL();
 	
 	/**
@@ -24,7 +26,9 @@ public interface IInstallHandlerReference {
 	 *  the feature archive itself is used to load the install
 	 *  handler classes. This attribute is only interpreted
 	 *  if class attribute is also specified 
+	 * @since 2.0 
 	 */
+
 	String getLibrary();
 	
 	/**
@@ -33,7 +37,9 @@ public interface IInstallHandlerReference {
 	 *  called at specific points during feature processing.
 	 *  The handler has visibility to the API classes from the update plug-in,
 	 *  and Eclipse plug-ins required by the update plugin. 
+	 * @since 2.0 
 	 */
+
 	String getClass();
 
 }

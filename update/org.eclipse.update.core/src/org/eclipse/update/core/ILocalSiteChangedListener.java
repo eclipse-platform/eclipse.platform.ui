@@ -5,6 +5,12 @@ package org.eclipse.update.core;
  */
 
 public interface ILocalSiteChangedListener {
+	/**
+	 * @since 2.0 
+	 */
 	void currentInstallConfigurationChanged(IInstallConfiguration configuration);
+	/**
+	 * @since 2.0 
+	 */
 	void installConfigurationRemoved(IInstallConfiguration configuration);
 }

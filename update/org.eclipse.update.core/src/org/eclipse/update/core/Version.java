@@ -51,7 +51,9 @@ public final class Version {
  * @param major major component of the version identifier
  * @param minor minor component of the version identifier
  * @param service service update component of the version identifier
- */
+ * @since 2.0 
+	 */
+
 public Version(int major, int minor, int service) {
 
 	if(major<0) major=0;
@@ -63,6 +65,9 @@ public Version(int major, int minor, int service) {
 	this.service = service;
 }
 
+/**
+* @since 2.0 
+	 */
 public Version () {
 	this(null);
 }
@@ -82,7 +87,9 @@ public Version () {
  * </p>
  * 
  * @param versionId string representation of the version identifier
- */
+ * @since 2.0 
+	 */
+
 public Version(String versionId) {
 
 	try{
@@ -117,7 +124,9 @@ public Version(String versionId) {
  *
  * @param object an object to compare
  * @return whehter or not the two objects are equal
- */
+ * @since 2.0 
+	 */
+
 public boolean equals(Object object) {
 	if (!(object instanceof Version))
 		return false;
@@ -129,7 +138,9 @@ public boolean equals(Object object) {
  * version identifier.
  *
  * @return the major version
- */
+ * @since 2.0 
+	 */
+
 public int getMajorComponent() {
 	return major;
 }
@@ -138,7 +149,9 @@ public int getMajorComponent() {
  * version identifier.
  *
  * @return the minor version
- */
+ * @since 2.0 
+	 */
+
 public int getMinorComponent() {
 	return minor;
 }
@@ -147,7 +160,9 @@ public int getMinorComponent() {
  * version identifier.
  *
  * @return the service level
- */
+ * @since 2.0 
+	 */
+
 public int getServiceComponent() {
 	return service;
 }
@@ -160,7 +175,9 @@ public int getServiceComponent() {
  * @return -1 if the other version id is smaller than this
  * version, 0 if it is equal and 1 if it is greater than
  * this version.
- */
+ * @since 2.0 
+	 */
+
 public int compare(Version id) {
 
 	if (id == null) {
@@ -182,7 +199,9 @@ public int compare(Version id) {
  * <code>vi.equals(new PluginVersionIdentifier(vi.toString()))</code>.
  *
  * @return the string representation of this plug-in version identifier
- */
+ * @since 2.0 
+	 */
+
 public String toString() {
 	return major+SEPARATOR+minor+SEPARATOR+service;
 }

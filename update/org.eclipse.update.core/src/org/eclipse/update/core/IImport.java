@@ -23,14 +23,18 @@ public interface IImport {
 	 * Returns the Identifier of the required plug-in.
 	 * 
 	 * @return the plug-in Identifier
+	 * @since 2.0 
 	 */
+
 	VersionedIdentifier getIdentifier();
 	
 	/**
 	 * Returns a atching rule
 	 * 
 	 * @return matching rule
+	 * @since 2.0 
 	 */
+
 	int getRule();
 }
 

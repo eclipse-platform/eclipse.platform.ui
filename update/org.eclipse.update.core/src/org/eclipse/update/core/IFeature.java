@@ -32,20 +32,26 @@ public interface IFeature extends IPluginContainer {
 	 * the URL is the key of the feature.
 	 * @return the Identifier of this feature.
 	 * @see VersionedIdentifier
+	 * @since 2.0 
 	 */
+
 	VersionedIdentifier getIdentifier();
 	
 	/**
 	 * Returns the Site this Featur belongs to.
 	 * @return the site of this feature
+	 * @since 2.0 
 	 */
+
 	ISite getSite();
 	
 	/**
 	 * Returns the label of the feature.
 	 * The label is declared in the <code>feature.xml</code> file.
 	 * @return the label of the feature
+	 * @since 2.0 
 	 */
+
 	String getLabel();
 	
 	/**
@@ -58,7 +64,9 @@ public interface IFeature extends IPluginContainer {
 	 * The Feature knows how to decipher the URL.
 	 * 
 	 * @return the URL identifying feature in the Site.
+	 * @since 2.0 
 	 */
+
 	URL getURL();
 	
 	/**
@@ -73,7 +81,9 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * @see IInfo
 	 * @return the IInfo that contains Update Information about this feature
+	 * @since 2.0 
 	 */
+
 	IInfo getUpdateInfo() ;
 	
 	/**
@@ -88,13 +98,17 @@ public interface IFeature extends IPluginContainer {
 	 * @see IInfo
 	 * @return a Array of discovery info.Returns an empty array
 	 * if there are no discovey info.
+	 * @since 2.0 
 	 */
+
 	IInfo [] getDiscoveryInfos() ;
 	
 	/**
 	 * Returns the provider of the feature
 	 * @return the provider of the feature
+	 * @since 2.0 
 	 */
+
 	String getProvider() ;
 	
 	/**
@@ -109,7 +123,9 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * @see IInfo
 	 * @return the description of this feature
+	 * @since 2.0 
 	 */
+
 	IInfo getDescription() ;
 	
 	/**
@@ -124,7 +140,9 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * @see IInfo
 	 * @return the copyright of this feature
+	 * @since 2.0 
 	 */
+
 	IInfo getCopyright() ;
 	
 	/**
@@ -139,7 +157,9 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * @see IInfo
 	 * @return the license of this feature
+	 * @since 2.0 
 	 */
+
 	IInfo getLicense() ;
 	
 	/**
@@ -154,7 +174,9 @@ public interface IFeature extends IPluginContainer {
 	 *
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the operating system specification.
+	 * @since 2.0 
 	 */
+
 	String getOS()  ;
 	
 	/**
@@ -169,7 +191,9 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * @see org.eclipse.core.boot.BootLoader 
 	 * @return the windowing system specification.
+	 * @since 2.0 
 	 */
+
 	String getWS()  ;
 	
 	/**
@@ -184,7 +208,9 @@ public interface IFeature extends IPluginContainer {
 	 *  support (user can force installation of feature regardless of this setting).
 	 * 
 	 * @return the locale specification.
+	 * @since 2.0 
 	 */
+
 	String getNL() ;
 	
 	/**
@@ -193,7 +219,9 @@ public interface IFeature extends IPluginContainer {
 	 * The URL is either absolute or relative to the <code>feature.xml</code> file.
 	 * 
 	 * @return the URL pointing to the image
+	 * @since 2.0 
 	 */
+
 	URL getImage() ;
 	
 	/**
@@ -203,12 +231,15 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * @return the list of required plug-ins. Returns an empty array
 	 * if there are no required.
+	 * @since 2.0 
 	 */
+
 	IImport[] getImports();
 	
 	/**
 	 * Returns <code> true </code> if the feature can
 	 * be added to the plugin-path of the workspace.
+	 * @since 2.0 
 	 */
 	// FIXME: javadoc	
 	boolean isExecutable();
@@ -216,6 +247,7 @@ public interface IFeature extends IPluginContainer {
 	/**
 	 * Returns <code> true </code> if the feature can
 	 * be installed.
+	 * @since 2.0 
 	 */
 	// FIXME: javadoc
 	boolean isInstallable();
@@ -226,6 +258,7 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * @return 
 	 * @deprecated seems nobody uses it
+	 * @since 2.0 
 	 */
 	// FIXME: javadoc	
 	String[] getArchives();
@@ -234,6 +267,7 @@ public interface IFeature extends IPluginContainer {
 	 * Returns an array of archives identifier that compose the feature.
 	 * 
 	 * @return 
+	 * @since 2.0 
 	 */
 	// FIXME: javadoc	
 	IDataEntry[] getDataEntries();
@@ -242,7 +276,9 @@ public interface IFeature extends IPluginContainer {
 	 * Adds a dataEntry to the list of managed dataEntry
 	 * 
 	 * @param entry the data entry
-	 */	
+	 * @since 2.0 
+	 */
+	
 	void addDataEntry(IDataEntry dataEntry);
 	
 	/**
@@ -253,7 +289,9 @@ public interface IFeature extends IPluginContainer {
 	 * If one plug-in entry has an unknown size.
 	 * then the download size is unknown and equal to <code>-1</code>
 	 * 
+	 * @since 2.0 
 	 */
+
 	long getDownloadSize(ISite site) throws CoreException;
 	
 	/**
@@ -263,7 +301,9 @@ public interface IFeature extends IPluginContainer {
 	 * 
 	 * If one plug-in entry has an unknown size.
 	 * then the install size is unknown and equal to <code>-1</code>.
+	 * @since 2.0 
 	 */
+
 	long getInstallSize(ISite site) throws CoreException;
 	
 	/**
@@ -272,7 +312,9 @@ public interface IFeature extends IPluginContainer {
      *  The application identifier must represent a valid application registered
      *  in the <code>org.eclipse.core.runtime.applications</code> extension point.
      *  Default is <code>org.eclipse.ui.workbench</code>.
-     */
+     * @since 2.0 
+	 */
+
 	String getApplication();
 		
 }

@@ -32,7 +32,9 @@ public interface ILocalSite {
 	 * return the label of the local site
 	 * 
 	 * @return teh label
+	 * @since 2.0 
 	 */
+
 	String getLabel();
 	
 
@@ -41,7 +43,9 @@ public interface ILocalSite {
 	 * This is the Configuration that will be saved.
 	 * 
 	 * @return IInstallConfiguration
-	 */	
+	 * @since 2.0 
+	 */
+	
 	IInstallConfiguration getCurrentConfiguration();
 	
 	/**
@@ -50,7 +54,9 @@ public interface ILocalSite {
 	 * 
 	 * @return IInstallConfiguration[] configuration history. Returns
 	 * an empty array is there is no history
+	 * @since 2.0 
 	 */
+
 	IInstallConfiguration [] getConfigurationHistory();
 	
 	/**
@@ -61,13 +67,17 @@ public interface ILocalSite {
 	 * Then set the newly created configuration as the current one
 	 * 
 	 * @param IInstallConfiguration the configuration to use
+	 * @since 2.0 
 	 */
+
 	void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor,IProblemHandler handler) throws CoreException;
 	
 	/**
 	 * Creates a configuration from a URL.
 	 * The configuration is not added to the LocalSite
+	 * @since 2.0 
 	 */
+
 	IInstallConfiguration importConfiguration(URL importURL,String label) throws CoreException;
 
 
@@ -87,32 +97,48 @@ public interface ILocalSite {
 	 * 
 	 * If <code>name</code> is <code>null</code> we'll create a name based on the creation date
 	 * if <code>newFile</code> is <code>null</code> we'll create a new file based on the creation date 
+	 * @since 2.0 
 	 */
+
 	IInstallConfiguration cloneCurrentConfiguration(URL newFile,String name) throws CoreException;
 
 	/**
 	 * Adds a new configuration to the LocalSite
 	 * The new configuration becomes the current one
+	 * @since 2.0 
 	 */
+
 	void addConfiguration(IInstallConfiguration config);
 	
 	/**
 	 * Saves and persists the localSite. Also saves and persists the current Configuration
+	 * @since 2.0 
 	 */
+
 	void save() throws CoreException;
 	
 	/**
 	 * returns the maximum number of InstallConfiguration in teh history
+	 * @since 2.0 
 	 */
+
 	int getMaximumHistory();
 	
 	/**
 	 * sets the maximum InstallConfiguration of the history
+	 * @since 2.0 
 	 */
+
 	void setMaximumHistory(int history);
 	
 	
+	/**
+	 * @since 2.0 
+	 */
 	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
+	/**
+	 * @since 2.0 
+	 */
 	void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
 
 }

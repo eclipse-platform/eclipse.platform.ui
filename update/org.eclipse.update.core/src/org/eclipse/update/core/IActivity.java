@@ -23,22 +23,30 @@ public interface IActivity {
 	
 	/**
 	 * Returns teh user description of teh action
+	 * @since 2.0 
 	 */
+
 	String getLabel();
 	
 	/**
 	 * Return the Action String for this activity
-	 */ 
+	 * @since 2.0 
+	 */
+ 
 	int getAction();
 	
 	/**
 	 * Return the creation date of this activity
+	 * @since 2.0 
 	 */
+
 	Date getDate();
 	
 	/** 
 	 * return the status
+	 * @since 2.0 
 	 */
+
 	int getStatus();
 }
 

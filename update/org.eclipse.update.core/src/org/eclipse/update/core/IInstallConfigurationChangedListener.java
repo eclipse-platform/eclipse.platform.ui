@@ -5,9 +5,21 @@ package org.eclipse.update.core;
  */
 
 public interface IInstallConfigurationChangedListener {
+	/**
+	 * @since 2.0 
+	 */
 	void installSiteAdded(IConfigurationSite site);
+	/**
+	 * @since 2.0 
+	 */
 	void installSiteRemoved(IConfigurationSite site);
+	/**
+	 * @since 2.0 
+	 */
 	void linkedSiteAdded(IConfigurationSite site);
+	/**
+	 * @since 2.0 
+	 */
 	void linkedSiteRemoved(IConfigurationSite site);
 }	
 
