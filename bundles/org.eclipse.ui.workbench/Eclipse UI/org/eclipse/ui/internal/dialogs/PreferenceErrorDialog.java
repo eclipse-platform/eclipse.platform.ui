@@ -74,7 +74,7 @@ public class PreferenceErrorDialog extends ErrorDialog {
 	/* (non-Javadoc)
 	 * Method declared on ErrorDialog.
 	 */
-	public Image getImage() {
+	protected Image getImage() {
 		return JFaceResources.getImageRegistry().get(DLG_IMG_WARNING);
 	}
 }

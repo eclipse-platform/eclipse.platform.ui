@@ -164,7 +164,7 @@ protected Control createContents(Composite parent) {
 /*
  * @see IconAndMessageDialog#getImage()
  */
-public Image getImage() {
+protected Image getImage() {
 	return JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
 }
 
