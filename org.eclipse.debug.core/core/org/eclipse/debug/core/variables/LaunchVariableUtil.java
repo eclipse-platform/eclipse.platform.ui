@@ -173,7 +173,7 @@ public class LaunchVariableUtil {
 	 * @param argument an optional argument for the variable, <code>null</code> if none
 	 * @param buffer the buffer to append the expression to
 	 */
-	public static void appendVariableExpression(String varName, String argument, StringBuffer buffer) {
+	private static void appendVariableExpression(String varName, String argument, StringBuffer buffer) {
 		buffer.append(VAR_TAG_START);
 		buffer.append(varName);
 		if (argument != null && argument.length() > 0) {

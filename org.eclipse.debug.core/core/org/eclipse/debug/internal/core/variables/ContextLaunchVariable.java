@@ -22,25 +22,19 @@ import org.eclipse.debug.core.variables.IVariableExpander;
  * Abstract representation of launch configuration variables.
  * @since 3.0
  */
-public class ContextLaunchVariable implements IContextLaunchVariable {
+public class ContextLaunchVariable extends LaunchVariable implements IContextLaunchVariable {
 	
-	private String tag;
-	private String description;
-	private IConfigurationElement element;
 	private IVariableExpander expander;
 
 	/**
 	 * Creates an variable definition
 	 * 
-	 * @param tag the variable tag
+	 * @param name the variable name
 	 * @param description a short description of what the variable will expand to
 	 * @param element the configuration element
 	 */
-	public ContextLaunchVariable(String tag, String description, IConfigurationElement element) {
-		super();
-		this.tag = tag;
-		this.description = description;
-		this.element = element;
+	public ContextLaunchVariable(String name, String description, IConfigurationElement element) {
+		super(name, description, element);
 	}
 	
 	/**
@@ -67,24 +61,11 @@ public class ContextLaunchVariable implements IContextLaunchVariable {
 	 */
 	protected final Object createObject(String attributeName) {
 		try {
-			return element.createExecutableExtension(attributeName);
+			return getConfigurationElement().createExecutableExtension(attributeName);
 		} catch (CoreException e) {
 			DebugPlugin.log(e.getStatus());
 			return null;
 		}
 	}
 	
-	/**
-	 * @see IContextLaunchVariable#getDescription()
-	 */
-	public final String getDescription() {
-		return description;
-	}
-
-	/**
-	 * @see IContextLaunchVariable#getName()
-	 */
-	public final String getName() {
-		return tag;
-	}
 }

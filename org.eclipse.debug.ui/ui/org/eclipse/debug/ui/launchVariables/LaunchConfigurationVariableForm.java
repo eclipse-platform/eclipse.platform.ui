@@ -209,7 +209,7 @@ public class LaunchConfigurationVariableForm {
 		ILaunchVariable variable;
 		for (int i = 0; i < variables.length; i++) {
 			variable= variables[i];
-			LaunchVariableUtil.appendVariableExpression(variable.getName(), null, buffer);
+			buffer.append(LaunchVariableUtil.newVariableExpression(variable.getName(), null));
 			String description= variable.getDescription();
 			if (description != null && description.length() != 0) {
 				buffer.append(" - "); //$NON-NLS-1$
