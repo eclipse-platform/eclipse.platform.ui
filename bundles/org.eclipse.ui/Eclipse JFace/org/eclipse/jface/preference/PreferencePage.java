@@ -178,7 +178,6 @@ public void createControl(Composite parent) {
 	GridData gd;
 	Composite content= new Composite(parent, SWT.NULL);
 	setControl(content);
-	Font font = parent.getFont();
 	GridLayout layout= new GridLayout();
 	layout.marginWidth = 0;
 	content.setLayout(layout);
@@ -210,7 +209,6 @@ public void createControl(Composite parent) {
 		int heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 	    int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		defaultsButton= new Button(buttonBar, SWT.PUSH);
-		defaultsButton.setFont(font);
 		defaultsButton.setText(labels[0]);
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.heightHint = heightHint;
@@ -226,7 +224,6 @@ public void createControl(Composite parent) {
 
 	
 		applyButton= new Button(buttonBar, SWT.PUSH);
-		applyButton.setFont(font);
 		applyButton.setText(labels[1]);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.heightHint = heightHint;

@@ -473,7 +473,6 @@ protected Control createDialogArea(Composite parent) {
 	gd.widthHint = pageWidth; 
 	gd.heightHint = pageHeight;
 	pageContainer.setLayoutData(gd);
-	pageContainer.setFont(parent.getFont());
 	
 	// Insert a progress monitor 
 	GridLayout pmlayout= new GridLayout();
@@ -543,8 +542,6 @@ private Composite createPreviousAndNextButtons(Composite parent) {
 		GridData.HORIZONTAL_ALIGN_CENTER |
 		GridData.VERTICAL_ALIGN_CENTER);
 	composite.setLayoutData(data);
-
-	composite.setFont(parent.getFont());
 
 	backButton = createButton(composite, IDialogConstants.BACK_ID, IDialogConstants.BACK_LABEL, false);
 	nextButton = createButton(composite, IDialogConstants.NEXT_ID, IDialogConstants.NEXT_LABEL, false);
