@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 
@@ -28,7 +29,7 @@ public class WelcomeEditorActionContributor extends EditorActionBarContributor {
 	public void setActiveEditor(IEditorPart part) {	
 		IActionBars actionBars= getActionBars();
 		if (actionBars != null) {
-			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, ((WelcomeEditor)part).getCopyAction());
+			actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), ((WelcomeEditor)part).getCopyAction());
 		}
 	}
 }

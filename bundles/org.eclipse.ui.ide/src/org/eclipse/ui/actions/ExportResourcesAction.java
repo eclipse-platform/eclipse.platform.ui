@@ -91,7 +91,7 @@ public class ExportResourcesAction
 		}
 		this.workbenchWindow = window;
 		setToolTipText(IDEWorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.EXPORT);
+		setId("export"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
 		// self-register selection listener (new for 3.0)
 		workbenchWindow.getSelectionService().addSelectionListener(selectionListener);

@@ -85,7 +85,7 @@ public class ImportResourcesAction
 		}
 		this.workbenchWindow = window;
 		setToolTipText(IDEWorkbenchMessages.getString("ImportResourcesAction.toolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.IMPORT);
+		setId("import"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.IMPORT_ACTION);
 		// self-register selection listener (new for 3.0)
 		workbenchWindow.getSelectionService().addSelectionListener(selectionListener);

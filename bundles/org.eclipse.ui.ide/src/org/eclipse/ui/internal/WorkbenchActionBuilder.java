@@ -623,18 +623,18 @@ public final class WorkbenchActionBuilder {
 
 		exportResourcesAction = IDEActionFactory.EXPORT.create(getWindow());
 
-		rebuildAllAction = IDEActionFactory.FULL_BUILD.create(getWindow());
+		rebuildAllAction = IDEActionFactory.REBUILD_ALL.create(getWindow());
 		registerGlobalAction(rebuildAllAction);
 
-		buildAllAction = IDEActionFactory.INCREMENTAL_BUILD.create(getWindow());
+		buildAllAction = IDEActionFactory.BUILD.create(getWindow());
 		registerGlobalAction(buildAllAction);
 
-		saveAction = ActionFactory.SAVE_EDITOR.create(getWindow());
+		saveAction = ActionFactory.SAVE.create(getWindow());
 		registerGlobalAction(saveAction);
 
-		saveAsAction = ActionFactory.SAVE_EDITOR_AS.create(getWindow());
+		saveAsAction = ActionFactory.SAVE_AS.create(getWindow());
 
-		saveAllAction = ActionFactory.SAVE_ALL_EDITORS.create(getWindow());
+		saveAllAction = ActionFactory.SAVE_ALL.create(getWindow());
 		registerGlobalAction(saveAllAction);
 		
 		undoAction = ActionFactory.UNDO.create(getWindow());
@@ -661,13 +661,13 @@ public final class WorkbenchActionBuilder {
 		findAction = ActionFactory.FIND.create(getWindow());
 		registerGlobalAction(findAction);
 
-		closeAction = ActionFactory.CLOSE_EDITOR.create(getWindow());
+		closeAction = ActionFactory.CLOSE.create(getWindow());
 		registerGlobalAction(closeAction);
 
-		closeAllAction = ActionFactory.CLOSE_ALL_EDITORS.create(getWindow());
+		closeAllAction = ActionFactory.CLOSE_ALL.create(getWindow());
 		registerGlobalAction(closeAllAction);
 
-		closeAllSavedAction = ActionFactory.CLOSE_ALL_CLEAN_EDITORS.create(getWindow());
+		closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(getWindow());
 		registerGlobalAction(closeAllSavedAction);
 
 		pinEditorAction = ActionFactory.PIN_EDITOR.create(getWindow());
@@ -691,7 +691,7 @@ public final class WorkbenchActionBuilder {
 
 		openPreferencesAction = ActionFactory.PREFERENCES.create(getWindow());
 
-		addBookmarkAction = IDEActionFactory.ADD_BOOKMARK.create(getWindow());
+		addBookmarkAction = IDEActionFactory.BOOKMARK.create(getWindow());
 		registerGlobalAction(addBookmarkAction);
 
 		addTaskAction = IDEActionFactory.ADD_TASK.create(getWindow());
@@ -754,7 +754,7 @@ public final class WorkbenchActionBuilder {
 		activateEditorAction = ActionFactory.ACTIVATE_EDITOR.create(getWindow());
 		registerGlobalAction(activateEditorAction);
 
-		maximizePartAction = ActionFactory.MAXIMIZE_PART.create(getWindow());
+		maximizePartAction = ActionFactory.MAXIMIZE.create(getWindow());
 		registerGlobalAction(maximizePartAction);
 		
 		workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS.create(getWindow());
@@ -901,10 +901,10 @@ public final class WorkbenchActionBuilder {
 		if (manager != null) {
 			try {
 				manager.insertBefore(
-					IWorkbenchActionConstants.REBUILD_PROJECT,
+					IDEActionFactory.REBUILD_PROJECT.getId(),
 					buildProjectAction);
 				manager.insertBefore(
-					IWorkbenchActionConstants.REBUILD_ALL,
+					IDEActionFactory.REBUILD_ALL.getId(),
 					buildAllAction);
 			} catch (IllegalArgumentException e) {
 				// action not found!
@@ -933,8 +933,8 @@ public final class WorkbenchActionBuilder {
 			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
 			try {
-				manager.remove(IWorkbenchActionConstants.BUILD);
-				manager.remove(IWorkbenchActionConstants.BUILD_PROJECT);
+				manager.remove(IDEActionFactory.BUILD.getId());
+				manager.remove(IDEActionFactory.BUILD_PROJECT.getId());
 			} catch (IllegalArgumentException e) {
 				// action was not in menu
 			}
@@ -948,7 +948,7 @@ public final class WorkbenchActionBuilder {
 			IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
 		} else {
 			try {
-				tBarMgr.remove(IWorkbenchActionConstants.BUILD);
+				tBarMgr.remove(IDEActionFactory.BUILD.getId());
 				tBarMgr.update(true);
 			} catch (IllegalArgumentException e) {
 				// Action was not in tool bar

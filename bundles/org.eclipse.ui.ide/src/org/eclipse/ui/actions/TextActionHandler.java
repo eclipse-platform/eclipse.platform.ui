@@ -262,11 +262,11 @@ public class TextActionHandler {
  */
 public TextActionHandler(IActionBars actionBar) {
 	super();
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.CUT, textCutAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.COPY, textCopyAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, textPasteAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, textSelectAllAction);
-	actionBar.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, textDeleteAction);
+	actionBar.setGlobalActionHandler(ActionFactory.CUT.getId(), textCutAction);
+	actionBar.setGlobalActionHandler(ActionFactory.COPY.getId(), textCopyAction);
+	actionBar.setGlobalActionHandler(ActionFactory.PASTE.getId(), textPasteAction);
+	actionBar.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), textSelectAllAction);
+	actionBar.setGlobalActionHandler(ActionFactory.DELETE.getId(), textDeleteAction);
 }
 /**
  * Add a <code>Text</code> control to the handler

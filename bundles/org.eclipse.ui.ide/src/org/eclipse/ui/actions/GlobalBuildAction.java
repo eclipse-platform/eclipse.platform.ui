@@ -113,7 +113,7 @@ private void setBuildType(int type) {
 		case IncrementalProjectBuilder.AUTO_BUILD:
 			setText(IDEWorkbenchMessages.getString("GlobalBuildAction.text")); //$NON-NLS-1$
 			setToolTipText(IDEWorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
-			setId(IWorkbenchActionConstants.BUILD);
+			setId("build"); //$NON-NLS-1$
 			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
 			setImageDescriptor(
 				IDEInternalWorkbenchImages.getImageDescriptor(
@@ -129,7 +129,7 @@ private void setBuildType(int type) {
 		case IncrementalProjectBuilder.FULL_BUILD:
 			setText(IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
 			setToolTipText(IDEWorkbenchMessages.getString("GlobalBuildAction.rebuildToolTip")); //$NON-NLS-1$
-			setId(IWorkbenchActionConstants.REBUILD_ALL);
+			setId("rebuildAll");  //$NON-NLS-1$
 			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_FULL_BUILD_ACTION);
 			setActionDefinitionId("org.eclipse.ui.project.rebuildAll"); //$NON-NLS-1$
 			break;

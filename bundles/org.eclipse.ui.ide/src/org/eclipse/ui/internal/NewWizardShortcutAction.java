@@ -23,10 +23,10 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
@@ -50,7 +50,7 @@ public class NewWizardShortcutAction extends Action {
 		super(element.getLabel(element));
 		setToolTipText(element.getDescription());
 		setImageDescriptor(element.getImageDescriptor());
-		setId(IWorkbenchActionConstants.NEW);
+		setId(IDEActionFactory.NEW.getId());
 		wizardElement = element;
 		this.window = window;
 	}

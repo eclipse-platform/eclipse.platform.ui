@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * <pre>
  * MenuManager menu = ...;
  * IDEActionFactory.IWorkbenchAction closeEditorAction
- * 	  = IDEActionFactory.CLOSE_EDITOR.create(window);
+ * 	  = IDEActionFactory.CLOSE.create(window);
  * menu.add(closeEditorAction);
  * IDEActionFactory.IWorkbenchAction closeProjectAction
  * 	  = IDEActionFactory.CLOSE_PROJECT.create(window);
@@ -64,7 +64,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 	 * This action is a {@link Retarget Retarget} action with 
 	 * id "bookmark". This action maintains its enablement state.
 	 */
-	public static final ActionFactory ADD_BOOKMARK = new ActionFactory("bookmark") { //$NON-NLS-1$
+	public static final ActionFactory BOOKMARK = new ActionFactory("bookmark") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
@@ -184,7 +184,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ProjectPropertyDialogAction(window);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -193,14 +193,14 @@ public abstract class IDEActionFactory extends ActionFactory {
 	 * IDE-specific workbench action: New.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory NEW = new ActionFactory("newWizard") { //$NON-NLS-1$
+	public static final ActionFactory NEW = new ActionFactory("new") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new NewWizardAction(window);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -218,7 +218,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 			// @issue we are creating a NEW action just to pass to NewWizardDropDownAction
 			IWorkbenchAction innerAction = IDEActionFactory.NEW.create(window);
 			IWorkbenchAction action = new NewWizardDropDownAction(window, innerAction);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -227,14 +227,14 @@ public abstract class IDEActionFactory extends ActionFactory {
 	 * IDE-specific workbench action: Import.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory IMPORT = new ActionFactory("importWizard") { //$NON-NLS-1$
+	public static final ActionFactory IMPORT = new ActionFactory("import") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ImportResourcesAction(window);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -243,14 +243,14 @@ public abstract class IDEActionFactory extends ActionFactory {
 	 * IDE-specific workbench action: Export.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory EXPORT = new ActionFactory("exportWizard") { //$NON-NLS-1$
+	public static final ActionFactory EXPORT = new ActionFactory("export") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new ExportResourcesAction(window);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -266,7 +266,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new QuickStartAction(window);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -282,7 +282,7 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new TipsAndTricksAction(window);
-			// @issue missing action.setId(getId()) ?
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -291,13 +291,14 @@ public abstract class IDEActionFactory extends ActionFactory {
 	 * IDE-specific workbench action: Full build.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory FULL_BUILD = new ActionFactory("rebuildAll") { //$NON-NLS-1$
+	public static final ActionFactory REBUILD_ALL = new ActionFactory("rebuildAll") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new GlobalBuildAction(window, IncrementalProjectBuilder.FULL_BUILD);
+			action.setId(getId());
 			return action;
 		}
 	};
@@ -306,13 +307,14 @@ public abstract class IDEActionFactory extends ActionFactory {
 	 * IDE-specific workbench action: Incremental build.
 	 * This action maintains its enablement state.
 	 */
-	public static final ActionFactory INCREMENTAL_BUILD = new ActionFactory("build") { //$NON-NLS-1$
+	public static final ActionFactory BUILD = new ActionFactory("build") { //$NON-NLS-1$
 		/* (non-javadoc) method declared on ActionFactory */
 		public IWorkbenchAction create(IWorkbenchWindow window) {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
 			IWorkbenchAction action = new GlobalBuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+			action.setId(getId());
 			return action;
 		}
 	};
