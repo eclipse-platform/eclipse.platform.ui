@@ -98,7 +98,7 @@ public class DocumentCommand {
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		public int compareTo(final Object object) {
-			if (equals(object))
+			if (isEqual(object))
 				return 0;
 
 			final Command command= (Command) object;
@@ -113,10 +113,7 @@ public class DocumentCommand {
 			return 42;
 		}
 
-		/*
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object object) {
+		private boolean isEqual(Object object) {
 			if (object == this)
 				return true;
 			if (! (object instanceof Command))
