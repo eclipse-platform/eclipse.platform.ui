@@ -225,6 +225,11 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			if (cachedBundles[i].getBundleId() == 0)
 				continue; // skip the system bundle
 			String cachedBundleLocation = cachedBundles[i].getLocation();
+			// TODO fix this when the platform correctly resolves local file urls
+			if (isWindows && 
+					cachedBundleLocation.startsWith("reference:file:") && 
+					!cachedBundleLocation.startsWith("reference:file:/"))
+				cachedBundleLocation = "reference:file:/"+cachedBundleLocation.substring(15);
 			boolean found = false;
 			for (int j=0; !found && j<newPlugins.length; j++) {
 				String newPluginLocation = newPlugins[j].toExternalForm();
