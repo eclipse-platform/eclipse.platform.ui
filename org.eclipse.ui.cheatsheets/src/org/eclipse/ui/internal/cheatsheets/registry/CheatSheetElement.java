@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
+import java.lang.reflect.Constructor;
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.cheatsheets.CheatSheetListener;
+import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.osgi.framework.Bundle;
 
 /**
  *	Instances represent registered cheatsheets.
@@ -135,5 +140,37 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable {
 	 */
 	public void setListenerClass(String value) {
 		listenerClass = value;
+	}
+
+	public CheatSheetListener createListenerInstance() {
+		if(listenerClass == null || configurationElement == null) {
+			return null;
+		}
+
+		Class extClass = null;
+		CheatSheetListener listener = null;
+		String pluginId = configurationElement.getDeclaringExtension().getNamespace();
+
+		try {
+			Bundle bundle = Platform.getBundle(pluginId);
+			extClass = bundle.loadClass(listenerClass);
+		} catch (Exception e) {
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+		}
+		try {
+			if (extClass != null) {
+				listener = (CheatSheetListener) extClass.newInstance();
+			}
+		} catch (Exception e) {
+			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
+			CheatSheetPlugin.getPlugin().getLog().log(status);
+		}
+		
+		if (listener != null){
+			return listener;
+		}
+
+		return null;
 	}
 }

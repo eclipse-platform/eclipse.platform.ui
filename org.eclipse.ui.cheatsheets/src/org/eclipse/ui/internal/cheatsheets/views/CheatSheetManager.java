@@ -13,24 +13,21 @@ package org.eclipse.ui.internal.cheatsheets.views;
 import java.util.*;
 
 import org.eclipse.ui.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 
 /**
- * Cheat sheet manager class.  Manages cheat sheet data,
- * enables access to model for adding/modifying steps and sub steps
- * on the cheat sheet "on the fly".
+ * Cheat sheet manager class.  Manages cheat sheet data and optional listner.
  */
 public class CheatSheetManager implements ICheatSheetManager {
 
 	private String cheatsheetID;
-//	private Hashtable listenerMap = new Hashtable(20);
-	private Hashtable viewListenerMap = new Hashtable(20);
+	private CheatSheetListener listener;
 	private Hashtable dataTable = null;
-	private CheatSheetViewer csview;
 
 	//Package protected:  We don't want anyone else creating instances of this class.	
-	CheatSheetManager(String id, CheatSheetViewer viewer) {
-		csview = viewer;
-		cheatsheetID = id;
+	CheatSheetManager(CheatSheetElement element) {
+		cheatsheetID = element.getID();
+		listener = element.createListenerInstance();
 	}
 
 
@@ -41,94 +38,16 @@ public class CheatSheetManager implements ICheatSheetManager {
 		return cheatsheetID;
 	}
 
-//FIXME: Are these methods required?
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#getItemWithID(java.lang.String)
-//	 */
-//	public AbstractItem getItem(String id) {
-//		try {
-//			//Check to see if that item with that id is dynamic.
-//			//If it is not dynamic, return null for it cannot be modified.
-//			ArrayList contentItems = csview.getListOfContentItems();
-//			for (int i = 0; i < contentItems.size(); i++) {
-//				AbstractItem contentItem = (AbstractItem) contentItems.get(i);
-//				if (contentItem.getID().equals(id)) {
-//					//return contentItem;
-//					if (contentItem instanceof IContainsContent) {
-//						IContainsContent cc = (IContainsContent) contentItem;
-//						if (cc.isDynamic())
-//							return contentItem;
-//					}
-//					return null;
-//				}
-//
-//			}
-//			return null;
-//		} catch (Exception e) {
-//			return null;
-//		}
-//	}
-//
-//	public ItemWithSubItems convertToIItemWithSubItems(AbstractItem ai) {
-//		if (ai instanceof ItemWithSubItems)
-//					return (ItemWithSubItems)ai;
-//		if (!(ai instanceof ActionItem))
-//			return null;
-//		String id = ai.getID();
-//		ArrayList contentItems = csview.getListOfContentItems();
-//		for (int i = 0; i < contentItems.size(); i++) {
-//			AbstractItem contentItem = (AbstractItem) contentItems.get(i);
-//			if (contentItem.getID().equals(id)) {
-//				ItemWithSubItems itemws = convertThisIItem((Item) contentItem);
-//				//replace item in list with new item.
-//				contentItems.set(i, itemws);
-//				//replace coreItem's contentItem with our new one.
-//				ViewItem[] va = csview.getViewItemArray();
-//				for(int j=0; j<va.length; j++){
-//					if(va[j].contentItem == contentItem)
-//						va[j].contentItem = itemws;	
-//				}			
-//				
-//				return itemws;
-//			}
-//		}
-//		return null;
-//	}
-//
-//	private ItemWithSubItems convertThisIItem(Item item) {
-//		Item cc = (Item) item;
-//		ItemWithSubItems itemws = new ItemWithSubItems();
-//		itemws.setContent(cc.getContent());
-//		itemws.setID(cc.getID());
-//		return itemws;
-//	}
-
 	//Package protected:  We don't want anyone else firing events but the view.
 	//this method will be called by the c.s. view when events occur.
 	void fireEvent(int eventType) {
-		//		System.out.println("Inside Manager Fire Event!");
-		ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
-
-//		//First check to see if we have the listener classes for this cheatsheet id.
-//		ArrayList list = (ArrayList) listenerMap.get(cheatsheetID);
-//		if (list == null)
-//			fillListenerMaps(cheatsheetID);
-
-		notifyListeners(event, cheatsheetID);
-	}
-
-	/**
-	 * Notifies all listeners registered of events.
-	 */
-	private void notifyListeners(ICheatSheetEvent e, String cheatsheetID) {
-		//		System.out.println("Inside manager notifyViewListeners!");
-		ArrayList listeners = (ArrayList) viewListenerMap.get(cheatsheetID);
-		if (listeners == null)
+		//First check to see if we have a listener for this cheatsheet
+		if(listener == null) {
 			return;
-
-		for (int i = 0; i < listeners.size(); i++) {
-			((CheatSheetListener) listeners.get(i)).cheatSheetEvent(e);
 		}
+
+		ICheatSheetEvent event = new CheatSheetEvent(eventType, cheatsheetID, this);
+		listener.cheatSheetEvent(event);
 	}
 
 	/**
@@ -167,39 +86,4 @@ public class CheatSheetManager implements ICheatSheetManager {
 
 		dataTable.put(key, data);
 	}
-
-
-	/**
-	 * Adds a cheat sheet listener to this cheat sheet manager.
-     * Has no effect if an identical listener is already registered.
-	 * 
-	 * @param listener the cheat sheet listener to add
-	 * @exception IllegalArgumentException if <code>listener</code>
-	 * is <code>null</code>
-	 */
-	public void addCheatSheetListener(CheatSheetListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException();
-		}
-		// TODO (lorne) - missing implementation
-		throw new RuntimeException("Not implemented yet"); //$NON-NLS-1$
-	}
-
-
-	/**
-	 * Removes a cheat sheet listener from this cheat sheet manager.
-     * Has no affect if the listener is not registered.
-	 * 
-	 * @param listener the cheat sheet listener to remove
-	 * @exception IllegalArgumentException if <code>listener</code>
-	 * is <code>null</code>
-	 */
-	public void removeCheatSheetListener(CheatSheetListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException();
-		}
-		// TODO (lorne) - missing implementation
-		throw new RuntimeException("Not implemented yet"); //$NON-NLS-1$
-	}
-
 }

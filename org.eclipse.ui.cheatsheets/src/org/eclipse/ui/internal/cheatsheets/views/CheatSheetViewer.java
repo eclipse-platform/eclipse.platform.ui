@@ -22,7 +22,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private String currentID;
 	private int currentItemNum;
 	private boolean hascontent = false;
-	private boolean isStarted = false;
 
 	private CheatSheetParser parser;
 	private CheatSheet cheatSheet;
@@ -59,6 +58,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	/*package*/ void advanceIntroItem() {
+		IntroItem introItem = (IntroItem) viewItemList.get(0);
+		boolean isStarted = introItem.isCompleted();
+
 		expandRestoreList = new ArrayList();
 		if(expandRestoreAction != null)
 			expandRestoreAction.setCollapsed(false);
@@ -86,12 +88,11 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 
 		if (isStarted)
-			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_RESTARTED);
+			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTARTED);
 		else
-			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_STARTED);
+			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_STARTED);
 
 		isStarted = true;
-		IntroItem introItem = (IntroItem) viewItemList.get(0);
 		introItem.setAsNormalCollapsed();
 		introItem.setComplete();
 		introItem.setRestartImage();
@@ -158,7 +159,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			saveCurrentSheet();
 			getViewItemArray()[0].setExpanded();
 			getViewItemArray()[0].getMainItemComposite().setFocus();
-			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
+			getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 		}
 
 		saveCurrentSheet();
@@ -356,10 +357,8 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		} else {
 			props = savedProps;
 		}
-//TODO: moved this down further
-//		manager = new CheatSheetManager(currentID, this);
+
 		if (props == null) {
-			manager = new CheatSheetManager(currentID, this);
 			getViewItemArray()[0].setAsCurrentActiveItem();
 			/* LP-item event */
 //			fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, getViewItemArray()[0]);
@@ -390,8 +389,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		if (cid != null)
 			currentID = cid;
 
-		manager = new CheatSheetManager(currentID, this);
-		manager.setData(csmData);
+		getManager().setData(csmData);
 
 		if (itemNum >= 0) {
 			clearBackgrounds(getViewItemArray());
@@ -476,8 +474,16 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			if(viewItemList.size()-1 == itemNum && currentItem.isCompleted()) {
 				currentItem.setCollapsed();
 				getViewItemArray()[0].getMainItemComposite().setFocus();
+				
+				// The cheat sheet has been restored but is also completed so fire both events
+				getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTORED);
+				getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_COMPLETED);
 			} else {
 				currentItem.setAsCurrentActiveItem();
+
+				// If the intro item is completed, than the cheat sheet has been restored.
+				if(getViewItemArray()[0].isCompleted())
+					getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_RESTORED);
 			}
 
 			/* LP-item event */
@@ -613,9 +619,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return getContent().getID();
 	}
 
-	private CheatSheetManager getCheatsheetManager() {
+	private CheatSheetManager getManager() {
 		if (manager == null) {
-			manager = new CheatSheetManager(currentID, this);
+			manager = new CheatSheetManager(contentElement);
 		}
 		return manager;
 	}
@@ -744,9 +750,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		hascontent = true;
 		listOfContentItems = cheatSheet.getItems();
 
-		checkSavedState();
+		getManager().fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
 
-		manager.fireEvent(ICheatSheetEvent.CHEATSHEET_OPENED);
+		checkSavedState();
 
 		parent.layout(true);
 
@@ -756,7 +762,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	
 	private void killDynamicData(ViewItem[] myitems){
 //		getCheatsheetManager().removeAllData();
-		manager = new CheatSheetManager(currentID, this);
+		manager = new CheatSheetManager(contentElement);
 		
 //FIXME: Is this needed?
 //		for (int i=0; i<myitems.length; i++){
@@ -814,7 +820,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		try {
 			if (mycore != null) {
-				if ((mycore.runAction(getCheatsheetManager()) == ViewItem.VIEWITEM_ADVANCE)){// && !(mycore.isCompleted())) {
+				if ((mycore.runAction(getManager()) == ViewItem.VIEWITEM_ADVANCE)){// && !(mycore.isCompleted())) {
 					/* LP-item event */
 //					fireManagerItemEvent(ICheatSheetItemEvent.ITEM_PERFORMED, currentItem);
 					mycore.setRestartImage();
@@ -848,7 +854,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 					SubItem isi = (SubItem)ciws.item.getSubItems().get(subItemIndex);
 					if(isi.getAction() != null) {
 						String[] params = isi.getAction().getParams();
-						if ((ciws.runAction(isi.getAction().getPluginID(), isi.getAction().getActionClass(), params, getCheatsheetManager()) == ViewItem.VIEWITEM_ADVANCE)) { 
+						if ((ciws.runAction(isi.getAction().getPluginID(), isi.getAction().getActionClass(), params, getManager()) == ViewItem.VIEWITEM_ADVANCE)) { 
 							//set that item as complete.
 							ArrayList l = ciws.getListOfSubItemCompositeHolders();
 							SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(subItemIndex);
@@ -873,7 +879,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			boolean expandRestoreActionState = false;
 			if(expandRestoreAction != null)
 				expandRestoreActionState = expandRestoreAction.isCollapsed();			
-			saveHelper.saveState(currentItemNum, getViewItemArray(), expandRestoreActionState, expandRestoreList, currentID, getCheatsheetManager());
+			saveHelper.saveState(currentItemNum, getViewItemArray(), expandRestoreActionState, expandRestoreList, currentID, getManager());
 		}
 	}
 
