@@ -18,17 +18,20 @@ package org.eclipse.debug.core.variables;
  * should implement either <code>IContextLaunchVariable</code> or
  * <code>ISimpleLaunchVariable</code>.
  * </p>
+ * @since 3.0
  */
 public interface ILaunchVariable {
 	/**
 	 * Returns this variable's name.
-	 * @return
+	 * 
+	 * @return variable name
 	 */
 	public String getName();
 
 	/**
 	 * Returns this variable's description.
-	 * @return
+	 * 
+	 * @return variable description
 	 */
 	public String getDescription();
 }

@@ -12,6 +12,10 @@ package org.eclipse.debug.core.variables;
 
 /**
  * A variable that can be assigned a value.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * @since 3.0
  */
 public interface ISimpleLaunchVariable extends ILaunchVariable {
 	/**
