@@ -30,12 +30,7 @@ public ProblemImageProvider() {
  * @see org.eclipse.jface.resource.FileImageDescriptor
  */
 public String getImagePath(IMarker marker) {
-	String iconPath;
-	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";//$NON-NLS-1$
-	else
-		iconPath = "icons/basic/";//$NON-NLS-1$
-		
+	String iconPath = "icons/full/";//$NON-NLS-1$		
 	if (isMarkerType(marker, IMarker.PROBLEM)) {
 		switch (marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING)) {
 			case IMarker.SEVERITY_ERROR:

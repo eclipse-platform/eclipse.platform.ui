@@ -10,7 +10,6 @@ import org.eclipse.ui.internal.misc.PluginFileFinder;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import java.io.*;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -365,23 +364,15 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 		
 	String fileName;
 	URL url;
-	
-	String suffix = ""; //$NON-NLS-1$
-	if(Display.getCurrent().getIconDepth() <= 4)
-		suffix = "_basic"; //$NON-NLS-1$
-	
-	fileName = (String) ini.get("image" + suffix);//$NON-NLS-1$
-	if (fileName == null)
-		fileName = (String) ini.get("image");//$NON-NLS-1$
+		
+	fileName = (String) ini.get("image");//$NON-NLS-1$
 	if (fileName != null) {
 		url = PluginFileFinder.getResource(getDescriptor(), fileName);
 		if (url != null)
 			productImage = ImageDescriptor.createFromURL(url);
 	}
 
-	fileName = (String) ini.get("aboutImage" + suffix);//$NON-NLS-1$
-	if(fileName == null)
-		fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
+	fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
 	if (fileName != null) {
 		url = PluginFileFinder.getResource(getDescriptor(), fileName);
 		if (url != null)

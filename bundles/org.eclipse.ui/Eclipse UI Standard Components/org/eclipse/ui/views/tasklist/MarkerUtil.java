@@ -35,12 +35,7 @@ private MarkerUtil() {
  * given relative path (relative to the icons directory for the plug-in).
  */
 static ImageDescriptor createImageDescriptor(String relativePath) {
-	String iconPath;
-	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";//$NON-NLS-1$
-	else
-		iconPath = "icons/basic/";//$NON-NLS-1$
-		
+	String iconPath = "icons/full/";//$NON-NLS-1$
 	try {
 		URL URL_BASIC = TaskList.getPlugin().getDescriptor().getInstallURL();
 		URL url = new URL(URL_BASIC, iconPath + relativePath);

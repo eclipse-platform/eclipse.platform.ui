@@ -152,12 +152,7 @@ void fillContextMenu(IMenuManager manager) {
  * Returns the image descriptor with the given relative path.
  */
 ImageDescriptor getImageDescriptor(String relativePath) {
-	String iconPath;
-	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";//$NON-NLS-1$
-	else
-		iconPath = "icons/basic/";//$NON-NLS-1$
-
+	String iconPath = "icons/full/";//$NON-NLS-1$
 	try {
 		URL installURL = getPlugin().getDescriptor().getInstallURL();
 		URL url = new URL(installURL, iconPath + relativePath);

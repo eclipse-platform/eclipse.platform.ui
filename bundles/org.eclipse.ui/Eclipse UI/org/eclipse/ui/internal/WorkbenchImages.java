@@ -58,13 +58,7 @@ public /*final*/ class WorkbenchImages {
 	// Subdirectory (under the package containing this class) where 16 color images are
 	private static final URL URL_BASIC = WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
 
-	public final static String ICONS_PATH;
-	static {
-		if(Display.getCurrent().getIconDepth() > 4)
-			ICONS_PATH = "icons/full/";//$NON-NLS-1$
-		else
-			ICONS_PATH = "icons/basic/";//$NON-NLS-1$
-	}
+	public final static String ICONS_PATH = "icons/full/";//$NON-NLS-1$
 	
 	private final static String PATH_CTOOL = ICONS_PATH+"ctool16/"; //Colored toolbar icons - hover.//$NON-NLS-1$
 	private final static String PATH_ETOOL = ICONS_PATH+"etool16/"; //Enabled toolbar icons.//$NON-NLS-1$

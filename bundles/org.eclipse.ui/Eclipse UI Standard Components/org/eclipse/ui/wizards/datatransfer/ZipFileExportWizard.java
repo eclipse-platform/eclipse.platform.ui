@@ -66,12 +66,7 @@ public void addPages() {
  * Returns the image descriptor with the given relative path.
  */
 private ImageDescriptor getImageDescriptor(String relativePath) {
-	String iconPath;
-	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";//$NON-NLS-1$
-	else
-		iconPath = "icons/basic/";//$NON-NLS-1$
-		
+	String iconPath = "icons/full/";//$NON-NLS-1$
 	try {
 		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		URL installURL = plugin.getDescriptor().getInstallURL();

@@ -216,12 +216,7 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
  * Method declared on BasicNewResourceWizard.
  */
 protected void initializeDefaultPageImageDescriptor() {
-	String iconPath;
-	if(Display.getCurrent().getIconDepth() > 4)
-		iconPath = "icons/full/";//$NON-NLS-1$
-	else
-		iconPath = "icons/basic/";//$NON-NLS-1$
-		
+	String iconPath = "icons/full/";//$NON-NLS-1$		
 	try {
 		URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
 		URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
