@@ -8,13 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.commands;
 
 /**
  * <p>
- * An instance of <code>IActivityBinding</code> represents a binding between
- * a command and an activity.
+ * An instance of <code>IContextBinding</code> represents a binding between a
+ * command and a context.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -28,8 +27,8 @@ package org.eclipse.ui.commands;
  */
 public interface IContextBinding extends Comparable {
 
-	/**
-	 * TODO
-	 */
-	String getContextId();
+    /**
+     * TODO
+     */
+    String getContextId();
 }
