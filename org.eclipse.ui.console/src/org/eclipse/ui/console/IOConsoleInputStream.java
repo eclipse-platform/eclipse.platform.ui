@@ -258,26 +258,27 @@ public class IOConsoleInputStream extends InputStream {
     /* (non-Javadoc)
      * @see java.io.InputStream#close()
      */
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         if(closed) {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         }
-        
-        synchronized(this) {
-        	closed = true;
-            notifyAll();
+        closed = true;
+        notifyAll();
+        if (console != null) {
+	        console.streamClosed(this);
+	        console = null;
         }
-        console = null;
     }
 
     /**
      *  Disconnects the console from this stream. 
      */
-    public void disconnect() {
+    public synchronized void disconnect() {
         disconnected = true;
-        synchronized(this) {
-            notifyAll();
+        notifyAll();
+        if (console != null) {
+	        console.streamClosed(this);
+	        console = null;
         }
-        console = null;
     }
 }

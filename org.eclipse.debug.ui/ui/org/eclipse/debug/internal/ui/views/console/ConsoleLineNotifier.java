@@ -152,7 +152,7 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
     public void propertyChange(PropertyChangeEvent event) {
-        if(event.getProperty().equals(IOConsole.P_CONSOLE_OUTPUT_COMPLETE)) {
+        if(event.getProperty().equals(IOConsole.P_CONSOLE_STREAMS_CLOSED)) {
             streamsClosed();
         }
     }

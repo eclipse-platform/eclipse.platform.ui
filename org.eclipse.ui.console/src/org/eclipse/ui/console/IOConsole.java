@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,12 +40,18 @@ import org.eclipse.ui.internal.console.IOConsolePartitioner;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * A console that displays messages and accepts input from users.
+ * A console that displays text, accepts keyboard input from users,
+ * provides hyperlinks, and supports regular expression matching.
  * The console may have multiple output streams connected to it and
- * provides one input stream.
- * Mechanisms are also provided for matching of the document
- * to regular expressions and adding hyperlinks to the document.
- * 
+ * provides one input stream connected to the keyboard.
+ * <p>
+ * Pattern match listeners can be registered with a console programmatically
+ * or via the <code>org.eclipse.ui.console.consolePatternMatchListeners</code>
+ * extension point. Listeners are notified of matches in the console.
+ * </p>
+ * <p>
+ * Clients may instantiate and subclass this class.
+ * </p>
  * @since 3.1
  *
  */
@@ -76,9 +83,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 	public static final String P_CONSOLE_WIDTH = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_WIDTH"; //$NON-NLS-1$
 	
 	/**
-	 * Property constant indicating that output queued on a finished console has been processed.
+	 * Property constant indicating that all queued output has been processed and that
+	 * all streams connected to this console have been closed.
 	 */
-	public static final String P_CONSOLE_OUTPUT_COMPLETE = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_OUTPUT_COMPLETE"; //$NON-NLS-1$
+	public static final String P_CONSOLE_STREAMS_CLOSED = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_STREAMS_CLOSED"; //$NON-NLS-1$
 	
 	/**
 	 * Property constant indicating that the auto scrolling should be turned on (or off)
@@ -116,21 +124,53 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      */
     private int consoleWidth = -1;
     
-    
+    /**
+     * Collection of compiled pattern match listeners
+     */
     private ArrayList patterns = new ArrayList();
         
+    /**
+     * Map of client defined attributes
+     */
     private HashMap attributes = new HashMap();
    
+    /**
+     * Whether the console srolls to show the end of text as output
+     * is appended.
+     */
     private boolean autoScroll = true;
     
+    /**
+     * Set to <code>true</code> when the partitioner completes the
+     * processing of buffered output.
+     */
     private boolean partitionerFinished = false;
     
+    /**
+     * Job used for regular experssion matching
+     */
     private MatchJob matchJob = new MatchJob();
+    
+    /**
+     * A collection of open streams connected to this console.
+     */
+    private List openStreams;
 
-    public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
-        super(title, imageDescriptor, autoLifecycle);
+    /**
+     * Constructs a console with the given name, type, image, and lifecycle.
+     * 
+     * @param name name to display for this console
+     * @param consoleType console type identifier or <code>null</code>
+     * @param imageDescriptor image to display for this console or <code>null</code>
+     * @param autoLifecycle whether lifecycle methods should be called automatically
+     *  when this console is added/removed from the console manager
+     */
+    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
+        super(name, imageDescriptor, autoLifecycle);
         setType(consoleType);
+        openStreams = new ArrayList();
         inputStream = new IOConsoleInputStream(this);
+        openStreams.add(inputStream);
         partitioner = new IOConsolePartitioner(inputStream, this);
         Document document = new Document();
         document.addPositionCategory(IOConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
@@ -138,23 +178,47 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         document.addDocumentListener(this);
     }
     
-    public IOConsole(String title, String consoleType, ImageDescriptor imageDescriptor) {
-        this(title, consoleType, imageDescriptor, true);
+    /**
+     * Constructs a console with the given name, type, and image. Lifecycle methods
+     * will be called when this console is added/removed from the console manager.
+     * 
+     * @param name name to display for this console
+     * @param consoleType console type identifier or <code>null</code>
+     * @param imageDescriptor image to display for this console or <code>null</code>
+     */
+    public IOConsole(String name, String consoleType, ImageDescriptor imageDescriptor) {
+        this(name, consoleType, imageDescriptor, true);
     }    
     
-    public IOConsole(String title, ImageDescriptor imageDescriptor) {
-        this(title, null, imageDescriptor);
+    /**
+     * Constructs a console with the given name and image. Lifecycle methods
+     * will be called when this console is added/removed from the console manager.
+     * This console will have an unspecified (<code>null</code>) type.
+     * 
+     * @param name name to display for this console
+     * @param imageDescriptor image to display for this console or <code>null</code>
+     */
+    public IOConsole(String name, ImageDescriptor imageDescriptor) {
+        this(name, null, imageDescriptor);
     }
     
     /**
-     * @return Returns the attribute matching the specified key.
+     * Returns the attribue associated with the specified key.
+     * 
+     * @param key attribute key
+     * @return Returns the attribue associated with the specified key
      */
     public Object getAttribute(String key) {
-        return attributes.get(key);
+        synchronized (attributes) {
+            return attributes.get(key);
+        }
     }
+    
     /**
-     * @param key The key used to store the attribute
-     * @param value The attribute to set.
+     * Sets an attribute value.
+     * 
+     * @param key attribute key
+     * @param value attribute value
      */
     public void setAttribute(String key, Object value) {
         synchronized(attributes) {
@@ -163,9 +227,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
     
 	/**
-	 * Returns the document this console writes to.
+	 * Returns this console's document.
 	 * 
-	 * @return the document this console wites to
+	 * @return this console's document
 	 */
     public IDocument getDocument() {
         return partitioner.getDocument();
@@ -180,30 +244,33 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
 
     /**
-     * Creates a new IOConsoleOutputStream which may be used to write to the console.
-     * A console may be connected to more than one OutputStream at once.
+     * Creates and returns a new output stream which may be used to write to this console.
+     * A console may be connected to more than one output stream at once. Clients are
+     * responsible for closing any output streams created on this console.
      * 
-     * @return A new output stream connected to this console
+     * @return a new output stream connected to this console
      */
     public IOConsoleOutputStream newOutputStream() {
-        return new IOConsoleOutputStream(this);
+        IOConsoleOutputStream outputStream = new IOConsoleOutputStream(this);
+        openStreams.add(outputStream);
+        return outputStream;
     }
     
     /**
-     * Returns an IOConsoleInputStream which may be used to read a users input.
-     * Every console has one input stream only.
+     * Returns the input stream connected to the keyboard.
      * 
-     * @return The input stream connected to this console.
+     * @return the input stream connected to the keyboard.
      */
     public IOConsoleInputStream getInputStream() {
         return inputStream;
     }
 
     /**
-     * Returns the consoles document partitioner.
-     * @return The console's document partitioner
+     * Returns this console's document partitioner.
+     * 
+     * @return this console's document partitioner
      */
-    public IDocumentPartitioner getPartitioner() {
+    IDocumentPartitioner getPartitioner() {
         return partitioner;
     }
 
@@ -248,6 +315,12 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 		partitioner.setWaterMarks(low, high);
 	}
 	
+	/**
+	 * Sets whether this console scrolls automatically to show the end of text as
+	 * output is appened to the console.
+	 * 
+	 * @param scroll whether this console scrolls automatically
+	 */
 	public void setAutoScroll(boolean scroll) {
 	    if (scroll != autoScroll) {
 	        autoScroll = scroll;
@@ -259,13 +332,20 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 	    }
 	}
 	
+	/**
+	 * Returns whether this console scrolls automatically to show the end of text as
+	 * output is appened to the console.
+	 * 
+	 * @return whether this console scrolls automatically
+	 */	
 	public boolean getAutoScroll() {
 	    return autoScroll;
 	}
 	
 	/**
 	 * Sets the tab width.
-	 * @param tabSize The tab width 
+	 * 
+	 * @param newTabWidth the tab width 
 	 */
     public void setTabWidth(final int newTabWidth) {
         if (tabWidth != newTabWidth) {
@@ -281,6 +361,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     
 	/**
 	 * Returns the tab width.
+	 * 
 	 * @return tab width
 	 */
     public int getTabWidth() {
@@ -288,9 +369,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
 
 	/**
-	 * Returns the font for this console
+	 * Returns the font used by this console
 	 * 
-	 * @return font for this console
+	 * @return font used by this console
 	 */
     public Font getFont() {
         return font;
@@ -310,15 +391,40 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
     
     /**
-     * Should be called to inform the console that output has been completed.
+     * Check if all streams connected to this console are closed. If so,
+     * notifiy the partitioner that this console is finished. 
      */
-    public void setFinished() {
-        partitioner.consoleFinished();
+    private void checkFinished() {
+        if (openStreams.isEmpty()) {
+            partitioner.consoleFinished();
+        }
+    }
+    
+    /**
+     * Notification that an output stream connected to this console has been closed.
+     * 
+     * @param stream stream that closed
+     */
+    void streamClosed(IOConsoleOutputStream stream) {
+        openStreams.remove(stream);
+        checkFinished();
+    }
+    
+    /**
+     * Notification that the input stream connected to this console has been closed.
+     * 
+     * @param stream stream that closed
+     */
+    void streamClosed(IOConsoleInputStream stream) {
+        openStreams.remove(stream);
+        checkFinished();
     }
     
     /**
      * Notification from the document partitioner that all pending partitions have been 
      * processed and the console's lifecycle is complete.
+     * TODO: this method is not intended for clients to call - it is an implementation
+     *  detail.
      */
     public void partitionerFinished() {
         partitionerFinished = true;
@@ -329,18 +435,19 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     
     /**
      * Returns the current width of this console. A value of zero of less 
-     * implies the console has no fixed width.
+     * indicates this console has no fixed width.
      * 
-     * @return The current width of this console
+     * @return the current width of this console
      */
     public int getConsoleWidth() {
         return consoleWidth;
     }
     
     /**
-     * Sets the width of this console. Any value greater than zero will cause
-     * this console to have a fixed width.
-     * @param width The width to make this console. Values of 0 or less imply
+     * Sets the width of this console in characters. Any value greater than zero
+     * will cause this console to have a fixed width.
+     * 
+     * @param width the width to make this console. Values of 0 or less imply
      * the console does not have any fixed width.
      */
     public void setConsoleWidth(int width) {
@@ -353,11 +460,12 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
 
     /**
-     * Adds an IConsoleHyperlink to the document.
-     * @param hyperlink The hyperlink to add.
-     * @param offset The offset in the document at which the hyperlink should be added.
-     * @param length The length of the text which should be hyperlinked.
-     * @throws BadLocationException Thrown if the specified location is not valid.
+     * Adds a hyperlink to this console.
+     * 
+     * @param hyperlink the hyperlink to add
+     * @param offset the offset in the console document at which the hyperlink should be added
+     * @param length the length of the text which should be hyperlinked
+     * @throws BadLocationException if the specified location is not valid.
      */
     public void addHyperlink(IHyperlink hyperlink, int offset, int length) throws BadLocationException {
 		IOConsoleHyperlinkPosition hyperlinkPosition = new IOConsoleHyperlinkPosition(hyperlink, offset, length); 
@@ -369,15 +477,17 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
     
     /**
-     * @param link
-     * @return
+     * Returns the region assocaited with the given hyperlink.
+     * 
+     * @param link hyperlink
+     * @return the region associated witht the hyperlink
      */
     public IRegion getRegion(IHyperlink link) {
         return partitioner.getRegion(link);
     }
     
     /**
-     * disposes of this console.
+     * Disposes this console.
      */
     protected void dispose() {
         super.dispose();
@@ -403,11 +513,14 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
     
     /**
-     * Adds a matchHandler to match a pattern to the document's content.
-     * @param matchListener The IPatternMatchHandler to add.
+     * Adds the given pattern match listener to this console. The listener will
+     * be connected and receive match notifications.
+     * 
+     * @param matchListener the pattern match listener to add
      */
     public void addPatternMatchListener(IPatternMatchListener matchListener) {
         synchronized(patterns) {
+            // TODO: check for dups
             if (matchListener == null || matchListener.getPattern() == null) {
                 throw new IllegalArgumentException("Pattern cannot be null"); //$NON-NLS-1$
             }
@@ -426,8 +539,10 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     }
     
     /**
-     * Removes an IPatternMatchHandler so that its pattern will no longer get matched to the document.
-     * @param matchHandler The IPatternMatchHandler to remove.
+     * Removes the given pattern match listener from this console. The listener will be
+     * disconnected and will no longer receive match notifications.
+     * 
+     * @param matchListener the pattern match listener to remove.
      */
     public void removePatternMatchListener(IPatternMatchListener matchListener) {
         synchronized(patterns){
@@ -593,7 +708,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 					}
 		        }
 	        	if (allDone && !monitor.isCanceled()) {
-	        	    firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
+	        	    firePropertyChange(this, IOConsole.P_CONSOLE_STREAMS_CLOSED, null, null);
 	        	    cancel(); // cancels this job if it has already been re-scheduled
 	        	}
         	}

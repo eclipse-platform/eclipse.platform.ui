@@ -240,9 +240,13 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 */
 	protected void dispose() {
 		super.dispose();
-		
 		fColorProvider.disconnect();
-		
+		closeStreams();
+		DebugPlugin.getDefault().removeDebugEventListener(this);
+		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+	}
+	
+	private void closeStreams() {
 		synchronized(streamListeners) {
 		    for(Iterator i = streamListeners.iterator(); i.hasNext(); ) {
 		        StreamListener listener = (StreamListener) i.next();
@@ -250,8 +254,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		    }
 		    streamListeners.clear();
 		}
-		DebugPlugin.getDefault().removeDebugEventListener(this);
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		synchronized (in) {
+			try {
+	            in.close();
+	        } catch (IOException e) {
+	        }		    
+		}
 	}
 
 	/* (non-Javadoc)
@@ -285,7 +293,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	        if (event.getSource().equals(getProcess())) {
 	            
 	            if (event.getKind() == DebugEvent.TERMINATE) {
-	                setFinished();
+	                closeStreams();
 	                DebugPlugin.getDefault().removeDebugEventListener(this);
 	            }
 	            
