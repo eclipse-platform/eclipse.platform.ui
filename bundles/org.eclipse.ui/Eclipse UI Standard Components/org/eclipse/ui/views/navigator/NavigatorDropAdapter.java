@@ -18,9 +18,9 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
@@ -60,103 +60,6 @@ public class NavigatorDropAdapter
 	public NavigatorDropAdapter(StructuredViewer viewer) {
 		super(viewer);
 	}
-	/**
-	 * Moves the <code>source</code> file to the given <code>
-	 * destination</code>.  If overwrite is true, any resource that
-	 * already exists at the destination will be deleted before the
-	 * move occurs.
-	 */
-	private IStatus doMove(
-		IProgressMonitor monitor,
-		final IResource source,
-		final IPath destination,
-		final boolean overwrite) {
-		try {
-			if (overwrite) {
-				//delete the destination
-				IResource oldResource = source.getWorkspace().getRoot().findMember(destination);
-				if (oldResource.exists()) {
-					oldResource.delete(IResource.KEEP_HISTORY | IResource.FORCE, null);
-				}
-			}
-			source.move(destination, IResource.KEEP_HISTORY, monitor);
-		} catch (CoreException e) {
-			return e.getStatus();
-		}
-		return ok();
-	}
-
-	/**
-	 * Copies the source into the target container.  Returns a status object
-	 * indicating success or failure.
-	 */
-	private IStatus dragAndDropCopy(Shell shell, IContainer target, IResource source) {
-		if (isCanceled) {
-			return ok();
-		}
-		if (source.getFullPath().isPrefixOf(target.getFullPath())) {
-			return error(source, ResourceNavigatorMessages.getString("DropAdapter.destinationASubFolder")); //$NON-NLS-1$
-		}
-		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
-		operation.copyResources(new IResource[] {source}, target);
-		return ok();
-	}
-
-	/**
-	 * Performs an import of the given file into the provided
-	 * container.  Returns a status indicating if the import was successful.
-	 */
-	private IStatus dragAndDropImport(
-		IProgressMonitor monitor,
-		IContainer target,
-		String filePath) {
-		File toImport = new File(filePath);
-		if (target.getLocation().equals(toImport)) {
-			return info(ResourceNavigatorMessages.getString("DropAdapter.canNotDropOntoSelf")); //$NON-NLS-1$
-		}
-		ImportOperation op =
-			new ImportOperation(
-				target.getFullPath(),
-				new File(toImport.getParent()),
-				FileSystemStructureProvider.INSTANCE,
-				this,
-				Arrays.asList(new File[] { toImport }));
-		op.setCreateContainerStructure(false);
-		try {
-			op.run(monitor);
-		} catch (InterruptedException e) {
-			return info(ResourceNavigatorMessages.getString("DropAdapter.cancelled")); //$NON-NLS-1$
-		} catch (InvocationTargetException e) {
-			return error(ResourceNavigatorMessages.format("DropAdapter.dropOperationError", new Object[] { e.getTargetException().getMessage()}), e.getTargetException()); //$NON-NLS-1$
-		}
-		return op.getStatus();
-	}
-	
-	/**
-	 * Moves the source into the target container.  Returns a status object
-	 * indicating success or failure.
-	 */
-	private IStatus dragAndDropMove(IProgressMonitor monitor, IContainer target, IResource source) {
-		if (isCanceled) {
-			return ok();
-		}
-		if (source.equals(target) || source.getParent().equals(target)) {
-			return info(ResourceNavigatorMessages.getString("DropAdapter.sameSourceAndDestination")); //$NON-NLS-1$
-		}
-		if (source.getFullPath().isPrefixOf(target.getFullPath())) {
-			return error(source, ResourceNavigatorMessages.getString("DropAdapter.destinationASubFolder")); //$NON-NLS-1$
-		}
-		IPath destination = target.getFullPath().append(source.getName());
-
-		IStatus result = doMove(monitor, source, destination, false);
-		if (result.getCode() == IResourceStatus.PATH_OCCUPIED
-			|| result.getCode() == IResourceStatus.RESOURCE_EXISTS) {
-			IWorkspace workspace = source.getWorkspace();
-			IPath destinationPath = getNewNameFor(destination, workspace);
-			result = doMove(monitor, source, destinationPath, false);
-		}
-		return result;
-	}	
 
 	/**
 	 * @see DropTargetListener#dragOver
@@ -251,30 +154,6 @@ public class NavigatorDropAdapter
 	}
 	
 	/**
-	 * Return a "Copy of " name for the given path.
-	 */
-	private IPath getNewNameFor(IPath originalName, IWorkspace workspace) {
-		int counter = 1;
-		String resourceName = originalName.lastSegment();
-		IPath leadupSegment = originalName.removeLastSegments(1);
-		
-		while (true) {
-			String nameSegment;
-			
-			if (counter > 1)
-				nameSegment = ResourceNavigatorMessages.format("DropAdapter.copyNameTwoArgs", new Object[] {new Integer(counter), resourceName}); //$NON-NLS-1$
-			else
-				nameSegment = ResourceNavigatorMessages.format("DropAdapter.copyNameOneArg", new Object[] {resourceName}); //$NON-NLS-1$
-				
-			IPath pathToTry = leadupSegment.append(nameSegment);
-			
-			if (!workspace.getRoot().exists(pathToTry))
-				return pathToTry;
-				
-			counter++;
-		}
-	}
-	/**
 	 * Returns the shell
 	 */
 	private Shell getShell() {
@@ -360,65 +239,42 @@ public class NavigatorDropAdapter
 		if (getCurrentTarget() == null || data == null) {
 			return false;
 		}
-		final boolean result[] = new boolean[1];
-		final IStatus status[] = new IStatus[1];
-		final TransferData currentTransfer = getCurrentTransfer();
-		if (ResourceTransfer.getInstance().isSupportedType(currentTransfer) &&
-			getCurrentOperation() == DND.DROP_COPY) {
-			status[0] = performResourceCopy(getShell(), data);
-			//always return false because we don't want the source to clean up
-			result[0] = false;
-		} else {
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					try {
-						ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-							public void run(IProgressMonitor monitor) {
-								if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
-									status[0] = performResourceMove(monitor, data);
-									//always return false because we don't want the source to clean up
-									result[0] = false;									
-								} else if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
-									status[0] = performFileDrop(monitor, data);
-									result[0] = status[0].isOK();
-								} else {
-									result[0] = NavigatorDropAdapter.super.performDrop(data);
-								}
-							}
-						}, monitor);
-					} catch (CoreException e) {
-						status[0] = e.getStatus();
-						result[0] = false;
-					}
-				}
-			};
-			ProgressMonitorDialog dlg = new ProgressMonitorDialog(getShell());
-			try {
-				dlg.run(true, true, runnable);
-			} catch (InterruptedException e) {
-				openError(info(ResourceNavigatorMessages.getString("DropAdapter.cancelled"))); //$NON-NLS-1$
-				return false; //$NON-NLS-1$
-			} catch (InvocationTargetException e) {
-				openError(error(ResourceNavigatorMessages.format("DropAdapter.dropOperationError", new Object[] { e.getTargetException().getMessage()}), e.getTargetException())); //$NON-NLS-1$
-				return false;
+		boolean result;
+		IStatus status = null;
+		TransferData currentTransfer = getCurrentTransfer();
+		if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
+			if (getCurrentOperation() == DND.DROP_COPY) {
+				status = performResourceCopy(getShell(), data);
+				//always return false because we don't want the source to clean up
+				result = false;
 			}
+			else {
+				status = performResourceMove(data);
+				//always return false because we don't want the source to clean up
+				result = false;									
+			}
+		} else if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
+			status = performFileDrop(data);
+			result = status.isOK();
+		} else {
+			result = NavigatorDropAdapter.super.performDrop(data);
 		}
-		openError(status[0]);
-		return result[0];
+		openError(status);
+		return result;
 	}
 	
 	/**
 	 * Performs a drop using the FileTransfer transfer type.
 	 */
-	private IStatus performFileDrop(IProgressMonitor monitor, Object data) {
+	private IStatus performFileDrop(Object data) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, ResourceNavigatorMessages.getString("DropAdapter.problemImporting"), null); //$NON-NLS-1$
 		mergeStatus(problems, validateTarget(getCurrentTarget()));
 
-		IContainer targetResource = getActualTarget((IResource) getCurrentTarget());
+		IContainer target = getActualTarget((IResource) getCurrentTarget());
 		String[] names = (String[]) data;
-		for (int i = 0; i < names.length; i++) {
-			mergeStatus(problems, dragAndDropImport(monitor, targetResource, names[i]));
-		}
+		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(getShell());
+		operation.copyFiles(names, target);
+		
 		return problems;
 	}
 
@@ -429,26 +285,31 @@ public class NavigatorDropAdapter
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
 		mergeStatus(problems, validateTarget(getCurrentTarget()));
 
-		IContainer targetResource = getActualTarget((IResource) getCurrentTarget());
+		IContainer target = getActualTarget((IResource) getCurrentTarget());
 		IResource[] sources = (IResource[]) data;
-		for (int i = 0; i < sources.length; i++) {
-			mergeStatus(problems, dragAndDropCopy(shell, targetResource, sources[i]));
-		}
+		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(shell);
+		operation.copyResources(sources, target);
+		
 		return problems;
 	}
 
 	/**
 	 * Performs a resource move
 	 */
-	private IStatus performResourceMove(IProgressMonitor monitor, Object data) {
+	private IStatus performResourceMove(Object data) {
 		MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
 		mergeStatus(problems, validateTarget(getCurrentTarget()));
 
-		IContainer targetResource = getActualTarget((IResource) getCurrentTarget());
+		IContainer target = getActualTarget((IResource) getCurrentTarget());
 		IResource[] sources = (IResource[]) data;
-		for (int i = 0; i < sources.length; i++) {
-			mergeStatus(problems, dragAndDropMove(monitor, targetResource, sources[i]));
-		}
+		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
+			getShell(), 
+			WorkbenchMessages.getString("MoveResourceAction.title"),			//$NON-NLS-1$
+			WorkbenchMessages.getString("MoveResourceAction.checkMoveMessage"));//$NON-NLS-1$	
+		sources = checker.checkReadOnlyResources(sources);
+		MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
+		operation.copyResources(sources, target);
+		
 		return problems;
 	}
 	
