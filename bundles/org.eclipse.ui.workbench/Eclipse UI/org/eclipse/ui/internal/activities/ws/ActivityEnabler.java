@@ -198,7 +198,6 @@ public class ActivityEnabler {
 
 		dualViewer = new CheckboxTreeViewer(c);
 		dualViewer.setSorter(new ViewerSorter());
-		dualViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		dualViewer.setLabelProvider(new ActivityCategoryLabelProvider());
 		dualViewer.setContentProvider(provider);
 		dualViewer.setInput(activitySupport.getActivityManager());
