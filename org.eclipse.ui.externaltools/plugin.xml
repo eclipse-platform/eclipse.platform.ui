@@ -381,6 +381,13 @@
 			category="org.eclipse.ui.externaltools.ToolsPreferencePage">
 		</page>
 	</extension>    
+	
+	<extension point="org.eclipse.debug.ui.consoleContentProviders">
+		<consoleContentProvider 
+			id="org.eclipse.ant.consoleContentProvider" 
+			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntConsoleContentProvider">
+		</consoleContentProvider>
+	</extension>  	
 
 <!-- Old Stuff -->
 <!-- Old Stuff -->

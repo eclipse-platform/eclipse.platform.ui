@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -255,5 +256,20 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		super.startup();
 		ResourceSelectionManager.getDefault();
 	}
+
+	/**
+	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		super.shutdown();
+		ColorManager.getDefault().dispose();
+	}
+	
+	/**
+	 * Returns the preference color, identified by the given preference.
+	 */
+	public static Color getPreferenceColor(String pref) {
+		return ColorManager.getDefault().getColor(PreferenceConverter.getColor(getDefault().getPreferenceStore(), pref));
+	}	
 
 }
