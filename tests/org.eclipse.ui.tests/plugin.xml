@@ -121,6 +121,13 @@
       class="org.eclipse.ui.tests.api.MockEditorPart"
       contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor">
     </editor>
+    <editor id ="org.eclipse.ui.tests.ExtendedTextEditor"
+      name="ExtendedTextEditor"
+      icon="icons\mockeditorpart2.gif"
+      extensions="exttxt"
+      class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
+      contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor">     
+    </editor>
 </extension>
 
 <extension point = "org.eclipse.ui.actionSets"> 
@@ -322,6 +329,47 @@
             </enablement>
         </action> 
     </actionSet> 
+    
+	<!-- TextSelectionActionFilterText -->
+	
+    <actionSet id="org.eclipse.ui.tests.internal.TextSelectionActions" 
+        label="Text Selection Tests">
+        <menu id="org.eclipse.ui.tests.internal.TextSelectionMenu" 
+            label="Text Selection Tests" 
+            path="additions"> 
+            <separator name="group1"/> 
+        </menu> 
+        <action id="org.eclipse.ui.tests.internal.as_1" 
+            label="anyText" 
+            menubarPath="org.eclipse.ui.tests.internal.TextSelectionMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
+            <enablement>
+            	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac_2" 
+            label="emptyText" 
+            menubarPath="org.eclipse.ui.tests.internal.TextSelectionMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
+            <enablement>
+            	<and>
+	            	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+    	        	<objectState name="isEmpty" value="true"/>
+    	        </and>
+            </enablement>
+        </action> 
+        <action id="org.eclipse.ui.tests.internal.ac_3" 
+            label="helloText" 
+            menubarPath="org.eclipse.ui.tests.internal.TextSelectionMenu/group1" 
+            class="org.eclipse.ui.tests.api.MockActionDelegate"> 
+            <enablement>
+            	<and>
+	            	<objectClass name="org.eclipse.jface.text.ITextSelection"/>
+    	        	<objectState name="text" value="Hello"/>
+    	        </and>
+            </enablement>
+        </action> 
+	</actionSet>  
 </extension> 
 
 <extension point="org.eclipse.ui.popupMenus"> 
