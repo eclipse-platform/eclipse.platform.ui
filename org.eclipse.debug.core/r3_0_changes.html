@@ -30,7 +30,7 @@
 <p>The debug platform has added an optional element (<code>launchMode</code>), 
   to the definition of a launch tab group extension - <code>(org.eclipse.debug.ui.launchConfigurationTabGroup</code>), 
   to support the contribution of a set of tabs for a specific launch configuration 
-  type and launch mode. This allows third parties to extend an existing lauch 
+  type and launch mode. This allows third parties to extend an existing launch 
   configuration user interface. For example, a client contributing a launch delegate 
   to profile a Java Application would also contribute a set of tabs to configure 
   the profiler. The launchMode element defines a perpsective attribute to specify 
@@ -88,6 +88,19 @@
   an indexed value - <code>org.eclipse.core.debug.model.IIndexedValue</code>. 
   If a value implements this interface, the variables view will automatically 
   paritition its elements as required, into subranges.</p>
+<h3>Logical Structure Types</h3>
+<p>Often, it is convenient to navigate complex data structures in terms of a logical 
+  structure, rather than an implementation structure. For example, no matter how 
+  a list is implemented (i.e. linked list, collection of arrays, etc.), it is 
+  often convenient to be able to view the list as an ordered collection. To facilitate 
+  the display of logical structures in the variables view, an extension point 
+  has been added (<code>org.eclipse.debug.core.logicalStructureTypes</code>) allowing 
+  debug models to contribute logical structures of its values, where applicable. 
+  Debug models may contribute delegates to translate raw implementation values 
+  into logical values. The variables view will display the logical values, when 
+  the option to display logical structures is turned on. More than one logical 
+  structure can be provided for a single value - the user can choose which structure 
+  to display.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 

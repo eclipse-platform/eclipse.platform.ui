@@ -27,8 +27,6 @@ import org.eclipse.debug.core.model.IValue;
  * @since 3.0
  */
 public class LogicalStructureManager {
-	
-	public static final String EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES = "logicalStructureTypes"; //$NON-NLS-1$
 
 	private static LogicalStructureManager fgDefault;
 	private List fTypes = null;
@@ -56,7 +54,7 @@ public class LogicalStructureManager {
 	private void initialize() {
 		if (fTypes == null) {
 			fTypes = new ArrayList();
-			IExtensionPoint point = DebugPlugin.getDefault().getDescriptor().getExtensionPoint(EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
+			IExtensionPoint point = DebugPlugin.getDefault().getDescriptor().getExtensionPoint(DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
 			IConfigurationElement[] extensions = point.getConfigurationElements();
 			for (int i = 0; i < extensions.length; i++) {
 				IConfigurationElement extension = extensions[i];

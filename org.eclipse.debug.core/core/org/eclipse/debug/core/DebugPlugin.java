@@ -122,7 +122,15 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final String EXTENSION_POINT_PROCESS_FACTORIES = "processFactories"; //$NON-NLS-1$
-		
+
+	/**
+	 * Simple identifier constant (value <code>"logicalStructureTypes"</code>) for the
+	 * logical structure types extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES = "logicalStructureTypes"; //$NON-NLS-1$
+	
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
