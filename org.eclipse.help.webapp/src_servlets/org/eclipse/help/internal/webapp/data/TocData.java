@@ -173,15 +173,19 @@ public class TocData extends RequestData {
 	 * @return true if TOC should be visible
 	 */
 	public boolean isEnabled(int toc) {
-		IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
-		return isEnabled(tocs[toc]);
+		ITocElement[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
+		if(!isEnabled(tocs[toc])){
+			return false;
+		}
+		// do not generate toc when there are no leaf topics
+		return (getEnabledSubtopicList(tocs[toc]).size() > 0);
 	}
 	/**
 	 * Check if given TOC is visible (belongs to an enabled activity)
 	 * @param toc
 	 * @return true if TOC should be visible
 	 */
-	private boolean isEnabled(IToc toc) {
+	private boolean isEnabled(ITocElement toc) {
 		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref());
 	}
 	
@@ -275,6 +279,10 @@ public class TocData extends RequestData {
 	 */
 	public void generateToc(int toc, Writer out) throws IOException {
 		ITopicElement[] topics = getEnabledSubtopics(tocs[toc]);
+		if(topics.length <=0){
+			// do not generate toc when there are no leaf topics
+			return;
+		}
 
 		int maxLevels = dynamicLoadDepths;
 		if (tocs[toc] instanceof Toc
@@ -512,7 +520,7 @@ public class TocData extends RequestData {
 	 * @return List of ITopicElement
 	 */
 	private List getEnabledSubtopicList(INavigationElement navigationElement) {
-		if(navigationElement instanceof IToc && !isEnabled((IToc)navigationElement))
+		if(navigationElement instanceof ITocElement && !isEnabled((ITocElement)navigationElement))
 			return Collections.EMPTY_LIST;
 		List children = navigationElement.getChildren();
 		List childTopics = new ArrayList(children.size());
@@ -521,7 +529,10 @@ public class TocData extends RequestData {
 			) {
 			INavigationElement c = (INavigationElement) childrenIt.next();
 			if ((c instanceof ITopicElement)) {
-				childTopics.add(c);
+				// add topic only if it will not end up being an empty container
+				if(((ITopicElement)c).getHref()!=null || getEnabledSubtopicList(c).size()>0){
+					childTopics.add(c);
+				}
 			} else {
 				// it is a Toc, Anchor or Link,
 				// which may have children attached to it.
