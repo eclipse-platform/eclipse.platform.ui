@@ -87,14 +87,22 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		
 		private String fStreamIdentifier;
 		private IStreamMonitor fStreamMonitor;
+		private boolean fIsSystemOut = false;
+		private boolean fIsSystemErr = false;
 	
 		public StreamListener(String streamIdentifier, IStreamMonitor streamMonitor) {
 			fStreamIdentifier = streamIdentifier;
 			fStreamMonitor = streamMonitor;
+			fIsSystemOut = IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB.equals(streamIdentifier);
+			fIsSystemErr = IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB.equals(streamIdentifier); 
 		}
 		
 		public void streamAppended(String newText, IStreamMonitor monitor) {
-			DebugUIPlugin.getConsoleDocumentManager().aboutToWriteSystemErr(fDocument);
+			if (fIsSystemOut) {
+				ConsoleDocumentManager.getDefault().aboutToWriteSystemOut(fDocument);
+			} else if (fIsSystemErr) {
+				ConsoleDocumentManager.getDefault().aboutToWriteSystemErr(fDocument);
+			}
 			ConsoleDocumentPartitioner.this.streamAppended(newText, fStreamIdentifier);
 		}
 		
