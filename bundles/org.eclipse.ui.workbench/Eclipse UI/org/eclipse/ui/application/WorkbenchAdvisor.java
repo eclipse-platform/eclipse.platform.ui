@@ -586,7 +586,9 @@ public abstract class WorkbenchAdvisor {
     }
 
     /**
-     * Returns the id of the perspective to use for the initial workbench window.
+     * Returns the id of the perspective to use for the initial workbench window,
+     * or <code>null</code> if no initial perspective should be shown in the initial
+     * workbench window.
      * <p>
      * This method is called during startup when the workbench is creating 
      * the first new window. Subclasses must implement.

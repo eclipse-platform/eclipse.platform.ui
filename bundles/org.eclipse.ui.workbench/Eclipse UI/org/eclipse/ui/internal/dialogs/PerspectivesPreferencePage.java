@@ -52,6 +52,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * The Workbench / Perspectives preference page.
@@ -466,10 +467,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 	/**
 	 * Look up the index of the perpective with the given if.
-	 * @param perspectiveId
+	 * @param perspectiveId or <code>null</code>
 	 * @return int -1 if it cannot be found
 	 */
 	private int indexOf(String perspectiveId) {
+		if (perspectiveId == null)
+			return -1;
 		PerspectiveDescriptor[] descriptors =
 			new PerspectiveDescriptor[perspectives.size()];
 		perspectives.toArray(descriptors);
@@ -522,9 +525,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	 */
 	public boolean performOk() {
 		// Set the default perspective
-		if (!defaultPerspectiveId.equals(perspectiveRegistry
-				.getDefaultPerspective()))
+		if (!Util.equals(defaultPerspectiveId, perspectiveRegistry.getDefaultPerspective())) {
 			perspectiveRegistry.setDefaultPerspective(defaultPerspectiveId);
+		}
 
 		if (!deletePerspectives())
 			return false;

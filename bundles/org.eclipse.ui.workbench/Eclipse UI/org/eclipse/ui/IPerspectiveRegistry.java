@@ -59,23 +59,10 @@ public interface IPerspectiveRegistry {
      * Returns the id of the default perspective for the workbench.  This identifies one
      * perspective extension within the workbench's perspective registry.
      * <p>
-     * On startup of the platform UI the default perspective is determined using a 
-     * multistep process.
-     * </p>
-     * <ol>
-     *   <li>Initially the <code>Resource Perspective</code> is default. </li>
-     *   <li>If a single perspective extension within the registry has a <b>default</b>
-     *			attribute it will become the default perspective.  If two or more
-     *			extensions have the <b>default</b> attribute the registry will ignore all
-     *			of them and select the <code>Resource Perspective</code>. </li>
-     *   <li>If the user has set the default perspective within the 
-     *			<code>Perspective</code> dialog their preference will be selected 
-     *			over all others. </li>
-     * </ol>
-     * </p>
+     * Returns <code>null</code> if there is no default perspective.
+     * </p> 
      *
-     * @return the default perspective id; will never be <code>null</code>
-     * Note: revise - this is out of date (even before RCP)
+     * @return the default perspective id, or <code>null</code>
      */
     public String getDefaultPerspective();
 
@@ -88,10 +75,13 @@ public interface IPerspectiveRegistry {
 
     /**
      * Sets the default perspective for the workbench to the given perspective id.
-     * The id must correspond to one perspective extension within the workbench's 
-     * perspective registry.
+     * If non-<code>null</code>, the id must correspond to a perspective extension 
+     * within the workbench's perspective registry.
+     * <p>
+     * A <code>null</code> id indicates no default perspective.
+     * </p>
      *
-     * @param id a perspective id; must not be <code>null</code>
+     * @param id a perspective id, or <code>null</code>
      */
     public void setDefaultPerspective(String id);
 

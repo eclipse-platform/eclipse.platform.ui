@@ -574,11 +574,13 @@ public final class Workbench implements IWorkbench {
         windowManager.add(newWindow);
 
         // Create the initial page.
-        try {
-            newWindow.busyOpenPage(perspID, input);
-        } catch (WorkbenchException e) {
-            windowManager.remove(newWindow);
-            throw e;
+        if (perspID != null) {
+	        try {
+	            newWindow.busyOpenPage(perspID, input);
+	        } catch (WorkbenchException e) {
+	            windowManager.remove(newWindow);
+	            throw e;
+	        }
         }
 
         // Open window after opening page, to avoid flicker.
@@ -1160,21 +1162,12 @@ public final class Workbench implements IWorkbench {
         }
     }
 
-    /*
-     * opens the initial workbench window.
+    /**
+     * Opens the initial workbench window.
      */
     /* package */void openFirstTimeWindow() {
-
-        // create the workbench window
-        WorkbenchWindow newWindow = newWorkbenchWindow();
-        newWindow.create();
-        windowManager.add(newWindow);
-
-        // Create the initial page.
-        try {
-            newWindow.openPage(
-                    getPerspectiveRegistry().getDefaultPerspective(),
-                    getDefaultPageInput());
+    	try {
+    		busyOpenWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), getDefaultPageInput());
         } catch (WorkbenchException e) {
             // Don't use the window's shell as the dialog parent, 
             // as the window is not open yet (bug 76724).
@@ -1182,7 +1175,6 @@ public final class Workbench implements IWorkbench {
                     .getString("Problems_Opening_Page"), //$NON-NLS-1$
                     e.getMessage(), e.getStatus());
         }
-        newWindow.open();
     }
 
     /*
@@ -1946,15 +1938,12 @@ public final class Workbench implements IWorkbench {
     }
 
     /**
-     * Returns the default perspective id.
+     * Returns the default perspective id, which may be <code>null</code>.
      * 
-     * @return the default perspective id
+     * @return the default perspective id, or <code>null</code>
      */
     public String getDefaultPerspectiveId() {
-        String id = getAdvisor().getInitialWindowPerspectiveId();
-        // make sure we the advisor gave us one
-        Assert.isNotNull(id);
-        return id;
+        return getAdvisor().getInitialWindowPerspectiveId();
     }
 
     /**

@@ -323,10 +323,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
     }
 
     /**
-     * Returns the id of the default perspective for the workbench.  This identifies one
-     * perspective extension within the workbench's perspective registry.
-     *
-     * @return the default perspective id; will never be <code>null</code>
+     * @see IPerspectiveRegistry#getDefaultPerspective()
      */
     public String getDefaultPerspective() {
         return defaultPerspID;
@@ -355,9 +352,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
         if (str != null && str.length() > 0) {
             setDefaultPerspective(str);
             dialogSettings.put(ID_DEF_PERSP, ""); //$NON-NLS-1$
-        } else {
-            defaultPerspID = PrefUtil.getAPIPreferenceStore().getString(
-                    IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
         }
         verifyDefaultPerspective();
     }
@@ -520,11 +514,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
     }
 
     /**
-     * Sets the default perspective for the workbench to the given perspective id.
-     * The id must correspond to one perspective extension within the workbench's 
-     * perspective registry.
-     *
-     * @param id a perspective id; must not be <code>null</code>
+     * @see IPerspectiveRegistry#setDefaultPerspective(String)
      */
     public void setDefaultPerspective(String id) {
         IPerspectiveDescriptor desc = findPerspectiveWithId(id);
@@ -563,12 +553,14 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IConfiguration
             return;
 
         // Step 2. Read default value.
-        defaultPerspID = PrefUtil.getAPIPreferenceStore().getString(
+        String str = PrefUtil.getAPIPreferenceStore().getString(
                 IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
-        if (defaultPerspID != null)
-            desc = findPerspectiveWithId(defaultPerspID);
-        if (desc != null)
+        if (str != null && str.length() > 0)
+            desc = findPerspectiveWithId(str);
+        if (desc != null) {
+        	defaultPerspID = str;
             return;
+        }
 
         // Step 3. Use application-specific default
         defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();

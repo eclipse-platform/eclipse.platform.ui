@@ -1633,10 +1633,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
             try {
                 String defPerspID = getWorkbenchImpl().getPerspectiveRegistry()
                         .getDefaultPerspective();
-                WorkbenchPage newPage = new WorkbenchPage(this, defPerspID,
-                        getAdvisor().getDefaultPageInput());
-                pageList.add(newPage);
-                firePageOpened(newPage);
+                if (defPerspID != null) {
+	                WorkbenchPage newPage = new WorkbenchPage(this, defPerspID,
+	                        getAdvisor().getDefaultPageInput());
+	                pageList.add(newPage);
+	                firePageOpened(newPage);
+                }
             } catch (WorkbenchException e) {
                 WorkbenchPlugin
                         .log("Unable to create default perspective - constructor failed.", e); //$NON-NLS-1$
@@ -2115,7 +2117,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
     /**
      * Sets the active page within the window.
      *
-     * @param in identifies the new active page.
+     * @param in identifies the new active page, or <code>null</code> for no active page
      */
     public void setActivePage(final IWorkbenchPage in) {
         if (getActiveWorkbenchPage() == in)

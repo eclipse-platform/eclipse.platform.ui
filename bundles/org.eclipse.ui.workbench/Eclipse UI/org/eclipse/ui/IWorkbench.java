@@ -205,16 +205,12 @@ public interface IWorkbench {
      * In most cases where this method is used the caller is tightly coupled to
      * a particular perspective. They define it in the registry and contribute
      * some user interface action to open or activate it. In situations like
-     * this a static variable is often used to identify the perspective Id.
-     * </p>
-     * <p>
-     * The workbench also defines a number of menu items to activate or open
-     * each registered perspective. A complete list of these perspectives is
-     * available from the perspective registry found on <code>IWorkbench</code>.
+     * this a static variable is often used to identify the perspective ID.
      * </p>
      * 
      * @param perspectiveId
-     *            the perspective id for the window's initial page
+     *            the perspective id for the window's initial page, or <code>null</code>
+     *            for no initial page 
      * @param input
      *            the page input, or <code>null</code> if there is no current
      *            input. This is used to seed the input for the new page's
@@ -237,11 +233,6 @@ public interface IWorkbench {
      * method will explicitly inform the user a new window will be opened.
      * Otherwise, callers are strongly recommended to use the <code>openPerspective</code>
      * APIs to programmatically show a perspective to avoid confusing the user.
-     * </p>
-     * <p>
-     * The workbench also defines a number of menu items to activate or open
-     * each registered perspective. A complete list of these perspectives is
-     * available from the perspective registry found on <code>IWorkbench</code>.
      * </p>
      * 
      * @param input

@@ -212,12 +212,15 @@ public class QuickStartAction extends Action implements
                         workbenchWindow);
             } catch (WorkbenchException e) {
                 IDEWorkbenchPlugin
-                        .log(
-                                "Error opening perspective: " + perspectiveId, e.getStatus()); //$NON-NLS-1$
+						.log("Error opening perspective: " + perspectiveId, e.getStatus()); //$NON-NLS-1$
                 return false;
             }
         }
 
+        if (page == null) {
+        	return false;
+        }
+        
         page.setEditorAreaVisible(true);
 
         // create input
