@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -361,8 +362,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				}
 
 				// Set the contents if we didn't cache them to disk
-				if (out == byteStream) {
-					contents = byteStream.toByteArray();
+				if (out instanceof ByteArrayOutputStream) {
+					contents = ((ByteArrayOutputStream)out).toByteArray();
 				} else {
 					contents = null;
 				}
@@ -522,7 +523,15 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			ioFile.getParentFile().mkdirs();
 		}
 		// Switch streams
-		OutputStream out = new BufferedOutputStream(new FileOutputStream(ioFile));
+		OutputStream out;
+		try {
+			out = new BufferedOutputStream(new FileOutputStream(ioFile));
+		} catch (FileNotFoundException e) {
+			// Could not find the file. Perhaps the name is too long. (bug 20696)
+			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.Could_not_cache_remote_contents_to_disk._Caching_remote_file_in_memory_instead._1"), e)); //$NON-NLS-1$
+			// Resort to in-memory storage of the remote file
+			out = new ByteArrayOutputStream();
+		}
 		// Write what we've read so far
 		out.write(byteStream.toByteArray());
 		return out;
