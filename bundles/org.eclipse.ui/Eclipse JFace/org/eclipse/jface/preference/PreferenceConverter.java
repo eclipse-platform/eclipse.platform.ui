@@ -82,7 +82,7 @@ private PreferenceConverter() {
  */
 private static RGB basicGetColor(String value) {
 
-	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+	if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
 		return COLOR_DEFAULT_DEFAULT;
 
 	RGB color = StringConverter.asRGB(value, null);
@@ -96,7 +96,7 @@ private static RGB basicGetColor(String value) {
  * multiple FontDatas can be defined.
  */
 private static FontData[] basicGetFontData(String value) {
-	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+	if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
 		return FONTDATA_ARRAY_DEFAULT_DEFAULT;
 
 	//Read in all of them to get the value
@@ -121,7 +121,7 @@ private static FontData[] basicGetFontData(String value) {
  */
 private static Point basicGetPoint(String value) {
 	Point dp = new Point(POINT_DEFAULT_DEFAULT.x, POINT_DEFAULT_DEFAULT.y);
-	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+	if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
 		return dp;
 	return StringConverter.asPoint(value, dp);
 }
@@ -138,7 +138,7 @@ private static Rectangle basicGetRectangle(String value) {
 			RECTANGLE_DEFAULT_DEFAULT.width, 
 			RECTANGLE_DEFAULT_DEFAULT.height); 
 
-	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+	if (IPreferenceStore.STRING_DEFAULT_DEFAULT.equals(value))
 		return dr;
 	return StringConverter.asRectangle(value, dr);
 }
