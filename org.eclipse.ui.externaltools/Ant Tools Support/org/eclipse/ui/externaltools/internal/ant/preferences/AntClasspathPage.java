@@ -293,6 +293,14 @@ public class AntClasspathPage extends AntPage {
 		browseAntHomeButton.setEnabled(enabled);
 		antHomeButton.setSelection(enabled);
 		antHome.setText(antHomePath);
+		antHome.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				File rootDir= validateAntHome(antHome.getText());
+				if (rootDir != null) {
+					setAntHome(rootDir);
+				}
+			}
+			});
 		tableSelectionChanged((IStructuredSelection) getTableViewer().getSelection());
 		userTableSelectionChanged((IStructuredSelection)userTableViewer.getSelection());
 		getPreferencePage().setErrorMessage(null);
@@ -370,14 +378,6 @@ public class AntClasspathPage extends AntPage {
 		gd.horizontalSpan = 1;
 		antHome.setLayoutData(gd);
 		antHome.setFont(font);
-		antHome.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				File rootDir= validateAntHome(antHome.getText());
-				if (rootDir != null) {
-					setAntHome(rootDir);
-				}
-			}
-		});
 		antHome.setEnabled(false);
 		
 		browseAntHomeButton= new Button(top, SWT.PUSH);
