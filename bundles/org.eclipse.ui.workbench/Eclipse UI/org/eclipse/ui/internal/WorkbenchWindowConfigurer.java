@@ -13,8 +13,11 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -237,17 +240,90 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getCoolBarManager()
-	 */
-	public CoolBarManager getCoolBarManager() {
-		return window.getCoolBarManager();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getStatusLineManager()
 	 */
 	public IStatusLineManager getStatusLineManager() {
 		return window.getStatusLineManager();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addToolBar(java.lang.String)
+	 */
+	public IToolBarManager addToolBar(String id) {
+		if (id == null || id.length() < 1) {
+			throw new IllegalArgumentException();
+		}
+		CoolBarManager cBarMgr = window.getCoolBarManager();
+		CoolBarContributionItem cBarItem = new CoolBarContributionItem(cBarMgr, id);
+		cBarMgr.add(cBarItem);
+		cBarItem.setVisible(true);
+		return cBarItem.getToolBarManager();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#removeToolBar(java.lang.String)
+	 */
+	public void removeToolBar(String id) {
+		if (id == null || id.length() < 1) {
+			throw new IllegalArgumentException();
+		}
+		CoolBarManager cBarMgr = window.getCoolBarManager();
+		cBarMgr.remove(id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getToolBar(java.lang.String)
+	 */
+	public IToolBarManager getToolBar(String id) {
+		if (id == null || id.length() < 1) {
+			throw new IllegalArgumentException();
+		}
+		CoolBarManager cBarMgr = window.getCoolBarManager();
+		CoolBarContributionItem cBarItem = (CoolBarContributionItem) cBarMgr.find(id);
+		if (cBarItem != null) {
+			return cBarItem.getToolBarManager();
+		} else {
+			return null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorToolbarGroup()
+	 */
+	public void addEditorToolbarGroup() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addToolbarGroup(org.eclipse.jface.action.IToolBarManager, java.lang.String, boolean)
+	 */
+	public void addToolbarGroup(IToolBarManager toolBarMgr, String id, boolean asSeperator) {
+		if (id == null || id.length() < 1) {
+			throw new IllegalArgumentException();
+		}
+		if (!(toolBarMgr instanceof CoolItemToolBarManager)) {
+			throw new IllegalArgumentException();
+		}
+		((CoolItemToolBarManager) toolBarMgr).addBaseGroup(id, asSeperator);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#registerGlobalAction(org.eclipse.jface.action.IAction)
+	 */
+	public void registerGlobalAction(IAction action) {
+		window.registerGlobalAction(action);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addToToolBarMenu(org.eclipse.jface.action.ActionContributionItem)
+	 */
+	public void addToToolBarMenu(ActionContributionItem menuItem) {
+		if (menuItem == null) {
+			throw new IllegalArgumentException();
+		}
+		CoolBarManager cBarMgr = window.getCoolBarManager();
+		cBarMgr.addToMenu(menuItem);
 	}
 }
 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -235,6 +237,39 @@ public interface IWorkbenchWindowConfigurer {
 	 */
 	public IToolBarManager getToolBar(String id);
 
+	/**
+	 * Adds a group to the tool bar of the workbench window. The new group is 
+	 * added after any existing contributions to the tool bar.
+	 * <p>
+	 * Note that every workbench window has a tool bar, even though it may not
+	 * be showing.
+	 * </p>
+	 *
+	 * @param toolBarMgr the tool bar manager to add the group to 
+	 * @param id the unique group identifier
+	 * @param asSeperator whether the group should have a seperator
+	 */
+	public void addToolbarGroup(IToolBarManager toolBarMgr, String id, boolean asSeperator);
+	
+	/**
+	 * Register the action as a global (i.e. retargetable) action with the workbench
+	 * window.
+	 *  
+	 * @param action the global action
+	 */
+	public void registerGlobalAction(IAction action);
+	
+	/**
+	 * Adds a menu item to the tool bar of the workbench menu.
+	 * <p>
+	 * Note that every workbench window has a tool bar, even though it may not
+	 * be showing.
+	 * </p>
+	 * 
+	 * @param menuItem the action contribution item to add to the menu
+	 */
+	public void addToToolBarMenu(ActionContributionItem menuItem);
+	
 	/**
 	 * Adds the special editor tool bar group to the tool bar of the workbench
 	 * window. The new tool bar item is added after any existing ones. The id
