@@ -99,6 +99,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	}
 
 	protected Control createContents(Composite parent) {
+		noDefaultAndApplyButton();
 		originalVariableState= getVariableManager().getSimpleVariables();
 		Font font= parent.getFont();
 		//The main composite
