@@ -15,6 +15,7 @@ package org.eclipse.ant.internal.ui;
 import java.util.Locale;
 
 import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThread;
+import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,6 +28,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -58,6 +60,8 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	private IPreferenceStore fCombinedPreferenceStore;
+
+    private IDocumentProvider fDocumentProvider;
 
 	/** 
 	 * Constructs an instance of this plug-in runtime class.
@@ -206,4 +210,17 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		}
 		return fCombinedPreferenceStore;
 	}
+    
+   /**
+	 * Returns the document provider for use in the Ant editor.
+     *
+	 * @return the Ant editor document provider
+	 * 
+	 * @since 3.1
+	 */
+    public synchronized IDocumentProvider getDocumentProvider() {
+        if (fDocumentProvider == null)
+            fDocumentProvider= new AntEditorDocumentProvider();
+        return fDocumentProvider;
+    }
 }

@@ -362,7 +362,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     public AntEditor() {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
-		setDocumentProvider(new AntEditorDocumentProvider());
+		setDocumentProvider(AntUIPlugin.getDefault().getDocumentProvider());
 		AntModelCore.getDefault().addAntModelListener(fAntModelListener);
 		
 		if (isFoldingEnabled()) {
