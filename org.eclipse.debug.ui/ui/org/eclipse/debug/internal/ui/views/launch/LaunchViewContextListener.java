@@ -375,7 +375,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	public void contextManagerChanged(ContextManagerEvent contextManagerEvent) {
 		Set enabled = getNewlyEnabledContexts(contextManagerEvent);
 		Set disabled = getNewlyDisabledContexts(contextManagerEvent);
-		contextActivated(enabled);
+		contextEnabled(enabled);
 		contextsDisabled(disabled);
 	}
 	
@@ -392,13 +392,13 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	}
 
 	/**
-	 * The context with the given ID has been submitted for
-	 * enablement. Activate the appropriate views.
+	 * The context with the given ID has been enabled.
+	 * Activate the appropriate views.
 	 * 
 	 * @param contextId the ID of the context that has been
-	 * 	submitted for enablement
+	 * 	enabled
 	 */
-	public void contextActivated(Set contextIds) {
+	public void contextEnabled(Set contextIds) {
 		IWorkbenchPage page= getActiveWorkbenchPage();
 		if (page == null || contextIds.size() == 0) {
 			return;
@@ -728,7 +728,7 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 			}
 		}
 		submitContexts(contextIds, launch);
-		contextActivated(contextsAlreadyEnabled);
+		contextEnabled(contextsAlreadyEnabled);
 	}
 
 	/**
