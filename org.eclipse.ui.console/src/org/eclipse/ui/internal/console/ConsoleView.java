@@ -417,4 +417,12 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		// add as a listener
 		manager.addConsoleListener(this);		
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleView#warnOfContentChange(org.eclipse.ui.console.IConsole)
+	 */
+	public void warnOfContentChange(IConsole console) {
+		// TODO: implementation
+	}
+	
 }

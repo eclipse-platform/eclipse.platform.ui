@@ -67,4 +67,12 @@ public interface IConsoleManager {
 	 * @param console console to display
 	 */
 	public void showConsoleView(IConsole console);
+	
+	/**
+	 * Warns that the content of the given console has changed in
+	 * all console views.
+	 * 
+	 * @param console the console that has changed
+	 */
+	public void warnOfContentChange(IConsole console);
 }

@@ -221,4 +221,12 @@ public class ConsoleManager implements IConsoleManager {
 		}
 		return bringToTop;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleManager#warnOfContentChange(org.eclipse.ui.console.IConsole)
+	 */
+	public void warnOfContentChange(IConsole console) {
+		// TODO: implementation
+	}
+	
 }

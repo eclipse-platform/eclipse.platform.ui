@@ -55,5 +55,12 @@ public interface IConsoleView extends IViewPart {
 	 *  if none
 	 */
 	public IConsole getConsole();
+	
+	/**
+	 * Warns that the content of the given console has changed.
+	 * 
+	 * @param console the console that has changed
+	 */
+	public void warnOfContentChange(IConsole console);	
 
 }
