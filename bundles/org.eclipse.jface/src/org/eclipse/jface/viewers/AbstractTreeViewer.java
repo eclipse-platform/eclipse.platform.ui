@@ -927,14 +927,9 @@ private void internalRefresh(Widget widget, Object element, boolean doStruct, bo
 	if (widget instanceof Item) {
 		if (doStruct) {
 			updatePlus((Item)widget, element);
-		}	
-		// update labels if told to, or if element has changed
-		if (updateLabels || !equals(element, widget.getData())) {
-			doUpdateItem(widget, element, true);
 		}
-		else {
-			associate(element, (Item) widget);
-		}
+		// TODO: ignore updateLabels for now	
+		doUpdateItem(widget, element, true);
 	}
 
 	if (doStruct) {
