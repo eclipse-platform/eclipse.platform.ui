@@ -89,6 +89,7 @@ public class ExportResourcesAction
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
+		setActionDefinitionId("org.eclipse.ui.file.export"); //$NON-NLS-1$
 		setToolTipText(IDEWorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
 		setId("export"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);

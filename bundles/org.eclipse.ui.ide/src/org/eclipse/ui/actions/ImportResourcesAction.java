@@ -83,6 +83,7 @@ public class ImportResourcesAction
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
+		setActionDefinitionId("org.eclipse.ui.file.import"); //$NON-NLS-1$
 		setToolTipText(IDEWorkbenchMessages.getString("ImportResourcesAction.toolTip")); //$NON-NLS-1$
 		setId("import"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.IMPORT_ACTION);
