@@ -145,9 +145,17 @@ private void checkInitialSelections() {
 
 	for (int i = 0; i < editorMappings.length; i++) {
 		IFileEditorMapping mapping = editorMappings[i];
+		
+		//Check for both extension and label matches
 		if (this.initialSelections.contains(mapping.getExtension())){
 			listViewer.setChecked(mapping, true);
 			selectedMappings.add(mapping.getExtension());
+		}
+		else{ 
+			if(this.initialSelections.contains(mapping.getLabel())){
+				listViewer.setChecked(mapping, true);
+				selectedMappings.add(mapping.getLabel());
+			}
 		}
 	}
 
