@@ -344,9 +344,6 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			}
 		};
 	}
-	public boolean isSaveNeeded() {
-		return false;
-	}
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		initLabels();
 		DiffNode diffRoot = new DiffNode(Differencer.NO_CHANGE);
