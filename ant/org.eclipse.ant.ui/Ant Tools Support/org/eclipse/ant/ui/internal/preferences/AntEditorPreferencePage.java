@@ -46,9 +46,9 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
@@ -59,8 +59,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		
 	private final String[][] fAppearanceColorListModel= new String[][] {
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.lineNumberForegroundColor"), AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.currentLineHighlighColor"), TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColor"), TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.currentLineHighlighColor"), ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColor"), ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_text_1"), IAntEditorColorConstants.P_DEFAULT, null}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_processing_instuctions_2"),  IAntEditorColorConstants.P_PROC_INSTR, null}, //$NON-NLS-1$
 		{AntPreferencesMessages.getString("AntEditorPreferencePage.Ant_editor_constant_strings_3"),  IAntEditorColorConstants.P_STRING, null},  //$NON-NLS-1$
@@ -141,21 +141,21 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
 		}
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN));
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER));
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
 	
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, TextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
@@ -232,19 +232,19 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
 		String[] errorMessages= new String[]{AntPreferencesMessages.getString("AntEditorPreferencePage.empty_input_print_margin"), AntPreferencesMessages.getString("AntEditorPreferencePage.invalid_input_print_margin")};  //$NON-NLS-1$//$NON-NLS-2$
-		addTextField(appearanceComposite, labelText, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
+		addTextField(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 3, 0, errorMessages);
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showOverviewRuler"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
+		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, 0);
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showLineNumbers"); //$NON-NLS-1$
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, 0);
 
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
+		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, 0);
 				
 		labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.showPrintMargin"); //$NON-NLS-1$
-		addCheckBox(appearanceComposite, labelText, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
+		addCheckBox(appearanceComposite, labelText, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
 
 		Label label= new Label(appearanceComposite, SWT.LEFT );
@@ -499,7 +499,9 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 		fAnnotationList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
 		fAnnotationList.setFont(font);
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		gd.heightHint= convertHeightInCharsToPixels(8);
+		int heightHint= fAnnotationColorListModel.length;
+		heightHint= Math.min(20, heightHint);
+		gd.heightHint= convertHeightInCharsToPixels(heightHint);
 		fAnnotationList.setLayoutData(gd);
 						
 		Composite optionsComposite= new Composite(editorComposite, SWT.NONE);
