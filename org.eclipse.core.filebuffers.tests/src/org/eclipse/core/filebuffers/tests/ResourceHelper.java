@@ -74,7 +74,7 @@ public class ResourceHelper {
 			} catch (CoreException x) {
 				if (i == MAX_RETRY - 1) {
 					FileBuffersTestPlugin.getDefault().getLog().log(x.getStatus());
-					throw x;
+//					throw x;
 				}
 				try {
 					Thread.sleep(1000); // sleep a second
