@@ -355,7 +355,7 @@ public final class Command extends NamedHandleObject implements Comparable {
 	 *         otherwise.
 	 */
 	public final boolean setHandler(final IHandler handler) {
-		if (handler == this.handler) {
+		if (!Util.equals(handler, this.handler)) {
 			return false;
 		}
 

@@ -63,6 +63,18 @@ public final class LegacyHandlerWrapper implements IHandler {
 		handler.dispose();
 	}
 
+	public final boolean equals(final Object object) {
+		if (object instanceof org.eclipse.ui.commands.IHandler) {
+			return this.handler == object;
+		}
+
+		if (object instanceof LegacyHandlerWrapper) {
+			return this.handler == ((LegacyHandlerWrapper) object).handler;
+		}
+
+		return false;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -74,6 +86,10 @@ public final class LegacyHandlerWrapper implements IHandler {
 		} catch (final org.eclipse.ui.commands.ExecutionException e) {
 			throw new ExecutionException(e.getMessage(), e.getCause());
 		}
+	}
+
+	public final int hashCode() {
+		return this.handler.hashCode();
 	}
 
 	/*
