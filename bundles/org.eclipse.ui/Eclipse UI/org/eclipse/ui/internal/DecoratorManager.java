@@ -29,6 +29,8 @@ public class DecoratorManager
 	//The definitions are definitions read from the registry
 	private DecoratorDefinition[] definitions;
 
+	private static final DecoratorDefinition[] EMPTY_DEF = new DecoratorDefinition[0];
+	
 	private final String PREFERENCE_SEPARATOR = ",";
 	private final String VALUE_SEPARATOR = ":";
 	private final String P_TRUE = "true";
@@ -167,6 +169,9 @@ public class DecoratorManager
 	 */
 	private DecoratorDefinition[] getDecoratorsFor(Object element) {
 
+		if (element == null)
+			return EMPTY_DEF;
+		
 		Class elementClass = element.getClass();
 		String className = elementClass.getName();
 		DecoratorDefinition[] decoratorArray = 
