@@ -905,6 +905,8 @@ public class JobManager implements IJobManager {
 				case Job.SLEEPING :
 					//update the job wake time
 					job.setStartTime(InternalJob.T_INFINITE);
+					//change state again to reshuffle the sleep queue
+					changeState(job, Job.SLEEPING);
 					return true;
 				case Job.NONE :
 					return true;

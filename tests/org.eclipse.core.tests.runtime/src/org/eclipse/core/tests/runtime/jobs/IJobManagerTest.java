@@ -172,6 +172,21 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		jobC.cancel();
 		jobB.cancel();
 	}
+	/**
+	 * Regression test for bug 57656
+	 */
+	public void testBug57656() {
+		TestJob jobA = new TestJob("Job1");
+		TestJob jobB = new TestJob("Job2");
+		//schedule jobA 
+		jobA.schedule(5000);
+		//schedule jobB so it gets behind jobA in the queue
+		jobB.schedule(10000);
+		//now put jobA to sleep indefinitely
+		jobA.sleep();
+		//jobB should still run within ten seconds
+		waitForCompletion(jobB, 30000);
+	}
 
 	public void testDelayedJob() {
 		//schedule a delayed job and ensure it doesn't start until instructed
@@ -1327,13 +1342,27 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 
-	private void waitForCompletion(Job job) {
+	/**
+	 * Ensure job completes within the given time.
+	 * @param job
+	 * @param waitTime time in milliseconds
+	 */
+	private void waitForCompletion(Job job, int waitTime) {
 		int i = 0;
+		int tickLength = 10;
+		int ticks = waitTime / tickLength;
 		while (job.getState() != Job.NONE) {
-			sleep(10);
+			sleep(tickLength);
 			//sanity test to avoid hanging tests
-			assertTrue("Timeout waiting for job to complete", i++ < 100);
+			assertTrue("Timeout waiting for job to complete", i++ < ticks);
 		}
+	}
+
+	/**
+	 * Ensure given job complets within a second.
+	 */
+	private void waitForCompletion(Job job) {
+		waitForCompletion(job, 1000);
 	}
 
 	/**
