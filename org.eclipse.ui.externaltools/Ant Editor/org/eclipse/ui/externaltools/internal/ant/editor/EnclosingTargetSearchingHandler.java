@@ -1,5 +1,10 @@
-//
-// EnclosingTargetSearchingHandler.java
+package org.eclipse.ui.externaltools.internal.ant.editor;
+
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 //
 // Copyright:
 // GEBIT Gesellschaft fuer EDV-Beratung
@@ -7,7 +12,8 @@
 // Berlin, Duesseldorf, Frankfurt (Germany) 2002
 // All rights reserved.
 //
-package org.eclipse.ui.externaltools.internal.ant.editor;
+
+import java.io.File;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -41,8 +47,8 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
      * @param aColumnOfCursorPosition the startingColumn where the cursor is located in
      * the document. The first startingColumn is refered to with an index of '0'.
      */
-    public EnclosingTargetSearchingHandler(int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
-    	super(aRowOfCursorPosition, aColumnOfCursorPosition);
+    public EnclosingTargetSearchingHandler(File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
+    	super(mainFileContainer, aRowOfCursorPosition, aColumnOfCursorPosition);
     }
 
     /* (non-Javadoc)
@@ -81,9 +87,6 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
 			}
 		}
     }
-
-
-
 
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
@@ -126,12 +129,8 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
 		}
     }
 
-
-
-    
-
     /**
-     * Checks wether the enclosing task element, that we are searching for can 
+     * Checks whether the enclosing task element, that we are searching for can
      * be or has already been determined.
      * <P>
      * This will be done by comparing the current parsing position with the
@@ -210,5 +209,4 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
         }
         return null;
     }
-
 }
