@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.util.*;
 
-import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.cheatsheets.*;
 
 /**

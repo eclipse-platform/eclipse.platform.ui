@@ -11,7 +11,6 @@ import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
-import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.osgi.framework.Bundle;
 
