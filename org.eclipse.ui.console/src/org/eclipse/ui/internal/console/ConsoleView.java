@@ -552,10 +552,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
                 if (getSite() instanceof IViewSite) {
                     mySec = ((IViewSite)getSite()).getSecondaryId();
                 }
-                if (secId == null) {
-                    return secId == mySec;
+                if (mySec == null) {
+                    return secId == null;
                 }
-                return secId.equals(mySec);
+                return mySec.equals(secId);
             }
         }
         return false;
