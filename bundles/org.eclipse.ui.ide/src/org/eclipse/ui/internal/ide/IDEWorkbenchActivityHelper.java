@@ -85,6 +85,16 @@ public class IDEWorkbenchActivityHelper {
         loadNatures();
         listener = getChangeListener();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
+        // crawl the initial projects to set up nature bindings
+        IProject [] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+        for (int i = 0; i < projects.length; i++) {
+            try {
+                processProject(projects[i], workbenchActivitySupport);
+            } catch (CoreException e) {
+                // do nothing
+            }
+        }
    }
     
    /**
@@ -135,32 +145,11 @@ public class IDEWorkbenchActivityHelper {
                     try {
                         IResourceDelta[] children = mainDelta.getAffectedChildren();
                         IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
-                        IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-
                         for (int i = 0; i < children.length; i++) {
                             IResourceDelta delta = children[i];
                             if (delta.getResource().getType() == IResource.PROJECT) {
                                 IProject project = (IProject) delta.getResource();
-                                String[] ids = project.getDescription().getNatureIds();
-                                if (ids.length == 0)
-                                    return;
-                                Set activities = new HashSet(activityManager.getEnabledActivityIds());
-                                boolean changed = false;
-                                for (int j = 0; j < ids.length; j++) {                                                                    
-                                    IPluginContribution contribution = (IPluginContribution) natureMap.get(ids[j]);
-                                    if (contribution == null)
-                                        continue; //bad nature ID.
-                                    IIdentifier identifier = 
-                                        activityManager
-                                        	.getIdentifier(
-                                        	        WorkbenchActivityHelper.createUnifiedId(
-                                        	                contribution));
-                                    if (activities.addAll(identifier.getActivityIds())) {
-                                    	changed = true;
-                                    }
-                                }
-                                if (changed)
-                                    workbenchActivitySupport.setEnabledActivityIds(activities);
+                                processProject(project, workbenchActivitySupport);
                             }
                         }
                     } catch (CoreException exception) {
@@ -169,6 +158,36 @@ public class IDEWorkbenchActivityHelper {
                 }
             }
         };
+    }
+
+    /**
+     * Handle natures for the given project.
+     * 
+     * @param project the project
+     * @param workbenchActivitySupport the activity support
+     */
+    protected void processProject(IProject project, IWorkbenchActivitySupport workbenchActivitySupport) throws CoreException {
+        IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+        String[] ids = project.getDescription().getNatureIds();
+        if (ids.length == 0)
+            return;
+        Set activities = new HashSet(activityManager.getEnabledActivityIds());
+        boolean changed = false;
+        for (int j = 0; j < ids.length; j++) {                                                                    
+            IPluginContribution contribution = (IPluginContribution) natureMap.get(ids[j]);
+            if (contribution == null)
+                continue; //bad nature ID.
+            IIdentifier identifier = 
+                activityManager
+                	.getIdentifier(
+                	        WorkbenchActivityHelper.createUnifiedId(
+                	                contribution));
+            if (activities.addAll(identifier.getActivityIds())) {
+            	changed = true;
+            }
+        }
+        if (changed)
+            workbenchActivitySupport.setEnabledActivityIds(activities);
     }
 
     /**
