@@ -29,11 +29,6 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	private CoolBarManager parentManager;
 	private CoolItemToolBarManager toolBarManager;
 
-	private String id;
-
-	/**
-	 */
-
 	/**
 	 */
 	public CoolBarContributionItem() {
@@ -45,9 +40,9 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		this(parent, new CoolItemToolBarManager(parent.getStyle()), id);
 	}
 	public CoolBarContributionItem(CoolBarManager parent, CoolItemToolBarManager tBarMgr, String id) {
+		super(id);
 		this.toolBarManager = tBarMgr;
 		this.parentManager = parent;
-		this.id = id;
 		parent.add(this);
 	}
 	protected ToolBar createControl() {
@@ -67,7 +62,7 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	public boolean equals(Object object) {
 		if (object instanceof CoolBarContributionItem) {
 			CoolBarContributionItem item = (CoolBarContributionItem) object;
-			return id.equals(item.id);
+			return getId().equals(item.getId());
 		}
 		return false;
 	}
@@ -152,16 +147,6 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		}
 		return tBar;
 	}
-	/**
-	 * Returns the identifier of this contribution item.
-	 * The id is used for retrieving an item from its manager.
-	 *
-	 * @return the contribution item identifier, or <code>null</code>
-	 *   if none
-	 */
-	public String getId() {
-		return id;
-	}
 	public IContributionItem[] getItems() {
 		return toolBarManager.getItems();
 	}
@@ -177,7 +162,7 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		return toolBarManager;
 	}
 	public int hashCode() {
-		return id.hashCode();
+		return getId().hashCode();
 	}
 	/**
 	 * Returns whether this contribution item is dynamic. A dynamic contribution
