@@ -69,7 +69,6 @@ public class FileStatesPage
 		Composite parent) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(labelString);
-		label.setFont(parent.getFont());
 
 		Text text = new Text(parent, SWT.LEFT | SWT.BORDER);
 		GridData data = new GridData();
@@ -80,7 +79,6 @@ public class FileStatesPage
 		data.grabExcessVerticalSpace = false;
 		text.setLayoutData(data);
 		text.setText(textValue);
-		text.setFont(parent.getFont());
 		return text;
 	}
 	/**
