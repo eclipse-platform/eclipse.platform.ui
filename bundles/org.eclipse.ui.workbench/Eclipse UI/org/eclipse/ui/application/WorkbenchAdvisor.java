@@ -642,7 +642,8 @@ public abstract class WorkbenchAdvisor {
      * is specified, it supercedes the perspective specified here.
      * </p>
      * 
-     * @return the id of the perspective for the initial window
+     * @return the id of the perspective for the initial window, or <code>null</code> 
+     *   if no initial perspective should be shown
      */
     public abstract String getInitialWindowPerspectiveId();
 
