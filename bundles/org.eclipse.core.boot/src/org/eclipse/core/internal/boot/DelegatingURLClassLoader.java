@@ -1,13 +1,13 @@
-/**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * IBM - Initial API and implementation
- **********************************************************************/
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.internal.boot;
 
 import java.io.*;
@@ -193,7 +193,8 @@ private static String[] buildLibraryVariants() {
  * is in a default location. Try to load this table from the file and initialize the values.
  * <p>
  * If there was problems loading the table then just return, the code elsewhere 
- * should handle the case where the table is not initialized.  */
+ * should handle the case where the table is not initialized. 
+ */
 private static void initializePrefixTable() {
 	if (!InternalBootLoader.useClassLoaderProperties())
 		return;
