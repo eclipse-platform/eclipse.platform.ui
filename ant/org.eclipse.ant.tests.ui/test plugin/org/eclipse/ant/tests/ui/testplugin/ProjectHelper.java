@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
@@ -59,7 +61,21 @@ public class ProjectHelper {
 			project.open(null);
 		}
 		
+		if (!project.hasNature(JavaCore.NATURE_ID)) {
+			addNatureToProject(project, JavaCore.NATURE_ID, null);
+		}
+		
 		return project;
+	}
+	
+	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
+		IProjectDescription description = proj.getDescription();
+		String[] prevNatures= description.getNatureIds();
+		String[] newNatures= new String[prevNatures.length + 1];
+		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+		newNatures[prevNatures.length]= natureId;
+		description.setNatureIds(newNatures);
+		proj.setDescription(description, monitor);
 	}
 	
 	/**

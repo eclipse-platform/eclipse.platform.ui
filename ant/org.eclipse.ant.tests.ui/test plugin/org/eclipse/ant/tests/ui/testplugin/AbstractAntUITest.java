@@ -29,6 +29,15 @@ import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.xml.sax.InputSource;
@@ -36,8 +45,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class AbstractAntUITest extends TestCase {
-
-	public static IProject project;
 	private IDocument currentDocument;
 
 	public AbstractAntUITest(String name) {
@@ -124,6 +131,31 @@ public abstract class AbstractAntUITest extends TestCase {
 	public void setCurrentDocument(IDocument currentDocument) {
 		this.currentDocument = currentDocument;
 	}
+	
+	/**
+	 * Launches the Ant build with the buildfile name (no extension).
+	 * 
+	 * @param mainTypeName the program to launch
+	 * @return thread in which the first suspend event occurred
+	 */
+	protected void launch(String buildFileName) throws CoreException {
+		ILaunchConfiguration config = getLaunchConfiguration(buildFileName);
+		assertNotNull("Could not locate launch configuration for " + buildFileName, config);
+		launchAndTerminate(config, 10000);
+	}
+	
+	/**
+	 * Returns the launch configuration for the given buildfile
+	 * 
+	 * @param buildFileName buildfile to launch
+	 * @see ProjectCreationDecorator
+	 */
+	protected ILaunchConfiguration getLaunchConfiguration(String buildFileName) {
+		IFile file = getJavaProject().getProject().getFolder("launchConfigurations").getFile(buildFileName + ".launch");
+		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
+		assertTrue("Could not find launch configuration for " + buildFileName, config.exists());
+		return config;
+	}
 
 	/**
 	 * Returns the content of the specified file as <code>String</code>.
@@ -171,5 +203,59 @@ public abstract class AbstractAntUITest extends TestCase {
 		} catch (SAXException e) {
 		} catch (IOException e) {
 		}
+	}
+	
+	/**
+	 * Returns the launch manager
+	 * 
+	 * @return launch manager
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
+	}
+	
+	/**
+	 * Returns the 'AntUITests' project.
+	 * 
+	 * @return the test project
+	 */
+	protected IJavaProject getJavaProject() {
+		return JavaCore.create( getProject());
+	}
+	
+	protected void launchAndTerminate(ILaunchConfiguration config, int timeout) throws CoreException {
+		DebugEventWaiter waiter= new DebugElementKindEventWaiter(DebugEvent.TERMINATE, IProcess.class);
+		waiter.setTimeout(timeout);
+
+		Object terminatee = launchAndWait(config, waiter);		
+		assertNotNull("Program did not terminate.", terminatee);
+		assertTrue("terminatee is not an IProcess", terminatee instanceof IProcess);
+		IProcess process = (IProcess) terminatee;
+		assertTrue("process is not terminated", process.isTerminated());
+	}
+	
+	/**
+	 * Launches the given configuration and waits for an event. Returns the
+	 * source of the event. If the event is not received, the launch is
+	 * terminated and an exception is thrown.
+	 * 
+	 * @param configuration the configuration to launch
+	 * @param waiter the event waiter to use
+	 * @return Object the source of the event
+	 * @exception Exception if the event is never received.
+	 */
+	protected Object launchAndWait(ILaunchConfiguration configuration, DebugEventWaiter waiter) throws CoreException {
+		ILaunch launch = configuration.launch(ILaunchManager.RUN_MODE, null);
+		Object suspendee= waiter.waitForEvent();
+		if (suspendee == null) {
+			try {
+				launch.terminate();
+			} catch (CoreException e) {
+				e.printStackTrace();
+				fail("Program did not suspend, and unable to terminate launch.");
+			}
+		}
+		assertNotNull("Program did not suspend, launch terminated.", suspendee);
+		return suspendee;		
 	}
 }
