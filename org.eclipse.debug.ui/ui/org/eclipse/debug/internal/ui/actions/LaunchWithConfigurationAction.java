@@ -6,6 +6,9 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,17 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	private List fActionItems;
 	private IAction fAction;
 	private ILaunchManager fLaunchManager;
+	
+	/**
+	 * Comparator used to sort ILaunchConfigurationType objects into alphabetical order of their names.
+	 */
+	private class LaunchConfigurationTypeAlphabeticComparator implements Comparator {
+		public int compare(Object obj1, Object obj2) {
+			String name1 = ((ILaunchConfigurationType)obj1).getName();
+			String name2 = ((ILaunchConfigurationType)obj2).getName();
+			return name1.compareTo(name2);
+		}
+	}
 	
 	/**
 	 * @see IAction#run()
@@ -90,59 +104,69 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
 	public Menu getMenu(Menu parent) {
+		
+		// Retrieve the current perspective and the registered shortcuts
 		String activePerspID = getActivePerspectiveID();
 		Map shortcutMap = DebugUIPlugin.getDefault().getLaunchConfigurationShortcuts();
 	
 		// Look through the shortcut map and for each config type, see if the active perspective's
 		// ID is listed.  If it is, add a shortcut for creating a new configuration of that type
 		// to the menu
-		Menu menu= new Menu(parent);
-		int menuCount= 1;
+		List configTypeList = new ArrayList(shortcutMap.keySet().size());
 		Iterator keyIterator = shortcutMap.keySet().iterator();
 		while (keyIterator.hasNext()) {
 			String configTypeID = (String) keyIterator.next();
 			List perspList = (List) shortcutMap.get(configTypeID);
 			if ((perspList.contains(activePerspID)) || (perspList.contains("*"))) {  //$NON-NLS-1$
 				ILaunchConfigurationType configType = getLaunchManager().getLaunchConfigurationType(configTypeID);
-				if (populateMenu(configType, menu, menuCount)) {
-					menuCount++;
+				if (configType.supportsMode(getMode()) && configType.isPublic()) {
+					configTypeList.add(configType);
 				}
 			}
 		}
 		
-		// If NO configuration types listed the current perspective, add ALL configuration types
-		// to the menu.  This is to avoid an empty cascading menu.
-		if (menuCount == 1) {
+		// If NO configuration types listed the current perspective as a place to add a shortcut,
+		// add shortcuts for ALL configuration types to avoid an empty cascading menu
+		if (configTypeList.isEmpty()) {
 			ILaunchConfigurationType[] allConfigTypes = getLaunchManager().getLaunchConfigurationTypes();
 			for (int i = 0; i < allConfigTypes.length; i++) {
 				ILaunchConfigurationType configType = allConfigTypes[i];
-				if (populateMenu(configType, menu, menuCount)) {
-					menuCount++;
+				if (configType.supportsMode(getMode()) && configType.isPublic()) {
+					configTypeList.add(configType);
 				}
-			}
+			}			
 		}
 		
+		// Sort the applicable config types alphabetically and add them to the menu
+		Menu menu= new Menu(parent);
+		int menuCount = 1;
+		Collections.sort(configTypeList, new LaunchConfigurationTypeAlphabeticComparator());
+		Iterator typeIterator = configTypeList.iterator();
+		while (typeIterator.hasNext()) {
+			ILaunchConfigurationType configType = (ILaunchConfigurationType) typeIterator.next();
+			populateMenu(configType, menu, menuCount);
+			menuCount++;
+		}
+				
 		return menu;
 	}
 	
 	/**
-	 * If the specified configuration type supports the current mode (run or debug), create a
-	 * shortcut action and add it to the specified menu.
+	 * Add the configuration type to the menu.
 	 */
-	protected boolean populateMenu(ILaunchConfigurationType configType, Menu menu, int menuCount) {
-		if (configType.supportsMode(getMode())) {
-			OpenLaunchConfigurationsAction openAction = null;
-			if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-				openAction = new OpenDebugConfigurations(configType);
-			} else {
-				openAction = new OpenRunConfigurations(configType);
-			}
-			createMenuForAction(menu, openAction, menuCount);
-			return true;
-		} 
-		return false;
+	protected void populateMenu(ILaunchConfigurationType configType, Menu menu, int menuCount) {
+		OpenLaunchConfigurationsAction openAction = null;
+		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+			openAction = new OpenDebugConfigurations(configType);
+		} else {
+			openAction = new OpenRunConfigurations(configType);
+		}
+		createMenuForAction(menu, openAction, menuCount);
 	}
 	
+	/**
+	 * Return the ID of the currently active perspective.
+	 */
 	protected String getActivePerspectiveID() {
 		return DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().getPerspective().getId();
 	}

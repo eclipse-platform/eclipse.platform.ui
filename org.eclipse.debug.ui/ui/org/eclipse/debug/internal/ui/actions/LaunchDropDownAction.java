@@ -136,13 +136,6 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Create the drop-down menu based on whether the config style pref is set
 	 */
 	protected Menu createMenu(Menu menu) {			
-		return createConfigStyleMenu(menu);
-	}
-	
-	/**
-	 * Create a configuration-style drop-down menu.
-	 */
-	protected Menu createConfigStyleMenu(Menu menu) {
 		
 		// Add any favorites at the top of the menu
 		LaunchConfigurationHistoryElement[] favoriteList = getFavorites();
