@@ -365,7 +365,7 @@ public class OverviewRuler implements IOverviewRuler {
 	
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
-				if (fTextViewer != null)
+				if (fTextViewer != null && fModel != null)
 					doubleBufferPaint(event.gc);
 			}
 		});
@@ -473,12 +473,8 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	private void doPaint(GC gc) {
 		
-		if (fTextViewer == null)
-			return;
-			
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		int yy, hh= ANNOTATION_HEIGHT;
-		
 		
 		IDocument document= fTextViewer.getDocument();
 		IRegion visible= fTextViewer.getVisibleRegion();
@@ -562,10 +558,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @param gc the GC to draw into
 	 */
 	private void doPaint1(GC gc) {
-
-		if (fTextViewer == null || fModel == null)
-			return;
-
+		
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		int yy, hh= ANNOTATION_HEIGHT;
 
@@ -679,6 +672,10 @@ public class OverviewRuler implements IOverviewRuler {
 	 * Redraws the overview ruler.
 	 */
 	private void redraw() {
+		
+		if (fTextViewer == null || fModel == null)
+			return;
+		
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			GC gc= new GC(fCanvas);
 			doubleBufferPaint(gc);
