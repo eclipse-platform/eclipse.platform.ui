@@ -396,6 +396,7 @@ class FindReplaceDialog extends Dialog {
 		layout.numColumns= 1;
 		layout.makeColumnsEqualWidth= true;
 		panel.setLayout(layout);
+		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Composite inputPanel= createInputPanel(panel);
 		setGridData(inputPanel, GridData.FILL, true, GridData.CENTER, false);
