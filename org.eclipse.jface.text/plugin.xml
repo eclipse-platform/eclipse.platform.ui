@@ -7,7 +7,8 @@
 
    <runtime>
       <library name="jfacetext.jar">
-         <export name="*"/>
+		<export name="*"/>
+		<packages prefixes="org.eclipse.jface.text"/>
       </library>
    </runtime>
 

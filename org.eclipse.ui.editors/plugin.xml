@@ -7,7 +7,8 @@
 
    <runtime>
       <library name="editors.jar">
-         <export name="*"/>
+		<export name="*"/>
+		<packages prefixes="org.eclipse.ui.texteditor,org.eclipse.ui.editors.text,org.eclipse.ui.internal"/>
       </library>
    </runtime>
    <requires>
