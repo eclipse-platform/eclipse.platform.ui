@@ -168,4 +168,13 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
       	assertTrue("Incorrect number of messages logged for build. Should be 14. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 14);
       	assertTrue("Incorrect last message. Should start with echo2:. Message: " + ConsoleLineTracker.getMessage(12), ConsoleLineTracker.getMessage(12).trim().startsWith("echo2"));
     }
+    
+    /**
+     * Tests launching Ant in a separate vm and using a SWT input handler
+     */
+    public void testInputHandler() throws CoreException {
+      	launch("input", "-inputhandler org.eclipse.ant.tests.ui.support.inputHandlers.TestSWTInputHandler");
+      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getAllMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+      	assertTrue("Incorrect last message. Should end with  [echo] TestSWTInputHandler:. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().startsWith("[echo] TestSWTInputHandler"));
+    }
 }

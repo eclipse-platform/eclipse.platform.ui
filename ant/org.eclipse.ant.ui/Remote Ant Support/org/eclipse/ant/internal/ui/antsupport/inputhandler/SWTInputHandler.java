@@ -40,7 +40,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 	private Button fOkButton;
 	private Shell fDialog;
 	private FontMetrics fFontMetrics;
-	private InputRequest fRequest;
+	protected InputRequest fRequest;
 	
 	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
@@ -73,9 +73,18 @@ public class SWTInputHandler extends DefaultInputHandler {
 		};
 	}
 	
-	private void open(String title, String prompt, boolean[] result) {
-		Display display= Display.getDefault();
-		
+	protected void open(String title, String prompt, boolean[] result) {
+		createDialog(title, prompt, result);
+		fDialog.open();
+
+		while (!fDialog.isDisposed()) {
+			if (!fDialog.getDisplay().readAndDispatch()) fDialog.getDisplay().sleep();
+		}
+		fDialog.getDisplay().dispose();
+	}
+
+    private void createDialog(String title, String prompt, boolean[] result) {
+        Display display= Display.getDefault();
 		fDialog = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		initializeDialogUnits(fDialog);
 		fDialog.setLayout(new GridLayout());
@@ -106,13 +115,7 @@ public class SWTInputHandler extends DefaultInputHandler {
         
 		createButtonBar(fDialog, result);
 		fDialog.pack();
-		fDialog.open();
-
-		while (!fDialog.isDisposed()) {
-			if (!display.readAndDispatch()) display.sleep();
-		}
-		display.dispose();
-	}
+    }
 
     protected void setErrorMessage(String errorMessage) {
         fErrorMessageText.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$

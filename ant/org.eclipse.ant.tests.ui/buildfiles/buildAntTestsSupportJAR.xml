@@ -24,7 +24,9 @@
 		<javac target="1.1" destdir="${temp.folder}/lib/antUITestsSupport.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes" bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/bin;
 			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/antsupport.jar;
-			${basedir}/../org.eclipse.ant.core/bin">
+			${basedir}/../org.eclipse.ant.core/bin
+			${eclipse.home}/plugins/org.eclipse.ant.core${version.suffix}/lib/remoteAnt.jar;
+			${basedir}/../org.eclipse.ant.ui/lib/remoteAnt.jar">
 			<src path="test support/"/>
 		</javac>
 		<mkdir dir="${build.result.folder}/lib"/>
