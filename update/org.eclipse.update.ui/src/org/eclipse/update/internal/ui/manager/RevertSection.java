@@ -121,17 +121,17 @@ private static final String KEY_DIALOG_MESSAGE="SnapshotPage.RevertSection.dialo
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 		
 			public void run(IProgressMonitor monitor) {
-				boolean isSucess = false;				
+				boolean success = false;				
 				try {
 					ILocalSite localSite = SiteManager.getLocalSite();
 					localSite.revertTo(target, monitor, new UIProblemHandler());
 					saveLocalSite();
-					isSucess = true;
+					success = true;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				} finally {
 					monitor.done();
-					if (isSucess)
+					if (success)
 						informRestartNeeded();
 				}
 			}
