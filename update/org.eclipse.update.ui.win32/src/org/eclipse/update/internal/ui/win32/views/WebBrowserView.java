@@ -4,29 +4,15 @@ package org.eclipse.update.internal.ui.win32.views;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.ole.win32.OleEvent;
-import org.eclipse.swt.ole.win32.OleListener;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.ole.win32.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.UpdateUIPluginImages;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.views.IEmbeddedWebBrowser;
 
 public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {

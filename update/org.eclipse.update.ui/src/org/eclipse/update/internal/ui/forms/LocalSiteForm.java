@@ -4,11 +4,14 @@ package org.eclipse.update.internal.ui.forms;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
@@ -24,6 +27,7 @@ public class LocalSiteForm extends UpdateWebForm {
 	private SiteBookmark currentBookmark;
 	private AboutInfo aboutInfo;
 	private Image image;
+	private PreserveSection preserveSection;
 
 	public LocalSiteForm(UpdateFormPage page) {
 		super(page);
@@ -84,6 +88,23 @@ public class LocalSiteForm extends UpdateWebForm {
 		data.heightHint = 1;
 		data.colspan = image != null ? 2 : 1;
 		sep.setLayoutData(data);
+		
+		preserveSection = new PreserveSection((UpdateFormPage) getPage());
+		Control control = preserveSection.createControl(parent, factory);
+		data = new TableData();
+		data.align = TableData.FILL;
+		data.grabHorizontal = true;
+		data.colspan = image != null ? 2 : 1;
+		data.valign = TableData.TOP;
+		control.setLayoutData(data);
+
+		registerSection(preserveSection);
+		try {
+			IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
+			preserveSection.configurationChanged(config);
+		}
+		catch (CoreException e) {
+		}
 		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.LocalSiteForm");
 	}
 

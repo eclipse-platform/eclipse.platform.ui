@@ -106,7 +106,7 @@ public class ActivitySection extends UpdateSection {
 		separator.setBackground(factory.getBorderColor());
 		factory.createLabel(container, null);
 		container.layout(true);
-		container.getParent().layout(true);
+		//container.getParent().layout(true);
 	}
 	
 	private void createLimitedLabel(Composite container, String text, int limit, FormWidgetFactory factory) {

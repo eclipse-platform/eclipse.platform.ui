@@ -29,6 +29,7 @@ public class InstallConfigurationForm extends PropertyWebForm {
 	private Label currentLabel;
 	private ActivitySection activitySection;
 	private RevertSection revertSection;
+	private PreserveSection preserveSection;
 	private IUpdateModelChangedListener modelListener;
 
 	public InstallConfigurationForm(UpdateFormPage page) {
@@ -49,12 +50,16 @@ public class InstallConfigurationForm extends PropertyWebForm {
 			public void objectsRemoved(Object parent, Object[] children) {
 			}
 			public void objectChanged(Object obj, String property) {
-				if (obj instanceof PreservedConfiguration)
+				final boolean preserved;
+				if (obj instanceof PreservedConfiguration) {
+					preserved = true;
 					obj = ((PreservedConfiguration) obj).getConfiguration();
+				} else
+					preserved = false;
 				if (obj.equals(currentConfiguration)) {
 					SWTUtil.getStandardDisplay().asyncExec(new Runnable() {
 						public void run() {
-					inputChanged(currentConfiguration);
+							inputChanged(currentConfiguration, preserved);
 						}
 					});
 				}
@@ -75,9 +80,13 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		FormWidgetFactory factory = getFactory();
 
 		dateLabel =
-			createProperty(parent, UpdateUIPlugin.getResourceString(KEY_CREATED_ON));
+			createProperty(
+				parent,
+				UpdateUIPlugin.getResourceString(KEY_CREATED_ON));
 		currentLabel =
-			createProperty(parent, UpdateUIPlugin.getResourceString(KEY_CURRENT_CONFIG));
+			createProperty(
+				parent,
+				UpdateUIPlugin.getResourceString(KEY_CURRENT_CONFIG));
 		factory.createLabel(parent, null);
 
 		activitySection = new ActivitySection((UpdateFormPage) getPage());
@@ -98,9 +107,20 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		control.setLayoutData(td);
 		setFocusControl(revertSection.getFocusControl());
 
+		preserveSection = new PreserveSection((UpdateFormPage) getPage());
+		control = preserveSection.createControl(parent, factory);
+		td = new TableData();
+		td.align = TableData.FILL;
+		td.grabHorizontal = true;
+		td.valign = TableData.TOP;
+		control.setLayoutData(td);
+
 		registerSection(activitySection);
 		registerSection(revertSection);
-		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.InstallConfigurationForm");
+		registerSection(preserveSection);
+		WorkbenchHelp.setHelp(
+			parent,
+			"org.eclipse.update.ui.InstallConfigurationForm");
 	}
 
 	protected Object createPropertyLayoutData() {
@@ -110,15 +130,19 @@ public class InstallConfigurationForm extends PropertyWebForm {
 	}
 
 	public void expandTo(Object obj) {
+		boolean preserved = false;
 		if (obj instanceof PreservedConfiguration) {
+			preserved = true;
 			obj = ((PreservedConfiguration) obj).getConfiguration();
 		}
 		if (obj instanceof IInstallConfiguration) {
-			inputChanged((IInstallConfiguration) obj);
+			inputChanged((IInstallConfiguration) obj, preserved);
 		}
 	}
 
-	private void inputChanged(IInstallConfiguration configuration) {
+	private void inputChanged(
+		IInstallConfiguration configuration,
+		boolean preserved) {
 		setHeadingText(configuration.getLabel());
 		Date date = configuration.getCreationDate();
 		dateLabel.setText(Utilities.format(date));
@@ -130,6 +154,7 @@ public class InstallConfigurationForm extends PropertyWebForm {
 
 		activitySection.configurationChanged(configuration);
 		revertSection.configurationChanged(configuration);
+		preserveSection.configurationChanged(!preserved ? configuration : null);
 		// reflow
 		dateLabel.getParent().layout(true);
 		((Composite) getControl()).layout(true);
@@ -137,7 +162,7 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		updateSize();
 		currentConfiguration = configuration;
 	}
-	
+
 	public void objectChanged(Object object, String property) {
 		if (object.equals(currentConfiguration)) {
 			expandTo(object);

@@ -44,9 +44,36 @@ public abstract class FormSection implements IPropertyChangeListener {
 	 * height. This kind of behaviour is not possible
 	 * with stock grid layout.
 	 */
-	class SectionLayout extends Layout {
+	class SectionLayout extends Layout implements ILayoutExtension {
 		int vspacing = 3;
 		int sepHeight = 2;
+
+		public int getMinimumWidth(Composite parent, boolean flush) {
+			return 30;
+		}
+
+		public int getMaximumWidth(Composite parent, boolean flush) {
+			int maxWidth = 0;
+			if (client != null) {
+				Point csize =
+					client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+				maxWidth = csize.x;
+			}
+			if (headerPainted && header != null) {
+				Point hsize =
+					header.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+				maxWidth = Math.max(maxWidth, hsize.x);
+			}
+			if (descriptionPainted && descriptionLabel != null) {
+				Point dsize =
+					descriptionLabel.computeSize(
+						SWT.DEFAULT,
+						SWT.DEFAULT,
+						flush);
+				maxWidth = Math.max(maxWidth, dsize.x);
+			}
+			return maxWidth;
+		}
 
 		protected Point computeSize(
 			Composite parent,
@@ -66,7 +93,8 @@ public abstract class FormSection implements IPropertyChangeListener {
 			cwidth = width;
 
 			if (client != null) {
-				Point csize = client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+				//Point csize = client.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+				Point csize = client.computeSize(wHint, SWT.DEFAULT);
 				if (width == 0) {
 					width = csize.x;
 					cwidth = width;
@@ -78,7 +106,8 @@ public abstract class FormSection implements IPropertyChangeListener {
 			Point toggleSize = null;
 
 			if (collapsable && toggle != null)
-				toggleSize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+				toggleSize =
+					toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
 
 			if (hHint == SWT.DEFAULT && headerPainted && header != null) {
 				int hwidth = cwidth;
@@ -95,8 +124,11 @@ public abstract class FormSection implements IPropertyChangeListener {
 				height += vspacing;
 				collapsedHeight += vspacing + sepHeight;
 			}
-			if (hHint == SWT.DEFAULT && descriptionPainted && descriptionLabel != null) {
-				Point dsize = descriptionLabel.computeSize(cwidth, SWT.DEFAULT, flush);
+			if (hHint == SWT.DEFAULT
+				&& descriptionPainted
+				&& descriptionLabel != null) {
+				Point dsize =
+					descriptionLabel.computeSize(cwidth, SWT.DEFAULT, flush);
 				height += dsize.y;
 				height += vspacing;
 			}
@@ -113,7 +145,8 @@ public abstract class FormSection implements IPropertyChangeListener {
 			Point toggleSize = null;
 
 			if (collapsable) {
-				toggleSize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
+				toggleSize =
+					toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, flush);
 			}
 			if (headerPainted && header != null) {
 				Point hsize;
@@ -140,7 +173,8 @@ public abstract class FormSection implements IPropertyChangeListener {
 				return;
 			}
 			if (descriptionPainted && descriptionLabel != null) {
-				Point dsize = descriptionLabel.computeSize(width, SWT.DEFAULT, flush);
+				Point dsize =
+					descriptionLabel.computeSize(width, SWT.DEFAULT, flush);
 				descriptionLabel.setBounds(0, y, width, dsize.y);
 				y += dsize.y + vspacing;
 			}
@@ -177,13 +211,19 @@ public abstract class FormSection implements IPropertyChangeListener {
 		if (headerPainted) {
 			Color headerColor = factory.getColor(getHeaderColorKey());
 			header =
-				factory.createHeadingLabel(section, getHeaderText(), headerColor, SWT.WRAP);
+				factory.createHeadingLabel(
+					section,
+					getHeaderText(),
+					headerColor,
+					SWT.WRAP);
 			if (collapsable) {
 				toggle = new ToggleControl(section, SWT.NULL);
 				toggle.setSelection(collapsed);
 				toggle.setBackground(factory.getBackgroundColor());
 				toggle.setActiveDecorationColor(factory.getHyperlinkColor());
-				toggle.setDecorationColor(factory.getColor(FormWidgetFactory.COLOR_COMPOSITE_SEPARATOR));
+				toggle.setDecorationColor(
+					factory.getColor(
+						FormWidgetFactory.COLOR_COMPOSITE_SEPARATOR));
 				toggle.setActiveCursor(factory.getHyperlinkCursor());
 				toggle.addFocusListener(factory.visibilityHandler);
 				toggle.addKeyListener(factory.keyboardHandler);
@@ -192,7 +232,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 						doToggle();
 					}
 				});
-					header.addMouseListener(new MouseAdapter() {
+				header.addMouseListener(new MouseAdapter() {
 					public void mouseDown(MouseEvent e) {
 						toggle.setSelection(!toggle.getSelection());
 						toggle.redraw();
@@ -216,21 +256,22 @@ public abstract class FormSection implements IPropertyChangeListener {
 		}
 
 		if (descriptionPainted && description != null) {
-			descriptionLabel = factory.createLabel(section, description, SWT.WRAP);
+			descriptionLabel =
+				factory.createLabel(section, description, SWT.WRAP);
 		}
 		client = createClient(section, factory);
 		section.setData(this);
 		control = section;
 		return section;
 	}
-	
+
 	private void doToggle() {
 		boolean collapsed = toggle.getSelection();
 		reflow();
 		if (descriptionLabel != null)
-		descriptionLabel.setVisible(!collapsed);
+			descriptionLabel.setVisible(!collapsed);
 		if (client != null)
-		client.setVisible(!collapsed);
+			client.setVisible(!collapsed);
 	}
 
 	protected void reflow() {
@@ -255,9 +296,11 @@ public abstract class FormSection implements IPropertyChangeListener {
 		int span) {
 		factory.createLabel(parent, label);
 		Text text = factory.createText(parent, "");
-		int hfill = span==1 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL;
-		GridData gd =
-			new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
+		int hfill =
+			span == 1
+				? GridData.FILL_HORIZONTAL
+				: GridData.HORIZONTAL_ALIGN_FILL;
+		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
@@ -269,14 +312,16 @@ public abstract class FormSection implements IPropertyChangeListener {
 		int span,
 		int style) {
 		Label l = factory.createLabel(parent, label);
-		if ((style & SWT.MULTI)!=0) {
+		if ((style & SWT.MULTI) != 0) {
 			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			l.setLayoutData(gd);
 		}
 		Text text = factory.createText(parent, "", style);
-		int hfill = span==1 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL;
-		GridData gd =
-			new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
+		int hfill =
+			span == 1
+				? GridData.FILL_HORIZONTAL
+				: GridData.HORIZONTAL_ALIGN_FILL;
+		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
@@ -286,9 +331,11 @@ public abstract class FormSection implements IPropertyChangeListener {
 		FormWidgetFactory factory,
 		int span) {
 		Text text = factory.createText(parent, "");
-		int hfill = span==1 ? GridData.FILL_HORIZONTAL : GridData.HORIZONTAL_ALIGN_FILL;
-		GridData gd =
-			new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
+		int hfill =
+			span == 1
+				? GridData.FILL_HORIZONTAL
+				: GridData.HORIZONTAL_ALIGN_FILL;
+		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
 		//gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
@@ -302,7 +349,9 @@ public abstract class FormSection implements IPropertyChangeListener {
 	}
 	public void expandTo(Object object) {
 	}
-	public final void fireChangeNotification(int changeType, Object changeObject) {
+	public final void fireChangeNotification(
+		int changeType,
+		Object changeObject) {
 		if (sectionManager == null)
 			return;
 		sectionManager.dispatchNotification(this, changeType, changeObject);
@@ -379,7 +428,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 		dirty = newDirty;
 	}
 	public void setFocus() {
-		if (toggle!=null)
+		if (toggle != null)
 			toggle.setFocus();
 	}
 	public void setHeaderColorKey(java.lang.String newHeaderColorKey) {
@@ -436,7 +485,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 	public void setCollapsed(boolean collapsed) {
 		this.collapsed = collapsed;
 	}
-	
+
 	public boolean canPaste(Clipboard clipboard) {
 		return false;
 	}

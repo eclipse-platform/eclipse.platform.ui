@@ -42,7 +42,7 @@ import org.eclipse.swt.SWT;
  * widths are not the same.
  */
 
-public class HTMLTableLayout extends Layout {
+public class HTMLTableLayout extends Layout implements ILayoutExtension {
 	public int numColumns = 1;
 	public int leftMargin = 5;
 	public int rightMargin = 5;
@@ -554,8 +554,8 @@ private TableData [] createEmptyRow() {
 				if (child instanceof Composite) {
 					Composite cc = (Composite)child;
 					Layout l = cc.getLayout();
-					if (l instanceof HTMLTableLayout) {
-						minWidth = ((HTMLTableLayout)l).getMinimumWidth(cc, changed);
+					if (l instanceof ILayoutExtension) {
+						minWidth = ((ILayoutExtension)l).getMinimumWidth(cc, changed);
 					}
 				}
 				if (minWidth == -1) {
@@ -578,7 +578,7 @@ private TableData [] createEmptyRow() {
 	
 	boolean isWrap(Control control) {
 		if (control instanceof Composite &&
-		   ((Composite)control).getLayout() instanceof HTMLTableLayout)
+		   ((Composite)control).getLayout() instanceof ILayoutExtension)
 		   return true;
 		return (control.getStyle() & SWT.WRAP)!=0;
 	}
@@ -599,8 +599,8 @@ private TableData [] createEmptyRow() {
 				if (child instanceof Composite) {
 					Composite cc = (Composite)child;
 					Layout l = cc.getLayout();
-					if (l instanceof HTMLTableLayout) {
-						maxWidth = ((HTMLTableLayout)l).getMaximumWidth(cc, changed);
+					if (l instanceof ILayoutExtension) {
+						maxWidth = ((ILayoutExtension)l).getMaximumWidth(cc, changed);
 					}
 				}
 				if (maxWidth == -1) {

@@ -646,6 +646,10 @@ public class ConfigurationView
 			new StructuredSelection(getLocalSite()),
 			true);
 	}
+	
+	public void expandPreservedConfigurations() {
+		getTreeViewer().setExpandedState(savedFolder, true);
+	}
 
 	private boolean canPreserve() {
 		ISelection selection = getTreeViewer().getSelection();

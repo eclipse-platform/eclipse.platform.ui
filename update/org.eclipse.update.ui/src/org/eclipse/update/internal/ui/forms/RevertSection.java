@@ -108,6 +108,7 @@ public class RevertSection extends UpdateSection {
 			revertButton.setText(
 				UpdateUIPlugin.getResourceString(KEY_RESTORE_BUTTON));
 		}
+		container.layout(true);
 	}
 
 	private void performRevert() {
