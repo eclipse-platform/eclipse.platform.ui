@@ -67,8 +67,11 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		super.stop(context);
-		AntUIImages.disposeImageDescriptorRegistry();
+		try {
+			AntUIImages.disposeImageDescriptorRegistry();
+		} finally {
+			super.stop(context);
+		}
 	}
 
 	/**
