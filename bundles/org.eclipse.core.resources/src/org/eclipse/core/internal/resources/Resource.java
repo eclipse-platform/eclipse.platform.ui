@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.internal.localstore.*;
@@ -87,12 +87,17 @@ public void checkAccessible(int flags) throws CoreException {
  * @see IResource#copy
  */
 public IStatus checkCopyRequirements(IPath destination, int destinationType) throws CoreException {
-	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, Policy.bind("copyNotMet"), null);
-	if (destination == null)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotNull"));
+	String message = Policy.bind("resources.copyNotMet");
+	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
+	if (destination == null) {
+		message = Policy.bind("resources.destNotNull");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message);
+	}
 	destination = makePathAbsolute(destination);
-	if (getFullPath().isPrefixOf(destination))
-		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotSub")));
+	if (getFullPath().isPrefixOf(destination)) {
+		message = Policy.bind("resources.destNotSub");
+		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+	}
 	checkValidPath(destination, destinationType);
 
 	ResourceInfo info = getResourceInfo(false, false);
@@ -105,8 +110,10 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 	dest.checkDoesNotExist(getFlags(info), false);
 
 	// ensure we aren't trying to copy a file to a project
-	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT)
-		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), "Cannot copy a file to a project."));
+	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
+		message = Policy.bind("resources.fileToProj");
+		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+	}
 
 	// we can't copy into a closed project
 	if (destinationType != IResource.PROJECT) {
@@ -121,7 +128,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 		}
 	}
 
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("copyMet")) : (IStatus) status;
+	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.copyMet")) : (IStatus) status;
 }
 /**
  * Checks that this resource does not exist.  
@@ -137,7 +144,7 @@ public void checkDoesNotExist(int flags, boolean checkType) throws CoreException
 	// If there is nothing there of this resource's type, then return.
 	if ((checkType && !exists(flags, checkType)))
 		return;
-	String message = Policy.bind("mustNotExist", new String[] { getFullPath().toString()});
+	String message = Policy.bind("resources.mustNotExist", getFullPath().toString());
 	throw new ResourceException(checkType ? IResourceStatus.RESOURCE_EXISTS : IResourceStatus.PATH_OCCUPIED, getFullPath(), message, null);
 }
 /**
@@ -148,7 +155,7 @@ public void checkDoesNotExist(int flags, boolean checkType) throws CoreException
  */
 public void checkExists(int flags, boolean checkType) throws CoreException {
 	if (!exists(flags, checkType)) {
-		String message = Policy.bind("mustExist", new String[] { getFullPath().toString()});
+		String message = Policy.bind("resources.mustExist", getFullPath().toString());
 		throw new ResourceException(IResourceStatus.RESOURCE_NOT_FOUND, getFullPath(), message, null);
 	}
 }
@@ -159,7 +166,7 @@ public void checkExists(int flags, boolean checkType) throws CoreException {
  */
 public void checkLocal(int flags, int depth) throws CoreException {
 	if (!isLocal(flags, depth)) {
-		String message = Policy.bind("mustBeLocal", new String[] { getFullPath().toString()});
+		String message = Policy.bind("resources.mustBeLocal", getFullPath().toString());
 		throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, getFullPath(), message, null);
 	}
 }
@@ -178,12 +185,17 @@ public void checkLocal(int flags, int depth) throws CoreException {
  * @see IResource#move
  */
 protected IStatus checkMoveRequirements(IPath destination, int destinationType) throws CoreException {
-	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, Policy.bind("moveNotMet"), null);
-	if (destination == null)
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotNull"));
+	String message = Policy.bind("resources.moveNotMet");
+	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
+	if (destination == null) {
+		message = Policy.bind("resources.destNotNull");
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message);
+	}
 	destination = makePathAbsolute(destination);
-	if (getFullPath().isPrefixOf(destination))
-		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), Policy.bind("destNotSub")));
+	if (getFullPath().isPrefixOf(destination)) {
+		message = Policy.bind("resources.destNotSub");
+		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+	}
 	checkValidPath(destination, destinationType);
 
 	ResourceInfo info = getResourceInfo(false, false);
@@ -196,8 +208,10 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 	dest.checkDoesNotExist(getFlags(info), false);
 
 	// ensure we aren't trying to move a file to a project
-	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT)
-		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), "Cannot move a file to a project."));
+	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
+		message = Policy.bind("resources.fileToProj");
+		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
+	}
 
 	// we can't move into a closed project
 	if (destinationType != IResource.PROJECT) {
@@ -211,7 +225,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 			parent.checkExists(getFlags(info), true);
 		}
 	}
-	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("moveMet")) : (IStatus) status;
+	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.moveMet")) : (IStatus) status;
 }
 /**
  * Checks that the supplied path is valid according to Workspace.validatePath().
@@ -248,7 +262,8 @@ public void convertToPhantom() throws CoreException {
 public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("copying", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.copying", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
@@ -294,7 +309,8 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 	}
 	try {
 		monitor = Policy.monitorFor(monitor);
-		monitor.beginTask(Policy.bind("copying", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.copying", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IResource.copy API
@@ -366,8 +382,8 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String title = Policy.bind("deleting", new String[] { getFullPath().toString()});
-		monitor.beginTask(title, Policy.totalWork);
+		String message = Policy.bind("resources.deleting", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			/* if there is no such resource (including type check) then there is nothing
@@ -696,7 +712,8 @@ protected IPath makePathAbsolute(IPath target) {
 public void move(IProjectDescription destDesc, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("moving", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.moving", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
@@ -761,7 +778,8 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 	}
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("moving", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.moving", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			// The following assert method throws CoreExceptions as stated in the IResource.move API
@@ -810,8 +828,10 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 protected void moveInFileSystem(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("moving", new String[] { getFullPath().toString()}), 100);
-		RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(Policy.bind("moveProblem"), monitor);
+		String message = Policy.bind("resources.moving", getFullPath().toString());
+		monitor.beginTask(message, 100);
+		message = Policy.bind("resources.moveProblem");
+		RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(message, monitor);
 		UnifiedTree tree = new UnifiedTree(this);
 		tree.accept(visitor, DEPTH_INFINITE);
 		/* if force is false and resources were not in sync, throw an exception */
@@ -829,7 +849,8 @@ protected void moveInFileSystem(IPath destination, boolean force, boolean keepHi
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("refreshing", new String[] { getFullPath().toString()}), Policy.totalWork);
+		String message = Policy.bind("resources.refreshing", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
 		try {
 			workspace.prepareOperation();
@@ -853,7 +874,8 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
 public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("Setting resource local flag.", Policy.totalWork);
+		String message = Policy.bind("resources.setLocal");
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			workspace.beginOperation(true);
@@ -911,7 +933,8 @@ public String toString() {
 public void touch(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask("Touching", Policy.totalWork);
+		String message = Policy.bind("resources.touch", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
 		try {
 			workspace.prepareOperation();
 			ResourceInfo info = getResourceInfo(false, false);
