@@ -134,7 +134,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 		
 		showPreferences = new SyncViewerShowPreferencesAction(view.getSite().getShell());
 		
-		refreshAction = new RefreshAction(getSite().getPage(), getParticipant(), true /* refresh all */);
+		refreshAction = new RefreshAction(getSite().getPage(), getParticipant(), false /* refresh all */);
 		statusLine = new StatusLineContributionGroup(this.input);
 		
 		collapseAll = new Action() {
@@ -189,6 +189,7 @@ public class TeamSubscriberParticipantPage implements IPageBookViewPage, IProper
 	private void setContextMenu(IMenuManager manager) {
 		openWithActions.fillContextMenu(manager);
 		refactorActions.fillContextMenu(manager);
+		manager.add(refreshAction);
 		manager.add(new Separator());
 		manager.add(expandAll);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
