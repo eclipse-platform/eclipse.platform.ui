@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.rcp.browser;
 
-import org.eclipse.core.boot.IPlatformRunnable;
-
+import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.ui.PlatformUI;
 
 /**
