@@ -49,8 +49,7 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		Control[] children = parent.getChildren();
 		int cwidth = 0;
 		int cheight = 0;
-		
-		Point [] sizes = new Point[children.length];
+		Point[] sizes = new Point[children.length];
 		for (int i = 0; i < children.length; i++) {
 			sizes[i] = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			cwidth = Math.max(cwidth, sizes[i].x);
@@ -64,25 +63,27 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 			ncolumns = Math.min(ncolumns, maxNumColumns);
 		}
 		int perColHeight = cheight / ncolumns;
+		if (cheight % ncolumns !=0) 
+			perColHeight++;
 		int colHeight = 0;
-		int [] heights = new int[ncolumns];
+		int[] heights = new int[ncolumns];
 		int ncol = 0;
 		for (int i = 0; i < sizes.length; i++) {
 			int childHeight = sizes[i].y;
 			if (colHeight + childHeight > perColHeight) {
 				ncol++;
-				colHeight=0;
+				colHeight = 0;
 			}
 			colHeight += childHeight;
-			if (heights[ncol]==0)
+			if (heights[ncol] == 0)
 				heights[ncol] += verticalSpacing;
 			heights[ncol] += childHeight;
 		}
-		Point size = new Point(0,0);
-		for (int i=0; i<ncolumns; i++) {
+		Point size = new Point(0, 0);
+		for (int i = 0; i < ncolumns; i++) {
 			size.y = Math.max(size.y, heights[i]);
 		}
-		size.x = cwidth * ncolumns + (ncolumns-1)*horizontalSpacing;
+		size.x = cwidth * ncolumns + (ncolumns - 1) * horizontalSpacing;
 		size.x += leftMargin + rightMargin;
 		size.y += topMargin + bottomMargin;
 		return size;
@@ -98,36 +99,40 @@ public class ColumnLayout extends Layout implements ILayoutExtension {
 		Rectangle carea = parent.getClientArea();
 		int cwidth = 0;
 		int cheight = 0;
-		Point [] sizes = new Point[children.length];
+		Point[] sizes = new Point[children.length];
 		for (int i = 0; i < children.length; i++) {
 			sizes[i] = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			cwidth = Math.max(cwidth, sizes[i].x);
 			cheight += sizes[i].y;
 		}
 		int ncolumns = (carea.width - leftMargin - rightMargin - horizontalSpacing)
-					/ (cwidth + horizontalSpacing);
-			ncolumns = Math.max(ncolumns, minNumColumns);
-			ncolumns = Math.min(ncolumns, maxNumColumns);
-		int realWidth = (carea.width - leftMargin - rightMargin + horizontalSpacing)/ncolumns - horizontalSpacing;
+				/ (cwidth + horizontalSpacing);
+		ncolumns = Math.max(ncolumns, minNumColumns);
+		ncolumns = Math.min(ncolumns, maxNumColumns);
+		int realWidth = (carea.width - leftMargin - rightMargin + horizontalSpacing)
+				/ ncolumns - horizontalSpacing;
+		System.out.println("ncolumns="+ncolumns);
+		System.out.println("cwidth="+cwidth);
+		System.out.println("childWidth="+realWidth);
 		int colWidth = 0;
 		int colHeight = 0;
 		int ncol = 0;
-		int x=leftMargin, y=topMargin;
+		int x = leftMargin, y = topMargin;
 		for (int i = 0; i < children.length; i++) {
 			Control child = children[i];
 			Point csize = sizes[i];
-			if (y + verticalSpacing + csize.y+bottomMargin>carea.height) {
+			if (y + csize.y + bottomMargin > carea.height) {
 				// wrap
 				x += horizontalSpacing + realWidth;
 				y = topMargin;
 				ncol++;
 			}
 			int childWidth = realWidth;
-			if (ncol==ncolumns-1) {
+			if (ncol == ncolumns - 1) {
 				childWidth = carea.width - x - rightMargin;
 			}
 			child.setBounds(x, y, childWidth, csize.y);
-			y += csize.y;
+			y += csize.y + verticalSpacing;
 		}
 	}
 	/*
