@@ -119,6 +119,8 @@ public class Perspective
 		}
 	};
 
+	private boolean shouldHideEditorsOnActivate = false;
+
 /**
  * ViewManager constructor comment.
  */
@@ -663,6 +665,13 @@ protected void onActivate() {
 	setAllPinsVisible(true);
 	presentation.activate(getClientComposite());
 	getClientComposite().addListener(SWT.Resize, resizeListener);
+	
+	if (shouldHideEditorsOnActivate) {
+		// We do this here to ensure that createPartControl is called on the top editor
+		// before it is hidden
+		hideEditorArea();
+		shouldHideEditorsOnActivate = false;
+	}
 }
 /**
  * deactivate.
@@ -912,8 +921,7 @@ public void restoreState() {
 	// Hide the editor area if needed. Need to wait for the
 	// presentation to be fully setup first.
 	Integer areaVisible = memento.getInteger(IWorkbenchConstants.TAG_AREA_VISIBLE);
-	if (areaVisible != null && areaVisible.intValue() == 0)
-		hideEditorArea();
+	shouldHideEditorsOnActivate = (areaVisible != null && areaVisible.intValue() == 0);
 }
 /**
  * Save the layout.
