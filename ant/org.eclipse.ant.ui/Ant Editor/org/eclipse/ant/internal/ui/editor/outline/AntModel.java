@@ -935,6 +935,7 @@ public class AntModel {
 	}
 	
 	public AntProjectNode getProjectNode() {
+		reconcile();
 		return fProjectNode;
 	}
 }
