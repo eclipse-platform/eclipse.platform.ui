@@ -142,9 +142,16 @@ function selectTopic(topic)
  * Scrolls the page to show the specified element
  */
 function scrollIntoView(node)
-{
-	var nodeTop = node.offsetTop;
-	var nodeBottom = nodeTop + node.offsetHeight;
+{      
+	// use the parent element for getting the offsetTop, as it appears
+	// that tables get their own layout measurements.
+
+	//var nodeTop = node.offsetTop;
+	var nodeTop = node.parentNode.offsetTop;
+	
+	//var nodeBottom = nodeTop + node.offsetHeight;
+	var nodeBottom = nodeTop + node.parentNode.offsetHeight;
+	
 	var pageTop = 0;
 	var pageBottom = 0;
 	
@@ -157,12 +164,12 @@ function scrollIntoView(node)
 	else if (isMozilla)
 	{
 		pageTop = window.pageYOffset;
-		pageBottom = pageTop + window.innerHeight - node.offsetHeight;
+		pageBottom = pageTop + window.innerHeight - node.parentNode.offsetHeight;
 	}
 	
 	var scroll = 0;
 	if (nodeTop >= pageTop )
-	{
+	{	
 		if (nodeBottom <= pageBottom)
 			return; // already in view
 		else
