@@ -50,20 +50,22 @@ class OverlayCache {
 		Image source,
 		Object element,
 		LightweightDecoratorDefinition[] decorators) {
-			
+
 		//Do not bother if there is no work to do,
-		if(decorators.length == 0)
+		if (decorators.length == 0)
 			return source;
 
 		ImageDescriptor[] descriptors = new ImageDescriptor[4];
 
-		decorateWith(element, decorators, descriptors);
+		if (decorateWith(element, decorators, descriptors)) {
 
-		Rectangle bounds = source.getBounds();
-		Point size = new Point(bounds.width, bounds.height);
-		DecoratorOverlayIcon icon =
-			new DecoratorOverlayIcon(source, descriptors, size);
-		return getImageFor(icon);
+			Rectangle bounds = source.getBounds();
+			Point size = new Point(bounds.width, bounds.height);
+			DecoratorOverlayIcon icon =
+				new DecoratorOverlayIcon(source, descriptors, size);
+			return getImageFor(icon);
+		} else
+			return source;
 	}
 
 	/**
@@ -84,15 +86,20 @@ class OverlayCache {
 		LightweightDecoratorDefinition[] decorators,
 		Object adapted,
 		LightweightDecoratorDefinition[] adaptedDecorators) {
-			
+
 		//Do not bother if there is no work to do,
-		if(decorators.length == 0 && adaptedDecorators.length == 0)
+		if (decorators.length == 0 && adaptedDecorators.length == 0)
 			return source;
 
 		ImageDescriptor[] descriptors = new ImageDescriptor[4];
 
-		decorateWith(element, decorators, descriptors);
-		decorateWith(adapted, adaptedDecorators, descriptors);
+		boolean decorated = decorateWith(element, decorators, descriptors);
+		decorated =
+			decorated || decorateWith(adapted, adaptedDecorators, descriptors);
+
+		//Don't do the math if you don't need to
+		if (!decorated)
+			return source;
 
 		Rectangle bounds = source.getBounds();
 		Point size = new Point(bounds.width, bounds.height);
@@ -103,25 +110,30 @@ class OverlayCache {
 
 	/**
 	 * Find the overlays for element using the supplied decorators.
+	 * @return boolean - true if anything was applied.
 	 * @param element
 	 * @param decorators
 	 * @param descriptors
 	 */
-	private void decorateWith(
+	private boolean decorateWith(
 		Object element,
 		LightweightDecoratorDefinition[] decorators,
 		ImageDescriptor[] descriptors) {
+		boolean anythingApplied = false;
 		for (int i = 0; i < decorators.length; i++) {
 			if (decorators[i].getEnablement().isEnabledFor(element)) {
 				ImageDescriptor overlay = decorators[i].getOverlay(element);
 				if (overlay != null) {
 					int quadrant = decorators[i].getQuadrant();
 					//Only allow one per quadrant
-					if (descriptors[quadrant] == null)
+					if (descriptors[quadrant] == null) {
 						descriptors[quadrant] = overlay;
+						anythingApplied = true;
+					}
 				}
 			}
 		}
+		return anythingApplied;
 	}
 
 }

@@ -761,6 +761,10 @@ public class DecoratorManager
 			}
 		}
 
+		//Nothing happened so just return the text
+		if(appliedDecorators.isEmpty() && appliedAdaptedDecorators.isEmpty())
+			return text;
+			
 		result.append(text);
 
 		if (adapted != null) {
