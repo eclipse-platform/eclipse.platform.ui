@@ -2322,7 +2322,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param viewer the viewer to be initialized
 	 * @since 2.0
 	 */
-	private void initializeViewerColors(ISourceViewer viewer) {
+	protected void initializeViewerColors(ISourceViewer viewer) {
 		
 		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
