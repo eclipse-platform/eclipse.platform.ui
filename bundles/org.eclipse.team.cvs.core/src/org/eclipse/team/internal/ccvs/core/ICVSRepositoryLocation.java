@@ -1,5 +1,9 @@
 package org.eclipse.team.ccvs.core;
 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -15,7 +19,7 @@ package org.eclipse.team.ccvs.core;
  * @see IUserAuthenticator
  * @see IConnectionMethod
  */
-public interface ICVSRepositoryLocation {
+public interface ICVSRepositoryLocation  extends IAdaptable {
 
 	/**
 	 * port value which indicates to a connection method to use the default port
@@ -49,6 +53,14 @@ public interface ICVSRepositoryLocation {
 	 */
 	public String getLocation();
 
+	/**
+	 * Return a remote folder for the given repository and 
+	 * repositoryRelativePath which can be used to query the server about the folder 
+	 * for the given tag. If repositoryRelativePath is null, the resulting remote
+	 * folder represents the root of the repository. If tag is null, the HEAD trunk is assumed
+	 */
+	public IRemoteFolder getRemoteFolder(IPath repositoryRelativePath, String tag)  throws CVSException;
+	
 	/**
 	 * Return the conection timeout value in milliseconds.
 	 * A value of 0 means there is no timeout value.

@@ -93,22 +93,6 @@ public interface ICVSProvider {
 	/** Return a list of the know repository locations
 	 */
 	public ICVSRepositoryLocation[] getKnownRepositories();
-	
-	/**
-	 * Return a remote folder for the given repository and 
-	 * repositoryRelativePath which can be used to query the server about the folder 
-	 * for the given tag. If repositoryRelativePath is null, the resulting remote
-	 * folder represents the root of the repository. If tag is null, the HEAD trunk is assumed
-	 */
-	public IRemoteFolder getRemoteFolder(ICVSRepositoryLocation repository, IPath repositoryRelativePath, String tag)  throws CVSException;
-	
-	/**
-	 * Return a remote resource for a resource in a CVS local working copy.
-	 * 
-	 * An exception will be thrown if the provided resource is not part of
-	 * a CVS working copy.
-	 */
-	public IRemoteResource getRemoteResource(IResource resource) throws TeamException;
 		
 	/**
 	 * Get the names of the registered connection methods.

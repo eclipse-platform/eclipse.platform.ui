@@ -90,6 +90,8 @@ public class CVSProvider implements ICVSProvider {
 		else 
 			repository.append(root);
 		
+		// NOTE: Check the cache to see if the instance already exists
+		
 		CVSRepositoryLocation location  = CVSRepositoryLocation.fromString(repository.toString());
 		
 		String password = configuration.getProperty("password");
@@ -320,33 +322,6 @@ public class CVSProvider implements ICVSProvider {
 		for (int i=0;i<methods.length;i++)
 			result[i] = methods[i].getName();
 		return result;
-	}
-
-	/**
-	 * @see ICVSProvider#getRemoteFolder(ICVSRepositoryLocation, IPath, String)
-	 */
-	public IRemoteFolder getRemoteFolder(
-		ICVSRepositoryLocation repository,
-		IPath repositoryRelativePath,
-		String tag)
-		throws CVSException {
-			
-		return new RemoteFolder(repository, repositoryRelativePath, tag);
-	}
-
-	/*
-	 * @see ICVSProvider#getRemoteResource(IResource)
-	 */
-	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
-		CVSTeamProvider team;
-		try {
-		 	team = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
-		} catch (ClassCastException e) {
-			throw new CVSException(Policy.bind("CVSProvider.invalidResource", resource.getFullPath().toString()));
-		}
-		if (team == null)
-			throw new CVSException(Policy.bind("CVSProvider.invalidResource", resource.getFullPath().toString()));
-		return team.getRemoteResource(resource);
 	}
 
 	/*

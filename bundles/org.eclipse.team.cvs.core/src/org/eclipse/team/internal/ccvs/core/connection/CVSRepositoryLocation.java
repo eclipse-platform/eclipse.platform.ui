@@ -11,19 +11,23 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
+import org.eclipse.team.ccvs.core.IRemoteFolder;
 import org.eclipse.team.ccvs.core.IUserAuthenticator;
 import org.eclipse.team.ccvs.core.IUserInfo;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 
 /**
  * This class manages a CVS repository location.
@@ -44,7 +48,7 @@ import org.eclipse.team.ccvs.core.IUserInfo;
  * notify the authenticator so cached properties can be cleared
  * 
  */
-public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo {
+public class CVSRepositoryLocation extends PlatformObject implements ICVSRepositoryLocation, IUserInfo {
 
 	// static variables for extension points
 	private static IUserAuthenticator authenticator;
@@ -64,7 +68,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 	public static final char PORT_SEPARATOR = '#';
 	public static final boolean STANDALONE_MODE = (System.getProperty("cvs.standalone")==null)?false:(new Boolean(System.getProperty("cvs.standalone")).booleanValue());
 	
-	/**
+	/*
 	 * Create a CVSRepositoryLocation from its composite parts.
 	 */
 	private CVSRepositoryLocation(IConnectionMethod method, String user, String password, String host, int port, String root, boolean userFixed, boolean passwordFixed) {
@@ -99,7 +103,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		}
 	}
 	
-	/**
+	/*
 	 * Create the connection to the remote server.
 	 * If anything fails, an exception will be thrown and must
 	 * be handled by the caller.
@@ -112,7 +116,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		return connection;
 	}
 	
-	/**
+	/*
 	 * Dispose of the receiver by clearing any cached authorization information.
 	 * This method shold only be invoked when the corresponding adapter is shut
 	 * down or a connection is being validated.
@@ -124,17 +128,17 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		}
 	}
 	
-	/**
+	/*
 	 * @see ICVSRepositoryLocation#getHost()
 	 */
 	public String getHost() {
 		return host;
 	}
 
-	/**
+	/*
 	 * @see IRepositoryLocation#getLocation()
 	 * 
-	 * The username is inlcuded if it is fixed.
+	 * The username is included if it is fixed.
 	 * The password is never included even if it is fixed.
 	 * The port is included if it is not the default port.
 	 */
@@ -148,7 +152,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 			COLON + root;
 	}
 	
-	/**
+	/*
 	 * @see ICVSRepositoryLocation#getMethod()
 	 */
 	public IConnectionMethod getMethod() {
@@ -163,21 +167,32 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		return true;
 	}
 
-	/**
+	/*
 	 * @see ICVSRepositoryLocation#getPort()
 	 */
 	public int getPort() {
 		return port;
 	}
 	
-	/**
+	/*
+	 * @see ICVSRepositoryLocation#getRemoteFolder(IPath, String)
+	 */
+	public IRemoteFolder getRemoteFolder(
+		IPath repositoryRelativePath,
+		String tag)
+		throws CVSException {
+			
+		return new RemoteFolder(this, repositoryRelativePath, tag);
+	}
+	
+	/*
 	 * @see ICVSRepositoryLocation#getRootDirectory()
 	 */
 	public String getRootDirectory() {
 		return root;
 	}
 	
-	/**
+	/*
 	 * @see ICVSRepositoryLocation#getTimeout()
 	 * 
 	 * For the time being, the timeout value is a system wide value
@@ -187,14 +202,14 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		return 60;
 	}
 	
-	/**
+	/*
 	 * @see ICVSRepositoryLocation#getUserInfo()
 	 */
 	public IUserInfo getUserInfo() {
 		return this;
 	}
 	
-	/**
+	/*
 	 * @see ICVSRepositoryLocation#getUsername()
 	 * @see IUserInfo#getUsername()
 	 */
@@ -202,14 +217,14 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		return user;
 	}
 	
-	/**
+	/*
 	 * @see IUserInfo#isUsernameMutable()
 	 */
 	public boolean isUsernameMutable() {
 		return !userFixed;
 	}
 
-	/**
+	/*
 	 * Open a connection to the repository represented by the receiver.
 	 * If the username or password are not fixed, openConnection will
 	 * use the plugged-in authenticator to prompt for the username and/or
@@ -256,14 +271,14 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		}
 	}
 	
-	/** 
+	/*
 	 * Implementation of inherited toString()
 	 */
 	public String toString() {
 		return getLocation();
 	}
 	
-	/**
+	/*
 	 * @see IUserInfo#setPassword(String)
 	 */
 	public void setPassword(String password) {
@@ -272,7 +287,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		this.password = password;
 	}
 	
-	/**
+	/*
 	 * @see IUserInfo#setUsername(String)
 	 */
 	public void setUsername(String user) {
@@ -298,7 +313,8 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 			authenticator.cachePassword(this, this, password);
 		}
 	}
-	/**
+	
+	/*
 	 * Validate that the receiver contains valid information for
 	 * making a connection. If the receiver contains valid
 	 * information, the method returns. Otherwise, an exception
@@ -324,7 +340,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		return false;
 	}
 	
-	/**
+	/*
 	 * Parse a location string and return a CVSRepositoryLocation.
 	 * 
 	 * On failure, the status of the exception will be a MultiStatus
@@ -345,7 +361,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		}
 	}
 	
-	/**
+	/*
 	 * Parse a location string and return a CVSRepositoryLocation.
 	 * 
 	 * The valid format (from the cederqvist) is:
@@ -441,7 +457,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		return authenticator;
 	}
 
-	/**
+	/*
 	 * Return the connection method registered for the given name or null if none
 	 * are registered
 	 */
@@ -454,7 +470,7 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 		return null;		
 	}
 	
-	/**
+	/*
 	 * Return a string containing a list of all connection methods
 	 */
 	private static String getPluggedInConnectionMethodNames() {
@@ -515,7 +531,8 @@ public class CVSRepositoryLocation implements ICVSRepositoryLocation, IUserInfo 
 			return null;
 		}
 	}
-	/**
+	
+	/*
 	 * Validate that the given string could ne used to succesfully create
 	 * an instance of the receiver.
 	 * 
