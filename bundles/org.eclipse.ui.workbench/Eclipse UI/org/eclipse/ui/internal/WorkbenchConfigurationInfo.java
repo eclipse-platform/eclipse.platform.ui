@@ -273,7 +273,7 @@ protected AboutInfo[] collectNewFeaturesWithPerspectives() {
  * Open an editor for the given input
  */
 private void openEditor(IWorkbenchWindow window, IEditorInput input, String editorId, String perspectiveId) {
-	if (window == null) {
+	if (getWorkbench().getWorkbenchWindowCount() == 0) {
 		// Something is wrong, there should be at least
 		// one workbench window open by now.
 		return;
@@ -284,6 +284,8 @@ private void openEditor(IWorkbenchWindow window, IEditorInput input, String edit
 		IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 		try {
 			win = getWorkbench().openWorkbenchWindow(perspectiveId, root);
+			if (win == null)
+				win = window;
 		} catch (WorkbenchException e) {
 			if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
 				WorkbenchPlugin.log("Error opening window in Workbench.openEditor(..)"); //$NON-NLS-1$
@@ -292,8 +294,8 @@ private void openEditor(IWorkbenchWindow window, IEditorInput input, String edit
 	}
 
 	if (win == null)
-		win = window;
-
+		win = getWorkbench().getWorkbenchWindows()[0];
+		
 	WorkbenchPage page = (WorkbenchPage) win.getActivePage();
 	String id = perspectiveId;
 	if (id == null)
