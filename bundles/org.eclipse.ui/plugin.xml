@@ -842,11 +842,13 @@
          </accelerator>
          <accelerator
                locale="zh"
-               key="Ctrl+Space">
+               key="Ctrl+Space"
+               id="">
          </accelerator>
          <accelerator
                locale="zh"
-               key="Ctrl+Shift+Space">
+               key="Ctrl+Shift+Space"
+               id="">
          </accelerator>
          <accelerator
                locale="zh"
