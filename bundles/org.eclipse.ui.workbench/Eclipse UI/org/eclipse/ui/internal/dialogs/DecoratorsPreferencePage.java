@@ -230,7 +230,9 @@ public class DecoratorsPreferencePage
 				definitions[i].setEnabled(checked);
 				
 			}
-			//Have the manager redecorate.
+			//Have the manager clear again as there may have been
+			//extra updates fired by the enablement changes.
+			manager.clearCaches();
 			manager.updateForEnablementChange();
 			return true;
 		}
