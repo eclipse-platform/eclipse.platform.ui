@@ -100,7 +100,8 @@ public class HyperlinkLabel extends Canvas{
 		data.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		label.setLayoutData(data);
 
-		initAccessible(this);
+		initAccessibleLink();
+		initAccessibleLabel();
 	}
 
 	public void setText(String text)
@@ -193,8 +194,8 @@ public class HyperlinkLabel extends Canvas{
 		label.setCursor(c);
 	}
 	
-	private void initAccessible(final Control control) {
-		Accessible accessible = control.getAccessible();
+	private void initAccessibleLink() {
+		Accessible accessible = this.getAccessible();
 		accessible.addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
 				e.result = label.getText();
@@ -207,33 +208,29 @@ public class HyperlinkLabel extends Canvas{
 
 		accessible
 			.addAccessibleControlListener(new AccessibleControlAdapter() {
-			public void getChildAtPoint(AccessibleControlEvent e) {
-				Point pt = label.toControl(new Point(e.x, e.y));
-				e.childID =
-					(control.getBounds().contains(pt))
-						? ACC.CHILDID_SELF
-						: ACC.CHILDID_NONE;
-			}
-
-			public void getLocation(AccessibleControlEvent e) {
-				Rectangle location = label.getBounds();
-				Point pt = control.toDisplay(new Point(location.x, location.y));
-				e.x = pt.x;
-				e.y = pt.y;
-				e.width = location.width;
-				e.height = location.height;
-			}
-
-			public void getChildCount(AccessibleControlEvent e) {
-				e.detail = 0;
-			}
-
 			public void getRole(AccessibleControlEvent e) {
-				e.detail = ACC.ROLE_TEXT;
+				e.detail = ACC.ROLE_LINK;
 			}
 
 			public void getState(AccessibleControlEvent e) {
-				e.detail = ACC.STATE_READONLY;
+				if(hasFocus)
+					e.detail = ACC.STATE_FOCUSABLE | ACC.STATE_LINKED | ACC.STATE_FOCUSED;
+				else
+					e.detail = ACC.STATE_FOCUSABLE | ACC.STATE_LINKED;
+					
+			}
+		});
+	}
+	private void initAccessibleLabel() {
+		Accessible accessible = label.getAccessible();
+		accessible
+			.addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getState(AccessibleControlEvent e) {
+				if(hasFocus)
+					e.detail = ACC.STATE_READONLY | ACC.STATE_FOCUSABLE | ACC.STATE_SELECTABLE | ACC.STATE_LINKED | ACC.STATE_FOCUSED ;
+				else
+					e.detail = ACC.STATE_READONLY | ACC.STATE_FOCUSABLE | ACC.STATE_SELECTABLE | ACC.STATE_LINKED;
+					
 			}
 		});
 	}
