@@ -1571,7 +1571,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	protected int findAndSelectInRange(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, int rangeOffset, int rangeLength, boolean regExSearch) {
 		
 		if (!isProjectionMode())
-			return super.findAndSelect(startPosition, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
+			return super.findAndSelectInRange(startPosition, findString, forwardSearch, caseSensitive, wholeWord, rangeOffset, rangeLength, regExSearch);
 		
 		StyledText textWidget= getTextWidget();
 		if (textWidget == null)
