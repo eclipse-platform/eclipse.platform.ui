@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Longfield <clongfield@internap.com> - Fix for Bug 70856
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
