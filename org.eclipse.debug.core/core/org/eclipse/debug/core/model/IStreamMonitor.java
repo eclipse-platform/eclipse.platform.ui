@@ -1,11 +1,11 @@
 package org.eclipse.debug.core.model;
-import org.eclipse.debug.core.IStreamListener;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
+import org.eclipse.debug.core.IStreamListener;
 
 /**
  * A stream monitor manages the contents of a stream a process
