@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * The import wizard allows the user to choose which nested import wizard to run.
@@ -87,7 +88,10 @@ public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
  * to perform any special finish processing for their wizard.
  */
 public boolean performFinish() {
-	((SelectionPage)getPages()[0]).saveWidgetValues();
+	SelectionPage first = (SelectionPage) getPages()[0];
+	first.saveWidgetValues();
+	RoleManager.getInstance().enableActivities(
+		first.getSelectedNode().getWizard().getClass().getName());
 	return true;
-}
+	}
 }
