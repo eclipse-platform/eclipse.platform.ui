@@ -105,10 +105,17 @@
           label="%help"
           visible="true">
 
-          <action id="org.eclipse.help.internal.ui.HelpAction"
+          <action id="org.eclipse.help.internal.ui.HelpActionExperimental"
                   menubarPath="help/helpEnd"
                   label="%helpcontents"
                   class="org.eclipse.help.internal.ui.HelpContentsAction"
+                  icon="icons/view.gif"
+                  tooltip="%openhelpcontents"/>
+
+          <action id="org.eclipse.help.internal.ui.HelpAction"
+                  menubarPath="help/helpEnd"
+                  label="Help Contents Version 1"
+                  class="org.eclipse.help.internal.ui.HelpContentsAction1"
                   icon="icons/view.gif"
                   tooltip="%openhelpcontents"/>
              
@@ -119,9 +126,9 @@
    <!-- =============================== -->
    <extension point="org.eclipse.ui.actionSets">
      <actionSet
-          id="org.eclipse.help.internal.ui.HelpActionSetExperimental"
-          label="Help Experimental"
-          visible="true">
+          id="org.eclipse.help.internal.ui.HelpActionInfocenter"
+          label="Help Information Center"
+          visible="false">
 
           <action id="org.eclipse.help.internal.ui.InfocenterAction"
                   menubarPath="help/helpEnd"
@@ -129,13 +136,6 @@
                   class="org.eclipse.help.internal.ui.InfocenterAction"
                   icon="icons/infocenter.gif"
                   tooltip="%openinfocenter"/>
-
-          <action id="org.eclipse.help.internal.ui.HelpActionExperimental"
-                  menubarPath="help/helpEnd"
-                  label="Help Contents (experimental)"
-                  class="org.eclipse.help.internal.ui.HelpContentsActionExperimental"
-                  icon="icons/view.gif"
-                  tooltip="%openhelpcontents"/>
              
      </actionSet>
  </extension>
