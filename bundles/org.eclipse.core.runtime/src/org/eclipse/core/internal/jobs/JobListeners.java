@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.jobs.*;
  * Responsible for notifying all job listeners about job lifecycle events.  Uses a
  * specialized iterator to ensure the complex iteration logic is contained in one place.
  */
-public class JobListeners {
+class JobListeners {
 	interface IListenerDoit {
 		public void notify(IJobChangeListener listener, IJobChangeEvent event);
 	}
