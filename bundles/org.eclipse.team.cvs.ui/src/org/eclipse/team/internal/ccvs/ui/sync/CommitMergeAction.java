@@ -91,16 +91,22 @@ public class CommitMergeAction extends MergeAction {
 		}
 		try {
 			RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-			if (additions.size() != 0) {
-				manager.add((IResource[])additions.toArray(new IResource[0]), monitor);
+			String comment = manager.promptForComment(getShell());
+			if (comment == null) {
+				// User cancelled. Remove the nodes from the sync set.
+				return null;
+			} else {
+				if (additions.size() != 0) {
+					manager.add((IResource[])additions.toArray(new IResource[0]), monitor);
+				}
+				if (deletions.size() != 0) {
+					manager.delete((IResource[])deletions.toArray(new IResource[0]), monitor);
+				}
+				if (conflicts.size() != 0) {
+					manager.merged((IRemoteSyncElement[])conflicts.toArray(new IRemoteSyncElement[0]));
+				}
+				manager.commit(changedResources, comment, getShell(), monitor);
 			}
-			if (deletions.size() != 0) {
-				manager.delete((IResource[])deletions.toArray(new IResource[0]), monitor);
-			}
-			if (conflicts.size() != 0) {
-				manager.merged((IRemoteSyncElement[])conflicts.toArray(new IRemoteSyncElement[0]));
-			}
-			manager.commit(changedResources, getShell(), monitor);
 		} catch (TeamException e) {
 			// remove the change from the set, add an error
 			CVSUIPlugin.getPlugin().log(e.getStatus());

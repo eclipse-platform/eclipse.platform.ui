@@ -482,18 +482,10 @@ public class RepositoryManager {
 		}		
 	}
 	/**
-	 * Commit the given resources to their associated providers.
-	 * Prompt for a release comment, which will be applied to all committed
-	 * resources. Persist the release comment for the next caller.
-	 * 
-	 * What should happen with errors?
-	 * Should this do a workspace operation?
-	 * 
-	 * @param resources  the resources to commit
-	 * @param shell  the shell that will be the parent of the release comment dialog
-	 * @param monitor  the progress monitor
+	 * Return the entered comment or null.
+	 * Persist the entered release comment for the next caller.
 	 */
-	public void commit(IResource[] resources, final Shell shell, IProgressMonitor monitor) throws TeamException {
+	public String promptForComment(final Shell shell) {
 		final int[] result = new int[1];
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
@@ -504,8 +496,20 @@ public class RepositoryManager {
 				previousComment = dialog.getComment();
 			}
 		});
-		if (result[0] != ReleaseCommentDialog.OK) return;
-		
+		if (result[0] != ReleaseCommentDialog.OK) return null;
+		return previousComment;
+	}
+	/**
+	 * Commit the given resources to their associated providers.
+	 * 
+	 * What should happen with errors?
+	 * Should this do a workspace operation?
+	 * 
+	 * @param resources  the resources to commit
+	 * @param shell  the shell that will be the parent of the release comment dialog
+	 * @param monitor  the progress monitor
+	 */
+	public void commit(IResource[] resources, String comment, final Shell shell, IProgressMonitor monitor) throws TeamException {
 		Hashtable table = getProviderMapping(resources);
 		Set keySet = table.keySet();
 		monitor.beginTask("", keySet.size() * 1000);
@@ -514,7 +518,7 @@ public class RepositoryManager {
 		while (iterator.hasNext()) {
 			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
 			CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-			provider.setComment(previousComment);
+			provider.setComment(comment);
 			List list = (List)table.get(provider);
 			IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
 			provider.checkin(providerResources, IResource.DEPTH_INFINITE, subMonitor);

@@ -6,16 +6,10 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.core.ITeamManager;
 import org.eclipse.team.core.ITeamProvider;
@@ -23,7 +17,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
+import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -32,10 +26,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * Prompts the user for a release comment.
  */
 public class CommitAction extends TeamAction {
-
-	// The previously remembered comment
-	private static String previousComment = "";
-
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -43,7 +33,11 @@ public class CommitAction extends TeamAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					CVSUIPlugin.getPlugin().getRepositoryManager().commit(getSelectedResources(), getShell(), monitor);
+					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
+					String comment = manager.promptForComment(getShell());
+					if (comment != null) {
+						manager.commit(getSelectedResources(), comment, getShell(), monitor);
+					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
