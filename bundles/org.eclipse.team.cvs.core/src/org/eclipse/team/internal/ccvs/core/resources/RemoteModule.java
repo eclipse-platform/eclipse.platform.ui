@@ -14,6 +14,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -160,7 +161,7 @@ public class RemoteModule extends RemoteFolder {
 	}
 	
 	/* 
-	 * Override of inherited method which persists the children
+	 * Override of inherited getMembers in order to combine the physical members with any referenced modules
 	 */
 	public ICVSRemoteResource[] getMembers(CVSTag tagName, IProgressMonitor monitor) throws TeamException {
 		ICVSRemoteResource[] physicalChildren;
@@ -185,6 +186,9 @@ public class RemoteModule extends RemoteFolder {
 		return allChildren;
 	}
 	
+	/*
+	 * Set the children to a static set of children
+	 */
 	protected void setChildren(ICVSRemoteResource[] children) {
 		super.setChildren(children);
 		if ( ! folderInfo.getIsStatic())

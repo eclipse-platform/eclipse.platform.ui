@@ -12,9 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.eclipse.core.internal.resources.Synchronizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -27,6 +28,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -43,6 +45,7 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -325,6 +328,36 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			assertTrue(message, info1.getRepository().equals(info2.getRepository()));
 		}
 	}
+	
+	
+	/*
+	 * Compare folders by comparing their folder sync info and there children
+	 * 
+	 * XXX What about unmanaged children?
+	 */
+	protected void assertEquals(RemoteFolder container1, RemoteFolder container2, boolean includeTags) throws CoreException, TeamException, IOException {
+		assertEquals("Folder information differs", container1.getFolderSyncInfo(), container2.getFolderSyncInfo(), includeTags);
+		ICVSRemoteResource[] members1 = container1.getMembers(DEFAULT_MONITOR);
+		ICVSRemoteResource[] members2 = container2.getMembers(DEFAULT_MONITOR);
+		assertTrue("Number of members differ", members1.length == members2.length);
+		Map memberMap2 = new HashMap();
+		for (int i= 0;i <members2.length;i++) {
+			memberMap2.put(members2[i].getName(), members2[i]);
+		}
+		for (int i= 0;i <members1.length;i++) {
+			ICVSRemoteResource member2 = (ICVSRemoteResource)memberMap2.get(members1[i].getName());
+			assertNotNull(member2);
+			assertEquals(members1[i], member2, includeTags);
+		}
+	}
+	protected void assertEquals(ICVSRemoteResource resource1, ICVSRemoteResource resource2, boolean includeTags) throws CoreException, TeamException, IOException {
+		assertEquals("Resource types do not match", resource1.isContainer(), resource2.isContainer());
+		if (resource1.isContainer())
+			assertEquals((RemoteFolder)resource1, (RemoteFolder)resource2, includeTags);
+		else 
+			assertEquals("File comparison failed", (ICVSFile)resource1, (ICVSFile)resource2, true, includeTags);
+	}
+	
 	
 	/*
 	 * Compare the local project with the remote state by checking out a copy of the project.

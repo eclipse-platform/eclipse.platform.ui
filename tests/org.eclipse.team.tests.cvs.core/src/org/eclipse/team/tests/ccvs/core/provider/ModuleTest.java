@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -142,7 +143,7 @@ public class ModuleTest extends EclipseTest {
 		IRemoteSyncElement tree = getProvider(project1).getRemoteSyncTree(project1, CVSTag.DEFAULT, DEFAULT_MONITOR);
 		assertEquals("Local does not match remote", Session.getManagedResource(project1), (ICVSResource)tree.getRemote(), false, false);
 		RemoteModule module = getRemoteModule("project1");
-		assertEquals("Local does not match module", Session.getManagedResource(project1), module, false, false);
+		assertEquals((RemoteFolder)tree.getRemote(), module, false);
 	}
 	
 	/*
