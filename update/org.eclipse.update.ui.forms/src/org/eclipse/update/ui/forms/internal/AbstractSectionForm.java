@@ -133,10 +133,14 @@ public abstract class AbstractSectionForm extends AbstractForm {
 	}
 
 	public static void ensureVisible(ScrolledComposite scomp, Control control) {
-		Rectangle area = scomp.getClientArea();
 		Point controlSize = control.getSize();
-		Point scompOrigin = scomp.getOrigin();
 		Point controlOrigin = getControlLocation(scomp, control);
+		ensureVisible(scomp, controlOrigin, controlSize);
+	}
+
+	public static void ensureVisible(ScrolledComposite scomp, Point controlOrigin, Point controlSize) {
+		Rectangle area = scomp.getClientArea();
+		Point scompOrigin = scomp.getOrigin();
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
@@ -155,7 +159,7 @@ public abstract class AbstractSectionForm extends AbstractForm {
 		scomp.setOrigin(x, y);
 	}
 	
-	private static Point getControlLocation(ScrolledComposite scomp, Control control) {
+	public static Point getControlLocation(ScrolledComposite scomp, Control control) {
 		int x = 0;
 		int y = 0;
 		Control currentControl = control;

@@ -9,6 +9,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
@@ -140,20 +141,22 @@ public class FormEngine extends Canvas {
 		initAccessible();
 		makeActions();
 	}
-	
+
 	private void makeActions() {
 		openAction = new Action() {
 			public void run() {
 				activateSelectedLink();
 			}
 		};
-		openAction.setText(FormsPlugin.getResourceString("FormEgine.linkPopup.open"));
+		openAction.setText(
+			FormsPlugin.getResourceString("FormEgine.linkPopup.open"));
 		copyShortcutAction = new Action() {
 			public void run() {
 				copyShortcut(getSelectedLink());
 			}
 		};
-		copyShortcutAction.setText(FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
+		copyShortcutAction.setText(
+			FormsPlugin.getResourceString("FormEgine.linkPopup.copyShortcut"));
 	}
 
 	private String getAcessibleText() {
@@ -218,8 +221,9 @@ public class FormEngine extends Canvas {
 			mouseDown = true;
 			dragOrigin = new Point(e.x, e.y);
 		} else {
-			if (e.button==1) {
-				IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
+			if (e.button == 1) {
+				IHyperlinkSegment segmentUnder =
+					model.findHyperlinkAt(e.x, e.y);
 				if (segmentUnder != null) {
 					activateLink(segmentUnder);
 				}
@@ -429,6 +433,7 @@ public class FormEngine extends Canvas {
 			oldLink.paintFocus(gc, bg, fg, false);
 		}
 		if (newLink != null) {
+			//ensureVisible(newLink);
 			gc.setBackground(bg);
 			gc.setForeground(fg);
 			newLink.paintFocus(gc, bg, fg, true);
@@ -466,24 +471,49 @@ public class FormEngine extends Canvas {
 	public void setMarginHeight(int marginHeight) {
 		this.marginHeight = marginHeight;
 	}
-	
+
 	public void contextMenuAboutToShow(IMenuManager manager) {
 		IHyperlinkSegment link = getSelectedLink();
-		if (link!=null)
+		if (link != null)
 			contributeLinkActions(manager, link);
 	}
-	
-	private void contributeLinkActions(IMenuManager manager, IHyperlinkSegment link) {
+
+	private void contributeLinkActions(
+		IMenuManager manager,
+		IHyperlinkSegment link) {
 		manager.add(openAction);
 		manager.add(copyShortcutAction);
 		manager.add(new Separator());
 	}
-	
+
 	private void copyShortcut(IHyperlinkSegment link) {
 		String text = link.getText();
 		Clipboard clipboard = new Clipboard(getDisplay());
 		clipboard.setContents(
 			new Object[] { text },
 			new Transfer[] { TextTransfer.getInstance()});
+	}
+
+	private void ensureVisible(IHyperlinkSegment segment) {
+		Rectangle bounds = segment.getBounds();
+		ScrolledComposite scomp = getScrolledComposite();
+		if (scomp == null)
+			return;
+		Point origin = AbstractSectionForm.getControlLocation(scomp, this);
+		origin.x += bounds.x;
+		origin.y += bounds.y;
+		AbstractSectionForm.ensureVisible(
+			scomp,
+			origin,
+			new Point(bounds.width, bounds.height));
+	}
+	ScrolledComposite getScrolledComposite() {
+		Composite parent = getParent();
+		while (parent != null) {
+			if (parent instanceof ScrolledComposite)
+				return (ScrolledComposite) parent;
+			parent = parent.getParent();
+		}
+		return null;
 	}
 }

@@ -109,6 +109,20 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 		}
 		return false;
 	}
+	
+	public Rectangle getBounds() {
+		int x=0, y=0;
+		int width = 0, height = 0;
+		
+		for (int i=0; i<areaRectangles.size(); i++) {
+			AreaRectangle ar = (AreaRectangle)areaRectangles.get(i);
+			if (i==0) y = ar.rect.y;
+			x = Math.min(ar.rect.x, x);
+			width = Math.max(ar.rect.width, width);
+			height += ar.rect.height;
+		}
+		return new Rectangle(x, y, width, height);
+	}
 
 	public void advanceLocator(
 		GC gc,

@@ -17,5 +17,6 @@ public interface ITextSegment extends IParagraphSegment {
 	boolean isWordWrapAllowed();
 	boolean isSelectable();
 	boolean contains(int x, int y);
+	Rectangle getBounds();
 	void paintFocus(GC gc, Color bg, Color fg, boolean selected);
 }
