@@ -584,7 +584,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             synchronized (streamMonitor) {
                 streamMonitor.removeListener(this);
                 if (!flushed) {
-                    streamAppended(null, streamMonitor);
+                    String contents = streamMonitor.getContents();
+                    streamAppended(contents, streamMonitor);
                 }
                 listenerRemoved = true;
                 try {
