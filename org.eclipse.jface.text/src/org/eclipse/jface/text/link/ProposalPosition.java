@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 
 /**
  * LinkedPosition with added completion proposals.
@@ -61,18 +60,9 @@ public class ProposalPosition extends LinkedPosition {
 	 * @return an array of choices, including the initial one. Clients must not modify it.
 	 */
 	public ICompletionProposal[] getChoices() {
-		updateChoicePositions();
 		return fProposals;
 	}
 
-	private void updateChoicePositions() {
-		for (int i= 0; i < fProposals.length; i++) {
-			if (fProposals[i] instanceof ICompletionProposalExtension3) {
-				((ICompletionProposalExtension3)fProposals[i]).updateReplacementOffset(offset);
-			}
-		}
-	}
-	
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPosition#hashCode()
 	 */

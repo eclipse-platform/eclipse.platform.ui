@@ -12,6 +12,7 @@
 package org.eclipse.jface.text.contentassist;
 
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
 
 
@@ -19,7 +20,8 @@ import org.eclipse.jface.text.IInformationControlCreator;
  * Extension interface to <code>ICompletionProposal</code>.
  * Add the following functions:
  * <ul>
- * <li> provision of a custom information control creator
+ * <li>provision of a custom information control creator</li>
+ * <li>provide a custom completion text and offset for prefix completion</li> 
  * </ul>
  * 
  * @since 3.0
@@ -33,43 +35,36 @@ public interface ICompletionProposalExtension3 {
 	IInformationControlCreator getInformationControlCreator();
 	
 	/**
-	 * Returns the string that would be inserted at the position returned from 
-	 * <code>getCompletionOffset()</code> if this proposal was applied. If the 
-	 * replacement string cannot be determined, <code>null</code> may be returned.
+	 * Returns the string that would be inserted at the position returned from
+	 * <code>getPrefixCompletionStart(IDocument, int)</code> if this proposal was
+	 * applied. If the replacement string cannot be determined,
+	 * <code>null</code> may be returned.
+	 * <p>
+	 * If this interface is not implemented,
+	 * {@link ICompletionProposal#getDisplayString()} will be used instead.
+	 * </p>
 	 * 
-	 * @return the replacement string or <code>null</code> if it cannot be determined
+	 * @param document the document that the receiver applies to
+	 * @param completionOffset the offset into <code>document</code> where the
+	 *        completion takes place
+	 * @return the replacement string or <code>null</code> if it cannot be
+	 *         determined
 	 */
-	CharSequence getCompletionText();
+	CharSequence getPrefixCompletionText(IDocument document, int completionOffset);
 	
 	/**
-	 * Returns the document offset at which the receiver would insert its proposal.
-	 *  
+	 * Returns the document offset at which the receiver would insert its
+	 * proposal.
+	 * <p>
+	 * If this interface is not implemented, <code>completionOffset</code> will 
+	 * be used instead.
+	 * </p>
+	 * 
+	 * @param document the document that the receiver applies to
+	 * @param completionOffset the offset into <code>document</code> where the
+	 *        completion takes place
 	 * @return the offset at which the proposal would insert its proposal
 	 */
-	int getCompletionOffset();
-	
-	/**
-	 * Updates the replacement offset of a completion proposal. Implementations
-	 * may use the offset to detect whether a partial 
-	 * 
-	 * @param offset the new replacement offset, nee
-	 */
-	void updateReplacementOffset(int offset);
-
-	/**
-	 * Returns the replacement string that would be inserted at the replacement offset if
-	 * the proposal were applied.
-	 * 
-	 * @return the replacement string that would be inserted at the replacement offset
-	 */
-	String getReplacementString();
-
-	/**
-	 * Updates the replacement length of a completion proposal. Implementations 
-	 * may use the length to ajust the amount of code they would 'eat' when inserted.
-	 * 
-	 * @param length the new replacement length hint
-	 */
-	void updateReplacementLength(int length);
+	int getPrefixCompletionStart(IDocument document, int completionOffset);
 	
 }

@@ -48,7 +48,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
-import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
 
@@ -352,16 +351,6 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				p.apply(document);
 			}
 			
-			// adjust replacement length - this is a HACK
-			if (p instanceof ICompletionProposalExtension3) {
-				int replacementLength= ((ICompletionProposalExtension3) p).getReplacementString().length();
-				for (int i= 0; i < fComputedProposals.length; i++) {
-					if (fComputedProposals[i] instanceof ICompletionProposalExtension3) {
-						((ICompletionProposalExtension3)fComputedProposals[i]).updateReplacementLength(replacementLength);
-					}
-				}
-			}
-	
 			Point selection= p.getSelection(document);
 			if (selection != null) {
 				fViewer.setSelectedRange(selection.x, selection.y);

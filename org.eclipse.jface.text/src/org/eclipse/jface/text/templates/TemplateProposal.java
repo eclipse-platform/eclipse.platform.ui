@@ -33,16 +33,14 @@ import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.ILinkedModeListener;
 import org.eclipse.jface.text.link.LinkedModeModel;
+import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
-import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.link.ProposalPosition;
 
 
 /**
  * A template proposal. 
- * 
- * XXX This is work in progress. 
  * 
  * @since 3.0
  */
@@ -56,6 +54,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 	private IRegion fSelectedRegion; // initialized by apply()
 	private String fDisplayString;
+	private InclusivePositionUpdater fUpdater;
 		
 	/**
 	 * Creates a template proposal with a template and its context.
@@ -103,6 +102,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 */
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 
+		IDocument document= viewer.getDocument();
 		try {
 			fContext.setReadOnly(false);
 			TemplateBuffer templateBuffer;
@@ -117,13 +117,12 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 			int end= getReplaceEndOffset();
 			
 			// insert template string
-			IDocument document= viewer.getDocument();
 			String templateString= templateBuffer.getString();	
 			document.replace(start, end - start, templateString);	
 			
 			
 			// translate positions
-			LinkedModeModel env= new LinkedModeModel();
+			LinkedModeModel model= new LinkedModeModel();
 			TemplateVariable[] variables= templateBuffer.getVariables();
 			boolean hasPositions= false;
 			for (int i= 0; i != variables.length; i++) {
@@ -140,7 +139,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 				String[] values= variable.getValues();
 				ICompletionProposal[] proposals= new ICompletionProposal[values.length];
 				for (int j= 0; j < values.length; j++) {
-					ensurePositionCategoryInstalled(document, env);
+					ensurePositionCategoryInstalled(document, model);
 					Position pos= new Position(offsets[0] + start, length);
 					document.addPosition(getCategory(), pos);
 					proposals[j]= new PositionBasedCompletionProposal(values[j], pos, length);
@@ -152,22 +151,25 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 					else
 						group.addPosition(new LinkedPosition(document, offsets[j] + start, length));
 				
-				env.addGroup(group);
+				model.addGroup(group);
 				hasPositions= true;
 			}
 				
 			if (hasPositions) {
-				env.forceInstall();
-				LinkedModeUI editor= new LinkedModeUI(env, viewer);
-				editor.setExitPosition(viewer, getCaretOffset(templateBuffer) + start, 0, Integer.MAX_VALUE);
-				editor.enter();
+				model.forceInstall();
+				LinkedModeUI ui= new LinkedModeUI(model, viewer);
+				ui.setExitPosition(viewer, getCaretOffset(templateBuffer) + start, 0, Integer.MAX_VALUE);
+				ui.enter();
 				
-				fSelectedRegion= editor.getSelectedRegion();
-			} else
+				fSelectedRegion= ui.getSelectedRegion();
+			} else {
+				ensurePositionCategoryRemoved(document);
 				fSelectedRegion= new Region(getCaretOffset(templateBuffer) + start, 0);
+			}
 			
 		} catch (BadLocationException e) {
-			openErrorDialog(viewer.getTextWidget().getShell(), e);		    
+			openErrorDialog(viewer.getTextWidget().getShell(), e);
+			ensurePositionCategoryRemoved(document);
 			fSelectedRegion= fRegion;
 		} catch (BadPositionCategoryException e) {
 			openErrorDialog(viewer.getTextWidget().getShell(), e);		    
@@ -176,24 +178,19 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 	}	
 	
-	private void ensurePositionCategoryInstalled(final IDocument document, LinkedModeModel env) {
+	private void ensurePositionCategoryInstalled(final IDocument document, LinkedModeModel model) {
 		if (!document.containsPositionCategory(getCategory())) {
 			document.addPositionCategory(getCategory());
-			final InclusivePositionUpdater updater= new InclusivePositionUpdater(getCategory());
-			document.addPositionUpdater(updater);
+			fUpdater= new InclusivePositionUpdater(getCategory());
+			document.addPositionUpdater(fUpdater);
 			
-			env.addLinkingListener(new ILinkedModeListener() {
+			model.addLinkingListener(new ILinkedModeListener() {
 
 				/*
 				 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
 				 */
 				public void left(LinkedModeModel environment, int flags) {
-					try {
-						document.removePositionCategory(getCategory());
-					} catch (BadPositionCategoryException e) {
-						// ignore
-					}
-					document.removePositionUpdater(updater);
+					ensurePositionCategoryRemoved(document);
 				}
 
 				public void suspend(LinkedModeModel environment) {}
@@ -202,6 +199,17 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		}
 	}
 
+	private void ensurePositionCategoryRemoved(IDocument document) {
+		if (document.containsPositionCategory(getCategory())) {
+			try {
+				document.removePositionCategory(getCategory());
+			} catch (BadPositionCategoryException e) {
+				// ignore
+			}
+			document.removePositionUpdater(fUpdater);
+		}
+	}
+	
 	private String getCategory() {
 		return "TemplateProposalCategory_" + toString(); //$NON-NLS-1$
 	}
@@ -270,14 +278,13 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 			TemplateBuffer templateBuffer;
 			try {
 				templateBuffer= fContext.evaluate(fTemplate);
-			} catch (TemplateException e1) {
+			} catch (TemplateException e) {
 				return null;
 			}
 
 			return templateBuffer.getString();
 
 	    } catch (BadLocationException e) {
-	    	// FIXME do something
 			return null;
 		}
 	}
@@ -356,15 +363,15 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementString()
 	 */
-	public CharSequence getCompletionText() {
+	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return fTemplate.getName();
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementOffset()
 	 */
-	public int getCompletionOffset() {
-		return fRegion.getOffset();
+	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
+		return getReplaceOffset();
 	}
 
 	/*
@@ -395,27 +402,5 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	 */
 	public int getContextInformationPosition() {
 		return fRegion.getOffset();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#updateReplacementOffset(int)
-	 */
-	public void updateReplacementOffset(int offset) {
-		// not implemented
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementString()
-	 */
-	public String getReplacementString() {
-		// not implemented
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#updateReplacementLength(int)
-	 */
-	public void updateReplacementLength(int length) {
-		// not implemented
 	}
 }

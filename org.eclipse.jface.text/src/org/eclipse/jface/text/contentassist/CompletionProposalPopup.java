@@ -1076,7 +1076,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private int getReplacementOffset(ICompletionProposal proposal) {
 		if (proposal instanceof ICompletionProposalExtension3)
-			return ((ICompletionProposalExtension3) proposal).getCompletionOffset();
+			return ((ICompletionProposalExtension3) proposal).getPrefixCompletionStart(fContentAssistSubjectAdapter.getDocument(), fFilterOffset);
 		else
 			return fInvocationOffset;	
 	}
@@ -1094,7 +1094,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private CharSequence getReplacementString(ICompletionProposal proposal) {
 		CharSequence insertion= null;
 		if (proposal instanceof ICompletionProposalExtension3)
-			insertion= ((ICompletionProposalExtension3) proposal).getCompletionText();
+			insertion= ((ICompletionProposalExtension3) proposal).getPrefixCompletionText(fContentAssistSubjectAdapter.getDocument(), fFilterOffset);
 		
 		if (insertion == null)
 			insertion= proposal.getDisplayString();
