@@ -132,6 +132,7 @@ public class RemoteFolderTreeBuilder {
 			progress.beginTask(null, 100);
 			IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 100);
 			subProgress.beginTask(null, 512);  //$NON-NLS-1$
+			subProgress.subTask(Policy.bind("RemoteFolderTreeBuilder.buildingBase", root.getName()));
 	 		return builder.buildBaseTree(null, root, subProgress);
 		} finally {
 			progress.done();
@@ -152,9 +153,11 @@ public class RemoteFolderTreeBuilder {
 		try {
 			monitor.beginTask(null, 100);
 	
+			Policy.checkCanceled(monitor);
 			Session session = new Session(repository, root, false);
 			session.open(Policy.subMonitorFor(monitor, 10));
 			try {
+				Policy.checkCanceled(monitor);
 				fetchDelta(session, Policy.subMonitorFor(monitor, 50));
 				if (projectDoesNotExist) {
 					return null;
@@ -197,6 +200,8 @@ public class RemoteFolderTreeBuilder {
 	 */
 	private RemoteFolderTree buildBaseTree(RemoteFolderTree parent, ICVSFolder local, IProgressMonitor monitor) throws CVSException {
 		
+		Policy.checkCanceled(monitor);
+					
 		// Create a remote folder tree corresponding to the local resource
 		RemoteFolderTree remote = new RemoteFolderTree(parent, local.getName(), repository, new Path(local.getFolderSyncInfo().getRepository()), local.getFolderSyncInfo().getTag());
 
@@ -207,7 +212,6 @@ public class RemoteFolderTreeBuilder {
 		ICVSFolder[] folders = local.getFolders();
 		for (int i=0;i<folders.length;i++) {
 			if (folders[i].isManaged() && folders[i].isCVSFolder()) {
-				monitor.subTask("Building base for " + folders[i].getRelativePath(root));
 				monitor.worked(1);
 				children.add(buildBaseTree(remote, folders[i], monitor));
 			}
@@ -245,6 +249,8 @@ public class RemoteFolderTreeBuilder {
 	 * Does 1 work for each file and folder delta processed
 	 */
 	private void buildRemoteTree(Session session, ICVSFolder local, RemoteFolderTree remote, IPath localPath, IProgressMonitor monitor) throws CVSException {
+		
+		Policy.checkCanceled(monitor);
 		
 		// Add the remote folder to the remote folder lookup table (used to update file revisions)
 		remoteFolderTable.put(remote.getFolderSyncInfo().getRemoteLocation(), remote);

@@ -56,6 +56,11 @@ public class RTag extends Command {
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {
+		// do nothing
+	}
+	
+	protected void sendLocalWorkingDirectory(Session session) throws CVSException {
+		// do nothing
 	}
 	
 	public IStatus execute(Session session, GlobalOption[] globalOptions,

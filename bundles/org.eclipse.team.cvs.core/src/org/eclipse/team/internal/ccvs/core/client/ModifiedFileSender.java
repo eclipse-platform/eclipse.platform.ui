@@ -28,4 +28,8 @@ class ModifiedFileSender extends FileStructureVisitor {
 			super.sendFile(mFile);
 		}
 	}
+	
+	protected String getSendFileTitleKey() {
+		return null;
+	}
 }

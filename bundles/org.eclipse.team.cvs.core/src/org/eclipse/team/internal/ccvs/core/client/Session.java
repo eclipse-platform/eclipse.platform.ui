@@ -81,6 +81,9 @@ public class Session {
 
 	// a shared buffer used for file transfers
 	private byte[] transferBuffer = null;
+	
+	// The resource bundle key that provides the file sending message
+	private String sendFileTitleKey;
 
 	/**
 	 * Creates a new CVS session, initially in the CLOSED state.
@@ -508,7 +511,7 @@ public class Session {
 	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
 		// update progress monitor
-		String title = Policy.bind("Session.sending", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
+		String title = Policy.bind(getSendFileTitleKey(), new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
 		monitor.subTask(Policy.bind("Session.transferNoSize", title)); //$NON-NLS-1$
 		// obtain an input stream for the file and its size
 		long size = file.getSize();
@@ -758,4 +761,22 @@ public class Session {
 	}
 
 		
+	/**
+	 * Gets the sendFileTitleKey.
+	 * @return Returns a String
+	 */
+	String getSendFileTitleKey() {
+		if (sendFileTitleKey == null)
+			return "Session.sending";
+		return sendFileTitleKey;
+	}
+
+	/**
+	 * Sets the sendFileTitleKey.
+	 * @param sendFileTitleKey The sendFileTitleKey to set
+	 */
+	public void setSendFileTitleKey(String sendFileTitleKey) {
+		this.sendFileTitleKey = sendFileTitleKey;
+	}
+
 }

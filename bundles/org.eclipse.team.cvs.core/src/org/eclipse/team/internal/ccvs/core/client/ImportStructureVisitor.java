@@ -13,6 +13,7 @@ import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 
@@ -47,7 +48,7 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 		String[] wrappers, IProgressMonitor monitor) {
 
 		this.session = session;
-		this.monitor = monitor;
+		this.monitor = Policy.infiniteSubMonitorFor(monitor, 512);
 		this.wrappers = wrappers;
 		wrapMatcher = initWrapMatcher(wrappers);
 	}
@@ -124,7 +125,10 @@ class ImportStructureVisitor implements ICVSResourceVisitor {
 			return;
 		}
 		
-		session.sendConstructedDirectory(mFolder.getRelativePath(session.getLocalRoot()));
+		String localPath = mFolder.getRelativePath(session.getLocalRoot());
+		monitor.subTask(Policy.bind("AbstractStructureVisitor.sendingFolder", localPath));
+		
+		session.sendConstructedDirectory(localPath);
 		mFolder.acceptChildren(this);
 	}
 

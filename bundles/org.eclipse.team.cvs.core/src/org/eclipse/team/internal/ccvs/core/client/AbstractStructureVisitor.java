@@ -17,6 +17,7 @@ import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -39,7 +40,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		this.session = session;
 		this.sendQuestionable = sendQuestionable;
 		this.sendModifiedContents = sendModifiedContents;
-		this.monitor = monitor;
+		this.monitor = Policy.infiniteSubMonitorFor(monitor, 256);
 	}
 
 	/** 
@@ -80,6 +81,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 		String localPath = mFolder.getRelativePath(session.getLocalRoot());
 		
+		monitor.subTask(Policy.bind("AbstractStructureVisitor.sendingFolder", localPath));
+		
 		// Deal with questionable directories
 		boolean isQuestionable = ! mFolder.isCVSFolder() || isOrphanedSubtree(mFolder);
 		if (isQuestionable) {
@@ -94,7 +97,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		// Send the directory to the server
 		String remotePath = mFolder.getRemoteLocation(session.getLocalRoot());
 		if (remotePath == null) {
-			throw new CVSException("Unable to determine remote location for resource");
+			throw new CVSException(Policy.bind("AbstractStructureVisitor.noRemote"));
 		}
 		session.sendDirectory(localPath, remotePath);
 
@@ -115,6 +118,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 		// Record that we sent this folder
 		recordLastSent(mFolder);
+		
+		monitor.worked(1);
 	}
 
 	/**
@@ -192,9 +197,15 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		});
 
 		// Visit all the resources
+		session.setSendFileTitleKey(getSendFileTitleKey());
 		for (int i = 0; i < resourceList.size(); i++) {
 			((ICVSResource)resourceList.get(i)).accept(this);
 		}
+		
+		monitor.done();
 	}
 	
+	protected String getSendFileTitleKey() {
+		return "AbstractStructureVisitor.sendingFile";
+	}
 }
