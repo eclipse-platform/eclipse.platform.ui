@@ -38,8 +38,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
@@ -435,35 +433,10 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 */
 	protected void createTitleBar() {
 		// Only do this once.
-		if (titleLabel != null)
+		if (viewToolBar != null)
 			return;
 
-		// Title.   
-		titleLabel = new CLabel(control, SWT.SHADOW_NONE);
-		if (getTitleFont() != null)
-			titleLabel.setFont(getTitleFont());
-		titleLabel.setAlignment(SWT.LEFT);
-		titleLabel.setBackground(getNormalGradient(), getNormalGradientPercents(), isGradientVertical());
-		titleLabel.setForeground(getNormalForeground());
-		titleLabel.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				if ((e.button == 1) && overImage(e.x))
-					showPaneMenu();
-			}
-			public void mouseDoubleClick(MouseEvent event) {
-				doZoom();
-			}
-		});
-		// Listen for popup menu mouse event
-		titleLabel.addListener(SWT.MenuDetect, new Listener() {
-			public void handleEvent(Event event) {
-				if (event.type == SWT.MenuDetect) {
-					showPaneMenu(titleLabel, new Point(event.x, event.y));
-				}
-			}
-		});
 		updateTitles();
-		control.setTopLeft(titleLabel);
 
 		// Listen to title changes.
 		getPartReference().addPropertyListener(this);
@@ -549,8 +522,6 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		 * containing the titleLabel will also disappear (disposing of the 
 		 * titleLabel).  As a result, the reference to titleLabel should be dropped. 
 		 */
-		titleLabel = null;
-
 		if (isvMenuMgr != null)
 			isvMenuMgr.dispose();
 		if (isvToolBarMgr != null)
@@ -591,7 +562,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Returns the drag control.
 	 */
 	public Control getDragHandle() {
-		return titleLabel;
+		return viewToolBar;
 	}
 	/**
 	 * @see ViewActionBars
@@ -917,6 +888,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 	 * Update the title attributes.
 	 */
 	public void updateTitles() {
+		/*
 		IViewReference ref = getViewReference();
 		if (titleLabel != null && !titleLabel.isDisposed()) {
 			boolean changed = false;
@@ -956,6 +928,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
 				page.updateTitle(ref);
 			}
 		}
+		*/
 	}
 
 	private Color[] getNormalGradient() {

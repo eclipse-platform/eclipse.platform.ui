@@ -25,23 +25,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
@@ -96,75 +82,10 @@ public class Perspective
 	private FastViewPane fastViewPane = new FastViewPane();
 	
 	// fields used by fast view resizing via a sash
-	private static final int SASH_SIZE = 3;
 	private static final int FASTVIEW_HIDE_STEPS = 5;
-	private static final long FASTVIEW_HIDE_MIN_DURATION = 50;
-	private static final long FASTVIEW_HIDE_MAX_DURATION = 250;
-	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
-	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
-	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
-	private Color borderColor1;
-	private Color borderColor2;
-	private Color borderColor3;
+
 	private Map mapFastViewToWidthRatio = new HashMap();
-	private Sash fastViewSash;
 	
-	// resize listener to update fast view height and width when
-	// window resized.
-	Listener resizeListener = new Listener() {
-		public void handleEvent(Event event) {
-			if (event.type == SWT.Resize && activeFastView != null) {
-				ViewPane pane = getPane(activeFastView);
-				if (pane.isZoomed() == false) {
-					Rectangle bounds = pane.getBounds();
-					bounds.height = Math.max(0, getClientComposite().getSize().y);
-					float ratio = getFastViewWidthRatio(pane.getID());
-					bounds.width = Math.max(0, (int)((float)(getClientComposite().getSize().x) * ratio));
-					pane.setBounds(bounds);
-					fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
-					fastViewSash.moveAbove(null);
-				}
-			}
-		}
-	};
-
-	private PaintListener paintListener = new PaintListener() {
-		public void paintControl(PaintEvent event) {
-			if (borderColor1 == null) borderColor1 = WorkbenchColors.getColor(RGB_COLOR1);
-			if (borderColor2 == null) borderColor2 = WorkbenchColors.getColor(RGB_COLOR2);
-			if (borderColor3 == null) borderColor3 = WorkbenchColors.getColor(RGB_COLOR3);
-			
-			Point size = fastViewSash.getSize();
-			Rectangle d = new Rectangle(0, 0, size.x, size.y);
-			GC gc = event.gc;
-			
-			gc.setForeground(borderColor1);
-			gc.drawLine(d.x, d.y, d.x, d.y + d.height);
-		
-			gc.setForeground(borderColor2);
-			gc.drawLine(d.x + 1, d.y + 1, d.x + 1, d.y + d.height);
-		
-			gc.setForeground(borderColor3);
-			gc.drawLine(d.x + 2, d.y + 2, d.x + 2, d.y + d.height);
-		}
-	};
-	private SelectionAdapter selectionListener = new SelectionAdapter () {
-		public void widgetSelected(SelectionEvent e) {
-			if (e.detail == SWT.DRAG && activeFastView != null)
-				checkDragLimit(e);
-			if (e.detail != SWT.DRAG && activeFastView != null) {
-				ViewPane pane = getPane(activeFastView);
-				Rectangle bounds = pane.getBounds();
-				bounds.width = Math.max(0, e.x - bounds.x);
-				pane.setBounds(bounds);
-				Float newRatio = new Float((float)bounds.width/(float)getClientComposite().getSize().x);
-				mapFastViewToWidthRatio.put(pane.getID(), newRatio);
-				updateFastViewSashBounds(bounds);
-				fastViewSash.moveAbove(null);
-			}
-		}
-	};
-
 	private String oldPartID = null;
 	private boolean shouldHideEditorsOnActivate = false;
 
@@ -246,15 +167,6 @@ public boolean canCloseView(IViewPart view) {
 	return true;
 }
 
-/**
- * Prevents the user from making a fast view too narrow or too wide.
- */
-private void checkDragLimit(SelectionEvent event) {
-	if (event.x < ((float)getClientComposite().getSize().x * IPageLayout.RATIO_MIN))
-		event.x = (int)((float)getClientComposite().getSize().x * IPageLayout.RATIO_MIN);
-	if (event.x > ((float)getClientComposite().getSize().x * IPageLayout.RATIO_MAX))
-		event.x = (int)((float)getClientComposite().getSize().x * IPageLayout.RATIO_MAX);
-}
 
 /**
  * Returns whether a view exists within the perspective.
@@ -312,12 +224,6 @@ public void dispose() {
 	}
 
 	fastViewPane.dispose();
-	
-		// Dispose of the sash too...
-	if (fastViewSash != null) {
-		fastViewSash.dispose();
-		fastViewSash = null;
-	}
 
 	mapFastViewToWidthRatio.clear();
 }
@@ -461,12 +367,6 @@ public ArrayList getShowViewActionIds() {
 }
 
 /**
- * Returns the last active fast view.
- */
-/*package*/ IViewReference getPreviousActiveFastView() {
-	return previousActiveFastView;	
-}
-/**
  * Returns the view factory.
  */
 private ViewFactory getViewFactory() {
@@ -546,57 +446,18 @@ protected void hideEditorArea() {
 private void hideFastView(IViewReference ref, int steps) {
 	setFastViewIconSelection(ref, false);
 
-	// Get pane.
-	ViewPane pane = getPane(ref);
-	// Hide the right side sash first
-	if (fastViewSash != null)
-		fastViewSash.setBounds(0, 0, 0, 0);
-	Control ctrl = pane.getControl();
-	
-	if(steps != 0) {
-		// Slide it off screen.
-		Rectangle bounds = pane.getBounds();
-		int increment = bounds.width / steps;
-		
-		// Record the longest we can go before cancelling the animation, 
-		// and the minimum time we will allow each step to take.
 		// Note: We always do at least one step of the animation.
-		long endTime = System.currentTimeMillis() + FASTVIEW_HIDE_MAX_DURATION;
-		long minStepTime = FASTVIEW_HIDE_MIN_DURATION / steps;
-
-		for (int i = 0; i <= bounds.width - 2; i += increment) {
-			long time = System.currentTimeMillis();
-			ctrl.setLocation(-i, bounds.y);
-			ctrl.getParent().update();
-			long afterTime = System.currentTimeMillis();
-			if (afterTime >= endTime) {
-				// Took too long. Just exit the loop.
-				break;
-			}
-			long stepDuration = afterTime - time;
-			if (stepDuration < minStepTime) {
 				// Note: This doesn't take into account the overhead of doing
-				// the loop and these calculations, so the total delay is
-				// always slightly more than "minStepTime".
-				try {
-					Thread.sleep (minStepTime - stepDuration);
-				} catch (InterruptedException ex) {
-					// Do nothing.
+	if (ref == activeFastView) {
+		saveFastViewWidthRatio();
+		fastViewPane.hideView();
 	}	
-}
-		}
-	}
-	// Hide it completely.
-	pane.setVisible(false);
-	pane.setFastViewSash(null);
-	ctrl.setEnabled(false); // Remove focus support.
 }
 /**
  * Hides the fast view sash for zooming in a fast view.
  */
 void hideFastViewSash() {
-	if (fastViewSash != null)
-		fastViewSash.setBounds(0, 0, 0, 0);
+	fastViewPane.hideFastViewSash();
 }
 public boolean hideView(IViewReference ref) {
 	// If the view is locked just return.
@@ -781,7 +642,6 @@ protected void onActivate() {
 	
 	setAllPinsVisible(true);
 	presentation.activate(getClientComposite());
-	getClientComposite().addListener(SWT.Resize, resizeListener);
 	
 	if (shouldHideEditorsOnActivate) {
 		// We do this here to ensure that createPartControl is called on the top editor
@@ -794,7 +654,6 @@ protected void onActivate() {
  * deactivate.
  */
 protected void onDeactivate() {
-	getClientComposite().removeListener(SWT.Resize, resizeListener);
 	presentation.deactivate();
 	setActiveFastView(null);
 	setAllPinsVisible(false);
@@ -1387,9 +1246,6 @@ public IViewReference getActiveFastView() {
 	if (activeFastView == ref)
 		return;
 		
-	if (activeFastView != null)
-		previousActiveFastView = activeFastView;
-		
 	if (activeFastView != null) {
 		ViewPane pane = getPane(activeFastView);
 		if (pane.isZoomed()) {
@@ -1513,47 +1369,23 @@ void showFastView(IViewReference ref) {
 	
 	ViewPane pane = getPane(ref);	
 
-	// Create the control first
-	Control ctrl = pane.getControl();
-	if(ctrl == null) {
-		pane.createControl(getClientComposite());
-		ctrl = pane.getControl();
-	}
+	saveFastViewWidthRatio();
 	
-	// Show pane fast.
-	ctrl.setEnabled(true); // Add focus support.
-	Composite parent = ctrl.getParent();
-	Rectangle bounds = getFastViewBounds(ref);
+	int side = ((WorkbenchWindow)pane.getWorkbenchWindow()).getFastViewBarSide();
 	
-	pane.setVisible(true);
-	pane.setBounds(bounds);
-	pane.moveAbove(null);
-	pane.setFocus();
-	
-	// Show the Sash to enable right side resize
-	if (fastViewSash == null) {
-		fastViewSash = new Sash(parent, SWT.VERTICAL);
-		fastViewSash.addPaintListener(paintListener);
-		fastViewSash.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				fastViewSash.removePaintListener(paintListener);
-			}
-			public void focusLost(FocusEvent e) {
-				fastViewSash.addPaintListener(paintListener);
-			}
-		});
-		fastViewSash.addSelectionListener(selectionListener);
-	}
-	pane.setFastViewSash(fastViewSash);
-	updateFastViewSashBounds(bounds);
-	fastViewSash.moveAbove(null);
+	fastViewPane.showView(getClientComposite(), pane, side, getFastViewWidthRatio(ref.getId()));	
 	
 	setFastViewIconSelection(ref, true);
 }
 
-public void updateFastViewSashBounds(Rectangle partBounds) {
-	fastViewSash.setBounds(partBounds.x + partBounds.width - 1, partBounds.y + 1, SASH_SIZE, partBounds.height - 2);
+private void saveFastViewWidthRatio() {
+	ViewPane pane = fastViewPane.getCurrentPane();
+	
+	if (pane != null) {
+		mapFastViewToWidthRatio.put(pane.getViewReference().getId(), new Float(fastViewPane.getCurrentRatio()));
 	}
+}
+
 /**
  * Shows the view with the given id and secondary id.
  */

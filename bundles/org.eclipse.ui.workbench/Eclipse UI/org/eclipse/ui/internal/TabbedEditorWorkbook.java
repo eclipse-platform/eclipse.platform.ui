@@ -122,7 +122,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(propertyChangeEvent.getProperty()) || (IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS.equals(propertyChangeEvent.getProperty())) && tabFolder != null) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
 				boolean multi = preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 						
-				int style = SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
+				int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
 				tabFolder.setStyle(style);
 			}
 		}
@@ -134,7 +134,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.EDITOR_TAB_POSITION); 
 		boolean multi = preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 						
-	    int style = SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
+	    int style = SWT.CLOSE | SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
 		
 		tabFolder = new CTabFolder2(parent, style);
 		//tabFolder.setBorderVisible(true);

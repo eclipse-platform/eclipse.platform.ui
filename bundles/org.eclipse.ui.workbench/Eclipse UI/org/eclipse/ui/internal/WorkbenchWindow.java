@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -107,7 +106,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private PageList pageList = new PageList();
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
-	private IPartDropListener partDropListener;
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
@@ -121,8 +119,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 	private PerspectiveBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
-	private Menu fastViewBarMenu;
-	private MenuItem restoreItem;
 	
 	//private PerspectiveBarManager newBar;
 	
@@ -1681,50 +1677,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		// Get the action for the tool item.
 		Object data = toolItem.getData();
 
-		// If the tool item is an icon for a fast view
-		if (data instanceof ShowFastViewContribution) {
-			// The fast view bar menu is created lazily here.
-			if (fastViewBarMenu == null) {
-				Menu menu = new Menu(toolBar);
-				MenuItem closeItem = new MenuItem(menu, SWT.NONE);
-				closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-				closeItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							IViewReference ref =
-								(IViewReference) toolItem.getData(
-									ShowFastViewContribution.FAST_VIEW);
-							getActiveWorkbenchPage().hideView(ref);
-						}
-					}
-				});
-				restoreItem = new MenuItem(menu, SWT.CHECK);
-				restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
-				restoreItem.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
-						if (toolItem != null && !toolItem.isDisposed()) {
-							IViewReference ref =
-								(IViewReference) toolItem.getData(
-									ShowFastViewContribution.FAST_VIEW);
-							getActiveWorkbenchPage().removeFastView(ref);
-						}
-					}
-				});
-				fastViewBarMenu = menu;
-			}
-			restoreItem.setSelection(true);
-			fastViewBarMenu.setData(toolItem);
-
-			// Show popup menu.
-			if (fastViewBarMenu != null) {
-				fastViewBarMenu.setLocation(pt.x, pt.y);
-				fastViewBarMenu.setVisible(true);
-			}
-		}
-
-		if (!(data instanceof ActionContributionItem))
+		if (!(data instanceof PerspectiveBarContributionItem))
 			return;
 		
 			// The perspective bar menu is created lazily here.

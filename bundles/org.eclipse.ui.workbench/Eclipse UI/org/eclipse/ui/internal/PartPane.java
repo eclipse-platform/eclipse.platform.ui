@@ -54,7 +54,7 @@ import org.eclipse.ui.part.WorkbenchPart;
  * and editor panes.
  */
 public abstract class PartPane extends LayoutPart
-	implements Listener
+	implements Listener, IWorkbenchDragSource
 {
 	public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
 	private boolean isZoomed = false;
@@ -302,13 +302,6 @@ public int getMinimumHeight() {
 	
 	// account for the borders
 	topHeight = control.computeTrim(0, 0, 0, topHeight).height;
-	
-	/* add +1 for highlight line. ViewForm adds this *inside* client area
-	 * even though it's arguably an inset; see ViewForm.layout for details.
-	 */
-	if (top) {
-		topHeight += 1;
-	}
 	
 	return topHeight;
 }

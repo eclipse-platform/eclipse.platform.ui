@@ -259,9 +259,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		//   from existing attributes?
 		// @issue this says to show the border only if there are no items, but 
 		//   in this case the folder should not be visible anyway
-		if (tabThemeDescriptor != null)
-			return (mapTabToPart.size() < 1);
-		return mapTabToPart.size() <= 1;
+//		if (tabThemeDescriptor != null)
+//			return (mapTabToPart.size() < 1);
+//		return mapTabToPart.size() <= 1;
+		return false;
 	}
 	private TabInfo[] arrayAdd(TabInfo[] array, TabInfo item, int index) {
 
@@ -327,7 +328,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
 			if (IPreferenceConstants.VIEW_TAB_POSITION.equals(propertyChangeEvent.getProperty()) && tabFolder != null) {
 				int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
-				int style = SWT.BORDER | tabLocation;
+				int style = SWT.CLOSE | SWT.BORDER | tabLocation;
 				tabFolder.setStyle(style);
 			}
 		}
@@ -344,7 +345,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 		int tabLocation = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION); 
 		
-		// probably won't work, given the code above..
+		// TODO probably won't work, given the code above..
 		if (tabPosition == -1) {
 			if (tabThemeDescriptor != null)
 				tabPosition = tabThemeDescriptor.getTabPosition();
@@ -1088,12 +1089,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			return;
 		Rectangle bounds;
 		// @issue as above, the mere presence of a theme should not change the behaviour
-		if ((mapTabToPart.size() > 1)
-			|| ((tabThemeDescriptor != null) && (mapTabToPart.size() >= 1)))
-			bounds = calculatePageBounds(tabFolder);
-		else
-			bounds = tabFolder.getBounds();
-		current.setBounds(bounds);
+//		if ((mapTabToPart.size() > 1)
+//			|| ((tabThemeDescriptor != null) && (mapTabToPart.size() >= 1)))
+//			bounds = calculatePageBounds(tabFolder);
+//		else
+//			bounds = tabFolder.getBounds();
+		current.setBounds(calculatePageBounds(tabFolder));
 		current.moveAbove(tabFolder);
 	}
 
