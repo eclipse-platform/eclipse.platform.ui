@@ -406,10 +406,10 @@ public class JobTest extends TestCase {
 		//the status for every job should be STATUS_OK
 		//the threads should have been reset to null
 		for(int i = 0; i < status.length; i++) {
-			assertTrue("7." + i, status[i] == StatusChecker.STATUS_DONE);
-			assertTrue("8." + i, jobs[i].getState() == Job.NONE);
-			assertTrue("9." + i, jobs[i].getResult().getSeverity() == Status.OK);
-			assertTrue("10." + i, jobs[i].getThread() == null);
+			assertEquals("7." + i, StatusChecker.STATUS_DONE, status[i]);
+			assertEquals("8." + i, Job.NONE, jobs[i].getState());
+			assertEquals("9." + i, Status.OK, jobs[i].getResult().getSeverity());
+			assertNull("10." + i, jobs[i].getThread());
 		}
 		
 	}
@@ -472,10 +472,10 @@ public class JobTest extends TestCase {
 		
 		//the 2 newly scheduled jobs should be waiting since they conflict with the third job
 		//no threads were assigned to them yet
-		assertTrue("6.1", jobs[3].getState() == Job.WAITING);
-		assertTrue("6.2", jobs[3].getThread() == null);
-		assertTrue("6.3", jobs[4].getState() == Job.WAITING);
-		assertTrue("6.4", jobs[4].getThread() == null);
+		assertEquals("6.1", Job.WAITING, jobs[3].getState());
+		assertNull("6.2", jobs[3].getThread());
+		assertEquals("6.3", Job.WAITING, jobs[4].getState());
+		assertNull("6.4", jobs[4].getThread());
 		
 		//let the two non-conflicting jobs execute together
 		for(int i = 0; i < 2; i++) {
@@ -486,10 +486,10 @@ public class JobTest extends TestCase {
 		StatusChecker.waitForStatus(status, 1, StatusChecker.STATUS_DONE, 100);
 		
 		//the third job should still be in the running state
-		assertTrue("8.1", jobs[2].getState() == Job.RUNNING);
+		assertEquals("8.1", Job.RUNNING, jobs[2].getState());
 		//the 2 conflicting jobs should still be in the waiting state
-		assertTrue("8.2", jobs[3].getState() == Job.WAITING);
-		assertTrue("8.3", jobs[4].getState() == Job.WAITING);
+		assertEquals("8.2", Job.WAITING, jobs[3].getState());
+		assertEquals("8.3", Job.WAITING, jobs[4].getState());
 		
 		//let the third job finish execution
 		assertTrue("8.4", jobs[2].getThread() instanceof AsynchExecThread);
@@ -500,17 +500,17 @@ public class JobTest extends TestCase {
 		
 		//the fourth job should now start running, the fifth job should still be waiting
 		waitForStart(jobs[3]);
-		assertTrue("9.1", jobs[3].getState() == Job.RUNNING);
-		assertTrue("9.2", jobs[4].getState() == Job.WAITING);
+		assertEquals("9.1", Job.RUNNING, jobs[3].getState());
+		assertEquals("9.2", Job.WAITING, jobs[4].getState());
 		
 		//let the fourth job run, the fifth job is still waiting
 		status[3] = StatusChecker.STATUS_START;
-		assertTrue("9.3", jobs[4].getState() == Job.WAITING);
+		assertEquals("9.3", Job.WAITING, jobs[4].getState());
 		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_WAIT_FOR_START, 100);
 		status[3] = StatusChecker.STATUS_WAIT_FOR_RUN;
-		assertTrue("9.4", jobs[4].getState() == Job.WAITING);
+		assertEquals("9.4", Job.WAITING, jobs[4].getState());
 		StatusChecker.waitForStatus(status, 3, StatusChecker.STATUS_RUNNING, 100);
-		assertTrue("9.5", jobs[4].getState() == Job.WAITING);
+		assertEquals("9.5", Job.WAITING, jobs[4].getState());
 		
 		//cancel the fifth job, finish the fourth job
 		jobs[4].cancel();
@@ -523,19 +523,18 @@ public class JobTest extends TestCase {
 		//the status for the first 4 jobs should be STATUS_OK
 		//the threads should have been reset to null
 		for(int i = 0; i < status.length - 1; i++) {
-			assertTrue("10." + i, status[i] == StatusChecker.STATUS_DONE);
-			assertTrue("11." + i, jobs[i].getState() == Job.NONE);
-			assertTrue("12." + i, jobs[i].getResult().getSeverity() == Status.OK);
-			assertTrue("13." + i, jobs[i].getThread() == null);
+			assertEquals("10." + i, StatusChecker.STATUS_DONE, status[i]);
+			assertEquals("11." + i, Job.NONE, jobs[i].getState());
+			assertEquals("12." + i, Status.OK, jobs[i].getResult().getSeverity());
+			assertNull("13." + i, jobs[i].getThread());
 		}
 		
 		//the fifth job should have null as its status (it never finished running)
 		//the thread for it should have also been reset
-		assertTrue("14.1", status[4] == StatusChecker.STATUS_WAIT_FOR_START);
-		assertTrue("14.2", jobs[4].getState() == Job.NONE);
-		assertTrue("14.3", jobs[4].getResult() == null);
-		assertTrue("14.4", jobs[4].getThread() == null);
-		
+		assertEquals("14.1", StatusChecker.STATUS_WAIT_FOR_START, status[4]);
+		assertEquals("14.2", Job.NONE, jobs[4].getState());
+		assertNull("14.3", jobs[4].getResult());
+		assertNull("14.4", jobs[4].getThread());
 	}
 
 	/**
