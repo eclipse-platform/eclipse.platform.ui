@@ -50,7 +50,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini"; //$NON-NLS-1$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
 	private static final int RESTORE_CODE_OK = 0;
-	private static final int RESTORE_CODE_OPEN_WINDOW = 1;
+	private static final int RESTORE_CODE_RESET = 1;
 	private static final int RESTORE_CODE_EXIT = 2;
 
 	private WindowManager windowManager;
@@ -512,7 +512,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		int restoreCode = openPreviousWorkbenchState();
 		if (restoreCode == RESTORE_CODE_EXIT)
 			return false;
-		if (restoreCode == RESTORE_CODE_OPEN_WINDOW)
+		if (restoreCode == RESTORE_CODE_RESET)
 			openFirstTimeWindow();
 			
 		openWelcomeDialog();
@@ -627,7 +627,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		final File stateFile = getWorkbenchStateFile();
 		// If there is no state file cause one to open.
 		if (!stateFile.exists())
-			return RESTORE_CODE_OPEN_WINDOW;
+			return RESTORE_CODE_RESET;
 
 		final int result[] = { RESTORE_CODE_OK };
 		Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("ErrorReadingState")) { //$NON-NLS-1$
@@ -652,7 +652,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 						WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
 						WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
 					stateFile.delete();
-					result[0] = RESTORE_CODE_OPEN_WINDOW;
+					result[0] = RESTORE_CODE_RESET;
 					return;
 				}
 				
@@ -660,13 +660,17 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				// We no longer support the release 1.0 format
 				if (VERSION_STRING[0].equals(version)) {
 					reader.close();
-					boolean ignoreSavedState = MessageDialog.openConfirm(
-						(Shell) null,
-						WorkbenchMessages.getString("Restoring_Problems"), //$NON-NLS-1$
-						WorkbenchMessages.getString("Workbench.uncompatibleSavedStateVersion")); //$NON-NLS-1$
+					boolean ignoreSavedState = new MessageDialog(
+						null, 
+						WorkbenchMessages.getString("Workbench.incompatibleUIState"), //$NON-NLS-1$
+						null,
+						WorkbenchMessages.getString("Workbench.incompatibleSavedStateVersion"), //$NON-NLS-1$
+						MessageDialog.WARNING,
+						new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
+						0).open() == 0; 	// OK is the default
 					if (ignoreSavedState) {
 						stateFile.delete();
-						result[0] = RESTORE_CODE_OPEN_WINDOW;
+						result[0] = RESTORE_CODE_RESET;
 					} else {
 						result[0] = RESTORE_CODE_EXIT;
 					}
@@ -679,14 +683,14 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
-				result[0] = RESTORE_CODE_OPEN_WINDOW;
+				result[0] = RESTORE_CODE_RESET;
 				stateFile.delete();
 			}
 
 		});
 		// ensure at least one window was opened
 		if (result[0] == RESTORE_CODE_OK && windowManager.getWindows().length == 0)
-			result[0] = RESTORE_CODE_OPEN_WINDOW;
+			result[0] = RESTORE_CODE_RESET;
 		return result[0];
 	}
 	/**
