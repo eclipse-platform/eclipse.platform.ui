@@ -301,7 +301,8 @@ private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
 		//if we failed to compare, just write the new contents
 	} finally {
 		try {
-			stream.close();
+			if (stream != null)
+				stream.close();
 		} catch (IOException e1) {
 			//ignore failure to close the file
 		}
