@@ -107,7 +107,7 @@ public class MarkerAnnotation extends Annotation {
 	/** The image name */
 	private String fImageName;
 	/**
-	 * Tells whether {@link setLayer(int)} has been called.
+	 * Tells whether {@link #setLayer(int)} has been called.
 	 * @since 3.0
 	 */
 	private boolean fLayerHasBeenSet= false;
