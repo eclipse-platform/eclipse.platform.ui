@@ -11,6 +11,9 @@
 
 package org.eclipse.ant.tests.ui.separateVM;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -137,6 +140,23 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		ConsoleLineTracker.waitForConsole();
 		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
 		assertTrue("Incorrect last message. Should end with " + ProjectHelper.PROJECT_NAME + ". Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).endsWith(ProjectHelper.PROJECT_NAME));
+	}
+	
+	/**
+	 * Tests launching Ant in a separate vm and that the
+	 * correct property substitions occur
+	 */
+	public void testPropertySubstitution() throws CoreException {
+		ILaunchConfiguration config = getLaunchConfiguration("74840SepVM");
+		assertNotNull("Could not locate launch configuration for " + "74840SepVM", config);
+		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+		Map properties= new HashMap(1);
+		properties.put("platform.location", "${workspace_loc}");
+		copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
+		launchAndTerminate(copy, 20000);
+		ConsoleLineTracker.waitForConsole();
+		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+		assertTrue("Incorrect echo message. Should not include unsubstituted property ", !ConsoleLineTracker.getMessage(2).trim().startsWith("[echo] ${workspace_loc}"));
 	}
 	
 	 /**
