@@ -108,6 +108,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
     Composite container = new Composite(parent, SWT.NULL);
     GridLayout layout = new GridLayout();
     container.setLayout(layout);
+    initializeDialogUnits(container);
 
     TabFolder tabFolder = new TabFolder(container, SWT.NONE);
     tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
