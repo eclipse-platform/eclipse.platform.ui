@@ -14,6 +14,7 @@ Import-Package:
  org.osgi.util.tracker,
  org.osgi.service.startlevel,
  org.osgi.service.packageadmin,
+ org.eclipse.osgi.service.debug,
  org.eclipse.osgi.service.environment
 Export-Package:
  org.eclipse.update.configurator
