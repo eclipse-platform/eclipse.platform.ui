@@ -18,32 +18,31 @@ public class MapHolder extends SortedMapFactory implements IMapHolder {
 	public Object[] keys;
 	public Object[] values;
 	
-	/**
-	 * @see com.objfac.util.IKeyHolder#getKeys()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.IKeyHolder#getKeys()
 	 */
 	public Object[] getKeys() {
 		return keys;
 	}
 
-	/**
-	 * @see com.objfac.util.IKeyHolder#setKeys(Object[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.IKeyHolder#setKeys(java.lang.Object[])
 	 */
 	public void setKeys(Object[] keys) {
 		this.keys = keys;
 	}
 
-	/**
-	 * @see com.objfac.util.IValueHolder#getValues()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.IValueHolder#getValues()
 	 */
 	public Object[] getValues() {
 		return values;
 	}
 
-	/**
-	 * @see com.objfac.util.IValueHolder#setValues(Object[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.dtd.util.IValueHolder#setValues(java.lang.Object[])
 	 */
 	public void setValues(Object[] values) {
 		this.values = values;
 	}
-
 }
