@@ -42,7 +42,7 @@ public class ServletResources {
 			return property;
 		}
 		int amp = property.indexOf('&');
-		if (amp <= 0) {
+		if (amp <0 || amp >= property.length() - 1) {
 			return property;
 		}
 		return property.substring(0, amp)
@@ -65,7 +65,7 @@ public class ServletResources {
 			return property;
 		}
 		int amp = property.indexOf('&');
-		if (amp <= 0) {
+		if (amp <0 || amp >= property.length() - 1) {
 			return property;
 		}
 		return property.substring(0, amp - 1)
@@ -88,13 +88,13 @@ public class ServletResources {
 			return property;
 		}
 		int amp = property.indexOf('&');
-		if (amp <= 0) {
+		if (amp <0 || amp >= property.length() - 1) {
 			return property;
 		}
-		return property.substring(0, amp - 1)
+		return property.substring(0, amp)
 				+ "<u STYLE=\"ACCELERATOR:true\">" //$NON-NLS-1$
-				+ property.charAt(amp - 1) + "</u>" //$NON-NLS-1$
-				+ property.substring(amp + 1, property.length());
+				+ property.charAt(amp+1) + "</u>" //$NON-NLS-1$
+				+ property.substring(amp + 2, property.length());
 	}
 
 	/**
@@ -112,10 +112,10 @@ public class ServletResources {
 			return null;
 		}
 		int amp = property.indexOf('&');
-		if (amp <= 0) {
-			return null;
-		}
-		return ("" + property.charAt(amp - 1)).toLowerCase(); //$NON-NLS-1$
+		if (amp <0 || amp >= property.length() - 1) {
+            return null;
+        }
+		return ("" + property.charAt(amp +1)).toLowerCase(); //$NON-NLS-1$
 	}
 
 }
