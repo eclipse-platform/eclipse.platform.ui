@@ -1105,13 +1105,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
 	 * @since 3.1
 	 */
-	public IContentDescription getContentDescription(Object element) {
+	public IContentDescription getContentDescription(Object element) throws CoreException {
 		if (element instanceof IFileEditorInput)
-			try {
-				return ((IFileEditorInput) element).getFile().getContentDescription();
-			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.getContentDescription")); //$NON-NLS-1$
-			}
+			return ((IFileEditorInput) element).getFile().getContentDescription();
 		return super.getContentDescription(element);
 	}
 }

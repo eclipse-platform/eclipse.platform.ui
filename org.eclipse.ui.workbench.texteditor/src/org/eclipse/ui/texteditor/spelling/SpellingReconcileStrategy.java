@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.texteditor.spelling;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
@@ -23,6 +24,7 @@ import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -113,11 +115,14 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	 */
 	private IContentType getContentType() {
 		IDocumentProvider documentProvider= fEditor.getDocumentProvider();
-		if (documentProvider instanceof IDocumentProviderExtension4) {
-			IContentDescription desc= ((IDocumentProviderExtension4) documentProvider).getContentDescription(fEditor.getEditorInput());
-			if (desc != null)
-				return desc.getContentType();
-		}
+		if (documentProvider instanceof IDocumentProviderExtension4)
+			try {
+				IContentDescription desc= ((IDocumentProviderExtension4) documentProvider).getContentDescription(fEditor.getEditorInput());
+				if (desc != null)
+					return desc.getContentType();
+			} catch (CoreException x) {
+				TextEditorPlugin.getDefault().getLog().log(x.getStatus());
+			}
 		return null;
 	}
 }

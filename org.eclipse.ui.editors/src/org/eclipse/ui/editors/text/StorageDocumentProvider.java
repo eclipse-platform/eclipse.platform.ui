@@ -441,24 +441,23 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
 	 * @since 3.1
 	 */
-	public IContentDescription getContentDescription(Object element) {
+	public IContentDescription getContentDescription(Object element) throws CoreException {
 		if (element instanceof IStorageEditorInput) {
 			InputStream in= null;
 			try {
 				in= ((IStorageEditorInput) element).getStorage().getContents();
 				return Platform.getContentTypeManager().getDescriptionFor(in, ((IStorageEditorInput) element).getName(), IContentDescription.ALL);
 			} catch (IOException x) {
-				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, TextEditorMessages.getString("StorageDocumentProvider.getContentDescription"), x); //$NON-NLS-1$
-				Platform.getLog(Platform.getBundle(PlatformUI.PLUGIN_ID)).log(s);
-			} catch (CoreException x) {
-				handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.getContentDescription")); //$NON-NLS-1$
+				String message= x.getLocalizedMessage();
+				if (message == null)
+					message= TextEditorMessages.getString("StorageDocumentProvider.getContentDescription"); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x));
 			} finally {
-				if (in != null) {
+				if (in != null)
 					try {
 						in.close();
 					} catch (IOException x) {
 					}
-				}
 			}
 		}
 		return super.getContentDescription(element);

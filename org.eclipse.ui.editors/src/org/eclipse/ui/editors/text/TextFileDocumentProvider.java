@@ -1259,17 +1259,13 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
 	 * @since 3.1
 	 */
-	public IContentDescription getContentDescription(Object element) {
-		try {
-			FileInfo info= (FileInfo) fFileInfoMap.get(element);
-			if (info != null)
-				return info.fTextFileBuffer.getContentDescription();
-			IDocumentProvider parent= getParentProvider();
-			if (parent instanceof IDocumentProviderExtension4)
-				return ((IDocumentProviderExtension4) parent).getContentDescription(element);
-		} catch (CoreException x) {
-			handleCoreException(x, "TextFileDocumentProvider.error.getContentDescription"); //$NON-NLS-1$
-		}
+	public IContentDescription getContentDescription(Object element) throws CoreException {
+		FileInfo info= (FileInfo) fFileInfoMap.get(element);
+		if (info != null)
+			return info.fTextFileBuffer.getContentDescription();
+		IDocumentProvider parent= getParentProvider();
+		if (parent instanceof IDocumentProviderExtension4)
+			return ((IDocumentProviderExtension4) parent).getContentDescription(element);
 		return null;
 	}
 }

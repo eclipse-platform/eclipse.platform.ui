@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentDescription;
 
 
@@ -37,6 +38,7 @@ public interface IDocumentProviderExtension4 {
 	 * 
 	 * @param element the element
 	 * @return the content description or <code>null</code>
+	 * @throws CoreException if reading or accessing the underlying store fails
 	 */
-	IContentDescription getContentDescription(Object element);
+	IContentDescription getContentDescription(Object element) throws CoreException;
 }

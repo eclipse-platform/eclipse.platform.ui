@@ -1031,7 +1031,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension4#getContentDescription(java.lang.Object)
 	 * @since 3.1
 	 */
-	public IContentDescription getContentDescription(Object element) {
+	public IContentDescription getContentDescription(Object element) throws CoreException {
 		return null;
 	}
 }
