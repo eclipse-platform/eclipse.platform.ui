@@ -45,19 +45,39 @@ public class HelpApplication implements IPlatformRunnable
 	/**
 	 * To be called by the standalone interface to display help
 	 */
-	private Boolean displayHelp(String toc, String topic)
+	private Boolean displayHelp(String href)
 	{
 		if (helpSupport == null)
 			initializeHelpSupport();
 
 		if (helpSupport != null)
 		{
-			helpSupport.displayHelp(toc, topic);
+			if (href == null)
+				helpSupport.displayHelp();
+			else
+				helpSupport.displayHelpResource(href);
+
 			return new Boolean(true);
 		}
 		else
 			return new Boolean(false);
+	}
+	
+	/**
+	 * To be called by the standalone interface to display help resources
+	 */
+	private Boolean displayHelpResource(String href)
+	{
+		if (helpSupport == null)
+			initializeHelpSupport();
 
+		if (helpSupport != null)
+		{
+			helpSupport.displayHelpResource(href);
+			return new Boolean(true);
+		}
+		else
+			return new Boolean(false);
 	}
 	
 	/**
@@ -74,7 +94,7 @@ public class HelpApplication implements IPlatformRunnable
 			int x = X.intValue();
 			int y = Y.intValue();
 			
-			helpSupport.displayHelp(contextId, x, y);
+			helpSupport.displayContext(contextId, x, y);
 			return new Boolean(true);
 		}
 		else
@@ -144,8 +164,13 @@ public class HelpApplication implements IPlatformRunnable
 		}
 		else if ("displayHelp".equals(command))
 		{
-			if ((argsArray.length== 3)	)
-				return displayHelp((String) argsArray[1], (String) argsArray[2]);
+			if ((argsArray.length== 2)	)
+				return displayHelp((String) argsArray[1]);
+		}
+		else if ("displayHelpResource".equals(command))
+		{
+			if ((argsArray.length== 2)	)
+				return displayHelpResource((String) argsArray[1]);
 		}
 		else if ("displayContext".equals(command))
 		{

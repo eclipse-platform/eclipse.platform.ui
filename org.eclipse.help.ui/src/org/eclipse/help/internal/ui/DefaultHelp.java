@@ -103,6 +103,11 @@ public class DefaultHelp implements IHelp
 		IToc toc = HelpSystem.getTocManager().getToc(href);
 		if (toc != null)
 			displayHelpResource(toc);
+		else if (href != null && href.indexOf('=') != -1)
+		{
+			// assume it is a query string
+			displayHelpURL(href);
+		}
 		else // assume this is a topic
 			displayHelpURL("topic="+URLEncoder.encode(href));
 		
