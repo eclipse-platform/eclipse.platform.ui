@@ -97,6 +97,7 @@ public interface IHelpContextIds {
 	// Actions
 	public static final String GET_FILE_REVISION_ACTION = PREFIX + "get_file_revision_action_context"; //$NON-NLS-1$
 	public static final String GET_FILE_CONTENTS_ACTION = PREFIX + "get_file_contents_action_context"; //$NON-NLS-1$
+	public static final String TAG_WITH_EXISTING_ACTION = PREFIX + "tag_with_existing_action_context"; //$NON-NLS-1$
 	public static final String NEW_REPOSITORY_LOCATION_ACTION = PREFIX + "new_repository_location_action_context"; //$NON-NLS-1$
 	public static final String NEW_DEV_ECLIPSE_REPOSITORY_LOCATION_ACTION = PREFIX + "new_dev_eclipse repository_location_action_context"; //$NON-NLS-1$
 	public static final String SHOW_REMOTE_FOLDERS_ACTION = PREFIX + "show_remote_folders_action_context"; //$NON-NLS-1$

@@ -6,14 +6,17 @@ package org.eclipse.team.internal.ccvs.ui;
  */
  
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.util.Date;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -70,19 +73,22 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
+import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * The history view allows browsing of an array of resource revisions
@@ -105,6 +111,7 @@ public class HistoryView extends ViewPart {
 	private Action getContentsAction;
 	private Action getRevisionAction;
 	private Action refreshAction;
+	private Action tagWithExistingAction;
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -177,11 +184,7 @@ public class HistoryView extends ViewPart {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
 		refreshAction = new Action(Policy.bind("HistoryView.refreshLabel"), plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED)) { //$NON-NLS-1$
 			public void run() {
-				BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
-					public void run() {
-						tableViewer.refresh();
-					}
-				});
+				refresh();
 			}
 		};
 		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh")); //$NON-NLS-1$
@@ -236,7 +239,48 @@ public class HistoryView extends ViewPart {
 			}
 		});
 		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);	
-		
+
+		// Override MoveRemoteTagAction to work for log entries
+		final IActionDelegate tagActionDelegate = new MoveRemoteTagAction() {
+			protected ICVSResource[] getSelectedCVSResources() {
+				ICVSResource[] resources = super.getSelectedCVSResources();
+				if (resources == null || resources.length == 0) {
+					ArrayList logEntrieFiles = null;
+					if (!selection.isEmpty()) {
+						logEntrieFiles = new ArrayList();
+						Iterator elements = ((IStructuredSelection) selection).iterator();
+						while (elements.hasNext()) {
+							Object next = elements.next();
+							if (next instanceof ILogEntry) {
+								logEntrieFiles.add(((ILogEntry)next).getRemoteFile());
+								continue;
+							}
+							if (next instanceof IAdaptable) {
+								IAdaptable a = (IAdaptable) next;
+								Object adapter = a.getAdapter(ICVSResource.class);
+								if (adapter instanceof ICVSResource) {
+									logEntrieFiles.add(((ILogEntry)adapter).getRemoteFile());
+									continue;
+								}
+							}
+						}
+					}
+					if (logEntrieFiles != null && !logEntrieFiles.isEmpty()) {
+						return (ICVSResource[])logEntrieFiles.toArray(new ICVSResource[logEntrieFiles.size()]);
+					}
+				}
+				return resources;
+			}
+		};
+		tagWithExistingAction = getContextMenuAction(Policy.bind("HistoryView.tagWithExistingAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
+			public void run(IProgressMonitor monitor) throws CoreException {
+				tagActionDelegate.selectionChanged(tagWithExistingAction, tableViewer.getSelection());
+				tagActionDelegate.run(tagWithExistingAction);
+				refresh();
+			}
+		});
+		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
+				
 		// Toggle text visible action
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		toggleTextAction = new Action(Policy.bind("HistoryView.showComment")) { //$NON-NLS-1$
@@ -590,6 +634,8 @@ public class HistoryView extends ViewPart {
 					if (((IStructuredSelection)sel).size() == 1) {
 						manager.add(getContentsAction);
 						manager.add(getRevisionAction);
+						manager.add(new Separator());
+						manager.add(tagWithExistingAction);
 					}
 				}
 			}
@@ -737,5 +783,16 @@ public class HistoryView extends ViewPart {
 			}
 		}
 		return true;
+	}
+	
+	/*
+	 * Refresh the view by refetching the log entries for the remote file	 */
+	private void refresh() {
+		entries = null;
+		BusyIndicator.showWhile(tableViewer.getTable().getDisplay(), new Runnable() {
+			public void run() {
+				tableViewer.refresh();
+			}
+		});
 	}
 }

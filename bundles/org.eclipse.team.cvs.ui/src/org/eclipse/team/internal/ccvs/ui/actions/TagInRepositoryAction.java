@@ -130,4 +130,11 @@ public class TagInRepositoryAction extends TagAction {
 		}
 		return combinedStatus;
 	}
+	/**
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#requiresLocalSyncInfo()
+	 */
+	protected boolean requiresLocalSyncInfo() {
+		return false;
+	}
+
 }
