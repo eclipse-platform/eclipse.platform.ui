@@ -54,6 +54,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		createEditorHistoryGroup(composite);
 		
 		createSpace(composite);
+		createShowMultipleEditorTabsPref(composite);
 		createCloseEditorsOnExitPref(composite);
 		createEditorReuseGroup(composite);
 		
