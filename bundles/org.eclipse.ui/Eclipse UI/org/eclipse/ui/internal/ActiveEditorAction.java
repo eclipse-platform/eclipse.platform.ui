@@ -86,8 +86,7 @@ public IEditorPart getActiveEditor() {
  */
 public void pageActivated(IWorkbenchPage page) {
 	super.pageActivated(page);
-	if (page != null)
-		setActiveEditor(page.getActiveEditor());
+	updateActiveEditor();
 	updateState();
 }
 /* (non-Javadoc)
@@ -95,7 +94,7 @@ public void pageActivated(IWorkbenchPage page) {
  */
 public void pageClosed(IWorkbenchPage page) {
 	super.pageClosed(page);
-	setActiveEditor(null);
+	updateActiveEditor();
 	updateState();
 }
 /* (non-Javadoc)
@@ -104,7 +103,17 @@ public void pageClosed(IWorkbenchPage page) {
 public void partActivated(IWorkbenchPart part) {
 	super.partActivated(part);
 	if (part instanceof IEditorPart) {
-		setActiveEditor((IEditorPart)part);
+		updateActiveEditor();
+		updateState();
+	}
+}
+/* (non-Javadoc)
+ * Method declared on PartEventAction.
+ */
+public void partBroughtToTop(IWorkbenchPart part) {
+	super.partBroughtToTop(part);
+	if (part instanceof IEditorPart) {
+		updateActiveEditor();
 		updateState();
 	}
 }
@@ -113,8 +122,18 @@ public void partActivated(IWorkbenchPart part) {
  */
 public void partClosed(IWorkbenchPart part) {
 	super.partClosed(part);
-	if (part == activeEditor) {
-		setActiveEditor(null);
+	if (part instanceof IEditorPart) {
+		updateActiveEditor();
+		updateState();
+	}
+}
+/* (non-Javadoc)
+ * Method declared on PartEventAction.
+ */
+public void partDeactivated(IWorkbenchPart part) {
+	super.partDeactivated(part);
+	if (part instanceof IEditorPart) {
+		updateActiveEditor();
 		updateState();
 	}
 }
@@ -129,6 +148,16 @@ private void setActiveEditor(IEditorPart part) {
 	activeEditor = part;
 	if (activeEditor != null)
 		editorActivated(activeEditor);
+}
+/**
+ * Update the active editor based on the current
+ * active page.
+ */
+private void updateActiveEditor() {
+	if (getActivePage() == null)
+		setActiveEditor(null);
+	else
+		setActiveEditor(getActivePage().getActiveEditor());
 }
 /**
  * Update the state of the action. By default, the action
