@@ -18,6 +18,6 @@ package org.eclipse.ui.internal.editors.text;
 public class ConvertLineDelimitersToMacOS9 extends ConvertLineDelimitersAction {
 
 	public ConvertLineDelimitersToMacOS9(){
-		super("\r", "&MacOS 9"); //$NON-NLS-1$
+		super("\r", TextEditorMessages.getString("ConvertLineDelimitersToMacOS9.label")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -35,13 +35,13 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	
 	protected ConvertLineDelimitersAction(String lineDelimiter, String label) {
 		super(new ConvertLineDelimitersOperation(lineDelimiter));
-		setText(constructLabel(label, lineDelimiter, System.getProperty("line.separator")));
+		setText(constructLabel(label, lineDelimiter, System.getProperty("line.separator"))); //$NON-NLS-1$
 		fLabel= Action.removeMnemonics(label);
 	}
 	
 	private static String constructLabel(String label, String lineDelimiter, String platformLineDelimiter) {
 		if (lineDelimiter.equals(platformLineDelimiter))
-			return label + " [default]";
+			return label + TextEditorMessages.getString("ConvertLineDelimitersAction.default.label"); //$NON-NLS-1$
 		return label;
 	}
 	
@@ -62,7 +62,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		if (files != null && resources != null && files.length == resources.length)
 			return files;
 		
-		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), "Convert Line Delimiters to " + fLabel, "Select files to convert:");
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.getString("ConvertLineDelimitersAction.dialog.title") + fLabel, TextEditorMessages.getString("ConvertLineDelimitersAction.dialog.description")); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {

@@ -1064,12 +1064,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		ResourceAction action= new AddMarkerAction(TextEditorMessages.getResourceBundle(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.BOOKMARK_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_BOOKMARK);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_BOOKMARK);
 		setAction(IDEActionFactory.BOOKMARK.getId(), action);
 
 		action= new AddTaskAction(TextEditorMessages.getResourceBundle(), "Editor.AddTask.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.ADD_TASK_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.ADD_TASK);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_TASK);
 		setAction(IDEActionFactory.ADD_TASK.getId(), action);
 		
 		action= new ChangeEncodingAction(TextEditorMessages.getResourceBundle(), "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$

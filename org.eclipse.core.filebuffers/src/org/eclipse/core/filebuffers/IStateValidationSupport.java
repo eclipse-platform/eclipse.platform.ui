@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IStatus;
  * implement <code>IStateValidationSupport</code> in order to allow a
  * {@link org.eclipse.core.filebuffers.IFileBufferManager} to batch the stages
  * of state validation when calling
- * {@link org.eclipse.core.filebuffers.IFileBufferManager#validateState(IFileBuffer[], IProgressMonitor, Object)}.
+ * {@link org.eclipse.core.filebuffers.IFileBufferManager#validateState(IFileBuffer[], org.eclipse.core.runtime.IProgressMonitor, Object)}.
  * <p>
  * Not yet for public use. API under construction.
  * 

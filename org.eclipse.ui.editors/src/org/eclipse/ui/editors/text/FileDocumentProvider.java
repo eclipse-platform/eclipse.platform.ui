@@ -963,9 +963,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			return fResourceRuleFactory.modifyRule(input.getFile());
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/*
@@ -976,9 +975,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {			
 			IFileEditorInput input= (IFileEditorInput) element;
 			return computeSchedulingRule(input.getFile());
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/*
@@ -989,9 +987,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			return fResourceRuleFactory.refreshRule(input.getFile());
-		} else {
-			return null;
 		}
+		return null;
 	}
 	
 	/*
@@ -1002,9 +999,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			return fResourceRuleFactory.validateEditRule(new IResource[] { input.getFile() });
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -1078,16 +1074,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @return the minimal scheduling rule needed to modify or create a resource
 	 */
 	private ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
-		if (toCreateOrModify.exists()) {
+		if (toCreateOrModify.exists())
 			return fResourceRuleFactory.modifyRule(toCreateOrModify);
-		} else {
-			IResource parent= toCreateOrModify;
-			do {
-				toCreateOrModify= parent;
-				parent= toCreateOrModify.getParent();
-			} while (parent != null && !parent.exists());
-			
-			return fResourceRuleFactory.createRule(toCreateOrModify);
-		}
+		
+		IResource parent= toCreateOrModify;
+		do {
+			toCreateOrModify= parent;
+			parent= toCreateOrModify.getParent();
+		} while (parent != null && !parent.exists());
+		
+		return fResourceRuleFactory.createRule(toCreateOrModify);
 	}
 }

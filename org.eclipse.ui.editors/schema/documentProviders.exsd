@@ -100,6 +100,7 @@
 &lt;/pre&gt;
 &lt;p&gt;
 This example registers &lt;samp&gt;org.eclipse.ui.examples.javaeditor.JavaDocumentProvider&lt;/samp&gt; as the default provider for files with the extension &quot;.jav&quot;. 
+&lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.ui.editors.documentProviders&quot;&gt; 

@@ -539,8 +539,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		if (location != null) {
 			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 			manager.connect(location, getProgressMonitor());
-			manager.requestSynchronizationContext(location);
 			ITextFileBuffer fileBuffer= manager.getTextFileBuffer(location);
+			fileBuffer.requestSynchronizationContext();
 			
 			FileInfo info= createEmptyFileInfo();
 			info.fTextFileBuffer= fileBuffer;
@@ -620,8 +620,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		try {
+			info.fTextFileBuffer.releaseSynchronizationContext();
 			IPath location= info.fTextFileBuffer.getLocation();
-			manager.releaseSynchronizationContext(location);
 			manager.disconnect(location, getProgressMonitor());
 		} catch (CoreException x) {
 			handleCoreException(x, "FileDocumentProvider.disposeElementInfo"); //$NON-NLS-1$
@@ -676,8 +676,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
 						return fResourceRuleFactory.modifyRule((input).getFile());
-					} else
-						return null;
+					}
+					return null;
 				}
 			};
 			executeOperation(operation, getProgressMonitor());
@@ -724,8 +724,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
 						return computeSchedulingRule(input.getFile());
-					} else
-						return null;
+					}
+					return null;
 				}
 			};
 			
@@ -987,8 +987,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
 						return fResourceRuleFactory.validateEditRule(new IResource[] { input.getFile() });
-					} else
-						return null;
+					}
+					return null;
 				}
 			};
 			executeOperation(operation, getProgressMonitor());
@@ -1062,8 +1062,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					if (info.fElement instanceof IFileEditorInput) {
 						IFileEditorInput input= (IFileEditorInput) info.fElement;
 						return fResourceRuleFactory.refreshRule(input.getFile());
-					} else
-						return null;
+					}
+					return null;
 				}
 			};
 			executeOperation(operation, getProgressMonitor());
@@ -1242,16 +1242,15 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @return the minimal scheduling rule needed to modify or create a resource
 	 */
 	private ISchedulingRule computeSchedulingRule(IResource toCreateOrModify) {
-		if (toCreateOrModify.exists()) {
+		if (toCreateOrModify.exists())
 			return fResourceRuleFactory.modifyRule(toCreateOrModify);
-		} else {
-			IResource parent= toCreateOrModify;
-			do {
-				toCreateOrModify= parent;
-				parent= toCreateOrModify.getParent();
-			} while (parent != null && !parent.exists());
-			
-			return fResourceRuleFactory.createRule(toCreateOrModify);
-		}
+		
+		IResource parent= toCreateOrModify;
+		do {
+			toCreateOrModify= parent;
+			parent= toCreateOrModify.getParent();
+		} while (parent != null && !parent.exists());
+		
+		return fResourceRuleFactory.createRule(toCreateOrModify);
 	}
 }

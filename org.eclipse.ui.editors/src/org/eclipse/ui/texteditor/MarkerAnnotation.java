@@ -199,8 +199,7 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 		AnnotationPreference preference= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(this);
 		if (preference != null)
 			return preference.getPresentationLayer();
-		else
-			return IAnnotationAccessExtension.DEFAULT_LAYER;
+		return IAnnotationAccessExtension.DEFAULT_LAYER;
 	}
 	
 	/**

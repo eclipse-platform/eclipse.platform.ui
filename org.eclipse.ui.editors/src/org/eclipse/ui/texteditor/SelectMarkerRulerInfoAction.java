@@ -22,6 +22,13 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 public class SelectMarkerRulerInfoAction extends SelectMarkerRulerAction {
 
 	/**
+	 * Creates a new action for the given ruler and editor. The action configures
+	 * its visual representation from the given resource bundle.
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 * @param ruler the ruler
+	 * @param editor the editor
 	 * @deprecated As of 2.1 replaced by {@link org.eclipse.ui.texteditor.SelectMarkerRulerAction#SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)}
 	 */
 	public SelectMarkerRulerInfoAction(ResourceBundle bundle, String prefix, IVerticalRulerInfo ruler, ITextEditor editor) {

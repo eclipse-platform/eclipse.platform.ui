@@ -84,7 +84,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 		final Shell parentShell= getTextEditor().getSite().getShell();
 		final IEncodingSupport encodingSupport= getEncodingSupport();
 		if (resource == null && encodingSupport == null) {
-			MessageDialog.openInformation(parentShell, fDialogTitle, "No encoding support installed");
+			MessageDialog.openInformation(parentShell, fDialogTitle, TextEditorMessages.getString("ChangeEncodingAction.message.noEncodingSupport")); //$NON-NLS-1$
 			return;
 		}
 		
@@ -141,7 +141,7 @@ public class ChangeEncodingAction extends TextEditorAction {
 			 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 			 */
 			protected void createButtonsForButtonBar(Composite parent) {
-				createButton(parent, APPLY_ID, "Apply", false);
+				createButton(parent, APPLY_ID, TextEditorMessages.getString("ChangeEncodingAction.button.apply.label"), false); //$NON-NLS-1$
 				super.createButtonsForButtonBar(parent);
 			}
 			

@@ -16,25 +16,15 @@ import java.util.ResourceBundle;
 /**
  * @since 3.0
  */
-public class QuickDiffMessages {
+class QuickDiffMessages {
+	
 	private static final String BUNDLE_NAME= "org.eclipse.ui.internal.editors.quickdiff.QuickDiffMessages";//$NON-NLS-1$
-
 	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
 
-	/**
-	 * 
-	 */
 	private QuickDiffMessages() {
-
-		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * @param key
-	 * @return
-	 */
 	public static String getString(String key) {
-		// TODO Auto-generated method stub
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {

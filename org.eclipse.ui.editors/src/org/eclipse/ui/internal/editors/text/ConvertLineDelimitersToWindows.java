@@ -19,6 +19,6 @@ package org.eclipse.ui.internal.editors.text;
 public class ConvertLineDelimitersToWindows extends ConvertLineDelimitersAction {
 
 	public ConvertLineDelimitersToWindows(){
-		super("\r\n", "&Windows"); //$NON-NLS-1$
+		super("\r\n", TextEditorMessages.getString("ConvertLineDelimitersToWindows.label")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -51,7 +51,7 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		if (files != null && resources != null && files.length == resources.length)
 			return files;
 		
-		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), "Remove Trailing Whitespace", "Select files:");
+		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.getString("RemoveTrailingWhitespaceHandler.dialog.title"), TextEditorMessages.getString("RemoveTrailingWhitespaceHandler.dialog.description")); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.setInput(resources);
 		int result= dialog.open();
 		if (Window.OK == result) {

@@ -111,6 +111,15 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
+	 * Creates a new action for the given ruler and editor. The action configures
+	 * its visual representation from the given resource bundle.
+	 * 
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 * @param ruler the ruler
+	 * @param editor the editor
+	 * @param markerType the type of the marker
+	 * @param askForLabel <code>true</code> if the user should be asked for a label
 	 * @deprecated use <code>MarkerRulerAction(ResourceBundle, String,  ITextEditor, IVerticalRulerInfo, String, boolean)</code> instead
 	 */
 	public MarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor, String markerType, boolean askForLabel) {
@@ -448,10 +457,9 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			String label= document.get(offset, length).trim();
 			if (label.length() <= MAX_LABEL_LENGTH)
 				return label;
-			else
-				return label.substring(0, MAX_LABEL_LENGTH);
+			return label.substring(0, MAX_LABEL_LENGTH);
 		} catch (BadLocationException x) {
-			// don't proposal label then
+			// don't propose label then
 			return null;
 		}
 	}

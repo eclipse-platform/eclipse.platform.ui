@@ -202,7 +202,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	}
 	
 	protected final IPath[] generateLocations(IFile[] files, IProgressMonitor progressMonitor) {
-		progressMonitor.beginTask("collecting files", files.length); 
+		progressMonitor.beginTask(TextEditorMessages.getString("FileBufferOperationAction.collectionFiles.label"), files.length);  //$NON-NLS-1$
 		try {
 			Set locations= new HashSet();
 			for (int i= 0; i < files.length; i++) {

@@ -23,6 +23,14 @@ import org.eclipse.swt.widgets.Canvas;
 public class ImageUtilities {
 	
 	/**
+	 * Draws an image aligned inside the given rectangle on the given canvas.
+	 *
+	 * @param image the image to be drawn
+	 * @param gc the drawing GC
+	 * @param canvas the canvas on which to draw
+	 * @param r the clipping rectangle
+	 * @param halign the horizontal alignment of the image to be drawn
+	 * @param valign the vertical alignment of the image to be drawn
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.ImageUtilities#drawImage(Image, GC, Canvas, Rectangle, int, int)}
 	 */
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int halign, int valign) {
@@ -30,6 +38,13 @@ public class ImageUtilities {
 	}
 	
 	/**
+	 * Draws an image aligned inside the given rectangle on the given canvas.
+	 *
+	 * @param image the image to be drawn
+	 * @param gc the drawing GC
+	 * @param canvas the canvas on which to draw
+	 * @param r the clipping rectangle
+	 * @param align the alignment of the image to be drawn
 	 * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.ImageUtilities#drawImage(Image, GC, Canvas, Rectangle, int)}
 	 */
 	public static void drawImage(Image image, GC gc, Canvas canvas, Rectangle r, int align) {

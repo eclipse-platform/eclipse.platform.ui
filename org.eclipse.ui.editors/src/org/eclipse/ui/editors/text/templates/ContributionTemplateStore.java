@@ -167,16 +167,17 @@ public class ContributionTemplateStore extends TemplateStore {
 	 */
 	private boolean validateTemplate(Template template) {
 		String contextTypeId= template.getContextTypeId();
-		if (contextExists(contextTypeId)) {
-			if (getRegistry() != null)
-				try {
-					getRegistry().getContextType(contextTypeId).validate(template.getPattern());
-				} catch (TemplateException e) {
-					return false;
-				}
-			return true;
-		} else
+		if (!contextExists(contextTypeId)) 
 			return false;
+		
+		if (getRegistry() != null) {
+			try {
+				getRegistry().getContextType(contextTypeId).validate(template.getPattern());
+			} catch (TemplateException e) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

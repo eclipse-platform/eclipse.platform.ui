@@ -94,7 +94,13 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	}
 	
 	/**
-	 * @see #SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)
+	 * Creates a new action for the given ruler and editor. The action configures
+	 * its visual representation from the given resource bundle.
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 * @param ruler the ruler
+	 * @param editor the editor
 	 * @deprecated As of 3.0, replaced by {@link #SelectMarkerRulerAction(ResourceBundle, String, ITextEditor, IVerticalRulerInfo)}
 	 */
 	public SelectMarkerRulerAction(ResourceBundle bundle, String prefix, IVerticalRuler ruler, ITextEditor editor) {

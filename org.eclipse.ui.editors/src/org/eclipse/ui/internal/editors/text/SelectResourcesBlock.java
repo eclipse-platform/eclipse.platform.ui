@@ -28,7 +28,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 
 import org.eclipse.jface.util.ListenerList;
@@ -87,7 +86,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Create an instance of this class. Use this constructor if you wish to
-	 * specify the width and/or height of the combined widget (to only hardcode
+	 * specify the width and/or height of the combined widget (to only hard code
 	 * one of the sizing dimensions, specify the other dimension's value as -1)
 	 * 
 	 * @param parent
@@ -97,9 +96,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @param listContentProvider
 	 * @param listLabelProvider
 	 * @param style
-	 * @param useHeightHint If true then use the height hint to make this group
-	 *            big enough
-	 *  
+	 * @param useHeightHint If true then use the height hint to make this group big enough
 	 */
 	public SelectResourcesBlock(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, boolean useHeightHint) {
 
@@ -109,23 +106,6 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		this.treeLabelProvider= treeLabelProvider;
 		this.listLabelProvider= listLabelProvider;
 		createContents(parent, style, useHeightHint);
-	}
-
-	/**
-	 * This method must be called just before this window becomes visible.
-	 */
-	public void aboutToOpen() {
-		determineWhiteCheckedDescendents(root);
-		checkNewTreeElements(treeContentProvider.getElements(root));
-		currentTreeSelection= null;
-
-		//select the first element in the list
-		Object[] elements= treeContentProvider.getElements(root);
-		Object primary= elements.length > 0 ? elements[0] : null;
-		if (primary != null) {
-			treeViewer.setSelection(new StructuredSelection(primary));
-		}
-		treeViewer.getControl().setFocus();
 	}
 
 	/**
@@ -145,7 +125,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @return boolean
 	 * @param treeElement java.lang.Object
 	 */
-	protected boolean areAllChildrenWhiteChecked(Object treeElement) {
+	private boolean areAllChildrenWhiteChecked(Object treeElement) {
 		Object[] children= treeContentProvider.getChildren(treeElement);
 		for (int i= 0; i < children.length; ++i) {
 			if (!whiteCheckedTreeItems.contains(children[i]))
@@ -156,13 +136,13 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Return a boolean indicating whether all list elements associated with the
-	 * passed tree element are currently checked
+	 * Checks whether all list elements associated with the
+	 * passed tree element are checked.
 	 * 
-	 * @return boolean
-	 * @param treeElement java.lang.Object
+	 * @param treeElement the tree element
+	 * @return <code>true</code> if all elements are checked, <code>false</code> otherwise
 	 */
-	protected boolean areAllElementsChecked(Object treeElement) {
+	private boolean areAllElementsChecked(Object treeElement) {
 		List checkedElements= (List) checkedStateStore.get(treeElement);
 		if (checkedElements == null) // ie.- tree item not even gray-checked
 			return false;
@@ -171,10 +151,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Iterate through the passed elements which are being realized for the
-	 * first time and check each one in the tree viewer as appropriate
+	 * Iterates over the passed elements which are being realized for the
+	 * first time and check each one in the tree viewer as appropriate.
+	 * 
+	 * @param elements the elements
 	 */
-	protected void checkNewTreeElements(Object[] elements) {
+	private void checkNewTreeElements(Object[] elements) {
 		for (int i= 0; i < elements.length; ++i) {
 			Object currentElement= elements[i];
 			boolean checked= checkedStateStore.containsKey(currentElement);
@@ -187,7 +169,8 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * An item was checked in one of self's two views. Determine which view this
 	 * occurred in and delegate appropriately
 	 * 
-	 * @param event CheckStateChangedEvent
+	 * @param event the check state event
+	 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 	 */
 	public void checkStateChanged(final CheckStateChangedEvent event) {
 
@@ -209,9 +192,9 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * 
 	 * @param parent org.eclipse.swt.widgets.Composite
 	 * @param style the style flags for the new Composite
-	 * @param useHeightHint If true yse the preferredHeight.
+	 * @param useHeightHint If true use the preferredHeight.
 	 */
-	protected void createContents(Composite parent, int style, boolean useHeightHint) {
+	private void createContents(Composite parent, int style, boolean useHeightHint) {
 		// group pane
 		Composite composite= new Composite(parent, style);
 		composite.setFont(parent.getFont());
@@ -230,9 +213,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Create this group's list viewer.
+	 * Creates this block's list viewer.
+	 * 
+	 * @param parent the parent control
+	 * @param useHeightHint if <code>true</code> use the height hints
 	 */
-	protected void createListViewer(Composite parent, boolean useHeightHint) {
+	private void createListViewer(Composite parent, boolean useHeightHint) {
 		listViewer= CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
 		if (useHeightHint)
@@ -245,9 +231,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Create this group's tree viewer.
+	 * Create this block's tree viewer.
+	 * 
+	 * @param parent the parent control
+	 * @param useHeightHint if <code>true</code> use the height hints
 	 */
-	protected void createTreeViewer(Composite parent, boolean useHeightHint) {
+	private void createTreeViewer(Composite parent, boolean useHeightHint) {
 		Tree tree= new Tree(parent, SWT.CHECK | SWT.BORDER);
 		GridData data= new GridData(GridData.FILL_BOTH);
 		if (useHeightHint)
@@ -275,7 +264,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @return boolean
 	 * @see #determineShouldBeWhiteChecked(Object)
 	 */
-	protected boolean determineShouldBeAtLeastGrayChecked(Object treeElement) {
+	private boolean determineShouldBeAtLeastGrayChecked(Object treeElement) {
 		// if any list items associated with treeElement are checked then it
 		// retains its gray-checked status regardless of its children
 		List checked= (List) checkedStateStore.get(treeElement);
@@ -303,48 +292,31 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @return boolean
 	 * @param treeElement java.lang.Object
 	 */
-	protected boolean determineShouldBeWhiteChecked(Object treeElement) {
+	private boolean determineShouldBeWhiteChecked(Object treeElement) {
 		return areAllChildrenWhiteChecked(treeElement) && areAllElementsChecked(treeElement);
 	}
 
 	/**
-	 * Recursively add appropriate tree elements to the collection of known
-	 * white-checked tree elements.
+	 * Expands an element in a tree viewer.
 	 * 
-	 * @param treeElement java.lang.Object
+	 * @param element the element to be expanded
 	 */
-	protected void determineWhiteCheckedDescendents(Object treeElement) {
-		// always go through all children first since their white-checked
-		// statuses will be needed to determine the white-checked status for
-		// this tree element
-		Object[] children= treeContentProvider.getElements(treeElement);
-		for (int i= 0; i < children.length; ++i)
-			determineWhiteCheckedDescendents(children[i]);
-
-		// now determine the white-checked status for this tree element
-		if (determineShouldBeWhiteChecked(treeElement))
-			setWhiteChecked(treeElement, true);
-	}
-
-	/**
-	 * Expand an element in a tree viewer
-	 */
-	private void expandTreeElement(final Object item) {
+	private void expandTreeElement(final Object element) {
 		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
 
 				// First see if the children need to be given their checked
 				// state at all. If they've
 				// already been realized then this won't be necessary
-				if (expandedTreeNodes.contains(item))
-					checkNewTreeElements(treeContentProvider.getChildren(item));
+				if (expandedTreeNodes.contains(element))
+					checkNewTreeElements(treeContentProvider.getChildren(element));
 				else {
 
-					expandedTreeNodes.add(item);
-					if (whiteCheckedTreeItems.contains(item)) {
+					expandedTreeNodes.add(element);
+					if (whiteCheckedTreeItems.contains(element)) {
 						//If this is the first expansion and this is a white
 						// checked node then check the children
-						Object[] children= treeContentProvider.getChildren(item);
+						Object[] children= treeContentProvider.getChildren(element);
 						for (int i= 0; i < children.length; ++i) {
 							if (!whiteCheckedTreeItems.contains(children[i])) {
 								Object child= children[i];
@@ -355,7 +327,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 						}
 
 						//Now be sure to select the list of items too
-						setListForWhiteSelection(item);
+						setListForWhiteSelection(element);
 					}
 				}
 
@@ -364,13 +336,15 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Add all of the selected children of nextEntry to result recursively. This
+	 * Adds all of the selected children of <code>treeElement</code> to result recursively. This
 	 * does not set any values in the checked state.
 	 * 
 	 * @param  treeElement the tree element being queried
+	 * @param parentLabel the parent label
 	 * @param addAll a boolean to indicate if the checked state store needs to be queried
-	 * @param filter IElementFilter - the filter being used on the data
-	 * @param monitor IProgressMonitor or null that the cancel is polled for
+	 * @param filter the filter being used on the data
+	 * @param monitor the progress monitor or <code>null</code> that the cancel is polled for
+	 * @throws InterruptedException in case of interruption
 	 */
 	private void findAllSelectedListElements(Object treeElement, String parentLabel, boolean addAll, IElementFilter filter, IProgressMonitor monitor) throws InterruptedException {
 
@@ -435,8 +409,9 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * 
 	 * @param filter - the filter for the data
 	 * @param monitor IProgressMonitor or null
+	 * @throws InterruptedException in case of interruption
 	 */
-	public void getAllCheckedListItems(IElementFilter filter, IProgressMonitor monitor) throws InterruptedException {
+	private void getAllCheckedListItems(IElementFilter filter, IProgressMonitor monitor) throws InterruptedException {
 		//Iterate through the children of the root as the root is not in the store
 		Object[] children= treeContentProvider.getChildren(root);
 		for (int i= 0; i < children.length; ++i) {
@@ -498,22 +473,13 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Answer the number of elements that have been checked by the user.
-	 * 
-	 * @return int
-	 */
-	public int getCheckedElementCount() {
-		return checkedStateStore.values().size();
-	}
-
-	/**
 	 * Get the full label of the treeElement (its name and its parent's name).
 	 * 
 	 * @param treeElement - the element being exported
 	 * @param parentLabel - the label of the parent, can be null
 	 * @return String
 	 */
-	protected String getFullLabel(Object treeElement, String parentLabel) {
+	private String getFullLabel(Object treeElement, String parentLabel) {
 		String parentName= parentLabel;
 
 		if (parentLabel == null)
@@ -536,25 +502,19 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * @return int
 	 * @param treeElement java.lang.Object
 	 */
-	protected int getListItemsSize(Object treeElement) {
+	private int getListItemsSize(Object treeElement) {
 		Object[] elements= listContentProvider.getElements(treeElement);
 		return elements.length;
 	}
 
-	/**
-	 * Get the table the list viewer uses.
-	 * 
-	 * @return org.eclipse.swt.widgets.Table
-	 */
-	public Table getListTable() {
-		return this.listViewer.getTable();
-	}
 
 	/**
-	 * Logically gray-check all ancestors of treeItem by ensuring that they
-	 * appear in the checked table
+	 * Logically gray-check all ancestors of <code>treeElement</code> by ensuring that they
+	 * appear in the checked table.
+	 * 
+	 * @param treeElement the tree element
 	 */
-	protected void grayCheckHierarchy(Object treeElement) {
+	private void grayCheckHierarchy(Object treeElement) {
 
 		//expand the element first to make sure we have populated for it
 		expandTreeElement(treeElement);
@@ -573,6 +533,8 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Set the checked state of self and all ancestors appropriately. Do not
 	 * white check anyone - this is only done down a hierarchy.
+	 * 
+	 * @param treeElement the tree element
 	 */
 	private void grayUpdateHierarchy(Object treeElement) {
 
@@ -590,29 +552,6 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		}
 	}
 
-	/**
-	 * Set the initial checked state of the passed list element to true.
-	 */
-	public void initialCheckListItem(Object element) {
-		Object parent= treeContentProvider.getParent(element);
-		selectAndReveal(parent);
-		//Check the element in the viewer as if it had been manually checked
-		listViewer.setChecked(element, true);
-		//As this is not done from the UI then set the box for updating from
-		// the selection to false
-		listItemChecked(element, true, false);
-		grayUpdateHierarchy(parent);
-	}
-
-	/**
-	 * Set the initial checked state of the passed element to true, as well as
-	 * to all of its children and associated list elements
-	 */
-	public void initialCheckTreeItem(Object element) {
-		treeItemChecked(element, true);
-		selectAndReveal(element);
-	}
-
 	public void selectAndReveal(Object treeElement) {
 		treeViewer.reveal(treeElement);
 		IStructuredSelection selection= new StructuredSelection(treeElement);
@@ -622,7 +561,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Initialize this group's viewers after they have been laid out.
 	 */
-	protected void initialize() {
+	private void initialize() {
 		treeViewer.setInput(root);
 		this.expandedTreeNodes= new ArrayList();
 		this.expandedTreeNodes.add(root);
@@ -633,8 +572,13 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Callback that's invoked when the checked status of an item in the list is
 	 * changed by the user. Do not try and update the hierarchy if we are
 	 * building the initial list.
+	 * 
+	 * @param listElement the list element
+	 * @param state the checked state
+	 * @param updatingFromSelection <code>true</code> if we are inside an
+	 *            update caused by selection
 	 */
-	protected void listItemChecked(Object listElement, boolean state, boolean updatingFromSelection) {
+	private void listItemChecked(Object listElement, boolean state, boolean updatingFromSelection) {
 		List checkedListItems= (List) checkedStateStore.get(currentTreeSelection);
 		//If it has not been expanded do so as the selection of list items will
 		// affect gray state
@@ -666,10 +610,11 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Notify all checked state listeners that the passed element has had its
-	 * checked state changed to the passed state
+	 * Notify all checked state listeners with the given event.
+	 * 
+	 * @param event the event
 	 */
-	protected void notifyCheckStateChangeListeners(final CheckStateChangedEvent event) {
+	private void notifyCheckStateChangeListeners(final CheckStateChangedEvent event) {
 		Object[] array= listeners.getListeners();
 		for (int i= 0; i < array.length; i++) {
 			final ICheckStateListener l= (ICheckStateListener) array[i];
@@ -687,7 +632,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * 
 	 * @param treeElement java.lang.Object
 	 */
-	protected void populateListViewer(final Object treeElement) {
+	private void populateListViewer(final Object treeElement) {
 		listViewer.setInput(treeElement);
 
 		//If the element is white checked but not expanded we have not set up
@@ -714,9 +659,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Logically gray-check all ancestors of treeItem by ensuring that they
-	 * appear in the checked table. Add any elements to the selectedNodes so we
-	 * can track that has been done.
+	 * Logically gray-check all ancestors of <code>item</code> by ensuring
+	 * that they appear in the checked table. Add any elements to the
+	 * <code>selectedNodes</code> so we can track that has been done.
+	 * 
+	 * @param item the tree item
+	 * @param selectedNodes the set of selected nodes
 	 */
 	private void primeHierarchyForSelection(Object item, Set selectedNodes) {
 
@@ -768,7 +716,11 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 	/**
 	 * Select or deselect all of the elements in the tree depending on the value
-	 * of the selection boolean. Be sure to update the displayed files as well.
+	 * of <code>selection</code>. Be sure to update the displayed files as
+	 * well.
+	 * 
+	 * @param selection <code>true</code> if selection should be set,
+	 *            <code>false</code> if it should be removed
 	 */
 	public void setAllSelections(final boolean selection) {
 
@@ -803,39 +755,23 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Set the list viewer's providers to those passed
+	 * Set the <code>sorter</code> that is to be applied to self's list viewer
 	 * 
-	 * @param contentProvider ITreeContentProvider
-	 * @param labelProvider ILabelProvider
-	 */
-	public void setListProviders(IStructuredContentProvider contentProvider, ILabelProvider labelProvider) {
-		listViewer.setContentProvider(contentProvider);
-		listViewer.setLabelProvider(labelProvider);
-	}
-
-	/**
-	 * Set the sorter that is to be applied to self's list viewer
+	 * @param sorter the sorter to be set
 	 */
 	public void setListSorter(ViewerSorter sorter) {
 		listViewer.setSorter(sorter);
 	}
 
 	/**
-	 * Set the root of the widget to be new Root. Regenerate all of the tables
-	 * and lists from this value.
+	 * Set the checked state of the passed <code>treeElement</code>
+	 * appropriately, and do so recursively to all of its child tree elements as
+	 * well.
 	 * 
-	 * @param newRoot
+	 * @param treeElement the root of the subtree
+	 * @param state <code>true</code> if checked, <code>false</code> otherwise
 	 */
-	public void setRoot(Object newRoot) {
-		this.root= newRoot;
-		initialize();
-	}
-
-	/**
-	 * Set the checked state of the passed tree element appropriately, and do so
-	 * recursively to all of its child tree elements as well
-	 */
-	protected void setTreeChecked(Object treeElement, boolean state) {
+	private void setTreeChecked(Object treeElement, boolean state) {
 
 		if (treeElement.equals(currentTreeSelection)) {
 			listViewer.setAllChecked(state);
@@ -861,18 +797,9 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Set the tree viewer's providers to those passed
+	 * Set the sorter that is to be applied to self's tree viewer.
 	 * 
-	 * @param contentProvider ITreeContentProvider
-	 * @param labelProvider ILabelProvider
-	 */
-	public void setTreeProviders(ITreeContentProvider contentProvider, ILabelProvider labelProvider) {
-		treeViewer.setContentProvider(contentProvider);
-		treeViewer.setLabelProvider(labelProvider);
-	}
-
-	/**
-	 * Set the sorter that is to be applied to self's tree viewer
+	 * @param sorter the sorter to be set
 	 */
 	public void setTreeSorter(ViewerSorter sorter) {
 		treeViewer.setSorter(sorter);
@@ -882,10 +809,11 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * Adjust the collection of references to white-checked tree elements
 	 * appropriately.
 	 * 
-	 * @param treeElement java.lang.Object
-	 * @param isWhiteChecked boolean
+	 * @param treeElement the root of the subtree
+	 * @param isWhiteChecked <code>true</code> if white checked,
+	 *            <code>false</code> otherwise
 	 */
-	protected void setWhiteChecked(Object treeElement, boolean isWhiteChecked) {
+	private void setWhiteChecked(Object treeElement, boolean isWhiteChecked) {
 		if (isWhiteChecked) {
 			if (!whiteCheckedTreeItems.contains(treeElement))
 				whiteCheckedTreeItems.add(treeElement);
@@ -894,14 +822,18 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Handle the collapsing of an element in a tree viewer
+	 * Handle the collapsing of an element in a tree viewer.
+	 * 
+	 * @param event the collapse event
 	 */
 	public void treeCollapsed(TreeExpansionEvent event) {
 		// We don't need to do anything with this
 	}
 
 	/**
-	 * Handle the expansionsion of an element in a tree viewer
+	 * Handle the expansion of an element in a tree viewer.
+	 * 
+	 * @param event the expansion event
 	 */
 	public void treeExpanded(TreeExpansionEvent event) {
 		expandTreeElement(event.getElement());
@@ -910,8 +842,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	/**
 	 * Callback that's invoked when the checked status of an item in the tree is
 	 * changed by the user.
+	 * 
+	 * @param treeElement the tree element that has been checked/unchecked
+	 * @param state <code>true</code> if checked, <code>false</code> if
+	 *            unchecked
 	 */
-	protected void treeItemChecked(Object treeElement, boolean state) {
+	private void treeItemChecked(Object treeElement, boolean state) {
 
 		// recursively adjust all child tree elements appropriately
 		setTreeChecked(treeElement, state);
@@ -931,37 +867,18 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Logically un-gray-check all ancestors of treeItem iff appropriate.
+	 * Logically un-gray-check all ancestors of <code>treeElement</code> if
+	 * appropriate.
+	 * 
+	 * @param treeElement the root of the subtree
 	 */
-	protected void ungrayCheckHierarchy(Object treeElement) {
+	private void ungrayCheckHierarchy(Object treeElement) {
 		if (!determineShouldBeAtLeastGrayChecked(treeElement))
 			checkedStateStore.remove(treeElement);
 
 		Object parent= treeContentProvider.getParent(treeElement);
 		if (parent != null)
 			ungrayCheckHierarchy(parent);
-	}
-
-	/**
-	 * Set the checked state of self and all ancestors appropriately
-	 */
-	protected void updateHierarchy(Object treeElement) {
-
-		boolean whiteChecked= determineShouldBeWhiteChecked(treeElement);
-		boolean shouldBeAtLeastGray= determineShouldBeAtLeastGrayChecked(treeElement);
-
-		treeViewer.setChecked(treeElement, shouldBeAtLeastGray);
-		setWhiteChecked(treeElement, whiteChecked);
-		if (whiteChecked)
-			treeViewer.setGrayed(treeElement, false);
-		else
-			treeViewer.setGrayed(treeElement, shouldBeAtLeastGray);
-
-		// proceed up the tree element hierarchy but gray select all of them
-		Object parent= treeContentProvider.getParent(treeElement);
-		if (parent != null) {
-			grayUpdateHierarchy(parent);
-		}
 	}
 
 	/**
@@ -1014,12 +931,105 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 				listViewer.setCheckedElements(((List) displayItems).toArray());
 		}
 	}
+	
+//	/**
+//	 * This method must be called just before this window becomes visible.
+//	 */
+//	private void aboutToOpen() {
+//		determineWhiteCheckedDescendents(root);
+//		checkNewTreeElements(treeContentProvider.getElements(root));
+//		currentTreeSelection= null;
+//
+//		//select the first element in the list
+//		Object[] elements= treeContentProvider.getElements(root);
+//		Object primary= elements.length > 0 ? elements[0] : null;
+//		if (primary != null) {
+//			treeViewer.setSelection(new StructuredSelection(primary));
+//		}
+//		treeViewer.getControl().setFocus();
+//	}
+//
+//	/**
+//	 * Set the focus on to the list widget.
+//	 */
+//	private void setFocus() {
+//		this.treeViewer.getTree().setFocus();
+//	}
+//
+//	/**
+//	 * Set the root of the widget to be new Root. Regenerate all of the tables
+//	 * and lists from this value.
+//	 * 
+//	 * @param newRoot the new root
+//	 */
+//	private void setRoot(Object newRoot) {
+//		this.root= newRoot;
+//		initialize();
+//	}
+//	/**
+//	 * Set the initial checked state of the passed list element to
+//	 * <code>true</code>.
+//	 * 
+//	 * @param element the element
+//	 */
+//	private void initialCheckListItem(Object element) {
+//		Object parent= treeContentProvider.getParent(element);
+//		selectAndReveal(parent);
+//		//Check the element in the viewer as if it had been manually checked
+//		listViewer.setChecked(element, true);
+//		//As this is not done from the UI then set the box for updating from
+//		// the selection to false
+//		listItemChecked(element, true, false);
+//		grayUpdateHierarchy(parent);
+//	}
+//
+//	/**
+//	 * Set the initial checked state of the passed element to <code>true</code>,
+//	 * as well as to all of its children and associated list elements
+//	 * 
+//	 * @param element the element
+//	 */
+//	private void initialCheckTreeItem(Object element) {
+//		treeItemChecked(element, true);
+//		selectAndReveal(element);
+//	}
+//
+//	/**
+//	 * Get the table the list viewer uses.
+//	 * 
+//	 * @return org.eclipse.swt.widgets.Table
+//	 */
+//	private Table getListTable() {
+//		return this.listViewer.getTable();
+//	}
+//
+//	/**
+//	 * Answer the number of elements that have been checked by the user.
+//	 * 
+//	 * @return int
+//	 */
+//	private int getCheckedElementCount() {
+//		return checkedStateStore.values().size();
+//	}
+//
+//	/**
+//	 * Recursively add appropriate tree elements to the collection of known
+//	 * white-checked tree elements.
+//	 * 
+//	 * @param treeElement java.lang.Object
+//	 */
+//	private void determineWhiteCheckedDescendents(Object treeElement) {
+//		// always go through all children first since their white-checked
+//		// statuses will be needed to determine the white-checked status for
+//		// this tree element
+//		Object[] children= treeContentProvider.getElements(treeElement);
+//		for (int i= 0; i < children.length; ++i)
+//			determineWhiteCheckedDescendents(children[i]);
+//
+//		// now determine the white-checked status for this tree element
+//		if (determineShouldBeWhiteChecked(treeElement))
+//			setWhiteChecked(treeElement, true);
+//	}
 
-	/**
-	 * Set the focus on to the list widget.
-	 */
-	public void setFocus() {
-		this.treeViewer.getTree().setFocus();
-	}
 
 }

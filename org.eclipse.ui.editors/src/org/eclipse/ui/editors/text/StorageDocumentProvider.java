@@ -370,8 +370,7 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			StorageInfo info= (StorageInfo) getElementInfo(element);
 			if (info != null)
 				return info.fEncoding;
-			else
-				return getPersistedEncoding(element);
+			return getPersistedEncoding(element);
 		}
 		return null;
 	}
