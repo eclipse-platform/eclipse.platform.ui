@@ -52,7 +52,7 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
             // TODO
             //return new PartTabFolderPresentation(parent, site, flags);
         default:
-            throw new Error("not implemented");
+            throw new Error("not implemented"); //$NON-NLS-1$
         }
     }
 

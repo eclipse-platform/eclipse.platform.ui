@@ -124,7 +124,7 @@ public Object buildNewCacheObject(IExtensionDelta delta) {
 				// log an error since its not safe to open a dialog here
 				WorkbenchPlugin.log("Unable to create view descriptor." , e.getStatus());//$NON-NLS-1$
 			}
-		} else if (singleton.getName().equals("category")) {
+		} else if (singleton.getName().equals("category")) { //$NON-NLS-1$
 			try {
 				// We want to create a category
 				if (findCategory(id) != null)

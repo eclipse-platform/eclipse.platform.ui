@@ -207,12 +207,12 @@ public class EditorPresentation extends BasicStackPresentation {
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf(title)).trim();
 
-            if (titleTooltip.endsWith("\\"))
+            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
                     //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
 
-            if (titleTooltip.endsWith("/"))
+            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
                     //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$

@@ -33,7 +33,7 @@ public class SystemMenuMinimize extends ContributionItem {
     
     public void fill(Menu menu, int index) {
         MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages.getString("ViewPane.minimizeView"));
+        menuItem.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
         menuItem.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {

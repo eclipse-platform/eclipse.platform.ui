@@ -33,7 +33,7 @@ public class SystemMenuMaximize extends ContributionItem {
     
     public void fill(Menu menu, int index) {
         MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages.getString("PartPane.maximize"));
+        menuItem.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
         menuItem.addSelectionListener(new SelectionAdapter() {
 
             public void widgetSelected(SelectionEvent e) {
