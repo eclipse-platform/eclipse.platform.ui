@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
  * </p>
  */
 public class WizardNewFileCreationPage extends WizardPage implements Listener {
+	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 300;
 	// the current resource selection
 	private	IStructuredSelection currentSelection;
 	
@@ -116,7 +117,7 @@ public void createControl(Composite parent) {
 	WorkbenchHelp.setHelp(topLevel, IHelpContextIds.NEW_FILE_WIZARD_PAGE);
 
 	// resource and container group
-	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file"), false); //$NON-NLS-1$
+	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initialPopulateContainerNameField();
 	if (initialFileName != null)

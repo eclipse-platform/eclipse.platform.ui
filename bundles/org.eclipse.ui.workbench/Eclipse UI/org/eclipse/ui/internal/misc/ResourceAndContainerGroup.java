@@ -91,10 +91,25 @@ public ResourceAndContainerGroup(Composite parent, Listener client, String resou
  * @param showClosedProjects whether or not to show closed projects
  */
 public ResourceAndContainerGroup(Composite parent, Listener client, String resourceFieldLabel, String resourceType, boolean showClosedProjects) {
+	this(parent,client,resourceFieldLabel, resourceType, showClosedProjects, SWT.DEFAULT);
+}
+/**
+ * Create an instance of the group to allow the user
+ * to enter/select a container and specify a resource
+ * name.
+ *
+ * @param parent composite widget to parent the group
+ * @param client object interested in changes to the group's fields value
+ * @param resourceFieldLabel label to use in front of the resource name field
+ * @param resourceType one word, in lowercase, to describe the resource to the user (file, folder, project)
+ * @param showClosedProjects whether or not to show closed projects
+ * @param heightHint height hint for the container selection widget group
+ */
+public ResourceAndContainerGroup(Composite parent, Listener client, String resourceFieldLabel, String resourceType, boolean showClosedProjects, int heightHint) {
 	super();
 	this.resourceType = resourceType;
 	this.showClosedProjects = showClosedProjects;
-	createContents(parent,resourceFieldLabel);
+	createContents(parent,resourceFieldLabel,heightHint);
 	this.client = client;
 }
 /**
@@ -110,8 +125,9 @@ public boolean areAllValuesValid() {
  * Creates this object's visual components.
  *
  * @param parent org.eclipse.swt.widgets.Composite
+ * @param heightHint height hint for the container selection widget group
  */
-protected void createContents(Composite parent,String resourceLabelString) {
+protected void createContents(Composite parent,String resourceLabelString,int heightHint) {
 	
 	Font font = parent.getFont();	
 	// server name group
@@ -124,7 +140,10 @@ protected void createContents(Composite parent,String resourceLabelString) {
 	composite.setFont(font);
 
 	// container group
-	containerGroup = new ContainerSelectionGroup(composite, this, true, null,showClosedProjects);
+	if (heightHint == SWT.DEFAULT)
+		containerGroup = new ContainerSelectionGroup(composite, this, true, null,showClosedProjects);
+	else
+		containerGroup = new ContainerSelectionGroup(composite, this, true, null,showClosedProjects, heightHint);
 	
 	// resource name group
 	Composite nameGroup = new Composite(composite,SWT.NONE);
@@ -132,8 +151,7 @@ protected void createContents(Composite parent,String resourceLabelString) {
 	layout.numColumns = 2;
 	layout.marginWidth = 0;
 	nameGroup.setLayout(layout);
-	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-	nameGroup.setLayoutData(data);
+	nameGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 	nameGroup.setFont(font);
 
 	Label label = new Label(nameGroup,SWT.NONE);

@@ -84,17 +84,32 @@ public ContainerSelectionGroup (Composite parent, Listener listener, boolean all
  * @param showClosedProjects Whether or not to show closed projects.
  */
 public ContainerSelectionGroup (Composite parent, Listener listener, boolean allowNewContainerName, String message, boolean showClosedProjects) {
+	this(parent, listener, allowNewContainerName, message, showClosedProjects, SIZING_SELECTION_PANE_HEIGHT);
+}
+/**
+ * Creates a new instance of the widget.
+ *
+ * @param parent The parent widget of the group.
+ * @param listener A listener to forward events to.  Can be null if
+ *	 no listener is required.
+ * @param allowNewContainerName Enable the user to type in a new container
+ *  name instead of just selecting from the existing ones.
+ * @param message The text to present to the user.
+ * @param showClosedProjects Whether or not to show closed projects.
+ * @param heightHint height hint for the drill down composite
+ */
+public ContainerSelectionGroup (Composite parent, Listener listener, boolean allowNewContainerName, String message, boolean showClosedProjects, int heightHint) {
 	super (parent, SWT.NONE);
 	this.listener = listener;
 	this.allowNewContainerName = allowNewContainerName;
 	this.showClosedProjects = showClosedProjects;
 	this.setFont(parent.getFont());
 	if (message != null)
-		createContents(message);
+		createContents(message, heightHint);
 	else if (allowNewContainerName)
-		createContents(DEFAULT_MSG_NEW_ALLOWED);
+		createContents(DEFAULT_MSG_NEW_ALLOWED, heightHint);
 	else
-		createContents(DEFAULT_MSG_SELECT_ONLY);
+		createContents(DEFAULT_MSG_SELECT_ONLY, heightHint);
 }
 /**
  * The container selection has changed in the
@@ -123,6 +138,14 @@ public void containerSelectionChanged(IContainer container) {
  * Creates the contents of the composite.
  */
 public void createContents(String message) {
+	createContents(message, SIZING_SELECTION_PANE_HEIGHT);
+}
+/**
+ * Creates the contents of the composite.
+ * 
+ * @param heightHint height hint for the drill down composite
+ */
+public void createContents(String message, int heightHint) {
 	GridLayout layout = new GridLayout();
 	layout.marginWidth = 0;
 	setLayout(layout);
@@ -143,21 +166,22 @@ public void createContents(String message) {
 		new Label(this, SWT.NONE);
 	}
 
-	createTreeViewer();
+	createTreeViewer(heightHint);
 }
 /**
  * Returns a new drill down viewer for this dialog.
  *
+ * @param heightHint height hint for the drill down composite
  * @return a new drill down viewer
  */
-protected void createTreeViewer() {
+protected void createTreeViewer(int heightHint) {
 	// Create drill down.
 	DrillDownComposite drillDown = new DrillDownComposite(this, SWT.BORDER);
 	GridData spec = new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL |
 		GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 	spec.widthHint = SIZING_SELECTION_PANE_WIDTH;
-	spec.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+	spec.heightHint = heightHint;
 	drillDown.setLayoutData(spec);
 	drillDown.setFont(this.getFont());
 

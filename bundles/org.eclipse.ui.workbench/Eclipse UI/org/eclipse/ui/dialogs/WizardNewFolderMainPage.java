@@ -52,6 +52,7 @@ import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
  * </p>
  */
 public class WizardNewFolderMainPage extends WizardPage implements Listener {
+	private static final int SIZING_CONTAINER_GROUP_HEIGHT = 300;
 	private IStructuredSelection currentSelection;
 	private IContainer currentParent;
 
@@ -86,6 +87,9 @@ protected void createAdvancedControls(Composite parent) {
 	advancedButton = new Button(parent, SWT.PUSH);
 	advancedButton.setFont(parent.getFont());
 	advancedButton.setText(WorkbenchMessages.getString("WizardNewFolderMainPage.advancedButtonCollapsed"));
+	GridData data = setButtonLayoutData(advancedButton);
+	data.horizontalAlignment = GridData.BEGINNING;
+	advancedButton.setLayoutData(data);
 	advancedButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			handleAdvancedButtonSelect();
@@ -96,6 +100,7 @@ protected void createAdvancedControls(Composite parent) {
  * Method declared on IDialogPage.
  */
 public void createControl(Composite parent) {
+	initializeDialogUnits(parent);
 	// top level group
 	Composite composite = new Composite(parent,SWT.NONE);
 	composite.setFont(parent.getFont());
@@ -105,7 +110,7 @@ public void createControl(Composite parent) {
 
 	WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_FOLDER_WIZARD_PAGE);
 
-	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel"), false); //$NON-NLS-2$ //$NON-NLS-1$
+	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initializePage();
 	createAdvancedControls(composite);	
