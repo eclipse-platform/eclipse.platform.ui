@@ -284,7 +284,9 @@ protected Control createDialogArea(Composite parent) {
 
 		// label on right hand side of icon
 		taskLabel = new Label(c, SWT.LEFT | SWT.WRAP);
-		taskLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.heightHint= 35;
+		taskLabel.setLayoutData(gd);
 		taskLabel.setText(DEFAULT_TASKNAME);
 		taskLabel.setFont(parent.getFont());
 
