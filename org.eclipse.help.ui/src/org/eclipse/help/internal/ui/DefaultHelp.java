@@ -3,13 +3,13 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.internal.util.Logger;
+import org.eclipse.help.internal.util.*;
 import org.eclipse.ui.*;
 /**
  * This class is an implementation of the pluggable help support.
@@ -94,20 +94,19 @@ public class DefaultHelp implements IHelp {
 		if (context == null || topic == null || topic.getHref() == null)
 			return;
 		String contextID = getContextID(context);
-		IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
-		if (appServer == null)
+		if (!AppServer.isRunning())
 			return; // may want to display an error message
 		String url =
 			"http://"
-				+ appServer.getHost()
+				+ AppServer.getHost()
 				+ ":"
-				+ appServer.getPort()
+				+ AppServer.getPort()
 				+ "/help?tab=links&contextId="
 				+ contextID
 				+ "&topic=http://"
-				+ appServer.getHost()
+				+ AppServer.getHost()
 				+ ":"
-				+ appServer.getPort()
+				+ AppServer.getPort()
 				+ "/help/content/help:"
 				+ topic.getHref();
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);

@@ -3,24 +3,26 @@ package org.eclipse.help.ui.internal.search;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.help.IAppServer;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
-import org.eclipse.help.internal.ui.util.WorkbenchResources;
-import org.eclipse.help.internal.util.URLCoder;
-import org.eclipse.help.ui.browser.IBrowser;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.ui.*;
+import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.internal.util.*;
+import org.eclipse.help.ui.browser.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.*;
 import org.eclipse.search.ui.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.*;
+import org.eclipse.help.ui.browser.IBrowser;
+
 /**
  * HelpSearchPage
  */
@@ -176,15 +178,14 @@ public class HelpSearchPage extends DialogPage implements ISearchPage
 		try
 		{
 			//Help.displayHelp(topicsURL);
-			IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
-			if (appServer == null)
+			if (!AppServer.isRunning())
 				return true; // may want to display an error message
 
 			String url =
 				"http://"
-					+ appServer.getHost()
+					+ AppServer.getHost()
 					+ ":"
-					+ appServer.getPort()
+					+ AppServer.getPort()
 					+ "/help?tab=search&query="
 					+ URLCoder.encode(searchQueryData.getExpression());
 			IBrowser browser = WorkbenchHelpPlugin.getDefault().getHelpBrowser();

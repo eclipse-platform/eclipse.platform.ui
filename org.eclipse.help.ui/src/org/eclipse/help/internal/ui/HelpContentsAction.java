@@ -5,14 +5,11 @@ package org.eclipse.help.internal.ui;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.IAppServer;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.help.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.help.ui.browser.IBrowser;
 
 /**
  * ShowHelp
@@ -43,15 +40,14 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 			public void run() {
 				try {
 					//Help.displayHelp(topicsURL);
-					IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
-					if (appServer == null)
+					if (!AppServer.isRunning())
 						return; // may want to display an error message
 						
 					String url = 
 						"http://"
-							+ appServer.getHost()
+							+ AppServer.getHost()
 							+ ":"
-							+ appServer.getPort()
+							+ AppServer.getPort()
 							+ "/help";
 					WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 				} catch (Exception e) {
