@@ -80,8 +80,9 @@ public class BreakpointsView extends AbstractDebugView {
 			IBreakpoint b2= (IBreakpoint)e2;
 			String modelId1= b1.getModelIdentifier();
 			String modelId2= b2.getModelIdentifier();
-			if (!modelId1.equals(modelId2)) {
-				return modelId1.compareTo(modelId2);
+			int result= modelId1.compareTo(modelId2);
+			if (result != 0) {
+				return result;
 			}
 			String type1= ""; //$NON-NLS-1$
 			String type2= ""; //$NON-NLS-1$
@@ -96,8 +97,9 @@ public class BreakpointsView extends AbstractDebugView {
 				DebugUIPlugin.logError(e);
 			}
 		
-			if (!type1.equals(type2)) {
-				return type1.compareTo(type2);
+			result= type1.compareTo(type2);
+			if (result != 0) {
+				return result;
 			}
 			// model and type are the same
 		
