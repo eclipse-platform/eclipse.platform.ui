@@ -16,7 +16,14 @@
 <jsp:include page="livehelp.js.jsp"/>
 </head>
 
-<frameset rows="45,*">
+<frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>45,*">
+<%
+	if(!("0".equals(data.getBannerHeight()))){
+%>
+	<frame name="BannerFrame" src='<%=data.getBannerURL()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="no" noresize>
+<%
+	}
+%>
 	<frame name="TabsFrame" src='<%="basic/tabs.jsp"+data.getQuery()%>'  marginwidth="5" marginheight="5" scrolling="no">
 	<frame name="HelpFrame" src='<%="basic/help.jsp"+data.getQuery()%>' frameborder="no" marginwidth="0" marginheight="0" scrolling="no">
 </frameset>
