@@ -101,14 +101,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	private String fExplicitEncoding;
 	/**
-	 * BOM if encoding is UTF-8.
-	 * <p>
-	 * XXX:
-	 * This is a workaround for a corresponding bug in Java readers and writer,
-	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-	 * </p>
+	 * Tells whether the file on disk has a BOM.
 	 */
-	private byte[] fUTF8BOM;
+	private boolean fHasBOM;
 
 
 	public ResourceTextFileBuffer(TextFileBufferManager manager) {
@@ -142,11 +137,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public void setEncoding(String encoding) {
 		fEncoding= encoding;
 		fExplicitEncoding= encoding;
+		fHasBOM= false;
 		try {
 			fFile.setCharset(encoding);
 			if (encoding == null)
 				fEncoding= fFile.getCharset();
-			readUTF8BOM();
+			setHasBOM();
 		} catch (CoreException x) {
 			handleCoreException(x);
 		}
@@ -259,7 +255,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					fEncoding= fFile.getCharset();
 			}
 			
-			readUTF8BOM();
+			setHasBOM();
 			
 			fDocument= fManager.createEmptyDocument(fFile.getLocation());
 			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
@@ -271,27 +267,16 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fStatus= x.getStatus();
 		}
 	}
-	
+
 	/**
-	 * Reads the file's UTF-8 BOM if any and stores it.
-	 * <p>
-	 * XXX:
-	 * This is a workaround for a corresponding bug in Java readers and writer,
-	 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-	 * </p>
-	 * @throws CoreException if
-	 * 			- reading of file's content description fails
-	 * 			- byte order mark is not valid for UTF-8
+	 * Sets whether the underlying file has a BOM.
+	 * 
+	 * @throws CoreException if reading of file's content description fails
 	 */
-	protected void readUTF8BOM() throws CoreException {
-		if (CHARSET_UTF_8.equals(fEncoding)) {
-			IContentDescription description= fFile.getContentDescription();
-			if (description != null) {
-				fUTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-				if (fUTF8BOM != null && fUTF8BOM != IContentDescription.BOM_UTF_8)
-					throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.error.wrongByteOrderMark"), null)); //$NON-NLS-1$
-			}
-		}
+	protected void setHasBOM() throws CoreException {
+		fHasBOM= false;
+		IContentDescription description= fFile.getContentDescription();
+		fHasBOM= description != null && description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
 	}
 	
 	/*
@@ -326,10 +311,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fUTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
-				byte[] bytesWithBOM= new byte[bytes.length + 3];
-				System.arraycopy(fUTF8BOM, 0, bytesWithBOM, 0, 3);
-				System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
+			if (fHasBOM && CHARSET_UTF_8.equals(encoding)) {
+				int bomLength= IContentDescription.BOM_UTF_8.length;
+				byte[] bytesWithBOM= new byte[bytes.length + bomLength];
+				System.arraycopy(IContentDescription.BOM_UTF_8, 0, bytesWithBOM, 0, bomLength);
+				System.arraycopy(bytes, 0, bytesWithBOM, bomLength, bytes.length);
 				bytes= bytesWithBOM;
 			}
 			
@@ -408,9 +394,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 		}
 		
-		// Use UTF-8 BOM if there was any
-		if (fUTF8BOM != null)
-			return CHARSET_UTF_8;
+		// Use file's encoding if the file has a BOM
+		if (fHasBOM)
+			return fEncoding;
 
 		// Use parent chain
 		try {
@@ -493,11 +479,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fUTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
-				contentStream.read();
-				contentStream.read();
-				contentStream.read();
-			}
+			if (fHasBOM && CHARSET_UTF_8.equals(encoding))
+				contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
 			
 			in= new BufferedReader(new InputStreamReader(contentStream, encoding), BUFFER_SIZE);
 			StringBuffer buffer= new StringBuffer(BUFFER_SIZE);

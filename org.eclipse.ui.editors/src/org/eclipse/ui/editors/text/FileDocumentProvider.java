@@ -298,15 +298,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		/** The time stamp at which this provider changed the file. */
 		public long fModificationStamp= IResource.NULL_STAMP;
 		/**
-		 * BOM if encoding is UTF-8.
-		 * <p>
-		 * XXX:
-		 * This is a workaround for a corresponding bug in Java readers and writer,
-		 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-		 * </p>
-		 * @since 3.0
+		 * Tells whether the file on disk has a BOM.
 		 */
-		private byte[] UTF8BOM;
+		private boolean fHasBOM;
 		
 		/**
 		 * Creates and returns a new file info.
@@ -363,11 +357,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 * </p>
 			 */
-			if (info != null && info.UTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
+			if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
 				try {
-					contentStream.read();
-					contentStream.read();
-					contentStream.read();
+					contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
 				} catch (IOException e) {
 					// ignore if we cannot remove BOM
 				}
@@ -509,8 +501,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 				FileInfo info= (FileInfo) getElementInfo(element);
 				IFile file= input.getFile();
-				boolean hasUTF8BOM= info != null && info.UTF8BOM != null;
-				encoding= getCharsetForNewFile(file, document, hasUTF8BOM);
+				encoding= getCharsetForNewFile(file, document, info);
 
 				byte[] bytes= document.get().getBytes(encoding);
 				
@@ -519,10 +510,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				 * This is a workaround for a corresponding bug in Java readers and writer,
 				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 				 */
-				if (hasUTF8BOM && CHARSET_UTF_8.equals(encoding)) {
-					byte[] bytesWithBOM= new byte[bytes.length + 3];
-					System.arraycopy(info.UTF8BOM, 0, bytesWithBOM, 0, 3);
-					System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
+				if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding)) {
+					int bomLength= IContentDescription.BOM_UTF_8.length;
+					byte[] bytesWithBOM= new byte[bytes.length + bomLength];
+					System.arraycopy(IContentDescription.BOM_UTF_8, 0, bytesWithBOM, 0, bomLength);
+					System.arraycopy(bytes, 0, bytesWithBOM, bomLength, bytes.length);
 					bytes= bytesWithBOM;
 				}
 				
@@ -581,7 +573,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 	}
 
-	private String getCharsetForNewFile(IFile targetFile, IDocument document, boolean hasUTF8BOM) {
+	private String getCharsetForNewFile(IFile targetFile, IDocument document, FileInfo info) {
 		// User-defined encoding has first priority
 		String encoding;
 		try {
@@ -612,9 +604,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 		}
 		
-		// Use UTF-8 BOM if there was any
-		if (hasUTF8BOM)
-			return CHARSET_UTF_8;
+		// Use file's encoding if the file has a BOM
+		if (info != null && info.fHasBOM)
+			return info.fEncoding;
 		
 		// Use parent chain
 		try {
@@ -657,6 +649,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			info.fModificationStamp= computeModificationStamp(input.getFile());
 			info.fStatus= s;
 			info.fEncoding= getPersistedEncoding(input);
+			info.fHasBOM= hasBOM(input);
 			
 			return info;
 		}
@@ -892,14 +885,12 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 						file.setCharset(encoding);
 						// if successful delete old property
 						file.setPersistentProperty(ENCODING_KEY, null);
-						readUTF8BOM(file, encoding, element);
 					} catch (CoreException ex) {
 						handleCoreException(ex, TextEditorMessages.getString("FileDocumentProvider.getPersistedEncoding")); //$NON-NLS-1$
 					}
 				} else {
 					try {
 						encoding= file.getCharset();
-						readUTF8BOM(file, encoding, element);
 					} catch (CoreException e) {
 						encoding= null;
 					}
@@ -928,10 +919,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				if (info != null) {
 					if (encoding == null)
 						info.fEncoding= file.getCharset();
+					if (info instanceof FileInfo)
+						((FileInfo)info).fHasBOM= hasBOM(element);
 				}
-				readUTF8BOM(file, encoding, element);
 			}
-			
 		}
 	}
 	
@@ -1003,6 +994,27 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	}
 
 	/**
+	 * Returns whether the underlying file has a BOM.
+	 * 
+	 * @param element the element, or <code>null</code>
+	 * @return <code>true</code> if the underlying file has BOM
+	 */
+	private boolean hasBOM(Object element) {
+		if (element instanceof IFileEditorInput) {
+			IFile file= ((IFileEditorInput)element).getFile();
+			if (file != null) {
+				try {
+					IContentDescription description= file.getContentDescription();
+					return  description != null && description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
+				} catch (CoreException ex) {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Reads the file's UTF-8 BOM if any and stores it.
 	 * <p>
 	 * XXX:
@@ -1012,22 +1024,8 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 *
 	 * @throws CoreException if reading the BOM fails 
 	 * @since 3.0
+	 * @deprecated as of 3.0 this method is no longer in use and does nothing
 	 */
 	protected void readUTF8BOM(IFile file, String encoding, Object element) throws CoreException {
-
-		if (element instanceof IFileEditorInput) {
-			FileInfo info= (FileInfo)getElementInfo(element);
-			if (info == null)
-				return;
-			
-			if ("UTF-8".equals(encoding)) { //$NON-NLS-1$
-				IContentDescription description= file.getContentDescription();
-				if (description != null) {
-					info.UTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-					if (info.UTF8BOM != null && info.UTF8BOM != IContentDescription.BOM_UTF_8)
-						throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "Wrong byte order mark for UTF-8 encoding", null));
-				}
-			}
-		}
 	}
 }
