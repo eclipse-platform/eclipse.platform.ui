@@ -11,10 +11,14 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.ListenerList;
@@ -1462,6 +1466,31 @@ public abstract class StructuredViewer extends ContentViewer implements
      */
     protected boolean usingElementMap() {
         return elementMap != null;
+    }
+    
+    /**
+     * Dump the contents of the elementMap to the log and 
+     * prune any disposed mappings. This is debug functionality
+     * for tracking down concurrency issues and should eventually
+     * be deleted. 
+     */
+    void dumpMap(){
+    	Enumeration keys = elementMap.keys();
+    	ILog log = Platform.getPlugin(Platform.PI_RUNTIME).getLog();
+    	while(keys.hasMoreElements()){
+    		Object key = keys.nextElement();
+    		Widget widget = (Widget) elementMap.get(key);
+    		if(widget.isDisposed()){
+    			log.log(new Status(
+    					IStatus.ERROR,
+						Platform.PI_RUNTIME,
+						IStatus.ERROR,
+						"Disposed widget for " + key.toString(),//$NON-NLS-1$
+						new Throwable()
+    					));
+    		}
+    	}
+    	
     }
 
 }
