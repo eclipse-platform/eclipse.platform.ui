@@ -11,6 +11,13 @@
 
 package org.eclipse.ui.application;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.SWTException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+
 /**
  * Public base class for configuring the workbench.
  * <p>
@@ -197,8 +204,50 @@ public abstract class WorkbenchAdviser {
 	 * event loop
 	 */
 	public void eventLoopException(Throwable exception) {
-		// TODO: carefully log the problem
-		// TODO: call IWorkbenchConfigurer.emergencyClose()
+		// Protection from client doing super(null) call
+		if (exception == null) {
+			return;
+		}
+		
+		try {
+			// Log the exception
+			String msg = exception.getMessage();
+			if (msg == null) {
+				msg = exception.toString();
+			}
+			WorkbenchPlugin.log(
+				"Unhandled event loop exception", //$NON-NLS-1$
+				new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, exception));
+	
+			// Handle nested exception from SWT (see bug 6312)
+			Throwable nested = null;
+			if (exception instanceof SWTException) {
+				nested = ((SWTException)exception).throwable;
+			} else if(exception instanceof SWTError) {
+				nested = ((SWTError)exception).throwable;
+			}
+			if (nested != null) {
+				msg = nested.getMessage();
+				if (msg == null) {
+					msg = nested.toString();
+				}
+				WorkbenchPlugin.log(
+					"*** SWT nested exception", //$NON-NLS-1$
+					new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg, nested));
+			}
+			
+			// Print it onto the console if debugging
+			if (WorkbenchPlugin.DEBUG) {
+				exception.printStackTrace();
+			}
+		} catch (Throwable e) {
+			// One of the log listener probably failed. Core should have logged the
+			// exception since its the first listener.
+			System.err.println("Error while logging event loop exception:"); //$NON-NLS-1$
+			exception.printStackTrace();
+			System.err.println("Logging exception:"); //$NON-NLS-1$
+			e.printStackTrace();
+		}
 	}
 
 	/**
