@@ -185,10 +185,15 @@ public class CopyFilesAndFoldersOperation {
 			} else {
 				// if we're merging folders, we could be overwriting an existing file
 				IResource existing = workspaceRoot.findMember(destinationPath);
+				boolean canCopy = true;
+				
 				if (existing != null) {
-					delete(existing, subMonitor);
+					canCopy = delete(existing, subMonitor);
 				}
-				source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
+				// was the resource deleted successfully or was there no existing resource to delete?
+				if (canCopy) {
+					source.copy(destinationPath, false, new SubProgressMonitor(subMonitor, 0));
+				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
@@ -332,23 +337,38 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Removes the given resource from the workspace. 
 	 *  
-	 * @param resourceToDelete resource to remove from the workspace
+	 * @param resource resource to remove from the workspace
 	 * @param monitor a progress monitor for showing progress and for cancelation
+	 * @return 
+	 * 	true the resource was deleted successfully
+	 * 	false the resource was not deleted because a CoreException occurred
 	 */
-	void delete(IResource resourceToDelete, IProgressMonitor monitor) throws CoreException {
+	boolean delete(IResource resource, IProgressMonitor monitor) throws CoreException {
 		boolean force = false; // don't force deletion of out-of-sync resources
 
-		if (resourceToDelete.getType() == IResource.PROJECT) {
+		if (resource.getType() == IResource.PROJECT) {
 			// if it's a project, ask whether content should be deleted too
-			IProject project = (IProject) resourceToDelete;
-			project.delete(true, force, monitor);
+			IProject project = (IProject) resource;
+			try {
+				project.delete(true, force, monitor);
+			} catch (CoreException e) {
+				recordError(e); // log error
+				return false;
+			}
 		} else {
-			int flags = IResource.KEEP_HISTORY;
-			if (force)
-				flags = flags | IResource.FORCE;
 			// if it's not a project, just delete it
-			resourceToDelete.delete(flags, monitor);
+			int flags = IResource.KEEP_HISTORY;
+			if (force) {
+				flags = flags | IResource.FORCE;
+			}
+			try {
+				resource.delete(flags, monitor);
+			} catch (CoreException e) {
+				recordError(e); // log error
+				return false;
+			}				
 		}
+		return true;
 	}
 	/**
 	 * Opens an error dialog to display the given message.
@@ -726,7 +746,6 @@ public class CopyFilesAndFoldersOperation {
 		IContainer destination,
 		IResource[] sourceResources,
 		IProgressMonitor monitor) {
-		List deleteItems = new ArrayList();
 		List copyItems = new ArrayList();
 		IWorkspaceRoot workspaceRoot = destination.getWorkspace().getRoot();
 		int overwrite = IDialogConstants.NO_ID;
@@ -770,11 +789,6 @@ public class CopyFilesAndFoldersOperation {
 					overwrite = checkOverwrite(parentShell, newResource);
 				}
 				if (overwrite == IDialogConstants.YES_ID || overwrite == IDialogConstants.YES_TO_ALL_ID) {
-					// do not delete folders, we want to merge in this case,
-					// not replace.
-					if (newResource.getType() == IResource.FILE) {
-						deleteItems.add(newResource);
-					}
 					copyItems.add(sourceResource);
 				} else if (overwrite == IDialogConstants.CANCEL_ID) {
 					canceled = true;
@@ -782,21 +796,6 @@ public class CopyFilesAndFoldersOperation {
 				}
 			} else {
 				copyItems.add(sourceResource);
-			}
-		}
-		if (deleteItems.size() > 0) {
-			//Now try deletions
-			IResource[] deleteResources = new IResource[deleteItems.size()];
-			deleteItems.toArray(deleteResources);
-			try {
-				monitor.subTask(WorkbenchMessages.getString("CopyFilesAndFoldersOperation.deletingCollision")); //$NON-NLS-1$
-				destination.getWorkspace().delete(
-					deleteResources,
-					IResource.KEEP_HISTORY,
-					new SubProgressMonitor(monitor, 25));
-			} catch (CoreException exception) {
-				recordError(exception);
-				return null;
 			}
 		}
 		return (IResource[]) copyItems.toArray(new IResource[copyItems.size()]);

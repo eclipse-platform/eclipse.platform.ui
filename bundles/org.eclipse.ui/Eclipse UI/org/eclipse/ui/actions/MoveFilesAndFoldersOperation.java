@@ -63,10 +63,15 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 			} else {
 				// if we're merging folders, we could be overwriting an existing file
 				IResource existing = workspaceRoot.findMember(destinationPath);
+				boolean canMove = true;
+
 				if (existing != null) {
-					delete(existing, subMonitor);
+					canMove = delete(existing, subMonitor);
 				}
-				source.move(destinationPath, IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
+				// was the resource deleted successfully or was there no existing resource to delete?
+				if (canMove) {
+					source.move(destinationPath, IResource.KEEP_HISTORY, new SubProgressMonitor(subMonitor, 0));
+				}
 				subMonitor.worked(1);
 				if (subMonitor.isCanceled()) {
 					throw new OperationCanceledException();
