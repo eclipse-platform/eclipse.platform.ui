@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.*;
@@ -186,16 +192,5 @@ public class CopyProjectOperation {
 	
 		errorStatus.merge(error.getStatus());
 	}
-	
-	/**
-	 * Set the location to the default location.
-	 */
-	private String setLocation(String projectName) {
-		IPath defaultPath = Platform.getLocation().append(projectName);
-		return defaultPath.toOSString();
-	}
-
-
-
 }
 

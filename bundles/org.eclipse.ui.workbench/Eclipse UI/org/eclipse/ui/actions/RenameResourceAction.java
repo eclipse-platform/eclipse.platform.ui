@@ -260,21 +260,6 @@ String getProblemsTitle() {
 private Tree getTree() {
 	return this.navigatorTree;
 }
-/**
- * Get the boolean that indicates if this action should be enabled or disabled.
- */
-private boolean getUpdateValue(IStructuredSelection selection) {
-	if (selection.size() > 1)
-		return false;
-	if (!super.updateSelection(selection))
-		return false;
-
-	List resources = getSelectedResources();
-	if(resources.size() != 1)
-		return false;
-		
-	return true;
-}
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */

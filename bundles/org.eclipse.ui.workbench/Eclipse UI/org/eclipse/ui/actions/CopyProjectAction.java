@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.PlatformUI;
@@ -29,8 +35,6 @@ public class CopyProjectAction extends SelectionListenerAction {
 	private static String COPY_TOOL_TIP = WorkbenchMessages.getString("CopyProjectAction.toolTip"); //$NON-NLS-1$
 	private static String COPY_TITLE = WorkbenchMessages.getString("CopyProjectAction.title"); //$NON-NLS-1$
 	private static String COPY_PROGRESS_TITLE = WorkbenchMessages.getString("CopyProjectAction.progressTitle"); //$NON-NLS-1$
-	private static String COPY_PROJECT_FAILED_MESSAGE =
-		WorkbenchMessages.getString("CopyProjectAction.copyFailedMessage"); //$NON-NLS-1$
 	private static String PROBLEMS_TITLE = WorkbenchMessages.getString("CopyProjectAction.copyFailedTitle"); //$NON-NLS-1$
 
 	/**
