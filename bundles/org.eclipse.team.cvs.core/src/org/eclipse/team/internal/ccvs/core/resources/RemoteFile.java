@@ -65,7 +65,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 
 	// Contents will be cached to disk when this thrshold is exceeded
-	private static final int CACHING_THRESHOLD = 32768;
+	private static final int CACHING_THRESHOLD = -1; // don't create a byte array even for files size 0
 	
 	// sync info in byte form
 	private byte[] syncBytes;
