@@ -39,14 +39,6 @@ public class MergeResource {
 	}
 	
 	/**
-	 * The user has manually merged contents from the server into
-	 * the local resource.  Clear the incoming changes from the server.
-	 */
-	public void confirmMerge() {
-	//	manager.confirmMerge(syncTree.getResource());
-	}
-	
-	/**
 	 * Returns an InputStream for the base revision of this incoming resource.
 	 */
 	public InputStream getBaseRevision() throws CoreException {
