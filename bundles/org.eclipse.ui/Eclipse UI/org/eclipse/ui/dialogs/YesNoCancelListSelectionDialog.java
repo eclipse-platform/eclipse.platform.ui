@@ -13,10 +13,16 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * YesNoCancelListSelectionDialog is a list selection dialog that also allows the user
  * to select no as a result.
+ * 
+ * @deprecated Providing Cancel in addition to Yes/No is confusing.
+ *   It is better to subclass the regular ListSelectionDialog, which uses OK/Cancel,
+ *   and provide a separate checkbox if necessary.
  */
 public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 /**
  * Create a list selection dialog with a possible Yes/No or Cancel result.
+ * 
+ * @deprecated see class comment
  */
 public YesNoCancelListSelectionDialog(org.eclipse.swt.widgets.Shell parentShell, Object input, org.eclipse.jface.viewers.IStructuredContentProvider contentProvider, org.eclipse.jface.viewers.ILabelProvider labelProvider, String message) {
 	super(parentShell, input, contentProvider, labelProvider, message);
