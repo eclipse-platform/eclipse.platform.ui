@@ -36,6 +36,9 @@
 	<extraClasspathEntry
 		library="lib/anttestloggers.jar">
 	</extraClasspathEntry>
+		<extraClasspathEntry
+		library="lib/antTestsSupport.jar">
+	</extraClasspathEntry>
 </extension>
 
 </plugin>

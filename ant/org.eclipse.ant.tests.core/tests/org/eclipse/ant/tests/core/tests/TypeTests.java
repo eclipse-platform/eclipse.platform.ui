@@ -27,7 +27,7 @@ public class TypeTests extends AbstractAntTest {
 		String path= getProject().getFolder("lib").getFile("antTestsSupport.jar").getLocation().toFile().getAbsolutePath();
 		URL url= new URL("file:" + path);
 		newType.setLibrary(url);
-		newType.setTypeName("AntTestTask");
+		newType.setTypeName("AntTestType");
 		newType.setClassName("org.eclipse.ant.tests.core.types.AntTestType");
 		prefs.setCustomTypes(new Type[]{newType});
 	}

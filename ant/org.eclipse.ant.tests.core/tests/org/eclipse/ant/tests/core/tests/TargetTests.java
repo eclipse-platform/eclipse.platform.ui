@@ -54,7 +54,7 @@ public class TargetTests extends AbstractAntTest {
 	 * Ensures that target projects are retrieved properly	 */
 	public void testTargetProject() throws CoreException {
 		String targetProject= getProjectName("TestForEcho.xml", "Test for Echo");
-		assertTrue("Project name should be exportplugins", "Echo Test".equals(targetProject));
+		assertTrue("Project name should be Echo Test", "Echo Test".equals(targetProject));
 	}
 	
 	/**

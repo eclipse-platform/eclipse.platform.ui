@@ -8,9 +8,24 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.Echo;
 
 
 public class AntTestTask extends Task {
-
+	
+	public AntTestTask() {
+		super();
+	}
+	
+	/**
+	 * @see org.apache.tools.ant.Task#execute()
+	 */
+	public void execute() throws BuildException {
+		Echo echo= new Echo();
+		echo.setProject(getProject());
+		echo.setMessage("Testing Ant in Eclipse with a custom task");
+		echo.execute();
+	}
 }
