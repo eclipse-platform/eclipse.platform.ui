@@ -33,16 +33,17 @@ public class DocumentTemplateContext extends TemplateContext {
 	 * 
 	 * @param type the context type
 	 * @param document the document this context applies to
-	 * @param completionOffset the completion offset (for usage in content assist)
+	 * @param completionOffset the completion offset (for usage in content
+	 *        assist)
 	 * @param completionLength the completion length
 	 */
-	public DocumentTemplateContext(ContextType type, IDocument document,	int completionOffset, int completionLength)	{
+	public DocumentTemplateContext(ContextType type, IDocument document, int completionOffset, int completionLength) {
 		super(type);
-		
+
 		Assert.isNotNull(document);
 		Assert.isTrue(completionOffset >= 0 && completionOffset <= document.getLength());
 		Assert.isTrue(completionLength >= 0);
-		
+
 		fDocument= document;
 		fCompletionOffset= completionOffset;
 		fCompletionLength= completionLength;
@@ -108,15 +109,15 @@ public class DocumentTemplateContext extends TemplateContext {
 		return fCompletionOffset + fCompletionLength;
 	}
 	
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.jface.text.templates.TemplateContext#canEvaluate(org.eclipse.jface.text.templates.Template)
 	 */
 	public boolean canEvaluate(Template template) {
 		return true;
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
 	 */
 	public TemplateBuffer evaluate(Template template) throws BadLocationException {
 		if (!canEvaluate(template))
@@ -125,7 +126,7 @@ public class DocumentTemplateContext extends TemplateContext {
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(template);
 
-		getContextType().edit(buffer, this);
+		getContextType().resolve(buffer, this);
 		
 		return buffer;
 	}

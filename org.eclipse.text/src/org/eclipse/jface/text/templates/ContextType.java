@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.RangeMarker;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -32,13 +33,13 @@ import org.eclipse.jface.text.IDocument;
  * 
  * @since 3.0
  */
-public class ContextType implements ITemplateEditor {
+public class ContextType {
 
-	/** name of the context type */
+	/** Name of the context type. */
 	private final String fName;
 
-	/** variables used by this content type */
-	private final Map fVariables= new HashMap();
+	/** Variable resolvers used by this content type. */
+	private final Map fResolvers= new HashMap();
 
 	/**
 	 * Creates a context type with a name.
@@ -59,29 +60,29 @@ public class ContextType implements ITemplateEditor {
 	}
 	
 	/**
-	 * Adds a template variable to the context type. If there already is a variable
-	 * with the same name, the previous one gets replaced by <code>variable</code>.
+	 * Adds a variable resolver to the context type. If there already is a resolver
+	 * for the same type, the previous one gets replaced by <code>resolver</code>.
 	 * 
-	 * @param variable the variable to be added under its name
+	 * @param resolver the resolver to be added under its name
 	 */
-	public void addVariable(TemplateVariable variable) {
-		fVariables.put(variable.getName(), variable);   
+	public void addResolver(TemplateVariableResolver resolver) {
+		fResolvers.put(resolver.getType(), resolver);   
 	}
 	
 	/**
 	 * Removes a template variable from the context type.
 	 * 
-	 * @param variable the varibable to be removed
+	 * @param resolver the varibable to be removed
 	 */
-	public void removeVariable(TemplateVariable variable) {
-		fVariables.remove(variable.getName());
+	public void removeVariable(TemplateVariableResolver resolver) {
+		fResolvers.remove(resolver.getType());
 	}
 
 	/**
 	 * Removes all template variables from the context type.
 	 */
 	public void removeAllVariables() {
-		fVariables.clear();
+		fResolvers.clear();
 	}
 
 	/**
@@ -89,15 +90,18 @@ public class ContextType implements ITemplateEditor {
 	 * 
 	 * @return an iterator over the variables in this context type
 	 */
-	public Iterator variableIterator() {
-	 	return Collections.unmodifiableMap(fVariables).values().iterator();   
+	public Iterator resolvers() {
+	 	return Collections.unmodifiableMap(fResolvers).values().iterator();   
 	}
 	
 	/**
-	 * Returns the variable with the given name
+	 * Returns the resolver for the given type.
+	 * 
+	 * @param type the type for which a resolver is needed
+	 * @return a resolver for the given type, or <code>null</code> if none is registered
 	 */
-	protected TemplateVariable getVariable(String name) {
-		return (TemplateVariable) fVariables.get(name);
+	protected TemplateVariableResolver getResolver(String type) {
+		return (TemplateVariableResolver) fResolvers.get(type);
 	}	
 
 	/**
@@ -105,7 +109,7 @@ public class ContextType implements ITemplateEditor {
 	 * a success or an error message if not.
 	 * 
 	 * @param pattern the template pattern to validate
-	 * @return the translated pattern if successful, or an error message if not
+	 * @return the translated pattern if successful, or an error message if not TODO what do we return there? throw an exception
 	 */
 	public String validate(String pattern) {
 		TemplateTranslator translator= new TemplateTranslator();
@@ -116,46 +120,50 @@ public class ContextType implements ITemplateEditor {
 		return translator.getErrorMessage();
 	}
 	
-	protected String validateVariables(TemplatePosition[] variables) {
+	protected String validateVariables(TemplateVariable[] variables) {
 		return null;
 	}
 
-    /*
-     * @see ITemplateEditor#edit(TemplateBuffer)
-     */
-    public void edit(TemplateBuffer templateBuffer, TemplateContext context) throws BadLocationException {
-    	IDocument document= new Document(templateBuffer.getString());
-		TemplatePosition[] variables= templateBuffer.getVariables();
+	/**
+	 * Resolves the variables in <code>buffer</code> withing <code>context</code>
+	 * and edits the template buffer to reflect the resolved variables.
+	 * 
+	 * @param buffer the template buffer
+	 * @param context the template context
+	 * @throws MalformedTreeException if the positions in the buffer overlap
+	 * @throws BadLocationException if the buffer cannot be successfully modified
+	 */
+	public void resolve(TemplateBuffer buffer, TemplateContext context) throws MalformedTreeException, BadLocationException {
+		TemplateVariable[] variables= buffer.getVariables();
 
 		List positions= variablesToPositions(variables);
 		List edits= new ArrayList(5);
 
         // iterate over all variables and try to resolve them
         for (int i= 0; i != variables.length; i++) {
-            TemplatePosition variable= variables[i];
+            TemplateVariable variable= variables[i];
 
 			if (variable.isResolved())
 				continue;			
 
-			String name= variable.getName();
-			int[] offsets= variable.getOffsets();
-			int length= variable.getLength();
+			String type= variable.getType();
+			TemplateVariableResolver resolver= (TemplateVariableResolver) fResolvers.get(type);
+			if (resolver != null)
+				resolver.resolve(variable, context);
 			
-			TemplateVariable evaluator= (TemplateVariable) fVariables.get(name);
-			String value= (evaluator == null)
-				? null
-				: evaluator.resolve(context);
+			if (variable.isResolved()) {
+				String value= variable.getDefaultValue();
+				int[] offsets= variable.getOffsets();
+				int length= variable.getLength();
+				
+				
+				for (int k= 0; k != offsets.length; k++)
+					edits.add(new ReplaceEdit(offsets[k], length, value));
+			}
 			
-			if (value == null)
-				continue;
-
-			variable.setLength(value.length());
-			variable.setResolved(evaluator.isResolved(context));
-
-        	for (int k= 0; k != offsets.length; k++)
-				edits.add(new ReplaceEdit(offsets[k], length, value));
         }
 
+    	IDocument document= new Document(buffer.getString());
         MultiTextEdit edit= new MultiTextEdit(0, document.getLength());
         edit.addChildren((TextEdit[]) positions.toArray(new TextEdit[positions.size()]));
         edit.addChildren((TextEdit[]) edits.toArray(new TextEdit[edits.size()]));
@@ -163,10 +171,10 @@ public class ContextType implements ITemplateEditor {
 
 		positionsToVariables(positions, variables);
         
-        templateBuffer.setContent(document.get(), variables);
+        buffer.setContent(document.get(), variables);
     }
 
-	private static List variablesToPositions(TemplatePosition[] variables) {
+	private static List variablesToPositions(TemplateVariable[] variables) {
    		List positions= new ArrayList(5);
 		for (int i= 0; i != variables.length; i++) {
 		    int[] offsets= variables[i].getOffsets();
@@ -177,11 +185,11 @@ public class ContextType implements ITemplateEditor {
 		return positions;
 	}
 	
-	private static void positionsToVariables(List positions, TemplatePosition[] variables) {
+	private static void positionsToVariables(List positions, TemplateVariable[] variables) {
 		Iterator iterator= positions.iterator();
 		
 		for (int i= 0; i != variables.length; i++) {
-		    TemplatePosition variable= variables[i];
+		    TemplateVariable variable= variables[i];
 		    
 			int[] offsets= new int[variable.getOffsets().length];
 			for (int j= 0; j != offsets.length; j++)

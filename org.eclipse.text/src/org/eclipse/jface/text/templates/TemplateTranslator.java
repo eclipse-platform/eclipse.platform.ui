@@ -18,7 +18,7 @@ import java.util.Vector;
 
 /**
  * The template translator translates a string into a template buffer. Regions
- * marked as variables are translated into <code>TemplatePosition</code>s.
+ * marked as variables are translated into <code>TemplateVariable</code>s.
  * <p>
  * The EBNF grammer of a valid string is as follows:</p>
  * <p>
@@ -126,12 +126,12 @@ public class TemplateTranslator {
 		}
 
 		String translatedString= fBuffer.toString();
-		TemplatePosition[] variables= findVariables(translatedString, offsets, lengths);
+		TemplateVariable[] variables= findVariables(translatedString, offsets, lengths);
 
 		return new TemplateBuffer(translatedString, variables);
 	}
 	
-	private static TemplatePosition[] findVariables(String string, int[] offsets, int[] lengths) {
+	private static TemplateVariable[] findVariables(String string, int[] offsets, int[] lengths) {
 
 		Map map= new HashMap();
 		
@@ -148,7 +148,7 @@ public class TemplateTranslator {
 		    vector.add(new Integer(offset));
 		}
 		
-		TemplatePosition[] variables= new TemplatePosition[map.size()];
+		TemplateVariable[] variables= new TemplateVariable[map.size()];
 		int k= 0;
 		
 		Set keys= map.keySet();
@@ -160,7 +160,7 @@ public class TemplateTranslator {
 			for (int j= 0; j != offsets_.length; j++)
 				offsets_[j]= ((Integer) vector.get(j)).intValue();
 				
-			variables[k]= new TemplatePosition(name, name, offsets_, name.length());
+			variables[k]= new TemplateVariable(name, name, offsets_, name.length());
 			k++;
 		}
 		

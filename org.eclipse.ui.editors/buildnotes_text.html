@@ -19,6 +19,16 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input March 9th 2004 ==========<br>
+<pre>
+- Moved the templates infrastructure to the text, jface.text and ui.workbench.texteditor 
+  projects, making it API. The template API is still in the flow and might change considerably.
+  
+  For people that have been using the internal template code, please note:
+    - TemplateVariable has been renamed to TemplateVariableResolver
+    - TemplatePosition has benn renamed to TemplateVariable
+    - there is first support for adding multiple proposals for a variable
+</pre>
 ========== Eclipse Build Input March 2nd 2004 ==========<br>
 <pre>
 - Moved the linked position infrastructure to the text, jface.text and ui.workbench.texteditor 

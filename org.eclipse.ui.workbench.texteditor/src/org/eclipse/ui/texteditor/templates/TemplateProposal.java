@@ -37,12 +37,13 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.link.LinkedEnvironment;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.LinkedUIControl;
+import org.eclipse.jface.text.link.ProposalPosition;
 import org.eclipse.jface.text.templates.GlobalVariables;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateMessages;
-import org.eclipse.jface.text.templates.TemplatePosition;
+import org.eclipse.jface.text.templates.TemplateVariable;
 
 
 /**
@@ -124,13 +125,13 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 
 			// translate positions
 			LinkedEnvironment env= new LinkedEnvironment();
-			TemplatePosition[] variables= templateBuffer.getVariables();
+			TemplateVariable[] variables= templateBuffer.getVariables();
 			boolean hasPositions= false;
 			for (int i= 0; i != variables.length; i++) {
-				TemplatePosition variable= variables[i];
+				TemplateVariable variable= variables[i];
 
 				if (variable.isResolved())
-					continue;
+					continue; // TODO why?
 				
 				LinkedPositionGroup group= new LinkedPositionGroup();
 				
@@ -145,7 +146,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 				}
 				
 				for (int j= 0; j != offsets.length; j++)
-					group.createPosition(document, offsets[j] + start, length);
+					group.addPosition(new ProposalPosition(document, offsets[j] + start, length, j == 0 ? 1 : LinkedPositionGroup.NO_STOP, proposals));
 				
 				env.addGroup(group);
 				hasPositions= true;
@@ -177,10 +178,10 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	
 	private int getCaretOffset(TemplateBuffer buffer) {
 	
-	    TemplatePosition[] variables= buffer.getVariables();
+	    TemplateVariable[] variables= buffer.getVariables();
 		for (int i= 0; i != variables.length; i++) {
-			TemplatePosition variable= variables[i];
-			if (variable.getName().equals(GlobalVariables.Cursor.NAME))
+			TemplateVariable variable= variables[i];
+			if (variable.getType().equals(GlobalVariables.Cursor.NAME))
 				return variable.getOffsets()[0];
 		}
 

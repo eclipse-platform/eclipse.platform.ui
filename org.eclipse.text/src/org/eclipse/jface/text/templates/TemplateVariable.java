@@ -10,71 +10,154 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
+import org.eclipse.jface.text.Assert;
+
 /**
- * A <code>TemplateVariable</code> represents a symbol in a template which can be
- * resolved in a given <code>TemplateContext</code>.
+ * A <code>TemplateVariable</code> represents a set of positions into a
+ * <code>TemplateBuffer</code> with identical content each. <code>TemplateVariableResolver</code>
+ * s can be used to resolve a template variable to a symbol available from the
+ * <code>TemplateContext</code>.
  * 
+ * @see TemplateVariableResolver
+ * @see TemplateBuffer
  * @since 3.0
  */
-public abstract class TemplateVariable {
+public class TemplateVariable {
 
-	/** name of the variable */
-	private final String fName;
-
-	/** description of the variable */
-	private final String fDescription;
+	/** The type name of the variable */
+	private final String fType;
+	/** The length of the variable. */
+	private int fLength;
+	/** The offsets of the variable. */
+	private int[] fOffsets;
+	/** A flag indicating if the variable has been resolved. */
+	private boolean fResolved;
+	/**
+	 * The proposal strings available for this variable. The first string is
+	 * the default value.
+	 */
+	private String[] fValues;
 	
 	/**
-	 * Creates an instance of <code>TemplateVariable</code>.
+	 * Creates a template variable.
 	 * 
-	 * @param name the name of the variable
-	 * @param description the description for the variable
+	 * @param type the type of the variable
+	 * @param defaultValue the default value of the variable
+	 * @param offsets the array of offsets of the variable
+	 * @param length the length of the variable
 	 */
-	protected TemplateVariable(String name, String description) {
-	 	fName= name;
-	 	fDescription= description;   
+	public TemplateVariable(String type, String defaultValue, int[] offsets, int length) {
+		this(type, new String[] { defaultValue }, offsets, length);
+	}
+
+	/**
+	 * Creates a template variable.
+	 * 
+	 * @param type the type of the template variable
+	 * @param values the values available at this variable, non-empty
+	 * @param offsets the array of offsets of the variable
+	 * @param length the length of the variable
+	 */
+	public TemplateVariable(String type, String[] values, int[] offsets, int length) {
+		fType= type;
+		setValues(values);
+		setOffsets(offsets);
+		setResolved(false);
+	}
+
+	/**
+	 * Returns the type name of the variable.
+	 * 
+	 * @return the type name of the variable
+	 */
+	public String getType() {
+	    return fType;
+	}	
+
+	/**
+	 * Returns the default value of the variable.
+	 * 
+	 * @return the default value of the variable
+	 */
+	public String getDefaultValue() {
+	 	return fValues[0];
 	}
 	
 	/**
-	 * Returns the name of the variable.
+	 * Returns the possible values for this variable. The returned array is
+	 * owned by this variable and must not be modified.
 	 * 
-	 * @return the name of the variable 
+	 * @return the possible values for this variable
 	 */
-	public String getName() {
-		return fName;
+	public String[] getValues() {
+		return fValues;
+	}
+	
+	/**
+	 * Returns the length of the variable.
+	 * 
+	 * @return the length of the variable
+	 */
+	public int getLength() {
+	 	return fLength;   
+	}
+	
+	/**
+	 * Sets the offsets of the variable.
+	 * 
+	 * @param offsets the new offsets of the variable
+	 */
+	public void setOffsets(int[] offsets) {
+	 	fOffsets= offsets; 
+	}
+	
+	/**
+	 * Returns the offsets of the variable.
+	 * 
+	 * @return the length of the variable
+	 */
+	public int[] getOffsets() {
+	 	return fOffsets;   
+	}
+	
+	/**
+	 * Sets the default value for this variable. This is a shortcut for
+	 * <code>setValues(new String[] { value })</code>.
+	 * 
+	 * @param value the new default value
+	 */
+	public final void setValue(String value) {
+		setValues(new String[] { value });
+	}
+	
+	/**
+	 * Sets the possible values for this variable, with the first being the
+	 * default value.
+	 * 
+	 * @param values a non-empty array of values
+	 */
+	public void setValues(String[] values) {
+		Assert.isTrue(values.length > 0);
+		fValues= values;
+		fLength= getDefaultValue().length();
 	}
 
 	/**
-	 * Returns the description for the variable.
+	 * Sets the resolved flag of the variable.
 	 * 
-	 * @return the description for the variable
+	 * @param resolved the new resolved state of the variable
 	 */
-	public String getDescription() {
-		return fDescription;   
+	public void setResolved(boolean resolved) {
+	    fResolved= resolved;
 	}
 
 	/**
-	 * Resolves this variable. To resolve means to provide a binding of this
-	 * variable to a concrete text object (a<code>String</code>) in the
-	 * given context.
+	 * Returns <code>true</code> if the variable is resolved, <code>false</code> otherwise.
 	 * 
-	 * @param context the context in which to resolve the receiver
-	 * @return the evaluated string, or <code>null</code> if not evaluatable
-	 */
-	public abstract String resolve(TemplateContext context);
-
-	/**
-	 * Returns whether this variable is resolved. By default, the variable is
-	 * not resolved. Clients can overwrite this method to force resolution of
-	 * the variable.
-	 * 
-	 * @param context the context in which the resolved check should be
-	 *        evaluated
-	 * @return <code>true</code> if the receiver is resolved in <code>context</code>,
-	 *         <code>false</code> otherwise
-	 */
-	public boolean isResolved(TemplateContext context) {
-		return false;
+	 * @return <code>true</code> if the variable is resolved, <code>false</code> otherwise
+	 */	
+	public boolean isResolved() {
+	 	return fResolved;   
 	}
 
 }

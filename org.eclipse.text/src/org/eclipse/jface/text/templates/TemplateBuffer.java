@@ -22,7 +22,7 @@ public final class TemplateBuffer {
 	/** The string of the template buffer */
 	private String fString;
 	/** The variable positions of the template buffer */
-	private TemplatePosition[] fVariables;
+	private TemplateVariable[] fVariables;
 	
 	/**
 	 * Creates a template buffer.
@@ -30,7 +30,7 @@ public final class TemplateBuffer {
 	 * @param string the string
 	 * @param variables the variable positions
 	 */
-    public TemplateBuffer(String string, TemplatePosition[] variables) {
+    public TemplateBuffer(String string, TemplateVariable[] variables) {
 		setContent(string, variables);
     }
 
@@ -40,7 +40,7 @@ public final class TemplateBuffer {
 	 * @param string the string
 	 * @param variables the variable positions
 	 */
-	public final void setContent(String string, TemplatePosition[] variables) {
+	public final void setContent(String string, TemplateVariable[] variables) {
 		Assert.isNotNull(string);
 		Assert.isNotNull(variables);
 
@@ -64,7 +64,7 @@ public final class TemplateBuffer {
 	 * 
 	 * @return the variable positions of the template buffer
 	 */
-	public final TemplatePosition[] getVariables() {
+	public final TemplateVariable[] getVariables() {
 		return fVariables;
 	}
 

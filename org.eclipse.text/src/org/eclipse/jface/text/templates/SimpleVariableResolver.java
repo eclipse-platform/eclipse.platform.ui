@@ -16,18 +16,16 @@ package org.eclipse.jface.text.templates;
  * 
  * @since 3.0
  */
-public class SimpleTemplateVariable extends TemplateVariable {
+public class SimpleVariableResolver extends TemplateVariableResolver {
 
 	/** The string to which this variable evaluates. */
 	private String fEvaluationString;
-	/** A flag indicating if this variable can be resolved. */
-	private boolean fResolved;
 
 	/*
-	 * @see TemplateVariable#TemplateVariable(String, String)
+	 * @see TemplateVariableResolver#TemplateVariableResolver(String, String)
 	 */
-	protected SimpleTemplateVariable(String name, String description) {
-		super(name, description);
+	protected SimpleVariableResolver(String type, String description) {
+		super(type, description);
 	}
 
 	/**
@@ -40,26 +38,10 @@ public class SimpleTemplateVariable extends TemplateVariable {
 	}
 
 	/*
-	 * @see TemplateVariable#evaluate(TemplateContext)
+	 * @see TemplateVariableResolver#evaluate(TemplateContext)
 	 */
-	public String resolve(TemplateContext context) {
+	protected String resolve(TemplateContext context) {
 		return fEvaluationString;
-	}
-
-	/**
-	 * Sets the resolved flag.
-	 * 
-	 * @param resolved the new value of the resolved flag
-	 */
-	public final void setResolved(boolean resolved) {
-		fResolved= resolved;
-	}
-
-	/*
-	 * @see TemplateVariable#isResolved(TemplateContext)
-	 */
-	public boolean isResolved(TemplateContext context) {
-		return fResolved;
 	}
 
 }
