@@ -1,0 +1,98 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Text Editor</title>
+</head>
+<body>
+
+<h3>
+Text Editor</h3>
+Purpose: To test the Text Editor in Eclipse.&nbsp; We will open a text
+file, adding some text, play with the edit actions, verify the save and
+save as, and then test persistance between sessions.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Create a project.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.</li>
+
+<li>
+Invoke File > New > File.&nbsp; Create a new text file with some name like
+test1.txt.&nbsp; Verify that a new editor opens on the file.</li>
+
+<li>
+Copy and paste the following text into the editor ..</li>
+</ol>
+
+<blockquote>Beware the beast man, for he is the devil's pawn. Alone among
+God's primates,
+<br>he kills for sport, or lust or greed. Yes, he will murder his brother
+to possess his
+<br>brother's land. Let him not breed in great numbers, for he will make
+a desert of
+<br>his home and yours. Shun him. Drive him back into his jungle lair:
+For he is the
+<br>harbinger of death.
+<p>(Planet of the Apes)</blockquote>
+
+<ol>
+<li>
+After paste has been performed the editor state should be dirty.&nbsp;
+Verify that File > Save is enabled and that Save is enabled in the context
+menu.&nbsp; Invoke Save and verify that save is disabled.</li>
+
+<li>
+The Save As menu action is always enabled.&nbsp; Invoke this action to
+create a new file, say test2.txt, and verify that the name of the new file
+name is reflected in the editor tab.</li>
+
+<li>
+Modify the contents of test2.txt and save.&nbsp; Then open test1.txt and
+verify that it still contains the original text.</li>
+
+<li>
+In text1.txt select the first 3 lines and invoke Edit Copy.&nbsp; Activate
+text2.txt, put the cursor at the end of the file, and invoke Edit Paste.&nbsp;
+Verify that the first 3 lines of text1.txt are copied to text2.txt.</li>
+
+<li>
+Invoke Undo and Redo a few times in text2.txt to undo and redo the paste.</li>
+
+<li>
+Select a few lines of text and invoke Shift Right and Shift Left a few
+times.</li>
+
+<li>
+Now close text2.txt.&nbsp; The file has been modified, so a Save dialog
+should appear.&nbsp; Press No to avoid saving.</li>
+
+<li>
+Now we need to test Find / Replace.&nbsp; Select the text1.txt editor.&nbsp;
+This file contains many instances of he and his.&nbsp; Invoke Find / Replace
+and replace all instances of he by "she".&nbsp; You may find that various
+words like "the" are modified to "tshe".&nbsp; Close the find dialog and
+invoke Revert in the context menu.&nbsp; Verify that the file contents
+are now equal to the original text.&nbsp; Then try Find / Replace again
+with "whole word" selected and verify the results.</li>
+
+<li>
+Open up text2.txt.&nbsp; Now there should be one open editor with changs
+and one without.</li>
+
+<li>
+Invoke File > Close All.&nbsp; At this point a "Save Resources" dialog
+should appear where you can save the modified files.&nbsp; Check all modifications
+and then press "Yes".&nbsp; Verify that all editors are closed.&nbsp; Then
+open up any editor which was saved and verify changes.</li>
+</ol>
+
+</body>
+</html>

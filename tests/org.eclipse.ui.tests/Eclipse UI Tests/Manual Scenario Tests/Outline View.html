@@ -1,0 +1,67 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Outline View</title>
+</head>
+<body>
+
+<h3>
+Outline View</h3>
+Purpose: To test the Outline view in Eclipse.&nbsp; The Outline view is
+just a container for the pages contributed by open editors.&nbsp; Therefore,
+this test will focus on the creation, show, and closure of those pages.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Create a java project containing three java files and a text file.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.</li>
+
+<li>
+If any editor is open close it.</li>
+
+<li>
+Verify that the Outline view is empty and contains the text "An Outline
+is not available".</li>
+
+<li>
+Open an editor on a java file. Verify that a java page appears in the outline
+view.&nbsp; If you select items in this page the scroll and selected text
+within the editor should change.</li>
+
+<li>
+Open a second file in a java editor.&nbsp; Verify that a second java page
+appears in the outline view.</li>
+
+<li>
+If you switch between the two editors the visible page should change.</li>
+
+<li>
+Open a .txt file in a text editor.&nbsp; When this editor is active the
+outline view will be empty and contain the standard empty text as described
+in step 2.</li>
+
+<li>
+If you switch between a text and java editor the visible page should change.&nbsp;
+Verify that the toolbar and menu items in the outline also chnage.&nbsp;
+The java editor has Field and Member toolbar items.</li>
+
+<li>
+Close one editor.&nbsp; If another editor is activated verify that its
+outline page is now visible.&nbsp; If no editor is activated verify that
+the outline is empty.</li>
+
+<li>
+Close the last editor and verify that the default blank page is visible
+in the outline.</li>
+</ol>
+
+</body>
+</html>

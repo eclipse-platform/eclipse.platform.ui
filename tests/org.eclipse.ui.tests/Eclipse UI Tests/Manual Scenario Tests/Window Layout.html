@@ -1,0 +1,196 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Window Layout</title>
+</head>
+<body>
+<h3>
+Window Layout</h3>
+Purpose: To test window layout in Eclipse.&nbsp; We will open a perspective,
+test the layout features, open a second perspective, switch between perspectives,
+and then create some windows.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Create a project with 3 .txt files.</li>
+
+<li>
+Delete the metadata for org.eclipse.ui.</li>
+</ol>
+Testing a Single Perspective:
+<ol>
+<li>
+Start the workbench.</li>
+
+<li>
+Drag the navigator over the shortcut bar (the vertical toolbar at left).&nbsp; 
+Verify that a stack icon appears.&nbsp; Drop the view on the shortcut bar. 
+It should become a fast view.</li>
+
+<li>
+Click on the navigator fast view button to show the view.&nbsp; Click on
+another view to hide it.&nbsp; You can also hide the view by clicking on
+the "hide" button or the fast view button.</li>
+
+<li>
+Close the Outline view.&nbsp; Then invoke Perspective > Show View > Outline
+to show it again.&nbsp; Verify that it has the same position as before.</li>
+
+<li>
+Select a text file in the navigator and open it.&nbsp; Verify that the
+navigator fast view is hidden and an editor appears in the editor area.</li>
+
+<li>
+Modify the contents of the editor and verify that File > Save becomes enabled.&nbsp;
+Save the file and verify that File > Save is disabled.</li>
+
+<li>
+Modify the contents of the editor again and close the editor.&nbsp; Verify
+that the Save dialog appears and you can answer, yes, no, and cancel.</li>
+
+<li>
+Open 3 text files within 3 editors.&nbsp; The editors appear in a single
+folder.</li>
+
+<li>
+Drag one editor out of the folder.&nbsp; Verify that the relative placement
+icons are shown when you are to the top, right, bottom, or left of the
+existing editor folder.&nbsp; The "no drop" icon should appear if you are
+over a view.&nbsp; Drop the editor below the existing folder.</li>
+
+<li>
+Drag another editor our of the folder onto the single view.&nbsp; Verify
+that the first folder is deconstructed and that a new folder is constructed.</li>
+
+<li>
+Maximize the active editor by clicking on the title area.&nbsp; Minimize
+it by clicking in the area again.&nbsp; Maximize it again and then close
+it.&nbsp; Verify that the perspective layout is restored.</li>
+
+<li>
+Drag a bunch of views out of the window to create detached windows.&nbsp;
+Try dragging these views on top of one another to create detached folders.</li>
+
+<li>
+Invoke Perspective > Reset.&nbsp; Answer yes to the dialog and verify that
+the layout of the perspective is restored to the original.</li>
+
+<li>
+Invoke Perspective > Close to close the page.</li>
+</ol>
+Perspective Save As:
+<ol>
+<li>
+Open the resource perspective.</li>
+
+<li>
+Drag a view onto the left tool bar.&nbsp; Drag another out into a detached
+window.</li>
+
+<li>
+In Eclipse you can customize the actions visible in a perspective.&nbsp;
+Invoke Perspective > Customize and select some new views and actions.&nbsp;
+Press OK and verify that the new actions appear in the menu and toolbar.</li>
+
+<li>
+Invoke Perspective > Save As and select the Resource perspective.&nbsp;
+Press OK and answer yes to the verify dialog.</li>
+
+<li>
+Close the perspective.</li>
+
+<li>
+Open the Resource perspective.&nbsp; Verify that the new page has the same
+layout and visible action sets as you created and saved.</li>
+
+<li>
+Close the perspective.</li>
+
+<li>
+Open up the Preferences dialog and view the Perspectives page.&nbsp; Select
+the Resource one and press Reset.</li>
+
+<li>
+Open the Resource perspective.&nbsp; Verify that the new page has the default
+layout.</li>
+
+<li>
+Drag a view onto the left tool bar.&nbsp; Drag another out into a detached
+window.</li>
+
+<li>
+Invoke Perspective > Save As and type the name of a new perspective (ie
+Bob).&nbsp; Press OK and then verify that the window title changes to reflect
+the new perspective.</li>
+
+<li>
+Close all perspectives</li>
+
+<li>
+Open a new Resource perspective and a Bob perspective.&nbsp; Verify that
+the first has the default layout and that the second has your custom layout.</li>
+</ol>
+Testing Two or More Perspectives:
+<ol>
+<li>
+Close all Perspectives</li>
+
+<li>
+Open a Resource perspective.&nbsp; Verify that a new page appears in the
+window with the Resource perspective.</li>
+
+<li>
+In the Navigator select your project and invoke Open Perspective > Java.&nbsp;
+Verify that a new perspective appears with the Java Perspective and that
+the input for the navigator is the project.&nbsp; Cool: Perspectives support
+scoping !!</li>
+
+<li>
+In the Java perspective open one of the text files in an editor.</li>
+
+<li>
+Drag a couple of views out of the window to create detached windows.</li>
+
+<li>
+Modify the action sets.</li>
+
+<li>
+Switch back and forth between the two pages in the window by clicking in
+the left hand tool bar.&nbsp; The active perspective controls the visible
+action sets, views and editors in the window.&nbsp; If you switch between
+two pages these attributes should change.</li>
+
+<li>
+Try Perspective > Next and Previous.</li>
+
+<li>
+Close the second perspective by invoking Perspective > Close.&nbsp; Verify
+that the first perspective is activated.</li>
+</ol>
+Multiple Windows
+<ol>
+<li>
+Start with one open window which has one perspective.</li>
+
+<li>
+Change the Workbench Preferences for "Open Perspective" to "Open in New
+Window".&nbsp; Then open a Java perspective and verify that a new window
+is created.</li>
+
+<li>
+A list of the open windows should appear in the Window menu.&nbsp; Select
+these items to switch between the windows.</li>
+
+<li>
+Close one window and verify that the other is activated.</li>
+
+<li>
+Close the last window and verify that the workbench shuts down.</li>
+</ol>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Welcome Editor</title>
+</head>
+<body>
+<h3>
+Welcome Editor</h3>
+Purpose: To test the Welcome editor in Eclipse.&nbsp; We will start the
+workbench after a fresh install, verify the visibility of the Welcome editor,
+and then test the format and links.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Delete the metadata for org.eclipse.ui.&nbsp; This will simulate a fresh
+install.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.&nbsp; Confirm that the default perspective (Resource)
+and Welcome editor both appear.</li>
+
+<li>
+Close the editor and exit the workbench.</li>
+
+<li>
+Restart the workbench and verify that the Welcome editor does not appear.&nbsp;
+The editor only appears automatically after a fresh install.</li>
+
+<li>
+Invoke Help > Welcome and verify that the Welcome editor opens.</li>
+
+<li>
+The Welcome editor contains a number of links. Test each of these links
+to ensure that the link invokes an appropriate action.</li>
+</ol>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Window Actions</title>
+</head>
+<body>
+<h3>
+Window Actions</h3>
+Purpose: To test the standard menu and toolbar actions in Eclipse.&nbsp;
+We will create a project, open some editors, test the global actions, test
+the persistance of workbench state between sessions.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Delete the metadata for org.eclipse.ui.</li>
+</ol>
+Testing the File Menu:
+<ol>
+<li>
+Start the workbench.</li>
+
+<li>
+Invoke File > New > Project.&nbsp; A wizard will appear where you can select
+a project type.&nbsp; Select each item in the left hand viewer to verify
+the basic page operation.&nbsp; Then select Simple > Project and press
+Next.&nbsp; Type "SimpleProject" as the name for the project and press
+Finish.&nbsp; Verify that a new Resource perspective is created and that
+SimpleProject appears in the Navigator view.</li>
+
+<li>
+Create a few folders and files (one.txt, two.txt, three.txt) within SimpleProject.&nbsp;
+For more information on this process refer to Simon's work on the New Wizard.</li>
+
+<li>
+Open one.txt within a text editor.&nbsp; Verify that File > Close and Save
+As are enabled.&nbsp; Verify that Save is disabled.</li>
+
+<li>
+Add the following text to the file..</li>
+
+<p><br>File One
+<br>&nbsp;
+<li>
+Once you modify a file the File > Save action should become enabled and
+a small asterix should appear in the editor tab.&nbsp; Invoke Save and
+verify that the asterix disappears and that the File > Save action is disabled.</li>
+
+<li>
+Open two.txt.&nbsp; Add the following text to the file..</li>
+
+<p><br>File Two
+<br>&nbsp;
+<li>
+Open three.txt and add the following text to the file..</li>
+
+<p><br>File Three
+<br>&nbsp;
+<li>
+If you close an editor which is dirty the workbench should ask if you want
+to save it.&nbsp; With three.txt active invoke File > Close.&nbsp; Verify
+that the Save dialog appears.&nbsp; Press Yes.&nbsp; Then reopen the file
+to verify that the text was saved.</li>
+
+<li>
+Invoke File > Close All.&nbsp; At this point there is 1 dirty editor.&nbsp;
+Verify that the Save Resources dialog appears.&nbsp; Press Yes.&nbsp; The
+dirty editors should be saved and all editors will close.</li>
+
+<li>
+Verify that File > Close, Close All, Save, Save As, and Save All are disabled.</li>
+</ol>
+Testing the Edit Menu:
+<ol>
+<li>
+The edit actions should target the active view or editor.&nbsp; To test
+this ..</li>
+
+<ol>
+<li>
+Select a file in the navigator view.&nbsp; Invoke Edit > Delete and verify
+that the Delete File dialog appears for the current selection in the navigator.&nbsp;&nbsp;
+Close the dialog without completing the delete.</li>
+
+<li>
+Select the file again and invoke Edit > Add Bookmark.&nbsp; Open the Bookmarks
+view and verify that a bookmark exists for the file.&nbsp; Select the bookmark.&nbsp;
+Invoke Edit > Delete and verify that the bookmark is deleted in the bookmarks
+view.</li>
+
+<li>
+Open one.txt in a text editor.&nbsp; Select a piece of text and invoke
+Edit > Cut.&nbsp; Verify that the selection in the text editor is cut.</li>
+</ol>
+
+<li>
+Create a file named X.java.&nbsp; Open it in an editor and then verify
+that the Java editor actions are contributed to the workbench menu and
+toolbar.</li>
+
+<li>
+Open one.txt in an editor.&nbsp; Verify that the java editor actions are
+no longer visible in the workbench.</li>
+
+<li>
+Activate the java editor and verify that its contributions appear once
+again.</li>
+
+<li>
+Close the java editor and verify that the contributions disappear.</li>
+</ol>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Persistence</title>
+</head>
+<body>
+<h3>
+Persistence</h3>
+Purpose: To test persistence in the workbench.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Delete the metadata for org.eclipse.ui.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.&nbsp; Confirm that the default perspective (Resource)
+and welcome editor both appear.</li>
+
+<li>
+Create a project with 3 files, one.txt, two.txt, and three.txt.&nbsp; Open
+one.txt in the default perspective.</li>
+
+<li>
+In the navigator select the project and invoke Open Perspective > Java
+from the context menu.&nbsp; Verify that a new Java perspective appears
+in the current window.&nbsp; The input for the Packages view and navigator
+should be the project.</li>
+
+<li>
+Open two.txt in the Java perspective.</li>
+
+<li>
+Change the Workbench Preferences for "Open Perspective" to "Open in New
+Window".&nbsp; Then open a Java perspective and verify that a new window
+is created.</li>
+
+<li>
+Now we have two windows.&nbsp; The first window has two perspectives (resource
+and java).&nbsp; In the resource perspective one.txt is open in an editor.&nbsp;
+In the java perspective two.txt is open in an editor.&nbsp; In the second
+window here is one Java perspective with no open editors.</li>
+
+<li>
+Invoke File > Exit.&nbsp; Then restart the workbench and verify that the
+window, perspective and editor state of the workbench is restored.</li>
+</ol>
+
+</body>
+</html>

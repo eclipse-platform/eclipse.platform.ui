@@ -1,0 +1,92 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Preferences</title>
+</head>
+<body>
+
+<h3>
+Preferences</h3>
+Purpose: To test the Preferences in Eclipse.&nbsp; We will open the Preferences
+dialog, select some pages, change and apply preferences, verify their affect,
+and test persistence between sessions.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.</li>
+
+<li>
+Invoke Window > Preferences and verify that the Preferences dialog appears.&nbsp;
+Click on all of the items in the left hand viewer to demonstrate that each
+item has a valid page and no exceptions occur in their creation.&nbsp;
+Now close the dialog.</li>
+
+<li>
+The behavior of the workbench can be customized using the preferences.&nbsp;
+To see this in action we will examine various preferences which ship with
+Eclipse.</li>
+
+<li>
+The selection in the navigator is linked to the active editor.&nbsp; Open
+a couple of files.&nbsp; Then switch between the editors and watch how
+the input for the active editor is selected in the navigator.&nbsp; You
+can disable this option in the Preferences.&nbsp; To do this ..</li>
+
+<ol>
+<li>
+Open the preferences dialog.</li>
+
+<li>
+Turning off "Link navigator selection to active editor" in the workbench
+preferences.</li>
+
+<li>
+Press OK.&nbsp; The dialog should close.</li>
+
+<li>
+Now switch between the editors.&nbsp; Notice that the selection in the
+navigator does not change.</li>
+</ol>
+
+<li>
+The Perspective > Open menu action can also be customized.&nbsp; By default
+this action will open a new perspective in the current window.&nbsp; You
+can change this to "open in new window" or "replace other".&nbsp; To see
+this behavior ..</li>
+
+<ol>
+<li>
+Open the preferences dialog.&nbsp; Change the workbench preferences for
+"Open Perspective" to "Open in New Window".&nbsp; Then press OK</li>
+
+<li>
+Invoke Perspective > Open > Java.&nbsp; Notice how a new window is created
+for the perspective.&nbsp; The list of open windows is shown in the Window
+menu.&nbsp; Select these items to switch between the windows.</li>
+</ol>
+
+<li>
+If you don't like the current preferences you can reset them.&nbsp; Open
+the preferences dialog again.&nbsp; To reset the state of "Link navigator
+.." and "Open Perspective .." press the Restore Defaults button.&nbsp;
+If you press OK the options will be saved.&nbsp; However, let's assume
+that you decide not to change them.&nbsp; Press Cancel.&nbsp; Then verify
+that the deviant options have not been restored to default by switching
+between editors and opening a new perspective.</li>
+
+<li>
+Invoke File > Exit.&nbsp; Then restart the workbench.</li>
+
+<li>
+Open the preferences dialog and confirm tha "Link navigator .. " and "Open
+Perspective .." still reflect the customized values.&nbsp; The workbench
+will automatically save your preferences between sessions.</li>
+</ol>
+</body>
+</html>

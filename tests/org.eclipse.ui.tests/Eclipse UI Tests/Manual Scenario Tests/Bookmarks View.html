@@ -1,0 +1,82 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>Test Scenario: Bookmarks View</title>
+</head>
+<body>
+
+<h3>
+Bookmarks View</h3>
+Purpose: To test the Bookmark view in Eclipse.&nbsp; We will open the view,
+add a number of bookmarks to some files, open the source file for each
+bookmark and then delete those bookmarks.
+<p>Setup:
+<ol>
+<li>
+Install Eclipse Platform.</li>
+
+<li>
+Create a java project containing three java files and a text file.</li>
+</ol>
+Method:
+<ol>
+<li>
+Start the workbench.</li>
+
+<li>
+Invoke Perspective > Show View > Bookmarks and verify that the Bookmarks
+view appears.</li>
+
+<li>
+Select a java file in the navigator and invoke Edit > Add Bookmark.&nbsp;
+Verify that a new bookmark appears in the Bookmarks view for the selected
+java file.</li>
+
+<li>
+Double click the bookmark in the bookmarks view and verify that an editor
+opens on the source file.</li>
+
+<li>
+Select the 10th line of text in the editor and invoke Add Bookmark in the
+context menu.&nbsp; A dialog should appear where you can type the bookmark
+label.&nbsp; Enter "Line 10" and press OK.&nbsp; Verify that another bookmark
+appears in the Bookmarks view with the label "Line 10".&nbsp; A bookmark
+icon should also appear in the editor to the left of line 10.</li>
+
+<li>
+Close the editor.</li>
+
+<li>
+Select "Line 10" in the bookmarks view and press the "Go to File" button
+in the toolbar.&nbsp; Verify that an editor opens on the source file and
+that line 10 is selected.</li>
+
+<li>
+Right click on the bookmark icon in the editor and invoke "Remove Bookmark".&nbsp;
+Verify that the bookmark disappears in the editor and the bookmarks view.</li>
+
+<li>
+In the navigator select all three java files, verify that "Add Bookmark"
+is enabled, and then invoke it.&nbsp; Verify that 3 bookmarks are appear
+in the bookmarks view.</li>
+
+<li>
+Select a project, folder, or any combination of project | folder with file.&nbsp;
+Verify that "Add Bookmark is disabled.</li>
+
+<li>
+Go to the bookmarks view and invoke "Select All" from the context menu.&nbsp;
+Verify that everything is selected.</li>
+
+<li>
+Then press "Return" in the bookmarks view and verify that all of the bookmarks
+are opened in editors.</li>
+
+<li>
+Invoke "Delete" in the bookmarks view and verify that all bookmarks are
+deleted.</li>
+</ol>
+
+</body>
+</html>
