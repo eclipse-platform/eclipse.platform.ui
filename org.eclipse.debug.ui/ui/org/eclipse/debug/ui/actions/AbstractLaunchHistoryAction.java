@@ -92,17 +92,15 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * 
 	 * @param menu the menu to add the action to	 * @param action the action to add	 * @param accelerator the number that should appear as an accelerator	 */
 	protected void addToMenu(Menu menu, IAction action, int accelerator) {
-		if (accelerator > 0) {
-			StringBuffer label= new StringBuffer();
-			if (accelerator < 10) {
-				//add the numerical accelerator
-				label.append('&');
-				label.append(accelerator);
-				label.append(' ');
-			}
-			label.append(action.getText());
-			action.setText(label.toString());
+		StringBuffer label= new StringBuffer();
+		if (accelerator >= 0 && accelerator < 10) {
+			//add the numerical accelerator
+			label.append('&');
+			label.append(accelerator);
+			label.append(' ');
 		}
+		label.append(action.getText());
+		action.setText(label.toString());
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(menu, -1);
 	}
@@ -242,7 +240,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		ILaunchConfiguration[] favoriteList = getLaunchHistory().getFavorites();		
 		
 		// Add favorites
-		int accelerator = 1;
+		int accelerator = 0;
 		for (int i = 0; i < favoriteList.length; i++) {
 			ILaunchConfiguration launch= favoriteList[i];
 			LaunchAction action= new LaunchAction(launch, getMode());
