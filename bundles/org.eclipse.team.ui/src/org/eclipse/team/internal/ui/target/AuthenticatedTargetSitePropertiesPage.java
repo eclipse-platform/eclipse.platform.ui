@@ -76,8 +76,7 @@ public class AuthenticatedTargetSitePropertiesPage extends PropertyPage {
 		Label passwordLabel = new Label(container, SWT.NONE);
 		passwordLabel.setText(Policy.bind("AuthenticatedTargetSitePropertiesPage.Password")); //$NON-NLS-1$
 		passwordLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		passwordText = new Text(container, SWT.SINGLE | SWT.BORDER);
-		passwordText.setEchoChar('*');
+		passwordText = new Text(container, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
 		passwordText.setText(""); //$NON-NLS-1$
 		data = new GridData();
 		data.widthHint = WIDTH_HINT;

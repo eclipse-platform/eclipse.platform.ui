@@ -194,6 +194,25 @@ public abstract class CVSWizardPage extends WizardPage {
 	 */
 	static public Text createTextField(Composite parent) {
 		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		return layoutTextField(text);
+	}
+	/**
+	 * Create a password field specific for this application
+	 *
+	 * @param parent  the parent of the new text field
+	 * @return the new text field
+	 */
+	static public Text createPasswordField(Composite parent) {
+		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+		return layoutTextField(text);
+	}
+	/**
+	 * Layout a text or password field specific for this application
+	 *
+	 * @param parent  the parent of the new text field
+	 * @return the new text field
+	 */
+	static public Text layoutTextField(Text text)  {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = GridData.CENTER;
 		data.grabExcessVerticalSpace = false;
@@ -201,6 +220,7 @@ public abstract class CVSWizardPage extends WizardPage {
 		text.setLayoutData(data);
 		return text;
 	}
+	
 	/**
 	 * Utility method to create a radio button
 	 * 

@@ -121,9 +121,8 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		userText = createTextField(composite);
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"), 1); //$NON-NLS-1$
-		passwordText = createTextField(composite);
-		passwordText.setEchoChar('*');
-		
+		passwordText = createPasswordField(composite);
+			
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1); //$NON-NLS-1$
 		hostLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
@@ -218,6 +217,25 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	 */
 	protected Text createTextField(Composite parent) {
 		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
+		return layoutTextField(text);
+	}
+	/**
+	 * Create a password field specific for this application
+	 *
+	 * @param parent  the parent of the new text field
+	 * @return the new text field
+	 */
+	protected Text createPasswordField(Composite parent) {
+		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
+		return layoutTextField(text);
+	}
+	/**
+	 * Layout a text or password field specific for this application
+	 *
+	 * @param parent  the parent of the new text field
+	 * @return the new text field
+	 */
+	protected Text layoutTextField(Text text) {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = GridData.CENTER;
 		data.grabExcessVerticalSpace = false;
@@ -226,6 +244,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		text.setLayoutData(data);
 		return text;
 	}
+
 	/**
 	 * Utility method to create a radio button
 	 * 

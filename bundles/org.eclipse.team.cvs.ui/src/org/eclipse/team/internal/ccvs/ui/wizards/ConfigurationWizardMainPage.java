@@ -171,8 +171,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		
 		// Password
 		createLabel(g, Policy.bind("ConfigurationWizardMainPage.password")); //$NON-NLS-1$
-		passwordText = createTextField(g);
-		passwordText.setEchoChar('*');
+		passwordText = createPasswordField(g);
 
 		g = createGroup(composite, Policy.bind("ConfigurationWizardMainPage.Connection_3")); //$NON-NLS-1$
 		
