@@ -68,70 +68,70 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	public static final String CHANGE_RESET_COMPLETE = "resetComplete"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when one or more perspective views are shown.
+	 * Change event id when one or more views are shown in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_VIEW_SHOW = "viewShow"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when one or more perspective views are hidden.
+	 * Change event id when one or more views are hidden in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_VIEW_HIDE = "viewHide"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when one or more perspective editors are opened.
+	 * Change event id when one or more editors are opened in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_EDITOR_OPEN = "editorOpen"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when one or more perspective editors are closed.
+	 * Change event id when one or more editors are closed in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_EDITOR_CLOSE = "editorClose"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when the perspective editor area is shown.
+	 * Change event id when the editor area is shown in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_EDITOR_AREA_SHOW = "editorAreaShow"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when the perspective editor area is hidden.
+	 * Change event id when the editor area is hidden in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_EDITOR_AREA_HIDE = "editorAreaHide"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when a perspective action set is shown.
+	 * Change event id when an action set is shown in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_ACTION_SET_SHOW = "actionSetShow"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when the perspective action set is hidden.
+	 * Change event id when an action set is hidden in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_ACTION_SET_HIDE = "actionSetHide"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when a perspective fast view added.
+	 * Change event id when a fast view is added in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
 	public static final String CHANGE_FAST_VIEW_ADD = "fastViewAdd"; //$NON-NLS-1$
 
 	/**
-	 * Change event id when the perspective fast view removed.
+	 * Change event id when a fast view is removed in a perspective.
 	 * 
 	 * @see IPerspectiveListener
 	 */
