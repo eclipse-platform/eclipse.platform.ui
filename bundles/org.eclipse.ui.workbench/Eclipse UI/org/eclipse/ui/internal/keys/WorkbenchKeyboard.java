@@ -706,6 +706,10 @@ public class WorkbenchKeyboard {
 	 */
 	public boolean press(List potentialKeyStrokes, Event event, boolean dialogOnly) {
 		// TODO remove event parameter once key-modified actions are removed
+		// TODO Add proper dialog support
+		if (dialogOnly) {
+			return false;
+		}
 
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
