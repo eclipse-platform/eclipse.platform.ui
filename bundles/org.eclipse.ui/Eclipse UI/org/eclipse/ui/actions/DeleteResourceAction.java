@@ -44,7 +44,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	/**
 	 * Whether or not we are deleting content for projects.
 	 */
-	private boolean deleteContent;
+	private boolean deleteContent = false;
 /**
  * Creates a new delete resource action.
  *
@@ -66,11 +66,9 @@ public DeleteResourceAction(Shell shell) {
  *  resources
  */
 boolean canDelete() {
-	if (getSelectedNonResources().size() > 0) return false;
-	int types = getSelectedResourceTypes();
 	// allow only projects or only non-projects to be selected; 
 	// note that the selection may contain multiple types of resource
-	if (!(types == IResource.PROJECT || (types & IResource.PROJECT) == 0)) {
+	if (!(containsOnlyProjects() || containsOnlyNonProjects())) {
 		return false;
 	}
 	
@@ -85,6 +83,34 @@ boolean canDelete() {
 	}
 	return true;
 }
+/**
+ * Returns whether the selection contains only projects.
+ *
+ * @return <code>true</code> if the resources contains only projects, and 
+ *  <code>false</code> otherwise
+ */
+boolean containsOnlyProjects() {
+	if (getSelectedNonResources().size() > 0) return false;
+	int types = getSelectedResourceTypes();
+	// note that the selection may contain multiple types of resource
+	return types == IResource.PROJECT;
+}
+
+/**
+ * Returns whether the selection contains only non-projects.
+ *
+ * @return <code>true</code> if the resources contains only non-projects, and 
+ *  <code>false</code> otherwise
+ */
+boolean containsOnlyNonProjects() {
+	if (getSelectedNonResources().size() > 0) return false;
+	int types = getSelectedResourceTypes();
+	// check for empty selection
+	if (types == 0) return false;
+	// note that the selection may contain multiple types of resource
+	return (types & IResource.PROJECT) == 0;
+}
+
 /**
  * Asks the user to confirm a delete operation.
  *
@@ -217,14 +243,10 @@ public void run() {
 	if (!confirmDelete())
 		return;
 
-	ReadOnlyStateChecker checker =
-		new ReadOnlyStateChecker(
-			this.shell,
-			WorkbenchMessages.getString("DeleteResourceAction.checkDelete"), //$NON-NLS-1$
-			WorkbenchMessages.getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
-
-	final IResource[] resourcesToDelete =
-		checker.checkReadOnlyResources(getSelectedResourcesArray());
+	final IResource[] resourcesToDelete = getResourcesToDelete();
+	
+	if (resourcesToDelete.length == 0)
+		return;
 
 	try {
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -249,6 +271,27 @@ public void run() {
 	} catch (InterruptedException e) {
 		// just return
 	}
+}
+/**
+ * Returns the resources to delete based on the selection and their read-only status.
+ * 
+ * @return the resources to delete
+ */
+IResource[] getResourcesToDelete() {
+	IResource[] selectedResources = getSelectedResourcesArray();
+
+	if (containsOnlyProjects()  && !deleteContent) {
+		// We can just return the selection
+		return selectedResources;
+	} 
+
+	ReadOnlyStateChecker checker =
+		new ReadOnlyStateChecker(
+			this.shell,
+			WorkbenchMessages.getString("DeleteResourceAction.checkDelete"), //$NON-NLS-1$
+			WorkbenchMessages.getString("DeleteResourceAction.readOnlyQuestion")); //$NON-NLS-1$
+	
+	return checker.checkReadOnlyResources(selectedResources);
 }
 /**
  * The <code>DeleteResourceAction</code> implementation of this
