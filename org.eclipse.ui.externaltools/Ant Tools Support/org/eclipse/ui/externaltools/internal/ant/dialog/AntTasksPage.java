@@ -61,7 +61,7 @@ public class AntTasksPage extends AntPage {
 	private void addTaskButtonPressed() {
 		String title = ToolMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
 		String msg = ToolMessages.getString("AntTasksPage.addTaskDialogDescription"); //$NON-NLS-1$
-		AddTaskDialog dialog = new AddTaskDialog(getShell(), title, msg);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg);
 		if (dialog.open() == Dialog.CANCEL)
 			return;
 
@@ -107,7 +107,7 @@ public class AntTasksPage extends AntPage {
 	private void editTaskButtonPressed() {
 		String title = ToolMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
 		String msg = ToolMessages.getString("AntTasksPage.editTaskDialogDescription"); //$NON-NLS-1$
-		AddTaskDialog dialog = new AddTaskDialog(getShell(), title, msg);
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), title, msg);
 		Task task = (Task) getSelectedElement();
 		if (task == null)
 			return;
