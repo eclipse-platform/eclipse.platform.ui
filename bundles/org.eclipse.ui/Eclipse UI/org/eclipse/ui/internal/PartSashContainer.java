@@ -151,11 +151,14 @@ protected abstract void childRemoved(LayoutPart child);
  * parts.
  */
 public RelationshipInfo[] computeRelation() {
+	LayoutTree treeRoot = root;
+	if(isZoomed())
+		treeRoot = unzoomRoot;
 	ArrayList list = new ArrayList();
-	if(root == null)
+	if(treeRoot == null)
 		return new RelationshipInfo[0];
 	RelationshipInfo r = new RelationshipInfo();
-	r.part = root.computeRelation(list);
+	r.part = treeRoot.computeRelation(list);
 	list.add(0,r);
 	RelationshipInfo[] result = new RelationshipInfo[list.size()];
 	list.toArray(result);
@@ -227,6 +230,14 @@ protected abstract void disposeParent();
  */
 public void disposeSashes() {
 	root.disposeSashes();
+}
+/**
+ * Return the most bottom rigth part or null if none.
+ */
+public LayoutPart findBottomRigth() {
+	if(root == null)
+		return null;
+	return root.findBottomRigth();
 }
 /**
  * Find a initial position for a new part.
