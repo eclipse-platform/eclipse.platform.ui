@@ -68,7 +68,6 @@ public class SearchResultViewer extends TableViewer {
 	private GotoMarkerAction fGotoMarkerActionProxy;
 	private SearchAgainAction fSearchAgainAction;
 	private RemoveResultAction fRemoveSelectedMatchesAction;
-	private RemoveAllResultsAction fRemoveAllMatchesAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private CopyToClipboardAction fCopyToClipboardAction;
