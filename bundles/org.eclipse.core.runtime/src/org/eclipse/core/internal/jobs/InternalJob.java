@@ -11,6 +11,7 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.*;
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 
@@ -19,11 +20,6 @@ import org.eclipse.core.runtime.jobs.*;
  * directly.  All jobs must be subclasses of the API <code>org.eclipse.core.runtime.jobs.Job</code> class.
  */
 public abstract class InternalJob extends PlatformObject implements Comparable {
-	/** 
-	 * Job state code (value 8) indicating that a job is blocked by another currently
-	 * running job.  From an API point of view, this is the same as WAITING.
-	 */
-	static final int BLOCKED = 0x08;
 	/** 
 	 * Job state code (value 16) indicating that a job has been removed from
 	 * the wait queue and is about to start running. From an API point of view, 
@@ -37,6 +33,11 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * this is the same as WAITING.
 	 */
 	static final int ABOUT_TO_SCHEDULE = 0x20;
+	/** 
+	 * Job state code (value 8) indicating that a job is blocked by another currently
+	 * running job.  From an API point of view, this is the same as WAITING.
+	 */
+	static final int BLOCKED = 0x08;
 
 	//flag mask bits
 	private static final int M_STATE = 0xFF;
@@ -58,7 +59,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 
 	private volatile int flags = Job.NONE;
 	private final int jobNumber = nextJobNumber++;
-	private volatile IJobChangeListener[] listeners = JobListeners.EMPTY_LISTENERS;
+	private ListenerList listeners = null;
 	private IProgressMonitor monitor;
 	private String name;
 	/**
@@ -98,18 +99,9 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see Job#addJobListener(IJobChangeListener)
 	 */
 	protected void addJobChangeListener(IJobChangeListener listener) {
-		//check for duplicate
-		IJobChangeListener[] tempListeners = listeners;
-		int oldCount = tempListeners.length;
-		for (int i = 0; i < oldCount; i++) 
-			if (tempListeners[i] == listener)
-				return;
-		//create a new array
-		IJobChangeListener[] newListeners = new IJobChangeListener[tempListeners.length+1];
-		System.arraycopy(tempListeners, 0, newListeners, 0, oldCount);
-		newListeners[oldCount] = listener;
-		//atomic assignment
-		listeners = newListeners;
+		if (listeners == null)
+			listeners = new ListenerList(ListenerList.IDENTITY);
+		listeners.add(listener);
 	}
 
 	/**
@@ -125,55 +117,64 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			previous.addLast(entry);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#belongsTo(Object)
 	 */
 	protected boolean belongsTo(Object family) {
 		return false;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#cancel()
 	 */
 	protected boolean cancel() {
 		return manager.cancel(this);
 	}
+
 	/* (on-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(Object otherJob) {
 		return ((InternalJob) otherJob).startTime >= startTime ? 1 : -1;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#done(IStatus)
 	 */
 	protected void done(IStatus endResult) {
 		manager.endJob(this, endResult, true);
 	}
+
 	/**
-	 * Returns the job listeners that are only listening to this job.  Returns null
-	 * if this job has no listeners.
+	 * Returns the job listeners that are only listening to this job.  Returns 
+	 * <code>null</code> if this job has no listeners.
 	 */
-	final IJobChangeListener[] getListeners() {
+	final ListenerList getListeners() {
 		return listeners;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#getName()
 	 */
 	protected String getName() {
 		return name;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#getPriority()
 	 */
 	protected int getPriority() {
 		return priority;
 	}
+
 	/**
 	 * Returns the job's progress monitor, or null if it is not running.
 	 */
 	final IProgressMonitor getProgressMonitor() {
 		return monitor;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#getProperty
 	 */
@@ -184,18 +185,21 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			return null;
 		return temp.get(key);
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#getResult
 	 */
 	protected IStatus getResult() {
 		return result;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#getRule
 	 */
 	protected ISchedulingRule getRule() {
 		return schedulingRule;
 	}
+
 	/**
 	 * Returns the time that this job should be started, awakened, or
 	 * rescheduled, depending on the current state.
@@ -204,6 +208,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final long getStartTime() {
 		return startTime;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#getState()
 	 */
@@ -215,48 +220,55 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 				return Job.WAITING;
 			case ABOUT_TO_RUN :
 				return Job.RUNNING;
-			case ABOUT_TO_SCHEDULE:
+			case ABOUT_TO_SCHEDULE :
 				return Job.WAITING;
 			default :
 				return state;
 		}
 	}
+
 	/* (non-javadoc)
 	 * @see Job.getThread
 	 */
 	protected Thread getThread() {
 		return thread;
 	}
+
 	/**
 	 * Returns the raw job state, including internal states no exposed as API.
 	 */
 	final int internalGetState() {
 		return flags & M_STATE;
 	}
+
 	/**
 	 * Must be called from JobManager#setPriority
 	 */
 	final void internalSetPriority(int newPriority) {
 		this.priority = newPriority;
 	}
+
 	/**
 	 * Must be called from JobManager#setRule
 	 */
 	final void internalSetRule(ISchedulingRule rule) {
 		this.schedulingRule = rule;
 	}
+
 	/**
 	 * Must be called from JobManager#changeState
 	 */
 	final void internalSetState(int i) {
 		flags = (flags & ~M_STATE) | i;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#isBlocking()
 	 */
 	protected boolean isBlocking() {
 		return manager.isBlocking(this);
 	}
+
 	/**
 	 * Returns true if this job conflicts with the given job, and false otherwise.
 	 */
@@ -269,36 +281,42 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			return schedulingRule.isConflicting(otherRule);
 		return otherRule.isConflicting(schedulingRule);
 	}
+
 	/* (non-javadoc)
 	 * @see Job.isSystem()
 	 */
 	protected boolean isSystem() {
 		return (flags & M_SYSTEM) != 0;
 	}
+
 	/* (non-javadoc)
 	 * @see Job.isUser()
 	 */
 	protected boolean isUser() {
 		return (flags & M_USER) != 0;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#join()
 	 */
 	protected void join() throws InterruptedException {
 		manager.join(this);
 	}
+
 	/**
 	 * Returns the next entry (ahead of this one) in the list, or null if there is no next entry
 	 */
 	final InternalJob next() {
 		return next;
 	}
+
 	/**
 	 * Returns the previous entry (behind this one) in the list, or null if there is no previous entry
 	 */
 	final InternalJob previous() {
 		return previous;
 	}
+
 	/**
 	 * Removes this entry from any list it belongs to.  Returns the receivelar.
 	 */
@@ -310,30 +328,20 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		next = previous = null;
 		return this;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#removeJobListener(IJobChangeListener)
 	 */
 	protected void removeJobChangeListener(IJobChangeListener listener) {
-		IJobChangeListener[] tempListeners = listeners;
-		int oldCount = tempListeners.length;
-		if (oldCount == 0 || (oldCount == 1 && tempListeners[0] == listener)) {
-			listeners = JobListeners.EMPTY_LISTENERS;
-			return;
-		}
-		//find listener to remove
-		for (int i = 0; i < oldCount; i++) 
-			if (tempListeners[i] == listener) {
-				IJobChangeListener[] newListeners = new IJobChangeListener[oldCount-1];
-				System.arraycopy(tempListeners, 0, newListeners, 0, i);
-				System.arraycopy(tempListeners, i+1, newListeners, i, oldCount-i-1);
-				listeners = newListeners;
-				return;
-			}
+		if (listeners != null)
+			listeners.remove(listener);
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#run(IProgressMonitor)
 	 */
 	protected abstract IStatus run(IProgressMonitor progressMonitor);
+
 	/* (non-Javadoc)
 	 * @see Job#schedule(long)
 	 */
@@ -341,6 +349,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		if (shouldSchedule())
 			manager.schedule(this, delay, false);
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#setName(String)
 	 */
@@ -348,6 +357,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		Assert.isNotNull(name);
 		this.name = name;
 	}
+
 	/**
 	 * Sets the next entry in this linked list of jobs.
 	 * @param entry
@@ -355,6 +365,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setNext(InternalJob entry) {
 		this.next = entry;
 	}
+
 	/**
 	 * Sets the previous entry in this linked list of jobs.
 	 * @param entry
@@ -362,6 +373,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setPrevious(InternalJob entry) {
 		this.previous = entry;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#setPriority(int)
 	 */
@@ -378,6 +390,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 				throw new IllegalArgumentException(String.valueOf(newPriority));
 		}
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#setProgressGroup(IProgressMonitor, int)
 	 */
@@ -387,6 +400,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		if (pm != null)
 			setProgressMonitor(pm);
 	}
+
 	/**
 	 * Sets the progress monitor to use for the next execution of this job,
 	 * or for clearing the monitor when a job completes.
@@ -395,6 +409,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setProgressMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#setProperty(QualifiedName,Object)
 	 */
@@ -419,6 +434,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			properties = temp;
 		}
 	}
+
 	/**
 	 * Sets or clears the result of an execution of this job.
 	 * @param result a result status, or <code>null</code>
@@ -426,12 +442,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setResult(IStatus result) {
 		this.result = result;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#setRule(ISchedulingRule)
 	 */
 	protected void setRule(ISchedulingRule rule) {
 		manager.setRule(this, rule);
 	}
+
 	/**
 	 * Sets a time to start, wake up, or schedule this job, 
 	 * depending on the current state
@@ -440,6 +458,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setStartTime(long time) {
 		startTime = time;
 	}
+
 	/* (non-javadoc)
 	 * @see Job.setSystem
 	 */
@@ -448,12 +467,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			throw new IllegalStateException();
 		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;
 	}
+
 	/* (non-javadoc)
 	 * @see Job.setThread
 	 */
 	protected void setThread(Thread thread) {
 		this.thread = thread;
 	}
+
 	/* (non-javadoc)
 	 * @see Job.setUser
 	 */
@@ -462,18 +483,21 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 			throw new IllegalStateException();
 		flags = value ? flags | M_USER : flags & ~M_USER;
 	}
+
 	/* (Non-javadoc)
 	 * @see Job#shouldSchedule
 	 */
 	protected boolean shouldSchedule() {
 		return true;
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#sleep()
 	 */
 	protected boolean sleep() {
 		return manager.sleep(this);
 	}
+
 	/* (non-Javadoc)
 	 * Prints a string-based representation of this job instance. 
 	 * For debugging purposes only.
@@ -481,6 +505,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	public String toString() {
 		return getName() + "(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
 	}
+
 	/* (non-Javadoc)
 	 * @see Job#wakeUp(long)
 	 */
