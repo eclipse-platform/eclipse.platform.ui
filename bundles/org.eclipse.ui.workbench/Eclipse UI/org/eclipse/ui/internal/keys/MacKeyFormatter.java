@@ -85,12 +85,7 @@ public final class MacKeyFormatter extends AbstractKeyFormatter {
 	}
 
 	protected String getKeyDelimiter() {
-		return Util.translateString(
-			RESOURCE_BUNDLE,
-			KEY_DELIMITER_KEY,
-			KEY_DELIMITER,
-			false,
-			false);
+		return Util.ZERO_LENGTH_STRING;
 	}
 
 	protected String getKeyStrokeDelimiter() {
