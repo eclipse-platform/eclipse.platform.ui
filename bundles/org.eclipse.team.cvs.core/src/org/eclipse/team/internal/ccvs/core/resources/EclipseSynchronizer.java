@@ -1397,6 +1397,9 @@ public class EclipseSynchronizer {
 	 */
 	public int getModificationState(IResource resource) throws CVSException {
 		String indicator =  getDirtyIndicator(resource);
+		if (Policy.DEBUG_DIRTY_CACHING) {
+			debug(resource, indicator, "getModificationState");
+		}
 		if (indicator == null || indicator == RECOMPUTE_INDICATOR) {
 			return ICVSFile.UNKNOWN;
 		} else if (indicator == IS_DIRTY_INDICATOR) {

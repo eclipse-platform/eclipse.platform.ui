@@ -350,15 +350,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			// for all child resources until a modified child is found.
 			modified = calculateAndSaveChildModificationStates();
 			setModified(modified);
-			if (Policy.DEBUG_DIRTY_CACHING) {
-				EclipseSynchronizer.debug(resource, modified, "recomputed dirty state");
-			}
-			return modified;
 		} else {
-			modified = state == ICVSFile.DIRTY;
-			if (Policy.DEBUG_DIRTY_CACHING) {
-				EclipseSynchronizer.debug(resource, modified, "found cached dirty state");
-			}
+			modified = (state == ICVSFile.DIRTY);
 		}
 		return modified;
 	}
