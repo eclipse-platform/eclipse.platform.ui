@@ -1,9 +1,15 @@
-package org.eclipse.core.internal.runtime;
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+package org.eclipse.core.internal.runtime;
 
 /**
  * Platform URL support
@@ -11,7 +17,7 @@ package org.eclipse.core.internal.runtime;
  */
 
 import java.io.IOException;import java.net.URL;import org.eclipse.core.internal.boot.PlatformURLConnection;import org.eclipse.core.internal.boot.PlatformURLHandler;import org.eclipse.core.internal.plugins.FragmentDescriptor;
-import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.model.*;
+import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.model.*;
  
 public class PlatformURLPluginConnection extends PlatformURLConnection {
 
@@ -19,7 +25,7 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 	private PluginDescriptorModel pd = null;
 	private static boolean isRegistered = false;
 	private URL[] fragmentURLs = null;
-	public static final String PLUGIN = "plugin";
+	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 public PlatformURLPluginConnection(URL url) {
 	super(url);
 }
@@ -28,18 +34,18 @@ protected boolean allowCaching() {
 }
 protected URL resolve() throws IOException {
 	String spec = url.getFile().trim();
-	if (spec.startsWith("/")) 
+	if (spec.startsWith("/"))  //$NON-NLS-1$
 		spec = spec.substring(1);
 	if (!spec.startsWith(PLUGIN)) 
-		throw new IOException(Policy.bind("url.badVariant", url.toString()));
-	int ix = spec.indexOf("/", PLUGIN.length()+1);
+		throw new IOException(Policy.bind("url.badVariant", url.toString())); //$NON-NLS-1$
+	int ix = spec.indexOf("/", PLUGIN.length()+1); //$NON-NLS-1$
 	String ref = ix==-1 ? spec.substring(PLUGIN.length()+1) : spec.substring(PLUGIN.length()+1,ix);
 	String id = getId(ref);
 	String vid = getVersion(ref);
 	PluginRegistryModel registry = (PluginRegistryModel)Platform.getPluginRegistry();
-	pd = (vid==null || vid.equals("")) ? registry.getPlugin(id) : registry.getPlugin(id,vid);
+	pd = (vid==null || vid.equals("")) ? registry.getPlugin(id) : registry.getPlugin(id,vid); //$NON-NLS-1$
 	if (pd == null)
-		throw new IOException(Policy.bind("url.resolvePlugin", url.toString()));
+		throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
 	URL result = new URL (pd.getLocation());
 	if (ix == -1 || (ix + 1) >= spec.length()) 
 		return result;
@@ -56,18 +62,18 @@ public static void startup() {
 public  URL[] getAuxillaryURLs() throws IOException {
 	if (pd == null) {
 		String spec = url.getFile().trim();
-		if (spec.startsWith("/")) 
+		if (spec.startsWith("/"))  //$NON-NLS-1$
 			spec = spec.substring(1);
 		if (!spec.startsWith(PLUGIN)) 
-			throw new IOException(Policy.bind("url.badVariant", url.toString()));
-		int ix = spec.indexOf("/", PLUGIN.length()+1);
+			throw new IOException(Policy.bind("url.badVariant", url.toString())); //$NON-NLS-1$
+		int ix = spec.indexOf("/", PLUGIN.length()+1); //$NON-NLS-1$
 		String ref = ix==-1 ? spec.substring(PLUGIN.length()+1) : spec.substring(PLUGIN.length()+1,ix);
 		String id = getId(ref);
 		String vid = getVersion(ref);
 		PluginRegistryModel registry = (PluginRegistryModel)Platform.getPluginRegistry();
-		pd = (vid==null || vid.equals("")) ? registry.getPlugin(id) : registry.getPlugin(id,vid);
+		pd = (vid==null || vid.equals("")) ? registry.getPlugin(id) : registry.getPlugin(id,vid); //$NON-NLS-1$
 		if (pd == null)
-			throw new IOException(Policy.bind("url.resolvePlugin", url.toString()));
+			throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
 	}
 	PluginFragmentModel[] fragments = pd.getFragments();
 	int fragmentLength = (fragments == null) ? 0 : fragments.length;

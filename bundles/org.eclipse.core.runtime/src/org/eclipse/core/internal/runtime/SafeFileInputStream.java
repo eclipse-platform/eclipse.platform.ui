@@ -1,9 +1,15 @@
-package org.eclipse.core.internal.runtime;
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+package org.eclipse.core.internal.runtime;
 
 import java.io.*;
 /**
@@ -14,7 +20,7 @@ import java.io.*;
  * @see SafeFileOutputStream
  */
 public class SafeFileInputStream extends FilterInputStream {
-	protected static final String EXTENSION = ".bak";
+	protected static final String EXTENSION = ".bak"; //$NON-NLS-1$
 public SafeFileInputStream(File file) throws IOException {
 	this(file.getAbsolutePath(), null);
 }

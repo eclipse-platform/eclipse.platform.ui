@@ -1,9 +1,15 @@
-package org.eclipse.core.internal.runtime;
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+package org.eclipse.core.internal.runtime;
 
 import org.eclipse.core.runtime.*;
 import java.util.*;
@@ -12,17 +18,17 @@ import java.io.*;
 public class PlatformMetaArea {
 	IPath location;
 	
-	/* package */ static final String F_DESCRIPTION = ".platform";
-	/* package */ static final String F_META_AREA = ".metadata";
-	/* package */ static final String F_PLUGIN_PATH = ".plugin-path";
-	/* package */ static final String F_PLUGIN_DATA = ".plugins";
-	/* package */ static final String F_REGISTRY = ".registry";
-	/* package */ static final String F_SNAP = ".snap";
-	/* package */ static final String F_LOG = ".log";
-	/* package */ static final String F_BACKUP = ".bak";
-	/* package */ static final String F_OPTIONS = ".options";	
-	/* package */ static final String F_KEYRING = ".keyring";
-	/* package */ static final String F_LOCK_FILE = ".lock";
+	/* package */ static final String F_DESCRIPTION = ".platform"; //$NON-NLS-1$
+	/* package */ static final String F_META_AREA = ".metadata"; //$NON-NLS-1$
+	/* package */ static final String F_PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
+	/* package */ static final String F_PLUGIN_DATA = ".plugins"; //$NON-NLS-1$
+	/* package */ static final String F_REGISTRY = ".registry"; //$NON-NLS-1$
+	/* package */ static final String F_SNAP = ".snap"; //$NON-NLS-1$
+	/* package */ static final String F_LOG = ".log"; //$NON-NLS-1$
+	/* package */ static final String F_BACKUP = ".bak"; //$NON-NLS-1$
+	/* package */ static final String F_OPTIONS = ".options";	 //$NON-NLS-1$
+	/* package */ static final String F_KEYRING = ".keyring"; //$NON-NLS-1$
+	/* package */ static final String F_LOCK_FILE = ".lock"; //$NON-NLS-1$
 /**
  * 
  */
@@ -38,7 +44,7 @@ private Properties buildPathProperties(Hashtable paths) {
 		IPath[] list = (IPath[]) paths.get(key);
 		for (int i = 0; i < list.length; i++) {
 			entry.append(list[i].toOSString());
-			entry.append(";");
+			entry.append(";"); //$NON-NLS-1$
 		}
 		result.put(key, entry.toString());
 	}
@@ -52,11 +58,11 @@ public void createLocation() throws CoreException {
 	try {
 		file.mkdirs();
 	} catch (Exception e) {
-		String message = Policy.bind("meta.couldNotCreate", file.getAbsolutePath());
+		String message = Policy.bind("meta.couldNotCreate", file.getAbsolutePath()); //$NON-NLS-1$
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
 	}
 	if (!file.canWrite()) {
-		String message = Policy.bind("meta.readonly", file.getAbsolutePath());
+		String message = Policy.bind("meta.readonly", file.getAbsolutePath()); //$NON-NLS-1$
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 	}
 }
@@ -108,7 +114,7 @@ private Hashtable parsePathProperties(Properties props) {
 		String key = (String) keys.nextElement();
 		String entry = props.getProperty(key);
 		Vector list = new Vector(4);
-		for (StringTokenizer tokens = new StringTokenizer(entry, ";"); tokens.hasMoreTokens();)
+		for (StringTokenizer tokens = new StringTokenizer(entry, ";"); tokens.hasMoreTokens();) //$NON-NLS-1$
 			list.addElement(new Path(tokens.nextToken()));
 		IPath[] paths = new IPath[list.size()];
 		list.copyInto(paths);
@@ -130,7 +136,7 @@ public Hashtable readPluginPath(IPath location) throws CoreException {
 				stream.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("meta.readPlatformMeta", location.toString());
+		String message = Policy.bind("meta.readPlatformMeta", location.toString()); //$NON-NLS-1$
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_READ_METADATA, message, e);
 		throw new CoreException (status);
 }
@@ -153,7 +159,7 @@ public void writePluginPath(Hashtable paths, IPath location) throws CoreExceptio
 				stream.close();
 		}
 	} catch (IOException e) {
-		String message = Policy.bind("meta.writePlatformMeta", location.toString());
+		String message = Policy.bind("meta.writePlatformMeta", location.toString()); //$NON-NLS-1$
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e);
 		throw new CoreException (status);
 	}

@@ -1,9 +1,15 @@
-package org.eclipse.core.internal.runtime;
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+package org.eclipse.core.internal.runtime;
 
 import org.eclipse.core.runtime.*;
 import java.io.*;
@@ -125,7 +131,7 @@ public void addProtectionSpace(URL resourceUrl, String realm){
 	Assert.isNotNull(realm);
 
 	String file = resourceUrl.getFile();
-	if(!file.endsWith("/")){
+	if(!file.endsWith("/")){ //$NON-NLS-1$
 		resourceUrl = URLTool.getParent(resourceUrl);
 	}
 
@@ -244,9 +250,9 @@ private void load() throws CoreException {
 			input.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_READ_METADATA,Policy.bind("meta.unableToReadAuthorization",file.toString()),e));
+		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_READ_METADATA,Policy.bind("meta.unableToReadAuthorization",file.toString()),e)); //$NON-NLS-1$
 	} catch (ClassNotFoundException e) {
-		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_READ_METADATA,Policy.bind("meta.unableToReadAuthorization",file.toString()),e));
+		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_READ_METADATA,Policy.bind("meta.unableToReadAuthorization",file.toString()),e)); //$NON-NLS-1$
 	}
 }
 private void load(InputStream is) throws IOException, ClassNotFoundException {
@@ -272,7 +278,7 @@ public void save() throws CoreException {
 			out.close();
 		}
 	} catch (IOException e) {
-		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_WRITE_METADATA,Policy.bind("meta.unableToWriteAuthorization",file.toString()),e));
+		throw new CoreException(new Status(IStatus.ERROR,Platform.PI_RUNTIME,Platform.FAILED_WRITE_METADATA,Policy.bind("meta.unableToWriteAuthorization",file.toString()),e)); //$NON-NLS-1$
 	}
 	needsSaving = false;
 }

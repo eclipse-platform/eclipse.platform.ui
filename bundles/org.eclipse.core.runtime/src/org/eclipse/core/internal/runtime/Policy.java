@@ -52,7 +52,7 @@ public static String bind(String id, String[] bindings) {
 	} catch (MissingResourceException e) {
 		// If we got an exception looking for the message, fail gracefully by just returning
 		// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-		return "Missing message: " + id + " in: " + bundleName;//$NON-NLS-1$
+		return "Missing message: " + id + " in: " + bundleName;//$NON-NLS-1$ //$NON-NLS-2$
 	}
 	if (bindings == null)
 		return message;

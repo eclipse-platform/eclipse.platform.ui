@@ -85,7 +85,7 @@ public byte cipher(byte datum) throws Exception {
 }
 private byte[] getSeed() throws Exception {
 	MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-	return messageDigest.digest(password.getBytes("UTF8"));
+	return messageDigest.digest(password.getBytes("UTF8")); //$NON-NLS-1$
 }
 private byte[] nextRandom(int length) throws Exception {
 	if (secureRandom == null) {

@@ -92,7 +92,7 @@ public final class InternalPlatform {
 	public static boolean DEBUG_PLUGINS = false;
 	public static boolean DEBUG_STARTUP = false;
 	public static boolean DEBUG_SHUTDOWN = false;
-	public static String DEBUG_PLUGINS_DUMP = "";
+	public static String DEBUG_PLUGINS_DUMP = ""; //$NON-NLS-1$
 	public static boolean DEBUG_PREFERENCES = false;
 
 /**
@@ -158,7 +158,7 @@ public static URL asLocalURL(URL url) throws IOException {
 	return ((PlatformURLConnection) connection).getURLAsLocal();
 }
 private static void assertInitialized() {
-	Assert.isTrue(initialized, "meta.appNotInit");
+	Assert.isTrue(initialized, Policy.bind("meta.appNotInit")); //$NON-NLS-1$
 }
 /**
  * Closes the open lock file handle, and makes a silent best
@@ -191,7 +191,7 @@ private static synchronized void createLockFile() throws CoreException {
 	if (lockFile.exists())
 		lockFile.delete();
 	if (lockFile.exists()) {
-		String message = Policy.bind("meta.inUse", lockLocation);
+		String message = Policy.bind("meta.inUse", lockLocation); //$NON-NLS-1$
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 	}
 	try {
@@ -199,7 +199,7 @@ private static synchronized void createLockFile() throws CoreException {
 		lockRAF = new RandomAccessFile(lockFile, "rw");
 		lockRAF.writeByte(0);
 	} catch (IOException e) {
-		String message = Policy.bind("meta.failCreateLock", lockLocation);
+		String message = Policy.bind("meta.failCreateLock", lockLocation); //$NON-NLS-1$
 		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
 	}
 }
@@ -233,7 +233,7 @@ private static void createXMLClassLoader() {
 	for (int i=0; i<libs.length; i++) {
 		LibraryModel lib = factory.createLibrary();
 		lib.setName(libs[i]);
-		lib.setExports(new String[] { "*" });
+		lib.setExports(new String[] { "*" }); //$NON-NLS-1$
 		libList.add(lib);
 	}
 	descriptor.setRuntime((LibraryModel[]) libList.toArray(new LibraryModel[0]));
@@ -253,7 +253,7 @@ public static void endSplash() {
 			try {
 				long start = Long.parseLong(startString);
 				long end = System.currentTimeMillis();
-				System.out.println("Startup complete: " + (end - start) + "ms");
+				System.out.println("Startup complete: " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (NumberFormatException e) {
 				//this is just debugging code -- ok to swallow exception
 			}
@@ -414,7 +414,7 @@ private static void handleException(ISafeRunnable code, Throwable e) {
 			//ignore and attribute exception to runtime
 		}
 		String pluginId =  plugin.getDescriptor().getUniqueIdentifier();
-		String message = Policy.bind("meta.pluginProblems", pluginId);
+		String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
 		IStatus status;
 		if (e instanceof CoreException) {
 			status = new MultiStatus(pluginId, Platform.PLUGIN_ERROR, message, e);
@@ -506,7 +506,7 @@ public static void loaderShutdown() {
 		try {
 			registry.saveRegistry();
 		} catch (IOException e) {
-			String message = Policy.bind("meta.unableToWriteRegistry");
+			String message = Policy.bind("meta.unableToWriteRegistry"); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, e);
 			getRuntimePlugin().getLog().log(status);
 			if (DEBUG)
@@ -553,8 +553,8 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 	PlatformURLPluginHandlerFactory.startup();
 	activateDefaultPlugins();
 	if (DEBUG_CONTEXT)
-		System.out.println("OS: " + BootLoader.getOS() + " WS: " + BootLoader.getWS() + 
-			" NL: " + BootLoader.getNL() + " ARCH: " + BootLoader.getOSArch());
+		System.out.println("OS: " + BootLoader.getOS() + " WS: " + BootLoader.getWS() +  //$NON-NLS-1$ //$NON-NLS-2$
+			" NL: " + BootLoader.getNL() + " ARCH: " + BootLoader.getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
 	// can't install the log or log problems until after the platform has been initialized.
 	platformLog = new PlatformLogWriter(metaArea.getLogLocation().toFile());
 	addLogListener(platformLog);
@@ -638,12 +638,12 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 				RegistryCacheReader cacheReader = new RegistryCacheReader(factory);
 				registry = (PluginRegistry)cacheReader.readPluginRegistry(input, augmentedPluginPath, DEBUG && DEBUG_PLUGINS);
 				if (DEBUG)
-					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms");
+					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			} finally {
 				input.close();
 			}
 		} catch (IOException ioe) {
-			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Policy.bind("meta.unableToReadCache"), ioe);
+			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, Policy.bind("meta.unableToReadCache"), ioe); //$NON-NLS-1$
 			problems.merge(status);
 		}
 	}
@@ -656,7 +656,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		problems.merge(resolveStatus);
 		registry.markReadOnly();
 		if (DEBUG)
-			System.out.println("Parse and resolve registry: " + (System.currentTimeMillis() - start) + "ms");
+			System.out.println("Parse and resolve registry: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	registry.startup(null);
 	return problems;
@@ -841,7 +841,7 @@ private static void setupMetaArea(String locationString) throws CoreException {
 	// must create the meta area first as it defines all the other locations.
 	if (location.toFile().exists()) {
 		if (!location.toFile().isDirectory()) {
-			String message = Policy.bind("meta.notDir", location.toString());
+			String message = Policy.bind("meta.notDir", location.toString()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 		}
 	}
@@ -884,7 +884,7 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 	if (cfg == null) {
 		// bail if we don't seem to have one for whatever reason (!)
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Plugin preferences unable to find a platform configuration");
+			System.out.println("Plugin preferences unable to find a platform configuration"); //$NON-NLS-1$
 		}
 		return;
 	}
@@ -892,7 +892,7 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 	if (primaryFeaturePluginId  == null) {
 		// bail if we don't seem to have one of these (!)
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Plugin preferences unable to find a primary feature plugin id");
+			System.out.println("Plugin preferences unable to find a primary feature plugin id"); //$NON-NLS-1$
 		}
 		return;
 	}
@@ -900,7 +900,7 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 	if (primaryFeatureDescriptor  == null) {
 		// bail if primary feature is missing (!)
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Plugin preferences unable to find a primary feature");
+			System.out.println("Plugin preferences unable to find a primary feature"); //$NON-NLS-1$
 		}
 		return;
 	}
@@ -908,12 +908,12 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 	URL pluginCustomizationURL = primaryFeatureDescriptor.find(new Path(PLUGIN_CUSTOMIZATION_FILE_NAME));
 	if (pluginCustomizationURL == null) {
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Preferences file " + PLUGIN_CUSTOMIZATION_FILE_NAME + " not found.");
+			System.out.println("Preferences file " + PLUGIN_CUSTOMIZATION_FILE_NAME + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return;
 	}
 	if (DEBUG_PREFERENCES) {
-		System.out.println("Loading preferences from " + pluginCustomizationURL);
+		System.out.println("Loading preferences from " + pluginCustomizationURL); //$NON-NLS-1$
 	}
 	// apply any defaults for the given plug-in
 	applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
@@ -940,7 +940,7 @@ public static void applyCommandLinePluginDefaultOverrides(
 	if (pluginCustomizationFile == null) {
 		// no command line overrides to process
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Command line argument -pluginCustomization not used.");
+			System.out.println("Command line argument -pluginCustomization not used."); //$NON-NLS-1$
 		}
 		return;
 	}
@@ -948,13 +948,13 @@ public static void applyCommandLinePluginDefaultOverrides(
 	try {
 		URL pluginCustomizationURL = new File(pluginCustomizationFile).toURL();
 		if (DEBUG_PREFERENCES) {
-			System.out.println("Loading preferences from " + pluginCustomizationURL);
+			System.out.println("Loading preferences from " + pluginCustomizationURL); //$NON-NLS-1$
 		}
 		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
 	} catch (MalformedURLException e) {
 		// fail silently
 		if (DEBUG_PREFERENCES) {
-			System.out.println("MalformedURLException creating URL for plugin customization file "
+			System.out.println("MalformedURLException creating URL for plugin customization file " //$NON-NLS-1$
 				+ pluginCustomizationFile);
 			e.printStackTrace();
 		}
@@ -988,8 +988,8 @@ private static void applyPluginDefaultOverrides(
 		if (!inFile.exists()) {
 			// We don't have a preferences file to worry about
 			if (DEBUG_PREFERENCES) {
-				System.out.println("Preference file " +
-				propertiesURL + " not found.");
+				System.out.println("Preference file " + //$NON-NLS-1$
+				propertiesURL + " not found."); //$NON-NLS-1$
 			}
 			return;
 		}
@@ -998,7 +998,7 @@ private static void applyPluginDefaultOverrides(
 		if (in == null) {
 			// fail quietly
 			if (DEBUG_PREFERENCES) {
-				System.out.println("Failed to open " +
+				System.out.println("Failed to open " + //$NON-NLS-1$
 					propertiesURL);
 			}
 			return;
@@ -1007,7 +1007,7 @@ private static void applyPluginDefaultOverrides(
 	} catch (IOException e) {
 		// cannot read ini file - fail silently
 		if (DEBUG_PREFERENCES) {
-			System.out.println("IOException reading preference file " +
+			System.out.println("IOException reading preference file " + //$NON-NLS-1$
 			propertiesURL);
 			e.printStackTrace();
 		}
@@ -1020,7 +1020,7 @@ private static void applyPluginDefaultOverrides(
 		} catch (IOException e) {
 			// ignore problems closing file
 			if (DEBUG_PREFERENCES) {
-				System.out.println("IOException closing preference file " +
+				System.out.println("IOException closing preference file " + //$NON-NLS-1$
 				propertiesURL);
 				e.printStackTrace();
 			}
@@ -1048,16 +1048,16 @@ private static void applyPluginDefaultOverrides(
 		}
 	}
 	if (DEBUG_PREFERENCES) {
-		System.out.println("Preferences now set as follows:");
+		System.out.println("Preferences now set as follows:"); //$NON-NLS-1$
 		String[] prefNames = preferences.propertyNames();
 		for (int i = 0; i < prefNames.length; i++) {
 			String value = preferences.getString(prefNames[i]);
-			System.out.println("\t" + prefNames[i] + " = " + value);
+			System.out.println("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		prefNames = preferences.defaultPropertyNames();
 		for (int i = 0; i < prefNames.length; i++) {
 			String value = preferences.getDefaultString(prefNames[i]);
-			System.out.println("\tDefault values: " + prefNames[i] + " = " + value);
+			System.out.println("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

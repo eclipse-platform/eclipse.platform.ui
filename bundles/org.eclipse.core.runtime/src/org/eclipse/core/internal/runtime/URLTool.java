@@ -1,9 +1,15 @@
-package org.eclipse.core.internal.runtime;
+/**********************************************************************
+ * Copyright (c) 2000,2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+package org.eclipse.core.internal.runtime;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,10 +64,10 @@ public static URL appendTrailingSlash(String url) throws MalformedURLException {
  */
 public static URL appendTrailingSlash(URL url){
 	String file = url.getFile();
-	if (file.endsWith("/"))
+	if (file.endsWith("/")) //$NON-NLS-1$
 		return url;
 	try {
-		return new URL(url.getProtocol(), url.getHost(), url.getPort(), file + "/");
+		return new URL(url.getProtocol(), url.getHost(), url.getPort(), file + "/"); //$NON-NLS-1$
 	} catch(MalformedURLException e){
 		Assert.isTrue(false, "internal error");
 	}
@@ -85,8 +91,8 @@ public static URL getChild(String parent, String member) throws MalformedURLExce
  */
 public static URL getChild(URL parent, String member){
 	String file = parent.getFile();
-	if (!file.endsWith("/"))
-		file = file + "/";
+	if (!file.endsWith("/")) //$NON-NLS-1$
+		file = file + "/"; //$NON-NLS-1$
 	try {
 		return new URL(parent.getProtocol(), parent.getHost(), parent.getPort(), file + member);
 	} catch(MalformedURLException e){
@@ -274,7 +280,7 @@ public static URL getParent(URL url) {
 			lastSlashIndex = i;
 	}
 	if (lastSlashIndex == -1)
-		file = "";
+		file = ""; //$NON-NLS-1$
 	else
 		file = file.substring(0, lastSlashIndex + 1);
 
@@ -327,7 +333,7 @@ public static URL getRoot(String urlString) throws MalformedURLException {
  */
 public static URL getRoot(URL url) {
 	try {
-		return new URL(url.getProtocol(), url.getHost(), url.getPort(), "/");
+		return new URL(url.getProtocol(), url.getHost(), url.getPort(), "/"); //$NON-NLS-1$
 	} catch(MalformedURLException e){
 		Assert.isTrue(false, "internal error");
 	}
@@ -379,7 +385,7 @@ public static URL removeTrailingSlash(String url) throws MalformedURLException {
 public static URL removeTrailingSlash(URL url) {
 	String file = url.getFile();
 
-	if(file.endsWith("/")){
+	if(file.endsWith("/")){ //$NON-NLS-1$
 		file = file.substring(0, file.length() - 1);
 		try {
 			return new URL(
