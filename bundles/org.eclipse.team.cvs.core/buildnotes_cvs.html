@@ -154,6 +154,35 @@ ul
 <h1 style=""> </h1>
 
 <h1 style="">Eclipse Platform Build Notes &#8211; CVS Support</h1>
+<p class="MsoNormal">CVS build I20021112 Nov 12, 2002</p>
+               
+<p class="MsoNormal">Build submission for Integration Build 20021112</p>
+               
+<h2>What's new in this build</h2>
+ 
+<p>The CVS Repositories view has undergone some changes. Here is a summary of the changes:</p>
+<ul>
+<li>Users can now define working sets which will limit the number of projects shown in the view.
+<li>Branches only contain projects that are "known" to be in the branch. Similarly, the Versions category
+has been changed and now displayes all the "known" projects in a version (as opposed to providing a list of
+verions).
+<li>The version and branch items will start out empty and must be populated by the user. This can be
+done by performing a "Refresh Branches and Versions" from the popup menu of a repository location or
+by using "Configure Branches and Tags". The user should define a working set before refreshing the tags
+of the repository location since the refresh operation will search each project in the working set (or
+each project in the repository if no working set is defined).
+<li>Comparing multiple versions of the same project can be done by choosing  "Compare With..." from
+popup menu of any folder or file in the view.
+<li>There is no longer a "Show Modules" mode. Instead, there is a Modules category under HEAD which can
+be expanded to see the modules defined in the CVSROOT/modules file.
+</ul>
+<p>Further work will be done on this view to fine-tune the tag discovery mechanisms.
+</p>
+
+<p>Numerous other bugs are fixed. As always, you can check in Bugzilla.<br>
+ </p>
+ 
+<h1 style="">Eclipse Platform Build Notes &#8211; CVS Support</h1>
 <p class="MsoNormal">CVS build I20021015 Oct 15, 2002</p>
                
 <p class="MsoNormal">Build submission for Integration Build 20021015</p>
