@@ -246,12 +246,6 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 		
 		Button changeButton = new Button(composite, SWT.PUSH);
 		changeButton.setText(Policy.bind("CVSProjectPropertiesPage.Change_Sharing_5")); //$NON-NLS-1$
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, changeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		changeButton.setLayoutData(data);
 		changeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				RepositorySelectionDialog dialog = new RepositorySelectionDialog(getShell(), oldLocation);
