@@ -185,7 +185,7 @@ public final class InternalPlatform implements IPlatform {
 	 */
 	public URL asLocalURL(URL url) throws IOException {
 		//TODO: this is bogus - only to satisfy clients that want to resolve bundle2 URLs
-		if (url.getProtocol().equals("bundle2")) {
+		if (url.getProtocol().equals("bundle2")) { //$NON-NLS-1$
 			String bundleName = url.getHost();
 			Bundle bundle = this.context.getBundle(bundleName.substring(0, bundleName.indexOf('_')));
 
@@ -245,7 +245,7 @@ public final class InternalPlatform implements IPlatform {
 	 */
 	public void endSplash() {
 		if (DEBUG) {
-			String startString = System.getProperty("eclipse.debug.startupTime");
+			String startString = System.getProperty("eclipse.debug.startupTime"); //$NON-NLS-1$
 			if (startString != null)
 				try {
 					long start = Long.parseLong(startString);
@@ -375,7 +375,7 @@ public final class InternalPlatform implements IPlatform {
 					status = new MultiStatus(pluginId, PLUGIN_ERROR, message, e);
 					((MultiStatus) status).merge(((CoreException) e).getStatus());
 				} else {
-					status = new Status(Status.ERROR, pluginId, PLUGIN_ERROR, message, e);
+					status = new Status(IStatus.ERROR, pluginId, PLUGIN_ERROR, message, e);
 				}
 				getLog(bundle).log(status);
 			}
@@ -501,8 +501,8 @@ public final class InternalPlatform implements IPlatform {
 		// assumes the endInitializationHandler is available as a service
 		// see EclipseStarter.publishSplashScreen
 		for (int i = 0; i < ref.length; i++) {
-			String name = (String) ref[i].getProperty("name");
-			if (name != null && name.equals("splashscreen")) {
+			String name = (String) ref[i].getProperty("name"); //$NON-NLS-1$
+			if (name != null && name.equals("splashscreen")) { //$NON-NLS-1$
 				Runnable result = (Runnable) context.getService(ref[i]);
 				context.ungetService(ref[i]);
 				return result;
@@ -755,7 +755,7 @@ public final class InternalPlatform implements IPlatform {
 
 			// look for the application to run.  
 			if (args[i - 1].equalsIgnoreCase(ARG_APPLICATION)) {
-				System.setProperty("eclipse.application", arg);
+				System.setProperty("eclipse.application", arg); //$NON-NLS-1$
 				found = true;
 			}
 
@@ -1101,7 +1101,7 @@ public final class InternalPlatform implements IPlatform {
 	public URL getInstallURL() {
 		if (installLocation == null)
 			try {
-				installLocation = new URL((String) System.getProperty("eclipse.installURL"));
+				installLocation = new URL((String) System.getProperty("eclipse.installURL")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				//This can't fail because eclipse.installURL has been set with a valid URL in BootLoader
 			}
@@ -1193,7 +1193,7 @@ public final class InternalPlatform implements IPlatform {
 	 */
 	public IPath getConfigurationMetadataLocation() {
 		if (configMetadataLocation == null)
-			configMetadataLocation = new Path(System.getProperty("osgi.configuration.area"));
+			configMetadataLocation = new Path(System.getProperty("osgi.configuration.area")); //$NON-NLS-1$
 		return configMetadataLocation;
 	}
 }
