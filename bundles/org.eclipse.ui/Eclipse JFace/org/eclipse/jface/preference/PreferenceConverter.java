@@ -96,7 +96,7 @@ private static RGB basicGetColor(String value) {
  * multiple FontDatas can be defined.
  */
 private static FontData[] basicGetFontData(String value) {
-	if (value == IPreferenceStore.STRING_DEFAULT_DEFAULT)
+	if (value.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
 		return FONTDATA_ARRAY_DEFAULT_DEFAULT;
 
 	//Read in all of them to get the value
