@@ -30,6 +30,7 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -648,7 +649,7 @@ public class ReviewPage
 			desc = descEntry.getAnnotation();
 		if (desc == null)
 			desc = ""; //$NON-NLS-1$
-		descLabel.setText(desc);
+		descLabel.setText(UpdateManagerUtils.getWritableXMLString(desc));
 		propertiesButton.setEnabled(feature != null);
 		moreInfoButton.setEnabled(job != null && getMoreInfoURL(job) != null);
 	}
