@@ -190,7 +190,7 @@ function onloadHandler(e)
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=WebappResources.getString("selectWorkingSet", request)%>' alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=WebappResources.getString("Scope", request)%></a>:
+					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=WebappResources.getString("selectWorkingSet", request)%>' alt='<%=WebappResources.getString("selectWorkingSet", request)%>' onmouseover="window.status='<%=WebappResources.getString("selectWorkingSet", request)%>'; return true;" onmouseout="window.status='';"><%=WebappResources.getString("Scope", request)%>:</a>
 				</td>
 				<td nowrap>
 					<input type="hidden" name="workingSet" value='<%=data.getScope()%>' >
