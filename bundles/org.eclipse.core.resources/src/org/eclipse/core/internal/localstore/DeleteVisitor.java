@@ -63,6 +63,7 @@ protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean kee
 		status.add(e.getStatus());
 	}
 }
+//XXX: in which situation would delete be called with (null, null)? It happens (see bug 29445), but why?
 protected void delete(Resource target, java.io.File localFile) {
 	if (target != null) {
 		if (localFile != null && !target.isLinked() && !target.getLocalManager().getStore().delete(localFile, status))
@@ -72,8 +73,8 @@ protected void delete(Resource target, java.io.File localFile) {
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}
-	} else 
-		localFile.delete();	
+	} else if (localFile != null)
+		localFile.delete();
 }
 protected boolean equals(IResource one, IResource another) throws CoreException {
 	return one.getFullPath().equals(another.getFullPath());
