@@ -40,9 +40,18 @@
 				<separator name="ExternalToolsGroup"/> 
 			</menu> 
 			<action
-				id="org.eclipse.ui.externaltools.ExternalToolMenuDelegate"
+				id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateMenu"
 				label="%Action.externalTools"
 				menubarPath="org.eclipse.ui.run/ExternalToolsGroup"
+				disabledIcon="icons/full/dtool16/external_tools.gif"
+				icon="icons/full/etool16/external_tools.gif"
+				hoverIcon="icons/full/ctool16/external_tools.gif"
+				pulldown="true"
+				class="org.eclipse.ui.externaltools.internal.menu.ExternalToolMenuDelegate">
+			</action>
+			<action
+				id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
+				label="%Action.externalTools"
 				toolbarPath="Normal/additions"
 				disabledIcon="icons/full/dtool16/external_tools.gif"
 				icon="icons/full/etool16/external_tools.gif"
