@@ -36,6 +36,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 	private static final String RUN_DEBUG= PREFIX + "run_debug";
 	private static final String NONE= PREFIX + "none";
 	private static final String ERROR= PREFIX + "error.";
+	private static final String CLOSED_PROJECT= PREFIX + "closed_project";
 
 	protected Combo fCombo;
 	
@@ -81,6 +82,10 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 	 */
 	public void createControl(Composite parent) {
 
+		if (!getProject().isOpen()) {
+			createForClosedProject(parent);
+			return;
+		}
 		// Table to choose which tags are shown in the outliner
 		Composite pageComponent= createComposite(parent, 1);
 		createLabel(pageComponent, DebugUIUtils.getResourceString(DESCRIPTION));
@@ -105,6 +110,12 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 		setControl(pageComponent);
 	}
 
+	private void createForClosedProject(Composite parent) {
+		Label label= new Label(parent, SWT.LEFT);
+		label.setText(DebugUIUtils.getResourceString(CLOSED_PROJECT));
+		label.setFont(parent.getFont());
+		setControl(label);
+	}
 	/**
 	 * Utility method that creates a label instance
 	 * and sets the default layout data.
