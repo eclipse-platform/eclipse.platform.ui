@@ -57,6 +57,7 @@ public class CVSPreferencesPage
 	private Button promptOnFileDelete;
 	private Button promptOnFolderDelete;
 	private Button showMarkers;
+	private Button replaceUnmanaged;
 	
 	/**
 	 * Utility method that creates a combo box
@@ -154,6 +155,9 @@ public class CVSPreferencesPage
 		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$
 		showMarkers.setToolTipText(Policy.bind("CVSPreferencePage.showAddRemoveMarkersTooltip")); //$NON-NLS-1$
 		
+		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
+		replaceUnmanaged.setToolTipText(Policy.bind("CVSPreferencePage.replaceUnmanagedTooltip")); //$NON-NLS-1$
+		
 		initializeValues();
 		
 		quietnessCombo.addSelectionListener(new SelectionListener() {
@@ -214,6 +218,7 @@ public class CVSPreferencesPage
 		promptOnFileDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		promptOnFolderDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		showMarkers.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
+		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 	}
 
 	/**
@@ -242,6 +247,7 @@ public class CVSPreferencesPage
 		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, promptOnFileDelete.getSelection());
 		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, promptOnFolderDelete.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
+		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(
 			store.getBoolean(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES));
@@ -255,6 +261,8 @@ public class CVSPreferencesPage
 			store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(
 			store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
+		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(
+			store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 
 		return true;
 	}
@@ -274,6 +282,7 @@ public class CVSPreferencesPage
 		promptOnFileDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		promptOnFolderDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
+		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 	}
 
 	/**

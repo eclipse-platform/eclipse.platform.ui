@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.core.util;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
@@ -40,9 +41,13 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	public void visitFile(ICVSFile file) throws CVSException {
 		ResourceSyncInfo info = file.getSyncInfo();
 		if (info == null) {
+			// Delete unmanaged files if the user wants them deleted
+			if (CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
+				file.delete();
+			}
 			// If the file is unmanaged, just leave it as is
 		} else if (info.isAdded()) {
-			// For added files, delete and unmanage
+			file.delete();
 			file.unmanage(null);
 		} else if (info.isDeleted()) {
 			// If deleted, null the sync info so the file will be refetched

@@ -65,6 +65,7 @@ public class CVSProviderPlugin extends Plugin {
 	private boolean promptOnFileDelete = true;
 	private boolean promptOnFolderDelete = true;
 	private boolean showTasksOnAddAndDelete = false;
+	private boolean replaceUnmanaged = true;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
@@ -382,5 +383,21 @@ public class CVSProviderPlugin extends Plugin {
 	public void setShowTasksOnAddAndDelete(boolean showTasksOnAddAndDelete) {
 		this.showTasksOnAddAndDelete = showTasksOnAddAndDelete;
 	}
+	/**
+	 * Gets the replaceUnmanaged.
+	 * @return Returns a boolean
+	 */
+	public boolean isReplaceUnmanaged() {
+		return replaceUnmanaged;
+	}
+
+	/**
+	 * Sets the replaceUnmanaged.
+	 * @param replaceUnmanaged The replaceUnmanaged to set
+	 */
+	public void setReplaceUnmanaged(boolean replaceUnmanaged) {
+		this.replaceUnmanaged = replaceUnmanaged;
+	}
+
 }
 

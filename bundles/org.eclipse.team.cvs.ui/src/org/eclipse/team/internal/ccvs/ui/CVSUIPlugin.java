@@ -46,8 +46,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The id of the CVS plug-in
 	 */
-	public static final String ID = "org.eclipse.team.cvs.ui";
-	public static final String DECORATOR_ID = "org.eclipse.team.cvs.ui.decorator";
+	public static final String ID = "org.eclipse.team.cvs.ui"; //$NON-NLS-1$
+	public static final String DECORATOR_ID = "org.eclipse.team.cvs.ui.decorator"; //$NON-NLS-1$
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
 	
@@ -178,6 +178,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, true);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MARKERS, true);
+		store.setDefault(ICVSUIConstants.PREF_REPLACE_UNMANAGED, true);
 		store.setDefault(ICVSUIConstants.PREF_CVS_RSH, CVSProviderPlugin.DEFAULT_CVS_RSH);
 		store.setDefault(ICVSUIConstants.PREF_CVS_SERVER, CVSProviderPlugin.DEFAULT_CVS_SERVER);
 		
@@ -210,6 +211,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setPromptOnFileDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		CVSProviderPlugin.getPlugin().setPromptOnFolderDelete(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
+		CVSProviderPlugin.getPlugin().setReplaceUnmanaged(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 	}
 
 	/**
@@ -217,7 +219,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
-		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages");
+		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages"); //$NON-NLS-1$
 
 		CVSAdapterFactory factory = new CVSAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);
