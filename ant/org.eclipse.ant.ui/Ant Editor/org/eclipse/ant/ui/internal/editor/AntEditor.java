@@ -14,6 +14,7 @@
 
 package org.eclipse.ant.ui.internal.editor;
 
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.ant.ui.internal.editor.outline.AntEditorContentOutlinePage;
@@ -48,18 +49,18 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * The actual editor implementation for Eclipse's Ant integration.
- * 
- * @author Alf Schiefelbein
  */
 public class AntEditor extends TextEditor {
 
@@ -83,6 +84,12 @@ public class AntEditor extends TextEditor {
      * The page that shows the outline.
      */
     protected AntEditorContentOutlinePage page;
+    
+	/**
+	 * The annotation preferences.
+	 * @since 2.1
+	 */
+	private MarkerAnnotationPreferences fAnnotationPreferences;
 
 
     /**
@@ -90,8 +97,9 @@ public class AntEditor extends TextEditor {
      */
     public AntEditor() {
         super();
+		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
-		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
+		fAnnotationPreferences= new MarkerAnnotationPreferences();
     }
 
 
@@ -109,11 +117,18 @@ public class AntEditor extends TextEditor {
         setAction("ContentAssistProposal", action); //$NON-NLS-1$
     }
 
-    public void initializeEditor() {
-        // That is where the assistant and its processor is defined
-		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.ui.editors.text.TextEditor#initializeEditor()
+	 * Called from TextEditor.<init>
+	 */
+    protected void initializeEditor() {
+		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 		setRangeIndicator(new DefaultRangeIndicator());
+		configureInsertMode(SMART_INSERT, false);
+		setInsertMode(INSERT);		
 		setCompatibilityMode(false);
+		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);	
     }
    
 	/* (non-Javadoc)
@@ -153,7 +168,7 @@ public class AntEditor extends TextEditor {
     }
 
     /**
-     * Returns wether the editor is active.
+     * Returns whether the editor is active.
      */
     private boolean isActivePart() {
         IWorkbenchWindow window= getSite().getWorkbenchWindow();
@@ -275,67 +290,6 @@ public class AntEditor extends TextEditor {
 		}
 	}
 	
-	/** Preference key for showing the line number ruler */
-	//private final static String LINE_NUMBER_RULER= AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER;
-	/** Preference key for the foreground color of the line numbers */
-	//private final static String LINE_NUMBER_COLOR= AntEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR;
-	/** Preference key for showing the overview ruler */
-	//private final static String OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
-	/** Preference key for error indication in overview ruler */
-	private final static String ERROR_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for warning indication in overview ruler */
-	private final static String WARNING_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for info indication in overview ruler */
-	private final static String INFO_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for task indication in overview ruler */
-	private final static String TASK_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for bookmark indication in overview ruler */
-	private final static String BOOKMARK_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for search result indication in overview ruler */
-	private final static String SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER;
-	/** Preference key for unknown annotation indication in overview ruler */
-	private final static String UNKNOWN_INDICATION_IN_OVERVIEW_RULER= AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER;
-
-	/** Preference key for error indication */
-	private final static String ERROR_INDICATION= AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION;
-	/** Preference key for error color */
-	private final static String ERROR_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR;
-	/** Preference key for warning indication */
-	private final static String WARNING_INDICATION= AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION;
-	/** Preference key for warning color */
-	private final static String WARNING_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR;
-	/** Preference key for info indication */
-	private final static String INFO_INDICATION= AntEditorPreferenceConstants.EDITOR_INFO_INDICATION;
-	/** Preference key for info color */
-	private final static String INFO_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR;
-	/** Preference key for task indication */
-	private final static String TASK_INDICATION= AntEditorPreferenceConstants.EDITOR_TASK_INDICATION;
-	/** Preference key for task color */
-	private final static String TASK_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR;
-	/** Preference key for bookmark indication */
-	private final static String BOOKMARK_INDICATION= AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION;
-	/** Preference key for bookmark color */
-	private final static String BOOKMARK_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR;
-	/** Preference key for search result indication */
-	private final static String SEARCH_RESULT_INDICATION= AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION;
-	/** Preference key for search result color */
-	private final static String SEARCH_RESULT_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR;
-	/** Preference key for unknown annotation indication */
-	private final static String UNKNOWN_INDICATION= AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION;
-	/** Preference key for unknown annotation color */
-	private final static String UNKNOWN_INDICATION_COLOR= AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR;
-
-	/** Preference key for highlighting current line */
-	private final static String CURRENT_LINE= AntEditorPreferenceConstants.EDITOR_CURRENT_LINE;
-	/** Preference key for highlight color of current line */
-	private final static String CURRENT_LINE_COLOR= AntEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR;
-	/** Preference key for showing print marging ruler */
-	private final static String PRINT_MARGIN= AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN;
-	/** Preference key for print margin ruler color */
-	private final static String PRINT_MARGIN_COLOR= AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR;
-	/** Preference key for print margin ruler column */
-	private final static String PRINT_MARGIN_COLUMN= AntEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN;
-
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite, org.eclipse.jface.text.source.IVerticalRuler, int)
 	 */
@@ -343,33 +297,42 @@ public class AntEditor extends TextEditor {
 		fAnnotationAccess= createAnnotationAccess();
 		ISharedTextColors sharedColors= ColorManager.getDefault();
 		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
-		fOverviewRuler.addHeaderAnnotationType(AnnotationType.WARNING);
-		fOverviewRuler.addHeaderAnnotationType(AnnotationType.ERROR);
 		
+		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference preference= (AnnotationPreference) e.next();
+			if (preference.contributesToHeader()){
+				fOverviewRuler.addHeaderAnnotationType(preference.getAnnotationType());
+			}
+		}
+				
 		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
 		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		configureSourceViewerDecorationSupport();
-		WorkbenchHelp.setHelp(sourceViewer.getTextWidget(), IAntUIHelpContextIds.ANT_EDITOR);
+		
 		return sourceViewer;
 	}
 
 	protected IAnnotationAccess createAnnotationAccess() {
-		return new AnnotationAccess();
+		return new AnnotationAccess(fAnnotationPreferences);
 	}
 
 	protected void configureSourceViewerDecorationSupport() {
-		
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.UNKNOWN, UNKNOWN_INDICATION_COLOR, UNKNOWN_INDICATION, UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, BOOKMARK_INDICATION_COLOR, BOOKMARK_INDICATION, BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, TASK_INDICATION_COLOR, TASK_INDICATION, TASK_INDICATION_IN_OVERVIEW_RULER, 2);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, SEARCH_RESULT_INDICATION_COLOR, SEARCH_RESULT_INDICATION, SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, INFO_INDICATION_COLOR, INFO_INDICATION, INFO_INDICATION_IN_OVERVIEW_RULER, 4);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, WARNING_INDICATION_COLOR, WARNING_INDICATION, WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
-		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, ERROR_INDICATION_COLOR, ERROR_INDICATION, ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
-		
-		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(CURRENT_LINE, CURRENT_LINE_COLOR);
-		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(PRINT_MARGIN, PRINT_MARGIN_COLOR, PRINT_MARGIN_COLUMN);
-		
+//		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
+//		while (e.hasNext()){
+//			fSourceViewerDecorationSupport.setAnnotationPreference((AnnotationPreference) e.next());
+//		}
+
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.UNKNOWN, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, AntEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION, AntEditorPreferenceConstants.EDITOR_BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION, AntEditorPreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER, 2);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.SEARCH, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION, AntEditorPreferenceConstants.EDITOR_SEARCH_RESULT_INDICATION_IN_OVERVIEW_RULER, 3);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.INFO, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION, AntEditorPreferenceConstants.EDITOR_INFO_INDICATION_IN_OVERVIEW_RULER, 4);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.WARNING, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION, AntEditorPreferenceConstants.EDITOR_WARNING_INDICATION_IN_OVERVIEW_RULER, 5);
+		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.ERROR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION_COLOR, AntEditorPreferenceConstants.EDITOR_PROBLEM_INDICATION, AntEditorPreferenceConstants.EDITOR_ERROR_INDICATION_IN_OVERVIEW_RULER, 6);
+
+		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(TextEditorPreferenceConstants.EDITOR_CURRENT_LINE, TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
+		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
 		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
 	}
 }
