@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -39,8 +40,7 @@ public class BreakpointTypeContainerFactory extends AbstractBreakpointContainerF
 		if (fContainerImage == null) {
 			fContainerImage= getImageDescriptor().createImage();
 		}
-		HashMap map= new HashMap();
-		List other= new ArrayList();
+		Map map= new HashMap();
 		for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
 			String typeName= DebugPlugin.getDefault().getBreakpointManager().getTypeName(breakpoint);

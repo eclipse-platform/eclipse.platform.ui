@@ -41,7 +41,6 @@ public abstract class AbstractBreakpointGroupAction extends AbstractBreakpointsV
 		fGroupContainers.clear();
 		if (selectionSize != 0) {
 			Iterator iter = selection.iterator();
-			int index= 0;
 			while (iter.hasNext()) {
 			    Object element= iter.next();
 			    if (element instanceof BreakpointGroupContainer) {

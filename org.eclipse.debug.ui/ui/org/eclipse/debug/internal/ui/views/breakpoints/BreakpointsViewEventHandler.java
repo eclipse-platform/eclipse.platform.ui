@@ -159,7 +159,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							}
 							return;
 						}
-						List groupsToUpdate= new ArrayList();
+						
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
 							IMarker marker= breakpoint.getMarker();

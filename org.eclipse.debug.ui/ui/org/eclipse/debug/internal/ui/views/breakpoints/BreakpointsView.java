@@ -328,7 +328,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	private void handleBreakpointChecked(CheckStateChangedEvent event, IBreakpoint breakpoint) {
 		boolean enable= event.getChecked();
 		CheckboxTreeViewer viewer= getCheckboxViewer();
-		ITreeContentProvider contentProvider= getTreeContentProvider();
 		try {
 			breakpoint.setEnabled(enable);
 			viewer.update(breakpoint, null);
