@@ -58,7 +58,6 @@ public interface IPlatform {
 	 * of the Core Runtime plug-in.
 	 */
 	public static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
-	public static final String PI_RUNTIME_OSGI = "org.eclipse.core.runtime.osgi"; //$NON-NLS-1$
 	public static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$ 
 	/** 
 	 * The simple identifier constant (value "<code>applications</code>") of
