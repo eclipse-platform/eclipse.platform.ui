@@ -14,7 +14,6 @@ package org.eclipse.debug.ui.actions;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.OrganizeFavoritesAction;
-import org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -54,12 +53,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 			addSeparator(menu);
 		}
 
-		// TODO: work in progress cleanup
-		if (DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(DebugWorkInProgressPreferencePage.WIP_PREF_CONTEXT_LAUNCH)) {
-			addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
-		} else {
-			addToMenu(menu, new LaunchAsAction(getLaunchGroupIdentifier()), -1);
-		}
+		addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
 		addToMenu(menu, new OpenLaunchDialogAction(getLaunchGroupIdentifier()), -1);
 		addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}

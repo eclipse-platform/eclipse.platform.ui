@@ -44,6 +44,9 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * launch group.
  * 
  * @since 2.1
+ * @deprecated The use of perspective based launch shorcuts has been deprecated
+ *  in the 3.1 release. Instead, selection sensitive launch is supported in the top level
+ *  menus. Use <code>LaunchShorcutsAction</code> instead.
  */
 public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWindowPulldownDelegate2 {
 	

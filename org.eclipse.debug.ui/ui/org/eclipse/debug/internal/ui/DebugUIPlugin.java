@@ -418,7 +418,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 		// work in progress TODO: remove
 		prefs.setDefault(DebugWorkInProgressPreferencePage.WIP_PREF_USE_LAUNCH_WIZARD, false);
-		prefs.setDefault(DebugWorkInProgressPreferencePage.WIP_PREF_CONTEXT_LAUNCH, false);
 	}
 
 	protected IProcess getProcessFromInput(Object input) {

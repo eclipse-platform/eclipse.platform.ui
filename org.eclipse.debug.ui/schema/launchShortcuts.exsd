@@ -121,6 +121,11 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
    </element>
 
    <element name="perspective">
+      <annotation>
+         <documentation>
+            The &lt;code&gt;perspective&lt;/code&gt; element has been &lt;b&gt;deprecated&lt;/b&gt; in the 3.1 release. The top level Run/Debug/Profile cascade menus now support contextual (selection sensitive) launching, and clients should provide a &lt;code&gt;contextualLaunch&lt;/code&gt; element instead.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -135,7 +140,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
    <element name="contextualLaunch">
       <annotation>
          <documentation>
-            Holds all descriptions for adding shortcuts to the Run context menu (pop-up).
+            Holds all descriptions for adding shortcuts to the selection sensitive Run/Debug/Profile cascade menus.
          </documentation>
       </annotation>
       <complexType>

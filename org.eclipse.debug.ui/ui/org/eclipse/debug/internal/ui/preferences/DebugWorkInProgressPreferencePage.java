@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class DebugWorkInProgressPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
     
     public static final String WIP_PREF_USE_LAUNCH_WIZARD = DebugUIPlugin.getUniqueIdentifier() + ".WIP_PREF_USE_LAUNCH_WIZARD"; //$NON-NLS-1$
-    public static final String WIP_PREF_CONTEXT_LAUNCH = DebugUIPlugin.getUniqueIdentifier() + ".WIP_PREF_CONTEXT_LAUNCH"; //$NON-NLS-1$
 	
 	public DebugWorkInProgressPreferencePage() {
 		super(GRID);
@@ -47,7 +46,6 @@ public class DebugWorkInProgressPreferencePage extends FieldEditorPreferencePage
 	 */
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(WIP_PREF_USE_LAUNCH_WIZARD, "Use launch wizard instead of launch dialog", SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(WIP_PREF_CONTEXT_LAUNCH, "Use contextual launch in top-level run menus", SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 	}
 
 	/**
