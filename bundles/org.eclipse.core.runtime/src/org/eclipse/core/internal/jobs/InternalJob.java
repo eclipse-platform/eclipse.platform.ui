@@ -78,7 +78,7 @@ public abstract class InternalJob implements Comparable {
 	final long getStartTime() {
 		return startTime;
 	}
-	protected int getState() {
+	protected synchronized int getState() {
 		return state;
 	}
 	void internalSetPriority(int newPriority) {
@@ -116,7 +116,7 @@ public abstract class InternalJob implements Comparable {
 	final void setStartTime(long time) {
 		startTime = time;
 	}
-	final void setState(int i) {
+	final synchronized void setState(int i) {
 		state = i;
 	}
 	protected boolean sleep() {
