@@ -242,7 +242,11 @@ public class LaunchConfigurationInfo {
 	 * @param value attribuet value
 	 */
 	protected void setAttribute(String key, Object value) {
-		getAttributeTable().put(key, value);
+		if (value == null) {
+			getAttributeTable().remove(key);
+		} else {
+			getAttributeTable().put(key, value);
+		}
 	}
 	
 	/**

@@ -12,8 +12,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -44,10 +47,9 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
  * open/switch to on a run or debug launch.
  */
 public class CommonTab implements ILaunchConfigurationTab {
-
-	// Flag that when true, prevents the owning dialog's status area from getting updated.
-	// Used when multiple config attributes are getting updated at once.
-	private boolean fBatchUpdate = false;
+	
+	// this pages's control
+	private Control fControl = null;
 	
 	// Local/shared UI widgets
 	private Label fLocalSharedLabel;
@@ -87,12 +89,10 @@ public class CommonTab implements ILaunchConfigurationTab {
 	// The launch configuration dialog that owns this tab
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
 	
-	// The launch config working copy providing the values shown on this tab
-	private ILaunchConfigurationWorkingCopy fWorkingCopy;
-	
-	//private static final String SHARED_LOCATION_CONTAINER_KEY = "shared_location_container_key";
-
-	protected void setLaunchDialog(ILaunchConfigurationDialog dialog) {
+	/**
+	 * @see ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
+	 */
+	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		fLaunchConfigurationDialog = dialog;
 	}
 	
@@ -100,21 +100,13 @@ public class CommonTab implements ILaunchConfigurationTab {
 		return fLaunchConfigurationDialog;
 	}
 	
-	protected void setWorkingCopy(ILaunchConfigurationWorkingCopy workingCopy) {
-		fWorkingCopy = workingCopy;
-	}
-	
-	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
-		return fWorkingCopy;
-	}
-	
 	/**
-	 * @see ILaunchConfigurationTab#createTabControl(TabItem)
+	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
-	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem) {
-		setLaunchDialog(dialog);
+	public void createControl(Composite parent) {
 		
-		Composite comp = new Composite(tabItem.getParent(), SWT.NONE);
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);		
 		GridData gd;
@@ -160,7 +152,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 		getSharedLocationText().setLayoutData(gd);
 		getSharedLocationText().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent evt) {
-				updateConfigFromLocalShared();
+				refreshStatus();
 			}
 		});
 		
@@ -192,49 +184,19 @@ public class CommonTab implements ILaunchConfigurationTab {
 		
 		setRunPerspectiveButton(new Button(perspComp, SWT.CHECK));
 		getRunPerspectiveButton().setText("R&un Mode:");
-		getRunPerspectiveButton().addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateConfigFromRunPerspective();
-				}
-			}
-		);
 				
 		setRunPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN | SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
 		getRunPerspectiveCombo().setLayoutData(gd);
-		getRunPerspectiveCombo().addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateConfigFromRunPerspective();
-				}
-			}
-		);
 		fillWithPerspectives(getRunPerspectiveCombo());
 		
 		setDebugPerspectiveButton(new Button(perspComp, SWT.CHECK));
 		getDebugPerspectiveButton().setText("&Debug Mode:");
-		getDebugPerspectiveButton().addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateConfigFromDebugPerspective();
-				}
-			}
-		);
 		
 		setDebugPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN |SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
-		getDebugPerspectiveCombo().setLayoutData(gd);
-		getDebugPerspectiveCombo().addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					updateConfigFromDebugPerspective();
-				}
-			}
-		);		
+		getDebugPerspectiveCombo().setLayoutData(gd);		
 		fillWithPerspectives(getDebugPerspectiveCombo());				
-				
-		return comp;
 	}
 
 	/**
@@ -242,14 +204,6 @@ public class CommonTab implements ILaunchConfigurationTab {
 	 */
 	protected void createVerticalSpacer(Composite comp) {
 		new Label(comp, SWT.NONE);
-	}
-
-	protected void setBatchUpdate(boolean update) {
-		fBatchUpdate = update;
-	}
-	
-	protected boolean isBatchUpdate() {
-		return fBatchUpdate;
 	}
 
 	protected void setSharedLocationButton(Button sharedLocationButton) {
@@ -390,7 +344,7 @@ public class CommonTab implements ILaunchConfigurationTab {
 
 	protected void handleSharedRadioButtonSelected() {
 		setSharedEnabled(isShared());
-		updateConfigFromLocalShared();
+		refreshStatus();
 	}
 	
 	protected void setSharedEnabled(boolean enable) {
@@ -468,29 +422,13 @@ public class CommonTab implements ILaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see ILaunchConfigurationTab#setLaunchConfiguration(ILaunchConfigurationWorkingCopy)
+	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
 	 */
-	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration) {
-		if (launchConfiguration.equals(getWorkingCopy())) {
-			return;
-		}
-		
-		setBatchUpdate(true);
-		updateWidgetsFromConfig(launchConfiguration);
-		setBatchUpdate(false);
-
-		setWorkingCopy(launchConfiguration);
-	}
-
-	/**
-	 * Set values for all UI widgets in this tab using values kept in the specified
-	 * launch configuration.
-	 */
-	protected void updateWidgetsFromConfig(ILaunchConfiguration config) {
-		updateLocalSharedFromConfig(config);
-		updateSharedLocationFromConfig(config);
-		updateRunPerspectiveFromConfig(config);
-		updateDebugPerspectiveFromConfig(config);
+	public void initializeFrom(ILaunchConfiguration configuration) {	
+		updateLocalSharedFromConfig(configuration);
+		updateSharedLocationFromConfig(configuration);
+		updateRunPerspectiveFromConfig(configuration);
+		updateDebugPerspectiveFromConfig(configuration);
 	}
 	
 	protected void updateLocalSharedFromConfig(ILaunchConfiguration config) {
@@ -557,16 +495,13 @@ public class CommonTab implements ILaunchConfigurationTab {
 		}
 	}
 
-	protected void updateConfigFromLocalShared() {
-		if (getWorkingCopy() != null) {
-			if (isShared()) {
-				String containerPathString = getSharedLocationText().getText();
-				IContainer container = (IContainer) getContainer(containerPathString);
-				getWorkingCopy().setContainer(container);
-			} else {
-				getWorkingCopy().setContainer(null);
-			}
-			refreshStatus();
+	protected void updateConfigFromLocalShared(ILaunchConfigurationWorkingCopy config) {
+		if (isShared()) {
+			String containerPathString = getSharedLocationText().getText();
+			IContainer container = (IContainer) getContainer(containerPathString);
+			config.setContainer(container);
+		} else {
+			config.setContainer(null);
 		}
 	}
 	
@@ -574,34 +509,31 @@ public class CommonTab implements ILaunchConfigurationTab {
 	 * Update the run perspective attribute based on current
 	 * UI settings.
 	 */
-	protected void updateConfigFromRunPerspective() {
+	protected void updateConfigFromRunPerspective(ILaunchConfigurationWorkingCopy config) {
 		if (getRunPerspectiveButton().getSelection()) {
-			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE,
+			config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE,
 				getPerspectiveWithLabel(getRunPerspectiveCombo().getText()).getId());
 		} else {
-			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
+			config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
 		}	
-		refreshStatus();	
 	}
 	
 	/**
 	 * Update the debug perspective attribute based on current
 	 * UI settings.
 	 */
-	protected void updateConfigFromDebugPerspective() {
+	protected void updateConfigFromDebugPerspective(ILaunchConfigurationWorkingCopy config) {
 		if (getDebugPerspectiveButton().getSelection()) {
-			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE,
+			config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE,
 				getPerspectiveWithLabel(getDebugPerspectiveCombo().getText()).getId());
 		} else {
-			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
+			config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
 		}		
-		refreshStatus();	
 	}	
 
 	protected void refreshStatus() {
-		if (!isBatchUpdate()) {
-			getLaunchDialog().refreshStatus();
-		}
+		getLaunchDialog().updateButtons();
+		getLaunchDialog().updateMessage();
 	}
 	
 	/**
@@ -624,6 +556,84 @@ public class CommonTab implements ILaunchConfigurationTab {
 	 */
 	private IWorkspaceRoot getWorkspaceRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#getControl()
+	 */
+	public Control getControl() {
+		return fControl;
+	}
+
+	/**
+	 * Sets this tab's control.
+	 * 
+	 * @param control The control to set
+	 */
+	private void setControl(Control control) {
+		fControl = control;
+	}
+
+	/*
+	 * @see ILaunchConfigurationTab#getErrorMessage()
+	 */
+	public String getErrorMessage() {
+		return null;
+	}
+
+	/*
+	 * @see ILaunchConfigurationTab#getMessage()
+	 */
+	public String getMessage() {
+		return null;
+	}
+
+	/*
+	 * @see ILaunchConfigurationTab#isPageComplete()
+	 */
+	public boolean isValid() {
+		return true;
+	}
+
+	/**
+	 * Do nothing.
+	 * 
+	 * @see ILaunchConfigurationTab#launched(ILaunch)
+	 */
+	public void launched(ILaunch launch) {
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#canChangePage()
+	 */
+	public boolean okToLeave() {
+		return isValid();
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
+		config.setContainer(null);
+		String debugId = null;
+		if (DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW)) {
+			debugId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+		}
+		String runId = null;
+		if (DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW)) {
+			runId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+		}		
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, debugId);
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, runId);
+	}
+
+	/**
+	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		updateConfigFromDebugPerspective(configuration);
+		updateConfigFromRunPerspective(configuration);
+		updateConfigFromLocalShared(configuration);
 	}
 
 }

@@ -266,13 +266,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	}
 
 	/**
-	 * @see ILaunchConfigurationWorkingCopy#initializeDefaults(Object)
-	 */
-	public void initializeDefaults(Object object) throws CoreException {
-		getDelegate().initializeDefaults(this, object);
-	}
-
-	/**
 	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
 	 */
 	public ILaunchConfiguration getOriginal() {

@@ -59,13 +59,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	}
 
 	/**
-	 * @see ILaunchConfiguration#verify(String)
-	 */
-	public void verify(String mode) throws CoreException {
-		getDelegate().verify(this, mode);
-	}
-
-	/**
 	 * @see ILaunchConfiguration#supportsMode(String)
 	 */
 	public boolean supportsMode(String mode) throws CoreException {

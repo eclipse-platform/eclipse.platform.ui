@@ -82,23 +82,6 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public ILaunch launch(String mode) throws CoreException;
 	
 	/**
-	 * Verifies this configuration can be launched in the
-	 * specified mode. If this configuration is not valid (not able to
-	 * be launched with its current attribute set), an exception is
-	 * thrown describing why this configuration is invalid.
-	 * Delegates to the underlying launch configuration delegate,
-	 * which causes the delegate to be instantiated (if not already).
-	 * 
-	 * @param mode a mode in which a configuration can be launched, one of
-	 *  the mode constants defined by this <code>ILaunchConfiguration</code>
-	 *  - <code>RUN</code> or <code>DEBUG</code>.
-	 * @exception CoreException if this configuration cannot be launched
-	 *  in the specified mode.
-	 */
-	public void verify(String mode) throws CoreException;
-
-	
-	/**
 	 * Returns whether this launch configuration supports the
 	 * specified mode.
 	 * 

@@ -535,16 +535,6 @@ public interface IDebugUIConstants {
 	
 	/**
 	 * Launch configuration attribute - a boolean value that indicates if the launch configuration
-	 * was 'autosaved'.  An autosaved configuration is one that was not saved by the user, but
-	 * needed to be saved by the launch manager because it was part of the launch history.  
-	 * Clients must not set this attribute value.
-	 * 
-	 * @since 2.0
-	 */
-	public static final String ATTR_AUTOSAVED = PLUGIN_ID + ".autosaved"; //$NON-NLS-1$
-
-	/**
-	 * Launch configuration attribute - a boolean value that indicates if the launch configuration
 	 * is 'private'.  A private configuration is one that does not appear to the user in the launch
 	 * history or the launch configuration dialog.
 	 * 

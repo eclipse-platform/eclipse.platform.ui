@@ -122,9 +122,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	/**
 	 * Constant for use as local name part of <code>QualifiedName</code>
-	 * for persisting the default launch configuration type.
+	 * for persisting the default launch configuration.
 	 */
-	private static final String DEFAULT_LAUNCH_CONFIGURATION_TYPE= "default_launch_configuration_type"; //$NON-NLS-1$	
+	private static final String DEFAULT_LAUNCH_CONFIGURATION= "default_launch_configuration"; //$NON-NLS-1$
 	
 	/**
 	 * Constant used for reading and writing the default config type to metadata.
@@ -450,44 +450,24 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	/**
 	 * @see ILaunchManager#setDefaultLaunchConfiguration(IResource, ILaunchConfiguration)
 	 */
-	public boolean setDefaultLaunchConfiguration(IResource resource, ILaunchConfiguration config) {
-		LaunchConfiguration launchConfig = (LaunchConfiguration) config;
-		try {
-			LaunchConfigurationInfo info = launchConfig.getInfo();
-			String xmlString = info.getAsXML();
-			String configTypeID = launchConfig.getType().getIdentifier();
-			resource.setPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION_TYPE, configTypeID), xmlString);
-			setDefaultLaunchConfigurationType(resource, configTypeID);
-		} catch (CoreException ce) {
-			return false;
-		} catch (IOException ioe) {
-			return false;
-		}
-		return true;
+	public void setDefaultLaunchConfiguration(IResource resource, ILaunchConfiguration config) throws CoreException {
+		String memento = config.getMemento();
+		resource.setPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, config.getType().getIdentifier()), memento);
+		setDefaultLaunchConfigurationType(resource, config.getType().getIdentifier());
 	}
 	
 	/**
-	 * @see ILaunchManager#initializeFromDefaultLaunchConfiguration(IResource, ILaunchConfigurationWorkingCopy, String)
+	 * @see ILaunchManager#getDefaultLaunchConfiguration(IResource, String)
 	 */
-	public boolean initializeFromDefaultLaunchConfiguration(IResource resource, ILaunchConfigurationWorkingCopy workingCopy, String configTypeID) {
-		try {
-			String xmlString = resource.getPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION_TYPE, configTypeID));
-			if (xmlString == null) {
-				return false;
-			}
-			ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes());
-			LaunchConfigurationInfo info = createInfoFromXML(bais);
-			((LaunchConfigurationWorkingCopy)workingCopy).setInfo(info);
-		} catch (CoreException ce) {
-			return false;
-		} catch (ParserConfigurationException pce) {
-			return false;
-		} catch (IOException ioe) {
-			return false;
-		} catch (SAXException se) {
-			return false;
-		}		
-		return true;													  	
+	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource, String configTypeID) throws CoreException {
+		String memento = resource.getPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, configTypeID));
+		if (memento != null) {
+			ILaunchConfiguration config = getLaunchConfiguration(memento);
+			if (config.exists()) {
+				return config;
+			}	
+		}
+		return null;													  	
 	}
 	
 	/**

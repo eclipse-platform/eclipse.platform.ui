@@ -106,18 +106,6 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void setAttribute(String attributeName, boolean value);	
 	
 	/**
-	 * Initializes this configuration's attributes to default settings
-	 * for the specified object. This responsibility is handled
-	 * by the launch configuration delegate.
-	 * 
-	 * @param object a context from which to initialize settings in
-	 *  this launch configuration
-	 * @exception CoreException if unable to instantiate the launch
-	 *  configuration delegate for this configuration
-	 */
-	public void initializeDefaults(Object object) throws CoreException;
-	
-	/**
 	 * Returns the original launch configuration this working copy
 	 * was created from, or <code>null</code> if this is a new
 	 * working copy created from a launch configuration type.

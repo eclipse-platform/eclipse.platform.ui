@@ -5,17 +5,18 @@ package org.eclipse.debug.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabItem;
  
 /**
- * Note: This interface is yet experimental.
- * <p>
- * Extension that provides a user interface to manipulate a
- * launch configuration. Launch configurations are presented in
- * a dialog, with a tab folder. Each tab may manipulate one
- * ore more attributes of a launch configuration working copy. 
+ * A launch configuration tab is used to edit/view attributes
+ * of a specific type of launch configuration. Launch
+ * configurations are presented in a dialog, with a tab folder.
+ * Each tab manipulates one ore more attributes of a launch
+ * configuration. 
  * </p>
  * <p>
  * A launch configuration tab extension is defined in <code>plugin.xml</code>.
@@ -61,38 +62,132 @@ import org.eclipse.swt.widgets.TabItem;
 public interface ILaunchConfigurationTab {
 
 	/**
-	 * Creates and returns the control to be used for this
-	 * tab, in the given tab item. Marks the beginning
-	 * of this tabs lifecycle. This is called once after
-	 * the tab is created.
-	 * 
-	 * @param tabItem the tabItem in which to create
-	 *   for this tab's control
-	 * @return the control to be used for this tab
+	 * Returns whether it is ok to leave this page and display
+	 * another page.
+	 *
+	 * @return whether it is ok to leave this page and display
+	 *  another page
 	 */
-	public Control createTabControl(ILaunchConfigurationDialog dialog, TabItem tabItem);
+	public boolean okToLeave();
+
+	/**
+	 * Creates the top level control for this launch configuration
+	 * page under the given parent composite. Marks the beginning
+	 * of this page's lifecycle. This method is called once on
+	 * page creation, after <code>setLaunchConfigurationDialog</code>
+	 * is called.
+	 * <p>
+	 * Implementors are responsible for ensuring that
+	 * the created control can be accessed via <code>getControl</code>
+	 * </p>
+	 *
+	 * @param parent the parent composite
+	 */
+	public void createControl(Composite parent);
 	
 	/**
-	 * Sets the launch configuration (working copy) that this
-	 * tab is currently presenting/editing. This page should
-	 * be updated to reflect the configuration's attribute
-	 * values. Discards any previous launch configuration
-	 * this tab was displaying. This can be called multiple
-	 * times, but only after <code>createTabControl</code>
-	 * has been called.
-	 * 
-	 * @param launchConfiguration working copy of a launch
-	 *  configuration to display and edit
+	 * Returns the top level control for this page.
+	 * <p>
+	 * May return <code>null</code> if the control
+	 * has not been created yet.
+	 * </p>
+	 *
+	 * @return the top level control or <code>null</code>
 	 */
-	public void setLaunchConfiguration(ILaunchConfigurationWorkingCopy launchConfiguration);
+	public Control getControl();	
 	
 	/**
-	 * Notifies this launch configuration tab that it has
-	 * been disposed. Marks the end of this tabs lifecycle,
-	 * allowing this tab to perform any cleanup required.
-	 * This is called once, after <code>createTabControl</code>
-	 * has been called.
+	 * Initializes the given launch configuration with
+	 * default values for this page. This method
+	 * is called when a new launch configuration is created
+	 * such that the configuration can be initialized with
+	 * meaningful values. This method may be called before this
+	 * page's control is created, to support single-click launching.
+	 * 
+	 * @param configuration launch configuration
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration);	
+	
+	/**
+	 * Initializes this page's controls with values from the given
+	 * launch configuration. This method is called when
+	 * a configuration is selected to view or edit, after this
+	 * page's control has been created.
+	 * 
+	 * @param configuration launch configuration
+	 */
+	public void initializeFrom(ILaunchConfiguration configuration);		
+	
+	/**
+	 * Notifies this launch configuration page that it has
+	 * been disposed. Marks the end of this page's lifecycle,
+	 * allowing this page to perform any cleanup required.
+	 * This is called once, after <code>createControl</code>
+	 * has been called. SWT resources allocated by this page
+	 * should be disposed.
 	 */
 	public void dispose();
+	
+	/**
+	 * Copies values from this page into the given 
+	 * launch configuration.
+	 * 
+	 * @param configuration launch configuration
+	 */
+	public void performApply(ILaunchConfigurationWorkingCopy configuration);
+	
+	/**
+	 * Returns the current error message for this page.
+	 * May be <code>null</null> to indicate no error message.
+	 * <p>
+	 * An error message should describe some error state,
+	 * as opposed to a message which may simply provide instruction
+	 * or information to the user.
+	 * </p>
+	 * 
+	 * @return the error message, or <code>null</code> if none
+	 */
+	public String getErrorMessage();
+	
+	/**
+	 * Returns the current message for this page.
+	 * <p>
+	 * A message provides instruction or information to the 
+	 * user, as opposed to an error message which should 
+	 * describe some error state.
+	 * </p>
+	 * 
+	 * @return the message, or <code>null</code> if none
+	 */
+	public String getMessage();	
+	
+	/**
+	 * Returns whether this page is in a valid state.
+	 * <p>
+	 * This information is typically used by the launch configuration
+	 * dialog to decide when it is okay to launch.
+	 * </p>
+	 *
+	 * @return whether this page is in a valid state
+	 */
+	public boolean isValid();	
+	
+	/**
+	 * Sets the launch configuration dialog that hosts this page.
+	 * This is the first method called on a launch configuration
+	 * tab, and marks the beginning of this tab's lifecycle.
+	 * 
+	 * @param dilaog launch configuration dialog
+	 */
+	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog);
+	
+	/**
+	 * Notifies this page that the current configuration has been
+	 * launched, resulting in the given launch.
+	 * 
+	 * @param launch the result of launching the current
+	 *  launch configuration
+	 */
+	public void launched(ILaunch launch);
 }
 

@@ -49,27 +49,4 @@ public interface ILaunchConfigurationDelegate {
 	 */
 	public ILaunch launch(ILaunchConfiguration configuration, String mode) throws CoreException;
 	
-	/**
-	 * Verifies the given launch configuration can be launched in the
-	 * specified mode. If the configuration is not valid (not able to
-	 * be launched with its current attribute set), an exception is
-	 * thrown describing why the configuration is invalid.
-	 * 
-	 * @param configuration the candidate configuration to be launch
-	 * @param mode a mode in which a configuration can be launched, one of
-	 *  the mode constants defined by this <code>ILaunchConfiguration</code>
-	 *  - <code>RUN</code> or <code>DEBUG</code>.
-	 * @exception CoreException if the configuration cannot be launched
-	 */
-	public void verify(ILaunchConfiguration configuration, String mode) throws CoreException;
-	
-	/**
-	 * Initializes the given configuration's attributes to default settings
-	 * based on the specified (possibly <code>null</code>) object.
-	 * 
-	 * @param configuration a working copy configuration in which to
-	 *  set default attributes for launching
-	 * @param object a context from which to initialize settings.  This object may be <code>null</code>
-	 */
-	public void initializeDefaults(ILaunchConfigurationWorkingCopy configuration, Object object);	
 }

@@ -109,7 +109,11 @@ public class DefaultLabelProvider implements ILabelProvider {
 			} else if (element instanceof ILaunchConfigurationType) {
 				return ((ILaunchConfigurationType)element).getIdentifier();
 			} else if (element instanceof ILaunchConfiguration) {
-				return IDebugUIConstants.IMG_OBJS_LAUNCH_CONFIGURATION;
+				try {
+					return ((ILaunchConfiguration)element).getType().getIdentifier();
+				} catch (CoreException e) {
+					return null;
+				}
 			} 
 		}
 		return null;		

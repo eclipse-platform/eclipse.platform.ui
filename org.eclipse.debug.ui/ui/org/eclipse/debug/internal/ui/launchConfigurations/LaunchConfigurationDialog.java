@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -74,7 +75,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 										implements ISelectionChangedListener, 
 													ILaunchConfigurationListener, 
 													ILaunchConfigurationDialog {
-	
+
 	/**
 	 * The tree of launch configurations
 	 */
@@ -84,12 +85,15 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 	private ILaunchConfiguration fFirstConfig;
 	
-	private Object fSelectedTreeObject;
-	
 	/**
 	 * The starting mode, as specified by the caller
 	 */
 	private String fMode;
+	
+	/**
+	 * The launch configuration edit area.
+	 */
+	private Control fEditArea;
 	
 	/**
 	 * The 'new' button to create a new configuration
@@ -105,11 +109,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * The 'copy' button to create a copy of the selected config
 	 */
 	private Button fCopyButton;
-	
-	/**
-	 * The 'save & launch' button
-	 */
-	private Button fSaveAndLaunchButton;
 	
 	/**
 	 * The 'save' button
@@ -153,12 +152,16 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private ILaunchConfiguration fUnderlyingConfig;
 	
-	private boolean fWorkingCopyVerifyState = false;
-	
 	/**
 	 * The current tab extensions being displayed
 	 */
 	private ILaunchConfigurationTab[] fTabs;
+	
+	/**
+	 * The type of config tabs are currently displayed
+	 * for
+	 */
+	private ILaunchConfigurationType fTabType;
 	
 	private ProgressMonitorPart fProgressMonitorPart;
 	private Cursor waitCursor;
@@ -170,39 +173,26 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			cancelPressed();
 		}
 	};
-	
-	/**
-	 * Indicates whether callbacks on 'launchConfigurationChanged' should be treated
-	 * as user changes.
-	 */
-	private boolean fChangesAreUserChanges = false;
-	
-	/**
-	 * Indicates whether the current working copy has been dirtied by the user.
-	 * This is the same as the more general notion of 'isDirty' on ILaunchConfigurationWorkingCopy,
-	 * except that initializing defaults does not count as user dirty.
-	 */
-	private boolean fWorkingCopyUserDirty = false;
-	
+		
 	/**
 	 * Indicates if selection changes in the tree should be ignored
 	 */
 	private boolean fIgnoreSelectionChanges = false;
 	
 	/**
+	 * Previously selected element in the tree
+	 */
+	private Object fSelectedTreeObject;
+	
+	/**
 	 * The number of 'long-running' operations currently taking place in this dialog
 	 */	
 	private long fActiveRunningOperations = 0;
-	
-	/**
-	 * Id for 'Save & Launch' button.
-	 */
-	protected static final int ID_SAVE_AND_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
 		
 	/**
 	 * Id for 'Launch' button.
 	 */
-	protected static final int ID_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 2;
+	protected static final int ID_LAUNCH_BUTTON = IDialogConstants.CLIENT_ID + 1;
 	
 	/**
 	 * Constrant String used as key for setting and retrieving current Control with focus
@@ -254,7 +244,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected Object resolveContext(IStructuredSelection selection) {
 		
 		// Empty selection means no context
-		if ((selection == null) || (selection.size() < 1)) {
+		if ((selection == null) || (selection.isEmpty())) {
 			return null;
 		} 
 
@@ -279,10 +269,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		setSaveAndLaunchButton(createButton(parent, ID_SAVE_AND_LAUNCH_BUTTON, "Sa&ve and Launch", false));
-		setLaunchButton(createButton(parent, ID_LAUNCH_BUTTON, "&Launch", true));
+		setLaunchButton(createButton(parent, ID_LAUNCH_BUTTON, getLaunchButtonText(), true));
 		setCancelButton(createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false));
-	}	
+	}
+	
+	/**
+	 * Returns the appropriate text for the launch button - run or debug.
+	 */
+	protected String getLaunchButtonText() {
+		if (getMode() == ILaunchManager.DEBUG_MODE) {
+			return "Deb&ug";
+		} else {
+			return "R&un";
+		}
+	}
 
 	/**
 	 * Handle the 'save and launch' & 'launch' buttons here, all others are handled
@@ -291,9 +291,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == ID_SAVE_AND_LAUNCH_BUTTON) {
-			handleSaveAndLaunchPressed();
-		} else if (buttonId == ID_LAUNCH_BUTTON) {
+		if (buttonId == ID_LAUNCH_BUTTON) {
 			handleLaunchPressed();
 		} else {
 			super.buttonPressed(buttonId);
@@ -322,7 +320,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				setIgnoreSelectionChanges(true);
 				getTreeViewer().setSelection(selection);			
 				setIgnoreSelectionChanges(false);
-				setLaunchConfiguration(fFirstConfig);
+				setLaunchConfiguration(fFirstConfig, false);
 			} catch (CoreException ce) {
 			}
 		} else if (fFirstConfig instanceof ILaunchConfiguration) {
@@ -343,21 +341,26 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see Window#open()
 	 */
 	public int open() {
-		fFirstConfig = determineConfigFromContext();
-		if (fFirstConfig != null) {
-			if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
-				setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
-				setWorkingCopyUserDirty(false);
-			} else {
-				fUnderlyingConfig = fFirstConfig;
-			}
-			if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {				
-				try {
-					fFirstConfig.verify(getMode());
+		if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {
+			try {
+				fFirstConfig = determineConfigFromContext();
+				if (fFirstConfig != null) {
+					if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
+						setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
+					} else {
+						fUnderlyingConfig = fFirstConfig;
+					}
 					doLaunch(fFirstConfig);
-					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;
-				} catch (CoreException ce) {				
-				}
+					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;					
+				}	
+			} catch (CoreException e) {
+				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred while launching configuration.", e.getStatus());
+			}
+		} else {
+			// select the most recent launch
+			LaunchConfigurationHistoryElement hist = DebugUIPlugin.getDefault().getLastLaunch();
+			if (hist != null) {
+				fFirstConfig = hist.getLaunchConfiguration();
 			}
 		}
 		return super.open();
@@ -416,7 +419,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * an <code>ILaunchConfigurationWorkingCopy</code> is created and initialized from 
 	 * the context if possible.
 	 */
-	protected ILaunchConfiguration determineConfigFromContext() {
+	protected ILaunchConfiguration determineConfigFromContext() throws CoreException {
 		Object workbenchSelection = getContext();
 		if (workbenchSelection == null) {
 			return null;
@@ -424,9 +427,25 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		if (workbenchSelection instanceof ILaunchConfiguration) {
 			return (ILaunchConfiguration) workbenchSelection;
-		} else {
-			return createConfigFromContext();
 		}
+		
+		IResource res = getResourceContext();
+		ILaunchConfiguration def = null;
+		if (res != null) {
+			ILaunchConfigurationType type = determineConfigTypeFromContext();
+			if (type != null) {
+				def = getLaunchManager().getDefaultLaunchConfiguration(res, type.getIdentifier());
+			}
+		}
+		if (def != null) {
+			return def;
+		}
+		
+		def = createConfigFromContext();
+		if (res != null && def != null) {
+			getLaunchManager().setDefaultLaunchConfiguration(res, def);
+		}
+		return def;
 	}
 	
 	/**
@@ -437,7 +456,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * tabs get populated, and finally make sure the config type is selected in the 
 	 * configuration tree.
 	 */
-	protected ILaunchConfigurationWorkingCopy createConfigFromContext() {
+	protected ILaunchConfiguration createConfigFromContext() {
 		ILaunchConfigurationType configType = determineConfigTypeFromContext();
 		if (configType == null) {
 			return null;
@@ -445,19 +464,42 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		ILaunchConfigurationWorkingCopy workingCopy = null;
 		try {
-			setChangesAreUserChanges(false);
 			workingCopy = configType.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
-			workingCopy.initializeDefaults(getContext());
 		} catch (CoreException ce) {
 		}
+
+		ILaunchConfiguration config = null;
+		try {
+	 		ILaunchConfigurationTab[] tabs = createTabs(configType);
+	 		for (int i = 0; i < tabs.length; i++) {
+	 			tabs[i].setDefaults(workingCopy);
+	 			tabs[i].dispose();
+	 		}	
+	 		config = workingCopy.doSave();
+		} catch (CoreException e) {
+			return null;
+		}
 		
-		return workingCopy;
-		
-		/*
-		setLaunchConfiguration(workingCopy);
-		IStructuredSelection selection = new StructuredSelection(configType);
-		setTreeViewerSelection(selection);
-		*/
+		return config;
+
+	}
+	
+	/**
+	 * Returns tab extensions for the given type of launch configuration.
+	 * Tabs are initialized to be contained in this dialog.
+	 * 
+	 * @exception CoreException if unable to instantiate a tab
+	 */
+	protected ILaunchConfigurationTab[] createTabs(ILaunchConfigurationType configType) throws CoreException {
+		// initialize with default values
+		// build the new tabs
+ 		LaunchConfigurationTabExtension[] exts = LaunchConfigurationPresentationManager.getDefault().getTabs(configType);
+ 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[exts.length];
+ 		for (int i = 0; i < exts.length; i++) {
+ 			tabs[i] = (ILaunchConfigurationTab)exts[i].getConfigurationElement().createExecutableExtension("class");
+ 			tabs[i].setLaunchConfigurationDialog(this);
+ 		}	
+ 		return tabs;
 	}
 	
 	/**
@@ -465,6 +507,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * with the current workbench selection.
 	 */
 	protected ILaunchConfigurationType determineConfigTypeFromContext() {		
+		IResource resource = getResourceContext();
+		ILaunchConfigurationType type = null;
+		if (resource != null) {
+			type = getLaunchManager().getDefaultLaunchConfigurationType(resource, false);
+		}
+		return type;		
+	}
+	
+	/**
+	 * Returns the selected resoruce context from the workbench,
+	 * or <code>null</code>
+	 */
+	protected IResource getResourceContext() {
 		IResource resource = null;
 		Object workbenchSelection = getContext();
 		if (workbenchSelection instanceof IResource) {
@@ -472,12 +527,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		} else if (workbenchSelection instanceof IAdaptable) {
 			resource = (IResource) ((IAdaptable)workbenchSelection).getAdapter(IResource.class);
 		}
-		ILaunchConfigurationType type = null;
-		if (resource != null) {
-			type = getLaunchManager().getDefaultLaunchConfigurationType(resource, false);
-		}
-		return type;		
+		return resource;		
 	}
+
 	
 	/**
 	 * Set the title area image based on the mode this dialog was initialized with
@@ -508,46 +560,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * If verifying fails, we catch a <code>CoreException</code>, in which
-	 * case we extract the error message and set it in the status area.
-	 * Otherwise, we set the "ready to launch" message in the status area.
-	 * 
-	 * @see ILaunchConfigurationDialog#refreshStatus()
+	 * Update buttons and message.
 	 */
-	public void refreshStatus() {
-		
-		// If there is no working copy, then the user is starting from scratch
-		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
-		if (workingCopy == null) {
-			setWorkingCopyVerifyState(false);
-			setErrorMessage(null);
-			setEnableStateEditButtons();
-			return;
-		}
-		
-		// Verify the working copy.  Any CoreExceptions indicate a problem with
-		// the working copy, so update the status area and internal state accordingly
-		try {
-			verify(getWorkingCopy());
-		} catch (CoreException ce) {
-			setWorkingCopyVerifyState(false);
-			String message = ce.getStatus().getMessage();
-			setErrorMessage(message);
-			setEnableStateEditButtons();
-			return;
-		}	
-		
-		// Otherwise the verify was successful, update status area and internal state 	
-		setWorkingCopyVerifyState(true);
-		setErrorMessage(null);
-		setEnableStateEditButtons();
+	protected void refreshStatus() {
+		updateButtons();
+		updateMessage();
 	}
 	
 	/**
 	 * Verify the working copy
 	 */
-	protected void verify(ILaunchConfiguration config) throws CoreException {
-		config.verify(getMode());
+	protected void verify() throws CoreException {
 		verifyStandardAttributes();	
 	}
 	
@@ -581,7 +604,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}				
 		
 		// Otherwise, if there's already a config with the same name, complain
-		if (getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
+		if (getLaunchConfiguration().getOriginal() == null && getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
 			throw new CoreException(new Status(IStatus.ERROR,
 												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 												 0,
@@ -591,8 +614,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	protected void updateConfigFromName() {
-		if (getWorkingCopy() != null) {
-			getWorkingCopy().rename(getNameTextWidget().getText());
+		if (getLaunchConfiguration() != null) {
+			getLaunchConfiguration().rename(getNameTextWidget().getText());
 			refreshStatus();
 		}
 	}
@@ -629,7 +652,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		tree.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		setTreeViewer(tree);
 		tree.addSelectionChangedListener(this);
-		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());		
+		tree.setInput(ResourcesPlugin.getWorkspace().getRoot());
+		tree.expandAll();		
 		
 		Button newButton = new Button(c, SWT.PUSH | SWT.CENTER);
 		newButton.setText("Ne&w");
@@ -689,6 +713,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */ 
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		Composite c = new Composite(parent, SWT.NONE);
+		setEditArea(c);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
@@ -729,9 +754,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		gd.widthHint = 375;
 		tabFolder.setLayoutData(gd);
 		setTabFolder(tabFolder);
+		getTabFolder().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleTabSelected();
+			}
+		});
 		
 		Button saveButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		saveButton.setText("&Save");
+		saveButton.setText("&Apply");
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
 		saveButton.setLayoutData(gd);
@@ -832,8 +862,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					ArrayList filteredConfigs = new ArrayList(allConfigs.length);
 					for (int i = 0; i < allConfigs.length; i++) {
 						ILaunchConfiguration config = allConfigs[i];
-						if (config.getAttribute(IDebugUIConstants.ATTR_AUTOSAVED, false) ||
-							config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
+						if (config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
 							continue;
 						}
 						filteredConfigs.add(config);
@@ -942,12 +971,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		
  		// Get the selection		
  		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+ 		if (selection.isEmpty()) {
+ 			getEditArea().setVisible(false);
+ 			updateButtons();
+ 			return;
+ 		}
+ 		
  		Object firstSelectedElement = selection.getFirstElement();		
  		boolean singleSelection = selection.size() == 1;
 		boolean configSelected = firstSelectedElement instanceof ILaunchConfiguration;
 
  		// If selection is the same, don't bother
- 		if (getSelectedTreeObject() == firstSelectedElement) {
+ 		Object obj = getSelectedTreeObject();
+ 		if (singleSelection && obj != null && obj.equals(firstSelectedElement)) {
  			return;
  		}
  		
@@ -964,64 +1000,40 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			setTreeViewerSelection(prevSelection);
  			return;
  		}			
- 				
- 		// Enable tree-related buttons
- 		setEnableStateTreeButtons(configSelected);
- 		 		 
+ 				 		 		 
 		// If a config is selected, update the edit area for it, if a config type is
 		// selected, behave as if user clicked 'New'
  		if (singleSelection && configSelected) {
  			ILaunchConfiguration config = (ILaunchConfiguration) firstSelectedElement; 			
  			setLastSavedName(config.getName());
- 			setLaunchConfiguration(config);
+ 			setLaunchConfiguration(config, false);
  		} else if (singleSelection && firstSelectedElement instanceof ILaunchConfigurationType) {
-			constructNewConfig();
+			if (canReplaceWorkingCopy()) {
+				clearLaunchConfiguration();
+				setTabsForConfigType((ILaunchConfigurationType)firstSelectedElement);
+				getEditArea().setVisible(false);
+			}
  		} else {
  			// multi-selection
  			clearLaunchConfiguration();
+ 			getEditArea().setVisible(false);
  		}
  		
- 		setSelectedTreeObject(firstSelectedElement);
+ 		updateButtons();
+ 		if (singleSelection) {
+	 		setSelectedTreeObject(firstSelectedElement);
+ 		} else {
+ 			setSelectedTreeObject(null);
+ 		}
  	}
  	
  	/**
- 	 * Set the enabled state of the buttons that relate to the tree viewer.  Note that
- 	 * the 'New' button is always enabled.
+ 	 * Set the enabled state of the buttons that relate to the tree viewer.
  	 */
  	protected void setEnableStateTreeButtons(boolean enable) {
+ 		getNewButton().setEnabled(enable);
 		getCopyButton().setEnabled(enable);
 		getDeleteButton().setEnabled(enable); 		
- 	}
- 	
- 	/**
- 	 * Set the enabled state of the buttons that appear on the edit side of the dialog
- 	 * (the 'save' & 'launch' buttons).
- 	 */
- 	protected void setEnableStateEditButtons() {
-		boolean verifies = getWorkingCopyVerifyState();
-		boolean dirty = isWorkingCopyUserDirty();
-		getSaveButton().setEnabled(verifies && dirty);
-		getSaveAndLaunchButton().setEnabled(verifies && dirty);
-		getLaunchButton().setEnabled(verifies);
- 		
- 	}
- 
- 	/**
- 	 * Sets the 'save & launch' button.
- 	 * 
- 	 * @param button the 'save & launch' button.
- 	 */	
- 	private void setSaveAndLaunchButton(Button button) {
- 		fSaveAndLaunchButton = button;
- 	}
- 	
- 	/**
- 	 * Returns the 'save & launch' button
- 	 * 
- 	 * @return the 'save & launch' button
- 	 */
- 	protected Button getSaveAndLaunchButton() {
- 		return fSaveAndLaunchButton;
  	}
  	
  	/**
@@ -1118,9 +1130,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * Sets all configuration-related state appropriately.
  	 * 
  	 * @param config the launch configuration to display/edit
+ 	 * @param init whether to initialize the config with default values
  	 */
- 	protected void setLaunchConfiguration(ILaunchConfiguration config) {
+ 	protected void setLaunchConfiguration(ILaunchConfiguration config, boolean init) {
 		try {
+			getEditArea().setVisible(true);
 			setTabsForConfigType(config.getType());
 			
 			if (config.isWorkingCopy()) {
@@ -1128,22 +1142,22 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			} else {
 				setWorkingCopy(config.getWorkingCopy());
 			}
-			fUnderlyingConfig = getWorkingCopy().getOriginal();
-	 		
-	 		// update the name field
-	 		getNameTextWidget().setText(config.getName());
-	 		
-	 		// Reset internal flags so user edits are recognized as making the
-	 		// working copy 'user dirty'
-	 		setChangesAreUserChanges(true);
-	 		setWorkingCopyUserDirty(false);
-	 		
+			fUnderlyingConfig = getLaunchConfiguration().getOriginal();
+	 			 		
 	 		// update the tabs with the new working copy
 	 		ILaunchConfigurationTab[] tabs = getTabs();
 	 		for (int i = 0; i < tabs.length; i++) {
-				tabs[i].setLaunchConfiguration(getWorkingCopy());
-	 		}	 		
+	 			if (init) {
+	 				tabs[i].setDefaults(getLaunchConfiguration());
+	 			}
+				tabs[i].initializeFrom(getLaunchConfiguration());
+	 		}
+	 		
+	 		// update the name field
+	 		getNameTextWidget().setText(config.getName());	 		
+	 				
 	 		refreshStatus();
+	 		
 		} catch (CoreException ce) {
  			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred setting launch configuration", ce.getStatus());
  			clearLaunchConfiguration();
@@ -1159,9 +1173,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	protected void clearLaunchConfiguration() {
  		setWorkingCopy(null);
  		fUnderlyingConfig = null;
- 		setWorkingCopyVerifyState(false);
-		setChangesAreUserChanges(false);
- 		setWorkingCopyUserDirty(false);
  		setLastSavedName(null);
  		getNameTextWidget().setText(""); 
  		disposeExistingTabs();
@@ -1173,12 +1184,23 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * launch configuration type.
  	 */
  	protected void setTabsForConfigType(ILaunchConfigurationType configType) {		
+ 		if (getTabType() != null && getTabType().equals(configType)) {
+ 			return;
+ 		}
+ 		
 		// dispose the current tabs
 		disposeExistingTabs();
 
 		// build the new tabs
  		LaunchConfigurationTabExtension[] exts = LaunchConfigurationPresentationManager.getDefault().getTabs(configType);
- 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[exts.length];
+ 		ILaunchConfigurationTab[] tabs = null;
+ 		try {
+	 		tabs = createTabs(configType);
+ 		} catch (CoreException ce) {
+ 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating launch configuration tabs.",ce.getStatus());
+ 			return;
+ 		}
+ 		
  		for (int i = 0; i < exts.length; i++) {
  			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
  			String name = exts[i].getName();
@@ -1186,18 +1208,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  				name = "unspecified";
  			}
  			tab.setText(name);
- 			try {
-	 			tabs[i] = (ILaunchConfigurationTab)exts[i].getConfigurationElement().createExecutableExtension("class");
- 			} catch (CoreException ce) {
-	 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating launch configuration tabs",ce.getStatus());
- 				return; 				
- 			}
- 			Control control = tabs[i].createTabControl(this, tab);
+ 			tabs[i].createControl(tab.getParent());
+ 			Control control = tabs[i].getControl();
  			if (control != null) {
 	 			tab.setControl(control);
  			}
  		}
  		setTabs(tabs);	
+ 		setTabType(configType);
  	}
  	
  	protected void disposeExistingTabs() {
@@ -1208,6 +1226,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			tabs[i].dispose();
 		} 		
 		setTabs(null);
+		setTabType(null);
  	}
  	
  	/**
@@ -1218,46 +1237,17 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		fWorkingCopy = workingCopy;
  	}
  	
- 	/**
- 	 * Returns the current launch configuration that is being
- 	 * displayed/edited.
- 	 * 
- 	 * @return current configuration being displayed
- 	 */
- 	protected ILaunchConfigurationWorkingCopy getWorkingCopy() {
- 		return fWorkingCopy;
- 	}
- 	
- 	protected void setWorkingCopyVerifyState(boolean state) {
- 		fWorkingCopyVerifyState = state;
- 	}
- 	
  	protected boolean isWorkingCopyDirty() {
- 		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
+ 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
  		if (workingCopy == null) {
  			return false;
  		}
- 		return workingCopy.isDirty();
- 	}
- 	
- 	protected boolean getWorkingCopyVerifyState() {
- 		return fWorkingCopyVerifyState;
- 	}
- 	
- 	protected void setChangesAreUserChanges(boolean state) {
- 		fChangesAreUserChanges = state;
- 	}
- 	
- 	protected boolean areChangesUserChanges() {
- 		return fChangesAreUserChanges;
- 	}
- 	
- 	protected void setWorkingCopyUserDirty(boolean dirty) {
- 		fWorkingCopyUserDirty = dirty;
- 	}
- 	
- 	protected boolean isWorkingCopyUserDirty() {
- 		return fWorkingCopyUserDirty;
+ 		if (workingCopy.getOriginal() == null) {
+ 			return true;
+ 		}
+ 		updateWorkingCopyFromPages();
+ 		ILaunchConfiguration original = workingCopy.getOriginal();
+ 		return !original.contentsEqual(workingCopy);
  	}
  	
  	protected void setContext(Object context) {
@@ -1267,15 +1257,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	protected Object getContext() {
  		return fContext;
  	}
- 	
- 	protected void setSelectedTreeObject(Object selection) {
- 		fSelectedTreeObject = selection;
- 	}
- 	
- 	protected Object getSelectedTreeObject() {
- 		return fSelectedTreeObject;
- 	}
- 	
+ 	 	
  	protected void setMode(String mode) {
  		fMode = mode;
  	}
@@ -1360,11 +1342,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	}
  	
  	/**
- 	 * Returns the current tab extensions being displayed
- 	 * 
- 	 * @return the current tab extensions being displayed
+ 	 * @see ILaunchConfigurationDialog#getTabs()
  	 */
- 	protected ILaunchConfigurationTab[] getTabs() {
+ 	public ILaunchConfigurationTab[] getTabs() {
  		return fTabs;
  	} 	
  	
@@ -1372,16 +1352,23 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see ILaunchConfigurationListener#launchConfigurationAdded(ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		getTreeViewer().refresh();		
+		setIgnoreSelectionChanges(true);
+		try {
+			setWorkingCopy(configuration.getWorkingCopy());
+			fUnderlyingConfig = configuration;
+			setSelectedTreeObject(configuration);
+		} catch (CoreException e) {
+		}
+		getTreeViewer().refresh();	
+		getTreeViewer().setSelection(new StructuredSelection(configuration));
+		updateButtons();
+		setIgnoreSelectionChanges(false);
 	}
 
 	/**
 	 * @see ILaunchConfigurationListener#launchConfigurationChanged(ILaunchConfiguration)
 	 */
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		if (areChangesUserChanges()) {
-			setWorkingCopyUserDirty(true);
-		}
 	}
 
 	/**
@@ -1405,7 +1392,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected boolean canReplaceWorkingCopy() {
 		
 		// If there is no working copy, there's no problem, return true
-		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
+		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
 		if (workingCopy == null) {
 			return true;
 		}
@@ -1413,13 +1400,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		// If the working copy doesn't verify, show user dialog asking if they wish
 		// to discard their changes.  Otherwise, if the working copy is dirty,
 		// show a slightly different 'save changes' dialog.
-		if (isWorkingCopyUserDirty() && !getWorkingCopyVerifyState()) {
+		if (!canLaunch()) {
 			StringBuffer buffer = new StringBuffer("The configuration \"");
-			buffer.append(getWorkingCopy().getName());
+			buffer.append(getLaunchConfiguration().getName());
 			buffer.append("\" CANNOT be saved.  Do you wish to discard changes?");
 			return MessageDialog.openQuestion(getShell(), "Discard changes?", buffer.toString());
 		} else {
-			if (isWorkingCopyUserDirty()) {
+			if (isWorkingCopyDirty()) {
 				return showSaveChangesDialog();
 			} else {
 				return true;
@@ -1433,7 +1420,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected boolean showSaveChangesDialog() {
 		StringBuffer buffer = new StringBuffer("The configuration \"");
-		buffer.append(getWorkingCopy().getName());
+		buffer.append(getLaunchConfiguration().getName());
 		buffer.append("\" has unsaved changes.  Do you wish to save them?");
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 "Save changes?",
@@ -1486,12 +1473,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			} else {
 				type = (ILaunchConfigurationType)obj;
 			}
-			setChangesAreUserChanges(false);
 			ILaunchConfigurationWorkingCopy wc = type.newInstance(null, generateUniqueNameFrom(DEFAULT_NEW_CONFIG_NAME));
-			Object workbenchSelection = getContext();
-			wc.initializeDefaults(workbenchSelection);
 			setLastSavedName(null);
-			setLaunchConfiguration(wc);
+			setLaunchConfiguration(wc, true);
+			doSave();
 		} catch (CoreException ce) {
 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception creating new launch configuration.", ce.getStatus());
  			clearLaunchConfiguration();
@@ -1506,6 +1491,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		IStructuredSelection selection = getTreeViewerSelection();
 		Iterator iterator = selection.iterator();
 		while (iterator.hasNext()) {
+			clearLaunchConfiguration();
 			Object selectedElement = iterator.next();
 			if (selectedElement instanceof ILaunchConfiguration) {
 				try {
@@ -1527,10 +1513,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			try {
 				ILaunchConfigurationWorkingCopy newWorkingCopy = selectedConfig.copy(newName);
 				ILaunchConfigurationType configType = newWorkingCopy.getType();
-				
-				IStructuredSelection selection = new StructuredSelection(configType);
-				setTreeViewerSelection(selection);
-				setLaunchConfiguration(newWorkingCopy);
+				setLaunchConfiguration(newWorkingCopy, false);
+				doSave();
 			} catch (CoreException ce) {				
 			}			
 		}
@@ -1564,90 +1548,92 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Notification the 'save & launch' button has been pressed
-	 */
-	protected void handleSaveAndLaunchPressed() {
-		doSave();
-		handleLaunchPressed();
-	}
-	
-	/**
 	 * Notification that the 'save' button has been pressed
 	 */
 	protected void handleSavePressed() {
-		doSave();
+		try {
+			doSave();
+		} catch (CoreException e) {
+			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while saving launch configuration.", e.getStatus());
+			return;
+		}
 		
 		// Do the UI-related things required after a save
 		setWorkingCopy(null);
 		setLastSavedName(fUnderlyingConfig.getName());	
-		setEnableStateEditButtons();		
-		getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
+		updateButtons();
 	}
 	
 	/**
-	 * Do the save and return the resulting <code>ILaunchConfiguration</code>
+	 * Notification that a tab has been selected
 	 */
-	protected void doSave() {
-		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
-		try {
-			setIgnoreSelectionChanges(true);
-			fUnderlyingConfig = workingCopy.doSave();
-			setIgnoreSelectionChanges(false);
-		} catch (CoreException ce) {						
-		}	
-		setWorkingCopyUserDirty(false);				
+	protected void handleTabSelected() {
+		refreshStatus();
+	}	
+	
+	/**
+	 * Iterate over the pages to update the working copy
+	 */
+	protected void updateWorkingCopyFromPages() {
+		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
+		ILaunchConfigurationTab[] tabs = getTabs();
+		if (tabs != null) {
+			for (int i = 0; i < tabs.length; i++) {
+				tabs[i].performApply(workingCopy);
+			}
+		}
 	}
 	
 	/**
-	 * Notification the 'launch' button has been pressed
+	 * Do the save
+	 */
+	protected void doSave() throws CoreException {
+		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
+		updateWorkingCopyFromPages();
+		fUnderlyingConfig = workingCopy.doSave();
+		setWorkingCopy(fUnderlyingConfig.getWorkingCopy());
+	}
+	
+	/**
+	 * Notification the 'launch' button has been pressed.
+	 * Save and launch.
 	 */
 	protected void handleLaunchPressed() {
-		doLaunch(getWorkingCopy());
+		try {
+			doSave();
+			doLaunch(getLaunchConfiguration());
+		} catch (CoreException e) {
+			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while launching configuration.", e.getStatus());
+			return;
+		}
 		close();
 	}
 	
 	/**
 	 * Autosave the working copy if necessary, then launch the underlying configuration.
 	 */
-	protected void doLaunch(ILaunchConfiguration config) {
+	protected void doLaunch(ILaunchConfiguration config) throws CoreException {
 		
 		// If the configuration is a working copy and is dirty or doesn't yet exist, autosave it
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			ILaunchConfigurationWorkingCopy workingCopy = (ILaunchConfigurationWorkingCopy) config;
-			if (isWorkingCopyUserDirty() || !workingCopy.exists()) {
-				workingCopy.setAttribute(IDebugUIConstants.ATTR_AUTOSAVED, true);
-				// If we're autosaving an existing config, set a unique name to avoid overwriting
-				// the existing config
-				if (workingCopy.exists()) {
-					String uniqueName = generateUniqueNameFrom(workingCopy.getName());
-					try {
-						workingCopy = workingCopy.copy(uniqueName);
-					} catch (CoreException ce) {
-						ce.printStackTrace();
-					}
-					
-				}
-				
-				// All autosaved configs must be local
-				workingCopy.setContainer(null);
-	
-				// Do the save
-				try {
-					setIgnoreSelectionChanges(true);
-					fUnderlyingConfig = workingCopy.doSave();
-					setIgnoreSelectionChanges(false);
-				} catch (CoreException ce) {			
-					ce.printStackTrace();
-				}	
+			if (isWorkingCopyDirty() || !workingCopy.exists()) {
+				// save the config
+				fUnderlyingConfig = workingCopy.doSave();
 			} 
 		}
 		
 		// Do the launch
-		try {
-			fUnderlyingConfig.launch(getMode());
-		} catch (CoreException ce) {
-			ce.printStackTrace();
-		}				
+		ILaunch launch = fUnderlyingConfig.launch(getMode());
+		// notify pages
+		if (launch != null) {
+			ILaunchConfigurationTab[] tabs = getTabs();
+			if (tabs != null) {
+				for (int i = 0; i < tabs.length; i++) {
+					tabs[i].launched(launch);
+				}
+			}
+		}
 	}
 	
 	protected IPreferenceStore getPreferenceStore() {
@@ -1763,7 +1749,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		saveEnableStateAndSet(getDeleteButton(), savedState, "delete", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getCopyButton(), savedState, "copy", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getSaveButton(), savedState, "save", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getSaveAndLaunchButton(), savedState, "saveandlaunch", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getCancelButton(), savedState, "cancel", keepCancelEnabled);//$NON-NLS-1$
 		saveEnableStateAndSet(getLaunchButton(), savedState, "launch", false);//$NON-NLS-1$
 		TabItem selectedTab = getTabFolder().getItem(getTabFolder().getSelectionIndex());
@@ -1803,7 +1788,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		restoreEnableState(getDeleteButton(), state, "delete");//$NON-NLS-1$
 		restoreEnableState(getCopyButton(), state, "copy");//$NON-NLS-1$
 		restoreEnableState(getSaveButton(), state, "save");//$NON-NLS-1$
-		restoreEnableState(getSaveAndLaunchButton(), state, "saveandlaunch");//$NON-NLS-1$
 		restoreEnableState(getCancelButton(), state, "cancel");//$NON-NLS-1$
 		restoreEnableState(getLaunchButton(), state, "launch");//$NON-NLS-1$
 		ControlEnableState tabState = (ControlEnableState) state.get("tab");//$NON-NLS-1$
@@ -1888,6 +1872,168 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			0 ); 
 		return result;
 	}
+	
+	/**
+	 * @see ILaunchConfigurationDialog#canLaunch()
+	 */
+	public boolean canLaunch() {
+		try {
+			verify();
+		} catch (CoreException e) {
+			return false;
+		}
+		
+		ILaunchConfigurationTab[] tabs = getTabs();
+		if (tabs == null) {
+			return false;
+		}
+		for (int i = 0; i < tabs.length; i++) {
+			if (!tabs[i].isValid()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * @see ILaunchConfigurationDialog#getLaunchConfiguration()
+	 */
+	public ILaunchConfigurationWorkingCopy getLaunchConfiguration() {
+		return fWorkingCopy;
+	}
+
+	/**
+	 * @see ILaunchConfigurationDialog#updateButtons()
+	 */
+	public void updateButtons() {
+		// new, copy, delete buttons
+		boolean empty = getTreeViewer().getSelection().isEmpty();
+		setEnableStateTreeButtons(!empty);
+		
+		// save and launch buttons
+		ILaunchConfigurationTab tab = getActiveTab();
+		if (tab != null) {
+			getSaveButton().setEnabled(tab.isValid());
+			getLaunchButton().setEnabled(canLaunch());		
+		}
+	}
+	
+	/**
+	 * Returns the currently active tab
+	 * 
+	 * @return launch configuration tab
+	 */
+	protected ILaunchConfigurationTab getActiveTab() {
+		TabFolder folder = getTabFolder();
+		ILaunchConfigurationTab[] tabs = getTabs();
+		if (folder != null && tabs != null) {
+			int pageIndex = folder.getSelectionIndex();
+			if (pageIndex >= 0) {		
+				return tabs[pageIndex];		
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @see ILaunchConfigurationDialog#updateMessage()
+	 */
+	public void updateMessage() {
+		if (getLaunchConfiguration() == null) {
+			setErrorMessage(null);
+			setMessage("Select a type of configuration to create, and press 'new'.");
+			return;
+		}
+		
+		try {
+			verify();
+		} catch (CoreException e) {
+			setErrorMessage(e.getMessage());
+			return;
+		}
+		
+		ILaunchConfigurationTab page = getActiveTab();
+		if (page == null) {
+			setMessage(null);
+			setErrorMessage(null);
+			return;
+		}
+		
+		
+		setErrorMessage(page.getErrorMessage());
+		setMessage(page.getMessage());
+
+	}
+
+	/**
+	 * Returns the launch configuration edit area control.
+	 * 
+	 * @return control
+	 */
+	protected Control getEditArea() {
+		return fEditArea;
+	}
+
+	/**
+	 * Sets the launch configuration edit area control.
+	 * 
+	 * @param editArea control
+	 */
+	private void setEditArea(Control editArea) {
+		fEditArea = editArea;
+	}
+
+	/**
+	 * Returns the type that tabs are currently displayed
+	 * for, or <code>null</code> if none.
+	 * 
+	 * @return launch configuration type or <code>null</code>
+	 */
+	protected ILaunchConfigurationType getTabType() {
+		return fTabType;
+	}
+
+	/**
+	 * Sets the type that tabs are currently displayed
+	 * for, or <code>null</code> if none.
+	 * 
+	 * @param tabType launch configuration type
+	 */
+	private void setTabType(ILaunchConfigurationType tabType) {
+		fTabType = tabType;
+	}
+
+	protected Object getSelectedTreeObject() {
+		return fSelectedTreeObject;
+	}
+	
+	protected void setSelectedTreeObject(Object obj) {
+		fSelectedTreeObject = obj;
+	}	
+	
+	/**
+	 * @see ILaunchConfigurationDialog#setName(String)
+	 */
+	public void setName(String name) {
+		if (isVisible()) {
+			if (name == null) {
+				name = "";
+			}
+			fNameText.setText(name);
+			refreshStatus();
+		}
+	}
+	
+	/**
+	 * @see ILaunchConfigurationDialog#generateName(String)
+	 */
+	public String generateName(String name) {
+		if (name == null) {
+			name = "";
+		}
+		return generateUniqueNameFrom(name);
+	}
+
 }
 
 
