@@ -268,7 +268,7 @@ void createColumns() {
  * Returns a string that summarizes the contents of the
  * given markers.
  */
-static public String createMarkerReport(IMarker[] markers) {
+/*package*/ static String createMarkerReport(IMarker[] markers) {
 	StringBuffer buf = new StringBuffer();
 	// Create the header
 	buf.append(TaskListMessages.getString("TaskList.reportType")); //$NON-NLS-1$
