@@ -28,6 +28,7 @@ import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.DebugContextManager;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
@@ -875,6 +876,25 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 		}
 	}
 	
+	/**
+	 * When the breakpoints view becomes visible, turn on the
+	 * debug action set. Note that the workbench will handle the
+	 * case where the user really doesn't want the action set
+	 * enabled - showActionSet(String) will do nothing for an
+	 * action set that's been manually disabled.
+	 */
+	public void partVisible(IWorkbenchPartReference ref) {
+		if (ref instanceof IViewReference) {
+			IViewPart part = ((IViewReference) ref).getView(false);
+			if (part == launchView) {
+				IWorkbenchPage page = getActiveWorkbenchPage();
+				if (page != null) {
+					page.showActionSet(IDebugUIConstants.DEBUG_ACTION_SET);
+				}
+			}
+		}
+	}
+	
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 	}
 	public void pageOpened(IWorkbenchPage page) {
@@ -886,8 +906,6 @@ public class LaunchViewContextListener implements IPartListener2, IPageListener,
 	public void partClosed(IWorkbenchPartReference ref) {
 	}
 	public void partDeactivated(IWorkbenchPartReference ref) {
-	}
-	public void partVisible(IWorkbenchPartReference ref) {
 	}
 	public void partInputChanged(IWorkbenchPartReference ref) {
 	}
