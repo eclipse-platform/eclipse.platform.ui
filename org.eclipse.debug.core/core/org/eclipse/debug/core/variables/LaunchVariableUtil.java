@@ -423,7 +423,7 @@ public class LaunchVariableUtil {
 				// Overwrite system environment with locally defined variables
 				while (iter.hasNext()) {
 					Map.Entry entry = (Map.Entry) iter.next();
-					env.put(entry.getKey(), expandVariables((String) entry.getValue(), status, context));
+					env.put(((String) entry.getKey()).toLowerCase(), expandVariables((String) entry.getValue(), status, context));
 				}
 			}
 			Iterator iter= env.entrySet().iterator();
@@ -450,7 +450,14 @@ public class LaunchVariableUtil {
 		try {
 			String nativeCommand= null;
 			if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
-				nativeCommand= "set";
+				String osName= System.getProperty("os.name");
+				if (osName != null && (osName.startsWith("Windows 9") || osName.startsWith("Windows ME"))) {
+					// Win 95, 98, and ME
+					nativeCommand= "command.com /C set";
+				} else {
+					// Win NT, 2K, XP
+					nativeCommand= "cmd.exe /C set";
+				}
 			} else if (!BootLoader.getOS().equals(BootLoader.OS_UNKNOWN)){
 				nativeCommand= "printenv";				
 			}
@@ -463,7 +470,7 @@ public class LaunchVariableUtil {
 			while (line != null) {
 				int separator= line.indexOf('=');
 				if (separator > 0) {
-					String key= line.substring(0, separator);
+					String key= line.substring(0, separator).toLowerCase();
 					String value= line.substring(separator + 1);
 					env.put(key, value);
 				}
@@ -471,7 +478,8 @@ public class LaunchVariableUtil {
 			}
 			reader.close();
 		} catch (IOException e) {
-			DebugPlugin.log(e);
+			// Native environment-fetching code failed.
+			// This can easily happen and is not useful to log.
 		}
 		return env;
 	}
