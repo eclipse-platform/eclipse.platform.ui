@@ -169,6 +169,8 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							    fView.updateViewerBackground();
 							}
 							fView.updateObjects();
+							// Fire a selection change to update contributed actions
+							viewer.setSelection(viewer.getSelection());
 							return;
 						}
 						List groupsToUpdate= new ArrayList();
