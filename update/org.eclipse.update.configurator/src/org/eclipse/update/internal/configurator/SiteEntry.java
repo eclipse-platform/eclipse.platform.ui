@@ -236,12 +236,13 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (pluginsDir.exists()) {
 			File[] files = pluginsDir.listFiles();
 			for (int i = 0; i < files.length; i++) {
+				long dirTimestamp = files[i].lastModified();
 				File pluginFile = new File(files[i], META_MANIFEST_MF);
 				try {
 					// First, check if has valid bundle manifest				
 					BundleManifest bundleManifest = new BundleManifest(pluginFile);
 					if(bundleManifest.exists()){
-						if (pluginFile.lastModified() <= pluginsChangeStamp)
+						if (dirTimestamp <= pluginsChangeStamp && pluginFile.lastModified() <= pluginsChangeStamp)
 							continue;
 						PluginEntry entry=bundleManifest.getPluginEntry();
 						addPluginEntry(entry);
@@ -259,7 +260,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 							// the apparently modifed plugin may actually be configured already.
 							// We will need to double check for this. END to do.
 							
-							if (pluginFile.lastModified() <= pluginsChangeStamp)
+							if (dirTimestamp <= pluginsChangeStamp && pluginFile.lastModified() <= pluginsChangeStamp)
 								continue;
 							PluginEntry entry =	pluginParser.parse(pluginFile);
 							addPluginEntry(entry);
@@ -523,8 +524,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			PluginEntry plugin = (PluginEntry)pluginEntries.get(i);
 			// Note: in the future, we can check for absolute url as well.
 			//       For now, feature url is plugins/org.eclipse.foo/plugin.xml
-			File pluginXML = new File(root, plugin.getURL());
-			if (!pluginXML.exists())
+			File pluginLocation = new File(root, plugin.getURL());
+			if (!pluginLocation.exists())
 				deletedPlugins.add(plugin);
 		}
 		for(Iterator it=deletedPlugins.iterator(); it.hasNext();){

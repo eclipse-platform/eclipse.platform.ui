@@ -1270,6 +1270,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			if (siteTimestamp > lastChange)
 				sites[s].loadFromDisk(lastChange);
 		}
+		config.setDirty(true);
 	}
 	
 	public Configuration getConfiguration() {
