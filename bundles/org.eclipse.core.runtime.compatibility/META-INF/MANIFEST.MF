@@ -16,7 +16,8 @@ Import-Package:
  org.eclipse.update.configurator,
  org.eclipse.osgi.service.environment,
  org.osgi.service.startlevel,
- org.osgi.util.tracker
+ org.osgi.util.tracker,
+ org.eclipse.osgi.util
 Provide-Package: 
  org.eclipse.core.boot,
  org.eclipse.core.internal.boot,

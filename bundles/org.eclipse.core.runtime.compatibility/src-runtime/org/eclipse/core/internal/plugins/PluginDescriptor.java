@@ -16,8 +16,6 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.BundleModel;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
@@ -25,6 +23,7 @@ import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
 
 public class PluginDescriptor implements IPluginDescriptor {
@@ -321,27 +320,54 @@ public class PluginDescriptor implements IPluginDescriptor {
 		if (!isLegacy())
 			return new IPluginPrerequisite[0];
 
-		ArrayList resolvedPrerequisites = null;
-		// TODO Who calls this?  It does not do the right thing as it is so perhaps it is not used?
 		String prereqs = (String) bundleOsgi.getHeaders().get(Constants.REQUIRE_BUNDLE);
 		if (prereqs == null)
 			return new IPluginPrerequisite[0];
 
-		StringTokenizer tokens = new StringTokenizer(prereqs, ",");
-		resolvedPrerequisites = new ArrayList(tokens.countTokens());
-		while (tokens.hasMoreElements()) {
-			String prereqId = tokens.nextToken().trim();
-			if (prereqId.equalsIgnoreCase(Platform.PI_RUNTIME) || prereqId.equalsIgnoreCase(BootLoader.PI_BOOT))
-				continue;
-			Bundle prereqBundle = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundleContext().getBundle(prereqId);
-			if (prereqBundle != null)
-				resolvedPrerequisites.add(new PluginPrerequisite(prereqBundle));
-			else if (BootLoader.inDebugMode())
-				System.out.println("Plugin " + this.getId() + " has unknown prerequisite: " + prereqId);
+		ManifestElement[] elements;
+		Set allRequired = new HashSet();
+		try {
+			elements = ManifestElement.parseBasicCommaSeparation(Constants.REQUIRE_BUNDLE, prereqs);
+			for (int i = 0; i < elements.length; i++) {
+				allRequired.add(elements[i].getValue());
+				allRequired.addAll(collectRequired(elements[i].getValue()));
+			}
+		} catch (BundleException e) {
+			return new IPluginPrerequisite[0];
 		}
-		return (IPluginPrerequisite[]) resolvedPrerequisites.toArray(new IPluginPrerequisite[resolvedPrerequisites.size()]);
+
+		IPluginPrerequisite[] resolvedPrerequisites = new IPluginPrerequisite[allRequired.size()];
+		int i = 0;
+		for (Iterator iter = allRequired.iterator(); iter.hasNext();) {
+			String element = (String) iter.next();
+			resolvedPrerequisites[i++] = new PluginPrerequisite(InternalPlatform.getDefault().getBundle(element));
+		}
+		
+		return resolvedPrerequisites;
 	}
 
+	//Recusively collect the required bundles of a given bundles
+	private Set collectRequired(String requiredId) {
+		String requiredBundle = (String) InternalPlatform.getDefault().getBundle(requiredId).getHeaders().get(Constants.REQUIRE_BUNDLE);
+		ManifestElement[] entries;
+		Set recursiveRequired = new HashSet(3);
+		try {
+			entries = ManifestElement.parseBasicCommaSeparation(Constants.REQUIRE_BUNDLE, requiredBundle);
+			if (entries == null)
+				return recursiveRequired;
+			
+			for (int i = 0; i < entries.length; i++) {
+				String reexport = (String) entries[i].getAttribute(Constants.PROVIDE_PACKAGES_ATTRIBUTE);
+				if ("true".equalsIgnoreCase(reexport)) {
+					recursiveRequired.add(entries[i].getValue());
+					recursiveRequired.addAll(collectRequired(entries[i].getValue()));
+				}
+			}
+		} catch (BundleException e) {
+			return recursiveRequired;
+		}
+		return recursiveRequired;
+	}
 	/**
 	 * Returns true if the plugin is active or is currently in the process of being 
 	 * activated, and false otherwse.
