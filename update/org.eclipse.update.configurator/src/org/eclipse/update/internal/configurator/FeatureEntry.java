@@ -179,7 +179,9 @@ public class FeatureEntry
 	 * @see org.eclipse.core.runtime.IBundleGroup#getName()
 	 */
 	public String getName() {
-		return id + "_" + version;
+		if (branding == null)
+			branding = AboutInfo.readFeatureInfo(id, version, getFeaturePluginIdentifier());
+		return branding.getProductName();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroup#getProperty(java.lang.String)
@@ -228,8 +230,9 @@ public class FeatureEntry
 	 * @see org.eclipse.core.runtime.IBundleGroup#getProviderName()
 	 */
 	public String getProviderName() {
-		// TODO Auto-generated method stub
-		return null;
+		if (branding == null)
+			branding = AboutInfo.readFeatureInfo(id, version, getFeaturePluginIdentifier());
+		return branding.getProviderName();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroup#getVersion()
