@@ -225,7 +225,6 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 						syncSets.clear();
 					}
 					for (int i = 0; i < updates.length; i++) {
-						SyncInfoSet set = updates[i];
 						calculateRoots(updates[i], monitor);
 					}
 					refreshViewer();
@@ -458,12 +457,12 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		ISynchronizeModelElement element;	
 		// If the element has a comment then group with common comment
 		if(remoteResource != null && logEntry != null && isInterestingChange(info)) {
-			ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) getChangeLogDiffNodeFor(logEntry);
+			ChangeLogDiffNode changeRoot = getChangeLogDiffNodeFor(logEntry);
 			if (changeRoot == null) {
 				changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
 				addToViewer(changeRoot);
 			}
-			if(info instanceof CVSSyncInfo && ! logEntry.isDeletion()) {
+			if(requiresCustomSyncInfo(info, remoteResource, logEntry)) {
 				info = new CVSUpdatableSyncInfo(info.getKind(), info.getLocal(), info.getBase(), (RemoteResource)logEntry.getRemoteFile(), ((CVSSyncInfo)info).getSubscriber());
 				try {
 					info.init();
@@ -480,6 +479,16 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		addToViewer(element);
 	}
 	
+	private boolean requiresCustomSyncInfo(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
+		// Only interested in non-deletions
+		if (logEntry.isDeletion() || !(info instanceof CVSSyncInfo)) return false;
+		// Only require a custom sync info if the remote of the sync info
+		// differs from the remote in the log entry
+		IResourceVariant remote = info.getRemote();
+		if (remote == null) return true;
+		return !remote.equals(remoteResource);
+	}
+
 	/*
 	 * Find an existing comment set
 	 * TODO: we could do better than a linear lookup?
