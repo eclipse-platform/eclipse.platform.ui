@@ -47,7 +47,7 @@ public class UIDialogs extends TestCase {
 		return WorkbenchPlugin.getDefault().getWorkbench();
 	}
 	public void testAbout() {
-		Dialog dialog = new AboutDialog( getShell() );
+		Dialog dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow());
 		DialogCheck.assertDialog(dialog, this);
 	}
 	public void testAddProjects() {

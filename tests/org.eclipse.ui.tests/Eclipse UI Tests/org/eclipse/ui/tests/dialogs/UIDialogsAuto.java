@@ -49,7 +49,7 @@ public class UIDialogsAuto extends TestCase {
 	}
 
 	public void testAbout() {
-		Dialog dialog = new AboutDialog( getShell() );
+		Dialog dialog = new AboutDialog(getWorkbench().getActiveWorkbenchWindow());
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testAddProjects() {
