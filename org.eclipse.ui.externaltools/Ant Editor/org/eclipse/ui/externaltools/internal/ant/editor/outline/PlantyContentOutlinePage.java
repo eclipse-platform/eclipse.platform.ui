@@ -41,7 +41,9 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -62,6 +64,8 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -70,7 +74,7 @@ import org.xml.sax.SAXParseException;
 /**
  * Content outline page for planty.
  */
-public class PlantyContentOutlinePage extends ContentOutlinePage {
+public class PlantyContentOutlinePage extends ContentOutlinePage implements IShowInSource {
 	
 	private IFile file;
 	private Menu menu;
@@ -643,5 +647,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		for (int i = 0; i < children.length; i++) {
 			updateColor(children[i]);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
+	 */
+	public ShowInContext getShowInContext() {
+		ISelection selection= new StructuredSelection(file);
+		return new ShowInContext(null, selection);
 	}
 }
