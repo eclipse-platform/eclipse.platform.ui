@@ -328,6 +328,7 @@ public void testIsUNC() {
 	assertTrue("5.0", new Path("//").isUNC());
 	assertTrue("5.1", new Path("//a").isUNC());
 	assertTrue("5.2", new Path("//a/b").isUNC());
+	assertTrue("5.3", new Path("\\\\ThisMachine\\HOME\\foo.jar").isUNC());
 	
 	assertTrue("6.0", new Path("c://a/").setDevice(null).isUNC());
 	assertTrue("6.1", new Path("c:\\/a/b").setDevice(null).isUNC());
