@@ -11,6 +11,8 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import java.util.Locale;
+
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
@@ -88,7 +90,11 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
 		new Label(getFieldEditorParent(), SWT.NONE);
 		
-		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent())); //$NON-NLS-1$
+		String osname= System.getProperty("os.name").toLowerCase(Locale.US); //$NON-NLS-1$
+		if (osname.indexOf("mac") == -1) { //$NON-NLS-1$
+			//the mac does not have a tools.jar Bug 40778
+			addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent())); //$NON-NLS-1$
+		}
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntPreferencePage.11"), getFieldEditorParent())); //$NON-NLS-1$
 		new Label(getFieldEditorParent(), SWT.NONE);
 				
