@@ -7,25 +7,21 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tests.runtime.locks;
+package org.eclipse.core.tests.runtime.jobs;
 
-import junit.framework.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
- * Runs all job tests
+ * A scheduling rule that always conflicts with an identical instance, but not with any
+ * other rules.
  */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
+public class IdentityRule implements ISchedulingRule {
+	private static int nextRule = 0;
+	private final int ruleNumber = nextRule++;
+	public boolean isConflicting(ISchedulingRule rule) {
+		return rule == this;
 	}
-	public AllTests(String name) {
-		super(name);
-	}
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTestSuite(IJobManagerTest.class);
-		suite.addTestSuite(JobQueueTest.class);
-		suite.addTestSuite(OrderedLockTest.class);
-		return suite;
+	public String toString() {
+		return "IdentityRule(" + ruleNumber + ")";
 	}
 }

@@ -7,7 +7,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tests.runtime.locks;
+package org.eclipse.core.tests.runtime.jobs;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,6 +21,7 @@ class TestJob extends Job {
 	private String name;
 	private int ticks;
 	private int tickLength;
+	private int runCount = 0;
 	public TestJob(String name) {
 		this(name, 10, 100);
 	}
@@ -29,8 +30,14 @@ class TestJob extends Job {
 		this.ticks = ticks;
 		this.tickLength = tickLength;
 	}
-	
+	/**
+	 * Returns the number of times this job instance has been run.
+	 */
+	public int getRunCount() {
+		return runCount;
+	}
 	public IStatus run(IProgressMonitor monitor) {
+		runCount++;
 		//must have positive work
 		monitor.beginTask(name, ticks <= 0 ? 1 : ticks);
 		try {

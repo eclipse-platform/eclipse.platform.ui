@@ -1,4 +1,4 @@
-package org.eclipse.core.tests.runtime.locks;
+package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.Random;
 

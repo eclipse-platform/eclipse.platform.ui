@@ -7,7 +7,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tests.runtime.locks;
+package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
 
@@ -124,12 +124,15 @@ private void sleep(long duration) {
 		int[] sleepTimes = new int[] {0, 10, 50, 100, 500, 1000, 2000, 2500};
 		for (int i = 0; i < sleepTimes.length; i++) {
 			long start = System.currentTimeMillis();
-			new TestJob("Noop", 0, 0).schedule(sleepTimes[i]);
+			TestJob job = new TestJob("Noop", 0, 0);
+			assertEquals("1.0", 0, job.getRunCount());
+			job.schedule(sleepTimes[i]);
 			waitForCompletion();
+			assertEquals("1.1", 1, job.getRunCount());
 			long duration = System.currentTimeMillis() - start;
-			assertTrue("1.0: duration: " + duration + " sleep: " + sleepTimes[i], duration >= sleepTimes[i]);
+			assertTrue("1.2: duration: " + duration + " sleep: " + sleepTimes[i], duration >= sleepTimes[i]);
 			//a no-op job shouldn't take any real time
-			assertTrue("1.1: duration: " + duration + " sleep: " + sleepTimes[i], duration < sleepTimes[i] + 1000);
+			assertTrue("1.3: duration: " + duration + " sleep: " + sleepTimes[i], duration < sleepTimes[i] + 1000);
 		}
 	}
 	public void testSimple() {

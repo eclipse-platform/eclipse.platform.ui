@@ -7,7 +7,7 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.core.tests.runtime.locks;
+package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.InternalJob;
