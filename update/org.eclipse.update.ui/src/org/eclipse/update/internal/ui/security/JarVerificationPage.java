@@ -94,14 +94,22 @@ public class JarVerificationPage extends BannerPage {
 		labelInformation.setLayoutData(
 			new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 
-		StringBuffer strb = new StringBuffer();
+        String actionMsg = null;
+        if (_VerificationResult.isFeatureVerification()) {
+            actionMsg = UpdateUI.getString("JarVerificationDialog.MayChooseToInstall"); //$NON-NLS-1$
+        } else {
+            actionMsg = UpdateUI.getString("JarVerificationDialog.MayChooseToContinue"); //$NON-NLS-1$                   
+        }
+        
+        StringBuffer strb = new StringBuffer();
 		switch (_VerificationResult.getVerificationCode()) {
 
 			case IVerificationResult.TYPE_ENTRY_NOT_SIGNED :
 				String msg =
 					UpdateUI.getString(
 						"JarVerificationDialog.AboutToInstall"+ //$NON-NLS-1$
-						componentVerified);
+						componentVerified) +
+                        "\r\n" + actionMsg; //$NON-NLS-1$
 				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUI.getString(
@@ -112,6 +120,7 @@ public class JarVerificationPage extends BannerPage {
 					UpdateUI.getString(
 						"JarVerificationDialog.CannotVerifyProvider"+ //$NON-NLS-1$
 						componentVerified));
+                
 /*				strb.append("\r\n"); //$NON-NLS-1$
 				if (_VerificationResult.isFeatureVerification()) {
 					strb.append(
@@ -140,7 +149,9 @@ public class JarVerificationPage extends BannerPage {
 				msg =
 					UpdateUI.getString(
 						"JarVerificationDialog.SignedComponent"+ //$NON-NLS-1$
-						componentVerified);
+						componentVerified) +
+                        "\r\n" + actionMsg; //$NON-NLS-1$
+                
 				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUI.getString(
@@ -167,7 +178,8 @@ public class JarVerificationPage extends BannerPage {
 				msg =
 					UpdateUI.getString(
 						"JarVerificationDialog.SignedComponent"+ //$NON-NLS-1$
-						componentVerified);
+						componentVerified) +
+                        "\r\n" + actionMsg; //$NON-NLS-1$
 				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUI.getString(
