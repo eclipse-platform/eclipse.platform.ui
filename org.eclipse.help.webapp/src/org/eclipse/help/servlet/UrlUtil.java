@@ -16,7 +16,17 @@ public class UrlUtil {
 	private static final String escapedXML[] =
 		{ "&amp;", "&gt;", "&lt;", "&quot;" };
 
-
+	/**
+	 * Encodes string of characters for inclusion in URIs.
+	 * It performs:
+	 * Convert the character string into a sequence of bytes using the UTF-8 encoding 
+	 * Convert each byte to %HH, where HH is the hexadecimal value of the byte.<br>
+	 * This method is compatible with w3.org URL encoding, and similar to 
+	 * java.net.URLEncoder.encode(String, String) in jdk1.4.
+	 * It is intended to be used when jdk1.4 cannot used,
+	 * because java.net.URLEncoder.encode(String) available in earlier jdk
+	 * uses current Locale for converting String to bytes instead of performing UTF-8 converstion.
+	 */
 	public static String encode(String s) {
 		try {
 			return urlEncode(s.getBytes("UTF8"));
@@ -24,6 +34,11 @@ public class UrlUtil {
 			return null;
 		}
 	}
+	/**
+	 * Decodes String from URI and converts resulting bytes to String
+	 * using UTF-8 encoding.
+	 * This method is reverse operation to urlEncode(String).
+	 */
 	public static String decode(String s) {
 		try {
 			return new String(urlDecode(s), "UTF8");
@@ -31,6 +46,10 @@ public class UrlUtil {
 			return null;
 		}
 	}
+	/**
+	 * Converts each byte to %HH, where HH is the hexadecimal value of the byte.
+	 * This method is appropriate for URI encoding as per RFC 2396.
+	 */
 	private static String urlEncode(byte[] data) {
 		StringBuffer buf = new StringBuffer(data.length);
 		for (int i = 0; i < data.length; i++) {
@@ -40,6 +59,9 @@ public class UrlUtil {
 		}
 		return buf.toString();
 	}
+	/**
+	 * Decodes URI string encoded by urlEncode(byte[]).
+	 */
 	private static byte[] urlDecode(String encodedURL) {
 		int len = encodedURL.length();
 		ByteArrayOutputStream os = new ByteArrayOutputStream(len);
@@ -180,8 +202,12 @@ public class UrlUtil {
 	}
 	/**
 	 * Changes encoding of parameter in the URL query
-	 * from JavaScript 1.3 escape encoding
-	 * to UTF-8 URL encoding
+	 * from JavaScript 1.3 escape encoding to UTF-8 URL encoding,
+	 * and changes parameter parameter key name
+	 * @param query url query in the format key1=value1&key2=value2...
+	 * @param jsParameterName key name of a parameter encoded in JS1.3
+	 * @param newParameterName the new key that will be used for the paramter
+	 * when its encoding is tranformed to UTF-8 encoding
 	 */
 	public static String changeParameterEncoding(
 		String query,
