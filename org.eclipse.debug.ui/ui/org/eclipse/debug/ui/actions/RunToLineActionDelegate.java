@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -118,8 +119,8 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 		this.action = action; 
 		if (action != null) {
 			action.setText(ActionMessages.getString("RunToLineActionDelegate.4")); //$NON-NLS-1$
-			action.setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_LCL_RUN_TO_LINE));
-			action.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_DLCL_RUN_TO_LINE));
+			action.setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_RUN_TO_LINE));
+			action.setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RUN_TO_LINE));
 		}
 	}
 	/* (non-Javadoc)

@@ -17,8 +17,8 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.sourcelookup.*;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -71,7 +71,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		
 		getShell().setText(SourceLookupUIMessages.getString("addSourceLocation.title")); //$NON-NLS-1$
 		setTitle(SourceLookupUIMessages.getString("addSourceLocation.description")); //$NON-NLS-1$
-		setTitleImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ADD_SRC_LOC_WIZ));
+		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_LOC_WIZ));
 		
 		Composite parent = new Composite(ancestor, SWT.NULL);
 		GridData gd= new GridData(GridData.FILL_BOTH);

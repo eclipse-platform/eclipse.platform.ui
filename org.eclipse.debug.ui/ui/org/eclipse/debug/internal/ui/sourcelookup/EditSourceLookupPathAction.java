@@ -15,10 +15,10 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.sourcelookup.*;
+import org.eclipse.debug.ui.sourcelookup.SourceLookupDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
@@ -40,7 +40,7 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 		super(SourceLookupUIMessages.getString("EditSourceLookupPathAction.0")); //$NON-NLS-1$
 		setEnabled(false);
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_SOURCELOOKUP_ACTION);
-		setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_SRC_LOOKUP_MENU));
+		setImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_SRC_LOOKUP_MENU));
 		fView = view;
 	}
 	

@@ -13,9 +13,9 @@ package org.eclipse.debug.ui.sourcelookup;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupPanel;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -62,7 +62,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		// create a composite with standard margins and spacing
 		setTitle(SourceLookupUIMessages.getString("manageSourceDialog.description")); //$NON-NLS-1$
-		setTitleImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ));
+		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ));
 		Composite composite = new Composite(parent, SWT.NONE);
 		
 		GridLayout layout = new GridLayout();

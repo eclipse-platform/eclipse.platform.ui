@@ -38,6 +38,8 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_LCL_COLLAPSE_ALL = "IMG_LCL_COLLAPSE_ALL"; //$NON-NLS-1$
 	public static final String IMG_LCL_TERMINATE = "IMG_LCL_TERMINATE"; //$NON-NLS-1$
 	public static final String IMG_LCL_SHOW_LOGICAL_STRUCTURE = "IMG_LCL_SHOW_LOGICAL_STRUCTURE"; //$NON-NLS-1$
+	public static final String IMG_LCL_RUN_TO_LINE= "IMG_LCL_RUN_TO_LINE"; //$NON-NLS-1$
+	public static final String IMG_SRC_LOOKUP_MENU = "IMG_SRC_LOOKUP_MENU"; //$NON-NLS-1$
 	
 	// disabled local tool images
 	public static final String IMG_DLCL_LOCK= "IMG_DLCL_LOCK"; //$NON-NLS-1$
@@ -51,6 +53,8 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_COLLAPSE_ALL = "IMG_DLCL_COLLAPSE_ALL"; //$NON-NLS-1$
 	public static final String IMG_DLCL_TERMINATE = "IMG_DLCL_TERMINATE"; //$NON-NLS-1$
 	public static final String IMG_DLCL_REMOVE_ALL = "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
+	public static final String IMG_DLCL_RUN_TO_LINE= "IMG_DLCL_RUN_TO_LINE"; //$NON-NLS-1$
+	public static final String IMG_SRC_LOOKUP_MENU_DLCL = "IMG_SRC_LOOKUP_MENU_DISABLED"; //$NON-NLS-1$
 	
 	// enabled local tool images	
 	public static final String IMG_ELCL_LOCK= "IMG_ELCL_LOCK"; //$NON-NLS-1$
@@ -63,6 +67,7 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_DETAIL_PANE_HIDE= "IMG_ELCL_DETAIL_PANE_HIDE"; //$NON-NLS-1$
 	public static final String IMG_ELCL_COLLAPSE_ALL = "IMG_ELCL_COLLAPSE_ALL"; //$NON-NLS-1$
 	public static final String IMG_ELCL_TERMINATE = "IMG_ELCL_TERMINATE"; //$NON-NLS-1$
+	public static final String IMG_SRC_LOOKUP_MENU_ELCL = "IMG_SRC_LOOKUP_MENU_ENABLED"; //$NON-NLS-1$
 	
 	// object images
 	public static final String IMG_OBJS_INSTRUCTION_POINTER_TOP = "IMG_OBJS_INSTRUCTION_POINTER_TOP"; //$NON-NLS-1$
@@ -71,6 +76,9 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PERSPECTIVE_TAB = "IMG_OBJS_PERSPECTIVE_TAB"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ARRAY_PARTITION = "IMG_OBJS_ARRAY_PARTITION"; //$NON-NLS-1$
+	public static final String IMG_SRC_LOOKUP_TAB = "IMG_SRC_LOOKUP_TAB"; //$NON-NLS-1$
+	public static final String IMG_ADD_SRC_LOC_WIZ = "IMG_ADD_SRC_LOCATION"; //$NON-NLS-1$
+	public static final String IMG_EDIT_SRC_LOC_WIZ = "IMG_EDIT_SRC_LOCATION"; //$NON-NLS-1$
 	
 	// internal preferenes
 	/**

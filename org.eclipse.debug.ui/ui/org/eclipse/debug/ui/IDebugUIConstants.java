@@ -324,19 +324,7 @@ public interface IDebugUIConstants {
 	 * Content assist action image identifier.
 	 */
 	public static final String IMG_LCL_CONTENT_ASSIST= "IMG_LCL_CONTENT_ASSIST"; //$NON-NLS-1$
-	
-	/**
-	 * Run to line action image identifier.
-	 * @since 3.0
-	 */
-	public static final String IMG_LCL_RUN_TO_LINE= "IMG_LCL_RUN_TO_LINE"; //$NON-NLS-1$
-
-	/**
-	 * Run to line action image identifier (disabled).
-	 * @since 3.0
-	 */
-	public static final String IMG_DLCL_RUN_TO_LINE= "IMG_DLCL_RUN_TO_LINE"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Content assist action image identifier (enabled).
 	 */
@@ -420,32 +408,7 @@ public interface IDebugUIConstants {
 	
 	/** Terminated system process image identifier. */
 	public static final String IMG_OBJS_OS_PROCESS_TERMINATED= "IMG_OBJS_OS_PROCESS_TERMINATED"; //$NON-NLS-1$
-
-	/** Edit source lookup action icon.
-	 * @since 3.0
-	 */
-	public static final String IMG_SRC_LOOKUP_MENU = "IMG_SRC_LOOKUP_MENU"; //$NON-NLS-1$
-	/** Disabled edit source lookup action icon.
-	 * @since 3.0
-	 */
-	public static final String IMG_SRC_LOOKUP_MENU_DLCL = "IMG_SRC_LOOKUP_MENU_DISABLED"; //$NON-NLS-1$
-	/** Enabled edit source lookup action icon.
-	 * @since 3.0
-	 */
-	public static final String IMG_SRC_LOOKUP_MENU_ELCL = "IMG_SRC_LOOKUP_MENU_ENABLED"; //$NON-NLS-1$
-	/** Source lookup launch configuration tab icon.
-	 * @since 3.0
-	 */
-	public static final String IMG_SRC_LOOKUP_TAB = "IMG_SRC_LOOKUP_TAB"; //$NON-NLS-1$
-	/** Add source lookup dialog banner icon.
-	 * @since 3.0
-	 */
-	public static final String IMG_ADD_SRC_LOC_WIZ = "IMG_ADD_SRC_LOCATION"; //$NON-NLS-1$
-	/** Edit source lookup dialog banner icon.
-	 * @since 3.0
-	 */
-	public static final String IMG_EDIT_SRC_LOC_WIZ = "IMG_EDIT_SRC_LOCATION"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Expression image identifier.
 	 * 
@@ -729,16 +692,7 @@ public interface IDebugUIConstants {
 	 * Status indicating an invalid extension definition.
 	 */
 	public static final int STATUS_INVALID_EXTENSION_DEFINITION = 100;
-	
-	/**
-	 * Status code for a status handler that invokes a delegate
-	 * status handler asyncronously in the UI thread, and blocks
-	 * until the delegate status handler returns.
-	 * 
-	 * @since 3.0
-	 */
-	public static final int STATUS_HANDLER_PROMPT = 200;
-	
+		
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
