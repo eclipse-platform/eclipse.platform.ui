@@ -35,20 +35,21 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Constants related to build requests
 	 *====================================================================*/
 	
-	/** Build kind constant indicating an incremental build request.
+	/** Build kind constant (value 10) indicating an incremental build request.
 	 * @see IProject#build
 	 */
 	public static final int INCREMENTAL_BUILD = 10;
 	
-	/** Build kind constant indicating a full build request.
+	/** Build kind constant (value 6) indicating a full build request.
 	 * @see IProject#build
 	 */
 	public static final int FULL_BUILD = 6;
 	
-	/** Build kind constant indicating an automatic build request.
+	/** Build kind constant (value 9) indicating an automatic build request.
 	 * @see IProject#build
 	 */
 	public static final int AUTO_BUILD = 9;
+	
 /**
  * Runs this builder on the given changes in the specified manner.
  * Subclasses should implement this method to do the processing 
