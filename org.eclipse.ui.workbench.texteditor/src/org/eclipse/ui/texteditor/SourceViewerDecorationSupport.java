@@ -123,10 +123,10 @@ public class SourceViewerDecorationSupport {
 				
 				Point left= textWidget.getLocationAtOffset(offset);
 				int x1= left.x;
-				int y1= left.y + 1;
+				int y1= left.y;
 				
 				gc.setForeground(color);
-				gc.drawLine(x1, y1, x1, left.y + textWidget.getLineHeight() - 2);
+				gc.drawLine(x1, y1, x1, left.y + textWidget.getLineHeight() - 1);
 									
 			} else {
 //				textWidget.redrawRange(offset, length, true);
