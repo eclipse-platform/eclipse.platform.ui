@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -75,8 +73,11 @@ import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 /**
  * IDE-specified workbench advisor which configures the workbench for use as
@@ -632,14 +633,22 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                 if (info != null && info.getWelcomePageURL() != null) {
                     welcomeFeatures.add(info);
                     // activate the feature plug-in so it can run some install code
-                    IPlatformConfiguration platformConfiguration = BootLoader
+                    IPlatformConfiguration platformConfiguration = ConfiguratorUtils
                             .getCurrentPlatformConfiguration();
                     IPlatformConfiguration.IFeatureEntry feature = platformConfiguration
                             .findConfiguredFeatureEntry(featureId);
                     if (feature != null) {
                         String pi = feature.getFeaturePluginIdentifier();
                         if (pi != null) {
-                            Platform.getPlugin(pi);
+                        	//Start the bundle if there is one
+                        	Bundle bundle = Platform.getBundle(pi);
+                        	if(bundle != null)
+                        		try{
+                        			bundle.start();
+                        		}
+                            	catch(BundleException exception){
+                            		IDEWorkbenchPlugin.log("Failed to load feature", exception);//$NON-NLS-1$
+                            	}
                         }
                     }
                 }

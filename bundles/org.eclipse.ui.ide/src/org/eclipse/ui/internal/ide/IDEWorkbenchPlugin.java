@@ -87,16 +87,14 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
      */
     private CapabilityRegistry capabilityRegistry;
 
-    /**
-     * Create an instance of the IDEWorkbenchPlugin.
-     * The workbench plugin is effectively the "application" for the workbench UI.
-     * The entire UI operates as a good plugin citizen.
-     */
-    public IDEWorkbenchPlugin(IPluginDescriptor descriptor) {
-        super(descriptor);
-        inst = this;
-    }
-
+   
+	/**
+	 * Create an instance of the receiver.
+	 */
+	public IDEWorkbenchPlugin() {
+		super();
+		inst = this;
+	}
     /**
      * Creates an extension.  If the extension plugin has not
      * been loaded a busy cursor will be activated during the duration of
