@@ -250,7 +250,8 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
 		appearanceComposite.setFont(font);
-		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		GridLayout layout= new GridLayout(); 
+		layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
 		String labelText= AntPreferencesMessages.getString("AntEditorPreferencePage.printMarginColumn"); //$NON-NLS-1$
