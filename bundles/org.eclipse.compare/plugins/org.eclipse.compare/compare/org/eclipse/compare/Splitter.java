@@ -84,12 +84,6 @@ public class Splitter extends SashForm {
 				sp.setVisible(this, visible);
 				sp.layout();
 			}
-			// temporary; will go away after deprecated internal.Splitter has been removed
-			if (parent instanceof org.eclipse.compare.internal.Splitter) {
-				org.eclipse.compare.internal.Splitter sp= (org.eclipse.compare.internal.Splitter) parent;
-				sp.setVisible(this, visible);
-				sp.layout();
-			}
 		} else {
 			layout();
 		}
@@ -109,9 +103,6 @@ public class Splitter extends SashForm {
 		Composite parent= getParent();
 		if (parent instanceof Splitter)
 			((Splitter) parent).setMaximizedControl(this);
-		// temporary; will go away after internal.Splitter has been removed
-		else if (parent instanceof org.eclipse.compare.internal.Splitter)
-			((org.eclipse.compare.internal.Splitter) parent).setMaximizedControl(this);
 		else
 			layout(true);
 	}

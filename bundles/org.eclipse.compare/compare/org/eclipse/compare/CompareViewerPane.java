@@ -69,9 +69,6 @@ public class CompareViewerPane extends ViewForm {
 				Control parent= getParent();
 				if (parent instanceof Splitter)
 					((Splitter)parent).setMaximizedControl(CompareViewerPane.this);
-				// temporary; will go away after internal.Splitter has been removed
-				else if (parent instanceof org.eclipse.compare.internal.Splitter)
-					((org.eclipse.compare.internal.Splitter)parent).setMaximizedControl(CompareViewerPane.this);
 			}
 		};	
 				
