@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.core.internal.plugins;
 
 import org.eclipse.core.runtime.*;

@@ -154,7 +154,7 @@ import org.osgi.framework.*;
  * </pre>
  * </p>
  */
-public abstract class Plugin  {
+public abstract class Plugin {
 	private PluginActivator activator;
 	private Bundle bundle;
 	/**
@@ -209,17 +209,17 @@ public abstract class Plugin  {
 	 */
 	public Plugin(IPluginDescriptor descriptor) {
 		Assert.isNotNull(descriptor);
-		activator = ((PluginDescriptor)descriptor).getActivator();
+		activator = ((PluginDescriptor) descriptor).getActivator();
 		Assert.isTrue(!descriptor.isPluginActivated(), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.descriptor = descriptor;
 		String key = descriptor.getUniqueIdentifier() + "/debug"; //$NON-NLS-1$
 		String value = InternalPlatform.getDefault().getOption(key);
 		this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
-		
+
 		// on plugin start, find and start the corresponding bundle.
 		bundle = InternalPlatform.getDefault().getBundleContext().getBundle(descriptor.getUniqueIdentifier());
 		try {
-			if ((bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING))  == 0)
+			if ((bundle.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) == 0)
 				bundle.start();
 		} catch (BundleException e) {
 			// TODO do nothing for now
@@ -260,10 +260,7 @@ public abstract class Plugin  {
 			// strip off the jar separator at the end of the url then do a recursive call
 			// to interpret the sub URL.
 			String file = target.getFile();
-			file =
-				file.substring(
-					0,
-					file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
+			file = file.substring(0, file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
 			try {
 				return getFileFromURL(new URL(file));
 			} catch (MalformedURLException e) {
@@ -377,7 +374,7 @@ public abstract class Plugin  {
 	private void loadPluginPreferences() {
 		// the preferences file is located in the plug-in's state area at a well-known name
 		// don't need to create the directory if there are no preferences to load
-		File prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(getDescriptor().getUniqueIdentifier(), false).toFile();		
+		File prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(getDescriptor().getUniqueIdentifier(), false).toFile();
 		if (!prefFile.exists()) {
 			// no preference file - that's fine
 			if (InternalPlatform.DEBUG_PREFERENCES) {
@@ -427,7 +424,7 @@ public abstract class Plugin  {
 			}
 		}
 	}
-	
+
 	/**
 	 * Saves preferences settings for this plug-in. Does nothing if the preference
 	 * store does not need saving.
@@ -448,7 +445,7 @@ public abstract class Plugin  {
 		// preferences need to be saved
 		// the preferences file is located in the plug-in's state area
 		// at a well-known name (pref_store.ini)
-		File prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(descriptor.getUniqueIdentifier(), true).toFile();			
+		File prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(descriptor.getUniqueIdentifier(), true).toFile();
 		if (preferences.propertyNames().length == 0) {
 			// there are no preference settings
 			// rather than write an empty file, just delete any existing file
@@ -536,9 +533,7 @@ public abstract class Plugin  {
 
 		IPluginDescriptor pluginDescriptor = getDescriptor();
 		// use URLs so we can find the file in fragments too
-		URL baseURL =
-			pluginDescriptor.find(
-				new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
+		URL baseURL = pluginDescriptor.find(new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
 
 		if (baseURL == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES) {
@@ -547,10 +542,9 @@ public abstract class Plugin  {
 			baseURL = pluginDescriptor.find(new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME_BACKUP));
 			if (baseURL == null)
 				// No backup file has ben found, but we do not log 
-				return;	
+				return;
 		}
-		
-		
+
 		if (InternalPlatform.DEBUG_PREFERENCES) {
 			System.out.println("Loading preferences from " + baseURL); //$NON-NLS-1$
 		}
@@ -586,8 +580,7 @@ public abstract class Plugin  {
 		// exists).
 		Properties props = null;
 		if (!overrides.isEmpty()) {
-			props =
-				InternalPlatform.getDefault().getPreferenceTranslator(pluginDescriptor.getUniqueIdentifier(), PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
+			props = InternalPlatform.getDefault().getPreferenceTranslator(pluginDescriptor.getUniqueIdentifier(), PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
 		}
 
 		for (Iterator it = overrides.entrySet().iterator(); it.hasNext();) {
@@ -650,16 +643,15 @@ public abstract class Plugin  {
 	 *   as specified
 	 * @return an input stream
 	 */
-	public final InputStream openStream(IPath file, boolean localized)
-		throws IOException {
+	public final InputStream openStream(IPath file, boolean localized) throws IOException {
 		URL target = new URL(getDescriptor().getInstallURL() + file.toString());
 		return target.openStream();
 	}
-	
+
 	PluginActivator getPluginActivator() {
 		return activator;
 	}
-	
+
 	public void setPluginActivator(PluginActivator value) {
 		activator = value;
 	}
@@ -750,7 +742,7 @@ public abstract class Plugin  {
 	public String toString() {
 		return descriptor.toString();
 	}
-	
+
 	public Bundle getBundle() {
 		return bundle;
 	}
@@ -759,7 +751,7 @@ public abstract class Plugin  {
 	 */
 	//TODO: this should be protected
 	public BundleContext getContext() {
-		PluginActivator activator = this.activator; 
+		PluginActivator activator = this.activator;
 		return activator == null ? null : activator.getBundleContext();
 	}
 }

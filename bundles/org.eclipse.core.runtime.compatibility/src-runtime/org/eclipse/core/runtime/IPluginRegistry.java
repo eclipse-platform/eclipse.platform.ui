@@ -110,7 +110,7 @@ public interface IPluginRegistry {
 	 * @return the extension point, or <code>null</code>
 	 */
 	public IExtensionPoint getExtensionPoint(String pluginId, String extensionPointName);
-		
+
 	/**
 	 * Returns all extension points known to this plug-in registry.
 	 * Returns an empty array if there are no extension points.

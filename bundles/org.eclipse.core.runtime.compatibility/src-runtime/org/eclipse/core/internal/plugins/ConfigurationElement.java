@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.plugins;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.*;
 
 public class ConfigurationElement implements IConfigurationElement {
 
@@ -41,11 +38,11 @@ public class ConfigurationElement implements IConfigurationElement {
 	}
 
 	public IConfigurationElement[] getChildren() {
-		return Utils.convertConfigurationElements((org.eclipse.core.runtime.registry.IConfigurationElement[]) configElt.getChildren());
+		return Utils.convertConfigurationElements(configElt.getChildren());
 	}
 
 	public IConfigurationElement[] getChildren(String name) {
-		return Utils.convertConfigurationElements((org.eclipse.core.runtime.registry.IConfigurationElement[]) configElt.getChildren(name));
+		return Utils.convertConfigurationElements(configElt.getChildren(name));
 	}
 
 	public IExtension getDeclaringExtension() {

@@ -44,7 +44,6 @@ public interface IExtension {
 	 */
 	public String getExtensionPointUniqueIdentifier();
 
-	
 	/**
 	 * Returns a displayable label for this extension.
 	 * Returns the empty string if no label for this extension
@@ -81,5 +80,5 @@ public interface IExtension {
 	 *    (e.g. <code>"com.example.acme.main"</code>), or <code>null</code>
 	 */
 	public String getUniqueIdentifier();
-	
+
 }

@@ -31,6 +31,6 @@ public interface IPluginListener extends EventListener {
 	 *</p>
 	 * @param events an array containing plug-in lifecycle events
 	 * @see IPluginEvent
-	 */	
+	 */
 	public void pluginChanged(IPluginEvent[] events);
 }
