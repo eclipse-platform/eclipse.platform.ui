@@ -34,6 +34,13 @@
             id="org.eclipse.ui.console.ConsoleView">
       </view>
    </extension>
+<!-- commands and their bindings
+NOTE: 
+M1 = CTRL/COMMAND 
+M2 = SHIFT 
+M3 = ALT 
+M4 = Platform-specific fourth key
+-->   
    <extension
          point="org.eclipse.ui.commands">
       <command
@@ -43,7 +50,7 @@
             id="org.eclipse.ui.console.ConsoleView">
       </command>
       <keyBinding
-            keySequence=""
+            keySequence="M3+M2+Q C"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.console.ConsoleView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
