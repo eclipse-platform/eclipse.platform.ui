@@ -11,12 +11,10 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.util.*;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 /**
  * A log writer that writes log entries in XML format.  
  * See PlatformLogReader for reading logs back into memory.
@@ -79,16 +77,16 @@ public synchronized void logging(IStatus status, String plugin) {
 		}			
 	} catch (Exception e) {
 		System.err.println("An exception occurred while writing to the platform log:");//$NON-NLS-1$
-		System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		e.printStackTrace(System.err);
 		System.err.println("Logging to the console instead.");//$NON-NLS-1$
 		//we failed to write, so dump log entry to console instead
-		try {
+	try {
 			log = logForStream(System.err);
 			write(status, 0);
 			log.flush();
 		} catch (Exception e2) {
 			System.err.println("An exception occurred while logging to the console:");//$NON-NLS-1$
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			e2.printStackTrace(System.err);
 		}
 	} finally {
 			log = null;
@@ -96,7 +94,7 @@ public synchronized void logging(IStatus status, String plugin) {
 }
 protected void openLogFile() {
 	try {
-		log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));
+		log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(logFile.getAbsolutePath(), true), "UTF-8"));//$NON-NLS-1$
 		if (newSession) {
 			writeHeader();
 			newSession = false;
@@ -191,8 +189,16 @@ protected void write(Throwable throwable) throws IOException {
 		return;
 	write(STACK);
 	writeSpace();
-	StringBuffer buffer = new StringBuffer();
+	boolean isCoreException = throwable instanceof CoreException;
+	if (isCoreException)
+		writeln("1");//$NON-NLS-1$
+	else
+		writeln("0");//$NON-NLS-1$
 	throwable.printStackTrace(new PrintWriter(log));
+	if (isCoreException) {
+	 CoreException e = (CoreException) throwable;
+	 write(e.getStatus(), 0);
+	}
 }
 
 
@@ -211,7 +217,13 @@ protected void write(IStatus status, int depth) throws IOException {
 	writeSpace();
 	write(Integer.toString(status.getCode()));
 	writeSpace();
-	write(new Date().toString());
+	try {
+		write(new SimpleDateFormat().format(new Date()));
+	} catch (Exception e) {
+		// If there were problems writing out the date, ignore and
+		// continue since that shouldn't stop us from losing the rest
+		// of the information
+	}
 	writeln();
 
 	write(MESSAGE);
@@ -232,11 +244,10 @@ protected void writeln() throws IOException {
 	write(LINE_SEPARATOR);
 }
 protected void write(String message) throws IOException {
-	log.write(message);
+	if (message != null)
+		log.write(message);
 }
 protected void writeSpace() throws IOException {
 	write(" ");//$NON-NLS-1$
 }
-
 }
-
