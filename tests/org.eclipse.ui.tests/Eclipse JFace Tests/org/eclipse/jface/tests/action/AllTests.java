@@ -24,6 +24,7 @@ public class AllTests extends TestSuite {
     }
     
     public AllTests() {
+        addTestSuite(ContributionItemTest.class);
         addTestSuite(MenuManagerTest.class);
     }
 }
