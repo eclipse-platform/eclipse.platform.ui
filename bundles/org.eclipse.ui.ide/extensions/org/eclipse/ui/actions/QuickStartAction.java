@@ -130,8 +130,8 @@ public class QuickStartAction
 			shell,
 			features,
 			primaryFeature,
-			"WelcomePageSelectionDialog.title",  //$NON-NLS-1$
-			"WelcomePageSelectionDialog.message", //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("WelcomePageSelectionDialog.title"),  //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("WelcomePageSelectionDialog.message"), //$NON-NLS-1$
 			IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
 		if (d.open() != Window.OK || d.getResult().length != 1)
 			return null;

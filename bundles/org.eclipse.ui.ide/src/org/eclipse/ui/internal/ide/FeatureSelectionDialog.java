@@ -88,8 +88,8 @@ public class FeatureSelectionDialog extends SelectionDialog {
 		}
 		this.features = features;
 		this.helpContextId = helpContextId;
-		setTitle(IDEWorkbenchMessages.getString(shellTitle));
-		setMessage(IDEWorkbenchMessages.getString(shellMessage));
+		setTitle(shellTitle);
+		setMessage(shellMessage);
 			
 		// Sort ascending
 		Arrays.sort(features, new Comparator() {

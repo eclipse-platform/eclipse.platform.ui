@@ -140,7 +140,7 @@ public final class IDEActionFactory {
 				throw new IllegalArgumentException();
 			}
 			RetargetAction action = new RetargetAction(getId(), IDEWorkbenchMessages.getString("Workbench.buildProject")); //$NON-NLS-1$
-			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.buildProject.ToolTip")); //$NON-NLS-1$
+			action.setToolTipText(IDEWorkbenchMessages.getString("Workbench.buildProjectToolTip")); //$NON-NLS-1$
 			window.getPartService().addPartListener(action);
 			action.setActionDefinitionId("org.eclipse.ui.project.buildProject"); //$NON-NLS-1$
 			return action;

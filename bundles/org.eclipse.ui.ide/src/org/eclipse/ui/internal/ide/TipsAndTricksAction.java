@@ -97,8 +97,8 @@ public class TipsAndTricksAction
 			shell, 
 			features, 
 			primaryInfo, 
-			"TipsAndTricksPageSelectionDialog.title", //$NON-NLS-1$
-			"TipsAndTricksPageSelectionDialog.message", //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("TipsAndTricksPageSelectionDialog.title"), //$NON-NLS-1$
+			IDEWorkbenchMessages.getString("TipsAndTricksPageSelectionDialog.message"), //$NON-NLS-1$
 			IHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);
 
 		if (d.open() != Dialog.OK || d.getResult().length != 1)
