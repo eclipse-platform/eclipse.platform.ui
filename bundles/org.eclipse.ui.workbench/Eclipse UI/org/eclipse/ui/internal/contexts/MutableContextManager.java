@@ -272,12 +272,12 @@ public final class MutableContextManager
 			contextEventsByContextId = updateContexts(contextsById.keySet());
 		}
 
-		if (contextManagerChanged)
-			fireContextManagerChanged(
-				new ContextManagerEvent(this, false, true));
-
 		if (contextEventsByContextId != null)
 			notifyContexts(contextEventsByContextId);
+		
+		if (contextManagerChanged)
+			fireContextManagerChanged(
+				new ContextManagerEvent(this, false, true));		
 	}
 
 	private ContextEvent updateContext(Context context) {

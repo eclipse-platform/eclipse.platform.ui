@@ -497,16 +497,15 @@ public final class MutableActivityManager
 
 		Map identifierEventsByIdentifierId =
 			updateIdentifiers(identifiersById.keySet());
+		if (identifierEventsByIdentifierId != null)
+			notifyIdentifiers(identifierEventsByIdentifierId);
+			
+		if (activityEventsByActivityId != null)
+			notifyActivities(activityEventsByActivityId);
 
 		if (activityManagerChanged)
 			fireActivityManagerChanged(
 				new ActivityManagerEvent(this, false, false, true));
-
-		if (activityEventsByActivityId != null)
-			notifyActivities(activityEventsByActivityId);
-
-		if (identifierEventsByIdentifierId != null)
-			notifyIdentifiers(identifierEventsByIdentifierId);
 	}
 
 	private Map updateActivities(Collection activityIds) {
