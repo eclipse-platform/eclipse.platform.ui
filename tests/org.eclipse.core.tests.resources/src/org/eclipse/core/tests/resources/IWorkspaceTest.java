@@ -819,6 +819,16 @@ public void testSortNatureSet() {
 	boolean third= sorted[0].equals(NATURE_SIMPLE) && sorted[1].equals(NATURE_WATER) && sorted[2].equals(NATURE_SNOW);
 	assertTrue("4.1", first || second || third);
 }
+public void testValidateEdit() {
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	IFile file = project.getFile("myfile.txt");
+	ensureExistsInWorkspace(new IResource[] {project, file}, true);
+	IStatus result = getWorkspace().validateEdit(new IFile[] {file}, null);
+	assertTrue("1.0", result.isOK());
+	file.setReadOnly(true);
+	result = getWorkspace().validateEdit(new IFile[] {file}, null);
+	assertEquals("1.1", IStatus.ERROR, result.getSeverity());
+}
 /**
  * Performs black box testing of the following method:
  *     IStatus validateName(String, int)
