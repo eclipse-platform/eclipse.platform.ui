@@ -12,6 +12,8 @@ package org.eclipse.core.tests.resources;
 
 import java.util.Random;
 
+import junit.framework.Assert;
+
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 /**
@@ -62,7 +64,7 @@ private void performTestRecursiveLoop(Object[][] inputs, Object[] args, int nth)
 			if (shouldFail(args, count)) {
 				try {
 					invokeMethod(args, count);
-					EclipseWorkspaceTest.assertTrue("invocation " + count + " should fail, but it doesn't", false);
+					Assert.assertTrue("invocation " + count + " should fail, but it doesn't", false);
 				} catch (Exception ex) {
 				}
 			} else {
@@ -77,9 +79,10 @@ private void performTestRecursiveLoop(Object[][] inputs, Object[] args, int nth)
 				try {
 					result = invokeMethod(args, count);
 				} catch (FussyProgressMonitor.FussyProgressAssertionFailed fussyEx) {
-					EclipseWorkspaceTest.assertTrue("invocation " + count + ": " + fussyEx.getMessage(), false);
+					Assert.assertTrue("invocation " + count + ": " + fussyEx.getMessage(), false);
 				} catch (Exception ex) {
-					EclipseWorkspaceTest.assertTrue("invocation " + count + " failed with " + ex, false);
+					ex.printStackTrace();
+					Assert.assertTrue("invocation " + count + " failed with " + ex, false);
 				}
 				boolean success = false;
 				try {
@@ -87,7 +90,7 @@ private void performTestRecursiveLoop(Object[][] inputs, Object[] args, int nth)
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
-				EclipseWorkspaceTest.assertTrue("invocation " + count + " did not produce desired result", success);
+				Assert.assertTrue("invocation " + count + " did not produce desired result", success);
 			}
 			cleanUp(args, count);
 			count++;
