@@ -14,13 +14,10 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.custom.ViewForm2;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -38,12 +35,18 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.WorkbenchPart;
+
+import org.eclipse.ui.internal.misc.UIStats;
 
 
 /**
@@ -57,7 +60,7 @@ public abstract class PartPane extends LayoutPart
 	private MenuManager paneMenuManager;
 	protected IWorkbenchPartReference partReference;
 	protected WorkbenchPage page;
-	protected ViewForm control;
+	protected ViewForm2 control;
 	
 	public static class Sashes {
 		public Sash left;
@@ -194,7 +197,7 @@ public void createControl(Composite parent) {
 		return;
 
 	// Create view form.	
-	control = new ViewForm(parent, getStyle());
+	control = new ViewForm2(parent, getStyle());
 	control.marginWidth = 0;
 	control.marginHeight = 0;
 
@@ -292,7 +295,7 @@ public int getMinimumHeight() {
 	 * even though it's arguably an inset; see ViewForm.layout for details.
 	 */
 	if (top) {
-		topHeight += 1;
+		//topHeight += 1;
 	}
 	
 	return topHeight;
@@ -301,7 +304,7 @@ public int getMinimumHeight() {
 /**
  * Returns the top level SWT Canvas of this Pane. 
  */
-protected ViewForm getPane() {
+protected ViewForm2 getPane() {
 	return control;
 }
 /**
@@ -322,7 +325,7 @@ int getStyle() {
 /**
  * Get the view form.
  */
-protected ViewForm getViewForm() {
+protected ViewForm2 getViewForm() {
 	return control;
 }
 /**
