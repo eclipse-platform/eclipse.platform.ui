@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -83,12 +84,12 @@ public class EclipseClasspath
      */
     public List getClassDirsUnique()
     {
-        return CollectionUtil.removeDuplicates(classDirs);
+        return removeDuplicates(classDirs);
     }
     
     private void handleSources(IClasspathEntry entry) throws JavaModelException
     {
-        String projectRoot = EclipseUtil.getProjectRoot(project);
+        String projectRoot = ExportUtil.getProjectRoot(project);
         String defaultClassDir = project.getOutputLocation().toString();
         if (entry.getContentKind() == IPackageFragmentRoot.K_SOURCE &&
             entry.getEntryKind() == IClasspathEntry.CPE_SOURCE)
@@ -96,8 +97,8 @@ public class EclipseClasspath
             // found source path
             IPath srcDirPath = entry.getPath();
             IPath classDirPath = entry.getOutputLocation();
-            String srcDir = EclipseUtil.removeProjectRoot((srcDirPath != null) ? srcDirPath.toString() : projectRoot, project.getProject());
-            String classDir = EclipseUtil.removeProjectRoot((classDirPath != null) ? classDirPath.toString() : defaultClassDir, project.getProject());
+            String srcDir = ExportUtil.removeProjectRoot((srcDirPath != null) ? srcDirPath.toString() : projectRoot, project.getProject());
+            String classDir = ExportUtil.removeProjectRoot((classDirPath != null) ? classDirPath.toString() : defaultClassDir, project.getProject());
             srcDirs.add(srcDir);
             classDirs.add(classDir);
             IPath[] inclusions = entry.getInclusionPatterns();                   
@@ -106,7 +107,7 @@ public class EclipseClasspath
             {
                 if (inclusions[j] != null)
                 {
-                    inclusionList.add(EclipseUtil.removeProjectRoot(inclusions[j].toString(), project.getProject()));
+                    inclusionList.add(ExportUtil.removeProjectRoot(inclusions[j].toString(), project.getProject()));
                 }
             }
             inclusionLists.add(inclusionList);
@@ -116,7 +117,7 @@ public class EclipseClasspath
             {
                 if (exclusions[j] != null)
                 {
-                    exclusionList.add(EclipseUtil.removeProjectRoot(exclusions[j].toString(), project.getProject()));
+                    exclusionList.add(ExportUtil.removeProjectRoot(exclusions[j].toString(), project.getProject()));
                 }
             }
             exclusionLists.add(exclusionList);
@@ -173,7 +174,7 @@ public class EclipseClasspath
             {
                 return;
             }
-            String jarFileAbsolute = EclipseUtil.resolve(entry.getPath());
+            String jarFileAbsolute = ExportUtil.resolve(entry.getPath());
             if (jarFileAbsolute == null)
             {
                 jarFileAbsolute = jarFile; // jarFile was already absolute
@@ -186,11 +187,11 @@ public class EclipseClasspath
             String jarFileOld = jarFile;
             if (newProjectRoot == null)
             {
-                jarFile = EclipseUtil.removeProjectRoot(jarFile, project.getProject());
+                jarFile = ExportUtil.removeProjectRoot(jarFile, project.getProject());
             }
             else
             {
-                jarFile = EclipseUtil.replaceProjectRoot(jarFile, project.getProject(), newProjectRoot);
+                jarFile = ExportUtil.replaceProjectRoot(jarFile, project.getProject(), newProjectRoot);
             }
             if (jarFile.equals(jarFileOld))
             {
@@ -221,15 +222,15 @@ public class EclipseClasspath
             int i = file.indexOf("/", 1); //$NON-NLS-1$
             i = (i != -1) ? i : file.length(); 
             String subproject = file.substring(1, i);
-            IJavaProject javaproject = EclipseUtil.getJavaProjectByName(subproject);
+            IJavaProject javaproject = ExportUtil.getJavaProjectByName(subproject);
             if (javaproject != null)
             {
                 jarFile.setLength(0);
                 jarFileAbsolute.setLength(0);
                 String location = javaproject.getProject().getName() + ".location"; //$NON-NLS-1$
-                jarFileAbsolute.append(EclipseUtil.replaceProjectRoot(file, javaproject.getProject(), EclipseUtil.getProjectRoot(javaproject)));
-                jarFile.append(EclipseUtil.replaceProjectRoot(file, javaproject.getProject(), "${" + location + "}")); //$NON-NLS-1$ //$NON-NLS-2$
-                variable2valueMap.put(location, EclipseUtil.getProjectRoot(javaproject));
+                jarFileAbsolute.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), ExportUtil.getProjectRoot(javaproject)));
+                jarFile.append(ExportUtil.replaceProjectRoot(file, javaproject.getProject(), "${" + location + "}")); //$NON-NLS-1$ //$NON-NLS-2$
+                variable2valueMap.put(location, ExportUtil.getProjectRoot(javaproject));
                 return true;
             }
         }
@@ -302,7 +303,7 @@ public class EclipseClasspath
     public static String getClasspath(IJavaProject project) throws JavaModelException
     {
         List items = EclipseClasspath.getClasspathList(project);
-        return CollectionUtil.toString(items, File.pathSeparator);
+        return toString(items, File.pathSeparator);
     }
 
     /**
@@ -311,7 +312,7 @@ public class EclipseClasspath
     public static String getClasspath(IJavaProject project, boolean includeSubProjects) throws JavaModelException
     {
         List items = EclipseClasspath.getClasspathList(project, includeSubProjects);
-        return CollectionUtil.toString(items, File.pathSeparator);
+        return toString(items, File.pathSeparator);
     }
 
     /**
@@ -319,8 +320,8 @@ public class EclipseClasspath
      */
     public static List getClasspathList(IJavaProject project) throws JavaModelException
     {
-        EclipseClasspath instance = new EclipseClasspath(project, EclipseUtil.getProjectRoot(project));
-        return CollectionUtil.removeDuplicates(instance.rawClassPathEntriesAbsolute);
+        EclipseClasspath instance = new EclipseClasspath(project, ExportUtil.getProjectRoot(project));
+        return instance.removeDuplicates(instance.rawClassPathEntriesAbsolute);
     }
 
     /**
@@ -328,19 +329,52 @@ public class EclipseClasspath
      */
     public static List getClasspathList(IJavaProject project, boolean includeSubProjects) throws JavaModelException
     {
-        EclipseClasspath instance = new EclipseClasspath(project, EclipseUtil.getProjectRoot(project));
+        EclipseClasspath instance = new EclipseClasspath(project, ExportUtil.getProjectRoot(project));
         List classpath = instance.rawClassPathEntriesAbsolute;
         if (!includeSubProjects)
         {
-            return CollectionUtil.removeDuplicates(classpath);            
+            return instance.removeDuplicates(classpath);            
         }
-        Set subprojects = EclipseUtil.getClasspathProjectsRecursive(project);
+        Set subprojects = ExportUtil.getClasspathProjectsRecursive(project);
         for (Iterator iter = subprojects.iterator(); iter.hasNext();)
         {
             IJavaProject subproject = (IJavaProject) iter.next();
-            instance = new EclipseClasspath(subproject, EclipseUtil.getProjectRoot(subproject));
+            instance = new EclipseClasspath(subproject, ExportUtil.getProjectRoot(subproject));
             classpath.addAll(instance.rawClassPathEntriesAbsolute);
         }
-        return CollectionUtil.removeDuplicates(classpath);
+        return instance.removeDuplicates(classpath);
+    }
+    
+    public static String toString(Collection c, String separator)
+    {
+        StringBuffer b = new StringBuffer();
+        for (Iterator iter = c.iterator(); iter.hasNext();)
+        {
+            b.append((String) iter.next());
+            b.append(separator);
+        }
+        if (c.size() > 0) {
+            b.delete(b.length() - separator.length(), b.length());
+        }
+        return b.toString();
+    }
+    
+    /**
+     * Remove duplicates preserving original order.
+     * @param l list to remove duplicates from
+     * @return new list without duplicates 
+     */
+    protected List removeDuplicates(List l)
+    {
+        List res = new ArrayList();
+        for (Iterator iter = l.iterator(); iter.hasNext();)
+        {
+            Object element = iter.next();
+            if (!res.contains(element))
+            {
+                res.add(element);
+            }
+        }
+        return res;
     }
 }

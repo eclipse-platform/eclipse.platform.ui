@@ -169,7 +169,7 @@ class AntBuildfileExportPage extends WizardPage {
             IJavaProject javaProject = (IJavaProject) javaProjects.next();
             Set projects;
             try {
-                projects = EclipseUtil.getClasspathProjectsRecursive(javaProject);
+                projects = ExportUtil.getClasspathProjectsRecursive(javaProject);
             } catch (JavaModelException e) {
                 AntUIPlugin.log(e);
                 return false;
@@ -178,8 +178,8 @@ class AntBuildfileExportPage extends WizardPage {
             List confirmOverwrite = getConfirmOverwriteSet(projects);
             if (confirmOverwrite.size() > 0)
             {
-                String message = DataTransferMessages.getString("AntBuildfileExportPage.3") + StringUtil.NEWLINE + //$NON-NLS-1$
-                    CollectionUtil.toString(confirmOverwrite, StringUtil.NEWLINE);
+                String message = DataTransferMessages.getString("AntBuildfileExportPage.3") + ExportUtil.NEWLINE + //$NON-NLS-1$
+                    EclipseClasspath.toString(confirmOverwrite, ExportUtil.NEWLINE);
                 if (! MessageDialog.openConfirm(getShell(), DataTransferMessages.getString("AntBuildfileExportPage.4"), message)) //$NON-NLS-1$
                 {
                     continue;
@@ -212,14 +212,14 @@ class AntBuildfileExportPage extends WizardPage {
                 IJavaProject project = (IJavaProject) iter.next();
                 projectNames.add(project.getProject().getName());
             }
-            String message = MessageFormat.format(DataTransferMessages.getString("AntBuildfileExportPage.5") + StringUtil.NEWLINE, new String[] {CollectionUtil.toString(projectNames, StringUtil.NEWLINE)}); //$NON-NLS-1$
+            String message = MessageFormat.format(DataTransferMessages.getString("AntBuildfileExportPage.5") + ExportUtil.NEWLINE, new String[] {EclipseClasspath.toString(projectNames, ExportUtil.NEWLINE)}); //$NON-NLS-1$
                 
             try {
-                if (EclipseUtil.hasCyclicDependency(javaProject))
+                if (ExportUtil.hasCyclicDependency(javaProject))
                 {
-                    String warningMessage= MessageFormat.format(DataTransferMessages.getString("AntBuildfileExportPage.6") + StringUtil.NEWLINE + //$NON-NLS-1$
+                    String warningMessage= MessageFormat.format(DataTransferMessages.getString("AntBuildfileExportPage.6") + ExportUtil.NEWLINE + //$NON-NLS-1$
                             DataTransferMessages.getString("AntBuildfileExportPage.7") + //$NON-NLS-1$
-                            DataTransferMessages.getString("AntBuildfileExportPage.8") + StringUtil.NEWLINE + StringUtil.NEWLINE +  //$NON-NLS-1$
+                            DataTransferMessages.getString("AntBuildfileExportPage.8") + ExportUtil.NEWLINE + ExportUtil.NEWLINE +  //$NON-NLS-1$
                             message, new String[] {javaProject.getProject().getName()});
                     MessageDialog.openWarning(getShell(), DataTransferMessages.getString("AntBuildfileExportPage.9"), warningMessage); //$NON-NLS-1$
                 }
@@ -256,7 +256,7 @@ class AntBuildfileExportPage extends WizardPage {
      */
    private boolean existsBuildFile(IJavaProject project)
     {
-        String projectRoot = EclipseUtil.getProjectRoot(project);
+        String projectRoot = ExportUtil.getProjectRoot(project);
         File buildFile = new File(projectRoot + "/build.xml"); //$NON-NLS-1$
         if (buildFile.exists())
         {

@@ -7,14 +7,28 @@
  * 
  * Contributors:
  *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation
+ *     IBM Corporation - nlsing and incorporating into Eclipse. 
+ *                          Class created from combination of all utility classes of contribution
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
 
+import java.io.StringWriter;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -35,13 +49,14 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.w3c.dom.Document;
 
 /**
  * Eclipse API shortcuts.
  */
-public class EclipseUtil
+public class ExportUtil
 {
-    private EclipseUtil()
+    private ExportUtil()
     {
     }
 
@@ -148,7 +163,7 @@ public class EclipseUtil
      */
     public static String removeProjectRoot(String file, IProject project)
     {
-        String res = StringUtil.removePrefix(file, '/' + project.getName() + '/');
+        String res = removePrefix(file, '/' + project.getName() + '/');
         if (res.equals('/' + project.getName()))
         {
             return "."; //$NON-NLS-1$
@@ -190,7 +205,7 @@ public class EclipseUtil
             {
                 // found required project on build path
                 String subProjectRoot = entries[i].getPath().toString();
-                IJavaProject subProject = EclipseUtil.getJavaProject(subProjectRoot);
+                IJavaProject subProject = ExportUtil.getJavaProject(subProjectRoot);
                 result.add(subProject);
             }
         }
@@ -215,9 +230,7 @@ public class EclipseUtil
         for (Iterator iter = projects.iterator(); iter.hasNext();)
         {
             IJavaProject javaProject = (IJavaProject) iter.next();
-            if (! result.contains(javaProject))
-            {
-                result.add(javaProject);
+            if (result.add(javaProject)) {
                 getClasspathProjectsRecursive(javaProject, result); // recursion
             }
         }
@@ -308,6 +321,96 @@ public class EclipseUtil
             }
             return compare(this, obj) == 0;
         }
+    }
+    
+    public static final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 
+    public static String removePrefix(String s, String prefix)
+    {
+        if (s == null)
+        {
+            return null;
+        }
+        if (s.startsWith(prefix))
+        {
+            return s.substring(prefix.length());
+        }
+        return s;
+    }
+
+    public static String removeSuffix(String s, String suffix)
+    {
+        if (s == null)
+        {
+            return null;
+        }
+        if (s.endsWith(suffix))
+        {
+            return s.substring(0, s.length() - suffix.length());
+        }
+        return s;
+    }
+
+    public static String removePrefixAndSuffix(String s, String prefix, String suffix)
+    {
+        return removePrefix(removeSuffix(s, suffix), prefix);
+    }
+    
+    /**
+     * Convert document to formatted XML string.
+     */
+    public static String toString(Document doc) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException
+    {
+        StringWriter writer = new StringWriter();
+        Source source = new DOMSource(doc);
+        Result result = new StreamResult(writer);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); //$NON-NLS-1$ //$NON-NLS-2$
+        transformer.transform(source, result);
+        return writer.toString();
+    }
+
+    /**
+     * Include a file into an XML document by adding an entity reference.
+     * @param doc     XML document
+     * @param name    name of the entity reference to create
+     * @param file    name of file to include 
+     * @return        XML document with entity reference
+     */
+    public static String addEntity(Document doc, String name, String file) throws TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException
+    {
+        String xml = toString(doc);
+        return addEntity(xml, name, file);
+    }
+    
+    /**
+     * Include a file into an XML document by adding an entity reference.
+     * @param xml     XML document
+     * @param name    name of the entity reference to create
+     * @param file    name of file to include 
+     * @return        XML document with entity reference
+     */
+    public static String addEntity(String xml, String name, String file)
+    {
+        // NOTE: It is not possible to write a DOCTYPE with an internal DTD using transformer.
+        //       It is also not possible to write an entity reference with JAXP.
+        StringBuffer xmlBuffer = new StringBuffer(xml);
+        int index = xmlBuffer.indexOf(ExportUtil.NEWLINE) != -1 ? xmlBuffer.indexOf(ExportUtil.NEWLINE) : 0;
+        StringBuffer entity= new StringBuffer();
+        entity.append(ExportUtil.NEWLINE);
+        entity.append("<!DOCTYPE project [<!ENTITY "); //$NON-NLS-1$
+        entity.append(name);
+        entity.append(" SYSTEM \"file:"); //$NON-NLS-1$
+        entity.append(file);
+        entity.append("\">]>"); //$NON-NLS-1$
+        xmlBuffer.insert(index, entity.toString());
+        index = xmlBuffer.indexOf("basedir") != -1 ? xmlBuffer.indexOf("basedir") : 0; //$NON-NLS-1$ //$NON-NLS-2$
+        index = xmlBuffer.indexOf(ExportUtil.NEWLINE, index);
+        if (index != -1)
+        {
+            xmlBuffer.insert(index, ExportUtil.NEWLINE + "    &" + name + ';'); //$NON-NLS-1$
+        }
+        return xmlBuffer.toString();
     }
 }
