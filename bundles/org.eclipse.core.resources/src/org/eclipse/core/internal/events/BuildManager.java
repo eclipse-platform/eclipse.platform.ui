@@ -317,7 +317,8 @@ protected String debugProject() {
 }
 public void deleting(IProject project) {
 	//make sure the builder persistent info is deleted for the project move case
-	setBuildersPersistentInfo(project, null);
+	if (project.isAccessible())
+		setBuildersPersistentInfo(project, null);
 }
 protected IncrementalProjectBuilder getBuilder(String builderName, IProject project) throws CoreException {
 	Hashtable builders = getBuilders(project);
