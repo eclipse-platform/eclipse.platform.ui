@@ -6,8 +6,9 @@ package org.eclipse.debug.ui.actions;
  */
 
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ExecutionAction;
-import org.eclipse.ui.IViewActionDelegate;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 
 /**
  * Action to launch a program in run mode.
@@ -23,7 +24,7 @@ import org.eclipse.ui.IViewActionDelegate;
  * </p>
  * @since 2.0
  */
-public final class RunAction extends ExecutionAction implements IViewActionDelegate {
+public final class RunAction extends ExecutionAction /*implements IViewActionDelegate*/ {
 	
 	public RunAction() {
 		//only used as a delegate
@@ -35,4 +36,5 @@ public final class RunAction extends ExecutionAction implements IViewActionDeleg
 	protected String getMode() {
 		return ILaunchManager.RUN_MODE;
 	}
+
 }

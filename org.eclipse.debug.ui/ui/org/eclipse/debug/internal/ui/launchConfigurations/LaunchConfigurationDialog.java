@@ -76,9 +76,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -111,14 +109,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private ILaunchConfiguration fFirstConfig;
 	
 	/**
-	 * Single click launching is controlled by the single-click launching preference value
-	 * and this value, which can be set via <code>setSingleClickLaunchable()</code>, which
-	 * provides a way to ignore single-click launching when the preference is set.
-	 */
-	private boolean fSingleClickLaunchable = true;
-	
-	/**
-	 * The starting mode (run or debug), as specified by the caller
+	 * The mode (run or debug), as specified by the caller
 	 */
 	private String fMode;
 	
@@ -305,7 +296,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 	/**
 	 * Set the flag indicating how this dialog behaves when the <code>open()</code> method is called.
-	 * Valid constants are the "
+	 * Valid constants are the LAUNCH_CONFIGURATION_DIALOG constants defined in this class.
 	 */
 	public void setOpenMode(int mode) {
 		fOpenMode = mode;
@@ -450,7 +441,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * just set the initial selection in the dialog to the last launched configuration.
 	 */
 	protected int doLastLaunchedConfig(boolean launch) {
-		fFirstConfig = getLastLaunchedWorkbenchConfiguration();
+		fFirstConfig = getLastLaunchedWorkbenchConfigurationForMode();
 		if (launch) {
 			try {
 				if (fFirstConfig != null) {
@@ -487,12 +478,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Return the last launched configuration in the workspace.
+	 * Return the last launched configuration in the workspace that matches the current mode.
 	 */
-	protected ILaunchConfiguration getLastLaunchedWorkbenchConfiguration() {
-		LaunchConfigurationHistoryElement history = DebugUIPlugin.getDefault().getLastLaunch();
-		if (history != null) {
-			return history.getLaunchConfiguration();
+	protected ILaunchConfiguration getLastLaunchedWorkbenchConfigurationForMode() {
+		LaunchConfigurationHistoryElement[] history;
+		if (getMode() == ILaunchManager.DEBUG_MODE) {
+			history = DebugUIPlugin.getDefault().getDebugHistory();
+		} else {
+			history = DebugUIPlugin.getDefault().getRunHistory();
+		}
+		if ((history != null) && (history.length > 0)) {
+			LaunchConfigurationHistoryElement element = history[0];
+			if (element != null) {
+				return element.getLaunchConfiguration();
+			}
 		}
 		return null;			
 	}
@@ -537,51 +536,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Determine and return an <code>ILaunchConfiguration</code> from the current context.
-	 * If the context is itself an ILaunchConfiguration, this is returned.  Otherwise,
-	 * an <code>ILaunchConfigurationWorkingCopy</code> is created and initialized from 
-	 * the context if possible.
-	 */
-	protected ILaunchConfiguration getSingleClickConfigFromContext() throws CoreException {
-		Object workbenchSelection = getContext();
-		if (workbenchSelection == null) {
-			return null;
-		}
-		
-		if (workbenchSelection instanceof ILaunchConfiguration) {
-			return (ILaunchConfiguration) workbenchSelection;
-		}
-		
-		IResource resource = getResourceContext();
-		if (resource == null) {
-			IEditorInput activeEditorInput= WorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor().getEditorInput();
-			if (activeEditorInput != null) {
-				setContext(activeEditorInput);
-				resource = getResourceContext();
-			}
-		}
-		
-		ILaunchConfiguration def = null;
-		if (resource != null) {
-			try {
-				def = getLaunchManager().getDefaultLaunchConfiguration(resource);
-			} catch (CoreException e) {
-				// hide the exception and return no default
-				DebugUIPlugin.log(e);
-			}
-		}
-		if (def != null) {
-			return def;
-		}
-		
-		def = createConfigFromContext();
-		if (resource != null && def != null) {
-			getLaunchManager().setDefaultLaunchConfiguration(resource, def);
-		}
-		return def;
-	}
-	
-	/**
 	 * Something other than an <code>ILaunchConfiguration</code> was selected in
 	 * the workbench, so try to determine an <code>ILaunchConfigurationType</code>
 	 * from the selection, then create a new working copy of that type, initialize
@@ -598,7 +552,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Create and return a launch configuration working copy of the specified type.
+	 * Create and return a launch configuration of the specified type.
 	 * This method is intended to be called before the UI has been realized, such as in
 	 * the case of single-click launching or creating a config for an initial configuration
 	 * type.

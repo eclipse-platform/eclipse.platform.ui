@@ -7,6 +7,7 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -30,9 +31,33 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
  * Superclass of run & debug pulldown actions.
  */
 public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDelegate,
-														  IActionDelegateWithEvent {
+														  IActionDelegateWithEvent,
+														  ILaunchHistoryChangedListener {
 	
 	private ExecutionAction fLaunchAction;
+	
+	/**
+	 * This action delegate's proxy.
+	 */
+	private IAction fActionProxy;
+	
+	/**
+	 * The tooltip that was specified in XML for this action.
+	 */
+	private String fOriginalTooltip;
+	
+	/**
+	 * Flag indicating if this action delegate has identified its proxy action yet.
+	 */
+	private boolean isInitialized = false;
+	
+	protected void setActionProxy(IAction action) {
+		fActionProxy = action;
+	}
+
+	protected IAction getActionProxy() {
+		return fActionProxy;
+	}
 	
 	public LaunchDropDownAction(ExecutionAction launchAction) {
 		setLaunchAction(launchAction);		
@@ -55,9 +80,40 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	}
 
 	/**
+	 * Initialize this action so that it can dynamically set its tooltip.
+	 */
+	protected void initialize(IAction action) {
+		DebugUIPlugin.getDefault().addLaunchHistoryListener(this);
+		fOriginalTooltip = action.getToolTipText();
+		setActionProxy(action);		
+		updateTooltip();		
+		isInitialized = true;
+	}
+	
+	/**
+	 * Set this action's tooltip to correspond to the most recent launch from the appropriate history.
+	 */
+	protected void updateTooltip() {
+		LaunchConfigurationHistoryElement[] history = getHistory();
+		String newTooltip = fOriginalTooltip;
+		if ((history != null) && (history.length > 0)) {
+			newTooltip = getTooltipPrefix() + ' ' + history[0].getLaunchConfiguration().getName();
+		}
+		getActionProxy().setToolTipText(newTooltip);
+	}
+	
+	/**
+	 * @see ILaunchHistoryChangedListener#launchHistoryChanged()
+	 */
+	public void launchHistoryChanged() {
+		updateTooltip();
+	}
+
+	/**
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
+		DebugUIPlugin.getDefault().removeLaunchHistoryListener(this);
 	}
 
 	/**
@@ -157,6 +213,9 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection){
+		if (!isInitialized) {
+			initialize(action);
+		} 
 	}
 	
 	/**
@@ -179,6 +238,11 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down.
 	 */
 	public abstract String getMode();
+	
+	/**
+	 * Return the String to use as the first part of the tooltip for this action.
+	 */
+	protected abstract String getTooltipPrefix();
 	
 	protected ExecutionAction getLaunchAction() {
 		return fLaunchAction;
@@ -214,5 +278,6 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			}
 		};
 	}
+	
 }
 

@@ -119,12 +119,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	private static final String DEFAULT_CONFIG_TYPE = "defaultLaunchConfigurationType"; //$NON-NLS-1$
 	
 	/**
-	 * Constant for use as local name part of <code>QualifiedName</code>
-	 * for persisting the default launch configuration.
-	 */
-	private static final String DEFAULT_LAUNCH_CONFIGURATION= "default_launch_configuration"; //$NON-NLS-1$
-	
-	/**
 	 * Constant used for reading and writing the default config type to metadata.
 	 */ 
 	private static final QualifiedName fgQualNameDefaultConfigType = new QualifiedName(DebugPlugin.getUniqueIdentifier(), DEFAULT_CONFIG_TYPE);
@@ -410,29 +404,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	public void setDefaultLaunchConfigurationType(String fileExtension, String configTypeID) {
 		fDefaultLaunchConfigurationTypes.put(fileExtension, getLaunchConfigurationType(configTypeID));
-	}
-	
-	/**
-	 * @see ILaunchManager#setDefaultLaunchConfiguration(IResource, ILaunchConfiguration)
-	 */
-	public void setDefaultLaunchConfiguration(IResource resource, ILaunchConfiguration config) throws CoreException {
-		String memento = config.getMemento();
-		resource.setPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, DEFAULT_LAUNCH_CONFIGURATION), memento);
-		setDefaultLaunchConfigurationType(resource, config.getType().getIdentifier());
-	}
-	
-	/**
-	 * @see ILaunchManager#getDefaultLaunchConfiguration(IResource)
-	 */
-	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource) throws CoreException {
-		String memento = resource.getPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION, DEFAULT_LAUNCH_CONFIGURATION));
-		if (memento != null) {
-			ILaunchConfiguration config = getLaunchConfiguration(memento);
-			if (config.exists()) {
-				return config;
-			}	
-		}
-		return null;													  	
 	}
 	
 	/**

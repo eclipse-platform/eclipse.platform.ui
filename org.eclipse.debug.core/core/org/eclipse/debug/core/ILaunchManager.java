@@ -251,29 +251,6 @@ public interface ILaunchManager {
 	public boolean isExistingLaunchConfigurationName(String name) throws CoreException;
 
 	/**
-	 * Set the specified launch configuration the default launch configuration
-	 * for the specified resource.
-	 * 
-	 * @param resource the <code>IResource</code> whose default launch configuration is being set
-	 * @param config the launch configuration being set as the default
-	 * @exception CoreException if an exception occurrs setting the default configuration
-	 * @since 2.0
-	 */
-	public void setDefaultLaunchConfiguration(IResource resource, ILaunchConfiguration config) throws CoreException;
-
-	/**
-	 * Returns the default launch configuration of the specified type on the specified resource,
-	 * or <code>null</code> if none.
-	 * 
-	 * @param resource the <code>IResource</code> on which to look for a default launch configuration
-	 * @return a launch configuration
-	 * @exception CoreException if an exception occurrs retrieving the default
-	 *  configuration
-	 * @since 2.0
-	 */
-	public ILaunchConfiguration getDefaultLaunchConfiguration(IResource resource) throws CoreException;
-	
-	/**
 	 * Creates and returns a new source locator of the specified
 	 * type.
 	 * 

@@ -5,35 +5,27 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.Date;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
- * This is the debug action which appears in the desktop menu and toolbar.
+ * This is the super class of the Run & Debug actions which appears in the desktop menu and toolbar.
  */
 public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	
@@ -41,10 +33,13 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		runLaunchConfiguration();
+		openLaunchConfigurationDialog();
 	}
-	
-	private void runLaunchConfiguration() {
+
+	/**
+	 * Open the launch configuration dialog, passing in the current workbench selection.
+	 */
+	private void openLaunchConfigurationDialog() {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		IStructuredSelection selection= resolveSelection(dwindow);
 		LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
@@ -52,18 +47,6 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 		dialog.open();
 	}
 	
-	/**
-	 * Returns the mode of a launcher to use for this action
-	 */
-	protected abstract String getMode();
-
-	/**
-	 * Returns the launch manager.
-	 */
-	protected static ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
-
 	/**
 	 * Determines and returns the selection that provides context for the launch,
 	 * or <code>null</code> if there is no selection.
@@ -95,23 +78,10 @@ public abstract class ExecutionAction implements IActionDelegateWithEvent {
 		}
 		return (IStructuredSelection)selection;
 	}
-		
-	/**
-	 * @see runWithEvent(IAction, Event)
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
-	}
 	
 	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * Returns the mode of a launcher to use for this action
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	}
-
-	/**
-	 * @see IViewActionDelegate#init(IViewPart)
-	 */
-	public void init(IViewPart part) {
-	}
+	protected abstract String getMode();
+	
 }

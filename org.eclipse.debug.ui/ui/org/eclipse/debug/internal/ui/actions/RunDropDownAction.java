@@ -40,5 +40,13 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	public LaunchConfigurationHistoryElement[] getFavorites() {
 		return DebugUIPlugin.getDefault().getRunFavorites();
 	}		
+
+	/**
+	 * @see ExecutionAction#getTooltipPrefix()
+	 */
+	protected String getTooltipPrefix() {
+		return "Run";
+	}
+
 }
 

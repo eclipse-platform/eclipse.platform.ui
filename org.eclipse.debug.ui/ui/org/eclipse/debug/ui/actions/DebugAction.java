@@ -6,7 +6,9 @@ package org.eclipse.debug.ui.actions;
  */
 
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ExecutionAction;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.ui.IViewActionDelegate;
 
 /**
@@ -23,7 +25,7 @@ import org.eclipse.ui.IViewActionDelegate;
  * </p>
  * @since 2.0
  */
-public final class DebugAction extends ExecutionAction implements IViewActionDelegate {
+public final class DebugAction extends ExecutionAction /*implements IViewActionDelegate*/ {
 	
 	public DebugAction() {
 		//only used as a delegate
@@ -35,4 +37,5 @@ public final class DebugAction extends ExecutionAction implements IViewActionDel
 	protected String getMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
+	
 }
