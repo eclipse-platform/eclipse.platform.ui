@@ -153,23 +153,21 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
-		if (event.isEvaluation() || (event.getDetail() & DebugEvent.STEP_END) != 0) {
-			IThread thread= getThread(element);
-			if (thread != null) {
-				fThreadTimer.stopTimer((IThread)element);
+		IThread thread= getThread(element);
+		if (thread != null) {
+			fThreadTimer.stopTimer((IThread)element);
+		}
+		
+		boolean wasTimedOut= fThreadTimer.getTimedOutThreads().remove(thread);
+		if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
+			if (thread != null && wasTimedOut) {
+				// Refresh the thread label when a timed out evaluation finishes.
+				// This is necessary because the timeout updates
+				// the label when it occurs
+				refresh(thread);
 			}
-			
-			boolean wasTimedOut= fThreadTimer.getTimedOutThreads().remove(thread);
-			if (event.isEvaluation() && ((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
-				if (thread != null && wasTimedOut) {
-					// Refresh the thread label when a timed out evaluation finishes.
-					// This is necessary because the timeout updates
-					// the label when it occurs
-					refresh(thread);
-				}
-				// Don't refresh fully for evaluation completion.
-				return;
-			}
+			// Don't refresh fully for evaluation completion.
+			return;
 		}
 		if (element instanceof IThread) {
 			doHandleSuspendThreadEvent((IThread)element, event);
