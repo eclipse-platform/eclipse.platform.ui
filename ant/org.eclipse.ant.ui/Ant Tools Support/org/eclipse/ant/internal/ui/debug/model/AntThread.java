@@ -124,8 +124,8 @@ public class AntThread extends AntDebugElement implements IThread {
 		if (isSuspended()) {
 			if (fFrames.size() == 0) {
 				getStackFrames0();
-				return (IStackFrame)fFrames.get(0);
 			}
+			return (IStackFrame)fFrames.get(0);
 		} 
 		return null;
 	}
