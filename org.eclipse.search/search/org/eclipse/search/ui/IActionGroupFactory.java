@@ -25,7 +25,7 @@ import org.eclipse.ui.actions.ActionGroup;
  * instance to the search result view.
  * 
  * @see	org.eclipse.ui.actions.ActionGroup
- * @see	ISearchResultView#searchStarted
+ * @see	ISearchResultView#searchStarted()
  * @since 	2.0
  * @deprecated Subclass {@link org.eclipse.search.ui.text.AbstractTextSearchViewPage} instead.
  */
