@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -128,6 +129,15 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (targets != null) {
 			runner.setExecutionTargets(targets);
 		}
+		
+		URL[] customClasspath= AntUtil.getCustomClasspath(configuration);
+		if (customClasspath != null) {
+			runner.setCustomClasspath(customClasspath);
+		}
+		
+		boolean reuseClassLoader= AntUtil.shouldReuseClassLoader(configuration);
+		runner.setReuseClassLoader(reuseClassLoader);
+		
 		monitor.worked(1);
 								
 		if (monitor.isCanceled()) {
