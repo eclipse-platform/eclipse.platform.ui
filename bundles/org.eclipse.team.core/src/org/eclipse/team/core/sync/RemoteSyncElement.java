@@ -172,7 +172,10 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 
 		// XXX projects are always in sync.
 		if(local.getType() == IResource.PROJECT) {
-			return description;
+			if (remote == null) 
+				return OUTGOING | ADDITION;
+			else 
+				return description;
 		}
 
 		if (threeWay) {

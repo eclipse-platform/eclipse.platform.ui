@@ -67,6 +67,8 @@ public class RemoteFolderTreeBuilder {
 	
 	private String[] updateLocalOptions;
 	
+	private boolean projectDoesNotExist = false;
+	
 	private static String UNKNOWN = "";
 	private static String DELETED = "DELETED";
 	private static String ADDED = "ADDED";
@@ -114,6 +116,9 @@ public class RemoteFolderTreeBuilder {
 		Connection connection = repository.openConnection();
 		try {
 			fetchDelta(connection, monitor);
+			if (projectDoesNotExist) {
+				return null;
+			}
 			remoteRoot = new RemoteFolderTree(null, repository, new Path(root.getFolderSyncInfo().getRepository()), tag);
 			buildRemoteTree(connection, root, remoteRoot, Path.EMPTY, monitor);
 			if (!changedFiles.isEmpty())
@@ -190,7 +195,7 @@ public class RemoteFolderTreeBuilder {
 		}
 		
 		// Fetch the delta's for the folder
-		Map deltas = deltas = (Map)fileDeltas.get(localPath);
+		Map deltas = (Map)fileDeltas.get(localPath);
 		if (deltas == null)
 			deltas = EMPTY_MAP;
 		
@@ -315,7 +320,11 @@ public class RemoteFolderTreeBuilder {
 			}
 			public void directoryDoesNotExist(IPath path) {
 				// Record removed directory with parent so it can be removed when building the parent
-				recordDelta(path, DELETED);
+				if (path.isEmpty()) {
+					projectDoesNotExist = true;
+				} else {
+					recordDelta(path, DELETED);
+				}
 			}
 			public void fileInformation(char type, String filename) {
 				// Cases that do not require action are:

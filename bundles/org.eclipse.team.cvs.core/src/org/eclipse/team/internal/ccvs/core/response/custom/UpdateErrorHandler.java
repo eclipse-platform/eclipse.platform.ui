@@ -83,7 +83,7 @@ public class UpdateErrorHandler extends ResponseHandler {
 				}
 			} else if (message.startsWith("skipping directory")) {
 				if (updateMessageListener != null) {
-					IPath path = new Path(message.substring(18));
+					IPath path = new Path(message.substring(18).trim());
 					updateMessageListener.directoryDoesNotExist(path);
 				}
 			} else if (message.startsWith("New directory")) {
