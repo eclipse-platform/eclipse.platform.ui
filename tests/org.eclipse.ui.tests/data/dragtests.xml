@@ -6,7 +6,7 @@
 <test name="drag editor 0 to top of window" result="layout (((Navigator)|(layout ((Mock Editor 1)-((Mock Editor 2)|(Mock Editor 2)))))-(Outline, Problems, Properties))"/>
 <test name="drag maximized Problems folder to top of window" result="layout ((Outline, Problems, Properties)-((Navigator)|(layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2)))))"/>
 <test name="drag Problems to top of editor area" result="layout (((Navigator)|((Problems)-(layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2)))))-(Outline, Properties))"/>
-<test name="drag editor 0 to top of editor 2" result="layout (((Navigator)|(layout ((Mock Editor 2)|(Mock Editor 1, Mock Editor 2))))-(Outline, Problems, Properties))"/>
+<test name="drag editor 0 to top of editor 2" result="layout (((Navigator)|(layout ((Mock Editor 2)|((Mock Editor 1)-(Mock Editor 2)))))-(Outline, Problems, Properties))"/>
 <test name="drag maximized Navigator to top of window" result="layout ((Navigator)-((layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2)))-(Outline, Problems, Properties)))"/>
 <test name="drag editor 0 folder to bottom of editor 2" result="layout (((Navigator)|(layout ((Mock Editor 2)-(Mock Editor 1, Mock Editor 2))))-(Outline, Problems, Properties))"/>
 <test name="drag maximized Navigator to right of Problems" result="layout ((layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2)))-((Outline, Problems, Properties)|(Navigator)))"/>

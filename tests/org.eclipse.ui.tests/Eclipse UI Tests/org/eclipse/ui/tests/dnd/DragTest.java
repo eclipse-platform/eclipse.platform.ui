@@ -77,6 +77,16 @@ import org.eclipse.ui.tests.util.UITestCase;
  * using a dash "-".  All drag tests are done in the Drag Test Perspective.
  * </p>
  * <p>
+ * The initial layout is:
+ * </p>
+ * <p></p>
+ * <p>
+ * layout (((Navigator)|(layout ((Mock Editor 1, Mock Editor 2)|(Mock Editor 2))))-(Outline, Problems, Properties))
+ * </p>
+ * <p>
+ * Where editor 0 is "Mock Editor 1", and editors 1 and 2 are shown as "Mock Editor 2".
+ * </p>
+ * <p>
  * If you see a message like "dragtests.xml is out of date", this indicates that new tests
  * were added without describing their intended behavior in dragtests.xml. In that case, ensure that
  * there are currently no failures and regenerate dragtests.xml as described below.
