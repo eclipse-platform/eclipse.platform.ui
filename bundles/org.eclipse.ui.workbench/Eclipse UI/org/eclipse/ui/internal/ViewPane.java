@@ -44,7 +44,6 @@ import sun.security.action.GetLongAction;
 public class ViewPane extends PartPane
 	implements IPropertyListener
 {
-	private ViewTitleHandler titleLabel;
 		
 	private boolean fast = false;
 	private boolean showFocus = false;
@@ -276,14 +275,9 @@ public boolean isDragAllowed(Point p) {
 	// See also similar restrictions in addMoveItems method
 	// No need to worry about fast views as they do not
 	// register for D&D operations
-	return !overImage(p.x) && !isZoomed();
+	return !isZoomed();
 }
-/*
- * Return true if <code>x</code> is over the label image.
- */
-private boolean overImage(int x) {
-	return titleLabel.overImage(x);
-}
+
 /**
  * Create a title bar for the pane.
  * 	- the view icon and title to the far left
@@ -292,11 +286,9 @@ private boolean overImage(int x) {
  */
 protected void createTitleBar() {
 	// Only do this once.
-	if (titleLabel != null)
+	if (viewToolBar != null)
 		return;
 
-	titleLabel = new ViewTitleHandler(this);
-	CLabel label = titleLabel.createLabel(control);
 	updateTitles();
 
 
@@ -319,12 +311,7 @@ protected void createTitleBar() {
 	// ISV toolbar.
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 	
-	if(label == null)
-		control.setTopLeft(isvToolBar);
-	else{
-		control.setTopLeft(label);	
-		control.setTopCenter(isvToolBar);
-	}
+	control.setTopLeft(isvToolBar);
 	
 	isvToolBar.addMouseListener(new MouseAdapter(){
 		public void mouseDoubleClick(MouseEvent event) {
@@ -344,8 +331,6 @@ public void dispose() {
 	 * containing the titleLabel will also disappear (disposing of the 
 	 * titleLabel).  As a result, the reference to titleLabel should be dropped. 
 	 */ 
-	titleLabel = null;
-	
 	if (isvMenuMgr != null)
 		isvMenuMgr.dispose();
 	if (isvToolBarMgr != null)
@@ -383,7 +368,7 @@ protected void doDock() {
  * Returns the drag control.
  */
 public Control getDragHandle() {
-	return titleLabel.getDragHandle();
+	return viewToolBar;
 }
 /**
  * @see ViewActionBars
@@ -471,9 +456,6 @@ public void setFastViewSash(Sash s) {
  * Indicate focus in part.
  */
 public void showFocus(boolean inFocus) {
-	if (titleLabel == null)
-		return;
-
 	showFocus = inFocus;
 //	drawGradient();
 	Control c = getControl();
@@ -490,13 +472,7 @@ public void showFocus(boolean inFocus) {
  * Shows the pane menu (system menu) for this pane.
  */
 public void showPaneMenu() {
-	if(titleLabel.hasLabel()){
-		// If this is a fast view, it may have been minimized. Do nothing in this case.
-		if(isFastView() && (page.getActiveFastView() != getViewReference()))
-			return;
-		Rectangle bounds = titleLabel.getLabel().getBounds();
-		showPaneMenu(titleLabel.getLabel(), titleLabel.getLabel().toDisplay(new Point(0, bounds.height)));
-	}
+	
 }
 /**
  * Return true if this view is a fast view.
@@ -636,12 +612,8 @@ public LayoutPart targetPartFor(LayoutPart dragSource) {
 		return this;
 }
 public String toString() {
-	String label = "disposed";//$NON-NLS-1$
-	if((titleLabel != null) && (!titleLabel.hasLabel()) && ! titleLabel.getLabel().isDisposed())
-		label = titleLabel.getText();
-	
-	return getClass().getName() + "@" + Integer.toHexString(hashCode()) + //$NON-NLS-1$
-	"(" + label + ")";//$NON-NLS-2$//$NON-NLS-1$
+
+	return getClass().getName() + "@" + Integer.toHexString(hashCode()); //$NON-NLS-1$
 }
 /**
  * @see ViewActionBars
@@ -657,11 +629,6 @@ public void updateActionBars() {
 /**
  * Update the title attributes.
  */
-public void updateTitles() {
-	IViewReference ref = getViewReference();
-	if (titleLabel != null ) {
-		titleLabel.updateLabel(ref);
-	}
-}
+public void updateTitles() {}
 
 }

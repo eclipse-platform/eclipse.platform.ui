@@ -15,7 +15,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 
 import org.eclipse.ui.activities.IObjectActivityManager;
-import org.eclipse.ui.progress.IProgressManager;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -335,6 +335,6 @@ public IObjectActivityManager getObjectActivityManager(String id, boolean create
  * <b>NOTE: This is experimental API and subject to change at any
  * time</b>.
  */
-public IProgressManager getProgressManager();
+public IProgressService getProgressManager();
 
 }

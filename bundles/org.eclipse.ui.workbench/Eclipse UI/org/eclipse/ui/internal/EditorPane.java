@@ -57,7 +57,7 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 		public void setFocus() {
 			if (text != null) text.setFocus();
 		}
-		protected void setTitle(String title) {
+		public void setTitle(String title) {
 			super.setTitle(title);
 		}
 		protected void setTitleToolTip(String text) {

@@ -240,7 +240,7 @@ protected void setSite(IWorkbenchPartSite site) {
  *
  * @param title the title, or <code>null</code> to clear
  */
-protected void setTitle(String title) {
+public void setTitle(String title) {
 	this.title = title;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
