@@ -11,16 +11,13 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.HelpUIResources;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.AbstractFormPart;
 import org.eclipse.ui.forms.widgets.*;
 
 public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
@@ -34,7 +31,61 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
 	private String id;
 	private Composite container;
 	private Combo searchWordCombo;
+	private Section scopeSection;
 	private Button goButton;
+	private ScopeSetManager scopeSetManager;
+	private ToolBarManager scopeToolbarManager;
+
+	class ScopeSetAction extends Action implements IMenuCreator {
+		private Menu fMenu;
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IMenuCreator#dispose()
+		 */
+		public ScopeSetAction() {
+			super("scope_set");
+			setMenuCreator(this);
+		}
+		public void dispose() {
+			if (fMenu != null) {
+				fMenu.dispose();
+				fMenu=null;
+			}
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+		 */
+		public Menu getMenu(Control parent) {
+			dispose();
+			fMenu = new Menu(parent);
+			MenuItem item = new MenuItem(fMenu, SWT.PUSH);			
+			item.setText("Edit scope sets...");
+			new MenuItem(fMenu, SWT.SEPARATOR);
+			ScopeSet [] sets = scopeSetManager.getScopeSets();
+			for (int i=0; i<sets.length; i++) {
+				addItem(sets[i]);
+			}
+			return fMenu;
+		}
+		private void addItem(final ScopeSet set) {
+			MenuItem item = new MenuItem(fMenu, SWT.PUSH);
+			item.setData(set);
+			item.setText(set.getName());
+			item.setImage(HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH));
+			item.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setActiveScopeSet(set);
+				}
+			});
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+		 */
+		public Menu getMenu(Menu parent) {
+			return null;
+		}
+		public void run() {
+		}
+	}
 
 	/**
 	 * @param parent
@@ -105,20 +156,27 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
 		// Syntax description
 		Label label = toolkit.createLabel(container, null, SWT.WRAP);
 		label.setText(HelpUIResources.getString("expression_label").replace('\n', ' ')); //$NON-NLS-1$
-		// Filtering group
-		toolkit.createLabel(container, null);
 		td = new TableWrapData();
 		td.colspan = 2;
-		Section filteringComposite = toolkit.createSection(container, 
-				Section.TWISTIE|Section.COMPACT);
+		label.setLayoutData(td);
+		
+		label = toolkit.createLabel(container, null);
+		td = new TableWrapData();
+		td.colspan = 2;	
+		label.setLayoutData(td);
+		// Filtering group		
+		scopeSection = toolkit.createSection(container, 
+				Section.TWISTIE|Section.COMPACT|Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		td = new TableWrapData();
 		td.colspan = 2;
-		filteringComposite.setLayoutData(td);
-		Composite filteringGroup = toolkit.createComposite(filteringComposite);
-		filteringComposite.setClient(filteringGroup);
+		td.align = TableWrapData.FILL;
+		scopeSection.setLayoutData(td);
+		Composite filteringGroup = toolkit.createComposite(scopeSection);
+		scopeSection.setClient(filteringGroup);
+		createScopeSet(scopeSection, toolkit);
 		TableWrapLayout flayout = new TableWrapLayout();
 		flayout.numColumns = 2;
-		filteringComposite.setText(HelpUIResources.getString("limit_to")); //$NON-NLS-1$
+		scopeSection.setText(HelpUIResources.getString("limit_to")); //$NON-NLS-1$
 		filteringGroup.setLayout(flayout);
 
 		toolkit.paintBordersFor(filteringGroup);
@@ -128,7 +186,24 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart {
 		td.colspan = 2;
 		advanced.setLayoutData(td);
 	}
-	
+
+	private void createScopeSet(Section section, FormToolkit toolkit) {
+		scopeToolbarManager = new ToolBarManager(SWT.FLAT);
+		ScopeSetAction action = new ScopeSetAction();
+		action.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_HELP_SEARCH));
+		scopeToolbarManager.add(action);
+		ToolBar toolBar = scopeToolbarManager.createControl(section);
+		toolkit.adapt(toolBar, true, true);
+		section.setTextClient(toolBar);
+	}
+
+	private void setActiveScopeSet(ScopeSet set) {
+		scopeSection.setText("Scope - "+set.getName());
+		scopeSection.layout();
+		parent.reflow();
+		scopeSetManager.setActiveSet(set);
+	}
+
 	private void loadEngines(Composite container, FormToolkit toolkit) {
 		IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(ENGINE_EXP_ID);
 		for (int i=0; i<elements.length; i++) {
