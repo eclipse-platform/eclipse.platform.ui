@@ -30,6 +30,24 @@
       </extraClasspathEntry>
    </extension>
    
+   <extension point="org.eclipse.ant.core.antTasks">
+	    <antTask 
+	    	name="coolTask" 
+	    	class="org.eclipse.ant.tests.core.support.tasks.AntTestTask"
+	    	library="lib/antTestsSupport.jar"
+	    	headless="false">
+	    </antTask>
+   </extension>
+
+	<extension point="org.eclipse.ant.core.antTypes">
+	    <antType 
+	    	name="coolType" 
+	    	class="org.eclipse.ant.tests.core.support.types.AntTestPath"
+	    	library="lib/antTestsSupport.jar"
+	    	headless="false">
+	    </antType>
+   </extension>
+   
    <extension
          point="org.eclipse.ant.core.antProperties">
       <antProperty

@@ -54,9 +54,10 @@ public class TaskTests extends AbstractAntTest {
 		} catch (CoreException ce) {
 			assertTrue("Exception from undefined task is incorrect", ce.getMessage().endsWith("as this is not an Ant bug."));
 			return;
+		} finally {
+			restorePreferenceDefaults();	
 		}
 		assertTrue("Build should have failed as task no longer defined", false);
-		restorePreferenceDefaults();
 	}
 	
 	public void testAddTaskFromFolder() throws MalformedURLException, CoreException {
@@ -96,5 +97,25 @@ public class TaskTests extends AbstractAntTest {
 		} finally {
 			restorePreferenceDefaults();
 		}
+	}
+	
+	public void testTaskDefinedInExtensionPoint() throws CoreException {
+		run("ExtensionPointTask.xml");
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertSuccessful();
+	}
+		
+	public void testTaskDefinedInExtensionPointHeadless() throws CoreException {
+		AntCorePlugin.getPlugin().setRunningHeadless(true);
+		try {
+			run("ExtensionPointTask.xml");
+		} catch (CoreException ce) {
+			assertTrue("Exception from undefined task is incorrect", ce.getMessage().endsWith("as this is not an Ant bug."));
+			return;
+		} finally {
+			AntCorePlugin.getPlugin().setRunningHeadless(false);
+		}
+		assertTrue("Build should have failed as task was not defined to run in headless", false);
 	}
 }

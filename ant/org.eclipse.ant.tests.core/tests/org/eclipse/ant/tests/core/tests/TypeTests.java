@@ -50,8 +50,31 @@ public class TypeTests extends AbstractAntTest {
 		} catch (CoreException ce) {
 			assertTrue("Exception from undefined type is incorrect", ce.getMessage().endsWith("Unexpected element \"anttestpath\""));
 			return;
+		} finally {
+			restorePreferenceDefaults();	
 		}
 		assertTrue("Build should have failed as type no longer defined", false);
-		restorePreferenceDefaults();
+		
 	}
+	
+	public void testTypeDefinedInExtensionPoint() throws CoreException {
+		run("ExtensionPointType.xml");
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("Ensure that an extension point defined type is present"));
+		assertSuccessful();
+	}
+	
+	public void testTypeDefinedInExtensionPointHeadless() throws CoreException {
+		AntCorePlugin.getPlugin().setRunningHeadless(true);
+		try {
+			run("ExtensionPointType.xml");
+		} catch (CoreException ce) {
+			assertTrue("Exception from undefined type is incorrect", ce.getMessage().endsWith("Unexpected element \"coolType\""));
+			return;
+		} finally {
+			AntCorePlugin.getPlugin().setRunningHeadless(false);
+		}
+		assertTrue("Build should have failed as type was not defined to run in headless", false);
+	}
+	
 }
