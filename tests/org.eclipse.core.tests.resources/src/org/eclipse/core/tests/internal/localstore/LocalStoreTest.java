@@ -16,6 +16,7 @@ import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public abstract class LocalStoreTest extends EclipseWorkspaceTest {
@@ -130,13 +131,16 @@ protected void setUp() throws Exception {
 
 	projectNames = new String[numberOfProjects];
 	projects = new IProject[numberOfProjects];
-
-	for (int i = 0; i < projectNames.length; i++) {
-		projectNames[i] = "Project"+i;
-		projects[i] = getWorkspace().getRoot().getProject(projectNames[i]);
-		projects[i].create(null);
-		projects[i].open(null);
-	}
+	getWorkspace().run(new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			for (int i = 0; i < projectNames.length; i++) {
+				projectNames[i] = "Project"+i;
+				projects[i] = getWorkspace().getRoot().getProject(projectNames[i]);
+				projects[i].create(null);
+				projects[i].open(null);
+			}
+		}
+	}, null);
 }
 protected void tearDown() throws Exception {
 	getWorkspace().getRoot().delete(true, true, getMonitor());

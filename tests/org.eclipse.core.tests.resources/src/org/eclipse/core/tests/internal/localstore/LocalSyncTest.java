@@ -46,6 +46,9 @@ public void testProjectDeletion() throws Throwable {
 	/* initialize common objects */
 	Project project = (Project)projects[0];
 
+	//snapshot will recreate the deleted .project file	
+	TestingSupport.waitForSnapshot();
+
 	// create resources
 	IResource[] resources = buildResources(project, defineHierarchy());
 	ensureExistsInWorkspace(resources, true);
