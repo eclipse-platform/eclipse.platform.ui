@@ -7,22 +7,22 @@
 <body>
 <p>Provides a framework for creating and manipulating text documents.</p>
 <h3>Package Specification</h3>
-<p><font face="Courier New, Courier, mono">IDocument</font> is the major text 
+<p><tt>IDocument</tt> is the major text 
   model abstraction. It provides content management, position management using 
   position categories, document partition management, and change notification. 
-  In order to be notified about document changes, an object must implements <font face="Courier New, Courier, mono">IDocumentListener 
-  </font>and must be registered with the document. <font face="Courier New, Courier, mono">Position</font> 
-  updating in responds to a document change is performed by implementers of <font face="Courier New, Courier, mono">IDocumentPositionUpdater</font>. 
+  In order to be notified about document changes, an object must implements <tt>IDocumentListener 
+  </tt>and must be registered with the document. <tt>Position</tt> 
+  updating in responds to a document change is performed by implementers of <tt>IDocumentPositionUpdater</tt>. 
   Partition updating in responds to a document change is performed by implements 
-  of <font face="Courier New, Courier, mono">IDocumentPartitioner</font>. In order 
-  to be notified about document partition changes, objects must implement <font face="Courier New, Courier, mono">IDocumentParititoningListener</font> 
+  of <tt>IDocumentPartitioner</tt>. In order 
+  to be notified about document partition changes, objects must implement <tt>IDocumentParititoningListener</tt> 
   and must be registered with the document.</p>
 <p>The package contains default implementations for document position updaters 
-  and for documents. <font face="Courier New, Courier, mono">AbstractDocument</font> 
-  uses <font face="Courier New, Courier, mono">ITextStorage</font> for storing 
-  and managing its content and <font face="Courier New, Courier, mono">ILineTracker</font> 
+  and for documents. <tt>AbstractDocument</tt> 
+  uses <tt>ITextStorage</tt> for storing 
+  and managing its content and <tt>ILineTracker</tt> 
   to maintain a line structure of its content. As defaults a gap text implementation 
-  of <font face="Courier New, Courier, mono">ITextStore</font> is provided, together 
+  of <tt>ITextStore</tt> is provided, together 
   with a line tracker understanding the three standard line delimiters (&quot;\r&quot;, 
   &quot;\n&quot;, &quot;\r\n&quot;) and a line tracker which can be freely configured 
   to consider any given set of strings as valid line delimiters. </p>
