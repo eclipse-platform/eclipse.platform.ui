@@ -51,56 +51,63 @@ public class TagAction extends TeamAction {
 	 */
 	public void run(IAction action) {
 		final List messages = new ArrayList();
+		final int[] failureCount = new int[] {0};
+		final int[] resourceCount = new int[] {0};
+		
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				try {
-					PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
-						getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));
-					IResource[] resources = prompt.promptForMultiple();
-					if(resources.length == 0) {
-						// nothing to do
-						return;						
-					}
-					
-					final String[] result = new String[1];
-					getShell().getDisplay().syncExec(new Runnable() {
-						public void run() {
-							result[0] = promptForTag();
-						}
-					});
-					if (result[0] == null) return;
-					Hashtable table = getProviderMapping(resources);
-					Set keySet = table.keySet();
-					monitor.beginTask(null, keySet.size() * 1000);
-					Iterator iterator = keySet.iterator();
-					
-					while (iterator.hasNext()) {
-						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
-						List list = (List)table.get(provider);
-						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						CVSTag tag = new CVSTag(result[0], CVSTag.VERSION);
-						IStatus status = provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
-						if (status.getCode() != CVSStatus.OK) {
-							messages.add(status);
-						}
-						// Cache the new tag creation even if the tag may of has warnings.
-						CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags(
-										CVSWorkspaceRoot.getCVSFolderFor(provider.getProject()), 
-										new CVSTag[] {tag});
-
-					}	
-					previousTag = result[0];				
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
+				PromptingDialog prompt = new PromptingDialog(getShell(), getSelectedResources(),
+					getPromptCondition(), Policy.bind("TagAction.uncommittedChangesTitle"));
+				IResource[] resources = prompt.promptForMultiple();
+				if(resources.length == 0) {
+					// nothing to do
+					return;						
 				}
+				
+				resourceCount[0] = resources.length;
+				final String[] result = new String[1];
+				getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						result[0] = promptForTag();
+					}
+				});
+				if (result[0] == null) return;
+				Hashtable table = getProviderMapping(resources);
+				Set keySet = table.keySet();
+				monitor.beginTask(null, keySet.size() * 1000);
+				Iterator iterator = keySet.iterator();
+				
+				while (iterator.hasNext()) {
+					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+					CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+					List list = (List)table.get(provider);
+					IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+					CVSTag tag = new CVSTag(result[0], CVSTag.VERSION);
+					IStatus status = provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
+					if (status.getCode() != CVSStatus.OK) {
+						messages.add(status);
+						failureCount[0]++;
+					}
+					// Cache the new tag creation even if the tag may of has warnings.
+					CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags(
+									CVSWorkspaceRoot.getCVSFolderFor(provider.getProject()), 
+									new CVSTag[] {tag});
+
+				}	
+				previousTag = result[0];				
 			}
 		}, Policy.bind("TagAction.tagProblemsMessage"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 		
 		// Check for any status messages and display them
 		if (!messages.isEmpty()) {
 			boolean error = false;
-			MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
+			MultiStatus combinedStatus;
+			if(resourceCount[0] == 1) {
+				combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessage"), null); //$NON-NLS-1$
+			} else {
+				combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0, Policy.bind("TagAction.tagProblemsMessageMultiple", 
+												  Integer.toString(resourceCount[0] - failureCount[0]), Integer.toString(failureCount[0])), null); //$NON-NLS-1$
+			}
 			for (int i = 0; i < messages.size(); i++) {
 				IStatus status = (IStatus)messages.get(i);
 				if (status.getSeverity() == IStatus.ERROR || status.getCode() == CVSStatus.SERVER_ERROR) {
