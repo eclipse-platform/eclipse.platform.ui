@@ -43,8 +43,10 @@ public class SyncAction extends WorkspaceAction {
 			if(view != null) {
 				CVSWorkspaceSubscriber cvsWorkspaceSubscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 				view.setWorkingSet(workingSet);
-				view.setSelection(cvsWorkspaceSubscriber, resources, view.getCurrentViewType());
+				view.selectSubscriber(cvsWorkspaceSubscriber);
 				view.refreshWithRemote(cvsWorkspaceSubscriber, resources);
+			} else {
+				CVSUIPlugin.openError(getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} else {
 			executeInOldSyncView(action);

@@ -11,12 +11,10 @@
 package org.eclipse.team.internal.ui.sync.views;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,7 +74,6 @@ import org.eclipse.team.internal.ui.sync.actions.RefreshAction;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.internal.ui.sync.sets.ISyncSetChangedListener;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
-import org.eclipse.team.internal.ui.sync.sets.SyncSet;
 import org.eclipse.team.internal.ui.sync.sets.SyncSetChangedEvent;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.sync.ISynchronizeView;
@@ -447,15 +444,14 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 
 	}
 	
-
-	
-
 	public void activateSubscriber(TeamSubscriber subscriber) {
-		SubscriberInput input = (SubscriberInput)subscriberInputs.get(subscriber.getId());
-		if (input == null) {
+		SubscriberInput newInput = (SubscriberInput)subscriberInputs.get(subscriber.getId());
+		if (newInput == null) {
 			addSubscriber(subscriber);
 		};
-		initializeSubscriberInput(input);
+		if(! newInput.getSubscriber().getId().equals(getInput().getSubscriber().getId())) {
+			initializeSubscriberInput(newInput);
+		}
 	}
 	/*
 	 * Synchronize - (showing N of M changes) - {Subscriber name}
@@ -765,21 +761,8 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		}
 	}
 	
-	public void setSelection(TeamSubscriber subscriber, IResource[] resources, int viewType) {
-		switchViewerType(viewType);
-		List syncResource = new ArrayList(resources.length);
-		for (int i = 0; i < resources.length; i++) {
-			syncResource.add(new SyncResource((SyncSet)viewer.getInput(), resources[i]));			
-		}
-		if(! syncResource.isEmpty()) {
-			viewer.setSelection(new StructuredSelection(syncResource), true /* reveal */);
-			if(viewer instanceof AbstractTreeViewer) {
-				((AbstractTreeViewer)viewer).expandToLevel(2);
-			}
-		}
-		if(subscriber != null) {
-			activateSubscriber(subscriber);
-		}
+	public void selectSubscriber(TeamSubscriber subscriber) {
+		activateSubscriber(subscriber);
 	}
 	
 	/**

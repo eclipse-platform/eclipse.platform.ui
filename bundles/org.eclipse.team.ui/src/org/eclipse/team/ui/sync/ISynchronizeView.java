@@ -36,7 +36,7 @@ public interface ISynchronizeView {
 	 * @param resources the resources to select
 	 * @param viewType the view configuration in which to select the resources
 	 */
-	public void setSelection(TeamSubscriber subscriber, IResource[] resources, int viewType);
+	public void selectSubscriber(TeamSubscriber subscriber);
 	
 	/**
 	 * Refreshes the resources from the specified subscriber. The working set or filters applied

@@ -300,8 +300,11 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				}
 				ISynchronizeView view = TeamUI.showSyncViewInActivePage(null);
 				if(view != null) {
-					IWorkingSet ws = CVSUIPlugin.getWorkingSet(new IResource[] {project}, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$
-					view.setSelection(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), new IResource[] {project}, ISynchronizeView.TREE_VIEW);
+					IWorkingSet workingSet = CVSUIPlugin.getWorkingSet(new IResource[] {project}, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$)
+					view.setWorkingSet(workingSet);
+					view.selectSubscriber(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+				} else {
+					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null);
 				}
 			}
 		} catch (InterruptedException e) {

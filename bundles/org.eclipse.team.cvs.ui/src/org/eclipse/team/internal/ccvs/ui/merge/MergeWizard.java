@@ -30,6 +30,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
 public class MergeWizard extends Wizard {
@@ -82,7 +83,13 @@ public class MergeWizard extends Wizard {
 				}
 			});
 			ISynchronizeView view = TeamUI.showSyncViewInActivePage(null /* no default page */);
-			view.setSelection(s, new IResource[0], view.getCurrentViewType());
+			IWorkingSet workingSet = CVSUIPlugin.getWorkingSet(resources, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$
+			if(view != null) {
+				view.setWorkingSet(workingSet);
+				view.selectSubscriber(s);
+			} else {
+				CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null);
+			}
 		} catch (InvocationTargetException e) {
 			CVSUIPlugin.openError(getContainer().getShell(), null, null, e);
 			return false;
