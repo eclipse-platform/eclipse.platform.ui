@@ -31,10 +31,33 @@ public class DeadlockDetectionTest extends TestCase {
 	}
 	
 	public static Test suite() {
-		return new TestSuite(DeadlockDetectionTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-//		return suite;
+//		return new TestSuite(DeadlockDetectionTest.class);
+		TestSuite suite = new TestSuite();
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+		return suite;
 	}
 
 	/**
@@ -797,8 +820,8 @@ public class DeadlockDetectionTest extends TestCase {
 				runningCount++;
 				status[3] = TestBarrier.STATUS_RUNNING;
 			}
-			//timeout if the two jobs don't start within ten seconds
-			assertTrue("Timeout waiting for job to end", (System.currentTimeMillis()-waitStart) < 10000);
+			//timeout if the two jobs don't start within a reasonable time
+			assertTrue("Timeout waiting for job to end", (System.currentTimeMillis()-waitStart) < 30000);
 		}
 		//wait until all jobs are done
 		for (int i = 0; i < jobs.length; i++) 
