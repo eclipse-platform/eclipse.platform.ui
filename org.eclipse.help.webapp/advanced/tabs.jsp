@@ -24,9 +24,6 @@
     
 <style type="text/css">
 
-HTML {
-	border-top:1px solid ThreeDShadow;
-}
 
 BODY {
 	margin:0px;
@@ -46,25 +43,36 @@ if (data.isMozilla()){
 .tab {
 	margin:0px;
 	padding:0px;
-	border:1px solid <%=prefs.getToolbarBackground()%>;
+	border-top:1px solid ThreeDShadow;
+	border-bottom:1px solid ThreeDShadow;
 	cursor:default;
 }
 
 .pressed {
 	margin:0px;
 	padding:0px;
-	border:1px solid ThreeDHighlight;
 	cursor:default;
+	background-color:<%=prefs.getViewBackground()%>;
+	border-top:1px solid <%=prefs.getViewBackground()%>;
+	border-bottom:1px solid ThreeDShadow;
 }
 
 .separator {
+	height:100%;
 	background-color:ThreeDShadow;
-	border-top:10px solid <%=prefs.getToolbarBackground()%>;
+	border-bottom:1px solid <%=prefs.getViewBackground()%>;
 }
 
 .separator_pressed {
 	height:100%;
 	background-color:ThreeDShadow;
+	border-bottom:1px solid <%=prefs.getViewBackground()%>;
+}
+
+.separator2 {
+	height:3px;
+	background:<%=prefs.getToolbarBackground()%>;
+	border-bottom:1px solid ThreeDShadow;
 }
 
 A {
@@ -131,13 +139,13 @@ function showTab(tab)
 	
  	// show the appropriate pressed tab
   	var buttons = document.body.getElementsByTagName("TD");
-  	for (var i=0; i<buttons.length; i++)
+  	for (var i=0; i<buttons.length-1; i++)
   	{
   		if (buttons[i].id == tab) { 
 			buttons[i].className = "pressed";
 			if (i > 0) 
 				buttons[i-1].className = "separator_pressed";
-			if (i<buttons.length-1) 
+			if (i<buttons.length-1-1) 
 				buttons[i+1].className = "separator_pressed";
 		} else if (buttons[i].className == "pressed") {
 			buttons[i].className = "tab";
@@ -146,8 +154,8 @@ function showTab(tab)
 					buttons[i-1].className = "separator_pressed";
 				else
 					buttons[i-1].className = "separator";
-			if (i<buttons.length-1) 
-				if (i<buttons.length-2 && buttons[i+2].id == tab) 
+			if (i<buttons.length-1-1) 
+				if (i<buttons.length-1-2 && buttons[i+2].id == tab) 
 					buttons[i+1].className = "separator_pressed";
 				else
 					buttons[i+1].className = "separator";
@@ -231,7 +239,7 @@ function getPreviousLink(currentLink){
    
 <body>
 
-  <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
+  <table style="filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#aaffffff', endColorstr='#00ffffff', gradientType='0');" cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
    <tr>
 
 <%
@@ -270,6 +278,9 @@ function getPreviousLink(currentLink){
 %>
  
    </tr>
+  <tr>
+		<td width="0px" colspan="<%=views.length*2-1%>" class="separator2"></td>
+  </tr>
    </table>
 
 </body>
