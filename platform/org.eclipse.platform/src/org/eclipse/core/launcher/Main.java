@@ -593,8 +593,7 @@ public class Main {
 				spec = "file:" + file.getAbsolutePath();
 		}
 		try {
-			if (trailingSlash && !(spec.endsWith("/") || spec.endsWith(File.separator)))
-				spec += "/";
+			spec = adjustTrailingSlash(spec, true);
 			return new URL(spec);
 		} catch (MalformedURLException e) {
 			if (spec.startsWith("file:"))
@@ -954,9 +953,7 @@ public class Main {
 			result = buildURL(computeDefaultConfigurationLocation(), true);
 		if (result == null)
 			return null;
-		configurationLocation = result.toExternalForm();
-		if (!configurationLocation.endsWith("/"))
-			configurationLocation += "/";
+		configurationLocation = adjustTrailingSlash(result.toExternalForm(), true);
 		System.getProperties().put(PROP_CONFIG_AREA, configurationLocation);
 		if (debug)
 			System.out.println("Configuration location:\n    " + configurationLocation);
@@ -1044,10 +1041,8 @@ public class Main {
 		// setup the path to the framework
 		String urlString = System.getProperty(PROP_FRAMEWORK, null);
 		if (urlString != null) {
-			if (!urlString.endsWith("/")) {
-				urlString += "/";
-				System.getProperties().put(PROP_FRAMEWORK, urlString);
-			}
+			urlString = adjustTrailingSlash(urlString, true);
+			System.getProperties().put(PROP_FRAMEWORK, urlString);
 			bootLocation = resolve(urlString);
 		}
 	}
@@ -1583,4 +1578,12 @@ public class Main {
 		}	
 	}
 
+	private String adjustTrailingSlash(String value, boolean slash) {
+		boolean hasSlash = value.endsWith("/") || value.endsWith(File.separator);
+		if (hasSlash == slash)
+			return value;
+		if (hasSlash)
+			return value.substring(0, value.length() - 1);
+		return value + "/";
+	}
 }
