@@ -13,6 +13,7 @@ package org.eclipse.core.internal.registry;
 import org.eclipse.core.internal.runtime.CompatibilityHelper;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.Bundle;
 
 /**
  * An object which represents the user-defined extension in a 
@@ -157,7 +158,16 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 	 * @deprecated
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor() {
-		return CompatibilityHelper.getPluginDescriptor(((Namespace) getParent()).getName());
+		IPluginDescriptor result = CompatibilityHelper.getPluginDescriptor(((Namespace) getParent()).getName());
+		if (result == null) {
+			Bundle underlyingBundle = Platform.getBundle(((Namespace) getParent()).getName());
+			if (underlyingBundle != null) {
+				Bundle[] hosts = Platform.getHosts(underlyingBundle);
+				if (hosts != null)
+					result = CompatibilityHelper.getPluginDescriptor(hosts[0].getSymbolicName());
+			}
+		}
+		return result;
 	}
 
 	public String getExtensionPointUniqueIdentifier() {
