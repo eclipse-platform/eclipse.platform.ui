@@ -313,7 +313,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         openAfterDelayButton.setEnabled(openOnSingleClick);
         stickyCycleButton.setSelection(store
                 .getDefaultBoolean(IPreferenceConstants.STICKY_CYCLE));
-
+        showUserDialogButton.setSelection(store.getDefaultBoolean(
+                IPreferenceConstants.RUN_IN_BACKGROUND));
+		
         super.performDefaults();
     }
 
