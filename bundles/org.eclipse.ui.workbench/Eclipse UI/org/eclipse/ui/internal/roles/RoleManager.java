@@ -115,7 +115,11 @@ public class RoleManager {
 	 */
 	void loadEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
+		
+		//Do not set it if the store is not set so as to
+		//allow for switching off and on of roles
+		if(!store.isDefault(PREFIX + FILTERING_ENABLED))
+			setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
 
 		for (int i = 0; i < roles.length; i++) {
 			roles[i].enabled = store.getBoolean(createPreferenceKey(i));
@@ -148,11 +152,11 @@ public class RoleManager {
 	 * whose pattern matches the id return whether or not the role is
 	 * enabled. If there is no match return true;
 	 * @param id
-	 * @return
+	 * @return boolean. 
 	 */
 	public boolean isEnabledId(String id) {
 
-		if (!filterRoles)
+		if (!isFiltering())
 			return true;
 		for (int i = 0; i < roles.length; i++) {
 			if (roles[i].patternMatches(id))
