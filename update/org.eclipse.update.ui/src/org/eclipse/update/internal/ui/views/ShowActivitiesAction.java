@@ -16,6 +16,7 @@ import org.eclipse.update.internal.ui.wizards.*;
 
 public class ShowActivitiesAction extends Action {
 	Shell shell;
+	
 	public ShowActivitiesAction(Shell parentShell, String text) {
 		super(text);
 		this.shell = parentShell;
@@ -24,7 +25,6 @@ public class ShowActivitiesAction extends Action {
 	public void run() {
 		ShowActivitiesDialog dialog = new ShowActivitiesDialog(shell);
 		dialog.create();
-//		dialog.getShell().setText("Current Configuration Activities");
 		dialog.getShell().setSize(500,500);
 		dialog.open();
 	}

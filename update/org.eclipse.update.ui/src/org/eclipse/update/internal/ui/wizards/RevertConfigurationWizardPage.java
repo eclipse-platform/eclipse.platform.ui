@@ -100,7 +100,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 				}
 				return result.toArray();
 			}
-
+			
 			public void dispose() {
 			}
 
@@ -166,15 +166,18 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		layout.addColumnData(new ColumnWeightData(50, 100, true));
 
 		activitiesViewer.getTable().setLayout(layout);
-//		parser = new InstallLogParser();
-//		parser.parseInstallationLog();
-//		InstallConfigElement[] ele = parser.getInstallConfigurations();
-//		return ele;
 		TableItem[] configs = configViewer.getTable().getItems();
 		if (configs.length >0)
 			activitiesViewer.setInput((InstallConfiguration)configs[0].getData());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+	 */
+	public void dispose() {
+		blueBGColor.dispose();
+	}
+	
 	public boolean performFinish() {
 		Shell shell = getContainer().getShell();
 		boolean result =
