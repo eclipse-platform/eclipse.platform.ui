@@ -140,7 +140,6 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 		Object adapter  = adaptable.getAdapter(getAdapterClass());
 		if (adapter == null) {
 			IAdapterManager adapterManager = Platform.getAdapterManager();
-			// TODO: we could restrict loading to cases when the debugging context is on
 			if (adapterManager.hasAdapter(adaptable, getAdapterClass().getName())) { //$NON-NLS-1$
 				targetAdapter = adapterManager.loadAdapter(adaptable, getAdapterClass().getName()); //$NON-NLS-1$
 			}
@@ -164,11 +163,26 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
+		clearPart(part);
+	}
+	
+	/**
+	 * Clears reference to active part and adapter when a relevant part
+	 * is closed or deactivated.
+	 * 
+	 * @param part workbench part that has been closed or deactivated
+	 */
+	protected void clearPart(IWorkbenchPart part) {
+		if (part.equals(activePart)) {
+			activePart = null;
+			targetAdapter = null;
+		}
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
+		clearPart(part);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
