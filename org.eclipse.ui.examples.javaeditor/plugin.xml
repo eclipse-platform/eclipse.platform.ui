@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- File written by PDE 1.0 -->
 <plugin
    id="org.eclipse.ui.examples.javaeditor"
    name="%pluginName"
    version="3.0.0"
-   provider-name="%providerName">
-<requires>
-   <import plugin="org.eclipse.ui"/>
-   <import plugin="org.eclipse.core.resources"/>
-</requires>
+   provider-name="%providerName"
+   class="org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin">
 
-<runtime>
-   <library name="javaeditorexample.jar">
-      <export name="*"/>
-   </library>
-</runtime>
+   <runtime>
+      <library name="javaeditorexample.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
+   </requires>
 
-<extension
-      point="org.eclipse.ui.editors">
-   <editor
-         name="%javaEditorName"
-         icon="icons/obj16/java.gif"
-         extensions="jav"
-         contributorClass="org.eclipse.ui.examples.javaeditor.JavaActionContributor"
-         class="org.eclipse.ui.examples.javaeditor.JavaEditor"
-         id="org.eclipse.ui.JavaEditor">
-   </editor>
-</extension>
 
-<extension
-      point="org.eclipse.ui.documentProviders">
-   <provider
-         extensions="%javaFileExtension"
-         class="org.eclipse.ui.examples.javaeditor.JavaDocumentProvider"
-         id="org.eclipse.ui.examples.javaeditor.JavaDocumentProvider">
-   </provider>
-</extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%javaEditorName"
+            icon="icons/obj16/java.gif"
+            extensions="%javaFileExtensions"
+            contributorClass="org.eclipse.ui.examples.javaeditor.JavaActionContributor"
+            class="org.eclipse.ui.examples.javaeditor.JavaEditor"
+            id="org.eclipse.ui.JavaEditor">
+      </editor>
+   </extension>
+
+   <extension
+         id="ExampleJavaDocumentSetupParticipant"
+         name="%documentSetupParticipantName"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            extensions="%javaFileExtensions"
+            class="org.eclipse.ui.examples.javaeditor.JavaDocumentSetupParticipant">
+      </participant>
+   </extension>
 
 </plugin>
