@@ -134,7 +134,6 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 			int delBelow= info.getRemovedLinesBelow();
 			if (delBefore > 0 || delBelow > 0) {
 				Color deletionColor= getDeletionColor(display);
-				gc.setBackground(deletionColor);
 				gc.setForeground(deletionColor);
 
 				if (delBefore > 0) {
@@ -142,7 +141,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 				}
 
 				if (delBelow > 0) {
-					gc.drawLine(0, y + lineheight, width, y + lineheight);
+					gc.drawLine(0, y + lineheight - 1, width, y + lineheight - 1);
 				}
 				gc.setForeground(getForeground());
 			}
