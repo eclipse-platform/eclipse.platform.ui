@@ -214,26 +214,6 @@
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
       </viewerContribution>
-      <objectContribution
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="*.xml"
-            id="org.eclipse.ant.ui.RunAnt">
-         <visibility>
-            <objectState
-                  name="xmlFirstTag"
-                  value="project">
-            </objectState>
-         </visibility>
-         <action
-               label="%PopupMenu.runAnt"
-               class="org.eclipse.ant.internal.ui.launchConfigurations.AntRunActionDelegate"
-               tooltip="%PopupMenu.runAntTip"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.ant.ui.RunAntAction">
-         </action>
-      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ant.core.extraClasspathEntries">
@@ -300,6 +280,47 @@
             class="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut"
             modes="run"
             id="org.eclipse.ant.ui.antShortcut">
+        <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <and>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
+                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.contentTypes.antBuildFile"/>
+                 </and>
+               </iterate>
+             </with>
+           </enablement>
+           <contextLabel
+         	  mode="run"
+         	  label="%ContextualAntLaunchShortcut.label"/>
+  		 </contextualLaunch>
+      </shortcut>
+      <shortcut
+            label="%AntLaunchShortcutWithDialog.label"
+            icon="icons/full/obj16/ant.gif"
+            category="org.eclipse.ui.externaltools"
+            helpContextId="org.eclipse.ui.externaltools.launchShortcutHelpContext.antShortcutWithDialog"
+            class="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcutWithDialog"
+            modes="run"
+            id="org.eclipse.ant.ui.antShortcutWithDialog">
+        <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <and>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
+                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.contentTypes.antBuildFile"/>
+                 </and>
+               </iterate>
+             </with>
+           </enablement>
+           <contextLabel
+         	  mode="run"
+         	  label="%ContextualAntLaunchShortcutWithDialog.label"/>
+  		 </contextualLaunch>
       </shortcut>
    </extension>
 <!-- Console Extensions -->
