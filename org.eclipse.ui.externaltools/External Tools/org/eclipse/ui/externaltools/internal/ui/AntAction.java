@@ -10,7 +10,9 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -45,12 +47,23 @@ public class AntAction extends Action {
 		if (file == null)
 			return;
 
-		AntTargetList targetList = AntUtil.getTargetList(file.getLocation());
+		AntTargetList targetList = null;
+		try {
+			targetList = AntUtil.getTargetList(file.getLocation());
+		} catch (CoreException e) {
+			ErrorDialog.openError(
+				window.getShell(),
+				ToolMessages.getString("AntAction.runErrorTitle"), //$NON-NLS-1$
+				ToolMessages.format("AntAction.errorReadAntFile", new Object[] {file.getFullPath().toString()}), //$NON-NLS-1$;
+				e.getStatus());
+			return;
+		}
+		
 		if (targetList == null) {
 			MessageDialog.openError(
 				window.getShell(),
 				ToolMessages.getString("AntAction.runErrorTitle"), //$NON-NLS-1$;
-				ToolMessages.getString("AntAction.runInvalidFile")); //$NON-NLS-1$;
+				ToolMessages.format("AntAction.noAntTargets", new Object[] {file.getFullPath().toString()})); //$NON-NLS-1$;
 			return;
 		}
 

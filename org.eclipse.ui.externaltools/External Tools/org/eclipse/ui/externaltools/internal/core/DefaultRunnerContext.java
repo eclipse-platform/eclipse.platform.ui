@@ -267,10 +267,10 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			shell.getDisplay().syncExec(new Runnable() { 
 				public void run() {
 					ErrorDialog.openError(
-					shell,
-					ToolMessages.getString("DefaultRunnerContext.errorShellTitle"), //$NON-NLS-1$
-					ToolMessages.getString("DefaultRunnerContext.errorMessage"), //$NON-NLS-1$
-					e.getStatus());
+						shell,
+						ToolMessages.getString("DefaultRunnerContext.errorShellTitle"), //$NON-NLS-1$
+						ToolMessages.getString("DefaultRunnerContext.errorMessage"), //$NON-NLS-1$
+						e.getStatus());
 				}
 			});
 		}

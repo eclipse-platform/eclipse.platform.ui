@@ -26,13 +26,14 @@ public class AntTargetList {
 	/**
 	 * Add a target to the list.
 	 */
-	public void add(String target) {
+	/*package*/ void add(String target) {
 		targets.add(target);	
 	}
 	
 	/**
-	 * Retrieve the default target. This method will return null
-	 * if the default target has not yet been specified.
+	 * Retrieve the default target. This method will return
+	 * <code>null</code> if the default target has not yet
+	 * been specified.
 	 */
 	public String getDefaultTarget() {
 		return defaultTarget;	
@@ -48,9 +49,29 @@ public class AntTargetList {
 	}
 	
 	/**
+	 * Returns the number of targets in the list.
+	 */
+	public int getTargetCount() {
+		return targets.size();
+	}
+	
+	/**
 	 * Set the default target.
 	 */
-	public void setDefaultTarget(String target) {
+	/*package*/ void setDefaultTarget(String target) {
 		defaultTarget = target;
+	}
+	
+	/**
+	 * Validate the default target exists within the
+	 * known target list and if not, remove it.
+	 */
+	/*package*/ boolean validateDefaultTarget() {
+		if (defaultTarget == null)
+			return true;
+		if (targets.contains(defaultTarget))
+			return true;
+		defaultTarget = null;
+		return false;
 	}
 }

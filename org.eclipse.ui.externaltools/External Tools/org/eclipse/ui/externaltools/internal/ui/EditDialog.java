@@ -667,11 +667,8 @@ public class EditDialog extends TitleAreaDialog {
 			list.add(ToolMessages.getString("EditDialog.varResourceXDirLabel")); //$NON-NLS-1$	
 			
 			location = ToolUtil.getLocationFromText(locationField.getText().trim());
-			if (location != null) {
-				Path path = new Path(location);
-				AntTargetList targetList = AntUtil.getTargetList(path);
-				if (targetList != null) // The file is a valid Ant file.
-					list.add(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
+			if (location != null && location.endsWith(".xml")) { //$NON-NLS-1$
+				list.add(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
 			}		
 			return dialogArea;
 		}
@@ -715,8 +712,28 @@ public class EditDialog extends TitleAreaDialog {
 					break;
 
 				case 5 :
+					AntTargetList targetList = null;
+					try {
+						targetList = AntUtil.getTargetList(new Path(location));
+					} catch (CoreException e) {
+						ErrorDialog.openError(
+							getShell(),
+							ToolMessages.getString("EditDialog.errorTitle"), //$NON-NLS-1$
+							ToolMessages.format("EditDialog.errorReadAntFile", new Object[] {location}), //$NON-NLS-1$;
+							e.getStatus());
+						break;
+					}
+					
+					if (targetList == null) {
+						MessageDialog.openError(
+							getShell(),
+							ToolMessages.getString("EditDialog.errorTitle"), //$NON-NLS-1$;
+							ToolMessages.format("EditDialog.noAntTargets", new Object[] {location})); //$NON-NLS-1$;
+						break;
+					}
+
 					TargetSelectionDialog targetDialog;
-					targetDialog = new TargetSelectionDialog(getShell(), location);
+					targetDialog = new TargetSelectionDialog(getShell(), targetList);
 					targetDialog.open();
 					Object[] targets = targetDialog.getResult();
 					if (targets != null && targets.length > 0) {
@@ -867,10 +884,9 @@ public class EditDialog extends TitleAreaDialog {
 		private AntTargetList targetList;
 		private AntTargetLabelProvider labelProvider = new AntTargetLabelProvider();	
 		
-		public TargetSelectionDialog(Shell parent, String location) {
+		public TargetSelectionDialog(Shell parent, AntTargetList targetList) {
 			super(parent);
-			IPath path = new Path(location);
-			targetList = AntUtil.getTargetList(path);
+			this.targetList = targetList;
 			setTitle(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
 		}
 		
