@@ -51,12 +51,13 @@ class ChangeElementLabelProvider extends LabelProvider {
 		} else if (object instanceof TextEditChangeElement) {
 			Object element= ((TextEditChangeElement)object).getTextEditChange();
 			return doGetImage(element);
-		} else if (object instanceof PseudoJavaChangeElement) {
-			PseudoJavaChangeElement element= (PseudoJavaChangeElement)object;
-			IAdaptable jElement= element.getJavaElement();
-			IWorkbenchAdapter adapter= (IWorkbenchAdapter)jElement.getAdapter(IWorkbenchAdapter.class);
-			if (adapter != null) {
-				return manageImageDescriptor(adapter.getImageDescriptor(jElement));
+		} else if (object instanceof ChangeElement) {
+			Object modifiedElement= ((ChangeElement)object).getModifiedElement();
+			if (modifiedElement instanceof IAdaptable) {
+				IWorkbenchAdapter adapter= (IWorkbenchAdapter)((IAdaptable)modifiedElement).getAdapter(IWorkbenchAdapter.class);
+				if (adapter != null) {
+					return manageImageDescriptor(adapter.getImageDescriptor(modifiedElement));
+				}
 			}
 		}
 		return super.getImage(object);
@@ -79,22 +80,14 @@ class ChangeElementLabelProvider extends LabelProvider {
 		} else if (object instanceof TextEditChangeElement) {
 			TextEditChangeElement element= (TextEditChangeElement)object;
 			String result= element.getTextEditChange().getName();
-			/*
-			if ((fJavaElementFlags & JavaElementLabelProvider.SHOW_POST_QUALIFIED) != 0) {
-				ChangeElement parent= getParent(element);
-				if (parent != null) 
-					result= RefactoringUIMessages.getFormattedString(
-						"PreviewWizardPage.changeElementLabelProvider.textFormatEdit",  //$NON-NLS-1$
-						new String[] {getText(parent), result});
-			}
-			*/
 			return result;
-		} else if (object instanceof PseudoJavaChangeElement) {
-			PseudoJavaChangeElement element= (PseudoJavaChangeElement)object;
-			IAdaptable jElement= element.getJavaElement();
-			IWorkbenchAdapter adapter= (IWorkbenchAdapter)jElement.getAdapter(IWorkbenchAdapter.class);
-			if (adapter != null) {
-				return adapter.getLabel(jElement);
+		}  else if (object instanceof ChangeElement) {
+			Object modifiedElement= ((ChangeElement)object).getModifiedElement();
+			if (modifiedElement instanceof IAdaptable) {
+				IWorkbenchAdapter adapter= (IWorkbenchAdapter)((IAdaptable)modifiedElement).getAdapter(IWorkbenchAdapter.class);
+				if (adapter != null) {
+					return adapter.getLabel(modifiedElement);
+				}
 			}
 		}
 		return super.getText(object);
@@ -115,9 +108,7 @@ class ChangeElementLabelProvider extends LabelProvider {
 				descriptor= RefactoringPluginImages.DESC_OBJS_TEXT_EDIT;
 			} else if (element instanceof CompositeChange) {
 				descriptor= RefactoringPluginImages.DESC_OBJS_COMPOSITE_CHANGE;	
-			} /* else if (element instanceof CompilationUnitChange) {
-				descriptor= RefactoringPluginImages.DESC_OBJS_CU_CHANGE;
-			} */ else if (element instanceof TextFileChange) {
+			} else if (element instanceof TextFileChange) {
 				descriptor= RefactoringPluginImages.DESC_OBJS_FILE_CHANGE;
 			} else {
 				descriptor= RefactoringPluginImages.DESC_OBJS_DEFAULT_CHANGE;
@@ -145,4 +136,3 @@ class ChangeElementLabelProvider extends LabelProvider {
 		return result.toString();
 	}	
 }
-

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.ltk.core.refactoring.Change;
-
 public interface IChangeElementChildrenCreator {
 
-	public ChangeElement[] create(ChangeElement parent, Change change);
+	public void createChildren(DefaultChangeElement changeElement);
+	
 }
-

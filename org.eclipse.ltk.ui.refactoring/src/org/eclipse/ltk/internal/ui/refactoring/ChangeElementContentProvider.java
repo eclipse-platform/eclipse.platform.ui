@@ -13,26 +13,14 @@ package org.eclipse.ltk.internal.ui.refactoring;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ISourceReference;
-import org.eclipse.jdt.core.JavaModelException;
-
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * A default content provider to present a hierarchy of <code>IChange</code>
@@ -121,37 +109,21 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 			List children= new ArrayList();
 			getFlattendedChildren(children, changeElement, (CompositeChange)change);
 			result= (ChangeElement[])children.toArray(new ChangeElement[children.size()]);
-		} else if (change instanceof TextChange) {
-			TextChange textChange= (TextChange)change;
-			ICompilationUnit cunit= (ICompilationUnit)textChange.getAdapter(ICompilationUnit.class);
-			if (cunit != null) {
-				List children= new ArrayList(5);
-				Map map= new HashMap(20);
-				TextEditChangeGroup[] changes=getSortedTextEditChanges(textChange);
-				for (int i= 0; i < changes.length; i++) {
-					TextEditChangeGroup tec= changes[i];
-					try {
-						IJavaElement element= getModifiedJavaElement(tec, cunit);
-						if (element.equals(cunit)) {
-							children.add(new TextEditChangeElement(changeElement, tec));
-						} else {
-							PseudoJavaChangeElement pjce= getChangeElement(map, element, children, changeElement);
-							pjce.addChild(new TextEditChangeElement(pjce, tec));
-						}
-					} catch (JavaModelException e) {
-						children.add(new TextEditChangeElement(changeElement, tec));
-					}
-				}
-				result= (ChangeElement[]) children.toArray(new ChangeElement[children.size()]);
-			} else {
+			changeElement.setChildren(result);
+		} else {
+			IChangeElementChildrenCreator creator= (IChangeElementChildrenCreator)change.getAdapter(IChangeElementChildrenCreator.class);
+			if (creator != null) {
+				creator.createChildren(changeElement);
+				result= changeElement.getChildren();
+			} else if (change instanceof TextChange) {
 				TextEditChangeGroup[] changes= getSortedTextEditChanges((TextChange)change);
 				result= new ChangeElement[changes.length];
 				for (int i= 0; i < changes.length; i++) {
 					result[i]= new TextEditChangeElement(changeElement, changes[i]);
 				}
+				changeElement.setChildren(result);
 			}
 		}
-		changeElement.setChildren(result);
 		return result;
 	}
 	
@@ -167,48 +139,6 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 		return (TextEditChangeGroup[])result.toArray(new TextEditChangeGroup[result.size()]);
 	}
 	
-	private PseudoJavaChangeElement getChangeElement(Map map, IJavaElement element, List children, ChangeElement cunitChange) {
-		PseudoJavaChangeElement result= (PseudoJavaChangeElement)map.get(element);
-		if (result != null)
-			return result;
-		IJavaElement parent= element.getParent();
-		if (parent instanceof ICompilationUnit) {
-			result= new PseudoJavaChangeElement(cunitChange, element);
-			children.add(result);
-			map.put(element, result);
-		} else {
-			PseudoJavaChangeElement parentChange= getChangeElement(map, parent, children, cunitChange);
-			result= new PseudoJavaChangeElement(parentChange, element);
-			parentChange.addChild(result);
-			map.put(element, result);
-		}
-		return result;
-	}
-	
-	private IJavaElement getModifiedJavaElement(TextEditChangeGroup edit, ICompilationUnit cunit) throws JavaModelException {
-		IRegion range= edit.getRegion();
-		if (range.getOffset() == 0 && range.getLength() == 0)
-			return cunit;
-		IJavaElement result= cunit.getElementAt(range.getOffset());
-		if (result == null)
-			return cunit;
-		
-		try {
-			while(true) {
-				ISourceReference ref= (ISourceReference)result;
-				IRegion sRange= new Region(ref.getSourceRange().getOffset(), ref.getSourceRange().getLength());
-				if (result.getElementType() == IJavaElement.COMPILATION_UNIT || result.getParent() == null || coveredBy(edit, sRange))
-					break;
-				result= result.getParent();
-			}
-		} catch(JavaModelException e) {
-			// Do nothing, use old value.
-		} catch(ClassCastException e) {
-			// Do nothing, use old value.
-		}
-		return result;
-	}
-	
 	private void getFlattendedChildren(List result, DefaultChangeElement parent, CompositeChange focus) {
 		Change[] changes= focus.getChildren();
 		for (int i= 0; i < changes.length; i++) {
@@ -220,30 +150,4 @@ class ChangeElementContentProvider  implements ITreeContentProvider {
 			}
 		}
 	}
-	
-	public boolean coveredBy(TextEditChangeGroup group, IRegion sourceRegion) {
-		int sLength= sourceRegion.getLength();
-		if (sLength == 0)
-			return false;
-		int sOffset= sourceRegion.getOffset();
-		int sEnd= sOffset + sLength - 1;
-		TextEdit[] edits= group.getTextEdits();
-		for (int i= 0; i < edits.length; i++) {
-			TextEdit edit= edits[i];
-			if (edit.isDeleted())
-				return false;
-			int rOffset= edit.getOffset();
-			int rLength= edit.getLength();
-			int rEnd= rOffset + rLength - 1;
-		    if (rLength == 0) {
-				if (!(sOffset < rOffset && rOffset <= sEnd))
-					return false;
-			} else {
-				if (!(sOffset <= rOffset && rEnd <= sEnd))
-					return false;
-			}
-		}
-		return true;
-	}
 }
-

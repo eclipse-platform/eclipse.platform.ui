@@ -20,7 +20,7 @@ import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
-class DefaultChangeElement extends ChangeElement {
+public class DefaultChangeElement extends ChangeElement {
 	
 	private Change fChange;
 	private ChangeElement[] fChildren;
@@ -46,6 +46,10 @@ class DefaultChangeElement extends ChangeElement {
 	 * @return the underlying change
 	 */
 	public Change getChange() {
+		return fChange;
+	}
+	
+	public Object getModifiedElement() {
 		return fChange;
 	}
 	

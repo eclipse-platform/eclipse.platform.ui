@@ -19,7 +19,7 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
  * Instances of <code>ChangeElement<code> are used to present <code>
  * IChange</code> object as nodes in a tree.
  */
-abstract class ChangeElement {
+public abstract class ChangeElement {
 	
 	/** Flag indicating that the change element isn't active */
 	public final static int INACTIVE=		0;
@@ -99,7 +99,7 @@ abstract class ChangeElement {
 	 * Returns the activation status of this <code>ChangeElement</code>.
 	 * Returns one of the following values: <code>IChange.ACTIVE</code>
 	 * if the node and all its children are active, <code>IChange.INACTIVE</code>
-	 * if all children and the node itself is inactive, and <code>IChange.PARTLy_ACTIVE
+	 * if all children and the node itself is inactive, and <code>IChange.PARTLY_ACTIVE
 	 * </code>otherwise.
 	 *
 	 * @return the change element's activation status.
@@ -107,9 +107,17 @@ abstract class ChangeElement {
 	public abstract int getActive();
 	
 	/**
+	 * Returns the element the change node represents. The method may return 
+	 * <code>null</code> if the change node isn't related to an element.
+	 * 
+	 * @return the element modified by this change node
+	 */
+	public abstract Object getModifiedElement();
+	
+	/**
 	 * Returns the change element's children.
 	 * 
 	 * @return the change element's children.
 	 */
-	public abstract ChangeElement[] getChildren();	
+	public abstract ChangeElement[] getChildren();
 }

@@ -36,5 +36,4 @@ public class UIQueryFactory implements IValidationCheckResultQueryFactory {
 		}
 		return new ValidationCheckResultQuery(parent, title);
 	}
-
 }

@@ -21,7 +21,7 @@ import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
-/* package */ class TextEditChangeElement extends ChangeElement {
+public class TextEditChangeElement extends ChangeElement {
 	
 	private static final ChangeElement[] fgChildren= new ChangeElement[0];
 	
@@ -41,7 +41,11 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	public TextEditChangeGroup getTextEditChange() {
 		return fChangeGroup;
 	}
-		
+	
+	public Object getModifiedElement() {
+		return fChangeGroup;
+	}
+	
 	public Change getChange() {
 		return null;
 	}
@@ -108,12 +112,11 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	private static IRegion getTextRange(ChangeElement element) throws CoreException {
 		if (element == null)
 			return null;
-		if (element instanceof PseudoJavaChangeElement) {
-			return ((PseudoJavaChangeElement)element).getTextRange();
+		if (element instanceof PseudoLanguageChangeElement) {
+			return ((PseudoLanguageChangeElement)element).getTextRange();
 		} else if (element instanceof DefaultChangeElement) {
 			return null;
 		}
 		return getTextRange(element.getParent());
 	}
 }
-

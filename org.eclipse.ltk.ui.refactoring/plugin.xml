@@ -20,7 +20,6 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.text"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
-      <import plugin="org.eclipse.jdt.core"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.compare"/>

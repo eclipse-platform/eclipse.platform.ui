@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ltk.internal.ui.refactoring;
+ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,41 +16,20 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.ISourceRange;
-import org.eclipse.jdt.core.ISourceReference;
-
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.util.Assert;
-
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 
-/**
- * TODO should remove dependency to JDT/Core 
- *      (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=61312)
- */ 
-/* package */ class PseudoJavaChangeElement extends ChangeElement {
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.util.Assert;
 
-	private IJavaElement fJavaElement;
+public abstract class PseudoLanguageChangeElement extends ChangeElement {
+
 	private List fChildren;
-
-	public PseudoJavaChangeElement(ChangeElement parent, IJavaElement element) {
-		super(parent);
-		fJavaElement= element;
-		Assert.isNotNull(fJavaElement);
-	}
 	
-	/**
-	 * Returns the Java element.
-	 * 
-	 * @return the Java element managed by this node
-	 */
-	public IJavaElement getJavaElement() {
-		return fJavaElement;
+	public PseudoLanguageChangeElement(ChangeElement parent) {
+		super(parent);
 	}
 
 	public Change getChange() {
@@ -87,10 +66,7 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	}
 	
 	public void setEnabledShallow(boolean enabled) {
-		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-			ChangeElement element= (ChangeElement)iter.next();
-			element.setEnabledShallow(enabled);
-		}
+		// do nothing. We don't manage a own enablement state.
 	}
 	
 	public int getActive() {
@@ -130,7 +106,7 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 	 * 
 	 * @param child the child to be added
 	 */
-	public void addChild(PseudoJavaChangeElement child) {
+	public void addChild(PseudoLanguageChangeElement child) {
 		doAddChild(child);
 	}
 	
@@ -155,16 +131,18 @@ import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
 			ChangeElement child= children[i];
 			if (child instanceof TextEditChangeElement) {
 				result.add(((TextEditChangeElement)child).getTextEditChange());
-			} else if (child instanceof PseudoJavaChangeElement) {
-				result.addAll(((PseudoJavaChangeElement)child).collectTextEditChanges());
+			} else if (child instanceof PseudoLanguageChangeElement) {
+				result.addAll(((PseudoLanguageChangeElement)child).collectTextEditChanges());
 			}
 		}
 		return result;
 	}
 	
-	public IRegion getTextRange() throws CoreException {
-		ISourceRange range= ((ISourceReference)fJavaElement).getSourceRange();
-		return new Region(range.getOffset(), range.getLength());
-	}	
+	/**
+	 * Returns the source region the lanaguage element.
+	 * 
+	 * @return the source region of the language element.
+	 * @throws CoreException if the source region can't be optained
+	 */
+	public abstract IRegion getTextRange() throws CoreException;
 }
-
