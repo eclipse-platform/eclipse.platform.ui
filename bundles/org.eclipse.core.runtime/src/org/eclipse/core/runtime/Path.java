@@ -310,10 +310,11 @@ private String collapseSlashes(String path) {
  * Computes the hash code for this object.
  */
 private int computeHashCode() {
-	int hash = device == null ? 0 : device.hashCode();
+	int hash = device == null ? 17 : device.hashCode();
 	int segmentCount = segments.length;
 	for (int i = 0; i < segmentCount; i++) {
-		hash += segments[i].hashCode();
+		//this function tends to given a fairly even distribution
+		hash = hash * 37 + segments[i].hashCode();
 	}
 	return hash;
 }
@@ -420,9 +421,9 @@ public boolean equals(Object obj) {
 		if (!device.equals(target.device))
 			return false;
 	}
-	//check segments
-	for (int i = 0; i < segmentCount; i++)
-		if (!segments[i].equals(target.segment(i)))
+	//check segments in reverse order - later segments more likely to differ
+	for (int i = segmentCount; --i >= 0;)
+		if (!segments[i].equals(target.segments[i]))
 			return false;
 	//they're the same!
 	return true;
