@@ -181,9 +181,7 @@ public final class KeySequenceText {
 			dummySequence = KeySequence.getInstance(keyStrokes);
 		}
 
-		// TODO doug, why doesn't the following work on the mac? ask me about this one.. (chris) 
-		// text.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : dummySequence.format());
-		text.setText(dummySequence.format());
+		text.setText(/*"carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) :*/dummySequence.format());
 
 		// Update the caret position.
 		text.setSelection(text.getText().length());
