@@ -10,10 +10,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -78,7 +81,17 @@ public class CheckoutAsAction extends TeamAction {
 					String name = folders[0].getName();
 					// Prompt for name
 					final int[] result = new int[] { InputDialog.OK };
-					final InputDialog dialog = new InputDialog(shell, Policy.bind("CheckoutAsAction.enterProjectTitle"), Policy.bind("CheckoutAsAction.enterProject"), name, null);
+					final InputDialog dialog = new InputDialog(shell, Policy.bind("CheckoutAsAction.enterProjectTitle"), Policy.bind("CheckoutAsAction.enterProject"), name, 
+						new IInputValidator() {
+							public String isValid(String newText) {
+								IStatus status = ResourcesPlugin.getWorkspace().validateName(newText, IResource.PROJECT);
+								if (status.isOK()) {
+									return ""; //$NON-NLS-1$
+								}
+								return status.getMessage();
+							}
+	
+						});
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							result[0] = dialog.open();
