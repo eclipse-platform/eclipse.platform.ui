@@ -292,6 +292,8 @@ public class FormUtil {
 	public static void processKey(int keyCode, Control c) {
 		ScrolledComposite scomp = FormUtil.getScrolledComposite(c);
 		if (scomp != null) {
+			if (c instanceof Combo)
+				return;
 			switch (keyCode) {
 				case SWT.ARROW_DOWN :
 					FormUtil.scrollVertical(scomp, false);

@@ -115,6 +115,7 @@ public class FormToolkit {
 		public void keyPressed(KeyEvent e) {
 			Widget w = e.widget;
 			if (w instanceof Control) {
+				if (e.doit)
 				FormUtil.processKey(e.keyCode, (Control) w);
 			}
 		}
