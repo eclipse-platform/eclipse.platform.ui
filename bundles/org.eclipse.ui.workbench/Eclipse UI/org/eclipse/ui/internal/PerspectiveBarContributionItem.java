@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -35,10 +36,10 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     private Image image;
 
-    private WorkbenchPage workbenchPage;
+    private IWorkbenchPage workbenchPage;
 
     public PerspectiveBarContributionItem(IPerspectiveDescriptor perspective,
-            WorkbenchPage workbenchPage) {
+            IWorkbenchPage workbenchPage) {
         super(perspective.getId());
         this.perspective = perspective;
         this.workbenchPage = workbenchPage;
@@ -150,7 +151,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         update();
     }
 
-    WorkbenchPage getPage() {
+    IWorkbenchPage getPage() {
         return workbenchPage;
     }
 

@@ -58,7 +58,7 @@ public class CloseAllPerspectivesAction extends Action implements
         }
         IWorkbenchPage page = workbenchWindow.getActivePage();
         if (page != null) {
-            ((WorkbenchPage) page).closeAllPerspectives();
+            page.closeAllPerspectives(true, true);
         }
     }
 

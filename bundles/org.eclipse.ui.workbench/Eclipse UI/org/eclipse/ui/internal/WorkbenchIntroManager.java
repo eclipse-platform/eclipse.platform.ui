@@ -92,15 +92,13 @@ public class WorkbenchIntroManager implements IIntroManager {
         if (preferredWindow == null)
             return null;
 
-        if (getViewIntroAdapterPart() == null) {
-            createIntro((WorkbenchWindow) preferredWindow);
+        ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
+        if (viewPart == null) {
+            createIntro(preferredWindow);
         } else {
             try {
-                ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
-                WorkbenchPage page = (WorkbenchPage) viewPart.getSite()
-                        .getPage();
-                WorkbenchWindow window = (WorkbenchWindow) page
-                        .getWorkbenchWindow();
+                IWorkbenchPage page = viewPart.getSite().getPage();
+                IWorkbenchWindow window = page.getWorkbenchWindow();
                 if (!window.equals(preferredWindow)) {
                     window.getShell().setActive();
                 }
@@ -117,7 +115,7 @@ public class WorkbenchIntroManager implements IIntroManager {
     }
 
     /**	 
-     * @param window the window to test
+     * @param testWindow the window to test
      * @return whether the intro exists in the given window
      */
     /*package*/boolean isIntroInWindow(IWorkbenchWindow testWindow) {
@@ -125,8 +123,7 @@ public class WorkbenchIntroManager implements IIntroManager {
         if (viewPart == null)
             return false;
 
-        WorkbenchPage page = (WorkbenchPage) viewPart.getSite().getPage();
-        WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+        IWorkbenchWindow window = viewPart.getSite().getWorkbenchWindow();
         if (window.equals(testWindow)) {
             return true;
         }
@@ -139,11 +136,11 @@ public class WorkbenchIntroManager implements IIntroManager {
      *
      * @param preferredWindow the window to create the intro in.
      */
-    private void createIntro(WorkbenchWindow preferredWindow) {
+    private void createIntro(IWorkbenchWindow preferredWindow) {
         if (this.workbench.getIntroDescriptor() == null)
             return;
 
-        WorkbenchPage workbenchPage = preferredWindow.getActiveWorkbenchPage();
+        IWorkbenchPage workbenchPage = preferredWindow.getActivePage();
         if (workbenchPage == null)
             return;
         try {
@@ -212,7 +209,7 @@ public class WorkbenchIntroManager implements IIntroManager {
             if (page == null) {
                 continue;
             }
-            IPerspectiveDescriptor[] perspDescs = page.getOpenedPerspectives();
+            IPerspectiveDescriptor[] perspDescs = page.getOpenPerspectives();
             for (int j = 0; j < perspDescs.length; j++) {
                 IPerspectiveDescriptor descriptor = perspDescs[j];
                 IViewReference reference = page.findPerspective(descriptor)

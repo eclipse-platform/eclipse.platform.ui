@@ -1056,19 +1056,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * Closes the specified perspective. If last perspective, then entire page
-     * is closed.
-     * 
-     * @param desc
-     *            the descriptor of the perspective to be closed
-     * @param save
-     *            whether the page's editors should be save if last perspective
+     * @see IWorkbenchPage#closePerspective(IPerspectiveDescriptor, boolean, boolean)
      */
-    /* package */
-    void closePerspective(IPerspectiveDescriptor desc, boolean save) {
+    public void closePerspective(IPerspectiveDescriptor desc, boolean saveEditors, boolean closePage) {
         Perspective persp = findPerspective(desc);
         if (persp != null)
-            closePerspective(persp, save, true);
+            closePerspective(persp, saveEditors, closePage);
     }
 
     /**
@@ -1077,11 +1070,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * 
      * @param persp
      *            the perspective to be closed
-     * @param save
+     * @param saveEditors
      *            whether the page's editors should be save if last perspective
      */
     /* package */
-    void closePerspective(Perspective persp, boolean save, boolean closePage) {
+    void closePerspective(Perspective persp, boolean saveEditors, boolean closePage) {
 
         // Always unzoom
         if (isZoomed())
@@ -1090,7 +1083,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Close all editors on last perspective close
         if (perspList.size() == 1 && getEditorManager().getEditorCount() > 0) {
             // Close all editors
-            if (!closeAllEditors(save))
+            if (!closeAllEditors(saveEditors))
                 return;
         }
 
@@ -1105,14 +1098,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * Closes all perspectives in the page. The page is kept so as not to lose
-     * the input.
-     * 
-     * @param save
-     *            whether the page's editors should be saved
+     * @see IWorkbenchPage#closeAllPerspectives(boolean, boolean)
      */
-    /* package */
-    void closeAllPerspectives() {
+    public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
 
         if (perspList.isEmpty())
             return;
@@ -1122,7 +1110,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             zoomOut();
 
         // Close all editors
-        if (!closeAllEditors(true))
+        if (!closeAllEditors(saveEditors))
             return;
 
         // Deactivate the active perspective and part
@@ -1134,7 +1122,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         Iterator itr = oldList.iterator();
         while (itr.hasNext())
             closePerspective((Perspective) itr.next(), false, false);
-        close();
+        if (closePage) {
+            close();
+        }
     }
 
     /**
@@ -3310,9 +3300,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * Returns an iterator over the opened perspectives
+     * @see IWorkbenchPage#getOpenPerspectives()
      */
-    protected IPerspectiveDescriptor[] getOpenedPerspectives() {
+    public IPerspectiveDescriptor[] getOpenPerspectives() {
         Perspective opened[] = perspList.getOpenedPerspectives();
         IPerspectiveDescriptor[] result = new IPerspectiveDescriptor[opened.length];
         for (int i = 0; i < result.length; i++) {
@@ -3321,10 +3311,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return result;
     }
 
-    /*
+    /**
      * Returns the perspectives in activation order (oldest first).
      */
-    protected IPerspectiveDescriptor[] getSortedPerspectives() {
+    public IPerspectiveDescriptor[] getSortedPerspectives() {
         Perspective sortedArray[] = perspList.getSortedPerspectives();
         IPerspectiveDescriptor[] result = new IPerspectiveDescriptor[sortedArray.length];
         for (int i = 0; i < result.length; i++) {

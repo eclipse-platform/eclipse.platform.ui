@@ -790,4 +790,51 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
      */
     public String[] getShowViewShortcuts();
     
+    /**
+     * Returns the descriptors for the perspectives that are open in this
+     * page, in the order in which they were opened.
+     * 
+     * @return the open perspective descriptors, in order of opening
+     * @since 3.1
+     */
+    public IPerspectiveDescriptor[] getOpenPerspectives();
+    
+    /**
+     * Returns the descriptors for the perspectives that are open in this
+     * page, in the order in which they were activated (oldest first).
+     * 
+     * @return the open perspective descriptors, in order of activation
+     * @since 3.1
+     */
+    public IPerspectiveDescriptor[] getSortedPerspectives();
+    
+    /**
+     * Closes the specified perspective in this page.
+     * If the last perspective in this page is closed, then all editors are closed, 
+     * prompting to save any unsaved changes if <code>saveEditors</code> is <code>true</code>,
+     * and the page itself is closed if <code>closePage</code> is <code>true</code>. 
+     * 
+     * @param desc
+     *            the descriptor of the perspective to be closed
+     * @param saveEditors
+     *            whether the page's editors should be saved if last perspective
+     * @param closePage
+     *            whether the page itself should be closed if last perspective
+     * @since 3.1            
+     */
+    public void closePerspective(IPerspectiveDescriptor desc, boolean saveEditors, boolean closePage);
+
+    /**
+     * Closes all perspectives in this page.
+     * All editors are closed, prompting to save any unsaved changes if <code>saveEditors</code> is <code>true</code>.
+     * The page itself is closed if <code>closePage</code> is <code>true</code>. 
+     * 
+     * @param saveEditors
+     *            whether the page's editors should be saved
+     * @param closePage
+     *            whether the page itself should be closed
+     * @since 3.1            
+     */
+    public void closeAllPerspectives(boolean saveEditors, boolean closePage);
+    
 }

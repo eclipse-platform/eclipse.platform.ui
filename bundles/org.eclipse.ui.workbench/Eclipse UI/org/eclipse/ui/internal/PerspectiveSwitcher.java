@@ -822,7 +822,7 @@ public class PerspectiveSwitcher {
                         PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
                                 .getData();
                         item.getPage().closePerspective(item.getPerspective(),
-                                true);
+                                true, true);
                     }
                 }
             });
@@ -837,7 +837,7 @@ public class PerspectiveSwitcher {
                             && !perspectiveToolItem.isDisposed()) {
                         PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
                                 .getData();
-                        item.getPage().closeAllPerspectives();
+                        item.getPage().closeAllPerspectives(true, true);
                     }
                 }
             });
@@ -873,11 +873,11 @@ public class PerspectiveSwitcher {
         barManager.add(new PerspectiveBarNewContributionItem(window));
 
         // add an item for all open perspectives
-        WorkbenchPage page = (WorkbenchPage) window.getActivePage();
+        IWorkbenchPage page = window.getActivePage();
         if (page != null) {
             // these are returned with the most recently opened one first
             IPerspectiveDescriptor[] perspectives = page
-                    .getOpenedPerspectives();
+                    .getOpenPerspectives();
             for (int i = 0; i < perspectives.length; ++i)
                 barManager.add(new PerspectiveBarContributionItem(
                         perspectives[i], page));

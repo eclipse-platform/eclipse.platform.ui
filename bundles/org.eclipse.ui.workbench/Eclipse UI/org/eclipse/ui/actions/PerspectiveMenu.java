@@ -37,10 +37,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 
 /**
@@ -59,7 +57,7 @@ import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
  * </p>
  */
 public abstract class PerspectiveMenu extends ContributionItem {
-    private static IPerspectiveRegistry reg;
+    private IPerspectiveRegistry reg;
 
     private IWorkbenchWindow window;
 
@@ -123,8 +121,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
     public PerspectiveMenu(IWorkbenchWindow window, String id) {
         super(id);
         this.window = window;
-        if (reg == null)
-            reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+        reg = window.getWorkbench().getPerspectiveRegistry();
     }
 
     /*
@@ -213,10 +210,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
     private final IAction getAction(final String id) {
         IAction action = (IAction) actions.get(id);
         if (action == null) {
-            final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
-                    .getPerspectiveRegistry();
-            final IPerspectiveDescriptor descriptor = registry
-                    .findPerspectiveWithId(id);
+            IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(id);
             if (descriptor != null) {
                 action = new OpenPerspectiveAction(window, descriptor, this);
                 action.setActionDefinitionId(id);

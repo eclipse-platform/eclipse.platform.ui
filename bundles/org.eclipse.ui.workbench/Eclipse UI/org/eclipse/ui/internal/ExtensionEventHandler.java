@@ -649,7 +649,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                     //						return;
                     //					XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_PERSPECTIVE);
                     //					result.merge(persp.saveState(memento));
-                    ((WorkbenchPage) pages[k]).closePerspective(desc, true);
+                    pages[k].closePerspective(desc, true, true);
                     //((WorkbenchPage)pages[k]).getStateMap().put(id, memento);				
                 }
             }
@@ -938,7 +938,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                             .findPerspective(desc);
                     if (persp == null)
                         return;
-                    ((WorkbenchPage) pages[k]).closePerspective(desc, true);
+                    pages[k].closePerspective(desc, true, true);
                 }
             }
         }

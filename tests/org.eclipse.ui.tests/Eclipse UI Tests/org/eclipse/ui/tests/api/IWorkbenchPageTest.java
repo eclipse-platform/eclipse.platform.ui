@@ -26,6 +26,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -74,7 +75,7 @@ public class IWorkbenchPageTest extends UITestCase {
             proj = null;
         }
     }
-
+    
     /**
      *	tests both of the following:	
      *	setEditorAreaVisible()
@@ -1598,4 +1599,140 @@ public class IWorkbenchPageTest extends UITestCase {
         assertEquals(0, shortcuts.length);
         // not much of a test
     }
+    
+    /**
+     * Tests the getOpenPerspectives() method.
+     *
+     * @since 3.1
+     */
+    public void testGetOpenPerspectives() {
+        IPerspectiveDescriptor[] openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(1, openPersps.length);
+        assertEquals(EmptyPerspective.PERSP_ID, openPersps[0].getId());
+        
+        IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+        IPerspectiveDescriptor resourcePersp = reg.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+        fActivePage.setPerspective(resourcePersp);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(2, openPersps.length);
+        assertEquals(EmptyPerspective.PERSP_ID, openPersps[0].getId());
+        assertEquals(IDE.RESOURCE_PERSPECTIVE_ID, openPersps[1].getId());
+        
+        IPerspectiveDescriptor emptyPersp = reg.findPerspectiveWithId(EmptyPerspective.PERSP_ID);
+        fActivePage.setPerspective(emptyPersp);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(2, openPersps.length);
+        assertEquals(EmptyPerspective.PERSP_ID, openPersps[0].getId());
+        assertEquals(IDE.RESOURCE_PERSPECTIVE_ID, openPersps[1].getId());
+        
+        fActivePage.closeAllPerspectives(false, false);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(0, openPersps.length);
+        
+        fActivePage.close();
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(0, openPersps.length);
+    }
+
+    /**
+     * Tests the getSortedPerspectives() method.
+     *
+     * @since 3.1
+     */
+    public void testGetSortedPerspectives() {
+        IPerspectiveDescriptor[] openPersps = fActivePage.getSortedPerspectives();
+        assertEquals(1, openPersps.length);
+        assertEquals(EmptyPerspective.PERSP_ID, openPersps[0].getId());
+        
+        IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+        IPerspectiveDescriptor resourcePersp = reg.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+        fActivePage.setPerspective(resourcePersp);
+        openPersps = fActivePage.getSortedPerspectives();
+        assertEquals(2, openPersps.length);
+        assertEquals(EmptyPerspective.PERSP_ID, openPersps[0].getId());
+        assertEquals(IDE.RESOURCE_PERSPECTIVE_ID, openPersps[1].getId());
+        
+        IPerspectiveDescriptor emptyPersp = reg.findPerspectiveWithId(EmptyPerspective.PERSP_ID);
+        fActivePage.setPerspective(emptyPersp);
+        openPersps = fActivePage.getSortedPerspectives();
+        assertEquals(2, openPersps.length);
+        assertEquals(IDE.RESOURCE_PERSPECTIVE_ID, openPersps[0].getId());
+        assertEquals(EmptyPerspective.PERSP_ID, openPersps[1].getId());
+        
+        fActivePage.closeAllPerspectives(false, false);
+        openPersps = fActivePage.getSortedPerspectives();
+        assertEquals(0, openPersps.length);
+        
+        fActivePage.close();
+        openPersps = fActivePage.getSortedPerspectives();
+        assertEquals(0, openPersps.length);
+    } 
+
+    /**
+     * Tests the closePerspective method.
+     *
+     * @since 3.1
+     */
+    public void testClosePerspective() {
+        // TODO: Need to test variants with saveEditors==true
+        
+        IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+        IPerspectiveDescriptor emptyPersp = reg.findPerspectiveWithId(EmptyPerspective.PERSP_ID);
+        IPerspectiveDescriptor resourcePersp = reg.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+
+        fActivePage.setPerspective(resourcePersp);
+        IPerspectiveDescriptor[] openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(2, openPersps.length);
+        
+        fActivePage.closePerspective(resourcePersp, false, false);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(1, openPersps.length);
+        assertEquals(EmptyPerspective.PERSP_ID, openPersps[0].getId());
+        
+        fActivePage.closePerspective(emptyPersp, false, false);
+        assertEquals(fActivePage, fWin.getActivePage());  // page not closed
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(0, openPersps.length);
+        
+        fActivePage.setPerspective(emptyPersp);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(1, openPersps.length);
+
+        fActivePage.closePerspective(emptyPersp, false, true);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(0, openPersps.length);
+        assertNull(fWin.getActivePage());  // page closed
+    } 
+
+    /**
+     * Tests the closeAllPerspectives method.
+     *
+     * @since 3.1
+     */
+    public void testCloseAllPerspectives() {
+        // TODO: Need to test variants with saveEditors==true
+        
+        IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+        IPerspectiveDescriptor emptyPersp = reg.findPerspectiveWithId(EmptyPerspective.PERSP_ID);
+        IPerspectiveDescriptor resourcePersp = reg.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+
+        fActivePage.setPerspective(resourcePersp);
+        IPerspectiveDescriptor[] openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(2, openPersps.length);
+        
+        fActivePage.closeAllPerspectives(false, false);
+        assertEquals(fActivePage, fWin.getActivePage());  // page not closed
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(0, openPersps.length);
+
+        fActivePage.setPerspective(emptyPersp);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(1, openPersps.length);
+
+        fActivePage.closeAllPerspectives(false, true);
+        openPersps = fActivePage.getOpenPerspectives();
+        assertEquals(0, openPersps.length);
+        assertNull(fWin.getActivePage());  // page closed
+    } 
+    
 }

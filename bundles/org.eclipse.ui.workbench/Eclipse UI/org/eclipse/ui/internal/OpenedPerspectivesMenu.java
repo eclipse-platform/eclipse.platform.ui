@@ -78,8 +78,7 @@ public class OpenedPerspectivesMenu extends ContributionItem {
 
         // Add one item for each opened perspective.
         IPerspectiveDescriptor activePersp = page.getPerspective();
-        IPerspectiveDescriptor descriptors[] = ((WorkbenchPage) page)
-                .getOpenedPerspectives();
+        IPerspectiveDescriptor descriptors[] = page.getOpenPerspectives();
         int count = 1;
         for (int i = 0; i < descriptors.length; i++) {
             final IPerspectiveDescriptor desc = (IPerspectiveDescriptor) descriptors[i];

@@ -1645,7 +1645,7 @@ public final class Workbench implements IWorkbench {
             WorkbenchPage page = win.getActiveWorkbenchPage();
             if (page != null) {
                 IPerspectiveDescriptor perspectives[] = page
-                        .getOpenedPerspectives();
+                        .getOpenPerspectives();
                 for (int i = 0; i < perspectives.length; i++) {
                     IPerspectiveDescriptor persp = perspectives[i];
                     if (perspectiveId.equals(persp.getId())) {
@@ -1754,7 +1754,7 @@ public final class Workbench implements IWorkbench {
                 if (inputSame) {
                     inputSameAsWindow = true;
                     IPerspectiveDescriptor perspectives[] = page
-                            .getOpenedPerspectives();
+                            .getOpenPerspectives();
                     for (int i = 0; i < perspectives.length; i++) {
                         IPerspectiveDescriptor persp = perspectives[i];
                         if (perspectiveId.equals(persp.getId())) {
