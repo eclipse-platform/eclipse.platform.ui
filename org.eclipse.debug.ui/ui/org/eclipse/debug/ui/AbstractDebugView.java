@@ -576,6 +576,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 					}
 					setMemento(null);
 				}
+				updateObjects();
 			}
 		};
 		asyncExec(r);
