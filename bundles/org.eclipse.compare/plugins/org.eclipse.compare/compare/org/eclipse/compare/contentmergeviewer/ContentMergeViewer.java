@@ -284,15 +284,15 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			}
 		};
 		
-		fPropertyChangeListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				ContentMergeViewer.this.propertyChange(event);
-			}
-		};
-		
 		fCompareConfiguration= cc;
-		if (fCompareConfiguration != null)
+		if (fCompareConfiguration != null) {
+			fPropertyChangeListener= new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					ContentMergeViewer.this.propertyChange(event);
+				}
+			};
 			fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
+		}
 			
 		fLeftSaveAction= new SaveAction(true);
 		fLeftSaveAction.setEnabled(false);
@@ -716,8 +716,10 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		if (input instanceof ICompareInput)
 			((ICompareInput)input).removeCompareInputChangeListener(fCompareInputChangeListener);
 		
-		if (fCompareConfiguration != null)
+		if (fCompareConfiguration != null && fPropertyChangeListener != null) {
 			fCompareConfiguration.removePropertyChangeListener(fPropertyChangeListener);
+			fPropertyChangeListener= null;
+		}
 
 		fAncestorLabel= null;
 		fLeftLabel= null;

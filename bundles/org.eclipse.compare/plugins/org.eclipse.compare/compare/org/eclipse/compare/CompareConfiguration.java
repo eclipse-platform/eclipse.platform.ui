@@ -86,6 +86,7 @@ public class CompareConfiguration {
 //		fgImages[Differencer.DELETION]= tmp;
 	}
 
+	private IPreferenceStore fPreferenceStore;
 	private ListenerList fListeners= new ListenerList();
 	private HashMap fProperties= new HashMap();
 	private boolean fLeftEditable= true;
@@ -102,17 +103,33 @@ public class CompareConfiguration {
 	 * Creates a new configuration with editable left and right sides,
 	 * suitable default labels, and no images.
 	 */
-	public CompareConfiguration() {
+	public CompareConfiguration(IPreferenceStore prefStore) {
 		
 		setProperty("LEFT_IS_LOCAL", new Boolean(fLeftIsLocal)); //$NON-NLS-1$
 		
-		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-		if (ps != null) {
-			boolean b= ps.getBoolean(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE);
+		fPreferenceStore= prefStore;
+		if (fPreferenceStore != null) {
+			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE);
 			setProperty(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE, new Boolean(b));
 		}
 	}
-
+	
+	/**
+	 * Creates a new configuration with editable left and right sides,
+	 * suitable default labels, and no images.
+	 */
+	public CompareConfiguration() {
+		this(CompareUIPlugin.getDefault().getPreferenceStore());
+	}
+	
+	/**
+	 * Returns the preference store of this configuration.
+	 * @return the preference store of this configuration.
+	 */
+	public IPreferenceStore getPreferenceStore() {
+		return fPreferenceStore;
+	}
+	
 	/**
 	 * Returns an image showing the specified change kind.
 	 * The different kind of changes are defined in the <code>Differencer</code>.

@@ -197,6 +197,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 	private IDocumentListener fDocumentListener;
 	
+	private IPreferenceStore fPreferenceStore;
 	private	IPropertyChangeListener fPreferenceChangeListener;
 	
 	/** All diffs for calculating scrolling position (includes line ranges without changes) */
@@ -220,10 +221,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private int fPts[]= new int[8];	// scratch area for polygon drawing
 	
-	//PR1GI3HDZ
 	private boolean fIgnoreAncestor= false;
 	private ActionContributionItem fIgnoreAncestorItem;
-	//end PR1GI3HDZ
+	
+	private boolean fShowPseudoConflicts= false;
 
 	private ActionContributionItem fNextItem;	// goto next difference
 	private ActionContributionItem fPreviousItem;	// goto previous difference
@@ -231,6 +232,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private ActionContributionItem fCopyDiffRightToLeftItem;
 	
 	private boolean fSynchronizedScrolling= true;
+	private boolean fShowMoreInfo= false;
 	
 	private MergeSourceViewer fFocusPart;
 	
@@ -442,19 +444,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		if (fIsMotif)
 			fMarginWidth= 0;
-				
-		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-		if (ps != null) {
+			
+		fPreferenceStore= configuration.getPreferenceStore();
+		if (fPreferenceStore != null) {
 			fPreferenceChangeListener= new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					TextMergeViewer.this.propertyChange(event);
 				}
 			};
-			ps.addPropertyChangeListener(fPreferenceChangeListener);
+			fPreferenceStore.addPropertyChangeListener(fPreferenceChangeListener);
 			
-			updateFont(ps, parent);
+			updateFont(fPreferenceStore, parent);
 			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
-			fSynchronizedScrolling= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+			fShowMoreInfo= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
+			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 		}
 		
 		fDocumentListener= new IDocumentListener() {
@@ -550,9 +554,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	protected void handleDispose(DisposeEvent event) {
 		
 		if (fPreferenceChangeListener != null) {
-			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-			if (ps != null)
-				ps.removePropertyChangeListener(fPreferenceChangeListener);
+			if (fPreferenceStore != null)
+				fPreferenceStore.removePropertyChangeListener(fPreferenceChangeListener);
 			fPreferenceChangeListener= null;
 		}
 		
@@ -1273,7 +1276,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						continue;
 				}
 		
-				if (kind != RangeDifference.NOCHANGE && kind != RangeDifference.ANCESTOR) {
+				if (useChange(kind)) {
 					fChangeDiffs.add(diff);	// here we remember only the real diffs
 					updateDiffBackground(diff);
 		
@@ -1309,6 +1312,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				rDoc, rRegion.getOffset()+rRegion.getLength(), rDoc.getLength());
 			fAllDiffs.add(diff);
 		}
+	}
+	
+	/**
+	 * Returns true if kind of change should be shown.
+	 */
+	private boolean useChange(int kind) {
+		if (kind == RangeDifference.NOCHANGE)
+			return false;
+		if (kind == RangeDifference.ANCESTOR)
+			return fShowPseudoConflicts;
+		return true;
 	}
 	
 	private int getTokenEnd(ITokenComparator tc, int start, int count) {
@@ -1463,8 +1477,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			RangeDifference first= null;
 			for (int ii= start; ii < end; ii++) {
 				es= r[ii];
-				int kind= es.kind();
-				if (kind != RangeDifference.NOCHANGE && kind != RangeDifference.ANCESTOR) {
+				if (useChange(es.kind())) {
 					first= es;
 					break;
 				}
@@ -1474,8 +1487,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			RangeDifference last= null;
 			for (int ii= end-1; ii >= start; ii--) {
 				es= r[ii];
-				int kind= es.kind();
-				if (kind != RangeDifference.NOCHANGE && kind != RangeDifference.ANCESTOR) {
+				if (useChange(es.kind())) {
 					last= es;
 					break;
 				}
@@ -1557,6 +1569,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 
 	private void updateStatus(Diff diff) {
 		
+		if (! fShowMoreInfo)
+			return;
+		
 		IActionBars bars= Utilities.findActionBars(fComposite);
 		if (bars == null)
 			return;
@@ -1594,6 +1609,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		);
 	
 		slm.setMessage(s);
+	}
+	
+	private void clearStatus() {
+		
+		IActionBars bars= Utilities.findActionBars(fComposite);
+		if (bars == null)
+			return;
+		IStatusLineManager slm= bars.getStatusLineManager();
+		if (slm == null)
+			return;
+						
+		slm.setMessage(null);
 	}
 	
 	private String getDiffType(Diff diff) {
@@ -1751,7 +1778,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		String key= event.getProperty();
 		
-		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE)) {
+		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE)
+				|| key.equals(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS)) {
+					
+			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
+			
 			// clear stuff
 			fCurrentDiff= null;
 		 	fChangeDiffs= null;
@@ -1766,19 +1797,27 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			selectFirstDiff();
 			
 		} else if (key.equals(TEXT_FONT)) {
-			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-			if (ps != null) {
-				updateFont(ps, fComposite);
+			if (fPreferenceStore != null) {
+				updateFont(fPreferenceStore, fComposite);
 				invalidateLines();
 			}
 				
 		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
 			
-			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
-			
-			boolean b= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
 			if (b != fSynchronizedScrolling)
 				toggleSynchMode();
+		
+		} else if (key.equals(ComparePreferencePage.SHOW_MORE_INFO)) {
+			
+			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
+			if (b != fShowMoreInfo) {
+				fShowMoreInfo= b;
+				if (fShowMoreInfo)
+					updateStatus(fCurrentDiff);
+				else
+					clearStatus();
+			}
 		
 		} else
 			super.propertyChange(event);
