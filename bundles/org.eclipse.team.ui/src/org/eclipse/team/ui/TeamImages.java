@@ -113,6 +113,7 @@ public class TeamImages {
 		createImageDescriptor(UIConstants.IMG_SYNC_MODE_RELEASE, baseURL);
 		createImageDescriptor(UIConstants.IMG_SYNC_MODE_FREE, baseURL);
 		createImageDescriptor(UIConstants.IMG_WIZBAN_SHARE, baseURL);
+		createImageDescriptor(UIConstants.IMG_WIZBAN_NEW_CONNECTION, baseURL);
 		createImageDescriptor(UIConstants.IMG_CONTENTS, baseURL);
 	}
 }
