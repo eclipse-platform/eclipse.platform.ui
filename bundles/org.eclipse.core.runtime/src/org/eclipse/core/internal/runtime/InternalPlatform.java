@@ -24,6 +24,12 @@ import java.util.*;
 public final class InternalPlatform {
 	private static IAdapterManager adapterManager;
 	private static PluginRegistry registry;
+	// registry index - used to store last modified times for
+	// registry caching
+	// ASSUMPTION:  Only the plugin registry in 'registry' above
+	// will be cached
+	private static Map regIndex = null;
+	
 	private static Set logListeners = new HashSet(5);
 	private static Map logs = new HashMap(5);
 	private static PlatformLogListener platformLog = null;
@@ -859,5 +865,13 @@ private static void setupMetaArea(String locationString) throws CoreException {
 	metaArea.createLocation();
 	if (keyringFile == null)
 		keyringFile = metaArea.getLocation().append(PlatformMetaArea.F_KEYRING).toOSString();
+}
+public static void addLastModifiedTime (String pathKey, long lastModTime) {
+	if (regIndex == null)
+		regIndex = new HashMap(30);
+	regIndex.put(pathKey, new Long(lastModTime));
+}
+public static Map getRegIndex() {
+	return regIndex;
 }
 }

@@ -596,7 +596,7 @@ public void writePluginRegistry(PluginRegistryModel registry, DataOutputStream o
 		addToObjectTable(registry);
 		writeHeaderInformation(out);
 		// Now write out all the last modified times
-		Map regIndex = ((PluginRegistry)registry).getRegIndex();
+		Map regIndex = InternalPlatform.getRegIndex();
 		if (regIndex != null) {
 			writeLabel(RegistryCacheReader.REGISTRY_LAST_MOD_START, out);
 			out.writeInt(regIndex.keySet().size());

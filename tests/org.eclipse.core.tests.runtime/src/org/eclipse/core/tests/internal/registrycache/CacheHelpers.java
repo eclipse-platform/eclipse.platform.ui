@@ -302,7 +302,7 @@ public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, S
 	}
 	
 	// Cobble together a plugin path
-	Map regIndex = ((PluginRegistry)inRegistry).getRegIndex();
+	Map regIndex = InternalPlatform.getRegIndex();
 	URL[] pluginPath = null;
 	if (regIndex != null) {
 		int entrySize = regIndex.keySet().size();

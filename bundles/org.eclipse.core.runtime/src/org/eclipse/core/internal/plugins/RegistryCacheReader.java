@@ -1038,7 +1038,7 @@ private boolean readAndCheckLastModified (PluginRegistry cachedRegistry, DataInp
 		for (int i = 0; i < numEntries; i++) {
 			String fileName = in.readUTF();
 			long lastMod = in.readLong();
-			cachedRegistry.addLastModifiedTime(fileName, lastMod);
+			InternalPlatform.addLastModifiedTime(fileName, lastMod);
 		}
 	} catch (IOException ioe) {
 		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(REGISTRY_LABEL)), ioe));
@@ -1063,7 +1063,7 @@ private boolean readAndCheckLastModified (PluginRegistry cachedRegistry, DataInp
 		}
 	}
 	
-	Map regIndex = cachedRegistry.getRegIndex();
+	Map regIndex = InternalPlatform.getRegIndex();
 	
 	// Get the simple (i.e. null) cases out of the way quickly
 	if ((regIndex == null) && (onDiskModTimes == null))

@@ -147,7 +147,7 @@ private boolean processPluginPathFile(PluginRegistryModel registry, URL location
 	url = url.substring(0, 1 + url.lastIndexOf('/'));
 	entry.setRegistry(registry);
 	entry.setLocation(url);
-	((PluginRegistry)registry).addLastModifiedTime(location.getFile(), new File(location.getFile()).lastModified());
+	InternalPlatform.addLastModifiedTime(location.getFile(), new File(location.getFile()).lastModified());
 	return true;
 }
 }
