@@ -616,7 +616,9 @@ private void hookControl() {
 	// Refresh the table when F5 pressed
 	tableTree.getTable().addKeyListener(new KeyAdapter() {
 		public void keyReleased(KeyEvent e) {
-			if (e.keyCode == SWT.F5)
+			if (e.character == SWT.ESC) 
+				deactivateCellEditor();
+			else if (e.keyCode == SWT.F5)
 				// The following will simulate a reselect
 				setInput(getInput());
 		}
