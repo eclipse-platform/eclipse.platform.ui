@@ -219,7 +219,7 @@ public class BrowsersPreferencePage
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
 				boolean enabled =
-					"org.eclipse.help.ui.custombrowser".equals(
+					"org.eclipse.help.custombrowser".equals(
 						BrowserManager
 							.getInstance()
 							.getBrowserDescriptors()[i]
