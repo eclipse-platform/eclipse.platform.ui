@@ -31,6 +31,14 @@ public class TargetTests extends AbstractAntTest {
 	}
 	
 	/**
+	 * Ensures that targets are found in a build file with data types
+	 */
+	public void testGetTargetsWithDataTypes() throws CoreException {
+		TargetInfo[] targets= getTargets("Bug32551.xml");
+		assertTrue("Should be one targets in Bug32551.xml", targets.length == 1);
+	}
+	
+	/**
 	 * Ensures that target names are retrieved properly
 	 */
 	public void testTargetNames() throws CoreException {

@@ -76,21 +76,20 @@ import org.apache.tools.ant.ProjectComponent;
 
 /**
  * A subclass of Project to facilitate "faster" parsing with
- * less garbage generated.
+ * less garbage generated. This class is not used on Ant 1.6 and newer
+ * due to the improvements in lazy loading of these Ant versions.
  * 
  * Only three tasks are loaded (property, taskdef and 
  * typedef: three tasks that can be defined outside of a target on Ant 1.5.1 or older).
  *
- * Datatypes are loaded as required.
+ * Datatypes are loaded if requested.
  * 
  * Derived from the original Ant Project class
  */
 public class InternalProject extends Project {
 
-	Hashtable typeNameToClassName = null;
-	/**
-	 * 
-	 */
+	private Hashtable typeNameToClass = null;
+	
 	public InternalProject() {
 		super();
 	}
@@ -121,18 +120,12 @@ public class InternalProject extends Project {
 	 * @see org.apache.tools.ant.Project#createDataType(java.lang.String)
 	 */
 	public Object createDataType(String typeName) throws BuildException {
-		if (typeNameToClassName == null) {
+		if (typeNameToClass == null) {
 			initializeTypes();
 		}
-		String className = (String) typeNameToClassName.get(typeName);
+		Class typeClass = (Class) typeNameToClass.get(typeName);
 
-		Class c = null;
-		try {
-			c = Class.forName(className);
-		} catch (ClassNotFoundException e) {
-		}
-
-		if (c == null) {
+		if (typeClass == null) {
 			return null;
 		}
 
@@ -142,10 +135,10 @@ public class InternalProject extends Project {
 			// DataType can have a "no arg" constructor or take a single
 			// Project argument.
 			try {
-				ctor = c.getConstructor(new Class[0]);
+				ctor = typeClass.getConstructor(new Class[0]);
 				noArg = true;
 			} catch (NoSuchMethodException nse) {
-				ctor = c.getConstructor(new Class[] { Project.class });
+				ctor = typeClass.getConstructor(new Class[] { Project.class });
 				noArg = false;
 			}
 
@@ -170,7 +163,7 @@ public class InternalProject extends Project {
 	 * Initialize the mapping of data type name to data type classname
 	 */
 	private void initializeTypes() {
-		typeNameToClassName = new Hashtable(18);
+		typeNameToClass = new Hashtable(18);
 		String dataDefs = "/org/apache/tools/ant/types/defaults.properties"; //$NON-NLS-1$
 		try {
 			Properties props = new Properties();
@@ -183,9 +176,17 @@ public class InternalProject extends Project {
 
 			Enumeration enum = props.propertyNames();
 			while (enum.hasMoreElements()) {
-				String key = (String) enum.nextElement();
-				String value = props.getProperty(key);
-				typeNameToClassName.put(key, value);
+				String typeName = (String) enum.nextElement();
+				String className = props.getProperty(typeName);
+				try {
+					Class typeClass= Class.forName(className);
+					typeNameToClass.put(typeName, typeClass);
+				} catch (NoClassDefFoundError e) {
+					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), e); //$NON-NLS-1$
+				} catch (ClassNotFoundException c) {
+					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), c); //$NON-NLS-1$
+				}
+				
 			}
 		} catch (IOException ioe) {
 			return;
@@ -197,9 +198,9 @@ public class InternalProject extends Project {
 	 * @see org.apache.tools.ant.Project#getDataTypeDefinitions()
 	 */
 	public Hashtable getDataTypeDefinitions() {
-		if (typeNameToClassName == null) {
+		if (typeNameToClass == null) {
 			initializeTypes();
 		}
-		return typeNameToClassName;
+		return typeNameToClass;
 	}
 }
