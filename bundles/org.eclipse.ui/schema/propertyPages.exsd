@@ -162,6 +162,23 @@ define the target object for a property page.
       </complexType>
    </element>
 
+   <element name="keywordReference">
+      <annotation>
+         <documentation>
+            A reference by a property page to a keyword. See the keywords extension point.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The id of the keyword being referred to.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>

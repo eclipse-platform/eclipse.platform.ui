@@ -171,37 +171,10 @@ the root level.
       </complexType>
    </element>
 
-   <element name="keyword">
-      <annotation>
-         <documentation>
-            The keyword is the definition of the id and the human readable name of a keyword.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The id is the id of the keyword for preference pages to refer to.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The value is the human readable value for the keyword
-               </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="keywordReference">
       <annotation>
          <documentation>
-            A reference by a preference page to a keyword.
+            A reference by a preference page to a keyword. See the keywords extension point.
          </documentation>
       </annotation>
       <complexType>
