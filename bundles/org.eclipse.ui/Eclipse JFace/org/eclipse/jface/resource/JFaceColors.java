@@ -12,9 +12,6 @@ import org.eclipse.swt.widgets.Display;
 
 public class JFaceColors {
 
-	private static final RGB ERROR_BACKGROUND_RGB = new RGB(230, 226, 221);
-	private static final RGB ERROR_BORDER_RGB = new RGB(192, 192, 192);
-	
 	/**
 	 * Get the Color used for banner backgrounds
 	 */
@@ -29,7 +26,7 @@ public class JFaceColors {
 	 */
 
 	public static Color getErrorBackground(Display display) {
-		return new Color(display, ERROR_BACKGROUND_RGB);
+		return display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
 
 	/**
@@ -38,7 +35,7 @@ public class JFaceColors {
 	 */
 
 	public static Color getErrorBorder(Display display) {
-		return new Color(display, ERROR_BORDER_RGB);
+		return display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
 	}
 
 }
