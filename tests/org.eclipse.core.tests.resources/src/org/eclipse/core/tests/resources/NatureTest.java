@@ -11,7 +11,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 /**
  * Tests all aspects of project natures.  These tests only
- * exercise API classes and methods.
+ * exercise API classes and methods.  Note that the nature-related
+ * APIs on IWorkspace are tested by IWorkspaceTest.
  */
 public class NatureTest extends EclipseWorkspaceTest {
 /**
