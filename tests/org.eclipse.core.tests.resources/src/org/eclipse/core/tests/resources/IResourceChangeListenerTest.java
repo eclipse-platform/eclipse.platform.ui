@@ -966,8 +966,6 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 		final IPath path = getRandomLocation();
 		try {
 			verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
-			verifier.addExpectedChange(project1.getFile(".project"), IResourceDelta.CHANGED, IResourceDelta.CONTENT);
-
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor m) throws CoreException {
 					m.beginTask("Creating and moving", 100);

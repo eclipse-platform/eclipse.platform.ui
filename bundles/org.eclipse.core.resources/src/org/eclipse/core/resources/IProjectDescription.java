@@ -57,6 +57,25 @@ public String getComment();
  */
 public String getDefaultCharset();
 /**
+ * Returns the dynamic project references for the described project. Dynamic
+ * project references can be used instead of simple project references in cases
+ * where the reference information is computed dynamically be a third party.
+ * These references are persisted by the workspace in a private location outside
+ * the project description file, and as such will not be shared when a project is
+ * exported or persisted in a repository.  A client using project references
+ * is always reponsible for setting these references when a project is created
+ * or recreated.
+ * <p>
+ * The returned projects need not exist in the workspace. The result will not 
+ * contain duplicates. Returns an empty array if there are no dynamic project 
+ * references on this description.
+ *
+ * @see #getReferencedProjects
+ * @return a list of projects
+ * @since 3.0
+ */
+public IProject[] getDynamicReferences();
+/**
  * Returns the  local file system location for the described project.  The path
  * will be either an absolute file system path, or a relative path whose first
  * segment is the name of a workspace path variable. <code>null</code> is
@@ -80,11 +99,17 @@ public String getName();
  */ 
 public String[] getNatureIds();
 /**
- * Returns the projects referenced by the described project.
+ * Returns the projects referenced by the described project. These references
+ * are persisted in the project description file (&quot;.project&quot;) and as such
+ * will be shared whenever the project is exported to another workspace. For
+ * references that are likely to change from one workspace to another, dynamic
+ * references should be used instead.
+ * <p>
  * The projects need not exist in the workspace.
  * The result will not contain duplicates. Returns an empty
  * array if there are no referenced projects on this description.
  *
+ *@see #getDynamicReferences
  * @return a list of projects
  */
 public IProject[] getReferencedProjects();
@@ -148,6 +173,20 @@ public void setComment(String comment);
  * @deprecated Use IProject#setDefaultCharset instead
  */
 public void setDefaultCharset(String charset);
+/**
+ * Sets the dynamic project references for the described project. 
+ * The projects need not exist in the workspace. Duplicates will be
+ * removed.  
+ * <p>
+ * Users must call <code>IProject.setDescription</code> before changes 
+ * made to this description take effect.
+ * </p>
+ * @see #getDynamicReferences
+ * @see IProject#setDescription
+ * @param a list of projects
+ * @since 3.0
+ */
+public void setDynamicReferences(IProject[] projects);
 /**
  * Sets the local file system location for the described project.  The path must
  * be either an absolute file system path, or a relative path whose first

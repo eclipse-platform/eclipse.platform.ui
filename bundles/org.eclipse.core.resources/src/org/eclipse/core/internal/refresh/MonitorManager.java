@@ -116,7 +116,7 @@ class MonitorManager implements IResourceChangeListener, IResourceDeltaVisitor, 
 		boolean pollingMonitorNeeded = true;
 		RefreshProvider[] providers = getRefreshProviders();
 		for (int i = 0; i < providers.length; i++) {
-				IRefreshMonitor monitor = safeInstallMonitor(providers[i], resource);
+			IRefreshMonitor monitor = safeInstallMonitor(providers[i], resource);
 			if (monitor != null) {
 				registerMonitor(monitor, resource);
 				pollingMonitorNeeded = false;

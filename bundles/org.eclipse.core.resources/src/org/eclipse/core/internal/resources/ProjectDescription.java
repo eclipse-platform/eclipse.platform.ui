@@ -18,25 +18,31 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 
 public class ProjectDescription extends ModelObject implements IProjectDescription {
+	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
 	// constants
 	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
-	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
-
-	// fields
-	protected IPath location = null;
-	protected IProject[] projects = EMPTY_PROJECT_ARRAY;
-	protected String[] natures = EMPTY_STRING_ARRAY;
-	protected ICommand[] buildSpec = EMPTY_COMMAND_ARRAY;
-	protected HashMap linkDescriptions = null;
-	protected String comment = ""; //$NON-NLS-1$
-	protected String defaultCharset;
+	protected static boolean isReading = false;
 
 	//flags to indicate when we are in the middle of reading or writing a
 	// workspace description
 	//these can be static because only one description can be read at once.
 	protected static boolean isWriting = false;
-	protected static boolean isReading = false;
+	protected ICommand[] buildSpec = EMPTY_COMMAND_ARRAY;
+	protected String comment = ""; //$NON-NLS-1$
+	protected String defaultCharset;
+	protected HashMap linkDescriptions = null;
+
+	// fields
+	protected IPath location = null;
+	protected String[] natures = EMPTY_STRING_ARRAY;
+	protected IProject[] staticRefs = EMPTY_PROJECT_ARRAY;
+	protected IProject[] dynamicRefs = EMPTY_PROJECT_ARRAY;
+	/*
+	 * Cached union of static and dynamic references (duplicates omitted).
+	 * This cache is not persisted.
+	 */
+	protected IProject[] cachedRefs = null;
 
 	public ProjectDescription() {
 		super();
@@ -48,6 +54,53 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		// table
 		clone.linkDescriptions = null;
 		return clone;
+	}
+	/**
+	 * Returns a copy of the given array with all duplicates removed
+	 */
+	private IProject[] copyAndRemoveDuplicates(IProject[] projects) {
+		IProject[] result = new IProject[projects.length];
+		int count = 0;
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			boolean found = false;
+			// scan to see if there are any other projects by the same name
+			for (int j = 0; j < count; j++)
+				if (project.equals(result[j]))
+					found = true;
+			if (!found)
+				result[count++] = project;
+		}
+		if (count < projects.length) {
+			//shrink array
+			IProject[] reduced = new IProject[count];
+			System.arraycopy(result, 0, reduced, 0, count);
+			return reduced;
+		}
+		return result;
+	}
+	/**
+	 * Returns the union of the description's static and dyamic project references,
+	 * with duplicates omitted. The calculation is optimized by caching the result
+	 */
+	public IProject[] getAllReferences(boolean makeCopy) {
+		if (cachedRefs == null) {
+			IProject[] statik = getReferencedProjects(false);
+			IProject[] dynamic = getDynamicReferences(false);
+			if (dynamic.length == 0) {
+				cachedRefs = statik;
+			} else if (statik.length == 0) {
+				cachedRefs = dynamic;
+			} else {
+				//combine all references
+				IProject[] result = new IProject[dynamic.length+statik.length];
+				System.arraycopy(statik, 0, result, 0, statik.length);
+				System.arraycopy(dynamic, 0, result, statik.length, dynamic.length);
+				cachedRefs = copyAndRemoveDuplicates(result);
+			}
+		}
+		//still need to copy the result to prevent tampering with the cache
+		return makeCopy ? (IProject[])cachedRefs.clone() : cachedRefs;
 	}
 	/**
 	 * @see IProjectDescription
@@ -63,20 +116,25 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/**
 	 * @see IProjectDescription
 	 */
+	public String getComment() {
+		return comment;
+	}
+	/**
+	 * @see IProjectDescription
+	 */
 	public String getDefaultCharset() {
 		return defaultCharset;
 	}	
 	/**
 	 * @see IProjectDescription
 	 */
-	public String getComment() {
-		return comment;
+	public IProject[] getDynamicReferences() {
+		return getDynamicReferences(true);
 	}
-	/**
-	 * @see IProjectDescription#getLocation
-	 */
-	public IPath getLocation() {
-		return location;
+	public IProject[] getDynamicReferences(boolean makeCopy) {
+		if (dynamicRefs == null)
+			return EMPTY_PROJECT_ARRAY;
+		return makeCopy ? (IProject[]) dynamicRefs.clone() : dynamicRefs;
 	}
 	/**
 	 * Returns the link location for the given resource name. Returns null if
@@ -99,6 +157,12 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return linkDescriptions;
 	}
 	/**
+	 * @see IProjectDescription#getLocation
+	 */
+	public IPath getLocation() {
+		return location;
+	}
+	/**
 	 * @see IProjectDescription
 	 */
 	public String[] getNatureIds() {
@@ -116,9 +180,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return getReferencedProjects(true);
 	}
 	public IProject[] getReferencedProjects(boolean makeCopy) {
-		if (projects == null)
+		if (staticRefs == null)
 			return EMPTY_PROJECT_ARRAY;
-		return makeCopy ? (IProject[]) projects.clone() : projects;
+		return makeCopy ? (IProject[]) staticRefs.clone() : staticRefs;
 	}
 	/**
 	 * @see IProjectDescription#hasNature
@@ -146,20 +210,32 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/**
 	 * @see IProjectDescription
 	 */
+	public void setComment(String value) {
+		comment = value;
+	}
+	/**
+	 * @see IProjectDescription
+	 */
 	public void setDefaultCharset(String value) {
 		defaultCharset = value;
 	}
 	/**
 	 * @see IProjectDescription
 	 */
-	public void setComment(String value) {
-		comment = value;
+	public void setDynamicReferences(IProject[] value) {
+		Assert.isLegal(value != null);
+		dynamicRefs = copyAndRemoveDuplicates(value);
+		cachedRefs = null;
 	}
 	/**
-	 * @see IProjectDescription#setLocation
+	 * Sets the map of link descriptions (String name -> LinkDescription).
+	 * Since this method is only used internally, it never creates a copy. May
+	 * pass null if this project does not have any linked resources
+	 * 
+	 * @return HashMap
 	 */
-	public void setLocation(IPath location) {
-		this.location = location;
+	public void setLinkDescriptions(HashMap linkDescriptions) {
+		this.linkDescriptions = linkDescriptions;
 	}
 	/**
 	 * Sets the description of a link. Setting to a description of null will
@@ -181,14 +257,10 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		}
 	}
 	/**
-	 * Sets the map of link descriptions (String name -> LinkDescription).
-	 * Since this method is only used internally, it never creates a copy. May
-	 * pass null if this project does not have any linked resources
-	 * 
-	 * @return HashMap
+	 * @see IProjectDescription#setLocation
 	 */
-	public void setLinkDescriptions(HashMap linkDescriptions) {
-		this.linkDescriptions = linkDescriptions;
+	public void setLocation(IPath location) {
+		this.location = location;
 	}
 	/**
 	 * @see IProjectDescription
@@ -207,19 +279,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 */
 	public void setReferencedProjects(IProject[] value) {
 		Assert.isLegal(value != null);
-		IProject[] result = new IProject[value.length];
-		int count = 0;
-		for (int i = 0; i < value.length; i++) {
-			IProject project = value[i];
-			boolean found = false;
-			// scan to see if there are any other projects by the same name
-			for (int j = 0; j < value.length; j++)
-				if (i != j && project.equals(value[j]))
-					found = true;
-			if (!found)
-				result[count++] = project;
-		}
-		projects = new IProject[count];
-		System.arraycopy(result, 0, projects, 0, count);
+		staticRefs = copyAndRemoveDuplicates(value);
+		cachedRefs = null;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.*;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
@@ -231,19 +232,21 @@ public boolean hasSavedProject(IProject project) {
  * The target must exist in the workspace.  This method must only ever
  * be called from Project.writeDescription(), because that method ensures
  * that the description isn't then immediately discovered as a new change.
+ * @return true if a new description was written, and false if it wasn't written
+ * because it was unchanged
  */
-public void internalWrite(IProject target, IProjectDescription description, int updateFlags) throws CoreException {
+public boolean internalWrite(IProject target, IProjectDescription description, int updateFlags) throws CoreException {
 	IPath location = locationFor(target);
 	if (location == null) {
 		String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 	}
 	getStore().writeFolder(location.toFile());
-	//write the project location to the meta-data area
-	getWorkspace().getMetaArea().writeLocation(target);
+	//write the project's private description to the metadata area
+	getWorkspace().getMetaArea().writePrivateDescription(target);
 	//can't do anything if there's no description
 	if (description == null)
-		return;
+		return false;
 
 	//write the model to a byte array
 	ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -253,12 +256,18 @@ public void internalWrite(IProject target, IProjectDescription description, int 
 		String msg = Policy.bind("resources.writeMeta", target.getFullPath().toString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
 	}
-	ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+	byte[] newContents = out.toByteArray();
 
 	//write the contents to the IFile that represents the description
 	IFile descriptionFile = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
 	if (!descriptionFile.exists())
 		workspace.createResource(descriptionFile, false);
+	else {
+		//if the description has not changed, don't write anything
+		if (!descriptionChanged(descriptionFile, newContents))
+			return false;
+	}
+	ByteArrayInputStream in = new ByteArrayInputStream(newContents);
 	descriptionFile.setContents(in, updateFlags, null);
 
 	//update the timestamp on the project as well so we know when it has
@@ -269,6 +278,35 @@ public void internalWrite(IProject target, IProjectDescription description, int 
 
 	//for backwards compatibility, ensure the old .prj file is deleted
 	getWorkspace().getMetaArea().clearOldDescription(target);
+	return true;
+}
+/**
+ * Returns true if the description on disk is different from the given byte array,
+ * and false otherwise.
+ */
+private boolean descriptionChanged(IFile descriptionFile, byte[] newContents) {
+	InputStream stream = null;
+	try {
+		stream = new BufferedInputStream(descriptionFile.getContents());
+		int newLength = newContents.length;
+		byte[] oldContents = new byte[newLength];
+		int read = stream.read(oldContents);
+		if (read != newLength)
+			return true;
+		//if the stream still has bytes available, then the description is changed
+		if (stream.read() >= 0)
+			return true;
+		return !Arrays.equals(newContents, oldContents);
+	} catch (Exception e) {
+		//if we failed to compare, just write the new contents
+	} finally {
+		try {
+			stream.close();
+		} catch (IOException e1) {
+			//ignore failure to close the file
+		}
+	}
+	return true;
 }
 /**
  * Returns true if the given project's description is synchronized with
@@ -452,15 +490,19 @@ public InputStream read(IFile target, boolean force, IProgressMonitor monitor) t
  * Never returns null.
  * @param target the project whose description should be read.
  * @param creation true if this project is just being created, in which
- * case the project location needs to be read from disk as well.
+ * case the private project information (including the location) needs to be read 
+ * from disk as well.
  * @exception CoreException if there was any failure to read the project
  * description, or if the description was missing.
  */
 public ProjectDescription read(IProject target, boolean creation) throws CoreException {
 	//read the project location if this project is being created
 	IPath projectLocation = null;
+	ProjectDescription privateDescription = null;
 	if (creation) {
-		projectLocation = getWorkspace().getMetaArea().readLocation(target);
+		privateDescription = new ProjectDescription();
+		getWorkspace().getMetaArea().readPrivateDescription(target, privateDescription);
+		projectLocation = privateDescription.getLocation();
 	} else {
 		IProjectDescription description = ((Project)target).internalGetDescription();
 		if (description != null && description.getLocation() != null) {
@@ -500,6 +542,8 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 		description.setName(target.getName());
 		if (!isDefaultLocation)
 			description.setLocation(projectLocation);
+		if (creation && privateDescription != null)
+			description.setDynamicReferences(privateDescription.getDynamicReferences(false));
 	}
 	long lastModified = CoreFileSystemLibrary.getLastModified(descriptionPath.toOSString());
 	IFile descriptionFile = target.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
@@ -748,8 +792,8 @@ public void writeSilently(IProject target) throws CoreException {
 	IProjectDescription desc = ((Project)target).internalGetDescription();
 	if (desc == null)
 		return;
-	//write the project location to the meta-data area
-	getWorkspace().getMetaArea().writeLocation(target);
+	//write the project's private description to the meta-data area
+	getWorkspace().getMetaArea().writePrivateDescription(target);
 	
 	//write the file that represents the project description
 	java.io.File file = location.append(IProjectDescription.DESCRIPTION_FILE_NAME).toFile();
@@ -765,11 +809,10 @@ public void writeSilently(IProject target) throws CoreException {
 			try {
 				fout.close();
 			} catch (IOException e) {
-				// ignore
+				// ignore failure to close stream
 			}
 		}
 	}
-	
 	//for backwards compatibility, ensure the old .prj file is deleted
 	getWorkspace().getMetaArea().clearOldDescription(target);
 }

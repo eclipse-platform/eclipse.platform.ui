@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -212,7 +212,6 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 	
 		Project source = (Project) project;
 		Project destination = (Project) source.getWorkspace().getRoot().getProject(destDescription.getName());
-		IProjectDescription srcDescription = source.internalGetDescription();
 		Workspace workspace = (Workspace) source.getWorkspace();
 		int depth = IResource.DEPTH_INFINITE;
 		
@@ -288,17 +287,11 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 			failed(status);
 		}
 	
-		// If the locations are the not the same then make sure the new location is written to disk.
-		// (or the old one removed)
-		IPath srcLocation = srcDescription.getLocation();
-		IPath destLocation = destDescription.getLocation();
-		if ((srcLocation == null && destLocation != null) || 
-			(srcLocation != null && !srcLocation.equals(destLocation))) {
-			try {
-				workspace.getMetaArea().writeLocation(destination);
-			} catch (CoreException e) {
-				failed(e.getStatus());
-			}
+		// write the private project description, including the project location
+		try {
+			workspace.getMetaArea().writePrivateDescription(destination);
+		} catch (CoreException e) {
+			failed(e.getStatus());
 		}
 	
 		// Do a refresh on the destination project to pick up any newly discovered resources

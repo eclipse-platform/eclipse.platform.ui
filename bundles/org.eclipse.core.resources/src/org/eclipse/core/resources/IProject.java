@@ -363,7 +363,8 @@ public IProjectNature getNature(String natureId) throws CoreException;
  */
 public IPath getPluginWorkingLocation(IPluginDescriptor plugin);
 /**
- * Returns the projects referenced by this project.
+ * Returns the projects referenced by this project. This includes
+ * both the static and dynamic references of this project.
  * The returned projects need not exist in the workspace.
  * The result will not contain duplicates. Returns an empty
  * array if there are no referenced projects.
@@ -374,6 +375,8 @@ public IPath getPluginWorkingLocation(IPluginDescriptor plugin);
  * <li> This project does not exist.</li>
  * <li> This project is not open.</li>
  * </ul>
+ * @see IProjectDescription#getReferencedProjects
+ * @see IProjectDescription#getDynamicReferences
  */
 public IProject[] getReferencedProjects() throws CoreException;
 /**

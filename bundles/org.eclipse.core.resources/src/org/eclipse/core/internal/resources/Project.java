@@ -40,12 +40,23 @@ protected MultiStatus basicSetDescription(ProjectDescription description) {
 	current.setBuildSpec(description.getBuildSpec(true));
 
 	// set the references before the natures 
+	boolean flushOrder = false;
 	IProject[] oldReferences = current.getReferencedProjects();
 	IProject[] newReferences = description.getReferencedProjects();
 	if (!Arrays.equals(oldReferences, newReferences)) {
-		current.setReferencedProjects(description.getReferencedProjects(true));
-		workspace.flushBuildOrder();
+		current.setReferencedProjects(newReferences);
+		flushOrder = true;
 	}
+	oldReferences = current.getDynamicReferences();
+	newReferences = description.getDynamicReferences();
+	if (!Arrays.equals(oldReferences, newReferences)) {
+		current.setDynamicReferences(newReferences);
+		flushOrder = true;
+	}
+
+	if (flushOrder)
+		workspace.flushBuildOrder();
+
 	// the natures last as this may cause recursive calls to setDescription.
 	workspace.getNatureManager().configureNatures(this, current, description, result);
 	return result;
@@ -243,7 +254,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 				if (getLocalManager().hasSavedProject(this)) {
 					updateDescription();
 					//make sure the .location file is written
-					workspace.getMetaArea().writeLocation(this);
+					workspace.getMetaArea().writePrivateDescription(this);
 				} else {
 					//write out the project
 					writeDescription(IResource.FORCE);
@@ -359,8 +370,9 @@ public IPath getRawLocation() {
 public IProject[] getReferencedProjects() throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
 	checkAccessible(getFlags(info));
-	return ((ProjectInfo)info).getDescription().getReferencedProjects(true);
+	return ((ProjectInfo)info).getDescription().getAllReferences(true);
 }
+
 /**
  * @see IProject
  */
@@ -371,7 +383,10 @@ public IProject[] getReferencingProjects() {
 		Project project = (Project) projects[i];
 		if (!project.isAccessible())
 			continue;
-		IProject[] references = project.internalGetDescription().getReferencedProjects(false);
+		ProjectDescription description = project.internalGetDescription();
+		if (description == null)
+			continue;
+		IProject[] references = description.getAllReferences(false);
 		for (int j = 0; j < references.length; j++)
 			if (references[j].equals(this)) {
 				result.add(projects[i]);
@@ -822,10 +837,11 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			if (hadSavedDescription && !status.isOK())
 				throw new CoreException(status);
 			//write the new description to the .project file
-			writeDescription(internalGetDescription(), updateFlags);
-			info = getResourceInfo(false, true);
-			info.incrementContentId();
-			workspace.updateModificationStamp(info);
+			if (writeDescription(internalGetDescription(), updateFlags)) {
+				info = getResourceInfo(false, true);
+				info.incrementContentId();
+				workspace.updateModificationStamp(info);
+			}
 			if (!hadSavedDescription) {
 				String msg = Policy.bind("resources.missingProjectMetaRepaired", getName()); //$NON-NLS-1$
 				status.merge(new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, getFullPath(), msg));
@@ -917,12 +933,12 @@ public void writeDescription(int updateFlags) throws CoreException {
  * the description isn't then immediately discovered as an incoming
  * change and read back from disk.
  */
-public void writeDescription(IProjectDescription description, int updateFlags) throws CoreException {
+public boolean writeDescription(IProjectDescription description, int updateFlags) throws CoreException {
 	if (ProjectDescription.isReading)
-		return;
+		return false;
 	ProjectDescription.isWriting = true;
 	try {
-		getLocalManager().internalWrite(this, description, updateFlags);
+		return getLocalManager().internalWrite(this, description, updateFlags);
 	} finally {
 		ProjectDescription.isWriting = false;
 	}

@@ -19,6 +19,7 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class IProjectTest extends EclipseWorkspaceTest {
 public IProjectTest() {
@@ -31,7 +32,7 @@ public void setGetPersistentProperty(IResource target) throws CoreException {
 	QualifiedName name = new QualifiedName("itp-test", "testProperty");
 	target.setPersistentProperty(name, value);
 	// see if we can get the property
-	assertTrue("get not equal set", ((String) target.getPersistentProperty(name)).equals(value));
+	assertTrue("get not equal set", target.getPersistentProperty(name).equals(value));
 	// see what happens if we get a non-existant property
 	name = new QualifiedName("eclipse-test", "testNonProperty");
 	assertNull("non-existant persistent property not missing", target.getPersistentProperty(name));
@@ -134,9 +135,7 @@ public void testCopy() {
 		fail("1.99", e);
 	}
 }
-public void testDescriptionConstant() {
-	assertEquals("1.0", ".project", IProjectDescription.DESCRIPTION_FILE_NAME);
-}
+
 /**
  * Tests creation and manipulation of projects names that are reserved on some platforms.
  */
@@ -155,7 +154,7 @@ public void testInvalidProjectNames() {
 	}
 	//do some tests with invalid names
 	names = new String[0];
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+	if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 		//invalid windows names
 		names = new String[] {"prn", "nul", "con", "aux", "clock$", "com1", 
 			"com2", "com3", "com4", "com5", "com6", "com7", "com8", "com9",
@@ -179,7 +178,7 @@ public void testInvalidProjectNames() {
 	}
 		
 	//do some tests with valid names that are *almost* invalid
-	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+	if (BootLoader.getOS().equals(Constants.OS_WIN32)) {
 		//these names are valid on windows
 		names = new String[] {"hello.prn.txt", "null", "con3", "foo.aux", "lpt0",
 			"com0", "com10", "lpt10", ",", "'", ";"};
@@ -1287,6 +1286,74 @@ public void testProjectDeletionOpenUserDefinedOutOfSync() {
 			Workspace.clear(((IPath) i.next()).toFile());
 		}
 	}
+}
+/**
+ * Tests API on IProjectDescription
+ */
+public void testProjectDescriptionReferences() {
+	IProjectDescription desc = getWorkspace().newProjectDescription("foo");
+	IProject project1 = getWorkspace().getRoot().getProject("P1");
+	IProject project2 = getWorkspace().getRoot().getProject("P2");
+	
+	//project name
+	assertEquals("1.0", "foo", desc.getName());
+	
+	//project references
+	assertEquals("2.0", 0, desc.getReferencedProjects().length);
+	IProject[] refs = new IProject[] {project1, project2};
+	desc.setReferencedProjects(refs);
+	IProject[] result = desc.getReferencedProjects();
+	assertEquals("2.1", 2, result.length);
+	assertEquals("2.2", project1, result[0]);
+	assertEquals("2.3", project2, result[1]);
+	
+	//destroying the result should not affect the description
+	result[0] = null;
+	result[1] = null;
+	result = desc.getReferencedProjects();
+	assertEquals("2.4", 2, result.length);
+	assertEquals("2.5", project1, result[0]);
+	assertEquals("2.6", project2, result[1]);
+	
+	//duplicates (should be automatically omitted)
+	refs = new IProject[] {project1, project2, project2, project1, project1};
+	desc.setReferencedProjects(refs);
+	result = desc.getReferencedProjects();
+	assertEquals("3.1", 2, result.length);
+	assertEquals("3.2", project1, result[0]);
+	assertEquals("3.3", project2, result[1]);
+}/**
+ * Tests API on IProjectDescription
+ */
+public void testProjectDescriptionDynamic() {
+	IProjectDescription desc = getWorkspace().newProjectDescription("foo");
+	IProject project1 = getWorkspace().getRoot().getProject("P1");
+	IProject project2 = getWorkspace().getRoot().getProject("P2");
+	
+	//dynamic project references
+	assertEquals("2.0", 0, desc.getDynamicReferences().length);
+	IProject[] refs = new IProject[] {project1, project2};
+	desc.setDynamicReferences(refs);
+	IProject[] result = desc.getDynamicReferences();
+	assertEquals("2.1", 2, result.length);
+	assertEquals("2.2", project1, result[0]);
+	assertEquals("2.3", project2, result[1]);
+	
+	//destroying the result should not affect the description
+	result[0] = null;
+	result[1] = null;
+	result = desc.getDynamicReferences();
+	assertEquals("2.4", 2, result.length);
+	assertEquals("2.5", project1, result[0]);
+	assertEquals("2.6", project2, result[1]);
+	
+	//duplicates (should be automatically omitted)
+	refs = new IProject[] {project1, project2, project2, project1, project1};
+	desc.setDynamicReferences(refs);
+	result = desc.getDynamicReferences();
+	assertEquals("3.1", 2, result.length);
+	assertEquals("3.2", project1, result[0]);
+	assertEquals("3.3", project2, result[1]);
 }
 /**
  * Tests for IProject.delete where:
@@ -2422,41 +2489,8 @@ public void testProjectMoveVariations() {
 	} catch (CoreException e) {
 	}
 }
-public void testProjectReferences() {
-	IProject target = getWorkspace().getRoot().getProject("Project1");
-	ensureExistsInWorkspace(target, true);
 
-	IProject project = getWorkspace().getRoot().getProject("Project2");
-	ensureExistsInWorkspace(project, true);
 
-	try {
-		project.open(getMonitor());
-	} catch (CoreException e) {
-		fail("0.0", e);
-	}
-
-	IProjectDescription description = null;
-	try {
-		description = project.getDescription();
-	} catch (CoreException e) {
-		fail("1.0", e);
-	}
-	description.setReferencedProjects(new IProject[] { target });
-	try {
-		project.setDescription(description, getMonitor());
-	} catch (CoreException e) {
-		fail("2.0", e);
-	}
-	assertTrue("2.1", target.getReferencingProjects().length == 1);
-
-	//get references for a non-existent project
-	try {
-		getWorkspace().getRoot().getProject("DoesNotExist").getReferencedProjects();
-		fail("3.0");
-	} catch (CoreException e1) {
-		//should fail
-	}
-}
 public void testSetGetProjectPersistentProperty() {
 	IProject target = getWorkspace().getRoot().getProject("Project");
 	ensureExistsInWorkspace(target, true);

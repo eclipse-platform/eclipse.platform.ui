@@ -450,24 +450,21 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// List<IProject[]> edges
 		List edges = new ArrayList(allProjects.length);
 		for (int i = 0; i < allProjects.length; i++) {
-			IProject project = allProjects[i];
+			Project project = (Project)allProjects[i];
 			// ignore projects that are not accessible
-			if (project.isAccessible()) {
-				allAccessibleProjects.add(project);
-				IProject[] refs = null;
-				try {
-					refs = project.getReferencedProjects();
-				} catch (CoreException e) {
-					// can't happen - project is accessible
-				}
-				for (int j = 0; j < refs.length; j++) {
-					IProject ref = refs[j];
-					// ignore self references and references to projects that are
-					// not accessible
-					if (ref.isAccessible() && !ref.equals(project)) {
-						edges.add(new IProject[] { project, ref });
-					}
-				}
+			if (!project.isAccessible())
+				continue;
+			ProjectDescription description = project.internalGetDescription();
+			if (description == null)
+				continue;
+			//obtain both static and dynamic project references
+			IProject[] refs = description.getAllReferences(false);
+			allAccessibleProjects.add(project);
+			for (int j = 0; j < refs.length; j++) {
+				IProject ref = refs[j];
+				// ignore self references and references to projects that are not accessible
+				if (ref.isAccessible() && !ref.equals(project))
+					edges.add(new IProject[] { project, ref });
 			}
 		}
 

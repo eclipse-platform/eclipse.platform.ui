@@ -430,6 +430,94 @@ public void testBuildOrder() {
 	}
 }
 /**
+ * Tests an implicit workspace build order created by setting dynamic 
+ * project references.
+ */
+public void testDynamicBuildOrder() {
+	IWorkspace workspace = getWorkspace();
+
+	// Create some resource handles
+	IProject proj1 = workspace.getRoot().getProject("PROJECT" + 1);
+	IProject proj2 = workspace.getRoot().getProject("PROJECT" + 2);
+
+	try {
+		// Turn auto-building off
+		setAutoBuilding(false);
+		
+		// Create some resources
+		proj1.create(getMonitor());
+		proj1.open(getMonitor());
+		proj2.create(getMonitor());
+		proj2.open(getMonitor());
+
+		//establish a build order by adding a dynamic reference from proj2->proj1
+		IProjectDescription description = proj2.getDescription();
+		description.setDynamicReferences(new IProject[] {proj1});
+		proj2.setDescription(description, IResource.NONE, null);
+		IWorkspaceDescription wsDescription = getWorkspace().getDescription();
+		wsDescription.setBuildOrder(null);
+		getWorkspace().setDescription(wsDescription);
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+
+	// Create and set a build specs for project one
+	try {
+		IProjectDescription desc = proj1.getDescription();
+		desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+		proj1.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("2.99", e);
+	}
+
+	// Create and set a build spec for project two
+	try {
+		IProjectDescription desc = proj2.getDescription();
+		desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1"), createCommand(desc, "Build2")});
+		proj2.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("3.99", e);
+	}
+
+	// Set up a plug-in lifecycle verifier for testing purposes
+	TestBuilder verifier = null;
+
+	// Build the workspace
+	try {
+		workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+		verifier = SortBuilder.getInstance();
+		verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+		verifier.addExpectedLifecycleEvent("Build0");
+		verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+		verifier.addExpectedLifecycleEvent("Build1");
+		verifier.addExpectedLifecycleEvent("Build2");
+		verifier.assertLifecycleEvents("4.0 ");
+	} catch (CoreException e) {
+		fail("4.99", e);
+	}
+	
+	//build in reverse order
+	try {
+		//reverse the order by adding a dynamic reference from proj1->proj2
+		IProjectDescription description = proj2.getDescription();
+		description.setDynamicReferences(new IProject[0]);
+		proj2.setDescription(description, IResource.NONE, null);
+		description = proj1.getDescription();
+		description.setDynamicReferences(new IProject[] {proj2});
+		proj1.setDescription(description, IResource.NONE, null);
+
+		workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+		verifier.addExpectedLifecycleEvent("Build1");
+		verifier.addExpectedLifecycleEvent("Build2");
+		verifier.addExpectedLifecycleEvent("Build0");
+		verifier.assertLifecycleEvents("5.0");
+	} catch (CoreException e) {
+		fail("5.99");
+	}
+}
+/**
  * Ensure that build order is preserved when project is closed/opened.
  */
 public void testCloseOpenProject() {
