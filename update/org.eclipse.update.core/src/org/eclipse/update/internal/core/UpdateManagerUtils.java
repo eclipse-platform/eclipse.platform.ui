@@ -949,4 +949,32 @@ public static class Writer {
 		}
 		return fragments;	
 	}
+	
+	public static String getWritableXMLString(String value) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
+			switch (c) {
+				case '&' :
+					buf.append("&amp;"); //$NON-NLS-1$
+					break;
+				case '<' :
+					buf.append("&lt;"); //$NON-NLS-1$
+					break;
+				case '>' :
+					buf.append("&gt;"); //$NON-NLS-1$
+					break;
+				case '\'' :
+					buf.append("&apos;"); //$NON-NLS-1$
+					break;
+				case '\"' :
+					buf.append("&quot;"); //$NON-NLS-1$
+					break;
+				default :
+					buf.append(c);
+					break;
+			}
+		}
+		return buf.toString();
+	}
 }

@@ -530,7 +530,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 		if (description == null)
 			description = ""; //$NON-NLS-1$
-		descLabel.setText(description);
+		descLabel.setText(UpdateManagerUtils.getWritableXMLString(description));
 	}
 
 	private void updateSearchRequest() {

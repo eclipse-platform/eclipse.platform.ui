@@ -16,6 +16,7 @@ import java.util.*;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
@@ -224,7 +225,7 @@ public class BookmarkUtil {
 					wign.append(',');
 				wign.append(ign[i]);
 			}
-			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\" local=\"" + local + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			writer.print(indent + "<site name=\"" + UpdateManagerUtils.getWritableXMLString(name) + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\" local=\"" + local + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			if (wign.length() > 0)
 				writer.print(" ignored-categories=\""+wign.toString()+"\""); //$NON-NLS-1$ //$NON-NLS-2$
 			if (bookmark.getDescription() != null) {
@@ -239,7 +240,7 @@ public class BookmarkUtil {
 		} else if (obj instanceof BookmarkFolder) {
 			BookmarkFolder folder = (BookmarkFolder) obj;
 			String name = folder.getName();
-			writer.println(indent + "<folder name=\"" + name + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
+			writer.println(indent + "<folder name=\"" + UpdateManagerUtils.getWritableXMLString(name) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 			Object[] children = folder.getChildren(folder);
 			String indent2 = indent + "   "; //$NON-NLS-1$
 			for (int i = 0; i < children.length; i++) {
