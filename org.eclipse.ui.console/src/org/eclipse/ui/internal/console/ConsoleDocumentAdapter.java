@@ -82,15 +82,15 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
                             length -= lineDelimiterLength;
                         }
 
-                        int wrappedLength = length;
                         if (consoleWidth > 0 && consoleWidth < length) {
-                            wrappedLength = consoleWidth;
-                            regions.add(new Region(offset, wrappedLength));
+                            regions.add(new Region(offset, consoleWidth));
+                            offset += consoleWidth;
+                            length -= consoleWidth;
                         } else {
-                            regions.add(new Region(offset, wrappedLength+lineDelimiterLength));
+                            regions.add(new Region(offset, length+lineDelimiterLength));
+                            offset += length+lineDelimiterLength;
+                            length -= length+lineDelimiterLength;
                         }
-                        offset += (wrappedLength+lineDelimiterLength);
-                        length -= (wrappedLength+lineDelimiterLength);
                     }
                 }
             }
