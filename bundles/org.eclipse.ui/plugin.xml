@@ -254,14 +254,14 @@
             id="org.eclipse.ui.edit.text.cut.line.to.end">
       </command>
       <command
-			category="org.eclipse.ui.category.edit"
+			category="org.eclipse.ui.category.file"
             name="%command.move.name"
             icon="icons/full/ctool16/move_edit.gif"
             description="%command.move.description"
             id="org.eclipse.ui.edit.move">
       </command>
       <command
-			category="org.eclipse.ui.category.edit"
+			category="org.eclipse.ui.category.file"
             name="%command.rename.name"
             icon="icons/full/ctool16/rename_edit.gif"
             description="%command.rename.description"
@@ -1052,13 +1052,13 @@
       </keyBinding>
       <keyBinding
             string="Ctrl+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.proposals"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             string="Ctrl+Shift+Space"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1310,49 +1310,49 @@
       <keyBinding
             platform="carbon"
             string="Ctrl+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Ctrl+Shift+K"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Ctrl+J"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Ctrl+Shift+J"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Ctrl+L"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Ctrl+ARROW_UP"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             platform="carbon"
             string="Ctrl+ARROW_DOWN"
-            scope="org.eclipse.ui.globalScope"
+            scope="org.eclipse.ui.textEditorScope"
             command=""
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
@@ -1362,14 +1362,7 @@
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.toggleOverwrite"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            string="Ctrl+W"
-            scope="org.eclipse.ui.globalScope"
-            command=""
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
+      </keyBinding>    
       <keyBinding
             platform="carbon"
             string="Command+W"
@@ -1592,13 +1585,6 @@
             string="Command+ARROW_DOWN"
             scope="org.eclipse.ui.textEditorScope"
             command="org.eclipse.ui.edit.text.scroll.lineDown"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            string="Ctrl+W"
-            scope="org.eclipse.ui.textEditorScope"
-            command="org.eclipse.ui.edit.text.showRulerContextMenu"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
