@@ -230,6 +230,8 @@ function hidePopupMenu() {
 		menu.style.display = "none";
 }
 
+var popupMenuTarget;
+
 function showPopupMenu(e) {
 	// show the menu
 	var x = e.clientX;
@@ -243,6 +245,8 @@ function showPopupMenu(e) {
 	menu.style.left = (x+1)+"px";
 	menu.style.top = (y+1)+"px";
 	menu.style.display = "block";
+	if (isMozilla)
+		popupMenuTarget = e.target;
 }
 
 /**
@@ -329,10 +333,8 @@ function contextMenuHandler(e)
  */
 function mouseClickHandler(e) {
 
-	// hide popup if open
-	var menu = document.getElementById("menu");
-	if (menu && menu.style.display == "block")
-		menu.style.display = "none";
+	if (!isMozilla || e && e.target && e.target != popupMenuTarget)
+		hidePopupMenu();
 		
   	var clickedNode;
  	if (isMozilla)
