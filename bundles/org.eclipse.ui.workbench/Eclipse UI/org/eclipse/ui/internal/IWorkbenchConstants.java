@@ -161,10 +161,10 @@ public interface IWorkbenchConstants {
 	public static final String TAG_PATH = "path";//$NON-NLS-1$
 	public static final String TAG_TOOLTIP = "tooltip";//$NON-NLS-1$
 	public static final String TAG_VIEWS = "views";//$NON-NLS-1$
-	public static final String TAG_ADDED = "added";//$NON-NLS-1$
 	public static final String TAG_POSITION = "position";//$NON-NLS-1$
 	public static final String TAG_NAVIGATION_HISTORY = "navigationHistory";//$NON-NLS-1$
 	public static final String TAG_ACTIVE = "active";//$NON-NLS-1$
 	public static final String TAG_REMOVED = "removed";//$NON-NLS-1$
 	public static final String TAG_HISTORY_LABEL = "historyLabel";//$NON-NLS-1$
+	public static final String TAG_LOCKED = "locked";//$NON-NLS-1$
 }

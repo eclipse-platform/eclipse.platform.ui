@@ -104,7 +104,6 @@ public class Perspective
 	private Color borderColor3;
 	private Map mapFastViewToWidthRatio = new HashMap();
 	private Sash fastViewSash;
-	private CoolBarLayout toolBarLayout;
 	
 	// resize listener to update fast view height and width when
 	// window resized.
@@ -423,12 +422,6 @@ public long getShowInTime(String partId) {
  */
 public ArrayList getShowViewActionIds() {
 	return showViewActionIds;
-}
-/**
- * Returns the toolbar layout for this perspective.
- */
-public CoolBarLayout getToolBarLayout() {
-	return toolBarLayout;
 }
 /**
  * Returns the last active fast view.
@@ -808,13 +801,6 @@ public IStatus restoreState(IMemento memento) {
 	if (desc != null)
 		descriptor = desc;
 		
-	// Create the toolbar layout.
-	IMemento layoutMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-	if (layoutMem != null) {
-		toolBarLayout = new CoolBarLayout();
-		boolean success = toolBarLayout.restoreState(layoutMem);
-		if (!success) toolBarLayout = null;
-	}	
 	this.memento = memento;
 	// Add the visible views.
 	IMemento views[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
@@ -1227,12 +1213,6 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 	IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_LAYOUT);
 	result.add(presentation.saveState(childMem));
 
-	// Save the toolbar layout.
-	if (toolBarLayout != null) {
-		childMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-		result.add(toolBarLayout.saveState(childMem));
-	}
-
 	// Save the editor visibility state
 	if (isEditorAreaVisible())
 		memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
@@ -1358,12 +1338,6 @@ public void setShowInPartIds(ArrayList list) {
  */
 public void setShowViewActionIds(ArrayList list) {
 	showViewActionIds = list;
-}
-/**
- * Sets the toolbar layout for this perspective.
- */
-public void setToolBarLayout(CoolBarLayout layout) {
-	toolBarLayout = layout;
 }
 /**
  * @see IWorkbenchPage

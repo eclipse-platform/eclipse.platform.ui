@@ -31,15 +31,6 @@ public class CoolBarContributionItem extends ContributionItem {
 	private CoolItemToolBarManager toolBarManager;
 
 	/**
-	 * Need to remember order information about the item since
-	 * item layout order is dynamic for coolbars.  We know the
-	 * order the of all of the CoolBarContribution items, but when 
-	 * an item is dynamically added and removed we need to remember 
-	 * its order relationship to the items around it.
-	 */
-	private boolean orderBefore = false;
-	private boolean orderAfter = false;
-	/**
 	 */
 	public CoolBarContributionItem() {
 	}
@@ -198,20 +189,6 @@ public class CoolBarContributionItem extends ContributionItem {
 		return true;
 	}
 	/**
-	 * Returns whether this contribution item is ordered after the 
-	 * the item before it.
-	 */
-	protected boolean isOrderAfter() {
-		return orderAfter;
-	}
-	/**
-	 * Returns whether this contribution item is ordered before a the
-	 * item after it.
-	 */
-	protected boolean isOrderBefore() {
-		return orderBefore;
-	}
-	/**
 	 * Returns whether this contribution item is a separator.
 	 * This information is used to enable hiding of unnecessary separators.
 	 *
@@ -233,20 +210,6 @@ public class CoolBarContributionItem extends ContributionItem {
 		if (getParentManager() == null)
 			return true;
 		return visible;
-	}
-	/**
-	 * Sets whether this contribution item is ordered after the
-	 * item before it.
-	 */
-	protected void setOrderAfter(boolean orderAfter) {
-		this.orderAfter = orderAfter;
-	}
-	/**
-	 * Sets whether this contribution item is ordered before the
-	 * item after it.
-	 */
-	protected void setOrderBefore(boolean orderBefore) {
-		this.orderBefore = orderBefore;
 	}
 	/**
 	 * Sets the visibility of the manager.  If the visibility is <code>true</code>

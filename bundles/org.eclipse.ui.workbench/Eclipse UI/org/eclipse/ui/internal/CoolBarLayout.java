@@ -31,8 +31,6 @@ public class CoolBarLayout {
 	// items may change between saving/restoring
 	ArrayList items = new ArrayList(0);
 
-	ArrayList rememberedPositions = new ArrayList();
-
 	public CoolBarLayout() {
 	}
 	public CoolBarLayout(CoolBar coolBar) {
@@ -74,11 +72,10 @@ public class CoolBarLayout {
 			}
 		}
 	}
-	public CoolBarLayout(ArrayList items, int[] itemWrapIndices, Point[] itemSizes, ArrayList rememberedPositions) {
+	public CoolBarLayout(ArrayList items, int[] itemWrapIndices, Point[] itemSizes) {
 		this.items = items;
 		this.itemWrapIndices = itemWrapIndices;
 		this.itemSizes = itemSizes;
-		this.rememberedPositions = rememberedPositions;
 	}
 	/**
 	 * Return the set of wrap indices that would be a result of adding
@@ -145,6 +142,14 @@ public class CoolBarLayout {
 	}
 	/**
 	 */
+	int getRowOf(String cbItemId) {
+		int index = items.indexOf(cbItemId);
+		if (index == -1)
+			return -1;
+		return getRowOfIndex(index);
+	}
+	/**
+	 */
 	int getRowOfIndex(int index) {
 		int row = -1;
 		for (row = 0; row < itemWrapIndices.length; row++) {
@@ -165,7 +170,9 @@ public class CoolBarLayout {
 		int row = getRowOfIndex(itemIndex);
 		int rowStart = getStartIndexOfRow(row);
 		int nextRowStart = getStartIndexOfRow(row + 1);
-		if (nextRowStart == -1) nextRowStart = rowStart;
+		if (nextRowStart == -1) {
+			nextRowStart = itemSizes.length;
+		}
 		return (rowStart == itemIndex) && (nextRowStart - rowStart <= 1);
 	}
 	/**
@@ -179,7 +186,9 @@ public class CoolBarLayout {
 		for (int i=0; i<this.items.size(); i++) {
 			String itemId = (String)this.items.get(i);
 			int index = otherLayout.items.indexOf(itemId);
-			if (index != -1) indexes.add(new Integer(index));
+			if (index != -1) {
+				indexes.add(new Integer(index));
+			}
 		}
 		// see if the items that are shared across the two
 		// layouts are in the same order, if not return 
@@ -202,9 +211,6 @@ public class CoolBarLayout {
 	 * @param memento the memento to save the object state in
 	 */
 	public boolean restoreState(IMemento memento) {
-		Integer newLayout = memento.getInteger(IWorkbenchConstants.TAG_ACTION_SET);
-		if (newLayout == null) return false;
-		
 		IMemento [] sizes = memento.getChildren(IWorkbenchConstants.TAG_ITEM_SIZE);
 		if (sizes == null) return false;
 		itemSizes = new Point[sizes.length];
@@ -234,24 +240,7 @@ public class CoolBarLayout {
 			if (id == null) return false;
 			items.add(id);
 		}
-		IMemento [] savedPositions = memento.getChildren(IWorkbenchConstants.TAG_POSITION);
-		rememberedPositions = new ArrayList(savedPositions.length);
-		for (int i=0; i < savedPositions.length; i++) {
-			CoolItemPosition position = new CoolItemPosition();
-			IMemento savedPos = savedPositions[i];
-			position.id = savedPos.getString(IWorkbenchConstants.TAG_ID);
-			if (position.id == null) return false;
-			Integer pos = savedPos.getInteger(IWorkbenchConstants.TAG_ADDED);
-			if (pos == null) return false;
-			int added = pos.intValue();
-			position.added = added == 1;
-			position.layout = new CoolBarLayout();
-			IMemento layoutMemento = savedPos.getChild(IWorkbenchConstants.TAG_LAYOUT);
-			if (layoutMemento == null) return false;
-			position.layout.restoreState(layoutMemento);
-			rememberedPositions.add(position);
-		}
-		return true;	
+		return true;
 	}
 	/**
 	 * Saves the object state in the given memento. 
@@ -259,10 +248,6 @@ public class CoolBarLayout {
 	 * @param memento the memento to save the object state in
 	 */
 	public IStatus saveState(IMemento memento) {
-		// tag used to indicate whether or not adding actions to other
-		// coolitems is supported
-		memento.putInteger(IWorkbenchConstants.TAG_ACTION_SET, 1);
-
 		for (int i = 0; i < itemSizes.length; i++) {
 			IMemento child = memento.createChild(IWorkbenchConstants.TAG_ITEM_SIZE);
 			Point pt = itemSizes[i];
@@ -279,19 +264,8 @@ public class CoolBarLayout {
 			String item = (String)iter.next();
 			child.putString(IWorkbenchConstants.TAG_ID, item);
 		}
-		iter = rememberedPositions.iterator();
-		while (iter.hasNext()) {
-			IMemento child = memento.createChild(IWorkbenchConstants.TAG_POSITION);
-			CoolItemPosition position = (CoolItemPosition)iter.next();
-			child.putString(IWorkbenchConstants.TAG_ID, position.id);
-			int value = 0;
-			if (position.added) value = 1;
-			child.putInteger(IWorkbenchConstants.TAG_ADDED, value);
-			IMemento layout = child.createChild(IWorkbenchConstants.TAG_LAYOUT);
-			position.layout.saveState(layout); 
-		}
 		return new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
-	}
+	}	
 	public String toString() {
 		StringBuffer buffer = new StringBuffer(20);
 		buffer.append("items "); //$NON-NLS-1$

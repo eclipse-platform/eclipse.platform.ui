@@ -598,6 +598,9 @@ private void busyResetPerspective() {
 	
 	// Destroy old persp.
 	disposePerspective(oldPersp);
+	
+	// Update the Coolbar layout.
+	resetToolBarLayout();
 }
 /**
  * Implements <code>setPerspective</code>.
@@ -1510,14 +1513,6 @@ public ArrayList getShowViewActionIds() {
 	else
 		return new ArrayList();
 }
-/*
- * Returns the toolbar layout for the active perspective.
- */
-public CoolBarLayout getToolBarLayout() {
-	Perspective persp = getActivePerspective();
-	if (persp != null) return persp.getToolBarLayout();
-	return null;
-}
 /**
  * Returns the unprotected window.
  */
@@ -2222,16 +2217,19 @@ public void requestActivation(IWorkbenchPart part) {
  */
 public void resetPerspective() {
 	// Run op in busy cursor.
-	// Use set redraw to eliminate the "flash" that occurs when the
-	// coolbar is reset.
+	// Use set redraw to eliminate the "flash" that can occur in the
+	// coolbar as the perspective is reset.
 	CoolBarManager mgr = window.getCoolBarManager();
-	mgr.getControl().setRedraw(false);
-	BusyIndicator.showWhile(null, new Runnable() {
-		public void run() {
-			busyResetPerspective();
-		}
-	});
-	mgr.getControl().setRedraw(true);
+	try {
+		mgr.getControl().setRedraw(false);
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				busyResetPerspective();
+			}
+		});
+	} finally {
+		mgr.getControl().setRedraw(true);
+	}
 }
 /**
  * Restore this page from the memento and ensure that
@@ -2391,21 +2389,12 @@ public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 	if (isZoomed())
 		zoomOut();
 
-	saveToolBarLayout();
 	persp.saveDescAs(newDesc);
 	window.updatePerspectiveShortcut(oldDesc, newDesc, this);
 	
 	// Update MRU list.
 	Workbench wb = (Workbench)window.getWorkbench();
 	wb.getPerspectiveHistory().add(newDesc);
-}
-/**
- * Save the toolbar layout for the given perspective.
- */
-protected void saveToolBarLayout() {
-	Perspective persp = getActivePerspective(); 
-	if (persp == null) return;
-	window.getCoolBarManager().saveLayoutFor(persp);
 }
 /**
  * Save the state of the page.
@@ -2434,9 +2423,6 @@ public IStatus saveState(IMemento memento) {
 	if (getActivePart() != null)
 	 	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,getActivePart().getSite().getId());
 
-	// Save the toolbar layout for the current perspective.
-	saveToolBarLayout();
-	
 	// Save each perspective in opened order
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
@@ -2544,11 +2530,6 @@ private void setPerspective(Perspective newPersp) {
 	if (oldPersp == newPersp)
 		return;
 
-	// Save the toolbar layout for the perspective before the
-	// active part is closed, so that any editor-related tool
-	// items are saved as part of the layout.
-	saveToolBarLayout();
-
 	if(newPersp != null) {
 		IStatus status = newPersp.restoreState();	
 		if(status.getSeverity() != IStatus.OK) {
@@ -2632,9 +2613,6 @@ private void setPerspective(Perspective newPersp) {
 	if(editorPresentation != null)
 		editorPresentation.showVisibleEditor();
 		
-	// Update the Coolbar layout.  Do this after the part is activated,
-	// since the layout may contain items associated to the part.
-	setToolBarLayout();
 }
 /*
  * Update visibility state of all views.
@@ -2716,10 +2694,8 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
 /**
  * Restore the toolbar layout for the active perspective.
  */
-protected void setToolBarLayout() {
-	Perspective persp = getActivePerspective(); 
-	if (persp == null) return;
-	window.getCoolBarManager().setLayoutFor(persp);
+protected void resetToolBarLayout() {
+	window.getCoolBarManager().resetLayout();
 }
 /**
  * Sets the active working set for the workbench page.

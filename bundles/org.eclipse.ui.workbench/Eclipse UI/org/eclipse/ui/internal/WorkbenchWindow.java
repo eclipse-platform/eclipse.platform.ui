@@ -12,82 +12,29 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IContributionManagerOverrides;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.SubMenuManager;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.ShellAdapter;
-import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IElementFactory;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.SequenceMachine;
-import org.eclipse.ui.internal.commands.Manager;
-import org.eclipse.ui.internal.commands.Sequence;
-import org.eclipse.ui.internal.commands.Stroke;
+import org.eclipse.ui.internal.commands.*;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
-import org.eclipse.ui.internal.registry.IActionSet;
+import org.eclipse.ui.internal.registry.*;
 
 /**
  * A window within the workbench.
@@ -1278,11 +1225,6 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 		getShell().setBounds(x, y, width, height);
 	}
 
-	// Recreate toolbar layout locked state. 
-	Integer locked = memento.getInteger(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
-	boolean state = (locked != null) && (locked.intValue() == 1);
-	lockToolBar(state);	
-	
 	// Recreate each page in the window. 
 	IWorkbenchPage newActivePage = null;
 	IMemento [] pageArray = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
@@ -1366,6 +1308,10 @@ public IStatus restoreState(IMemento memento, IPerspectiveDescriptor activeDescr
 	if (part != null)
 		getKeyBindingService().update(part);
 		
+	// Restore the coolbar manager state. 
+	IMemento coolBarMem = memento.getChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+	if (coolBarMem != null) getCoolBarManager().restoreState(coolBarMem);
+	
 	return result;
 }
 /* (non-Javadoc)
@@ -1423,9 +1369,9 @@ public IStatus saveState(IMemento memento) {
 		memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, bounds.height);
 	}
 
-	// Save toolbar lock state.
-	int state = isToolBarLocked() ? 1 : 0;
-	memento.putInteger(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT, state);
+	// Savre the coolbar manager state. 
+	IMemento coolBarMem = memento.createChild(IWorkbenchConstants.TAG_TOOLBAR_LAYOUT);
+	getCoolBarManager().saveState(coolBarMem);
 	
 	// Save each page.
 	Iterator enum = pageList.iterator();
@@ -1508,8 +1454,6 @@ public void setActivePage(final IWorkbenchPage in) {
 			updateTitle();
 			updateActionSets();
 			shortcutBar.update(false);
-			if (newPage != null && newPage.getPerspective() != null)
-				newPage.setToolBarLayout();
 			getMenuManager().update(IAction.TEXT);
 			
 			if(noOpenPerspective != null && in != null) {
