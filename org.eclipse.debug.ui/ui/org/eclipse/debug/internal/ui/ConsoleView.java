@@ -90,6 +90,9 @@ public class ConsoleView extends ViewPart {
 		if (display != null) {
 			display.asyncExec(new Runnable() {
 				public void run() {
+					if (fConsoleViewer == null) {
+						return;
+					}
 					IDocument doc= DebugUIPlugin.getDefault().getConsoleDocument((IProcess) element, determineCurrentProcess);
 					fConsoleViewer.setDocument(doc);
 				}
