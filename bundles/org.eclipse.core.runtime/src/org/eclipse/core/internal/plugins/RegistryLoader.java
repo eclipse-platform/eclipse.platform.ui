@@ -88,7 +88,7 @@ private PluginModel processManifestFile(URL manifest) {
 		/* exception details logged by parser */
 		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), null));
 	} catch (Exception e) {
-		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString()), null));
+		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.errorProcessing", manifest.toString() + ":  " + e.getMessage()), null));
 	}
 	return result;
 }

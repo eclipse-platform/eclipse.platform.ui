@@ -8,6 +8,7 @@ package org.eclipse.core.runtime;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.Policy;
 
 /**
  * <p>
@@ -75,9 +76,9 @@ public PluginVersionIdentifier(int major, int minor, int service) {
  */
 public PluginVersionIdentifier(int major, int minor, int service, String qualifier) {
 
-	Assert.isTrue(major>=0);
-	Assert.isTrue(minor>=0);
-	Assert.isTrue(service>=0);
+	Assert.isTrue(major>=0, Policy.bind("parse.postiveMajor", major + "." + minor + "." + service + "." + qualifier));
+	Assert.isTrue(minor>=0, Policy.bind("parse.postiveMinor", major + "." + minor + "." + service + "." + qualifier));
+	Assert.isTrue(service>=0,  Policy.bind("parse.postiveService", major + "." + minor + "." + service + "." + qualifier));
 	if (qualifier == null) qualifier = "";
 	
 	this.major = major;
@@ -105,12 +106,12 @@ public PluginVersionIdentifier(int major, int minor, int service, String qualifi
  */
 public PluginVersionIdentifier(String versionId) {
 
-	Assert.isNotNull(versionId);
+	Assert.isNotNull(versionId, Policy.bind("parse.emptyPluginVersion"));
 	String s = versionId.trim();
-	Assert.isTrue(!s.equals(""));
-	Assert.isTrue(!s.startsWith(SEPARATOR));
-	Assert.isTrue(!s.endsWith(SEPARATOR));
-	Assert.isTrue(s.indexOf(SEPARATOR+SEPARATOR)==-1);
+	Assert.isTrue(!s.equals(""), Policy.bind("parse.emptyPluginVersion"));
+	Assert.isTrue(!s.startsWith(SEPARATOR), Policy.bind("parse.separatorStartVersion", s));
+	Assert.isTrue(!s.endsWith(SEPARATOR), Policy.bind("parse.separatorEndVersion", s));
+	Assert.isTrue(s.indexOf(SEPARATOR+SEPARATOR)==-1, Policy.bind("parse.doubleSeparatorVersion", s));
 	
 	StringTokenizer st = new StringTokenizer(s, SEPARATOR);
 	Vector elements = new Vector(4);
@@ -119,17 +120,26 @@ public PluginVersionIdentifier(String versionId) {
 		elements.addElement(st.nextToken());
 	}
 
-	Assert.isTrue(elements.size()>0);
-	Assert.isTrue(elements.size()<=4);
+	Assert.isTrue(elements.size()>0, Policy.bind("parse.oneElementPluginVersion", s));
+	Assert.isTrue(elements.size()<=4, Policy.bind("parse.fourElementPluginVersion", s));
+
+	// A rather crude test to see if we have none numeric characters
+	// in any of the first three elements.
+	if (elements.size() >= 1)
+		Assert.isTrue(((String)elements.elementAt(0)).toLowerCase().equals(((String)elements.elementAt(0)).toUpperCase()),Policy.bind("parse.numericMajorComponent", s));
+	if (elements.size() >= 2)
+		Assert.isTrue(((String)elements.elementAt(1)).toLowerCase().equals(((String)elements.elementAt(1)).toUpperCase()),Policy.bind("parse.numericMinorComponent", s));
+	if (elements.size() >= 3)
+		Assert.isTrue(((String)elements.elementAt(2)).toLowerCase().equals(((String)elements.elementAt(2)).toUpperCase()),Policy.bind("parse.numericServiceComponent", s));
 
 	if (elements.size()>=1) this.major = (new Integer((String)elements.elementAt(0))).intValue();
 	if (elements.size()>=2) this.minor = (new Integer((String)elements.elementAt(1))).intValue();
 	if (elements.size()>=3) this.service = (new Integer((String)elements.elementAt(2))).intValue();
 	if (elements.size()>=4) this.qualifier = verifyQualifier((String)elements.elementAt(3));
 	
-	Assert.isTrue(this.major >= 0);
-	Assert.isTrue(this.minor >= 0);
-	Assert.isTrue(this.service >= 0);
+	Assert.isTrue(this.major >= 0, Policy.bind("parse.postiveMajor", s));
+	Assert.isTrue(this.minor >= 0, Policy.bind("parse.postiveMinor", s));
+	Assert.isTrue(this.service >= 0, Policy.bind("parse.postiveService", s));
 }
 /**
  * Compare version identifiers for equality. Identifiers are

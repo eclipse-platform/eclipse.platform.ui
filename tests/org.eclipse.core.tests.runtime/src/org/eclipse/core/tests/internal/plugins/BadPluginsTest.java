@@ -179,11 +179,12 @@ public void badPlugins() {
 		"Name attribute missing from plugin or fragment at file:",
 		"Name attribute missing from plugin or fragment at file:",
 		"Version attribute missing from plugin or fragment at file:",
-		"Error while processing file:",
-		"Error while processing file:",
-		"Error while processing file:",
-		"Error while processing file:",
-		"Error while processing file:",
+		"A plugin version identifier must be non-empty.",
+		"The service (3rd) component of plugin version identifier, 1.2.bad, must be numeric.",
+		"The minor (2nd) component of plugin version identifier, 1.bad.0, must be numeric.",
+		"Plugin version identifier, ..., must not start with a separator character.",
+		"The major (1st) component of plugin version identifier, one, must be numeric.",
+		"Plugin version identifier, 1.2.3.4.5, can contain a maximum of four components.",
 		"Error while processing file:",
 	};
 	
@@ -289,12 +290,12 @@ public void failedFragment() {
 		"Name attribute missing from plugin or fragment at file:",
 		"Name attribute missing from plugin or fragment at file:",
 		"Version attribute missing from plugin or fragment at file:",
-		"Error while processing file:",
-		"Error while processing file:",
+		"A plugin version identifier must be non-empty.",
+		"The service (3rd) component of plugin version identifier, 1.2.bad, must be numeric.",
 		"Plugin name attribute missing from fragment at file:",
 		"Plugin name attribute missing from fragment at file:",
 		"Plugin version attribute missing from fragment at file:",
-		"Error while processing file:",
+		"A plugin version identifier must be non-empty.",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
