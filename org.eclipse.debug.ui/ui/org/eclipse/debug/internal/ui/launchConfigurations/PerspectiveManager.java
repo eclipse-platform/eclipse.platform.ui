@@ -78,6 +78,13 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	private static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
 	private static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
 	private static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
+
+	/**
+	 * Flag used to indicate that the user is already being prompted to
+	 * switch perspectives. This flag allows us to not open multiple
+	 * prompts at the same time.
+	 */
+	private boolean fPrompting;
 		
 	/**
 	 * Called by the debug ui plug-in on startup.
@@ -339,7 +346,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 *  automatically
 	 */
 	private boolean shouldSwitchPerspective(String perspectiveId, String message, String preferenceKey) {
-		if (isCurrentPerspective(perspectiveId)) {
+		if (isCurrentPerspective(perspectiveId) || fPrompting) {
 			return false;
 		}
 		String perspectiveName= getPerspectiveLabel(perspectiveId);
@@ -347,13 +354,16 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		if (perspectiveName == null || shell == null) {
 			return false;
 		}
-		String switchPerspective = DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
+		String switchPerspective= DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
 		if (AlwaysNeverDialog.ALWAYS.equals(switchPerspective)) {
 			return true;
 		} else if (AlwaysNeverDialog.NEVER.equals(switchPerspective)) {
 			return false;
 		}
-		return AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), preferenceKey, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+		fPrompting= true;
+		boolean answer= AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), preferenceKey, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
+		fPrompting= false;
+		return answer;
 	}
 	
 	/**
