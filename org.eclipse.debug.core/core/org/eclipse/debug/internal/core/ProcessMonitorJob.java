@@ -52,6 +52,7 @@ public class ProcessMonitorJob extends Job {
 				fProcess.terminated();
 			}
 		}
+		fThread = null;
 		return Status.OK_STATUS;
 	}
 
