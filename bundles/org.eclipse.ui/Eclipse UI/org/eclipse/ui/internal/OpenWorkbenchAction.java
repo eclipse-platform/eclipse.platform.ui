@@ -4,15 +4,11 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Creates an About dialog and opens it.
@@ -24,7 +20,7 @@ public class OpenWorkbenchAction extends Action {
  */
 public OpenWorkbenchAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("OpenWorkbench.text")); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("OpenWorkbench.toolTip"));
+	setToolTipText(WorkbenchMessages.getString("OpenWorkbench.toolTip")); //$NON-NLS-1$
 	this.workbenchWindow = window;
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.ABOUT_ACTION});
 }
@@ -33,9 +29,13 @@ public OpenWorkbenchAction(IWorkbenchWindow window) {
  */
 public void run() {
 	try {
-		workbenchWindow.getWorkbench().openWorkbenchWindow(
+		workbenchWindow.getWorkbench().openPage(
 			ResourcesPlugin.getWorkspace().getRoot());
 	} catch (WorkbenchException e) {
+		MessageDialog.openError(
+			workbenchWindow.getShell(),
+			WorkbenchMessages.getString("OpenWorkbench.errorTitle"), //$NON-NLS-1$,
+			e.getMessage());
 	}
 }
 }

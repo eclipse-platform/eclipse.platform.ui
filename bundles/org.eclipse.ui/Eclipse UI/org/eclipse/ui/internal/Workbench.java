@@ -560,6 +560,59 @@ private void openWindows() {
 		openFirstTimeWindow();
 }
 /**
+ * Opens a new page with the default perspective.
+ * The "Open Perspective" preference is consulted and implemented.
+ */
+public IWorkbenchPage openPage(final IAdaptable input) 
+	throws WorkbenchException 
+{
+	return openPage(getPerspectiveRegistry().getDefaultPerspective(), input);
+}
+/**
+ * Opens a new workbench page with a specific perspective.
+ * The "Open Perspective" preference is consulted and implemented.
+ */
+public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
+	throws WorkbenchException 
+{
+	// If "reuse" and a window already exists for the input reuse it.
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	boolean reuse = store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	if (reuse) {
+		IWorkbenchPage page = findPage(input);
+		if (page != null) {
+			IWorkbenchWindow win = page.getWorkbenchWindow();
+			win.getShell().open();
+			win.setActivePage(page);
+			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
+				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
+			if (desc == null)
+				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+			page.setPerspective(desc);
+			return page;
+		}
+	}
+
+	// The page does not already exists.  Open it for real.	
+	String setting = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+	if (setting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		return window.openPage(perspID,input);
+	} else {
+		IWorkbenchWindow window = openWorkbenchWindow(perspID, input);
+		return window.getActivePage();
+	}
+}
+/**
+ * Opens a new window and page with the default perspective.
+ */
+public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) 
+	throws WorkbenchException 
+{
+	return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), 
+		input);
+}
+/**
  * Opens a new workbench window and page with a specific perspective.
  */
 public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) 
@@ -567,11 +620,8 @@ public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptab
 {
 	// If "reuse" and a window already exists for the input reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = 
-		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	boolean reuse = store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
 	if (reuse) {
-		// If a window already exists for the input then
-		// reuse it.
 		IWorkbenchPage page = findPage(input);
 		if (page != null) {
 			IWorkbenchWindow win = page.getWorkbenchWindow();
@@ -604,16 +654,6 @@ public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptab
 	else
 		throw new WorkbenchException(WorkbenchMessages.getString("Abnormal_Workbench_Conditi")); //$NON-NLS-1$
 }
-/**
- * Opens a new window and page with the default perspective.
- */
-public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) 
-	throws WorkbenchException 
-{
-	return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), 
-		input);
-}
-
 /**
  * Reteturns the first page open on a particular input.
  */

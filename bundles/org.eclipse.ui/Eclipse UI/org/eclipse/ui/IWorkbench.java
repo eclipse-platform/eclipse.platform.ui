@@ -91,6 +91,44 @@ public ISharedImages getSharedImages();
  */
 public IWorkbenchWindow [] getWorkbenchWindows();
 /**
+ * Creates and opens a new workbench page.  If the user preference for 
+ * "Open Perspective" is "in current window", the page will be created in
+ * the current window.  Otherwise, it will be created in a new window.
+ * The perspective of the new page is the default perspective.
+ * On return, the new window and new page be active.
+ *
+ * @param input the page input, or <code>null</code> if there is no current input.
+ *		This is used to seed the input for the new page's views.
+ * @return the new workbench page
+ * @exception WorkbenchException if a new page could not be opened
+ */
+public IWorkbenchPage openPage(final IAdaptable input) 
+	throws WorkbenchException;
+/**
+ * Creates and opens a new workbench page.  If the user preference for 
+ * "Open Perspective" is "in current window", the page will be created in
+ * the current window.  Otherwise, it will be created in a new window.
+ * The perspective of the new page is defined by the specified perspective ID.  
+ * On return, the new window and new page be active.
+ * <p>
+ * In most cases where this method is used the caller is tightly coupled to
+ * a particular perspective.  They define it in the registry and contribute some
+ * user interface action to open or activate it.  In situations like this a
+ * static variable is often used to identify the perspective Id.
+ * </p><p>
+ * The workbench also defines a number of menu items to activate or open each
+ * registered perspective. A complete list of these perspectives is available 
+ * from the perspective registry found on IWorkbenchPlugin.
+ * </p>
+ * @param perspectiveId the perspective id for the window's initial page
+ * @param input the page input, or <code>null</code> if there is no current input.
+ *		This is used to seed the input for the new page's views.
+ * @return the new workbench page
+ * @exception WorkbenchException if a new page could not be opened
+ */
+public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
+	throws WorkbenchException;
+/**
  * Creates and opens a new workbench window with one page.  The perspective of
  * the new page is defined by the specified perspective ID.  The new window and new 
  * page become active.
