@@ -67,12 +67,12 @@ public class FeatureSelectionDialog extends SelectionDialog {
 	 * There must be at least one feature.
 	 * </p>
 	 * 
-	 * @param the parent shell
-	 * @param the features to display
-	 * @param the primary feature
-	 * @param shell title
-	 * @param shell message
-	 * @param help context id
+	 * @param shell  the parent shell
+	 * @param features  the features to display
+	 * @param primaryFeature  the primary feature
+	 * @param shellTitle  shell title
+	 * @param shellMessage  shell message
+	 * @param helpContextId  help context id
 	 */
 	public FeatureSelectionDialog(
 		Shell shell,

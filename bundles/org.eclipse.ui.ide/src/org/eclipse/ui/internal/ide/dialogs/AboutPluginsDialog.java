@@ -47,8 +47,8 @@ import org.osgi.framework.Bundle;
 /**
  * Displays information about the product plugins.
  *
- * @private
- *		this class is internal to the ide
+ * PRIVATE
+ *	this class is internal to the ide
  */
 public class AboutPluginsDialog extends ProductInfoDialog {
 

@@ -247,7 +247,7 @@ public class MarkerRegistry implements IResourceChangeListener, ITableViewConten
 	}
 	
 	/**
-	 * @return
+	 * @return the number of items
 	 */
 	public int getItemCount() {
 		//TODO do this more efficiently

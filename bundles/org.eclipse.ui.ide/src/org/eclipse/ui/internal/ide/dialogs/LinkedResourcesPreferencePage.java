@@ -36,7 +36,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * It also shows all path variables currently defined in the workspace's path 
  * variable manager. The user may add, edit and remove path variables. 
  *  
- * @see org.eclipse.ui.internal.dialogs.PathVariableDialog
+ * @see org.eclipse.ui.internal.ide.dialogs.PathVariableDialog
  */
 public class LinkedResourcesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private Label topLabel;

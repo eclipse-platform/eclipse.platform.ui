@@ -116,7 +116,7 @@ public abstract class WizardDataTransferPage
 	 * this hook method.
 	 * </p>
 	 *
-	 * @param parent the parent control
+	 * @param optionsGroup the parent control
 	 */
 	protected void createOptionsGroupButtons(Group optionsGroup) {
 	}

@@ -108,7 +108,7 @@ public class MarkerList {
 	 * 
 	 * @param types
 	 * @param mon
-	 * @return
+	 * @return IMarker[] array of markers 
 	 */
 	public static IMarker[] compute(String[] types) throws CoreException {
 		
@@ -126,7 +126,7 @@ public class MarkerList {
 	/**
 	 * Returns the markers in the list. Read-only.
 	 * 
-	 * @return an array of markers inthe list
+	 * @return an array of markers in the list
 	 */
 	public ConcreteMarker[] toArray() {
 		return markers;
@@ -144,7 +144,7 @@ public class MarkerList {
 	/**
 	 * Returns the number of items in the list
 	 *  
-	 * @return
+	 * @return the number of items 
 	 */
 	public int getItemCount() {
 		return markers.length;
@@ -153,7 +153,7 @@ public class MarkerList {
 	/**
 	 * Returns the number of error markers in the list
 	 * 
-	 * @return
+	 * @return the number of errors 
 	 */
 	public int getErrors() {
 		return getMarkerCounts()[IMarker.SEVERITY_ERROR];
@@ -162,7 +162,7 @@ public class MarkerList {
 	/**
 	 * Returns the number of info markers in the list
 	 * 
-	 * @return
+	 * @return the number of info markers
 	 */
 	public int getInfos() {
 		return getMarkerCounts()[IMarker.SEVERITY_INFO];
@@ -171,7 +171,7 @@ public class MarkerList {
 	/**
 	 * Returns the number of warning markers in the list 
 	 * 
-	 * @return
+	 * @return the number of warning markers
 	 */
 	public int getWarnings() {
 		return getMarkerCounts()[IMarker.SEVERITY_WARNING];
@@ -181,7 +181,7 @@ public class MarkerList {
 	 * Returns an array of marker counts where getMarkerCounts()[severity] is the number
 	 * of markers in the list with the given severity. 
 	 * 
-	 * @return
+	 * @return an array of marker counts
 	 */
 	private int[] getMarkerCounts() {
 		if (markerCounts == null) {

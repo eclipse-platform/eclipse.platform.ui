@@ -115,7 +115,7 @@ public class NewWizardDropDownAction
 		return menu;
 	}
 	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
 	}
@@ -127,13 +127,12 @@ public class NewWizardDropDownAction
 		newWizardAction.run();
 	}
 	/**
-	 * @see runWithEvent(IAction, Event)
-	 * @see IActionDelegate#run(IAction)
+	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
 	}
 	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}

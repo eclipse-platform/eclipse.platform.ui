@@ -21,10 +21,6 @@ public class ActionMarkerProperties extends SelectionProviderAction {
 	
 	private IWorkbenchPart part;
 
-	/**
-	 * @param provider
-	 * @param text
-	 */
 	public ActionMarkerProperties(IWorkbenchPart part, ISelectionProvider provider) {
 		super(provider, Messages.getString("propertiesAction.title")); //$NON-NLS-1$
 		setEnabled(false);

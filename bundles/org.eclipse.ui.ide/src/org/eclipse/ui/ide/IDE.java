@@ -333,7 +333,7 @@ public final class IDE {
 	 * <code>getDefaultEditor(IFile)</code>.
 	 *
 	 * @param file the file
-	 * @param editorId the editor id
+	 * @param editorID the editor id
 	 */
 	public static void setDefaultEditor(IFile file, String editorID) {
 		try {

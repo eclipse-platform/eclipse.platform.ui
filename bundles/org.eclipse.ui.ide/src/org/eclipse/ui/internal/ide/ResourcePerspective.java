@@ -33,7 +33,7 @@ public ResourcePerspective() {
  * an old perspective is restored from a persistence file then
  * this method is not called.
  *
- * @param factory the factory used to add views to the perspective
+ * @param layout the factory used to add views to the perspective
  */
 public void createInitialLayout(IPageLayout layout) {
 	defineActions(layout);

@@ -173,7 +173,7 @@ public class ProjectReferencePage extends PropertyPage {
 
 	}
 	/**
-	 * @see PreferencePage#doOk
+	 * @see PreferencePage#performOk
 	 */
 	protected void handle(InvocationTargetException e) {
 		IStatus error;

@@ -234,7 +234,7 @@ public class MarkerFilter {
 	 * Subclasses should override to determine if the given marker passes the filter.
 	 * 
 	 * @param marker
-	 * @return
+	 * @return <code>true</code> if the marker passes the filter and <code>false</code> otherwise
 	 */
 	protected boolean selectMarker(ConcreteMarker marker) {
 		return true;

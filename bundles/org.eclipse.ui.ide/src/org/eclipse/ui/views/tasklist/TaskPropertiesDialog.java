@@ -101,7 +101,7 @@ public class TaskPropertiesDialog extends Dialog {
 	 * use <code>setResource</code> and <code>setInitialAttributes</code>.
 	 * To show or modify an existing task, use <code>setMarker</code>.
 	 * 
-	 * @param shell the parent shell
+	 * @param parentShell the parent shell
 	 */
 	public TaskPropertiesDialog(Shell parentShell) {
 		super(parentShell);

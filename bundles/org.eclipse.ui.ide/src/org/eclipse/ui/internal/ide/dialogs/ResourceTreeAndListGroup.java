@@ -55,15 +55,17 @@ public class ResourceTreeAndListGroup implements ICheckStateListener, ISelection
  *	Create an instance of this class.  Use this constructor if you wish to specify
  *	the width and/or height of the combined widget (to only hardcode one of the
  *	sizing dimensions, specify the other dimension's value as -1)
+ *  
+ * @param parent
+ * @param rootObject
+ * @param treeContentProvider
+ * @param treeLabelProvider
+ * @param listContentProvider
+ * @param listLabelProvider
+ * @param style
+ * @param useHeightHint If true then use the height hint
+ *  to make this group big enough
  *
- *	@param parent org.eclipse.swt.widgets.Composite
- *	@param style int
- *  @param rootObject java.lang.Object
- *	@param childPropertyName java.lang.String
- *	@param parentPropertyName java.lang.String
- *	@param listPropertyName java.lang.String
- *	@param useHeightHint If true then use the height hint
- *				to make this group big enough
  */
 public ResourceTreeAndListGroup(
 	Composite parent,Object rootObject,

@@ -94,7 +94,7 @@ public void addProvider(IConfigurationElement element) {
 	descriptors.add(desc);
 }
 /**
- * @see IWorkbenchAdapter#getImageDescriptor
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(Object)
  */
 public ImageDescriptor getImageDescriptor(IMarker marker) {
 	int size = descriptors.size();

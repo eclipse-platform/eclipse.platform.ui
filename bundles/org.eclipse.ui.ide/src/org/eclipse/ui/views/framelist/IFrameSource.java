@@ -48,7 +48,7 @@ public interface IFrameSource {
 	 * Otherwise, only the visible aspects of the frame, such as the name and tool tip text,
 	 * will be used.
 	 *
-	 * @param frame one of the frame constants defined in this interface
+	 * @param whichFrame one of the frame constants defined in this interface
 	 * @param flags a bit-wise OR of the flag constants defined in this interface
 	 * @return a new frame describing the current state of the source
 	 */

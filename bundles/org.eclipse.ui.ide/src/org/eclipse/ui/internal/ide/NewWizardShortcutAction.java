@@ -56,8 +56,6 @@ public class NewWizardShortcutAction extends Action implements IPluginContributi
 	}
 	/**
 	 *	This action has been invoked by the user
-	 *
-	 *	@param context Window
 	 */
 	public void run() {
 		// create instance of target wizard

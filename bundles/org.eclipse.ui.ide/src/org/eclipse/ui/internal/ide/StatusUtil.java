@@ -21,8 +21,9 @@ import org.eclipse.core.runtime.Status;
 /**
  * Utility class to create status objects.
  *
- * @private - This class is an internal implementation class and should
- * not be referenced or subclassed outside of the workbench
+ * PRIVATE
+ *   This class is an internal implementation class and should
+ *   not be referenced or subclassed outside of the workbench
  *
  * @since 3.0
  */

@@ -60,9 +60,9 @@ import org.osgi.framework.Bundle;
 /**
  * Displays information about the product plugins.
  *
- * @private
- *		This class is internal to the workbench and must not be called outside
- *		the workbench.
+ * PRIVATE
+ *	This class is internal to the workbench and must not be called outside
+ *	the workbench.
  */
 public class AboutFeaturesDialog extends ProductInfoDialog {
 
@@ -229,8 +229,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
      * 
      * Subclasses should overide.
      * 
-     * @param the
-     *            parent composite to contain the dialog area
+     * @param parent  the parent composite to contain the dialog area
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
@@ -304,7 +303,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	/**
 	 * Create the table part of the dialog.
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param parent  the parent composite to contain the dialog area
 	 */
 	protected void createTable(Composite parent) {
         table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE

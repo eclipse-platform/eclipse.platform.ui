@@ -43,7 +43,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	public LinkedResourceDecorator() {
 	}
 	/**
-	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) {
 	}
@@ -61,7 +61,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 		return false;
 	}
 	/**
-	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
+	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
 	}
@@ -71,10 +71,10 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	 * resource.
 	 * 
 	 * @param element element to decorate
-	 * @param decoration. The decoration we are adding to
+	 * @param decoration  The decoration we are adding to
 	 * @return the linked resource overlay or null if element is not a 
 	 * 	linked resource.
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
+	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(Object, IDecoration)
 	 */
 	public void decorate(Object element, IDecoration decoration) {
 

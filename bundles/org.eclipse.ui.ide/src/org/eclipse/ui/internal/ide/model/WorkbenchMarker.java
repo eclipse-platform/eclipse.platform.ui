@@ -28,7 +28,7 @@ public class WorkbenchMarker
 	extends WorkbenchAdapter
 	implements IMarkerActionFilter {
 /**
- * @see IWorkbenchAdapter#getImageDescriptor
+ * @see IWorkbenchAdapter#getImageDescriptor(Object)
  */
 public ImageDescriptor getImageDescriptor(Object o) {
 	if(!(o instanceof IMarker))
@@ -54,7 +54,7 @@ public Object getParent(Object o) {
  * Returns whether the specific attribute matches the state of the target
  * object.
  *
- * @param taret the target object
+ * @param target the target object
  * @param name the attribute name
  * @param value the attriute value
  * @return <code>true</code> if the attribute matches; <code>false</code> otherwise

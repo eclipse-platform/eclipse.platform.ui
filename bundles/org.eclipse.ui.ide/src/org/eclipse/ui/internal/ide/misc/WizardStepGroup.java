@@ -45,8 +45,6 @@ public class WizardStepGroup {
 
 	/**
 	 * Creates a new instance of the <code>WizardStepGroup</code>
-	 * 
-	 * @param numberColWidth the width in pixel for the number column
 	 */
 	public WizardStepGroup() {
 		super();

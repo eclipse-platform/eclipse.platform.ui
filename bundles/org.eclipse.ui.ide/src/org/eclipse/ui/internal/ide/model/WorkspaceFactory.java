@@ -38,7 +38,7 @@ public IAdaptable createElement(IMemento memento) {
 	return ResourcesPlugin.getWorkspace();
 }
 /**
- * @see IPersistableElement.
+ * @see IPersistableElement
  */
 public String getFactoryId() {
 	return FACTORY_ID;

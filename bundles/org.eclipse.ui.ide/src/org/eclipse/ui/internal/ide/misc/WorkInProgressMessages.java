@@ -32,7 +32,7 @@ public class WorkInProgressMessages {
     }
     /**
      * @param key
-     * @return
+     * @return the string for the given key
      * @since 3.0
      */
     public static String getString(String key) {

@@ -31,9 +31,12 @@ public class ActionDeleteCompleted extends SelectionProviderAction {
 	
 	private TaskView part;
 	
+
 	/**
+	 * Constructs an ActionDeleteCompleted instance
+	 * 
+	 * @param part
 	 * @param provider
-	 * @param text
 	 */
 	public ActionDeleteCompleted(TaskView part, ISelectionProvider provider) {
 		super(provider, Messages.getString("deleteCompletedAction.title")); //$NON-NLS-1$

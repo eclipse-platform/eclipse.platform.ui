@@ -32,7 +32,7 @@ public class MarkerQueryResult {
 	 * The values may not be empty.
 	 * </p>
 	 * 
-	 * @param values the target marker's attribute values
+	 * @param markerAttributeValues the target marker's attribute values
 	 */
 	public MarkerQueryResult(String[] markerAttributeValues) {
 		if (markerAttributeValues == null) {

@@ -13,7 +13,7 @@ package org.eclipse.ui.views.navigator;
 import java.util.Vector;
 
 /**
- * A string pattern matcher, suppporting * and ? wildcards.
+ * A string pattern matcher, suppporting ‘*’ and ‘?’ wildcards.
  */
 /* package */ class StringMatcher {
 	protected String fPattern;

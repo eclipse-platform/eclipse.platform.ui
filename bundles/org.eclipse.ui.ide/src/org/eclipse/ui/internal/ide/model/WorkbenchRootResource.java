@@ -20,7 +20,7 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  */
 public class WorkbenchRootResource extends WorkbenchAdapter {
 /**
- * @see IWorkbenchAdapter#getChildren
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
  * Returns the children of the root resource.
  */
 public Object[] getChildren(Object o) {
@@ -28,7 +28,7 @@ public Object[] getChildren(Object o) {
 	return root.getProjects();
 }
 /**
- * @see IWorkbenchAdapter#getImageDescriptor
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(Object)
  */
 public ImageDescriptor getImageDescriptor(Object object) {
 	return null;

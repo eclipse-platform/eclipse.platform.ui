@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * operation.
  * </p>
  * @see ISchedulingRule
- * @see IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
+ * @see org.eclipse.core.resources.IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
  *  */
 public abstract class WorkspaceModifyOperation implements IRunnableWithProgress {
 	private ISchedulingRule rule;

@@ -61,7 +61,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		}
 	}
 	/**
-	 * @see CompositeImage#fill
+	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
 	 */
 	protected void drawCompositeImage(int width, int height) {
 		ImageData bg;
@@ -110,7 +110,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 		}
 	}
 	/**
-	 * @see CompositeImage#getSize
+	 * @see CompositeImageDescriptor#getSize()
 	 */
 	protected Point getSize() {
 		return fSize;

@@ -76,7 +76,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	/**
 	 * Creates a new project creation wizard page.
 	 *
-	 * @param pageName the name of this page
 	 */
 	public WizardExternalProjectImportPage() {
 		super("wizardExternalProjectPage"); //$NON-NLS-1$

@@ -667,7 +667,7 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * @param selection
-	 * @return
+	 * @return the summary status message
 	 */
 	protected String updateSummarySelected(IStructuredSelection selection) {
 		// Show how many items selected
@@ -675,7 +675,7 @@ public abstract class MarkerView extends TableView {
 	}
 
 	/**
-	 * @return
+	 * @return the update summary 
 	 */
 	protected String updateSummaryVisible() {
 		return ""; //$NON-NLS-1$

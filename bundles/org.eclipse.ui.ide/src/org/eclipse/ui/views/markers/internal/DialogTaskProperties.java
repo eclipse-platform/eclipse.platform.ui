@@ -54,7 +54,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	}
 	
 	/**
-	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#createAttributesArea(org.eclipse.swt.widgets.Composite)
+	 * @see DialogMarkerProperties#createAttributesArea(Composite)
 	 */
 	protected void createAttributesArea(Composite parent) {
 		super.createAttributesArea(parent);
@@ -134,7 +134,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	}
 	
 	/**
-	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#updateEnablement()
+	 * @see DialogMarkerProperties#updateEnablement()
 	 */
 	protected void updateEnablement() {
 		super.updateEnablement();
@@ -143,7 +143,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	}
 	
 	/**
-	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#updateDialogForNewMarker()
+	 * @see DialogMarkerProperties#updateDialogForNewMarker()
 	 */
 	protected void updateDialogForNewMarker() {
 		Map initialAttributes = getInitialAttributes();
@@ -165,7 +165,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	}
 
 	/**
-	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#updateDialogFromMarker()
+	 * @see DialogMarkerProperties#updateDialogFromMarker()
 	 */
 	protected void updateDialogFromMarker() {
 		Map initialAttributes = getInitialAttributes();
@@ -198,7 +198,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 	}
 	
 	/**
-	 * @see org.eclipse.ui.views.markerview.MarkerPropertiesDialog#getMarkerAttributesFromDialog()
+	 * @see DialogMarkerProperties#getMarkerAttributes()
 	 */
 	protected Map getMarkerAttributes() {
 		Map attrs = super.getMarkerAttributes();

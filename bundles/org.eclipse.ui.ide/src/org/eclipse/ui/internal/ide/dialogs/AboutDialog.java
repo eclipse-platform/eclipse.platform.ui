@@ -43,8 +43,8 @@ import org.eclipse.ui.internal.ide.IHelpContextIds;
 /**
  * Displays information about the product.
  *
- * @private
- *		this class is internal to the ide
+ * PRIVATE  
+ * 	this class is internal to the ide
  */
 public class AboutDialog extends ProductInfoDialog {
 	private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
@@ -177,7 +177,7 @@ public class AboutDialog extends ProductInfoDialog {
 	 *
 	 * Subclasses should overide.
 	 *
-	 * @param the parent composite to contain the dialog area
+	 * @param parent  the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {

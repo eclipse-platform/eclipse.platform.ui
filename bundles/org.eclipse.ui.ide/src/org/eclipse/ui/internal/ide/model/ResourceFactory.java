@@ -78,7 +78,7 @@ public IAdaptable createElement(IMemento memento) {
 	return res;	
 }
 /**
- * @see IPersistableElement.
+ * @see IPersistableElement
  */
 public String getFactoryId() {
 	return FACTORY_ID;

@@ -79,7 +79,7 @@ import org.xml.sax.SAXException;
  * A "fake" editor to show a welcome page
  * The contents of this page are supplied in the product configuration
  *
- * @private
+ * PRIVATE
  *		This class is internal to the workbench and must not be called outside the workbench
  */
 public class WelcomeEditor extends EditorPart {

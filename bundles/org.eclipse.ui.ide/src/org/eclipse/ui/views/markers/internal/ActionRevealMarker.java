@@ -27,10 +27,6 @@ public class ActionRevealMarker extends SelectionProviderAction {
 
 	protected IWorkbenchPart part;
 
-	/**
-	 * @param provider
-	 * @param text
-	 */
 	public ActionRevealMarker(IWorkbenchPart part, ISelectionProvider provider) {
 		super(provider, ""); //$NON-NLS-1$
 		this.part = part;

@@ -21,7 +21,7 @@ package org.eclipse.ui;
  * Clients are not expected to implement this interface.
  * </p>
  *
- * @see IActionFilter
+ * @see org.eclipse.ui.IActionFilter
  */
 public interface IResourceActionFilter extends IActionFilter {
 	/**

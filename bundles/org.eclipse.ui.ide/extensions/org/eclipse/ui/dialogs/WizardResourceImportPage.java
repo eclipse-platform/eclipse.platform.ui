@@ -75,7 +75,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
  * contains exactly one container resource then it will be used as the default
  * import destination.
  *
- * @param pageName the name of the page
+ * @param name the name of the page
  * @param selection the current resource selection
  */
 protected WizardResourceImportPage(String name, IStructuredSelection selection) {
@@ -414,7 +414,6 @@ protected void updateSelections(final Map map) {
 }
 /**
  * Check if widgets are enabled or disabled by a change in the dialog.
- * @param event Event
  */
 protected void updateWidgetEnablements() {
 

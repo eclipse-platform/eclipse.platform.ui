@@ -47,7 +47,7 @@ public class MarkerQuery {
 	 * </p>
 	 * 
 	 * @param markerType the targetted marker type
-	 * @param attributes the targetted marker attributes
+	 * @param markerAttributes the targetted marker attributes
 	 */
 	public MarkerQuery(String markerType, String[] markerAttributes) {
 		if (markerAttributes == null) {

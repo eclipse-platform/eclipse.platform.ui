@@ -165,7 +165,7 @@ public class TableSorter extends ViewerSorter implements Comparator {
 	}
 	
 	/**
-	 * @return
+	 * @return IField[]  an array of fields
 	 */
 	public IField[] getFields() {
 		return fields;

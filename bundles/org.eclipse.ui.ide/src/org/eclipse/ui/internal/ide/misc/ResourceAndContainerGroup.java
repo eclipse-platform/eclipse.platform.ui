@@ -220,7 +220,7 @@ public void setAllowExistingResources(boolean value) {
 /**
  * Sets the value of this page's container.
  *
- * @param value Full path to the container.
+ * @param path Full path to the container.
  */
 public void setContainerFullPath(IPath path) {
 	IResource initial = 
@@ -299,7 +299,7 @@ protected boolean validateControls() {
  * is stored for future reference if the path  does not represent a valid
  * new resource path.
  *
- * @param containerName the container name to validate
+ * @param resourcePath the path to validate
  * @return <code>boolean</code> indicating validity of the resource path
  */
 protected boolean validateFullResourcePath(IPath resourcePath) {

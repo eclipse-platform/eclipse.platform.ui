@@ -658,8 +658,6 @@ public class DialogMarkerFilter extends Dialog {
 	
 	/**
 	 * Updates the given filter from the UI state.
-	 *
-	 * @param filter the filter to update
 	 */
 	protected void updateFilterFromUI() {
 		filter.setEnabled(filterEnabledButton.getSelection());
@@ -693,8 +691,6 @@ public class DialogMarkerFilter extends Dialog {
 
 	/**
 	 * Updates the UI state from the given filter.
-	 *
-	 * @param filter the filter to use
 	 */
 	protected void updateUIFromFilter() {
 		filterEnabledButton.setSelection(filter.isEnabled());

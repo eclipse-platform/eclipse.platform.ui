@@ -31,10 +31,6 @@ public class ActionResolveMarker extends SelectionProviderAction {
 	
 	private IWorkbenchPart part;
 
-	/**
-	 * @param provider
-	 * @param text
-	 */
 	public ActionResolveMarker(IWorkbenchPart part, ISelectionProvider provider) {
 		super(provider, Messages.getString("resolveMarkerAction.title")); //$NON-NLS-1$
 		this.part = part;

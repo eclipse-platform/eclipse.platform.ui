@@ -106,7 +106,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 *
 	 * @param element the config element defining the extension
 	 * @param classAttribute the name of the attribute carrying the class
-	 * @returns the extension object
+	 * @returns Object the extension object
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
 		// If plugin has been loaded create extension.
