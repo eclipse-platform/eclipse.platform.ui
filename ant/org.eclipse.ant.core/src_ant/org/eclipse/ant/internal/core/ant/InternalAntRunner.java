@@ -260,12 +260,11 @@ public class InternalAntRunner {
 		antProject.setProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		parseScript(antProject);
 		defaultTarget = antProject.getDefaultTarget();
-		Collection targets = antProject.getTargets().values();
-		List infos= new ArrayList(targets.size());
+		Enumeration targets = antProject.getTargets().elements();
+		List infos= new ArrayList();
 		List info;
-		Iterator iter = targets.iterator();
-		while (iter.hasNext()) {
-			Target target = (Target) iter.next();
+		while (targets.hasMoreElements()) {
+			Target target = (Target) targets.nextElement();
 			info= new ArrayList(4);
 			info.add(target.getName());
 			info.add(target.getDescription());
