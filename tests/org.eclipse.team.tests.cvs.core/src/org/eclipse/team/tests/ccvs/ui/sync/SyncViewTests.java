@@ -12,8 +12,6 @@ package org.eclipse.team.tests.ccvs.ui.sync;
 
 import junit.framework.Test;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.AllTestsTeamSubscriber;
@@ -32,12 +30,5 @@ public class SyncViewTests extends EclipseTest {
 
 	public static Test suite() {
 		return AllTestsTeamSubscriber.suite(new SyncInfoFromSyncSet());
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.tests.ccvs.core.subscriber.CVSWorkspaceSubscriberTest#testDeletionConflicts()
-	 */
-	public void testDeletionConflicts() throws TeamException, CoreException {
-		// Added for Bug 40035 to obscure inherited test
 	}
 }
