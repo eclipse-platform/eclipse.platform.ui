@@ -368,58 +368,55 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		return fRegion.getOffset();
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#apply(org.eclipse.jface.text.IDocument, char, int)
 	 */
 	public void apply(IDocument document, char trigger, int offset) {
 		// not called any longer		
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#isValidFor(org.eclipse.jface.text.IDocument, int)
 	 */
 	public boolean isValidFor(IDocument document, int offset) {
 		// not called any longer
 		return false;
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getTriggerCharacters()
 	 */
 	public char[] getTriggerCharacters() {
 		// no triggers
 		return new char[0];
 	}
 
-	/**
-	 * {@inheritdoc}
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension#getContextInformationPosition()
 	 */
 	public int getContextInformationPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+		return fRegion.getOffset();
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#updateReplacementOffset(int)
 	 */
 	public void updateReplacementOffset(int offset) {
-		// TODO Auto-generated method stub
-		
+		// not implemented
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#getReplacementString()
 	 */
 	public String getReplacementString() {
-		// TODO Auto-generated method stub
+		// not implemented
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/*
+	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension3#updateReplacementLength(int)
 	 */
 	public void updateReplacementLength(int length) {
-		// TODO Auto-generated method stub
-		
+		// not implemented
 	}
 }

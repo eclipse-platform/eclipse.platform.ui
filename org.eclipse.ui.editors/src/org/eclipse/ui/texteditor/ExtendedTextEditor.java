@@ -257,6 +257,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	/**
 	 * Configures the decoration support for this editor's the source viewer. Subclasses may override this
 	 * method, but should call their superclass' implementation at some point.
+	 * 
+	 * @param support the decoration support to configure
 	 */
 	protected void configureSourceViewerDecorationSupport(SourceViewerDecorationSupport support) {
 
@@ -283,6 +285,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	
 	/**
 	 * Tells whether the overview ruler is visible.
+	 * 
+	 * @return whether the overview ruler is visible
 	 */
 	protected boolean isOverviewRulerVisible() {
 		IPreferenceStore store= getNewPreferenceStore();
@@ -627,6 +631,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Creates a new line number ruler column that is appropriately initialized.
+	 * 
+	 * @return the created line number column
 	 */
 	protected IVerticalRulerColumn createLineNumberRulerColumn() {
 		if (isPrefQuickDiffAlwaysOn() || isChangeInformationShowing()) {
@@ -899,6 +905,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	/**
 	 * Returns the source viewer decoration support.
 	 * 
+	 * @param viewer the viewer for which to return a decoration support
 	 * @return the source viewer decoration support
 	 */
 	protected SourceViewerDecorationSupport getSourceViewerDecorationSupport(ISourceViewer viewer) {
