@@ -19,6 +19,7 @@ import java.util.List;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Javac;
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
@@ -30,7 +31,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.wizard.WizardPage;
@@ -382,10 +385,15 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		} catch (InvocationTargetException e) {
 			// ie.- one of the steps resulted in a core exception	
 			Throwable t = e.getTargetException();
+			IStatus status= null;
 			if (t instanceof CoreException) {	
-				ErrorDialog.openError(getShell(), DataTransferMessages.getString("ExternalAntBuildfileImportPage.21"), //$NON-NLS-1$
-				null, ((CoreException) t).getStatus());
+				status= ((CoreException) t).getStatus();
+			} else {
+			    status= new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IStatus.OK, "Error occurred. Check log for details ", t); //$NON-NLS-1$
+			    AntUIPlugin.log(t);
 			}
+			ErrorDialog.openError(getShell(), DataTransferMessages.getString("ExternalAntBuildfileImportPage.21"), //$NON-NLS-1$
+					null, status);
 		}
 		
 		return result[0];
