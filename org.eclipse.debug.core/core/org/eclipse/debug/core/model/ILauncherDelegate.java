@@ -14,7 +14,8 @@ import org.eclipse.debug.core.ILauncher;
  * lazily instantiates an extension when required. A launch delegate
  * starts a debug session with a specific debug model, and/or
  * launches one or more system processes, registering the result
- * with the launch manager.
+ * with the launch manager. A launch delegate is also capable
+ * of persisting and restoring elements that it can launch.
  * <p>
  * A launcher extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a launcher extension.
@@ -103,6 +104,31 @@ public interface ILauncherDelegate {
 	 * @see org.eclipse.debug.core.ILaunchManager#registerLaunch
 	 */
 	boolean launch(Object[] elements, String mode, ILauncher launcher);
+	
+	/**
+	 * Returns a memento for an object that this delegate has lanuched, such
+	 * that launched elements can be persisted across workspace invocations.
+	 * The memento is used to re-create the launched element.
+	 * 
+	 * @param element an element this delegate has launched
+	 * @return a String representing a memento for the given element,
+	 *		or <code>null</code> if unable to create a memento for
+	 * 		the element
+	 * 
+	 * @see #getObject
+	 */
+	String getLaunchMemento(Object element);
+	
+	/**
+	 * Returns the object represented by the given memento, or <code>null</code>
+	 * if unable to re-create an element from the given memento.
+	 * 
+	 * @param memento a memento created by this delegate
+	 * @return the object represented by the memento, or <code>null</code>
+	 * 
+	 * @see #getMemento
+	 */
+	Object getLaunchObject(String memento);
 }
 
 
