@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.ui.externaltools"
+   name="%Plugin.name"
+   version="1.9.0"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin">
+
+   <runtime>
+      <library name="externaltools.jar">
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.apache.ant"/>
+      <import plugin="org.eclipse.ant.core"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
+
+
+<!-- extension point definitions -->
+
+<!-- Extensions -->
+	<extension point="org.eclipse.ui.popupMenus">
+		<objectContribution
+			id="org.eclipse.ui.externaltools.RunAnt"
+			objectClass="org.eclipse.core.resources.IResource"
+			adaptable="true"
+			nameFilter="*.xml">
+			<action
+				id="org.eclipse.ui.externaltools.RunAntAction"
+				label="%PopupMenu.runAnt"
+				tooltip="%PopupMenu.runAntTip"
+				menubarPath="additions"
+				enablesFor="1"
+				class="org.eclipse.ui.externaltools.internal.ui.AntRunActionDelegate">
+			</action>
+		</objectContribution>			
+	</extension>
+
+	<extension point="org.eclipse.ui.actionSets">
+		<actionSet
+			id="org.eclipse.ui.externaltools.ExternalToolsSet"
+			label="%ActionSet.externalTools"
+			visible="true">
+			<action
+				id="org.eclipse.ui.externaltools.ExternalToolAction"
+				label="%Action.externalTools"
+				menubarPath="file/additions"
+				toolbarPath="Normal/additions"
+				icon="icons/externaltools.gif"
+				tooltip="%Action.externalToolsTip"
+				pulldown="true"
+				class="org.eclipse.ui.externaltools.internal.ui.ExternalToolsAction">
+			</action>
+		</actionSet>
+	</extension>
+
+	<extension point="org.eclipse.ui.propertyPages">
+		<page
+			id="org.eclipse.ui.externaltools.propertypages.BuilderPropertyPage"
+			objectClass="org.eclipse.core.resources.IProject"
+			adaptable="true"
+			name="%PropertyPage.externalToolsBuilders"
+			class="org.eclipse.ui.externaltools.internal.ui.BuilderPropertyPage">
+		</page>
+	</extension>
+
+	<extension point="org.eclipse.ui.views">
+		<category 
+			id="org.eclipse.ui.externaltools.views"
+			name="%Category.externalTools">
+		</category>
+		<view
+			id="org.eclipse.ui.externaltools.LogConsoleView"
+	  		name="%View.logConsole"
+			icon="icons/full/cview16/log_console.gif"
+			category="org.eclipse.ui.externaltools.views"
+			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
+		</view>
+	</extension>
+
+</plugin>
