@@ -45,6 +45,8 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
+	private IProject[] projectsWithinScope= null;
+	
 	private boolean buildKindCompatible(int kind, ILaunchConfiguration config) throws CoreException {
 		int[] buildKinds = buildTypesToArray(config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
 		for (int j = 0; j < buildKinds.length; j++) {
@@ -58,13 +60,13 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	/* (non-Javadoc)
 	 * Method declared on IncrementalProjectBuilder.
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {				
 		if (kind == FULL_BUILD) {
 			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(args);
 			if (config != null && buildKindCompatible(kind, config)) {
 				launchBuild(kind, config, monitor);
 			}
-			return null;
+			return projectsWithinScope;
 		}
 		
 		//need to build all external tools from one builder (see bug 39713)
@@ -78,13 +80,18 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 				}
 			}
 		}
-		return null;
+		return projectsWithinScope;
 	}
 
 	private void doBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
 		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
 		if (resources != null && resources.length > 0) {
+			projectsWithinScope= new IProject[resources.length];
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				projectsWithinScope[i]= resource.getProject();
+			}
 			buildForChange = buildScopeIndicatesBuild(resources);
 		}
 
@@ -140,7 +147,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {
 		for (int i = 0; i < resources.length; i++) {
-			IResourceDelta delta = getDelta(resources[i].getProject());
+			IResourceDelta delta = getDelta(projectsWithinScope[i]);
 			if (delta == null) {
 				//project just added to the workspace..no previous build tree
 				return true;
