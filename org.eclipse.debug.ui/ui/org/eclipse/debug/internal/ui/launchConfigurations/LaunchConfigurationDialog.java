@@ -337,17 +337,24 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Determine the first configuration for this dialog.  If this configuration verifies
 	 * and the 'single-click launching' preference is turned on, launch the configuration
 	 * WITHOUT realizing the dialog.  Otherwise, call super.open(), which will realize the
-	 * dialog and display the first configuration.
+	 * dialog and display the first configuration.  If single-click launching was successful,
+	 * this method returns <code>ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED</code>.
 	 * 
 	 * @see Window#open()
 	 */
 	public int open() {
 		fFirstConfig = determineConfigFromContext();
 		if (fFirstConfig != null) {
+			if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
+				setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
+				setWorkingCopyUserDirty(false);
+			} else {
+				fUnderlyingConfig = fFirstConfig;
+			}
 			if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {				
 				try {
 					fFirstConfig.verify(getMode());
-					fFirstConfig.launch(getMode());
+					doLaunch(fFirstConfig);
 					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;
 				} catch (CoreException ce) {				
 				}
@@ -421,17 +428,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return createConfigFromContext();
 		}
 	}
-	
-	/**
-	 * If an actual <code>ILaunchConfiguration</code> was selected in
-	 * the workbench, select it in the tree.  	
-	 */
-	/*
-	protected void initializeFirstConfigForConfiguration() {
-		IStructuredSelection selection = new StructuredSelection(getContext());
-		setTreeViewerSelection(selection);
-	}
-	*/
 	
 	/**
 	 * Something other than an <code>ILaunchConfiguration</code> was selected in
@@ -1003,7 +999,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 */
  	protected void setEnableStateEditButtons() {
 		boolean verifies = getWorkingCopyVerifyState();
-		boolean dirty = isWorkingCopyDirty();
+		boolean dirty = isWorkingCopyUserDirty();
 		getSaveButton().setEnabled(verifies && dirty);
 		getSaveAndLaunchButton().setEnabled(verifies && dirty);
 		getLaunchButton().setEnabled(verifies);
@@ -1606,41 +1602,52 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Notification the 'launch' button has been pressed
 	 */
 	protected void handleLaunchPressed() {
+		doLaunch(getWorkingCopy());
+		close();
+	}
+	
+	/**
+	 * Autosave the working copy if necessary, then launch the underlying configuration.
+	 */
+	protected void doLaunch(ILaunchConfiguration config) {
 		
-		// If the working copy has changed or has not yet been saved, 'autosave' it
-		ILaunchConfigurationWorkingCopy workingCopy = getWorkingCopy();
-		if (isWorkingCopyUserDirty() || !workingCopy.exists()) {
-			getWorkingCopy().setAttribute(IDebugUIConstants.ATTR_AUTOSAVED, true);
-			// If we're autosaving an existing config, set a unique name to avoid overwriting
-			// the existing config
-			if (workingCopy.exists()) {
-				String uniqueName = generateUniqueNameFrom(getNameTextWidget().getText());
-				try {
-					workingCopy = workingCopy.copy(uniqueName);
-				} catch (CoreException ce) {
+		// If the configuration is a working copy and is dirty or doesn't yet exist, autosave it
+		if (config instanceof ILaunchConfigurationWorkingCopy) {
+			ILaunchConfigurationWorkingCopy workingCopy = (ILaunchConfigurationWorkingCopy) config;
+			if (isWorkingCopyUserDirty() || !workingCopy.exists()) {
+				workingCopy.setAttribute(IDebugUIConstants.ATTR_AUTOSAVED, true);
+				// If we're autosaving an existing config, set a unique name to avoid overwriting
+				// the existing config
+				if (workingCopy.exists()) {
+					String uniqueName = generateUniqueNameFrom(workingCopy.getName());
+					try {
+						workingCopy = workingCopy.copy(uniqueName);
+					} catch (CoreException ce) {
+						ce.printStackTrace();
+					}
+					
 				}
 				
-			}
-			
-			// All autosaved configs must be local
-			workingCopy.setContainer(null);
-
-			try {
-				setIgnoreSelectionChanges(true);
-				fUnderlyingConfig = workingCopy.doSave();
-				setIgnoreSelectionChanges(false);
-			} catch (CoreException ce) {			
-				ce.printStackTrace();
-			}	
-		} 
+				// All autosaved configs must be local
+				workingCopy.setContainer(null);
+	
+				// Do the save
+				try {
+					setIgnoreSelectionChanges(true);
+					fUnderlyingConfig = workingCopy.doSave();
+					setIgnoreSelectionChanges(false);
+				} catch (CoreException ce) {			
+					ce.printStackTrace();
+				}	
+			} 
+		}
 		
 		// Do the launch
 		try {
 			fUnderlyingConfig.launch(getMode());
 		} catch (CoreException ce) {
 			ce.printStackTrace();
-		}		
-		close();
+		}				
 	}
 	
 	protected IPreferenceStore getPreferenceStore() {

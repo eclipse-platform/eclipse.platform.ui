@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -27,6 +28,10 @@ import org.apache.xml.serialize.Method;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -66,7 +71,9 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -89,6 +96,8 @@ import org.xml.sax.SAXException;
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener, 
 															   ILaunchListener,
+															   IResourceChangeListener, 
+															   IPropertyChangeListener, 
 															   ILaunchConfigurationListener {															   
 															   	
 										   	
@@ -127,12 +136,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	/**
 	 * The most recent debug launches
 	 */
-	protected Vector fDebugHistory = new Vector(MAX_HISTORY_SIZE);
+	protected Vector fDebugHistory;
 	
 	/**
 	 * The most recent run launches
 	 */
-	protected Vector fRunHistory = new Vector(MAX_HISTORY_SIZE);
+	protected Vector fRunHistory;
 	
 	/**
 	 * Event filters for the debug UI
@@ -147,9 +156,37 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	private boolean fTrace = false;	
 	
 	/**
-	 * The name of the file used to persist the launch history.
+	 * The visitor used to traverse resource deltas and keep the run & debug
+	 * histories in synch with resource deletions.
+	 */
+	protected static ResourceDeletedVisitor fgDeletedVisitor;
+	
+	/**
+	 * Visitor for handling resource deltas
+	 */
+	class ResourceDeletedVisitor implements IResourceDeltaVisitor {
+		
+		/**
+		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) {
+			if (delta == null) {
+				return false;
+			}
+			if (delta.getKind() != IResourceDelta.REMOVED) {
+				return true;
+			}
+			// check for deletions in launch history
+			removeDeletedHistories();
+			return false;
+		}
+	}
+	
+	/**
+	 * The names of the files used to persist the launch history.
 	 */
 	private static final String LAUNCH_CONFIGURATION_HISTORY_FILENAME = "launchConfigurationHistory.xml";
+	private static final String LAUNCH_OLD_HISTORY_FILENAME = "launchHistory.xml";
 	
 	private static final String HISTORY_ROOT_NODE = "launchHistory";
 	private static final String HISTORY_LAUNCH_NODE = "launch";
@@ -187,6 +224,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	public DebugUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		fgDebugUIPlugin= this;
+		setEmptyLaunchHistories();
 	}
 	/**
 	 * Poll the filters to determine if the event should be shown
@@ -335,6 +373,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		launchManager.removeLaunchConfigurationListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		getPreferenceStore().removePropertyChangeListener(this);
 		fColorManager.dispose();
 		Iterator docs= fConsoleDocuments.values().iterator();
 		while (docs.hasNext()) {
@@ -360,6 +400,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
 		launchManager.addLaunchConfigurationListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		getPreferenceStore().addPropertyChangeListener(this);
 		//set up the docs for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
 		try {
@@ -502,6 +544,23 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	}
 	
 	/**
+	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		IResourceDelta delta= event.getDelta();
+		if (delta != null) {
+			try {
+				if (fgDeletedVisitor == null) {
+					fgDeletedVisitor= new ResourceDeletedVisitor();
+				}
+				delta.accept(fgDeletedVisitor, false);
+			} catch (CoreException ce) {
+				logError(ce);
+			}
+		}		
+	}
+	
+	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public void launchRemoved(final ILaunch launch) {
@@ -634,22 +693,103 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	}
 	
 	/**
+	 * Adjust all histories, removing deleted launches.
+	 */
+	protected void removeDeletedHistories() {
+		Runnable r = new Runnable() {
+			public void run() {
+				removeDeletedHistories(fDebugHistory);
+				removeDeletedHistories(fRunHistory);
+			}
+		};
+		getStandardDisplay().asyncExec(r);
+	}	
+	
+	/**
+	 * Update the given history, removing launches with no element.
+	 */
+	protected void removeDeletedHistories(Vector history) {
+		List remove = null;
+		Iterator iter = history.iterator();
+		while (iter.hasNext()) {
+			LaunchHistoryElement element = (LaunchHistoryElement)iter.next();
+			if (element.getLaunchElement() == null) {
+				if (remove == null) {
+					remove = new ArrayList(1);
+				}
+				remove.add(element);
+			}
+		}
+		if (remove != null) {
+			iter = remove.iterator();
+			while (iter.hasNext()) {
+				history.remove(iter.next());
+			}
+		}
+	}
+	
+	/**
+	 * Return whether the preference is currently set to use configuration-style launching.
+	 */
+	private boolean usingConfigurationStyleLaunching() {
+		String launchingStyle = getPreferenceStore().getString(IDebugPreferenceConstants.LAUNCHING_STYLE);
+		if (IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS.equals(launchingStyle)) {
+			return true;
+		} else {
+			return false;
+		}		
+	}
+	
+	/**
+	 * Erase both (run & debug) launch histories.
+	 */
+	protected void setEmptyLaunchHistories() {
+		fRunHistory = new Vector(MAX_HISTORY_SIZE);
+		fDebugHistory = new Vector(MAX_HISTORY_SIZE);
+	}
+	
+	/**
 	 * Given a launch, try to add it to both of the run & debug histories.
 	 */
 	protected void updateHistories(ILaunch launch) {
+		if (usingConfigurationStyleLaunching()) {
+			updateNewHistories(launch);
+		} else {
+			updateOldHistories(launch);
+		}
+	}
+
+	/**
+	 * Update both history lists when they contain configurations (new style)
+	 */
+	protected void updateNewHistories(ILaunch launch) {
 		//
 		// ToDo: Do we need an equivalent of 'public' for launch config types?
 		//
 		//if (isVisible(launch.getLauncher())) {
-			updateHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch);
-			updateHistory(ILaunchManager.RUN_MODE, fRunHistory, launch);
+			updateNewHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch);
+			updateNewHistory(ILaunchManager.RUN_MODE, fRunHistory, launch);
 		//}
+	}
+	
+	/**
+	 * Update both history lists when they contain launcher ids & launched element mementos (old style)
+	 */
+	protected void updateOldHistories(ILaunch launch) {
+		if (isVisible(launch.getLauncher())) {
+			String elementMemento = launch.getLauncher().getDelegate().getLaunchMemento(launch.getElement());
+			if (elementMemento == null) {
+				return;
+			}
+			updateOldHistory(ILaunchManager.DEBUG_MODE, fDebugHistory, launch, elementMemento);
+			updateOldHistory(ILaunchManager.RUN_MODE, fRunHistory, launch, elementMemento);
+		}		
 	}
 	
 	/**
 	 * Add the given launch to the specified history if the launcher supports the mode.  
 	 */
-	protected void updateHistory(String mode, Vector history, ILaunch launch) {
+	protected void updateNewHistory(String mode, Vector history, ILaunch launch) {
 		
 		// First make sure the launch configuration exists, supports the mode of the history list,
 		// and isn't private
@@ -775,18 +915,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		all.addAll(fDebugHistory);
 		all.addAll(fRunHistory);
 
-		try {
-			Iterator iter = all.iterator();
-			while (iter.hasNext()) {
-				Element historyElement = getHistoryEntryAsXMLElement(doc, (LaunchConfigurationHistoryElement)iter.next());
-				historyRootElement.appendChild(historyElement);
-			}
-			if (fRecentLaunch != null) {
-				Element recent = getRecentLaunchAsXMLElement(doc, fRecentLaunch);
-				historyRootElement.appendChild(recent);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		Iterator iter = all.iterator();
+		while (iter.hasNext()) {
+			Element historyElement = getHistoryEntryAsXMLElement(doc, (LaunchConfigurationHistoryElement)iter.next());
+			historyRootElement.appendChild(historyElement);
+		}
+		if (fRecentLaunch != null) {
+			Element recent = getRecentLaunchAsXMLElement(doc, fRecentLaunch);
+			historyRootElement.appendChild(recent);
 		}
 
 		// produce a String output
@@ -814,6 +950,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	}
 	
 	protected void setAttributes(Element entry, LaunchConfigurationHistoryElement element) {
+		if (usingConfigurationStyleLaunching()) {
+			setNewAttributes(entry, element);
+		} else {
+			setOldAttributes(entry, element);
+		}
+	}
+	
+	protected void setNewAttributes(Element entry, LaunchConfigurationHistoryElement element) {
 		ILaunchConfiguration config = element.getLaunchConfiguration();
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			config = ((ILaunchConfigurationWorkingCopy)config).getOriginal();
@@ -824,13 +968,29 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel());		 
 	}
 	
+	protected void setOldAttributes(Element entry, LaunchConfigurationHistoryElement element) {
+		entry.setAttribute("launcherId", element.getLauncherIdentifier()); //$NON-NLS-1$
+		entry.setAttribute("elementMemento", element.getElementMemento()); //$NON-NLS-1$
+		entry.setAttribute(HISTORY_LABEL_ATT, element.getLabel()); 
+		entry.setAttribute(HISTORY_MODE_ATT, element.getMode());		 	
+	}
+		
+	protected IPath getHistoryFilePath() {
+		IPath historyPath = getStateLocation();
+		if (usingConfigurationStyleLaunching()) {
+			historyPath = historyPath.append(LAUNCH_CONFIGURATION_HISTORY_FILENAME); 
+		} else {
+			historyPath = historyPath.append(LAUNCH_OLD_HISTORY_FILENAME); 			
+		}
+		return historyPath;		
+	}
+
 	/**
 	 * Write out an XML file indicating the entries on the run & debug history lists and
 	 * the most recent launch.
 	 */
 	protected void persistLaunchHistory() throws IOException {
-		IPath historyPath = getStateLocation();
-		historyPath = historyPath.append(LAUNCH_CONFIGURATION_HISTORY_FILENAME); 
+		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
 		File file = new File(osHistoryPath);
 		file.createNewFile();
@@ -846,8 +1006,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	protected void restoreLaunchHistory() throws IOException {
 		
 		// Find the history file
-		IPath historyPath = getStateLocation();
-		historyPath = historyPath.append(LAUNCH_CONFIGURATION_HISTORY_FILENAME);
+		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
 		File file = new File(osHistoryPath);
 		
@@ -904,13 +1063,70 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * Construct & return a <code>LaunchConfigurationHistoryElement</code> corresponding to
 	 * the specified XML element.
 	 */
-	public LaunchConfigurationHistoryElement createHistoryElement(Element entry) {
+	protected LaunchConfigurationHistoryElement createHistoryElement(Element entry) {
+		if (usingConfigurationStyleLaunching()) {
+			return createNewHistoryElement(entry);
+		} else {
+			return createOldHistoryElement(entry);
+		}
+	}
+	
+	protected LaunchConfigurationHistoryElement createNewHistoryElement(Element entry) {
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
 		String mode = entry.getAttribute(HISTORY_MODE_ATT);       
 		String label = entry.getAttribute(HISTORY_LABEL_ATT);     
 		ILaunchConfiguration launchConfig = getLaunchManager().getLaunchConfiguration(memento);
 		return new LaunchConfigurationHistoryElement(launchConfig, mode, label);
 	}
+	
+	protected LaunchConfigurationHistoryElement createOldHistoryElement(Element entry) {
+		String launcherId = entry.getAttribute("launcherId"); //$NON-NLS-1$
+		String memento = entry.getAttribute("elementMemento"); //$NON-NLS-1$
+		String mode = entry.getAttribute(HISTORY_MODE_ATT); 
+		String label = entry.getAttribute(HISTORY_LABEL_ATT); 
+		return new LaunchConfigurationHistoryElement(launcherId, memento, mode, label);		
+	}
+	
+	/**
+	 * Add the given launch to the debug history if the
+	 * launcher supports the debug mode.  
+	 */
+	protected void updateOldHistory(String mode, Vector history, ILaunch launch, String memento) {
+		
+		// First make sure the launcher used supports the mode of the history list
+		ILauncher launcher= launch.getLauncher();
+		Set supportedLauncherModes= launcher.getModes();
+		if (!supportedLauncherModes.contains(mode)) {
+			return;
+		}
+		
+		// create new history item
+		LaunchConfigurationHistoryElement item= new LaunchConfigurationHistoryElement(launcher.getIdentifier(), memento, mode, getModelPresentation().getText(launch));
+		
+		// update the most recent launch
+		if (launch.getLaunchMode().equals(mode)) {
+			fRecentLaunch = item;
+		}
+		
+		// Look for an equivalent launch in the history list
+		int index;
+		
+		index = history.indexOf(item);
+		
+		//It's already listed as the most recent launch, so nothing to do
+		if (index == 0) {
+			return;
+		}
+		
+		// It's in the history, but not the most recent, so make it the most recent
+		if (index > 0) {
+			history.remove(item);
+		} 			
+		history.add(0, item);
+		if (history.size() > MAX_HISTORY_SIZE) {
+			history.remove(history.size() - 1);
+		}	
+	}	
 	
 	public void addEventFilter(IDebugUIEventFilter filter) {
 		fEventFilters.add(filter);
@@ -1071,5 +1287,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			display= Display.getDefault();
 		return display;		
 	}	
+
+	/**
+	 * If the 'launching style' preference changes, wipe out both launch histories.
+	 * 
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		String propertyName= event.getProperty();
+		if (propertyName.equals(IDebugPreferenceConstants.LAUNCHING_STYLE)) {
+			setEmptyLaunchHistories();
+		}
+	}
+	
 }
 

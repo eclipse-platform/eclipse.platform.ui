@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -17,6 +18,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
@@ -33,6 +35,52 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		}
 	}
 
+	/**
+	 * Re-launches the launch of the given object in the specified mode.
+	 */
+	public static void relaunch(ILauncher launcher, String mode, Object element) {
+		launcher.launch(new Object[]{element}, mode);		
+	}
+	
+	public static void relaunch(LaunchConfigurationHistoryElement history) {
+		if (history.isConfigurationBased()) {
+			relaunch(history.getLaunchConfiguration(), history.getMode());			
+		} else {
+			if (verifyHistoryElement(history)) {
+				relaunch(history.getLauncher(), history.getMode(), history.getLaunchElement());
+			} else {
+				DebugUIPlugin.getDefault().removeHistoryElement(history);
+			}
+		}
+	}
+	
+	/**
+	 * Returns whether the launcher and launch element this history element
+	 * refers to are still valid. Reports errors to the user.
+	 * 
+	 * @param history the launch history element to verify
+	 * @return whether this given launch history element is still valid
+	 */
+	protected static boolean verifyHistoryElement(LaunchConfigurationHistoryElement history) {
+		ILauncher launcher = history.getLauncher();
+		if (launcher == null) {
+			MessageDialog.openError(
+				DebugUIPlugin.getShell(),
+				ActionMessages.getString("RelaunchActionDelegate.Unable_to_Launch"), //$NON-NLS-1$
+				ActionMessages.getString("RelaunchActionDelegate.launcher_no_longer_exists")); //$NON-NLS-1$
+			return false;
+		}
+		Object element = history.getLaunchElement();
+		if (element == null) {
+		MessageDialog.openError(
+				DebugUIPlugin.getShell(),
+				ActionMessages.getString("RelaunchActionDelegate.Unable_to_Launch"), //$NON-NLS-1$
+				ActionMessages.getString("RelaunchActionDelegate.element_no_longer_exists"));			 //$NON-NLS-1$
+			return false;
+		}
+		return true;
+	}
+	
 	public static void relaunch(IDebugElement element) {
 		relaunch(element.getLaunch());
 	}
@@ -42,16 +90,26 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	}
 	
 	public static void relaunch(ILaunch launch) {
-		relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+		if (launch.getLaunchConfiguration() == null) {
+			relaunch(launch.getLauncher(), launch.getLaunchMode(), launch.getElement());
+		} else {
+			relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+		}
 	}
 	
 	public static void relaunch(ILaunch launch, String mode) {
-		relaunch(launch.getLaunchConfiguration(), mode);
+		if (launch.getLaunchConfiguration() == null) {
+			relaunch(launch.getLauncher(), mode, launch.getElement());
+		} else {
+			relaunch(launch.getLaunchConfiguration(), mode);
+		}
 	}
 	
+	/*
 	public static void relaunch(LaunchConfigurationHistoryElement history) {
 		relaunch(history.getLaunchConfiguration(), history.getMode());
 	}
+	*/
 	
 	/**
 	 * Re-launches the given configuration in the specified mode.
@@ -72,7 +130,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	protected boolean isEnabledFor(Object element) {
+	public boolean isEnabledFor(Object element) {
 		ILaunch launch= null;
 		
 		if (element instanceof ILaunch) {
