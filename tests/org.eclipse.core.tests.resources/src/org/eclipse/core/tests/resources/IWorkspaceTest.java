@@ -1040,11 +1040,12 @@ public void testValidateProjectLocation() {
 	}
 	
 	//cannot overlap with another project's location
-	IPath openProjectLocation = new Path("c:/temp/openProject");
+	String tempDir = System.getProperty("java.io.tmpdir");
+	IPath openProjectLocation = new Path(tempDir).append("OpenProject");
 	IProject open = workspace.getRoot().getProject("OpenProject");
 	IProjectDescription openDesc = workspace.newProjectDescription(open.getName());
 	openDesc.setLocation(openProjectLocation);
-	IPath closedProjectLocation = new Path("c:/temp/closedProject");
+	IPath closedProjectLocation = new Path(tempDir).append("ClosedProject");
 	IProject closed = workspace.getRoot().getProject("ClosedProject");
 	IProjectDescription closedDesc= workspace.newProjectDescription(closed.getName());
 	closedDesc.setLocation(closedProjectLocation);
