@@ -308,17 +308,17 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 	store.setDefault(
 		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
-		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
-	store.setDefault(
-		IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW);
 	store.setDefault(
+		IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE,
+		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
+	store.setDefault(
 		IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE,
-		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
-		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
-	store.setDefault(IPreferenceConstants.VERSION_2_PERSPECTIVES, false);
+		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+	store.setDefault(IPreferenceConstants.REUSE_PERSPECTIVES, true);
 	store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, 
 		IPreferenceConstants.OVM_FAST);
 	store.setDefault(IPreferenceConstants.ENABLED_DECORATORS,"");

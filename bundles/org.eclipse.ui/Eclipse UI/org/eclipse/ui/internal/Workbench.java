@@ -13,6 +13,7 @@ import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.*;
 import org.eclipse.jface.window.*;
@@ -26,6 +27,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.core.internal.boot.LaunchInfo;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -149,6 +151,18 @@ private void checkInstallErrors() {
 		ErrorDialog.openError(null,WorkbenchMessages.getString("Error"), null, ms);//$NON-NLS-1$
 	}
 }
+
+/*
+ * @see IWorkbench#clonePage(IWorkbenchPage)
+ */
+public IWorkbenchPage clonePage(IWorkbenchPage page)
+	throws WorkbenchException 
+{
+	String perspId = page.getPerspective().getId();
+	IAdaptable input = page.getInput();
+	return openNewPage(perspId, input, 0);
+}
+
 /**
  * Closes the workbench.
  */
@@ -560,24 +574,58 @@ private void openWindows() {
 		openFirstTimeWindow();
 }
 /**
+ * Creates a new workbench page with a specific perspective.
+ * The "Open Perspective" preference is consulted and implemented.
+ */
+private IWorkbenchPage openNewPage(final String perspID, final IAdaptable input,
+	int keyStateMask) throws WorkbenchException 
+{
+	// If the active window is empty, open a page in it.
+	IWorkbenchWindow window = getActiveWorkbenchWindow();
+	if (window != null) {
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return window.openPage(perspID,input);
+		}
+	}
+	
+	// Get preferred open mode.
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	String setting = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+	int stateMask = keyStateMask & (SWT.CONTROL | SWT.SHIFT | SWT.ALT);
+	if (stateMask == alternateMask())
+		setting = store.getString(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE);
+	else if (stateMask == SWT.SHIFT)
+		setting = store.getString(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE);
+	
+	// Open a new page in the preferred mode.
+	if (setting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
+		return window.openPage(perspID,input);
+	} else {
+		IWorkbenchWindow win2 = openWorkbenchWindow(perspID, input);
+		return win2.getActivePage();
+	}
+}
+
+/**
  * Opens a new page with the default perspective.
  * The "Open Perspective" preference is consulted and implemented.
  */
 public IWorkbenchPage openPage(final IAdaptable input) 
 	throws WorkbenchException 
 {
-	return openPage(getPerspectiveRegistry().getDefaultPerspective(), input);
+	return openPage(getPerspectiveRegistry().getDefaultPerspective(), input, 0);
 }
 /**
  * Opens a new workbench page with a specific perspective.
  * The "Open Perspective" preference is consulted and implemented.
  */
-public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
-	throws WorkbenchException 
+public IWorkbenchPage openPage(final String perspID, final IAdaptable input,
+	int keyStateMask) throws WorkbenchException 
 {
 	// If "reuse" and a page already exists for the input, reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+	boolean version2 = store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
 	if (version2 && (input != null)) {
 		IWorkbenchPage page = findPage(input);
 		if (page != null) {
@@ -592,24 +640,20 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 			return page;
 		}
 	}
-
-	// If the active window is empty, open a page in it.
-	IWorkbenchWindow window = getActiveWorkbenchWindow();
-	if (window != null) {
-		IWorkbenchPage page = window.getActivePage();
-		if (page == null) {
-			return window.openPage(perspID,input);
-		}
-	}
 	
-	// Open a new page in the preferred mode.
-	String setting = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-	if (setting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
-		return window.openPage(perspID,input);
-	} else {
-		IWorkbenchWindow win2 = openWorkbenchWindow(perspID, input);
-		return win2.getActivePage();
-	}
+	// The page does not exist.  Create it.
+	return openNewPage(perspID, input, keyStateMask);
+}
+/**
+ * Return the alternate mask for this platform. It is control on win32 and
+ * shift alt on other platforms. 
+ * @return int
+ */
+private int alternateMask() {
+	if (SWT.getPlatform().equals("win32"))//$NON-NLS-1$
+		return SWT.CONTROL;
+	else
+		return SWT.ALT | SWT.SHIFT;
 }
 /**
  * Opens a new window and page with the default perspective.
@@ -628,24 +672,6 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
 {
-	// If "reuse" and a window already exists for the input reuse it.
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
-	if (reuse) {
-		IWorkbenchPage page = findPage(input);
-		if (page != null) {
-			IWorkbenchWindow win = page.getWorkbenchWindow();
-			win.getShell().open();
-			win.setActivePage(page);
-			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
-			if (desc == null)
-				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-			page.setPerspective(desc);
-			return win;
-		}
-	}
-	
 	// Run op in busy cursor.
 	final Object [] result = new Object[1];
 	BusyIndicator.showWhile(null, new Runnable() {
@@ -981,5 +1007,4 @@ private boolean asyncRestoreSnapshot(final File stateFile) {
 	public void refreshPluginActions(String pluginId) {
 		WWinPluginAction.refreshActionList();
 	}
-
 }

@@ -38,12 +38,9 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	private boolean replaceEnabled = true;
 	private IWorkbenchWindow window;
 	private IPerspectiveRegistry reg;
-	private int alternateMask = SWT.NULL;
 
-	private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.getString("OpenPerspectiveMenu.pageProblem"); //$NON-NLS-1$
+	private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.getString("OpenPerspectiveMenu.pageProblemsTitle"); //$NON-NLS-1$
 	private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages.getString("OpenPerspectiveMenu.errorUnknownInput"); //$NON-NLS-1$
-	private static String WINDOW_PROBLEMS_TITLE = WorkbenchMessages.getString("OpenPerspectiveMenu.dialogTitle"); //$NON-NLS-1$
-	private static String WINDOW_PROBLEMS_MESSAGE = WorkbenchMessages.getString("OpenPerspectiveMenu.unknownInput"); //$NON-NLS-1$
 /**
  * Constructs a new menu.
  */
@@ -79,22 +76,6 @@ public OpenPerspectiveMenu(IWorkbenchWindow window, IAdaptable input) {
 	super(window, "Open New Page Menu");//$NON-NLS-1$
 	this.pageInput = input;
 }
-
-/**
- * Return the alternate mask for this platform. It is control on win32 and
- * shift alt on other platforms. Cache the value.
- * @return int
- */
-private int alternateMask() {
-	
-	if(alternateMask == SWT.NULL){
-		if (SWT.getPlatform().equals("win32"))//$NON-NLS-1$
-			alternateMask =  SWT.CONTROL;
-		else
-			alternateMask = SWT.ALT | SWT.SHIFT;
-	}
-	return alternateMask;		
-}
 /**
  * Return whether or not the menu can be run. Answer true unless the current perspective
  * is replace and the replaceEnabled flag is false.
@@ -121,15 +102,7 @@ private String openPerspectiveSetting() {
  * @param desc the selected perspective
  */
 protected void run(IPerspectiveDescriptor desc) {
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
-	if (version2) {
-		runVersion2(desc);
-	} else {
-		String perspectiveSetting =
-			store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-		runWithPerspectiveValue(desc, perspectiveSetting);
-	}
+	runVersion2(desc, 0);
 }
 /**
  * Runs an action for a particular perspective. Check for shift or control events
@@ -139,30 +112,12 @@ protected void run(IPerspectiveDescriptor desc) {
  * @param event SelectionEvent - the event send along with the selection callback
  */
 protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
-	if (version2) {
-		runVersion2(desc);
-	} else {
-		String perspectiveSetting =
-			store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-	
-		int stateMask = event.stateMask & (SWT.CONTROL | SWT.SHIFT | SWT.ALT);
-		if (stateMask == alternateMask())
-			perspectiveSetting =
-				store.getString(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE);
-		else {
-			if (stateMask == SWT.SHIFT)
-				perspectiveSetting =
-					store.getString(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE);
-		}
-		runWithPerspectiveValue(desc, perspectiveSetting);
-	}
+	runVersion2(desc, event.stateMask);
 }
 /* (non-Javadoc)
  * Opens a new page with a particular perspective and input.
  */
-private void runVersion2(IPerspectiveDescriptor desc) {
+private void runVersion2(IPerspectiveDescriptor desc, int keyStateMask) {
 	// Verify page input.
 	if (pageInput == null) {
 		MessageDialog.openError(
@@ -174,90 +129,13 @@ private void runVersion2(IPerspectiveDescriptor desc) {
 
 	// Open the page.
 	try {
-		getWindow().getWorkbench().openPage(desc.getId(), pageInput);
+		getWindow().getWorkbench().openPage(desc.getId(), pageInput, keyStateMask);
 	} catch (WorkbenchException e) {
 		MessageDialog.openError(
 			getWindow().getShell(),
 			PAGE_PROBLEMS_TITLE,
 			e.getMessage());
 	}
-}
-/* (non-Javadoc)
- * Opens a new page with a particular perspective and input.
- */
-private void runInNewPage(IPerspectiveDescriptor desc) {
-	// Verify page input.
-	if (pageInput == null) {
-		MessageDialog.openError(
-			getWindow().getShell(),
-			PAGE_PROBLEMS_TITLE,
-			PAGE_PROBLEMS_MESSAGE);
-		return;
-	}
-
-	// Open the page.
-	try {
-		getWindow().openPage(desc.getId(), pageInput);
-	} catch (WorkbenchException e) {
-		MessageDialog.openError(
-			getWindow().getShell(),
-			PAGE_PROBLEMS_TITLE,
-			e.getMessage());
-	}
-}
-/* (non-Javadoc)
- * Opens a new window with a particular perspective and input.
- */
-private void runInNewWindow(IPerspectiveDescriptor desc) {
-	// Verify page input.
-	if (pageInput == null) {
-		MessageDialog.openError(
-			getWindow().getShell(),
-			WINDOW_PROBLEMS_TITLE,
-			WINDOW_PROBLEMS_MESSAGE);
-		return;
-	}
-
-	// Open the page.
-	try {
-		getWindow().getWorkbench().openWorkbenchWindow(desc.getId(), pageInput);
-	} catch (WorkbenchException e) {
-		MessageDialog.openError(
-			getWindow().getShell(),
-			WINDOW_PROBLEMS_TITLE,
-			e.getMessage());
-	}
-}
-/**
- * Run the action.
- */
-protected void runReplaceCurrent(IPerspectiveDescriptor desc) {
-	IWorkbenchPage page = getWindow().getActivePage();
-	if (page != null) {
-		page.setPerspective(desc);
-	} else {
-		runInNewPage(desc);
-	}
-}
-/**
- * Runs an action for a particular perspective. Opens the perspective supplied
- * in a new window or a new page depending on the workbench preference.
- *
- * @param desc the descriptor used to build the menu
- * @param perspectiveSetting the selected perspective
- */
-private void runWithPerspectiveValue(IPerspectiveDescriptor desc,
-	String perspectiveSetting) 
-{
-	if (perspectiveSetting
-		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW))
-		runInNewWindow(desc);
-	if (perspectiveSetting
-		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE))
-		runInNewPage(desc);
-	if (perspectiveSetting
-		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE))
-		runReplaceCurrent(desc);
 }
 /**
  * Sets the page input.  

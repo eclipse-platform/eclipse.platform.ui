@@ -1326,6 +1326,10 @@ public void savePerspectiveAs(IPerspectiveDescriptor desc) {
 
 	getPersp().saveDescAs(desc);
 	window.updateShortcut(this);
+	
+	// Update MRU list.
+	Workbench wb = (Workbench)window.getWorkbench();
+	wb.getPerspectiveHistory().add(desc);
 }
 /**
  * Save the state of the page.

@@ -10,10 +10,13 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.IPerspectiveListener;
 
-public class PerspectiveComboBox extends ControlContribution {
+public class PerspectiveComboBox extends ControlContribution
+	implements IPropertyListener
+{
 
 	private IWorkbenchWindow window;	
 	private Combo combo;
+	private PerspectiveHistory history;
 	
 	private IPerspectiveListener perspListener = new IPerspectiveListener() {
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
@@ -46,6 +49,8 @@ public class PerspectiveComboBox extends ControlContribution {
 		this.window = window;
 		window.addPerspectiveListener(perspListener);
 		window.addPageListener(pageListener);
+		history = ((Workbench)(window.getWorkbench())).getPerspectiveHistory();
+		history.addListener(this);
 	}	
 	
 	/**
@@ -65,6 +70,11 @@ public class PerspectiveComboBox extends ControlContribution {
 		combo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleSelection();
+			}
+		});
+		combo.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				history.removeListener(PerspectiveComboBox.this);
 			}
 		});
 		return combo;
@@ -140,5 +150,14 @@ public class PerspectiveComboBox extends ControlContribution {
 		Workbench wb = (Workbench)window.getWorkbench();
 		return wb.getPerspectiveHistory().getItems();
 	}
+	
+	/*
+	 * @see IPropertyListener#propertyChanged(Object, int)
+	 */
+	public void propertyChanged(Object source, int propId) {
+		if (source == history)
+			fill();
+	}
+
 }
 

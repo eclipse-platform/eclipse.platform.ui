@@ -33,8 +33,8 @@ public interface IPreferenceConstants {
 	// (int) If > 0, an editor will be reused once 'N' editors are opened.
 	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
 
-	// (boolean) If true then try out version 2 perspective behavior
-	public static final String VERSION_2_PERSPECTIVES = "VERSION_2_PERSPECTIVES"; //$NON-NLS-1$
+	// (boolean) If true then reuse open perspectives.
+	public static final String REUSE_PERSPECTIVES = "REUSE_PERSPECTIVES"; //$NON-NLS-1$
 
 	// (integer) Mode for opening a view.
 	public static final String OPEN_VIEW_MODE = "OPEN_VIEW_MODE"; //$NON-NLS-1$

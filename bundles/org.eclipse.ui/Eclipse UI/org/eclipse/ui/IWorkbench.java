@@ -41,6 +41,20 @@ import org.eclipse.jface.preference.PreferenceManager;
  */
 public interface IWorkbench {
 /**
+ * Creates a copy of an existing workbench page, and opens it in the workbench.
+ * If the user preference for "Open Perspective" is "in current window", the 
+ * page will be created in the current window.  Otherwise, it will be created 
+ * in a new window.
+ * On return, the new window and new page will be active.
+ *
+ * @param page the page to clone
+ * @return the new workbench page
+ * @exception WorkbenchException if a new page could not be opened
+ * @since 2.0
+ */
+public IWorkbenchPage clonePage(IWorkbenchPage page) 
+	throws WorkbenchException;
+/**
  * Closes this workbench and all its open windows.
  * <p>
  * If the workbench has an open editor with unsaved content, the user will be
@@ -123,11 +137,12 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @param perspectiveId the perspective id for the window's initial page
  * @param input the page input, or <code>null</code> if there is no current input.
  *		This is used to seed the input for the new page's views.
+ * @param keyState the state of the keyboard modifier keys, or 0 if undefined
  * @return the new workbench page
  * @exception WorkbenchException if a new page could not be opened
  * @since 2.0
  */
-public IWorkbenchPage openPage(String perspID, IAdaptable input) 
+public IWorkbenchPage openPage(String perspID, IAdaptable input, int keyState) 
 	throws WorkbenchException;
 /**
  * Creates and opens a new workbench window with one page.  The perspective of

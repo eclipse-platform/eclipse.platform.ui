@@ -54,6 +54,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CycleEditorAction prevEditorAction;
 	private ActivateEditorAction activateEditorAction;
 	private WorkbenchEditorsAction workbenchEditorsAction;
+	private ClonePerspectiveAction cloneAction;
 
 	// menus
 	private OpenPerspectiveMenu openPerspMenu;
@@ -135,6 +136,7 @@ public void buildActions(WorkbenchWindow win) {
 		private void enableActions(boolean value) {
 			openPerspMenu.setReplaceEnabled(value);
 			hideShowEditorAction.setEnabled(value);
+			cloneAction.setEnabled(value);
 			savePerspectiveAction.setEnabled(value);
 			resetPerspectiveAction.setEnabled(value);
 			editActionSetAction.setEnabled(value);
@@ -226,6 +228,7 @@ private void createMenuBar() {
 		new ShowViewMenu(subMenu, window, true);
 	}
 	popup.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));
+	popup.add(cloneAction = new ClonePerspectiveAction(window));
 	popup.add(new Separator());
 	popup.add(savePerspectiveAction = new SavePerspectiveAction(window));
 	popup.add(editActionSetAction = new EditActionSetsAction(window));

@@ -617,24 +617,6 @@ public boolean okToClose() {
 public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
 {
-	// If "reuse" and a page already exists for the input reuse it.
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
-	if (reuse) {
-		// If a window already exists for the input then
-		// reuse it.
-		IWorkbenchPage page = findPage(input);
-		if (page != null) {
-			setActivePage(page);
-			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
-			if (desc == null)
-				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-			page.setPerspective(desc);
-			return page;
-		}
-	}
-	
 	// Run op in busy cursor.
 	final Object [] result = new Object[1];
 	BusyIndicator.showWhile(null, new Runnable() {

@@ -139,7 +139,7 @@ private ArrayList getShortcuts()
 {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	boolean mru = 
-		store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
 	if (mru)
 		return getMruShortcuts();
 	else

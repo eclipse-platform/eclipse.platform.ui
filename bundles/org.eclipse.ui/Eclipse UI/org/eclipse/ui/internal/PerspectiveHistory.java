@@ -2,6 +2,8 @@ package org.eclipse.ui.internal;
 
 import java.text.Collator;
 import java.util.*;
+
+import org.eclipse.jface.util.ListenerList;
 import org.eclipse.ui.*;
 
 /**
@@ -13,6 +15,7 @@ public class PerspectiveHistory {
 	private ArrayList shortcuts;
 	private ArrayList sortedShortcuts;
 	private IPerspectiveRegistry reg; 
+	private ListenerList listeners = new ListenerList();
 
 	private Comparator comparator = new Comparator() {
 		private Collator collator = Collator.getInstance();
@@ -28,6 +31,22 @@ public class PerspectiveHistory {
 		shortcuts = new ArrayList(DEFAULT_DEPTH);
 		sortedShortcuts = new ArrayList(DEFAULT_DEPTH);
 		this.reg = reg;
+	}
+
+	public void addListener(IPropertyListener l) {
+		listeners.add(l);
+	}	
+	
+	public void removeListener(IPropertyListener l) {
+		listeners.remove(l);
+	}	
+	
+	public void fireChange() {
+		Object [] array = listeners.getListeners();
+		for (int i = 0; i < array.length; i++) {
+			IPropertyListener element = (IPropertyListener)array[i];
+			element.propertyChanged(this, 0);
+		}
 	}
 	
 	public void restoreState(IMemento memento) {
@@ -74,6 +93,9 @@ public class PerspectiveHistory {
 		// Sort descriptor into ordered list.
 		sortedShortcuts = (ArrayList)shortcuts.clone();
 		Collections.sort(sortedShortcuts, comparator);
+
+		// Update listeners.		
+		fireChange();
 	}
 	
 	/**
