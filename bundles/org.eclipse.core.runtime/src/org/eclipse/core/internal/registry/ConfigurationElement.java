@@ -201,10 +201,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 	 * @return the value of this element or <code>null</code>
 	 */
 	public String getValue() {
-		String s = getValueAsIs();
-		if (s == null)
-			return null;
-		return s;
+		return getValueAsIs();
 	}
 
 	public String getValueAsIs() {
