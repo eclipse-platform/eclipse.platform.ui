@@ -41,6 +41,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ui.externaltools.internal.ant.editor.outline.OutlinePreparingHandler;
 import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePage;
+import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 
 /**
@@ -849,7 +850,7 @@ public class PlantyContentOutlineTest extends TestCase {
 		// <target name="properties">
         XmlElement tempEle = (XmlElement)tempProjectEle.getChildNodes().get(1);
         assertNotNull(tempEle);
-        assertEquals("properties", tempEle.getAttributeNamed("name").getValue());
+        assertEquals("properties", tempEle.getAttributeNamed(IAntEditorConstants.ATTR_NAME).getValue());
         assertEquals(16, tempEle.getStartingRow());
         assertEquals(2, tempEle.getStartingColumn());
         tempOffset = tempWholeDocumentString.indexOf("<target name=\"properties\"");
