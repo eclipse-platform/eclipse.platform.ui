@@ -169,8 +169,11 @@ public class DecoratorManager
 
 		Class elementClass = element.getClass();
 		String className = elementClass.getName();
-		if (cachedDecorators.containsKey(className))
-			return (DecoratorDefinition[]) cachedDecorators.get(className);
+		DecoratorDefinition[] decoratorArray = 
+			(DecoratorDefinition[]) cachedDecorators.get(className);
+		if (decoratorArray != null) {
+			return decoratorArray;
+		}
 
 		List allClasses = computeClassOrder(elementClass);
 		ArrayList decorators = new ArrayList();
@@ -183,8 +186,7 @@ public class DecoratorManager
 			enabledDefinitions,
 			decorators);
 
-		DecoratorDefinition[] decoratorArray =
-			new DecoratorDefinition[decorators.size()];
+		decoratorArray = new DecoratorDefinition[decorators.size()];
 		decorators.toArray(decoratorArray);
 		cachedDecorators.put(element.getClass().getName(), decoratorArray);
 		return decoratorArray;
