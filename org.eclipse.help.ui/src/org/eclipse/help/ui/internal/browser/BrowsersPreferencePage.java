@@ -152,9 +152,11 @@ public class BrowsersPreferencePage extends PreferencePage
 			PreferenceLinkArea linkArea = new PreferenceLinkArea(parent,
 					SWT.WRAP,
 					WBROWSER_PAGE_ID,
-					"See <a>''{0}''</a> for external web browser in use.",
+					HelpUIResources.getString("BrowsersPreferencePage.message"), //$NON-NLS-1$
 					(IWorkbenchPreferenceContainer)getContainer(),
 					null);
+	        GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+	        linkArea.getControl().setLayoutData(data);
 		}
 	}
 
@@ -164,11 +166,11 @@ public class BrowsersPreferencePage extends PreferencePage
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText("Open window context help");
+		group.setText(HelpUIResources.getString("BrowsersPreferencePage.wgroup")); //$NON-NLS-1$
 		whelpAsViewButton = new Button(group, SWT.RADIO);
-		whelpAsViewButton.setText("in a dynamic help view");
+		whelpAsViewButton.setText(HelpUIResources.getString("BrowsersPreferencePage.view")); //$NON-NLS-1$
 		whelpAsInfopopButton = new Button(group, SWT.RADIO);
-		whelpAsInfopopButton.setText("in an infopop");
+		whelpAsInfopopButton.setText(HelpUIResources.getString("BrowsersPreferencePage.winfopop")); //$NON-NLS-1$
 		boolean winfopop = HelpBasePlugin.getDefault()
 		.getPluginPreferences().getBoolean(IHelpUIConstants.P_WINDOW_INFOPOP);
 		whelpAsViewButton.setSelection(!winfopop);
@@ -180,11 +182,11 @@ public class BrowsersPreferencePage extends PreferencePage
 		group = new Group(parent, SWT.NONE);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
 		group.setLayout(layout);
-		group.setText("Open dialog context help");
+		group.setText(HelpUIResources.getString("BrowsersPreferencePage.dgroup")); //$NON-NLS-1$
 		dhelpAsWindowButton = new Button(group, SWT.RADIO);
-		dhelpAsWindowButton.setText("in a dynamic help window");
+		dhelpAsWindowButton.setText(HelpUIResources.getString("BrowsersPreferencePage.window")); //$NON-NLS-1$
 		dhelpAsInfopopButton = new Button(group, SWT.RADIO);
-		dhelpAsInfopopButton.setText("in an infopop");
+		dhelpAsInfopopButton.setText(HelpUIResources.getString("BrowsersPreferencePage.dinfopop")); //$NON-NLS-1$
 		boolean dinfopop = HelpBasePlugin.getDefault()
 		.getPluginPreferences().getBoolean(IHelpUIConstants.P_DIALOG_INFOPOP);
 		dhelpAsWindowButton.setSelection(!dinfopop);
