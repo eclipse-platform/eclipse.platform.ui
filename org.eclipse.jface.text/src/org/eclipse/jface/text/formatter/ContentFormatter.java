@@ -605,7 +605,7 @@ public class ContentFormatter implements IContentFormatter {
 	 * @param positions the adapted character positions to be used to update the document positions
 	 * @param offset the offset of the document region that has been formatted
 	 */
-	private void updateAffectedPositions(IDocument document, int[] positions, int offset) {
+	protected void updateAffectedPositions(IDocument document, int[] positions, int offset) {
 		
 		if (positions.length == 0)
 			return;
@@ -623,18 +623,8 @@ public class ContentFormatter implements IContentFormatter {
 			String category= r.getCategory();
 			if (!document.containsPosition(category, p.offset, p.length)) {
 				try {
-					if (ChildDocumentManager.CHILDDOCUMENTS.equals(category)) {
-						/* 
-						 * We assume child document offsets to be at the beginning
-						 * of a line. Because the formatter might have moved the
-						 * position to be somewhere in the middle of a line we
-						 * patch it here. 
-						 */  
-						int lineOffset= document.getLineInformationOfOffset(p.offset).getOffset(); 
-						p.setLength(p.length + p.offset - lineOffset);
-						p.setOffset(lineOffset);
-					}
-					document.addPosition(r.getCategory(), p);
+					if (positionAboutToBeAdded(document, category, p))
+						document.addPosition(r.getCategory(), p);
 				} catch (BadPositionCategoryException x) {
 					// can not happen
 				} catch (BadLocationException x) {
@@ -645,7 +635,35 @@ public class ContentFormatter implements IContentFormatter {
 		}
 		
 		fOverlappingPositionReferences= null;
-	} 
+	}
+
+	/**
+	 * The given position is about to be added to the given position category of the given document. <p>
+	 * This default implementation enacts the same rule as the TextViewer, i.e. if the position is used for 
+	 * managing slave documents it is ensured that the slave document starts at a line offset.
+	 * 
+	 * @param document the document
+	 * @param category the position categroy
+	 * @param position the position that will be added
+	 * @return <code>true</code> if the position can be added, <code>false</code> if it should be ignored
+	 */
+	protected boolean positionAboutToBeAdded(IDocument document, String category, Position position) {
+		if (ChildDocumentManager.CHILDDOCUMENTS.equals(category)) {
+			/* 
+			 * We assume child document offsets to be at the beginning
+			 * of a line. Because the formatter might have moved the
+			 * position to be somewhere in the middle of a line we patch it here. 
+			 */
+			try {
+				int lineOffset= document.getLineInformationOfOffset(position.offset).getOffset();
+				position.setLength(position.length + position.offset - lineOffset);
+				position.setOffset(lineOffset);
+			} catch (BadLocationException x) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	/**
 	 * Returns the indentation of the line of the given offset.
