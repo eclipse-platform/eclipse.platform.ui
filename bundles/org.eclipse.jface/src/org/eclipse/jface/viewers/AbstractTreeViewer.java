@@ -487,7 +487,7 @@ protected void fireTreeExpanded(final TreeExpansionEvent event) {
 /**
  * Returns the auto-expand level.
  *
- * @return non-negative level, or <code>EXPAND_ALL</code> if
+ * @return non-negative level, or <code>ALL_LEVELS</code> if
  *  all levels of the tree are expanded automatically
  * @see #setAutoExpandLevel
  */
@@ -1134,13 +1134,13 @@ public Item scrollUp(int x, int y) {
 }
 /**
  * Sets the auto-expand level.
- * The value 0 means that the root's children are not visible; 
+ * The value 0 means that there is no auto expand. 
  * 1 means that the root is expanded so that its children are visible,
  * but the root's grandchildren are not; and so on.
- * The value <code>EXPAND_ALL</code> means that all subtrees should be
+ * The value <code>ALL_LEVELS</code> means that all subtrees should be
  * expanded.
  *
- * @param level non-negative level, or <code>EXPAND_ALL</code> to expand
+ * @param level non-negative level, or <code>ALL_LEVELS</code> to expand
  *  all levels of the tree
  */
 public void setAutoExpandLevel(int level) {
