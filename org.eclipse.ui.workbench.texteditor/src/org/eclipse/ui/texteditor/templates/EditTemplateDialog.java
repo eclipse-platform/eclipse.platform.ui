@@ -18,6 +18,8 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -171,6 +173,20 @@ class EditTemplateDialog extends StatusDialog {
 	}
 	
 	/*
+	 * @see org.eclipse.ui.texteditor.templates.StatusDialog#create()
+	 */
+	public void create() {
+		super.create();
+		// update initial ok button to be disabled for new templates 
+		boolean valid= fNameText == null || fNameText.getText().trim().length() != 0;
+		if (!valid) {
+			StatusInfo status = new StatusInfo();
+			status.setError(TextEditorTemplateMessages.getString("EditTemplateDialog.error.noname")); //$NON-NLS-1$
+			updateButtonsEnableState(status);
+ 		}
+	}
+	
+	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite ancestor) {
@@ -196,10 +212,22 @@ class EditTemplateDialog extends StatusDialog {
 			layout.marginWidth= 0;
 			layout.marginHeight= 0;
 			composite.setLayout(layout);
-
-			fNameText= createText(composite);
 			
+			fNameText= createText(composite);
 			fNameText.addModifyListener(listener);
+			fNameText.addFocusListener(new FocusListener() {
+
+				public void focusGained(FocusEvent e) {
+				}
+
+				public void focusLost(FocusEvent e) {
+					if (fSuppressError) {
+						fSuppressError= false;
+						updateButtons();
+					}
+				}
+			});
+			
 			createLabel(composite, TextEditorTemplateMessages.getString("EditTemplateDialog.context")); //$NON-NLS-1$		
 			fContextCombo= new Combo(composite, SWT.READ_ONLY);
 	
@@ -260,9 +288,6 @@ class EditTemplateDialog extends StatusDialog {
 	private void doTextWidgetChanged(Widget w) {
 		if (w == fNameText) {
 			String name= fNameText.getText();
-			if (fSuppressError && (name.trim().length() != 0))
-				fSuppressError= false;
-
 			fTemplate.setName(name);
 			updateButtons();			
 		} else if (w == fContextCombo) {

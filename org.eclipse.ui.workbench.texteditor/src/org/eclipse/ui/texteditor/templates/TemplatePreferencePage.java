@@ -714,6 +714,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTemplateStore.restoreDeleted();
 		fTableViewer.refresh();
 		fTableViewer.setCheckedElements(getEnabledTemplates());
+		updateButtons();
 	}
 	
 	private void revert() {
