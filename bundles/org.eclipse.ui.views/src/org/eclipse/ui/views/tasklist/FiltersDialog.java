@@ -824,7 +824,7 @@ void updateUIFromFilter(TasksFilter filter) {
 	completionGroup.setSelection(filter.filterOnCompletion);
 	completionGroup.setValueMask(filter.completionFilter);
 
-	markerLimit.setText("" + filter.getMarkerLimit());
+	markerLimit.setText("" + filter.getMarkerLimit()); //$NON-NLS-1$
 	filterOnMarkerLimit.setSelection(filter.getFilterOnMarkerLimit());
 
 	updateEnabledState();

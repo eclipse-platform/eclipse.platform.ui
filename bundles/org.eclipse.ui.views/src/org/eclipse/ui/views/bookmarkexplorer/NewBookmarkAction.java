@@ -84,8 +84,8 @@ public class NewBookmarkAction implements IViewActionDelegate {
 						newMarker.setAttribute(IMarker.CHAR_START, marker.getAttribute(IMarker.CHAR_START, 0));
 						newMarker.setAttribute(IMarker.CHAR_END, marker.getAttribute(IMarker.CHAR_END, 0));
 						newMarker.setAttribute(IMarker.LINE_NUMBER, marker.getAttribute(IMarker.LINE_NUMBER, -1));
-						newMarker.setAttribute(IMarker.MESSAGE, marker.getAttribute(IMarker.MESSAGE, ""));
-						BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(view.getSite().getShell(), "New Bookmark");
+						newMarker.setAttribute(IMarker.MESSAGE, marker.getAttribute(IMarker.MESSAGE, "")); //$NON-NLS-1$
+						BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(view.getSite().getShell(), BookmarkMessages.getString("NewBookmarkDialogTitle.text")); //$NON-NLS-1$
 						dialog.setMarker(newMarker);	
 						int returnCode = dialog.open();
 						if (returnCode == BookmarkPropertiesDialog.CANCEL)

@@ -103,11 +103,11 @@ public class BookmarkNavigator extends ViewPart {
 	private BookmarkSorter sorter;
 	
 	private final String columnHeaders[] = {
-		BookmarkMessages.getString("ColumnIcon.text"),//$NON-NLS-1$
-		BookmarkMessages.getString("ColumnDescription.text"),//$NON-NLS-1$
-		BookmarkMessages.getString("ColumnResource.text"),//$NON-NLS-1$
-		BookmarkMessages.getString("ColumnFolder.text"),//$NON-NLS-1$
-		BookmarkMessages.getString("ColumnLocation.text")};//$NON-NLS-1$
+		BookmarkMessages.getString("ColumnIcon.header"),//$NON-NLS-1$
+		BookmarkMessages.getString("ColumnDescription.header"),//$NON-NLS-1$
+		BookmarkMessages.getString("ColumnResource.header"),//$NON-NLS-1$
+		BookmarkMessages.getString("ColumnFolder.header"),//$NON-NLS-1$
+		BookmarkMessages.getString("ColumnLocation.header")};//$NON-NLS-1$
 												
 	private ColumnLayoutData columnLayouts[] = {
 		new ColumnPixelData(19, false),

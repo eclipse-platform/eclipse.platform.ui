@@ -55,8 +55,8 @@ protected void frameChanged(TreeFrame frame) {
 	if (project != null && project.isOpen() == false) {
 		MessageDialog.openInformation(
 			navigator.getViewSite().getShell(), 
-			ResourceNavigatorMessages.getString("NavigatorFrameSource.closedProject.title"),
-			ResourceNavigatorMessages.format("NavigatorFrameSource.closedProject.message", new Object[]{project.getName()}));
+			ResourceNavigatorMessages.getString("NavigatorFrameSource.closedProject.title"), //$NON-NLS-1$
+			ResourceNavigatorMessages.format("NavigatorFrameSource.closedProject.message", new Object[]{project.getName()})); //$NON-NLS-1$
 		navigator.getFrameList().back();
 	}
 	else {

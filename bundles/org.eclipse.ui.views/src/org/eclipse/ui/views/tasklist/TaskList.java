@@ -906,45 +906,45 @@ void makeActions() {
 	resolveMarkerAction.setEnabled(false);
 	
 	// Sort by ->	
-	sortByCategoryAction = new SortByAction(this,"sortByCategory", 0);
+	sortByCategoryAction = new SortByAction(this,"sortByCategory", 0); //$NON-NLS-1$
 	sortByCategoryAction.setText(TaskListMessages.getString("SortByCategory.text")); //$NON-NLS-1$
 	sortByCategoryAction.setToolTipText(TaskListMessages.getString("SortByCategory.tooltip")); //$NON-NLS-1$
 	
-	sortByCompletedAction = new SortByAction(this,"sortByCompleted", 1);
+	sortByCompletedAction = new SortByAction(this,"sortByCompleted", 1); //$NON-NLS-1$
 	sortByCompletedAction.setText(TaskListMessages.getString("SortByCompleted.text")); //$NON-NLS-1$
 	sortByCompletedAction.setToolTipText(TaskListMessages.getString("SortByCompleted.tooltip")); //$NON-NLS-1$
 
-	sortByPriorityAction = new SortByAction(this,"sortByPriority", 2);
+	sortByPriorityAction = new SortByAction(this,"sortByPriority", 2); //$NON-NLS-1$
 	sortByPriorityAction.setText(TaskListMessages.getString("SortByPriority.text")); //$NON-NLS-1$
 	sortByPriorityAction.setToolTipText(TaskListMessages.getString("SortByPriority.tooltip")); //$NON-NLS-1$
 
-	sortByDescriptionAction = new SortByAction(this,"sortByDescription", 3);
+	sortByDescriptionAction = new SortByAction(this,"sortByDescription", 3); //$NON-NLS-1$
 	sortByDescriptionAction.setText(TaskListMessages.getString("SortByDescription.text")); //$NON-NLS-1$
 	sortByDescriptionAction.setToolTipText(TaskListMessages.getString("SortByDescription.tooltip")); //$NON-NLS-1$
 
-	sortByResourceAction = new SortByAction(this,"sortByResource", 4);
+	sortByResourceAction = new SortByAction(this,"sortByResource", 4); //$NON-NLS-1$
 	sortByResourceAction.setText(TaskListMessages.getString("SortByResource.text")); //$NON-NLS-1$
 	sortByResourceAction.setToolTipText(TaskListMessages.getString("SortByResource.tooltip")); //$NON-NLS-1$
 
-	sortByContainerAction = new SortByAction(this,"sortByContainer", 5);
+	sortByContainerAction = new SortByAction(this,"sortByContainer", 5); //$NON-NLS-1$
 	sortByContainerAction.setText(TaskListMessages.getString("SortByContainer.text")); //$NON-NLS-1$
 	sortByContainerAction.setToolTipText(TaskListMessages.getString("SortByContainer.tooltip")); //$NON-NLS-1$
 
-	sortByLocationAction = new SortByAction(this,"sortByLocation", 6);
+	sortByLocationAction = new SortByAction(this,"sortByLocation", 6); //$NON-NLS-1$
 	sortByLocationAction.setText(TaskListMessages.getString("SortByLocation.text")); //$NON-NLS-1$
 	sortByLocationAction.setToolTipText(TaskListMessages.getString("SortByLocation.tooltip")); //$NON-NLS-1$
 
-	sortByCreationTimeAction = new SortByAction(this,"sortByCreationTime", 7);
+	sortByCreationTimeAction = new SortByAction(this,"sortByCreationTime", 7); //$NON-NLS-1$
 	sortByCreationTimeAction.setText(TaskListMessages.getString("SortByCreationTime.text")); //$NON-NLS-1$
 	sortByCreationTimeAction.setToolTipText(TaskListMessages.getString("SortByCreationTime.tooltip")); //$NON-NLS-1$
 	
-	sortAscendingAction = new SortDirectionAction(this, "sortAscending", false);
-	sortAscendingAction.setText(TaskListMessages.getString("SortAscending.text"));
-	sortAscendingAction.setToolTipText(TaskListMessages.getString("SortAscending.tooltip"));
+	sortAscendingAction = new SortDirectionAction(this, "sortAscending", false); //$NON-NLS-1$
+	sortAscendingAction.setText(TaskListMessages.getString("SortAscending.text")); //$NON-NLS-1$
+	sortAscendingAction.setToolTipText(TaskListMessages.getString("SortAscending.tooltip")); //$NON-NLS-1$
 
-	sortDescendingAction = new SortDirectionAction(this, "sortDescending", true);
-	sortDescendingAction.setText(TaskListMessages.getString("SortDescending.text"));
-	sortDescendingAction.setToolTipText(TaskListMessages.getString("SortDescending.tooltip"));
+	sortDescendingAction = new SortDirectionAction(this, "sortDescending", true); //$NON-NLS-1$
+	sortDescendingAction.setText(TaskListMessages.getString("SortDescending.text")); //$NON-NLS-1$
+	sortDescendingAction.setToolTipText(TaskListMessages.getString("SortDescending.tooltip")); //$NON-NLS-1$
 
 	// filters...
 	filtersAction = new FiltersAction(this, "filter"); //$NON-NLS-1$

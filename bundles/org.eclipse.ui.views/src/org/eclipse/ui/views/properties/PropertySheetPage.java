@@ -307,7 +307,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		Shell shell = viewer.getControl().getShell();
 		clipboard = new Clipboard(shell.getDisplay());
 		copyAction = new CopyPropertyAction(viewer, "copy", clipboard); //$NON-NLS-1$
-		copyAction.setText(PropertiesMessages.getString("CopyProperty.text"));
+		copyAction.setText(PropertiesMessages.getString("CopyProperty.text")); //$NON-NLS-1$
 		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif")); //$NON-NLS-1$
 		copyAction.setHoverImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif")); //$NON-NLS-1$
 		

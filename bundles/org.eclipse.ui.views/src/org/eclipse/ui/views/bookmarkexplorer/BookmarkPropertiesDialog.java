@@ -206,7 +206,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		composite.setLayout(layout);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(BookmarkMessages.getString("MarkerCreationTime.text" + ':'));//$NON-NLS-1$
+		label.setText(BookmarkMessages.getString("MarkerCreationTime.text"));//$NON-NLS-1$
 		label.setFont(font);
 		
 		creationTime = new Label(composite, SWT.NONE);
@@ -232,7 +232,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(BookmarkMessages.getString("ColumnDescription.text") + ':'); //$NON-NLS-1$
+		label.setText(BookmarkMessages.getString("ColumnDescription.text")); //$NON-NLS-1$
 		label.setFont(font);
 		int style = SWT.SINGLE | SWT.BORDER;
 		descriptionText = new Text(composite, style);
@@ -255,7 +255,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		composite.setLayout(layout);
 		
 		Label resourceLabel = new Label(composite, SWT.NONE);
-		resourceLabel.setText(BookmarkMessages.getString("ColumnResource.text") + ':'); //$NON-NLS-1$
+		resourceLabel.setText(BookmarkMessages.getString("ColumnResource.text")); //$NON-NLS-1$
 		resourceLabel.setFont(font);
 		resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -263,7 +263,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		resourceText.setFont(font);
 		
 		Label folderLabel = new Label(composite, SWT.NONE);
-		folderLabel.setText(BookmarkMessages.getString("ColumnFolder.text") + ':'); //$NON-NLS-1$
+		folderLabel.setText(BookmarkMessages.getString("ColumnFolder.text")); //$NON-NLS-1$
 		folderLabel.setFont(font);
 		folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -271,7 +271,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		folderText.setFont(font);
 		
 		Label locationLabel = new Label(composite, SWT.NONE);
-		locationLabel.setText(BookmarkMessages.getString("ColumnLocation.text") + ':'); //$NON-NLS-1$
+		locationLabel.setText(BookmarkMessages.getString("ColumnLocation.text")); //$NON-NLS-1$
 		locationLabel.setFont(font);
 		locationText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);

@@ -97,7 +97,7 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 		backAction = new BackAction(frameList);
 		forwardAction = new ForwardAction(frameList);
 		upAction = new UpAction(frameList);
-		goToResourceAction = new GotoResourceAction(navigator, ResourceNavigatorMessages.getString("GoToResource.label"));
+		goToResourceAction = new GotoResourceAction(navigator, ResourceNavigatorMessages.getString("GoToResource.label")); //$NON-NLS-1$
 	}	
 
 	public void updateActionBars() {

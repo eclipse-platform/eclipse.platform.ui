@@ -659,7 +659,7 @@ public class ResourceNavigator
 	void initWorkingSetFilter() {
 		String workingSetName = settings.get(STORE_WORKING_SET);
 
-		if (workingSetName != null && workingSetName.equals("") == false) {
+		if (workingSetName != null && workingSetName.equals("") == false) { //$NON-NLS-1$
 			IWorkingSetManager workingSetManager =
 				getPlugin().getWorkbench().getWorkingSetManager();
 			IWorkingSet workingSet = workingSetManager.getWorkingSet(workingSetName);
@@ -976,7 +976,7 @@ public class ResourceNavigator
 			settings.put(STORE_WORKING_SET, workingSet.getName());
 		}
 		else {
-			settings.put(STORE_WORKING_SET, "");
+			settings.put(STORE_WORKING_SET, ""); //$NON-NLS-1$
 		}
 		updateTitle();
 		treeViewer.refresh();

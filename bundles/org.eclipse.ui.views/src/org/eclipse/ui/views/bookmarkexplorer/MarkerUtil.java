@@ -48,7 +48,7 @@ class MarkerUtil {
 		IPath path = marker.getResource().getFullPath();
 		int n = path.segmentCount() - 1; // n is the number of segments in container, not path
 		if (n <= 0)
-			return "";
+			return ""; //$NON-NLS-1$
 		int len = 0;
 		for (int i = 0; i < n; ++i)
 			len += path.segment(i).length();

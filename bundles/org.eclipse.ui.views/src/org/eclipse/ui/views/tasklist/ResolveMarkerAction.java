@@ -60,8 +60,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 		if (resolutions.length == 0) {
 			MessageDialog.openInformation(
 				getShell(),
-				TaskListMessages.getString("Resolve.title"), //$NON-NLS-1 
-				TaskListMessages.getString("Resolve.noResolutionsLabel")); //$NON-NLS-1);
+				TaskListMessages.getString("Resolve.title"),  //$NON-NLS-1$
+				TaskListMessages.getString("Resolve.noResolutionsLabel")); //$NON-NLS-1$
 			return;
 		}	 
 		MarkerResolutionSelectionDialog d = new MarkerResolutionSelectionDialog(getShell(), resolutions);
