@@ -14,9 +14,8 @@ package org.eclipse.jface.text.formatter;
 /**
  * Extension interface for <code>IFormattingStrategy</code>.
  * <p>
- * Updates formatting strategies to be able to receive a more general
- * <code>IFormattingContext</code> object from its associated
- * content formatters.
+ * Updates formatting strategies to be able to receive a more general <code>IFormattingContext</code>
+ * object from its associated content formatters.
  * <p>
  * Each formatting process calls the strategy's methods in the following
  * sequence:
@@ -26,11 +25,12 @@ package org.eclipse.jface.text.formatter;
  * <li><code>formatterStops</code>
  * </ul>
  * <p>
- * Note that multiple calls to <code>formatterStarts</code> can be issued to a
- * strategy before launching the formatting process with <code>format</code>.
+ * Note that multiple calls to <code>formatterStarts</code> can be issued to
+ * a strategy before launching the formatting process with <code>format</code>.
  * <p>
- * This interface must be implemented by clients. Implementers should be registered with
- * a content formatter in order get involved in the formatting process.
+ * This interface must be implemented by clients. Implementers should be
+ * registered with a content formatter in order get involved in the formatting
+ * process.
  * 
  * @see IFormattingContext
  * @since 3.0
@@ -38,23 +38,24 @@ package org.eclipse.jface.text.formatter;
 public interface IFormattingStrategyExtension {
 
 	/**
-	 * Formats the region with the properties indicated
-	 * in the formatting context previously supplied
-	 * by <code>formatterStarts(IFormattingContext)</code>.
+	 * Formats the region with the properties indicated in the formatting
+	 * context previously supplied by <code>formatterStarts(IFormattingContext)</code>.
 	 */
 	void format();
 
 	/**
-	 * Informs the strategy about the start of a formatting process in
-	 * which it will participate. 
-	 *
-	 * @param context Formatting context used in the corresponding formatting process.
+	 * Informs the strategy about the start of a formatting process in which it
+	 * will participate.
+	 * 
+	 * @param context
+	 *                  Formatting context used in the corresponding formatting
+	 *                  process.
 	 */
 	void formatterStarts(IFormattingContext context);
 
 	/**
-	 * Informs the strategy that the formatting process in which it has participated
-	 * has been finished.
+	 * Informs the strategy that the formatting process in which it has
+	 * participated has been finished.
 	 */
 	void formatterStops();
 }

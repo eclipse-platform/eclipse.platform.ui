@@ -28,6 +28,7 @@ import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
@@ -110,6 +111,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		}
 	}
 	
+	/**
+	 * Partial name of the position category to manage remembered selections.
+	 * @since 3.0
+	 */
+	protected final static String _SELECTION_POSITION_CATEGORY= "__selection_category"; //$NON-NLS-1$
+
 	
 	/** The viewer's content assistant */
 	protected IContentAssistant fContentAssistant;
@@ -132,15 +139,15 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	protected final Stack fSelections= new Stack();
 	/**
-	 * Position category of saved selections
-	 * @since 3.0
-	 */
-	protected final static String SELECTION_POSITION_CATEGORY= "__selection_category";
-	/**
 	 * Position updater for saved selections
 	 * @since 3.0
 	 */
 	protected IPositionUpdater fSelectionUpdater= null;
+	/**
+	 * Position category used by the selection updater
+	 * @since 3.0
+	 */
+	protected String fSelectionCategory;
 	/** 
 	 * The viewer's overview ruler annotation hover
 	 * @since 3.0
@@ -442,6 +449,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	protected void handleDispose() {
 		
+		clearRememberedSelection();
+		
 		if (fPresentationReconciler != null) {
 			fPresentationReconciler.uninstall();
 			fPresentationReconciler= null;
@@ -529,67 +538,96 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 	
 	/**
-	 * Saves the current selection in the document.
+	 * Remembers and returns the current selection. The saved selection can be restored
+	 * by calling <code>restoreSelection()</code>.
+	 * 
+	 * @return the current selection
+	 * @see org.eclipse.jface.text.ITextViewer#getSelectedRange()
+	 * @since 3.0
 	 */
-	public void saveSelection(int offset, int length) {
-
+	protected Point rememberSelection() {
+		
+		final Point selection= getSelectedRange();
 		final IDocument document= getDocument();
 
 		if (fSelections.isEmpty()) {
-
-			fSelectionUpdater= new DefaultPositionUpdater(SELECTION_POSITION_CATEGORY);
-			document.addPositionCategory(SELECTION_POSITION_CATEGORY);
+			fSelectionCategory= _SELECTION_POSITION_CATEGORY + hashCode();
+			fSelectionUpdater= new DefaultPositionUpdater(fSelectionCategory);
+			document.addPositionCategory(fSelectionCategory);
 			document.addPositionUpdater(fSelectionUpdater);
 		}
 
-		final Position selection;
 		try {
 
-			selection= new Position(offset, length);
-			document.addPosition(SELECTION_POSITION_CATEGORY, selection);
-			fSelections.push(selection);
+			final Position position= new Position(selection.x, selection.y);
+			document.addPosition(fSelectionCategory, position);
+			fSelections.push(position);
 
 		} catch (BadLocationException exception) {
 			// Should not happen
 		} catch (BadPositionCategoryException exception) {
 			// Should not happen
 		}
+		
+		return selection;
 	}
 	
 	/**
 	 * Restores a previously saved selection in the document.
+	 * <p>
+	 * If no selection was previously saved, nothing happens.
+	 * 
+	 * @since 3.0
 	 */
-	public void restoreSelection() {
+	protected void restoreSelection() {
 
 		if (!fSelections.isEmpty()) {
 
 			final IDocument document= getDocument();
-			final Position selection= (Position)fSelections.pop();
+			final Position position= (Position) fSelections.pop();
 
 			try {
-				document.removePosition(SELECTION_POSITION_CATEGORY, selection);
-				setSelectedRange(selection.getOffset(), selection.getLength());
+				document.removePosition(fSelectionCategory, position);
+				setSelectedRange(position.getOffset(), position.getLength());
 
 				if (fSelections.isEmpty()) {
 
 					document.removePositionUpdater(fSelectionUpdater);
 					fSelectionUpdater= null;
-					document.removePositionCategory(SELECTION_POSITION_CATEGORY);
+					document.removePositionCategory(fSelectionCategory);
+					fSelectionCategory= null;
 				}
 			} catch (BadPositionCategoryException exception) {
 				// Should not happen
 			}
 		}
 	}
+	
+	protected void clearRememberedSelection() {
+		if (fSelections.isEmpty())
+			return;
+		fSelections.clear();
+		
+		IDocument document= getDocument();
+		document.removePositionUpdater(fSelectionUpdater);
+		fSelectionUpdater= null;
+		
+		try {
+			document.removePositionCategory(fSelectionCategory);
+		} catch (BadPositionCategoryException e) {
+			// ignore
+		}
+		fSelectionCategory= null;
+	}
 
 	/*
 	 * @see ITextOperationTarget#doOperation(int)
 	 */
 	public void doOperation(int operation) {
-		
+
 		if (getTextWidget() == null || !redraws())
 			return;
-		
+
 		switch (operation) {
 			case CONTENTASSIST_PROPOSALS:
 				fContentAssistant.showPossibleCompletions();
@@ -602,10 +640,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				return;
 			case FORMAT :
 				{
-					final Point selection= getSelectedRange();
-					saveSelection(selection.x, selection.y);
-					
-					final IRegion region= new Region(selection.x, selection.y); 
+					final Point selection= rememberSelection();
+
+					final IRegion region= new Region(selection.x, selection.y);
+					final IRewriteTarget target= getRewriteTarget();
 					final IFormattingContext context= createFormattingContext();
 
 					if (selection.y == 0) {
@@ -616,6 +654,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 					}
 					try {
 						setRedraw(false);
+						target.beginCompoundChange();
 
 						final IDocument document= getDocument();
 						if (fContentFormatter instanceof IContentFormatterExtension2) {
@@ -627,10 +666,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 							fContentFormatter.format(document, region);
 
 					} finally {
-						
+						target.endCompoundChange();
+
 						restoreSelection();
 						context.dispose();
-						
+
 						setRedraw(true);
 					}
 					return;

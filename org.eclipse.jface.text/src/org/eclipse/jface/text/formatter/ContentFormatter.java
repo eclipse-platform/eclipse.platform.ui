@@ -31,56 +31,57 @@ import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedPosition;
 
 
 /**
- * Standard implementation of <code>IContentFormatter</code>.
- * The formatter supports three operation modi: partition aware, 
- * partition unaware and context based.
+ * Standard implementation of <code>IContentFormatter</code>. The formatter
+ * supports three operation modi: partition aware, partition unaware and
+ * context based.
  * <p>
- * In the partition aware mode, the formatter determines the 
- * partitioning of the document region to be formatted. For each 
- * partition it determines all document positions  which are affected 
- * when text changes are applied to the partition. Those which overlap
- * with the partition are remembered as character positions. These
- * character positions are passed over to the formatting strategy
- * registered for the partition's content type. The formatting strategy
- * returns a string containing the formatted document partition as well
- * as the adapted character positions. The formatted partition replaces
- * the old content of the partition. The remembered document postions 
- * are updated with the adapted character positions. In addition, all
- * other document positions are accordingly adapted to the formatting 
- * changes.
+ * In the partition aware mode, the formatter determines the partitioning of
+ * the document region to be formatted. For each partition it determines all
+ * document positions which are affected when text changes are applied to the
+ * partition. Those which overlap with the partition are remembered as
+ * character positions. These character positions are passed over to the
+ * formatting strategy registered for the partition's content type. The
+ * formatting strategy returns a string containing the formatted document
+ * partition as well as the adapted character positions. The formatted
+ * partition replaces the old content of the partition. The remembered document
+ * postions are updated with the adapted character positions. In addition, all
+ * other document positions are accordingly adapted to the formatting changes.
  * <p>
- * In the partition unaware mode, the document's partitioning is ignored
- * and the document is considered consisting of only one partition of 
- * the content type <code>IDocument.DEFAULT_CONTENT_TYPE</code>. The 
- * formatting process is similar to the partition aware mode, with the 
- * exception of having only one partition.
+ * In the partition unaware mode, the document's partitioning is ignored and
+ * the document is considered consisting of only one partition of the content
+ * type <code>IDocument.DEFAULT_CONTENT_TYPE</code>. The formatting process
+ * is similar to the partition aware mode, with the exception of having only
+ * one partition.
  * <p>
- * The context based mode is supported by the extension interface
- * <code>IContentFormatterExtension2</code> and supersedes the
- * previous modes. Clients using context based formatting call the method
- * <code>format(IDocument, IFormattingContext)</code> with a properly
- * initialized formatting context.<br>
- * The formatting context must be set up according to the desired formatting mode:
+ * The context based mode is supported by the extension interface <code>IContentFormatterExtension2</code>
+ * and supersedes the previous modes. Clients using context based formatting
+ * call the method <code>format(IDocument, IFormattingContext)</code> with a
+ * properly initialized formatting context. <br>The formatting context must be
+ * set up according to the desired formatting mode:
  * <ul>
- * <li>For whole document formatting set the property <code>CONTEXT_DOCUMENT</code>.</li>
- * <li>For single partition formatting set the property <code>CONTEXT_PARTITION</code>.</li>
- * <li>For multiple region formatting set the property <code>CONTEXT_REGION</code>.</li>
+ * <li>For whole document formatting set the property <code>CONTEXT_DOCUMENT</code>.
+ * </li>
+ * <li>For single partition formatting set the property <code>CONTEXT_PARTITION</code>.
+ * </li>
+ * <li>For multiple region formatting set the property <code>CONTEXT_REGION</code>.
+ * </li>
  * </ul>
- * Depending on the registered formatting strategies, more context information must
- * be passed in the formatting context, like e.g. <code>CONTEXT_PREFERENCES</code>.
+ * Depending on the registered formatting strategies, more context information
+ * must be passed in the formatting context, like e.g. <code>CONTEXT_PREFERENCES</code>.
  * <p>
- * Note that in context based mode the content formatter is fully reentrant, but not
- * thread-safe. Formatting strategies are therefore allowed to recursively call the
- * method <code>format(IDocument, IFormattingContext)</code>. The formatting
- * context is saved between calls to this method.
+ * Note that in context based mode the content formatter is fully reentrant,
+ * but not thread-safe. Formatting strategies are therefore allowed to
+ * recursively call the method <code>format(IDocument, IFormattingContext)</code>.
+ * The formatting context is saved between calls to this method.
  * <p>
  * Usually, clients instantiate this class and configure it before using it.
- *
+ * 
  * @see IContentFormatter
  * @see IContentFormatterExtension2
  * @see IDocument
@@ -282,8 +283,13 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	/** Internal position category used for the formatter partitioning */
 	private final static String PARTITIONING= "__formatter_partitioning"; //$NON-NLS-1$
 	
-	/** The map of <code>IFormattingStrategy</code> objects */
+	/** The map of slave <code>IFormattingStrategy</code> objects */
 	private Map fStrategies;
+	/**
+	 * The master <code>IFormattingStrategy</code> object
+	 * @since 3.0
+	 */
+	private IFormattingStrategy fMasterStrategy;
 	/** The indicator of whether the formatter operates in partition aware mode or not */
 	private boolean fIsPartitionAware= true;
 	
@@ -325,39 +331,17 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	private final LinkedList fPositions= new LinkedList();
 	
 	/**
-	 * Creates a new content formatter. 
+	 * Creates a new content formatter.
 	 * <p>
-	 * The content formatter operates by default
-	 * in the partition-aware mode. There are no preconfigured formatting strategies.
-	 * It will use the default document partitioning if not further configured. The
-	 * context based mode is enabled by calls to <code>format(IDocument, IFormattingContext</code>.
+	 * The content formatter operates by default in the partition-aware mode.
+	 * There are no preconfigured formatting strategies. It will use the
+	 * default document partitioning if not further configured. The context
+	 * based mode is enabled by calls to <code>format(IDocument, IFormattingContext</code>.
 	 */
 	public ContentFormatter() {
 		fPartitioning= IDocumentExtension3.DEFAULT_PARTITIONING;
 	}
-		
-	/**
-	 * Registers a strategy for a particular content type. If there is already a strategy
-	 * registered for this type, the new strategy is registered instead of the old one.
-	 * If the given content type is <code>null</code> the given strategy is registered for
-	 * all content types as is called only once per formatting session.
-	 *
-	 * @param strategy the formatting strategy to register, or <code>null</code> to remove an existing one
-	 * @param contentType the content type under which to register, or <code>null</code> for all content types
-	 */
-	public void setFormattingStrategy(IFormattingStrategy strategy, String contentType) {
-		
-		Assert.isNotNull(contentType);
-			
-		if (fStrategies == null)
-			fStrategies= new HashMap();
-			
-		if (strategy == null)
-			fStrategies.remove(contentType);
-		else
-			fStrategies.put(contentType, strategy);
-	}
-	
+
 	/**
 	 * Informs this content formatter about the names of those position categories
 	 * which are used to manage the document's partitioning information and thus should
@@ -393,8 +377,9 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	/**
 	 * Sets whether the formatter operates in partition aware mode.
 	 * 
-	 * @param enable <code>true</code> iff partition aware mode
-	 * should be enabled, <code>false</code> otherwise.
+	 * @param enable
+	 *                  <code>true</code> iff partition aware mode should be
+	 *                  enabled, <code>false</code> otherwise.
 	 */
 	public void enablePartitionAwareFormatting(boolean enable) {
 		fIsPartitionAware= enable;
@@ -473,24 +458,35 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 					formatRegion(partition.getOffset(), partition.getLength(), partition.getType());
 				} else if (region != null) {
 
-					final int offset= region.getOffset();
-					final int length= region.getLength();
+					int offset= region.getOffset();
+					int length= region.getLength();
 
 					final ITypedRegion[] regions= TextUtilities.computePartitioning(fDocument, fPartitioning, offset, length);
+					final ITypedRegion start= TextUtilities.getPartition(fDocument, fPartitioning, regions[0].getOffset());
+		
+					final String type= start.getType();
 					if (regions.length > 1) {
 
+						if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
+
+							final int delta= offset - start.getOffset();
+							offset -= delta;
+							length += delta;
+						}
+
+						final int rest= fDocument.getLength() - length;
 						try {
-							formatRegion(offset, length, IDocument.DEFAULT_CONTENT_TYPE);
+							formatMaster(offset, length);
 						} finally {
-							formatPartitions(offset, length);
+							formatPartitions(offset, fDocument.getLength() - rest);
 						}
 					} else if (regions.length == 1)
-						formatRegion(offset, length, regions[0].getType());
+						formatRegion(offset, length, type);
 				}
 			} else {
 
 				try {
-					formatRegion(0, fDocument.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+					formatMaster(0, fDocument.getLength());
 				} finally {
 					formatPartitions(0, fDocument.getLength());
 				}
@@ -509,21 +505,93 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 			fPositions.addAll(previous);
 		}
 	}
+		
+	/**
+	 * Registers a slave strategy for a particular content type.
+	 * <p>
+	 * If there is already a slave strategy registered for this type, the new
+	 * strategy is registered instead of the old one. The content type <code>type</code>
+	 * must be a valid content type of the registered partitioning of the
+	 * formatter.
+	 * <p>
+	 * Note that slave strategies can only be registered if a master strategy
+	 * has been registered before.
+	 * </p>
+	 * 
+	 * @param strategy
+	 *                  The formatting strategy to register as a slave strategy, or
+	 *                  <code>null</code> to remove an existing one
+	 * @param type
+	 *                  The content type under which to register the slave strategy
+	 */
+	public void setFormattingStrategy(IFormattingStrategy strategy, String type) {
+		
+		Assert.isNotNull(type);
+			
+		if (fStrategies == null)
+			fStrategies= new HashMap();
+			
+		if (strategy == null)
+			fStrategies.remove(type);
+		else
+			fStrategies.put(type, strategy);
+	}
+
+	/**
+	 * Registers the master strategy for this content formatter. If there is
+	 * already a master strategy registered, the new strategy is registered
+	 * instead of the old one.
+	 * <p>
+	 * Note that slave strategies can only be registered if a master strategy
+	 * has been registered before.
+	 * </p>
+	 * 
+	 * @param strategy
+	 *                  The formatting strategy to register as the master strategy, or
+	 *                  <code>null</code> to remove the existing one
+	 */
+	public void setFormattingStrategy(IFormattingStrategy strategy) {
+		fMasterStrategy= strategy;
+	}
+	
+	/**
+	 * Aligns the region to a block selection.
+	 * 
+	 * @param offset
+	 *                  Offset of the region
+	 * @param length
+	 *                  Length of the region
+	 * @return The aligned region
+	 */
+	private IRegion alignBlockSelect(int offset, int length) {
+		
+		try {
+			
+			final int aligned= fDocument.getLineOffset(fDocument.getLineOfOffset(offset));
+			return new Region(aligned, length + offset - aligned);
+			
+		} catch (BadLocationException exception) {
+			// Should not happen
+		
+			return new Region(offset, length);
+		}
+	}
 
 	/**
 	 * Determines the partitioning of the given region of the document and
 	 * formats each partition in the partitioning separately.
 	 * <p>
-	 * The formatting strategies of each partition about the start,
-	 * the process, and the termination of the formatting session.
+	 * The formatting strategies of each partition about the start, the
+	 * process, and the termination of the formatting session.
 	 * 
-	 * @param offset The offset of the region to be formatted
-	 * @param length The length of the region to be formatted
+	 * @param offset
+	 *                  The offset of the region to be formatted
+	 * @param length
+	 *                  The length of the region to be formatted
 	 */
 	private void formatPartitions(int offset, int length) {
 
 		addPartitioningUpdater();
-		
 		try {
 
 			final TypedPosition[] ranges= getPartitioning(offset, length);
@@ -555,24 +623,60 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	 * @param type The type of the region
 	 */
 	private void formatRegion(int offset, int length, String type) {
+		
+		IRegion range= null;
+		if (type.equals(IDocument.DEFAULT_CONTENT_TYPE))
+			range= alignBlockSelect(offset, length);
+		else
+			range= new Region(offset, length);
 
 		final IFormattingStrategy strategy= getFormattingStrategy(type);
 		if (strategy != null) {
 
-			final TypedPosition region= new TypedPosition(offset, length, type);
+			final TypedPosition region= new TypedPosition(range.getOffset(), range.getLength(), type);
 
-			formatterStarts(strategy, region, getIndentation(offset));
+			formatterStarts(strategy, region, getIndentation(region.getOffset()));
 			format(strategy, region);
 			strategy.formatterStops();
 		}
 	}
-	
+
 	/**
-	 * Fires the <code>formatterStarts</code> event for the indicated formatting strategy.
+	 * Formats the given region with the master formatting strategy.
+	 * <p>
+	 * The formatting strategy is informed about the start, the process, and
+	 * the termination of the formatting session.
 	 * 
-	 * @param strategy Formatting strategy to fire the event for
-	 * @param region Region where the strategy is supposed to format
-	 * @param indentation Indentation to use while formatting the region
+	 * @param offset
+	 *                  The offset of the region
+	 * @param length
+	 *                  The length of the region
+	 * @param type
+	 *                  The type of the region
+	 */
+	private void formatMaster(int offset, int length) {
+
+		if (fMasterStrategy != null) {
+
+			final IRegion aligned= alignBlockSelect(offset, length);
+			final TypedPosition region= new TypedPosition(aligned.getOffset(), aligned.getLength(), IDocument.DEFAULT_CONTENT_TYPE);
+
+			formatterStarts(fMasterStrategy, region, getIndentation(region.getOffset()));
+			format(fMasterStrategy, region);
+			fMasterStrategy.formatterStops();
+		}
+	}
+
+	/**
+	 * Fires the <code>formatterStarts</code> event for the indicated
+	 * formatting strategy.
+	 * 
+	 * @param strategy
+	 *                  Formatting strategy to fire the event for
+	 * @param region
+	 *                  Region where the strategy is supposed to format
+	 * @param indentation
+	 *                  Indentation to use while formatting the region
 	 */
 	private void formatterStarts(IFormattingStrategy strategy, TypedPosition region, String indentation) {
 
@@ -623,11 +727,13 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	}
 	
 	/**
-	 * Fires the <code>formatterStarts</code> event to all formatting strategies
-	 * which will be involved in the forthcoming formatting process.
+	 * Fires the <code>formatterStarts</code> event to all formatting
+	 * strategies which will be involved in the forthcoming formatting process.
 	 * 
-	 * @param partitions The partitioning of the document to be formatted
-	 * @param indentation The initial indentation
+	 * @param partitions
+	 *                  The partitioning of the document to be formatted
+	 * @param indentation
+	 *                  The initial indentation
 	 */
 	private void start(TypedPosition[] partitions, String indentation) {
 
@@ -642,17 +748,18 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 			if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 
 				final IFormattingStrategy strategy= getFormattingStrategy(type);
-				if (strategy != null)
+				if (strategy != null && strategy != fMasterStrategy)
 					formatterStarts(strategy, region, indentation);
 			}
 		}
 	}
 	
 	/**
-	 * Formats the partitions using the formatting strategy registered for
-	 * each partition's content type.
-	 *
-	 * @param partitions The partitioning of the document to be formatted
+	 * Formats the partitions using the formatting strategy registered for each
+	 * partition's content type.
+	 * 
+	 * @param partitions
+	 *                  The partitioning of the document to be formatted
 	 */
 	private void format(TypedPosition[] partitions) {
 
@@ -667,7 +774,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 			if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 
 				final IFormattingStrategy strategy= getFormattingStrategy(type);
-				if (strategy != null) {
+				if (strategy != null && strategy != fMasterStrategy) {
 
 					if (fFormattingContext != null && strategy instanceof IFormattingStrategyExtension) {
 
@@ -682,17 +789,17 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	}
 	
 	/**
-	 * Formats the given region in the document using the
-	 * indicated strategy. The type of the region does not
-	 * have to be the same as the type for which the strategy
-	 * was originally registred.
+	 * Formats the given region in the document using the indicated strategy.
+	 * The type of the region does not have to be the same as the type for
+	 * which the strategy was originally registred.
 	 * <p>
-	 * The formatting process will happen in the mode set up
-	 * by the formatting context or changes to the partition
-	 * aware/unaware property.
+	 * The formatting process will happen in the mode set up by the formatting
+	 * context or changes to the partition aware/unaware property.
 	 * 
-	 * @param strategy The strategy to be used
-	 * @param region The region to be formatted
+	 * @param strategy
+	 *                  The strategy to be used
+	 * @param region
+	 *                  The region to be formatted
 	 */
 	private void format(IFormattingStrategy strategy, TypedPosition region) {
 
@@ -742,10 +849,12 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 	}
 	
 	/**
-	 * Fires the <code>formatterStops</code> event to all formatting strategies which were
-	 * involved in the formatting process which is about to terminate.
-	 *
-	 * @param partitions The partitioning of the document which has been formatted
+	 * Fires the <code>formatterStops</code> event to all formatting
+	 * strategies which were involved in the formatting process which is about
+	 * to terminate.
+	 * 
+	 * @param partitions
+	 *                  The partitioning of the document which has been formatted
 	 */
 	private void stop(TypedPosition[] partitions) {
 
@@ -756,7 +865,7 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 			if (!type.equals(IDocument.DEFAULT_CONTENT_TYPE)) {
 
 				final IFormattingStrategy strategy= getFormattingStrategy(type);
-				if (strategy != null)
+				if (strategy != null && strategy != fMasterStrategy)
 					strategy.formatterStops();
 			}
 		}
@@ -923,8 +1032,8 @@ public class ContentFormatter implements IContentFormatter, IContentFormatterExt
 		
 		if (document != fDocument)
 			return;
-		
-		if (fOverlappingPositionReferences == null || positions.length == 0)
+
+		if (fOverlappingPositionReferences == null || fOverlappingPositionReferences.size() == 0 || positions.length == 0)
 			return;
 		
 		for (int i= 0; i < positions.length; i++) {
