@@ -1,6 +1,7 @@
 package org.eclipse.update.internal.ui.search;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.graphics.Image;
 
@@ -15,6 +16,15 @@ public class SearchCategoryDescriptor {
 	}
 	public String getName() {
 		return config.getAttribute("name");
+	}
+	
+	public ImageDescriptor getImageDescriptor() {
+		String imageName = config.getAttribute("icon");
+		if (imageName == null)
+			return null;
+		return UpdateUIPluginImages.getImageDescriptorFromPlugin(
+			config.getDeclaringExtension().getDeclaringPluginDescriptor(),
+			imageName);
 	}
 	public Image getImage() {
 		String imageName = config.getAttribute("icon");

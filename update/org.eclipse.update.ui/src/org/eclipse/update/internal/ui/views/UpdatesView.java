@@ -102,6 +102,7 @@ public class UpdatesView
 	private EnvironmentFilter environmentFilter = new EnvironmentFilter();
 	private Cursor handCursor;
 	private Clipboard clipboard;
+	private SearchMonitorManager searchMonitorManager;
 
 	class DeleteAction extends Action implements IUpdate {
 		public DeleteAction() {
@@ -286,6 +287,9 @@ public class UpdatesView
 				else
 					return dir.getLabel(dir);
 			}
+			if (obj instanceof SearchObject) {
+				return searchMonitorManager.getLabel((SearchObject)obj);
+			}
 			return super.getText(obj);
 		}
 		public Image getImage(Object obj) {
@@ -347,7 +351,8 @@ public class UpdatesView
 				SearchCategoryRegistryReader.getDefault().getDescriptor(
 					categoryId);
 			if (desc != null) {
-				return desc.getImage();
+				int flags = obj.isSearchInProgress()?UpdateLabelProvider.F_CURRENT:0;
+				return UpdateUIPlugin.getDefault().getLabelProvider().get(desc.getImageDescriptor(), flags);
 			}
 			return null;
 		}
@@ -413,10 +418,13 @@ public class UpdatesView
 			clipboard.dispose();
 			clipboard = null;
 		}
+		searchMonitorManager.shutdown();
 		super.dispose();
 	}
 
 	public void initProviders() {
+		searchMonitorManager = new SearchMonitorManager();
+		searchMonitorManager.register(updateSearchObject);
 		viewer.setContentProvider(new SiteProvider());
 		viewer.setLabelProvider(new SiteLabelProvider());
 		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
@@ -1097,14 +1105,11 @@ public class UpdatesView
 		Object child = children[0];
 		if (child instanceof PendingChange)
 			return;
-		if (child instanceof NamedModelObject
-			/*
-		|| child instanceof SearchResultSite
-		|| child instanceof IFeature
-		|| child instanceof IFeatureAdapter 
-		*/
-			) {
+		if (child instanceof NamedModelObject) {
 			UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+			if (child instanceof SearchObject) {
+				searchMonitorManager.register((SearchObject)child);
+			}
 			if (parent == null)
 				parent = model;
 			viewer.add(parent, children);
@@ -1118,16 +1123,19 @@ public class UpdatesView
 		if (children[0] instanceof PendingChange)
 			return;
 		if (children[0] instanceof NamedModelObject
-			/*|| children[0] instanceof SearchResultSite */
 			) {
 			viewer.remove(children);
 			viewer.setSelection(new StructuredSelection());
+			for (int i=0; i<children.length; i++) {
+				if (children[i] instanceof SearchObject)	
+			   		searchMonitorManager.unregister((SearchObject)children[i]);
+			}
 		}
 	}
 
 	public void objectChanged(Object object, String property) {
 		if (object instanceof NamedModelObject) {
-			if (property.equals(SiteBookmark.P_NAME)) {
+			if (property.equals(NamedModelObject.P_NAME)) {
 				viewer.update(object, null);
 			}
 			if (object instanceof SiteBookmark) {
