@@ -506,19 +506,6 @@
          </action>
 <!-- Step Group -->
          <action
-               id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
-               toolbarPath="emptyStepGroup"
-               hoverIcon="icons/full/clcl16/stepbystep_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
-               disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
-               icon="icons/full/elcl16/stepbystep_co.gif"
-               label="%StepWithFiltersAction.label"
-               helpContextId="step_with_filters_action_context"
-               tooltip="%StepWithFiltersAction.tooltip"
-               style="toggle"
-               state="false">
-         </action>
-         <action
                id="org.eclipse.debug.ui.debugview.toolbar.stepReturn"
                toolbarPath="stepReturnGroup"
                hoverIcon="icons/full/clcl16/stepreturn_co.gif"
@@ -563,6 +550,7 @@
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
+<!-- Render Group -->         
          <action
                id="org.eclipse.debug.ui.debugview.toolbar.toggleAutoManageViews"
                toolbarPath="renderGroup"
@@ -575,6 +563,19 @@
                style="toggle"
                state="true">
          </action>
+         <action
+               id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
+               toolbarPath="renderGroup"
+               hoverIcon="icons/full/clcl16/stepbystep_co.gif"
+               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               disabledIcon="icons/full/dlcl16/stepbystep_co.gif"
+               icon="icons/full/elcl16/stepbystep_co.gif"
+               label="%StepWithFiltersAction.label"
+               helpContextId="step_with_filters_action_context"
+               tooltip="%StepWithFiltersAction.tooltip"
+               style="toggle"
+               state="false">
+         </action>         
       </viewContribution>
 <!-- Contributions to Breakpoints View Toolbar -->
       <viewContribution
@@ -877,16 +878,6 @@
          </action>
 <!-- Step Group -->
          <action
-               label="%StepWithFiltersAction.label"
-               icon="icons/full/clcl16/stepbystep_co.gif"
-               helpContextId="step_with_filters_action_context"
-               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
-               menubarPath="stepReturnGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
-               style="toggle"
-               state="false">
-         </action>
-         <action
                label="%StepReturnAction.label"
                icon="icons/full/clcl16/stepreturn_co.gif"
                helpContextId="step_return_action_context"
@@ -922,6 +913,26 @@
                   class="org.eclipse.debug.core.model.IStep">
             </selection>
          </action>
+<!-- Render Group -->   
+         <action
+               menubarPath="renderGroup"
+               class="org.eclipse.debug.internal.ui.actions.ToggleAutoManageViewsActionDelegate"
+               icon="icons/full/clcl16/synced.gif"
+               label="%AutoManageViewsAction.label"
+               helpContextId="auto_manage_views_action"
+               style="toggle"
+               state="true">
+         </action>      
+         <action
+               label="%StepWithFiltersAction.label"
+               icon="icons/full/clcl16/stepbystep_co.gif"
+               helpContextId="step_with_filters_action_context"
+               class="org.eclipse.debug.internal.ui.actions.ToggleStepFiltersActionDelegate"
+               menubarPath="renderGroup"
+               id="org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
+               style="toggle"
+               state="false">
+         </action>         
       </viewerContribution>
 <!-- Contributions to Breakpoints View Popup Menu -->
       <viewerContribution
