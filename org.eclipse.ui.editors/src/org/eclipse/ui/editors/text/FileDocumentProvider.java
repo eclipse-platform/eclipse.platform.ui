@@ -364,7 +364,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			InputStream contentStream= file.getContents(false);
 			
 			FileInfo info= (FileInfo)getElementInfo(editorInput);
-
+			
 			/*
 			 * XXX:
 			 * This is a workaround for a corresponding bug in Java readers and writer,
@@ -380,12 +380,21 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 							throw new IOException();
 						n += bytes;
 					} while (n < IContentDescription.BOM_UTF_8.length);
-				} catch (IOException e) {
-					// ignore if we cannot remove BOM
+				} catch (IOException ex) {
+					String message= (ex.getMessage() != null ? ex.getMessage() : ""); //$NON-NLS-1$
+					IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, ex);
+					throw new CoreException(s);
+				} finally {
+					try {
+						if (contentStream != null)
+							contentStream.close();
+					} catch (IOException e1) {
+					}
 				}
 			}
-
+				
 			setDocumentContent(document, contentStream, encoding);
+
 			return true;
 		}
 		return super.setDocumentContent(document, editorInput, encoding);

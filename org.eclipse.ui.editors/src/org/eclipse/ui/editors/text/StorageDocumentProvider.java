@@ -18,9 +18,6 @@ import java.io.Reader;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,6 +25,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
+
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.operation.IRunnableContext;
 
@@ -137,11 +138,12 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
-			if (in != null) {
-				try {
+			try {
+				if (in != null)
 					in.close();
-				} catch (IOException x) {
-				}
+				else
+					contentStream.close();
+			} catch (IOException x) {
 			}
 		}	
 	}
