@@ -43,6 +43,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -90,6 +91,15 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	 */
 	private RepositoryManager repositoryManager;
 	
+	// Property change listener
+	IPropertyChangeListener listener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
+				CVSDecorator.refresh();
+			}
+		}
+	};
+		
 	/**
 	 * CVSUIPlugin constructor
 	 * 
@@ -362,13 +372,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		repositoryManager = new RepositoryManager();
 		
 		// if the global ignores list is changed then update decorators.
-		TeamUIPlugin.getPlugin().addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if(event.getProperty().equals(TeamUIPlugin.GLOBAL_IGNORES_CHANGED)) {
-					CVSDecorator.refresh();
-				}
-			}
-		});
+		TeamUI.addPropertyChangeListener(listener);
 		
 		try {
 			repositoryManager.startup();
@@ -384,6 +388,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
+		TeamUI.removePropertyChangeListener(listener);
 		try {
 			repositoryManager.shutdown();
 		} catch (TeamException e) {

@@ -39,10 +39,7 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	private static TeamUIPlugin instance;
 	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
 	
-	// property change types
-	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed"; //$NON-NLS-1$
-
-	private List propertyChangeListeners = new ArrayList(5);
+	private static List propertyChangeListeners = new ArrayList(5);
 
 	/**
 	 * Creates a new TeamUIPlugin.
@@ -117,30 +114,6 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	 */
 	public static void log(IStatus status) {
 		getPlugin().getLog().log(status);
-	}
-	
-	/**
-	 * Register for changes made to Team UI properties.
-	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		propertyChangeListeners.add(listener);
-	}
-	
-	/**
-	 * Deregister as a Team UI property changes.
-	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		propertyChangeListeners.remove(listener);
-	}
-	
-	/**
-	 * Broadcast a Team UI property change.
-	 */
-	public void broadcastPropertyChange(PropertyChangeEvent event) {
-		for (Iterator it = propertyChangeListeners.iterator(); it.hasNext();) {
-			IPropertyChangeListener listener = (IPropertyChangeListener) it.next();			
-			listener.propertyChange(event);
-		}
 	}
 	
 	public static void runWithProgress(Shell parent, boolean cancelable,
@@ -218,4 +191,27 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
+	/**
+	 * Register for changes made to Team properties.
+	 */
+	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
+		propertyChangeListeners.add(listener);
+	}
+	
+	/**
+	 * Deregister as a Team property changes.
+	 */
+	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
+		propertyChangeListeners.remove(listener);
+	}
+	
+	/**
+	 * Broadcast a Team property change.
+	 */
+	public static void broadcastPropertyChange(PropertyChangeEvent event) {
+		for (Iterator it = propertyChangeListeners.iterator(); it.hasNext();) {
+			IPropertyChangeListener listener = (IPropertyChangeListener)it.next();			
+			listener.propertyChange(event);
+		}
+	}
 }
