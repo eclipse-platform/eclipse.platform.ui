@@ -4,7 +4,8 @@
    id="org.eclipse.core.tests.runtime"
    name="Eclipse Core Tests Runtime"
    version="3.0"
-   provider-name="Eclipse.org">
+   provider-name="Eclipse.org"
+   class="org.eclipse.core.tests.runtime.RuntimeTestsPlugin">
 
    <runtime>
       <library name="runtimetests.jar">

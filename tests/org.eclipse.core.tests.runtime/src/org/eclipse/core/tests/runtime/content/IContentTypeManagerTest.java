@@ -11,17 +11,17 @@
 package org.eclipse.core.tests.runtime.content;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.*;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.tests.runtime.DynamicPluginTest;
-import org.eclipse.core.tests.runtime.RuntimeTest;
+import org.eclipse.core.tests.harness.BundleTestingHelper;
+import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
+import org.eclipse.core.tests.runtime.TestRegistryChangeListener;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
-public class IContentTypeManagerTest extends DynamicPluginTest {
+public class IContentTypeManagerTest extends TestCase {
 	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16 = "<?xml version=\"1.0\" encoding=\"UTF-16\"?><org.eclipse.core.runtime.tests.root/>";
@@ -59,12 +59,12 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNotNull("2.3", xmlDescriber);
 		assertTrue("2.4", xmlDescriber instanceof XMLContentDescriber);
 
-		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
+		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
 		assertNotNull("3.0", xmlBasedDifferentExtensionContentType);
 		assertTrue("3.1", isText(contentTypeManager, xmlBasedDifferentExtensionContentType));
 		assertEquals("3.2", xmlContentType, xmlBasedDifferentExtensionContentType.getBaseType());
 
-		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
+		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
 		assertNotNull("4.0", xmlBasedSpecificNameContentType);
 		assertTrue("4.1", isText(contentTypeManager, xmlBasedSpecificNameContentType));
 		assertEquals("4.2", xmlContentType, xmlBasedSpecificNameContentType.getBaseType());
@@ -72,7 +72,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentType[] xmlTypes = contentTypeManager.findContentTypesFor(changeCase("foo.xml"));
 		assertTrue("5.1", contains(xmlTypes, xmlContentType));
 
-		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary1");
+		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "sample-binary1");
 		assertNotNull("6.0", binaryContentType);
 		assertTrue("6.1", !isText(contentTypeManager, binaryContentType));
 		assertNull("6.2", binaryContentType.getBaseType());
@@ -81,16 +81,16 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("7.0", 1, binaryTypes.length);
 		assertEquals("7.1", binaryContentType, binaryTypes[0]);
 
-		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
+		IContentType myText = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".mytext");
 		assertNotNull("8.0", myText);
 		assertEquals("8.1", "BAR", myText.getDefaultCharset());
 
 		IContentType[] fooBarTypes = contentTypeManager.findContentTypesFor(changeCase("foo.bar"));
 		assertEquals("9.0", 2, fooBarTypes.length);
 
-		IContentType fooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".fooBar");
+		IContentType fooBar = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".fooBar");
 		assertNotNull("9.1", fooBar);
-		IContentType subFooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".subFooBar");
+		IContentType subFooBar = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".subFooBar");
 		assertNotNull("9.2", subFooBar);
 		assertTrue("9.3", contains(fooBarTypes, fooBar));
 		assertTrue("9.4", contains(fooBarTypes, subFooBar));
@@ -108,10 +108,10 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	 */
 	public void testContentDetection() throws IOException {
 		LocalContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".sample-binary1");
+		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".sample-binary1");
 		IContentType appropriate = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
-		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-different-extension");
-		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + ".xml-based-specific-name");
+		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".xml-based-different-extension");
+		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".xml-based-specific-name");
 
 		// if only inappropriate is provided, none will be selected
 		assertNull("1.0", contentTypeManager.findContentTypeFor(getInputStream(MINIMAL_XML), new IContentType[] {inappropriate}));
@@ -141,9 +141,9 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public void testContentDescription() throws IOException, CoreException {
 		IContentTypeManager contentTypeManager = (LocalContentTypeManager) LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType xmlType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
-		IContentType mytext = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext");
-		IContentType mytext1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext1");
-		IContentType mytext2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext2");
+		IContentType mytext = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "mytext");
+		IContentType mytext1 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "mytext1");
+		IContentType mytext2 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "mytext2");
 
 		boolean text = false;
 
@@ -234,8 +234,8 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 	public void testBinaryTypes() throws IOException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType sampleBinary1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary1");
-		IContentType sampleBinary2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".sample-binary2");
+		IContentType sampleBinary1 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".sample-binary1");
+		IContentType sampleBinary2 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".sample-binary2");
 		InputStream contents;
 
 		contents = getInputStream(new byte[][] {SAMPLE_BIN1_OFFSET.getBytes(), SAMPLE_BIN1_SIGNATURE, " extra contents".getBytes()});
@@ -283,9 +283,9 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	 */
 	public void testDoubleAssociation() {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
-		IContentType fooBarType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "fooBar");
+		IContentType fooBarType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "fooBar");
 		assertNotNull("1.0", fooBarType);
-		IContentType subFooBarType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "subFooBar");
+		IContentType subFooBarType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "subFooBar");
 		assertNotNull("1.1", subFooBarType);
 		// ensure we don't get fooBar twice 
 		IContentType[] fooBarAssociated = contentTypeManager.findContentTypesFor(changeCase("foo.bar"));
@@ -298,9 +298,9 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + '.' + "text");
 		IContentType xmlContentType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
-		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
-		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
-		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary1");
+		IContentType xmlBasedDifferentExtensionContentType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "xml-based-different-extension");
+		IContentType xmlBasedSpecificNameContentType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "xml-based-specific-name");
+		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "sample-binary1");
 		assertTrue("1.0", textContentType.isKindOf(textContentType));
 		assertTrue("2.0", xmlContentType.isKindOf(textContentType));
 		assertTrue("2.1", !textContentType.isKindOf(xmlContentType));
@@ -373,7 +373,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	 */
 	public void testOrphanContentType() throws IOException, BundleException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType orphan = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".orphan");
+		IContentType orphan = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".orphan");
 		assertNull("0.8", orphan);
 		IContentType missing = contentTypeManager.getContentType("org.eclipse.bundle01.missing");
 		assertNull("0.9", missing);
@@ -383,15 +383,15 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 		//test late addition of content type - orphan2 should become visible
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
-		registerListener(listener, Platform.PI_RUNTIME);
-		Bundle installed = installBundle("content/bundle01");
+		listener.register();
+		Bundle installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle01");
 		assertEquals("1.4", Bundle.INSTALLED, installed.getState());
-		refreshPackages(new Bundle[] {installed});
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
 		try {
 			IRegistryChangeEvent event = listener.getEvent(10000);
 			assertNotNull("1.5", event);
 			assertNotNull("2.0", Platform.getBundle("org.eclipse.bundle01"));
-			orphan = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".orphan");
+			orphan = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".orphan");
 			assertNotNull("2.1", orphan);
 			missing = contentTypeManager.getContentType("org.eclipse.bundle01.missing");
 			assertNotNull("2.2", missing);
@@ -406,14 +406,14 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		} finally {
 			//remove installed bundle
 			installed.uninstall();
-			refreshPackages(new Bundle[] {installed});
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
 		}
 	}
 
 	public void testRootElementAndDTDDescriber() throws IOException {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		IContentType rootElement = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".root-element");
-		IContentType dtdElement = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".dtd");
+		IContentType rootElement = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
+		IContentType dtdElement = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".dtd");
 		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_ISO_8859_1, "ISO-8859-1"), "fake.xml");
 		assertTrue("1.0", contentTypes.length > 0);
 		assertEquals("1.1", rootElement, contentTypes[0]);
@@ -438,7 +438,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		assertEquals("1.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.identifier").length);
 		assertEquals("2.0", 0, contentTypeManager.findContentTypesFor("invalid.missing.name").length);
-		assertNull("3.0", contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "invalid-missing-name"));
+		assertNull("3.0", contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "invalid-missing-name"));
 	}
 
 	public void testByteOrderMark() throws UnsupportedEncodingException, IOException {
@@ -468,16 +468,16 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public void testFileSpecConflicts() throws IOException {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 
-		IContentType conflict1a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict1");
-		IContentType conflict1b = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict1");
+		IContentType conflict1a = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".conflict1");
+		IContentType conflict1b = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".aaa_conflict1");
 		assertNotNull("1.0", conflict1a);
 		assertNotNull("1.1", conflict1b);
 		IContentType preferredConflict1 = manager.findContentTypeFor("test.conflict1");
 		assertNotNull("1.2", preferredConflict1);
 		assertEquals("1.3", conflict1a, preferredConflict1);
 
-		IContentType conflict2a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict2");
-		IContentType conflict2b = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict2");
+		IContentType conflict2a = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".conflict2");
+		IContentType conflict2b = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".aaa_conflict2");
 		assertNotNull("2.0", conflict2a);
 		// although there is conflict, aliasing is not done for related content types
 		assertNotNull("2.1", conflict2b);
@@ -485,10 +485,10 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNotNull("2.2", preferredConflict2);
 		assertEquals("2.3", conflict2a, preferredConflict2);
 
-		IContentType conflict3a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict3");
-		IContentType conflict3b = manager.getContentType(PI_RUNTIME_TESTS + ".base_conflict3");
-		IContentType conflict3c = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict3");
-		IContentType conflict3d = manager.getContentType(PI_RUNTIME_TESTS + ".bbb_conflict3");
+		IContentType conflict3a = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".conflict3");
+		IContentType conflict3b = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".base_conflict3");
+		IContentType conflict3c = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".aaa_conflict3");
+		IContentType conflict3d = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".bbb_conflict3");
 		assertNotNull("3.0", conflict3a);
 		assertNotNull("3.1", conflict3b);
 		// this content type is an alias for conflict3a, should not be visible
@@ -506,7 +506,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 
 	public void testMyContentDescriber() throws UnsupportedEncodingException, IOException {
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		IContentType myContent = manager.getContentType(PI_RUNTIME_TESTS + '.' + "myContent");
+		IContentType myContent = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + '.' + "myContent");
 		assertNotNull("0.5", myContent);
 		assertEquals("0.6", myContent, manager.findContentTypeFor("myContent.mc"));
 		IContentDescription description = manager.getDescriptionFor(getInputStream(MyContentDescriber.SIGNATURE, "US-ASCII"), "myContent.mc", IContentDescription.ALL);
@@ -520,8 +520,8 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public void testOrderWithEmptyFiles() throws IOException {
 		IContentTypeManager manager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
-		IContentType rootElement = manager.getContentType(PI_RUNTIME_TESTS + ".root-element");
-		IContentType dtdElement = manager.getContentType(PI_RUNTIME_TESTS + ".dtd");
+		IContentType rootElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
+		IContentType dtdElement = manager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".dtd");
 		// for an empty file, the most generic content type should be returned
 		IContentType selected = manager.findContentTypeFor(getInputStream(""), "foo.xml");
 		assertEquals("1.0", xml, selected);

@@ -1,0 +1,3 @@
+<plugin>
+	<extension-point id="xp1" name="Extension Point 1"/>
+</plugin>

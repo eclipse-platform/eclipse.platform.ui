@@ -11,15 +11,15 @@
 package org.eclipse.core.tests.runtime.compatibility;
 
 import java.io.IOException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import junit.framework.*;
 import org.eclipse.core.internal.plugins.InternalPlatform;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
-import org.eclipse.core.tests.runtime.DynamicPluginTest;
+import org.eclipse.core.tests.harness.BundleTestingHelper;
+import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.*;
 
-public class PluginCompatibilityTests extends DynamicPluginTest {
+public class PluginCompatibilityTests extends TestCase {
 
 	public PluginCompatibilityTests(String name) {
 		super(name);
@@ -28,10 +28,10 @@ public class PluginCompatibilityTests extends DynamicPluginTest {
 	// see bug 59013
 	public void testPluginWithNoRuntimeLibrary() throws BundleException, IOException {
 		Bundle installed = null;
-		assertNull("0.0", getBundles("bundle01", "1.0"));
-		installed = installBundle("compatibility/bundle01");
-		assertEquals("0.5", Bundle.INSTALLED, installed.getState());		
-		refreshPackages(new Bundle[] {installed});
+		assertNull("0.0", BundleTestingHelper.getBundles(RuntimeTestsPlugin.getContext(), "bundle01", "1.0"));
+		installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "compatibility/bundle01");
+		assertEquals("0.5", Bundle.INSTALLED, installed.getState());
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
 		try {
 			assertEquals("1.0", "bundle01", installed.getSymbolicName());
 			assertEquals("1.1", "1.0", installed.getHeaders().get(Constants.BUNDLE_VERSION));
@@ -43,11 +43,11 @@ public class PluginCompatibilityTests extends DynamicPluginTest {
 		} finally {
 			// clean-up
 			installed.uninstall();
-			refreshPackages(new Bundle[] {installed});			
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
 		}
 	}
 
-	public static  Test suite() {
+	public static Test suite() {
 		return new TestSuite(PluginCompatibilityTests.class);
 	}
 }
