@@ -407,17 +407,41 @@ public interface IDebugUIConstants {
 	public static final String IMG_OBJS_BREAKPOINT_GROUP = "IMG_OBJS_BREAKPOINT_GROUP"; //$NON-NLS-1$
 		
 	/**
-	 * Enabled watchpoint image identifier.
+	 * Enabled watchpoint image identifier (access & modification).
 	 * @since 3.0
 	 */
 	public static final String IMG_OBJS_WATCHPOINT= "IMG_OBJS_WATCHPOINT"; //$NON-NLS-1$
 	
 	/**
-	 * Disabled watchpoint image identifier.
+	 * Disabled watchpoint image identifier (access & modification).
 	 * @since 3.0
 	 */
 	public static final String IMG_OBJS_WATCHPOINT_DISABLED= "IMG_OBJS_WATCHPOINT_DISABLED"; //$NON-NLS-1$
 	
+	/**
+	 * Enabled access watchpoint image identifier.
+	 * @since 3.1
+	 */
+	public static final String IMG_OBJS_ACCESS_WATCHPOINT= "IMG_OBJS_ACCESS_WATCHPOINT"; //$NON-NLS-1$
+	
+	/**
+	 * Disabled access watchpoint image identifier.
+	 * @since 3.1
+	 */
+	public static final String IMG_OBJS_ACCESS_WATCHPOINT_DISABLED= "IMG_OBJS_ACCESS_WATCHPOINT_DISABLED"; //$NON-NLS-1$
+	
+	/**
+	 * Enabled modification watchpoint image identifier.
+	 * @since 3.1
+	 */
+	public static final String IMG_OBJS_MODIFICATION_WATCHPOINT= "IMG_OBJS_MODIFICATION_WATCHPOINT"; //$NON-NLS-1$
+	
+	/**
+	 * Disabled modification watchpoint image identifier.
+	 * @since 3.1
+	 */
+	public static final String IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED= "IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED"; //$NON-NLS-1$
+
 	/** Running system process image identifier. */
 	public static final String IMG_OBJS_OS_PROCESS= "IMG_OBJS_OS_PROCESS"; //$NON-NLS-1$
 	

@@ -39,9 +39,11 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.core.model.IWatchpoint;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
@@ -373,13 +375,43 @@ public class DefaultLabelProvider implements ILabelProvider {
 	
 	protected String getBreakpointImageKey(IBreakpoint breakpoint) {
 		if (breakpoint != null && breakpoint.getMarker().exists()) {
-			try {
-				if (breakpoint.isEnabled()) {
-					return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
-				} 
-				return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
-			} catch (CoreException e) {
-			}
+		    try {
+			    boolean enabled = breakpoint.isEnabled();
+			    if (breakpoint instanceof IWatchpoint) {
+	                IWatchpoint watchpoint = (IWatchpoint) breakpoint;
+	        		if (watchpoint.isAccess()) {
+	        			if (watchpoint.isModification()) {
+	        				//access and modification
+	        				if (enabled) {
+	        					return IDebugUIConstants.IMG_OBJS_WATCHPOINT;
+	        				} else {
+	        					return IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED;
+	        				}
+	        			} else {
+	        				if (enabled) {
+	        					return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT;
+	        				} else {
+	        					return IDebugUIConstants.IMG_OBJS_ACCESS_WATCHPOINT_DISABLED;
+	        				}
+	        			}
+	        		} else if (watchpoint.isModification()) {
+	        			if (enabled) {
+	        				return IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT;
+	        			} else {
+	        				return IDebugUIConstants.IMG_OBJS_MODIFICATION_WATCHPOINT_DISABLED;
+	        			}
+	        		} else {
+	        			//neither access nor modification
+	        			return IDebugUIConstants.IMG_OBJS_WATCHPOINT_DISABLED;
+	        		}
+	            } else {
+					if (enabled) {
+						return IDebugUIConstants.IMG_OBJS_BREAKPOINT;
+					} 
+					return IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED;
+	            }
+		    } catch (CoreException e) {
+		    }
 		}
 		return null;
 	}

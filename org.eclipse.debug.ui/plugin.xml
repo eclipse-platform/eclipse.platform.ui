@@ -871,6 +871,29 @@
                id="org.eclipse.debug.ui.expressionViewActions.AddWatchExpression">
          </action>
       </viewerContribution>
+<!-- Watchpoint actions -->      
+      <objectContribution
+            objectClass="org.eclipse.debug.core.model.IWatchpoint"
+            id="org.eclipse.debug.ui.WatchpointToggleActions">
+         <action
+               label="%accessAction.label"
+               helpContextId="access_toggle_action_context"
+               state="false"
+               class="org.eclipse.debug.internal.ui.actions.AccessWatchpointToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.actions.AccessToggle">
+         </action>
+         <action
+               label="%modificationAction.label"
+               helpContextId="modification_toggle_action_context"
+               state="false"
+               class="org.eclipse.debug.internal.ui.actions.ModificationWatchpointToggleAction"
+               menubarPath="emptyBreakpointGroup"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.actions.ModificationToggle">
+         </action>
+      </objectContribution>
 <!-- Contributions to Debug View Popup Menu -->
       <viewerContribution
             targetID="org.eclipse.debug.ui.DebugView"
