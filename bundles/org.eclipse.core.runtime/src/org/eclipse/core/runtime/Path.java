@@ -569,9 +569,8 @@ public boolean isUNC() {
  */
 public boolean isValidPath(String path) {
 	// We allow "//" at the beginning for UNC paths
-	if (path.indexOf("//") > 0) { //$NON-NLS-1$
+	if (path.indexOf("//", 1) > 0) //$NON-NLS-1$
 		return false;
-	}
 	Path test = new Path(path);
 	int segmentCount = test.segmentCount();
 	for (int i = 0; i < segmentCount; i++) {

@@ -370,6 +370,23 @@ public void testIsUNC() {
 	assertTrue("6.2", new Path("c:\\\\").setDevice(null).isUNC());
 
 }
+public void testIsValidPath() {
+	IPath test = Path.ROOT;
+	// positive
+	assertTrue("1.0", test.isValidPath("/first/second/third"));
+	assertTrue("1.1", test.isValidPath(""));
+	assertTrue("1.2", test.isValidPath("a"));
+	assertTrue("1.3", test.isValidPath("c:"));
+	assertTrue("1.4", test.isValidPath("//"));
+	assertTrue("1.5", test.isValidPath("//a"));
+	assertTrue("1.6", test.isValidPath("c:/a"));
+	
+	// negative
+	assertTrue("2.0", !test.isValidPath("c://a//b//c//d//e//f"));
+	assertTrue("2.1", !test.isValidPath("//a//b//c//d//e//f"));
+	assertTrue("2.2", !test.isValidPath("/           /"));
+	assertTrue("2.3", !test.isValidPath(" "));
+}
 public void testLastSegment() {
 
 	assertEquals("1.0", "second", new Path("/first/second").lastSegment());
