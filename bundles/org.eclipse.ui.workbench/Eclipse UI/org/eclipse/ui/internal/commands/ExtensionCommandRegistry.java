@@ -130,17 +130,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
         // TODO deprecated start
         IConfigurationElement[] deprecatedConfigurationElements = extensionRegistry
-                .getConfigurationElementsFor("org.eclipse.ui.acceleratorConfigurations"); //$NON-NLS-1$
-
-        for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
-            IConfigurationElement deprecatedConfigurationElement = deprecatedConfigurationElements[i];
-            String name = deprecatedConfigurationElement.getName();
-
-            if ("acceleratorConfiguration".equals(name)) //$NON-NLS-1$
-                readKeyConfigurationDefinition(deprecatedConfigurationElement);
-        }
-
-        deprecatedConfigurationElements = extensionRegistry
                 .getConfigurationElementsFor("org.eclipse.ui.acceleratorSets"); //$NON-NLS-1$
 
         for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
@@ -203,10 +192,8 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
                 readCategoryDefinition(configurationElement);
             else if (Persistence.TAG_COMMAND.equals(name))
                 readCommandDefinition(configurationElement);
-            else if (Persistence.TAG_HANDLER.equals(name)) {
+            else if (Persistence.TAG_HANDLER.equals(name))
                 readHandlerSubmissionDefinition(configurationElement);
-            } else if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
-                readKeyConfigurationDefinition(configurationElement);
             else if (Persistence.TAG_KEY_SEQUENCE_BINDING.equals(name))
                 readKeySequenceBindingDefinition(configurationElement);
         }
@@ -233,13 +220,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
         if (!imageBindingDefinitions.equals(super.imageBindingDefinitions)) {
             super.imageBindingDefinitions = Collections
                     .unmodifiableList(imageBindingDefinitions);
-            commandRegistryChanged = true;
-        }
-
-        if (!keyConfigurationDefinitions
-                .equals(super.keyConfigurationDefinitions)) {
-            super.keyConfigurationDefinitions = Collections
-                    .unmodifiableList(keyConfigurationDefinitions);
             commandRegistryChanged = true;
         }
 
@@ -291,17 +271,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
         if (handler != null)
             handlers.add(handler);
-    }
-
-    private void readKeyConfigurationDefinition(
-            IConfigurationElement configurationElement) {
-        KeyConfigurationDefinition keyConfigurationDefinition = Persistence
-                .readKeyConfigurationDefinition(
-                        new ConfigurationElementMemento(configurationElement),
-                        getNamespace(configurationElement));
-
-        if (keyConfigurationDefinition != null)
-            keyConfigurationDefinitions.add(keyConfigurationDefinition);
     }
 
     private void readKeySequenceBindingDefinition(

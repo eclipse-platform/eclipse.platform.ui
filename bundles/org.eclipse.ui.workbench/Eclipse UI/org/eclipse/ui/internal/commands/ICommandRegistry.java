@@ -26,8 +26,6 @@ public interface ICommandRegistry {
 
     List getImageBindingDefinitions();
 
-    List getKeyConfigurationDefinitions();
-
     List getKeySequenceBindingDefinitions();
 
     void removeCommandRegistryListener(

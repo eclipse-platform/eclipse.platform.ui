@@ -331,52 +331,6 @@ final class Persistence {
         return new HandlerProxy(commandId, configurationElement);
     }
 
-    static KeyConfigurationDefinition readKeyConfigurationDefinition(
-            IMemento memento, String sourceIdOverride) {
-        if (memento == null)
-            throw new NullPointerException();
-
-        String description = memento.getString(TAG_DESCRIPTION);
-        String id = memento.getString(TAG_ID);
-        String name = memento.getString(TAG_NAME);
-        String parentId = memento.getString(TAG_PARENT_ID);
-
-        // TODO deprecated start
-        if (parentId == null)
-            parentId = memento.getString("parent"); //$NON-NLS-1$ 
-        // TODO deprecated end
-
-        String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
-                .getString(TAG_SOURCE_ID);
-
-        // TODO deprecated start
-        if (sourceIdOverride == null && sourceId == null)
-            sourceId = memento.getString("plugin"); //$NON-NLS-1$ 
-        // TODO deprecated end
-
-        return new KeyConfigurationDefinition(description, id, name, parentId,
-                sourceId);
-    }
-
-    static List readKeyConfigurationDefinitions(IMemento memento, String name,
-            String sourceIdOverride) {
-        if (memento == null || name == null)
-            throw new NullPointerException();
-
-        IMemento[] mementos = memento.getChildren(name);
-
-        if (mementos == null)
-            throw new NullPointerException();
-
-        List list = new ArrayList(mementos.length);
-
-        for (int i = 0; i < mementos.length; i++)
-            list.add(readKeyConfigurationDefinition(mementos[i],
-                    sourceIdOverride));
-
-        return list;
-    }
-
     static KeySequenceBindingDefinition readKeySequenceBindingDefinition(
             IMemento memento, String sourceIdOverride) {
         if (memento == null)
@@ -532,41 +486,6 @@ final class Persistence {
         while (iterator.hasNext())
             writeCommandDefinition(memento.createChild(name),
                     (CommandDefinition) iterator.next());
-    }
-
-    static void writeKeyConfigurationDefinition(IMemento memento,
-            KeyConfigurationDefinition keyConfigurationDefinition) {
-        if (memento == null || keyConfigurationDefinition == null)
-            throw new NullPointerException();
-
-        memento.putString(TAG_DESCRIPTION, keyConfigurationDefinition
-                .getDescription());
-        memento.putString(TAG_ID, keyConfigurationDefinition.getId());
-        memento.putString(TAG_NAME, keyConfigurationDefinition.getName());
-        memento.putString(TAG_PARENT_ID, keyConfigurationDefinition
-                .getParentId());
-        memento.putString(TAG_SOURCE_ID, keyConfigurationDefinition
-                .getSourceId());
-    }
-
-    static void writeKeyConfigurationDefinitions(IMemento memento, String name,
-            List keyConfigurationDefinitions) {
-        if (memento == null || name == null
-                || keyConfigurationDefinitions == null)
-            throw new NullPointerException();
-
-        keyConfigurationDefinitions = new ArrayList(keyConfigurationDefinitions);
-        Iterator iterator = keyConfigurationDefinitions.iterator();
-
-        while (iterator.hasNext())
-            Util.assertInstance(iterator.next(),
-                    KeyConfigurationDefinition.class);
-
-        iterator = keyConfigurationDefinitions.iterator();
-
-        while (iterator.hasNext())
-            writeKeyConfigurationDefinition(memento.createChild(name),
-                    (KeyConfigurationDefinition) iterator.next());
     }
 
     static void writeKeySequenceBindingDefinition(IMemento memento,

@@ -853,6 +853,7 @@ public final class Workbench implements IWorkbench {
 		final IBindingService bindingService = new BindingService(
 				bindingManager);
 		services[IWorkbenchServices.BINDING] = bindingService;
+		bindingService.readRegistryAndPreferences();
 
 		/*
 		 * TODO This is the deprecated support. It would be nice to pull out all
@@ -864,9 +865,6 @@ public final class Workbench implements IWorkbench {
 				bindingManager, commandManager, contextManager);
         workbenchContextSupport.initialize(); // deferred key binding support
         initializeCommandResolver();
-		
-		// TODO Initialize the services code.
-		bindingService.readRegistryAndPreferences();
 
         addWindowListener(windowListener);
 

@@ -111,24 +111,7 @@ public final class BindingService implements IBindingService {
 	}
 
 	public final void readRegistryAndPreferences() {
-		final String activeSchemeId = BindingPersistence.read();
-		try {
-			bindingManager.setActiveScheme(bindingManager
-					.getScheme(activeSchemeId));
-		} catch (final NotDefinedException e) {
-			// The scheme is undefined, so try to set it to the default default.
-			try {
-				bindingManager.setActiveScheme(bindingManager
-						.getScheme(DEFAULT_DEFAULT_ACTIVE_SCHEME_ID));
-			} catch (final NotDefinedException nde) {
-				/*
-				 * Even the default scheme is undefined. We're in serious
-				 * trouble. This should not be possible.
-				 */
-				throw new Error(
-						"The active scheme is not defined, and neither is the default default scheme."); //$NON-NLS-1$
-			}
-		}
+		BindingPersistence.read(bindingManager);
 	}
 
 	public final void savePreferences(final Scheme activeScheme,

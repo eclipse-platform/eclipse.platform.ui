@@ -539,39 +539,6 @@ public final class CommandManagerWrapper implements ICommandManager,
 					.getCategory(commandDefinition.getCategoryId()));
 		}
 
-		// Copy in the key configuration definitions.
-		Collection keyConfigurationDefinitions = new ArrayList();
-		keyConfigurationDefinitions.addAll(commandRegistry
-				.getKeyConfigurationDefinitions());
-		keyConfigurationDefinitions.addAll(mutableCommandRegistry
-				.getKeyConfigurationDefinitions());
-		Map keyConfigurationDefinitionsById = new HashMap(
-				KeyConfigurationDefinition.keyConfigurationDefinitionsById(
-						keyConfigurationDefinitions, false));
-		for (Iterator iterator = keyConfigurationDefinitionsById.values()
-				.iterator(); iterator.hasNext();) {
-			KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) iterator
-					.next();
-			String name = keyConfigurationDefinition.getName();
-			if (name == null || name.length() == 0)
-				iterator.remove();
-		}
-		for (Iterator iterator = keyConfigurationDefinitionsById.keySet()
-				.iterator(); iterator.hasNext();)
-			if (!isKeyConfigurationDefinitionChildOf(null, (String) iterator
-					.next(), keyConfigurationDefinitionsById))
-				iterator.remove();
-		final Iterator schemeDefinitionItr = keyConfigurationDefinitionsById
-				.values().iterator();
-		while (schemeDefinitionItr.hasNext()) {
-			final KeyConfigurationDefinition schemeDefinition = (KeyConfigurationDefinition) schemeDefinitionItr
-					.next();
-			final String schemeId = schemeDefinition.getId();
-			final Scheme scheme = bindingManager.getScheme(schemeId);
-			scheme.define(schemeDefinition.getName(), schemeDefinition
-					.getDescription(), schemeDefinition.getParentId());
-		}
-
 		// Copy in the handler submissions
 		definedHandlers.clear();
 		definedHandlers.addAll(commandRegistry.getHandlers());

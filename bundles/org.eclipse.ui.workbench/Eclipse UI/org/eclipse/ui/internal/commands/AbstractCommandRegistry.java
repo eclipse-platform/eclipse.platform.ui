@@ -29,8 +29,6 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 
     protected List imageBindingDefinitions = Collections.EMPTY_LIST;
 
-    protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;
-
     protected List keySequenceBindingDefinitions = Collections.EMPTY_LIST;
 
     protected AbstractCommandRegistry() {
@@ -81,10 +79,6 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 
     public List getImageBindingDefinitions() {
         return imageBindingDefinitions;
-    }
-
-    public List getKeyConfigurationDefinitions() {
-        return keyConfigurationDefinitions;
     }
 
     public List getKeySequenceBindingDefinitions() {

@@ -16,10 +16,12 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IMemento;
@@ -59,6 +61,17 @@ public final class BindingPersistence {
 	private static final String ATTRIBUTE_CONTEXT_ID = "contextId"; //$NON-NLS-1$
 
 	/**
+	 * The name of the description attribute, which appears on a scheme
+	 * definition.
+	 */
+	private static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
+
+	/**
+	 * The name of the id attribute, which is used on scheme definitions.
+	 */
+	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+
+	/**
 	 * The name of the attribute storing the identifier for the active key
 	 * configuration identifier. This provides legacy support for the
 	 * <code>activeKeyConfiguration</code> element in the commands extension
@@ -76,6 +89,22 @@ public final class BindingPersistence {
 	 * The name of the attribute storing the locale for a binding.
 	 */
 	private static final String ATTRIBUTE_LOCALE = "locale"; //$NON-NLS-1$
+
+	/**
+	 * The name of the name attribute, which appears on scheme definitions.
+	 */
+	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+
+	/**
+	 * The name of the deprecated parent attribute, which appears on scheme
+	 * definitions.
+	 */
+	private static final String ATTRIBUTE_PARENT = "parent"; //$NON-NLS-1$
+
+	/**
+	 * The name of the parent id attribute, which appears on scheme definitions.
+	 */
+	private static final String ATTRIBUTE_PARENT_ID = "parentId"; //$NON-NLS-1$
 
 	/**
 	 * The name of the attribute storing the platform for a binding.
@@ -102,6 +131,13 @@ public final class BindingPersistence {
 	private static final boolean DEBUG = Policy.DEBUG_KEY_BINDINGS;
 
 	/**
+	 * The name of the deprecated accelerator configuration element. This
+	 * element was used in 2.1.x and earlier to defined groups of what are now
+	 * called schemes.
+	 */
+	private static final String ELEMENT_ACCELERATOR_CONFIGURATION = "acceleratorConfiguration"; //$NON-NLS-1$
+
+	/**
 	 * The name of the element storing the active key configuration from the
 	 * commands extension point.
 	 */
@@ -120,10 +156,75 @@ public final class BindingPersistence {
 	private static final String ELEMENT_BINDING = "keyBinding"; //$NON-NLS-1$
 
 	/**
-	 * The preference key for the workbench preference store. This keys is
-	 * called 'commands' for legacy reasons.
+	 * The name of the deprecated key configuration element in the commands
+	 * extension point. This element has been replaced with the scheme element
+	 * in the bindings extension point.
 	 */
-	private static final String KEY = "org.eclipse.ui.commands"; //$NON-NLS-1$
+	private static final String ELEMENT_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$
+
+	/**
+	 * The name of the deprecated accelerator configurations extension point.
+	 */
+	private static final String EXTENSION_ACCELERATOR_CONFIGURATIONS = "org.eclipse.ui.acceleratorConfigurations"; //$NON-NLS-1$
+
+	/**
+	 * The name of the commands extension point, and the name of the key for the
+	 * commands preferences.
+	 */
+	private static final String EXTENSION_COMMANDS = "org.eclipse.ui.commands"; //$NON-NLS-1$
+
+	/**
+	 * The index of the active scheme configuration elements in the indexed
+	 * array.
+	 * 
+	 * @see BindingPersistence#read(BindingManager)
+	 */
+	private static final int INDEX_ACTIVE_SCHEME = 0;
+
+	/**
+	 * The index of the scheme definition configuration elements in the indexed
+	 * array.
+	 * 
+	 * @see BindingPersistence#read(BindingManager)
+	 */
+	private static final int INDEX_SCHEME_DEFINITIONS = 1;
+
+	/**
+	 * Inserts the given element into the indexed two-dimensional array in the
+	 * array at the index. The array is grown as necessary.
+	 * 
+	 * @param elementToAdd
+	 *            The element to add to the indexed array; may be
+	 *            <code>null</code>
+	 * @param indexedArray
+	 *            The two-dimensional array that is indexed by element type;
+	 *            must not be <code>null</code>.
+	 * @param index
+	 *            The index at which the element should be added; must be a
+	 *            valid index.
+	 * @param currentCount
+	 *            The current number of items in the array at the index.
+	 */
+	private static final void addElementToIndexedArray(
+			final IConfigurationElement elementToAdd,
+			final IConfigurationElement[][] indexedArray, final int index,
+			final int currentCount) {
+		final IConfigurationElement[] elements;
+		if (currentCount == 0) {
+			elements = new IConfigurationElement[1];
+			indexedArray[index] = elements;
+		} else {
+			if (currentCount >= indexedArray[index].length) {
+				final IConfigurationElement[] copy = new IConfigurationElement[indexedArray[index].length * 2];
+				System.arraycopy(indexedArray[index], 0, copy, 0, currentCount);
+				elements = copy;
+				indexedArray[index] = elements;
+			} else {
+				elements = indexedArray[index];
+			}
+		}
+		elements[currentCount] = elementToAdd;
+	}
 
 	/**
 	 * Returns the default scheme identifier for the currently running
@@ -166,7 +267,8 @@ public final class BindingPersistence {
 		writeActiveScheme(activeScheme);
 
 		// Build the XML block for writing the bindings and active scheme.
-		final XMLMemento xmlMemento = XMLMemento.createWriteRoot(KEY);
+		final XMLMemento xmlMemento = XMLMemento
+				.createWriteRoot(EXTENSION_COMMANDS);
 		if (activeScheme != null) {
 			writeActiveScheme(xmlMemento, activeScheme);
 		}
@@ -186,7 +288,7 @@ public final class BindingPersistence {
 		final Writer writer = new StringWriter();
 		try {
 			xmlMemento.save(writer);
-			preferenceStore.setValue(KEY, writer.toString());
+			preferenceStore.setValue(EXTENSION_COMMANDS, writer.toString());
 		} finally {
 			writer.close();
 		}
@@ -196,19 +298,61 @@ public final class BindingPersistence {
 	 * Reads all of the binding information from the registry and from the
 	 * preference store.
 	 * 
-	 * @return The active scheme identifier; this value is never
-	 *         <code>null</code>, but it may point to undefined scheme.
+	 * @param bindingManager
+	 *            The binding manager which should be populated with the values
+	 *            from the registry and preference store; must not be
+	 *            <code>null</code>.
 	 */
-	public static final String read() {
+	public static final void read(final BindingManager bindingManager) {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		final IConfigurationElement[] configurationElements = registry
-				.getConfigurationElementsFor(KEY);
+		int activeSchemeElementCount = 0;
+		int schemeDefinitionCount = 0;
+		final IConfigurationElement[][] indexedConfigurationElements = new IConfigurationElement[2][];
+
+		// Sort the commands extension point based on element name.
+		final IConfigurationElement[] commandsExtensionPoint = registry
+				.getConfigurationElementsFor(EXTENSION_COMMANDS);
+		for (int i = 0; i < commandsExtensionPoint.length; i++) {
+			final IConfigurationElement configurationElement = commandsExtensionPoint[i];
+			final String name = configurationElement.getName();
+
+			// Check if it is an active scheme identifier.
+			if (ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_ACTIVE_SCHEME,
+						activeSchemeElementCount++);
+
+				// Check if it is a scheme defintion.
+			} else if (ELEMENT_KEY_CONFIGURATION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+						schemeDefinitionCount++);
+			}
+		}
+
+		/*
+		 * Sort the accelerator configuration extension point into the scheme
+		 * definitions.
+		 */
+		final IConfigurationElement[] acceleratorConfigurationsExtensionPoint = registry
+				.getConfigurationElementsFor(EXTENSION_ACCELERATOR_CONFIGURATIONS);
+		for (int i = 0; i < acceleratorConfigurationsExtensionPoint.length; i++) {
+			final IConfigurationElement configurationElement = acceleratorConfigurationsExtensionPoint[i];
+			final String name = configurationElement.getName();
+
+			// Check if the name matches the accelerator configuration element
+			if (ELEMENT_ACCELERATOR_CONFIGURATION.equals(name)) {
+				addElementToIndexedArray(configurationElement,
+						indexedConfigurationElements, INDEX_SCHEME_DEFINITIONS,
+						schemeDefinitionCount++);
+			}
+		}
 
 		// Create the preference memento.
 		final IPreferenceStore store = WorkbenchPlugin.getDefault()
 				.getPreferenceStore();
-		final String preferenceString = store.getString(KEY);
+		final String preferenceString = store.getString(EXTENSION_COMMANDS);
 		IMemento preferenceMemento = null;
 		if ((preferenceString != null) && (preferenceString.length() > 0)) {
 			final Reader reader = new StringReader(preferenceString);
@@ -219,7 +363,11 @@ public final class BindingPersistence {
 			}
 		}
 
-		return readActiveScheme(configurationElements, preferenceMemento);
+		// Read the scheme definitions.
+		readSchemes(indexedConfigurationElements[INDEX_SCHEME_DEFINITIONS],
+				schemeDefinitionCount, bindingManager);
+		readActiveScheme(indexedConfigurationElements[INDEX_ACTIVE_SCHEME],
+				activeSchemeElementCount, preferenceMemento, bindingManager);
 	}
 
 	/**
@@ -242,15 +390,21 @@ public final class BindingPersistence {
 	 * @param configurationElements
 	 *            The configuration elements from the commands extension point;
 	 *            must not be <code>null</code>.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
 	 * @param preferences
 	 *            The memento wrapping the commands preference key; may be
 	 *            <code>null</code>.
-	 * @return The active scheme identifier; this value is never
-	 *         <code>null</code>.
+	 * @param bindingManager
+	 *            The binding manager that should be updated with the active
+	 *            scheme. This binding manager must already have its schemes
+	 *            defined. This value must not be <code>null</code>.
 	 */
-	private static final String readActiveScheme(
+	private static final void readActiveScheme(
 			final IConfigurationElement[] configurationElements,
-			final IMemento preferences) {
+			final int configurationElementCount, final IMemento preferences,
+			final BindingManager bindingManager) {
 		// A non-default preference.
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
 		final String defaultActiveSchemeId = store
@@ -259,7 +413,13 @@ public final class BindingPersistence {
 				.getString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
 		if ((preferenceActiveSchemeId != null)
 				&& (!preferenceActiveSchemeId.equals(defaultActiveSchemeId))) {
-			return preferenceActiveSchemeId;
+			try {
+				bindingManager.setActiveScheme(bindingManager
+						.getScheme(preferenceActiveSchemeId));
+				return;
+			} catch (final NotDefinedException e) {
+				// Let's keep looking....
+			}
 		}
 
 		// A legacy preference XML memento.
@@ -271,7 +431,13 @@ public final class BindingPersistence {
 				final IMemento memento = preferenceMementos[i];
 				String id = memento.getString(ATTRIBUTE_KEY_CONFIGURATION_ID);
 				if (id != null) {
-					return id;
+					try {
+						bindingManager.setActiveScheme(bindingManager
+								.getScheme(id));
+						return;
+					} catch (final NotDefinedException e) {
+						// Let's keep looking....
+					}
 				}
 			}
 		}
@@ -280,32 +446,89 @@ public final class BindingPersistence {
 		if ((defaultActiveSchemeId != null)
 				&& (!defaultActiveSchemeId
 						.equals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID))) {
-			return defaultActiveSchemeId;
+			try {
+				bindingManager.setActiveScheme(bindingManager
+						.getScheme(defaultActiveSchemeId));
+				return;
+			} catch (final NotDefinedException e) {
+				// Let's keep looking....
+			}
 		}
 
 		// The registry.
-		final int configurationElementCount = configurationElements.length;
-		for (int i = 0; i < configurationElementCount; i++) {
+		for (int i = configurationElementCount - 1; i >= 0; i--) {
 			final IConfigurationElement configurationElement = configurationElements[i];
-			if (!ELEMENT_ACTIVE_KEY_CONFIGURATION.equals(configurationElement
-					.getName())) {
-				continue;
-			}
 
 			String id = configurationElement
 					.getAttribute(ATTRIBUTE_KEY_CONFIGURATION_ID);
 			if (id != null) {
-				return id;
+				try {
+					bindingManager
+							.setActiveScheme(bindingManager.getScheme(id));
+					return;
+				} catch (final NotDefinedException e) {
+					// Let's keep looking....
+				}
 			}
 
 			id = configurationElement.getAttribute(ATTRIBUTE_VALUE);
 			if (id != null) {
-				return id;
+				try {
+					bindingManager
+							.setActiveScheme(bindingManager.getScheme(id));
+					return;
+				} catch (final NotDefinedException e) {
+					// Let's keep looking....
+				}
 			}
 		}
 
 		// The default default active scheme id.
-		return IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID;
+		try {
+			bindingManager
+					.setActiveScheme(bindingManager
+							.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID));
+		} catch (final NotDefinedException e) {
+			// Damn, we're fucked.
+			throw new Error("You cannot make something from nothing"); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Reads all of the scheme definitions from the registry.
+	 * 
+	 * @param configurationElements
+	 *            The configuration elements in the commands extension point;
+	 *            must not be <code>null</code>, but may be empty.
+	 * @param configurationElementCount
+	 *            The number of configuration elements that are really in the
+	 *            array.
+	 * @param bindingManager
+	 *            The binding manager to which the schemes should be added.
+	 */
+	private static final void readSchemes(
+			final IConfigurationElement[] configurationElements,
+			final int configurationElementCount,
+			final BindingManager bindingManager) {
+		for (int i = 0; i < configurationElementCount; i++) {
+			final IConfigurationElement configurationElement = configurationElements[i];
+
+			// Read out the attributes.
+			final String id = configurationElement.getAttribute(ATTRIBUTE_ID);
+			final String name = configurationElement
+					.getAttribute(ATTRIBUTE_NAME);
+			final String description = configurationElement
+					.getAttribute(ATTRIBUTE_DESCRIPTION);
+			String parentId = configurationElement
+					.getAttribute(ATTRIBUTE_PARENT_ID);
+			if (parentId == null) {
+				parentId = configurationElement.getAttribute(ATTRIBUTE_PARENT);
+			}
+
+			// Define the scheme.
+			final Scheme scheme = bindingManager.getScheme(id);
+			scheme.define(name, description, parentId);
+		}
 	}
 
 	/**

@@ -101,10 +101,6 @@ public final class PreferenceCommandRegistry extends
                 List commandDefinitions = Collections
                         .unmodifiableList(Persistence.readCommandDefinitions(
                                 memento, Persistence.TAG_COMMAND, null));
-                List keyConfigurationDefinitions = Collections
-                        .unmodifiableList(Persistence
-                                .readKeyConfigurationDefinitions(memento,
-                                        Persistence.TAG_KEY_CONFIGURATION, null));
                 List keySequenceBindingDefinitions = Collections
                         .unmodifiableList(Persistence
                                 .readKeySequenceBindingDefinitions(memento,
@@ -119,12 +115,6 @@ public final class PreferenceCommandRegistry extends
 
                 if (!commandDefinitions.equals(this.commandDefinitions)) {
                     this.commandDefinitions = commandDefinitions;
-                    commandRegistryChanged = true;
-                }
-
-                if (!keyConfigurationDefinitions
-                        .equals(this.keyConfigurationDefinitions)) {
-                    this.keyConfigurationDefinitions = keyConfigurationDefinitions;
                     commandRegistryChanged = true;
                 }
 
@@ -157,8 +147,6 @@ public final class PreferenceCommandRegistry extends
                 Persistence.TAG_CATEGORY, categoryDefinitions);
         Persistence.writeCommandDefinitions(xmlMemento,
                 Persistence.TAG_COMMAND, commandDefinitions);
-        Persistence.writeKeyConfigurationDefinitions(xmlMemento,
-                Persistence.TAG_KEY_CONFIGURATION, keyConfigurationDefinitions);
         Persistence.writeKeySequenceBindingDefinitions(xmlMemento,
                 Persistence.TAG_KEY_SEQUENCE_BINDING,
                 keySequenceBindingDefinitions);
