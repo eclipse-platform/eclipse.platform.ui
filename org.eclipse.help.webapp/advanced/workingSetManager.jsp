@@ -103,12 +103,6 @@ function enableButtons() {
 	}
 }
 
-function selectRadio(radioId) {
-	if (!(document.getElementById(radioId).checked)){
-		document.getElementById(radioId).click();
-	}
-}
-
 function getWorkingSet()
 {
 	if (active != null && document.getElementById("selectws").checked)
@@ -179,11 +173,11 @@ function closeWorkingSetDialog()
 <form>
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
-		<tr><td onclick="selectRadio('alldocs')">
-			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><%=ServletResources.getString("All", request)%>
+		<tr><td>
+			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><label for="alldocs"><%=ServletResources.getString("All", request)%></label>
 		</td></tr>
-		<tr><td onclick="selectRadio('selectws')">
-			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><%=ServletResources.getString("selectWorkingSet", request)%>:		
+		<tr><td>
+			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><label for="selectws"><%=ServletResources.getString("selectWorkingSet", request)%>:</label>	
 		</td></tr>
 		<tr><td>
 			<div id="workingSetContainer" style="overflow:auto; height:150px; background:<%=prefs.getViewBackground()%>;">
