@@ -141,7 +141,7 @@ public class FindVariableDialog extends Dialog {
         label.setFont(parent.getFont());
         label.setText(ActionMessages.getString("FindVariableDialog.1")); //$NON-NLS-1$
         
-        fText= new Text(composite, SWT.SINGLE);
+        fText= new Text(composite, SWT.SINGLE | SWT.BORDER);
         fText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fText.setFont(parent.getFont());
         fText.addModifyListener(new ModifyListener() {
