@@ -31,13 +31,17 @@ body {
 	width : 100%;
 	background-image : url(../graphics/background/content_background.jpg);
 	background-repeat : repeat-x;
-	text-align : center;
+	text-align : left;
 }
 
-#background-image img {
+#curve-image {
 	height : 120px;
-	width : 850px;
-
+	width : 600px;
+	background-image : url(../graphics/background/content_curve.gif);
+	background-repeat : no-repeat;
+	position : relative;
+	left : 50%;
+	margin-left : -300px;
 }
 
 /* don't display the page title */

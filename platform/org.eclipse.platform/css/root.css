@@ -33,15 +33,20 @@ body {
 	position : relative;
 	top : 10%; /* same as variable-space and background height */
 	height : 253px;
+	width : 100%;
 	background-image : url(graphics/background/background.jpg);
 	background-repeat : repeat-x;
-	text-align : center;
+	text-align : left;
 }
 
-#background-image img {
+#curve-image {
 	height : 253px;
 	width : 611px;
 	background-image : url(graphics/background/curve.gif);
+	background-repeat : no-repeat;
+	position : relative;
+	left : 50%;
+	margin-left : -305px;
 }
 
 #navigation-links {

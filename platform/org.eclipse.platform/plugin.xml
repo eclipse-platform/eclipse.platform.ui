@@ -56,8 +56,8 @@
             <div id="background">
       			<div id="variable-space"></div>
 				<div id="background-image">
-					<img id="curve-image" src="css/graphics/background/curve.gif">
-					</img>
+					<div id="curve-image">
+					</div>
 				</div>
       		</div>
       		
@@ -110,8 +110,8 @@
 	               title="%overview.title"
 	               id="overview">
 	            <div id="background-image">
-                    <img id="curve-image" src="css/graphics/background/content_curve.gif">
-                    </img>
+                    <div id="curve-image">
+					</div>
 	    	 	</div>
 	         	<include path="root/navigation-links"/>
 	         	<text id="page-title">
@@ -138,8 +138,6 @@
 		               </text>
 		            </link>
             	</div>
-            	<img id="eclipse-wordmark" src="css/graphics/watermark/eclipse_wordmark.gif">
-            	</img>
          </page>
          <page
                alt-style="css/tutorials/swt.properties"
@@ -147,8 +145,8 @@
                title="%tutorials.title"
                id="tutorials">
             <div id="background-image">
-                    <img id="curve-image" src="css/graphics/background/content_curve.gif">
-                    </img>
+            	<div id="curve-image">
+				</div>
 	    	 </div>
 	         <include path="root/navigation-links"/>
 	         <text id="page-title">
@@ -157,8 +155,6 @@
             <text id="page-description">
                %tutorials.text
             </text>
-            <img id="eclipse-wordmark" src="css/graphics/watermark/eclipse_wordmark.gif">
-            </img>
          </page>
          <page
                alt-style="css/samples/swt.properties"
@@ -166,8 +162,8 @@
                title="%samples.title"
                id="samples">
             <div id="background-image">
-                    <img id="curve-image" src="css/graphics/background/content_curve.gif">
-                    </img>
+            	<div id="curve-image">
+				</div>
 	    	</div>
 	        <include path="root/navigation-links"/>
 	        <text id="page-title">
@@ -230,8 +226,6 @@
                   </text>
                </link>
             </div>
-            <img id="eclipse-wordmark" src="css/graphics/watermark/eclipse_wordmark.gif">
-	        </img>
          </page>
          <page
                alt-style="css/whatsnew/swt.properties"
@@ -240,8 +234,8 @@
                id="news">
             
             <div id="background-image">
-                    <img id="curve-image" src="css/graphics/background/content_curve.gif">
-                    </img>
+            	<div id="curve-image">
+				</div>
 	    	</div>
 	        <include path="root/navigation-links"/>
 	        <text id="page-title">
@@ -281,8 +275,6 @@
 	               </text>
 	            </link>
             </div>
-            <img id="eclipse-wordmark" src="css/graphics/watermark/eclipse_wordmark.gif">
-	        </img>
          </page>
       </config>
    </extension>
