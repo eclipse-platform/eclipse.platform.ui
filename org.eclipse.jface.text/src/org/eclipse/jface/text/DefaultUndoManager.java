@@ -14,7 +14,6 @@ package org.eclipse.jface.text;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyEvent;
@@ -75,67 +74,45 @@ public class DefaultUndoManager implements IUndoManager {
 		/**
 		 * Undo the change described by this command.
 		 * 
-		 * @param text the text widget to be modified
 		 * @since 2.0
 		 */
-		protected void undoTextChange(StyledText text) {
-			text.replaceTextRange(fStart, fText.length(), fPreservedText);
+		protected void undoTextChange() {
+			try {
+				fTextViewer.getDocument().replace(fStart, fText.length(), fPreservedText);
+			} catch (BadLocationException x) {
+			}
 		}
 		
 		/**
 		 * Undo the change described by this command. Also selects and
 		 * reveals the change.
-		 *
-		 * @param text the text widget to be modified
 		 */
-		protected void undo(StyledText text) {
-			undoTextChange(text);
-			IRegion modelRange= widgetRange2ModelRange(fStart, fPreservedText == null ? 0 : fPreservedText.length());
-			fTextViewer.setSelectedRange(modelRange.getOffset(), modelRange.getLength());
-			fTextViewer.revealRange(modelRange.getOffset(), modelRange.getLength());
+		protected void undo() {
+			undoTextChange();
+			selectAndReveal(fStart, fPreservedText == null ? 0 : fPreservedText.length());
 		}
 		
 		/**
-		 * Redo the change described by this command.
+		 * Re-applies the change described by this command.
 		 * 
-		 * @param text the text widget to be modified
 		 * @since 2.0
 		 */
-		protected void redoTextChange(StyledText text) {
-			text.replaceTextRange(fStart, fEnd - fStart, fText);
-		}
-		
-		/**
-		 * Redo the change described by this command that previously been 
-		 * rolled back. Also selects and reveals the change.
-		 *
-		 * @param text the text widget to be modified
-		 */
-		protected void redo(StyledText text) {
-			redoTextChange(text);
-			IRegion modelRange= widgetRange2ModelRange(fStart, fText == null ? 0 : fText.length());
-			fTextViewer.setSelectedRange(modelRange.getOffset(), modelRange.getLength());
-			fTextViewer.revealRange(modelRange.getOffset(), modelRange.getLength());
-		}
-		
-		/**
-		 * Translates a given widget range into the corresponding range of the source viewer's input document.
-		 * 
-		 * @param offset the offset of the widget range
-		 * @param length the length of the widget range
-		 * @return the corresponding model range
-		 * @since 2.1
-		 */
-		protected IRegion widgetRange2ModelRange(int offset, int length) {
-			if (fTextViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
-				return extension.widgetRange2ModelRange(new Region(offset, length));
+		protected void redoTextChange() {
+			try {
+				fTextViewer.getDocument().replace(fStart, fEnd - fStart, fText);
+			} catch (BadLocationException x) {
 			}
-			
-			IRegion visible= fTextViewer.getVisibleRegion();
-			return new Region(offset + visible.getOffset(), length);
 		}
 		
+		/**
+		 * Re-applies the change described by this command that previously been 
+		 * rolled back. Also selects and reveals the change.
+		 */
+		protected void redo() {
+			redoTextChange();
+			selectAndReveal(fStart, fText == null ? 0 : fText.length());
+		}
+				
 		/**
 		 * Updates the command stack in response to committing
 		 * the current change into this command.
@@ -204,9 +181,9 @@ public class DefaultUndoManager implements IUndoManager {
 		}
 		
 		/*
-		 * @see TextCommand#undo
+		 * @see org.eclipse.jface.text.DefaultUndoManager2.TextCommand#undo()
 		 */
-		protected void undo(StyledText text) {
+		protected void undo() {
 			ITextViewerExtension extension= null;
 			if (fTextViewer instanceof ITextViewerExtension)
 				extension= (ITextViewerExtension) fTextViewer;
@@ -223,11 +200,11 @@ public class DefaultUndoManager implements IUndoManager {
 					
 					for (int i= size -1; i > 0;  --i) {
 						c= (TextCommand) fCommands.get(i);
-						c.undoTextChange(text);
+						c.undoTextChange();
 					}
 					
 					c= (TextCommand) fCommands.get(0);
-					c.undo(text);
+					c.undo();
 				}
 					
 			} finally {
@@ -237,9 +214,9 @@ public class DefaultUndoManager implements IUndoManager {
 		}
 		
 		/*
-		 * @see TextCommand#redo
+		 * @see org.eclipse.jface.text.DefaultUndoManager2.TextCommand#redo()
 		 */
-		protected void redo(StyledText text) {
+		protected void redo() {
 			
 			ITextViewerExtension extension= null;
 			if (fTextViewer instanceof ITextViewerExtension)
@@ -257,11 +234,11 @@ public class DefaultUndoManager implements IUndoManager {
 					
 					for (int i= 0; i < size -1;  ++i) {
 						c= (TextCommand) fCommands.get(i);
-						c.redoTextChange(text);
+						c.redoTextChange();
 					}
 					
 					c= (TextCommand) fCommands.get(size -1);
-					c.redo(text);
+					c.redo();
 				}
 				
 			} finally {
@@ -459,7 +436,7 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/**
-	 * Deregister all previously installed listeners from the text viewer.
+	 * Unregister all previously installed listeners from the text viewer.
 	 */
 	private void removeListeners() {
 		StyledText text= fTextViewer.getTextWidget();
@@ -498,39 +475,31 @@ public class DefaultUndoManager implements IUndoManager {
 	}
 	
 	/**
-	 * Does redo the previously undone editing command.
+	 * Re-applies the previously undone editing command.
 	 */
-	private void internalRedo() {
-		StyledText text= fTextViewer.getTextWidget();
-		if (text != null) {
-			
-			++fCommandCounter;
-			TextCommand cmd= (TextCommand) fCommandStack.get(fCommandCounter);
-			
-			listenToTextChanges(false);
-			cmd.redo(text);
-			listenToTextChanges(true);
-			
-			fCurrent= new TextCommand();
-		}
+	private void internalRedo() {		
+		++fCommandCounter;
+		TextCommand cmd= (TextCommand) fCommandStack.get(fCommandCounter);
+		
+		listenToTextChanges(false);
+		cmd.redo();
+		listenToTextChanges(true);
+		
+		fCurrent= new TextCommand();
 	}
 	
 	/**
 	 * Does undo the last editing command.
 	 */
-	private void internalUndo() {
-		StyledText text= fTextViewer.getTextWidget();
-		if (text != null) {
+	private void internalUndo() {		
+		TextCommand cmd= (TextCommand) fCommandStack.get(fCommandCounter);
+		-- fCommandCounter;
 		
-			TextCommand cmd= (TextCommand) fCommandStack.get(fCommandCounter);
-			-- fCommandCounter;
-				
-			listenToTextChanges(false);
-			cmd.undo(text);
-			listenToTextChanges(true);
-			
-			fCurrent= new TextCommand();
-		}
+		listenToTextChanges(false);
+		cmd.undo();
+		listenToTextChanges(true);
+		
+		fCurrent= new TextCommand();
 	}
 	
 	/**
@@ -538,7 +507,6 @@ public class DefaultUndoManager implements IUndoManager {
 	 * subsequently contains a white space only.
 	 *
 	 * @param text the text to check
-	 * @return <code>true</code> if check is successful
 	 */
 	private boolean isWhitespaceText(String text) {
 				
@@ -586,9 +554,18 @@ public class DefaultUndoManager implements IUndoManager {
 	 * @param e the text event
 	 */
 	private void processTextEvent(TextEvent e) {
+		
+		DocumentEvent event= e.getDocumentEvent();
+		if (event == null) {
+			commit();
+			return;
+		}
 	
 		int start= e.getOffset();
+		int modelStart= event.getOffset();
 		int end= e.getOffset() + e.getLength();
+		int modelEnd= event.getOffset() + event.getLength();
+		
 		String newText= e.getText();
 		String oldText= e.getReplacedText();
 		
@@ -614,18 +591,18 @@ public class DefaultUndoManager implements IUndoManager {
 			// text will be inserted
 			if ((length == 1) || isWhitespaceText(newText)) {
 				// by typing or model manipulation
-				if (!fInserting || (start != fCurrent.fStart + fTextBuffer.length())) {
+				if (!fInserting || (modelStart != fCurrent.fStart + fTextBuffer.length())) {
 					commit();
 					fInserting= true;
 				} 
 				if (fCurrent.fStart < 0)
-					fCurrent.fStart= fCurrent.fEnd= start;
+					fCurrent.fStart= fCurrent.fEnd= modelStart;
 				if (length > 0)
 					fTextBuffer.append(newText);
 			} else if (length > 0) {
 				// by pasting
 				commit();
-				fCurrent.fStart= fCurrent.fEnd= start;
+				fCurrent.fStart= fCurrent.fEnd= modelStart;
 				fTextBuffer.append(newText);
 				commit();
 			}
@@ -643,9 +620,9 @@ public class DefaultUndoManager implements IUndoManager {
 						// repeated DEL
 							
 							// correct wrong settings of fCurrent
-						if (fCurrent.fStart == end && fCurrent.fEnd == start) {
-							fCurrent.fStart= start;
-							fCurrent.fEnd= end;
+						if (fCurrent.fStart == modelEnd && fCurrent.fEnd == modelStart) {
+							fCurrent.fStart= modelStart;
+							fCurrent.fEnd= modelEnd;
 						}
 							// append to buffer && extend command range
 						fPreservedTextBuffer.append(oldText);
@@ -656,7 +633,7 @@ public class DefaultUndoManager implements IUndoManager {
 						
 							// insert in buffer and extend command range
 						fPreservedTextBuffer.insert(0, oldText);
-						fCurrent.fStart= start;
+						fCurrent.fStart= modelStart;
 					
 					} else {
 						// either DEL or backspace for the first time
@@ -665,8 +642,8 @@ public class DefaultUndoManager implements IUndoManager {
 						
 						// as we can not decide whether it was DEL or backspace we initialize for backspace
 						fPreservedTextBuffer.append(oldText);
-						fCurrent.fStart= start;
-						fCurrent.fEnd= end;
+						fCurrent.fStart= modelStart;
+						fCurrent.fEnd= modelEnd;
 					}
 					
 					fPreviousDelete.set(start, end);
@@ -674,8 +651,8 @@ public class DefaultUndoManager implements IUndoManager {
 				} else if (length > 0) {
 					// whereby selection is not empty
 					commit();
-					fCurrent.fStart= start;
-					fCurrent.fEnd= end;
+					fCurrent.fStart= modelStart;
+					fCurrent.fEnd= modelEnd;
 					fPreservedTextBuffer.append(oldText);
 				}
 			} else {
@@ -687,15 +664,15 @@ public class DefaultUndoManager implements IUndoManager {
 
 					if ((length == 1) || TextUtilities.equals(delimiters, oldText) > -1) {
 						// because of overwrite mode or model manipulation
-						if (!fOverwriting || (start != fCurrent.fStart +  fTextBuffer.length())) {
+						if (!fOverwriting || (modelStart != fCurrent.fStart +  fTextBuffer.length())) {
 							commit();
 							fOverwriting= true;
 						}
 
 						if (fCurrent.fStart < 0)
-							fCurrent.fStart= start;
+							fCurrent.fStart= modelStart;
 
-						fCurrent.fEnd= end;
+						fCurrent.fEnd= modelEnd;
 						fTextBuffer.append(newText);
 						fPreservedTextBuffer.append(oldText);
 						return;
@@ -703,8 +680,8 @@ public class DefaultUndoManager implements IUndoManager {
 				} 
 				// because of typing or pasting whereby selection is not empty
 				commit();
-				fCurrent.fStart= start;
-				fCurrent.fEnd= end;
+				fCurrent.fStart= modelStart;
+				fCurrent.fEnd= modelEnd;
 				fTextBuffer.append(newText);
 				fPreservedTextBuffer.append(oldText);
 			}
@@ -808,4 +785,15 @@ public class DefaultUndoManager implements IUndoManager {
 			internalUndo();
 		}
 	}
+	
+	protected void selectAndReveal(int offset, int length) {
+		if (fTextViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
+			extension.exposeModelRange(new Region(offset, length));
+		} else if (!fTextViewer.overlapsWithVisibleRegion(offset, length))
+			fTextViewer.resetVisibleRegion();
+
+		fTextViewer.setSelectedRange(offset, length);
+		fTextViewer.revealRange(offset, length);
+	}	
 }

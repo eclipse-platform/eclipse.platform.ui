@@ -116,7 +116,16 @@ public class TextViewer extends Viewer implements
 			
 			if (length != 0) {
 				try {
-					preservedText= e.getDocument().get(e.getOffset(), e.getLength());
+					
+					if (e instanceof SlaveDocumentEvent) {
+						SlaveDocumentEvent slave= (SlaveDocumentEvent) e;
+						DocumentEvent master= slave.getMasterEvent();
+						if (master != null)
+							preservedText= master.getDocument().get(master.getOffset(), master.getLength());
+					} else {
+						preservedText= e.getDocument().get(e.getOffset(), e.getLength());
+					}
+					
 				} catch (BadLocationException x) {
 					preservedText= null;
 					if (TRACE_ERRORS)
@@ -1168,10 +1177,7 @@ public class TextViewer extends Viewer implements
 	private WidgetCommand fWidgetCommand= new WidgetCommand();	
 	/** The SWT control's scrollbars */
 	private ScrollBar fScroller;
-	/**
-	 * Listener on the visible document.
-	 * @since 3.0
-	 */
+	/** Listener on the visible document */
 	private VisibleDocumentListener fVisibleDocumentListener= new VisibleDocumentListener();
 	/** Verify listener */
 	private TextVerifyListener fVerifyListener= new TextVerifyListener();
@@ -2342,7 +2348,8 @@ public class TextViewer extends Viewer implements
 		fDocument= document;
 		
 		setVisibleDocument(fDocument);
-		
+
+		resetPlugins();
 		inputChanged(fDocument, oldDocument);
 		
 		fireInputDocumentChanged(oldDocument, fDocument);
@@ -2371,6 +2378,7 @@ public class TextViewer extends Viewer implements
 			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_1")); //$NON-NLS-1$
 		}
 		
+		resetPlugins();
 		inputChanged(fDocument, oldDocument);
 		
 		fireInputDocumentChanged(oldDocument, fDocument);
@@ -2976,7 +2984,6 @@ public class TextViewer extends Viewer implements
 		
 		if (fVisibleDocument == document && fVisibleDocument instanceof ChildDocument) {
 			// optimization for new child documents
-			resetPlugins();
 			return;
 		}
 		
@@ -2991,7 +2998,6 @@ public class TextViewer extends Viewer implements
 		initializeDocumentInformationMapping(fVisibleDocument);
 		
 		initializeWidgetContents();
-		resetPlugins();
 		
 		if (fVisibleDocument != null) {
 			fFindRepalceDocumentAdapter= new FindReplaceDocumentAdapter(getVisibleDocument());
@@ -3864,9 +3870,8 @@ public class TextViewer extends Viewer implements
 		}
 	}
 	
-	/*
+	/**
 	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
-	 * @since 3.0
 	 */
 	protected int findAndSelect(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (fTextWidget == null)
@@ -3898,7 +3903,7 @@ public class TextViewer extends Viewer implements
 		return -1;
 	}
 	
-	/*
+	/**
 	 * @see IFindReplaceTargetExtension3#findAndSelect(int, String, boolean, boolean, boolean, boolean)
 	 * @since 3.0
 	 */
