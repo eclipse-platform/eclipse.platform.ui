@@ -21,17 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.ui.ISearchPage;
-import org.eclipse.search.ui.ISearchPageScoreComputer;
-import org.osgi.framework.Bundle;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -41,6 +37,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.StringConverter;
 
 import org.eclipse.ui.IPluginContribution;
+
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchPageScoreComputer;
+
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+
+import org.osgi.framework.Bundle;
 
 /**
  * Proxy that represents a search page.
@@ -93,24 +97,23 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 
 	/**
 	 * Creates a new search page from this node.
+	 * @param container The parent container
 	 * @return the created page or null if the creation failed
+	 * @throws CoreException Page creation failed
 	 */
-	public ISearchPage createObject() {
+	public ISearchPage createObject(ISearchPageContainer container) throws CoreException {
 		if (fCreatedPage == null) {
-			try {
-				fCreatedPage= (ISearchPage) fElement.createExecutableExtension(CLASS_ATTRIBUTE);
-			} catch (CoreException ex) {
-				ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
-			} catch (ClassCastException ex) {
-				ExceptionHandler.displayMessageDialog(ex, SearchMessages.getString("Search.Error.createSearchPage.title"), SearchMessages.getString("Search.Error.createSearchPage.message")); //$NON-NLS-2$ //$NON-NLS-1$
-				return null;
-			}
-			if (fCreatedPage != null) {
-				fCreatedPage.setTitle(getLabel());
-			}
+			fCreatedPage= (ISearchPage) fElement.createExecutableExtension(CLASS_ATTRIBUTE);
+			fCreatedPage.setTitle(getLabel());
+			fCreatedPage.setContainer(container);
 		}
 		return fCreatedPage;
 	}
+	
+	public ISearchPage getPage() {
+		return fCreatedPage;
+	}
+	
 	
 	public void dispose() {
 		if (fCreatedPage != null) {
