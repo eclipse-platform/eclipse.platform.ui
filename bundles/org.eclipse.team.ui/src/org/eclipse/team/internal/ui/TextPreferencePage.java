@@ -123,7 +123,6 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * @see PreferencePage#createControl
 	 */
 	protected Control createContents(Composite ancestor) {
-		noDefaultAndApplyButton();
 		
 		Composite parent = new Composite(ancestor, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -276,11 +275,17 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 				changePattern();
 			}
 		});
-		
-		fillTable();
+		fillTable(Team.getAllTypes());
 		Dialog.applyDialogFont(parent);
 		return parent;
 	}
+	
+	protected void performDefaults() {
+		super.performDefaults();
+		IFileTypeInfo[] infos = Team.getDefaultTypes();
+		fillTable(infos);
+	}
+	
 	/**
 	 * Do anything necessary because the OK button has been pressed.
 	 *
@@ -310,9 +315,8 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	/**
 	 * Fill the table with the values from the file type registry
 	 */
-	private void fillTable() {
+	private void fillTable(IFileTypeInfo[] infos) {
 		this.input = new ArrayList();
-		IFileTypeInfo[] infos = Team.getAllTypes();
 		for (int i = 0; i < infos.length; i++) {
 			IFileTypeInfo info = infos[i];
 			int type = info.getType();

@@ -18,14 +18,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.SortedMap;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import org.eclipse.core.resources.IFile;
@@ -73,10 +72,10 @@ public final class Team {
 	public static final int BINARY = 2;
 	
 	// Keys: file extensions. Values: Integers
-	private static Hashtable fileTypes, pluginTypes;
+	private static SortedMap globalTypes, pluginTypes;
 
 	// The ignore list that is read at startup from the persisted file
-	private static Map globalIgnore, pluginIgnore;
+	private static SortedMap globalIgnore, pluginIgnore;
 	private static StringMatcher[] ignoreMatchers;
 
 	private static class FileTypeInfo implements IFileTypeInfo {
@@ -125,7 +124,7 @@ public final class Team {
 	public static int getType(IStorage storage) {
 		String extension = getFileExtension(storage.getName());
 		if (extension == null) return UNKNOWN;
-		Hashtable table = getFileTypeTable();
+		SortedMap table = getFileTypeTable();
 		Integer integer = (Integer)table.get(extension);
 		if (integer == null) return UNKNOWN;
 		return integer.intValue();
@@ -170,21 +169,24 @@ public final class Team {
 		return matchesEnabledIgnore(file);
 	}
 
+	private static IFileTypeInfo[] getFileTypeInfo(SortedMap map)  {
+		List result = new ArrayList();
+		Iterator e = map.keySet().iterator();
+		while (e.hasNext()) {
+			String string = (String)e.next();
+			int type = ((Integer)map.get(string)).intValue();
+			result.add(new FileTypeInfo(string, type));
+		}
+		return (IFileTypeInfo[])result.toArray(new IFileTypeInfo[result.size()]);
+	}
+	
 	/**
 	 * Return all known file types.
 	 * 
 	 * @return all known file types
 	 */
 	public static IFileTypeInfo[] getAllTypes() {
-		List result = new ArrayList();
-		Hashtable table = getFileTypeTable();
-		Enumeration e = table.keys();
-		while (e.hasMoreElements()) {
-			String string = (String)e.nextElement();
-			int type = ((Integer)table.get(string)).intValue();
-			result.add(new FileTypeInfo(string, type));
-		}
-		return (IFileTypeInfo[])result.toArray(new IFileTypeInfo[result.size()]);
+		return getFileTypeInfo(getFileTypeTable());
 	}
 	
 	/**
@@ -192,21 +194,27 @@ public final class Team {
 	 */
 	public synchronized static IIgnoreInfo[] getAllIgnores() {
 		if (globalIgnore == null) {
-			globalIgnore = new HashMap();
+			globalIgnore = new TreeMap();
+			pluginIgnore = new TreeMap();
 			ignoreMatchers = null;
 			try {
 				readIgnoreState();
 			} catch (TeamException e) {
 				TeamPlugin.log(IStatus.ERROR, Policy.bind("Team.Error_loading_ignore_state_from_disk_1"), e); //$NON-NLS-1$
 			}
-			initializePluginIgnores();
+			initializePluginIgnores(pluginIgnore, globalIgnore);
 		}
-		IIgnoreInfo[] result = new IIgnoreInfo[globalIgnore.size()];
-		Iterator e = globalIgnore.keySet().iterator();
+		IIgnoreInfo[] result = getIgnoreInfo(globalIgnore);
+		return result;
+	}
+
+	private static IIgnoreInfo[] getIgnoreInfo(Map gIgnore) {
+		IIgnoreInfo[] result = new IIgnoreInfo[gIgnore.size()];
+		Iterator e = gIgnore.keySet().iterator();
 		int i = 0;
 		while (e.hasNext() ) {
 			final String pattern = (String)e.next();
-			final boolean enabled = ((Boolean)globalIgnore.get(pattern)).booleanValue();
+			final boolean enabled = ((Boolean)gIgnore.get(pattern)).booleanValue();
 			result[i++] = new IIgnoreInfo() {
 				private String p = pattern;
 				private boolean e = enabled;
@@ -236,9 +244,9 @@ public final class Team {
 		return ignoreMatchers;
 	}
 	
-	private synchronized static Hashtable getFileTypeTable() {
-		if (fileTypes == null) loadTextState();
-		return fileTypes;
+	private synchronized static SortedMap getFileTypeTable() {
+		if (globalTypes == null) loadTextState();
+		return globalTypes;
 	}
 	
 	/**
@@ -256,13 +264,13 @@ public final class Team {
 		if (pluginTypes == null) {
 			loadTextState();
 		}
-		fileTypes = new Hashtable(11);
+		globalTypes = new TreeMap();
 		for (int i = 0; i < extensions.length; i++) {
-			fileTypes.put(extensions[i], new Integer(types[i]));
+			globalTypes.put(extensions[i], new Integer(types[i]));
 		}
 		// Now set into preferences
 		StringBuffer buf = new StringBuffer();
-		Iterator e = fileTypes.keySet().iterator();
+		Iterator e = globalTypes.keySet().iterator();
 		while (e.hasNext()) {
 			String extension = (String)e.next();
 			boolean isCustom = (!pluginTypes.containsKey(extension)) ||
@@ -270,7 +278,7 @@ public final class Team {
 			if (isCustom) {
 				buf.append(extension);
 				buf.append(PREF_TEAM_SEPARATOR);
-				Integer type = (Integer)fileTypes.get(extension);
+				Integer type = (Integer)globalTypes.get(extension);
 				buf.append(type);
 				buf.append(PREF_TEAM_SEPARATOR);
 			}
@@ -283,7 +291,7 @@ public final class Team {
 	 * Add patterns to the list of global ignores.
 	 */
 	public static void setAllIgnores(String[] patterns, boolean[] enabled) {
-		globalIgnore = new Hashtable(11);
+		globalIgnore = new TreeMap();
 		ignoreMatchers = null;
 		for (int i = 0; i < patterns.length; i++) {
 			globalIgnore.put(patterns[i], new Boolean(enabled[i]));
@@ -361,8 +369,7 @@ public final class Team {
 	 * 
 	 * Reads the text patterns currently defined by extensions.
 	 */
-	private static void initializePluginPatterns() {
-		pluginTypes = new Hashtable();
+	private static void initializePluginPatterns(Map pTypes, Map fTypes) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
 			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.FILE_TYPES_EXTENSION);
@@ -375,13 +382,13 @@ public final class Team {
 						if (ext != null) {
 							String type = configElements[j].getAttribute("type"); //$NON-NLS-1$
 							// If the extension doesn't already exist, add it.
-							if (!fileTypes.containsKey(ext)) {
+							if (!fTypes.containsKey(ext)) {
 								if (type.equals("text")) { //$NON-NLS-1$
-									pluginTypes.put(ext, new Integer(TEXT));
-									fileTypes.put(ext, new Integer(TEXT));
+									pTypes.put(ext, new Integer(TEXT));
+									fTypes.put(ext, new Integer(TEXT));
 								} else if (type.equals("binary")) { //$NON-NLS-1$
-									fileTypes.put(ext, new Integer(BINARY));
-									pluginTypes.put(ext, new Integer(BINARY));
+									fTypes.put(ext, new Integer(BINARY));
+									pTypes.put(ext, new Integer(BINARY));
 								}
 							}
 						}
@@ -411,7 +418,7 @@ public final class Team {
 		for (int i = 0; i < extensionCount; i++) {
 			String extension = dis.readUTF();
 			int type = dis.readInt();
-			fileTypes.put(extension, new Integer(type));
+			globalTypes.put(extension, new Integer(type));
 		}
 	}
 	
@@ -422,10 +429,11 @@ public final class Team {
 	 * contents, as well as discovering any values contributed by plug-ins.
 	 */
 	private static void loadTextState() {
-		fileTypes = new Hashtable(11);
+		globalTypes = new TreeMap();
 		boolean old = loadBackwardCompatibleTextState();
 		if (!old) loadTextPreferences();
-		initializePluginPatterns();
+		pluginTypes = new TreeMap();
+		initializePluginPatterns(pluginTypes, globalTypes);
 		if (old) TeamPlugin.getPlugin().savePluginPreferences();
 	}
 
@@ -440,7 +448,7 @@ public final class Team {
 				extension = tok.nextToken();
 				if (extension.length()==0) return;
 				integer = tok.nextToken();
-				fileTypes.put(extension, Integer.valueOf(integer));
+				globalTypes.put(extension, Integer.valueOf(integer));
 			} 
 		} catch (NoSuchElementException e) {
 			return;
@@ -476,8 +484,7 @@ public final class Team {
 	 * 
 	 * Reads the ignores currently defined by extensions.
 	 */
-	private static void initializePluginIgnores() {
-		pluginIgnore = new Hashtable();
+	private static void initializePluginIgnores(SortedMap pIgnore, SortedMap gIgnore) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
 			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.IGNORE_EXTENSION);
@@ -495,9 +502,9 @@ public final class Team {
 							}
 							boolean enabled = selected != null && selected.equalsIgnoreCase("true"); //$NON-NLS-1$
 							// if this ignore doesn't already exist, add it to the global list
-							pluginIgnore.put(pattern, new Boolean(enabled));
-							if (!globalIgnore.containsKey(pattern)) {
-								globalIgnore.put(pattern, new Boolean(enabled));
+							pIgnore.put(pattern, new Boolean(enabled));
+							if (!gIgnore.containsKey(pattern)) {
+								gIgnore.put(pattern, new Boolean(enabled));
 							}
 						}
 					}
@@ -641,5 +648,25 @@ public final class Team {
 		if (index == (name.length() - 1))
 			return ""; //$NON-NLS-1$
 		return name.substring(index + 1);
+	}
+
+	/**
+	 * @return
+	 */
+	public static IIgnoreInfo[] getDefaultIgnores() {
+		SortedMap gIgnore = new TreeMap();
+		SortedMap pIgnore = new TreeMap();
+		initializePluginIgnores(pIgnore, gIgnore);
+		return getIgnoreInfo(gIgnore);
+	}
+
+	/**
+	 * @return
+	 */
+	public static IFileTypeInfo[] getDefaultTypes() {
+		SortedMap gTypes = new TreeMap();
+		SortedMap pTypes = new TreeMap();
+		initializePluginPatterns(pTypes, gTypes);
+		return getFileTypeInfo(gTypes);
 	}
 }

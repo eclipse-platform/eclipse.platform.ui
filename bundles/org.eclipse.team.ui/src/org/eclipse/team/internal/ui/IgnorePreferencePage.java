@@ -48,7 +48,6 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	 * @param parent  the parent for the preference page
 	 */
 	protected Control createContents(Composite ancestor) {
-		noDefaultAndApplyButton();
 		
 		Composite parent = new Composite(ancestor, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -117,8 +116,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 				removeIgnore();
 			}
 		});
-		
-		fillTable();
+		fillTable(Team.getAllIgnores());
 		Dialog.applyDialogFont(ancestor);
 		return parent;
 	}
@@ -141,16 +139,25 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		return true;
 	}
 	
-	private void fillTable() {
-		IIgnoreInfo[] ignore = Team.getAllIgnores();
+	protected void performDefaults() {
+		super.performDefaults();
+		ignoreTable.removeAll();
+		IIgnoreInfo[] ignore = Team.getDefaultIgnores();
+		fillTable(ignore);
+	}
+	
+	/**
+	 * @param ignore
+	 */
+	private void fillTable(IIgnoreInfo[] ignore) {
 		for (int i = 0; i < ignore.length; i++) {
 			IIgnoreInfo info = ignore[i];
 			TableItem item = new TableItem(ignoreTable, SWT.NONE);
 			item.setText(info.getPattern());
 			item.setChecked(info.getEnabled());
-		}
+		}		
 	}
-	
+
 	private void addIgnore() {
 		InputDialog dialog = new InputDialog(getShell(), Policy.bind("IgnorePreferencePage.enterPatternShort"), Policy.bind("IgnorePreferencePage.enterPatternLong"), null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.open();
