@@ -10,48 +10,24 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import java.io.File;
+import java.util.*;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.apache.tools.ant.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.toolscript.core.internal.ToolScript;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.toolscript.core.internal.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.model.*;
+import org.eclipse.swt.widgets.List;
 
 /**
  * Dialog box to enter the required information for running
@@ -68,6 +44,10 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	private static final int WIDGET_SPACE = 5;
 	// The spacing of margins in the dialog
 	private static final int MARGIN_SPACE = 5;
+	
+	// dialog sizing constants
+	private static final int SIZING_SELECTION_PANE_HEIGHT = 250;
+	private static final int SIZING_SELECTION_PANE_WIDTH = 300;	
 	
 	private Text nameField;
 	private Text locationField;
@@ -564,10 +544,6 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	 * the user can select one
 	 */
 	private class ResourceSelectionDialog extends SelectionDialog {
-		// sizing constants
-		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
-		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
-
 		IContainer root;
 		TreeViewer wsTree;
 		
@@ -618,10 +594,6 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	 * the user can select one.
 	 */
 	private class VariableSelectionDialog extends SelectionDialog {
-		// sizing constants
-		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
-		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
-
 		List list;
 		
 		public VariableSelectionDialog(Shell parent) {
@@ -648,7 +620,11 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varWorkspaceDirLabel")); //$NON-NLS-1$
 			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varProjectDirLabel")); //$NON-NLS-1$
 			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varProjectXDirLabel")); //$NON-NLS-1$
-			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varAntTargetLabel")); //$NON-NLS-1$
+			
+			Path path = new Path(locationField.getText().trim());
+			Project project = AntUtil.createAntProject(path);
+			if (project != null)
+				list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varAntTargetLabel")); //$NON-NLS-1$
 			
 			return dialogArea;
 		}
@@ -679,7 +655,16 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 					break;
 
 				case 3 :
-					result = null;
+					TargetSelectionDialog targetDialog;
+					targetDialog = new TargetSelectionDialog(getShell(), locationField.getText().trim());
+					targetDialog.open();
+					Object[] targets = targetDialog.getResult();
+					if (targets != null && targets.length > 0) {
+						result = ""; // $NON-NLS-1$
+						for(int i=0; i<targets.length; i++) {
+							result = result + ToolScript.buildVariableTag(ToolScript.VAR_ANT_TARGET, (String)targets[i]); 
+						}
+					}
 					break;
 			}
 			
@@ -694,10 +679,6 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	 * the user can select one.
 	 */
 	private class RefreshSelectionDialog extends SelectionDialog {
-		// sizing constants
-		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
-		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
-
 		List list;
 		
 		public RefreshSelectionDialog(Shell parent) {
@@ -780,10 +761,6 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	 * the user can select one.
 	 */
 	private class ProjectSelectionDialog extends SelectionDialog {
-		// sizing constants
-		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
-		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
-
 		List list;
 		
 		public ProjectSelectionDialog(Shell parent) {
@@ -824,4 +801,74 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			super.okPressed();
 		}
 	}
+	
+	private class TargetSelectionDialog extends SelectionDialog implements ICheckStateListener {
+		private ArrayList selectedTargets = new ArrayList();
+		private CheckboxTableViewer listViewer;
+		private Project project;
+		private AntTargetLabelProvider labelProvider = new AntTargetLabelProvider();	
+		
+		public TargetSelectionDialog(Shell parent, String location) {
+			super(parent);
+			IPath path = new Path(location);
+			project = AntUtil.createAntProject(path);
+			setTitle(ToolScriptMessages.getString("ToolScriptEditDialog.varAntTargetLabel")); //$NON-NLS-1$
+		}
+		
+		public void checkStateChanged(CheckStateChangedEvent e) {
+			Target checkedTarget = (Target)e.getElement();
+			if (e.getChecked())
+				selectedTargets.add(checkedTarget);
+			else
+				selectedTargets.remove(checkedTarget);
+				
+			labelProvider.setSelectedTargets(selectedTargets);
+			listViewer.refresh();
+		}
+		
+		protected Control createDialogArea(Composite parent) {
+			Composite dialogArea = (Composite)super.createDialogArea(parent);
+			
+			Label label = new Label(dialogArea, SWT.LEFT);
+			label.setText(ToolScriptMessages.getString("ToolScriptEditDialog.selectTargets")); //$NON-NLS-1$
+			
+			listViewer = CheckboxTableViewer.newCheckList(dialogArea, SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+			listViewer.getTable().setLayoutData(data);
+			listViewer.setSorter(new ViewerSorter() {
+				public int compare(Viewer viewer,Object o1,Object o2) {
+					return ((Target)o1).getName().compareTo(((Target)o2).getName());
+				}
+			});
+			
+			if (project != null && project.getDefaultTarget() != null)
+				labelProvider.setDefaultTargetName(project.getDefaultTarget());
+			listViewer.setLabelProvider(labelProvider);
+			listViewer.setContentProvider(new AntTargetContentProvider());
+			listViewer.setInput(project);
+			
+			listViewer.addCheckStateListener(this);
+			listViewer.refresh();
+			
+			return dialogArea;
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected void okPressed() {
+			setSelectionResult(getTargetNames());
+			super.okPressed();
+		}
+		
+		protected String[] getTargetNames() {
+			String[] result = new String[selectedTargets.size()];
+			for (int i = 0; i < selectedTargets.size(); i++)
+				result[i] = ((Target) selectedTargets.get(i)).getName();
+			return result;
+		}
+	}
+	
 }

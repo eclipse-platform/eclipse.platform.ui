@@ -35,6 +35,9 @@ public class AntScriptRunner extends ToolScriptRunner {
 			AntRunner runner = new AntRunner();
 			runner.setArguments(scriptContext.getExpandedArguments());
 			runner.setBuildFileLocation(scriptContext.getExpandedLocation());
+			String[] targets = scriptContext.getAntTargets();
+			if (targets.length > 0)
+				runner.setExecutionTargets(targets);
 			if (listener != null)
 				runner.addBuildListener(listener.getClass().getName());
 			runner.run();

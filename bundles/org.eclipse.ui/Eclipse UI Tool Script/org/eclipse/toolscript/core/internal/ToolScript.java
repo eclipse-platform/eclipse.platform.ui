@@ -48,6 +48,7 @@ public class ToolScript {
 	// Variable names the tool script will expand
 	public static final String VAR_DIR_WORKSPACE = "workspace_dir"; //$NON-NLS-1$
 	public static final String VAR_DIR_PROJECT = "project_dir"; //$NON-NLS-1$
+	public static final String VAR_ANT_TARGET = "ant_target"; //$NON-NLS-1$
 
 	// Known refresh scopes
 	public static final String REFRESH_SCOPE_NONE = "none"; //$NON-NLS-1$;

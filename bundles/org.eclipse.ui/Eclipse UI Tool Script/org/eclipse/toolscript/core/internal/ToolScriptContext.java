@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import java.io.File;
+import java.util.ArrayList;
 
 import org.apache.tools.ant.BuildListener;
 import org.eclipse.core.resources.IProject;
@@ -33,6 +34,7 @@ public final class ToolScriptContext implements IToolScriptContext {
 	private ToolScript script;
 	private IProject currentProject;
 	private IWorkingSetManager workingSetManager;
+	private ArrayList antTargets = new ArrayList();
 	private String expandedLocation;
 	private String expandedArguments;
 	private String expandedDirectory;
@@ -55,6 +57,20 @@ public final class ToolScriptContext implements IToolScriptContext {
 	 */
 	public String getName() {
 		return script.getName();
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on IToolScriptContext.
+	 */
+	public String[] getAntTargets() {
+		// Required because ant target variable tags
+		// are embedded in the script's arguments and
+		// must be expanded beforehand.
+		getExpandedArguments();
+		
+		String[] results = new String[antTargets.size()];	
+		antTargets.toArray(results);
+		return results;
 	}
 
 	/* (non-Javadoc)
@@ -139,7 +155,7 @@ public final class ToolScriptContext implements IToolScriptContext {
 		
 		if (script.VAR_DIR_PROJECT.equals(varName)) {
 			IPath location = null;
-			if (varArg != null) {
+			if (varArg != null && varArg.length() > 0) {
 				IProject namedProject = ResourcesPlugin.getWorkspace().getRoot().getProject(varArg);
 				location = namedProject.getLocation();
 			} else {
@@ -148,6 +164,12 @@ public final class ToolScriptContext implements IToolScriptContext {
 			}
 			if (location != null)
 				buf.append(location.toString());
+			return;
+		}
+		
+		if (script.VAR_ANT_TARGET.equals(varName)) {
+			if (varArg != null && varArg.length() > 0)
+				antTargets.add(varArg);
 			return;
 		}
 	}

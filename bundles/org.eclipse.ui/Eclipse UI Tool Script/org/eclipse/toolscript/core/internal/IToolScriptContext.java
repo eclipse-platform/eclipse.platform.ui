@@ -28,6 +28,13 @@ public interface IToolScriptContext {
 	public String getExpandedLocation();
 	
 	/**
+	 * Returns the targets for an Ant script. The
+	 * targets are collected from the corresponding
+	 * variable tags in the script's arguments.
+	 */
+	public String[] getAntTargets();
+	
+	/**
 	 * Returns the arguments for the script. All
 	 * variables embedded in the arguments have been fully
 	 * expanded.
