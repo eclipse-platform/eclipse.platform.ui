@@ -29,6 +29,9 @@ public void destroy() {
 public ResourceComparator getComparator() {
 	return comparator;
 }
+/**
+ * Table of all marker deltas, IPath -> MarkerSet
+ */
 public Map getMarkerDeltas() {
 	return allMarkerDeltas;
 }
