@@ -135,7 +135,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		setPageComplete(false);
 	}
 	/**
-	 * Grays all disabled projects
+	 * Grays all closed projects
 	 */
 	private void disableClosedProjects() {
 		IProject[] projects = WorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
@@ -166,6 +166,11 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			}
 		}
 	}
+	/**
+	 * Implements IWorkingSetPage.
+	 * 
+	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
+	 */
 	public void finish() {
 		ArrayList resources = new ArrayList(10);
 		findCheckedResources(resources, (IContainer) tree.getInput());
@@ -303,7 +308,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 	}	
 	/**
-	 * Set the checked state of the container's members.
+	 * Sets the checked state of the container's members.
 	 * 
 	 * @param container the container whose children should be checked/unchecked
 	 * @param state true=check all members in the container. false=uncheck all 

@@ -154,6 +154,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		});
 	}
 	/**
+	 * Overrides method from Dialog.
+	 * 
 	 * @see Dialog#cancelPressed()
 	 */
 	protected void cancelPressed() {
@@ -172,8 +174,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKING_SET_SELECTION_DIALOG);
 	}
 	/**
-	 * Create the dialog widgets.
 	 * Overrides method from Dialog.
+	 * Create the dialog widgets.
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
@@ -206,8 +208,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		return composite;
 	}
 	/**
-	 * Sets the initial selection, if any.
 	 * Overrides method from Dialog.
+	 * Sets the initial selection, if any.
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(Composite)
 	 */
@@ -322,7 +324,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		super.okPressed();
 	}
 	/**
-	 * Overrides org.eclipse.jface.dialogs.Dialog#open()
+	 * Overrides method in Dialog
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#open()
 	 */
 	public int open() {
 		addedWorkingSets = new ArrayList();

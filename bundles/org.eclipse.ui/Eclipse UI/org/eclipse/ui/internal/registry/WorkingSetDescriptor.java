@@ -30,7 +30,7 @@ public class WorkingSetDescriptor {
 	private static final String ATT_PAGE_CLASS = "pageClass"; //$NON-NLS-1$	
 
 	/**
-	 * Create a descriptor from a configuration element.
+	 * Creates a descriptor from a configuration element.
 	 * 
 	 * @param configElement configuration element to create a descriptor from
 	 */
@@ -80,6 +80,8 @@ public class WorkingSetDescriptor {
 	}
 	/**
 	 * Returns the page's icon
+	 * 
+	 * @return the page's icon
 	 */
 	public ImageDescriptor getIcon() {
 		if (icon == null)
@@ -96,6 +98,8 @@ public class WorkingSetDescriptor {
 	}
 	/**
 	 * Returns the working set page id.
+	 * 
+	 * @return the working set page id.
 	 */
 	public String getId() {
 		return id;

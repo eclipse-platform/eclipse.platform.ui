@@ -22,8 +22,6 @@ import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
  * A working set manager stores working sets and provides property 
  * change notification when a working set is added or removed.
  * Working sets are persisted whenever one is added or removed.
- * When a resource is removed from the workspace it is also removed 
- * from any working sets that contain it.
  * 
  * @see IWorkingSetManager
  * @since 2.0
@@ -89,7 +87,7 @@ public class WorkingSetManager implements IWorkingSetManager {
 	/**
 	 * Implements IWorkingSetManager.
 	 * 
-	 * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetSelectionDialog(Shell)
+	 * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetSelectionDialog(Shell, boolean)
 	 */
 	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi) {
 		return new WorkingSetSelectionDialog(parent, multi);
@@ -115,12 +113,15 @@ public class WorkingSetManager implements IWorkingSetManager {
 	 * Notify property change listeners about a change to the list of 
 	 * working sets.
 	 * 
-	 * @param changeId one of IWorkingSetManager#CHANGE_WORKING_SET_ADD 
-	 * 	and IWorkingSetManager#CHANGE_WORKING_SET_REMOVE
+	 * @param changeId one of 
+	 * 	IWorkingSetManager#CHANGE_WORKING_SET_ADD 
+	 * 	IWorkingSetManager#CHANGE_WORKING_SET_REMOVE
+	 * 	IWorkingSetManager#CHANGE_WORKING_SET_CONTENT_CHANGE 
+	 * 	IWorkingSetManager#CHANGE_WORKING_SET_NAME_CHANGE
 	 * @param oldValue the removed working set or null if a working set 
-	 * 	was added.
-	 * @param newValue the new working set or null if a working set was 
-	 * 	removed.
+	 * 	was added or changed.
+	 * @param newValue the new or changed working set or null if a working 
+	 * 	set was removed.
 	 */
 	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
 		final PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
@@ -361,7 +362,7 @@ public class WorkingSetManager implements IWorkingSetManager {
 		}
 	}
 	/**
-	 * Saves all working sets and fires a property change event for 
+	 * Persists all working sets and fires a property change event for 
 	 * the changed working set.
 	 * Should only be called by org.eclipse.ui.internal.WorkingSet.
 	 * 

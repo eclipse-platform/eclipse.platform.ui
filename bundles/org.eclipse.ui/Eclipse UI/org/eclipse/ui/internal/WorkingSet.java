@@ -15,7 +15,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * A working set holds a number of IAdaptable elements. 
  * A working set is intended to group elements for presentation to 
- * the user or for operations on the set of elements.
+ * the user or for operations on a set of elements.
  * 
  * @see org.eclipse.ui.IWorkingSet
  * @since 2.0
