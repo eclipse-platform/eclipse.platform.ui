@@ -58,14 +58,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.XMLMemento;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
  */
-public class BreakpointsView extends AbstractDebugView implements ISelectionListener, IBreakpointManagerListener {
+public class BreakpointsView extends AbstractDebugView implements ISelectionListener, IBreakpointManagerListener, IPerspectiveListener2 {
 
 	private BreakpointsViewEventHandler fEventHandler;
 	private ICheckStateListener fCheckListener= new ICheckStateListener() {
@@ -79,6 +85,13 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	private static String KEY_BREAKPOINT_CONTAINER_FACTORIES= "breakpointContainerFactories"; //$NON-NLS-1$
 	private static String KEY_VALUE="value"; //$NON-NLS-1$
 	private BreakpointsViewContentProvider fContentProvider;
+	/**
+	 * This memento allows the Breakpoints view to save and restore state
+	 * when it is closed and opened within a session. A different
+	 * memento is supplied by the platform for persistance at
+	 * workbench shutdown.
+	 */
+	private static IMemento fgMemento;
 	
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -86,6 +99,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
+		getSite().getWorkbenchWindow().addPerspectiveListener(this);
 	}
 
 	/**
@@ -216,6 +230,16 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 				fContentProvider.setBreakpointContainerFactories(factories);
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#getMemento()
+	 */
+	protected IMemento getMemento() {
+		if (fgMemento != null) {
+		    return fgMemento;
+		}
+		return super.getMemento();
 	}
 
 	/**
@@ -445,6 +469,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		if (getEventHandler() != null) {
 			getEventHandler().dispose();
 		}
+		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 	}
 
 	/**
@@ -660,4 +685,30 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	public List getBreakpointContainerFactories() {
 		return fContentProvider.getBreakpointContainerFactories();
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
+     */
+    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
+		if (partRef instanceof IViewReference && changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
+			String id = ((IViewReference) partRef).getId();
+			if (id.equals(getViewSite().getId())) {
+				// BreakpointsView closed. Persist settings.
+				fgMemento= XMLMemento.createWriteRoot("BreakpointsViewMemento"); //$NON-NLS-1$
+				saveState(fgMemento);
+			}
+		}
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
+     */
+    public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
+     */
+    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+    }
 }
