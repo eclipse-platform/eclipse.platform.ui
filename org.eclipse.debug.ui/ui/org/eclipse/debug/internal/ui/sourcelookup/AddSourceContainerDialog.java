@@ -112,7 +112,6 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		});
 		if(types.length != 0) {	
 			fViewer.setInput(types);
-			fViewer.setSelection(new StructuredSelection(types[0]), true);
 		}
 		Dialog.applyDialogFont(parent);
 		WorkbenchHelp.setHelp(getShell(), IDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
