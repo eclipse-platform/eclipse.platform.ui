@@ -392,36 +392,38 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Delete any files locally and record the names.
 		// Use a resource visitor to ensure the proper depth is obtained
 		final List files = new ArrayList(resources.length);
-		final Set parents = new HashSet();
 		final TeamException[] eHolder = new TeamException[1];
 		for (int i=0;i<resources.length;i++) {
 			checkIsChild(resources[i]);
 			try {
-				resources[i].accept(new IResourceVisitor() {
-					public boolean visit(IResource resource) {
-						try {
-							if (isManaged(resource)) {
-								String name = resource.getFullPath().removeFirstSegments(1).toString();
-								if (resource.getType() == IResource.FILE) {
-									parents.add(resource.getParent());
-									files.add(name);
-									((IFile)resource).delete(false, true, progress);
-									// NOTE: Should we broadcast Team change events?
+				if (resources[i].exists()) {
+					resources[i].accept(new IResourceVisitor() {
+						public boolean visit(IResource resource) {
+							try {
+								if (isManaged(resource)) {
+									String name = resource.getFullPath().removeFirstSegments(1).toString();
+									if (resource.getType() == IResource.FILE) {
+										files.add(name);
+										((IFile)resource).delete(false, true, progress);
+									}
 								}
+							} catch (TeamException e) {
+								eHolder[0] = e;
+								// If there was a problem, don't visit the children
+								return false;
+							} catch (CoreException e) {
+								eHolder[0] = wrapException(e);
+								// If there was a problem, don't visit the children
+								return false;
 							}
-						} catch (TeamException e) {
-							eHolder[0] = e;
-							// If there was a problem, don't visit the children
-							return false;
-						} catch (CoreException e) {
-							eHolder[0] = wrapException(e);
-							// If there was a problem, don't visit the children
-							return false;
+							// Always return true and let the depth determine if children are visited
+							return true;
 						}
-						// Always return true and let the depth determine if children are visited
-						return true;
-					}
-				}, IResource.DEPTH_INFINITE, false);
+					}, IResource.DEPTH_INFINITE, false);
+				} else if (resources[i].getType() == IResource.FILE) {
+					// If the resource doesn't exist but is a file, queue it for removal
+					files.add(resources[i].getFullPath().removeFirstSegments(1).toString());
+				}
 			} catch (CoreException e) {
 				throw wrapException(e);
 			}
