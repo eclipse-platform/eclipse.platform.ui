@@ -188,4 +188,16 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		String content= getFileContentAsString(file);
 		assertTrue("XML logging file is empty", content.length() > 0);
 	}
+	
+	 /**
+     * Tests launching Ant in a separate vm and that the Environment variable
+     * ANT_HOME is set from the Ant home set for the build and ant.home is set as a property.
+     * Bug 75729
+     */
+    public void testAntHome() throws CoreException {
+      	launch("environmentVar");
+      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+      	assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + ConsoleLineTracker.getMessage(1), ConsoleLineTracker.getMessage(1).trim().endsWith("org.apache.ant"));
+		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + ConsoleLineTracker.getMessage(2), ConsoleLineTracker.getMessage(2).trim().endsWith("org.apache.ant"));
+    }
 }

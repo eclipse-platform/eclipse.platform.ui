@@ -61,6 +61,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			createLaunchConfigurationForSeparateVM("extensionPointTaskSepVM", null);
 			createLaunchConfigurationForSeparateVM("extensionPointTypeSepVM", null);
 			createLaunchConfigurationForSeparateVM("input", null);
+			createLaunchConfigurationForSeparateVM("environmentVar", null);
             
             createLaunchConfigurationForBoth("breakpoints");
 			
