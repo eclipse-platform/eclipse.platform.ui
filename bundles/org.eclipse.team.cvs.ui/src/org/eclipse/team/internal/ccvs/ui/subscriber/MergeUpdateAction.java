@@ -85,48 +85,52 @@ public class MergeUpdateAction extends SafeUpdateAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberUpdateAction#runUpdateShallow(org.eclipse.team.internal.ui.sync.views.SyncInfo[], org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void runSafeUpdate(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
-		
-		TeamSubscriber subscriber = getSubscriber();
-		if (!(subscriber instanceof CVSMergeSubscriber)) {
-			throw new CVSException("Invalid subscriber: " + subscriber.getId());
-		}
-		CVSTag startTag = ((CVSMergeSubscriber)subscriber).getStartTag();
-		CVSTag endTag = ((CVSMergeSubscriber)subscriber).getEndTag();
-		
-		// Incoming additions require different handling then incoming changes and deletions
-		List additions = new ArrayList();
-		List changes = new ArrayList();
-		for (int i = 0; i < nodes.length; i++) {
-			SyncInfo resource = nodes[i];
-			int kind = resource.getKind();
-			if ((kind & SyncInfo.ADDITION) != 0) {
-				additions.add(resource);
-			} else {
-				changes.add(resource);
+		if(nodes.length > 0) {
+			TeamSubscriber subscriber = nodes[0].getSubscriber();
+			if (!(subscriber instanceof CVSMergeSubscriber)) {
+				throw new CVSException("Invalid subscriber: " + subscriber.getId());
+			}
+			CVSTag startTag = ((CVSMergeSubscriber)subscriber).getStartTag();
+			CVSTag endTag = ((CVSMergeSubscriber)subscriber).getEndTag();
+
+			// Incoming additions require different handling then incoming changes and deletions
+			List additions = new ArrayList();
+			List changes = new ArrayList();
+			for (int i = 0; i < nodes.length; i++) {
+				SyncInfo resource = nodes[i];
+				int kind = resource.getKind();
+				if ((kind & SyncInfo.ADDITION) != 0) {
+					additions.add(resource);
+				} else {
+					changes.add(resource);
+				}
+			}
+			
+			try {
+				monitor.beginTask(null, (additions.size() + changes.size()) * 100);
+				if (!additions.isEmpty()) {
+					safeUpdate(
+						getIResourcesFrom((SyncInfo[]) additions.toArray(new SyncInfo[additions.size()])), 
+						new Command.LocalOption[] {
+							Command.DO_NOT_RECURSE,
+							Update.makeArgumentOption(Update.JOIN, endTag.getName()) 
+						},
+						Policy.subMonitorFor(monitor, additions.size() * 100));
+				}
+				if (!changes.isEmpty()) {
+					safeUpdate(
+						getIResourcesFrom((SyncInfo[]) changes.toArray(new SyncInfo[changes.size()])), 
+						new Command.LocalOption[] {
+							Command.DO_NOT_RECURSE,
+							Update.makeArgumentOption(Update.JOIN, startTag.getName()),
+							Update.makeArgumentOption(Update.JOIN, endTag.getName()) 
+						},
+						Policy.subMonitorFor(monitor, changes.size() * 100));
+				}
+			} finally {
+				monitor.done();
 			}
 		}
-		
-		monitor.beginTask(null, (additions.size() + changes.size()) * 100);
-		if (!additions.isEmpty()) {
-			safeUpdate(
-				getIResourcesFrom((SyncInfo[]) additions.toArray(new SyncInfo[additions.size()])), 
-				new Command.LocalOption[] {
-					Command.DO_NOT_RECURSE,
-					Update.makeArgumentOption(Update.JOIN, endTag.getName()) 
-				},
-				Policy.subMonitorFor(monitor, additions.size() * 100));
-		}
-		if (!changes.isEmpty()) {
-			safeUpdate(
-				getIResourcesFrom((SyncInfo[]) changes.toArray(new SyncInfo[changes.size()])), 
-				new Command.LocalOption[] {
-					Command.DO_NOT_RECURSE,
-					Update.makeArgumentOption(Update.JOIN, startTag.getName()),
-					Update.makeArgumentOption(Update.JOIN, endTag.getName()) 
-				},
-				Policy.subMonitorFor(monitor, changes.size() * 100));
-		}
-		monitor.done();
 	}
 	
 	/*

@@ -230,7 +230,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 				ActionContext context = new ActionContext(null);
 				context.setInput(input);
 				actions.setContext(context);
-				viewer.setInput(input.getFilteredSyncSet());
+				viewer.setInput(input);
 			
 				RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
 				refreshJob.setSubscriberInput(input);
@@ -240,7 +240,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		updateTitle();
 	}
 	/**
-	 * Toggles between labe/tree/table viewers. 
+	 * Toggles between label/tree/table viewers. 
 	 */
 	public void switchViewerType(int viewerType) {
 		if(viewer == null || viewerType != currentViewType) {
@@ -349,7 +349,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 					createTableViewerPartControl(parent); 
 					break;
 			}
-			viewer.setInput(input.getFilteredSyncSet());
+			viewer.setInput(input);
 			viewer.getControl().setFocus();
 			hookContextMenu();
 			initializeListeners();		
@@ -632,9 +632,9 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			Set result = new HashSet();
 			for (int i = 0; i < selected.length; i++) {
 				Object object = selected[i];
-				if (object instanceof SyncResource) {
-					SyncResource syncResource = (SyncResource) object;
-					SyncInfo[] infos = syncResource.getOutOfSyncDescendants();
+				if (object instanceof SynchronizeViewNode) {
+					SynchronizeViewNode syncResource = (SynchronizeViewNode) object;
+					SyncInfo[] infos = syncResource.getChildSyncInfos();
 					result.addAll(Arrays.asList(infos));
 				}
 			}

@@ -285,4 +285,23 @@ abstract public class TeamSubscriber {
 	public boolean isReleaseSupported() {
 		return true;
 	}
+	
+	/**
+	 * Return true if the receiver is equal to object.
+	 * @return true if object is the same class as the receiver and has the same ID
+	 */
+	public boolean equals(Object object) {
+		if (object instanceof TeamSubscriber) {
+			TeamSubscriber subscriber = (TeamSubscriber) object;
+			return getId().equals(subscriber.getId());
+		}
+		return super.equals(object);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getId().hashCode();
+	}
 }

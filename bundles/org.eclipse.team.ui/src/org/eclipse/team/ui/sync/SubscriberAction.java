@@ -11,8 +11,12 @@
 package org.eclipse.team.ui.sync;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
@@ -24,19 +28,28 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
  */
 public abstract class SubscriberAction extends TeamAction {
 	
-	TeamSubscriber subscriber;
+	private TeamSubscriber subscriber;
 	
 	/**
-	 * This method returns all instances of SyncResource that are in the current
+	 * This method returns all instances of SynchronizeViewNode that are in the current
 	 * selection. For a table view, this is any resource that is directly selected.
-	 * For a tree view, this is any descendants of the slected resource that are
+	 * For a tree view, this is any descendants of the selected resource that are
 	 * contained in the view.
 	 * 
 	 * @return the selected resources
 	 */
 	protected SyncInfo[] getSyncInfos() {
-		SyncInfo[] syncInfos= (SyncInfo[])getSelectedResources(SyncInfo.class);
-		return syncInfos;
+		Object[] selected = ((IStructuredSelection)selection).toArray();
+		Set result = new HashSet();
+		for (int i = 0; i < selected.length; i++) {
+			Object object = selected[i];
+			if (object instanceof ISynchronizeViewNode) {
+				ISynchronizeViewNode syncResource = (ISynchronizeViewNode) object;
+				SyncInfo[] infos = syncResource.getChildSyncInfos();
+				result.addAll(Arrays.asList(infos));
+			}
+		}
+		return (SyncInfo[]) result.toArray(new SyncInfo[result.size()]);
 	}
 
 	/**
@@ -78,22 +91,26 @@ public abstract class SubscriberAction extends TeamAction {
 		List filtered = new ArrayList();
 		for (int i = 0; i < infos.length; i++) {
 			SyncInfo info = infos[i];
+			if(subscriber == null) {
+				subscriber = info.getSubscriber();
+			}
 			if (select(info))
 				filtered.add(info);
 		}
 		return (SyncInfo[]) filtered.toArray(new SyncInfo[filtered.size()]);
 	}
-
+	
 	/**
-	 * @return
+	 * Returns the TeamSubscriber for this action. 
+	 * @return TeamSubscriber
 	 */
 	public TeamSubscriber getSubscriber() {
 		return subscriber;
 	}
-
+	
 	/**
-	 * Sets 
-	 * @param context
+	 * Sets the the TeamSubscriber for this action. 
+	 * @return TeamSubscriber
 	 */
 	public void setSubscriber(TeamSubscriber subscriber) {
 		this.subscriber = subscriber;

@@ -557,53 +557,76 @@
       </objectContribution>
    </extension>
    
+      
+         
 <!-- ************* Subscriber Menus ************ -->
-   <extension
-         point="org.eclipse.team.ui.subscriberMenus">
-      <subscriberContribution
-            subscriberClass="org.eclipse.team.internal.ccvs.core.CVSWorkspaceSubscriber"
-            id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriberContributions">
-          <action
-               label="%CVSWorkspaceSubscriber.update.label"
-               tooltip="%CVSWorkspaceSubscriber.update.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction"
-               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_update_action"
-               id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.update">
-         </action>
-         <action
-               label="%CVSWorkspaceSubscriber.commit.label"
-               tooltip="%CVSWorkspaceSubscriber.commit.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction"
-               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_commit_action"
-               id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.commit">
-         </action>
-         <action
+	
+	<extension
+			point="org.eclipse.ui.popupMenus">
+		<objectContribution
+            objectClass="org.eclipse.team.ui.sync.ISynchronizeViewNode"
+            id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriberContributions"
+            adaptable="true">
+          
+        	<filter name="equals" value="org.eclipse.team.cvs.subscribers:workspace-subscriber" />
+            
+			<action
                label="%CVSWorkspaceSubscriber.confirmMerged.label"
+               menubarPath="SubscriberActions"
                tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
                helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
                id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.confirmMerged">
-         </action>
-      </subscriberContribution>
-          <subscriberContribution
-            subscriberClass="org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber"
-            id="org.eclipse.team.ccvs.ui.CVSMergeSubscriberContributions">
-          <action
-               label="%CVSWorkspaceSubscriber.merge.label"
-               tooltip="%CVSWorkspaceSubscriber.merge.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction"
-               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_merge_action"
-               id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.merge">
-         </action>
-         <action
-               label="%CVSWorkspaceSubscriber.confirmMerged.label"
-               tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
-               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
-               id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.confirmMerged">
-         </action>
-      </subscriberContribution>
-   </extension>
+            </action>
+  
+			<action
+				label="%CVSWorkspaceSubscriber.commit.label"
+				menubarPath="SubscriberActions"
+				tooltip="%CVSWorkspaceSubscriber.commit.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction"
+				overrideActionId="org.eclipse.team.ccvs.ui.commit"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_commit_action"
+				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.commit">
+			</action>
+
+			<action
+				label="%CVSWorkspaceSubscriber.update.label"
+				menubarPath="SubscriberActions"
+				tooltip="%CVSWorkspaceSubscriber.update.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction"
+				overrideActionId="org.eclipse.team.ccvs.ui.update"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_update_action"
+				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.update">
+			</action>
+		</objectContribution>
+        
+		<objectContribution
+			objectClass="org.eclipse.team.ui.sync.ISynchronizeViewNode"
+			id="org.eclipse.team.ccvs.ui.CVSMergeSubscriberContributions"
+			adaptable="true">
+    
+			<filter name="startsWith" value="org.eclipse.team.cvs.subscribers:merge-" />
+  
+			<action
+				label="%CVSWorkspaceSubscriber.confirmMerged.label"
+				menubarPath="SubscriberActions"
+				tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
+				id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.confirmMerged">
+			</action>         
+
+			<action
+				label="%CVSWorkspaceSubscriber.merge.label"
+				menubarPath="SubscriberActions"
+				tooltip="%CVSWorkspaceSubscriber.merge.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction"
+				overrideActionId="org.eclipse.team.ccvs.ui.update"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_merge_action"
+				id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.merge">
+			</action>
+		</objectContribution>
+	</extension>
    
 <!-- ************** Views ********************** -->
    <extension

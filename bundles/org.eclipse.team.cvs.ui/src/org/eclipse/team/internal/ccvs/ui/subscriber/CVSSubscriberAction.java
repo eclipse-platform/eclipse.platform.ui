@@ -189,7 +189,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	}
 	
 	protected SyncInfo getParent(SyncInfo info) throws TeamException {
-		return getSubscriber().getSyncInfo(info.getLocal().getParent(), new NullProgressMonitor());
+		return info.getSubscriber().getSyncInfo(info.getLocal().getParent(), new NullProgressMonitor());
 	}
 
 	protected IResource[] getIResourcesFrom(SyncInfo[] nodes) {

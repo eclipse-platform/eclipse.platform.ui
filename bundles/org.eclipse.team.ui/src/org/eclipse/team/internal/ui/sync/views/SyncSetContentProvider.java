@@ -19,7 +19,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.internal.ui.sync.sets.*;
+import org.eclipse.team.internal.ui.sync.sets.ISyncSetChangedListener;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
+import org.eclipse.team.internal.ui.sync.sets.SyncSet;
+import org.eclipse.team.internal.ui.sync.sets.SyncSetChangedEvent;
 
 /**
  * This class provides the contents for a StructuredViewer using a SyncSet as the model
@@ -36,28 +39,37 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		if (input == null) {
 			return null;
 		}
-		return (SyncSet)input;
+		return ((SubscriberInput)input).getFilteredSyncSet();
+	}
+	
+	protected SubscriberInput getSubscriberInput() {
+		if(viewer == null || viewer.getControl().isDisposed()) {
+			return null;	
+		}
+		return (SubscriberInput)viewer.getInput();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer v, Object oldInput, Object newInput) {
+
 		this.viewer = v;
-		SyncSet oldSyncSet = null;
-		SyncSet newSyncSet = null;
-		if (oldInput instanceof SyncSet) {
-			oldSyncSet = (SyncSet) oldInput;
+		SubscriberInput oldSubscriberInput = null;
+		SubscriberInput newSubscriberInput = null;
+		
+		if (oldInput instanceof SubscriberInput) {
+			oldSubscriberInput = (SubscriberInput) oldInput;
 		}
-		if (newInput instanceof SyncSet) {
-			newSyncSet = (SyncSet) newInput;
+		if (newInput instanceof SubscriberInput) {
+			newSubscriberInput = (SubscriberInput) newInput;
 		}
-		if (oldSyncSet != newSyncSet) {
-			if (oldSyncSet != null) {
-				oldSyncSet.removeSyncSetChangedListener(this);
+		if (oldSubscriberInput != newSubscriberInput) {
+			if (oldSubscriberInput != null) {
+				((SubscriberInput)oldSubscriberInput).getFilteredSyncSet().removeSyncSetChangedListener(this);
 			}
-			if (newSyncSet != null) {
-				newSyncSet.addSyncSetChangedListener(this);
+			if (newSubscriberInput != null) {
+				((SubscriberInput)newSubscriberInput).getFilteredSyncSet().addSyncSetChangedListener(this);
 			}
 		}
 	}
@@ -218,8 +230,8 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	public SyncInfo getSyncInfo(Object element) {
 		if (element instanceof SyncInfo) {
 			return ((SyncInfo) element);
-		}  else if (element instanceof SyncResource) {
-			SyncResource syncResource = (SyncResource)element;
+		}  else if (element instanceof SynchronizeViewNode) {
+			SynchronizeViewNode syncResource = (SynchronizeViewNode)element;
 			return syncResource.getSyncInfo();
 		}
 		return null;
@@ -248,7 +260,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		if (resource.getType() == IResource.ROOT) {
 			return getSyncSet();
 		} else {
-			return new SyncResource(getSyncSet(), resource);
+			return new SynchronizeViewNode(getSubscriberInput(), resource);
 		}
 	}
 	

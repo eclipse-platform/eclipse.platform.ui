@@ -16,21 +16,21 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ui.sync.sets.*;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 
 /**
  * A compressed folder appears under a project and contains out-of-sync resources
  */
-public class CompressedFolder extends SyncResource {
+public class CompressedFolder extends SynchronizeViewNode {
 
-	public CompressedFolder(SyncSet syncSet, IResource resource) {
-		super(syncSet, resource);
+	public CompressedFolder( SubscriberInput input, IResource resource) {
+		super(input, resource);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.sync.views.SyncResource#getOutOfSyncDescendants()
+	 * @see org.eclipse.team.internal.ui.sync.views.SynchronizeViewNode#getOutOfSyncDescendants()
 	 */
-	public SyncInfo[] getOutOfSyncDescendants() {
+	public SyncInfo[] getChildSyncInfos() {
 		IResource[] children = getSyncSet().members(getResource());
 		List result = new ArrayList();
 		for (int i = 0; i < children.length; i++) {

@@ -21,7 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ui.sync.sets.*;
+import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
+import org.eclipse.team.internal.ui.sync.sets.SyncSetChangedEvent;
 
 /**
  * The contents provider compressed in-sync folder paths
@@ -79,13 +80,14 @@ public class CompressedFolderContentProvider extends SyncSetTreeContentProvider 
 			return getModelObject(getResource(element).getProject());
 		}
 		Object parent = super.getParent(element);
-		if (parent instanceof SyncResource) {
-			SyncInfo info = ((SyncResource)parent).getSyncInfo();
+		if (parent instanceof SynchronizeViewNode) {
+			SyncInfo info = ((SynchronizeViewNode)parent).getSyncInfo();
 			if (info == null) {
 				// The resource is in-sync so return a compressed folder
-				IResource resource = ((SyncResource)parent).getResource();
+				IResource resource = ((SynchronizeViewNode)parent).getResource();
 				if (resource.getType() == IResource.FOLDER) {
-					return new CompressedFolder(((SyncResource)parent).getSyncSet(), resource);
+					return new CompressedFolder((SubscriberInput)viewer.getInput(), resource);
+					
 				}
 			}
 		}
@@ -145,7 +147,7 @@ public class CompressedFolderContentProvider extends SyncSetTreeContentProvider 
 	 */
 	public Object getModelObject(IResource resource) {
 		if (resource.getType() == IResource.FOLDER && getSyncSet().getSyncInfo(resource) == null) {
-			return new CompressedFolder(getSyncSet(), resource);
+			return new CompressedFolder(getSubscriberInput(), resource);
 		}
 		return super.getModelObject(resource);
 	}

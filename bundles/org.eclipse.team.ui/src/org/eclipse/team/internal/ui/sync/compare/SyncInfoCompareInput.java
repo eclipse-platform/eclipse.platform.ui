@@ -171,6 +171,10 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	
 	private boolean equalDiffNodes(SyncInfoDiffNode node1, SyncInfoDiffNode node2) {
 		
+		if(node1 == null || node2 == null) {
+			return false;
+		}
+		
 		// First, ensure the local resources are equals
 		IResource local1 = null;
 		if (node1.getLeft() != null)
