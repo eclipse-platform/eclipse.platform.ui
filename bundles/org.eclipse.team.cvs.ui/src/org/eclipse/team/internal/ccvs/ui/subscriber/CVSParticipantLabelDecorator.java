@@ -13,13 +13,15 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.ui.CVSLightweightDecorator;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -38,7 +40,7 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 			IResource resource =  ((ISynchronizeModelElement)element).getResource();
 			if(resource != null && resource.getType() != IResource.ROOT) {
 				CVSLightweightDecorator.Decoration decoration = new CVSLightweightDecorator.Decoration();
-				CVSLightweightDecorator.decorateTextLabel(resource, decoration, false, true);
+				CVSLightweightDecorator.decorateTextLabel(resource, decoration, false, true, getRevisionNumber((ISynchronizeModelElement)element));
 				StringBuffer output = new StringBuffer(25);
 				if(decoration.prefix != null) {
 					output.append(decoration.prefix);
@@ -66,5 +68,42 @@ class CVSParticipantLabelDecorator extends LabelProvider implements IPropertyCha
 	}
 	public void dispose() {
 		CVSUIPlugin.removePropertyChangeListener(this);
+	}
+	
+	protected String getRevisionNumber(ISynchronizeModelElement element) {
+		if(element instanceof SyncInfoModelElement) {
+			SyncInfo info = ((SyncInfoModelElement)element).getSyncInfo();
+			if(info != null && info instanceof CVSSyncInfo) {
+				CVSSyncInfo cvsInfo = (CVSSyncInfo)info;
+				ICVSRemoteResource remote = (ICVSRemoteResource) cvsInfo.getRemote();
+				ICVSRemoteResource local;
+				try {
+					local = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
+				} catch (CVSException e) {
+					local = null;
+				}
+				if(local == null) {
+					local = (ICVSRemoteResource)info.getBase();
+				}
+				StringBuffer revisionString = new StringBuffer();
+				String remoteRevision = getRevisionString(remote);
+				String localRevision = getRevisionString(local);
+				if(localRevision != null) {
+					revisionString.append(localRevision);
+				}
+				if(remoteRevision != null) {
+					revisionString.append( (localRevision != null ? " - " : "") + remoteRevision); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				return revisionString.toString();
+			}
+		}
+		return null;
+	}
+
+	private String getRevisionString(ICVSRemoteResource remoteFile) {
+		if(remoteFile instanceof RemoteFile) {
+			return ((RemoteFile)remoteFile).getRevision();
+		}
+		return null;
 	}
 }

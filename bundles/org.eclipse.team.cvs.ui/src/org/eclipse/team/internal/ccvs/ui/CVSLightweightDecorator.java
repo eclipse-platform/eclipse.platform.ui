@@ -12,49 +12,24 @@ package org.eclipse.team.internal.ccvs.ui;
 
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
+import java.util.*;
+
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IDecoration;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
+import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
@@ -232,7 +207,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			isDirty = CVSLightweightDecorator.isDirty(resource);
 		}
 		
-		decorateTextLabel(resource, decoration, isDirty, true);
+		decorateTextLabel(resource, decoration, isDirty, true, null);
 		
 		ImageDescriptor overlay = getOverlay(resource, isDirty, cvsProvider);
 		if(overlay != null) { //actually sending null arg would work but this makes logic clearer
@@ -246,7 +221,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 	}
 
 	//todo the showRevisions flag is temp, a better solution is DecoratorStrategy classes which have most the code below
-	public static void decorateTextLabel(IResource resource, IDecoration decoration, boolean isDirty, boolean showRevisions) {
+	public static void decorateTextLabel(IResource resource, IDecoration decoration, boolean isDirty, boolean showRevisions, String overrideRevision) {
 		try {
 			Map bindings = new HashMap(3);
 			String format = ""; //$NON-NLS-1$
@@ -302,8 +277,12 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 					if (fileInfo.isAdded()) {
 						bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, store.getString(ICVSUIConstants.PREF_ADDED_FLAG));
 					} else {
-						if(showRevisions)
-							bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
+						if(showRevisions) {
+							if(overrideRevision != null)
+								bindings.put(CVSDecoratorConfiguration.FILE_REVISION, overrideRevision);
+							else 
+								bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
+						}
 					}
 					KSubstOption option = fileInfo.getKeywordMode() != null ?
 						fileInfo.getKeywordMode() :
