@@ -11,13 +11,16 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -123,10 +126,30 @@ public interface IWorkbench {
     public IEditorRegistry getEditorRegistry();
 
     /**
-     * Returns the perspective registry for the workbench.
-     * 
-     * @return the workbench perspective registry
-     */
+	 * <p>
+	 * Returns the operation support for the workbench.
+	 * </p>
+	 * <p>
+	 * Note: This method is part of a new API under development. It has been
+	 * added to builds so that clients can start using the new features.
+	 * However, it may change significantly before reaching stability. It is
+	 * being made available at this early stage to solicit feedback with the
+	 * understanding that any code that uses this API may be broken as the API
+	 * evolves.
+	 * </p>
+	 * 
+	 * @return the workbench operation support
+	 * 
+	 * @since 3.1
+	 * @experimental
+	 */
+	public IWorkbenchOperationSupport getOperationSupport();
+
+    /**
+	 * Returns the perspective registry for the workbench.
+	 * 
+	 * @return the workbench perspective registry
+	 */
     public IPerspectiveRegistry getPerspectiveRegistry();
 
     /**
@@ -143,6 +166,17 @@ public interface IWorkbench {
      * @since 2.0
      */
     public IPreferenceStore getPreferenceStore();
+    
+    /**
+     * Returns the service of the given type.  If the service does not currently
+     * exist for the workbench, then this returns <code>null</code>.
+     * 
+     * @param type The type of service to retrieve.  The services provided by the
+     * workbench are defined in <code>IWorkbenchServices</code>.
+     * 
+     * @return The given service, if available; <code>null</code> otherwise.
+     */
+    public IService getService(int type);
 
     /**
      * Returns the shared images for the workbench.
@@ -187,6 +221,7 @@ public interface IWorkbench {
      * API under construction and subject to change at any time.
      * </p>
      *
+     * @return the local working set manager
      * @since 3.1
      */
     public ILocalWorkingSetManager createLocalWorkingSetManager();
@@ -441,4 +476,44 @@ public interface IWorkbench {
      * @since 3.0
      */
     public IIntroManager getIntroManager();
+    
+    /**
+     * Return the help system for this workbench.
+     * 
+     * @return the help system
+     * @since 3.1
+     */
+    public IWorkbenchHelpSystem getHelpSystem();
+    
+    /**
+     * Returns a boolean indicating whether the workbench is in the process
+     * of closing.
+     * 
+     * @return <code>true</code> if the workbench is in the process of
+     *         closing, <code>false</code> otherwise
+     * @since 3.1
+     */
+    public boolean isClosing();
+    
+    /**
+	 * <p>
+	 * Return the extension tracker for the workbench. This tracker may be used
+	 * by plug-ins to ensure responsiveness to changes to the plug-in registry.
+	 * </p>
+	 * <p>
+	 * The tracker at this level of the workbench is typically used to track
+	 * elements that persist for the life of the workbench. For example,
+	 * <code>IEditorDescriptor</code> objects fall into this category.
+	 * </p>
+	 * <p>
+	 * This method is <strong>EXPERIMENTAL</strong> and may change prior to the
+	 * 3.1 release.
+	 * </p> 
+	 * 
+	 * @return the extension tracker
+	 * @see IWorkbenchWindow#getExtensionTracker()
+	 * @see IWorkbenchPage#getExtensionTracker()
+	 * @since 3.1
+	 */
+    public IExtensionTracker getExtensionTracker();
 }

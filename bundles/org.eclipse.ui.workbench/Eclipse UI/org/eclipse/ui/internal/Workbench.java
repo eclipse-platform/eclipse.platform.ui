@@ -72,11 +72,13 @@ import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IService;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchServices;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -92,12 +94,15 @@ import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
+import org.eclipse.ui.internal.commands.CommandService;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
+import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
+import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -828,22 +833,35 @@ public final class Workbench implements IWorkbench {
         workbenchActivitySupport = new WorkbenchActivitySupport();
         activityHelper = ActivityPersistanceHelper.getInstance();
 
-        commandManager = new CommandManager();
-        contextManager = new ContextManager();
-        bindingManager = new BindingManager(contextManager);
-        workbenchContextSupport = new WorkbenchContextSupport(this,
-                contextManager);
-        workbenchCommandSupport = new WorkbenchCommandSupport(this,
-                bindingManager, commandManager, contextManager);
-        workbenchContextSupport.initialize(); // deferred key binding support
+        /*
+		 * TODO This is the beginning of the new services support for commands
+		 * and such like. This needs to be further thought out.
+		 */
+		commandManager = new CommandManager();
+		services[IWorkbenchServices.COMMAND] = new CommandService(
+				commandManager);
+		contextManager = new ContextManager();
+		services[IWorkbenchServices.CONTEXT] = new ContextService(
+				contextManager);
+		bindingManager = new BindingManager(contextManager);
+		services[IWorkbenchServices.BINDING] = new BindingService(
+				bindingManager);
 
-        workbenchCommandSupport.getCommandManager().addCommandManagerListener(
-                commandManagerListener);
-
-        workbenchContextSupport.getContextManager().addContextManagerListener(
-                contextManagerListener);
-
-        initializeCommandResolver();
+		/*
+		 * TODO This is the deprecated support. It would be nice to pull out all
+		 * of this except for the Workbench*Support constructors.
+		 */
+		workbenchContextSupport = new WorkbenchContextSupport(this,
+				contextManager);
+		workbenchCommandSupport = new WorkbenchCommandSupport(this,
+				bindingManager, commandManager, contextManager);
+		workbenchContextSupport.initialize(); // deferred key binding support
+		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
+				commandManagerListener);
+		workbenchContextSupport.getContextManager().addContextManagerListener(
+				contextManagerListener);
+		initializeCommandResolver();
+        
 
         addWindowListener(windowListener);
 
@@ -2281,5 +2299,18 @@ public final class Workbench implements IWorkbench {
 	private void addStartupRegistryListener() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		registry.addRegistryChangeListener(startupRegistryListener);
+	}
+
+	private IService[] services = new IService[5];
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getService(int)
+	 */
+	public IService getService(int type) {
+		if ((type >= 0) && (type < services.length)) {
+			return services[type];
+		}
+		
+		return null;
 	}
 }

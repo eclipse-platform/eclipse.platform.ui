@@ -25,6 +25,7 @@ import java.util.SortedSet;
  * </p>
  * 
  * @since 3.0
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface IContextManager {
 

@@ -36,7 +36,7 @@ public final class ContextManagerFactory {
      */
     public static IMutableContextManager getMutableContextManager(
             final ContextManager contextManager) {
-        return new MutableContextManager(contextManager);
+        return new ContextManagerWrapper(contextManager);
     }
 
     private ContextManagerFactory() {

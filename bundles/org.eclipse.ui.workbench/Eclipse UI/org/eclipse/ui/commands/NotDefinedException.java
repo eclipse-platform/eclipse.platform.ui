@@ -18,6 +18,7 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public final class NotDefinedException extends CommandException {
 

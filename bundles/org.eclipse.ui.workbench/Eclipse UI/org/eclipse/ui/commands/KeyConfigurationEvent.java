@@ -20,6 +20,8 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  * @see IKeyConfigurationListener#keyConfigurationChanged(KeyConfigurationEvent)
+ * @deprecated Please use the bindings support in the "org.eclipse.jface"
+ * plug-in instead.
  */
 public final class KeyConfigurationEvent {
 

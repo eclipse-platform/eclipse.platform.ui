@@ -42,6 +42,7 @@ package org.eclipse.ui.commands;
  * @since 3.0
  * @see ICategoryListener
  * @see ICommandManager
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface ICategory extends Comparable {
 

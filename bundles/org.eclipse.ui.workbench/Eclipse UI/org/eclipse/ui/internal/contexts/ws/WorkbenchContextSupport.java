@@ -45,7 +45,6 @@ import org.eclipse.ui.contexts.NotDefinedException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.contexts.ContextManagerFactory;
 import org.eclipse.ui.internal.contexts.IMutableContextManager;
-import org.eclipse.ui.internal.contexts.ProxyContextManager;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -197,8 +196,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     private boolean processing = true;
 
-    private ProxyContextManager proxyContextManager;
-
     /**
      * This is a map of shell to a list of submissions. When a shell is
      * registered, it is added to this map with the list of submissions that
@@ -230,7 +227,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         workbench = workbenchToSupport;
         mutableContextManager = ContextManagerFactory
                 .getMutableContextManager(contextManager);
-        proxyContextManager = new ProxyContextManager(mutableContextManager);
 
         // And hook up a shell activation filter.
         workbenchToSupport.getDisplay().addFilter(SWT.Activate,
@@ -491,7 +487,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     }
 
     public IContextManager getContextManager() {
-        return proxyContextManager;
+        return mutableContextManager;
     }
 
     /**

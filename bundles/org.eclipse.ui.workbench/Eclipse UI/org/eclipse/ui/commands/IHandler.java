@@ -23,6 +23,7 @@ import java.util.Map;
  * </p>
  * 
  * @since 3.0
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface IHandler {
 

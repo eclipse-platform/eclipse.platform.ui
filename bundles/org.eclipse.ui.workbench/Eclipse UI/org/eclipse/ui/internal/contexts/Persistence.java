@@ -26,7 +26,9 @@ final class Persistence {
 
     final static String PACKAGE_PREFIX = "org.eclipse.ui"; //$NON-NLS-1$		
 
-    final static String TAG_CONTEXT = "context"; //$NON-NLS-1$			
+    final static String TAG_CONTEXT = "context"; //$NON-NLS-1$
+
+    final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$			
 
     final static String TAG_ID = "id"; //$NON-NLS-1$
 
@@ -59,6 +61,7 @@ final class Persistence {
 
         String id = memento.getString(TAG_ID);
         String name = memento.getString(TAG_NAME);
+        String description = memento.getString(TAG_DESCRIPTION);
         String parentId = memento.getString(TAG_PARENT_ID);
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
@@ -77,7 +80,7 @@ final class Persistence {
         }
         // TODO DEPRECATED END
 
-        return new ContextDefinition(id, name, parentId, sourceId);
+        return new ContextDefinition(id, name, description, parentId, sourceId);
     }
 
     static List readContextDefinitions(IMemento memento, String name,

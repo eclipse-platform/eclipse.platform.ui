@@ -20,6 +20,7 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  * @see IContextListener#contextChanged(ContextEvent)
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public final class ContextEvent {
 

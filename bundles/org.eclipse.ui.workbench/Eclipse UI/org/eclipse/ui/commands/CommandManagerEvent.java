@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  * @see ICommandManagerListener#commandManagerChanged(CommandManagerEvent)
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public final class CommandManagerEvent {
 

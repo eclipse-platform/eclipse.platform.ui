@@ -42,11 +42,11 @@ public final class CommandManagerFactory {
      *         outside the contract of the interface. Guaranteed not to be
      *         <code>null</code>.
      */
-    public static IMutableCommandManager getMutableCommandManager(
+    public static CommandManagerWrapper getCommandManagerWrapper(
             final BindingManager bindingManager,
             final CommandManager commandManager,
             final ContextManager contextManager) {
-        return new MutableCommandManager(bindingManager, commandManager,
+        return new CommandManagerWrapper(bindingManager, commandManager,
                 contextManager);
     }
 
