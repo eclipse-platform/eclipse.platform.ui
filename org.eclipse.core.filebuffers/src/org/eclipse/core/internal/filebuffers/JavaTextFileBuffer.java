@@ -357,8 +357,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				String encoding= description.getCharset();
 				if (encoding != null)
 					return encoding;
-			} else if (fUTF8BOM != null)
-				return CHARSET_UTF_8;
+			}
 		} catch (IOException ex) {
 			// try next strategy
 		} finally {
@@ -368,6 +367,10 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceTextFileBuffer.error.closeReader"), ex)); //$NON-NLS-1$
 			}
 		}
+		
+		// Use UTF-8 BOM if there was any
+		if (fUTF8BOM != null)
+			return CHARSET_UTF_8;
 		
 		// Use global default
 		return fManager.getDefaultEncoding();

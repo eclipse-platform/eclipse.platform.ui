@@ -601,8 +601,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				encoding= description.getCharset();
 				if (encoding != null)
 					return encoding;
-			} else if (hasUTF8BOM)
-				return CHARSET_UTF_8;
+			}
 		} catch (IOException ex) {
 			// continue with next strategy
 		} finally {
@@ -612,6 +611,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "TextFileDocumentProvider.getCharsetForNewFile(...): Could not close reader", ex)); //$NON-NLS-1$
 			}
 		}
+		
+		// Use UTF-8 BOM if there was any
+		if (hasUTF8BOM)
+			return CHARSET_UTF_8;
 		
 		// Use parent chain
 		try {

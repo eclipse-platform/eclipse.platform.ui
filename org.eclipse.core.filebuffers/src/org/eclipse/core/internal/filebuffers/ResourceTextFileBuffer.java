@@ -397,8 +397,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				String encoding= description.getCharset();
 				if (encoding != null)
 					return encoding;
-			} else if (fUTF8BOM != null)
-				return CHARSET_UTF_8;
+			} 
 		} catch (IOException ex) {
 			// try next strategy
 		} finally {
@@ -409,6 +408,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 		}
 		
+		// Use UTF-8 BOM if there was any
+		if (fUTF8BOM != null)
+			return CHARSET_UTF_8;
+
 		// Use parent chain
 		try {
 			return fFile.getParent().getDefaultCharset();
