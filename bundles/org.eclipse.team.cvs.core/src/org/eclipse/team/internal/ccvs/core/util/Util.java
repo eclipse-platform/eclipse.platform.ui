@@ -575,4 +575,23 @@ public class Util {
 		}
 		return file.getName();
 	}
+	
+	/**
+	 * If the status/log returns that the file is in the Attic, then remove the
+	 * Attic segment. This is because files added to a branch that are not in
+	 * the main trunk (HEAD) are added to the Attic but cvs does magic on
+	 * update to put them in the correct location.
+	 * (e.g. /project/Attic/file.txt -> /project/file.txt)
+	 */ 
+	public static String removeAtticSegment(String path) {
+		int lastSeparator = path.lastIndexOf(Session.SERVER_SEPARATOR);
+		if (lastSeparator == -1) return path;
+		int secondLastSeparator = path.lastIndexOf(Session.SERVER_SEPARATOR, lastSeparator - 1);
+		if (secondLastSeparator == -1) return path;
+		String secondLastSegment = path.substring(secondLastSeparator + 1, lastSeparator);
+		if (secondLastSegment.equals("Attic")) { //$NON-NLS-1$
+			return path.substring(0, secondLastSeparator) + path.substring(lastSeparator);
+		}
+		return path;
+	}
 }

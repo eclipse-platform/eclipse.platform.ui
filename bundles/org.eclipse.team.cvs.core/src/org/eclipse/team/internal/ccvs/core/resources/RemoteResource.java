@@ -156,7 +156,9 @@ public abstract class RemoteResource extends CachedResourceVariant implements IC
 		if (!(target instanceof RemoteResource))
 			return false;
 		RemoteResource remote = (RemoteResource) target;
-		return remote.isContainer() == isContainer() && remote.getRepositoryRelativePath().equals(getRepositoryRelativePath());
+		return remote.isContainer() == isContainer() 
+		&& remote.getRepository().equals(getRepository())
+		&& remote.getRepositoryRelativePath().equals(getRepositoryRelativePath());
 	}
 
 	/*

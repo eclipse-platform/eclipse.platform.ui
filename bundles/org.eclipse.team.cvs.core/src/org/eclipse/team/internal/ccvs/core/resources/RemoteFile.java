@@ -74,6 +74,20 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	}
 	
 	/**
+	 * Create a remote file handle for the given file path that is relative to the
+	 * given location.
+	 */
+	public static RemoteFile create(String filePath, ICVSRepositoryLocation location) {
+		Assert.isNotNull(filePath);
+		Assert.isNotNull(location);
+		IPath path = new Path(filePath);
+		RemoteFolder parent = new RemoteFolder(null /* parent */, location, path.removeLastSegments(1).toString(), null /* tag */);
+		RemoteFile file = new RemoteFile(parent, Update.STATE_NONE, path.lastSegment(), null /* revision */, null /* keyword mode */, null /* tag */);
+		parent.setChildren(new ICVSRemoteResource[] {file});
+		return file;
+	}
+	
+	/**
 	 * Constructor for RemoteFile that should be used when nothing is know about the
 	 * file ahead of time.
 	 * @param parent the folder that is the parent of the file

@@ -11,25 +11,19 @@
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import java.util.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.DateUtil;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class LogListener extends CommandOutputListener {
-	private List entries;
-	private RemoteFile file;
+	private Map entries = new HashMap(); /* Map repo relative path->List of LogEntry */
+	private RemoteFile currentFile;
+	private List currentFileEntries;
 	
 	// state
 	private final int BEGIN = 0, SYMBOLIC_NAMES = 1, REVISION = 2, COMMENT = 3, DONE = 4;
@@ -41,12 +35,49 @@ public class LogListener extends CommandOutputListener {
 	private String revision;    // revision number
 	private String fileState;   //
 	private StringBuffer comment; // comment
+	
 
 	private static final String NOTHING_KNOWN_ABOUT = "nothing known about "; //$NON-NLS-1$
 	
+	/**
+	 * Constructor used to get the log information for one or more files.
+	 */
+	public LogListener() {
+		this.currentFile = null;
+		this.currentFileEntries = new ArrayList();
+	}
+	
+	/**
+	 * Constructor used to get the log information for one file.
+	 */
 	public LogListener(RemoteFile file, List entries) {
-		this.file = file;
-		this.entries = entries;
+		this.currentFile = file;
+		this.currentFileEntries = entries;
+		this.entries.put(file.getRepositoryRelativePath(), entries);
+	}
+	
+	/**
+	 * Return the log entry for the given remote file. The revision
+	 * of the remote file is used to determine which log entry to
+	 * return. If no log entry was fetched, <code>null</code>
+	 * is returned.
+	 */
+	public ILogEntry getEntryFor(ICVSRemoteFile file) {
+		List fileEntries = (List)entries.get(file.getRepositoryRelativePath());
+		if (fileEntries != null) {
+			for (Iterator iter = fileEntries.iterator(); iter.hasNext();) {
+				ILogEntry entry = (ILogEntry) iter.next();
+				try {
+					if (entry.getRevision().equals(file.getRevision())) {
+						return entry;
+					}
+				} catch (TeamException e) {
+					// Log and continue
+					CVSProviderPlugin.log(e);
+				}
+			}
+		}
+		return null;
 	}
 
 	public IStatus messageLine(String line, ICVSRepositoryLocation location, ICVSFolder commandRoot,
@@ -55,7 +86,27 @@ public class LogListener extends CommandOutputListener {
 		// keys = String (tag name), values = String (tag revision number) */
 		switch (state) {
 			case BEGIN:
-				if (line.startsWith("symbolic names:")) { //$NON-NLS-1$
+				if (line.startsWith("RCS file: ")) { //$NON-NLS-1$
+					// We are starting to recieve the log for a file
+					String fileName = getRelativeFilePath(location, line.substring(10).trim());
+					if (fileName == null) {
+						// We couldn't determine the file name so dump the entries
+						currentFile = null;
+						currentFileEntries = new ArrayList();
+					} else {
+						if (!currentFile.getRepositoryRelativePath().equals(fileName)) {
+							// We are starting another file
+							currentFile = RemoteFile.create(fileName, location);
+							currentFileEntries = (List)entries.get(currentFile.getRepositoryRelativePath());
+							if (currentFileEntries == null) {
+								currentFileEntries = new ArrayList();
+								entries.put(currentFile.getRepositoryRelativePath(), currentFileEntries);
+							}
+							tagNames.clear();
+							tagRevisions.clear();
+						}
+					}
+				} else  if (line.startsWith("symbolic names:")) { //$NON-NLS-1$
 					state = SYMBOLIC_NAMES;
 				} else if (line.startsWith("revision ")) { //$NON-NLS-1$
 					revision = line.substring(9);
@@ -127,11 +178,12 @@ public class LogListener extends CommandOutputListener {
 				}
 			}
 			Date date = DateUtil.convertFromLogTime(creationDate);
-			LogEntry entry = new LogEntry(file, revision, author, date,
-				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[0]));
-			entries.add(entry);
+			if (currentFile != null) {
+				LogEntry entry = new LogEntry(currentFile, revision, author, date,
+					comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[0]));
+				currentFileEntries.add(entry);
+			}
 			state = BEGIN;
-			// XXX should we reset the tagNames and tagRevisions stuff?
 		}
 		return OK;
 	}
@@ -167,5 +219,26 @@ public class LogListener extends CommandOutputListener {
 		// If not, check if the second lat segment is a zero
 		if (tagName.charAt(lastDot - 1) == '0' && tagName.charAt(lastDot - 2) == '.') return true;
 		return false;
+	}
+	
+	/*
+	 * Return the file path as a relative path to the 
+	 * repository location
+	 */
+	private String getRelativeFilePath(ICVSRepositoryLocation location, String fileName) {
+		if (fileName.endsWith(",v")) { //$NON-NLS-1$
+			fileName = fileName.substring(0, fileName.length() - 2);
+		}
+		fileName = Util.removeAtticSegment(fileName);
+		String rootDirectory = location.getRootDirectory();
+		if (fileName.startsWith(rootDirectory)) {
+			try {
+				fileName = Util.getRelativePath(rootDirectory, fileName);
+			} catch (CVSException e) {
+				CVSProviderPlugin.log(e);
+				return null;
+			}
+		}
+		return fileName;
 	}
 }

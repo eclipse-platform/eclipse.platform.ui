@@ -12,11 +12,9 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class StatusListener extends CommandOutputListener {
 	private static boolean isFolder = false;
@@ -74,14 +72,6 @@ public class StatusListener extends CommandOutputListener {
 	 * (e.g. /project/Attic/file.txt -> /project/file.txt)
 	 */ 
 	private String removeAtticSegment(String path) {
-		int lastSeparator = path.lastIndexOf(Session.SERVER_SEPARATOR);
-		if (lastSeparator == -1) return path;
-		int secondLastSeparator = path.lastIndexOf(Session.SERVER_SEPARATOR, lastSeparator - 1);
-		if (secondLastSeparator == -1) return path;
-		String secondLastSegment = path.substring(secondLastSeparator + 1, lastSeparator);
-		if (secondLastSegment.equals("Attic")) { //$NON-NLS-1$
-			return path.substring(0, secondLastSeparator) + path.substring(lastSeparator);
-		}
-		return path;
+		return Util.removeAtticSegment(path);
 	}
 }
