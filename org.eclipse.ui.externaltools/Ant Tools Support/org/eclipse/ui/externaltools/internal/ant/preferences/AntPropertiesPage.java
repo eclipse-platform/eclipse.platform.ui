@@ -48,8 +48,7 @@ public class AntPropertiesPage extends AntPage {
 	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
 	
 	private static final int ADD_PROPERTY_FILE_BUTTON = IDialogConstants.CLIENT_ID + 4;
-	private static final int EDIT_PROPERTY_FILE_BUTTON = IDialogConstants.CLIENT_ID + 5;
-	private static final int REMOVE_PROPERTY_FILE_BUTTON = IDialogConstants.CLIENT_ID + 6;
+	private static final int REMOVE_PROPERTY_FILE_BUTTON = IDialogConstants.CLIENT_ID + 5;
 	
 	private Button addButton;
 	private Button addFileButton;
