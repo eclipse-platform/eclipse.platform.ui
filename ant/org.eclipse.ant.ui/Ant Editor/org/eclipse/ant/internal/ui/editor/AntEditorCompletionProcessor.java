@@ -191,7 +191,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	/**
 	 * The prefix for the current content assist
      */
-	private String currentPrefix= null;
+	protected String currentPrefix= null;
 	
 	public AntEditorCompletionProcessor(AntModel model) {
 		super();

@@ -82,7 +82,9 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
     }
 
     public String getPrefixFromDocument(String aDocumentText, int anOffset) {
-        return super.getPrefixFromDocument(aDocumentText, anOffset);
+        String prefix= super.getPrefixFromDocument(aDocumentText, anOffset);
+        currentPrefix= null;
+        return prefix;
     }
 
     public ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int cursorPos) {
