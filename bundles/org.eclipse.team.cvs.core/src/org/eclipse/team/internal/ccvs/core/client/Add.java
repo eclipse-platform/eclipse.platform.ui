@@ -13,11 +13,13 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -73,5 +75,26 @@ public class Add extends Command {
 		}
 		return status;
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.core.client.Command#getDefaultCommandOutputListener()
+     */
+    protected ICommandOutputListener getDefaultCommandOutputListener() {
+        return new CommandOutputListener() {
+            public IStatus errorLine(String line,
+                    ICVSRepositoryLocation location, ICVSFolder commandRoot,
+                    IProgressMonitor monitor) {
+                
+                String serverMessage = getServerMessage(line, location);
+                if (serverMessage != null) {
+                    if (serverMessage.startsWith("use `cvs commit' to add")) //$NON-NLS-1$
+                        return OK;
+                    if (serverMessage.startsWith("scheduling file") && serverMessage.endsWith("for addition")) //$NON-NLS-1$ //$NON-NLS-2$
+                        return OK;
+                }
+                return super.errorLine(line, location, commandRoot, monitor);
+            }
+        };
+    }
 
 }
