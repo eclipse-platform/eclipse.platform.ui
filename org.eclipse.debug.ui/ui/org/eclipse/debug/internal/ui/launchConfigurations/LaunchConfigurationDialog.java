@@ -2358,7 +2358,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		ILaunchConfigurationTab[] allTabs = getTabs();
 		for (int i = 0; i < allTabs.length; i++) {
-			if (getTabFolder().getSelectionIndex() == 1) {
+			if (getTabFolder().getSelectionIndex() == i) {
 				continue;
 			}
 			String tabError = checkTabForError(allTabs[i]);				
