@@ -48,6 +48,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private long pluginsChangeStamp;
 	private boolean pluginsChangeStampIsValid = false;
 	private boolean featureChangesConfigured = false;
+	private boolean transientConfig = false;
 	
 	private static String cmdConfiguration;
 	private static String cmdFeature;
@@ -87,6 +88,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String INIT_PRIMARY_FEATURE_APP = "application";
 	private static final String DFLT_PRIMARY_FEATURE_APP = "org.eclipse.ui.workbench";
 	private static final String CFG_VERSION = "version";
+	private static final String CFG_TRANSIENT = "transient";
 	private static final String VERSION = "1.0";
 	private static final String EOF = "eof";
 	private static final int CFG_LIST_LENGTH = 10;
@@ -547,35 +549,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
 						
-		// Determine configuration URL to use (based on command line argument)		
-		// flag: -configuration COMMON | USER.HOME | USER.DIR | <path>
-		//        	COMMON		in <eclipse>/install/<cfig>
-		//        	USER.HOME	in <user.home>/eclipse/install/<cfig>
-		//        	USER.DIR	in <user.dir>/eclipse/install/<cfig>
-		//        	<path>		URL as specififed
-		URL configURL = null;
-		String tmp;
-		if (configArg != null && !configArg.trim().equals("")) {
-			if (configArg.equalsIgnoreCase(ARG_USER_DIR)) {
-				tmp = System.getProperty("user.dir");
-				if (!tmp.endsWith(File.separator))
-					tmp += File.separator;
-				configURL = new URL("file:" + tmp.replace(File.separatorChar,'/') + ECLIPSEDIR + "/" + INSTALL + "/" + CONFIG_FILE);
-			} else if (configArg.equalsIgnoreCase(ARG_USER_HOME)) {				
-				tmp = System.getProperty("user.home");
-				if (!tmp.endsWith(File.separator))
-					tmp += File.separator;
-				configURL = new URL("file:" + tmp.replace(File.separatorChar,'/') + ECLIPSEDIR + "/" + INSTALL + "/" + CONFIG_FILE);
-			} else if (configArg.equalsIgnoreCase(ARG_COMMON)) {				
-				configURL = new URL(BootLoader.getInstallURL(), INSTALL + "/" + CONFIG_FILE);
-			} else {
-				try {
-					configURL = new URL(configArg);
-				} catch(MalformedURLException e) {
-					throw new IllegalArgumentException(Policy.bind("cfig.badUrlArg",configArg));
-				}
-			}
-		}
+		// Determine configuration URL to use (based on command line argument)	
+		URL configURL = getConfigurationURL(configArg);
+
+		// initialize configuration
 		initializeCurrent(configURL);
 		
 		// pick up any first-time default settings relative to selected config location
@@ -797,6 +774,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// FIXME: support r/o configuration
 		return true;
 	}
+	
+	/*
+	 * @see IPlatformConfiguration#isTransient()
+	 */
+	public boolean isTransient() {
+		return transientConfig;
+	}
 
 	/*
 	 * @see IPlatformConfiguration#save()
@@ -935,11 +919,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		String[] passthruArgs = processCommandLine(cmdArgs);
 		
 		// determine launch mode
-		if (cmdConfiguration == null && cmdPlugins != null) {
+		if (cmdPlugins != null) {
 			// R1.0 compatibility mode ... explicit plugin-path was specified.
-			// Convert the plugins path into a temporary configuration 
+			// Convert the plugins path into a configuration 
 			try {
-				cmdConfiguration = createConfigurationFromPlugins(cmdPlugins);
+				cmdConfiguration = createConfigurationFromPlugins(cmdPlugins, cmdConfiguration);
 			} catch (Exception e) {
 				if (DEBUG)
 					debug("Unable to use specified plugin-path: "+e);
@@ -1225,6 +1209,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		primaryFeature = loadAttribute(props, CFG_PRIMARY_FEATURE, null);
 		primaryFeatureVersion = loadAttribute(props, CFG_PRIMARY_FEATURE_VERSION, null);
 		primaryFeatureApplication = loadAttribute(props, CFG_PRIMARY_FEATURE_APP, null);
+		String flag = loadAttribute(props, CFG_TRANSIENT, null);
+		if (flag != null) {
+			if (flag.equals("true"))
+				transientConfig = true;
+			else
+				transientConfig = false;
+		}
 		
 		String stamp = loadAttribute(props, CFG_STAMP, null);
 		if (stamp != null) {
@@ -1428,6 +1419,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// write header
 		w.println("# "+(new Date()).toString());
 		writeAttribute(w, CFG_VERSION, VERSION);
+		if (transientConfig)
+			writeAttribute(w,CFG_TRANSIENT,"true");
 		w.println("");
 		
 		// write global attributes
@@ -1593,17 +1586,50 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		return passThruArgs;
 	}
+		
+	private static URL getConfigurationURL(String configArg) throws MalformedURLException {
+		// Determine configuration URL to use (based on command line argument)		
+		// flag: -configuration COMMON | USER.HOME | USER.DIR | <url>
+		//        	COMMON		in <eclipse>/install/<cfig>
+		//        	USER.HOME	in <user.home>/eclipse/install/<cfig>
+		//        	USER.DIR	in <user.dir>/eclipse/install/<cfig>
+		//        	<url>		URL as specififed
+		String tmp;
+		URL result = null;
+		if (configArg != null && !configArg.trim().equals("")) {
+			if (configArg.equalsIgnoreCase(ARG_USER_DIR)) {
+				tmp = System.getProperty("user.dir");
+				if (!tmp.endsWith(File.separator))
+					tmp += File.separator;
+				result = new URL("file:" + tmp.replace(File.separatorChar,'/') + ECLIPSEDIR + "/" + INSTALL + "/" + CONFIG_FILE);
+			} else if (configArg.equalsIgnoreCase(ARG_USER_HOME)) {				
+				tmp = System.getProperty("user.home");
+				if (!tmp.endsWith(File.separator))
+					tmp += File.separator;
+				result = new URL("file:" + tmp.replace(File.separatorChar,'/') + ECLIPSEDIR + "/" + INSTALL + "/" + CONFIG_FILE);
+			} else if (configArg.equalsIgnoreCase(ARG_COMMON)) {				
+				result = new URL(BootLoader.getInstallURL(), INSTALL + "/" + CONFIG_FILE);
+			} else {
+				try {
+					result = new URL(configArg);
+				} catch(MalformedURLException e) {
+					throw new IllegalArgumentException(Policy.bind("cfig.badUrlArg",configArg));
+				}
+			}
+		}
+		return result;
+	}
 	
 	/*
 	 * R1.0 compatibility
 	 */
-	private static String createConfigurationFromPlugins(URL file) throws Exception {
+	private static String createConfigurationFromPlugins(URL file, String cfigCmd) throws Exception {
 		// get the actual plugin path
 		URL[] pluginPath = BootLoader.getPluginPath(file);
 		if (pluginPath == null || pluginPath.length == 0)
 			return null;
 			
-		// create a temp configuration
+		// create a temp configuration and populate it based on plugin path
 		PlatformConfiguration tempConfig = new PlatformConfiguration((URL)null);
 		for (int i=0; i<pluginPath.length; i++) {
 			String entry = pluginPath[i].toExternalForm();
@@ -1664,16 +1690,30 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				site.setSitePolicy(policy);
 			}				
 		}
+							
+		// check to see if configuration was specified. If specified, will be used to
+		// persist the new configuration. Otherwise a transient configuration will be
+		// created in temp space.
+		URL tmpURL = null;
+		try {
+			tmpURL = getConfigurationURL(cfigCmd);
+		} catch(MalformedURLException e) {
+		}
 		
-		// save the configuration in temp location
-		String tmpDirName = System.getProperty("java.io.tmpdir");
-		if (!tmpDirName.endsWith(File.separator))
-		tmpDirName += File.separator;
-		tmpDirName += Long.toString((new Date()).getTime()) + File.separator;
-		File tmpDir = new File(tmpDirName);
-		tmpDir.mkdirs();
-		tmpDir.deleteOnExit();
-		File tmpCfg = File.createTempFile("platform",".cfg",tmpDir);
+		if (tmpURL == null) {		
+			// save the configuration in temp location
+			String tmpDirName = System.getProperty("java.io.tmpdir");
+			if (!tmpDirName.endsWith(File.separator))
+				tmpDirName += File.separator;
+			tmpDirName += Long.toString((new Date()).getTime()) + File.separator;
+			File tmpDir = new File(tmpDirName);
+			tmpDir.mkdirs();
+			tmpDir.deleteOnExit();
+			File tmpCfg = File.createTempFile("platform",".cfg",tmpDir);
+			tmpCfg.deleteOnExit();
+			tmpURL = new URL("file:" + tmpCfg.getAbsolutePath().replace(File.separatorChar, '/'));
+			tempConfig.transientConfig = true;
+		}
 		
 		// force writing null stamps
 		ISiteEntry[] se = tempConfig.getConfiguredSites();
@@ -1687,11 +1727,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		tempConfig.featuresChangeStampIsValid = true;
 		
 		// write out configuration
-		URL tmpURL = new URL("file:" + tmpCfg.getAbsolutePath().replace(File.separatorChar, '/'));
 		tempConfig.save(tmpURL); // write the temporary configuration we just created
-		tmpCfg.deleteOnExit();
+
 		
-		// return reference to temp configuration
+		// return reference to new configuration
 		return tmpURL.toExternalForm();
 	}
 	

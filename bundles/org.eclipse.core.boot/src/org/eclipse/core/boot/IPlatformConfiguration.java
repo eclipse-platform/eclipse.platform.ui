@@ -339,6 +339,18 @@ public interface IPlatformConfiguration {
 	 * @since 2.0
 	 */
 	public boolean isUpdateable();	
+		
+	/**
+	 * Returns an indication whether the configuration is transient. A transient
+	 * configuration typically represents a scenario where the configuration
+	 * was computed for a single instantiation of the platform and is not
+	 * guaranteed to be valid on subsequent instantiations.
+	 * 
+	 * @return <code>true</code> if configuration is transient, <code>false</code> 
+	 * otherwise
+	 * @since 2.0
+	 */
+	public boolean isTransient();	
 	
 	/**
 	 * Called to save the configuration information
