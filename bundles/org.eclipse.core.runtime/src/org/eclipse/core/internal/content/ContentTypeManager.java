@@ -15,11 +15,12 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
 public class ContentTypeManager implements IContentTypeManager {
 
-	final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
+	public final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;	
 	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
 	private static ContentTypeManager instance;
@@ -178,7 +179,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			for (int i = 0; i < children.length; i++) {
 				ContentType child = (ContentType) children[i];
 				// must avoid duplicates and ensure children do not override filespecs
-				if (child.internalIsAssociatedWith(fileName) == ContentType.ASSOCIATED_BY_NAME && !result.contains(child))
+				if (!result.contains(child) && child.internalIsAssociatedWith(fileName) == ContentType.ASSOCIATED_BY_NAME)
 					result.add(count++, child);
 			}
 		}
@@ -193,7 +194,8 @@ public class ContentTypeManager implements IContentTypeManager {
 					IContentType[] children = main.getChildren();
 					for (int i = 0; i < children.length; i++) {
 						ContentType child = (ContentType) children[i];
-						if (child.internalIsAssociatedWith(fileName) == ContentType.ASSOCIATED_BY_EXTENSION && !result.contains(children[i]))
+						// must avoid duplicates and ensure children do not override filespecs						
+						if (!result.contains(children[i]) && child.internalIsAssociatedWith(fileName) == ContentType.ASSOCIATED_BY_EXTENSION)
 							result.add(count++, children[i]);
 					}
 				}
@@ -260,7 +262,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	}
 
 	Preferences getPreferences() {
-		return InternalPlatform.getDefault().getPreferencesService().getRootNode().node(CONTENT_TYPE_PREF_NODE);
+		return new InstanceScope().getNode(CONTENT_TYPE_PREF_NODE);
 	}
 
 	protected IContentType[] internalFindContentTypesFor(InputStream buffer, IContentType[] subset) {
