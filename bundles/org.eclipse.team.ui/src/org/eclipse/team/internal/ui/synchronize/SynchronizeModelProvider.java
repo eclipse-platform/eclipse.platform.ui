@@ -621,20 +621,23 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	}
 	
 	/**
-	 * Forces the viewer to update the labels for parents whose children have
-	 * changed during this round of sync set changes.
+	 * Forces the viewer to update the labels for queued elemens
+	 * whose label has changed during this round of changes. This method
+	 * should only be invoked in the UI thread.
 	 */
 	protected void firePendingLabelUpdates() {
+		if (!canUpdateViewer()) return;
 		try {
-			if (canUpdateViewer()) {
-				StructuredViewer tree = getViewer();
-				tree.update(pendingLabelUpdates.toArray(new Object[pendingLabelUpdates.size()]), null);
-			}
+			Object[] updates = pendingLabelUpdates.toArray(new Object[pendingLabelUpdates.size()]);
+			updateLabels(updates);
 		} finally {
 			pendingLabelUpdates.clear();
 		}
 	}
 	
+	/*
+	 * Forces the viewer to update the labels for the given elements
+	 */
 	private void updateLabels(Object[] elements) {
 		if (canUpdateViewer()) {
 			StructuredViewer tree = getViewer();	
@@ -799,7 +802,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 				// Fire label changed
 				asyncExec(new Runnable() {
 					public void run() {
-						updateLabels(changes);
+						firePendingLabelUpdates();
 					}
 				});
 				return Status.OK_STATUS;
