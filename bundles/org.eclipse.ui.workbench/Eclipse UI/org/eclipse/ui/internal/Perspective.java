@@ -1371,7 +1371,7 @@ void showFastView(IViewReference ref) {
 
 	saveFastViewWidthRatio();
 	
-	int side = ((WorkbenchWindow)pane.getWorkbenchWindow()).getFastViewBarSide();
+	int side = ((WorkbenchWindow)page.getWorkbenchWindow()).getFastViewBarSide();
 	
 	fastViewPane.showView(getClientComposite(), pane, side, getFastViewWidthRatio(ref.getId()));	
 	
