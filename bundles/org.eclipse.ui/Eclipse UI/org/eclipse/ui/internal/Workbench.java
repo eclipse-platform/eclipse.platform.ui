@@ -1038,9 +1038,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			Window.setExceptionHandler(handler);
 			boolean initOK = init(commandLineArgs);
 			Platform.endSplash();
+			runEventLoop = true;
 			if (initOK) 
-				checkUpdates();
-			if (initOK) {
+				checkUpdates(); // may trigger a close/restart
+			if (initOK && runEventLoop) {
 				runEventLoop();
 			}
 			shutdown();
