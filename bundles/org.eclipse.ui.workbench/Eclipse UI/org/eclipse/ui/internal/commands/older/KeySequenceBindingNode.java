@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 
-final class KeyBindingNode {
+final class KeySequenceBindingNode {
 
 	final static class Assignment implements Comparable {
 		
@@ -98,14 +98,14 @@ final class KeyBindingNode {
 	static void add(Map tree, KeySequence keySequence, String contextId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {		 	
 		List keyStrokes = keySequence.getKeyStrokes();		
 		Map root = tree;
-		KeyBindingNode keyBindingNode = null;
+		KeySequenceBindingNode keyBindingNode = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
 			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			keyBindingNode = (KeyBindingNode) root.get(keyStroke);
+			keyBindingNode = (KeySequenceBindingNode) root.get(keyStroke);
 			
 			if (keyBindingNode == null) {
-				keyBindingNode = new KeyBindingNode();	
+				keyBindingNode = new KeySequenceBindingNode();	
 				root.put(keyStroke, keyBindingNode);
 			}
 			
@@ -156,7 +156,7 @@ final class KeyBindingNode {
 		Iterator iterator = prefix.getKeyStrokes().iterator();
 	
 		while (iterator.hasNext()) {
-			KeyBindingNode keyBindingNode = (KeyBindingNode) tree.get(iterator.next());
+			KeySequenceBindingNode keyBindingNode = (KeySequenceBindingNode) tree.get(iterator.next());
 			
 			if (keyBindingNode == null)
 				return new HashMap();
@@ -174,7 +174,7 @@ final class KeyBindingNode {
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			KeyStroke keyStroke = (KeyStroke) entry.getKey();			
-			KeyBindingNode keyBindingNode = (KeyBindingNode) entry.getValue();					
+			KeySequenceBindingNode keyBindingNode = (KeySequenceBindingNode) entry.getValue();					
 			List keyStrokes = new ArrayList(prefix.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
@@ -195,7 +195,7 @@ final class KeyBindingNode {
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			KeyStroke keyStroke = (KeyStroke) entry.getKey();			
-			KeyBindingNode keyBindingNode = (KeyBindingNode) entry.getValue();					
+			KeySequenceBindingNode keyBindingNode = (KeySequenceBindingNode) entry.getValue();					
 			List keyStrokes = new ArrayList(prefix.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
@@ -260,7 +260,7 @@ final class KeyBindingNode {
 				commandMap.put(commandId, keyBindings);			
 			}
 			
-			keyBindings.add(new KeyBinding(keySequence, value));
+			keyBindings.add(new KeySequenceBinding(keySequence, value));
 		}	
 		
 		return commandMap;		
@@ -273,7 +273,7 @@ final class KeyBindingNode {
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			KeyStroke keyStroke = (KeyStroke) entry.getKey();			
-			KeyBindingNode keyBindingNode = (KeyBindingNode) entry.getValue();					
+			KeySequenceBindingNode keyBindingNode = (KeySequenceBindingNode) entry.getValue();					
 			List keyStrokes = new ArrayList(prefix.getKeyStrokes());
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
@@ -291,11 +291,11 @@ final class KeyBindingNode {
 	static void remove(Map tree, KeySequence keySequence, String contextId, String keyConfigurationId, int rank, String platform, String locale) {
 		List keyStrokes = keySequence.getKeyStrokes();		
 		Map root = tree;
-		KeyBindingNode keyBindingNode = null;
+		KeySequenceBindingNode keyBindingNode = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
 			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			keyBindingNode = (KeyBindingNode) root.get(keyStroke);
+			keyBindingNode = (KeySequenceBindingNode) root.get(keyStroke);
 			
 			if (keyBindingNode == null)
 				break;
@@ -342,11 +342,11 @@ final class KeyBindingNode {
 	static void remove(Map tree, KeySequence keySequence, String contextId, String keyConfigurationId, int rank, String platform, String locale, String commandId) {
 		List keyStrokes = keySequence.getKeyStrokes();		
 		Map root = tree;
-		KeyBindingNode keyBindingNode = null;
+		KeySequenceBindingNode keyBindingNode = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
 			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			keyBindingNode = (KeyBindingNode) root.get(keyStroke);
+			keyBindingNode = (KeySequenceBindingNode) root.get(keyStroke);
 			
 			if (keyBindingNode == null)
 				break;
@@ -400,14 +400,14 @@ final class KeyBindingNode {
 
 	static void solve(Map tree, String[] keyConfigurationIds, String[] platforms, String[] locales) {
 		for (Iterator iterator = tree.values().iterator(); iterator.hasNext();) {	
-			KeyBindingNode keyBindingNode = (KeyBindingNode) iterator.next();
+			KeySequenceBindingNode keyBindingNode = (KeySequenceBindingNode) iterator.next();
 			keyBindingNode.assignmentsByContextId.clear();		
 
 			for (Iterator iterator2 = keyBindingNode.contextMap.entrySet().iterator(); iterator2.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator2.next();
 				String contextId = (String) entry.getKey();
 				Map keyConfigurationMap = (Map) entry.getValue();
-				KeyBindingNode.Assignment assignment = null;
+				KeySequenceBindingNode.Assignment assignment = null;
 				
 				if (keyConfigurationMap != null)
 					for (int keyConfiguration = 0; keyConfiguration < keyConfigurationIds.length && keyConfiguration < 0xFF; keyConfiguration++) {
@@ -472,7 +472,7 @@ final class KeyBindingNode {
 
 	static void solve(Map tree, String[] contextIds, String[] keyConfigurationIds, String[] platforms, String[] locales) {
 		for (Iterator iterator = tree.values().iterator(); iterator.hasNext();) {
-			KeyBindingNode keyBindingNode = (KeyBindingNode) iterator.next();
+			KeySequenceBindingNode keyBindingNode = (KeySequenceBindingNode) iterator.next();
 			keyBindingNode.match = null;		
 			
 			for (int context = 0; context < contextIds.length && context < 0xFF && keyBindingNode.match == null; context++) {
@@ -512,6 +512,6 @@ final class KeyBindingNode {
 	private Map contextMap = new HashMap();
 	private Match match = null;
 	
-	private KeyBindingNode() {
+	private KeySequenceBindingNode() {
 	}
 }
