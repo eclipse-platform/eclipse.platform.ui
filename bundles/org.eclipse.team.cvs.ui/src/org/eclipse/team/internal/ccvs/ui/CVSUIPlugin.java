@@ -21,6 +21,7 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IRemoteFile;
 import org.eclipse.team.ccvs.core.IRemoteFolder;
 import org.eclipse.team.ccvs.core.IRemoteRoot;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -157,5 +158,21 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		initializeImages();
 		initializePreferences();
 		repositoryManager = new RepositoryManager();
+		try {
+			repositoryManager.startup();
+		} catch (TeamException e) {
+			throw new CoreException(e.getStatus());
+		}
+	}
+	
+	/**
+	 * @see Plugin#shutdown()
+	 */
+	public void shutdown() throws CoreException {
+		try {
+			repositoryManager.shutdown();
+		} catch (TeamException e) {
+			throw new CoreException(e.getStatus());
+		}
 	}
 }

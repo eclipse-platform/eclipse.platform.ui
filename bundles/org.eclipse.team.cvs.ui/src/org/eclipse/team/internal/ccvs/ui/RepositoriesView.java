@@ -30,6 +30,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
+import org.eclipse.team.internal.ccvs.ui.model.Tag;
 import org.eclipse.team.internal.ccvs.ui.wizards.ConfigurationWizardMainPage;
 import org.eclipse.team.internal.ccvs.ui.wizards.LocationWizard;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -56,6 +57,22 @@ public class RepositoriesView extends ViewPart {
 	// Drill down adapter
 	private DrillDownAdapter drillPart;
 	
+	// Listener
+	IRepositoryListener listener = new IRepositoryListener() {
+		public void repositoryAdded(IRemoteRoot root) {
+			viewer.refresh();
+		}
+		public void repositoryRemoved(IRemoteRoot root) {
+			viewer.refresh();
+		}
+		public void tagAdded(Tag tag, IRemoteRoot root) {
+			viewer.refresh(root);
+		}
+		public void tagRemoved(Tag tag, IRemoteRoot root) {
+			viewer.refresh(root);
+		}
+	};
+
 	/**
 	 * Add a new repository based on the given properties to the viewer.
 	 */
@@ -143,6 +160,14 @@ public class RepositoriesView extends ViewPart {
 		viewer.setSorter(new RepositorySorter());
 		drillPart = new DrillDownAdapter(viewer);
 		contributeActions();
+		CVSUIPlugin.getPlugin().getRepositoryManager().addRepositoryListener(listener);
+	}
+	
+	/*
+	 * @see WorkbenchPart#dispose
+	 */
+	public void dispose() {
+		CVSUIPlugin.getPlugin().getRepositoryManager().remoteRepositoryListener(listener);
 	}
 	
 	/**
