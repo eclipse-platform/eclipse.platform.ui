@@ -95,6 +95,8 @@ public class DefaultPartPresentation extends StackPresentation {
 	private int dragStart = -1;
 		
 	private final static String TAB_DATA = DefaultPartPresentation.class.getName() + ".partId"; //$NON-NLS-1$
+	private final static String BOLD_DATA = "isBold"; //$NON-NLS-1$
+	private final static String FONT_DATA = "currentFont"; //$NON-NLS-1$ 
 	
 	private PaneFolderButtonListener buttonListener = new PaneFolderButtonListener() {
 		public void stateButtonPressed(int buttonId) {
@@ -593,28 +595,24 @@ public class DefaultPartPresentation extends StackPresentation {
 			return;
 		}
 		
-		initTab(tab, part);
-		
 		switch (property) {
-		 case IPresentablePart.PROP_BUSY:
-			break;
-	     case IPresentablePart.PROP_HIGHLIGHT_IF_BACK:
-	     	FontRegistry registry = 
-			    PlatformUI.getWorkbench().
-			    	getThemeManager().getCurrentTheme().
-			    		getFontRegistry();
-	     	
-	       	if(getCurrent() != part)//Set bold if it does currently have focus
-				tab.setFont(registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT));
+	     case IPresentablePart.PROP_HIGHLIGHT_IF_BACK: 	
+	       	if(getCurrent() != part) {//Set bold if it does currently have focus
+	       		tab.setData(BOLD_DATA, BOLD_DATA);
+	       		initTab(tab, part);
+	       	}
 	        break;
 	     case IPresentablePart.PROP_CONTENT_DESCRIPTION:
 		 case IPresentablePart.PROP_TOOLBAR:
 		 case IPresentablePart.PROP_PANE_MENU:
 		 case IPresentablePart.PROP_TITLE:
 		 	if (getCurrent() == part) {
+		 		initTab(tab, part);
 		 		setControlSize();
 		 	}
 		 	break;
+		 default:
+	 		initTab(tab, part);
 		}
 	}
 
@@ -844,26 +842,48 @@ public class DefaultPartPresentation extends StackPresentation {
 	protected void initTab(CTabItem tabItem, IPresentablePart part) {
     	Assert.isTrue(!isDisposed());
     	
-		tabItem.setText(part.getName());
-		
-		tabItem.setImage(part.getTitleImage());
+    	if (!Util.equals(part.getName(), tabItem.getText())) {
+    		tabItem.setText(part.getName());    		
+    	}
+
+    	if (tabItem.getImage() != part.getTitleImage()) {
+    		tabItem.setImage(part.getTitleImage());
+    	}
 		
         String toolTipText = part.getTitleToolTip();
-        if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
+        if (toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
+        	toolTipText = null;
+        }
+        
+        if (!Util.equals(toolTipText, tabItem.getToolTipText())) {
         	tabItem.setToolTipText(toolTipText);
         }
-		
+        
+        // Set the font if necessary
 		FontRegistry registry = 
 		    PlatformUI.getWorkbench().
 		    	getThemeManager().getCurrentTheme().
 		    		getFontRegistry();
-		
-		if(part.isBusy())
-			tabItem.setFont(registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-		else{
-			tabItem.setFont(null);
-		}			
 
+		// Determine the parent font. We will set the tab's font
+		Font targetFont = null;
+
+		if(part.isBusy()) {
+			targetFont = registry.getItalic(IWorkbenchThemeConstants.TAB_TEXT_FONT);
+		} else {
+			if (tabItem.getData(BOLD_DATA) != null) {
+				targetFont = registry.getBold(IWorkbenchThemeConstants.TAB_TEXT_FONT);
+			}
+		}
+		
+		// Workaround for the fact that we can't determine what we called
+		// tabItem.setFont(...) with last time around if the last argument was null.
+		Font currentFont = (Font)tabItem.getData(FONT_DATA);
+		
+		if (currentFont != targetFont) {
+			tabItem.setFont(targetFont);
+			tabItem.setData(FONT_DATA, targetFont);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -1075,6 +1095,7 @@ public class DefaultPartPresentation extends StackPresentation {
 		
 		if (current != null) {
 			CTabItem item = getTab(toSelect);
+			
 			if (item != null)
 				// If the item is not currently visible, move it
 				// to last visible position on the right
@@ -1126,6 +1147,16 @@ public class DefaultPartPresentation extends StackPresentation {
 			if (activationListChange) {
 				activationList.remove(toSelect);
 				activationList.add(toSelect);
+			}
+			
+			CTabItem newItem = getTab(toSelect);
+			
+			if (newItem != null && !(newItem.isDisposed())) {
+				// Determine if we need to un-bold this tab
+				if (newItem.getData(BOLD_DATA) != null) {
+					newItem.setData(BOLD_DATA, null);
+					initTab(newItem, current);
+				}
 			}
 		}
 		
