@@ -15,7 +15,7 @@
 		<mkdir dir="${basedir}/webapp.jar.bin"/>
 
 		<!-- compile the source code -->
-		<javac destdir="${basedir}/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/bin;../org.apache.xerces/xercesImpl.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.tomcat/servlet.jar">
+		<javac destdir="${basedir}/webapp.jar.bin" failonerror="false" verbose="true" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/bin;../org.apache.xerces/xercesImpl.jar;../org.apache.xerces/xerces.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.tomcat/servlet.jar">
 			<src path="src/"/>
 		</javac>
 		
