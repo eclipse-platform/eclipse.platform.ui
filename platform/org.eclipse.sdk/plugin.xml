@@ -173,5 +173,25 @@
             </class>
       </page>   
    </extension>
+   
+      <extension
+            point="org.eclipse.ui.activitySupport">
+      <triggerPointAdvisor
+            id="org.eclipse.ui.ide.triggerPointAdvisor">
+            <class class="org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor">
+            	<parameter name="proceedMulti" value="%TriggerPointAdvisor.proceedMulti" />
+            	<parameter name="proceedSingle" value="%TriggerPointAdvisor.proceedSingle" />
+            	<parameter name="dontAsk" value="%TriggerPointAdvisor.dontAsk" />
+            	<parameter name="noDetails" value="%TriggerPointAdvisor.noDetails" />
+            </class>
+      </triggerPointAdvisor>
+   </extension>   
+   
+   <extension
+         point="org.eclipse.ui.activitySupport">
+      <triggerPointAdvisorProductBinding
+            productId="org.eclipse.platform.ide"
+            triggerPointAdvisorId="org.eclipse.ui.ide.triggerPointAdvisor"/>
+   </extension>
 
 </plugin>
