@@ -1919,7 +1919,11 @@ public IEditorPart openInternalEditor(IMarker marker)
 private IEditorPart openMarker(IMarker marker, boolean activate, boolean forceInternal)
 	throws PartInitException {
 	// Get the resource.
-	IFile file = (IFile)marker.getResource();
+	Object resource = marker.getResource();
+	if(!(resource instanceof IFile))
+		return null;
+		
+	IFile file = (IFile)resource;
 
 	// Get the preferred editor id.
 	String editorID = null;
