@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
-
 import org.apache.tools.ant.AntTypeDefinition;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
@@ -143,8 +142,6 @@ public class AntModel implements IAntModel {
 			}
 		};
 		AntUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(fUIPropertyChangeListener);
-		
-		DecayCodeCompletionDataStructuresThread.cancel();
 	}
 	
 	public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider, boolean resolveLexicalInfo, boolean resolvePositionInfo, boolean resolveTaskInfo) {
@@ -161,6 +158,7 @@ public class AntModel implements IAntModel {
 		fLocationProvider= locationProvider;
 		AntDefiningTaskNode.setJavaClassPath();
 		fgInstanceCount++;
+		DecayCodeCompletionDataStructuresThread.cancel();
     }
 	
 	/* (non-Javadoc)
