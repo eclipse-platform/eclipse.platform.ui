@@ -27,6 +27,7 @@ import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -77,7 +78,7 @@ public class LaunchViewer extends TreeViewer {
 	            Iterator iterator = parents.iterator();
 	            while (iterator.hasNext() && !monitor.isCanceled()) {
 	                Object parent = iterator.next();
-	                TreeItem item = (TreeItem) doFindItem(parent);
+	                TreeItem item = (TreeItem) findItem(parent);
 	                if (item != null) {
 	                    expandToLevel(parent, 1);
 	                } else {
@@ -86,7 +87,7 @@ public class LaunchViewer extends TreeViewer {
 	                }
 	            }
 	            if (allParentsExpanded) {
-	                if (doFindItem(element) != null) {
+	                if (findItem(element) != null) {
 	                    setSelection(new StructuredSelection(element), true);
 	                    fSelectionJob = null;
 	                    return Status.OK_STATUS;
@@ -129,7 +130,7 @@ public class LaunchViewer extends TreeViewer {
 	            Iterator iterator = parents.iterator();
 	            while (iterator.hasNext() && !monitor.isCanceled()) {
 	                Object parent = iterator.next();
-	                TreeItem item = (TreeItem) doFindItem(parent);
+	                TreeItem item = (TreeItem) findItem(parent);
 	                if (item != null) {
 	                    expandToLevel(parent, 1);
 	                } else {
@@ -138,9 +139,11 @@ public class LaunchViewer extends TreeViewer {
 	                }
 	            }
 	            if (allParentsExpanded) {
-	                TreeItem item = (TreeItem) doFindItem(element); 
+	                TreeItem item = (TreeItem) findItem(element); 
 	                if (item != null) {
-	                    expandToLevel(element, 1);
+	                    if (isExpandable(element)) {
+		                    expandToLevel(element, 1);
+	                    }
 	                    fExpansionJob = null;
 	                    return Status.OK_STATUS;
 	                }
@@ -160,7 +163,7 @@ public class LaunchViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#add(java.lang.Object, java.lang.Object)
 	 */
 	public synchronized void add(Object parentElement, Object childElement) {
-		if (doFindItem(childElement) == null) {
+		if (findItem(childElement) == null) {
 			super.add(parentElement, childElement);
 			runDeferredUpdates();
 		}
@@ -259,7 +262,7 @@ public class LaunchViewer extends TreeViewer {
 	 * @param element element to be selected if present or when added to the tree
 	 */
 	public synchronized void setDeferredSelection(Object element) {
-	    if (doFindItem(element) == null) {
+	    if (findItem(element) == null) {
 	        if (fSelectionJob != null) {
 	            fSelectionJob.cancel();
 	        }
@@ -271,7 +274,7 @@ public class LaunchViewer extends TreeViewer {
 	}
 	
 	public synchronized void deferExpansion(Object element) {
-	    TreeItem treeItem = (TreeItem) doFindItem(element);
+	    TreeItem treeItem = (TreeItem) findItem(element);
         if (treeItem == null) {
 	        if (fExpansionJob != null) {
 	            fExpansionJob.cancel();
