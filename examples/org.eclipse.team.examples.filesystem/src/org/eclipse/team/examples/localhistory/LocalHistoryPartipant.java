@@ -29,7 +29,6 @@ public class LocalHistoryPartipant extends SubscriberParticipant {
 	private class LocalHistoryActionContribution extends SynchronizePageActionGroup {
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
-			
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, CONTEXT_MENU_CONTRIBUTION_GROUP, 
 					new SynchronizeModelAction("Revert to latest in local history", configuration) { //$NON-NLS-1$
