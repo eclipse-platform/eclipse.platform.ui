@@ -28,6 +28,8 @@ public final class TextOperationAction extends TextEditorAction {
 	private int fOperationCode= -1;
 	/** The text operation target */
 	private ITextOperationTarget fOperationTarget;
+	/** Indicates whether this action can be executed on read only editors */
+	private boolean fRunsOnReadOnly= false;
 	
 	/**
 	 * Creates and initializes the action for the given text editor and operation 
@@ -52,6 +54,31 @@ public final class TextOperationAction extends TextEditorAction {
 	}
 	
 	/**
+	 * Creates and initializes the action for the given text editor and operation 
+	 * code. The action configures its visual representation from the given resource
+	 * bundle. The action works by asking the text editor at the time for its 
+	 * text operation target adapter (using
+	 * <code>getAdapter(ITextOperationTarget.class)</code>. The action runs that
+	 * operation with the given opcode.
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   <code>null</code> if none
+	 * @param editor the text editor
+	 * @param operationCode the operation code
+	 * @param runsOnReadOnly <code>true</code> if action can be executed on read-only files
+	 * 
+	 * @see ResourceAction#ResourceAction
+	 */
+	public TextOperationAction(ResourceBundle bundle, String prefix, ITextEditor editor, int operationCode, boolean runsOnReadOnly) {
+		super(bundle, prefix, editor);
+		fOperationCode= operationCode;
+		fRunsOnReadOnly= runsOnReadOnly;
+		update();
+	}
+	
+	/**
 	 * The <code>TextOperationAction</code> implementation of this 
 	 * <code>IAction</code> method runs the operation with the current
 	 * operation code.
@@ -72,7 +99,7 @@ public final class TextOperationAction extends TextEditorAction {
 		ITextEditor editor= getTextEditor();
 		if (editor instanceof ITextEditorExtension) {
 			ITextEditorExtension extension= (ITextEditorExtension) editor;
-			if (extension.isEditorInputReadOnly()) {
+			if (extension.isEditorInputReadOnly() && !fRunsOnReadOnly) {
 				setEnabled(false);
 				return;
 			}
