@@ -47,22 +47,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 		if (o instanceof LocalFileStorage) {
 			LocalFileStorage storage = (LocalFileStorage) o;
 			IPath path = storage.getFullPath();
-			StringBuffer buffer = new StringBuffer();
-			String[] segments = path.segments();
-			if (segments.length > 0) {
-				buffer.append(path.lastSegment());
-				if (segments.length > 1) {
-					buffer.append(" - "); //$NON-NLS-1$
-					if (path.getDevice() != null) {
-						buffer.append(path.getDevice());	
-					}
-					for (int i = 0; i < segments.length - 1; i++) {
-						buffer.append(File.separatorChar);
-						buffer.append(segments[i]);
-					}
-				}
-				return buffer.toString();
-			}
+			return getQualifiedName(path);
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -71,5 +56,25 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	public Object getParent(Object o) {
 		return null;
+	}
+	
+	public static String getQualifiedName(IPath path) {
+		StringBuffer buffer = new StringBuffer();
+		String[] segments = path.segments();
+		if (segments.length > 0) {
+			buffer.append(path.lastSegment());
+			if (segments.length > 1) {
+				buffer.append(" - "); //$NON-NLS-1$
+				if (path.getDevice() != null) {
+					buffer.append(path.getDevice());	
+				}
+				for (int i = 0; i < segments.length - 1; i++) {
+					buffer.append(File.separatorChar);
+					buffer.append(segments[i]);
+				}
+			}
+			return buffer.toString();
+		}
+		return ""; //$NON-NLS-1$
 	}
 }

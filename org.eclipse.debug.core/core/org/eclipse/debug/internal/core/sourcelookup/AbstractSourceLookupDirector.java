@@ -12,8 +12,10 @@ package org.eclipse.debug.internal.core.sourcelookup;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -73,6 +75,8 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	protected ILaunchConfiguration fConfig;
 	//whether duplicates should be searched for or not
 	protected boolean fDuplicates = false;
+	// cache of resolved source elements for stack frames with dups
+	protected Map fResolvedElements = null;
 	
 	protected static final IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
 	protected static final IStatus fResolveDuplicatesStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 205, "", null);  //$NON-NLS-1$//$NON-NLS-2$
@@ -163,6 +167,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			}
 		}
 		fSourceContainers = null;
+		fResolvedElements = null;
 	}
 	
 	/**
@@ -394,6 +399,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			try {
 				Object result = prompter.handleStatus(fResolveDuplicatesStatus, new Object[]{frame, sources});
 				if (result != null) {
+					cacheResolvedElement(frame, result);
 					return result;
 				}
 			} catch (CoreException e) {
@@ -489,5 +495,30 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 */
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		return true;
+	}
+	
+	/**
+	 * Caches the resolved source element to use for a stack frame when
+	 * there are duplicates.
+	 * 
+	 * @param frame stack frame
+	 * @param sourceElement source element to use for the frame
+	 */
+	protected void cacheResolvedElement(IStackFrame frame, Object sourceElement) {
+		if (fResolvedElements == null) {
+			fResolvedElements = new HashMap(10);
+		}
+		fResolvedElements.put(frame, sourceElement);
+	}
+	
+	/**
+	 * Clears any resolved source element for the given stack frame.
+	 * 
+	 * @param frame stack frame
+	 */
+	protected void clearResolvedElement(IStackFrame frame) {
+		if (fResolvedElements != null) {
+			fResolvedElements.remove(frame);
+		}
 	}
 }

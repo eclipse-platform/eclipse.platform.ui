@@ -21,7 +21,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Status handler to prompt for dupicate source element resolution.
@@ -47,7 +46,7 @@ public class ResolveDuplicatesHandler implements IStatusHandler {
 		} else if(sources.size() == 0) {
 			return null;
 		}
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(DebugUIPlugin.getShell(), new WorkbenchLabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(DebugUIPlugin.getShell(), new SourceElementLabelProvider());
 		dialog.setMultipleSelection(false);
 		dialog.setTitle(SourceLookupUIMessages.getString("ResolveDuplicatesHandler.0")); //$NON-NLS-1$
 		dialog.setMessage(SourceLookupUIMessages.getString("ResolveDuplicatesHandler.1")); //$NON-NLS-1$
