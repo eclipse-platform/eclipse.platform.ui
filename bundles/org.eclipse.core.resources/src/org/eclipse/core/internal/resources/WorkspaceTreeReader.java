@@ -101,7 +101,16 @@ protected ElementTree[] readTrees(IPath root, DataInputStream input, IProgressMo
 		ElementTreeReader treeReader = new ElementTreeReader(workspace.getSaveManager());
 		ElementTree[] trees = treeReader.readDeltaChain(input);
 		monitor.worked(3);
-		workspace.linkTrees(root, trees);
+		if (root.isRoot()) {
+			//Don't need to link because we're reading the whole workspace.
+			//The last tree in the chain is the complete tree.
+			ElementTree newTree = trees[trees.length-1];
+			newTree.setTreeData(workspace.tree.getTreeData());
+			workspace.tree = newTree;
+		} else {
+			//splice the restored tree into the current set of trees
+			workspace.linkTrees(root, trees);
+		}
 		monitor.worked(1);
 		return trees;
 	} finally {
@@ -137,7 +146,7 @@ protected void linkBuildersToTrees(List buildersToBeLinked, ElementTree[] trees,
 				projectName = info.getProjectName();
 				infos = new HashMap(5);
 			}
-			info.setLastBuildTree(trees[++index]);
+			info.setLastBuildTree(trees[index++]);
 			infos.put(info.getBuilderName(), info);
 		}
 		if (infos != null) {

@@ -116,9 +116,9 @@ protected int readNumber() throws IOException {
 /**
  * Reads a DeltaDataTree from the given input stream
  */
-public DeltaDataTree readTree(DataInput input) throws IOException {
+public DeltaDataTree readTree(DeltaDataTree parent, DataInput input) throws IOException {
 	this.input = input;
 	AbstractDataTreeNode root = readNode(Path.ROOT);
-	return new DeltaDataTree(root);
+	return new DeltaDataTree(root, parent);
 }
 }

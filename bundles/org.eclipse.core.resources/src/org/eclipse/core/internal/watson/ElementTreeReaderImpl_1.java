@@ -36,14 +36,13 @@ ElementTreeReaderImpl_1(IElementInfoFlattener factory) {
  */
 public ElementTree readDelta(ElementTree parentTree, DataInput input) throws IOException {
 	DeltaDataTree complete = parentTree.getDataTree();
-	DeltaDataTree delta = dataTreeReader.readTree(input);
+	DeltaDataTree delta = dataTreeReader.readTree(complete, input);
 	
 	//if the delta is empty, just return the parent
 	if (delta.isEmptyDelta()) 
 		return parentTree;
 
-	DeltaDataTree reconstructed = complete.assembleWithForwardDelta(delta);
-	ElementTree tree = new ElementTree(reconstructed);
+	ElementTree tree = new ElementTree(delta);
 	
 	//copy the user data forward
 	IElementTreeData data = parentTree.getTreeData();
@@ -54,7 +53,7 @@ public ElementTree readDelta(ElementTree parentTree, DataInput input) throws IOE
 	//make the underlying data tree immutable
 	//can't call immutable() on the ElementTree because
 	//this would attempt to reroot.
-	reconstructed.immutable();
+	delta.immutable();
 	return tree;
 }
 /**
@@ -95,7 +94,7 @@ public ElementTree readTree(DataInput input) throws IOException {
 	/* The format version number has already been consumed
 	 * by ElementTreeReader#readFrom.
 	 */
-	ElementTree result= new ElementTree(dataTreeReader.readTree(input));
+	ElementTree result= new ElementTree(dataTreeReader.readTree(null, input));
 	return result;
 }
 }
