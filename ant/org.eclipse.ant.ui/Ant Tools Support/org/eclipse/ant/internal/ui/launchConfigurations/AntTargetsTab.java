@@ -537,7 +537,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 			
 			if (fAllTargets == null) {
-			    setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.1")); //$NON-NLS-1$
+			    //if an error was not thrown during parsing then having no targets is valid (Ant 1.6.*)
 			    return fAllTargets;
 			}
 			
