@@ -37,6 +37,9 @@ public class StatusChecker {
 			Assert.assertTrue("Timeout waiting for status to change from " + getStatus(location[index]) + " to " + getStatus(status), i++ < timeout);
 		}
 	}
+	public static void waitForStatus(int [] location, int status) {
+		waitForStatus(location, 0, status, 100);
+	}
 
 	private static String getStatus(int status) {
 		switch(status) {
