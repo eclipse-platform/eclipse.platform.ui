@@ -48,6 +48,7 @@ public class ResourceComponent implements IVariableComponent {
 	protected Button selectedResourceButton;
 	protected Button specificResourceButton;
 	protected TreeViewer resourceList;
+	private IResource selectedResource;
 	
 	/**
 	 * Creates the component
@@ -93,6 +94,7 @@ public class ResourceComponent implements IVariableComponent {
 		resourceList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				validateResourceListSelection();
+				selectedResource= (IResource) ((IStructuredSelection)event.getSelection()).getFirstElement();
 			}
 		});
 		resourceList.setContentProvider(new WorkbenchContentProvider());
@@ -152,10 +154,8 @@ public class ResourceComponent implements IVariableComponent {
 			return null;
 		
 		if (resourceList != null) {
-			IStructuredSelection sel = (IStructuredSelection) resourceList.getSelection();
-			IResource resource = (IResource) sel.getFirstElement();
-			if (resource != null)
-				return resource.getFullPath().toString();
+			if (selectedResource != null)
+				return selectedResource.getFullPath().toString();
 		}
 		
 		return null;
@@ -248,7 +248,7 @@ public class ResourceComponent implements IVariableComponent {
 	protected boolean validateResourceListSelection() {
 		if (resourceList == null)
 			return true;
-			
+
 		if (resourceList.getSelection().isEmpty()) {
 			getPage().setMessage(ToolMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$
 			setIsValid(false);

@@ -10,10 +10,13 @@ Contributors:
 **********************************************************************/
 
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -202,13 +205,13 @@ public class ExternalToolOptionGroup extends ExternalToolGroup {
 		if (button == variableButton) {
 			VariableSelectionDialog dialog= new VariableSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 			if (dialog.open() == SelectionDialog.OK) {
-				Object[] objects= dialog.getResult();
-				argumentField.append(((ExternalToolVariable)objects[0]).getTag());
+				argumentField.append(dialog.getForm().getSelectedVariable());
 			}
 		}
 	}
 	
 	private class VariableSelectionDialog extends SelectionDialog {
+		private ExternalToolVariableForm form;
 		private VariableSelectionDialog(Shell parent) {
 			super(parent);
 			setTitle("Select variable");
@@ -217,7 +220,7 @@ public class ExternalToolOptionGroup extends ExternalToolGroup {
 			// Create the dialog area
 			Composite composite= (Composite)super.createDialogArea(parent);
 			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getArgumentVariableRegistry().getArgumentVariables();
-			ExternalToolVariableForm form= new ExternalToolVariableForm("Choose a variable", variables);
+			form= new ExternalToolVariableForm("Choose a variable", variables);
 			form.createContents(composite, new IGroupDialogPage() {
 				public GridData setButtonGridData(Button button) {
 					GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -240,14 +243,23 @@ public class ExternalToolOptionGroup extends ExternalToolGroup {
 				}
 
 				public String getMessage() {
-					return VariableSelectionDialog.this.getMessage();
+					if (!form.isValid()) {
+						return "Invalid selection";
+					}
+					return null;
 				}
 
 				public int getMessageType() {
+					if (!form.isValid()) {
+						return IMessageProvider.ERROR;
+					}
 					return 0;
 				}
 			});
 			return composite;
+		}
+		private ExternalToolVariableForm getForm() {
+			return form;
 		}
 
 	}
