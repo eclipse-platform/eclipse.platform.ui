@@ -897,12 +897,12 @@ class FindReplaceDialog extends Dialog {
 	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
 	 * @param wholeWord does the search string represent a complete word
 	 * @param incremental is this an incremental search
-	 * @param global is the search scope the whole document
 	 * @param regExSearch if <code>true</code> findString represents a regular expression 
 	 * @return <code>true</code> if the search string can be found using the given options
+	 * 
 	 * @since 3.0
 	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean global, boolean regExSearch) {
+	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch) {
 
 		if (fTarget == null)
 			return false;
@@ -1166,18 +1166,6 @@ class FindReplaceDialog extends Dialog {
 	}
 
 	/**
-	 * Retrieves and returns the option global scope from the appropriate check box.
-	 * @return <code>true</code> if searching globally
-	 * @since 2.0
-	 */
-	private boolean isGlobalSearch() {
-		if (okToUse(fGlobalRadioButton)) {
-			return fGlobalRadioButton.getSelection();
-		}
-		return fGlobalInit;
-	}
-
-	/**
 	 * Retrieves and returns the option search whole words from the appropriate check box.
 	 * @return <code>true</code> if searching for whole words
 	 */
@@ -1301,7 +1289,7 @@ class FindReplaceDialog extends Dialog {
 			class ReplaceAllRunnable implements Runnable {
 				public int numberOfOccurrences;
 				public void run() {
-					numberOfOccurrences= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch() && !isRegExSearchAvailableAndChecked(), isGlobalSearch(), isRegExSearchAvailableAndChecked());	//$NON-NLS-1$
+					numberOfOccurrences= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());	//$NON-NLS-1$
 				}				
 			}
 			
@@ -1403,7 +1391,7 @@ class FindReplaceDialog extends Dialog {
 		if (findString != null && findString.length() > 0) {
 
 			try {
-				boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch() && !isRegExSearchAvailableAndChecked(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isGlobalSearch(), isRegExSearchAvailableAndChecked());
+				boolean somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch() && !isRegExSearchAvailableAndChecked(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
 				if (somethingFound) {
 					statusMessage(""); //$NON-NLS-1$
 				} else {
@@ -1430,12 +1418,12 @@ class FindReplaceDialog extends Dialog {
 	 * @param caseSensitive should the search be case sensitive
 	 * @param wrapSearch	should search wrap to start/end if end/start is reached
 	 * @param wholeWord does the search string represent a complete word
-	 * @param global	is the search performed globally
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return the number of occurrences
+	 * 
 	 * @since 3.0
 	 */
-	private int replaceAll(String findString, String replaceString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean global, boolean regExSearch) {
+	private int replaceAll(String findString, String replaceString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
 
 		int replaceCount= 0;
 		int findReplacePosition= 0;

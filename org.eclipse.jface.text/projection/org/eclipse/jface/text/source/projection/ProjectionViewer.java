@@ -1277,7 +1277,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (matchRegion != null) {
 				int offset= matchRegion.getOffset();
 				int length= matchRegion.getLength();
-				if (rangeOffset <= offset || offset + length <= rangeOffset + rangeLength) {
+				if (rangeOffset <= offset && offset + length <= rangeOffset + rangeLength) {
 					exposeModelRange(matchRegion);
 					setSelectedRange(offset, length);
 					textWidget.showSelection();
