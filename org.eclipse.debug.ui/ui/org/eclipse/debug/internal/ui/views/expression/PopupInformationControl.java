@@ -115,7 +115,7 @@ public abstract class PopupInformationControl implements IInformationControl, II
 		this.closeHandler = new CloseHandler();
 		this.commandId = commandId;
 		
-		shell= new Shell(parent, SWT.ON_TOP | SWT.RESIZE);
+		shell= new Shell(parent, SWT.RESIZE);
 		Display display = shell.getDisplay();
 		shell.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
