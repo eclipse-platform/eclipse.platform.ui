@@ -26,11 +26,11 @@ public class EclipseConnection {
 	// help server port
 	private String port;
 
-	EclipseConnection() {
+	public EclipseConnection() {
 		this(0, 0, 5 * 1000);
 	}
 
-	EclipseConnection(
+	public EclipseConnection(
 		int startupTimeout,
 		int connectionRetries,
 		int connectionRetryInterval) {
