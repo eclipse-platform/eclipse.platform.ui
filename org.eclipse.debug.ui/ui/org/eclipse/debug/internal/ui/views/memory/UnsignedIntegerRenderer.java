@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
 
-import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.core.memory.MemoryByte;
@@ -117,8 +116,6 @@ public class UnsignedIntegerRenderer extends AbstractMemoryRenderer {
 	 * @return
 	 */
 	private int getEndianess() {
-		IMemoryBlock memBlk = fViewTab.getMemoryBlock();
-		
 		// default to Big Endian in case the endianess cannot be determined
 		int endianess = RendererUtil.BIG_ENDIAN;
 		
@@ -172,8 +169,7 @@ public class UnsignedIntegerRenderer extends AbstractMemoryRenderer {
 			
 			return convertToString(byteArray, columnSize, endianess);
 		}
-		else
-			return "";
+        return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -187,8 +183,7 @@ public class UnsignedIntegerRenderer extends AbstractMemoryRenderer {
 			
 			return convertToBytes(columnSize, data, endianess);
 		}
-		else
-			return new byte[0];
+        return new byte[0];
 	}
 	
 	private byte[] extractBytes(byte[] bytes, int endianess, int colSize) {
