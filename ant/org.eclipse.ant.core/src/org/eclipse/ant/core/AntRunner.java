@@ -136,6 +136,52 @@ public void addUserProperties(Map properties) {
 }
 
 /**
+ * Gets all the target information available from the build script.
+ * 
+ * @return an array containing the target information
+ * 
+ * @see TargetInfo
+ */
+public TargetInfo[] getAvailableTargets() throws CoreException {
+	try {
+		ClassLoader loader = getClassLoader();
+		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
+		Object runner = classInternalAntRunner.newInstance();
+		// set build file
+		Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] {String.class}); //$NON-NLS-1$
+		setBuildFileLocation.invoke(runner, new Object[] {buildFileLocation});
+		// get the info for each targets
+		Method getTargets = classInternalAntRunner.getMethod("getTargets", null); //$NON-NLS-1$
+		Object results = getTargets.invoke(runner, null);
+		// collect the info into target objects
+		String[][] infos = (String[][]) results;
+		if (infos.length < 2)
+			return new TargetInfo[0];
+		// The last info is the name of the default target or null if none
+		int count = infos.length - 1;
+		String defaultName = infos[count][0];
+		TargetInfo[] targets = new TargetInfo[count];
+		for (int i = 0; i < count; i++) {
+			String[] info = infos[i];
+			boolean isDefault = info[0].equals(defaultName);
+			targets[i] = new TargetInfo(info[0], info[1], isDefault);
+		}
+		return targets;
+	} catch (NoClassDefFoundError e) {
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.incorrectClasspath"), e)); //$NON-NLS-1$
+	} catch (ClassNotFoundException e) {
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, Policy.bind("error.incorrectClasspath"), e)); //$NON-NLS-1$
+	} catch (InvocationTargetException e) {
+		Throwable realException = e.getTargetException();
+		String message = (realException.getMessage() == null) ? Policy.bind("error.buildFailed") : realException.getMessage(); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, realException));
+	} catch (Exception e) {
+		String message = (e.getMessage() == null) ? Policy.bind("error.buildFailed") : e.getMessage(); //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, e));
+	}
+}
+
+/**
  * Runs the build script. If a progress monitor is specified it will
  * be available during the script execution as a reference in the
  * Ant Project (<code>org.apache.tools.ant.Project.getReferences()</code>).
