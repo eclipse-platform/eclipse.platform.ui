@@ -267,6 +267,8 @@ public void dispose() {
 	for (int i = 0; i < editors.size(); i++)
 		removeListeners((EditorPane)editors.get(i));
 	editors.clear();
+	//Reset the visible editor so that no references are made to it.
+	setVisibleEditor(null);
 
 	// dispose of disabled images
 	for(int i = 0; i < tabFolder.getItemCount(); i++) {
