@@ -1,6 +1,9 @@
 package org.eclipse.debug.ui;
 
-import java.util.ArrayList;
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -24,12 +27,12 @@ public class BreakpointPropertySource implements IPropertySource {
 	private static IPropertyDescriptor[] fBaseDescriptors;
 
 	// Property Values
-	protected static final String P_ID_ENABLE = "enable";
+	protected static final String P_ID_ENABLE = "enable"; //$NON-NLS-1$
 	
-	private static final String P_ENABLE = "enabled";
+	private static final String P_ENABLE = "enabled"; //$NON-NLS-1$
 	
-	protected static final String P_VALUE_TRUE_LABEL = "true"; 
-	protected static final String P_VALUE_FALSE_LABEL = "false";
+	protected static final String P_VALUE_TRUE_LABEL = "true";  //$NON-NLS-1$
+	protected static final String P_VALUE_FALSE_LABEL = "false"; //$NON-NLS-1$
 
 	protected static final Integer P_VALUE_TRUE = new Integer(0);
 	protected static final Integer P_VALUE_FALSE = new Integer(1);
@@ -101,7 +104,7 @@ public class BreakpointPropertySource implements IPropertySource {
 		// to set the breakpoint, we use this method in a somewhat non-inutuitive way.
 		// Note we can't set the breakpoint through a constructor since this object is
 		// created as an executable extension, which requires a no-arg constructor.
-		if (id.equals("breakpoint")) {
+		if (id.equals("breakpoint")) { //$NON-NLS-1$
 			fBreakpoint = (IBreakpoint) value;
 		}
 		else if (id.equals(P_ID_ENABLE)) {
@@ -117,7 +120,6 @@ public class BreakpointPropertySource implements IPropertySource {
 	 */
 	protected String getModelPresentationText(Object obj) {
 		return DebugUIPlugin.getModelPresentation().getText(obj);
-	}
-	
+	}	
 }
 

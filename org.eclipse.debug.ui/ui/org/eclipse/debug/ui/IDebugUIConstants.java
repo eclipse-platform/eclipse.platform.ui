@@ -108,17 +108,17 @@ public interface IDebugUIConstants {
 	/**
 	 * Debug UI plug-in identifier (value <code>"org.eclipse.debug.ui"</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.debug.ui";
+	public static final String PLUGIN_ID = "org.eclipse.debug.ui"; //$NON-NLS-1$
 	
 	/**
 	 * Debug perspective identifier (value <code>"org.eclipse.debug.ui.DebugPerspective"</code>).
 	 */
-	public static final String ID_DEBUG_PERSPECTIVE = PLUGIN_ID + ".DebugPerspective";
+	public static final String ID_DEBUG_PERSPECTIVE = PLUGIN_ID + ".DebugPerspective"; //$NON-NLS-1$
 	
 	/**
 	 * Debug model presentation extension point identifier (value <code>"debugModelPresentations"</code>).
 	 */
-	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations";
+	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations"; //$NON-NLS-1$
 	
 	// Preferences
 	/**
@@ -129,7 +129,7 @@ public interface IDebugUIConstants {
 	 * and a debug view is not present in the current perspective, a debug perspective
 	 * of the appropriate kind is created (or switched to if already created).
 	 */
-	public static final String PREF_AUTO_SHOW_DEBUG_VIEW= PLUGIN_ID + ".auto_show_debug_view";
+	public static final String PREF_AUTO_SHOW_DEBUG_VIEW= PLUGIN_ID + ".auto_show_debug_view"; //$NON-NLS-1$
 	
 	/**
 	 * Boolean preference controlling automatic change to debug perspective when
@@ -139,165 +139,165 @@ public interface IDebugUIConstants {
 	 * perspective, a debug perspective of the appropriate kind is created (or switched
 	 * to if already created).
 	 */
-	public static final String PREF_AUTO_SHOW_PROCESS_VIEW= PLUGIN_ID + ".auto_show_process_view";	
+	public static final String PREF_AUTO_SHOW_PROCESS_VIEW= PLUGIN_ID + ".auto_show_process_view";	 //$NON-NLS-1$
 
 	/**
 	 * Boolean preference controlling automatic build before
 	 * launching a program.
 	 */
-	public static final String PREF_AUTO_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".auto_build_before_launch";
+	public static final String PREF_AUTO_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".auto_build_before_launch"; //$NON-NLS-1$
 		
 	// Debug views
 	
 	/**
 	 * Debug view identifier (value <code>"org.eclipse.debug.ui.DebugView"</code>).
 	 */
-	public static final String ID_DEBUG_VIEW= "org.eclipse.debug.ui.DebugView";
+	public static final String ID_DEBUG_VIEW= "org.eclipse.debug.ui.DebugView"; //$NON-NLS-1$
 
 	/**
 	 * Process view identifier (value <code>"org.eclipse.debug.ui.ProcessView"</code>).
 	 */
-	public static final String ID_PROCESS_VIEW= "org.eclipse.debug.ui.ProcessView";
+	public static final String ID_PROCESS_VIEW= "org.eclipse.debug.ui.ProcessView"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint view identifier (value <code>"org.eclipse.debug.ui.BreakpointView"</code>).
 	 */
-	public static final String ID_BREAKPOINT_VIEW= "org.eclipse.debug.ui.BreakpointView";
+	public static final String ID_BREAKPOINT_VIEW= "org.eclipse.debug.ui.BreakpointView"; //$NON-NLS-1$
 	
 	/**
 	 * Variable view identifier (value <code>"org.eclipse.debug.ui.VariableView"</code>).
 	 */
-	public static final String ID_VARIABLE_VIEW= "org.eclipse.debug.ui.VariableView";
+	public static final String ID_VARIABLE_VIEW= "org.eclipse.debug.ui.VariableView"; //$NON-NLS-1$
 	
 	/**
 	 * Inspector view identifier (value <code>"org.eclipse.debug.ui.InspectorView"</code>).
 	 */
-	public static final String ID_INSPECTOR_VIEW= "org.eclipse.debug.ui.InspectorView";
+	public static final String ID_INSPECTOR_VIEW= "org.eclipse.debug.ui.InspectorView"; //$NON-NLS-1$
 	
 	/**
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
 	 */
-	public static final String ID_CONSOLE_VIEW= "org.eclipse.debug.ui.ConsoleView";
+	public static final String ID_CONSOLE_VIEW= "org.eclipse.debug.ui.ConsoleView"; //$NON-NLS-1$
 
 	// Debug Action images
 	
 	/**
 	 * Debug action image identifier.
 	 */
-	public static final String IMG_ACT_DEBUG= "IMG_ACT_DEBUG";
+	public static final String IMG_ACT_DEBUG= "IMG_ACT_DEBUG"; //$NON-NLS-1$
 
 	/**
 	 * Run action image identifier.
 	 */
-	public static final String IMG_ACT_RUN= "IMG_ACT_RUN";
+	public static final String IMG_ACT_RUN= "IMG_ACT_RUN"; //$NON-NLS-1$
 		
 	/** Resume action image identifier. */
-	public static final String IMG_LCL_RESUME= "IMG_LCL_RESUME";
+	public static final String IMG_LCL_RESUME= "IMG_LCL_RESUME"; //$NON-NLS-1$
 	
 	/** Suspend action image identifier. */
-	public static final String IMG_LCL_SUSPEND= "IMG_LCL_SUSPEND";
+	public static final String IMG_LCL_SUSPEND= "IMG_LCL_SUSPEND"; //$NON-NLS-1$
 	
 	/** Terminate action image identifier. */
-	public static final String IMG_LCL_TERMINATE= "IMG_LCL_TERMINATE";
+	public static final String IMG_LCL_TERMINATE= "IMG_LCL_TERMINATE"; //$NON-NLS-1$
 	
 	/** Terminate all action image identifier. */
-	public static final String IMG_LCL_TERMINATE_ALL= "IMG_LCL_TERMINATE_ALL";
+	public static final String IMG_LCL_TERMINATE_ALL= "IMG_LCL_TERMINATE_ALL"; //$NON-NLS-1$
 	
 	/** Terminate and remove action image identifier. */
-	public static final String IMG_LCL_TERMINATE_AND_REMOVE= "IMG_LCL_TERMINATE_AND_REMOVE";
+	public static final String IMG_LCL_TERMINATE_AND_REMOVE= "IMG_LCL_TERMINATE_AND_REMOVE"; //$NON-NLS-1$
 	
 	/** Disconnect action image identifier. */
-	public static final String IMG_LCL_DISCONNECT= "IMG_LCL_DISCONNECT";
+	public static final String IMG_LCL_DISCONNECT= "IMG_LCL_DISCONNECT"; //$NON-NLS-1$
 	
 	/** Step into action image identifier. */
-	public static final String IMG_LCL_STEPINTO= "IMG_LCL_STEPINTO";
+	public static final String IMG_LCL_STEPINTO= "IMG_LCL_STEPINTO"; //$NON-NLS-1$
 	
 	/** Step over action image identifier. */
-	public static final String IMG_LCL_STEPOVER= "IMG_LCL_STEPOVER";
+	public static final String IMG_LCL_STEPOVER= "IMG_LCL_STEPOVER"; //$NON-NLS-1$
 	
 	/** Step return action image identifier. */
-	public static final String IMG_LCL_STEPRETURN= "IMG_LCL_STEPRETURN";
+	public static final String IMG_LCL_STEPRETURN= "IMG_LCL_STEPRETURN"; //$NON-NLS-1$
 	
 	/** Clear action image identifier. */
-	public static final String IMG_LCL_CLEAR= "IMG_LCL_CLEAR";
+	public static final String IMG_LCL_CLEAR= "IMG_LCL_CLEAR"; //$NON-NLS-1$
 	
 	/** Remove all terminated action image identifier. */
-	public static final String IMG_LCL_REMOVE_TERMINATED= "IMG_LCL_REMOVE_TERMINATED";
+	public static final String IMG_LCL_REMOVE_TERMINATED= "IMG_LCL_REMOVE_TERMINATED"; //$NON-NLS-1$
 	
 	/** Display qualififed names action image identifier. */
-	public static final String IMG_LCL_QUALIFIED_NAMES= "IMG_LCL_QUALIFIED_NAMES";
+	public static final String IMG_LCL_QUALIFIED_NAMES= "IMG_LCL_QUALIFIED_NAMES"; //$NON-NLS-1$
 	
 	/** Display variable type names action image identifier. */
-	public static final String IMG_LCL_TYPE_NAMES= "IMG_LCL_TYPE_NAMES";
+	public static final String IMG_LCL_TYPE_NAMES= "IMG_LCL_TYPE_NAMES"; //$NON-NLS-1$
 	
 	/** Remove action image identifier. */
-	public static final String IMG_LCL_REMOVE= "IMG_LCL_REMOVE";
+	public static final String IMG_LCL_REMOVE= "IMG_LCL_REMOVE"; //$NON-NLS-1$
 	
 	/** Remove all action image identifier. */
-	public static final String IMG_LCL_REMOVE_ALL= "IMG_LCL_REMOVE_ALL";
+	public static final String IMG_LCL_REMOVE_ALL= "IMG_LCL_REMOVE_ALL"; //$NON-NLS-1$
 
 	/** Inspector action image identifier. */
-	public static final String IMG_LCL_INSPECT= "IMG_LCL_INSPECT";
+	public static final String IMG_LCL_INSPECT= "IMG_LCL_INSPECT"; //$NON-NLS-1$
 	
 	/** Re-launch action image identifier.*/
-	public static final String IMG_LCL_RELAUNCH= "IMG_LCL_RELAUNCH";
+	public static final String IMG_LCL_RELAUNCH= "IMG_LCL_RELAUNCH"; //$NON-NLS-1$
 
 	/** Copy-to-clipboard action image identifier.*/
-	public static final String IMG_LCL_COPY= "IMG_LCL_COPY";
+	public static final String IMG_LCL_COPY= "IMG_LCL_COPY"; //$NON-NLS-1$
 
 	
 	// Debug element images
 	
 	/** Debug mode launch image identifier. */
-	public static final String IMG_OBJS_LAUNCH_DEBUG= "IMG_OBJS_LAUNCH_DEBUG";
+	public static final String IMG_OBJS_LAUNCH_DEBUG= "IMG_OBJS_LAUNCH_DEBUG"; //$NON-NLS-1$
 	
 	/** Run mode launch image identifier. */
-	public static final String IMG_OBJS_LAUNCH_RUN= "IMG_OBJS_LAUNCH_RUN";
+	public static final String IMG_OBJS_LAUNCH_RUN= "IMG_OBJS_LAUNCH_RUN"; //$NON-NLS-1$
 	
 	/** Running debug target image identifier. */
-	public static final String IMG_OBJS_DEBUG_TARGET= "IMG_OBJS_DEBUG_TARGET";
+	public static final String IMG_OBJS_DEBUG_TARGET= "IMG_OBJS_DEBUG_TARGET"; //$NON-NLS-1$
 	
 	/** Terminated debug target image identifier. */
-	public static final String IMG_OBJS_DEBUG_TARGET_TERMINATED= "IMG_OBJS_DEBUG_TARGET_TERMINATED";
+	public static final String IMG_OBJS_DEBUG_TARGET_TERMINATED= "IMG_OBJS_DEBUG_TARGET_TERMINATED"; //$NON-NLS-1$
 	
 	/** Running thread image identifier. */
-	public static final String IMG_OBJS_THREAD_RUNNING= "IMG_OBJS_THREAD_RUNNING";
+	public static final String IMG_OBJS_THREAD_RUNNING= "IMG_OBJS_THREAD_RUNNING"; //$NON-NLS-1$
 	
 	/** Suspended thread image identifier. */
-	public static final String IMG_OBJS_THREAD_SUSPENDED= "IMG_OBJS_THREAD_SUSPENDED";
+	public static final String IMG_OBJS_THREAD_SUSPENDED= "IMG_OBJS_THREAD_SUSPENDED"; //$NON-NLS-1$
 	
 	/** Terminated thread image identifier. */
-	public static final String IMG_OBJS_THREAD_TERMINATED= "IMG_OBJS_THREAD_TERMINATED";
+	public static final String IMG_OBJS_THREAD_TERMINATED= "IMG_OBJS_THREAD_TERMINATED"; //$NON-NLS-1$
 	
 	/** Stack frame image identifier. */
-	public static final String IMG_OBJS_STACKFRAME= "IMG_OBJS_STACKFRAME";
+	public static final String IMG_OBJS_STACKFRAME= "IMG_OBJS_STACKFRAME"; //$NON-NLS-1$
 	
 	/** Enabled breakpoint image identifier. */
-	public static final String IMG_OBJS_BREAKPOINT= "IMG_OBJS_BREAKPOINT";
+	public static final String IMG_OBJS_BREAKPOINT= "IMG_OBJS_BREAKPOINT"; //$NON-NLS-1$
 	
 	/** Disabled breakpoint image identifier. */
-	public static final String IMG_OBJS_BREAKPOINT_DISABLED= "IMG_OBJS_BREAKPOINT_DISABLED";
+	public static final String IMG_OBJS_BREAKPOINT_DISABLED= "IMG_OBJS_BREAKPOINT_DISABLED"; //$NON-NLS-1$
 		
 	/** Running system process image identifier. */
-	public static final String IMG_OBJS_OS_PROCESS= "IMG_OBJS_OS_PROCESS";
+	public static final String IMG_OBJS_OS_PROCESS= "IMG_OBJS_OS_PROCESS"; //$NON-NLS-1$
 	
 	/** Terminated system process image identifier. */
-	public static final String IMG_OBJS_OS_PROCESS_TERMINATED= "IMG_OBJS_OS_PROCESS_TERMINATED";
+	public static final String IMG_OBJS_OS_PROCESS_TERMINATED= "IMG_OBJS_OS_PROCESS_TERMINATED"; //$NON-NLS-1$
 
 	/** Expression image identifier. */
-	public static final String IMG_OBJS_EXPRESSION= "IMG_OBJS_EXPRESSION";
+	public static final String IMG_OBJS_EXPRESSION= "IMG_OBJS_EXPRESSION"; //$NON-NLS-1$
 	
 	// wizard banners
 	/** Debug wizard banner image identifier. */
-	public static final String IMG_WIZBAN_DEBUG= "IMG_WIZBAN_DEBUG";
+	public static final String IMG_WIZBAN_DEBUG= "IMG_WIZBAN_DEBUG"; //$NON-NLS-1$
 	
 	/** Run wizard banner image identifier. */
-	public static final String IMG_WIZBAN_RUN= "IMG_WIZBAN_RUN";
+	public static final String IMG_WIZBAN_RUN= "IMG_WIZBAN_RUN"; //$NON-NLS-1$
 	
 	/**
 	 * Debug action set identifier (value <code>"org.eclipse.debug.ui.debugActionSet"</code>).
 	 */
-	public static final String DEBUG_ACTION_SET= PLUGIN_ID + ".debugActionSet";
+	public static final String DEBUG_ACTION_SET= PLUGIN_ID + ".debugActionSet"; //$NON-NLS-1$
 	
 	// menus 
 	
@@ -305,113 +305,113 @@ public interface IDebugUIConstants {
 	 * Identifier for an empty group preceeding an
 	 * edit group in a menu (value <code>"emptyEditGroup"</code>).
 	 */
-	public static final String EMPTY_EDIT_GROUP = "emptyEditGroup";
+	public static final String EMPTY_EDIT_GROUP = "emptyEditGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for an edit group in a menu (value <code>"editGroup"</code>).
 	 */
-	public static final String EDIT_GROUP = "editGroup";
+	public static final String EDIT_GROUP = "editGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * step group in a menu (value <code>"emptyStepGroup"</code>).
 	 */
-	public static final String EMPTY_STEP_GROUP = "emptyStepGroup";
+	public static final String EMPTY_STEP_GROUP = "emptyStepGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a step group in a menu (value <code>"stepGroup"</code>).
 	 */
-	public static final String STEP_GROUP = "stepGroup";
+	public static final String STEP_GROUP = "stepGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * thread group in a menu (value <code>"emptyThreadGroup"</code>).
 	 */
-	public static final String EMPTY_THREAD_GROUP = "emptyThreadGroup";
+	public static final String EMPTY_THREAD_GROUP = "emptyThreadGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a thread group in a menu (value <code>"threadGroup"</code>).
 	 */
-	public static final String THREAD_GROUP = "threadGroup";
+	public static final String THREAD_GROUP = "threadGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * launch group in a menu (value <code>"emptyLaunchGroup"</code>).
 	 */
-	public static final String EMPTY_LAUNCH_GROUP = "emptyLaunchGroup";
+	public static final String EMPTY_LAUNCH_GROUP = "emptyLaunchGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a launch group in a menu (value <code>"launchGroup"</code>).
 	 */
-	public static final String LAUNCH_GROUP = "launchGroup";
+	public static final String LAUNCH_GROUP = "launchGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * variable group in a menu (value <code>"emptyVariableGroup"</code>).
 	 */
-	public static final String EMPTY_VARIABLE_GROUP = "emptyVariableGroup";
+	public static final String EMPTY_VARIABLE_GROUP = "emptyVariableGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a variable group in a menu (value <code>"variableGroup"</code>).
 	 */
-	public static final String VARIABLE_GROUP = "variableGroup";
+	public static final String VARIABLE_GROUP = "variableGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * navigation group in a menu (value <code>"emptyNavigationGroup"</code>).
 	 */
-	public static final String EMPTY_NAVIGATION_GROUP = "emptyNavigationGroup";
+	public static final String EMPTY_NAVIGATION_GROUP = "emptyNavigationGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a navigation group in a menu (value <code>"navigationGroup"</code>).
 	 */
-	public static final String NAVIGATION_GROUP = "navigationGroup";
+	public static final String NAVIGATION_GROUP = "navigationGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * breakpoint group in a menu (value <code>"emptyBreakpointGroup"</code>).
 	 */
-	public static final String EMPTY_BREAKPOINT_GROUP = "emptyBreakpointGroup";
+	public static final String EMPTY_BREAKPOINT_GROUP = "emptyBreakpointGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a breakpoint group in a menu (value <code>"breakpointGroup"</code>).
 	 */
-	public static final String BREAKPOINT_GROUP = "breakpointGroup";
+	public static final String BREAKPOINT_GROUP = "breakpointGroup"; //$NON-NLS-1$
 	
 	/** 
 	 * Identifier for an empty group preceeding an
 	 * expression group in a menu (value <code>"emptyExpressionGroup"</code>).
 	 */
-	public static final String EMPTY_EXPRESSION_GROUP = "emptyExpressionGroup";
+	public static final String EMPTY_EXPRESSION_GROUP = "emptyExpressionGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for an expression group in a menu (value <code>"expressionGroup"</code>).
 	 */
 
-	public static final String EXPRESSION_GROUP = "expressionGroup";
+	public static final String EXPRESSION_GROUP = "expressionGroup"; //$NON-NLS-1$
 	/** 
 	 * Identifier for an empty group preceeding a
 	 * render group in a menu (value <code>"emptyRenderGroup"</code>).
 	 */
-	public static final String EMPTY_RENDER_GROUP = "emptyRenderGroup";
+	public static final String EMPTY_RENDER_GROUP = "emptyRenderGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a render group in a menu (value <code>"renderGroup"</code>).
 	 */
-	public static final String RENDER_GROUP = "renderGroup";
+	public static final String RENDER_GROUP = "renderGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Identifier for a property group in a menu (value <code>"propertyGroup"</code>).
 	 */
-	public static final String PROPERTY_GROUP = "propertyGroup";
+	public static final String PROPERTY_GROUP = "propertyGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Id for the popup menu associated with the variables (tree viewer) part of the VariableView
 	 */
-	public static final String VARIABLE_VIEW_VARIABLE_ID = "org.eclipse.debug.ui.VariableView.variables";
+	public static final String VARIABLE_VIEW_VARIABLE_ID = "org.eclipse.debug.ui.VariableView.variables"; //$NON-NLS-1$
 	
 	/**
 	 * Id for the popup menu associated with the detail (text viewer) part of the VariableView
 	 */
-	public static final String VARIABLE_VIEW_DETAIL_ID = "org.eclipse.debug.ui.VariableView.detail";
+	public static final String VARIABLE_VIEW_DETAIL_ID = "org.eclipse.debug.ui.VariableView.detail"; //$NON-NLS-1$
 }

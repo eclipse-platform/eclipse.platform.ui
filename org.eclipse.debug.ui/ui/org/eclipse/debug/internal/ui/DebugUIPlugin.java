@@ -82,7 +82,6 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -189,7 +188,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	class ResourceDeletedVisitor implements IResourceDeltaVisitor {
 		
 		/**
-		 * @see IResourceDeltaVisitor
+		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null) {
@@ -386,7 +385,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * On a SUSPEND event, show the debug view or if no debug view is open,
 	 * switch to the perspective specified by the launcher.
 	 *
-	 * @see IDebugEventListener
+	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
 	 */
 	public void handleDebugEvent(final DebugEvent event) {
 		// open the debugger if this is a suspend event and the debug view is not yet open
@@ -658,6 +657,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			window.setActivePage(page);
 		}
 	}
+	
 	/**
 	 * Returns the launcher perspective specified in the launcher
 	 * associated with the source of a <code>DebugEvent</code>
@@ -698,41 +698,41 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		return getActiveWorkbenchWindow().getShell();
 	}
 
-/**
- * Creates an extension.  If the extension plugin has not
- * been loaded a busy cursor will be activated during the duration of
- * the load.
- *
- * @param element the config element defining the extension
- * @param classAttribute the name of the attribute carrying the class
- * @returns the extension object
- */
-public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
-	// If plugin has been loaded create extension.
-	// Otherwise, show busy cursor then create extension.
-	IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
-	if (plugin.isPluginActivated()) {
-		return element.createExecutableExtension(classAttribute);
-	} else {
-		final Object [] ret = new Object[1];
-		final CoreException [] exc = new CoreException[1];
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				try {
-					ret[0] = element.createExecutableExtension(classAttribute);
-				} catch (CoreException e) {
-					exc[0] = e;
+	/**
+	 * Creates an extension.  If the extension plugin has not
+	 * been loaded a busy cursor will be activated during the duration of
+	 * the load.
+	 *
+	 * @param element the config element defining the extension
+	 * @param classAttribute the name of the attribute carrying the class
+	 * @return the extension object
+	 */
+	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
+		// If plugin has been loaded create extension.
+		// Otherwise, show busy cursor then create extension.
+		IPluginDescriptor plugin = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+		if (plugin.isPluginActivated()) {
+			return element.createExecutableExtension(classAttribute);
+		} else {
+			final Object [] ret = new Object[1];
+			final CoreException [] exc = new CoreException[1];
+			BusyIndicator.showWhile(null, new Runnable() {
+				public void run() {
+					try {
+						ret[0] = element.createExecutableExtension(classAttribute);
+					} catch (CoreException e) {
+						exc[0] = e;
+					}
 				}
+			});
+			if (exc[0] != null) {
+				throw exc[0];
 			}
-		});
-		if (exc[0] != null) {
-			throw exc[0];
+			else {
+				return ret[0];
+			}
 		}
-		else {
-			return ret[0];
-		}
-	}
-}	
+	}	
 	
 	protected ImageRegistry createImageRegistry() {
 		return DebugPluginImages.initializeImageRegistry();
@@ -804,7 +804,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 		Platform.getAdapterManager().registerAdapters(factory, IBreakpoint.class);
 		
 	}
-
+
 	/**
 	 * Adds the selection provider for the debug UI.
 	 */
@@ -813,7 +813,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 		fSelectionParts.add(part);
 		provider.addSelectionChangedListener(this);
 	}
-
+
 	/**
 	 * Removes the selection provider from the debug UI.
 	 */
@@ -823,21 +823,21 @@ public static Object createExtension(final IConfigurationElement element, final 
 		provider.removeSelectionChangedListener(this);
 		selectionChanged(null);
 	}
-
+
 	/**
 	 * Adds an <code>ISelectionListener</code> to the debug selection manager.
 	 */
 	public void addSelectionListener(ISelectionListener l) {
 		fListeners.add(l);
 	}
-
+
 	/**
 	 * Removes an <code>ISelectionListener</code> from the debug selection manager.
 	 */
 	public synchronized void removeSelectionListener(ISelectionListener l) {
 		fListeners.remove(l);
 	}
-
+
 	/**
 	 * Selection has changed in the debug selection provider.
 	 * Notify the listeners.
@@ -861,7 +861,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 			((ISelectionListener)copiedListeners[i]).selectionChanged(part, selection);
 		}
 	}
-
+
 	/**
 	 * Sets the console document for the specified process.
 	 * If the document is <code>null</code> the mapping for the
@@ -875,7 +875,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 			fConsoleDocuments.put(process, doc);
 		}
 	}
-
+
 	/**
 	 * Returns the correct document for the process, determining the current
 	 * process if required (process argument is null).
@@ -883,6 +883,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	public IDocument getConsoleDocument(IProcess process) {
 		return getConsoleDocument(process, true);
 	}
+	
 	/**
 	 * Returns the correct document for the process, determining the current
 	 * process if specified.
@@ -944,7 +945,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	}
 	
 	/**
-	 * @see ISelectionListener
+	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (!(part instanceof LaunchesView)) {
@@ -1052,7 +1053,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	}
 
 	/**
-	 * @see IDocumentListener
+	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
 	public void documentAboutToBeChanged(final DocumentEvent e) {
 		// if the prefence is set, show the conosle
@@ -1087,7 +1088,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	}
 
 	/**
-	 * @see IDocumentListener
+	 * @see IDocumentListener#documentChanged(DocumentEvent)
 	 */
 	public void documentChanged(DocumentEvent e) {
 	}
@@ -1096,6 +1097,13 @@ public static Object createExtension(final IConfigurationElement element, final 
 		return fCurrentProcess;
 	}
 	
+	/**
+	 * Returns the currently selected debug element in the 
+	 * debug view of the current workbench page, or <code>null</code>
+	 * if there is no current debug context.
+	 * 
+	 * @return the currently selected debug context, or <code>null</code>
+	 */
 	public IDebugElement getDebugContext() {
 		LaunchesView view = fSwitchContext.getDebuggerView();
 		if (view == null) {
@@ -1141,7 +1149,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	}
 	
 	/**
-	 * @see IResourceChangeListener 
+	 * @see IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
@@ -1158,7 +1166,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	}
 	
 	/**
-	 * @see ILaunchListener
+	 * @see ILaunchListener#launchDeregistered(ILaunch)
 	 */
 	public void launchDeregistered(final ILaunch launch) {
 		getDisplay().syncExec(new Runnable () {
@@ -1181,7 +1189,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	/**
 	 * Must not assume that will only be called from the UI thread.
 	 *
-	 * @see ILaunchListener
+	 * @see ILaunchListener#launchRegistered(ILaunch)
 	 */
 	public void launchRegistered(final ILaunch launch) {
 		if (launch.getLaunchConfiguration() != null) {
@@ -1644,8 +1652,8 @@ public static Object createExtension(final IConfigurationElement element, final 
 			// cancelled by user
 			return false;
 		} catch (InvocationTargetException e) {
-			String title= "Run/Debug";
-			String message= "Build error. Check log for details.";
+			String title= DebugUIMessages.getString("DebugUIPlugin.Run/Debug_1"); //$NON-NLS-1$
+			String message= DebugUIMessages.getString("DebugUIPlugin.Build_error._Check_log_for_details._2"); //$NON-NLS-1$
 			Throwable t = e.getTargetException();
 			IStatus status = null;
 			if (t instanceof CoreException) {

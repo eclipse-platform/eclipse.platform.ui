@@ -5,10 +5,10 @@ package org.eclipse.debug.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * A debug model presentation is responsible for providing labels, images,
@@ -42,22 +42,22 @@ import org.eclipse.swt.graphics.Image;
  * <li><code>id</code> specifies the identifier of the debug model this presentation
  *    is responsible for. Corresponds to the model identifier returned from a debug
  *	element - see <code>IDebugElement.getModelIndentifier</code></li>
- * <li><code>class</code> specifies the fully qualified name of the java class
+ * <li><code>class</code> specifies the fully qualified name of the Java class
  *   that implements this interface.</li>
  * </ul>
  * </p>
  * <p>
- * To allow for an extensible configuation, this interface defines
+ * To allow for an extensible configuration, this interface defines
  * a <code>setAttribute</code> method. The debug UI plug-in defines
  * two presentation attributes:
  * <ul>
  *  <li><code>DISPLAY_QUALIFIED_NAMES</code> - This is a boolean attribute 
  *     indicating whether elements should be rendered with fully qualified names.
- *     For example, a java debug model presentation would include package names
+ *     For example, a Java debug model presentation would include package names
  *     when this attribute is true.</li>
  *  <li><code>DISPLAY_VARIABLE_TYPE_NAMES</code> - This is a boolean attribute 
  *     indicating whether variable elements should be rendered with the declared
- *     type of a variable. For example, a java debug model presentation would render
+ *     type of a variable. For example, a Java debug model presentation would render
  *     an integer as <code>"int x = 3"</code> when true, and <code>"x = 3"</code>
  *     when false.</li>
  * </ul>
@@ -93,7 +93,7 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * when rendering elements.
 	 * @see #setAttribute(String, Object)
 	 */
-	public final static String DISPLAY_QUALIFIED_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayQualifiedNames";
+	public final static String DISPLAY_QUALIFIED_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayQualifiedNames"; //$NON-NLS-1$
 	/** 
 	 * Variable type names presentation property (value <code>"org.eclipse.debug.ui.displayVariableTypeNames"</code>).
 	 * When <code>DISPLAY_VARIABLE_TYPE_NAMES</code> is set to <code>True</code>,
@@ -103,7 +103,7 @@ public interface IDebugModelPresentation extends ILabelProvider {
 	 * variables.
 	 * @see #setAttribute(String, Object)
 	 */
-	public final static String DISPLAY_VARIABLE_TYPE_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayVariableTypeNames";
+	public final static String DISPLAY_VARIABLE_TYPE_NAMES= IDebugUIConstants.PLUGIN_ID + ".displayVariableTypeNames"; //$NON-NLS-1$
 	/**
 	 * Sets a presentation attribute of this label provider. For example,
 	 * see the presentation attribute <code>DISPLAY_QUALIFIED_NAMES</code>
