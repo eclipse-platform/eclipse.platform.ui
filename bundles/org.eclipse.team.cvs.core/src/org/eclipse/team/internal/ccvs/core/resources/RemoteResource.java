@@ -173,4 +173,11 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 * 	 * @param parent	 * @param tagName	 * @return ICVSRemoteFolder	 */
 	public abstract ICVSRemoteResource forTag(ICVSRemoteFolder parent, CVSTag tagName);
 
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getRepositoryRelativePath().hashCode();
+	}
+
 }
