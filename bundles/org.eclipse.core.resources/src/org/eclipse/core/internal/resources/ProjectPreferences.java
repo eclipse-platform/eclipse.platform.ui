@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -165,13 +166,13 @@ public class ProjectPreferences extends EclipsePreferences {
 		IPath location = getLocation();
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
+				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		IEclipsePreferences node = getLoadLevel();
 		if (node == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
-				System.out.println("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
+				Policy.debug("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
 		if (node instanceof EclipsePreferences) {
