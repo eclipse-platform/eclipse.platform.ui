@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -24,8 +22,6 @@ import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.OpenStrategy;
 
 import org.eclipse.ui.themes.IThemeManager;
-
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Implementation of the workbench plugin's preferences extension's
@@ -98,19 +94,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService()
 				.getRootNode().node(InstanceScope.SCOPE);
 
-		final String workbenchName = WorkbenchPlugin.getDefault().getBundle().getSymbolicName();
-		try {
-			if (rootNode.nodeExists(workbenchName))
-				((IEclipsePreferences) rootNode.node(workbenchName))
-						.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
-		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.getDefault().getBundle()
-					.getSymbolicName(), IStatus.ERROR, e.getLocalizedMessage(), e);
-			WorkbenchPlugin.getDefault().getLog().log(status);
-		}
-
 		JFacePreferences.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		((IEclipsePreferences) rootNode.node(workbenchName))
+		((IEclipsePreferences) rootNode.node( WorkbenchPlugin.getDefault().getBundle().getSymbolicName()))
 				.addPreferenceChangeListener(PlatformUIPreferenceListener.getSingleton());
 
 	}
