@@ -298,19 +298,19 @@ public class SearchResultViewer extends TableViewer {
 			fContextMenuContributor.fill(menu, this);
 		
 		if (!selection.isEmpty()) {
-			menu.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
+			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, fCopyToClipboardAction);
 			menu.appendToGroup(IContextMenuConstants.GROUP_GOTO, fGotoMarkerActionProxy);
 			if (enableRemoveMatchMenuItem())
-				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveMatchAction(this));
-			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveResultAction(this, true));
+				menu.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, new RemoveMatchAction(this));
+			menu.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, new RemoveResultAction(this, true));
 
 			if (isPotentialMatchSelected())
-				menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemovePotentialMatchesAction(fOuterPart.getViewSite()));
+				menu.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, new RemovePotentialMatchesAction(fOuterPart.getViewSite()));
 		}
 
 		// If we have elements
 		if (getItemCount() > 0)
-			menu.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, new RemoveAllResultsAction());
+			menu.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, new RemoveAllResultsAction());
 	
 		menu.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fSearchAgainAction);
 		if (!selection.isEmpty())

@@ -99,4 +99,9 @@ public interface IContextMenuConstants {
 	 * Pop-up menu: name of group for properties actions (value <code>"group.properties"</code>).
 	 */	
 	public static final String GROUP_PROPERTIES= "group.properties"; //$NON-NLS-1$
+
+	/**
+	 * Pop-up menu: name of group for remove match actions (value <code>"group.removeMatches"</code>).
+	 */	
+	public static final String GROUP_REMOVE_MATCHES= "group.removeMatches";
 }
