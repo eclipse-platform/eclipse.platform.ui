@@ -18,7 +18,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A menu for window creation in the workbench.  
