@@ -34,7 +34,7 @@ import org.eclipse.team.internal.ui.dialogs.ResourceMappingResourceDisplayArea;
 public class ReplaceWithTagAction extends WorkspaceTraversalAction {
     
     /* package*/ static UncommittedChangesDialog getPromptingDialog(Shell shell, ResourceMapping[] mappings) {
-        return new UncommittedChangesDialog(shell, Policy.bind("TagLocalAction.4"), mappings) { //$NON-NLS-1$
+        return new UncommittedChangesDialog(shell, Policy.bind("ReplaceWithTagAction.4"), mappings) { //$NON-NLS-1$
             protected String getSingleMappingMessage(ResourceMapping mapping) {
                 String label = ResourceMappingResourceDisplayArea.getLabel(mapping);
                 return Policy.bind("ReplaceWithTagAction.0", label); //$NON-NLS-1$

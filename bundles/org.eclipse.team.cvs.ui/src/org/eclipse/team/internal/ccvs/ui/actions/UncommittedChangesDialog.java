@@ -47,14 +47,16 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
         return new SyncInfoDirectionFilter(new int[] { SyncInfo.OUTGOING, SyncInfo.CONFLICTING });
     }
     
-    final Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-    final FastSyncInfoFilter resourceFilter = getResourceFilter();
+    private final ResourceMapping[] allMappings;
+    
     
     public UncommittedChangesDialog(Shell parentShell, String dialogTitle, ResourceMapping[] mappings) {
-        super(parentShell, dialogTitle, mappings, new UncommittedFilter());
+        super(parentShell, dialogTitle, getMatchingMappings(mappings, CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), getResourceFilter()), new UncommittedFilter());
+        allMappings = mappings;
     }
 
-    protected String getResourceListMessage(ResourceMapping mapping) {
+
+	protected String getResourceListMessage(ResourceMapping mapping) {
         if (mapping == null) {
             return Policy.bind("UncommittedChangesDialog.2"); //$NON-NLS-1$
         } else {
@@ -69,12 +71,12 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
      * @return the mappings that either didn't match the filter or were selected by the user
      */
     public ResourceMapping[] promptToSelectMappings() {
-        ResourceMapping[] matchingMappings = getMatchingMappings();
+        ResourceMapping[] matchingMappings = getMappings();
         if (matchingMappings.length > 0) {
             int code = open();
             if (code == OK) {
                 Set result = new HashSet();
-                result.addAll(Arrays.asList(getMappings()));
+                result.addAll(Arrays.asList(allMappings));
                 result.removeAll(Arrays.asList(matchingMappings));
                 result.addAll(Arrays.asList(getCheckedMappings()));
                 return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
@@ -82,23 +84,22 @@ public abstract class UncommittedChangesDialog extends MappingSelectionDialog {
             return new ResourceMapping[0];
         } else {
             // No mappings match the filter so return them all
-            return getMappings();
+            return allMappings;
         }
     }
 
-    ResourceMapping[] getMatchingMappings() {
+    private static ResourceMapping[] getMatchingMappings(ResourceMapping[] mappings, final Subscriber subscriber, final FastSyncInfoFilter resourceFilter) {
         Set result = new HashSet();
-        ResourceMapping[] mappings = getMappings();
         for (int i = 0; i < mappings.length; i++) {
             ResourceMapping mapping = mappings[i];
-            if (matchesFilter(mapping)) {
+            if (matchesFilter(mapping, subscriber, resourceFilter)) {
                 result.add(mapping);
             }
         }
         return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
     }
 
-    boolean matchesFilter(ResourceMapping mapping) {
+    private static boolean matchesFilter(ResourceMapping mapping, final Subscriber subscriber, final FastSyncInfoFilter resourceFilter) {
         try {
             mapping.accept(null, new IResourceVisitor() {
                 public boolean visit(IResource resource) throws CoreException {

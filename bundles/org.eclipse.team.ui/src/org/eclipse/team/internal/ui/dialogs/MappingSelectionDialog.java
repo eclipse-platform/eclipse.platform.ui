@@ -61,6 +61,8 @@ public abstract class MappingSelectionDialog extends DetailsDialog implements IP
         // Create a separator between the two sets of buttons
         Label seperator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
         seperator.setLayoutData(new GridData (GridData.FILL_HORIZONTAL));
+        
+        checkedMappings = mappingArea.getCheckedMappings();
     }
 
     /* (non-Javadoc)

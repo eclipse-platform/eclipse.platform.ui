@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -27,6 +28,28 @@ import org.eclipse.ui.model.*;
  */
 public class ResourceMappingSelectionArea extends DialogArea {
 
+	public class ResourceMappingLabelProvider extends LabelProvider {
+		WorkbenchLabelProvider provider = new WorkbenchLabelProvider();
+		public String getText(Object element) {
+			if (element instanceof ResourceMapping) {
+				ResourceMapping mapping = (ResourceMapping) element;
+				String text = provider.getText(mapping.getModelObject());
+				if (text != null)
+					return text;
+			}
+			return super.getText(element);
+		}
+		public Image getImage(Object element) {
+			if (element instanceof ResourceMapping) {
+				ResourceMapping mapping = (ResourceMapping) element;
+				Image image = provider.getImage(mapping.getModelObject());
+				if (image != null)
+					return image;
+			}
+			return super.getImage(element);
+		}
+	}
+	
     /**
      * Property constant used to indicate that the selected mapping has changed.
      * The object associated with the property is a <code>ResourceMapping</code>.
@@ -65,7 +88,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
         data.widthHint = 200;
         viewer.getControl().setLayoutData(data);
         viewer.setContentProvider(new BaseWorkbenchContentProvider());
-        viewer.setLabelProvider(new WorkbenchLabelProvider());
+        viewer.setLabelProvider(new ResourceMappingLabelProvider());
         viewer.setInput(new AdaptableList(mappings));
         viewer.addCheckStateListener(new ICheckStateListener() {
             public void checkStateChanged(CheckStateChangedEvent event) {
