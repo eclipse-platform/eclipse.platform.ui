@@ -668,12 +668,12 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		if (one == two)
 			return;
 		if (one == null || two == null)
-			assertTrue("1.0." + message, false);
+			assertTrue(message + ".1", false);
 		if (one.length != two.length)
-			assertTrue("2.0." + message, false);
+			assertTrue(message + ".2", false);
 		for (int i = 0; i < one.length; i++)
 			if (one[i] != two[i])
-				assertTrue("3." + i + '.' + message, false);
+				assertTrue(message + ".3." + i, false);
 	}
 
 	private void assertEquals(String message, Object[] one, Object[] two) {
@@ -682,9 +682,9 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		if (one == two)
 			return;
 		if (one == null || two == null)
-			assertTrue("1.0." + message, false);
+			assertTrue(message + ".1", false);
 		if (one.length != two.length)
-			assertTrue("2.0." + message, false);
+			assertTrue(message + ".2", false);
 		boolean[] found = new boolean[one.length];
 		for (int i = 0; i < one.length; i++) {
 			for (int j = 0; j < one.length; j++) {
@@ -694,7 +694,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		}
 		for (int i = 0; i < found.length; i++)
 			if (!found[i])
-				assertTrue("3.0." + i + '.' + message, false);
+				assertTrue(message + ".3." + i, false);
 	}
 
 	public void testChildrenNames() {
