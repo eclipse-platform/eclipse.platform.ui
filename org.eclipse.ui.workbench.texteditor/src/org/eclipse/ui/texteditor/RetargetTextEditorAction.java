@@ -136,14 +136,4 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		if (fAction != null)
 			fAction.run();
 	}
-	
-	/*
-	 * @see IAction#getActionDefinitionId()
-	 * @since 2.0
-	 */
-	public String getActionDefinitionId() {
-		if(fAction != null)
-			return fAction.getActionDefinitionId();
-		return null;
-	}
 }

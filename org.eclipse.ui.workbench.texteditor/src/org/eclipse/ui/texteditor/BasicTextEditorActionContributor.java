@@ -18,12 +18,15 @@ import java.util.Map;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
-
 import org.eclipse.jface.action.IStatusLineManager;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.WWinKeyBindingService;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.part.EditorActionBarContributor;
 
 
@@ -114,10 +117,15 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	public BasicTextEditorActionContributor() {
 		
 		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindNext."); //$NON-NLS-1$
+		fFindNext.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_NEXT); 
 		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious."); //$NON-NLS-1$
+		fFindPrevious.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_PREVIOUS); 
 		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental."); //$NON-NLS-1$
+		fIncrementalFind.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL); 
 		fIncrementalFindReverse= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncrementalReverse."); //$NON-NLS-1$
+		fIncrementalFindReverse.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.GotoLine."); //$NON-NLS-1$
+		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		
 		fStatusFields= new HashMap(3);
 		for (int i= 0; i < STATUSFIELDS.length; i++)
@@ -200,10 +208,10 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
 			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fFindNext);
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fFindPrevious);
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fIncrementalFind);
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fIncrementalFindReverse);
-			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT,fGotoLine);
+			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fFindPrevious);
+			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFind);
+			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fIncrementalFindReverse);
+			editMenu.appendToGroup(IWorkbenchActionConstants.FIND_EXT, fGotoLine);
 		}
 	}
 	
@@ -225,4 +233,28 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		doSetActiveEditor(null);
 		super.dispose();
 	}
+	
+	
+//	/* (non-Javadoc)
+//	 * @see org.eclipse.ui.IEditorActionBarContributor#init(org.eclipse.ui.IActionBars, org.eclipse.ui.IWorkbenchPage)
+//	 */
+//	public void init(IActionBars bars, IWorkbenchPage page) {
+//		
+//		if (page != null) {
+//			IWorkbenchWindow window= page.getWorkbenchWindow();
+//			if (window instanceof WorkbenchWindow) {
+//				WorkbenchWindow wWindow= (WorkbenchWindow) window;
+//				WWinKeyBindingService service= wWindow.getKeyBindingService();
+//				if (service != null) {
+//					service.registerGlobalAction(fFindNext);
+//					service.registerGlobalAction(fFindPrevious);
+//					service.registerGlobalAction(fIncrementalFind);
+//					service.registerGlobalAction(fIncrementalFindReverse);
+//					service.registerGlobalAction(fGotoLine);
+//				}
+//			}
+//		}
+//		super.init(bars, page);
+//	}
+
 }
