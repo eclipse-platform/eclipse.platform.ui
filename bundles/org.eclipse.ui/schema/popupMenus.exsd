@@ -280,7 +280,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="overrideActionId" type="boolean">
+         <attribute name="overrideActionId" type="string">
             <annotation>
                <documentation>
                   an optional attribute that specifies the identifier of an action which this action overrides. The action represented by this identifier will not be contributed to the context menu. The action identifier must be from a prerequisite plug-in only. This attribute is only applicable to action elements of an object contribution.
