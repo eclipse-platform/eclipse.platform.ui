@@ -145,7 +145,7 @@ public class TocManager {
 				}
 			}
 		} catch (Exception e) {
-			Logger.logWarning(Resources.getString("W001"));
+			Logger.logError(Resources.getString("E039"), e);
 		}
 		return orderedTocs;
 	}
