@@ -107,12 +107,8 @@ public class CVSUITestCase extends LoggingTestCase {
 		description.setAutoBuilding(false);
 		workspace.setDescription(description);
 						
-		// disable CVS markers and prompts
-		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, false);
-		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(false);
-
 		// disable CVS GZIP compression
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
 		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, 0);
 		CVSProviderPlugin.getPlugin().setCompressionLevel(0);
 
