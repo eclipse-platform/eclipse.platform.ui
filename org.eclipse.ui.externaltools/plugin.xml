@@ -251,6 +251,15 @@
 		</launchGroup>	
 	</extension>	
 	
+	<!-- Console Extensions -->
+	<extension point = "org.eclipse.debug.ui.consoleLineTrackers">
+		<consoleLineTracker
+			id = "org.eclipse.ui.externaltools.ant.javacLineTracker"
+			class = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.JavacLineTracker"
+			processType = "ant">
+		</consoleLineTracker>
+	</extension>	
+		
 	<!-- Variable Extensions -->
 	<extension point="org.eclipse.ui.externaltools.fileVariables">
 		<variable
