@@ -56,7 +56,7 @@
          point="org.eclipse.ui.cheatsheets.cheatSheetContent">
       <cheatsheet
             name="%cheatsheet.cvs.name"
-            contentFile="cheatsheets/CVS_1.xml"
+            contentFile="$nl$/cheatsheets/CVS_1.xml"
             id="org.eclipse.platform.cvs_1">
          <description>
             %cheatsheet.cvs.desc
