@@ -67,9 +67,6 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
 		String objectClassName;
 		IObjectContributor contributor;
 	}
-	
-    // Empty list that is immutable
-    private static final List EMPTY_LIST = Arrays.asList(new Object[0]);
 
     /** Table of contributors. */
     protected Map contributors;
@@ -194,7 +191,7 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
         if (objectList == null) {
             objectList = addContributorsFor(objectClass);
             if (objectList.size() == 0)
-                objectList = EMPTY_LIST;
+                objectList = Collections.EMPTY_LIST;
 
             // Store the contribution list into the cache.
             cacheObjectLookup(objectClass, objectList);
@@ -364,7 +361,7 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
         if (objectList == null) {
             objectList = addContributorsFor(objectClass);
             if (objectList.size() == 0)
-                objectList = EMPTY_LIST;
+                objectList = Collections.EMPTY_LIST;
             cacheObjectLookup(objectClass, objectList);
         }
         if (resourceList == null) {
@@ -378,7 +375,7 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
                     resourceList.add(contributor);
             }
             if (resourceList.size() == 0)
-                resourceList = EMPTY_LIST;
+                resourceList = Collections.EMPTY_LIST;
             cacheAdapterLookup(resourceClass, resourceList);
         }
 
