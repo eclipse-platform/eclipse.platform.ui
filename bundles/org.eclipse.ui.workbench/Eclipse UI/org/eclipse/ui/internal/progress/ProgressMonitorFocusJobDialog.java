@@ -395,6 +395,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
                 //if the job is done at this point, we don't need the dialog
                 if (job.getState() == Job.NONE){
+                	finishedRun();
                 	cleanUpFinishedJob();
                 	return Status.CANCEL_STATUS;
                 }
