@@ -60,6 +60,7 @@ public class RemoteTreeViewer extends TreeViewer {
             parents = new ArrayList();
             this.lock = lock;
             addAllParents(parents, element);
+            setSystem(true);
         }
 
         /* (non-Javadoc)
@@ -125,6 +126,7 @@ public class RemoteTreeViewer extends TreeViewer {
             parents = new ArrayList();
             this.lock = lock;
             addAllParents(parents, first);
+            setSystem(true);
         }
 
         /* (non-Javadoc)
@@ -169,6 +171,7 @@ public class RemoteTreeViewer extends TreeViewer {
     private class StateRestorationJob extends UIJob {
         public StateRestorationJob(String name) {
             super(name);
+            setSystem(true);
         }
 
         /* (non-Javadoc)
