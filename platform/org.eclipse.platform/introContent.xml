@@ -4,42 +4,42 @@
                alt-style="css/root_swt.properties"
                style="css/root.css"
                id="root"
-               class-id="page"> 
-            <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
-            <div id="links-background">
-	            <div
+               style-id="page"> 
+            <title style-id="intro-header">Welcome to Eclipse Platform 3.0</title>
+            <group id="links-background">
+	            <group
                   id="page-links">
 	               <link
                      label="Overview"
                      url="http://org.eclipse.ui.intro/showPage?id=overview"
                      id="overview"
-					 class-id="left">
+					 style-id="left">
 	                  <text>Find out what Eclipse is all about</text>
 	               </link>
 	               <link
                      label="Tutorials"
                      url="http://org.eclipse.ui.intro/showPage?id=tutorials"
                      id="tutorials"
-					 class-id="left">
+					 style-id="left">
 	                  <text>Let us guide you through Eclipse end-to-end tutorials</text>
 	               </link>
 	               <link
                      label="Samples"
                      url="http://org.eclipse.ui.intro/showPage?id=samples"
                      id="samples"
-					 class-id="right">
+					 style-id="right">
 	                  <text>Explore Eclipse development through code samples</text>
 	               </link>
 	               <link
                      label="What&apos;s New" 
                      url="http://org.eclipse.ui.intro/showPage?id=news"
                      id="news"
-					 class-id="right">
+					 style-id="right">
 	                  <text>Find out what is new in this release</text>
 	               </link>
-	            </div>
-	        </div>
-            <div
+	            </group>
+	        </group>
+            <group
                   id="action-links">
                <link
                      url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.contextHelp"
@@ -47,22 +47,21 @@
                      id="workbench">
                   <text>Go to the workbench but stay around helping me as I browse</text>
                </link>
-            </div>
+            </group>
          </page>
          <page
                style="css/overview/overview.css"
                alt-style="css/overview/swt.properties"
-               title="OVERVIEW"
                id="overview"
-               class-id="page">
-   			<title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
-			<div
+               style-id="page">
+   			<title style-id="intro-header">Welcome to Eclipse Platform 3.0</title>
+			<group
                   id="background-image">
-            </div>
-            <div
+            </group>
+            <group
                   id="curve-image">
-            </div>
-            <div 
+            </group>
+            <group 
             	  id="navigation-links" filteredFrom="swt">
                <include
                      path="root/links-background/page-links">
@@ -70,13 +69,13 @@
 			   <include
                      path="root/action-links">
                </include>
-            </div>
-            <div id="page-content">
+            </group>
+            <group id="page-content">
 	            <text
-	                  class-id="page-title" id="page-title">OVERVIEW</text>
+	                  style-id="page-title" id="page-title">OVERVIEW</text>
 	            <text
-	                  class-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
-	            <div
+	                  style-id="page-description" id="page-description">Eclipse is a kind of universal tool platform - an open extensible IDE for anything and nothing in particular. It provides a feature-rich development environment that allows the developer to efficiently create tools that integrate seamlessly into the Eclipse Platform.</text>
+	            <group
 	                  id="overview-links">
 	               <link
 	                     label="Workbench basics"
@@ -90,127 +89,124 @@
 	                     id="team">
 	                  <text>Find out how to collaborate with other developers</text>
 	               </link>
-	            </div>
-            </div>
+	            </group>
+            </group>
          </page>
          <page
                style="css/tutorials/tutorials.css"
                alt-style="css/tutorials/swt.properties"
-               title="TUTORIALS"
                id="tutorials"
-               class-id="page">
-		  <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
-            <div
+               style-id="page">
+		  <title style-id="intro-header">Welcome to Eclipse Platform 3.0</title>
+            <group
                   id="background-image">
-            </div>
-            <div
+            </group>
+            <group
                   id="curve-image">
-            </div>
+            </group>
             <include
                   path="overview/navigation-links">
             </include>
-            <div
+            <group
             	  id="page-content">
 	           <text
-	                 class-id="page-title" id="page-title">TUTORIALS</text>
+	                 style-id="page-title" id="page-title">TUTORIALS</text>
 	           <text
-	                 class-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
-            </div>
+	                 style-id="page-description" id="page-description">Learn how to be productive using Eclipse by completing end-to-end tutorials that will guide you along the way.</text>
+            </group>
          </page>
          <page
                style="css/samples/samples.css"
                alt-style="css/samples/swt.properties"
-               title="SAMPLES"
                id="samples"
-               class-id="page">
-            <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
-            <div
+               style-id="page">
+            <title style-id="intro-header">Welcome to Eclipse Platform 3.0</title>
+            <group
                   id="background-image">
-            </div>
-            <div
+            </group>
+            <group
                   id="curve-image">
-            </div>
+            </group>
             <include
                   path="overview/navigation-links">
             </include>
-            <div
+            <group
             	  id="page-content">
 	            <text
-	                  class-id="page-title" id="page-title" >SAMPLES</text>
+	                  style-id="page-title" id="page-title" >SAMPLES</text>
 	            <text
-	                  class-id="page-description" id="page-description" >Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
-	            <div
+	                  style-id="page-description" id="page-description" >Explore Eclipse by installing prefabricated samples (may require Internet connection).</text>
+	            <group
 	                  label="SWT"
 	                  id="swt"
-	                  class-id="samples-group">
+	                  style-id="samples-group">
 	               <text
-	                     class-id="group-description">Run SWT samples using either standalone SWT launcher or integrated into workbench views.</text>
+	                     style-id="group-description">Run SWT samples using either standalone SWT launcher or integrated into workbench views.</text>
 	               <link
 	                     label="Stand-alone SWT launcher"
 	                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.swt.examples"
 	                     id="standalone"
-	                     class-id="sample-link">
+	                     style-id="sample-link">
 	                  <text>A new window will open that will allow you to select standalone samples from the list</text>
 	               </link>
 	               <link
 	                     label="Workbench views"
 	                     url="http://org.eclipse.ui.intro/showMessage?message=Action not implemented."
 	                     id="views"
-	                     class-id="sample-link">
+	                     style-id="sample-link">
 	                  <text>Samples will be integrated in the workbench views in the current perspective</text>
 	               </link>
-	            </div>
-	            <div
+	            </group>
+	            <group
 	                  label="Workbench"
 	                  id="workbench"
-	                  class-id="samples-group">
+	                  style-id="samples-group">
 	               <text
-	                     class-id="group-description">The following samples demonstrate how to tightly integrate into the Eclipse workbench.</text>
+	                     style-id="group-description">The following samples demonstrate how to tightly integrate into the Eclipse workbench.</text>
 	               <link
 	                     label="Multi-page editor"
 	                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.multipageeditor"
 	                     id="multi-page-editor"
-	                     class-id="sample-link">
+	                     style-id="sample-link">
 	                  <text>Shows how to create an editor with multiple pages</text>
 	               </link>
 	               <link
 	                     label="Property sheet and outline"
 	                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.propertysheet"
 	                     id="property-sheet"
-	                     class-id="sample-link">
+	                     style-id="sample-link">
 	                  <text>Demonstrates how to use property sheet and outline views</text>
 	               </link>
 	               <link
 	                     label="Readme tool"
 	                     url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.ui.internal.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.readmetool"
 	                     id="readmetool"
-	                     class-id="sample-link">
+	                     style-id="sample-link">
 	                  <text>Shows how to create your own extension points</text>
 	               </link>
-	            </div>
-            </div>
+	            </group>
+            </group>
          </page>
          <page
                style="css/whatsnew/whatsnew.css"
                alt-style="css/whatsnew/swt.properties"
-               title="WHAT&apos;S NEW"
                id="news"
-               class-id="page">
-            <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
-            <div
+               style-id="page">
+            <title style-id="intro-header">Welcome to Eclipse Platform 3.0</title>
+            <group
                   id="background-image">
-            </div>
-            <div
+            </group>
+            <group
                   id="curve-image">
-            </div>
+            </group>
             <include
                   path="overview/navigation-links">
             </include>
-            <div
+            <group
             	  id="page-content">
 	            <text
-	                  class-id="page-title" id="page-title">WHAT&apos;S NEW</text>
-	            <div
+	                  style-id="page-title" id="page-title">WHAT&apos;S NEW</text>
+	            <group
 	                  id="news-links">
 	               <link
 	                     label="New and noteworthy"
@@ -236,8 +232,8 @@
 	                     id="eclipse">
 	                  <text>Join the community, read articles and news on Eclipse.org</text>
 	               </link>
-	            </div>
-            </div>
+	            </group>
+            </group>
          </page>
 	
 </introContent>
