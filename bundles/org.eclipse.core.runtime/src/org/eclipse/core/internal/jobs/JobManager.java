@@ -154,6 +154,8 @@ public class JobManager implements IJobManager {
 				return "BLOCKED"; //$NON-NLS-1$
 			case InternalJob.ABOUT_TO_RUN :
 				return "ABOUT_TO_RUN"; //$NON-NLS-1$
+			case InternalJob.ABOUT_TO_SCHEDULE:
+				return "ABOUT_TO_SCHEDULE";//$NON-NLS-1$
 		}
 		return "UNKNOWN"; //$NON-NLS-1$
 	}
