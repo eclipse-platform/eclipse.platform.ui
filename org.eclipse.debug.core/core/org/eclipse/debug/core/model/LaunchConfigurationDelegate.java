@@ -11,11 +11,11 @@
 package org.eclipse.debug.core.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -225,7 +225,10 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		if (orderedNames != null) {
 			List orderedProjects = new ArrayList(projects.length);
 			//Projects may not be in the build order but should be built if selected
-			List unorderedProjects = Arrays.asList(projects);
+			List unorderedProjects = new ArrayList(projects.length);
+			for(int i = 0; i < projects.length; ++i) {
+				unorderedProjects.add(projects[i]);
+			}
 			
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
