@@ -13,7 +13,7 @@ package org.eclipse.core.tools.runtime;
 import java.util.*;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.tools.Policy;
+import org.eclipse.core.tools.Messages;
 import org.eclipse.core.tools.SpyView;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -43,7 +43,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 		 * @see ITableLabelProvider#getColumnText(Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
-			return element == null ? Policy.bind("depend.badPluginId") : ((IPluginDescriptor) element).getUniqueIdentifier(); //$NON-NLS-1$
+			return element == null ? Messages.depend_badPluginId : ((IPluginDescriptor) element).getUniqueIdentifier();
 		}
 	}
 

@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.framework.stats.BundleStats;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -151,7 +152,7 @@ public class PluginDependencyView extends SpyView implements ISelectionListener 
 		if (id == -1)
 			return;
 		PluginDependencyGraphNode node = (PluginDependencyGraphNode) getDependencyGraph().get(new Long(id));
-		String text = node == null ? Policy.bind("depend.noInformation", name) : node.toDeepString(); //$NON-NLS-1$
+		String text = node == null ? NLS.bind(Messages.depend_noInformation, name) : node.toDeepString();
 		viewer.getDocument().set(text);
 		viewer.refresh();
 	}

@@ -11,8 +11,9 @@
 package org.eclipse.core.tools.runtime;
 
 import java.util.*;
-import org.eclipse.core.tools.Policy;
+import org.eclipse.core.tools.Messages;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.util.NLS;
 
 /**
  *  This class is used to build up a dependency graph.  The full dependency
@@ -68,13 +69,13 @@ public class PluginDependencyGraphNode {
 		StringBuffer buffer = new StringBuffer();
 
 		// write ID
-		writeln(buffer, 0, Policy.bind("stats.pluginid", descriptor.getSymbolicName())); //$NON-NLS-1$
+		writeln(buffer, 0, NLS.bind(Messages.stats_pluginid, descriptor.getSymbolicName()));
 
 		// write ancestors
 		if (ancestors.size() == 0) {
-			writeln(buffer, 1, Policy.bind("depend.noParentPlugins")); //$NON-NLS-1$
+			writeln(buffer, 1, Messages.depend_noParentPlugins);
 		} else {
-			writeln(buffer, 1, Policy.bind("depend.requiredBy")); //$NON-NLS-1$
+			writeln(buffer, 1, Messages.depend_requiredBy);
 			for (Iterator i = ancestors.iterator(); i.hasNext();) {
 				PluginDependencyGraphNode ancestor = (PluginDependencyGraphNode) i.next();
 				writeln(buffer, 2, ancestor.getId());
@@ -83,9 +84,9 @@ public class PluginDependencyGraphNode {
 
 		// write children
 		if (children.size() == 0) {
-			writeln(buffer, 1, Policy.bind("depend.noChildrenPlugins")); //$NON-NLS-1$
+			writeln(buffer, 1, Messages.depend_noChildrenPlugins);
 		} else {
-			writeln(buffer, 1, Policy.bind("depend.requires")); //$NON-NLS-1$
+			writeln(buffer, 1, Messages.depend_requires);
 			for (Iterator i = children.iterator(); i.hasNext();) {
 				PluginDependencyGraphNode child = (PluginDependencyGraphNode) i.next();
 				writeln(buffer, 2, child.getId());

@@ -79,11 +79,11 @@ public class TableSelectionProviderDecorator implements ISelectionProvider {
 
 	private String headerPluginStats() {
 		String retString = ""; //$NON-NLS-1$
-		retString += Policy.bind("stats.eventHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.blameHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.contextHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.countHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
-		retString += Policy.bind("stats.timeHeader") + "\t"; //$NON-NLS-1$ //$NON-NLS-2$
+		retString += Messages.stats_eventHeader + "\t"; //$NON-NLS-1$
+		retString += Messages.stats_blameHeader + "\t"; //$NON-NLS-1$
+		retString += Messages.stats_contextHeader + "\t"; //$NON-NLS-1$
+		retString += Messages.stats_countHeader + "\t"; //$NON-NLS-1$
+		retString += Messages.stats_timeHeader + "\t"; //$NON-NLS-1$
 		return retString;
 	}
 

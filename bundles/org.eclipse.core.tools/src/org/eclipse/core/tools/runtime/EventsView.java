@@ -99,7 +99,7 @@ public class EventsView extends TableWithTotalView {
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			if (!(element instanceof PerformanceStats)) {
-				return Policy.bind("stats.badStat"); //$NON-NLS-1$
+				return Messages.stats_badStat;
 			}
 			PerformanceStats stats = (PerformanceStats) element;
 			switch (columnIndex) {
@@ -114,7 +114,7 @@ public class EventsView extends TableWithTotalView {
 				case COLUMN_TIME :
 					return Long.toString(stats.getRunningTime());
 			}
-			return Policy.bind("stats.badColumn"); //$NON-NLS-1$
+			return Messages.stats_badColumn;
 		}
 
 		public Color getForeground(Object element) {
@@ -172,11 +172,11 @@ public class EventsView extends TableWithTotalView {
 	public final static int COLUMN_TIME = 4;
 
 	private String columnHeaders[] = {
-			Policy.bind("stats.eventHeader"), //$NON-NLS-1$
-			Policy.bind("stats.blameHeader"), //$NON-NLS-1$
-			Policy.bind("stats.contextHeader"), //$NON-NLS-1$
-			Policy.bind("stats.countHeader"), //$NON-NLS-1$
-			Policy.bind("stats.timeHeader"), //$NON-NLS-1$
+			Messages.stats_eventHeader, //
+			Messages.stats_blameHeader, //
+			Messages.stats_contextHeader, //
+			Messages.stats_countHeader, //
+			Messages.stats_timeHeader, //
 	};
 	private ColumnLayoutData columnLayouts[] = {
 			new ColumnWeightData(80), // event
