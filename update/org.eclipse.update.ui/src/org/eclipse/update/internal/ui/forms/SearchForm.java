@@ -401,6 +401,7 @@ public class SearchForm extends UpdateWebForm {
 				category.createControl(pagebook, factory);
 			}
 		}
+		categoryCombo.pack();
 		categoryCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = categoryCombo.getSelectionIndex();
