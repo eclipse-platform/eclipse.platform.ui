@@ -346,7 +346,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 	 */
 	public boolean getBoolean(String qualifier, String key, boolean defaultValue, IScopeContext[] scopes) {
 		String result = get(key, null, getNodes(qualifier, key, scopes));
-		return result == null ? defaultValue : Boolean.getBoolean(result);
+		return result == null ? defaultValue : Boolean.valueOf(result).booleanValue();
 	}
 
 	/*
