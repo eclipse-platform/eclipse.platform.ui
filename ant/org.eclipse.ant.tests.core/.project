@@ -5,9 +5,7 @@
 	<projects>
 		<project>org.apache.ant</project>
 		<project>org.eclipse.ant.core</project>
-		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.jdt.core</project>
 		<project>org.eclipse.jface.text</project>
