@@ -58,7 +58,7 @@ public class SystemMenuFastViewOrientation extends ContributionItem {
         if (bar != null && viewPane != null) {
         	
         	currentOrientation.set(bar.getOrientation(viewPane.getViewReference()));
-			MenuItem orientationItem = new MenuItem(menu, SWT.CASCADE);
+			MenuItem orientationItem = new MenuItem(menu, SWT.CASCADE, index);
 			{
 				orientationItem.setText(WorkbenchMessages.getString("FastViewBar.view_orientation")); //$NON-NLS-1$
 				
