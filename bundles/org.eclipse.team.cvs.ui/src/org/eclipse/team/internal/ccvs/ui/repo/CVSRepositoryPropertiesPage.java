@@ -67,10 +67,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 
 	IUserInfo info;
 
-	// Program Name
-	private Text programNameText;
-	private Button useDefaultProgramName;
-	private Button useCustomProgramName;
 	// Label
 	private Button useLocationAsLabel;
 	private Button useCustomLabel;
@@ -139,20 +135,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		// Add some extra space
 		createLabel(composite, "", 3); //$NON-NLS-1$
 
-		// Remote CVS program name
-		// create a composite to ensure the radio buttons come in the correct order
-		Composite programNameGroup = createRadioGroupComposite(composite);
-		Listener programNameListener = new Listener() {
-			public void handleEvent(Event event) {
-				updateWidgetEnablements();
-			}
-		};
-		useDefaultProgramName = createRadioButton(programNameGroup, Policy.bind("CVSRepositoryPropertiesPage.useDefaultProgramName"), 3); //$NON-NLS-1$
-		useCustomProgramName = createRadioButton(programNameGroup, Policy.bind("CVSRepositoryPropertiesPage.useProgramName"), 1); //$NON-NLS-1$
-		useCustomProgramName.addListener(SWT.Selection, programNameListener);
-		programNameText = createTextField(programNameGroup);
-		programNameText.addListener(SWT.Modify, programNameListener);
-		
 		// Add some extra space
 		createLabel(composite, "", 3); //$NON-NLS-1$
 		
@@ -341,12 +323,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		}
 		pathLabel.setText(location.getRootDirectory());
 		
-		// get the program name
-		String programName = ((CVSRepositoryLocation)location).getRemoteCVSProgramName();
-		programNameText.setText(programName);
-		useDefaultProgramName.setSelection(programName == CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME);
-		useCustomProgramName.setSelection(!useDefaultProgramName.getSelection());
-		
 		// get the repository label
 		String label = null;
 		RepositoryRoot root = CVSUIPlugin.getPlugin().getRepositoryManager().getRepositoryRootFor(location);
@@ -492,7 +468,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	}
 	
 	private void performNonConnectionInfoChanges() {
-		recordNewProgramName((CVSRepositoryLocation)location);
 		recordNewLabel((CVSRepositoryLocation)location);
 		recordReadWriteLocations((CVSRepositoryLocation)location);
 	}
@@ -517,11 +492,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	 * Updates widget enablements and sets error message if appropriate.
 	 */
 	protected void updateWidgetEnablements() {
-		if (useDefaultProgramName.getSelection()) {
-			programNameText.setEnabled(false);
-		} else {
-			programNameText.setEnabled(true);
-		}
 		if (useLocationAsLabel.getSelection()) {
 			labelText.setEnabled(false);
 		} else {
@@ -538,12 +508,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 	}
 	
 	private void validateFields() {
-		if (programNameText.isEnabled()) {
-			if (programNameText.getText().length() == 0) {
-				setValid(false);
-				return;
-			}
-		}
 		if (labelText.isEnabled()) {
 			if (labelText.getText().length() == 0) {
 				setValid(false);
@@ -553,24 +517,6 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		setValid(true);
 	}
 	
-	private void recordNewProgramName(CVSRepositoryLocation location) {
-		String newProgramName = getNewProgramName();
-		if (getOldProgramName(location).equals(newProgramName)) return;
-		CVSProviderPlugin.getPlugin().setCVSProgramName(location, newProgramName);
-	}
-	private String getOldProgramName(CVSRepositoryLocation location) {
-		return location.getRemoteCVSProgramName();
-	}
-	private String getNewProgramName() {
-		// Set the remote program name if appropriate
-		String newProgramName;
-		if (useDefaultProgramName.getSelection()) {
-			newProgramName = CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME;
-		} else {
-			newProgramName = programNameText.getText();
-		}
-		return newProgramName;
-	}
 	private void recordNewLabel(CVSRepositoryLocation location) {
 		String newLabel = getNewLabel(location);
 		if (newLabel == null) {

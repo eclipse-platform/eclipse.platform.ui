@@ -783,9 +783,6 @@ public class CVSProviderPlugin extends Plugin {
 			for (int i = 0; i < count; i++) {
 				ICVSRepositoryLocation root = getRepository(dis.readUTF());
 				String programName = dis.readUTF();
-				if (!programName.equals(CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME)) {
-					((CVSRepositoryLocation)root).setRemoteCVSProgramName(programName);
-				}
 			}
 		} else {
 			Util.logError(Policy.bind("CVSProviderPlugin.unknownStateFileVersion", new Integer(count).toString()), null); //$NON-NLS-1$
@@ -802,7 +799,7 @@ public class CVSProviderPlugin extends Plugin {
 		while (it.hasNext()) {
 			CVSRepositoryLocation root = (CVSRepositoryLocation)it.next();
 			dos.writeUTF(root.getLocation());
-			dos.writeUTF(root.getRemoteCVSProgramName());
+			dos.writeUTF("unused"); // place holder for an additional configuration parameter
 		}
 	}
 		
@@ -825,17 +822,6 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public void setDetermineVersionEnabled(boolean determineVersionEnabled) {
 		this.determineVersionEnabled = determineVersionEnabled;
-	}
-	
-	/**
-	 * Set the program name of the given repository location.
-	 * The program name is the expected prefix on server text messages.
-	 * Since we extract information out of these messages, we need to
-	 * know what prefix to expect. The default is "cvs".
-	 */
-	public void setCVSProgramName(ICVSRepositoryLocation location, String programName) {
-		((CVSRepositoryLocation)location).setRemoteCVSProgramName(programName);
-		saveState();
 	}
 	
 	/**

@@ -338,10 +338,6 @@ public class RepositoryRoot extends PlatformObject {
 
 		attributes.clear();
 		attributes.put(RepositoriesViewContentHandler.ID_ATTRIBUTE, root.getLocation());
-		String programName = ((CVSRepositoryLocation)root).getRemoteCVSProgramName();
-		if (!programName.equals(CVSRepositoryLocation.DEFAULT_REMOTE_CVS_PROGRAM_NAME)) {
-			attributes.put(RepositoriesViewContentHandler.REPOSITORY_PROGRAM_NAME_ATTRIBUTE, programName);
-		}
 		if (name != null) {
 			attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, name);
 		}

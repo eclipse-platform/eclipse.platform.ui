@@ -41,7 +41,6 @@ public class RepositoriesViewContentHandler extends DefaultHandler {
 	public static final String PATH_ATTRIBUTE = "path"; //$NON-NLS-1$
 	public static final String FULL_PATH_ATTRIBUTE = "full-path"; //$NON-NLS-1$
 	public static final String TYPE_ATTRIBUTE = "type"; //$NON-NLS-1$
-	public static final String REPOSITORY_PROGRAM_NAME_ATTRIBUTE = "program-name"; //$NON-NLS-1$
 	public static final String READ_ID_ATTRIBUTE = "read-id"; //$NON-NLS-1$
 	public static final String WRITE_ID_ATTRIBUTE = "write-id"; //$NON-NLS-1$
 	
