@@ -95,7 +95,7 @@ public class FontPreferencePage
 
 		createPreviewControl(previewColumn);
 		createValueControl(previewColumn);
-		
+
 		Composite buttonColumn = new Composite(previewColumn, SWT.NULL);
 		layout = new GridLayout();
 		layout.numColumns = 2;
@@ -104,7 +104,7 @@ public class FontPreferencePage
 		buttonColumn.setLayout(layout);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonColumn.setLayoutData(data);
-		
+
 		createUseDefaultsControl(
 			buttonColumn,
 			WorkbenchMessages.getString("FontsPreference.useSystemFont"));
@@ -265,7 +265,7 @@ public class FontPreferencePage
 	 */
 	private void updateForFont(FontData font) {
 
-		valueControl.setText(StringConverter.asString(font));
+		valueControl.setText(asDisplayableString(font));
 		previewer.setFont(font);
 	}
 
@@ -343,4 +343,42 @@ public class FontPreferencePage
 		return super.performOk();
 	}
 
+	/**
+	* Converts a font data object to a string representation for display. 
+	* 	The string representation is
+	* "font name-style-height" (for example "Times New Roman-bold-36").
+	* @param value The font data.
+	* @return The string representation of the font data object.
+	*/
+	private String asDisplayableString(FontData value) {
+		String [] arguments = new String [3];
+		arguments[0] = value.getName();
+		arguments[1] = getStyleString(value);
+		arguments[2] = String.valueOf(value.getHeight());
+		return WorkbenchMessages.format("FontsPreference.FontFormat",arguments);
+	}
+	
+	/**
+	 * Get the string that displays the style of the font
+	 * in human readable form
+	 * @param value The font data.
+	 * @return The string representation of the style of the font data object.	
+	 */
+
+	private String getStyleString(FontData value) {
+		int style = value.getStyle();
+		boolean bold = (style & SWT.BOLD) == SWT.BOLD;
+		boolean italic = (style & SWT.ITALIC) == SWT.ITALIC;
+		if (bold && italic)
+			return WorkbenchMessages.getString("FontsPreference.BoldItalic");
+		else
+			if (bold)
+				return WorkbenchMessages.getString("FontsPreference.Bold");
+			else
+				if (italic)
+					return WorkbenchMessages.getString("FontsPreference.Italic");
+				else
+					return WorkbenchMessages.getString("FontsPreference.Regular");
+
+	}
 }
