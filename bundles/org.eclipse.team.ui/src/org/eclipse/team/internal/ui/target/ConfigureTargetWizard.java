@@ -237,7 +237,8 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 			if(getMappingPage() != null) {
 				path = getMappingPage().getMapping();
 			}
-			return setMapping(getContainer(), project, site, path);
+			if(! setMapping(getContainer(), project, site, path))
+				return false;	//mapping failed so fail finish
 		}
 		
 		// allow target wizard to finish
