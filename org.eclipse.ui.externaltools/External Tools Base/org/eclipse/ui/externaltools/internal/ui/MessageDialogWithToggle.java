@@ -94,7 +94,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * Store the preference based on the user's selection
 	 */
 	protected void storePreference() {
-		fStore.setValue(fPreferenceKey, getToggleButton().getSelection());
+		fStore.setValue(fPreferenceKey, !getToggleButton().getSelection());
 	}
 
 	/**
