@@ -23,7 +23,7 @@ import org.eclipse.ui.IResourceActionFilter;
  * Clients are not expected to implement this interface.
  * </p>
  *
- * @see IActionFilter
+ * @see org.eclipse.ui.IActionFilter
  */
 public interface IProjectActionFilter extends IResourceActionFilter {
 	

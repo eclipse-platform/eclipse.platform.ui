@@ -120,7 +120,7 @@ boolean performMove(
  * Query for a new project destination using the parameters in the existing
  * project.
  * @return Object[]  or null if the selection is cancelled
- * @param IProject - the project we are going to move.
+ * @param project  the project we are going to move.
  */
 protected Object[] queryDestinationParameters(IProject project) {
 	ProjectLocationMoveDialog dialog =

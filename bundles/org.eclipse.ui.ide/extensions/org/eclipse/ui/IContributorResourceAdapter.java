@@ -29,7 +29,7 @@ public interface IContributorResourceAdapter {
 	 * that any object passed to it adapts to one equivalent
 	 * resource.
 	 * 
-	 * @param IAdaptable the adaptable being queried
+	 * @param adaptable the adaptable being queried
 	 * @return a resource, or <code>null</code> if there
 	 * 	is no adapted resource for this type
 	 */

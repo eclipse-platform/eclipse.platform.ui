@@ -37,7 +37,7 @@ public class WorkspaceModifyDelegatingOperation
 	 * 
 	 * @param content
 	 *            the runnable to delegate to when this operation is executed
-	 * @param rule.
+	 * @param rule
 	 *            The ISchedulingRule to use or <code>null</code>.
 	 */
 	public WorkspaceModifyDelegatingOperation(

@@ -94,7 +94,7 @@ public OpenWithMenu(IWorkbenchPage page) {
 /**
  * Constructs a new instance of <code>OpenWithMenu</code>.  
  *
- * @param window the window where a new page is created if an item within
+ * @param page the page where the editor is opened if an item within
  *		the menu is selected
  * @param file the selected file
  */

@@ -65,8 +65,6 @@ public class CopyProjectAction extends SelectionListenerAction {
  * Creates a new project copy action with the default text.
  *
  * @param shell the shell for any dialogs
- * @param text the string used as the text for the action, 
- *   or <code>null</code> if there is no text
  */
 public CopyProjectAction(Shell shell) {
 	this(shell,COPY_TITLE);
@@ -76,7 +74,7 @@ public CopyProjectAction(Shell shell) {
  * Creates a new project copy action with the given text.
  *
  * @param shell the shell for any dialogs
- * @param text the string used as the text for the action, 
+ * @param name the string used as the text for the action, 
  *   or <code>null</code> if there is no text
  */
 CopyProjectAction(Shell shell, String name) {
@@ -191,7 +189,7 @@ boolean performCopy(
  * Query for a new project name and destination using the parameters in the existing
  * project.
  * @return Object []  or null if the selection is cancelled
- * @param IProject - the project we are going to copy.
+ * @param project  the project we are going to copy.
  */
 protected Object [] queryDestinationParameters(IProject project) {
 	ProjectLocationSelectionDialog dialog =

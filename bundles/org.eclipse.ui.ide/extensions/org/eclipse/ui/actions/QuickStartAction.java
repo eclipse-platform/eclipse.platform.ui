@@ -141,7 +141,7 @@ public class QuickStartAction
 	/**
 	 * Opens the welcome page for the given feature.
 	 * 
-	 * @param feature the about info for the feature
+	 * @param featureId the about info for the feature
 	 * @return <code>true</code> if successful, <code>false</code> otherwise
 	 */	
 	public boolean openWelcomePage(String featureId) throws WorkbenchException {

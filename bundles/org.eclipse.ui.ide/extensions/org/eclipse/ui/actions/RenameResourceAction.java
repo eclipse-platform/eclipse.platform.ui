@@ -310,7 +310,7 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
  * Return the new name to be given to the target resource.
  *
  * @return java.lang.String
- * @param context IVisualPart
+ * @param resource the resource to query status on
  */
 protected String queryNewResourceName(final IResource resource) {
 	final IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
