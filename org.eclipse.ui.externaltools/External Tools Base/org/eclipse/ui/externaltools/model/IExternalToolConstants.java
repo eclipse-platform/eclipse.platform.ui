@@ -249,7 +249,7 @@ public interface IExternalToolConstants {
 	/**
 	 * Program launch configuration type identifier
 	 */
-	public static final String ID_PROGRAM_LANUCH_CONFIGURATION_TYPE = "org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"; //$NON-NLS-1$
+	public static final String ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE = "org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"; //$NON-NLS-1$
 	
 	// ------- Launch configuration groups --------
 	/**
