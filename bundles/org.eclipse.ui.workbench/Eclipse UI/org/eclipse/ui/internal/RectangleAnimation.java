@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
@@ -70,18 +71,25 @@ public class RectangleAnimation extends Job {
 
         public void run() {
 
-            // Measure the start as the time of the first syncExec
-            if (startTime == 0) {
-                startTime = System.currentTimeMillis();
-            }
-
             if (theShell == null || theShell.isDisposed()) {
                 done = true;
                 return;
             }
 
+            if (first) {
+                // Wait until the first syncExec before we make the shell visible and start
+            	// the timer.
+            	setCurrentRectangle(start);
+            	theShell.setVisible(true);
+            	// Making the shell visible will be slow on old video cards, so only start
+            	// the timer once it is visible.
+            	startTime = System.currentTimeMillis();
+            	first = false;
+            	return;
+            }
+            
             long currentTime = System.currentTimeMillis();
-
+            
             double amount = (double) (currentTime - startTime)
                     / (double) duration;
 
@@ -92,29 +100,9 @@ public class RectangleAnimation extends Job {
 
             Rectangle toPaint = interpolate(start, end, amount);
 
-            theShell.setBounds(toPaint);
-            if (shellRegion != null) {
-                shellRegion.dispose();
-                shellRegion = new Region(display);
-            }
-
-            Rectangle rect = theShell.getClientArea();
-            shellRegion.add(rect);
-            rect.x += LINE_WIDTH;
-            rect.y += LINE_WIDTH;
-            rect.width = Math.max(0, rect.width - 2 * LINE_WIDTH);
-            rect.height = Math.max(0, rect.height - 2 * LINE_WIDTH);
-
-            shellRegion.subtract(rect);
-
-            theShell.setRegion(shellRegion);
+            setCurrentRectangle(toPaint);
+            
             display.update();
-
-            if (first) {
-                theShell.setVisible(true);
-            }
-
-            first = false;
         }
 
     };
@@ -123,6 +111,25 @@ public class RectangleAnimation extends Job {
         this(parentShell, start, end, 400);
     }
 
+    private void setCurrentRectangle(Rectangle newRegion) {
+        if (shellRegion != null) {
+            shellRegion.dispose();
+            shellRegion = new Region(display);
+        }
+
+        Rectangle shellBounds = theShell.getBounds();
+        Rectangle rect = Geometry.toControl(theShell, newRegion);
+        shellRegion.add(rect);
+        rect.x += LINE_WIDTH;
+        rect.y += LINE_WIDTH;
+        rect.width = Math.max(0, rect.width - 2 * LINE_WIDTH);
+        rect.height = Math.max(0, rect.height - 2 * LINE_WIDTH);
+
+        shellRegion.subtract(rect);
+
+        theShell.setRegion(shellRegion);
+    }
+    
     /**
      * Creates an animation that will morph the start rectangle to the end rectangle in the
      * given number of milliseconds. The animation will take the given number of milliseconds to
@@ -159,7 +166,9 @@ public class RectangleAnimation extends Job {
 	        Color color = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
 	        theShell.setBackground(color);
 	
-	        theShell.setBounds(start);
+	        Rectangle shellBounds = Geometry.copy(start);
+	        shellBounds.add(end);
+	        theShell.setBounds(shellBounds);
 	
 	        shellRegion = new Region(display);
         }
