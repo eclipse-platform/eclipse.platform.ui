@@ -66,7 +66,7 @@ function resynch()
 		<a  href='<%=viewHref%>' > 
 	         <img alt="" 
 	              title="<%=title%>" 
-	              src="<%=views[i].getImage()%>" border=0>
+	              src="<%=views[i].getOnImage()%>" border=0>
 	         
 	     <%=title%>
 	     </a>
