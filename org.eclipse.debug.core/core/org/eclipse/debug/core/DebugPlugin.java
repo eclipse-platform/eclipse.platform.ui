@@ -200,6 +200,11 @@ public class DebugPlugin extends Plugin {
 	private int fDispatching = 0;
 	
 	/**
+	 * Sync lock for async scheduling
+	 */
+	private Object fLock = new Object();
+	
+	/**
 	 * Queue of runnables to execute after event dispatch is
 	 * complete.
 	 * 
@@ -321,7 +326,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public void asyncExec(Runnable r) {
-		synchronized (fRunnables) {
+		synchronized (fLock) {
 			if (fRunnables == null) {
 				// initialize runnables and async job
 				fRunnables= new Vector(10);
@@ -329,10 +334,10 @@ public class DebugPlugin extends Plugin {
 				fRunnables.add(r);
 				if (!isDispatching()) {
 					fAsynchJob.schedule();
-				} 
+				}
 			} else {
 				fRunnables.add(r);
-			}			
+			}
 		}
 	}
 	
@@ -845,7 +850,7 @@ public class DebugPlugin extends Plugin {
 		public IStatus run(IProgressMonitor monitor) {
 			// Executes runnables and empties the queue
 			Vector v = null;
-			synchronized (fRunnables) {
+			synchronized (fLock) {
 				v = fRunnables;
 				fRunnables = null;
 				fAsynchJob= null;
