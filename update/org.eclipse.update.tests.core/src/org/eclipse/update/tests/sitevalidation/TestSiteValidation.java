@@ -156,12 +156,12 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 
 //		UpdateManagerUtils.removeFromFileSystem(new File(file,".eclipseUM"));
 
-		String msg = "The site "+file+" should be updatable.";
-		if (!status.isOK()){
+		String msg = "The site "+file+" should not be updatable.";
+		if (status.isOK()){
 			fail(msg+status.getMessage());
 		}
-//		if (status.getMessage().indexOf("This site is contained in another site:")==-1){
-//			fail("Wrong validation:"+status.getMessage());
-//		}
+		if (status.getMessage().indexOf("This site is contained in another site:")==-1){
+			fail("Wrong validation:"+status.getMessage());
+		}
 	}	
 }
