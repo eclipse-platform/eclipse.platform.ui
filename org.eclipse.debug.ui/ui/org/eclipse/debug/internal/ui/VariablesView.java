@@ -396,7 +396,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		tbm.add(new Separator(this.getClass().getName()));
 		tbm.add(getShowTypesAction());
 		tbm.add(getShowQualifiedAction());
-		tbm.add(new Separator(DebugUIMessages.getString("VariablesView.TOGGLE_VIEW_1"))); //$NON-NLS-1$
+		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
 		tbm.add(getShowDetailPaneAction());
 	}
 
