@@ -2526,6 +2526,7 @@
          </action>
          <action
                definitionId="org.eclipse.ui.navigate.openResource"
+               helpContextId="org.eclipse.ui.open_workspace_file_action_context"
                label="%OpenWorkspaceFileAction.label"
                class="org.eclipse.ui.internal.actions.OpenWorkspaceFileAction"
                menubarPath="navigate/open.ext2"
