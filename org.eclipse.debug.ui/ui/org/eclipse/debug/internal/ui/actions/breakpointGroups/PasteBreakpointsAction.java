@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,10 @@
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.List;
-
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
@@ -29,21 +26,14 @@ import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
  * @since 2.0
  */
 public class PasteBreakpointsAction extends BreakpointSelectionAction {
-
-    /**
-     * System clipboard
-     */
-    private Clipboard clipboard;
     
     /**
      * Creates a new action.
      *
-     * @param shell the shell for any dialogs
+     * @param view the view of this action
      */
-    public PasteBreakpointsAction(BreakpointsView view, Clipboard clipboard) {
+    public PasteBreakpointsAction(BreakpointsView view) {
         super(BreakpointGroupMessages.getString("PasteBreakpointsAction.0"), view); //$NON-NLS-1$
-        Assert.isNotNull(clipboard);
-        this.clipboard = clipboard;
         setToolTipText(BreakpointGroupMessages.getString("PasteBreakpointsAction.1")); //$NON-NLS-1$
     }
 
@@ -91,4 +81,3 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
 		return false;
     }
 }
-

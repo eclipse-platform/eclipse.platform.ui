@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -426,7 +426,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         
         fClipboard= new Clipboard(getSite().getShell().getDisplay());
         
-        PasteBreakpointsAction paste = new PasteBreakpointsAction(this, fClipboard);
+        PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
         configure(paste, IWorkbenchActionDefinitionIds.PASTE, ActionFactory.PASTE.getId(),ISharedImages.IMG_TOOL_PASTE);
         SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
         configure(copy, IWorkbenchActionDefinitionIds.COPY, ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);
