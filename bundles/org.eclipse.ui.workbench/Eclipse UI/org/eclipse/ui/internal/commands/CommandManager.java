@@ -32,6 +32,7 @@ import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.registry.CategoryDefinition;
 import org.eclipse.ui.internal.commands.registry.CommandDefinition;
+import org.eclipse.ui.internal.commands.registry.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.commands.registry.ICategoryDefinition;
 import org.eclipse.ui.internal.commands.registry.ICommandDefinition;
 import org.eclipse.ui.internal.commands.registry.ICommandRegistry;
@@ -232,36 +233,12 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
-	public void setActiveLocale(String locale) {
+	public void setActiveLocale(String locale) {		
 		// TODO: this changes imageBindingsByCommandId and keyBindingsByCommandId 
 	}
 	
 	public void setActivePlatform(String platform) {
 		// TODO: this changes imageBindingsByCommandId and keyBindingsByCommandId
-	}
-
-	ICommandRegistry getPluginCommandRegistry() {
-		return pluginCommandRegistry;
-	}
-
-	ICommandRegistry getPreferenceCommandRegistry() {
-		return preferenceCommandRegistry;
-	}
-
-	void loadPluginCommandRegistry() {
-		try {
-			pluginCommandRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}
-	}
-	
-	void loadPreferenceCommandRegistry() {
-		try {
-			preferenceCommandRegistry.load();
-		} catch (IOException eIO) {
-			// TODO proper catch
-		}		
 	}
 
 	private void fireCommandManagerChanged() {
@@ -277,6 +254,30 @@ public final class CommandManager implements ICommandManager {
 					((ICommandManagerListener) iterator.next()).commandManagerChanged(commandManagerEvent);
 			}							
 		}			
+	}
+
+	private ICommandRegistry getPluginCommandRegistry() {
+		return pluginCommandRegistry;
+	}
+
+	private ICommandRegistry getPreferenceCommandRegistry() {
+		return preferenceCommandRegistry;
+	}
+
+	private void loadPluginCommandRegistry() {
+		try {
+			pluginCommandRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}
+	}
+	
+	private void loadPreferenceCommandRegistry() {
+		try {
+			preferenceCommandRegistry.load();
+		} catch (IOException eIO) {
+			// TODO proper catch
+		}		
 	}
 
 	private void notifyCategories(SortedSet categoryChanges) {	
@@ -316,7 +317,17 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private void readRegistry() {
-		// TODO: activeConfigurationId + the bindings need to be read		
+		// TODO read bindings		
+		List activeKeyConfigurationDefinitions = new ArrayList();
+		activeKeyConfigurationDefinitions.addAll(pluginCommandRegistry.getActiveKeyConfigurationDefinitions());
+		activeKeyConfigurationDefinitions.addAll(preferenceCommandRegistry.getActiveKeyConfigurationDefinitions());
+		String activeKeyConfigurationId = Util.ZERO_LENGTH_STRING;
+		
+		if (activeKeyConfigurationDefinitions.size() >= 1) {
+			IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (IActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions.get(activeKeyConfigurationDefinitions.size() - 1);
+			activeKeyConfigurationId = activeKeyConfigurationDefinition.getKeyConfigurationId();
+		}
+				
 		List categoryDefinitions = new ArrayList();
 		categoryDefinitions.addAll(pluginCommandRegistry.getCategoryDefinitions());
 		categoryDefinitions.addAll(preferenceCommandRegistry.getCategoryDefinitions());
@@ -336,6 +347,18 @@ public final class CommandManager implements ICommandManager {
 		SortedSet keyConfigurationChanges = new TreeSet();
 		Util.diff(keyConfigurationDefinitionsById, this.keyConfigurationDefinitionsById, keyConfigurationChanges, keyConfigurationChanges, keyConfigurationChanges);
 		boolean commandManagerChanged = false;
+	
+		if (!this.activeKeyConfigurationId.equals(activeKeyConfigurationId)) {
+			if (keyConfigurationsById.containsKey(this.activeKeyConfigurationId))
+				keyConfigurationChanges.add(this.activeKeyConfigurationId);
+
+			this.activeKeyConfigurationId = activeKeyConfigurationId;
+
+			if (keyConfigurationsById.containsKey(this.activeKeyConfigurationId))
+				keyConfigurationChanges.add(this.activeKeyConfigurationId);
+
+			commandManagerChanged = true;
+		}
 	
 		if (!categoryChanges.isEmpty()) {
 			this.categoryDefinitionsById = categoryDefinitionsById;	
@@ -388,8 +411,7 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private void updateCommand(Command command) {
-		// TODO: command.setActive(activeCommandIds.contains(command.getId()));
-		// TODO: command.setInContext(false);
+		// TODO command.setActive(false);
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);
 		List contextBindings = (List) contextBindingsByCommandId.get(command.getId());

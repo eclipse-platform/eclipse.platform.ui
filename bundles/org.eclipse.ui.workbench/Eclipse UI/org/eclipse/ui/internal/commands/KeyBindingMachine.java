@@ -33,8 +33,7 @@ import org.eclipse.ui.keys.KeySequence;
 
 final class KeyBindingMachine {
 
-	private final static String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
-	private final static String PLATFORM_SEPARATOR = "_"; //$NON-NLS-1$
+	private final static String SEPARATOR = "_"; //$NON-NLS-1$
 
 	private static SortedMap build(SortedSet[] keyBindings, SortedMap contextDefinitionMap, SortedMap keyConfigurationDefinitionMap) {
 		SortedMap tree = new TreeMap();
@@ -59,8 +58,8 @@ final class KeyBindingMachine {
 				paths.add(keyConfiguration);
 				State contextKeyConfiguration = new State(paths);						
 				paths = new ArrayList();
-				paths.add(getPathForPlatform(keyBindingDefinition.getPlatform()));
-				paths.add(getPathForLocale(keyBindingDefinition.getLocale()));
+				paths.add(getPath(keyBindingDefinition.getPlatform(), SEPARATOR));
+				paths.add(getPath(keyBindingDefinition.getLocale(), SEPARATOR));
 				State platformLocale = new State(paths);		
 				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), contextKeyConfiguration, i, platformLocale, keyBindingDefinition.getCommandId());
 			}
@@ -155,39 +154,15 @@ final class KeyBindingMachine {
 		return path;			
 	}	
 
-	private static Path getPathForLocale(String locale) {
+	private static Path getPath(String locale, String separator) {
 		Path path = null;
 
-		if (locale != null) {
+		if (locale != null && separator != null) {
 			List strings = new ArrayList();				
 			locale = locale.trim();
 			
 			if (locale.length() > 0) {
-				StringTokenizer st = new StringTokenizer(locale, LOCALE_SEPARATOR);
-						
-				while (st.hasMoreElements()) {
-					String string = ((String) st.nextElement()).trim();
-					
-					if (string != null)
-						strings.add(string);
-				}
-			}
-
-			path = new Path(strings);
-		}
-			
-		return path;		
-	}
-
-	private static Path getPathForPlatform(String platform) {
-		Path path = null;
-
-		if (platform != null) {
-			List strings = new ArrayList();				
-			platform = platform.trim();
-			
-			if (platform.length() > 0) {
-				StringTokenizer st = new StringTokenizer(platform, PLATFORM_SEPARATOR);
+				StringTokenizer st = new StringTokenizer(locale, separator);
 						
 				while (st.hasMoreElements()) {
 					String string = ((String) st.nextElement()).trim();
@@ -223,8 +198,8 @@ final class KeyBindingMachine {
 		}
 
 		List paths = new ArrayList();
-		paths.add(getPathForPlatform(activePlatform));
-		paths.add(getPathForLocale(activeLocale));
+		paths.add(getPath(activePlatform, SEPARATOR));
+		paths.add(getPath(activeLocale, SEPARATOR));
 		State platformLocale = new State(paths);	
 		KeyBindingNode.solve(tree, contextKeyConfigurations, new State[] { platformLocale } );
 	}
