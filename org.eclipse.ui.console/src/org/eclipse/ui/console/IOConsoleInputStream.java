@@ -169,9 +169,8 @@ public class IOConsoleInputStream extends InputStream {
             if (!eofSent) {
                 eofSent = true;
                 return -1;
-            } else {
-                throw new IOException("Input Stream Closed"); //$NON-NLS-1$
-            }
+            } 
+            throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         }
         
         return size;

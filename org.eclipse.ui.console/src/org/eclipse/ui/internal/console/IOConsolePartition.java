@@ -74,25 +74,22 @@ public class IOConsolePartition implements ITypedRegion {
     private int getFontStyle() {
         if (type.equals(INPUT_PARTITION_TYPE)) {
             return inputStream.getFontStyle();
-        } else {
-            return outputStream.getFontStyle();
-        }
+        } 
+        return outputStream.getFontStyle();
     }
 
     private Color getColor() {
         if (type.equals(INPUT_PARTITION_TYPE)) {
             return inputStream.getColor();
-        } else {
-            return outputStream.getColor();
-        }
+        } 
+        return outputStream.getColor();
     }
 
     public String getStreamId() {
         if (type.equals(INPUT_PARTITION_TYPE)) {
             return inputStream.getStreamId();
-        } else {
-            return outputStream.getStreamId();
-        }
+        } 
+        return outputStream.getStreamId();
     }
 
     public boolean isReadOnly() {
