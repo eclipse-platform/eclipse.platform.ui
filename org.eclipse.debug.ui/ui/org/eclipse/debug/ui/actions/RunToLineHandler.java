@@ -13,6 +13,9 @@ package org.eclipse.debug.ui.actions;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -23,6 +26,8 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -123,13 +128,22 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
             getBreakpointManager().setEnabled(false);
             breakpointManager.addBreakpointManagerListener(this);
         }
-        fTarget.breakpointAdded(fBreakpoint);
-        try {
-            fResumee.resume();
-        } catch (DebugException e) {
-            cancel();
-            throw e;
-        }
+        Job job = new Job(ActionMessages.getString("RunToLineHandler.0")) { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor jobMonitor) {
+                if (!jobMonitor.isCanceled()) {
+                    fTarget.breakpointAdded(fBreakpoint);
+                    try {
+                        fResumee.resume();
+                    } catch (DebugException e) {
+                        cancel();
+                        DebugUIPlugin.log(e);
+                        return Status.CANCEL_STATUS;
+                    }
+                }
+                return Status.OK_STATUS;
+            }  
+        };
+        job.schedule();
     }
     
 }
