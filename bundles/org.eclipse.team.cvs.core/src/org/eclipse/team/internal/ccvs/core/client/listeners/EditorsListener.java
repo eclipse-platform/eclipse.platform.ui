@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.EditorsInfo;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 
 
