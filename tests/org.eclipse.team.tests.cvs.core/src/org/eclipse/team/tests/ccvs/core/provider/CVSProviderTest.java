@@ -518,20 +518,15 @@ public class CVSProviderTest extends EclipseTest {
 		// Checkout a copy and commit the same resource
 		IProject copy = checkoutCopy(project, "-copy");
 		addResources(copy, new String[] { "new.txt" }, true);
-		IStatus status;
-		try {
-			// Use the regular update and ensure that it fails
-			status = executeCommand(project, Command.UPDATE, Command.NO_LOCAL_OPTIONS);
-			fail();
-		} catch (CVSException e) {
-			// This is expected as the creation of the file failed;
-		}
+		// Use the regular update and ensure that it fails
+		IStatus status = executeCommand(project, Command.UPDATE, Command.NO_LOCAL_OPTIONS);
+		assertStatusContainsCode(status, CVSStatus.INVALID_LOCAL_RESOURCE_PATH);
 		// Use the update and overwrite and ensure that it works
 		status = executeCommand(project, Command.REPLACE, Command.NO_LOCAL_OPTIONS);
 		assertTrue(status.isOK());
 	}
 
-	private IStatus executeCommand(IProject project, Update update, LocalOption[] options) throws CVSException {
+    private IStatus executeCommand(IProject project, Update update, LocalOption[] options) throws CVSException {
 		Session session = new Session(getRepository(), CVSWorkspaceRoot.getCVSFolderFor(project));
 		session.open(DEFAULT_MONITOR);
 		try {

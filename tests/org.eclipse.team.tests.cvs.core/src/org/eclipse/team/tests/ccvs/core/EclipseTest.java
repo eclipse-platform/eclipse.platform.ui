@@ -944,6 +944,20 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			super.ensureDoesNotExistInWorkspace(resource);
 		}
 	}
+	
+    protected void assertStatusContainsCode(IStatus status, int code) {
+        if (status.isMultiStatus()) {
+            IStatus[] children = status.getChildren();
+            for (int i = 0; i < children.length; i++) {
+                IStatus child = children[i];
+                if (child.getCode() == code)
+                    return;
+            }
+            fail("Expected status code was not present");
+        } else {
+            assertEquals("Status code is not what is expected", status.getCode(), code);
+        }
+    }
 
 }
 
