@@ -253,8 +253,17 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				text = ""; //$NON-NLS-1$
 				while (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop() + text;
+					// add text, preserving at most one space between text fragments
+					String newText = (String) objectStack.pop();
+					if (trailingSpace(newText) && !leadingSpace(text)) {
+						text = " " + text;
+					}
+					text = newText.trim() + text;
+					if (leadingSpace(newText) && !leadingSpace(text)) {
+						text = " " + text;
+					}
 				}
+				text = text.trim();
 
 				info = (URLEntryModel) objectStack.pop();
 				if (text != null)
@@ -275,8 +284,17 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				text = ""; //$NON-NLS-1$
 				while (objectStack.peek() instanceof String) {
-					text = (String) objectStack.pop() + text;
+					// add text, preserving at most one space between text fragments
+					String newText = (String) objectStack.pop();
+					if (trailingSpace(newText) && !leadingSpace(text)) {
+						text = " " + text;
+					}
+					text = newText.trim() + text;
+					if (leadingSpace(newText) && !leadingSpace(text)) {
+						text = " " + text;
+					}
 				}
+				text = text.trim();
 
 				info = (URLEntryModel) objectStack.pop();
 				if (text != null)
@@ -307,7 +325,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * @since 2.0
 	 */
 	public void characters(char[] ch, int start, int length) {
-		String text = new String(ch, start, length).trim();
+		String text = new String(ch, start, length);
 		//only push if description
 		int state = ((Integer) stateStack.peek()).intValue();
 		if (state == STATE_DESCRIPTION_SITE || state == STATE_DESCRIPTION_CATEGORY_DEF)
@@ -707,5 +725,17 @@ public class DefaultSiteParser extends DefaultHandler {
 			default :
 				return Policy.bind("DefaultSiteParser.UnknownState"); //$NON-NLS-1$
 		}
+	}
+	private boolean leadingSpace(String str) {
+		if (str.length() <= 0) {
+			return false;
+		}
+		return Character.isWhitespace(str.charAt(0));
+	}
+	private boolean trailingSpace(String str) {
+		if (str.length() <= 0) {
+			return false;
+		}
+		return Character.isWhitespace(str.charAt(str.length() - 1));
 	}
 }
