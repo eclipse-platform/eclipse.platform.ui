@@ -9,14 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.handlers;
+package org.eclipse.ui;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISources;
-import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * <p>

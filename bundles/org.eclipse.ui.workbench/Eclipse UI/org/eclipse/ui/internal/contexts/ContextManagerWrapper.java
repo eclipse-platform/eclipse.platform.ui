@@ -24,6 +24,7 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContext;
+import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerListener;
 
 /**
@@ -34,7 +35,7 @@ import org.eclipse.ui.contexts.IContextManagerListener;
  */
 public final class ContextManagerWrapper implements
 		org.eclipse.core.commands.contexts.IContextManagerListener,
-		IMutableContextManager {
+		IContextManager {
 
 	/**
 	 * A comparator between context identifiers, that sorts them based on depth

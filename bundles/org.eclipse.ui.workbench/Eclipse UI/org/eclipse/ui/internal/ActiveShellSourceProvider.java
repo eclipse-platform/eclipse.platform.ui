@@ -23,7 +23,7 @@ import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.contexts.IContextService;
 
 /**
  * A provider of notifications for when the active shell changes.
@@ -60,6 +60,10 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 		 * Notifies all listeners that the source has changed.
 		 */
 		public final void handleEvent(final Event event) {
+			if (!(event.widget instanceof Shell)) {
+				return;
+			}
+			
 			final Map currentState = getCurrentState();
 			final Shell newActiveShell = (Shell) currentState
 					.get(ISources.ACTIVE_SHELL_NAME);
@@ -126,9 +130,10 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 		 * We will fallback to the workbench window, but only if a dialog is not
 		 * open.
 		 */
-		final int shellType = workbench.getContextSupport().getShellType(
-				newActiveShell);
-		if (shellType != IWorkbenchContextSupport.TYPE_DIALOG) {
+		final IContextService contextService = (IContextService) workbench
+				.getAdapter(IContextService.class);
+		final int shellType = contextService.getShellType(newActiveShell);
+		if (shellType != IContextService.TYPE_DIALOG) {
 			final IWorkbenchWindow newActiveWorkbenchWindow = workbench
 					.getActiveWorkbenchWindow();
 			final Shell newActiveWorkbenchWindowShell;

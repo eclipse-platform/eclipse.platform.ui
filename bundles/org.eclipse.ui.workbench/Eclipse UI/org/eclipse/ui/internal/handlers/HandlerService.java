@@ -17,7 +17,6 @@ import java.util.Iterator;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -49,12 +48,9 @@ public class HandlerService implements IHandlerService {
 	 * 
 	 * @param commandManager
 	 *            The command manager to use; must not be <code>null</code>.
-	 * @param context
-	 *            The basic set-up of the context; must not be <code>null</code>.
 	 */
-	public HandlerService(final CommandManager commandManager,
-			final IEvaluationContext context) {
-		this.handlerAuthority = new HandlerAuthority(commandManager, context);
+	public HandlerService(final CommandManager commandManager) {
+		this.handlerAuthority = new HandlerAuthority(commandManager);
 	}
 
 	public final IHandlerActivation activateHandler(final String commandId,

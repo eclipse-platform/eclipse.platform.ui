@@ -23,22 +23,26 @@ import org.eclipse.core.commands.contexts.ContextManager;
  */
 public final class ContextManagerFactory {
 
-    /**
-     * Creates a new instance of <code>IMutableContextManager</code>.
-     * 
-     * @param contextManager
-     *            The context manager that this mutable context manager should
-     *            wrapper; must not be <code>null</code>.
-     * @return a new instance of <code>IMutableContextManager</code>. Clients
-     *         should not make assumptions about the concrete implementation
-     *         outside the contract of the interface. Guaranteed not to be
-     *         <code>null</code>.
-     */
-    public static IMutableContextManager getMutableContextManager(
-            final ContextManager contextManager) {
-        return new ContextManagerWrapper(contextManager);
-    }
+	/**
+	 * Creates a new instance of <code>ContextManagerWrapper</code>.
+	 * 
+	 * @param contextManager
+	 *            The context manager that this context manager wrapper should
+	 *            wrap; must not be <code>null</code>.
+	 * @return a new instance of <code>ContextManagerWrapper</code>. Clients
+	 *         should not make assumptions about the concrete implementation
+	 *         outside the contract of the interface. Guaranteed not to be
+	 *         <code>null</code>.
+	 */
+	public static final ContextManagerWrapper getContextManagerWrapper(
+			final ContextManager contextManager) {
+		return new ContextManagerWrapper(contextManager);
+	}
 
-    private ContextManagerFactory() {
-    }
+	/**
+	 * This class should not be constructed.
+	 */
+	private ContextManagerFactory() {
+		// Should not be called.
+	}
 }

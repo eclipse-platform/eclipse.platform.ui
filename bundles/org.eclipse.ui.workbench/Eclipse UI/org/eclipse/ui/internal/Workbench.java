@@ -25,8 +25,6 @@ import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.expressions.EvaluationContext;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -79,12 +77,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
@@ -843,45 +838,9 @@ public final class Workbench implements IWorkbench {
 		// Initialize the activity support.
 		workbenchActivitySupport = new WorkbenchActivitySupport();
 		activityHelper = ActivityPersistanceHelper.getInstance();
-		
-		/*
-		 * Phase 1 of initialization of commands. Figure out the existing state
-		 * of the workbench. This will be used to initialization an evaluation
-		 * context, from which future changes can be computed.
-		 */
-		final IEvaluationContext context = new EvaluationContext(null, this);
-		final Shell activeShell = display.getActiveShell();
-		if (activeShell != null) {
-			context.addVariable(ISources.ACTIVE_SHELL_NAME, activeShell);
-		}
-		final IWorkbenchWindow window = getActiveWorkbenchWindow();
-		if (window != null) {
-			final Shell windowShell = window.getShell();
-			if (windowShell != null) {
-				context.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
-						windowShell);
-			}
-
-			final IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				final IWorkbenchPart part = page.getActivePart();
-				if (part != null) {
-					final IWorkbenchPartSite site = part.getSite();
-					if (site != null) {
-						context.addVariable(ISources.ACTIVE_SITE_NAME, site);
-
-						final String partId = site.getId();
-						if (partId != null) {
-							context.addVariable(ISources.ACTIVE_PART_NAME,
-									partId);
-						}
-					}
-				}
-			}
-		}
 
 		/*
-		 * Phase 2 of the initialization of commands. When this phase completes,
+		 * Phase 1 of the initialization of commands. When this phase completes,
 		 * all the services and managers will exist, and be accessible via the
 		 * getService(Object) method.
 		 */  
@@ -895,7 +854,7 @@ public final class Workbench implements IWorkbench {
 				contextManager);
 		services.put(IContextService.class, contextService);
 		final IHandlerService handlerService = new HandlerService(
-				commandManager, context);
+				commandManager);
 		services.put(IHandlerService.class, handlerService);
 		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager, commandManager);
@@ -904,7 +863,7 @@ public final class Workbench implements IWorkbench {
 		services.put(IBindingService.class, bindingService);
 
 		/*
-		 * Phase 3 of the initialization of commands. The registry and
+		 * Phase 2 of the initialization of commands. The registry and
 		 * preference store are parsed into memory. When this phase completes,
 		 * all persisted state should be available to the application.
 		 */
@@ -914,17 +873,19 @@ public final class Workbench implements IWorkbench {
 		bindingService.readRegistryAndPreferences(commandService);
 		
 		/*
-		 * Phase 4 of the initialization of commands. The source providers that
+		 * Phase 3 of the initialization of commands. The source providers that
 		 * the workbench provides are creating and registered with the above
 		 * services. These source providers notify the services when particular
 		 * pieces of workbench state change.
 		 */
 		final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
 				this);
+		handlerService.addSourceProvider(activeShellSourceProvider);
+		contextService.addSourceProvider(activeShellSourceProvider);
 		final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
 				this);
-		handlerService.addSourceProvider(activeShellSourceProvider);
 		handlerService.addSourceProvider(activePartSourceProvider);
+		contextService.addSourceProvider(activePartSourceProvider);
 
 		/*
 		 * TODO Putting this here is a like a sword in my side. But alas, the
@@ -938,7 +899,7 @@ public final class Workbench implements IWorkbench {
 		showPerspectiveCommand.setHandler(new ShowPerspectiveHandler());
 
 		/*
-		 * Phase 5 of the initialization of commands.  This handles the creation
+		 * Phase 4 of the initialization of commands.  This handles the creation
 		 * of wrappers for legacy APIs.  By the time this phase completes, any
 		 * code trying to access commands through legacy APIs should work.
 		 *  

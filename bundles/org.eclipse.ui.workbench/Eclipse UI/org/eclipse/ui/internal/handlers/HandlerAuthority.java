@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISourceProviderListener;
@@ -108,22 +109,15 @@ final class HandlerAuthority implements ISourceProviderListener {
 	 * @param commandManager
 	 *            The command manager from which commands can be retrieved (to
 	 *            update their handlers); must not be <code>null</code>.
-	 * @param context
-	 *            The basic set-up of the context; must not be <code>null</code>.
 	 */
-	HandlerAuthority(final CommandManager commandManager,
-			final IEvaluationContext context) {
+	HandlerAuthority(final CommandManager commandManager) {
 		if (commandManager == null) {
 			throw new NullPointerException(
 					"The handler authority needs a command manager"); //$NON-NLS-1$
 		}
-		if (context == null) {
-			throw new NullPointerException(
-					"The handler authority needs an evaluation context"); //$NON-NLS-1$
-		}
 
 		this.commandManager = commandManager;
-		this.context = context;
+		this.context = new EvaluationContext(null, this);
 	}
 
 	/**
@@ -188,6 +182,7 @@ final class HandlerAuthority implements ISourceProviderListener {
 	final void addSourceProvider(final ISourceProvider provider) {
 		provider.addSourceProviderListener(this);
 		providers.add(provider);
+		updateCurrentState();
 	}
 
 	/**
@@ -259,6 +254,7 @@ final class HandlerAuthority implements ISourceProviderListener {
 	final void removeSourceProvider(final ISourceProvider provider) {
 		provider.removeSourceProviderListener(this);
 		providers.remove(provider);
+		updateCurrentState();
 	}
 
 	/**

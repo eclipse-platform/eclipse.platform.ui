@@ -74,6 +74,29 @@ public final class ContextManager implements IContextListener {
 	private final Set definedContextIds = new HashSet();
 
 	/**
+	 * Activates a context in this context manager.
+	 * 
+	 * @param contextId
+	 *            The identifier of the context to activate; must not be
+	 *            <code>null</code>.
+	 */
+	public final void addActiveContext(final String contextId) {
+		if (activeContextIds.contains(contextId)) {
+			return;
+		}
+
+		final Set previouslyActiveContextIds = new HashSet(activeContextIds);
+		activeContextIds.add(contextId);
+
+		if (DEBUG) {
+			System.out.println("CONTEXTS >> " + activeContextIds); //$NON-NLS-1$
+		}
+
+		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
+				true, previouslyActiveContextIds));
+	}
+
+	/**
 	 * Adds a listener to this context manager. The listener will be notified
 	 * when the set of defined contexts changes. This can be used to track the
 	 * global appearance and disappearance of contexts.
@@ -184,6 +207,29 @@ public final class ContextManager implements IContextListener {
 	}
 
 	/**
+	 * Deactivates a context in this context manager.
+	 * 
+	 * @param contextId
+	 *            The identifier of the context to deactivate; must not be
+	 *            <code>null</code>.
+	 */
+	public final void removeActiveContext(final String contextId) {
+		if (!activeContextIds.contains(contextId)) {
+			return;
+		}
+
+		final Set previouslyActiveContextIds = new HashSet(activeContextIds);
+		activeContextIds.remove(contextId);
+
+		if (DEBUG) {
+			System.out.println("CONTEXTS >> " + activeContextIds); //$NON-NLS-1$
+		}
+		
+		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
+				true, previouslyActiveContextIds));
+	}
+
+	/**
 	 * Removes a listener from this context manager.
 	 * 
 	 * @param listener
@@ -227,11 +273,11 @@ public final class ContextManager implements IContextListener {
 		} else {
 			this.activeContextIds = null;
 		}
-		
+
 		if (DEBUG) {
-            System.out.println("CONTEXTS >>> " + activeContextIds); //$NON-NLS-1$
+			System.out.println("CONTEXTS >> " + activeContextIds); //$NON-NLS-1$
 		}
-		
+
 		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
 				true, previouslyActiveContextIds));
 	}
