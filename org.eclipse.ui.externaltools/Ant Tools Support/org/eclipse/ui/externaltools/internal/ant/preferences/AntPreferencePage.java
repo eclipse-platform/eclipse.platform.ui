@@ -8,8 +8,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -37,19 +39,21 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	private List fAppearanceColorList;
 	private ColorEditor fAppearanceColorEditor;
 	
+	// Array containing the message to display, the preference key, and the 
+	// default value (initialized in storeInitialValues()) for each color preference
 	private final String[][] fAppearanceColorListModel= new String[][] {
-		{AntPreferencesMessages.getString("AntPreferencePage.&Error__2"), IPreferenceConstants.CONSOLE_ERROR_RGB}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.&Warning__3"), IPreferenceConstants.CONSOLE_WARNING_RGB}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.I&nformation__4"), IPreferenceConstants.CONSOLE_INFO_RGB}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ve&rbose__5"), IPreferenceConstants.CONSOLE_VERBOSE_RGB}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Deb&ug__6"), IPreferenceConstants.CONSOLE_DEBUG_RGB}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_text_1"), IAntEditorColorConstants.P_DEFAULT}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_processing_instuctions_2"),  IAntEditorColorConstants.P_PROC_INSTR}, //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_constant_strings_3"),  IAntEditorColorConstants.P_STRING},  //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_tags_4"),    IAntEditorColorConstants.P_TAG},  //$NON-NLS-1$
-		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.P_XML_COMMENT} //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.&Error__2"), IPreferenceConstants.CONSOLE_ERROR_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.&Warning__3"), IPreferenceConstants.CONSOLE_WARNING_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.I&nformation__4"), IPreferenceConstants.CONSOLE_INFO_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Ve&rbose__5"), IPreferenceConstants.CONSOLE_VERBOSE_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Deb&ug__6"), IPreferenceConstants.CONSOLE_DEBUG_RGB, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_text_1"), IAntEditorColorConstants.P_DEFAULT, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_processing_instuctions_2"),  IAntEditorColorConstants.P_PROC_INSTR, null}, //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_constant_strings_3"),  IAntEditorColorConstants.P_STRING, null},  //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_tags_4"),    IAntEditorColorConstants.P_TAG, null},  //$NON-NLS-1$
+		{AntPreferencesMessages.getString("AntPreferencePage.Ant_editor_comments_5"), IAntEditorColorConstants.P_XML_COMMENT, null} //$NON-NLS-1$
 	};
-	
+
 	/**
  	 * Create the Ant page.
      */
@@ -63,6 +67,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
 	protected void createFieldEditors() {
+		storeAppliedValues();
 
 		Label label= new Label(getFieldEditorParent(), SWT.NONE);
 		label.setText(AntPreferencesMessages.getString("AntPreferencePage.Enter")); //$NON-NLS-1$
@@ -81,6 +86,19 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
 		new Label(getFieldEditorParent(), SWT.NONE);
 		createColorComposite();
+	}
+	
+	/**
+	 * Stores the initial values of the color preferences. The preference values are updated 
+	 * on the fly as the user edits them (instead of only when they press "Apply"). We need
+	 * to store the old values so that we can reset them when the user chooses "Cancel".
+	 */
+	private void storeAppliedValues() {
+		IPreferenceStore store= getPreferenceStore();
+		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
+			String preference = fAppearanceColorListModel[i][1];
+			fAppearanceColorListModel[i][2]= store.getString(preference);
+		}
 	}
 	
 	private void createColorComposite() {
@@ -139,6 +157,26 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 				PreferenceConverter.setValue(getPreferenceStore(), key, fAppearanceColorEditor.getColorValue());
 			}
 		});
+	}
+	
+	/**
+	 * Restore all color preferences to their values when the page was opened.
+	 */
+	public boolean performCancel() {
+		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
+			String preference = fAppearanceColorListModel[i][1];
+			PreferenceConverter.setValue(getPreferenceStore(), preference, StringConverter.asRGB(fAppearanceColorListModel[i][2]));
+		}
+		return super.performCancel();
+	}
+	
+	/**
+	 * When the user applies the preferences, update the set of stored
+	 * preferences so that we will fall back to the applied values on Cancel.
+	 */
+	public boolean performOk() {
+		storeAppliedValues();
+		return super.performOk();
 	}
 	
 	private void handleAppearanceColorListSelection() {	
