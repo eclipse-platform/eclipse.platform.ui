@@ -33,9 +33,9 @@ public interface IChangeRulerColumn extends IVerticalRulerColumn, IVerticalRuler
 	 * Sets the background color for normal lines. The color has to be disposed of by the caller when
 	 * the receiver is no longer used.
 	 * 
-	 * @param addedColor the new color to be used as standard line background
+	 * @param backgroundColor the new color to be used as standard line background
 	 */
-	public abstract void setBackground(Color addedColor);
+	public abstract void setBackground(Color backgroundColor);
 
 	/**
 	 * Sets the background color for added lines. The color has to be disposed of by the caller when

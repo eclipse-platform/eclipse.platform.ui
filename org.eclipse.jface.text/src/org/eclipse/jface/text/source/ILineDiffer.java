@@ -18,6 +18,10 @@ import org.eclipse.jface.text.BadLocationException;
  * implement <code>IAnnotationModel</code>, which only allows <code>Iterator</code> based access
  * to annotations.
  * <p>
+ * <code>ILineDiffer</code> also allows to revert any lines to their original 
+ * contents as defined by the quick diff reference used by the receiver.
+ * </p>
+ * <p>
  * This interface may be implemented by clients.
  * </p>
  * 

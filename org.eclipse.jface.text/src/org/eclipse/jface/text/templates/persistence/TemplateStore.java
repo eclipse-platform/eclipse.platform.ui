@@ -27,7 +27,7 @@ import org.eclipse.jface.text.templates.TemplateException;
 
 /**
  * A collection of templates. Clients may instantiate this class. In order to 
- * load templates contributed by the <code>org.eclipse.ui.editors.templates</code>
+ * load templates contributed using the <code>org.eclipse.ui.editors.templates</code>
  * extension point, use a <code>ContributionTemplateStore</code>.
  * 
  * @since 3.0

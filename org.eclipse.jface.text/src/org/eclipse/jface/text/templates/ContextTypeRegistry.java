@@ -17,6 +17,10 @@ import java.util.Map;
 /**
  * A registry for context types. Editor implementors will usually instantiate a
  * registry and configure the context types available in their editor.
+ * <p>
+ * In order to pick up templates contributed using the <code>org.eclipse.ui.editors.templates</code>
+ * extension point, use a <code>ContributionContextTypeRegistry</code>.
+ * </p>
  * 
  * @since 3.0
  */
