@@ -13,6 +13,7 @@ package org.eclipse.core.tests.internal.plugins;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 import org.eclipse.core.internal.plugins.*;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.tests.harness.*;
 import java.net.URL;
 import junit.framework.*;
@@ -29,6 +30,9 @@ public BadPluginsTest(String name) {
 }
 
 public static Test suite() {
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new BadPluginsTest("testFailedFragment"));
+//	return suite;
 	return new TestSuite(BadPluginsTest.class);
 }
 
@@ -44,14 +48,14 @@ public void testBadElements() {
 		"badRuntimeElementsTest",
 	};
 	String[] errorMessages = {
-		"badTopLevelElementsTest.xml: Unknown element \"notAPlugin\", found at the top level, ignored.",
-		"badPluginElementsTest.xml: Unknown element \"somethingBad\", found within a \"plugin / fragment\", ignored.",
-		"badExtensionPointElementsTest.xml: Unknown element \"nameless\", found within a \"extension-point\", ignored.",
-		"badLibrary1ElementsTest.xml: Unknown element \"notAnExport\", found within a \"library\", ignored.",
-		"badLibrary2ElementsTest.xml: Unknown element \"badElement\", found within a \"export\", ignored.",
-		"badRequiresImportElementsTest.xml: Unknown element \"unrecognizedElement\", found within a \"requires\", ignored.",
-		"badRequiresElementsTest.xml: Unknown element \"notAnImport\", found within a \"requires\", ignored.",
-		"badRuntimeElementsTest.xml: Unknown element \"notALibrary\", found within a \"runtime\", ignored.",
+		Policy.bind("parse.unknownTopElement", "notAPlugin"),
+		Policy.bind("parse.unknownElement", "plugin / fragment", "somethingBad"),
+		Policy.bind("parse.unknownElement", "extension-point", "nameless"),
+		Policy.bind("parse.unknownElement", "library", "notAnExport"),
+		Policy.bind("parse.unknownElement", "export", "badElement"),
+		Policy.bind("parse.unknownElement", "requires", "unrecognizedElement"),
+		Policy.bind("parse.unknownElement", "requires", "notAnImport"),
+		Policy.bind("parse.unknownElement", "runtime", "notALibrary"),
 	};
 
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -107,17 +111,17 @@ public void testBadAttributes() {
 		"badFragment2AttributesTest", 
 	};
 	String[] errorMessages = {
-		"badPluginAttributesTest.xml: Unknown attribute \"a-bad-attribute\" for element \"plugin\" ignored.",
-		"badFragment1AttributesTest.xml: Unknown attribute \"vendor-name\" for element \"fragment\" ignored.",
-		"badExtensionPointAttributesTest.xml: Unknown attribute \"bogusAttribute\" for element \"extension-point\" ignored.",
-		"badExtensionAttributesTest.xml: Unknown attribute \"hello\" for element \"extension\" ignored.",
-		"badRequiresImport1AttributesTest.xml: Unknown attribute \"badImportAttr\" for element \"import\" ignored.",
-		"badRequiresImport2AttributesTest.xml: \"notTrue\" is not a valid value for the attribute \"export\".   Use \"true\" or \"false\".",
-		"badRequiresImport3AttributesTest.xml: \"incompatible\" is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
-		"badLibrary1AttributesTest.xml: Unknown attribute \"badAttribute\" for element \"library\" ignored.",
-		"badLibrary2AttributesTest.xml: Unknown attribute \"badExportAttribute\" for element \"library\" ignored.",
-		"badLibrary3AttributesTest.xml: Unknown library type \"source\" for library \"lib1.jar\".",
-		"badFragment2AttributesTest.xml: \"nothing\" is not a valid value for the attribute \"match\".   Use \"perfect\", \"equivalent\", \"compatible\" or \"greaterOrEqual\".",
+		Policy.bind("parse.unknownAttribute", "plugin", "a-bad-attribute"),
+		Policy.bind("parse.unknownAttribute", "fragment", "vendor-name"),
+		Policy.bind("parse.unknownAttribute", "extension-point", "bogusAttribute"),
+		Policy.bind("parse.unknownAttribute", "extension", "hello"),
+		Policy.bind("parse.unknownAttribute", "import", "badImportAttr"),
+		Policy.bind("parse.validExport", "notTrue"),
+		Policy.bind("parse.validMatch", "incompatible"),
+		Policy.bind("parse.unknownAttribute", "library", "badAttribute"),
+		Policy.bind("parse.unknownAttribute", "library", "badExportAttribute"),
+		Policy.bind("parse.unknownLibraryType", "source", "lib1.jar"),
+		Policy.bind("parse.validMatch", "nothing"),
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -174,21 +178,21 @@ public void testBadPlugins() {
 		"badPluginVersion4Test", 
 		"badPluginVersion5Test", 
 	};
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
 	String[] errorMessages = {
-		"Id attribute missing from plug-in or fragment at \"file:",
-		"Id attribute missing from plug-in or fragment at \"file:",
-		"Name attribute missing from plug-in or fragment at \"file:",
-		"Name attribute missing from plug-in or fragment at \"file:",
-		"Version attribute missing from plug-in or fragment at \"file:",
-		"A plug-in version identifier must be non-empty.",
-		"The service (3rd) component of plug-in version identifier, \"1.2.bad\", must be numeric.",
-		"The minor (2nd) component of plug-in version identifier, \"1.bad.0\", must be numeric.",
-		"Plug-in version identifier, \"...\", must not start with a separator character.",
-		"The major (1st) component of plug-in version identifier, \"one\", must be numeric.",
-		"Plug-in version identifier, \"1.2.3.4.5\", can contain a maximum of four components.",
+		Policy.bind("parse.missingPluginId", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[0] + ".xml")),
+		Policy.bind("parse.missingPluginId", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[1] + ".xml")),
+		Policy.bind("parse.missingPluginName", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[2] + ".xml")),
+		Policy.bind("parse.missingPluginName", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[3] + ".xml")),
+		Policy.bind("parse.missingPluginVersion", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badTests[4] + ".xml")),
+		Policy.bind("parse.emptyPluginVersion"),
+		Policy.bind("parse.numericServiceComponent", "1.2.bad"),
+		Policy.bind("parse.numericMinorComponent", "1.bad.0"),
+		Policy.bind("parse.separatorStartVersion", "..."),
+		Policy.bind("parse.numericMajorComponent", "one"),
+		Policy.bind("parse.fourElementPluginVersion", "1.2.3.4.5"),
 	};
 	
-	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
 	try {
 		for (int i = 0; i < badTests.length; i++) {
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
@@ -226,9 +230,8 @@ public void testBadFragment() {
 		"fragment10799",
 	};
 	String[] errorMessages = {
-		"Plug-in descriptor \"org.eclipse.not.there\" not found for fragment \"badFragmentsTest\".  Fragment ignored.",
-		"Fragment \"Fragment 10799\" requires non-existant plug-in \"org.apache.something.which.does.not.exist\".  Fragment ignored.",
-	};
+		Policy.bind("parse.missingFragmentPd", "org.eclipse.not.there", "badFragmentsTest"),
+		Policy.bind("parse.badPrereqOnFrag", "Fragment 10799", "org.apache.something.which.does.not.exist")	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
 	try {
@@ -286,21 +289,21 @@ public void testFailedFragment() {
 		"noFragmentPluginVersionTest",
 		"blankFragmentPluginVersionTest",
 	};
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
 	String[] errorMessages = {
-		"Id attribute missing from plug-in or fragment at \"file:",
-		"Id attribute missing from plug-in or fragment at \"file:",
-		"Name attribute missing from plug-in or fragment at \"file:",
-		"Name attribute missing from plug-in or fragment at \"file:",
-		"Version attribute missing from plug-in or fragment at \"file:",
-		"A plug-in version identifier must be non-empty.",
-		"The service (3rd) component of plug-in version identifier, \"1.2.bad\", must be numeric.",
-		"Plug-in name attribute missing from fragment at \"file:",
-		"Plug-in name attribute missing from fragment at \"file:",
-		"Plug-in version attribute missing from fragment at \"file:",
-		"A plug-in version identifier must be non-empty.",
+		Policy.bind("parse.missingPluginId", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[0] + ".xml")),
+		Policy.bind("parse.missingPluginId", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[1] + ".xml")),
+		Policy.bind("parse.missingPluginName", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[2] + ".xml")),
+		Policy.bind("parse.missingPluginName", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[3] + ".xml")),
+		Policy.bind("parse.missingPluginVersion", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[4] + ".xml")),
+		Policy.bind("parse.emptyPluginVersion"),
+		Policy.bind("parse.numericServiceComponent", "1.2.bad"),
+		Policy.bind("parse.missingFPName", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[7] + ".xml")),
+		Policy.bind("parse.missingFPName", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[8] + ".xml")),
+		Policy.bind("parse.missingFPVersion", tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/" + badAttrs[9] + ".xml")),
+		Policy.bind("parse.emptyPluginVersion"),
 	};
 	
-	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
 	try {
 		for (int i = 0; i < badAttrs.length; i++) {
 			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
