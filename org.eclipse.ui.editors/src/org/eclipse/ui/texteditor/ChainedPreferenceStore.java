@@ -431,7 +431,9 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 				IPreferenceStore oldVisibleStore= null;
 				int i= 0;
 				int length= fPreferenceStores.length;
-				while (i < length && fPreferenceStores[i++] != visibleStore);
+				while (i < length && fPreferenceStores[i++] != visibleStore) {
+					// do nothing
+				}
 				while (oldVisibleStore == null && i < length) {
 					if (fPreferenceStores[i].contains(property))
 						oldVisibleStore= fPreferenceStores[i];

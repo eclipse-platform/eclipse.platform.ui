@@ -94,8 +94,9 @@ public final class RangeDifferencer {
 		int row, col;
 
 		// find common prefix
-		for (row= 0; row < rightSize && row < leftSize && rangesEqual(right, row, left, row) == true; ++row)
-			;
+		for (row= 0; row < rightSize && row < leftSize && rangesEqual(right, row, left, row) == true; ++row) {
+			// do nothing
+		}
 
 		lastDiagonal[origin]= row;
 		script[origin]= null;
