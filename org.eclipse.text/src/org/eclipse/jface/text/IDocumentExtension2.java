@@ -31,5 +31,20 @@ public interface IDocumentExtension2 {
 	 * <code>registerPostNotificationReplace</code> until
 	 * <code>ignorePostNotificationReplaces</code> is called.
 	 */
-	void acceptPostNotificationReplaces();		
+	void acceptPostNotificationReplaces();
+	
+	/**
+	 * Can be called prior to a <code>replace</code> operation. After the
+	 * <code>replace</code> <code>resumeListenerNotification</code> must be
+	 * called. The affect of these calls is that no document listener is notified
+	 * until <code>resumeListenerNotification</code> is called. This allows clients
+	 * to update structure before any listener is informed about the change.
+	 */
+	void stopListenerNotification();
+	
+	/**
+	 * Resumes the notification of document listeners which must previously
+	 * have been stopped by a call to <code>stopListenerNotification</code>. 
+	 */
+	void resumeListenerNotification();
 }

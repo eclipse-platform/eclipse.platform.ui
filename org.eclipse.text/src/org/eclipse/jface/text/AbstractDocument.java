@@ -79,6 +79,24 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 2.1
 	 */
 	private boolean fAcceptPostNotificationReplaces= true;
+	/**
+	 * Indicates whether the notification of listeners has been stopped.
+	 * @since 2.1
+	 */
+	private int fStoppedListenerNotification= 0;
+	/**
+	 * The document event to be sent after listener notification has been resumed.
+	 */
+	private DocumentEvent fDeferredDocumentEvent;
+	/**
+	 * Indicates whether listeners must be notified when listener notification will be resumed.
+	 */
+	private boolean fPartitionHasChanged;
+	/**
+	 * The region of changed parititions to be sent when listener notification will be resumed.
+	 */
+	private IRegion fChangedPartition;
+	
 	
 	/**
 	 * The default constructor does not perform any configuration
@@ -505,34 +523,51 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param event the document event describing the change to which structures must be adapted
 	 */
 	protected void updateDocumentStructures(DocumentEvent event) {
-		boolean partitioningChanged= false;
-		IRegion changedRegion= null;
+		fPartitionHasChanged= false;
+		fChangedPartition= null;
 		
 		if (fDocumentPartitioner != null) {
 			if (fDocumentPartitionerExtension != null) {
-				changedRegion= fDocumentPartitionerExtension.documentChanged2(event);
-				partitioningChanged= (changedRegion != null);
+				fChangedPartition= fDocumentPartitionerExtension.documentChanged2(event);
+				fPartitionHasChanged= (fChangedPartition != null);
 			} else
-				partitioningChanged= fDocumentPartitioner.documentChanged(event);
+			fPartitionHasChanged= fDocumentPartitioner.documentChanged(event);
 		}
 			
 		if (fPositions.size() > 0)
 			updatePositions(event);
-			
-		if (partitioningChanged)
-			fireDocumentPartitioningChanged(changedRegion);
 	}
-		
+	
 	/**
-	 * Updates the internal document structures and informs all document listeners.
+	 * Notifies all listeners about the given document change.
 	 * Uses a robust iterator. <p>
 	 * Executes all registered post notification replace operation.
-	 *
-	 * @param event the document event to be sent out
+	 * 
+	 * @param event the event to be sent out.
 	 * @see IDocumentExtension
 	 */
-	protected void fireDocumentChanged(DocumentEvent event) {
-		updateDocumentStructures(event);
+	protected void doFireDocumentChanged(DocumentEvent event) {
+		boolean hasChanged= fPartitionHasChanged;
+		IRegion changedRegion= fChangedPartition;
+		fPartitionHasChanged= false;
+		fChangedPartition= null;
+		doFireDocumentChanged(event, hasChanged, changedRegion);
+	}
+	
+	/**
+	 * Notifies all listeners about the given document change.
+	 * Uses a robust iterator. <p>
+	 * Executes all registered post notification replace operation.
+	 * 
+	 * @param event the event to be sent out
+	 * @param firePartitionChange <code>true</code> if a partition change notification should be sent
+	 * @param partitionChange the region whose partitioning changed
+	 * @see IDocumentExtension
+	 */
+	protected void doFireDocumentChanged(DocumentEvent event, boolean firePartitionChange, IRegion partitionChange) {
+		
+		if (firePartitionChange)
+			fireDocumentPartitioningChanged(partitionChange);
 		
 		if (fPrenotifiedDocumentListeners.size() > 0) {
 			
@@ -562,6 +597,22 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		} finally {
 			-- fReentranceCount;
 		}
+	}
+		
+	/**
+	 * Updates the internal document structures and informs all document listeners
+	 * if listener notification has been enabled. Otherwise it remembers the event
+	 * to be sent to the listeners on resume.
+	 * 
+	 * @param event the document event to be sent out
+	 */
+	protected void fireDocumentChanged(DocumentEvent event) {
+		updateDocumentStructures(event);
+		
+		if (fStoppedListenerNotification == 0)
+			doFireDocumentChanged(event);
+		else
+			fDeferredDocumentEvent= event;
 	}
 	
 	/*
@@ -1197,5 +1248,30 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @since 2.0
 	 */
 	public void stopSequentialRewrite() {
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension2#resumeListenerNotification()
+	 */
+	public void resumeListenerNotification() {
+		-- fStoppedListenerNotification;
+		if (fStoppedListenerNotification == 0) {
+			resumeDocumentListenerNotification();
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IDocumentExtension2#stopListenerNotification()
+	 */
+	public void stopListenerNotification() {
+		++ fStoppedListenerNotification;
+	}
+	
+	private void resumeDocumentListenerNotification() {
+		if (fDeferredDocumentEvent != null) {
+			DocumentEvent event= fDeferredDocumentEvent;
+			fDeferredDocumentEvent= null;
+			doFireDocumentChanged(event);
+		}
 	}
 }

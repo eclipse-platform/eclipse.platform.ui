@@ -92,6 +92,11 @@ public final class ChildDocument extends AbstractDocument {
 	 * @since 2.0
 	 */
 	private IDocumentExtension fExtension;
+	/**
+	 * The parent document as document extension 2
+	 * @since 2.1
+	 */
+	private IDocumentExtension2 fExtension2;
 	
 	/** The section inside the parent document */
 	private Position fRange;
@@ -114,6 +119,8 @@ public final class ChildDocument extends AbstractDocument {
 		fParentDocument= parentDocument;
 		if (fParentDocument instanceof IDocumentExtension) 
 			fExtension= (IDocumentExtension) fParentDocument;
+		if (fParentDocument instanceof IDocumentExtension2)
+			fExtension2= (IDocumentExtension2) fParentDocument;
 			
 		fRange= range;
 		
@@ -250,8 +257,28 @@ public final class ChildDocument extends AbstractDocument {
 			if (fExtension != null)
 				fExtension.stopPostNotificationProcessing();
 				
-			super.replace(offset, length, text);
+			if ((0 > offset) || (0 > length) || (offset + length > getLength()))
+				throw new BadLocationException();
 			
+			DocumentEvent event= new DocumentEvent(this, offset, length, text);
+			fireDocumentAboutToBeChanged(event);
+					
+			try {
+			
+				if (fExtension2 != null)
+					fExtension2.stopListenerNotification();
+				
+				getStore().replace(offset, length, text);
+				getTracker().replace(offset, length, text);
+				updateDocumentStructures(fEvent);
+			
+			} finally {
+				if (fExtension2 != null)
+					fExtension2.resumeListenerNotification();
+			}
+		 			
+			doFireDocumentChanged(fEvent);
+						
 		} finally {
 			fIsUpdating= false;
 			if (fExtension != null)
@@ -268,9 +295,27 @@ public final class ChildDocument extends AbstractDocument {
 			fIsUpdating= true;
 			if (fExtension != null)
 				fExtension.stopPostNotificationProcessing();
-				
-			super.set(text);
+			
+			int length= getStore().getLength();
+			DocumentEvent event= new DocumentEvent(this, 0, length, text);
+			fireDocumentAboutToBeChanged(event);
 		
+			try {
+				
+				if (fExtension2 != null)
+					fExtension2.stopListenerNotification();
+					
+				getStore().set(text);
+				getTracker().set(text);
+				updateDocumentStructures(fEvent);
+				
+			} finally {
+				if (fExtension2 != null)
+					fExtension2.resumeListenerNotification();
+			}
+			
+			doFireDocumentChanged(fEvent);
+
 		} finally {
 			fIsUpdating= false;
 			if (fExtension != null)
