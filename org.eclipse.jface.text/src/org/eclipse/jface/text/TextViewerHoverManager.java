@@ -108,7 +108,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 						String information;
 						try {
 							information= hover.getHoverInfo(fTextViewer, region);
-						} catch (ArrayIndexOutOfBoundsException ex) {
+						} catch (ArrayIndexOutOfBoundsException x) {
 							/*
 							 * This code runs in a separate thread which can
 							 * lead to text offsets being out of bounds when
