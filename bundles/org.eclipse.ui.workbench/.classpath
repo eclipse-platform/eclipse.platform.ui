@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-    <classpathentry kind="src" path="extensions"/>
     <classpathentry kind="src" path="Eclipse UI/"/>
     <classpathentry kind="src" path="Eclipse UI Editor Support/"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
@@ -10,7 +9,7 @@
     <classpathentry kind="src" path="/org.eclipse.jface"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.core.boot"/>
-    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="/org.eclipse.jface.text"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
