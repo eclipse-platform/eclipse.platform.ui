@@ -14,14 +14,10 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
 
@@ -153,22 +149,6 @@ public class UpdateJob extends Job {
                     UpdateCore.debug("Automatic download of updates finished."); //$NON-NLS-1$
                 }
             }
-            // prompt the user
-            if (isUpdate && isAutomatic && !InstallWizard.isRunning()) {
-                if (download) {
-                    UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            asyncNotifyDownloadUser();
-                        }
-                    });
-                } else {
-                    UpdateUI.getStandardDisplay().asyncExec(new Runnable() {
-                        public void run() {
-                            asyncNotifyUser();
-                        }
-                    });
-                }
-            }
         }
         
         if (statusList.size() == 0)
@@ -185,62 +165,6 @@ public class UpdateJob extends Job {
         }
     }
 
-	private void asyncNotifyUser() {
-		// ask the user to install updates
-        UpdateUI.getStandardDisplay().beep();
-		if (MessageDialog
-			.openQuestion(
-				UpdateUI.getActiveWorkbenchShell(),
-				UpdateUI.getString("AutomaticUpdatesJob.EclipseUpdates1"), //$NON-NLS-1$
-				UpdateUI.getString("AutomaticUpdatesJob.UpdatesAvailable"))) { //$NON-NLS-1$
-			BusyIndicator.showWhile(UpdateUI.getStandardDisplay(), new Runnable() {
-				public void run() {
-					openInstallWizard2();
-				}
-			});
-		}
-		// notify the manager that the job is done
-		done(Status.OK_STATUS);
-	}
-	
-	private void asyncNotifyDownloadUser() {
-		// ask the user to install updates
-        UpdateUI.getStandardDisplay().beep();
-		if (MessageDialog
-			.openQuestion(
-                UpdateUI.getActiveWorkbenchShell(),
-                UpdateUI.getString("AutomaticUpdatesJob.EclipseUpdates2"), //$NON-NLS-1$
-                UpdateUI.getString("AutomaticUpdatesJob.UpdatesDownloaded"))) { //$NON-NLS-1$
-			BusyIndicator.showWhile(UpdateUI.getStandardDisplay(), new Runnable() {
-				public void run() {
-					openInstallWizard2();
-				}
-			});
-		} else {
-			// Don't discard downloaded data, as next time we compare timestamps.
-			
-			// discard all the downloaded data from cache (may include old data as well)
-			//Utilities.flushLocalFile();
-		}
-		// notify the manager that the job is done
-		done(Status.OK_STATUS);
-	}
-
-	private void openInstallWizard2() {
-		if (InstallWizard.isRunning())
-			// job ends and a new one is rescheduled
-			return;
-			
-		InstallWizard2 wizard = new InstallWizard2(searchRequest, updates, isUpdate);
-		WizardDialog dialog =
-			new ResizableInstallWizardDialog(
-                UpdateUI.getActiveWorkbenchShell(),
-				wizard,
-				UpdateUI.getString("AutomaticUpdatesJob.Updates")); //$NON-NLS-1$
-		dialog.create();
-		dialog.open();
-	}
-    
     public ArrayList getUpdates() {
         return updates;
     }
