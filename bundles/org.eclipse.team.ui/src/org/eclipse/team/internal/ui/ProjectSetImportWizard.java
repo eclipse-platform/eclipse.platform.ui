@@ -21,7 +21,6 @@ import java.util.Map;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.IProjectSetSerializer;
@@ -30,6 +29,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -50,8 +50,8 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
 		try {
-			getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			getContainer().run(true, true, new WorkspaceModifyOperation() {
+				public void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					InputStreamReader reader = null;
 					try {
 						String filename = mainPage.getFileName();
