@@ -1780,7 +1780,8 @@
      <context
            name="%Context.debugging.name"
            description="%Context.debugging.description"
-           id="org.eclipse.debug.ui.debugging">
+           id="org.eclipse.debug.ui.debugging"
+           parentId="org.eclipse.ui.contexts.window">
      </context>
   </extension>
   <extension
