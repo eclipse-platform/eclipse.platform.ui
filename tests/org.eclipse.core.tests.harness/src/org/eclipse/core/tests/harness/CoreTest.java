@@ -90,10 +90,8 @@ public class CoreTest extends TestCase {
 
 	/**
 	 * Fails the test due to the given throwable.
-	 * @param message
-	 * @param e
 	 */
-	public void fail(String message, Throwable e) {
+	public static void fail(String message, Throwable e) {
 		// If the exception is a CoreException with a multistatus
 		// then print out the multistatus so we can see all the info.
 		if (e instanceof CoreException) {
@@ -105,7 +103,7 @@ public class CoreTest extends TestCase {
 		fail(message + ": " + e);
 	}
 
-	protected void write(IStatus status, int indent) {
+	private static void write(IStatus status, int indent) {
 		PrintStream output = System.out;
 		indent(output, indent);
 		output.println("Severity: " + status.getSeverity());
@@ -126,7 +124,7 @@ public class CoreTest extends TestCase {
 		}
 	}
 
-	protected void indent(OutputStream output, int indent) {
+	private static void indent(OutputStream output, int indent) {
 		for (int i = 0; i < indent; i++)
 			try {
 				output.write("\t".getBytes());
