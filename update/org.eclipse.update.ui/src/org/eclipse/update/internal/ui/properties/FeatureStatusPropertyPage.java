@@ -57,10 +57,10 @@ public class FeatureStatusPropertyPage
 			if (severity == IStatus.ERROR
 				&& getStatusCode(feature, status) == IFeature.STATUS_HAPPY) {
 				severity = IStatus.OK;
+				message.setText(UpdateUI.getString("FeatureStatusPropertyPage.goodConfiguration")); //$NON-NLS-1$
+			} else {
+				message.setText(status.getMessage());
 			}
-			
-			message.setText(status.getMessage());
-
 			if (severity != IStatus.OK && status.isMultiStatus()) {
 				String reason = getReason(status);
 				if (reason.length() > 0) {
