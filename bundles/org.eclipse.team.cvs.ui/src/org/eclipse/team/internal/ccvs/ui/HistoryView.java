@@ -5,20 +5,25 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
-import java.util.HashMap;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,6 +41,7 @@ import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.ccvs.core.IRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -52,11 +58,13 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	private IRemoteFile remoteFile;
 	
 	private TableViewer viewer;
+	private StyledText text;
+	
 	private OpenRemoteFileAction openAction;
-
-	private static final int DIALOG_WIDTH = 600;
-	private static final int DIALOG_HEIGHT = 250;
-
+	private IAction toggleTextAction;
+	
+	private SashForm sashForm;
+	
 	//column constants
 	private static final int COL_REVISION = 0;
 	private static final int COL_TAGS = 1;
@@ -100,7 +108,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	 * Adds the action contributions for this view.
 	 */
 	protected void contributeActions() {
-		// double click
+		// Double click open action
 		openAction = new OpenRemoteFileAction();
 		viewer.getTable().addListener(SWT.MouseDoubleClick, new Listener() {
 			public void handleEvent(Event e) {
@@ -109,14 +117,30 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 			}
 		});
 		
+		// Toggle text visible action
+		toggleTextAction = new Action(Policy.bind("HistoryView.showComment")) {
+			public void run() {
+				if (sashForm.getMaximizedControl() != null) {
+					sashForm.setMaximizedControl(null);
+				} else {
+					sashForm.setMaximizedControl(viewer.getControl());
+				}
+			}
+		};
+		toggleTextAction.setChecked(true);
 		
-		// popup menu
+		// Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(viewer.getTable());
 		menuMgr.addMenuListener(this);
 		menuMgr.setRemoveAllWhenShown(true);
 		viewer.getTable().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
+
+		// Contribute toggle text visible to the toolbar drop-down
+		IActionBars actionBars = getViewSite().getActionBars();
+		IMenuManager actionBarsMenu = actionBars.getMenuManager();
+		actionBarsMenu.add(toggleTextAction);
 	}
 	
 	/**
@@ -163,7 +187,11 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	 * Method declared on IWorkbenchPart
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = createTable(parent);
+		sashForm = new SashForm(parent, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer = createTable(sashForm);
+		text = createText(sashForm);
+		sashForm.setWeights(new int[] { 70, 30 });
 		getSite().getPage().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		contributeActions();
 		// set F1 help
@@ -192,7 +220,31 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		TableViewer viewer = new TableViewer(table);
 		viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(new HistoryLabelProvider());
+		
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection = event.getSelection();
+				if (selection == null || !(selection instanceof IStructuredSelection)) {
+					text.setText("");
+					return;
+				}
+				IStructuredSelection ss = (IStructuredSelection)selection;
+				if (ss.size() != 1) {
+					text.setText("");
+					return;
+				}
+				ILogEntry entry = (ILogEntry)ss.getFirstElement();
+				text.setText(entry.getComment());
+			}
+		});
+		
 		return viewer;
+	}
+	protected StyledText createText(Composite parent) {
+		StyledText text = new StyledText(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.READ_ONLY);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		text.setLayoutData(data);
+		return text;
 	}
 	public void dispose() {
 		getSite().getPage().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
@@ -221,7 +273,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 			public void widgetSelected(SelectionEvent e) {
 				// column selected - need to sort
 				int column = viewer.getTable().indexOf((TableColumn) e.widget);
-				HistorySorter oldSorter = (HistorySorter) viewer.getSorter();
+				HistorySorter oldSorter = (HistorySorter)viewer.getSorter();
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
 					viewer.refresh();
