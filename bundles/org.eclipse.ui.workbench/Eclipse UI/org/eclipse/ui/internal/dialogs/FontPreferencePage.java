@@ -49,7 +49,7 @@ public class FontPreferencePage
 	 * The label that displays the selected font, or <code>null</code> if none.
 	 */
 	private Label valueControl;
-	
+
 	/**
 	 *  The label that displays the selected font, or <code>null</code> if none.
 	 */
@@ -59,12 +59,12 @@ public class FontPreferencePage
 	 * The previewer, or <code>null</code> if none.
 	 */
 	private DefaultPreviewer previewer;
-	
+
 	/**
 	 * The sorted value of the workbench font definitions.
 	 */
 	private FontDefinition[] definitions;
-	
+
 	private static class DefaultPreviewer {
 		private Text text;
 		private Font font;
@@ -187,14 +187,15 @@ public class FontPreferencePage
 
 		return mainColumn;
 	}
-	
+
 	/**
 	 * Create the note control that informs about
 	 * the font mappings.
 	 * @param parent
 	 */
 	private void createNoteControl(Composite parent) {
-		this.noteControl = new Label(parent, SWT.WRAP | SWT.CENTER | SWT.BORDER);
+		this.noteControl =
+			new Label(parent, SWT.WRAP | SWT.CENTER | SWT.BORDER);
 		GridData noteData = new GridData(GridData.FILL_BOTH);
 		noteData.grabExcessHorizontalSpace = true;
 		noteData.grabExcessHorizontalSpace = true;
@@ -445,10 +446,8 @@ public class FontPreferencePage
 		if (DEFAULT_TOKEN.equals(setting)
 			&& definition.getDefaultsTo() != null) {
 			FontDefinition mapped = getDefinition(definition.getDefaultsTo());
-			this.noteControl.setText(
-				WorkbenchMessages.format(
-					"FontsPreference.defaultsNote", //$NON-NLS-1$
-					new String[] { mapped.getLabel()}));
+			this.noteControl.setText(WorkbenchMessages.format("FontsPreference.defaultsNote", //$NON-NLS-1$
+			new String[] { mapped.getLabel()}));
 		} else
 			this.noteControl.setText(""); //$NON-NLS-1$
 	}
@@ -576,30 +575,30 @@ public class FontPreferencePage
 	 * @return FontDefinition[]
 	 */
 	private FontDefinition[] getDefinitions() {
-		
-		if (definitions == null){
-			definitions =  FontDefinition.getDefinitions();
-			Arrays.sort(definitions,new Comparator() {
+
+		if (definitions == null) {
+			definitions = FontDefinition.getDefinitions();
+			Arrays.sort(definitions, new Comparator() {
 				public int compare(Object o1, Object o2) {
-					FontDefinition def1 = ((FontDefinition)o1);
-					FontDefinition def2 = ((FontDefinition)o2);
-					
+					FontDefinition def1 = ((FontDefinition) o1);
+					FontDefinition def2 = ((FontDefinition) o2);
+
 					//Make the ones without definitions first
 					//in the list so that all actions on them
 					//are done first.
-					if(def1.getDefaultsTo() == null){
-						if(def2.getDefaultsTo() == null)
+					if (def1.getDefaultsTo() == null) {
+						if (def2.getDefaultsTo() == null)
 							return 0;
 						else
 							return -1;
-					}
-					else{
-						if(def2.getDefaultsTo() != null)
+					} else {
+						if (def2.getDefaultsTo() != null)
 							return 0;
 						else
 							return 1;
 					}
-			}});
+				}
+			});
 		}
 		return definitions;
 	}
@@ -617,7 +616,6 @@ public class FontPreferencePage
 		}
 		return null;
 	}
-
 
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
