@@ -299,7 +299,8 @@ public class ConfigurationView
 					csite.isUpdatable() ? 0 : UpdateLabelProvider.F_LINKED;
 				if (csite.isEnabled()==false)
 					flags |= UpdateLabelProvider.F_UNCONFIGURED;
-				return provider.get(UpdateUIImages.DESC_LSITE_OBJ, flags);
+				ImageDescriptor desc = provider.getLocalSiteDescriptor(csite);
+				return provider.get(desc, flags);
 			}
 			if (obj instanceof SavedFolder) {
 				return provider.get(UpdateUIImages.DESC_SAVED_OBJ);

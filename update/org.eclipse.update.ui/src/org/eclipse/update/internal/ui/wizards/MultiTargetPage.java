@@ -6,7 +6,6 @@ package org.eclipse.update.internal.ui.wizards;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -97,9 +96,10 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		* @see ITableLabelProvider#getColumnImage(Object, int)
 		*/
 		public Image getColumnImage(Object obj, int col) {
+			UpdateLabelProvider provider =
+				UpdateUI.getDefault().getLabelProvider();
 			if (obj instanceof IConfiguredSite)
-				return UpdateUI.getDefault().getLabelProvider().get(
-					UpdateUIImages.DESC_LSITE_OBJ);
+				return provider.getLocalSiteImage((IConfiguredSite) obj);
 			if (obj instanceof PendingChange) {
 				PendingChange job = (PendingChange) obj;
 				boolean patch = job.getFeature().isPatch();
@@ -111,9 +111,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 				JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 				if (jobSite == null || jobSite.targetSite == null)
 					flags = UpdateLabelProvider.F_ERROR;
-				return UpdateUI.getDefault().getLabelProvider().get(
-					base,
-					flags);
+				return provider.get(base, flags);
 			}
 			return null;
 		}
@@ -232,7 +230,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 			for (int j = 0; j < refs.length; j++) {
 				IFeatureReference ref = refs[j];
 				try {
-					IFeature feature = ref.getFeature();
+					IFeature feature = ref.getFeature(null);
 					if (featureID
 						.equals(
 							feature
@@ -308,14 +306,12 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		layout.numColumns = 2;
 		status.setLayout(layout);
 		label = new Label(status, SWT.NULL);
-		label.setText(
-			UpdateUI.getResourceString(KEY_REQUIRED_FREE_SPACE));
+		label.setText(UpdateUI.getResourceString(KEY_REQUIRED_FREE_SPACE));
 		requiredSpaceLabel = new Label(status, SWT.NULL);
 		requiredSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
 		label = new Label(status, SWT.NULL);
-		label.setText(
-			UpdateUI.getResourceString(KEY_AVAILABLE_FREE_SPACE));
+		label.setText(UpdateUI.getResourceString(KEY_AVAILABLE_FREE_SPACE));
 		availableSpaceLabel = new Label(status, SWT.NULL);
 		availableSpaceLabel.setLayoutData(
 			new GridData(GridData.FILL_HORIZONTAL));
@@ -494,8 +490,7 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 					config.addConfiguredSite(csite);
 				else {
 					String title =
-						UpdateUI.getResourceString(
-							KEY_LOCATION_ERROR_TITLE);
+						UpdateUI.getResourceString(KEY_LOCATION_ERROR_TITLE);
 					String message =
 						UpdateUI.getFormattedMessage(
 							KEY_LOCATION_ERROR_MESSAGE,
@@ -608,20 +603,21 @@ public class MultiTargetPage extends BannerPage implements IDynamicPage {
 		}
 		return null;
 	}
-	
-	public JobTargetSite [] getTargetSites() {
-		JobTargetSite [] sites = new JobTargetSite[jobs.length];
-		for (int i=0; i<jobs.length; i++) {
+
+	public JobTargetSite[] getTargetSites() {
+		JobTargetSite[] sites = new JobTargetSite[jobs.length];
+		for (int i = 0; i < jobs.length; i++) {
 			PendingChange job = jobs[i];
-			JobTargetSite jobSite = (JobTargetSite)targetSites.get(job);
+			JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
 			sites[i] = jobSite;
 		}
 		return sites;
 	}
 
 	public IConfiguredSite getTargetSite(PendingChange job) {
-		JobTargetSite jobSite = (JobTargetSite)targetSites.get(job);
-		if (jobSite!=null) return jobSite.targetSite;
+		JobTargetSite jobSite = (JobTargetSite) targetSites.get(job);
+		if (jobSite != null)
+			return jobSite.targetSite;
 		return null;
 	}
 }

@@ -137,6 +137,12 @@ public class SharedLabelProvider
 	}
 
 	private ImageDescriptor[] getUpperRightOverlays(int flags) {
+		if ((flags & F_ADD) != 0)
+			return new ImageDescriptor[] { UpdateUIImages.DESC_ADD_CO };
+		if ((flags & F_DEL) != 0)
+			return new ImageDescriptor[] { UpdateUIImages.DESC_DEL_CO };
+		if ((flags & F_UNCONFIGURED) != 0)
+			return new ImageDescriptor[] { UpdateUIImages.DESC_UNCONF_CO };
 		if ((flags & F_LINKED) != 0)
 			return new ImageDescriptor[] { UpdateUIImages.DESC_LINKED_CO };
 		return null;
@@ -147,12 +153,14 @@ public class SharedLabelProvider
 			return new ImageDescriptor[] { UpdateUIImages.DESC_CURRENT_CO };
 		if ((flags & F_MOD) != 0)
 			return new ImageDescriptor[] { UpdateUIImages.DESC_MOD_CO };
+		/*
 		if ((flags & F_ADD) != 0)
 			return new ImageDescriptor[] { UpdateUIImages.DESC_ADD_CO };
 		if ((flags & F_DEL) != 0)
 			return new ImageDescriptor[] { UpdateUIImages.DESC_DEL_CO };
 		if ((flags & F_UNCONFIGURED) != 0)
 			return new ImageDescriptor[] { UpdateUIImages.DESC_UNCONF_CO };
+		*/
 		return null;
 	}
 	

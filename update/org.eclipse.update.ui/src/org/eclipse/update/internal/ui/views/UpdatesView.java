@@ -327,7 +327,7 @@ public class UpdatesView
 				return ((MyComputerDirectory) obj).getImage(obj);
 			}
 			if (obj instanceof ExtensionRoot) {
-				return provider.get(UpdateUIImages.DESC_LSITE_OBJ);
+				return provider.get(UpdateUIImages.DESC_ESITE_OBJ);
 			}
 			if (obj instanceof MyComputerFile) {
 				ImageDescriptor desc =

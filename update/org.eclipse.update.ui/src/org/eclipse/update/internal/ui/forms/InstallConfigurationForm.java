@@ -71,7 +71,8 @@ public class InstallConfigurationForm extends PropertyWebForm {
 	protected void createContents(Composite parent) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		parent.setLayout(layout);
-		layout.leftMargin = layout.rightMargin = 10;
+		layout.leftMargin = 10;
+		layout.rightMargin = 0;
 		layout.topMargin = 10;
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;

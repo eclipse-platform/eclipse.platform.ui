@@ -18,13 +18,14 @@ import org.eclipse.update.internal.ui.views.SiteStateAction;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
-public class InstallableSiteForm extends UpdateWebForm {
+public class InstallableSiteForm extends PropertyWebForm {
 	private static final String KEY_TITLE = "InstallableSitePage.title";
 	private static final String KEY_DESC = "InstallableSitePage.desc";
 	private static final String KEY_NEW_LOC = "InstallableSitePage.newLocation";
 
 	private IConfiguredSite currentSite;
 	private Label urlLabel;
+	private Label typeLabel;
 	private Label stateLabel;
 	private Button stateButton;
 	private SiteStateAction siteStateAction;
@@ -46,38 +47,58 @@ public class InstallableSiteForm extends UpdateWebForm {
 	protected void createContents(Composite parent) {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		parent.setLayout(layout);
-		layout.leftMargin = layout.rightMargin = 10;
+		layout.leftMargin = 10;
+		layout.rightMargin = 0;
 		layout.topMargin = 10;
 		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 20;
+		//layout.verticalSpacing = 20;
 		layout.numColumns = 1;
 
 		FormWidgetFactory factory = getFactory();
-		urlLabel = factory.createHeadingLabel(parent, null);
-		TableData td = new TableData();
-		urlLabel.setLayoutData(td);
-		
-		FormEngine desc = factory.createFormEngine(parent);
-		desc.load(UpdateUI.getResourceString(KEY_DESC), true, true);
-		setFocusControl(desc);
-		td = new TableData();
-		td.align = TableData.FILL;
-		td.grabHorizontal = true;
-		desc.setLayoutData(td);
-		
-		stateLabel = factory.createLabel(parent, "");
-		
+		urlLabel =
+			createProperty(
+				parent,
+				UpdateUI.getResourceString(
+					"InstallableSiteForm.url"));
+		typeLabel =
+			createProperty(
+				parent,
+					UpdateUI.getResourceString(
+						"InstallableSiteForm.type"));
+		stateLabel =
+			createProperty(
+				parent,
+					UpdateUI.getResourceString(
+						"InstallableSiteForm.state"));
+
 		stateButton = factory.createButton(parent, "", SWT.PUSH);
 		stateButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				siteStateAction.run();
 			}
 		});
+
+		factory.createLabel(parent, "");
+
+		FormEngine desc = factory.createFormEngine(parent);
+		desc.load(UpdateUI.getResourceString(KEY_DESC), true, true);
+		setFocusControl(desc);
+		TableData td = new TableData();
+		td.align = TableData.FILL;
+		td.grabHorizontal = true;
+		desc.setLayoutData(td);
+
 		siteStateAction = new SiteStateAction();
 
 		WorkbenchHelp.setHelp(
 			parent,
 			"org.eclipse.update.ui.InstallableSiteForm");
+	}
+
+	protected Object createPropertyLayoutData() {
+		TableData td = new TableData();
+		//td.indent = 10;
+		return td;
 	}
 
 	public void expandTo(Object obj) {
@@ -92,7 +113,7 @@ public class InstallableSiteForm extends UpdateWebForm {
 				? "InstallableSiteForm.stateButton.disable"
 				: "InstallableSiteForm.stateButton.enable");
 	}
-	
+
 	private String getStateLabel(boolean enabled) {
 		return UpdateUI.getResourceString(
 			enabled
@@ -100,9 +121,18 @@ public class InstallableSiteForm extends UpdateWebForm {
 				: "InstallableSiteForm.stateLabel.disabled");
 	}
 
+	private String getSiteType(IConfiguredSite csite) {
+		if (csite.isProductSite())
+			return UpdateUI.getResourceString("InstallableSiteForm.type.product");
+		if (csite.isExtensionSite())
+			return UpdateUI.getResourceString("InstallableSiteForm.type.extension");
+		return UpdateUI.getResourceString("InstallableSiteForm.type.private");
+	}
+
 	private void inputChanged(IConfiguredSite csite) {
 		ISite site = csite.getSite();
 		urlLabel.setText(site.getURL().toString());
+		typeLabel.setText(getSiteType(csite));
 
 		stateLabel.setText(getStateLabel(csite.isEnabled()));
 		stateButton.setText(getStateButtonLabel(csite.isEnabled()));

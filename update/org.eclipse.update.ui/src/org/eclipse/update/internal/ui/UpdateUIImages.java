@@ -64,6 +64,8 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_FLOPPY_OBJ = create(PATH_OBJ, "floppy_obj.gif");
 	public static final ImageDescriptor DESC_HISTORY_OBJ = create(PATH_OBJ, "history_obj.gif");
 	public static final ImageDescriptor DESC_LSITE_OBJ = create(PATH_OBJ, "lsite_obj.gif");
+	public static final ImageDescriptor DESC_PSITE_OBJ = create(PATH_OBJ, "psite_obj.gif");
+	public static final ImageDescriptor DESC_ESITE_OBJ = create(PATH_OBJ, "esite_obj.gif");
 	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif");
 	public static final ImageDescriptor DESC_WEB_SITE_OBJ = create(PATH_OBJ, "web_bkmrk_obj.gif");
 	public static final ImageDescriptor DESC_PLACES_OBJ = create(PATH_OBJ, "places_obj.gif");

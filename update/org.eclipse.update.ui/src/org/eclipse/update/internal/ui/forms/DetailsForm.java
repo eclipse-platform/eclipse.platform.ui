@@ -289,7 +289,7 @@ public class DetailsForm extends PropertyWebForm {
 		HTMLTableLayout layout = new HTMLTableLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		layout.rightMargin = 0;
+		//layout.rightMargin = 0;
 		GridData gd;
 
 		configureSectionHandler(factory, container.getDisplay());
