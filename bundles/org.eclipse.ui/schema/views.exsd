@@ -118,7 +118,7 @@ in this attribute.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the class the implements 
+                  a fully qualified name of the class that implements 
 &lt;samp&gt;org.eclipse.ui.IViewPart&lt;/samp&gt;. A common practice 
 is to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt; 
 in order to inherit the default functionality.
@@ -161,7 +161,7 @@ If no value is supplied, a default ratio will be used.
    <element name="description" type="string">
       <annotation>
          <documentation>
-            an optional subelement whose body should contain text providing short description of the view.
+            an optional subelement whose body should contain text providing a short description of the view.
          </documentation>
       </annotation>
    </element>
