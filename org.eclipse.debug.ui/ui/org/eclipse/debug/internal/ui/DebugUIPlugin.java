@@ -347,6 +347,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
 		prefs.setDefault(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, false);
 		prefs.setDefault(IDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE, AlwaysNeverDialog.PROMPT);
+		prefs.setDefault(IDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, AlwaysNeverDialog.PROMPT);
 		
 		//ConsolePreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_WRAP, false);
@@ -777,9 +778,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 		if (builds.length > 0) {
 			String waitForBuild = store.getString(IDebugUIConstants.PREF_WAIT_FOR_BUILD);
-			
+
 			if (waitForBuild.equals(AlwaysNeverDialog.PROMPT)) {
-				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUITools.4"), DebugUIMessages.getString("DebugUITools.5"), IDebugUIConstants.PREF_WAIT_FOR_BUILD, store);
+				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUIPlugin.23"), DebugUIMessages.getString("DebugUIPlugin.24"), IDebugUIConstants.PREF_WAIT_FOR_BUILD, store); //$NON-NLS-1$ //$NON-NLS-2$
 				prompt.open();
 				
 				switch (prompt.getReturnCode()) {
@@ -888,7 +889,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (builds.length > 0) { // if there are build jobs running, do we wait or not??
 			if (waitForBuild.equals(AlwaysNeverDialog.PROMPT)) {
 				boolean wait = false;
-				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUITools.4"), DebugUIMessages.getString("DebugUITools.5"), IDebugUIConstants.PREF_WAIT_FOR_BUILD, store);
+				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUIPlugin.25"), DebugUIMessages.getString("DebugUIPlugin.26"), IDebugUIConstants.PREF_WAIT_FOR_BUILD, store); //$NON-NLS-1$ //$NON-NLS-2$
 				prompt.open();
 				
 				switch (prompt.getReturnCode()) {

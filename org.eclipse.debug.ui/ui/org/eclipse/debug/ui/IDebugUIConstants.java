@@ -165,7 +165,13 @@ public interface IDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String PREF_RELAUNCH_IN_DEBUG_MODE = PLUGIN_ID + ".relaunch_in_debug_mode"; //$NON-NLS-1$
-		
+	
+	/**
+	 * Preference specifying that launches should continue when compile errors exist.
+	 * @since 3.0
+	 */
+	public static final String PREF_CONTINUE_WITH_COMPILE_ERROR = PLUGIN_ID + ".cancel_launch_with_compile_errors"; //$NON-NLS-1$	
+	
 	/**
 	 * Boolean preference controlling whether the debugger re-uses non-dirty editors
 	 * that it opens when displaying source. When <code>true</code> the debugger

@@ -32,6 +32,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
  * Default implementation of a launch configuration delegate. Provides
@@ -58,6 +59,12 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 */
 	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.core", 201, "", null);  //$NON-NLS-1$//$NON-NLS-2$
 	
+	/**
+	 * Status code for which a prompter is registered to ask the user if the
+	 * want to continue launch despite existing compile errors
+	 */
+	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.core", 202, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
@@ -80,7 +87,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	
 	/**
 	 * Returns the projects to build before launching the given launch configuration
-	 * or <code>null</code> if the entire workspace should be built incrementatlly.
+	 * or <code>null</code> if the entire workspace should be built incrementally.
 	 * Subclasses should override as required.
 	 * 
 	 * @param configuration the configuration being launched
@@ -92,12 +99,43 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		return null;
 	}
 	
+	/**
+	 * Returns the set of projects to use when searching for errors or <code>null</code> 
+	 * if no search is to be done.  
+	 * 
+	 * @param projects the list of projects to sort into build order
+	 * @return a list of projects.
+	 */
+	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#finalLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		return true;
+		IProject[] projects = getProjectsForProblemSearch(configuration, mode);
+		if (projects == null) {
+			return true; //continue launch
+		} else {
+			boolean continueLaunch = true;
+			
+			monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.6")); //$NON-NLS-1$
+			for (int i = 0; i < projects.length; i++) {
+				monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.7") + projects[i].getName()); //$NON-NLS-1$
+				if (existsProblems(projects[i], IMarker.SEVERITY_ERROR)) {
+					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+					if (prompter != null) {
+						continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, null)).booleanValue();
+						break;
+					}
+				}	
+			}	
+			
+			return continueLaunch;
+		}
 	}
+	
 	/* (non-Javadoc)
 	 * 
 	 * If launching in run mode, and the configuration supports debug mode, check
@@ -131,7 +169,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		// no enabled breakpoints... continue launch
 		return true;
 	}
-
+	
 	/**
 	 * Returns an array of projects in their suggested build order
 	 * containing all of the projects specified by <code>baseProjects</code>
@@ -152,8 +190,8 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 		IProject[] projectSet = (IProject[]) unorderedProjects.toArray(new IProject[unorderedProjects.size()]);
 		return computeBuildOrder(projectSet);
 	}
-
-
+	
+	
 	/**
 	 * Adds all projects referenced by <code>project</code> to the given
 	 * set.
@@ -179,7 +217,8 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * given unordered list of projects.
 	 * 
 	 * @param projects the list of projects to sort into build order
-	 * @return a list of projects in build order.
+	 * @return a new array containing all projects from <code>projects</code> sorted
+	 *   according to their build order.
 	 */
 	protected IProject[] computeBuildOrder(IProject[] projects) { 
 		String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
@@ -187,7 +226,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			List orderedProjects = new ArrayList(projects.length);
 			//Projects may not be in the build order but should be built if selected
 			List unorderedProjects = Arrays.asList(projects);
-		
+			
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];
 				for (Iterator iterator = unorderedProjects.iterator(); iterator.hasNext(); ) {
@@ -203,7 +242,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			orderedProjects.addAll(unorderedProjects);
 			return (IProject[]) orderedProjects.toArray(new IProject[orderedProjects.size()]);
 		}
-
+		
 		// Computing build order returned null, try the project prerequisite order
 		IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace().computeProjectOrder(projects);
 		return po.projects;
@@ -216,7 +255,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @param proj the project to search
 	 * @param severity the severity of error(s) to search for
 	 * @return whether the given project contains any problem markers of the
-	 * specified severity
+	 * specified or greater severity
 	 * @throws CoreException if an error occurs while searching for
 	 *  problem markers
 	 */

@@ -57,10 +57,12 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.getString("LaunchingPreferencePage.10"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		createSwitchPerspectiveEditor();
 		createRelaunchInDebugMode();
+		createContinueWithCompileErrors();
 		
 		createLaunchHistoryEditor();
 	}
 	
+
 	protected void createSpacer(Composite composite, int columnSpan) {
 		Label label = new Label(composite, SWT.NONE);
 		GridData gd = new GridData();
@@ -122,7 +124,16 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 				getFieldEditorParent(),
 				true));
 	}	
-	
+
+	private void createContinueWithCompileErrors() {
+		addField(new RadioGroupFieldEditor(IDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
+				DebugPreferencesMessages.getString("LaunchingPreferencePage.21"), 2, //$NON-NLS-1$
+				new String[][] {{DebugPreferencesMessages.getString("LaunchingPreferencePage.22"), AlwaysNeverDialog.ALWAYS},  //$NON-NLS-1$
+					{DebugPreferencesMessages.getString("LaunchingPreferencePage.23"), AlwaysNeverDialog.PROMPT}},  //$NON-NLS-1$
+				getFieldEditorParent(),
+				true));
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */

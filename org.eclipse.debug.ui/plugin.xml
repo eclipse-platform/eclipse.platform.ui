@@ -1205,7 +1205,13 @@
             code="201"
             class="org.eclipse.debug.internal.ui.launchConfigurations.DebugModePromptStatusHandler"
             id="org.eclipse.debug.ui.statusHandler.debugModePromptStatusHandler">
-      </statusHandler>      
+      </statusHandler>
+      <statusHandler
+            plugin="org.eclipse.debug.core"
+            code="202"
+            class="org.eclipse.debug.internal.ui.launchConfigurations.CompileErrorPromptStatusHandler"
+            id="org.eclipse.debug.ui.statusHandler.compileErrorPromptStatusHandler">
+      </statusHandler> 
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchGroups">
