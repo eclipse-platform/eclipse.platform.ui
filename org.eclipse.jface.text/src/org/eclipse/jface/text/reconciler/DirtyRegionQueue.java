@@ -15,8 +15,9 @@ import java.util.ArrayList;
 
 
 /**
- * Queue used by {@link org.eclipse.jface.text.reconciler.Reconciler} to manage dirty regions. When a dirty region
- * is inserted into the queue, the queue tries to fold it into the neighboring dirty region.
+ * Queue used by {@link org.eclipse.jface.text.reconciler.Reconciler} to manage
+ * dirty regions. When a dirty region is inserted into the queue, the queue tries
+ * to fold it into the neighboring dirty region.
  *
  * @see org.eclipse.jface.text.reconciler.Reconciler
  * @see org.eclipse.jface.text.reconciler.DirtyRegion

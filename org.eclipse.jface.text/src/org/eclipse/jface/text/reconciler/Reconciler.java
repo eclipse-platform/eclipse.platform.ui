@@ -28,19 +28,20 @@ import org.eclipse.jface.text.TypedRegion;
 
 
 /**
- * Standard implementation of <code>IReconciler</code>. The reconciler
- * is configured with a set of reconciling strategies each of which is
- * responsible for a particular content type. <p>
+ * Standard implementation of {@link org.eclipse.jface.text.reconciler.IReconciler}.
+ * The reconciler is configured with a set of {@linkplain org.eclipse.jface.text.reconciler.IReconcilingStrategy reconciling strategies}
+ * each of which is responsible for a particular content type.
+ * <p>
  * Usually, clients instantiate this class and configure it before using it.
+ * </p>
  *
- * @see IReconciler
  * @see org.eclipse.jface.text.IDocumentListener
  * @see org.eclipse.jface.text.ITextInputListener
- * @see DirtyRegion
+ * @see org.eclipse.jface.text.reconciler.DirtyRegion
  */
 public class Reconciler extends AbstractReconciler implements IReconcilerExtension {
 	
-	/** The map of reconciling strategies */
+	/** The map of reconciling strategies. */
 	private Map fStrategies;
 	
 	/**
@@ -53,7 +54,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	 * Creates a new reconciler with the following configuration: it is
 	 * an incremental reconciler with a standard delay of 500 milli-seconds. There
 	 * are no predefined reconciling strategies. The partitioning it uses
-	 * is the default partitioning <code>IDocumentExtension3.DEFAULT_PARTITIONING</code>.
+	 * is the default partitioning {@link IDocumentExtension3#DEFAULT_PARTITIONING}.
 	 */ 
 	public Reconciler() {
 		super();

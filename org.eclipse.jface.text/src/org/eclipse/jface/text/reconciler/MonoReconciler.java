@@ -18,22 +18,23 @@ import org.eclipse.jface.text.Region;
 
 
 /**
- * Standard implementation of <code>IReconciler</code>. The reconciler
- * is configured with a single <code>IReconcilingStrategy</code> that is
- * used independently from where a dirty region is located in the reconciler's
- * document. <p>
+ * Standard implementation of {@link org.eclipse.jface.text.reconciler.IReconciler}.
+ * The reconciler is configured with a single {@linkplain org.eclipse.jface.text.reconciler.IReconcilingStrategy reconciling strategy}
+ * that is used independently from where a dirty region is located in the reconciler's
+ * document.
+ * <p>
  * Usually, clients instantiate this class and configure it before using it.
+ * </p>
  *
- * @see IReconciler
  * @see org.eclipse.jface.text.IDocumentListener
  * @see org.eclipse.jface.text.ITextInputListener
- * @see DirtyRegion
+ * @see org.eclipse.jface.text.reconciler.DirtyRegion
  * @since 2.0
  */
 public class MonoReconciler extends AbstractReconciler {
 	
 	
-	/** The reconciling strategy */
+	/** The reconciling strategy. */
 	private IReconcilingStrategy fStrategy;
 	
 	

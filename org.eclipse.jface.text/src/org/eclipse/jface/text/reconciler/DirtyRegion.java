@@ -27,13 +27,13 @@ public class DirtyRegion implements ITypedRegion {
 	 */
 	final static public String REMOVE= "__remove"; //$NON-NLS-1$
 	
-	/** The region's offset */
+	/** The region's offset. */
 	private int fOffset;
-	/** The region's length */
+	/** The region's length. */
 	private int fLength;
-	/** Indicates the type of the applied change */
+	/** Indicates the type of the applied change. */
 	private String fType;
-	/** The text which has been inserted */
+	/** The text which has been inserted. */
 	private String fText;
 
 	/**
@@ -41,7 +41,7 @@ public class DirtyRegion implements ITypedRegion {
 	 * 
 	 * @param offset the offset within the document where the change occurred
 	 * @param length the length of the text within the document that changed
-	 * @param type the type of change that this region represents: <code>INSERT</code> or <code>REMOVE</code>
+	 * @param type the type of change that this region represents: {@link #INSERT} {@link #REMOVE}
 	 * @param text the substitution text
 	 */
 	public DirtyRegion(int offset, int length, String type, String text) {

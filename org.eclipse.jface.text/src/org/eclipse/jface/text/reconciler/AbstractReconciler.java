@@ -22,24 +22,26 @@ import org.eclipse.jface.text.ITextViewer;
 
 
 /**
- * Abstract implementation of <code>IReconciler</code>. The reconciler
+ * Abstract implementation of {@link IReconciler}. The reconciler
  * listens to input document changes as well as changes of
  * the input document of the text viewer it is installed on. Depending on 
  * its configuration it manages the received change notifications in a 
- * queue folding neighboring or overlapping changes together.  The reconciler
+ * queue folding neighboring or overlapping changes together. The reconciler
  * processes the dirty regions as a background activity after having waited for further
- * changes for the configured duration of time. A reconciler is started using its
- * <code>install</code> method.  As a first step <code>initialProcess</code> is
+ * changes for the configured duration of time. A reconciler is started using the
+ * {@link #install(ITextViewer)} method.  As a first step {@link #initialProcess()} is
  * executed in the background. Then, the reconciling thread waits for changes that
- * need to be reconciled. A reconciler can be resumed by calling <code>forceReconciling</code>
+ * need to be reconciled. A reconciler can be resumed by calling {@link #forceReconciling()}
  * independent from the existence of actual changes. This mechanism is for subclasses only.
- * It is the clients responsibility to stop a reconciler using its <code>uninstall</code>
- * method. Unstopped reconcilers do not free their resources.<p>
+ * It is the clients responsibility to stop a reconciler using its {@link #uninstall()}
+ * method. Unstopped reconcilers do not free their resources.
+ * <p>
  * It is subclass responsibility to specify how dirty regions are processed.
- *
- * @see IDocumentListener
- * @see ITextInputListener
- * @see DirtyRegion
+ * </p>
+ * 
+ * @see org.eclipse.jface.text.IDocumentListener
+ * @see org.eclipse.jface.text.ITextInputListener
+ * @see org.eclipse.jface.text.reconciler.DirtyRegion
  * @since 2.0
  */
 abstract public class AbstractReconciler implements IReconciler {
@@ -151,8 +153,10 @@ abstract public class AbstractReconciler implements IReconciler {
 		/**
 		 * The background activity. Waits until there is something in the
 		 * queue managing the changes that have been applied to the text viewer.
-		 * Removes the first change from the queue and process it.<p>
-		 * Calls <code>initialProcess</code> on entrance.
+		 * Removes the first change from the queue and process it.
+		 * <p>
+		 * Calls {@link AbstractReconciler#initialProcess()} on entrance.
+		 * </p>
 		 */
 		public void run() {
 			
@@ -293,20 +297,20 @@ abstract public class AbstractReconciler implements IReconciler {
 		}			
 	}
 	
-	/** Queue to manage the changes applied to the text viewer */
+	/** Queue to manage the changes applied to the text viewer. */
 	private DirtyRegionQueue fDirtyRegionQueue;
-	/** The background thread */
+	/** The background thread. */
 	private BackgroundThread fThread;
-	/** Internal document and text input listener */
+	/** Internal document and text input listener. */
 	private Listener fListener;
-	/** The background thread delay */
+	/** The background thread delay. */
 	private int fDelay= 500;
 	/** Are there incremental reconciling strategies? */
 	private boolean fIsIncrementalReconciler= true;
-	/** The progress monitor used by this reconciler */
+	/** The progress monitor used by this reconciler. */
 	private IProgressMonitor fProgressMonitor;
 
-	/** The text viewer's document */
+	/** The text viewer's document. */
 	private IDocument fDocument;
 	/** The text viewer */
 	private ITextViewer fViewer;

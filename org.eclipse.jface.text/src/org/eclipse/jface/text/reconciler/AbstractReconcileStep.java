@@ -113,10 +113,24 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	 */
 	abstract protected IReconcileResult[] reconcileModel(DirtyRegion dirtyRegion, IRegion subRegion);
 
+	/**
+	 * Adapts the given an array with reconcile results to
+	 * this step's input model and returns it. 
+	 * 
+	 * @param inputResults an array with reconcile results 
+	 * @return an array with the reconcile results adapted to the input model
+	 */
 	protected IReconcileResult[] convertToInputModel(IReconcileResult[] inputResults) {
 		return inputResults;
 	}
 	
+	/**
+	 * Merges the two reconcile result arrays.
+	 * 
+	 * @param results1 an array with reconcile results
+	 * @param results2 an array with reconcile results
+	 * @return an array with the merged reconcile results
+	 */
 	private IReconcileResult[] merge(IReconcileResult[] results1, IReconcileResult[] results2) {
 		if (results1 == null)
 			return results2;
@@ -156,9 +170,19 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 			fNextStep.setInputModel(getModel());
 	}
 
+	/**
+	 * Returns the reconcilable input model.
+	 * 
+	 * @return the reconcilable input model.
+	 */
 	public IReconcilableModel getInputModel() {
 		return fInputModel;
 	}
 	
+	/**
+	 * Returns the reconcilable model.
+	 * 
+	 * @return the reconcilable model
+	 */
 	abstract public IReconcilableModel getModel();
 }

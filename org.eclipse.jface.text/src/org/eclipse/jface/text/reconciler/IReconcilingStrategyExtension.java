@@ -14,13 +14,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
  
 /**
- * Extension interface for <code>IReconcilingStrategy</code>.
- * The new functions are:
+ * Extends {@link org.eclipse.jface.text.reconciler.IReconcilingStrategy} 
+ * with the following functions:
  * <ul>
- * <li> usage of a progress monitor
- * <li> initial reconciling step: If a reconciler runs as periodic activity in the background, this
+ * 	<li>usage of a progress monitor</li>
+ * 	<li>initial reconciling step: if a reconciler runs as periodic activity in the background, this
  * 		methods offers the reconciler a chance for initializing its strategies and achieving a 
- * 		reconciled state before the periodic activity starts.
+ * 		reconciled state before the periodic activity starts.</li>
  * </ul>
  * 
  * @since 2.0
