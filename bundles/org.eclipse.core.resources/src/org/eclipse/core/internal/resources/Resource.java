@@ -232,12 +232,22 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 			parent.checkExists(getFlags(info), true);
 		}
 	}
-	//make sure location of source is not a prefix of the location of the destination
-	//this can occur if the source or destination is a linked resource
 	if (isUnderLink() || dest.isUnderLink()) {
+		//make sure location is not null.  This can occur with linked resources relative to
+		//undefined path variables
 		IPath sourceLocation = getLocation();
+		if (sourceLocation == null) {
+			message = Policy.bind("localstore.locationUndefined", getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
+		}
 		IPath destLocation = dest.getLocation();
-		if (sourceLocation != null && destLocation != null && sourceLocation.isPrefixOf(destLocation)) {
+		if (destLocation == null) {
+			message = Policy.bind("localstore.locationUndefined", dest.getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, dest.getFullPath(), message, null);
+		}
+		//make sure location of source is not a prefix of the location of the destination
+		//this can occur if the source or destination is a linked resource
+		if (sourceLocation.isPrefixOf(destLocation)) {
 			message = Policy.bind("resources.copyDestNotSub", getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 		}
@@ -368,12 +378,25 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
 			parent.checkExists(getFlags(info), true);
 		}
 	}
-	
-	//make sure location of source is not a prefix of the location of the destination
-	//this can occur if the source or destination is a linked resource
-	if ((isUnderLink() || dest.isUnderLink()) && getLocation().isPrefixOf(dest.getLocation())) {
-		message = Policy.bind("resources.moveDestNotSub", getFullPath().toString()); //$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
+	if (isUnderLink() || dest.isUnderLink()) {
+		//make sure location is not null.  This can occur with linked resources relative to
+		//undefined path variables
+		IPath sourceLocation = getLocation();
+		if (sourceLocation == null) {
+			message = Policy.bind("localstore.locationUndefined", getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
+		}
+		IPath destLocation = dest.getLocation();
+		if (destLocation == null) {
+			message = Policy.bind("localstore.locationUndefined", dest.getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, dest.getFullPath(), message, null);
+		}
+		//make sure location of source is not a prefix of the location of the destination
+		//this can occur if the source or destination is a linked resource
+		if (sourceLocation.isPrefixOf(destLocation)) {
+			message = Policy.bind("resources.moveDestNotSub", getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
+		}
 	}
 
 	return status.isOK() ? ResourceStatus.OK_STATUS : (IStatus) status;
@@ -1091,7 +1114,7 @@ public void move(IPath path, int updateFlags, IProgressMonitor monitor) throws C
 			tree.makeInvalid();
 			//update any aliases of this resource and the destination
 			workspace.getAliasManager().updateAliases(this, originalLocation, IResource.DEPTH_INFINITE, monitor);
-			workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);			
+			workspace.getAliasManager().updateAliases(destination, destination.getLocation(), IResource.DEPTH_INFINITE, monitor);
 			if (!tree.getStatus().isOK())
 				throw new ResourceException(tree.getStatus());
 		} catch (OperationCanceledException e) {
