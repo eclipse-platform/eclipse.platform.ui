@@ -12,6 +12,7 @@
 package org.eclipse.ant.internal.ui.model;
 
 import org.apache.tools.ant.Target;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -26,6 +27,12 @@ public class InternalTargetFilter extends ViewerFilter {
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		boolean result= true;
+		if (viewer instanceof CheckboxTableViewer) {
+		    if (((CheckboxTableViewer)viewer).getChecked(element)) {
+		        //do not filter out (selected) checked items
+		        return true;
+		    }
+		}
 		if (element instanceof AntTargetNode) {
 			Target target= ((AntTargetNode)element).getTarget();
 			result= target.getDescription() != null || ((AntTargetNode)element).isDefaultTarget();

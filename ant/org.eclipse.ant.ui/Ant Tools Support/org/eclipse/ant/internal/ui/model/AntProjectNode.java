@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.model;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -21,11 +22,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class AntProjectNode extends AntElementNode {
 
-	private AntModelProject fProject;
-	private AntModel fModel;
+	protected AntModelProject fProject;
+	protected IAntModel fModel;
 	private Map fNameToDefiningNodeMap;
 	
-	public AntProjectNode(AntModelProject project, AntModel antModel) {
+	public AntProjectNode(AntModelProject project, IAntModel antModel) {
 		super("project"); //$NON-NLS-1$
 		fProject= project;
 		fModel= antModel;
@@ -35,10 +36,13 @@ public class AntProjectNode extends AntElementNode {
 	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getDisplayName()
 	 */
 	public String getLabel() {
-		String projectName= fProject.getName();
-		if (projectName == null || projectName.length() == 0) {
-			projectName= "project"; //$NON-NLS-1$
-		}
+	    String projectName= "project"; //$NON-NLS-1$
+	    if (fProject != null) {
+	        projectName= fProject.getName();
+	        if (projectName == null || projectName.length() == 0) {
+	            projectName= "project"; //$NON-NLS-1$
+	        }
+	    }
 		return projectName;
 	}
 	/* (non-Javadoc)
@@ -56,7 +60,7 @@ public class AntProjectNode extends AntElementNode {
 		return fProject;
 	}
 	
-	protected AntModel getAntModel() {
+	protected IAntModel getAntModel() {
 		return fModel;
 	}
 	
@@ -66,11 +70,12 @@ public class AntProjectNode extends AntElementNode {
 	public void reset() {
 		super.reset();
 		fProject.reset();
-		if (fNameToDefiningNodeMap != null) {
-			getAntModel().setNamesOfOldDefiningNodes(fNameToDefiningNodeMap.keySet());
+		if (fNameToDefiningNodeMap != null && getAntModel() instanceof AntModel) {
+			((AntModel)getAntModel()).setNamesOfOldDefiningNodes(fNameToDefiningNodeMap.keySet());
 		}
 		fNameToDefiningNodeMap= null;
 		setProblemSeverity(AntModelProblem.NO_PROBLEM);
+		setProblemMessage(null);
 	}
 	
 	public void addDefiningTaskNode(AntDefiningTaskNode node) {
@@ -94,7 +99,20 @@ public class AntProjectNode extends AntElementNode {
 		}
 		return null;
 	}
+	
+	public String getDescription() {
+		return fProject.getDescription();
+	}
 
+	public String getBuildFileName() {
+		LocationProvider locationProvider= getAntModel().getLocationProvider();
+		return locationProvider.getFile().getFullPath().toOSString();
+	}
+	
+	public String getDefaultTargetName() {
+		return fProject.getDefaultTarget();
+	}
+	
 	/**
 	 * @param node the property node that is currently being configured
 	 */
@@ -102,4 +120,10 @@ public class AntProjectNode extends AntElementNode {
 		AntModelProject project= (AntModelProject) getProject();
 		project.setCurrentConfiguringProperty(node);
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ant.internal.ui.model.AntElementNode#getProjectNode()
+     */
+    public AntProjectNode getProjectNode() {
+        return this;
+    }
 }
