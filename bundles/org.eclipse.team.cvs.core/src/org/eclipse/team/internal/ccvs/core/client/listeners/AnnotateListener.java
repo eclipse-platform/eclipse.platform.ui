@@ -53,8 +53,8 @@ public class AnnotateListener extends CommandOutputListener {
 		 */
 		try {
 			aStream.write(line.substring(aBlock.getSourceOffset()).getBytes());
-			if (!(line.endsWith("\r") || line.endsWith("\r\n"))) {
-				aStream.write(System.getProperty("line.separator").getBytes());
+			if (!(line.endsWith("\r") || line.endsWith("\r\n"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				aStream.write(System.getProperty("line.separator").getBytes()); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
 		}

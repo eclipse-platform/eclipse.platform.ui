@@ -58,6 +58,7 @@ import org.eclipse.team.internal.ccvs.core.util.AddDeleteMoveListener;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSProviderPlugin extends Plugin {
 	
@@ -86,7 +87,7 @@ public class CVSProviderPlugin extends Plugin {
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
 	
-	public static final QualifiedName CVS_WORKSPACE_SUBSCRIBER_ID = new QualifiedName(CVSSubscriberFactory.ID, "workspace-subscriber");
+	public static final QualifiedName CVS_WORKSPACE_SUBSCRIBER_ID = new QualifiedName(CVSSubscriberFactory.ID, "workspace-subscriber"); //$NON-NLS-1$
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	public static final String PT_FILE_MODIFICATION_VALIDATOR = "filemodificationvalidator"; //$NON-NLS-1$
@@ -331,8 +332,8 @@ public class CVSProviderPlugin extends Plugin {
 		
 		cvsWorkspaceSubscriber = new CVSWorkspaceSubscriber(
 				CVS_WORKSPACE_SUBSCRIBER_ID, 
-				"CVS Workspace",  
-				"Synchronizes the CVS managed resources in your workspace with their associated remote location");
+				Policy.bind("CVSProviderPlugin.20"),   //$NON-NLS-1$
+				Policy.bind("CVSProviderPlugin.21")); //$NON-NLS-1$
 		TeamProvider.registerSubscriber(cvsWorkspaceSubscriber);
 	}
 	

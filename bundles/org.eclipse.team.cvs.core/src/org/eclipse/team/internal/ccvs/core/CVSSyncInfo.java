@@ -308,17 +308,17 @@ public class CVSSyncInfo extends SyncInfo {
 		IRemoteResource base = getBase();
 		IRemoteResource remote = getRemote();
 		StringBuffer result = new StringBuffer();
-		result.append("Local: ");
+		result.append("Local: "); //$NON-NLS-1$
 		result.append(getLocal().toString());
-		result.append(" Base: ");
+		result.append(" Base: "); //$NON-NLS-1$
 		if (base == null) {
-			result.append("none");
+			result.append("none"); //$NON-NLS-1$
 		} else {
 			result.append(base.toString());
 		}
-		result.append(" Remote: ");
+		result.append(" Remote: "); //$NON-NLS-1$
 		if (remote == null) {
-			result.append("none");
+			result.append("none"); //$NON-NLS-1$
 		} else {
 			result.append(remote.toString());
 		}

@@ -33,6 +33,7 @@ import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * This class provides common funtionality for three way sychronizing
@@ -244,7 +245,7 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	 */
 	public void setCurrentComparisonCriteria(String id) throws TeamException {
 		if(! comparisonCriterias.containsKey(id)) {
-			throw new CVSException(id + " is not a valid comparison criteria");
+			throw new CVSException(Policy.bind("CVSSyncTreeSubscriber.0", id, getName())); //$NON-NLS-1$
 		}
 		this.defaultCriteria = id;
 	}

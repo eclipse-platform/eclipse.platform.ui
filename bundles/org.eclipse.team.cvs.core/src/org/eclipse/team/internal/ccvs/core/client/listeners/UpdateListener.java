@@ -178,7 +178,7 @@ public class UpdateListener extends CommandOutputListener {
 					} else {
 						return super.errorLine(line, location, commandRoot, monitor);
 					}
-				} else if (line.equals("rcsmerge: warning: conflicts during merge")) {
+				} else if (line.equals("rcsmerge: warning: conflicts during merge")) { //$NON-NLS-1$
 					// There were conflicts in the merge
 					return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 				}
@@ -187,7 +187,7 @@ public class UpdateListener extends CommandOutputListener {
 			// Something went wrong in the parsing of the message.
 			// Return a status indicating the problem
 			if (CVSProviderPlugin.getPlugin().isDebugging()) {
-				System.out.println("Error parsing E line: " + line);
+				System.out.println("Error parsing E line: " + line); //$NON-NLS-1$
 			}
 			return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE_PARSE_FAILURE, commandRoot, line);
 		}

@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.ssh.Policy;
 
 /**
  * I represent a database of known hosts usually placed in ~/.ssh/known_hosts
@@ -92,7 +93,7 @@ public class KnownHosts {
 			addHost(hostname, nbits, e, n);
 			return true;
 		} catch (IOException ex) {
-			SSHPlugin.log(IStatus.ERROR, "Error reading host key file", ex);
+			SSHPlugin.log(IStatus.ERROR, Policy.bind("KnownHosts.8"), ex); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -109,7 +110,7 @@ public class KnownHosts {
 			String message = Policy.bind("Client.addedHostKey", new String[] {hostname, defaultFilename()}); //$NON-NLS-1$
 			SSHPlugin.log(IStatus.INFO, message, null);
 		} catch (IOException ex) {
-			SSHPlugin.log(IStatus.ERROR, "Error writing host key file", ex);
+			SSHPlugin.log(IStatus.ERROR, Policy.bind("KnownHosts.9"), ex); //$NON-NLS-1$
 		}
 	}
 	
@@ -120,7 +121,7 @@ public class KnownHosts {
 		try {
 			new File(defaultFilename()).createNewFile();
 		} catch (IOException ee) {
-			SSHPlugin.log(IStatus.ERROR, "Error creating host key file", ee);
+			SSHPlugin.log(IStatus.ERROR, Policy.bind("KnownHosts.10"), ee); //$NON-NLS-1$
 		}
 
 	}

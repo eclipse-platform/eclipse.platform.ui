@@ -40,6 +40,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
 import org.eclipse.team.internal.core.SaveContext;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * A CVSMergeSubscriber is responsible for maintaining the remote trees for a merge into
@@ -58,7 +59,7 @@ import org.eclipse.team.internal.core.SaveContext;
  */
 public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResourceChangeListener, ITeamResourceChangeListener {
 
-	public static final String UNIQUE_ID_PREFIX = "merge-";
+	public static final String UNIQUE_ID_PREFIX = "merge-"; //$NON-NLS-1$
 	
 	private CVSTag start, end;
 	private List roots;
@@ -92,7 +93,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	}
 	
 	public CVSMergeSubscriber(QualifiedName id, IResource[] roots, CVSTag start, CVSTag end) {		
-		super(id, "CVS Merge: " + start.getName() + " to " + end.getName(), "CVS Merge");
+		super(id, Policy.bind("CVSMergeSubscriber.2", start.getName(), end.getName()), Policy.bind("CVSMergeSubscriber.4")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.start = start;
 		this.end = end;
 		this.roots = new ArrayList(Arrays.asList(roots));
@@ -191,11 +192,11 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	public SaveContext saveState() {
 		// start and end tags
 		SaveContext state = new SaveContext();
-		state.setName("merge");
-		state.putString("startTag", start.getName());
-		state.putInteger("startTagType", start.getType());
-		state.putString("endTag", end.getName());
-		state.putInteger("endTagType", end.getType());
+		state.setName("merge"); //$NON-NLS-1$
+		state.putString("startTag", start.getName()); //$NON-NLS-1$
+		state.putInteger("startTagType", start.getType()); //$NON-NLS-1$
+		state.putString("endTag", end.getName()); //$NON-NLS-1$
+		state.putInteger("endTagType", end.getType()); //$NON-NLS-1$
 		
 		// resources roots
 		SaveContext[] ctxRoots = new SaveContext[roots.size()];
@@ -203,8 +204,8 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		for (Iterator it = roots.iterator(); it.hasNext(); i++) {
 			IResource element = (IResource) it.next();
 			ctxRoots[i] = new SaveContext();
-			ctxRoots[i].setName("resource");
-			ctxRoots[i].putString("fullpath", element.getFullPath().toString());			
+			ctxRoots[i].setName("resource"); //$NON-NLS-1$
+			ctxRoots[i].putString("fullpath", element.getFullPath().toString());			 //$NON-NLS-1$
 		}
 		state.setChildren(ctxRoots);
 		return state;
@@ -212,32 +213,32 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	
 	public static CVSMergeSubscriber restore(QualifiedName id, SaveContext saveContext) throws CVSException {
 		String name = saveContext.getName(); 
-		if(! name.equals("merge")) {
-			throw new CVSException("error restoring merge subscriber: " + name + " is an invalid save context.");
+		if(! name.equals("merge")) { //$NON-NLS-1$
+			throw new CVSException(Policy.bind("CVSMergeSubscriber.13", name)); //$NON-NLS-1$
 		}
 		
-		CVSTag start = new CVSTag(saveContext.getString("startTag"), saveContext.getInteger("startTagType"));
-		CVSTag end = new CVSTag(saveContext.getString("endTag"), saveContext.getInteger("endTagType"));
+		CVSTag start = new CVSTag(saveContext.getString("startTag"), saveContext.getInteger("startTagType")); //$NON-NLS-1$ //$NON-NLS-2$
+		CVSTag end = new CVSTag(saveContext.getString("endTag"), saveContext.getInteger("endTagType")); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		SaveContext[] ctxRoots = saveContext.getChildren();
 		if(ctxRoots == null || ctxRoots.length == 0) {
-			throw new CVSException("error restoring merge subscriber: there are no roots in the save context.");
+			throw new CVSException(Policy.bind("CVSMergeSubscriber.19", id.toString())); //$NON-NLS-1$
 		}
 		
 		List resources = new ArrayList();
 		for (int i = 0; i < ctxRoots.length; i++) {
 			SaveContext context = ctxRoots[i];
-			IPath path = new Path(context.getString("fullpath"));
+			IPath path = new Path(context.getString("fullpath")); //$NON-NLS-1$
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path, true /* include phantoms */);
 			if(resource != null) {
 				resources.add(resource);
 			} else {
 				// log that a resource previously in the merge set is no longer in the workspace
-				CVSProviderPlugin.log(CVSStatus.INFO, "ignoring root resource not found in current workspace", null);
+				CVSProviderPlugin.log(CVSStatus.INFO, Policy.bind("CVSMergeSubscriber.21", resource.getFullPath().toString()), null); //$NON-NLS-1$
 			}
 		}
 		if(resources.isEmpty()) {
-			throw new CVSException("error restoring merge subscriber: there are no existing roots in the save context.");
+			throw new CVSException(Policy.bind("CVSMergeSubscriber.22", id.toString())); //$NON-NLS-1$
 		}
 		IResource[] roots = (IResource[]) resources.toArray(new IResource[resources.size()]);
 		return new CVSMergeSubscriber(id, roots, start, end);

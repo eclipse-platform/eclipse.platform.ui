@@ -9,14 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
+import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Model for a CVS Annotate block.
  */
 public class CVSAnnotateBlock {
 
-	String revision = "";
-	String user = "";
+	String revision = ""; //$NON-NLS-1$
+	String user = ""; //$NON-NLS-1$
 	int startLine = 0;
 	int endLine = 0;
 	int sourceOffset = 0;
@@ -81,7 +82,7 @@ public class CVSAnnotateBlock {
 		}
 		revision = line.substring(0, index);
 		
-		index = line.indexOf("(", index);
+		index = line.indexOf("(", index); //$NON-NLS-1$
 		if (index == -1) {
 			return;
 		}
@@ -93,7 +94,7 @@ public class CVSAnnotateBlock {
 		
 		user = line.substring(index + 1, index2);
 		
-		index = line.indexOf(":", index2);
+		index = line.indexOf(":", index2); //$NON-NLS-1$
 		if (index == -1) {
 			return;
 		}
@@ -107,11 +108,16 @@ public class CVSAnnotateBlock {
 	 */
 	public String toString() {
 		int delta = endLine - startLine + 1;
-		String line = "lines";
+		String line = Policy.bind("CVSAnnotateBlock.4"); //$NON-NLS-1$
 		if (delta == 1) {
-			line = "line";
+			line = Policy.bind("CVSAnnotateBlock.5"); //$NON-NLS-1$
 		}
-		return user + "  " + revision + " (" + String.valueOf(delta) + " " + line + ")";
+		return Policy.bind("CVSAnnotateBlock.6", new Object[] { //$NON-NLS-1$
+			user,
+			revision,
+			String.valueOf(delta),
+			line
+		});
 	}
 
 	/**

@@ -21,7 +21,7 @@ import org.eclipse.team.internal.core.SaveContext;
  */
 public class CVSSubscriberFactory extends TeamSubscriberFactory {
 
-	final static public String ID = "org.eclipse.team.cvs.subscribers";
+	final static public String ID = "org.eclipse.team.cvs.subscribers"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.subscribers.ISyncTreeSubscriberFactory#getID()
