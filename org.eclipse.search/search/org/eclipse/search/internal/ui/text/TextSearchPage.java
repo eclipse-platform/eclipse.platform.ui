@@ -87,15 +87,15 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 
 	private static class SearchPatternData {
 		boolean	ignoreCase;
-		String		pattern;
-		Set			extensions;
+		String		textPattern;
+		Set			fileNamePatterns;
 		int		scope;
 		IWorkingSet	workingSet;
 		
-		public SearchPatternData(String pattern, boolean ignoreCase, Set extensions, int scope, IWorkingSet workingSet) {
+		public SearchPatternData(String textPattern, boolean ignoreCase, Set fileNamePatterns, int scope, IWorkingSet workingSet) {
 			this.ignoreCase= ignoreCase;
-			this.pattern= pattern;
-			this.extensions= extensions;
+			this.textPattern= textPattern;
+			this.fileNamePatterns= fileNamePatterns;
 			this.scope= scope;
 			this.workingSet= workingSet;
 		}
@@ -107,7 +107,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		SearchUI.activateSearchResultView();
 		
 		SearchPatternData patternData= getPatternData();
-		if (patternData.pattern == null || patternData.pattern.length() == 0)
+		if (patternData.fileNamePatterns == null || fExtensions.getText().length() <= 0)
 			return true;
 
 		// Setup search scope
@@ -124,13 +124,13 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				String desc= SearchMessages.getFormattedString("WorkingSetScope", workingSet.getName()); //$NON-NLS-1$
 				scope= new TextSearchScope(desc, workingSet.getResources());
 		}		
-		scope.addExtensions(patternData.extensions);
+		scope.addExtensions(patternData.fileNamePatterns);
 
 		TextSearchResultCollector collector= new TextSearchResultCollector();
 		
 		TextSearchOperation op= new TextSearchOperation(
 			SearchPlugin.getWorkspace(),
-			patternData.pattern,
+			patternData.textPattern,
 			getSearchOptions(),
 			scope,
 			collector);
@@ -162,31 +162,35 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	 * An existing entry will be updated.
 	 */
 	private SearchPatternData getPatternData() {
-		String pattern= getPattern();
+		String fileNamePatterns= fExtensions.getText();
 		SearchPatternData match= null;
 		int i= 0;
 		int size= fgPreviousSearchPatterns.size();
-		while (match == null && i < size) {
-			match= (SearchPatternData) fgPreviousSearchPatterns.get(i);
+		String[] previousFileNamePatterns= getPreviousExtensions();
+		while (i < size) {
+			if (fileNamePatterns.equals(previousFileNamePatterns[i]))
+				break;
 			i++;
-			if (!pattern.equals(match.pattern))
-				match= null;
 		};
-		if (match == null) {
+		if (i < size) {
+			int pos= size - i - 1;
+			match= (SearchPatternData)fgPreviousSearchPatterns.get(pos);
+			match.ignoreCase= ignoreCase();
+			match.textPattern= getPattern();
+			match.fileNamePatterns= getExtensions();
+			match.scope= getContainer().getSelectedScope();
+			match.workingSet= getContainer().getSelectedWorkingSet();
+			// remove - will be added last (see below)
+			fgPreviousSearchPatterns.remove(match);
+		} else {
 			match= new SearchPatternData(
-						pattern,
+						getPattern(),
 						ignoreCase(),
 						getExtensions(),
 						getContainer().getSelectedScope(),
 						getContainer().getSelectedWorkingSet());
-			fgPreviousSearchPatterns.add(match);
 		}
-		else {
-			match.ignoreCase= ignoreCase();
-			match.extensions= getExtensions();
-			match.scope= getContainer().getSelectedScope();
-			match.workingSet= getContainer().getSelectedWorkingSet();
-		};
+		fgPreviousSearchPatterns.add(match);
 		return match;
 	}
 
@@ -194,7 +198,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		List extensions= new ArrayList(fgPreviousSearchPatterns.size());
 		for (int i= fgPreviousSearchPatterns.size() -1 ; i >= 0; i--) {
 			SearchPatternData data= (SearchPatternData)fgPreviousSearchPatterns.get(i);
-			String text= FileTypeEditor.typesToString(data.extensions);
+			String text= FileTypeEditor.typesToString(data.fileNamePatterns);
 			if (!extensions.contains(text))
 				extensions.add(text);
 		}
@@ -205,7 +209,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		int size= fgPreviousSearchPatterns.size();
 		String [] patterns= new String[size];
 		for (int i= 0; i < size; i++)
-			patterns[i]= ((SearchPatternData) fgPreviousSearchPatterns.get(size - 1 - i)).pattern;
+			patterns[i]= ((SearchPatternData) fgPreviousSearchPatterns.get(size - 1 - i)).textPattern;
 		return patterns;
 	}
 	
@@ -240,8 +244,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				fExtensions.setItems(getPreviousExtensions());
 				initializePatternControl();
 			}
-			fPattern.setFocus();
-			getContainer().setPerformActionEnabled(fPattern.getText().length() > 0 && getContainer().hasValidScope());
+			fExtensions.setFocus();
+			getContainer().setPerformActionEnabled(fExtensions.getText().length() > 0 && getContainer().hasValidScope());
 		}
 		super.setVisible(visible);
 	}
@@ -253,51 +257,54 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	 */
 	public void createControl(Composite parent) {
 		readConfiguration();
-		
+		initializeDialogUnits(parent);
 		GridLayout layout;
-		GridData gd;
-		Label label;
 		RowLayouter layouter;
 		Composite result= new Composite(parent, SWT.NONE);
 		result.setLayout(new GridLayout());
 		
-		// Search Expression
+		// Search Expression group
 		Group group= new Group(result, SWT.NONE);
 		group.setText(SearchMessages.getString("SearchPage.expression.label")); //$NON-NLS-1$
 		layout= new GridLayout();
-		layout.numColumns= 2;
+		layout.numColumns= 3;
 		group.setLayout(layout);
-		layouter= new RowLayouter(2);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layouter= new RowLayouter(3);
 		layouter.setDefaultSpan();
 
+		createFileNamePatternComposite(layouter, group);
+
+		createTextSearchComposite(layouter, group);
+
+		setControl(result);
+		
+		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
+	}
+
+	private void createTextSearchComposite(RowLayouter layouter, Group group) {
+		GridData gd;
+		Label label;
+		
 		// Pattern combo
+		label= new Label(group, SWT.LEFT);
+		label.setText(SearchMessages.getString("SearchPage.containingText.text")); //$NON-NLS-1$
 		fPattern= new Combo(group, SWT.SINGLE | SWT.BORDER);
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
-		fPattern.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleWidgetSelected();
-			}
-		});
 		fPattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getContainer().setPerformActionEnabled(getPattern().length() > 0 && getContainer().hasValidScope());
+				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
 			}
 		});
-		
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint= convertWidthInCharsToPixels(30);
+		gd= new GridData();//GridData.FILL_HORIZONTAL
+		gd.widthHint= convertWidthInCharsToPixels(40);
 		fPattern.setLayoutData(gd);
 		
-		layouter.perform( new Control[] { fPattern }, 0);
-		
-		label= new Label(group, SWT.LEFT);
-		label.setText(SearchMessages.getString("SearchPage.expression.pattern")); //$NON-NLS-1$
 		fIgnoreCase= new Button(group, SWT.CHECK);
 		fIgnoreCase.setText(SearchMessages.getString("SearchPage.caseSensitive")); //$NON-NLS-1$
 		gd= new GridData(); gd.horizontalAlignment= gd.END;
 		fIgnoreCase.setLayoutData(gd);
-		layouter.perform( new Control[] {label, fIgnoreCase}, -1);
 		fIgnoreCase.setSelection(!fIsCaseSensitive);
 		fIgnoreCase.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -305,24 +312,22 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				writeConfiguration();
 			}
 		});
-
-		Control control= makeExtensionEditor(group);
-		layouter.perform( new Control[] { control }, 0);
+		layouter.perform( new Control[] {label, fPattern, fIgnoreCase }, -1);
 		
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		setControl(result);
-		
-		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
+		// Text line which explains the special characters
+		label= new Label(group, SWT.LEFT);
+		label.setText(SearchMessages.getString("SearchPage.containingText.hint")); //$NON-NLS-1$
+		layouter.perform(label);
 	}
 
 	private void handleWidgetSelected() {
-		if (fPattern.getSelectionIndex() < 0)
+		if (fExtensions.getSelectionIndex() < 0)
 			return;
-		int index= fgPreviousSearchPatterns.size() - 1 - fPattern.getSelectionIndex();
+		int index= fgPreviousSearchPatterns.size() - 1 - fExtensions.getSelectionIndex();
 		SearchPatternData patternData= (SearchPatternData) fgPreviousSearchPatterns.get(index);
 		fIgnoreCase.setSelection(patternData.ignoreCase);
-		fPattern.setText(patternData.pattern);
-		fFileTypeEditor.setFileTypes(patternData.extensions);
+		fPattern.setText(patternData.textPattern);
+		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);
 		if (patternData.workingSet != null)
 			getContainer().setSelectedWorkingSet(patternData.workingSet);
 		else
@@ -332,7 +337,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	private void initializePatternControl() {
 		ISelection selection= getSelection();
 		String text= "";	 //$NON-NLS-1$
-		String extension= null; //$NON-NLS-1$
+		String extension= null;
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection)getSelection();
 			text= textSelection.getText();
@@ -426,39 +431,40 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		return null;
 	}
 
-	private Composite makeExtensionEditor(Composite parent) {
-		Composite result= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.marginWidth= 0; layout.marginHeight= 0;
-		layout.numColumns= 3;
-		result.setLayout(layout);
-		
-		Label label= new Label(result, SWT.LEFT);
-		label.setText(SearchMessages.getString("SearchPage.extensions")); //$NON-NLS-1$
-		
-//		fExtensions= new Text(result, SWT.LEFT | SWT.BORDER);
-		fExtensions= new Combo(result, SWT.SINGLE | SWT.BORDER);
-//		fExtensions.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				handleWidgetSelected();
-//			}
-//		});
-		
+	private void createFileNamePatternComposite(RowLayouter layouter, Composite group) {
+		// Line with label, combo and button
+		Label label= new Label(group, SWT.LEFT);
+		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.text")); //$NON-NLS-1$
 
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint= convertWidthInCharsToPixels(30);
+		fExtensions= new Combo(group, SWT.SINGLE | SWT.BORDER);
+		GridData gd= new GridData();
+		gd.widthHint= convertWidthInCharsToPixels(40);
 		fExtensions.setLayoutData(gd);
+		fExtensions.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleWidgetSelected();
+			}
+		});
+		fExtensions.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				getContainer().setPerformActionEnabled(fExtensions.getText().length() > 0 && getContainer().hasValidScope());
+			}
+		});
 		
-		Button button= new Button(result, SWT.PUSH);
+		Button button= new Button(group, SWT.PUSH);
 		button.setText(SearchMessages.getString("SearchPage.browse")); //$NON-NLS-1$
-		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		SWTUtil.setButtonDimensionHint(button);
-		
 		fFileTypeEditor= new FileTypeEditor(
 			SearchPlugin.getDefault().getWorkbench().getEditorRegistry(),
 			fExtensions, button);
 		
-		return result;
+		layouter.perform(new Control[] { label, fExtensions, button }, -1);
+		
+		// Text line which explains the special characters
+		label= new Label(group, SWT.LEFT);
+		label.setText(SearchMessages.getString("SearchPage.fileNamePatterns.hint")); //$NON-NLS-1$
+		layouter.perform(label);
 	}
 	
 	public boolean isValid() {

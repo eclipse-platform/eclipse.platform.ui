@@ -73,7 +73,7 @@
 <extension point="org.eclipse.search.searchPages">
 	<page
 		id="org.eclipse.search.internal.ui.text.TextSearchPage"
-		label="%textSearch"
+		label="%fileSearch"
 		icon="icons/full/obj16/tsearch_obj.gif"
 		sizeHint="250,160"
 		tabPosition="1"
