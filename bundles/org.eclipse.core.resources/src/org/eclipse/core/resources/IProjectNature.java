@@ -30,7 +30,7 @@ public interface IProjectNature {
  * Configures this nature for its project. This is called by the workspace 
  * and should not be called directly by clients.  The nature extension 
  * id is added to the list of natures on the project by 
- * <code>IProject.addNature()</code> or <code>IProject.create()</code>
+ * <code>IProject.create()</code> or <code>IProject.setDescription()</code>
  * and need not be added here.
  *
  * @exception CoreException if this method fails.
@@ -38,9 +38,9 @@ public interface IProjectNature {
 public void configure() throws CoreException;
 /** 
  * Removes this nature from its project, performing any required deconfiguration.
- * This is called by <code>IProject.removeNature</code> and should not
+ * This is called by <code>IProject.setDescription</code> and should not
  * be called directly by clients.  The nature id is removed from the 
- * list of natures on the project by <code>IProject.removeNature</code>, 
+ * list of natures on the project, if needed, by <code>IProject.setDescription</code>, 
  * and need not be removed here.
  *
  * @exception CoreException if this method fails. 
@@ -55,7 +55,8 @@ public IProject getProject();
 /**
  * Sets the project to which this nature applies.
  * Used when instantiating this project nature runtime.
- * This is called by <code>IProject.addNature</code>
+ * This is called by <code>IProject.create()</code> or
+ * <code>IProject.setDescription()</code>
  * and should not be called directly by clients.
  *
  * @param project the project to which this nature applies
