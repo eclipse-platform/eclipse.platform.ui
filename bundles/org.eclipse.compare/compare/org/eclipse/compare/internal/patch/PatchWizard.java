@@ -7,8 +7,6 @@ package org.eclipse.compare.internal.patch;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
@@ -19,9 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.Differencer;
 
 
 /* package */ class PatchWizard extends Wizard {
@@ -109,50 +105,26 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	 */
 	public boolean performFinish() {
 		
-		if (false) {
-			CompareConfiguration cc= new CompareConfiguration() {
-				public Image getImage(int kind) {
-					if (kind == Differencer.ADDITION)
-						kind= Differencer.DELETION;
-					else if (kind == Differencer.DELETION)
-						kind= Differencer.ADDITION;
-					return super.getImage(kind);
-				}
-				public Image getImage(Image base, int kind) {
-					if (kind == Differencer.ADDITION)
-						kind= Differencer.DELETION;
-					else if (kind == Differencer.DELETION)
-						kind= Differencer.ADDITION;
-					return super.getImage(base, kind);
+		fPatcher.setName(fPatchWizardPage.getPatchName());
+
+		try {
+			WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+				protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						fPatcher.applyAll(getTarget(), monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
 				}
 			};
-			cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
-	
-			fPatcher.setName(fPatchWizardPage.getPatchName());
-	
-			CompareUI.openCompareEditor(new PatchCompareInput(cc, fPatcher, new StructuredSelection(fTarget)));
-		} else {
-			fPatcher.setName(fPatchWizardPage.getPatchName());
+			getContainer().run(true, false, op);
 
-			try {
-				WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
-					protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							fPatcher.applyAll(getTarget(), monitor);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				getContainer().run(true, false, op);
-
-			} catch (InvocationTargetException e) {
-				ExceptionHandler.handle(e,
-						PatchMessages.getString("PatchWizard.title"),	//$NON-NLS-1$ 
-						PatchMessages.getString("PatchWizard.unexpectedException.message"));	//$NON-NLS-1$
-			} catch (InterruptedException e) {
-				// cannot happen
-			}
+		} catch (InvocationTargetException e) {
+			ExceptionHandler.handle(e,
+					PatchMessages.getString("PatchWizard.title"),	//$NON-NLS-1$ 
+					PatchMessages.getString("PatchWizard.unexpectedException.message"));	//$NON-NLS-1$
+		} catch (InterruptedException e) {
+			// cannot happen
 		}
 		
 		// Save the dialog settings

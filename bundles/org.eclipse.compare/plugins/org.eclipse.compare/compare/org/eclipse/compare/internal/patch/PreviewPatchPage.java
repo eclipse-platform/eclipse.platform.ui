@@ -498,7 +498,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 	
 	private IFile existsInSelection(IPath path) {
 		IResource target= fPatchWizard.getTarget();
-		if (target instanceof IFile) {
+		if (target instanceof IFile) {	// special case
 			IFile file= (IFile) target;
 			if (matches(file.getFullPath(), path))
 				return file;

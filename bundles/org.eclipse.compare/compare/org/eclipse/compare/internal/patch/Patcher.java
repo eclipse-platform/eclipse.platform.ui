@@ -743,13 +743,13 @@ public class Patcher {
 		
 		final int WORK_UNIT= 10;
 				
-		IFile file= null;	// file to be patched
+		IFile singleFile= null;	// file to be patched
 		IContainer container= null;
 		if (target instanceof IContainer)
 			container= (IContainer) target;
 		else if (target instanceof IFile) {
-			file= (IFile) target;
-			container= file.getParent();
+			singleFile= (IFile) target;
+			container= singleFile.getParent();
 		} else {
 			Assert.isTrue(false);
 		}
@@ -770,8 +770,10 @@ public class Patcher {
 				if (pm != null)
 					pm.subTask(path.toString());
 			
-				if (container != null)
-					file= createPath(container, path);
+				IFile file= singleFile != null
+								? singleFile
+								: createPath(container, path);
+					
 				List failed= new ArrayList();
 				List result= null;
 				
@@ -862,7 +864,6 @@ public class Patcher {
 	}
 	
 	List apply(Diff diff, IFile file, boolean create, List failedHunks) {
-		
 		List lines= load(file, create);
 		patch(diff, lines, failedHunks);
 		return lines;

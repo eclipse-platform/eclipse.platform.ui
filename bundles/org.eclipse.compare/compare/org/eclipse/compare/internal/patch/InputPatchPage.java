@@ -5,6 +5,7 @@
 package org.eclipse.compare.internal.patch;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 
 import org.eclipse.swt.SWT;
@@ -97,116 +98,79 @@ import org.eclipse.core.runtime.*;
 	 * Method declared in IWizardPage.
 	 */
 	public IWizardPage getNextPage() {
-		if (true) {
 			
-			Patcher patcher= ((PatchWizard) getWizard()).getPatcher();
-			
-			// Create a reader for the input
-			Reader reader= null;
-			if (getUseClipboard()) {
-				Control c= getControl();
-				if (c != null) {
-					Clipboard clipboard= new Clipboard(c.getDisplay());
-					Object o= clipboard.getContents(TextTransfer.getInstance());
-					clipboard.dispose();
-					if (o instanceof String)
-						reader= new StringReader((String)o);
-				}
-			} else {
-				String patchFilePath= getPatchFilePath();
-				if (patchFilePath != null) {
-					try {
-						reader= new FileReader(patchFilePath);
-					} catch (FileNotFoundException ex) {
-						MessageDialog.openError(null,
-							PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"),	//$NON-NLS-1$
-							PatchMessages.getString("InputPatchPage.PatchFileNotFound.message")); //$NON-NLS-1$
-					}
-				}
-			}
-			
-			// parse the input
-			if (reader != null) {
-				try {
-					patcher.parse(new BufferedReader(reader));
-				} catch (IOException ex) {
-					MessageDialog.openError(null,
-						PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), //$NON-NLS-1$ 
-						PatchMessages.getString("InputPatchPage.ParseError.message")); //$NON-NLS-1$
-				}
-				
-				try {
-					reader.close();
-				} catch (IOException x) {
-				}
-			}
-			
-			Diff[] diffs= patcher.getDiffs();
-			if (diffs == null || diffs.length == 0) {
-				String source= getUseClipboard() ? "Clipboard"	//$NON-NLS-1$
-												   : "File";	//$NON-NLS-1$
-				MessageDialog.openError(null,
-					PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"),	//$NON-NLS-1$
-					PatchMessages.getString("InputPatchPage.NoDiffsFound_"+source+".message")); //$NON-NLS-1$ //$NON-NLS-2$
-				return this;
-			}
-			
-			// guess prefix count
-			int guess= guessPrefix(diffs);
-			patcher.setStripPrefixSegments(guess);
-		}
-		return super.getNextPage();
-	}
+		Patcher patcher= ((PatchWizard) getWizard()).getPatcher();
 		
-	private int guessPrefix(Diff[] diffs) {
-		/*
-		ArrayList list= new ArrayList();
+		String source;
+		// Create a reader for the input
+		Reader reader= null;
+		if (getUseClipboard()) {
+			Control c= getControl();
+			if (c != null) {
+				Clipboard clipboard= new Clipboard(c.getDisplay());
+				Object o= clipboard.getContents(TextTransfer.getInstance());
+				clipboard.dispose();
+				if (o instanceof String)
+					reader= new StringReader((String)o);
+			}
+			source= PatchMessages.getString("InputPatchPage.Clipboard.title");	//$NON-NLS-1$
+		} else {
+			String patchFilePath= getPatchFilePath();
+			if (patchFilePath != null) {
+				try {
+					reader= new FileReader(patchFilePath);
+				} catch (FileNotFoundException ex) {
+					MessageDialog.openError(null,
+						PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"),	//$NON-NLS-1$
+						PatchMessages.getString("InputPatchPage.PatchFileNotFound.message")); //$NON-NLS-1$
+				}
+			}
+			source= PatchMessages.getString("InputPatchPage.PatchFile.title");	//$NON-NLS-1$
+		}
+		
+		// parse the input
+		if (reader != null) {
+			try {
+				patcher.parse(new BufferedReader(reader));
+			} catch (IOException ex) {
+				MessageDialog.openError(null,
+					PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), //$NON-NLS-1$ 
+					PatchMessages.getString("InputPatchPage.ParseError.message")); //$NON-NLS-1$
+			}
+			
+			try {
+				reader.close();
+			} catch (IOException x) {
+			}
+		}
+		
+		Diff[] diffs= patcher.getDiffs();
+		if (diffs == null || diffs.length == 0) {
+			String format= PatchMessages.getString("InputPatchPage.NoDiffsFound.format");	//$NON-NLS-1$
+			String message= MessageFormat.format(format, new String[] { source });
+			MessageDialog.openInformation(null,
+				PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), message); //$NON-NLS-1$
+			return this;
+		}
+		
+		// if selected target is file ensure that patch file
+		// contains only a patch for a single file
 		IResource target= fPatchWizard.getTarget();
-		if (target instanceof IFile) {
-			list.add(target.getFullPath());
-		} else if (target instanceof IContainer) {
-			addLeaf(list, (IContainer) target);
+		if (target instanceof IFile && diffs.length > 1) {
+			String format= PatchMessages.getString("InputPatchPage.SingleFileError.format");	//$NON-NLS-1$
+			String message= MessageFormat.format(format, new String[] { source });
+			MessageDialog.openInformation(null,
+				PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"), message); //$NON-NLS-1$
+			return this;
 		}
 		
 		// guess prefix count
-		for (int i= 0; i < diffs.length; i++) {
-			IPath p= diffs[i].fOldPath;
-			if (p != null) {
-				int matches= match(p, list);
-				if (matches > 0) {
-					return p.segmentCount() - matches;
-				}
-			}
-		}
-		*/
-		return 0;
+		int guess= 0; // guessPrefix(diffs);
+		patcher.setStripPrefixSegments(guess);
+
+		return super.getNextPage();
 	}
-	
-//	private int match(IPath path, ArrayList list) {
-//		Iterator iter= list.iterator();
-//		while (iter.hasNext()) {
-//			IPath filePath= (IPath) iter.next();
-//			int matches= matchTrailingSegments(path, filePath);
-//			if (matches > 0)
-//				return matches;
-//		}
-//		return 0;
-//	}
-	
-//	private int matchTrailingSegments(IPath p1, IPath p2) {
-//		int matches= 0;
-//		int i1= p1.segmentCount()-1;
-//		int i2= p2.segmentCount()-1;
-//		for (; i1 >= 0 && i2 >= 0; i1--, i2--) {
-//			String s1= p1.segment(i1);
-//			String s2= p2.segment(i2);
-//			if (!s1.equals(s2))
-//				break;
-//			matches++;
-//		}
-//		return matches;
-//	}
-	
+			
 	private void addLeaf(ArrayList list, IContainer c) {
 		IResource[] rs= null;
 		try {
@@ -347,32 +311,7 @@ import org.eclipse.core.runtime.*;
 		);
 		//fPatchFileNameField.setFocus();
 	}
-	
-	/**
-	 * Returns a content provider for <code>IResource</code>s that returns 
-	 * only children of the given resource type.
-	 */
-//	private ITreeContentProvider getResourceProvider(final int resourceType) {
-//		return new WorkbenchContentProvider() {
-//			public Object[] getChildren(Object o) {
-//				if (o instanceof IContainer) {
-//					try {
-//						ArrayList results= new ArrayList();
-//						IResource[] members= ((IContainer)o).members();
-//						for (int i= 0; i < members.length; i++)
-//							// filter out the desired resource types
-//							if ((members[i].getType() & resourceType) != 0)
-//								results.add(members[i]);
-//						return results.toArray();
-//					} catch (CoreException e) {
-//					}
-//				}
-//				// just return an empty set of children
-//				return new Object[0];
-//			}
-//		};
-//	}
-	
+		
 	/**
 	 * Updates the enable state of this page's controls.
 	 */
@@ -574,23 +513,6 @@ import org.eclipse.core.runtime.*;
 			return fPatchFileNameField.getText();
 		return ""; //$NON-NLS-1$
 	} 
-
-	/**
-	 * Creates a new label with a bold font.
-	 *
-	 * @param parent the parent control
-	 * @param text the label text
-	 * @return the new label control
-	 */
-//	private static Label buildPlainLabel(Composite parent, String text) {
-//		Label label= new Label(parent, SWT.NONE);
-//		label.setText(text);
-//		GridData data= new GridData();
-//		data.verticalAlignment= GridData.FILL;
-//		data.horizontalAlignment= GridData.FILL;
-//		label.setLayoutData(data);
-//		return label;
-//	}
 
 	/**
 	 * Adds an entry to a history, while taking care of duplicate history items
