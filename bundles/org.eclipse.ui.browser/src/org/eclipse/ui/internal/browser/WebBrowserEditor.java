@@ -12,6 +12,11 @@ package org.eclipse.ui.internal.browser;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -29,19 +34,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.EditorPart;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * An integrated Web browser, defined as an editor to make
  * better use of the desktop.
@@ -56,8 +48,6 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	protected TextAction cutAction;
 	protected TextAction copyAction;
 	protected TextAction pasteAction;
-	
-	protected IResourceChangeListener resourceListener;
 	
 	private boolean disposed;
 
@@ -95,9 +85,6 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			image.dispose();
 		image = null;
 
-		if (resourceListener != null)
-			ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
-		
 		super.dispose();
 		// mark this instance as disposed to avoid stale references
 		disposed = true;
@@ -161,14 +148,6 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 		return pasteAction;
 	}
 
-	/* (non-Javadoc)
-	 * Sets the cursor and selection state for this editor to the passage defined
-	 * by the given marker.
-	 */
-	public void gotoMarker(IMarker marker) {
-		// do nothing
-	}
-	
 	/* (non-Javadoc)
 	 * Initializes the editor part with a site and input.
 	 */
@@ -294,48 +273,6 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
         return result[0];
 	}
 	
-	/**
-	 * Adds a resource change listener to see if the file is deleted.
-	 */
-	protected void addResourceListener(final IResource resource) {
-		if (resource == null)
-			return;
-	
-		resourceListener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					event.getDelta().accept(new IResourceDeltaVisitor() {
-						public boolean visit(IResourceDelta delta) {
-							IResource res = delta.getResource();
-														
-							if (res == null || !res.equals(resource))
-								return true;
-
-							if (delta.getKind() != IResourceDelta.REMOVED)
-								return true;
-							
-							Display.getDefault().asyncExec(new Runnable() {
-								public void run() {
-									String title = WebBrowserUIPlugin.getResource("%dialogResourceDeletedTitle");
-									String message = WebBrowserUIPlugin.getResource("%dialogResourceDeletedMessage", resource.getName());
-									String[] labels = new String[] {WebBrowserUIPlugin.getResource("%dialogResourceDeletedIgnore"), IDialogConstants.CLOSE_LABEL};
-									MessageDialog dialog = new MessageDialog(getEditorSite().getShell(), title, null, message, MessageDialog.INFORMATION, labels, 0);
-
-									if (dialog.open() != 0)
-										close();
-								}
-							});
-							return false;
-						}
-					});
-				} catch (Exception e) {
-					Trace.trace(Trace.SEVERE, "Error listening for resource deletion", e);
-				}
-			}
-		};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
-	}
-
     public IActionBars getActionBars() {
         return getEditorSite().getActionBars();
     }
@@ -374,7 +311,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
             String ext = name;
             if (dot!= -1)
                 ext = "*."+name.substring(dot+1);
-            //registry.setDefaultEditor(ext, null);
+            registry.setDefaultEditor(ext, null);
         }
  
          if (editorId==null) {

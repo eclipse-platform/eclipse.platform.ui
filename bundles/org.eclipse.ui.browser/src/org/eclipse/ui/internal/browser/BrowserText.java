@@ -62,8 +62,8 @@ public class BrowserText {
                 .getSystemColor(SWT.COLOR_LIST_BACKGROUND);
         scomp = new ReflowScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL);
         Composite client = new Composite(scomp, SWT.NULL);
-        scomp.setContent(client);
         fillContent(client, bg);
+        scomp.setContent(client);        
         scomp.setBackground(bg);
     }
 
