@@ -33,7 +33,7 @@ public interface IOperation {
 	 * Executes operation.
 	 * @param pm Progress monitor for the operation
 	 * @param listener Operation listener
-	 * @return
+	 * @return true if operation was successful and a restart is needed.
 	 * @throws CoreException
 	 * @throws InvocationTargetException
 	 */
