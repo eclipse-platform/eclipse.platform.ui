@@ -330,8 +330,10 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
     protected void disposeFileInfo(Object element, FileInfo info) {
 	    if (info instanceof AntFileInfo) {
 		    AntFileInfo xmlInfo= (AntFileInfo) info;
-		    if (xmlInfo.fAntModel != null)
+		    if (xmlInfo.fAntModel != null) {
 			    xmlInfo.fAntModel.dispose();
+		    	xmlInfo.fAntModel= null;
+		    }
 	    }
 	    super.disposeFileInfo(element, info);	
     }
