@@ -83,7 +83,7 @@ public class HelpNavigationManager {
 				// generate navigation file for each infoset
 				generateNavForInfoSet(infoset);
 
-				infosetsMap.put(infoset.getID(), infoset.getLabel());
+				infosetsMap.put(infoset.getID(), infoset.getRawLabel());
 			}
 			// Save a file with all the infosets ids and labels
 			infosetsMap.save();
@@ -181,6 +181,23 @@ public class HelpNavigationManager {
 		}
 		return orderedInfosets;
 	}
+	
+	/**
+	 * Returns the label for an infoset.
+	 * This method uses the label from the infoset map file
+	 * so that the navigation file does not need to be
+	 * read in memory
+	 */
+	public String getInfoSetLabel(String infosetId) {
+		String label = (String)infosetsMap.get(infosetId);
+		if (label.indexOf('%') == 0) {
+			int lastPeriod = infosetId.lastIndexOf('.');
+			String pluginID = infosetId.substring(0, lastPeriod);
+			label =	DocResources.getPluginString(pluginID, label.substring(1));
+		}
+		return label;
+	}
+	
 	/**
 	 * Returns the navigation model for an infoset
 	 */
