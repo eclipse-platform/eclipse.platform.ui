@@ -12,7 +12,7 @@
 
 	<target name="build" if="fullBuild">
 		<antcall target="clean"/>
-		<antcall target="lib/antsupportlib.jar"/>
+		<antcall target="lib/antbuilderlib.jar"/>
 		<antcall target="refresh"/>
 	</target>
 
@@ -29,7 +29,7 @@
 		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 	</target>
 
-	<target name="lib/antsupportlib.jar" depends="init">
+	<target name="lib/antbuilderlib.jar" depends="init">
 		<property name="destdir" value="${temp.folder}/lib/antbuilder.jar.bin"/>
 		<delete dir="${temp.folder}/lib/antbuilder.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/antbuilder.jar.bin"/>
