@@ -438,10 +438,10 @@ public class AntCorePreferences {
 	 */
 	public List getTasks() {
 		List result = new ArrayList(10);
-		if (defaultTasks != null) {
+		if (defaultTasks != null && !defaultTasks.isEmpty()) {
 			result.addAll(defaultTasks);
 		}
-		if (customTasks != null) {
+		if (customTasks != null && customTasks.length != 0) {
 			result.addAll(Arrays.asList(customTasks));
 		}
 		return result;
