@@ -19,21 +19,21 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                 an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -158,7 +158,7 @@ In the above example, a launch shortcut will be shown in the run and debug casca
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+          &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 

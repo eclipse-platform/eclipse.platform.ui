@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.debug.ui">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.debug.ui" id="consoleColorProviders" name="Console Color Providers"/>
+   </appInfo>
+   <documentation>
+      This extension point provides a mechanism for contributing a console document coloring scheme for a process. The color provider will be used to color output in the console.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                 an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   
+   <element name="consoleColorProvider">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this console color provider.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a fully qualified name of a Java class that implements IConsoleColorProvider
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.console.IConsoleColorProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="processType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the type of process this color provider is for. This attribute corresponds to the process attribute IProcess.ATTR_PROCESS_TYPE.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         2.1
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+      The following is an example of a console color provider extension point: 
+
+      &lt;p&gt;
+&lt;pre&gt;
+&lt;extension point="org.eclipse.debug.ui.consoleColorProviders"&gt;
+  &lt;consoleColorProvider 
+     id="com.example.ExampleConsoleColorProvider"
+     class="com.example.ExampleConsoleColorProvider"
+     processType=&quot;ExampleProcessType&quot;&gt;
+  &lt;/consoleColorProvider&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+In the above example, the contributed color provider will be used for processes of type "ExampleProcessType", which corresponds to the process attribute IProcess.ATTR_PROCESS_TYPE. Process types are client defined, and are set by clients that create processes.
+
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.console.IConsoleColorProvider&lt;/b&gt;. 
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+      &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;    
+      </documentation>
+   </annotation>
+
+</schema>

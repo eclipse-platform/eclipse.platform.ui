@@ -19,24 +19,24 @@ in a specific debug model.
          <sequence>
             <element ref="debugModelPresentation" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="point" type="string" use="required">
+ 		<attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                 an optional name of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -105,19 +105,10 @@ qualified class name of a Java class that implements
 
    <annotation>
       <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+          &lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2003.  All Rights Reserved." BORDER=0 height=12 width=195&gt;&lt;/a&gt;
       </documentation>
    </annotation>
 
