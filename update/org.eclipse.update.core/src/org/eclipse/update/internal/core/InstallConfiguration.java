@@ -781,8 +781,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		String siteURL = feature.getSite().getURL().toExternalForm();
 		// TODO fix this. toURL() returns file:/d:/eclipse/etc... wheareas the 
 		// platform.asLocalURL() returns file:d:/eclipse/etc... (no leading / )
-		if (url.startsWith("file:/") && Platform.getOS().equals("win32"))
-			url = "file:" + url.substring(6);
+//		if (url.startsWith("file:/") && Platform.getOS().equals("win32"))
+//			url = "file:" + url.substring(6);
 		
 		if (url.startsWith(siteURL))
 			return url.substring(siteURL.length());

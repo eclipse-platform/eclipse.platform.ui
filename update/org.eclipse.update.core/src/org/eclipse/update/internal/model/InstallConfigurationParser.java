@@ -63,6 +63,9 @@ public class InstallConfigurationParser {
 		siteURL = siteEntry.getURL();
 		try {
 			siteURL = Platform.asLocalURL(siteURL);
+			// TODO workaround bug in platform url resolution
+			if (siteURL.getProtocol().equals("file"))
+				siteURL = new File(siteURL.getFile()).toURL();
 		} catch (IOException e) {
 			// keep original url
 		}
