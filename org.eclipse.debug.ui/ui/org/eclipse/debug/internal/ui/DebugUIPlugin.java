@@ -221,10 +221,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return fMemBlkViewSynchronizer;
 	}
 	
+	/**
+	 * Returns the currently active workbench window or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the currently active workbench window or <code>null</code>
+	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 	
+	/**
+	 * Returns the currently active workbench window shell or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the currently active workbench window shell or <code>null</code>
+	 */
 	public static Shell getShell() {
 		if (getActiveWorkbenchWindow() != null) {
 			return getActiveWorkbenchWindow().getShell();
