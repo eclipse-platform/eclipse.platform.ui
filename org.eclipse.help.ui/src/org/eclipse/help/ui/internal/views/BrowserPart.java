@@ -133,8 +133,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				if (statusURL!=null) {
 					try {
 					String relativeURL = BaseHelpSystem.unresolve(new URL(statusURL));
-					if (BrowserPart.this.parent.isHelpResource(relativeURL))
+					if (BrowserPart.this.parent.isHelpResource(relativeURL)){
 						BrowserPart.this.parent.showExternalURL(relativeURL);
+						event.required = true;
+					}
+					
 					}
 					catch (MalformedURLException e) {
 						// TODO report this
