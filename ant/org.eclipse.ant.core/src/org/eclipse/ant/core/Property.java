@@ -167,10 +167,10 @@ public class Property {
 	}
 	
 	/**
-	 * Returns whether this classpath entry requires the Eclipse runtime to be 
+	 * Returns whether this property requires the Eclipse runtime to be 
 	 * relevant. Defaults value is <code>true</code>
 	 * 
-	 * @return whether this classpath entry requires the Eclipse runtime
+	 * @return whether this property requires the Eclipse runtime
      * @since 3.0
 	 */
 	public boolean isEclipseRuntimeRequired() {
