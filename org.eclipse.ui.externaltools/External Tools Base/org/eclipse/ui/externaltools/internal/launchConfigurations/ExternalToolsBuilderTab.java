@@ -143,6 +143,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		buffer.append(','); 
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		configuration.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false);
+		configuration.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
 	}
 
 	/* (non-Javadoc)

@@ -66,6 +66,10 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private List projectsWithinScope;
 	
 	private boolean buildKindCompatible(int kind, ILaunchConfiguration config) throws CoreException {
+		if (config.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false)) {
+			//triggers have been set on the ICommand associated with this builder..therefore build kind must be compatible
+			return true;
+		}
 		int[] buildKinds = buildTypesToArray(config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
 		for (int j = 0; j < buildKinds.length; j++) {
 			if (kind == buildKinds[j]) {

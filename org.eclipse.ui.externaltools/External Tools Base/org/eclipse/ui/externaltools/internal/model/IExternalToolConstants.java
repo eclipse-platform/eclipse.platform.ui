@@ -76,7 +76,7 @@ public interface IExternalToolConstants {
 	public static final String BUILD_TYPE_AUTO = "auto"; //$NON-NLS-1$
 
 	/**
-	 * Build type indicating an no project build request for
+	 * Build type indicating no project build request for
 	 * the external tool running as a builder (value <code>none</code>).
 	 */
 	public static final String BUILD_TYPE_NONE = "none"; //$NON-NLS-1$
@@ -197,4 +197,11 @@ public interface IExternalToolConstants {
 	 * The value is the name of the disabled builder.
 	 */
 	public static final String ATTR_DISABLED_BUILDER = PLUGIN_ID + ".ATTR_DISABLED_BUILDER";		 //$NON-NLS-1$
+	
+	/**
+	 * boolean attribute identifying that an external tool builder has been configured for triggering
+	 * using the <code>ICommand.setBuilding(int)</code> mechanism
+	 * @since 3.1
+	 */
+	public static final String ATTR_TRIGGERS_CONFIGURED = PLUGIN_ID + ".ATTR_TRIGGERS_CONFIGURED";		 //$NON-NLS-1$
 }

@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -668,10 +669,22 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 						handleException(e);
 					}
 				}
+			} else if (data instanceof ICommand) {
+				ICommand command= (ICommand) data;
+				if (command.isConfigurable()) {
+					if (editCommand(command)) {
+						userHasMadeChanges= true;	
+					}
+				}
 			}
 		}
 	}
 	
+	private boolean editCommand(ICommand data) {
+		EditCommandDialog dialog= new EditCommandDialog(getShell(), data);
+		return Window.OK == dialog.open();
+	}
+
 	/**
 	 * Prompts the user to proceed with the migration of a project builder from
 	 * the old format to the new, launch configuration-based, format and returns
@@ -748,12 +761,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 						enableRemove= ext == null;
 					}
 				} else {
-					enableEdit= false;
-					
 					if (data instanceof ErrorConfig) {
+						enableEdit= false;
 						continue;
 					}
-					IExtension ext= Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, ((ICommand)data).getBuilderName());
+					ICommand command= (ICommand) data;
+					enableEdit= command.isConfigurable();
+					IExtension ext= Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, command.getBuilderName());
 					enableRemove= ext == null;
 					break;
 				}
@@ -1102,6 +1116,13 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 					} else if (!oldArg.equals(newArg)){
 						return true;
 					}
+				}
+				
+				if (oldCommand.isBuilding(IncrementalProjectBuilder.AUTO_BUILD) != newCommand.isBuilding(IncrementalProjectBuilder.AUTO_BUILD)
+						|| oldCommand.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD) != newCommand.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD)
+						|| oldCommand.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD) != newCommand.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD)
+						|| oldCommand.isBuilding(IncrementalProjectBuilder.FULL_BUILD) != newCommand.isBuilding(IncrementalProjectBuilder.FULL_BUILD)) {
+					return true;
 				}
 			}
 		} catch (CoreException ce) {

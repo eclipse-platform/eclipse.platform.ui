@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -125,6 +126,7 @@ public class BuilderUtils {
 		try {
 			newCommand = project.getDescription().newCommand();
 			newCommand = toBuildCommand(project, config, newCommand);
+			configureTriggers(config, newCommand);
 		} catch (CoreException exception) {
 			Shell shell= ExternalToolsPlugin.getActiveWorkbenchShell();
 			if (shell != null) {
@@ -133,6 +135,36 @@ public class BuilderUtils {
 			return null;
 		}
 		return newCommand;
+	}
+	
+	private static void configureTriggers(ILaunchConfiguration config, ICommand newCommand) throws CoreException {
+		newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, false);
+		newCommand.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
+		newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
+		newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
+		String buildKinds= config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String)null);
+		int[] triggers= ExternalToolBuilder.buildTypesToArray(buildKinds);
+		for (int i = 0; i < triggers.length; i++) {
+			switch (triggers[i]) {
+				case IncrementalProjectBuilder.FULL_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
+					break;
+				case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+					break;
+				case IncrementalProjectBuilder.AUTO_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
+					break;
+				case IncrementalProjectBuilder.CLEAN_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
+					break;
+			}
+		}
+		if (!config.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false)) {
+			ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+			copy.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
+			copy.doSave();
+		}
 	}
 
 	/**
@@ -238,8 +270,7 @@ public class BuilderUtils {
 	 * IExternalToolConstants.EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS.
 	 */
 	public static ILaunchConfiguration duplicateConfiguration(IProject project, ILaunchConfiguration config) throws CoreException {
-		Map attributes= null;
-		attributes= config.getAttributes();
+		Map attributes= config.getAttributes();
 		String newName= new StringBuffer(config.getName()).append(ExternalToolsModelMessages.getString("BuilderUtils.7")).toString(); //$NON-NLS-1$
 		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
 		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);

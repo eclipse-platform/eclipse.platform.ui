@@ -122,7 +122,8 @@
          id="ExternalToolBuilder"
          name="%Builder.externalTools"
          point="org.eclipse.core.resources.builders">
-      <builder>
+      <builder
+      	isConfigurable= "true">
          <run
                class="org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder">
          </run>
