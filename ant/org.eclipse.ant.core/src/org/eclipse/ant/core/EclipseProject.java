@@ -42,7 +42,7 @@ public Object createDataType(String typeName) throws BuildException {
 	// look in the predeclared types.  If found, do the super behavior.
 	// If its not found, look in the types defined in the plugin extension point.
 	Class c = (Class) getDataTypeDefinitions().get(typeName);
-	if (c != null)
+	if (c != null && c != EclipseProject.class)
 		return internalCreateDataType(typeName);
 	// check to see if the ant plugin is available.  If we are running from
 	// the command line (i.e., no platform) it will not be.
@@ -167,6 +167,18 @@ public void init() throws BuildException {
 	addDataTypeDefinition("commapatternset", CommaPatternSet.class);
 	addDataTypeDefinition("command", CommandDataType.class);
 	System.setProperty("ant.regexp.matcherimpl", "org.eclipse.ant.core.XercesRegexpMatcher");
+	// initialize the datatype table with marker values so that the table contains
+	// the keys (needed while parsing) but don't load the classes to prevent plugin activation.
+	if (AntPlugin.getPlugin() == null)
+		return;
+	Map types = AntPlugin.getPlugin().getTypeExtensions();
+	if (types == null)
+		return;
+	for (Iterator i = types.keySet().iterator(); i.hasNext();) {
+		String typeName = (String)i.next();
+		if (getDataTypeDefinitions().get(typeName) == null)
+			addDataTypeDefinition(typeName, EclipseProject.class);
+	}
 }
 
 public Object internalCreateDataType(String typeName) throws BuildException {
