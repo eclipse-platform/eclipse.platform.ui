@@ -106,6 +106,11 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
     private IOConsole console;
 	private boolean closeFired = false;
 	
+	/**
+	 * Lock for appending to and removing from the document - used
+	 * to synchronize addition of new text/partitions in the update
+	 * job and handling buffer overflow/clearing of the console. 
+	 */
 	private Object overflowLock = new Object();
 	
 	public IOConsolePartitioner(IOConsoleInputStream inputStream, IOConsole console) {
@@ -295,15 +300,29 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 * low water mark.
 	 */
 	private void checkBufferSize() {
+		int length = document.getLength();
+		if (length > highWaterMark) {
+		    trimBuffer(length - lowWaterMark);
+		}
+	}
+	
+	/**
+	 * Trims all text in the console up to the line containing
+	 * the given offset.
+	 * 
+	 * @param truncateOffset the offset up to which all preceeding lines
+	 *  will be removed
+	 */
+	private void trimBuffer(int truncateOffset) {
 		if (lastPartition == null || highWaterMark == -1 || document == null) {
 			return;
 		}
 		
 		int length = document.getLength();
-		if (length > highWaterMark) {
+		if (truncateOffset < length) {
 			synchronized (overflowLock) {
 				try {
-					int cutoffLine = document.getLineOfOffset(lowWaterMark);
+					int cutoffLine = document.getLineOfOffset(truncateOffset);
 					int cutOffset = document.getLineOffset(cutoffLine);
 					
 	    			Iterator iter = patterns.iterator();
@@ -349,7 +368,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				}  
 			}
 		}
-	}
+	}	
 	
 	/*
 	 * (non-Javadoc)
