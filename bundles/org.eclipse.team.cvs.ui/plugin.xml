@@ -113,6 +113,11 @@
 				label="%OpenRemoteFileAction.label"
 				tooltip="%OpenRemoteFileAction.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction"/>
+			<action 
+				id="org.eclipse.team.ccvs.ui.showHistory"
+				label="%ShowHistoryAction.label"
+				tooltip="%ShowHistoryAction.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"/>
 		</objectContribution>
 	</extension> 
 
@@ -159,6 +164,13 @@
 			name="%RepositoriesView.name"
 			category="org.eclipse.team.ccvs.ui"
 			class="org.eclipse.team.internal.ccvs.ui.RepositoriesView">
+		</view>
+		<view
+			id="org.eclipse.team.ccvs.ui.HistoryView"
+			icon="icons/full/cview16/history_view.gif"
+			name="%HistoryView.name"
+			category="org.eclipse.team.ccvs.ui"
+			class="org.eclipse.team.internal.ccvs.ui.HistoryView">
 		</view>
 	</extension>
 	
