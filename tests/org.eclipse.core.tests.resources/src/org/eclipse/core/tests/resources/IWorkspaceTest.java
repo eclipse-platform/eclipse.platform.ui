@@ -833,6 +833,7 @@ public void testValidateEdit() {
 }
 public void testValidateLinkLocation() {
 	//TODO
+	//see also: some tests in LinkedResourceWithPathVariableTest
 }
 /**
  * Performs black box testing of the following method:
