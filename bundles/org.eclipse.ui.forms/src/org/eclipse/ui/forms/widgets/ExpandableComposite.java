@@ -83,6 +83,13 @@ public class ExpandableComposite extends Composite {
 	 * If this style is used, title will not be rendered.
 	 */
 	public static final int NO_TITLE = 1 << 12;
+	
+	/**
+	 * By default, text client is right-aligned. If this
+	 * style is used, it will be positioned after the
+	 * text control and vertically centered with it.
+	 */
+	public static final int LEFT_TEXT_CLIENT_ALIGNMENT = 1 << 13;
 
 	/**
 	 * Width of the margin that will be added around the control (default is 0).
@@ -189,19 +196,36 @@ public class ExpandableComposite extends Composite {
 				GC gc = new GC(ExpandableComposite.this);
 				gc.setFont(getFont());
 				FontMetrics fm = gc.getFontMetrics();
-				int fontHeight = fm.getHeight();
+				int textHeight = fm.getHeight();
 				gc.dispose();
-				int ty = fontHeight / 2 - tsize.y / 2 + 1;
+				if (textClient!=null && (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT)!=0) {
+					textHeight = Math.max(textHeight, tcsize.y);
+				}
+				int ty = textHeight / 2 - tsize.y / 2 + 1;
 				ty = Math.max(ty, 0);
 				ty += marginHeight + tvmargin;
 				toggle.setLocation(x, ty);
 				toggle.setSize(tsize);
 				x += tsize.x + GAP;
 			}
-			if (textLabel != null)
-				textLabelCache.setBounds(x, y, size.x, size.y);
+			if (textLabel != null) {
+				int ty=y;
+				if (textClient!=null && (expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT)!=0) {
+					if (tsize.y< tcsize.y)
+						ty = tcsize.y/2 - tsize.y/2 + marginHeight + tvmargin;
+				}
+				textLabelCache.setBounds(x, ty, size.x, size.y);
+			}
 			if (textClient != null) {
-				int tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
+				int tcx, tcy;
+				if ((expansionStyle & LEFT_TEXT_CLIENT_ALIGNMENT)!=0) {
+					tcx = x + size.x + GAP;
+					tcy = y;
+				}
+				else {
+					tcx = clientArea.width - tcsize.x - marginWidth - thmargin;
+					tcy = y;
+				}
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
 			int tbarHeight = 0;
