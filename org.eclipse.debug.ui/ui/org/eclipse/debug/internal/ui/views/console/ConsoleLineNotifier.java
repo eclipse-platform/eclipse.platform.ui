@@ -134,11 +134,13 @@ public class ConsoleLineNotifier implements IDebugEventSetListener {
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getSource() == fConsole.getProcess() && event.getKind() == DebugEvent.TERMINATE) {
-				DebugPlugin.getDefault().removeDebugEventListener(this);
-				processNewLines();
+		if (fConsole != null) {
+			for (int i = 0; i < events.length; i++) {
+				DebugEvent event = events[i];
+				if (event.getSource() == fConsole.getProcess() && event.getKind() == DebugEvent.TERMINATE) {
+					DebugPlugin.getDefault().removeDebugEventListener(this);
+					processNewLines();
+				}
 			}
 		}
 	}
