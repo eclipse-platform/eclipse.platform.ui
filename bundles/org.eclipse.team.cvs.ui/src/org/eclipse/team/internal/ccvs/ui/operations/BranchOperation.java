@@ -19,10 +19,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.CVSWorkspaceSubscriber;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -103,7 +101,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 			makeBranch(provider, providerResources, rootVersionTag, branchTag, update, Policy.subMonitorFor(monitor, 90));										
 			updateRememberedTags(providerResources);
 			if (update) {
-				updateWorkspaceSubscriber(provider, Policy.subMonitorFor(monitor, 10));
+				updateWorkspaceSubscriber(provider, getCVSArguments(providerResources), Policy.subMonitorFor(monitor, 10));
 			}
 			collectStatus(Status.OK_STATUS);
 		} catch (TeamException e) {
@@ -248,14 +246,6 @@ public class BranchOperation extends RepositoryProviderOperation {
 				}
 			}
 		}
-	}
-
-	/*
-	 * Update the workspace subscriber by flushin any cahced remote bytes
-	 */
-	private void updateWorkspaceSubscriber(CVSTeamProvider provider, IProgressMonitor monitor) throws TeamException {
-		CVSWorkspaceSubscriber s = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-		s.updateRemote(provider, monitor);
 	}
 	
 	/* (non-Javadoc)

@@ -16,9 +16,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -154,6 +157,34 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	protected ICVSFolder getLocalRoot(CVSTeamProvider provider) throws CVSException {
 		CVSWorkspaceRoot workspaceRoot = provider.getCVSWorkspaceRoot();
 		return workspaceRoot.getLocalRoot();
+	}
+
+	/**
+	 * Update the workspace subscriber for an update operation performed on the 
+	 * given resources. After an update, the remote tree is flushed in order
+	 * to ensure that stale incoming additions are removed. This need only
+	 * be done for folders. At the time of writting, all update operations
+	 * are deep so the flush is deep as well.
+	 * @param provider the provider (projedct) for all the given resources
+	 * @param resources the resources that were updated
+	 * @param monitor a progress monitor
+	 */
+	protected void updateWorkspaceSubscriber(CVSTeamProvider provider, ICVSResource[] resources, IProgressMonitor monitor) {
+		CVSWorkspaceSubscriber s = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+		monitor.beginTask(null, 100 * resources.length);
+		for (int i = 0; i < resources.length; i++) {
+			ICVSResource resource = resources[i];
+			if (resource.isFolder()) {
+				try {
+					s.updateRemote(provider, (ICVSFolder)resource, Policy.subMonitorFor(monitor, 100));
+				} catch (TeamException e) {
+					// Just log the error and continue
+					CVSUIPlugin.log(e);
+				}
+			} else {
+				monitor.worked(100);
+			}
+		}
 	}
 	
 }

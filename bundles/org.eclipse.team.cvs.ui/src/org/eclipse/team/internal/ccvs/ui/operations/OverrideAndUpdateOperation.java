@@ -43,9 +43,9 @@ public class OverrideAndUpdateOperation extends ReplaceOperation {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation#updateWorkspaceSubscriber(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation#updateWorkspaceSubscriber(org.eclipse.team.internal.ccvs.core.CVSTeamProvider, org.eclipse.team.internal.ccvs.core.ICVSResource[], org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void updateWorkspaceSubscriber(CVSTeamProvider provider, IProgressMonitor monitor) {
+	protected void updateWorkspaceSubscriber(CVSTeamProvider provider, ICVSResource[] resources, IProgressMonitor monitor) {
 		// No need to update the workspace subscriber since we know this operation will do it properly by itself
 	}
 

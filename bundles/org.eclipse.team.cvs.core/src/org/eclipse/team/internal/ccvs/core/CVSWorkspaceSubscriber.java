@@ -153,10 +153,10 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		fireTeamResourceChange(new SubscriberChangeEvent[] {delta});
 	}
 
-	public void setRemote(IProject project, IResourceVariant remote, IProgressMonitor monitor) throws TeamException {
+	public void setRemote(IResource resource, IResourceVariant remote, IProgressMonitor monitor) throws TeamException {
 		// TODO: This exposes internal behavior to much
 		IResource[] changedResources = 
-			((CVSResourceVariantTree)getRemoteTree()).collectChanges(project, remote, IResource.DEPTH_INFINITE, monitor);
+			((CVSResourceVariantTree)getRemoteTree()).collectChanges(resource, remote, IResource.DEPTH_INFINITE, monitor);
 		if (changedResources.length != 0) {
 			fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, changedResources));
 		}
@@ -260,16 +260,23 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 
 	/**
 	 * Update the remote tree to the base
+	 * @param folder
 	 */
-	public void updateRemote(CVSTeamProvider provider, IProgressMonitor monitor) throws TeamException {
-		monitor.beginTask(null, 100);
-		ICVSResource tree = RemoteFolderTreeBuilder.buildBaseTree(
-				(CVSRepositoryLocation)provider.getRemoteLocation(), 
-				provider.getCVSWorkspaceRoot().getLocalRoot(), 
-				null, 
-				Policy.subMonitorFor(monitor, 50));
-		setRemote(provider.getProject(), (IResourceVariant)tree, Policy.subMonitorFor(monitor, 50));
-		monitor.done();
+	public void updateRemote(CVSTeamProvider provider, ICVSFolder folder, IProgressMonitor monitor) throws TeamException {
+		try {
+			monitor.beginTask(null, 100);
+			IResource resource = folder.getIResource();
+			if (resource != null) {
+				ICVSResource tree = RemoteFolderTreeBuilder.buildBaseTree(
+						(CVSRepositoryLocation)provider.getRemoteLocation(), 
+						folder, 
+						null, 
+						Policy.subMonitorFor(monitor, 50));
+				setRemote(resource, (IResourceVariant)tree, Policy.subMonitorFor(monitor, 50));
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 
 }

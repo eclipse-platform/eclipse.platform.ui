@@ -10,17 +10,23 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -78,7 +84,7 @@ public class UpdateOperation extends SingleCommandOperation {
 				getCommandOutputListener(),
 				Policy.subMonitorFor(monitor, 95));
 			
-			updateWorkspaceSubscriber(provider, Policy.subMonitorFor(monitor, 5));
+			updateWorkspaceSubscriber(provider, resources, Policy.subMonitorFor(monitor, 5));
 			monitor.done();
 			return execute;
 	}
@@ -135,18 +141,5 @@ public class UpdateOperation extends SingleCommandOperation {
 	 */
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
 		return Policy.bind("UpdateAction.update"); //$NON-NLS-1$
-	}
-	
-	/*
-	 * Update the workspace subscriber by flushing any cached remote bytes
-	 */
-	protected void updateWorkspaceSubscriber(CVSTeamProvider provider, IProgressMonitor monitor) {
-		CVSWorkspaceSubscriber s = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
-		try {
-			s.updateRemote(provider, monitor);
-		} catch (TeamException e) {
-			// Just log the error and continue
-			CVSUIPlugin.log(e);
-		}
 	}
 }
