@@ -10,6 +10,7 @@ import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.actions.NewWizardAction;
@@ -428,6 +429,7 @@ private void makeActions() {
 	
 	selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$
 	selectAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
+	selectAllAction.setAccelerator(SWT.CONTROL,'a');
 	partService.addPartListener(selectAllAction);
 
 	findAction = new RetargetAction(IWorkbenchActionConstants.FIND, WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
@@ -435,6 +437,7 @@ private void makeActions() {
 	findAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
 	findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
 	findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
+	findAction.setAccelerator(SWT.CONTROL,'f');
 	partService.addPartListener(findAction);
 	
 	closeAction = new CloseEditorAction(window);

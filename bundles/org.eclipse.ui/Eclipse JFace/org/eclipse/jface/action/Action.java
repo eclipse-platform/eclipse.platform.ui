@@ -575,7 +575,7 @@ public void setAccelerator(int keycode) {
  * @param char - the character modifying the control code
  */
 public void setAccelerator(int controlCode, char modifier){
-	setAccelerator(controlCode | Character.getNumericValue(modifier));
+	setAccelerator(controlCode | modifier);
 }
 
 }
