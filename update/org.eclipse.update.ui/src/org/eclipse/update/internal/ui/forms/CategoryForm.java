@@ -47,9 +47,10 @@ protected void createContents(Composite parent) {
 	parent.setLayout(layout);
 	layout.leftMargin = layout.rightMargin = 10;
 	layout.topMargin = 10;
-	layout.horizontalSpacing = 0;
 	layout.verticalSpacing = 20;
 	layout.numColumns = 1;
+	// defect 17123
+	//layout.horizontalSpacing = 0;
 	
 	FormWidgetFactory factory = getFactory();
 	textLabel = factory.createLabel(parent, null, SWT.WRAP);
@@ -86,8 +87,9 @@ public void expandTo(Object obj) {
 		inputChanged((SiteCategory)obj);
 	}
 }
-
-private void inputChanged(SiteCategory category) {
+//
+// Defect 17123 - commented out this implementation of inputChanged(...)
+/*private void inputChanged(SiteCategory category) {
 	setHeadingText(category.getCategory().getLabel());
 	IURLEntry info = category.getCategory().getDescription();
 	if (info!=null) {
@@ -102,6 +104,32 @@ private void inputChanged(SiteCategory category) {
 		textLabel.setText("");
 		link.setVisible(false);
 	}
+	textLabel.getParent().layout();
+	((Composite)getControl()).layout();
+	getControl().redraw();
+	currentCategory = category;
+}*/
+
+// defect 17123: new implementation of inputChanged(...)
+private void inputChanged(SiteCategory category) {
+	setHeadingText(category.getCategory().getLabel());
+	IURLEntry info = category.getCategory().getDescription();
+	String text = null;
+	if (info != null) {
+		text = info.getAnnotation();
+		if (text != null) {
+			Composite parent = textLabel.getParent();
+			textLabel.dispose();
+			parent.layout();
+			textLabel = getFactory().createLabel(parent,text,SWT.WRAP);
+			link.setVisible(info.getURL()!= null);
+		}
+	}
+	if (text == null) {
+	 textLabel.setText("");
+	 link.setVisible(false);
+	}
+	
 	textLabel.getParent().layout();
 	((Composite)getControl()).layout();
 	getControl().redraw();
