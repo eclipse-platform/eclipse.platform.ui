@@ -34,6 +34,8 @@ public abstract class AbstractScope implements IScopeContext {
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getNode(java.lang.String)
 	 */
 	public IEclipsePreferences getNode(String qualifier) {
+		if (qualifier == null)
+			throw new IllegalArgumentException();
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(getName()).node(qualifier);
 	}
 
