@@ -31,6 +31,8 @@ public class FormTextModel {
 	private IHyperlinkSegment[] hyperlinks;
 
 	private int selectedLinkIndex = -1;
+	
+	private int savedSelectedLinkIndex = -1;
 
 	private HyperlinkSettings hyperlinkSettings;
 
@@ -506,6 +508,7 @@ public class FormTextModel {
 			paragraphs = new Vector();
 		paragraphs.clear();
 		selectedLinkIndex = -1;
+		savedSelectedLinkIndex = -1;
 		hyperlinks = null;
 	}
 
@@ -583,10 +586,21 @@ public class FormTextModel {
 		}
 		return selectedLinkIndex != -1;
 	}
+	
+	public boolean restoreSavedLink() {
+		if (savedSelectedLinkIndex!= -1) {
+			selectedLinkIndex = savedSelectedLinkIndex;
+			return true;
+		}
+		else
+			return false;
+	}
 
 	public void selectLink(IHyperlinkSegment link) {
-		if (link == null)
+		if (link == null) {
+			savedSelectedLinkIndex = selectedLinkIndex;	
 			selectedLinkIndex = -1;
+		}
 		else {
 			IHyperlinkSegment[] links = getHyperlinks();
 			selectedLinkIndex = -1;
@@ -611,6 +625,7 @@ public class FormTextModel {
 	public void dispose() {
 		paragraphs = null;
 		selectedLinkIndex = -1;
+		savedSelectedLinkIndex = -1;
 		hyperlinks = null;
 	}
 

@@ -1057,7 +1057,8 @@ public final class FormText extends Canvas {
 
 	private void handleFocusChange() {
 		if (hasFocus) {
-			if (model.getSelectedLink() == null)
+			//if (model.getSelectedLink() == null)
+			if (model.restoreSavedLink()==false)
 				model.traverseLinks(true);
 			enterLink(model.getSelectedLink(), SWT.NULL);
 			paintFocusTransfer(null, model.getSelectedLink());
@@ -1102,10 +1103,10 @@ public final class FormText extends Canvas {
 		boolean selected = (link == model.getSelectedLink());
 		((ParagraphSegment) link).paint(gc, hover, resourceTable, selected,
 				selData, null);
-		if (selected) {
-			link.paintFocus(gc, getBackground(), getForeground(), false, null);
-			link.paintFocus(gc, getBackground(), getForeground(), true, null);
-		}
+		//if (selected) {
+			//link.paintFocus(gc, getBackground(), getForeground(), false, null);
+			//link.paintFocus(gc, getBackground(), getForeground(), true, null);
+		//}
 		gc.dispose();
 	}
 

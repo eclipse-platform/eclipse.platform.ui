@@ -387,8 +387,15 @@ public class TextSegment extends ParagraphSegment {
 			int lineY = rect.y + lineHeight - descent + 1;
 			paintString(gc, text, extent.x, textX, rect.y, lineY, selData,
 					rect, hover, rollover, repaintRegion);
-			if (selected)
-				gc.drawFocus(rect.x, rect.y, rect.width, rect.height);
+			if (selected) {
+				int fx = rect.x;
+				int fy = rect.y;
+				if (repaintRegion != null) {
+					fx -= repaintRegion.x;
+					fy -= repaintRegion.y;
+				}				
+				gc.drawFocus(fx, fy, rect.width, rect.height);
+			}
 		}
 		// restore GC resources
 		if (oldFont != null) {

@@ -427,4 +427,14 @@ public class FormUtil {
 		}
 		return new Font(display, fontDatas);
 	}
+	public static void recursiveSetMenu(Control control, Menu menu) {
+		control.setMenu(menu);
+		if (control instanceof Composite) {
+			Composite parent = (Composite)control;
+			Control [] children = parent.getChildren();
+			for (int i=0; i<children.length; i++) {
+				recursiveSetMenu(children[i], menu);
+			}
+		}
+	}
 }
