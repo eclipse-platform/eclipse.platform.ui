@@ -125,25 +125,12 @@ public class WorkbenchActivityHelper {
     private WorkbenchActivityHelper() {
         loadEnabledStates();
 
-        // TODO start enables all activities by default unless command line
-		// parameter -activities is specified
-
-        String[] commandLineArgs = Platform.getCommandLineArgs();
-        boolean activities = false;
-
-        for (int i = 0; i < commandLineArgs.length; i++)
-            if (commandLineArgs[i].equalsIgnoreCase("-activities")) { //$NON-NLS-1$
-                activities = true;
-                break;
-            }
-
-        if (!activities) {
+        boolean noRoles = PlatformUI.getWorkbench().getRoleManager().getDefinedRoleIds().isEmpty();
+        
+        if (noRoles) {
             IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
             activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
         }
-
-        // TODO end enables all activities by default unless command line
-		// parameter -activities is specified
 
         createPreferenceMappings();
         createNewWizardMappings();
