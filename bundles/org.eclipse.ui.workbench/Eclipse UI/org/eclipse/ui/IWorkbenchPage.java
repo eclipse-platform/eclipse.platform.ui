@@ -670,4 +670,6 @@ public void setEditorReuseThreshold(int openEditors);
  * @since 2.1
  */
 public INavigationHistory getNavigationHistory();
+
+//IContextActivationService getContextActivationService();
 }

@@ -24,12 +24,12 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  */
-public interface IContextServiceListener {
+public interface IContextActivationServiceListener {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param contextServiceEvent
+	 * @param contextActivationServiceEvent
 	 */	
-	void contextServiceChanged(IContextServiceEvent contextServiceEvent);
+	void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent);
 }

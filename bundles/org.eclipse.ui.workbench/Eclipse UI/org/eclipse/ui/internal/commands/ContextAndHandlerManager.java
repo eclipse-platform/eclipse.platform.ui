@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -47,12 +47,14 @@ import org.eclipse.ui.commands.HandlerServiceEvent;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IHandlerService;
 import org.eclipse.ui.commands.IHandlerServiceListener;
-import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.contexts.IContextServiceEvent;
-import org.eclipse.ui.contexts.IContextServiceListener;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.contexts.IContextManagerEvent;
+import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.commands.registry.ContextBinding;
 import org.eclipse.ui.internal.commands.registry.CoreRegistry;
@@ -68,15 +70,15 @@ public class ContextAndHandlerManager implements IContextResolver {
 
 	private final StatusLineContributionItem modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
-	private final IContextServiceListener contextServiceListener = new IContextServiceListener() {
-		public void contextServiceChanged(IContextServiceEvent contextServiceEvent) {
-			ContextAndHandlerManager.this.contextServiceChanged();
+	private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
+		public void contextManagerChanged(IContextManagerEvent contextManagerEvent) {
+			update();
 		}
-	};	
+	};
 
 	private final IHandlerServiceListener handlerServiceListener = new IHandlerServiceListener() {
 		public void handlerServiceChanged(HandlerServiceEvent handlerServiceEvent) {
-			ContextAndHandlerManager.this.handlerServiceChanged();
+			update();
 		}
 	};
 
@@ -119,23 +121,23 @@ public class ContextAndHandlerManager implements IContextResolver {
 	};
 
 	private AcceleratorMenu acceleratorMenu;		
-	//private IContextService activeWorkbenchPageContextService;
-	//private IHandlerService activeWorkbenchPageHandlerService;
-	private IContextService activeWorkbenchPartContextService;
+	private IContextActivationService activeWorkbenchPartContextService;
 	private IHandlerService activeWorkbenchPartHandlerService;
 	private WorkbenchWindow workbenchWindow;
-	private IContextService workbenchWindowContextService;
+	private IContextActivationService workbenchWindowContextService;
 	private IHandlerService workbenchWindowHandlerService;
 	private Map contextsByCommand;
+	private IContextManager contextManager;
 
 	public ContextAndHandlerManager(WorkbenchWindow workbenchWindow) {
 		super();
 		this.workbenchWindow = workbenchWindow;	
-		workbenchWindow.getStatusLineManager().add(modeContributionItem);							
-		workbenchWindowContextService = ((WorkbenchWindow) workbenchWindow).getContextService();
-		workbenchWindowContextService.addContextServiceListener(contextServiceListener);
+		IWorkbench workbench = workbenchWindow.getWorkbench();
+		contextManager = ((Workbench) workbench).getContextManager(); // TODO temporary cast
+		contextManager.addContextManagerListener(contextManagerListener);		
 		workbenchWindowHandlerService = ((WorkbenchWindow) workbenchWindow).getHandlerService();
 		workbenchWindowHandlerService.addHandlerServiceListener(handlerServiceListener);
+		workbenchWindow.getStatusLineManager().add(modeContributionItem);							
 		reset();
 
 		this.workbenchWindow.addPageListener(new IPageListener() {			
@@ -162,16 +164,8 @@ public class ContextAndHandlerManager implements IContextResolver {
 		partEvent();
 	}
 
-	private void contextServiceChanged() {
-		update();
-	}	
-
-	private void handlerServiceChanged() {
-		update();
-	}
-
 	private void partEvent() {
-		IContextService activeWorkbenchPartContextService = null;
+		IContextActivationService activeWorkbenchPartContextService = null;
 		IHandlerService activeWorkbenchPartHandlerService = null;
 		IWorkbenchPage activeWorkbenchPage = workbenchWindow.getActivePage();
 	 
@@ -182,26 +176,12 @@ public class ContextAndHandlerManager implements IContextResolver {
 				IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart.getSite();
 			
 				if (activeWorkbenchPartSite != null) {
-					activeWorkbenchPartContextService = ((PartSite) activeWorkbenchPartSite).getContextService();
+					activeWorkbenchPartContextService = ((PartSite) activeWorkbenchPartSite).getContextActivationService();
 					activeWorkbenchPartHandlerService = ((PartSite) activeWorkbenchPartSite).getHandlerService();
 				}
 			}
 		}
 
-		boolean updateRequired = false;
-
-		if (this.activeWorkbenchPartContextService != activeWorkbenchPartContextService) {
-			if (this.activeWorkbenchPartContextService != null)
-				this.activeWorkbenchPartContextService.removeContextServiceListener(contextServiceListener);				
-			
-			this.activeWorkbenchPartContextService = activeWorkbenchPartContextService;
-			
-			if (this.activeWorkbenchPartContextService != null)
-				this.activeWorkbenchPartContextService.addContextServiceListener(contextServiceListener);
-				
-			updateRequired = true;				
-		}
-				
 		if (this.activeWorkbenchPartHandlerService != activeWorkbenchPartHandlerService) {
 			if (this.activeWorkbenchPartHandlerService != null)
 				this.activeWorkbenchPartHandlerService.removeHandlerServiceListener(handlerServiceListener);				
@@ -211,11 +191,8 @@ public class ContextAndHandlerManager implements IContextResolver {
 			if (this.activeWorkbenchPartHandlerService != null)
 				this.activeWorkbenchPartHandlerService.addHandlerServiceListener(handlerServiceListener);
 				
-			updateRequired = true;				
+			update();				
 		}
-		
-		if (updateRequired)
-			update();
 	}
 
 	private void shellEvent() {
@@ -283,14 +260,9 @@ public class ContextAndHandlerManager implements IContextResolver {
 	}
 
 	public void update() {
-		List contexts = new ArrayList();
-		
-		if (workbenchWindowContextService != null)
-			contexts.addAll(Arrays.asList(workbenchWindowContextService.getActiveContextIds()));
-
-		if (activeWorkbenchPartContextService != null)
-			contexts.addAll(Arrays.asList(activeWorkbenchPartContextService.getActiveContextIds()));
-
+		SortedSet activeContextIds = contextManager.getActiveContextIds();
+		List contexts = new ArrayList(activeContextIds);
+		// TODO: these should be sorted somehow
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 			
 		try {
@@ -388,6 +360,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 			Set set = (Set) contextsByCommand.get(commandId);
 		
 			if (set != null) {
+				/*
 				if (activeWorkbenchPartContextService != null) {
 					List contexts = Arrays.asList(activeWorkbenchPartContextService.getActiveContextIds());
 
@@ -427,6 +400,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 						}
 					}
 				}
+				*/
 
 				return false;				
 			}

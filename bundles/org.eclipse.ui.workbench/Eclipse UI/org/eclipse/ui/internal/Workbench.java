@@ -21,6 +21,8 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IContainer;
@@ -86,6 +88,8 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
@@ -103,6 +107,12 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationServiceEvent;
+import org.eclipse.ui.contexts.IContextActivationServiceListener;
+import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.internal.contexts.ContextActivationService;
+import org.eclipse.ui.internal.contexts.ContextManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -143,17 +153,183 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private static final int RESTORE_CODE_RESET = 1;
 	private static final int RESTORE_CODE_EXIT = 2;
 	protected static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.dialogs.WelcomeEditor"; //$NON-NLS-1$
-
+	
 	/**
 	 * Workbench constructor comment.
 	 */
 	public Workbench() {
 		super();
 		WorkbenchPlugin.getDefault().setWorkbench(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-			getShowTasksChangeListener(),
-			IResourceChangeEvent.POST_CHANGE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(getShowTasksChangeListener(), IResourceChangeEvent.POST_CHANGE);
+		initializeContexts();
 	}
+
+
+	/* begin context support */
+
+
+	private IContextActivationServiceListener contextActivationServiceListener = new IContextActivationServiceListener() {
+		public void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent) {
+			updateContexts();
+		}
+	}; 
+	
+	private IInternalPerspectiveListener internalPerspectiveListener = new IInternalPerspectiveListener() {
+		public void perspectiveActivated(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor) {
+			updateContexts();
+		}
+
+		public void perspectiveChanged(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
+			updateContexts();
+		}
+		
+		public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			updateContexts();
+		}
+
+		public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			updateContexts();				
+		}		
+	};
+
+	private IPageListener pageListener = new IPageListener() {
+		public void pageActivated(IWorkbenchPage workbenchPage) {
+			updateContexts();
+		}
+			
+		public void pageClosed(IWorkbenchPage workbenchPage) {
+			updateContexts();
+		}
+			
+		public void pageOpened(IWorkbenchPage workbenchPage) {
+			updateContexts();
+		}				
+	};
+
+	private IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart workbenchPart) {
+			updateContexts();
+		}
+		
+		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
+		}
+		
+		public void partClosed(IWorkbenchPart workbenchPart) {
+			updateContexts();
+		}
+		
+		public void partDeactivated(IWorkbenchPart workbenchPart) {
+			updateContexts();
+		}
+		
+		public void partOpened(IWorkbenchPart workbenchPart) {
+			updateContexts();
+		}
+	};
+				
+	private IWindowListener windowListener = new IWindowListener() {
+		public void windowActivated(IWorkbenchWindow workbenchWindow) {
+			updateContexts();
+		}
+
+		public void windowClosed(IWorkbenchWindow workbenchWindow) {
+			updateContexts();
+		}
+			
+		public void windowDeactivated(IWorkbenchWindow workbenchWindow) {
+			updateContexts();				
+		}
+			
+		public void windowOpened(IWorkbenchWindow workbenchWindow) {
+			updateContexts();				
+		}
+	};
+
+	private IWorkbenchWindow activeWorkbenchWindow;
+	private	IWorkbenchPage activeWorkbenchPage;
+	private	IContextActivationService activeWorkbenchPageContextActivationService;
+	private	IWorkbenchPart activeWorkbenchPart;;
+	private	IContextActivationService activeWorkbenchPartContextActivationService;
+	private IContextActivationService contextActivationService;
+	private IContextManager contextManager;
+		
+	public IContextActivationService getContextActivationService() {
+		if (contextActivationService == null) {
+			contextActivationService = new ContextActivationService();
+			contextActivationService.addContextActivationServiceListener(contextActivationServiceListener);
+		}
+		
+		return contextActivationService;
+	}
+
+	public IContextManager getContextManager() {
+		return contextManager;
+	}
+	
+	private void initializeContexts() {
+		contextManager = new ContextManager();
+		addWindowListener(windowListener);
+		updateContexts();
+	}
+	
+	private void updateContexts() {
+		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
+		IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow != null ? activeWorkbenchWindow.getActivePage() : null;
+		IContextActivationService activeWorkbenchPageContextActivationService = (activeWorkbenchPage != null) ? ((WorkbenchPage) activeWorkbenchPage).getContextActivationService() : null;
+		IWorkbenchPart activeWorkbenchPart = activeWorkbenchWindow != null ? activeWorkbenchWindow.getPartService().getActivePart() : null;
+		IContextActivationService activeWorkbenchPartContextActivationService = (activeWorkbenchPart != null) ? ((PartSite) activeWorkbenchPart.getSite()).getContextActivationService() : null;
+
+		if (activeWorkbenchWindow != this.activeWorkbenchWindow) {
+			if (this.activeWorkbenchWindow != null) {
+				this.activeWorkbenchWindow.removePageListener(pageListener); 
+				this.activeWorkbenchWindow.getPartService().removePartListener(partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow).getPerspectiveService().removePerspectiveListener(internalPerspectiveListener);
+			}
+					
+			this.activeWorkbenchWindow = activeWorkbenchWindow;
+					
+			if (this.activeWorkbenchWindow != null) {
+				this.activeWorkbenchWindow.addPageListener(pageListener); 
+				this.activeWorkbenchWindow.getPartService().addPartListener(partListener);
+				((WorkbenchWindow) this.activeWorkbenchWindow).getPerspectiveService().addPerspectiveListener(internalPerspectiveListener);					
+			}			
+		}
+
+		if (activeWorkbenchPageContextActivationService != this.activeWorkbenchPageContextActivationService) {
+			if (this.activeWorkbenchPage != null)
+				((WorkbenchPage) this.activeWorkbenchPage).getContextActivationService().removeContextActivationServiceListener(contextActivationServiceListener);
+					
+			this.activeWorkbenchPage = activeWorkbenchPage;
+
+			if (this.activeWorkbenchPage != null)
+				((WorkbenchPage) this.activeWorkbenchPage).getContextActivationService().addContextActivationServiceListener(contextActivationServiceListener);
+		}
+
+		if (activeWorkbenchPartContextActivationService != this.activeWorkbenchPartContextActivationService) {
+			if (this.activeWorkbenchPart != null)
+				((PartSite) this.activeWorkbenchPart.getSite()).getContextActivationService().removeContextActivationServiceListener(contextActivationServiceListener);
+					
+			this.activeWorkbenchPart = activeWorkbenchPart;
+
+			if (this.activeWorkbenchPart != null)
+				((PartSite) this.activeWorkbenchPart.getSite()).getContextActivationService().addContextActivationServiceListener(contextActivationServiceListener);
+		}
+		
+		SortedSet activeContextIds = new TreeSet();
+		activeContextIds.addAll(getContextActivationService().getActiveContextIds());
+		
+		if (activeWorkbenchPageContextActivationService != null)
+			activeContextIds.addAll(activeWorkbenchPageContextActivationService.getActiveContextIds());
+
+		if (activeWorkbenchPartContextActivationService != null)
+			activeContextIds.addAll(activeWorkbenchPartContextActivationService.getActiveContextIds());
+			
+		((ContextManager) getContextManager()).setActiveContextIds(activeContextIds);
+	}
+	
+	
+	/* end context support */
+	
 	
 	// TODO: The code for bringing the problem view to front must be moved 
 	// to org.eclipse.ui.views.

@@ -311,4 +311,6 @@ public IDecoratorManager getDecoratorManager();
  * @return boolean false if the operation was cancelled.
  */
 public boolean saveAllEditors(boolean confirm);
+
+//IContextActivationService getContextActivationService();
 }

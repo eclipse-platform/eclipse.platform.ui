@@ -147,8 +147,4 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @param page the new active page
  */
 public void setActivePage(IWorkbenchPage page);
-
-//public IActionService getActionService();
-
-//public IContextService getContextService();
 }

@@ -26,47 +26,48 @@ import java.util.SortedSet;
  * 
  * @since 3.0
  */
-public interface IContextManager {
+public interface IContextActivationService {
 
 	/**
-	 * Registers an IContextManagerListener instance with this context manager.
+	 * TODO javadoc
 	 *
-	 * @param contextManagerListener the IContextManagerListener instance to register.
+	 * @param contextId
 	 * @throws IllegalArgumentException
 	 */	
-	void addContextManagerListener(IContextManagerListener contextManagerListener)
+	void activateContext(String contextId)
 		throws IllegalArgumentException;
 
+	/**
+	 * Registers an IContextActivationServiceListener instance with this context activation service.
+	 *
+	 * @param contextActivationServiceListener the IContextActivationServiceListener instance to register.
+	 * @throws IllegalArgumentException
+	 */	
+	void addContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener)
+		throws IllegalArgumentException;
+
+	/**
+	 * TODO javadoc
+	 *
+	 * @param contextId
+	 * @throws IllegalArgumentException
+	 */	
+	void deactivateContext(String contextId)
+		throws IllegalArgumentException;
+		
 	/**
 	 * TODO javadoc
 	 *
 	 * @return
 	 */
 	SortedSet getActiveContextIds();
-
-	/**
-	 * TODO javadoc
-	 *
-	 * @param contextId
-	 * @return
-	 * @throws IllegalArgumentException
-	 */	
-	IContext getContext(String contextId)
-		throws IllegalArgumentException;
-
-	/**
-	 * TODO javadoc
-	 *
-	 * @return
-	 */
-	SortedSet getDefinedContextIds();
 	
 	/**
-	 * Unregisters an IContextManagerListener instance with this context manager.
+	 * Unregisters an IContextActivationServiceListener instance with this context activation services.
 	 *
-	 * @param contextManagerListener the IContextManagerListener instance to unregister.
+	 * @param contextActivationServiceListener the IContextActivationServiceListener instance to unregister.
 	 * @throws IllegalArgumentException
 	 */
-	void removeContextManagerListener(IContextManagerListener contextManagerListener)
+	void removeContextActivationServiceListener(IContextActivationServiceListener contextActivationServiceListener)
 		throws IllegalArgumentException;
 }

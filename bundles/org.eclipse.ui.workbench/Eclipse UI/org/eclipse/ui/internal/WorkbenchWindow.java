@@ -82,7 +82,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.IHandlerService;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.ContextAndHandlerManager;
@@ -91,7 +90,6 @@ import org.eclipse.ui.internal.commands.SequenceMachine;
 import org.eclipse.ui.internal.commands.SimpleHandlerService;
 import org.eclipse.ui.internal.commands.util.Sequence;
 import org.eclipse.ui.internal.commands.util.Stroke;
-import org.eclipse.ui.internal.contexts.SimpleContextService;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -108,7 +106,6 @@ public class WorkbenchWindow
 	implements IWorkbenchWindow {
 
 	private ContextAndHandlerManager contextAndHandlerManager;
-	private IContextService contextService;
 	private IHandlerService handlerService;
 	private int number;
 	private Workbench workbench;
@@ -425,13 +422,6 @@ public class WorkbenchWindow
 	void updateContextAndHandlerManager() {
 		if (contextAndHandlerManager != null)
 			contextAndHandlerManager.update();
-	}
-
-	public IContextService getContextService() {
-		if (contextService == null)
-			contextService = new SimpleContextService();
-
-		return contextService;
 	}
 
 	public IHandlerService getHandlerService() {
@@ -1208,7 +1198,7 @@ public class WorkbenchWindow
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService = new KeyBindingService(getContextService(), getHandlerService());
+			keyBindingService = new KeyBindingService(workbench.getContextActivationService(), getHandlerService());
 			updateActiveActions();
 		}
 

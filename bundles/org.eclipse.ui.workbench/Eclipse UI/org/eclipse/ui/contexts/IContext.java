@@ -16,7 +16,7 @@ package org.eclipse.ui.contexts;
  * TODO javadoc
  * </p>
  * <p>
- * This interface is not intended to be implemented or extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -30,14 +30,16 @@ public interface IContext {
 	 * Registers an IContextListener instance with this context.
 	 *
 	 * @param contextListener the IContextListener instance to register.
+	 * @throws IllegalArgumentException
 	 */	
-	void addContextListener(IContextListener contextListener);
-		
+	void addContextListener(IContextListener contextListener)
+		throws IllegalArgumentException;
+
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
-	 * @throws Exception
+	 * @throws NotDefinedException
 	 */	
 	String getDescription()
 		throws NotDefinedException;
@@ -53,7 +55,7 @@ public interface IContext {
 	 * TODO javadoc
 	 * 
 	 * @return
-	 * @throws Exception
+	 * @throws NotDefinedException
 	 */	
 	String getName()
 		throws NotDefinedException;	
@@ -62,7 +64,7 @@ public interface IContext {
 	 * TODO javadoc
 	 * 
 	 * @return
-	 * @throws Exception
+	 * @throws NotDefinedException
 	 */	
 	String getParentId()
 		throws NotDefinedException;
@@ -71,7 +73,7 @@ public interface IContext {
 	 * TODO javadoc
 	 * 
 	 * @return
-	 * @throws Exception
+	 * @throws NotDefinedException
 	 */	
 	String getPluginId()
 		throws NotDefinedException;
@@ -81,8 +83,7 @@ public interface IContext {
 	 * 
 	 * @return
 	 */	
-	boolean isActive()
-		throws NotDefinedException;
+	boolean isActive();
 
 	/**
 	 * TODO javadoc
@@ -90,11 +91,13 @@ public interface IContext {
 	 * @return
 	 */	
 	boolean isDefined();
-
+	
 	/**
 	 * Unregisters an IContextListener instance with this context.
 	 *
 	 * @param contextListener the IContextListener instance to unregister.
+	 * @throws IllegalArgumentException
 	 */
-	void removeContextListener(IContextListener contextListener);
+	void removeContextListener(IContextListener contextListener)
+		throws IllegalArgumentException;
 }
