@@ -59,7 +59,7 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * for the given tag. If repositoryRelativePath is null, the resulting remote
 	 * folder represents the root of the repository. If tag is null, the HEAD trunk is assumed
 	 */
-	public IRemoteFolder getRemoteFolder(IPath repositoryRelativePath, String tag)  throws CVSException;
+	public ICVSRemoteFolder getRemoteFolder(IPath repositoryRelativePath, String tag)  throws CVSException;
 	
 	/**
 	 * Return the conection timeout value in milliseconds.

@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
@@ -21,13 +21,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * An editor input for a file in a repository.
  */
 public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorInput {
-	private IRemoteFile file;
+	private ICVSRemoteFile file;
 	private IStorage storage;
 
 	/**
 	 * Creates FileEditionEditorInput on the given file.
 	 */
-	public RemoteFileEditorInput(IRemoteFile file) {
+	public RemoteFileEditorInput(ICVSRemoteFile file) {
 		this.file = file;
 	}
 	/**

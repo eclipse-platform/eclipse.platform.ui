@@ -7,7 +7,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.PlatformUI;
@@ -23,15 +23,15 @@ public class RemoteFileElement extends RemoteResourceElement {
 	 * Initial implementation: return null.
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		if (!(object instanceof IRemoteFile)) return null;
-		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(((IRemoteFile)object).getName());
+		if (!(object instanceof ICVSRemoteFile)) return null;
+		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(((ICVSRemoteFile)object).getName());
 	}
 	/**
 	 * Initial implementation: return the file's name and version
 	 */
 	public String getLabel(Object o) {
-		if (!(o instanceof IRemoteFile)) return null;
-		IRemoteFile file = (IRemoteFile)o;
+		if (!(o instanceof ICVSRemoteFile)) return null;
+		ICVSRemoteFile file = (ICVSRemoteFile)o;
 		try {
 			return file.getName() + " " + file.getRevision();
 		} catch (TeamException e) {

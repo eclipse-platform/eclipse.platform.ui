@@ -25,8 +25,8 @@ import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
-import org.eclipse.team.ccvs.core.IRemoteFolder;
-import org.eclipse.team.ccvs.core.IRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
@@ -203,10 +203,10 @@ public class CVSProvider implements ICVSProvider {
 	}
 
 	/**
-	 * @see ICVSProvider#checkout(IRemoteResource[], IProject[], IProgressMonitor)
+	 * @see ICVSProvider#checkout(ICVSRemoteResource[], IProject[], IProgressMonitor)
 	 */
 	public void checkout(
-		final IRemoteResource[] resources,
+		final ICVSRemoteResource[] resources,
 		final IProject[] projects,
 		final IProgressMonitor monitor)
 		throws TeamException {

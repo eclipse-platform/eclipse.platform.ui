@@ -48,6 +48,6 @@ public interface ILogEntry extends IAdaptable {
 	/**
 	 * Get the remote file for this entry
 	 */
-	public IRemoteFile getRemoteFile();
+	public ICVSRemoteFile getRemoteFile();
 }
 

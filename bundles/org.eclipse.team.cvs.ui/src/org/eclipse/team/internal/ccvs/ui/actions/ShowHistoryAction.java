@@ -15,7 +15,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -25,21 +25,21 @@ public class ShowHistoryAction extends TeamAction {
 	/**
 	 * Returns the selected remote files
 	 */
-	protected IRemoteFile[] getSelectedRemoteFiles() {
+	protected ICVSRemoteFile[] getSelectedRemoteFiles() {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
-				if (next instanceof IRemoteFile) {
+				if (next instanceof ICVSRemoteFile) {
 					resources.add(next);
 					continue;
 				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(IRemoteFile.class);
-					if (adapter instanceof IRemoteFile) {
+					Object adapter = a.getAdapter(ICVSRemoteFile.class);
+					if (adapter instanceof ICVSRemoteFile) {
 						resources.add(adapter);
 						continue;
 					}
@@ -47,11 +47,11 @@ public class ShowHistoryAction extends TeamAction {
 			}
 		}
 		if (resources != null && !resources.isEmpty()) {
-			IRemoteFile[] result = new IRemoteFile[resources.size()];
+			ICVSRemoteFile[] result = new ICVSRemoteFile[resources.size()];
 			resources.toArray(result);
 			return result;
 		}
-		return new IRemoteFile[0];
+		return new ICVSRemoteFile[0];
 	}
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -59,7 +59,7 @@ public class ShowHistoryAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				IRemoteFile[] files = getSelectedRemoteFiles();
+				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				HistoryView view = HistoryView.openInActivePerspective();
 				if (view != null) {
 					view.showHistory(files[0]);
@@ -71,7 +71,7 @@ public class ShowHistoryAction extends TeamAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		IRemoteFile[] resources = getSelectedRemoteFiles();
+		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
 		return resources.length == 1;
 	}
 	/** (Non-javadoc)

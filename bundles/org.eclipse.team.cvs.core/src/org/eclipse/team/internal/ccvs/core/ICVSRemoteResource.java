@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * 
  * Clients are not expected to implement this interface.
  */
-public interface IRemoteResource extends IAdaptable {
+public interface ICVSRemoteResource extends IAdaptable {
 	
 	public static int FILE = IResource.FILE;
 	public static int FOLDER = IResource.FOLDER;

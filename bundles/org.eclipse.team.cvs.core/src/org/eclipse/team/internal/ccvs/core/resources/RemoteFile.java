@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
@@ -30,10 +30,10 @@ import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.LogHandler;
 
 /**
- * This class provides the implementation of IRemoteFile and IManagedFile for
+ * This class provides the implementation of ICVSRemoteFile and IManagedFile for
  * use by the repository and sync view.
  */
-public class RemoteFile extends RemoteResource implements IRemoteFile, IManagedFile  {
+public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IManagedFile  {
 
 	// cache for file properties provided by cvs commands
 	private FileProperties info;
@@ -52,7 +52,7 @@ public class RemoteFile extends RemoteResource implements IRemoteFile, IManagedF
 	}
 
 	/**
-	 * @see IRemoteFile#getContents()
+	 * @see ICVSRemoteFile#getContents()
 	 */
 	public InputStream getContents(final IProgressMonitor monitor) throws TeamException {
 			
@@ -72,7 +72,7 @@ public class RemoteFile extends RemoteResource implements IRemoteFile, IManagedF
 	}
 
 	/**
-	 * @see IRemoteFile#getLogEntries()
+	 * @see ICVSRemoteFile#getLogEntries()
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws CVSException {
 		
@@ -92,14 +92,14 @@ public class RemoteFile extends RemoteResource implements IRemoteFile, IManagedF
 	}
 	
 	/**
-	 * @see IRemoteFile#getRevision()
+	 * @see ICVSRemoteFile#getRevision()
 	 */
 	public String getRevision() {
 		return tag;
 	}
 	
 	/**
-	 * @see IRemoteResource#getType()
+	 * @see ICVSRemoteResource#getType()
 	 */
 	public int getType() {
 		return FILE;

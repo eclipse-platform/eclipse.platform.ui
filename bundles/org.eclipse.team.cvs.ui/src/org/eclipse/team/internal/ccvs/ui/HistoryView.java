@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.ui.IActionBars;
@@ -56,7 +56,7 @@ import org.eclipse.ui.part.ViewPart;
  * The history view allows browsing of an array of resource revisions
  */
 public class HistoryView extends ViewPart implements IMenuListener, ISelectionListener {
-	private IRemoteFile remoteFile;
+	private ICVSRemoteFile remoteFile;
 	
 	private TableViewer viewer;
 	private StyledText text;
@@ -360,7 +360,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	/**
 	 * Shows the given log entries in the view.
 	 */
-	public void showHistory(IRemoteFile file) {
+	public void showHistory(ICVSRemoteFile file) {
 		this.remoteFile = file;
 		if (remoteFile == null) {
 			setTitle(Policy.bind("HistoryView.title"));

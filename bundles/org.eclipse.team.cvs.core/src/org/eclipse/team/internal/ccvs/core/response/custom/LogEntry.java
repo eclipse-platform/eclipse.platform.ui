@@ -7,7 +7,7 @@ package org.eclipse.team.internal.ccvs.core.response.custom;
  
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.ccvs.core.ILogEntry;
-import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogEntry extends PlatformObject implements ILogEntry {
@@ -76,7 +76,7 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	/**
 	 * @see ILogEntry#getRemoteFile()
 	 */
-	public IRemoteFile getRemoteFile() {
+	public ICVSRemoteFile getRemoteFile() {
 		return file;
 	}
 

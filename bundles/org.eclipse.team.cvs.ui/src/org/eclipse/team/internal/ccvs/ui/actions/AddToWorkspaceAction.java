@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.IRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -32,21 +32,21 @@ public class AddToWorkspaceAction extends TeamAction {
 	/**
 	 * Returns the selected remote folders
 	 */
-	protected IRemoteFolder[] getSelectedRemoteFolders() {
+	protected ICVSRemoteFolder[] getSelectedRemoteFolders() {
 		ArrayList resources = null;
 		if (!selection.isEmpty()) {
 			resources = new ArrayList();
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
-				if (next instanceof IRemoteFolder) {
+				if (next instanceof ICVSRemoteFolder) {
 					resources.add(next);
 					continue;
 				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(IRemoteFolder.class);
-					if (adapter instanceof IRemoteFolder) {
+					Object adapter = a.getAdapter(ICVSRemoteFolder.class);
+					if (adapter instanceof ICVSRemoteFolder) {
 						resources.add(adapter);
 						continue;
 					}
@@ -54,11 +54,11 @@ public class AddToWorkspaceAction extends TeamAction {
 			}
 		}
 		if (resources != null && !resources.isEmpty()) {
-			IRemoteFolder[] result = new IRemoteFolder[resources.size()];
+			ICVSRemoteFolder[] result = new ICVSRemoteFolder[resources.size()];
 			resources.toArray(result);
 			return result;
 		}
-		return new IRemoteFolder[0];
+		return new ICVSRemoteFolder[0];
 	}
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -67,7 +67,7 @@ public class AddToWorkspaceAction extends TeamAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					IRemoteFolder[] folders = getSelectedRemoteFolders();
+					ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
 					IProject[] projects = new IProject[folders.length];
 					for (int i = 0; i < folders.length; i++) {
 						String name = folders[i].getName();
@@ -88,7 +88,7 @@ public class AddToWorkspaceAction extends TeamAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		IRemoteFolder[] resources = getSelectedRemoteFolders();
+		ICVSRemoteFolder[] resources = getSelectedRemoteFolders();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i] instanceof ICVSRepositoryLocation) return false;

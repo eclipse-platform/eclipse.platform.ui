@@ -421,7 +421,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * Checout the provider remote resources into the local workspace.
 	 * The local project naming is the same as the above checkout.
 	 */
-	public static void checkout(final IRemoteResource[] resources, final IProject[] projects, final IProgressMonitor monitor) throws TeamException {
+	public static void checkout(final ICVSRemoteResource[] resources, final IProject[] projects, final IProgressMonitor monitor) throws TeamException {
 
 		final TeamException[] eHolder = new TeamException[1];
 		try {
@@ -835,7 +835,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	/** 
 	 * Get the remote resource corresponding to the base of the local resource
 	 */
-	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
+	public ICVSRemoteResource getRemoteResource(IResource resource) throws TeamException {
 		checkIsChild(resource);
 		IManagedResource managed = getChild(resource);
 		if (managed.isFolder()) {
@@ -860,7 +860,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
 	 */
-	public static IRemoteFolder getRemoteRoot(Properties configuration) throws TeamException {
+	public static ICVSRemoteFolder getRemoteRoot(Properties configuration) throws TeamException {
 		return new RemoteFolder(buildRepository(configuration), Path.EMPTY, null);
 	}
 	

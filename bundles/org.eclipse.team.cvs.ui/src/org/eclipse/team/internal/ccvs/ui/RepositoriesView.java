@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
@@ -179,7 +179,7 @@ public class RepositoriesView extends ViewPart {
 			IStructuredSelection structured = (IStructuredSelection)selection;
 			if (structured.size() == 1) {
 				Object first = structured.getFirstElement();
-				if (first instanceof IRemoteFile) {
+				if (first instanceof ICVSRemoteFile) {
 					// It's a file, open it.
 					openAction.selectionChanged(null, selection);
 					openAction.run(null);

@@ -18,8 +18,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.IRemoteFile;
-import org.eclipse.team.ccvs.core.IRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
@@ -155,8 +155,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSTeamProvider.setPrintStream(new PrintStream(new ConsoleOutputStream()));
 
 		CVSAdapterFactory factory = new CVSAdapterFactory();
-		Platform.getAdapterManager().registerAdapters(factory, IRemoteFile.class);
-		Platform.getAdapterManager().registerAdapters(factory, IRemoteFolder.class);
+		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);
+		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFolder.class);
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRepositoryLocation.class);
 		
 		initializeImages();

@@ -12,7 +12,7 @@ import java.util.List;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -22,11 +22,11 @@ import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding
- * IRemoteResource interfaces for the purpose of communicating information about 
+ * ICVSRemoteResource interfaces for the purpose of communicating information about 
  * resources that reside in a CVS repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource extends PlatformObject implements IRemoteResource, IManagedResource {
+public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, IManagedResource {
 
 	protected String name;
 	protected String tag;
@@ -37,7 +37,7 @@ public abstract class RemoteResource extends PlatformObject implements IRemoteRe
 	}
 	
 	/**
-	 * @see IRemoteResource#getName()
+	 * @see ICVSRemoteResource#getName()
 	 */
 	public String getName() {
 		return name;
@@ -56,7 +56,7 @@ public abstract class RemoteResource extends PlatformObject implements IRemoteRe
 	}
 	
 	/**
-	 * @see IRemoteResource#getType()
+	 * @see ICVSRemoteResource#getType()
 	 */
 	public int getType() {
 		return 0;

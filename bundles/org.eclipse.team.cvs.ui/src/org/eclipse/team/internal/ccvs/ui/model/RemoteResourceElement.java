@@ -5,21 +5,21 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.ccvs.core.IRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 
 public abstract class RemoteResourceElement extends CVSModelElement {
 	/**
 	 * Initial implementation: return the resource's name
 	 */
 	public String getLabel(Object o) {
-		if (!(o instanceof IRemoteResource)) return null;
-		return ((IRemoteResource)o).getName();
+		if (!(o instanceof ICVSRemoteResource)) return null;
+		return ((ICVSRemoteResource)o).getName();
 	}
 	/**
 	 * Return null.
 	 */
 	public Object getParent(Object o) {
-		if (!(o instanceof IRemoteResource)) return null;
+		if (!(o instanceof ICVSRemoteResource)) return null;
 		return null;
 	}
 }

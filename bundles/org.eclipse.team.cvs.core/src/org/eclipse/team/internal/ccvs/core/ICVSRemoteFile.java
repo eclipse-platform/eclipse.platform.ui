@@ -19,7 +19,7 @@ import org.eclipse.team.core.TeamException;
   * 
   * Clients are not expected to implement this interface.
   */
-public interface IRemoteFile extends IRemoteResource {
+public interface ICVSRemoteFile extends ICVSRemoteResource {
 
 	/**
 	 * Get the contents of the remote file.

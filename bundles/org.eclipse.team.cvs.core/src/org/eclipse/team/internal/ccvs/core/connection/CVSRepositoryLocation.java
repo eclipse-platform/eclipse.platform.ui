@@ -21,7 +21,7 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
-import org.eclipse.team.ccvs.core.IRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.IUserAuthenticator;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -177,7 +177,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/*
 	 * @see ICVSRepositoryLocation#getRemoteFolder(IPath, String)
 	 */
-	public IRemoteFolder getRemoteFolder(
+	public ICVSRemoteFolder getRemoteFolder(
 		IPath repositoryRelativePath,
 		String tag)
 		throws CVSException {

@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -42,7 +42,7 @@ public class Tag extends CVSModelElement implements IAdaptable {
 	public Object[] getChildren(Object o) {
 		if (!(o instanceof Tag)) return null;
 		try {
-			IRemoteFolder folder = root.getRemoteFolder(Path.EMPTY, tag);
+			ICVSRemoteFolder folder = root.getRemoteFolder(Path.EMPTY, tag);
 			return folder.getMembers(new NullProgressMonitor());
 		} catch (TeamException e) {
 			return null;

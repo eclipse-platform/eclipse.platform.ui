@@ -15,8 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.ccvs.core.IRemoteFolder;
-import org.eclipse.team.ccvs.core.IRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
@@ -36,11 +36,11 @@ import org.eclipse.team.internal.ccvs.core.response.custom.UpdateErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.UpdateMessageHandler;
 
 /**
- * This class provides the implementation of IRemoteFolder
+ * This class provides the implementation of ICVSRemoteFolder
  */
-public class RemoteFolder extends RemoteResource implements IRemoteFolder, IManagedFolder {
+public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IManagedFolder {
 
-	private IRemoteResource[] children;
+	private ICVSRemoteResource[] children;
 	private CVSRepositoryLocation repository;
 	private IPath repositoryRelativePath;
 	
@@ -90,16 +90,16 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder, IMana
 	}
 	
 	/**
-	 * @see IRemoteFolder#getMembers()
+	 * @see ICVSRemoteFolder#getMembers()
 	 */
-	public IRemoteResource[] getMembers(IProgressMonitor monitor) throws TeamException {
+	public ICVSRemoteResource[] getMembers(IProgressMonitor monitor) throws TeamException {
 		return getMembers(tag, monitor);
 	}
 
 	/**
 	 * Get the members for the given tag
 	 */
-	public IRemoteResource[] getMembers(final String tagName, final IProgressMonitor monitor) throws TeamException {
+	public ICVSRemoteResource[] getMembers(final String tagName, final IProgressMonitor monitor) throws TeamException {
 		
 		// Forget about our children
 		children = null;
@@ -159,7 +159,7 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder, IMana
 			}
 			for (int i=0;i<newRemoteDirectories.size();i++)
 				result.add(new RemoteFolder(getRepository(), repositoryRelativePath.append((String)newRemoteDirectories.get(i)), tagName));
-			children = (IRemoteResource[])result.toArray(new IRemoteResource[0]);
+			children = (ICVSRemoteResource[])result.toArray(new ICVSRemoteResource[0]);
 
 			// Get the revision numbers for the files
 			if (newRemoteFiles.size() > 0) {
@@ -175,7 +175,7 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder, IMana
 	}
 
 	/**
-	 * @see IRemoteResource#getType()
+	 * @see ICVSRemoteResource#getType()
 	 */
 	public int getType() {
 		return FOLDER;
@@ -185,7 +185,7 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder, IMana
 	 * @see IManagedFolder#getFolders()
 	 */
 	public IManagedFolder[] getFolders() throws CVSException {
-		IRemoteResource[] children = getChildren();
+		ICVSRemoteResource[] children = getChildren();
 		if (children == null)
 			return new IManagedFolder[0];
 		else {
@@ -201,7 +201,7 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder, IMana
 	 * @see IManagedFolder#getFiles()
 	 */
 	public IManagedFile[] getFiles() throws CVSException {
-		IRemoteResource[] children = getChildren();
+		ICVSRemoteResource[] children = getChildren();
 		if (children == null)
 			return new IManagedFile[0];
 		else {
@@ -277,7 +277,7 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder, IMana
 			return this;
 		// NOTE: We only search down one level for now!!!
 		if (path.indexOf(Client.SERVER_SEPARATOR) == -1) {
-			IRemoteResource[] children = getChildren();
+			ICVSRemoteResource[] children = getChildren();
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
 					return (IManagedResource)children[i];
@@ -355,14 +355,14 @@ public class RemoteFolder extends RemoteResource implements IRemoteFolder, IMana
 		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
 	}
 	
-	protected IRemoteResource[] getChildren() {
+	protected ICVSRemoteResource[] getChildren() {
 		return children;
 	}
 	
 	/**
 	 * Returns a new instance that is the same as the receiver except for the tag.
 	 */
-	public IRemoteFolder forTag(String tagName) {
+	public ICVSRemoteFolder forTag(String tagName) {
 		return new RemoteFolder(repository, repositoryRelativePath, tagName);
 	}
 }
