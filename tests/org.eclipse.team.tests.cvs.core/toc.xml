@@ -120,6 +120,8 @@
             </topic>
             <topic label="Team Data Structures" href="html/perf00006.html">
             </topic>
+            <topic label="Scalability" href="html/perf00007.html">
+            </topic>
         </topic>
         <topic label="Failure Cases" href="html/failures00001.html">
             <topic label="Connections" href="html/connections00001.html">
