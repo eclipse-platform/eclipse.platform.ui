@@ -52,11 +52,10 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         if (element instanceof IWorkbenchPart) {
             IWorkbenchPart part = (IWorkbenchPart) element;
             String path = part.getTitleToolTip();
-            if (path.length() == 0) {
+            if (path == null || path.trim().length() == 0) {
                 return part.getTitle();
-            } else {
-                return part.getTitle() + "  [" + part.getTitleToolTip() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
             }
+            return part.getTitle() + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return null;
     }
