@@ -154,7 +154,7 @@ public class SearchURL extends HelpURL {
 		if (searchManager == null) {
 			Logger.logError(Resources.getString("search_not_installed"), null);
 			return new ByteArrayInputStream(
-				"<?xml version=\"1.0\"?>\n<topics/>".getBytes());
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<topics/>".getBytes());
 		}
 
 		// The url string should contain the search parameters.
@@ -165,7 +165,7 @@ public class SearchURL extends HelpURL {
 			} catch (Exception e) {
 				Logger.logError(Resources.getString("search_index_update_error"), null);
 				return new ByteArrayInputStream(
-					"<?xml version=\"1.0\"?>\n<topics/>".getBytes());
+					"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<topics/>".getBytes());
 			}
 			String results = searchManager.getSearchResults(infoSet, query.toString());
 			//System.out.println("search results=" + results);
