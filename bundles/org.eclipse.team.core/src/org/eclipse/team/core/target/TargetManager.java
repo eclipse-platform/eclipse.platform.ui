@@ -128,6 +128,26 @@ public class TargetManager {
 		}
 	}
 
+	public static boolean hasProvider(IProject project) throws TeamException {
+		try {
+			ISynchronizer s = ResourcesPlugin.getWorkspace().getSynchronizer();
+			byte[] mappingBytes = s.getSyncInfo(TARGET_MAPPINGS, project);
+			if (mappingBytes == null) {
+				return false;
+			} else {
+				LocationMapping mapping = new LocationMapping(mappingBytes);
+				Site site =
+					getSite(mapping.getType(), mapping.getURL());
+				return site != null;
+			}
+		} catch (CoreException e) {
+			throw new TeamException("Problems getting default target provider" + project.getName(), e);
+		} catch (IOException e) {
+			throw new TeamException("Problems getting default target provider" + project.getName(), e);
+		}
+	}
+
+
 	public static Site getSite(String type, URL id) {
 		for (Iterator it = sites.iterator(); it.hasNext();) {
 			Site element = (Site) it.next();

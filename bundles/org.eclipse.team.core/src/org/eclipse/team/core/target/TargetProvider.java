@@ -66,5 +66,21 @@ public abstract class TargetProvider {
 	 */
 	public abstract void put(IResource[] resources, IProgressMonitor progress) throws TeamException;
 	
+	/**
+	 * Replies true if its believed possible to get the given resource.
+	 * This intended to be a relatively quick operation, presumably based on local state of the provider.
+	 */
+	public boolean canGet(IResource resource) {
+		return true;
+	}
+
+	/**
+	 * Replies true if its believed possible to put the given resource.
+	 * This intended to be a relatively quick operation, presumably based on local state of the provider.
+	 */
+	public boolean canPut(IResource resource) {
+		return true;
+	}
+	
 	public abstract void deregister(IProject project);
 }
