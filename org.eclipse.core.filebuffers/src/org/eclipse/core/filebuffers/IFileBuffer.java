@@ -34,7 +34,7 @@ public interface IFileBuffer {
 	 * The returned location fulfills the following requirements:
 	 * </p>
 	 * <ul>
-	 * <li>It is given as an absolute path in the locale file system.</li>
+	 * <li>It is given as an absolute path in the local file system.</li>
 	 * <li>If the file buffer as been provided for a workspace resource, the
 	 * location describes the location inside the workspace. I.e. for linked
 	 * resources the location is the unresolved location and the not the
