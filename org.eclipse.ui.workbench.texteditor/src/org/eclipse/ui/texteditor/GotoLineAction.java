@@ -138,7 +138,7 @@ public class GotoLineAction extends TextEditorAction {
 		IDocument document= provider.getDocument(editor.getEditorInput());
 		try {
 			
-			int start= document.getLineOffset(line);			
+			int start= document.getLineOffset(line);
 			editor.selectAndReveal(start, 0);
 			
 			IWorkbenchPage page= editor.getSite().getPage();
