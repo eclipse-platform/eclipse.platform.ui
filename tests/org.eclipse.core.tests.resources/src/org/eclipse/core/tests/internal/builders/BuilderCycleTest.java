@@ -82,27 +82,24 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		IProject project = root.getProject("Project");
 		IFolder unsorted = project.getFolder(SortBuilder.DEFAULT_UNSORTED_FOLDER);
 		IFile unsortedFile = unsorted.getFile("File.txt");
-		ensureExistsInWorkspace(new IResource[] {project, unsorted, unsortedFile}, true);  
+		ensureExistsInWorkspace(project, true);
+		ensureExistsInWorkspace(unsorted, true);
+		ensureExistsInWorkspace(unsortedFile, true);
 		
 		//setup so that the sortbuilder and cycle builder are both touching files in the project
 		try {
-			aboutToBuild();
 			setAutoBuilding(true);
-			waitForBuild();
 			IProjectDescription description = project.getDescription();
 			ICommand command1 = createCommand(description, CycleBuilder.BUILDER_NAME, "Build0");
 			ICommand command2 = createCommand(description, SortBuilder.BUILDER_NAME, "Build1");
 			description.setBuildSpec(new ICommand[] {command1, command2});
-			aboutToBuild();
 			project.setDescription(description, IResource.NONE, getMonitor());
-			waitForBuild();
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
 		CycleBuilder builder = CycleBuilder.getInstance();
 		builder.resetBuildCount();
 		try {
-			//note explicit builds don't require aboutToBuild/waitForBuild
 			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 		} catch (CoreException e) {
 			fail("3.0", e);
@@ -122,9 +119,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		IFile file = project.getFile("foo.txt");
 		builder.resetBuildCount();
 		try {
-			aboutToBuild();
 			file.create(getRandomContents(), IResource.NONE, getMonitor());
-			waitForBuild();
 		} catch (CoreException e) {
 			fail("4.2", e);
 		}
@@ -143,9 +138,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		//force an incremental build
 		builder.resetBuildCount();
 		try {
-			aboutToBuild();
 			file.setContents(getRandomContents(), IResource.NONE, getMonitor());
-			waitForBuild();
 		} catch (CoreException e) {
 			fail("5.2", e);
 		}
@@ -164,9 +157,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		//force an incremental build
 		builder.resetBuildCount();
 		try {
-			aboutToBuild();
 			file.setContents(getRandomContents(), IResource.NONE, getMonitor());
-			waitForBuild();
 		} catch (CoreException e) {
 			fail("6.2", e);
 		}
@@ -186,9 +177,7 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		//force an incremental build
 		builder.resetBuildCount();
 		try {
-			aboutToBuild();
 			file.setContents(getRandomContents(), IResource.NONE, getMonitor());
-			waitForBuild();
 		} catch (CoreException e) {
 			fail("7.2", e);
 		}
@@ -215,12 +204,12 @@ public class BuilderCycleTest extends AbstractBuilderTest {
 		//force an incremental build
 		builder.resetBuildCount();
 		try {
-			aboutToBuild();
 			file.setContents(getRandomContents(), IResource.NONE, getMonitor());
 		} catch (CoreException e) {
 			fail("8.3", e);
 		}
-		waitForBuild();
 		assertEquals("8.4", maxBuilds, builder.getBuildCount());
+
+
 	}
 }

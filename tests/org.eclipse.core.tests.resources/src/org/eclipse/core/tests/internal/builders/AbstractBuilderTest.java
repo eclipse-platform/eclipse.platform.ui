@@ -12,7 +12,6 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.util.Map;
 
-import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
@@ -22,152 +21,88 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
  * This class does not define any tests, just convenience methods for other builder tests.
  */
 public abstract class AbstractBuilderTest extends EclipseWorkspaceTest {
-	protected static final boolean DEBUG = false;
-	/**
-	 * Class used to wait for build completion in an asynchronous environment.
-	 */
-	class PostBuildListener implements IResourceChangeListener {
-		private boolean waitingForBuild = false;
-		public synchronized void resourceChanged(IResourceChangeEvent event) {
-			switch(event.getType())  {
-				case IResourceChangeEvent.POST_AUTO_BUILD:
-					debug("POST_AUTO_BUILD notification");
-					waitingForBuild = false;
-					notifyAll();
-					break;
-				case IResourceChangeEvent.PRE_AUTO_BUILD:
-				debug("PRE_AUTO_BUILD notification");
-				break;
-				case IResourceChangeEvent.POST_CHANGE:
-				debug("POST_CHANGE notification");
-				break;
-			}
-		}
-		public synchronized void aboutToBuild() {
-			debug("about to build");
-			waitingForBuild = true;
-		}
-		public boolean isBuildFinished() {
-			return !waitingForBuild;
-		}
-	}
-	public static void debug(String msg)  {
-		if (DEBUG)
-			JobManager.debug(msg);
-	}
-	private PostBuildListener postBuildListener = new PostBuildListener();
-	private boolean listenerAdded = false;
-	private boolean autoBuilding;
-
-	public AbstractBuilderTest(String name) {
-		super(name);
-	}
-	/**
-	 * Indicates that a build is about to begin that a test wants to wait for.  Used
-	 * in conjunction with waitForBuild
-	 */
-	protected void aboutToBuild() {
-		if (!listenerAdded)  {
-			int types = IResourceChangeEvent.POST_AUTO_BUILD | IResourceChangeEvent.POST_CHANGE;
-			getWorkspace().addResourceChangeListener(postBuildListener, types);
-			listenerAdded = true;
-		}
-		postBuildListener.aboutToBuild();
-	}
-	/**
-	 * Adds a new delta verifier builder to the given project.
-	 */
-	protected void addBuilder(IProject project, String builderName) throws CoreException {
-		IProjectDescription desc = project.getDescription();
-		desc.setBuildSpec(new ICommand[] { createCommand(desc, builderName, "Project1Build1")});
-		project.setDescription(desc, getMonitor());
-	}
-	/**
-	 * Creates and returns a new command with the SortBuilder, and the TestBuilder.BUILD_ID 
-	 * parameter set to the given value.
-	 */
-	protected ICommand createCommand(IProjectDescription description, String buildID) {
-		return createCommand(description, SortBuilder.BUILDER_NAME, buildID);
-	}
-	/**
-	 * Creates and returns a new command with the given builder name, and the TestBuilder.BUILD_ID 
-	 * parameter set to the given value.
-	 */
-	protected ICommand createCommand(IProjectDescription description, String builderName, String buildID) {
-		ICommand command = description.newCommand();
-		Map args = command.getArguments();
-		args.put(TestBuilder.BUILD_ID, buildID);
-		command.setBuilderName(builderName);
-		command.setArguments(args);
-		return command;
-	}
-	/**
-	 * Dirties the given file, forcing a build.
-	 */
-	protected void dirty(IFile file) throws CoreException {
-		file.setContents(getRandomContents(), true, true, getMonitor());
-	}
-	/**
-	 * Sets the workspace autobuilding to the desired value.
-	 */
-	protected void setAutoBuilding(boolean value) throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		if (workspace.isAutoBuilding() == value)
-			return;
-		IWorkspaceDescription desc = workspace.getDescription();
-		desc.setAutoBuilding(value);
-		workspace.setDescription(desc);
-	}
-	/**
-	 * Sets the workspace build order to just contain the given project.
-	 */
-	protected void setBuildOrder(IProject project) throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IWorkspaceDescription desc = workspace.getDescription();
-		desc.setBuildOrder(new String[] { project.getName()});
-		workspace.setDescription(desc);
-	}
-	/**
-	 * Sets the workspace build order to contain the two given projects
-	 */
-	protected void setBuildOrder(IProject project1, IProject project2) throws CoreException {
-		IWorkspace workspace = getWorkspace();
-		IWorkspaceDescription desc = workspace.getDescription();
-		desc.setBuildOrder(new String[] { project1.getName(), project2.getName()});
-		workspace.setDescription(desc);
-	}
-	/**
-	 * Saves the current auto-build flag value so it can be restored later.
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		autoBuilding = getWorkspace().isAutoBuilding();
-	}
-	/**
-	 * Restores the auto-build flag to its original value.
-	 */
-	protected void tearDown() throws Exception {
-		setAutoBuilding(autoBuilding);
-		if (listenerAdded) {
-			getWorkspace().removeResourceChangeListener(postBuildListener);
-			listenerAdded = false;
-		}
-		super.tearDown();
-	}
-	/**
-	 * Waits for the completion of a build that was signalled using aboutToBuild.
-	 */
-	protected void waitForBuild() {
-		debug("waiting for build to complete");
-		synchronized (postBuildListener) {
-			while (!postBuildListener.isBuildFinished()) {
-				try {
-					postBuildListener.wait(3000);
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-		debug("finished waiting");
-	}
+	
+	private boolean autoBuilding; 	
+	
+public AbstractBuilderTest(String name) {
+	super(name);
+}
+/**
+ * Adds a new delta verifier builder to the given project.
+ */
+protected void addBuilder(IProject project, String builderName) throws CoreException {
+	IProjectDescription desc = project.getDescription();
+	desc.setBuildSpec(new ICommand[] {createCommand(desc, builderName, "Project1Build1")});
+	project.setDescription(desc, getMonitor());
+}
+/**
+ * Creates and returns a new command with the SortBuilder, and the TestBuilder.BUILD_ID 
+ * parameter set to the given value.
+ */
+protected ICommand createCommand(IProjectDescription description, String buildID) {
+	return createCommand(description, SortBuilder.BUILDER_NAME, buildID);
+}
+/**
+ * Creates and returns a new command with the given builder name, and the TestBuilder.BUILD_ID 
+ * parameter set to the given value.
+ */
+protected ICommand createCommand(IProjectDescription description, String builderName, String buildID) {
+	ICommand command = description.newCommand();
+	Map args = command.getArguments();
+	args.put(TestBuilder.BUILD_ID, buildID);
+	command.setBuilderName(builderName);
+	command.setArguments(args);
+	return command;
+}
+/**
+ * Dirties the given file, forcing a build.
+ */
+protected void dirty(IFile file) throws CoreException {
+	file.setContents(getRandomContents(), true, true, getMonitor());
+}
+/**
+ * Sets the workspace autobuilding to the desired value.
+ */
+protected void setAutoBuilding(boolean value) throws CoreException {
+	IWorkspace workspace = getWorkspace();
+	if (workspace.isAutoBuilding() == value)
+		return;
+	IWorkspaceDescription desc = workspace.getDescription();
+	desc.setAutoBuilding(value);
+	workspace.setDescription(desc);
+}
+/**
+ * Sets the workspace build order to just contain the given project.
+ */
+protected void setBuildOrder(IProject project) throws CoreException {
+	IWorkspace workspace = getWorkspace();
+	IWorkspaceDescription desc = workspace.getDescription();
+	desc.setBuildOrder(new String[] {project.getName()});
+	workspace.setDescription(desc);
+}
+/**
+ * Sets the workspace build order to contain the two given projects
+ */
+protected void setBuildOrder(IProject project1, IProject project2) throws CoreException {
+	IWorkspace workspace = getWorkspace();
+	IWorkspaceDescription desc = workspace.getDescription();
+	desc.setBuildOrder(new String[] {project1.getName(), project2.getName()});
+	workspace.setDescription(desc);
+}
+/**
+ * Saves the current auto-build flag value so it can be restored later.
+ */
+protected void setUp() throws Exception {
+	super.setUp();
+	autoBuilding = getWorkspace().isAutoBuilding();
+	
+}
+/**
+ * Restores the auto-build flag to its original value.
+ */
+protected void tearDown() throws Exception {
+	setAutoBuilding(autoBuilding);
+	super.tearDown();
+}
 }
 
