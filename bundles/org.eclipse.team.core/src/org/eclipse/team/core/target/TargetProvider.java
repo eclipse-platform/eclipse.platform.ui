@@ -81,7 +81,6 @@ public abstract class TargetProvider {
 	 * If a remote resource does not exist this method creates a new remote resource with the same content
 	 * as the given local resource.  The local resource is said to <i>correspond</i> to the new remote resource.
 	 * If the local resource doesn't exist and a remote does, the remote resource will be deleted.
-	 * For containers, the remote
 	 * </p>
 	 * <p>
 	 * If the local resource is a container (e.g. folder or project) this operation is equivalent 
@@ -134,7 +133,8 @@ public abstract class TargetProvider {
 	
 	/**
 	 * Answers true if the base identifier of the given resource is different to the
-	 * current released state of the resource.
+	 * current released state of the resource. Also answer true if there was not 
+	 * previously a correspondance between the local and remote resource.
 	 * 
 	 * @param resource the resource to test
 	 * @param monitor a progress monitor
@@ -146,7 +146,7 @@ public abstract class TargetProvider {
 	/**
 	 * Answer true if the local resource currently has a different timestamp to the
 	 * base timestamp for this resource. Answer true for local resources that no longer exist
-	 * (i.e. the local resource did exist and was mapped to a remote resource) and false if the 
+	 * (i.e. the local resource did exist and corresponded to a remote resource) and false if the 
 	 * local resource does not exist and was never mapped to a remote resource.
 	 * 
 	 * @param resource the resource to test
