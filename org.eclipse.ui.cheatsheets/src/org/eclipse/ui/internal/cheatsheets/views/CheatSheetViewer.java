@@ -263,100 +263,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return false;
 	}
 
-	private void checkDynamicModel() {
-		Properties props = saveHelper.loadState(currentID);
-		if (props == null)
-			return;
-
-		savedProps = props;
-
-		ArrayList dynamicItemDataList = null; //TODO (ArrayList) props.get(IParserTags.DYNAMICDATA);
-		ArrayList dynamicSubItemDataList = null; //TODO (ArrayList) props.get(IParserTags.DYNAMICSUBITEMDATA);
-
-//FIXME: Is this needed?
-//		if (dynamicItemDataList != null)
-//			for (int i = 0; i < dynamicItemDataList.size(); i++) {
-//				Properties p = (Properties) dynamicItemDataList.get(i);
-//				String itemid = (String) p.get(IParserTags.ITEM);
-///* TODO: Remove this! */
-////				String buttonCodes = (String) p.get(IParserTags.ACTIONPHRASE);
-//				String aclass = (String) p.get(IParserTags.CLASS);
-//				String actionpid = (String) p.get(IParserTags.PLUGINID);
-//				String[] actionParams = (String[]) p.get(IParserTags.ACTIONPARAM);
-//				AbstractItem abItem = getItemWithID(itemid);
-//				if (abItem == null) {
-//					continue;
-//				} else {
-//					if (abItem instanceof Item) {
-//						Item c = (Item) abItem;
-//						if (c.isDynamic()) {
-//							c.setActionClass(aclass);
-//							c.setActionPluginID(actionpid);
-//							c.setActionParams(actionParams);
-///* TODO: Remove this! */
-////							c.setButtonCodes(buttonCodes);
-//						}
-//					}
-//				}
-//			}
-
-//FIXME: Is this needed?
-//		//Re-Set the dynamic item sub item data if there was any stored.
-//		if (dynamicSubItemDataList != null)
-//			for (int i = 0; i < dynamicSubItemDataList.size(); i++) {
-//				Properties p = (Properties) dynamicSubItemDataList.get(i);
-//				String itemid = (String) p.get(IParserTags.ITEM);
-//				String subitemid = (String) p.get(IParserTags.SUBITEM);
-///* TODO: Remove this! */				
-////				String buttonCodes = (String) p.get(IParserTags.ACTIONPHRASE);
-//				String aclass = (String) p.get(IParserTags.CLASS);
-//				String actionpid = (String) p.get(IParserTags.PLUGINID);
-//				String sublabel = (String) p.get(IParserTags.SUBITEMLABEL);
-//				String[] actionParams = (String[]) p.get(IParserTags.ACTIONPARAM);
-//				AbstractItem abItem = getItemWithID(itemid);
-//				if (abItem == null) {
-//					continue;
-//				} else {
-//					if (abItem instanceof Item) {
-//						Item c = (Item) abItem;
-//						if (c.isDynamic()) {
-//							ItemWithSubItems ciws = convertThisIItem(c);
-//							replaceThisContentItem(c, ciws);
-///* TODO: Remove this! */
-////							SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
-////							ciws.addSubItem(subItem);
-//						}
-//					} else if (abItem instanceof ItemWithSubItems) {
-//						boolean handled = false;
-//						ItemWithSubItems c = (ItemWithSubItems) abItem;
-//						if (c.isDynamic()) {
-//							SubItem[] subs = c.getSubItems();
-//							sublabel : for (int j = 0; j < subs.length; j++) {
-//								SubItem s = subs[j];
-//								if (s.getID().equals(subitemid)) {
-//									s.setActionClass(aclass);
-//									s.setActionPluginID(actionpid);
-//									s.setActionParams(actionParams);
-///* TODO: Remove this! */
-////									s.setButtonCodes(buttonCodes);
-//									s.setLabel(sublabel);
-//									handled = true;
-//									break sublabel;
-//								}
-//							}
-//							if (!handled) {
-///* TODO: Remove this! */
-////								SubItem subItem = createASubItem(subitemid, buttonCodes, actionpid, aclass, actionParams, sublabel);
-////								c.addSubItem(subItem);
-//								handled = true;
-//							}
-//						}
-//					}
-//				}
-//			}
-
-	}
-
 	private void checkSavedState() {
 		Properties props = null;
 		if (savedProps == null) {
@@ -545,28 +451,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		}
 	}
 
-//FIXME: Is this needed?
-//	private ItemWithSubItems convertThisIItem(Item item) {
-//		Item cc = (Item) item;
-//		ItemWithSubItems itemws = new ItemWithSubItems();
-//		itemws.setContent(cc.getContent());
-//		itemws.setID(cc.getID());
-//		return itemws;
-//	}
-
-//FIXME: Is this needed?
-//	private SubItem createASubItem(String subid, String actionCodes, String actionPID, String actionClass, String[] params, String label) {
-//		SubItem subItem = new SubItem();
-//		subItem.setActionClass(actionClass);
-///* TODO: Remove this! */
-////		subItem.setButtonCodes(actionCodes);
-//		subItem.setActionParams(params);
-//		subItem.setLabel(label);
-//		subItem.setActionPluginID(actionPID);
-//		subItem.setID(subid);
-//		return subItem;
-//	}
-
 	/**
 	 * Creates the SWT controls for this workbench part.
 	 * <p>
@@ -676,31 +560,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		return 0;
 	}
 
-//FIXME: Is this needed?
-//	private AbstractItem getItemWithID(String id) {
-//		try {
-//			//Check to see if that item with that id is dynamic.
-//			//If it is not dynamic, return null for it cannot be modified.
-//			ArrayList contentItems = cheatSheet.getItems();
-//			for (int i = 0; i < contentItems.size(); i++) {
-//				AbstractItem contentItem = (AbstractItem) contentItems.get(i);
-//				if (contentItem.getID().equals(id)) {
-//					//return contentItem;
-//					if (contentItem instanceof IContainsContent) {
-//						IContainsContent cc = (IContainsContent) contentItem;
-//						if (cc.isDynamic())
-//							return contentItem;
-//					}
-//					return null;
-//				}
-//
-//			}
-//			return null;
-//		} catch (Exception e) {
-//			return null;
-//		}
-//	}
-
 	/**
 	 * @return
 	 */
@@ -779,18 +638,10 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 	
 	private void killDynamicData(ViewItem[] myitems){
+		//TODO: perhaps this would be better?
+		// what to do when restarting cheatsheet vs. starting new cheatsheet?
 //		getCheatsheetManager().removeAllData();
 		manager = new CheatSheetManager(contentElement);
-		
-//FIXME: Is this needed?
-//		for (int i=0; i<myitems.length; i++){
-//			if(myitems[i].contentItem.isDynamic()){
-//				((CoreItem)myitems[i]).setButtonsHandled(false);
-//				if(myitems[i].contentItem instanceof ItemWithSubItems)
-//					((ItemWithSubItems)myitems[i].contentItem).addSubItems(null);
-//			}
-//					
-//		}
 	}
 
 	/**
@@ -802,19 +653,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		cheatSheet = parser.parse(contentURL);
 		return cheatSheet == null ? false : true;
 	}
-
-//FIXME: Is this needed?
-//	private boolean replaceThisContentItem(Item ci, ItemWithSubItems ciws) {
-//		ArrayList list = cheatSheet.getItems();
-//		for (int i = 0; i < list.size(); i++) {
-//			AbstractItem oci = (AbstractItem) list.get(i);
-//			if (oci.getID().equals(ci.getID())) {
-//				list.set(i, ciws);
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
 
 	private void restoreExpandStates() {
 		ViewItem[] items = getViewItemArray();

@@ -1,9 +1,13 @@
-/*
- * Created on Apr 29, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2002, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.actions;
 
 import org.eclipse.core.runtime.*;
@@ -13,7 +17,8 @@ import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.*;
 
 /**
- * Action to programmatically open a Enterprise Services perspective.
+ * Action to programmatically open a perspective from a cheat sheet.
+ * The perspective id must be passed to the action via param1.
  * 
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.

@@ -452,8 +452,6 @@ public class CoreItem extends ViewItem {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), null, status);
-
-			//logActionLinkError(pluginId, className);
 			return VIEWITEM_DONOT_ADVANCE;
 		}
 

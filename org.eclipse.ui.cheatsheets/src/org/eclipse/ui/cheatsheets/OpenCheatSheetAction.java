@@ -81,21 +81,12 @@ public final class OpenCheatSheetAction extends Action {
 	 * @see IAction#run()
 	 */
 	public void run() {
-
-		/* TODO (lorne) - action fails silently when id does not correspond to a known cheatsheet
-		 * it would better to report some kind of error in this case.
-		 */
-		if (id == null) {
-			return;
-		}
-
 		IWorkbench myworkbench = CheatSheetPlugin.getPlugin().getWorkbench();
 		IWorkbenchWindow window = myworkbench.getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();
 
 		CheatSheetView newview = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 		if (newview != null) {
-			// TODO (lorne) - won't setContent clobber a cheat sheet execution already in progress?
 			if(url == null) {
 				newview.setInput(id);
 			} else {
@@ -104,12 +95,6 @@ public final class OpenCheatSheetAction extends Action {
 			page.bringToTop(newview);
 		} else {
 			try {
-//TODO: Port problem, update the following to open the view correctly.
-//				IViewReference viewref = realpage.getViewFactory().createView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
-//				CheatSheetView view = (CheatSheetView) viewref.getPart(true);
-//				CheatSheetView view = (CheatSheetView)realpage.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
-//				IViewReference viewref = realpage.findViewReference(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
-//				realpage.addFastView(viewref);
 				CheatSheetView view = (CheatSheetView)page.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 				page.activate(view);
 				if(url == null) {

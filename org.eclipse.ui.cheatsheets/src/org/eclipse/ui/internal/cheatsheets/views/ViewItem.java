@@ -115,9 +115,6 @@ public abstract class ViewItem {
 		//		Set up the main composite for the item.******************************************
 		checkDoneLabel = toolkit.createLabel(parent, " "); //$NON-NLS-1$
 		checkDoneLabel.setBackground(white);
-//		TableWrapData checkdonelabeldata = new TableWrapData();
-//		checkdonelabeldata.widthHint = Math.max(completeImage.getBounds().width, skipImage.getBounds().width);
-
 
 		mainItemComposite = toolkit.createExpandableComposite(parent, ExpandableComposite.TREE_NODE);
 		mainItemComposite.setBackground(itemColor);
@@ -263,8 +260,6 @@ public abstract class ViewItem {
 			white.dispose();
 		if (titleComposite != null)
 			titleComposite.dispose();
-//		if (boldFont != null)
-//			boldFont.dispose();
 		if (regularFont != null)
 			regularFont.dispose();
 
@@ -379,7 +374,6 @@ public abstract class ViewItem {
 		setExpanded();
 		setBold(true);
 		mainItemComposite.setFocus();
-//		getExpandToggle().setFocus();
 	}
 
 	/*package*/
@@ -437,11 +431,7 @@ public abstract class ViewItem {
 
 		if (buttonComposite != null)
 			if (buttonExpanded) {
-				//		System.out.println("Buttons collapsing!!!");
-
 				buttonComposite.setVisible(false);
-//				GridData mydata = (GridData) buttonComposite.getLayoutData();
-//				mydata.heightHint = 0;
 
 				buttonExpanded = false;
 				parent.getParent().layout(true);
@@ -457,11 +447,7 @@ public abstract class ViewItem {
 	void setButtonsExpanded() {
 
 		if (!buttonExpanded) {
-			//		System.out.println("Buttons Expanding!!");
 			buttonComposite.setVisible(true);
-
-//			GridData mydata = (GridData) buttonComposite.getLayoutData();
-//			mydata.heightHint = SWT.DEFAULT;
 
 			buttonExpanded = true;
 
@@ -480,9 +466,6 @@ public abstract class ViewItem {
 			mainItemComposite.setExpanded(false);
 			form.reflow(true);
 
-//			GridData mydata = (GridData) bodyWrapperComposite.getLayoutData();
-//			mydata.heightHint = 0;
-//			expanded = false;
 			parent.getParent().layout(true);
 			mainItemComposite.layout(true);
 			bodyWrapperComposite.layout(true);
@@ -512,7 +495,6 @@ public abstract class ViewItem {
 	//expands the item
 	/*package*/
 	void setExpanded() {
-		// System.out.println("Item is already expanded? : " + expanded);
 		if (!mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(true);
 			form.reflow(true);

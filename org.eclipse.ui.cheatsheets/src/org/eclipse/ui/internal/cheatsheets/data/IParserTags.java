@@ -121,32 +121,18 @@ public interface IParserTags {
 	public static final String PERFORMWHEN = "perform-when"; //$NON-NLS-1$
 
 	
-	
-	
-//	public static final String CHEATSHEETID = "cheatsheetID"; //$NON-NLS-1$
-	public static final String KIND = "kind"; //$NON-NLS-1$
-	public static final String VERSION = "version";//$NON-NLS-1$
+
+	// Cheat Sheet state data key
 	public static final String ID = "id";//$NON-NLS-1$
-
-
-
-
-//	public static final String DYNAMIC = "dynamic";//$NON-NLS-1$
-	public static final String CHEATSHEETMANAGER = "CheatsheetManager";//$NON-NLS-1$
 	public static final String MANAGERDATA = "CSMData";//$NON-NLS-1$
 	public static final String MANAGERDATAKEY = "key"; //$NON-NLS-1$
-//	public static final String DYNAMICDATA = "dynamicData"; //$NON-NLS-1$
-//	public static final String DYNAMICSUBITEMDATA = "dynamicSubItemData"; //$NON-NLS-1$
-	public static final String SUBITEMLABEL ="subitemlabel"; //$NON-NLS-1$
-	
 	public static final String COMPLETED ="completed"; //$NON-NLS-1$
+	public static final String CURRENT = "current"; //$NON-NLS-1$
 	public static final String SUBITEMCOMPLETED ="subitemcompleted"; //$NON-NLS-1$
 	public static final String SUBITEMSKIPPED ="subitemskipped"; //$NON-NLS-1$
-	public static final String CURRENT = "current"; //$NON-NLS-1$
 	public static final String EXPANDED = "expanded"; //$NON-NLS-1$
 	public static final String EXPANDRESTORE = "expandRestore"; //$NON-NLS-1$
 	public static final String BUTTON = "button"; //$NON-NLS-1$
 	public static final String BUTTONSTATE = "buttonstate"; //$NON-NLS-1$
-//	public static final String URL = "url"; //$NON-NLS-1$
 	
 }

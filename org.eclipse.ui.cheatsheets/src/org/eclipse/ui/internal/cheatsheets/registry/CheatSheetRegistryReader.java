@@ -399,8 +399,6 @@ public class CheatSheetRegistryReader extends RegistryReader {
 		for (int nX = 0; nX < children.length; nX++) {
 			CheatSheetCollectionElement child = (CheatSheetCollectionElement) children[nX];
 			pruneEmptyCategories(child);
-			//			if (child.isEmpty() && shouldPrune)
-			//				parent.remove(child);
 		}
 	}
 
@@ -463,34 +461,7 @@ public class CheatSheetRegistryReader extends RegistryReader {
 		itemExtensionElement.setItemAttribute(itemAttribute);
 		itemExtensionElement.setConfigurationElement(element);
 
-		cheatsheetItemExtensions.add(itemExtensionElement);
-
-//		Class extClass = null;
-//		AbstractItemExtensionElement extElement = null;
-//		String pluginId = element.getDeclaringExtension().getNamespace();
-//
-//		try {
-//			Bundle bundle = Platform.getBundle(pluginId);
-//			extClass = bundle.loadClass(className);
-//		} catch (Exception e) {
-//			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
-//			CheatSheetPlugin.getPlugin().getLog().log(status);
-//		}
-//		try {
-//			if (extClass != null) {
-//				Constructor c = extClass.getConstructor(stringArray);
-//				Object[] parameters = { itemAttribute };
-//				extElement = (AbstractItemExtensionElement) c.newInstance(parameters);
-//			}
-//		} catch (Exception e) {
-//			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
-//			CheatSheetPlugin.getPlugin().getLog().log(status);
-//		}
-//		
-//		if (extElement != null){
-//			cheatsheetItemExtensions.add(extElement);
-//		}
-		
+		cheatsheetItemExtensions.add(itemExtensionElement);		
 	}
 
 	/**

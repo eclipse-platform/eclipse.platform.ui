@@ -74,8 +74,6 @@ public class IntroItem extends ViewItem {
 		buttonlayout.marginWidth = 2;
 		buttonlayout.verticalSpacing = 2;
 
-//		GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
-//		buttonData.grabExcessHorizontalSpace = true;
 		TableWrapData buttonData = new TableWrapData(TableWrapData.FILL);
 
 		buttonComposite.setLayout(buttonlayout);

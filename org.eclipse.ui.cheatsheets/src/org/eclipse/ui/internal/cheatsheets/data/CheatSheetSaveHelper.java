@@ -161,7 +161,8 @@ public class CheatSheetSaveHelper {
 			URL readURL = filePath.toFile().toURL();
 			doc = readXMLFile(readURL);
 		} catch (MalformedURLException mue) {
-			System.err.println("Could not create url of xml file to read in"); //$NON-NLS-1$
+			//TODO: NLS!
+			System.err.println("Could not create url of xml file to read in");
 			return null;
 		}
 
@@ -207,59 +208,6 @@ public class CheatSheetSaveHelper {
 				}
 			}
 
-			//Parse out the saved steps and sub steps that are dynamic.
-			ArrayList dynamicItemDataList = null;
-			NodeList dynamicNL = null;//TODO = doc.getElementsByTagName(IParserTags.DYNAMICDATA);
-			if (dynamicNL != null) {
-				dynamicItemDataList = new ArrayList(30);
-				for (int i = 0; i < dynamicNL.getLength(); i++) {
-					String itemid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ITEM);
-/* TODO: Remove this! */
-//					String buttonCodes = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ACTIONPHRASE);
-					String aclass = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.CLASS);
-					String actionpid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.PLUGINID);
-					ArrayList actionParams = getParamList(dynamicNL.item(i).getAttributes());
-
-					Properties p = new Properties();
-					p.put(IParserTags.ITEM, itemid);
-/* TODO: Remove this! */
-//					p.put(IParserTags.ACTIONPHRASE, buttonCodes);
-					p.put(IParserTags.CLASS, aclass);
-					p.put(IParserTags.PLUGINID, actionpid);
-					p.put(IParserTags.PARAM, actionParams.toArray(new String[actionParams.size()]));
-					dynamicItemDataList.add(p);
-				}
-			}
-
-			//Parse out the saved steps and sub steps that are dynamic.
-			ArrayList dynamicSubItemDataList = null;
-			dynamicNL = null; //TODO doc.getElementsByTagName(IParserTags.DYNAMICSUBITEMDATA);
-			if (dynamicNL != null) {
-				dynamicSubItemDataList = new ArrayList(30);
-				for (int i = 0; i < dynamicNL.getLength(); i++) {
-					String itemid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ITEM);
-					String subitemid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.SUBITEM);
-/* TODO: Remove this! */
-//					String buttonCodes = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.ACTIONPHRASE);
-					String aclass = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.CLASS);
-					String actionpid = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.PLUGINID);
-					String subItemLabel = getAttributeWithName(dynamicNL.item(i).getAttributes(), IParserTags.SUBITEMLABEL);
-					ArrayList actionParams = getParamList(dynamicNL.item(i).getAttributes());
-
-					Properties p = new Properties();
-					p.put(IParserTags.ITEM, itemid);
-					p.put(IParserTags.SUBITEM, subitemid);
-/* TODO: Remove this! */
-//					p.put(IParserTags.ACTIONPHRASE, buttonCodes);
-					p.put(IParserTags.CLASS, aclass);
-					p.put(IParserTags.PLUGINID, actionpid);
-					p.put(IParserTags.SUBITEMLABEL, subItemLabel);
-					p.put(IParserTags.PARAM, actionParams.toArray(new String[actionParams.size()]));
-					dynamicSubItemDataList.add(p);
-				}
-			}
-
-			//			System.out.println("URL in xml state file read by xml helper is:" + url);
 			returnProps = new Properties();
 			returnProps.put(IParserTags.ID, currentID);
 			returnProps.put(IParserTags.CURRENT, number);
@@ -270,9 +218,6 @@ public class CheatSheetSaveHelper {
 			returnProps.put(IParserTags.SUBITEMCOMPLETED, subcompleted);
 			returnProps.put(IParserTags.SUBITEMSKIPPED, subskipped);
 			returnProps.put(IParserTags.MANAGERDATA, ht);
-// TODO
-//			returnProps.put(IParserTags.DYNAMICDATA, dynamicItemDataList);
-//			returnProps.put(IParserTags.DYNAMICSUBITEMDATA, dynamicSubItemDataList);
 		}
 		return returnProps;
 	}
@@ -398,49 +343,6 @@ public class CheatSheetSaveHelper {
 					root.appendChild(csmDataTag);
 				}
 			}
-// TODO: fix this
-//			//Store dynamic single step data here.
-//			for (int i = 0; i < items.length; i++) {
-//				ViewItem item = items[i];
-//				IContainsContent c = item.getContentItem();
-//				if (c.isDynamic()) {
-//					if (c instanceof Item) {
-//						Item ci = (Item) c;
-//						Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICDATA);
-//						dynamicTag.setAttribute(IParserTags.ITEM, ci.getID());
-///* TODO: Remove this! */
-////						dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, ci.getButtonCodes());
-//						dynamicTag.setAttribute(IParserTags.CLASS, ci.getActionClass());
-//						dynamicTag.setAttribute(IParserTags.PLUGINID, ci.getActionPluginID());
-//						String[] params = ci.getActionParams();
-//						for (int j = 0; j < params.length; j++)
-//							dynamicTag.setAttribute(IParserTags.ACTIONPARAM + j, params[j]);
-//						root.appendChild(dynamicTag);
-//					} else if (c instanceof ItemWithSubItems) {
-//						ItemWithSubItems ciws = (ItemWithSubItems) c;
-//						String itemid = ciws.getID();
-//						SubItem[] subs = ciws.getSubItems();
-//						if (subs != null)
-//							for (int j = 0; j < subs.length; j++) {
-//								SubItem s = subs[j];
-//								String subitemid = s.getID();
-//								Element dynamicTag = null; //TODO doc.createElement(IParserTags.DYNAMICSUBITEMDATA);
-//								dynamicTag.setAttribute(IParserTags.ITEM, itemid);
-//								dynamicTag.setAttribute(IParserTags.SUBITEM, subitemid);
-///* TODO: Remove this! */
-////								dynamicTag.setAttribute(IParserTags.ACTIONPHRASE, s.getButtonCodes());
-//								dynamicTag.setAttribute(IParserTags.CLASS, s.getActionClass());
-//								dynamicTag.setAttribute(IParserTags.PLUGINID, s.getActionPluginID());
-//								dynamicTag.setAttribute(IParserTags.SUBITEMLABEL, s.getLabel());
-//								String[] params = s.getActionParams();
-//								if(params != null)
-//								for (int k = 0; k < params.length; k++)
-//									dynamicTag.setAttribute(IParserTags.ACTIONPARAM + k, params[k]);
-//								root.appendChild(dynamicTag);
-//							}
-//					}
-//				}
-//			}
 
 			StreamResult streamResult = new StreamResult(filePath.toFile());
 			
@@ -448,19 +350,10 @@ public class CheatSheetSaveHelper {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.transform(domSource, streamResult);
-
-//			OutputFormat format = new OutputFormat(doc);
-//			FileWriter fw = new FileWriter(filePath.toOSString());
-//			PrintWriter pw = new PrintWriter(fw);
-//			XMLSerializer serial = new XMLSerializer(pw, format);
-//			serial.serialize(doc.getDocumentElement());
-//			
-//			pw.close();
-//			fw.close();
 		} catch (Exception e) {
-		}
-		finally {
-			
+			//TODO : log exception
+		} finally {
+			//TODO : need to close resources?
 		}
 	}
 

@@ -14,8 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 
 public class CheatSheetPage extends Page {
@@ -40,10 +38,6 @@ public class CheatSheetPage extends Page {
 
 	public void createPart(Composite parent) {
 		super.createPart(parent);
-
-		WorkbenchHelp.setHelp(cheatSheetComposite, IHelpContextIds.WELCOME_EDITOR);
-
-//		checkDynamicModel();
 	}
 
 	/**
