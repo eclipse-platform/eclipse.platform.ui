@@ -309,4 +309,15 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		super.setResult(result);
 	}
 	
+   /**
+	* @see org.eclipse.jface.window.Window#handleShellCloseEvent()
+	*/
+	protected void handleShellCloseEvent() {
+		super.handleShellCloseEvent();
+
+		//Handle the closing of the shell by selecting the close icon
+		if (getReturnCode() == CANCEL)
+			setResult(null);
+	}
+	
 }
