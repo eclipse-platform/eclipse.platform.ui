@@ -575,8 +575,10 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		if (append) {
 			appendEnvironment.setSelection(true);
+	        replaceEnvironment.setSelection(false);
 		} else {
 			replaceEnvironment.setSelection(true);
+			appendEnvironment.setSelection(false);
 		}
 		updateEnvironment(configuration);
 		updateAppendReplace();
