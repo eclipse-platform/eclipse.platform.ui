@@ -181,8 +181,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	/**
 	 * Collections for tracking actions.
 	 */
-	private Map fGlobalActions= new HashMap(3);	
-	private List fSelectionActions = new ArrayList(1);
+	private List fSelectionActions = new ArrayList(3);
 	
 	/**
 	 * These are used to initialize and persist the position of the sash that
@@ -193,8 +192,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private boolean fToggledDetailOnce;
 
 	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail";
-
 	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables";
+	
+	protected static final String DETAIL_COPY_ACTION = ITextEditorActionConstants.COPY + ".Detail";
+	protected static final String VARIABLES_COPY_ACTION=  ITextEditorActionConstants.COPY + ".Variables";
+
 	
 	/**
 	 * Remove myself as a selection listener
@@ -299,6 +301,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(vv);
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
+				setAction(COPY, getAction(VARIABLES_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
@@ -323,6 +326,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(getDetailViewer().getSelectionProvider());
 				setAction(SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
+				setAction(COPY, getAction(DETAIL_COPY_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
 		});
@@ -493,36 +497,41 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		action.setChecked(false);
 		setAction("ShowDetailPane", action); //$NON-NLS-1$
 	
-		IActionBars actionBars= getViewSite().getActionBars();
-		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().COPY);
-		textAction.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, textAction);
-
-		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().SELECT_ALL);
-		textAction.configureAction("Select &All", "", "");
-		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
-
-		//XXX Still using "old" resource access
-		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
-		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
-	
-		fSelectionActions.add(ITextEditorActionConstants.COPY);
-		updateAction(ITextEditorActionConstants.FIND);
+		//detail specific actions
 		
-		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().CONTENTASSIST_PROPOSALS);
+		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().CONTENTASSIST_PROPOSALS);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
 		
-		actionBars.updateActionBars();
+		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().SELECT_ALL);
+		textAction.configureAction("Select &All", "", "");
+		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
+		
+		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().COPY);
+		textAction.configureAction("&Copy", "", ""); 
+		setAction(DETAIL_COPY_ACTION, textAction);
+		
+		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().CUT);
+		textAction.configureAction("Cu&t", "", "");
+		setAction(ITextEditorActionConstants.CUT, textAction);
+		
+		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().PASTE);
+		textAction.configureAction("&Paste", "", "");
+		setAction(ITextEditorActionConstants.PASTE, textAction);
+		
+		//XXX Still using "old" resource access
+		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
+		setAction(ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
+		
+		fSelectionActions.add(ITextEditorActionConstants.COPY);
+		fSelectionActions.add(ITextEditorActionConstants.CUT);
+		fSelectionActions.add(ITextEditorActionConstants.PASTE);
+		updateAction(ITextEditorActionConstants.FIND);
+		
 		addVerifyKeyListener();
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	} 
-
-	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
-		fGlobalActions.put(actionID, action); 
-		actionBars.setGlobalActionHandler(actionID, action);
-	}
 	
 	/**
 	 * Configures the toolBar.
@@ -568,10 +577,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));		
 		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
 		menu.add(new Separator());
-		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
+		menu.add(getAction(ITextEditorActionConstants.CUT));
+		menu.add(getAction(ITextEditorActionConstants.COPY + ".Detail"));
+		menu.add(getAction(ITextEditorActionConstants.PASTE));
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
+		menu.add(getAction(ITextEditorActionConstants.FIND));
 		menu.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
 		menu.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -729,10 +740,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 
 	protected void updateAction(String actionId) {
-		IAction action= (IAction)fGlobalActions.get(actionId);
-		if (action == null) {
-			action= getAction(actionId);
-		}
+		IAction action= getAction(actionId);
 		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
 		}

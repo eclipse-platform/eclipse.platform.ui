@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui.actions;
  */
  
 import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.TreeViewer;
 
 /**
@@ -26,5 +27,9 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	 */
 	protected boolean isEnabledFor(Object element) {
 		return element instanceof IDebugElement;
+	}
+	
+	protected String getActionId() {
+		return AbstractDebugView.COPY + ".Variables";
 	}
 }

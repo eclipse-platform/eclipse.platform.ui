@@ -137,6 +137,36 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	public static final String COPY = ITextEditorActionConstants.COPY;
 	
 	/**
+	 * Action id for a view's cut action. Any view
+	 * with a cut action that should be invoked when
+	 * ctrl+x is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String CUT = ITextEditorActionConstants.CUT;
+	
+	/**
+	 * Action id for a view's paste action. Any view
+	 * with a paste action that should be invoked when
+	 * ctrl+v is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String PASTE = ITextEditorActionConstants.PASTE;
+	
+	/**
+	 * Action id for a view's find action. Any view
+	 * with a paste action that should be invoked when
+	 * ctrl+f is pressed should store their
+	 * copy action with this key.
+	 * 
+	 * @see #setAction(String, IAction)
+	 */
+	public static final String FIND = ITextEditorActionConstants.FIND;
+	
+	/**
 	 * Action id for a view's double-click action. Any view
 	 * with an action that should be invoked when
 	 * the mouse is double-clicked should store their
@@ -471,12 +501,19 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (actionID.equals(SELECT_ALL_ACTION)) {
 			IActionBars actionBars = getViewSite().getActionBars();	
 			actionBars.setGlobalActionHandler(actionID, action);
-		}
-		if (actionID.equals(COPY)) {
+		} else if (actionID.equals(COPY)) {
+			IActionBars actionBars = getViewSite().getActionBars();	
+			actionBars.setGlobalActionHandler(actionID, action);
+		} else if (actionID.equals(CUT)) {
+			IActionBars actionBars = getViewSite().getActionBars();	
+			actionBars.setGlobalActionHandler(actionID, action);
+		} else if (actionID.equals(PASTE)) {
+			IActionBars actionBars = getViewSite().getActionBars();	
+			actionBars.setGlobalActionHandler(actionID, action);
+		} else if (actionID.equals(FIND)) {
 			IActionBars actionBars = getViewSite().getActionBars();	
 			actionBars.setGlobalActionHandler(actionID, action);
 		}
-		
 	}	
 	
 	/**

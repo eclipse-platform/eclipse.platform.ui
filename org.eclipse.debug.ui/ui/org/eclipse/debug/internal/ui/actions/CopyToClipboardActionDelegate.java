@@ -42,11 +42,15 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 				if (adapter.getViewer() instanceof ContentViewer) {
 					setViewer((ContentViewer) adapter.getViewer());
 				}
-				adapter.setAction(AbstractDebugView.COPY, action);
+				adapter.setAction(getActionId(), action);
 			}
 			return super.initialize(action, selection);
 		} 
 		return false;
+	}
+
+	protected String getActionId() {
+		return AbstractDebugView.COPY;
 	}
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
