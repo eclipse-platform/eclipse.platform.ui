@@ -639,7 +639,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			}
 
 		});
-		return result[0];
+		// ensure at least one window was opened
+		return result[0] && (windowManager.getWindows().length > 0);
 	}
 	/**
 	 * Open the Welcome dialog
