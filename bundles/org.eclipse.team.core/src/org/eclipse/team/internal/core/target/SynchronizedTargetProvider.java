@@ -41,7 +41,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	// The URL which combines the site and relative path
 	protected URL targetURL;
 	
-	/**
+	/*
 	 * These interfaces are to operations that can be performed on the array of resources,
 	 * and on all resources identified by the depth parameter.
 	 * @see execute(IOperation, IResource[], int, IProgressMonitor)
@@ -55,7 +55,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		public void visit(IResource resource, IProgressMonitor progress) throws TeamException;
 	}
 
-	/**
+	/*
 	 * Answers the synchronizer.
 	 */		
 	final protected static ISynchronizer getSynchronizer() {
@@ -74,12 +74,12 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		}
 	}
 	
-	/**
+	/*
 	 * Answers a new state based on an existing local resource.
 	 */
 	abstract public ResourceState newState(IResource resource);
 	
-	/**
+	/*
 	 * Answers a new state based on an existing local resource and
 	 * an associated existing remote resource.
 	 */
@@ -97,8 +97,9 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 */
 	public URL getURL() {
 		return targetURL;
-	}	
-	/**
+	}
+		
+	/*
 	 * Get the state descriptor for a given resource.
 	 */
 	public ResourceState getState(IResource resource) throws TeamException {
@@ -108,7 +109,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		return state;
 	}
 	
-	/**
+	/*
 	 * Get the state descriptor for a given resource.
 	 */
 	public ResourceState getState(IResource resource, IRemoteTargetResource remote) throws TeamException {
@@ -122,7 +123,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * Get the resource from the provider to the workspace, and remember the fetched
 	 * state as the base state of the resource.
 	 * 
-	 * @see ITeamProvider.get(IResource[], int, IProgressMonitor)
+	 * @see TargetProvider.get(IResource[], int, IProgressMonitor)
 	 */
 	public void get(IResource[] resources, IProgressMonitor progress)
 		throws TeamException {
@@ -137,7 +138,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * Get the resource from the provider to the workspace, and remember the fetched
 	 * state as the base state of the resource.
 	 * 
-	 * @see ITeamProvider.get(IResource[], int, IProgressMonitor)
+	 * @see TargetProvider.get(IResource[], int, IProgressMonitor)
 	 */
 	public void get(IResource resource, final IRemoteTargetResource remote, IProgressMonitor progress)
 		throws TeamException {
@@ -182,7 +183,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * @param resource the resource to test.
 	 * @return <code>true</code> if the resource has a different modification
 	 * timestamp, and <code>false</code> otherwise.
-	 * @see ITeamSynch#isDirty(IResource)
+	 * @see TargetProvider#isDirty(IResource)
 	 */
 	public boolean isDirty(IResource resource) {
 		try {
