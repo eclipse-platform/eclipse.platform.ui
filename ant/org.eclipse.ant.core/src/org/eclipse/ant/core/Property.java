@@ -75,11 +75,11 @@ public class Property {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		StringBuffer buff= new StringBuffer("\"");
+		StringBuffer buff= new StringBuffer("\""); //$NON-NLS-1$
 		buff.append(getName());
-		buff.append("\"= \"");
+		buff.append("\"= \""); //$NON-NLS-1$
 		buff.append(getValue());
-		buff.append("\"");
+		buff.append("\""); //$NON-NLS-1$
 		return buff.toString();
 	}
 }

@@ -461,9 +461,9 @@ public class InternalAntRunner {
 			}
 			
 			addBuildListeners(getCurrentProject());
-			if (argList != null) {
-				processProperties(argList);
-			}
+		
+			processProperties(argList);
+			
 			setProperties(getCurrentProject());
 			
 			addInputHandler(getCurrentProject());
@@ -993,10 +993,22 @@ public class InternalAntRunner {
 			propertyFiles.add(args[0]);
 			args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		}
+		
+		String[] globalPropertyFiles= AntCorePlugin.getPlugin().getPreferences().getCustomPropertyFiles();
+		if (globalPropertyFiles.length > 0) {
+			if (propertyFiles == null) {
+				propertyFiles= new ArrayList(globalPropertyFiles.length);
+			}
+			propertyFiles.addAll(Arrays.asList(globalPropertyFiles));
+		}
+		
 		if (propertyFiles != null) {
 			loadPropertyFiles();
 		}
 		
+		if (commands == null) {
+			return;
+		}
 		args = (String[]) commands.toArray(new String[commands.size()]);
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
@@ -1096,7 +1108,7 @@ public class InternalAntRunner {
 		msg.append("\t-logfile\t<file>\t\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_file_for_log_37")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t\t-l\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_____15")); //$NON-NLS-1$
+		msg.append("\t\t-l\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_____15")); //$NON-NLS-1$ //$NON-NLS-2$
 		msg.append(lSep);  
 		msg.append("\t-logger <classname>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_is_to_perform_logging_39")); //$NON-NLS-1$
@@ -1107,9 +1119,9 @@ public class InternalAntRunner {
 		msg.append("\t-buildfile\t<file>\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_buildfile_43")); //$NON-NLS-1$
 		msg.append(lSep); 
-		msg.append("\t\t-file\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1"));  //$NON-NLS-1$
+		msg.append("\t\t-file\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1")); //$NON-NLS-2$
 		msg.append(lSep);
-        msg.append("\t\t-f\t\t\t<file>"); //$NON-NLS-1$        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1")); //$NON-NLS-1$
+        msg.append("\t\t-f\t\t\t<file>"); //$NON-NLS-1$        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1")); //$NON-NLS-2$
 		msg.append(lSep);
 		msg.append("\t-D<property>=<value>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_value_for_given_property_45")); //$NON-NLS-1$
@@ -1119,7 +1131,7 @@ public class InternalAntRunner {
 		msg.append(lSep);
         msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tproperties_taking_precedence_20")); //$NON-NLS-1$
         msg.append(lSep);
-        msg.append("\t-inputhandler <class>\t\t"); //$NON-NLS-1$       	msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_will_handle_input_requests_22")); //$NON-NLS-1$
+        msg.append("\t-inputhandler <class>\t\t"); //$NON-NLS-1$       	msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_will_handle_input_requests_22")); //$NON-NLS-2$
         msg.append(lSep);
         msg.append("\t-find <file>\t\t\t\t\t\t"); //$NON-NLS-1$
         msg.append(InternalAntMessages.getString("InternalAntRunner.search_for_buildfile_towards_the_root_of_the_24")); //$NON-NLS-1$
@@ -1138,6 +1150,9 @@ public class InternalAntRunner {
 	 * 			or an empty array if no arguments are found
 	 */
 	protected String[] getArgument(List commands, String param) {
+		if (commands == null) {
+			return null;
+		}
 		int index = commands.indexOf(param);
 		if (index == -1) {
 			return null;
@@ -1277,7 +1292,7 @@ public class InternalAntRunner {
 				continue;
 			}
 			buff.append(path.toOSString());
-			buff.append("; ");
+			buff.append("; "); //$NON-NLS-1$
 		}
 
 		org.apache.tools.ant.types.Path systemClasspath= new org.apache.tools.ant.types.Path(null, buff.substring(0, buff.length() - 2));

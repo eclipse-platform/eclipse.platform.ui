@@ -33,6 +33,7 @@ public class AntCorePreferences {
 	protected Type[] customTypes;
 	protected URL[] customURLs;
 	protected Property[] customProperties;
+	protected String[] customPropertyFiles;
 	
 	protected List pluginClassLoaders;
 
@@ -75,6 +76,13 @@ public class AntCorePreferences {
 			customProperties = new Property[0];
 		} else {
 			customProperties = extractProperties(prefs, getArrayFromString(properties));
+		}
+		
+		String propertyFiles= prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTY_FILES);
+		if (propertyFiles.equals("")) {
+			customPropertyFiles= new String[0];
+		} else {
+			customPropertyFiles= getArrayFromString(propertyFiles);
 		}
 	}
 
@@ -121,7 +129,6 @@ public class AntCorePreferences {
 	protected Property[] extractProperties(Preferences prefs, String[] properties) {
 		Property[] result = new Property[properties.length];
 		for (int i = 0; i < properties.length; i++) {
-			
 			String propertyName = properties[i];
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_PROPERTY + propertyName));
 			Property property = new Property();
@@ -351,6 +358,16 @@ public class AntCorePreferences {
 	}
 	
 	/**
+	 * Returns the custom property files specified for Ant builds.
+	 * 
+	 * @return the property files defined for Ant builds.
+	 * @since 2.1
+	 */
+	public String[] getCustomPropertyFiles() {
+		return customPropertyFiles;
+	}
+	
+	/**
 	 * Returns the custom URLs specified for the Ant classpath
 	 * 
 	 * @return the urls defining the Ant classpath
@@ -376,6 +393,17 @@ public class AntCorePreferences {
 	 */
 	public void setCustomURLs(URL[] urls) {
 		customURLs = urls;
+	}
+	
+	/**
+	 * Sets the custom property files specified for Ant builds. To commit the
+	 * changes, updatePluginPreferences must be called.
+	 * 
+	 * @param the absolute paths defining the property files to use.
+	 * @since 2.1
+	 */
+	public void setCustomPropertyFiles(String[] paths) {
+		customPropertyFiles = paths;
 	}
 	
 	/**
@@ -431,6 +459,7 @@ public class AntCorePreferences {
 		updateTypes(prefs);
 		updateURLs(prefs);
 		updateProperties(prefs);
+		updatePropertyFiles(prefs);
 		AntCorePlugin.getPlugin().savePluginPreferences();
 	}
 
@@ -502,5 +531,15 @@ public class AntCorePreferences {
 		}
 		
 		prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, urls.toString());
+	}
+	
+	protected void updatePropertyFiles(Preferences prefs) {
+		StringBuffer files = new StringBuffer();
+		for (int i = 0; i < customPropertyFiles.length; i++) {
+			files.append(customPropertyFiles[i]);
+			files.append(',');
+		}
+		
+		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTY_FILES, files.toString());
 	}
 }
