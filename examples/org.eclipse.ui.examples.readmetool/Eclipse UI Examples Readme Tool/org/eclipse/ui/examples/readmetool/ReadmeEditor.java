@@ -60,7 +60,7 @@ public class ReadmeEditor extends TextEditor {
 	protected void editorContextMenuAboutToShow(IMenuManager parentMenu) {
 		super.editorContextMenuAboutToShow(parentMenu);
 		parentMenu.add(new Separator());
-		IMenuManager subMenu = new MenuManager(MessageUtil.getString("Add"));
+		IMenuManager subMenu = new MenuManager(MessageUtil.getString("Add")); //$NON-NLS-1$
 		parentMenu.add(subMenu);
 		if (subMenu != null) {
 			// Add readme actions with various attributes

@@ -26,7 +26,7 @@ public class ReadmeImages {
 	static final ImageDescriptor README_WIZARD_BANNER;
 
 	static {
-		String iconPath = "icons/";
+		String iconPath = "icons/"; //$NON-NLS-1$
 		
 		String prefix = iconPath + "ctool16/"; //$NON-NLS-1$
 		EDITOR_ACTION1_IMAGE = createImageDescriptor(prefix + "action1.gif"); //$NON-NLS-1$

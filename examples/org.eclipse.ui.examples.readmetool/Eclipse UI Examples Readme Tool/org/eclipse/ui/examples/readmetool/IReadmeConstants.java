@@ -19,11 +19,11 @@ public interface IReadmeConstants {
 	public static final String PP_SECTION_PARSER = "sectionParser"; //$NON-NLS-1$
 
 	// Global actions
-	public static final String RETARGET2 = PREFIX + "retarget2";
-	public static final String LABELRETARGET3 = PREFIX + "labelretarget3";
+	public static final String RETARGET2 = PREFIX + "retarget2"; //$NON-NLS-1$
+	public static final String LABELRETARGET3 = PREFIX + "labelretarget3"; //$NON-NLS-1$
 
-	public static final String ACTION_SET_RETARGET4 = "org_eclipse_ui_examples_readmetool_readmeRetargetAction";
-	public static final String ACTION_SET_LABELRETARGET5 = "org_eclipse_ui_examples_readmetool_readmeRelabelRetargetAction";
+	public static final String ACTION_SET_RETARGET4 = "org_eclipse_ui_examples_readmetool_readmeRetargetAction"; //$NON-NLS-1$
+	public static final String ACTION_SET_LABELRETARGET5 = "org_eclipse_ui_examples_readmetool_readmeRelabelRetargetAction"; //$NON-NLS-1$
 
 	// Preference constants
 	public static final String PRE_CHECK1=PREFIX+"check1"; //$NON-NLS-1$
