@@ -80,7 +80,15 @@ public class WorkbenchKeyboard {
 	static {
 		initializeOutOfOrderKeys();
 	}
-
+	
+	/**
+	 * The maximum height of the multi-stroke key binding assistant shell.
+	 */
+	private static final int MULTI_KEY_ASSIST_SHELL_MAX_HEIGHT = 175;
+	/**
+	 * The maximum width of the multi-stroke key binding assistant shell.
+	 */
+	private static final int MULTI_KEY_ASSIST_SHELL_MAX_WIDTH = 300;
 	/**
 	 * The properties key for the key strokes that should be processed out of
 	 * order.
@@ -583,14 +591,16 @@ public class WorkbenchKeyboard {
 			noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 			noMatchesLabel.setBackground(multiKeyAssistShell.getBackground());
 		} else {
+			// Layout the table.
 			final Table completionsTable = new Table(multiKeyAssistShell, SWT.SINGLE);
 			completionsTable.setBackground(multiKeyAssistShell.getBackground());
-
-			// Initialize the rows.
+			GridData gridData = new GridData(GridData.FILL_BOTH);
+			completionsTable.setLayoutData(gridData);
+			
+			// Initialize the columns and rows.
 			final List commands = new ArrayList(); // remember commands
-			completionsTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-			new TableColumn(completionsTable, SWT.LEFT);
-			new TableColumn(completionsTable, SWT.LEFT);
+			TableColumn columnKeySequence = new TableColumn(completionsTable, SWT.LEFT, 0);
+			TableColumn columnCommandName = new TableColumn(completionsTable, SWT.LEFT, 1);
 			Iterator itemsItr = partialMatches.entrySet().iterator();
 			while (itemsItr.hasNext()) {
 				Map.Entry entry = (Map.Entry) itemsItr.next();
@@ -606,6 +616,8 @@ public class WorkbenchKeyboard {
 					// Not much to do, but this shouldn't really happen.
 				}
 			}
+			columnKeySequence.pack();
+			columnCommandName.pack();
 
 			// If you double-click on the table, it should execute the selected
 			// command.
@@ -627,11 +639,11 @@ public class WorkbenchKeyboard {
 		// Size the shell.
 		multiKeyAssistShell.pack();
 		Point assistShellSize = multiKeyAssistShell.getSize();
-		if (assistShellSize.x > 300) {
-			assistShellSize.x = 300;
+		if (assistShellSize.x > MULTI_KEY_ASSIST_SHELL_MAX_WIDTH) {
+			assistShellSize.x = MULTI_KEY_ASSIST_SHELL_MAX_WIDTH;
 		}
-		if (assistShellSize.y > 200) {
-			assistShellSize.y = 200;
+		if (assistShellSize.y > MULTI_KEY_ASSIST_SHELL_MAX_HEIGHT) {
+			assistShellSize.y = MULTI_KEY_ASSIST_SHELL_MAX_HEIGHT;
 		}
 		multiKeyAssistShell.setSize(assistShellSize);
 
