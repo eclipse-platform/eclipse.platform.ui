@@ -180,7 +180,9 @@ public class AntModel {
 				fProjectNode= null;
 			} else {
 				reset(region);
-				parseDocument(fDocument, region);
+				if (fDocument.get().trim().length() != 0) {
+					parseDocument(fDocument, region);
+				}
 				fRemoveLengthOfReplace= 0;
 				fDirtyRegion= null;
 				reconcileTaskAndTypes();

@@ -498,7 +498,7 @@ public class ProjectHelper extends ProjectHelper2 {
             parser.setProperty("http://xml.org/sax/properties/lexical-handler", lexicalHandler); //$NON-NLS-1$
             parser.parse(inputSource);
         } catch (SAXParseException exc) {
-        	//ignore as we will be parsing incomplete source
+        	getAntModel().error(exc);
         } catch (SAXException exc) {
         	//ignore as we will be parsing incomplete source
         } catch (FileNotFoundException exc) {

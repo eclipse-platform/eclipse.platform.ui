@@ -66,11 +66,11 @@ public class AntEditorMarkerUpdater {
 	}
 	
 	public void updateMarkers() {
+		removeProblems();
 		if (!shouldAddMarkers()) {
 			return;
 		}
 
-		removeProblems();
 		if (fCollectedProblems.size() > 0) {
 			Iterator e= fCollectedProblems.iterator();
 			while (e.hasNext()) {
