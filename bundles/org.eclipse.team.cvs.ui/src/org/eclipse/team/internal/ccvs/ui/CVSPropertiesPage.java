@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
@@ -35,6 +37,9 @@ public class CVSPropertiesPage extends PropertyPage {
 	Text userText;
 	Text passwordText;
 	Combo methodType;
+	Label hostLabel;
+	Label pathLabel;
+	Label moduleLabel;
 	
 	boolean passwordChanged;
 
@@ -62,6 +67,15 @@ public class CVSPropertiesPage extends PropertyPage {
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.password"));
 		passwordText = createTextField(composite);
 		passwordText.setEchoChar('*');
+		
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"));
+		hostLabel = createLabel(composite, "");
+		
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"));
+		pathLabel = createLabel(composite, "");
+		
+		label = createLabel(composite, Policy.bind("CVSPropertiesPage.module"));
+		moduleLabel = createLabel(composite, "");
 		
 		initializeValues();
 		passwordText.addListener(SWT.Modify, new Listener() {
@@ -155,6 +169,21 @@ public class CVSPropertiesPage extends PropertyPage {
 			showError(e.getStatus());
 		}
 		passwordText.setText("*********");
+		
+		try {
+			ICVSRemoteResource resource = provider.getRemoteResource(project);
+			ICVSRepositoryLocation location = resource.getRepository();
+			int port = location.getPort();
+			if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
+				hostLabel.setText(location.getHost());
+			} else {
+				hostLabel.setText(location.getHost() + ":" + port);
+			}
+			pathLabel.setText(location.getRootDirectory());
+			moduleLabel.setText(resource.getRelativePath());
+		} catch (TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
+		}
 	}
 	/*
 	 * @see PreferencesPage#performOk
