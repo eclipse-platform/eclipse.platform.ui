@@ -156,11 +156,11 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 				}
 				if (editorInput != null) {
 					editorId= presentation.getEditorId(editorInput, sourceElement);
-				}
-				result.setEditorInput(editorInput);
-				result.setEditorId(editorId);
-				result.setSourceElement(sourceElement);
+				}				
 			}
+			result.setEditorInput(editorInput);
+			result.setEditorId(editorId);
+			result.setSourceElement(sourceElement);
 		}
 		return result;
     }
