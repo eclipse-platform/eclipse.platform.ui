@@ -224,7 +224,11 @@
 	      class="org.eclipse.ui.internal.dialogs.ViewsPreferencePage"
        	  category="org.eclipse.ui.preferencePages.Workbench">
        </page>
-
+	 <page id="org.eclipse.ui.preferencePages.Fonts"
+	      name="%PreferencePages.Fonts"
+	      class="org.eclipse.ui.internal.dialogs.FontPreferencePage"
+       	  category="org.eclipse.ui.preferencePages.Workbench">
+       </page>
 </extension>
 
 <extension 

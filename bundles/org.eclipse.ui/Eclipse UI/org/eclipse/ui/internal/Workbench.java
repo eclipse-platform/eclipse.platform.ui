@@ -20,7 +20,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
@@ -372,6 +372,7 @@ private boolean init(String[] commandLineArgs) {
 	addAdapters();
 	windowManager = new WindowManager();
 	WorkbenchColors.startup();
+	initializeFonts();
 
 	// deadlock code
 	boolean avoidDeadlock = true;
@@ -395,6 +396,28 @@ private boolean init(String[] commandLineArgs) {
 	
 	isStarting = false;
 	return true;
+}
+
+/**
+ * Initialize the workbench fonts with the stored values.
+ */
+private void initializeFonts() {
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	FontRegistry registry = JFaceResources.getFontRegistry();
+	initializeFont(JFaceResources.DIALOG_FONT,registry,store);
+	initializeFont(JFaceResources.BANNER_FONT,registry,store);
+	initializeFont(JFaceResources.HEADER_FONT,registry,store);
+	initializeFont(JFaceResources.TEXT_FONT,registry,store);
+}
+/**
+ * Initialize the specified font with the stored value.
+ */
+private void initializeFont(String fontKey,FontRegistry registry,IPreferenceStore store) {
+	if(store.isDefault(fontKey))
+		return;
+	FontData[] font = new FontData[1];
+	font[0] = PreferenceConverter.getFontData(store,fontKey);
+	registry.put(fontKey,font);
 }
 /**
  * Initialize the product image obtained from the product info file

@@ -45,10 +45,15 @@ public class FontRegistry {
 	/**
 	 * Table of known fonts, keyed by symbolic font name
 	 * (key type: <code>String</code>, 
-	 *  value type: <code>org.eclipse.swt.graphics.Font</code> or 
-	 *   <code>org.eclipse.swt.graphics.FontData[]</code>).
+	 *  value type: <code>org.eclipse.swt.graphics.Font</code>.
 	 */
-	private Map mapping = new HashMap(17);
+	private Map stringToFont = new HashMap(7);
+	/**
+	 * Table of known font data, keyed by symbolic font name
+	 * (key type: <code>String</code>, 
+	 *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
+	 */
+	private Map stringToFontData = new HashMap(7);
 /**
  * Creates an empty font registry.
  * <p>
@@ -190,22 +195,22 @@ private Font createFont(FontData[] fonts) {
  * Returns the default font.  Creates it if necessary.
  */
 private Font defaultFont() {
-	Object result = mapping.get(JFaceResources.DEFAULT_FONT);
-	if (result != null) {
-		if (result instanceof Font)
-			return (Font) result;
-
-		//must be an array of font descriptors -- lazily create the font.
-		Font font = createFont((FontData[]) result);
-		mapping.put(JFaceResources.DEFAULT_FONT, font);
+	Display current = Display.getCurrent();
+	if(current == null){
+		Shell shell = new Shell();
+		Font font = shell.getFont();
+		FontData [] data = font.getFontData();
+		shell.dispose();
 		return font;
 	}
-
-	Shell shell = new Shell();
-	Font font = shell.getFont();
-	shell.dispose();
-	mapping.put(JFaceResources.DEFAULT_FONT, font);
-	return font;
+	else
+		return current.getSystemFont();
+}
+/**
+ * Returns the default font data.  Creates it if necessary.
+ */
+private FontData[] defaultFontData() {
+	return defaultFont().getFontData();
 }
 /**
  * Fires a PropertyChangeEvent.
@@ -220,6 +225,23 @@ private void fireFontMappingChanged(String name) {
 	}
 }
 /**
+ * Returns the font data associated with the given symbolic font name.
+ * Returns the default font data if there is no special value associated
+ * with that name.
+ *
+ * @param symbolicName symbolic font name
+ * @return the font
+ */
+public FontData[] getFontData(String symbolicName) {
+
+	Assert.isNotNull(symbolicName);	
+	Object result = stringToFontData.get(symbolicName);
+	if (result == null)
+		return defaultFontData();
+	
+	return (FontData[])result;
+}
+/**
  * Returns the font associated with the given symbolic font name.
  * Returns the default font if there is no special value associated
  * with that name.
@@ -230,18 +252,18 @@ private void fireFontMappingChanged(String name) {
 public Font get(String symbolicName) {
 
 	Assert.isNotNull(symbolicName);
-	Object result = mapping.get(symbolicName);
+	Object result = stringToFont.get(symbolicName);
+	if (result != null)
+		return (Font)result;
+	
+	result = stringToFontData.get(symbolicName);
 	if (result == null)
 		return defaultFont();
-	if (result instanceof Font)
-		return (Font)result;
 
-	//Note, result must be an array of font descriptors. 
 	// Create the font and update the mapping so it can 
 	// be shared.
-	
 	Font font = createFont((FontData[])result);
-	mapping.put(symbolicName, font);
+	stringToFont.put(symbolicName, font);
 
 	// Note, the font may be null if the create() failed. Put a mapping
 	// in for this font to prevent repeated attempts to allocate the
@@ -257,17 +279,17 @@ public Font get(String symbolicName) {
  */
 private void handleDisplayDispose() {
 
-	if (mapping == null)
+	if (stringToFont == null)
 		return;
 		
-	for (Iterator e = mapping.values().iterator(); e.hasNext();) {
+	for (Iterator e = stringToFont.values().iterator(); e.hasNext();) {
 		Object next = e.next();
 		if (next instanceof Font) {
 			((Font) next).dispose();
 		}
 	}
 	
-	mapping = null;
+	stringToFont = null;
 	listeners = null;
 }
 /**
@@ -321,9 +343,13 @@ public void put(String symbolicName, FontData[] fontData) {
 
 	Assert.isNotNull(symbolicName);
 	Assert.isNotNull(fontData);
-	
-	Font oldFont = get(symbolicName);
-	mapping.put(symbolicName, fontData);
+		
+	FontData[] existing = (FontData []) stringToFontData.get(symbolicName);
+	if(Arrays.equals(existing,fontData))
+		return;
+		
+	Font oldFont = (Font)stringToFont.remove(symbolicName);
+	stringToFontData.put(symbolicName, fontData);
 	fireFontMappingChanged(symbolicName);
 
 	if (oldFont == defaultFont())
@@ -343,7 +369,7 @@ private void readResourceBundle(ResourceBundle bundle,String bundleName) throws 
 		String key = (String) keys.nextElement();
 		int pos = key.lastIndexOf('.');
 		if (pos == -1) {
-			mapping.put(key, new FontData[] {
+			stringToFontData.put(key, new FontData[] {
 	            makeFontData(bundle.getString(key))});
 		} else {
 			String name = key.substring(0, pos);
@@ -354,16 +380,16 @@ private void readResourceBundle(ResourceBundle bundle,String bundleName) throws 
 				//Panic the file can not be parsed.
 				throw new MissingResourceException("Wrong key format ", bundleName, key);//$NON-NLS-1$
 			}
-			FontData[] elements = (FontData[]) mapping.get(name);
+			FontData[] elements = (FontData[]) stringToFontData.get(name);
 			if (elements == null) {
 				elements = new FontData[8];
-				mapping.put(name, elements);
+				stringToFontData.put(name, elements);
 			}
 			if (i > elements.length) {
 				FontData[] na = new FontData[i + 8];
 				System.arraycopy(elements, 0, na, 0, elements.length);
 				elements = na;
-				mapping.put(name, elements);
+				stringToFontData.put(name, elements);
 			}
 			elements[i] = makeFontData(bundle.getString(key));
 		}

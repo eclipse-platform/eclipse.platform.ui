@@ -4,6 +4,8 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+ 
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -282,4 +284,17 @@ private void updateFont(FontData font) {
 		previewer.setFont(chosenFont);
 	}
 }
+/**
+ * Store the default preference for the field
+ * being edited
+ */
+protected void setToDefault(){
+	FontData defaultFontData = 
+		PreferenceConverter.getDefaultFontData(getPreferenceStore(),getPreferenceName());
+	PreferenceConverter.setValue(
+		getPreferenceStore(), 
+		getPreferenceName(), 
+		defaultFontData);
+}
+
 }

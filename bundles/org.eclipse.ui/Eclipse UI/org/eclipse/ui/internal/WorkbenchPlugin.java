@@ -15,6 +15,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
 import java.io.*;
 import java.util.*;
 
@@ -314,6 +315,25 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
+		
+	FontRegistry registry = JFaceResources.getFontRegistry();
+	String locale = Locale.getDefault().toString();
+	initializeFont(JFaceResources.DIALOG_FONT,  registry, store);
+	initializeFont(JFaceResources.BANNER_FONT,  registry, store);
+	initializeFont(JFaceResources.HEADER_FONT,  registry, store);
+	initializeFont(JFaceResources.TEXT_FONT,  registry, store);
+}
+
+private void initializeFont(
+	String fontKey,
+	FontRegistry registry,
+	IPreferenceStore store) {
+			
+	FontData[] fontData = registry.getFontData(fontKey);
+	PreferenceConverter.setDefault(
+		store,
+		fontKey,
+		fontData[0]);
 }
 /**
  * Log the given status to the ISV log.

@@ -286,6 +286,10 @@ public static void setValue(IPreferenceStore store, String name, FontData value)
 		                      oldValue.getHeight() == value.getHeight() &&
 		                      oldValue.getStyle() == value.getStyle())) {
 		store.putValue(name, value.toString());
+		
+		FontData[] registryValue = new FontData[1];
+		registryValue[0] = value;
+		JFaceResources.getFontRegistry().put(name,registryValue);
 		store.firePropertyChangeEvent(name, oldValue, value);
 	}
 }
