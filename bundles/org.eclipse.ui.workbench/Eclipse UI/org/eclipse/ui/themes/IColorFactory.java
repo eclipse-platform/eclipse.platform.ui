@@ -12,10 +12,9 @@ package org.eclipse.ui.themes;
 
 import org.eclipse.swt.graphics.RGB;
 
-
 /**
  * A factory interface that may be used to specify a color value.  This is 
- * (optionally) used by the themes extension point for color and gradient value 
+ * (optionally) used by the themes extension point for color value 
  * definitions.
  * <p>
  * Example usage:
@@ -28,7 +27,6 @@ import org.eclipse.swt.graphics.RGB;
  * &lt;/colorDefinition&gt;
  * </code>
  * </p>
-
  * 
  * @since 3.0
  */

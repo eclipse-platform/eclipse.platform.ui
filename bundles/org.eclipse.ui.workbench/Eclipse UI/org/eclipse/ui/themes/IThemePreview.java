@@ -30,7 +30,8 @@ public interface IThemePreview {
     void createControl(Composite parent, ITheme currentTheme);
     
     /**
-     * Dispose of resources used by this previewer.
+     * Dispose of resources used by this previewer.   This method is called by 
+     * the workbench when appropriate and should never be called by a user.
      */
     void dispose();
 }

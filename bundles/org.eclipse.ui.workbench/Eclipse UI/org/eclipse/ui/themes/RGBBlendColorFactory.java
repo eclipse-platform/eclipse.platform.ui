@@ -19,9 +19,9 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.internal.themes.ColorUtils;
 
 /**
- * A resuable IColorFactory that may be used to blend two colors.  The colors
- * to blend are specified as per method number two in 
- * <code>IExecutableExtension.</code>
+ * A resuable <code>IColorFactory</code> that may be used to blend two colors.  
+ * The colors to blend are specified as per method number two in 
+ * {@link org.eclipse.core.runtime.IExecutableExtension}.
  * <p>
  * Example usage:
  * <br/>
@@ -32,14 +32,18 @@ import org.eclipse.ui.internal.themes.ColorUtils;
  *     &lt;colorFactory 
  * 				plugin="org.eclipse.ui" 
  * 				class="org.eclipse.ui.themes.RGBBlendColorFactory"&gt;
- *      	&lt;parameter name="color1" value="COLOR_RED" /&gt;
+ *      	&lt;parameter name="color1" value="255,0,0" /&gt;
  *  		&lt;parameter name="color2" value="COLOR_BLUE" /&gt;
  *     &lt;/colorFactory&gt;
  * &lt;/colorDefinition&gt;
  * </code>
  * </p>
  * 
- * @see org.eclipse.core.runtime.IExecutableExtension
+ * <p>
+ * The color values may be specified as RGB triples or as SWT constants.
+ * </p>
+ * 
+ * @see org.eclipse.swt.SWT
  * @since 3.0
  */
 public class RGBBlendColorFactory implements IColorFactory,
