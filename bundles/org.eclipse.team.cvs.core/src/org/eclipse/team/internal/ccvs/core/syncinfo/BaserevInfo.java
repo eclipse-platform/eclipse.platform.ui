@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class represents the information in the CVS/Baserev file
@@ -47,18 +47,18 @@ public class BaserevInfo {
 		if(entryLine.startsWith(BASEREV_PREFIX)) {
 			entryLine = entryLine.substring(1);
 		}
-		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine, ResourceSyncInfo.SEPARATOR);
-		if(tokenizer.countTokens() != 2) {
+		String[] strings = Util.parseIntoSubstrings(entryLine, ResourceSyncInfo.SEPARATOR);
+		if(strings.length != 2) {
 			throw new CVSException(Policy.bind("BaseRevInfo.malformedEntryLine", entryLine)); //$NON-NLS-1$
 		}
 
-		name = tokenizer.nextToken();
+		name = strings[0];
 
 		if(name.length()==0) {
 			throw new CVSException(Policy.bind("BaseRevInfo.malformedEntryLine", entryLine)); //$NON-NLS-1$
 		}
 
-		revision = tokenizer.nextToken();
+		revision = strings[1];
 
 		if(revision.length()==0) {
 			throw new CVSException(Policy.bind("BaseRevInfo.malformedEntryLine", entryLine)); //$NON-NLS-1$

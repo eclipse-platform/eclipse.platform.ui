@@ -21,7 +21,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
-import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class contains the information required by the server for edit/unedit.
@@ -34,7 +34,6 @@ public class NotifyInfo {
 	public static final char COMMIT = 'C';
 	public static final char[] ALL = new char[] {EDIT, UNEDIT, COMMIT};
 	
-	protected static final String SEPARATOR = "/"; //$NON-NLS-1$
 	protected static final String TAB_SEPARATOR = "\t"; //$NON-NLS-1$
 	
 	private String filename;
@@ -59,26 +58,26 @@ public class NotifyInfo {
 	 */
 	public NotifyInfo(IContainer parent, String line) throws CVSException {
 		ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(parent);
-		EmptyTokenizer tokenizer = new EmptyTokenizer(line, SEPARATOR);
-		if(tokenizer.countTokens() != 4) {
+		String[] strings = Util.parseIntoSubstrings(line, ResourceSyncInfo.SEPARATOR);
+		if(strings.length != 4) {
 			throw new CVSException(Policy.bind("NotifyInfo.MalformedLine", line)); //$NON-NLS-1$
 		}
-		this.filename = tokenizer.nextToken();
+		this.filename = strings[0];
 		
-		String type = tokenizer.nextToken();
+		String type = strings[1];
 		if (type.length() != 1) {
 			throw new CVSException(Policy.bind("NotifyInfo.MalformedNotificationType", line)); //$NON-NLS-1$
 		}
 		this.notificationType = type.charAt(0);
 		
-		String date = tokenizer.nextToken();
+		String date = strings[2];
 		try {	
 			this.timeStamp = CVSDateFormatter.entryLineToDate(date);
 		} catch(ParseException e) {
 			throw new CVSException(Policy.bind("NotifyInfo.MalformedNotifyDate", line)); //$NON-NLS-1$
 		}
 		
-		String watchesString = tokenizer.nextToken();
+		String watchesString = strings[3];
 		if (watchesString.length() > 0) {
 			this.watches = new char[watchesString.length()];
 			for (int i = 0; i < watchesString.length(); i++) {
@@ -99,11 +98,11 @@ public class NotifyInfo {
 	public String getNotifyLine() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getName());
-		buffer.append(SEPARATOR);
+		buffer.append(ResourceSyncInfo.SEPARATOR);
 		buffer.append(notificationType);
-		buffer.append(SEPARATOR);
+		buffer.append(ResourceSyncInfo.SEPARATOR);
 		buffer.append(CVSDateFormatter.dateToEntryLine(timeStamp));
-		buffer.append(SEPARATOR);
+		buffer.append(ResourceSyncInfo.SEPARATOR);
 		if (watches != null) {
 			for (int i = 0; i < watches.length; i++) {
 				char c = watches[i];

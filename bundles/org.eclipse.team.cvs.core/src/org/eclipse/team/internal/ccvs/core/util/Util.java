@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -170,5 +172,25 @@ public class Util {
 			throw new InterruptedIOException(Policy.bind("Util.timeout", host)); //$NON-NLS-1$
 		}
 		return socket[0];
+	}
+	
+	public static String[] parseIntoSubstrings(String string, String delimiter) {
+		List result = new ArrayList();
+		int start = 0;
+		int index = string.indexOf(delimiter);
+		String next;
+		while (index != -1) {
+			next = string.substring(start, index);
+			result.add(next);
+			start = index + 1;
+			index = string.indexOf(delimiter, start);
+		}
+		if (start >= string.length()) {
+			next = "";//$NON-NLS-1$
+		} else {
+			next = string.substring(start);
+		}
+		result.add(next);
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 }

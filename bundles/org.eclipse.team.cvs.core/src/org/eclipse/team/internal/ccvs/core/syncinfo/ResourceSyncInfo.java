@@ -15,7 +15,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
-import org.eclipse.team.internal.ccvs.core.util.EmptyTokenizer;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Value (immutable) object that represents workspace state information about a resource contained in
@@ -70,7 +70,7 @@ public class ResourceSyncInfo {
 	protected boolean isDeleted = false;
 	
 	// utility constants
-	protected static final String DIRECTORY_PREFIX = "D/"; //$NON-NLS-1$
+	protected static final String DIRECTORY_PREFIX = "D"; //$NON-NLS-1$
 	protected static final String SEPARATOR = "/"; //$NON-NLS-1$
 	
 	// fields describing the synchronization of a resource in CVS parlance
@@ -379,24 +379,21 @@ public class ResourceSyncInfo {
 	 * @throws CVSException if the entryLine is malformed
 	 */
 	private void setEntryLine(String entryLine) throws CVSException {
-		if(entryLine.startsWith(DIRECTORY_PREFIX)) {
-			isDirectory = true;
-			entryLine = entryLine.substring(1);
-		} else {
-			isDirectory = false;
-		}
-		EmptyTokenizer tokenizer = new EmptyTokenizer(entryLine,SEPARATOR);
-		if(tokenizer.countTokens() != 5) {
+
+		String[] strings = Util.parseIntoSubstrings(entryLine, SEPARATOR);
+		if(strings.length < 6) {
 			throw new CVSException(Policy.bind("Malformed_entry_line___11") + entryLine); //$NON-NLS-1$
 		}
 		
-		name = tokenizer.nextToken();
+		isDirectory = (strings[0].equals(DIRECTORY_PREFIX));
+		
+		name = strings[1];
 		
 		if(name.length()==0) {
 			throw new CVSException(Policy.bind("Malformed_entry_line,_missing_name___12") + entryLine); //$NON-NLS-1$
 		}
 		
-		String rev = tokenizer.nextToken();
+		String rev = strings[2];
 		
 		if(rev.length()==0 && !isDirectory()) {
 			throw new CVSException(Policy.bind("Malformed_entry_line,_missing_revision___13") + entryLine); //$NON-NLS-1$
@@ -404,7 +401,7 @@ public class ResourceSyncInfo {
 			setRevision(rev);
 		}
 	
-		String date = tokenizer.nextToken();
+		String date = strings[3];
 		
 		// possible timestamps are:
 		// from server: "+=" and "+modified"
@@ -444,8 +441,22 @@ public class ResourceSyncInfo {
 				timeStamp = null;
 			}
 		}
-		keywordMode = KSubstOption.fromMode(tokenizer.nextToken());
-		String tagEntry = tokenizer.nextToken();
+		keywordMode = KSubstOption.fromMode(strings[4]);
+		String tagEntry;
+		if (strings.length == 6) {
+			tagEntry = strings[5];
+		} else {
+			// It turns out that CVS supports slashes (/) in the tag even though this breaks the spec
+			// See http://dev.eclipse.org/bugs/show_bug.cgi?id=26717
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 5; i < strings.length; i++) {
+				buffer.append(strings[i]);
+				if (i < strings.length - 1) {
+					buffer.append(SEPARATOR);
+				}
+			}
+			tagEntry = buffer.toString();
+		}
 						
 		if(tagEntry.length()>0) {
 			tag = new CVSEntryLineTag(tagEntry);
@@ -459,7 +470,11 @@ public class ResourceSyncInfo {
 		
 		if(isDirectory) {
 			result.append(DIRECTORY_PREFIX);
-			result.append(name + "////"); //$NON-NLS-1$
+			result.append(SEPARATOR);
+			result.append(name);
+			for (int i = 0; i <=4; i++) {
+				result.append(SEPARATOR);
+			}
 		} else {
 			result.append(SEPARATOR);
 			result.append(name);
