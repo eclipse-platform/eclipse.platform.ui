@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -83,14 +84,19 @@ public void createControl(Composite parent) {
  *	@param parent org.eclipse.swt.widgets.Composite
  */
 protected void createDestinationGroup(Composite parent) {
+	
+	Font font = parent.getFont();
 	// destination specification group
 	Composite destinationSelectionGroup = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	destinationSelectionGroup.setLayout(layout);
 	destinationSelectionGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
+	destinationSelectionGroup.setFont(font);
 
-	new Label(destinationSelectionGroup, SWT.NONE).setText(getDestinationLabel());
+	Label destinationLabel = new Label(destinationSelectionGroup, SWT.NONE);
+	destinationLabel.setText(getDestinationLabel());
+	destinationLabel.setFont(font);
 
 	// destination name entry field
 	destinationNameField = new Combo(destinationSelectionGroup, SWT.SINGLE | SWT.BORDER);
@@ -99,12 +105,15 @@ protected void createDestinationGroup(Composite parent) {
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	destinationNameField.setLayoutData(data);
+	destinationNameField.setFont(font);
 
 	// destination browse button
 	destinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH);
 	destinationBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
 	destinationBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	destinationBrowseButton.addListener(SWT.Selection, this);
+	destinationBrowseButton.setFont(font);
+	setButtonLayoutData(destinationBrowseButton);
 
 	new Label(parent, SWT.NONE);	// vertical spacer
 }
@@ -114,22 +123,31 @@ protected void createDestinationGroup(Composite parent) {
  */
 
 protected void createOptionsGroupButtons(Group optionsGroup) {
-		// overwrite... checkbox
-		overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-		overwriteExistingFilesCheckbox.setText(
-			DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
+	
+	Font font = optionsGroup.getFont();
+	// overwrite... checkbox
+	overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
+	overwriteExistingFilesCheckbox.setText(
+		DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
+	overwriteExistingFilesCheckbox.setFont(font);
+	setButtonLayoutData(overwriteExistingFilesCheckbox);
 
-		// create directory structure radios
-		createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-		createDirectoryStructureButton.setText(
-			DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
-		createDirectoryStructureButton.setSelection(false);
+	// create directory structure radios
+	createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+	createDirectoryStructureButton.setText(
+		DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
+	createDirectoryStructureButton.setSelection(false);
+	createDirectoryStructureButton.setFont(font);
+	setButtonLayoutData(createDirectoryStructureButton);
 
-		// create directory structure radios
-		createSelectionOnlyButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-		createSelectionOnlyButton.setText(
-			DataTransferMessages.getString("FileExport.createSelectedDirectories"));//$NON-NLS-1$}
-		createSelectionOnlyButton.setSelection(true);
+
+	// create directory structure radios
+	createSelectionOnlyButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
+	createSelectionOnlyButton.setText(
+		DataTransferMessages.getString("FileExport.createSelectedDirectories"));//$NON-NLS-1$}
+	createSelectionOnlyButton.setSelection(true);
+	createSelectionOnlyButton.setFont(font);
+	setButtonLayoutData(createSelectionOnlyButton);
 }
 
 /**

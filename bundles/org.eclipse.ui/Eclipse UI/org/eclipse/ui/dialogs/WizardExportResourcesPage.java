@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -140,6 +141,7 @@ protected Button createButton(Composite parent, int id, String label, boolean de
 		button.setFocus();
 	}
 	button.setFont(parent.getFont());
+	setButtonLayoutData(button);
 	return button;
 }
 /**
@@ -149,8 +151,13 @@ protected Button createButton(Composite parent, int id, String label, boolean de
  * @param parent the parent control
  */
 protected final void createButtonsGroup(Composite parent) {
+	
+	Font font = parent.getFont();
+	
 	// top level group
 	Composite buttonComposite = new Composite(parent, SWT.NONE);
+	buttonComposite.setFont(parent.getFont());
+	
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
 	layout.makeColumnsEqualWidth = true;
@@ -173,6 +180,8 @@ protected final void createButtonsGroup(Composite parent) {
 		}
 	};
 	selectTypesButton.addSelectionListener(listener);
+	selectTypesButton.setFont(font);
+	setButtonLayoutData(selectTypesButton);
 
 	Button selectButton =
 		createButton(
@@ -187,6 +196,9 @@ protected final void createButtonsGroup(Composite parent) {
 		}
 	};
 	selectButton.addSelectionListener(listener);
+	selectButton.setFont(font);
+	setButtonLayoutData(selectButton);
+
 
 	Button deselectButton =
 		createButton(
@@ -201,6 +213,9 @@ protected final void createButtonsGroup(Composite parent) {
 		}
 	};
 	deselectButton.addSelectionListener(listener);
+	deselectButton.setFont(font);
+	setButtonLayoutData(deselectButton);
+
 
 }
 /** (non-Javadoc)
@@ -214,6 +229,7 @@ public void createControl(Composite parent) {
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+	composite.setFont(parent.getFont());
 
 	createPlainLabel(composite, WorkbenchMessages.getString("WizardExportPage.whatLabel")); //$NON-NLS-1$
 	createResourcesGroup(composite);

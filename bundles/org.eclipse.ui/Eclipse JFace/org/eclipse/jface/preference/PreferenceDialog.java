@@ -446,6 +446,7 @@ private void createTree(Composite parent) {
 	
 	IPreferenceNode node = preferenceManager.getRoot();
 	IPreferenceNode[] subnodes = node.getSubNodes();
+	tree.setFont(parent.getFont());
 	for (int i = 0; i < subnodes.length; i++){
 		createTreeItemFor(tree, subnodes[i]);
 	}

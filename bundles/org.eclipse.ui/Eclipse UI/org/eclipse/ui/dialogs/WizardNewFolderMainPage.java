@@ -90,6 +90,7 @@ public WizardNewFolderMainPage(String pageName, IStructuredSelection selection) 
 public void createControl(Composite parent) {
 	// top level group
 	Composite composite = new Composite(parent,SWT.NONE);
+	composite.setFont(parent.getFont());
 	composite.setLayout(new GridLayout());
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));

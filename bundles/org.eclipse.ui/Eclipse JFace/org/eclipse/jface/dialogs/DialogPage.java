@@ -4,12 +4,12 @@ package org.eclipse.jface.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-
-import java.util.*;
 
 /**
  * Abstract base implementation of a dialog page.
@@ -289,6 +289,23 @@ protected void initializeDialogUnits(Control control) {
 	fontMetrics = gc.getFontMetrics();
 	gc.dispose();
 }
+
+/**
+ * Set the GridData on button to be one that is spaced for the
+ * current dialog units.
+ * @return GridData
+ * @param Button
+ */
+
+protected GridData setButtonLayoutData(Button button) {
+	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+	data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+	button.setLayoutData(data);
+	return data;
+}
+
 /**
  * Tests whether this page's UI content has already been created.
  *

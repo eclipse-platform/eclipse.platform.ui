@@ -4,15 +4,18 @@ package org.eclipse.jface.preference;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.Assert; 
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
 
 /**
  * Abstract base implementation for all preference page implementations.
@@ -189,6 +192,7 @@ public void createControl(Composite parent) {
 	layout.marginWidth = 0;
 	layout.marginHeight = 0;
 	content.setLayout(layout);
+	content.setFont(font);
 
 	// initialize the dialog units
 	initializeDialogUnits(content);
@@ -496,4 +500,5 @@ protected void updateApplyButton() {
 	if (applyButton != null)
 		applyButton.setEnabled(isValid());
 }
+
 }
