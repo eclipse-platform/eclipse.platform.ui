@@ -111,8 +111,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 				if (!queryYesNoQuestion(DataTransferMessages.getString("ZipExport.alreadyExists"))) //$NON-NLS-1$
 					return false;
 			}
-
-			if (!targetFile.canWrite()) {
+			else {
 				displayErrorDialog(DataTransferMessages.getString("ZipExport.alreadyExistsError")); //$NON-NLS-1$
 				giveFocusToDestination();
 				return false;
@@ -201,24 +200,34 @@ import org.eclipse.ui.help.WorkbenchHelp;
 	}
 	/**
 	 *	Answer the contents of self's destination specification widget.  If this
-	 *	value does not have the required suffix then add it first.
+	 *	value does not have a suffix then add it first.
 	 */
 	protected String getDestinationValue() {
-		String requiredSuffix = getOutputSuffix();
+		String idealSuffix = getOutputSuffix();
 		String destinationText = super.getDestinationValue();
 
-		if (destinationText.length() != 0) {
-			// only append a suffix if a value has been specified for the destination
-			if (!destinationText
-				.toLowerCase()
-				.endsWith(requiredSuffix.toLowerCase()))
-				destinationText += requiredSuffix;
+        // only append a suffix if the destination doesn't already have a . in 
+        // its last path segment.  
+        // Also prevent the user from selecting a directory.  Allowing this will 
+        // create a ".zip" file in the directory
+		if (destinationText.length() != 0 && !destinationText.endsWith(File.separator)) {
+            int dotIndex = destinationText.lastIndexOf('.');
+            if (dotIndex != -1) {
+                // the last path seperator index
+                int pathSepIndex = destinationText.lastIndexOf(File.separator);
+                if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
+                    destinationText += idealSuffix;
+                }
+            }
+            else {
+                destinationText += idealSuffix;
+            }
 		}
 
 		return destinationText;
 	}
 	/**
-	 *	Answer the suffix that files exported from this wizard must have.
+	 *	Answer the suffix that files exported from this wizard should have.
 	 *	If this suffix is a file extension (which is typically the case)
 	 *	then it must include the leading period character.
 	 *
@@ -232,7 +241,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 	 */
 	protected void handleDestinationBrowseButtonPressed() {
 		FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
-		dialog.setFilterExtensions(new String[] { "*.zip" }); //$NON-NLS-1$
+		dialog.setFilterExtensions(new String[] { "*.zip", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.setText(DataTransferMessages.getString("ZipExport.selectDestinationTitle")); //$NON-NLS-1$
 		String currentSourceString = getDestinationValue();
 		int lastSeparatorIndex =
