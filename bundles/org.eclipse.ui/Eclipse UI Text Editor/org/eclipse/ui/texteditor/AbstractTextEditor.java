@@ -819,15 +819,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			fForegroundColor= color;
 			
-			// ---------- background color ----------------------
-			color= createColor(store, PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
-			if (color != null)
-				styledText.setBackground(color);
-				
-			if (fBackgroundColor != null)
-				fBackgroundColor.dispose();
-				
-			fBackgroundColor= color;
+//			// ---------- background color ----------------------
+//			color= createColor(store, PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
+//			if (color != null)
+//				styledText.setBackground(color);
+//				
+//			if (fBackgroundColor != null)
+//				fBackgroundColor.dispose();
+//				
+//			fBackgroundColor= color;
 		}
 	}
 		
