@@ -5,8 +5,14 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.*;
-import org.eclipse.debug.core.model.*;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 
 public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
@@ -68,6 +74,9 @@ public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 	/**
 	 * @see ControlActionDelegate
 	 */
-	protected void setActionImages(IAction action) {	
+	protected void setActionImages(IAction action) {
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE_AND_REMOVE));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_AND_REMOVE));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_AND_REMOVE));
 	}	
 }

@@ -5,7 +5,15 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.MultiStatus;import org.eclipse.debug.core.*;import org.eclipse.jface.action.Action;import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugStatusConstants;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Terminates all launches.
@@ -21,6 +29,10 @@ public class TerminateAllAction extends Action {
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.TERMINATE_ALL_ACTION });
+			
+		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE_ALL));
+		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL));
+		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL));
 	}
 
 	/**

@@ -184,7 +184,7 @@ public interface IDebugUIConstants {
 	 * Run action image identifier.
 	 */
 	public static final String IMG_ACT_RUN= "IMG_ACT_RUN";
-	
+		
 	/** Resume action image identifier. */
 	public static final String IMG_LCL_RESUME= "IMG_LCL_RESUME";
 	
@@ -193,6 +193,12 @@ public interface IDebugUIConstants {
 	
 	/** Terminate action image identifier. */
 	public static final String IMG_LCL_TERMINATE= "IMG_LCL_TERMINATE";
+	
+	/** Terminate all action image identifier. */
+	public static final String IMG_LCL_TERMINATE_ALL= "IMG_LCL_TERMINATE_ALL";
+	
+	/** Terminate and remove action image identifier. */
+	public static final String IMG_LCL_TERMINATE_AND_REMOVE= "IMG_LCL_TERMINATE_AND_REMOVE";
 	
 	/** Disconnect action image identifier. */
 	public static final String IMG_LCL_DISCONNECT= "IMG_LCL_DISCONNECT";
@@ -226,6 +232,10 @@ public interface IDebugUIConstants {
 
 	/** Inspector action image identifier. */
 	public static final String IMG_LCL_INSPECT= "IMG_LCL_INSPECT";
+	
+	/** Re-launch action image identifier.*/
+	public static final String IMG_LCL_RELAUNCH= "IMG_LCL_RELAUNCH";
+
 	
 	// Debug element images
 	

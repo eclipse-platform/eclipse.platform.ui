@@ -21,6 +21,8 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_RESUME= "IMG_DLCL_RESUME";
 	public static final String IMG_DLCL_SUSPEND= "IMG_DLCL_SUSPEND";
 	public static final String IMG_DLCL_TERMINATE= "IMG_DLCL_TERMINATE";
+	public static final String IMG_DLCL_TERMINATE_ALL= "IMG_DLCL_TERMINATE_ALL";
+	public static final String IMG_DLCL_TERMINATE_AND_REMOVE= "IMG_DLCL_TERMINATE_AND_REMOVE";
 	public static final String IMG_DLCL_DISCONNECT= "IMG_DLCL_DISCONNECT";
 	public static final String IMG_DLCL_STEPINTO= "IMG_DLCL_STEPINTO";
 	public static final String IMG_DLCL_STEPOVER= "IMG_DLCL_STEPOVER";
@@ -32,11 +34,14 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_REMOVE= "IMG_DLCL_REMOVE";
 	public static final String IMG_DLCL_REMOVE_ALL= "IMG_DLCL_REMOVE_ALL";
 	public static final String IMG_DLCL_INSPECT= "IMG_DLCL_INSPECT";
+	public static final String IMG_DLCL_RELAUNCH= "IMG_DLCL_RELAUNCH";
 
 	// enabled local tool images
 	public static final String IMG_ELCL_RESUME= "IMG_ELCL_RESUME";
 	public static final String IMG_ELCL_SUSPEND= "IMG_ELCL_SUSPEND";
 	public static final String IMG_ELCL_TERMINATE= "IMG_ELCL_TERMINATE";
+	public static final String IMG_ELCL_TERMINATE_ALL= "IMG_ELCL_TERMINATE_ALL";
+	public static final String IMG_ELCL_TERMINATE_AND_REMOVE= "IMG_ELCL_TERMINATE_AND_REMOVE";
 	public static final String IMG_ELCL_DISCONNECT= "IMG_ELCL_DISCONNECT";
 	public static final String IMG_ELCL_STEPINTO= "IMG_ELCL_STEPINTO";
 	public static final String IMG_ELCL_STEPOVER= "IMG_ELCL_STEPOVER";
@@ -48,4 +53,5 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_REMOVE= "IMG_ELCL_REMOVE";
 	public static final String IMG_ELCL_REMOVE_ALL= "IMG_ELCL_REMOVE_ALL";
 	public static final String IMG_ELCL_INSPECT= "IMG_ELCL_INSPECT";
+	public static final String IMG_ELCL_RELAUNCH= "IMG_ELCL_RELAUNCH";
 }

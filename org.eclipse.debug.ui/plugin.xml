@@ -216,6 +216,7 @@
       </action>
       <action
             label="%RelaunchLastAction.label"
+            icon="icons/full/clcl16/relaunch_co.gif"
             helpContextId="relaunch_last_action_context"
             tooltip="%RelaunchLastAction.tooltip"
             class="org.eclipse.debug.internal.ui.RelaunchLastAction"

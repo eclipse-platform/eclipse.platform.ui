@@ -6,9 +6,12 @@ package org.eclipse.debug.internal.ui;
  */
 
 import java.text.MessageFormat;
-import org.eclipse.debug.core.*;
+
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 
@@ -98,5 +101,8 @@ public class RelaunchActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate
 	 */
 	protected void setActionImages(IAction action) {
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_RELAUNCH));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RELAUNCH));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RELAUNCH));
 	}		
 }
