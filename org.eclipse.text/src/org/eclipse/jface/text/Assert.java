@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public final class Assert {
 	 * @exception Throwable an unspecified unchecked exception if the object
 	 *   is <code>null</code>
 	 */
-	public static void isNotNull(Object object) {
+	public static void isNotNull(Object object) throws Throwable {
 		// succeed as quickly as possible
 		if (object != null) {
 			return;
@@ -141,7 +141,7 @@ public final class Assert {
 	 * @exception Throwable an unspecified unchecked exception if the object
 	 *   is <code>null</code>
 	 */
-	public static void isNotNull(Object object, String message) {
+	public static void isNotNull(Object object, String message) throws Throwable {
 		if (object == null)
 			throw new AssertionFailedException("null argument;" + message);//$NON-NLS-1$
 	}

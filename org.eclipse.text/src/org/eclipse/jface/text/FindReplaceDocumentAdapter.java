@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,17 +17,23 @@ import java.util.regex.PatternSyntaxException;
 
 
 /**
- * Adapts {@link org.eclipse.jface.text.IDocument} for doing search and
- * replace operations.
+ * Provides search and replace operations on
+ * {@link org.eclipse.jface.text.IDocument}.
+ * <p>
+ * Replaces
+ * {@link org.eclipse.jface.text.IDocument#search(int, String, boolean, boolean, boolean)}.
  * 
  * @since 3.0
  */
 public class FindReplaceDocumentAdapter implements CharSequence {
 	
+	/**
+	 * Internal type for operation codes.
+	 */
 	private static class FindReplaceOperationCode {
 	}
 	
-	// Shortcuts to findReplace operation codes
+	// Find/replace operation codes.
 	private static final FindReplaceOperationCode FIND_FIRST= new FindReplaceOperationCode();
 	private static final FindReplaceOperationCode FIND_NEXT= new FindReplaceOperationCode();
 	private static final FindReplaceOperationCode REPLACE= new FindReplaceOperationCode();
@@ -149,7 +155,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			fFindReplaceMatchOffset= startOffset;
 			if (fFindReplaceMatcher != null && fFindReplaceMatcher.pattern().pattern().equals(findString) && fFindReplaceMatcher.pattern().flags() == patternFlags) {
 				/*
-				 * Commented out for optimazation:
+				 * Commented out for optimization:
 				 * The call is not needed since FIND_FIRST uses find(int) which resets the matcher
 				 */
 				// fFindReplaceMatcher.reset();

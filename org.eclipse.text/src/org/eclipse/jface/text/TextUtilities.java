@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
+
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,12 +21,12 @@ import java.util.Set;
 
 
 /**
- * Collection of text functions.
+ * A collection of text functions.
  */
 public class TextUtilities {
 	
 	/**
-	 * Default line delimiters used by these text functions.
+	 * Default line delimiters used by the text functions of this class.
 	 */
 	public final static String[] DELIMITERS= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	
