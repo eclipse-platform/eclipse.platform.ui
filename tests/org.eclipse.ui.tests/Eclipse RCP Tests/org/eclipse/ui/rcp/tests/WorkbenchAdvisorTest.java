@@ -148,8 +148,7 @@ public class WorkbenchAdvisorTest extends TestCase {
         wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
-        if (Bug51282Fixed)
-                wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
+        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
         wa.assertAllOperationsExamined();
     }
@@ -195,8 +194,8 @@ public class WorkbenchAdvisorTest extends TestCase {
         wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
         if (Bug51282Fixed) {
             wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_RESTORE);
-            wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
         }
+        wa2.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
         wa2.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
         wa2.assertAllOperationsExamined();
     }
@@ -224,8 +223,7 @@ public class WorkbenchAdvisorTest extends TestCase {
         wa.assertNextOperation(WorkbenchAdvisorObserver.FILL_ACTION_BARS);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
-        if (Bug51282Fixed)
-            wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
+        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
         wa.assertAllOperationsExamined();
     }
@@ -279,8 +277,7 @@ public class WorkbenchAdvisorTest extends TestCase {
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_WINDOW_OPEN);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_STARTUP);
         wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_WINDOW_SHELL_CLOSE);
-        if (Bug51282Fixed)
-            wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
+        wa.assertNextOperation(WorkbenchAdvisorObserver.PRE_SHUTDOWN);
         wa.assertNextOperation(WorkbenchAdvisorObserver.POST_SHUTDOWN);
         wa.assertAllOperationsExamined();
     }

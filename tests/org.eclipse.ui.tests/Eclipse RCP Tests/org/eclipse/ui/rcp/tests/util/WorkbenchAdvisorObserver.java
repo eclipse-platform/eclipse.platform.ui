@@ -140,9 +140,10 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
         return true;
     }
 
-    public void preShutdown() {
-        super.preShutdown();
+    public boolean preShutdown() {
+        boolean result = super.preShutdown();
         addOperation(PRE_SHUTDOWN);
+        return result;
     }
 
     public void postShutdown() {

@@ -396,6 +396,12 @@ public final class Workbench implements IWorkbench {
 	 */
 	private boolean busyClose(final boolean force) {
 
+	    // notify the advisor of preShutdown and allow it to veto if not forced
+	    isClosing = advisor.preShutdown();
+		if (!force && !isClosing) {
+			return false;
+		}
+	    
 		// save any open editors if they are dirty
 		isClosing = saveAllEditors(!force);
 		if (!force && !isClosing) {

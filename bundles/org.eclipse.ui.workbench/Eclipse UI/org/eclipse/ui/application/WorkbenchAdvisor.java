@@ -237,14 +237,17 @@ public abstract class WorkbenchAdvisor {
 	 * This method is called immediately prior to workbench shutdown before any
 	 * windows have been closed.
 	 * Clients must not call this method directly (although super calls are okay).
-	 * The default implementation does nothing. Subclasses may override.
+	 * The default implementation returns <code>true</code>. Subclasses may override.
 	 * </p>
-	 * 
-	 * @issue veto?
-	 * @issue about to close last window - window closing
+	 * <p>
+	 * The advisor may veto a regular shutdown by returning <code>false</code>, 
+	 * although this will be ignored if the workbench is being forced to shut down.
+	 * </p>
+	 * @return <code>true</code> to allow the workbench to proceed with shutdown,
+	 *   <code>false</code> to veto a non-forced shutdown
 	 */
-	public void preShutdown() {
-		// do nothing
+	public boolean preShutdown() {
+		return true;
 	}
 	
 	/**
