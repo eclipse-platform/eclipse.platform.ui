@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 
-import org.eclipse.core.filebuffers.tests.TestHelper;
+import org.eclipse.core.filebuffers.tests.ResourceHelper;
 
 import org.eclipse.jface.text.IDocument;
 
@@ -51,15 +51,15 @@ public class SegmentedModeTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		IFolder folder= TestHelper.createFolder("project/folderA/folderB/");
-		fFile= TestHelper.createFile(folder, "file.txt", getOriginalContent());
+		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
+		fFile= ResourceHelper.createFile(folder, "file.txt", getOriginalContent());
 	}
 	
 	/*
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		TestHelper.deleteProject("project");
+		ResourceHelper.deleteProject("project");
 	}
 	
 	/*

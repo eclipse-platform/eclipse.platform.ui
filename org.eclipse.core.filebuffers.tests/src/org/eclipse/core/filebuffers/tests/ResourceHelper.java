@@ -11,10 +11,8 @@
 package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
-import java.net.URL;
 
 import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 import org.eclipse.core.resources.IContainer;
@@ -37,20 +35,10 @@ import org.eclipse.core.runtime.Plugin;
 /**
  * @since 3.0
  */
-public class TestHelper {
+public class ResourceHelper {
 	
 	private final static IProgressMonitor NULL_MONITOR= new NullProgressMonitor();
 	private static final int MAX_RETRY= 5;
-	
-	public static File getFileInPlugin(Plugin plugin, IPath path) {
-		try {
-			URL installURL= new URL(plugin.getDescriptor().getInstallURL(), path.toString());
-			URL localURL= Platform.asLocalURL(installURL);
-			return new File(localURL.getFile());
-		} catch (IOException e) {
-			return null;
-		}
-	}
 	
 	public static IProject createProject(String projectName) throws CoreException {
 		
@@ -85,7 +73,7 @@ public class TestHelper {
 				i= MAX_RETRY;
 			} catch (CoreException x) {
 				if (i == MAX_RETRY - 1) {
-					FilebuffersTestPlugin.getDefault().getLog().log(x.getStatus());
+					FileBuffersTestPlugin.getDefault().getLog().log(x.getStatus());
 					throw x;
 				}
 				try {
@@ -113,16 +101,23 @@ public class TestHelper {
 		return file;
 	}
 	
+	public static IFile createLinkedFile(IContainer container, IPath linkedFilePath, File linkTarget) throws CoreException {
+		IFile iFile= container.getFile(linkedFilePath);
+		iFile.createLink(new Path(linkTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+		return iFile;
+
+	}
+	
 	public static IFile createLinkedFile(IContainer container, IPath filePath, Plugin plugin, IPath linkPath) throws CoreException {
 		IFile iFile= container.getFile(filePath);
-		File file= getFileInPlugin(plugin, linkPath);
+		File file= FileTool.getFileInPlugin(plugin, linkPath);
 		iFile.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFile;
 	}
 	
 	public static IFolder createLinkedFolder(IContainer container, IPath folderPath, Plugin plugin, IPath linkPath) throws CoreException {
 		IFolder iFolder= container.getFolder(folderPath);
-		File file= getFileInPlugin(plugin, linkPath);
+		File file= FileTool.getFileInPlugin(plugin, linkPath);
 		iFolder.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFolder;
 	}
@@ -132,7 +127,7 @@ public class TestHelper {
 		IProject project= workspace.getRoot().getProject(projectName);
 		
 		IProjectDescription desc= workspace.newProjectDescription(projectName);
-		File file= getFileInPlugin(plugin, linkPath);
+		File file= FileTool.getFileInPlugin(plugin, linkPath);
 		IPath projectLocation= new Path(file.getAbsolutePath());
 		if (Platform.getLocation().equals(projectLocation))
 			projectLocation= null;

@@ -13,9 +13,7 @@ package org.eclipse.core.filebuffers.tests;
 import java.io.File;
 
 import junit.framework.Assert;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -34,7 +32,7 @@ import org.eclipse.jface.text.IDocument;
 
 
 
-public class FileBufferTest1 extends TestCase {
+public class FileBufferCreation extends TestCase {
 	
 	private final static String CONTENT1= "This is the content of the workspace file.";
 	private final static String CONTENT2= "This is the content of the link target.";
@@ -43,33 +41,30 @@ public class FileBufferTest1 extends TestCase {
 	
 	private IProject fProject;
 	
-	
-	public static Test suite() {
-		TestSuite suite= new TestSuite();
-		suite.addTest(new FileBufferTest1("test1"));
-		suite.addTest(new FileBufferTest1("test2"));
-		suite.addTest(new FileBufferTest1("test3"));
-		suite.addTest(new FileBufferTest1("test4"));
-		suite.addTest(new FileBufferTest1("test5"));
-		suite.addTest(new FileBufferTest1("test6"));
-		return suite;
-	}		
-	
-	public FileBufferTest1(String name) {
+		
+	public FileBufferCreation(String name) {
 		super(name);
 	}
 	
 	protected void setUp() throws Exception {
-		fProject= TestHelper.createProject("project");
+		fProject= ResourceHelper.createProject("project");
 	}
 	
 	protected void tearDown() throws Exception {
-		TestHelper.deleteProject("project");
-	}	
+		ResourceHelper.deleteProject("project");
+	}
 	
+	private IPath createLinkedFile(String fileName, String linkTarget) throws CoreException {
+		IFile file= ResourceHelper.createLinkedFile(fProject, new Path(fileName), FileBuffersTestPlugin.getDefault(), new Path(linkTarget));
+		return file != null ? file.getFullPath() : null;
+	}
+	
+	/*
+	 * Tests the creation of file buffer for an existing file.
+	 */
 	public void test1() throws Exception {
-		IFolder folder= TestHelper.createFolder("project/folderA/folderB/");
-		IFile file= TestHelper.createFile(folder, "file", CONTENT1);
+		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
+		IFile file= ResourceHelper.createFile(folder, "file", CONTENT1);
 		IPath path= file.getFullPath();
 		assertNotNull(path);
 		
@@ -86,10 +81,14 @@ public class FileBufferTest1 extends TestCase {
 		assertNull(manager.getTextFileBuffer(path));
 	}
 	
+	/*
+	 * Tests that two different paths pointing to the same physical resource
+	 * result in the same shared file buffer.
+	 */
 	public void test2() throws Exception {
 		
-		IFolder folder= TestHelper.createFolder("project/folderA/folderB/");
-		IFile file= TestHelper.createFile(folder, "file", CONTENT1);
+		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
+		IFile file= ResourceHelper.createFile(folder, "file", CONTENT1);
 		IPath path1= file.getFullPath();
 		assertNotNull(path1);
 		
@@ -133,8 +132,11 @@ public class FileBufferTest1 extends TestCase {
 		assertNull(manager.getTextFileBuffer(path2));
 	}
 	
+	/*
+	 * Tests the creation of a file buffer for a linked file.
+	 */
 	public void test3() throws Exception {
-		IPath path= createLinkedFile("file", "testResources/LinkTarget1");
+		IPath path= createLinkedFile("file", "testResources/LinkTarget");
 		assertNotNull(path);
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
@@ -150,11 +152,15 @@ public class FileBufferTest1 extends TestCase {
 		assertNull(manager.getTextFileBuffer(path));
 	}
 	
+	/*
+	 * Tests that two different files linked to the same target file result
+	 * in two different, independent file buffers.
+	 */
 	public void test4() throws Exception {
 		
-		IPath path1= createLinkedFile("file1", "testResources/LinkTarget1");
+		IPath path1= createLinkedFile("file1", "testResources/LinkTarget");
 		assertNotNull(path1);
-		IPath path2= createLinkedFile("file2", "testResources/LinkTarget1");
+		IPath path2= createLinkedFile("file2", "testResources/LinkTarget");
 		assertNotNull(path2);
 
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
@@ -183,12 +189,16 @@ public class FileBufferTest1 extends TestCase {
 		
 		manager.disconnect(path1, null);
 		assertNull(manager.getTextFileBuffer(path1));
+		assertNotNull(manager.getTextFileBuffer(path2));
 		manager.disconnect(path2, null);
 		assertNull(manager.getTextFileBuffer(path2));
 	}
 	
+	/*
+	 * Tests the creation of a file buffer for an external file.
+	 */
 	public void test5() throws Exception {
-		File externalFile= TestHelper.getFileInPlugin(FilebuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
+		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
 		assertNotNull(externalFile);
 		IPath path= new Path(externalFile.getAbsolutePath());
 		
@@ -205,12 +215,16 @@ public class FileBufferTest1 extends TestCase {
 		assertNull(manager.getTextFileBuffer(path));
 	}
 	
+	/*
+	 * Tests that a workspace file linked to an external file and the external file result
+	 * in two different, independent file buffers.
+	 */
 	public void test6() throws Exception {
 		
 		IPath path1= createLinkedFile("file1", "testResources/ExternalFile");
 		assertNotNull(path1);
 		
-		File externalFile= TestHelper.getFileInPlugin(FilebuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
+		File externalFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
 		assertNotNull(externalFile);
 		IPath path2= new Path(externalFile.getAbsolutePath());
 		
@@ -243,9 +257,24 @@ public class FileBufferTest1 extends TestCase {
 		manager.disconnect(path2, null);
 		assertNull(manager.getTextFileBuffer(path2));
 	}
-
-	private IPath createLinkedFile(String fileName, String linkTarget) throws CoreException {
-		IFile file= TestHelper.createLinkedFile(fProject, new Path(fileName), FilebuffersTestPlugin.getDefault(), new Path(linkTarget));
-		return file != null ? file.getFullPath() : null;
+	
+	/*
+	 * Tests the creation of a file buffer for a non-existing file. 
+	 */
+	public void test7() throws Exception {
+		IPath path= FileBuffersTestPlugin.getDefault().getStateLocation();
+		path= path.append("NonExistingFile");
+				
+		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		manager.connect(path, null);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		Assert.assertNotNull(buffer);
+		
+		IDocument document= buffer.getDocument();
+		Assert.assertNotNull(document);
+		Assert.assertTrue("".equals(document.get()));
+		
+		manager.disconnect(path, null);
+		assertNull(manager.getTextFileBuffer(path));
 	}
 }

@@ -29,7 +29,7 @@
       <property name="data-dir" value="${core-filebuffers-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
-                value="org.eclipse.core.filebuffers.tests.FilebuffersTestSuite"/>
+                value="org.eclipse.core.filebuffers.tests.FileBuffersTestSuite"/>
     </ant>
   </target>
 

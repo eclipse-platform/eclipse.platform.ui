@@ -20,12 +20,17 @@ import junit.framework.TestSuite;
  * 
  * @since 3.0
  */
-public class FilebuffersTestSuite {
+public class FileBuffersTestSuite {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.core.filebuffers"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
-		suite.addTest(FileBufferTest1.suite());
+		suite.addTestSuite(FileBufferCreation.class);
+		suite.addTestSuite(FileBuffersForWorkspaceFiles.class);
+		suite.addTestSuite(FileBuffersForExternalFiles.class);
+		suite.addTestSuite(FileBuffersForLinkedFiles.class);
+		suite.addTestSuite(FileBuffersForNonExistingExternalFiles.class);
+		suite.addTestSuite(FileBuffersForNonExistingWorkspaceFiles.class);
 		//$JUnit-END$
 		return suite;
 	}
