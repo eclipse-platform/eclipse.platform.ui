@@ -33,7 +33,93 @@ function getTarget(e) {
 }
 
 /**
- * Returns the node with specified tag
+ * Returns the next tree node "down" from current one
+ */
+function getNextDown(node)
+{
+	var a = getAnchorNode(node);
+	if (!a) return null;
+		
+	// Try visible child first
+	var li = a.parentNode.parentNode;
+	var ul = getChildNode(li, "UL");
+	if (ul && ul.className == "expanded")
+		return getDescendantNode(ul, "A");
+	
+	// Try next sibling
+	var li_sib = getNextSibling(li);
+	if (li_sib != null)
+		return getDescendantNode(li_sib, "A");
+		
+	// Try looking to parent's sibling
+	while(li_sib == null) {
+		var ul = li.parentNode;
+		li = ul.parentNode;
+		if (li.tagName != "LI") // reached the top, nothing else to do
+			return null;
+			
+		li_sib = getNextSibling(li);		
+	}
+		
+	// found the next down sibling
+	return getDescendantNode(li_sib, "A");		
+}
+
+/**
+ * Returns the next tree node "down" from current one
+ */
+function getNextUp(node)
+{
+	var a = getAnchorNode(node);
+	if (!a) return null;
+		
+	// Get previous sibling first
+	var li = a.parentNode.parentNode;
+	var li_sib = getPrevSibling(li);
+	if (li_sib != null) {
+		// try to get the deepest node that preceeds this current node
+		var candidate = getDescendantNode(li_sib, "A");
+		var nextDown = getNextDown(candidate);
+		while(nextDown != null && nextDown != node){
+			candidate = nextDown;
+			nextDown = getNextDown(nextDown);
+		}
+		return getDescendantNode(candidate, "A");	;
+	} else {
+		// get the parent
+		var li = li.parentNode.parentNode;
+		if (li && li.tagName == "LI")
+			return getDescendantNode(li, "A");
+		else
+			return null;
+	}
+}
+
+/**
+ * Returns the next sibling element
+ */
+function getNextSibling(node) 
+{
+	var sib = node.nextSibling;
+	while (sib && sib.nodeType == 3) // text node
+		sib = sib.nextSibling;
+	return sib;
+}
+
+/**
+ * Returns the next sibling element
+ */
+function getPrevSibling(node) 
+{
+	var sib = node.previousSibling;
+	while (sib && sib.nodeType == 3) // text node
+		sib = sib.previousSibling;
+	return sib;
+}
+
+
+/**
+ * Returns the child node with specified tag
  */
 function getChildNode(parent, childTag)
 {
@@ -45,18 +131,41 @@ function getChildNode(parent, childTag)
 	return null;
 }
 
+/**
+ * Returns the descendat node with specified tag (depth-first searches)
+ */
+function getDescendantNode(parent, childTag)
+{	
+	if (parent.tagName == childTag)
+		return parent;
+		
+	var list = parent.childNodes;
+	if (list == null) return null;
+	for (var i=0; i<list.length; i++) {
+		var child = list.item(i);
+		if(child.tagName == childTag)
+			return child;
+		
+		child = getDescendantNode(child, childTag);
+		if (child != null)
+			return child;
+	}
+	return null;
+}
+
 
 /**
  * Returns the anchor of this click
  * NOTE: MOZILLA BUG WITH A:focus and A:active styles
  */
 function getAnchorNode(node) {
+
   if (node.nodeType == 3)  //"Node.TEXT_NODE") 
 	return node.parentNode;
-  else if (node.tagName == "NOBR")
-  	return node.lastChild;
   else if (node.tagName == "A") 
     return node;
+  else if (node.tagName == "NOBR")
+  	return node.lastChild;
   else if (node.tagName == "IMG")
   	return getChildNode(node.parentNode, "A");
   return null;
@@ -332,7 +441,7 @@ function keyDownHandler(e)
 		key = window.event.keyCode;
 	else if (isMozilla)
 		key = e.keyCode;
-	
+		
 	if (key == 9 | key == 13) // tab or enter
 		return true;
 	
@@ -367,31 +476,23 @@ function keyDownHandler(e)
   			highlightTopic(plus_minus);
   			scrollIntoView(clickedNode);
   		}
-  	}
-  	/*
-  	  else if (key == 40 ) { // down arrow
+  	} else if (key == 40 ) { // down arrow
   		var clickedNode = getTarget(e);
   		if (!clickedNode) return;
-		
-  		var evtObj = document.createEventObject();
-  		evtObj.keyCode = 9;
-  
-		var x=clickedNode.fireEvent("onkeydown",evtObj);
 
-		//if (isIE)
-		//	window.event.cancelBubble = true;
-  	} else if (key == 40 ) { // up arrow
-  		if (!e) e = window.event;
-  		var evtObj = document.createEventObject(e);
-  		evtObj.keyCode = 9;
- 		evtObj.shiftKey = true;
-  
-		document.fireEvent("onkeydown",evtObj);
-		document.fireEvent("onkeyup",evtObj);
-		if (isIE)
-			window.event.cancelBubble = true;
+		var next = getNextDown(clickedNode);
+		if (next)
+			next.focus();
+
+  	} else if (key == 38 ) { // up arrow
+  		var clickedNode = getTarget(e);
+  		if (!clickedNode) return;
+
+		var next = getNextUp(clickedNode);
+		if (next)
+			next.focus();
   	}
-  	*/
+  	
   	 			
   	return false;
 }
