@@ -72,7 +72,7 @@ public class AntPropertyNode extends AntTaskNode {
 	}
 	
 	/**
-	 * Sets the property in the project.
+	 * Sets the properties in the project.
 	 */
 	public boolean configure(boolean validateFully) {
 		if (configured) {
@@ -92,13 +92,14 @@ public class AntPropertyNode extends AntTaskNode {
 	}
 
 	/**
-	 * @param name
-	 * @param value
+	 * Adds this property name and value as being created by this property node declaration.
+	 * @param propertyName the name of the property
+	 * @param value the value of the property
 	 */
-	public void addProperty(String name, String value) {
+	public void addProperty(String propertyName, String value) {
 		if (fProperties == null) {
 			fProperties= new HashMap(1);
 		}
-		fProperties.put(name, value);
+		fProperties.put(propertyName, value);
 	}
 }
