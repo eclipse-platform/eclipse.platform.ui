@@ -23,7 +23,6 @@ public class LaunchVariableManager implements ILaunchVariableManager {
 	
 	private static SimpleLaunchVariableRegistry fgSimpleVariableRegistry= new SimpleLaunchVariableRegistry();
 	private static ContextLaunchVariableRegistry fgContextVariableRegistry= new ContextLaunchVariableRegistry();
-	private static RefreshLaunchVariableRegistry fgRefreshVariableRegistry= new RefreshLaunchVariableRegistry();
 
 	/**
 	 * @see ILaunchVariableManager#getContextVariable(String)
@@ -37,20 +36,6 @@ public class LaunchVariableManager implements ILaunchVariableManager {
 	 */
 	public IContextLaunchVariable[] getContextVariables() {
 		return fgContextVariableRegistry.getVariables();
-	}
-
-	/**
-	 * @see ILaunchVariableManager#getRefreshVariable(String)
-	 */
-	public IContextLaunchVariable getRefreshVariable(String name) {
-		return fgRefreshVariableRegistry.getVariable(name);
-	}
-
-	/**
-	 * @see ILaunchVariableManager#getRefreshVariables()
-	 */
-	public IContextLaunchVariable[] getRefreshVariables() {
-		return fgRefreshVariableRegistry.getVariables();
 	}
 
 	/**

@@ -1288,35 +1288,6 @@
             description="%folder_prompt.description">
       </variable>
    </extension>
-<!-- Refresh variables -->
-   <extension
-         point="org.eclipse.debug.core.refreshLaunchVariables">
-      <variable
-            name="workspace"
-            expanderClass="org.eclipse.debug.internal.core.variables.WorkspaceExpander"
-            description="%workspace.description">
-      </variable>
-      <variable
-            name="project"
-            expanderClass="org.eclipse.debug.internal.core.variables.ProjectExpander"
-            description="%project.description">
-      </variable>
-      <variable
-            name="container"
-            expanderClass="org.eclipse.debug.internal.core.variables.ContainerExpander"
-            description="%container.description">
-      </variable>
-      <variable
-            name="resource"
-            expanderClass="org.eclipse.debug.internal.core.variables.ResourceExpander"
-            description="%resource.description">
-      </variable>
-      <variable
-            name="working_set"
-            expanderClass="org.eclipse.debug.internal.ui.launchVariables.WorkingSetExpander"
-            description="%working_set.description">
-      </variable>
-   </extension>
 <!-- Variable Components -->
    <extension
          point="org.eclipse.debug.ui.launchVariableComponents">

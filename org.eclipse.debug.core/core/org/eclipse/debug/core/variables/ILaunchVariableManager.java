@@ -92,23 +92,7 @@ public interface ILaunchVariableManager {
 	 * @return the context launch variables in this registry
 	 */
 	public IContextLaunchVariable[] getContextVariables();
-	/**
-	 * Returns the refresh variable with the given name or <code>null</code>
-	 * if no such variable exists. If multiple refresh variables with the given name
-	 * have been added to this registry, returns the most recently added variable
-	 * with that name.
-	 * 
-	 * @param name the name of the refresh variable
-	 * @return the refresh launch configuration variable with the given name or
-	 * <code>null</code> if no such variable exists.
-	 */
-	public IContextLaunchVariable getRefreshVariable(String name);
-	/**
-	 * Returns all the refresh variables in the registry.
-	 * 
-	 * @return the refresh launch variables in this registry
-	 */
-	public IContextLaunchVariable[] getRefreshVariables();
+
 	/**
 	 * Adds the given simple variables to this variable registry
 	 * 

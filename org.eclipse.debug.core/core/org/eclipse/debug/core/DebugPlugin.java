@@ -128,13 +128,6 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final String EXTENSION_POINT_CONTEXT_LAUNCH_VARIABLES = "contextLaunchVariables"; //$NON-NLS-1$
-	/**
-	 * Simple identifier constant (value <code>"refreshLaunchVariables"</code>) for the
-	 * refresh launch variables extension point.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String EXTENSION_POINT_REFRESH_LAUNCH_VARIABLES = "refreshLaunchVariables"; //$NON-NLS-1$
 	
 	/**
 	 * Simple identifier constant (value <code>"processFactories"</code>) for the

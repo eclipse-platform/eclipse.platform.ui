@@ -192,7 +192,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 		
 		if (fWorkingSet == null){
-			fWorkingSet = workingSetManager.createWorkingSet("workingSet", new IAdaptable[0]); //$NON-NLS-1$
+			fWorkingSet = workingSetManager.createWorkingSet(LaunchVariableMessages.getString("RefreshTab.40"), new IAdaptable[0]); //$NON-NLS-1$
 		}
 		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(fWorkingSet);
 		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
@@ -521,20 +521,20 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		String factoryID = memento.getString(IVariableConstants.TAG_FACTORY_ID);
 
 		if (factoryID == null) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.2")); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.2")); //$NON-NLS-1$
 			return null;
 		}
 		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 		if (factory == null) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.3") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.3") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 		IAdaptable adaptable = factory.createElement(memento);
 		if (adaptable == null) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.4") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.4") + factoryID); //$NON-NLS-1$
 		}
 		if ((adaptable instanceof IWorkingSet) == false) {
-			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.5") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("RefreshTab.5") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 			
