@@ -34,13 +34,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -138,34 +136,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	
 	private static final String VIEWER_TYPE_MEMENTO_KEY = "viewerType"; // $NON-NLS-1$
 
-	/**
-	 * Subclass of TreeViewer which handles decorator events properly. We should not need to create 
-	 * a subclass just for this!
-	 */
-	public class SyncTreeViewer extends TreeViewer {
-		public SyncTreeViewer(Composite parent, int style) {
-			super(parent, style);
-		}
-		protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
-			Object[] changed= event.getElements();
-			if (changed != null && input != null) {
-				ArrayList others= new ArrayList();
-				for (int i= 0; i < changed.length; i++) {
-					Object curr = changed[i];
-					if (curr instanceof IResource) {
-						curr = SyncSet.getModelObject(input.getFilteredSyncSet(), (IResource)curr);
-					}
-					others.add(curr);
-				}
-				if (others.isEmpty()) {
-					return;
-				}
-				event= new LabelProviderChangedEvent((IBaseLabelProvider) event.getSource(), others.toArray());
-			}
-			super.handleLabelProviderChanged(event);
-		}
-	}
-			
 	public SyncViewer() {
 	}
 
@@ -250,7 +220,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	}
 
 	private void createTreeViewerPartControl(Composite parent) {
-		viewer = new SyncTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new SyncTreeViewer(this, parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new SyncSetTreeContentProvider());
 		viewer.setLabelProvider(SyncViewerLabelProvider.getDecoratingLabelProvider());
 		viewer.setSorter(new SyncViewerSorter());
@@ -269,7 +239,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		table.setLayout(layout);
 		
 		// Create the viewer
-		TableViewer tableViewer = new TableViewer(table);
+		TableViewer tableViewer = new SyncTableViewer(table);
 		
 		// Create the table columns
 		createColumns(table, layout, tableViewer);
@@ -519,12 +489,22 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 */
 	public void dispose() {
 		super.dispose();
+		
+		// cancel and wait 
+		RefreshSubscriberInputJob job = TeamUIPlugin.getPlugin().getRefreshJob();
+		job.cancel();
+		try {
+			job.join();
+		} catch (InterruptedException e) {
+			// continue with shutdown
+		}
+		job.setSubscriberInput(null);
+		
 		TeamProvider.removeListener(this);
 		for (Iterator it = subscriberInputs.values().iterator(); it.hasNext();) {
 			SubscriberInput input = (SubscriberInput) it.next();
 			input.dispose();
-		}
-		TeamUIPlugin.getPlugin().getRefreshJob().setSubscriberInput(null);
+		}		
 	}
 
 	public void run(IRunnableWithProgress runnable) {
@@ -823,5 +803,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 //			TreeViewer tree = (TreeViewer)getViewer();
 //			tree.getTree().selectAll();
 		}
+	}
+	
+	public boolean gotoDifference(int direction) {
+		if(viewer instanceof INavigableControl) {
+			return ((INavigableControl)viewer).gotoDifference(direction);
+		}
+		return false;
 	}
 }

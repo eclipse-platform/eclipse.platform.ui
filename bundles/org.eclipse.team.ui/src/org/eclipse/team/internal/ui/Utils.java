@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -20,6 +21,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.ui.IKeyBindingService;
 
 /**
  * @author Jean-Michel Lemieux
@@ -175,6 +177,13 @@ public class Utils {
 		// Let's log non-team exceptions
 		if (!(t instanceof TeamException)) {
 			TeamUIPlugin.log(error.getSeverity(), error.getMessage(), t);
+		}
+	}
+	
+	public static void registerAction(IKeyBindingService kbs, IAction a, String id) {
+		if (kbs != null) {
+			a.setActionDefinitionId(id);
+			kbs.registerAction(a);
 		}
 	}
 }

@@ -23,17 +23,22 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.sync.views.INavigableControl;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.sync.AndSyncInfoFilter;
+import org.eclipse.team.ui.sync.ISyncViewer;
 import org.eclipse.team.ui.sync.PseudoConflictFilter;
 import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
 import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
@@ -67,6 +72,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	private Action open;
 	private ExpandAllAction expandAll;
 	private CancelSubscription cancelSubscription;
+	private SelectAllAction selectAllAction;
 	
 	class CollapseAllAction extends Action {
 		public CollapseAllAction() {
@@ -107,17 +113,20 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 				setChecked(viewer.getCurrentViewType() == SyncViewer.TREE_VIEW);
 			}			
 		}
-	}
-	
-	class SelectAllAction extends Action {
-		public boolean isEnabled() {
-			// Always enable the action but selectAll on Tree does nothing
-			// Being smarter would require a refresh of the global command when the 
-			// view switches type (TREE<>TABLE)
-			return true;
+	}	
+
+	class SelectAllAction extends Action implements IPropertyListener {
+		public SelectAllAction() {
+			getSyncView().addPropertyListener(this);
 		}
 		public void run() {
 			getSyncView().selectAll();
+		}
+		public void propertyChanged(Object source, int propId) {
+			if(propId == SyncViewer.PROP_VIEWTYPE) {
+				selectAllAction.setEnabled(getSyncView().getCurrentViewType() == ISyncViewer.TABLE_VIEW);
+				getSyncView().getViewSite().getActionBars().updateActionBars();	
+			}			
 		}
 	}
 	
@@ -197,6 +206,23 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		expandAll = new ExpandAllAction(this);
 		cancelSubscription = new CancelSubscription(this);
 		
+		IKeyBindingService kbs = getSyncView().getSite().getKeyBindingService();
+		Action a= new Action("Select next team change") {
+			public void run() {
+				getSyncView().gotoDifference(INavigableControl.NEXT);
+			}
+		};
+		Utils.registerAction(kbs, a, "org.eclipse.team.ui.syncview.selectNextChange");	//$NON-NLS-1$
+		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.NEXT, a);
+		
+		a= new Action("Select previous team change") {
+			public void run() {
+				getSyncView().gotoDifference(INavigableControl.PREVIOUS);
+			}
+		};
+		Utils.registerAction(kbs, a, "org.eclipse.team.ui.syncview.selectPreviousChange");	//$NON-NLS-1$
+		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, a);
+		
 		toggleViewerType = new ToggleViewAction(getSyncView(), getSyncView().getCurrentViewType());
 		open = new OpenInCompareAction(syncView);
 		
@@ -227,7 +253,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		
-		Action selectAllAction = new SelectAllAction();
+		selectAllAction = new SelectAllAction();
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
 
 		IToolBarManager manager = actionBars.getToolBarManager();
@@ -311,6 +337,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	protected void initializeActions() {
 		SubscriberInput input = getSubscriberContext();
 		refreshSelectionAction.setEnabled(input != null);
+		
 
 		cancelSubscription.updateTitle(input);
 		if(input == null) {
