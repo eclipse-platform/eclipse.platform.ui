@@ -646,7 +646,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		//detail specific actions
 		
 		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
-		textAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.content.assist.proposals");
+		textAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.content.assist.proposals"); //$NON-NLS-1$
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));

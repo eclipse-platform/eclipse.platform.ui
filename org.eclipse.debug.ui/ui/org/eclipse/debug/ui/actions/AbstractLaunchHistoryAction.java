@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -147,9 +148,9 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 			String mode = getMode();
 			String launchName = lastLaunched.getName();
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
-				tooltip = MessageFormat.format("Run {0}", new String[]{launchName});
+				tooltip = MessageFormat.format(ActionMessages.getString("AbstractLaunchHistoryAction.Run_{0}_1"), new String[]{launchName}); //$NON-NLS-1$
 			} else {
-				tooltip = MessageFormat.format("Debug {0}", new String[]{launchName});
+				tooltip = MessageFormat.format(ActionMessages.getString("AbstractLaunchHistoryAction.Debug_{0}_2"), new String[]{launchName}); //$NON-NLS-1$
 			}
 		}
 		getAction().setToolTipText(tooltip);
