@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
@@ -268,6 +269,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, Policy.bind("error")));
 			} catch (CVSException e) {
 				throw e;
+			} catch (OperationCanceledException e) {
+				throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, message == null ? Policy.bind("error") : message));
 			}
 			try {
 				// The following will throw an exception if authentication fails
