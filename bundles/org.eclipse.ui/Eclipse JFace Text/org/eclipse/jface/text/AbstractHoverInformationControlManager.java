@@ -14,6 +14,10 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -184,13 +188,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	/**
 	 * The mouse tracker to be installed on the manager's subject control.
 	 */
-	class MouseTracker extends MouseTrackAdapter implements MouseMoveListener {
+	class MouseTracker extends ShellAdapter implements MouseTrackListener, MouseMoveListener {
+		
+		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=18393
 		
 		private final static int EPSILON= 3;
 		
 		private Rectangle fSubjectArea;
 		private Control fSubjectControl;
 		private boolean fIsActive= false;
+		private boolean fMouseLost= false;
+		private boolean fShellDeactivated= false;
 		
 		public MouseTracker() {
 		}
@@ -218,6 +226,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void mouseHover(MouseEvent event) {
 			fIsActive= true;
+			fMouseLost= false;
 			setEnabled(false);
 			
 			fHoverEventLocation= new Point(event.x, event.y);
@@ -227,10 +236,25 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (r.y < 0) r.y= 0;
 			setSubjectArea(r);
 			
-			if (fSubjectControl != null && !fSubjectControl.isDisposed())
+			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addMouseMoveListener(this);
+				fSubjectControl.getShell().addShellListener(this);
+			}
 			
 			doShowInformation();
+		}
+		
+		/*
+		 * @see MouseTrackListener#mouseEnter(MouseEvent)
+		 */
+		public void mouseEnter(MouseEvent e) {
+		}
+		
+		/*
+		 * @see MouseTrackListener#mouseExit(MouseEvent)
+		 */
+		public void mouseExit(MouseEvent e) {
+			fMouseLost= true;
 		}
 		
 		/*
@@ -243,14 +267,45 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			}
 		}
 		
+		/*
+		 * @see ShellListener#shellDeactivated(ShellEvent)
+		 */
+		public void shellDeactivated(ShellEvent e) {
+			fShellDeactivated= true;
+		}
+		
+		/*
+		 * @see ShellListener#shellIconified(ShellEvent)
+		 */
+		public void shellIconified(ShellEvent e) {
+			fShellDeactivated= true;
+		}
+		
 		public void deactivate() {
 			fIsActive= false;
+			fMouseLost= false;
+			fShellDeactivated= false;
+		}
+		
+		public boolean isMouseLost() {
+			
+			if (fMouseLost || fShellDeactivated)
+				return true;
+				
+			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
+				Display display= fSubjectControl.getDisplay();
+				Point p= display.getCursorLocation();
+				p= fSubjectControl.toControl(p);
+				if (!fSubjectArea.contains(p.x, p.y))
+					return true;
+			}
+			
+			return false;
 		}
 	};
 		
 	/** The mouse tracker on the subject control */
 	private MouseTracker fMouseTracker= new MouseTracker();
-	
 	/** The remembered hover event location */
 	private Point fHoverEventLocation= new Point(-1, -1);
 	
@@ -269,9 +324,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @see AbstractInformationControlManager#presentInformation()
 	 */
 	protected void presentInformation() {
-		fMouseTracker.setSubjectArea(getSubjectArea());
-		super.presentInformation();
-		fMouseTracker.deactivate();
+		
+		Rectangle area= getSubjectArea();
+		if (area != null)
+			fMouseTracker.setSubjectArea(area);
+		
+		if (fMouseTracker.isMouseLost()) {
+			hideInformationControl();
+		} else {
+			fMouseTracker.deactivate();
+			super.presentInformation();
+		}
 	}
 	
 	/*
