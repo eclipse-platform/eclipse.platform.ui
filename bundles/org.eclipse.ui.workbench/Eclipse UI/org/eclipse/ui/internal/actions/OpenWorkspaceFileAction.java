@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.OpenResourceDialog;
