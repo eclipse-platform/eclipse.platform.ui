@@ -139,7 +139,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 */
 	private int additionalProposalOffset = -1;
     
-    private static final String ANT_DTD_FILENAME = "/ant1.6.0.dtd"; //$NON-NLS-1$
+    private static final String ANT_DTD_FILENAME = "/ant1.6.2.dtd"; //$NON-NLS-1$
 
     /**
      * The dtd.

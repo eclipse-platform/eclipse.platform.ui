@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!ENTITY % boolean "(true|false|on|off|yes|no)">
-<!ENTITY % tasks "propertyfile | importtypelib | vsscheckin | sql | cvspass | p4reopen | csc | dirname | wlrun | p4label | p4revert | replaceregexp | get | jjtree | sleep | jarlib-display | dependset | zip | patch | jspc | style | test | tstamp | unwar | vsshistory | icontract | cvschangelog | p4submit | ccmcheckin | p4change | bzip2 | sync | p4delete | vssadd | javadoc | p4integrate | translate | signjar | cclock | chown | vajload | jarlib-available | WsdlToDotnet | buildnumber | jpcovmerge | ejbjar | war | rename | sequential | serverdeploy | property | subant | move | ildasm | copydir | cccheckin | ccunlock | wljspc | fixcrlf | sosget | pathconvert | record | p4sync | exec | ccmklabel | p4edit | manifest | maudit | antlr | netrexxc | jpcovreport | execon | ccmcheckout | ant | xmlvalidate | xslt | p4resolve | iplanet-ejbc | ccmcheckintask | gzip | native2ascii | ccrmtype | starteam | ear | input | presetdef | rmic | checksum | mail | loadfile | vsscheckout | stylebook | soscheckin | mimemail | stlabel | gunzip | concat | cab | touch | parallel | splash | antcall | ccmkbl | cccheckout | typedef | p4have | filter | xmlproperty | import | copy | jsharpc | symlink | antstructure | script | ccmcreatetask | rpm | delete | replace | mmetrics | attrib | waitfor | untar | loadproperties | available | echoproperties | chgrp | vajexport | bunzip2 | whichresource | copyfile | p4labelsync | vsscreate | macrodef | ejbc | unjar | vbc | wsdltodotnet | mkdir | condition | cvs | tempfile | junitreport | taskdef | echo | ccupdate | java | vsslabel | renameext | basename | javadoc2 | tar | vsscp | vajimport | p4fstat | setproxy | p4counter | wlstop | ilasm | soscheckout | apply | ccuncheckout | jarlib-resolve | jlink | cvstagdiff | javacc | chmod | pvcs | jarlib-manifest | jar | ccmklbtype | sound | scriptdef | defaultexcludes | mparse | blgenclient | uptodate | jjdoc | genkey | javah | ccmreconfigure | fail | unzip | javac | p4add | jpcoverage | soslabel | depend | vssget | deltree | ddcreator | image">
-<!ENTITY % types "patternset | assertions | propertyset | filterset | libfileset | filterreader | scriptfilter | extension | fileset | dirset | filelist | filterchain | path | classfileset | selector | xmlcatalog | description | mapper | zipfileset | substitution | extensionSet | regexp">
+<!ENTITY % tasks "propertyfile | ccmkdir | importtypelib | vsscheckin | sql | cvspass | p4reopen | csc | dirname | wlrun | p4label | p4revert | replaceregexp | get | jjtree | sleep | jarlib-display | dependset | zip | patch | jspc | style | test | tstamp | unwar | vsshistory | icontract | cvschangelog | p4submit | ccmcheckin | p4change | bzip2 | sync | p4delete | vssadd | javadoc | p4integrate | translate | signjar | cclock | chown | vajload | jarlib-available | rexec | WsdlToDotnet | buildnumber | jpcovmerge | ejbjar | war | stlist | rename | sequential | serverdeploy | property | subant | move | ildasm | copydir | cccheckin | ccunlock | wljspc | fixcrlf | telnet | sosget | pathconvert | record | p4sync | exec | ccmklabel | p4edit | manifest | maudit | antlr | netrexxc | ftp | jpcovreport | execon | ccmcheckout | ant | xmlvalidate | xslt | p4resolve | iplanet-ejbc | ccmcheckintask | gzip | native2ascii | ccrmtype | starteam | ear | input | presetdef | rmic | checksum | mail | loadfile | vsscheckout | stylebook | soscheckin | mimemail | stlabel | gunzip | concat | cab | touch | parallel | splash | antcall | ccmkbl | cccheckout | typedef | p4have | filter | xmlproperty | import | copy | jsharpc | symlink | antstructure | script | ccmcreatetask | rpm | delete | replace | mmetrics | attrib | waitfor | untar | loadproperties | available | echoproperties | stcheckin | chgrp | vajexport | stcheckout | bunzip2 | whichresource | copyfile | p4labelsync | vsscreate | macrodef | ejbc | unjar | vbc | wsdltodotnet | mkdir | cvs | condition | tempfile | junitreport | ccmkattr | taskdef | echo | ccupdate | java | vsslabel | renameext | basename | javadoc2 | tar | vsscp | vajimport | p4fstat | setproxy | p4counter | wlstop | ilasm | soscheckout | apply | ccuncheckout | jarlib-resolve | jlink | cvstagdiff | javacc | chmod | pvcs | jarlib-manifest | jar | ccmklbtype | sound | scriptdef | defaultexcludes | mparse | blgenclient | uptodate | jjdoc | genkey | javah | ccmkelem | ccmreconfigure | fail | unzip | javac | p4add | jpcoverage | soslabel | depend | vssget | deltree | ddcreator | junit">
+<!ENTITY % types "patternset | assertions | propertyset | filterset | libfileset | mergemapper | identitymapper | filterreader | unpackagemapper | scriptfilter | concatfilter | extension | fileset | dirset | globmapper | filelist | filterchain | path | compositemapper | classfileset | regexpmapper | selector | xmlcatalog | flattenmapper | description | chainedmapper | packagemapper | mapper | zipfileset | substitution | extensionSet | redirector | regexp">
 
 <!ELEMENT project (target | %tasks; | %types;)*>
 <!ATTLIST project
@@ -81,6 +81,7 @@
           id ID #IMPLIED
           refid IDREF #IMPLIED
           description CDATA #IMPLIED
+          negate %boolean; #IMPLIED
           dynamic %boolean; #IMPLIED>
 
 <!ELEMENT propertyref EMPTY>
@@ -91,7 +92,7 @@
           regex CDATA #IMPLIED
           prefix CDATA #IMPLIED>
 
-<!ELEMENT mapper (classpath)*>
+<!ELEMENT mapper (classpath | mapper)*>
 <!ATTLIST mapper
           id ID #IMPLIED
           classpath CDATA #IMPLIED
@@ -100,10 +101,10 @@
           refid IDREF #IMPLIED
           description CDATA #IMPLIED
           classname CDATA #IMPLIED
-          from CDATA #IMPLIED
-          to CDATA #IMPLIED>
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
 
-<!ELEMENT classpath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT classpath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST classpath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -111,7 +112,7 @@
           description CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT fileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT fileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST fileset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -143,6 +144,13 @@
           type CDATA #IMPLIED
           value CDATA #IMPLIED>
 
+<!ELEMENT none (custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | date | and | depth)*>
+<!ATTLIST none
+          id ID #IMPLIED
+          error CDATA #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED>
+
 <!ELEMENT present (mapper)*>
 <!ATTLIST present
           id ID #IMPLIED
@@ -151,13 +159,6 @@
           refid IDREF #IMPLIED
           description CDATA #IMPLIED
           present (srconly | both) #IMPLIED>
-
-<!ELEMENT none (custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | date | and | depth)*>
-<!ATTLIST none
-          id ID #IMPLIED
-          error CDATA #IMPLIED
-          refid IDREF #IMPLIED
-          description CDATA #IMPLIED>
 
 <!ELEMENT not (custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | date | and | depth)*>
 <!ATTLIST not
@@ -270,14 +271,15 @@
 <!ELEMENT date EMPTY>
 <!ATTLIST date
           id ID #IMPLIED
+          refid IDREF #IMPLIED
+          millis CDATA #IMPLIED
+          checkdirs %boolean; #IMPLIED
+          datetime CDATA #IMPLIED
+          granularity CDATA #IMPLIED
+          pattern CDATA #IMPLIED
           when (before | after | equal) #IMPLIED
           error CDATA #IMPLIED
-          millis CDATA #IMPLIED
-          refid IDREF #IMPLIED
-          description CDATA #IMPLIED
-          checkdirs %boolean; #IMPLIED
-          granularity CDATA #IMPLIED
-          datetime CDATA #IMPLIED>
+          description CDATA #IMPLIED>
 
 <!ELEMENT and (custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | date | and | depth)*>
 <!ATTLIST and
@@ -295,7 +297,7 @@
           refid IDREF #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT dirset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT dirset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST dirset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -310,7 +312,7 @@
           excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT extdirs (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT extdirs (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST extdirs
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -318,15 +320,7 @@
           description CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT existing (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
-<!ATTLIST existing
-          id ID #IMPLIED
-          location CDATA #IMPLIED
-          refid IDREF #IMPLIED
-          description CDATA #IMPLIED
-          path CDATA #IMPLIED>
-
-<!ELEMENT filelist EMPTY>
+<!ELEMENT filelist (file)*>
 <!ATTLIST filelist
           id ID #IMPLIED
           dir CDATA #IMPLIED
@@ -334,13 +328,26 @@
           description CDATA #IMPLIED
           files CDATA #IMPLIED>
 
+<!ELEMENT file EMPTY>
+<!ATTLIST file
+          id ID #IMPLIED
+          name CDATA #IMPLIED>
+
+<!ELEMENT existing (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
+<!ATTLIST existing
+          id ID #IMPLIED
+          location CDATA #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED
+          path CDATA #IMPLIED>
+
 <!ELEMENT pathelement EMPTY>
 <!ATTLIST pathelement
           id ID #IMPLIED
           location CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT path (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT path (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST path
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -368,7 +375,7 @@
           id ID #IMPLIED
           file CDATA #IMPLIED>
 
-<!ELEMENT libfileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT libfileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST libfileset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -386,6 +393,18 @@
           excludes CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
+<!ELEMENT mergemapper EMPTY>
+<!ATTLIST mergemapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
+<!ELEMENT identitymapper EMPTY>
+<!ATTLIST identitymapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
 <!ELEMENT filterreader (classpath | param)*>
 <!ATTLIST filterreader
           id ID #IMPLIED
@@ -395,6 +414,12 @@
           description CDATA #IMPLIED
           classname CDATA #IMPLIED>
 
+<!ELEMENT unpackagemapper EMPTY>
+<!ATTLIST unpackagemapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
 <!ELEMENT scriptfilter (#PCDATA)>
 <!ATTLIST scriptfilter
           id ID #IMPLIED
@@ -402,6 +427,12 @@
           token CDATA #IMPLIED
           src CDATA #IMPLIED
           language CDATA #IMPLIED>
+
+<!ELEMENT concatfilter EMPTY>
+<!ATTLIST concatfilter
+          id ID #IMPLIED
+          append CDATA #IMPLIED
+          prepend CDATA #IMPLIED>
 
 <!ELEMENT extension EMPTY>
 <!ATTLIST extension
@@ -415,6 +446,12 @@
           implementationurl CDATA #IMPLIED
           description CDATA #IMPLIED
           implementationvendor CDATA #IMPLIED>
+
+<!ELEMENT globmapper EMPTY>
+<!ATTLIST globmapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
 
 <!ELEMENT filterchain (headfilter | classconstants | linecontains | filterreader | replaceregex | replacetokens | escapeunicode | ignoreblank | tailfilter | tabstospaces | prefixlines | expandproperties | striplinebreaks | trim | striplinecomments | replacestring | tokenfilter | stripjavacomments | containsregex | deletecharacters | linecontainsregexp)*>
 <!ATTLIST filterchain
@@ -508,8 +545,8 @@
 <!ATTLIST replacestring
           id ID #IMPLIED
           byline %boolean; #IMPLIED
-          from CDATA #IMPLIED
-          to CDATA #IMPLIED>
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
 
 <!ELEMENT tokenfilter (containsstring | linetokenizer | trim | stringtokenizer | replaceregex | replacestring | ignoreblank | deletecharacters | containsregex | filetokenizer)*>
 <!ATTLIST tokenfilter
@@ -566,6 +603,12 @@
           description CDATA #IMPLIED
           pattern CDATA #IMPLIED>
 
+<!ELEMENT compositemapper (mapper)*>
+<!ATTLIST compositemapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
 <!ELEMENT classfileset (patternset | exclude | include | custom | rootfileset | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | root | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST classfileset
           id ID #IMPLIED
@@ -577,12 +620,12 @@
           rootclass CDATA #IMPLIED
           casesensitive %boolean; #IMPLIED
           description CDATA #IMPLIED
+          excludesfile CDATA #IMPLIED
           excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
-          excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT rootfileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT rootfileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST rootfileset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -602,6 +645,12 @@
           id ID #IMPLIED
           classname CDATA #IMPLIED>
 
+<!ELEMENT regexpmapper EMPTY>
+<!ATTLIST regexpmapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
 <!ELEMENT xmlcatalog (entity | classpath | catalogpath | dtd | xmlcatalog)*>
 <!ATTLIST xmlcatalog
           id ID #IMPLIED
@@ -618,7 +667,7 @@
           base CDATA #IMPLIED
           publicid CDATA #IMPLIED>
 
-<!ELEMENT catalogpath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT catalogpath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST catalogpath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -633,13 +682,31 @@
           base CDATA #IMPLIED
           publicid CDATA #IMPLIED>
 
+<!ELEMENT flattenmapper EMPTY>
+<!ATTLIST flattenmapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
 <!ELEMENT description (#PCDATA)>
 <!ATTLIST description
           id ID #IMPLIED
           refid IDREF #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT zipfileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT chainedmapper (mapper)*>
+<!ATTLIST chainedmapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
+<!ELEMENT packagemapper EMPTY>
+<!ATTLIST packagemapper
+          id ID #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
+<!ELEMENT zipfileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST zipfileset
           id ID #IMPLIED
           src CDATA #IMPLIED
@@ -672,6 +739,78 @@
           refid IDREF #IMPLIED
           description CDATA #IMPLIED>
 
+<!ELEMENT redirector (errorfilterchain | outputfilterchain | errormapper | inputfilterchain | outputmapper | inputmapper)*>
+<!ATTLIST redirector
+          id ID #IMPLIED
+          refid IDREF #IMPLIED
+          inputencoding CDATA #IMPLIED
+          append %boolean; #IMPLIED
+          createemptyfiles %boolean; #IMPLIED
+          output CDATA #IMPLIED
+          outputproperty CDATA #IMPLIED
+          outputencoding CDATA #IMPLIED
+          errorproperty CDATA #IMPLIED
+          error CDATA #IMPLIED
+          inputstring CDATA #IMPLIED
+          input CDATA #IMPLIED
+          description CDATA #IMPLIED
+          errorencoding CDATA #IMPLIED
+          logerror %boolean; #IMPLIED>
+
+<!ELEMENT errorfilterchain (headfilter | classconstants | linecontains | filterreader | replaceregex | replacetokens | escapeunicode | ignoreblank | tailfilter | tabstospaces | prefixlines | expandproperties | striplinebreaks | trim | striplinecomments | replacestring | tokenfilter | stripjavacomments | containsregex | deletecharacters | linecontainsregexp)*>
+<!ATTLIST errorfilterchain
+          id ID #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED>
+
+<!ELEMENT outputfilterchain (headfilter | classconstants | linecontains | filterreader | replaceregex | replacetokens | escapeunicode | ignoreblank | tailfilter | tabstospaces | prefixlines | expandproperties | striplinebreaks | trim | striplinecomments | replacestring | tokenfilter | stripjavacomments | containsregex | deletecharacters | linecontainsregexp)*>
+<!ATTLIST outputfilterchain
+          id ID #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED>
+
+<!ELEMENT errormapper (classpath | mapper)*>
+<!ATTLIST errormapper
+          id ID #IMPLIED
+          classpath CDATA #IMPLIED
+          classpathref IDREF #IMPLIED
+          type (identity | flatten | glob | merge | regexp | package | unpackage) #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED
+          classname CDATA #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
+<!ELEMENT inputfilterchain (headfilter | classconstants | linecontains | filterreader | replaceregex | replacetokens | escapeunicode | ignoreblank | tailfilter | tabstospaces | prefixlines | expandproperties | striplinebreaks | trim | striplinecomments | replacestring | tokenfilter | stripjavacomments | containsregex | deletecharacters | linecontainsregexp)*>
+<!ATTLIST inputfilterchain
+          id ID #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED>
+
+<!ELEMENT outputmapper (classpath | mapper)*>
+<!ATTLIST outputmapper
+          id ID #IMPLIED
+          classpath CDATA #IMPLIED
+          classpathref IDREF #IMPLIED
+          type (identity | flatten | glob | merge | regexp | package | unpackage) #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED
+          classname CDATA #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
+<!ELEMENT inputmapper (classpath | mapper)*>
+<!ATTLIST inputmapper
+          id ID #IMPLIED
+          classpath CDATA #IMPLIED
+          classpathref IDREF #IMPLIED
+          type (identity | flatten | glob | merge | regexp | package | unpackage) #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED
+          classname CDATA #IMPLIED
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
+
 <!ELEMENT propertyfile (entry)*>
 <!ATTLIST propertyfile
           id ID #IMPLIED
@@ -690,6 +829,19 @@
           unit (millisecond | second | minute | hour | day | week | month | year) #IMPLIED
           pattern CDATA #IMPLIED
           value CDATA #IMPLIED>
+
+<!ELEMENT ccmkdir EMPTY>
+<!ATTLIST ccmkdir
+          id ID #IMPLIED
+          viewpath CDATA #IMPLIED
+          comment CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED
+          cleartooldir CDATA #IMPLIED
+          objselect CDATA #IMPLIED
+          nocheckout %boolean; #IMPLIED
+          taskname CDATA #IMPLIED
+          description CDATA #IMPLIED
+          commentfile CDATA #IMPLIED>
 
 <!ELEMENT importtypelib EMPTY>
 <!ATTLIST importtypelib
@@ -831,7 +983,7 @@
           unless CDATA #IMPLIED
           if CDATA #IMPLIED>
 
-<!ELEMENT reference (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT reference (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST reference
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -846,7 +998,7 @@
           excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT src (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT src (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST src
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -880,16 +1032,16 @@
           username CDATA #IMPLIED
           weblogicmainclass CDATA #IMPLIED
           wlclasspath CDATA #IMPLIED
-          args CDATA #IMPLIED
           policy CDATA #IMPLIED
           properties CDATA #IMPLIED
+          args CDATA #IMPLIED
           home CDATA #IMPLIED
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           password CDATA #IMPLIED
           jvmargs CDATA #IMPLIED>
 
-<!ELEMENT wlclasspath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT wlclasspath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST wlclasspath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -938,7 +1090,7 @@
           flags CDATA #IMPLIED
           taskname CDATA #IMPLIED
           match CDATA #IMPLIED
-          byline CDATA #IMPLIED
+          byline %boolean; #IMPLIED
           replace CDATA #IMPLIED
           file CDATA #IMPLIED
           description CDATA #IMPLIED
@@ -986,8 +1138,8 @@
           milliseconds CDATA #IMPLIED
           minutes CDATA #IMPLIED
           description CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
-          seconds CDATA #IMPLIED>
+          seconds CDATA #IMPLIED
+          failonerror %boolean; #IMPLIED>
 
 <!ELEMENT jarlib-display (fileset)*>
 <!ATTLIST jarlib-display
@@ -1001,15 +1153,15 @@
           id ID #IMPLIED
           defaultexcludes %boolean; #IMPLIED
           followsymlinks %boolean; #IMPLIED
-          taskname CDATA #IMPLIED
           casesensitive %boolean; #IMPLIED
+          taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
           excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT targetfileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT targetfileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST targetfileset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -1024,7 +1176,7 @@
           excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT srcfileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT srcfileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST srcfileset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -1039,7 +1191,7 @@
           excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT srcfilelist EMPTY>
+<!ELEMENT srcfilelist (file)*>
 <!ATTLIST srcfilelist
           id ID #IMPLIED
           dir CDATA #IMPLIED
@@ -1047,7 +1199,7 @@
           description CDATA #IMPLIED
           files CDATA #IMPLIED>
 
-<!ELEMENT targetfilelist EMPTY>
+<!ELEMENT targetfilelist (file)*>
 <!ATTLIST targetfilelist
           id ID #IMPLIED
           dir CDATA #IMPLIED
@@ -1061,6 +1213,7 @@
           whenempty (fail | skip | create) #IMPLIED
           keepcompression %boolean; #IMPLIED
           duplicate (add | preserve | fail) #IMPLIED
+          roundup %boolean; #IMPLIED
           excludes CDATA #IMPLIED
           basedir CDATA #IMPLIED
           encoding CDATA #IMPLIED
@@ -1079,7 +1232,7 @@
           excludesfile CDATA #IMPLIED
           zipfile CDATA #IMPLIED>
 
-<!ELEMENT zipgroupfileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT zipgroupfileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST zipgroupfileset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -1137,7 +1290,7 @@
           uriroot CDATA #IMPLIED
           webinc CDATA #IMPLIED>
 
-<!ELEMENT compilerclasspath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT compilerclasspath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST compilerclasspath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -1150,7 +1303,7 @@
           id ID #IMPLIED
           basedir CDATA #IMPLIED>
 
-<!ELEMENT style (patternset | exclude | include | custom | present | none | not | type | factory | modified | param | or | contains | depend | classpath | different | size | majority | containsregexp | filename | xmlcatalog | selector | includesfile | outputproperty | date | excludesfile | depth | and)*>
+<!ELEMENT style (patternset | exclude | include | custom | present | none | not | type | factory | modified | param | or | contains | depend | classpath | different | size | majority | containsregexp | filename | xmlcatalog | selector | includesfile | outputproperty | mapper | date | excludesfile | depth | and)*>
 <!ATTLIST style
           id ID #IMPLIED
           force %boolean; #IMPLIED
@@ -1190,40 +1343,6 @@
           name CDATA #IMPLIED
           value CDATA #IMPLIED>
 
-<!ELEMENT test (classpath | sysproperty | bootclasspath | env | syspropertyset | permissions | jvmarg | arg | assertions | testlet)*>
-<!ATTLIST test
-          id ID #IMPLIED
-          resultproperty CDATA #IMPLIED
-          jvmargs CDATA #IMPLIED
-          fork %boolean; #IMPLIED
-          args CDATA #IMPLIED
-          maxmemory CDATA #IMPLIED
-          classpathref IDREF #IMPLIED
-          jar CDATA #IMPLIED
-          errorproperty CDATA #IMPLIED
-          forceshowtrace %boolean; #IMPLIED
-          output CDATA #IMPLIED
-          timeout CDATA #IMPLIED
-          spawn %boolean; #IMPLIED
-          jvm CDATA #IMPLIED
-          input CDATA #IMPLIED
-          inputstring CDATA #IMPLIED
-          classpath CDATA #IMPLIED
-          logerror %boolean; #IMPLIED
-          dir CDATA #IMPLIED
-          error CDATA #IMPLIED
-          description CDATA #IMPLIED
-          showsuccess %boolean; #IMPLIED
-          jvmversion CDATA #IMPLIED
-          outputproperty CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
-          append %boolean; #IMPLIED
-          taskname CDATA #IMPLIED
-          showbanner CDATA #IMPLIED
-          newenvironment %boolean; #IMPLIED
-          classname CDATA #IMPLIED
-          showtrace %boolean; #IMPLIED>
-
 <!ELEMENT sysproperty EMPTY>
 <!ATTLIST sysproperty
           id ID #IMPLIED
@@ -1232,7 +1351,7 @@
           value CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT bootclasspath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT bootclasspath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST bootclasspath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -1253,6 +1372,7 @@
           id ID #IMPLIED
           refid IDREF #IMPLIED
           description CDATA #IMPLIED
+          negate %boolean; #IMPLIED
           dynamic %boolean; #IMPLIED>
 
 <!ELEMENT permissions (grant | revoke)*>
@@ -1373,23 +1493,59 @@
           repbuilddir CDATA #IMPLIED
           targets CDATA #IMPLIED>
 
-<!ELEMENT cvschangelog (fileset | user)*>
+<!ELEMENT cvschangelog (fileset | user | commandline)*>
 <!ATTLIST cvschangelog
           id ID #IMPLIED
+          cvsrsh CDATA #IMPLIED
+          quiet %boolean; #IMPLIED
+          passfile CDATA #IMPLIED
           end CDATA #IMPLIED
-          taskname CDATA #IMPLIED
-          dir CDATA #IMPLIED
-          description CDATA #IMPLIED
-          usersfile CDATA #IMPLIED
-          daysinpast CDATA #IMPLIED
+          command CDATA #IMPLIED
+          package CDATA #IMPLIED
           start CDATA #IMPLIED
-          destfile CDATA #IMPLIED>
+          cvsroot CDATA #IMPLIED
+          reallyquiet %boolean; #IMPLIED
+          output CDATA #IMPLIED
+          port CDATA #IMPLIED
+          compressionlevel CDATA #IMPLIED
+          dest CDATA #IMPLIED
+          destfile CDATA #IMPLIED
+          usersfile CDATA #IMPLIED
+          dir CDATA #IMPLIED
+          noexec %boolean; #IMPLIED
+          error CDATA #IMPLIED
+          description CDATA #IMPLIED
+          failonerror %boolean; #IMPLIED
+          daysinpast CDATA #IMPLIED
+          append %boolean; #IMPLIED
+          taskname CDATA #IMPLIED
+          date CDATA #IMPLIED
+          compression %boolean; #IMPLIED
+          tag CDATA #IMPLIED>
 
 <!ELEMENT user EMPTY>
 <!ATTLIST user
           id ID #IMPLIED
           userid CDATA #IMPLIED
           displayname CDATA #IMPLIED>
+
+<!ELEMENT commandline (marker | argument)*>
+<!ATTLIST commandline
+          id ID #IMPLIED
+          executable CDATA #IMPLIED>
+
+<!ELEMENT marker EMPTY>
+<!ATTLIST marker
+          id ID #IMPLIED>
+
+<!ELEMENT argument EMPTY>
+<!ATTLIST argument
+          id ID #IMPLIED
+          line CDATA #IMPLIED
+          file CDATA #IMPLIED
+          pathref IDREF #IMPLIED
+          value CDATA #IMPLIED
+          path CDATA #IMPLIED>
 
 <!ELEMENT p4submit EMPTY>
 <!ATTLIST p4submit
@@ -1398,10 +1554,12 @@
           client CDATA #IMPLIED
           inerror %boolean; #IMPLIED
           user CDATA #IMPLIED
+          needsresolveproperty CDATA #IMPLIED
+          changeproperty CDATA #IMPLIED
           cmdopts CDATA #IMPLIED
           globalopts CDATA #IMPLIED
-          change CDATA #IMPLIED
           view CDATA #IMPLIED
+          change CDATA #IMPLIED
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           failonerror %boolean; #IMPLIED
@@ -1451,6 +1609,7 @@
           overwrite %boolean; #IMPLIED
           includeemptydirs %boolean; #IMPLIED
           description CDATA #IMPLIED
+          granularity CDATA #IMPLIED
           failonerror %boolean; #IMPLIED>
 
 <!ELEMENT p4delete EMPTY>
@@ -1462,8 +1621,8 @@
           user CDATA #IMPLIED
           cmdopts CDATA #IMPLIED
           globalopts CDATA #IMPLIED
-          change CDATA #IMPLIED
           view CDATA #IMPLIED
+          change CDATA #IMPLIED
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           failonerror %boolean; #IMPLIED
@@ -1592,7 +1751,7 @@
 <!ATTLIST title
           id ID #IMPLIED>
 
-<!ELEMENT packageset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT packageset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST packageset
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -1607,7 +1766,7 @@
           excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT sourcepath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT sourcepath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST sourcepath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -1633,7 +1792,7 @@
           id ID #IMPLIED
           name CDATA #IMPLIED>
 
-<!ELEMENT tag (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT tag (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST tag
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -1724,10 +1883,12 @@
 <!ELEMENT cclock EMPTY>
 <!ATTLIST cclock
           id ID #IMPLIED
+          objsel CDATA #IMPLIED
           replace %boolean; #IMPLIED
           pname CDATA #IMPLIED
           viewpath CDATA #IMPLIED
           comment CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED
           cleartooldir CDATA #IMPLIED
           objselect CDATA #IMPLIED
           taskname CDATA #IMPLIED
@@ -1735,7 +1896,7 @@
           nusers CDATA #IMPLIED
           obsolete %boolean; #IMPLIED>
 
-<!ELEMENT chown (arg | fileset | dirset | env | filelist | targetfile | srcfile | mapper)*>
+<!ELEMENT chown (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
 <!ATTLIST chown
           id ID #IMPLIED
           resultproperty CDATA #IMPLIED
@@ -1763,21 +1924,22 @@
           description CDATA #IMPLIED
           outputproperty CDATA #IMPLIED
           resolveexecutable %boolean; #IMPLIED
-          failonerror %boolean; #IMPLIED
           append %boolean; #IMPLIED
+          failonerror %boolean; #IMPLIED
           taskname CDATA #IMPLIED
-          newenvironment %boolean; #IMPLIED
+          ignoremissing %boolean; #IMPLIED
           vmlauncher %boolean; #IMPLIED
+          newenvironment %boolean; #IMPLIED
           file CDATA #IMPLIED
           relative %boolean; #IMPLIED
           parallel %boolean; #IMPLIED>
 
-<!ELEMENT targetfile EMPTY>
-<!ATTLIST targetfile
-          id ID #IMPLIED>
-
 <!ELEMENT srcfile EMPTY>
 <!ATTLIST srcfile
+          id ID #IMPLIED>
+
+<!ELEMENT targetfile EMPTY>
+<!ATTLIST targetfile
           id ID #IMPLIED>
 
 <!ELEMENT vajload (vajproject)*>
@@ -1807,6 +1969,19 @@
           id ID #IMPLIED
           refid IDREF #IMPLIED
           description CDATA #IMPLIED>
+
+<!ELEMENT rexec (write | read)*>
+<!ATTLIST rexec
+          id ID #IMPLIED
+          port CDATA #IMPLIED
+          server CDATA #IMPLIED
+          command CDATA #IMPLIED
+          userid CDATA #IMPLIED
+          timeout CDATA #IMPLIED
+          initialcr %boolean; #IMPLIED
+          taskname CDATA #IMPLIED
+          description CDATA #IMPLIED
+          password CDATA #IMPLIED>
 
 <!ELEMENT WsdlToDotnet EMPTY>
 <!ATTLIST WsdlToDotnet
@@ -1863,7 +2038,7 @@
           excludesfile CDATA #IMPLIED
           genericjarsuffix CDATA #IMPLIED>
 
-<!ELEMENT weblogictoplink (classpath | sysproperty | wlclasspath)*>
+<!ELEMENT weblogictoplink (classpath | wlclasspath | sysproperty)*>
 <!ATTLIST weblogictoplink
           id ID #IMPLIED
           newcmp %boolean; #IMPLIED
@@ -1912,7 +2087,7 @@
           suffix CDATA #IMPLIED
           generateclient %boolean; #IMPLIED>
 
-<!ELEMENT weblogic (classpath | sysproperty | wlclasspath)*>
+<!ELEMENT weblogic (classpath | wlclasspath | sysproperty)*>
 <!ATTLIST weblogic
           id ID #IMPLIED
           newcmp %boolean; #IMPLIED
@@ -1968,7 +2143,7 @@
           nocompil %boolean; #IMPLIED
           secpropag %boolean; #IMPLIED>
 
-<!ELEMENT support (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT support (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST support
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -2010,7 +2185,7 @@
           nowarn %boolean; #IMPLIED
           genericjarsuffix CDATA #IMPLIED>
 
-<!ELEMENT wasclasspath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT wasclasspath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST wasclasspath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -2018,12 +2193,13 @@
           description CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT war (patternset | exclude | include | custom | present | none | not | manifest | type | metainf | modified | or | contains | depend | lib | fileset | different | size | majority | containsregexp | filename | selector | includesfile | zipgroupfileset | zipfileset | classes | date | excludesfile | webinf | depth | and)*>
+<!ELEMENT war (patternset | exclude | include | custom | present | none | not | manifest | type | metainf | modified | or | contains | depend | lib | fileset | different | size | majority | containsregexp | indexjars | filename | selector | includesfile | zipgroupfileset | zipfileset | classes | date | excludesfile | webinf | depth | and)*>
 <!ATTLIST war
           id ID #IMPLIED
           keepcompression %boolean; #IMPLIED
           whenempty (fail | skip | create) #IMPLIED
           duplicate (add | preserve | fail) #IMPLIED
+          roundup %boolean; #IMPLIED
           excludes CDATA #IMPLIED
           basedir CDATA #IMPLIED
           encoding CDATA #IMPLIED
@@ -2058,7 +2234,7 @@
           id ID #IMPLIED
           name CDATA #IMPLIED>
 
-<!ELEMENT metainf (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT metainf (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST metainf
           id ID #IMPLIED
           src CDATA #IMPLIED
@@ -2078,7 +2254,7 @@
           includes CDATA #IMPLIED
           dirmode CDATA #IMPLIED>
 
-<!ELEMENT lib (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT lib (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST lib
           id ID #IMPLIED
           src CDATA #IMPLIED
@@ -2098,7 +2274,15 @@
           includes CDATA #IMPLIED
           dirmode CDATA #IMPLIED>
 
-<!ELEMENT classes (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT indexjars (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
+<!ATTLIST indexjars
+          id ID #IMPLIED
+          location CDATA #IMPLIED
+          refid IDREF #IMPLIED
+          description CDATA #IMPLIED
+          path CDATA #IMPLIED>
+
+<!ELEMENT classes (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST classes
           id ID #IMPLIED
           src CDATA #IMPLIED
@@ -2118,7 +2302,7 @@
           includes CDATA #IMPLIED
           dirmode CDATA #IMPLIED>
 
-<!ELEMENT webinf (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT webinf (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST webinf
           id ID #IMPLIED
           src CDATA #IMPLIED
@@ -2178,6 +2362,7 @@
           name CDATA #IMPLIED
           classpath CDATA #IMPLIED
           file CDATA #IMPLIED
+          userproperty %boolean; #IMPLIED
           resource CDATA #IMPLIED
           environment CDATA #IMPLIED
           prefix CDATA #IMPLIED
@@ -2208,7 +2393,7 @@
           location CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT buildpath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT buildpath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST buildpath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -2228,6 +2413,7 @@
           includeemptydirs %boolean; #IMPLIED
           overwrite %boolean; #IMPLIED
           enablemultiplemappings %boolean; #IMPLIED
+          granularity CDATA #IMPLIED
           outputencoding CDATA #IMPLIED
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
@@ -2258,7 +2444,7 @@
           taskname CDATA #IMPLIED
           item CDATA #IMPLIED>
 
-<!ELEMENT copydir (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT copydir (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST copydir
           id ID #IMPLIED
           flatten %boolean; #IMPLIED
@@ -2271,8 +2457,8 @@
           description CDATA #IMPLIED
           forceoverwrite %boolean; #IMPLIED
           excludesfile CDATA #IMPLIED
-          excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
+          excludes CDATA #IMPLIED
           filtering %boolean; #IMPLIED
           includes CDATA #IMPLIED>
 
@@ -2283,6 +2469,7 @@
           viewpath CDATA #IMPLIED
           comment CDATA #IMPLIED
           nowarn %boolean; #IMPLIED
+          failonerr %boolean; #IMPLIED
           objselect CDATA #IMPLIED
           identical %boolean; #IMPLIED
           cleartooldir CDATA #IMPLIED
@@ -2294,13 +2481,15 @@
 <!ELEMENT ccunlock EMPTY>
 <!ATTLIST ccunlock
           id ID #IMPLIED
+          objsel CDATA #IMPLIED
+          pname CDATA #IMPLIED
+          viewpath CDATA #IMPLIED
+          comment CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED
+          cleartooldir CDATA #IMPLIED
           objselect CDATA #IMPLIED
           taskname CDATA #IMPLIED
-          pname CDATA #IMPLIED
-          description CDATA #IMPLIED
-          cleartooldir CDATA #IMPLIED
-          viewpath CDATA #IMPLIED
-          comment CDATA #IMPLIED>
+          description CDATA #IMPLIED>
 
 <!ELEMENT wljspc (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | classpath | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST wljspc
@@ -2314,12 +2503,12 @@
           dest CDATA #IMPLIED
           package CDATA #IMPLIED
           description CDATA #IMPLIED
+          excludesfile CDATA #IMPLIED
           excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
-          excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT fixcrlf (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT fixcrlf (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST fixcrlf
           id ID #IMPLIED
           tab (add | asis | remove) #IMPLIED
@@ -2336,10 +2525,23 @@
           tablength CDATA #IMPLIED
           includes CDATA #IMPLIED
           description CDATA #IMPLIED
+          fixlast %boolean; #IMPLIED
           includesfile CDATA #IMPLIED
           taskname CDATA #IMPLIED
           srcdir CDATA #IMPLIED
           excludesfile CDATA #IMPLIED>
+
+<!ELEMENT telnet (write | read)*>
+<!ATTLIST telnet
+          id ID #IMPLIED
+          userid CDATA #IMPLIED
+          port CDATA #IMPLIED
+          taskname CDATA #IMPLIED
+          password CDATA #IMPLIED
+          initialcr %boolean; #IMPLIED
+          description CDATA #IMPLIED
+          timeout CDATA #IMPLIED
+          server CDATA #IMPLIED>
 
 <!ELEMENT sosget EMPTY>
 <!ATTLIST sosget
@@ -2362,7 +2564,7 @@
           soscmd CDATA #IMPLIED
           password CDATA #IMPLIED>
 
-<!ELEMENT pathconvert (path | map)*>
+<!ELEMENT pathconvert (path | map | mapper)*>
 <!ATTLIST pathconvert
           id ID #IMPLIED
           taskname CDATA #IMPLIED
@@ -2377,8 +2579,8 @@
 <!ELEMENT map EMPTY>
 <!ATTLIST map
           id ID #IMPLIED
-          from CDATA #IMPLIED
-          to CDATA #IMPLIED>
+          to CDATA #IMPLIED
+          from CDATA #IMPLIED>
 
 <!ELEMENT record EMPTY>
 <!ATTLIST record
@@ -2408,7 +2610,7 @@
           failonerror %boolean; #IMPLIED
           errormessage CDATA #IMPLIED>
 
-<!ELEMENT exec (arg | env)*>
+<!ELEMENT exec (arg | redirector | env)*>
 <!ATTLIST exec
           id ID #IMPLIED
           resultproperty CDATA #IMPLIED
@@ -2443,6 +2645,7 @@
           typename CDATA #IMPLIED
           comment CDATA #IMPLIED
           version CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED
           objselect CDATA #IMPLIED
           cleartooldir CDATA #IMPLIED
           taskname CDATA #IMPLIED
@@ -2459,8 +2662,8 @@
           user CDATA #IMPLIED
           cmdopts CDATA #IMPLIED
           globalopts CDATA #IMPLIED
-          change CDATA #IMPLIED
           view CDATA #IMPLIED
+          change CDATA #IMPLIED
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           failonerror %boolean; #IMPLIED
@@ -2484,7 +2687,7 @@
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT rulespath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT rulespath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST rulespath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -2492,7 +2695,7 @@
           description CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT searchpath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT searchpath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST searchpath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -2518,7 +2721,7 @@
           glib CDATA #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT netrexxc (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT netrexxc (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST netrexxc
           id ID #IMPLIED
           excludes CDATA #IMPLIED
@@ -2566,6 +2769,32 @@
           compact %boolean; #IMPLIED
           decimal %boolean; #IMPLIED>
 
+<!ELEMENT ftp (fileset)*>
+<!ATTLIST ftp
+          id ID #IMPLIED
+          binary %boolean; #IMPLIED
+          password CDATA #IMPLIED
+          userid CDATA #IMPLIED
+          timediffauto %boolean; #IMPLIED
+          remotedir CDATA #IMPLIED
+          separator CDATA #IMPLIED
+          port CDATA #IMPLIED
+          skipfailedtransfers %boolean; #IMPLIED
+          chmod CDATA #IMPLIED
+          timediffmillis CDATA #IMPLIED
+          verbose %boolean; #IMPLIED
+          server CDATA #IMPLIED
+          newer %boolean; #IMPLIED
+          action (send | put | recv | get | del | delete | list | mkdir | chmod | rmdir) #IMPLIED
+          description CDATA #IMPLIED
+          passive %boolean; #IMPLIED
+          taskname CDATA #IMPLIED
+          preservelastmodified %boolean; #IMPLIED
+          listing CDATA #IMPLIED
+          umask CDATA #IMPLIED
+          ignorenoncriticalerrors %boolean; #IMPLIED
+          depends %boolean; #IMPLIED>
+
 <!ELEMENT jpcovreport (reference | coveragepath | sourcepath)*>
 <!ATTLIST jpcovreport
           id ID #IMPLIED
@@ -2580,7 +2809,7 @@
           includesource %boolean; #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT coveragepath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT coveragepath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST coveragepath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -2588,7 +2817,7 @@
           description CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT execon (arg | fileset | dirset | env | filelist | targetfile | srcfile | mapper)*>
+<!ELEMENT execon (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
 <!ATTLIST execon
           id ID #IMPLIED
           resultproperty CDATA #IMPLIED
@@ -2615,11 +2844,12 @@
           description CDATA #IMPLIED
           outputproperty CDATA #IMPLIED
           resolveexecutable %boolean; #IMPLIED
-          failonerror %boolean; #IMPLIED
           append %boolean; #IMPLIED
+          failonerror %boolean; #IMPLIED
           taskname CDATA #IMPLIED
-          newenvironment %boolean; #IMPLIED
+          ignoremissing %boolean; #IMPLIED
           vmlauncher %boolean; #IMPLIED
+          newenvironment %boolean; #IMPLIED
           relative %boolean; #IMPLIED
           parallel %boolean; #IMPLIED>
 
@@ -2646,7 +2876,7 @@
           antfile CDATA #IMPLIED
           target CDATA #IMPLIED>
 
-<!ELEMENT xmlvalidate (fileset | classpath | attribute | dtd | xmlcatalog)*>
+<!ELEMENT xmlvalidate (fileset | classpath | attribute | dtd | xmlcatalog | property)*>
 <!ATTLIST xmlvalidate
           id ID #IMPLIED
           classpath CDATA #IMPLIED
@@ -2656,10 +2886,10 @@
           warn %boolean; #IMPLIED
           classpathref IDREF #IMPLIED
           taskname CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
-          description CDATA #IMPLIED>
+          description CDATA #IMPLIED
+          failonerror %boolean; #IMPLIED>
 
-<!ELEMENT xslt (patternset | exclude | include | custom | present | none | not | type | factory | modified | param | or | contains | depend | classpath | different | size | majority | containsregexp | filename | xmlcatalog | selector | includesfile | outputproperty | date | excludesfile | depth | and)*>
+<!ELEMENT xslt (patternset | exclude | include | custom | present | none | not | type | factory | modified | param | or | contains | depend | classpath | different | size | majority | containsregexp | filename | xmlcatalog | selector | includesfile | outputproperty | mapper | date | excludesfile | depth | and)*>
 <!ATTLIST xslt
           id ID #IMPLIED
           force %boolean; #IMPLIED
@@ -2699,8 +2929,8 @@
           view CDATA #IMPLIED
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
           errormessage CDATA #IMPLIED
+          failonerror %boolean; #IMPLIED
           resolvemode CDATA #IMPLIED
           redoall %boolean; #IMPLIED>
 
@@ -2751,8 +2981,8 @@
           dest CDATA #IMPLIED
           description CDATA #IMPLIED
           excludesfile CDATA #IMPLIED
-          excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
+          excludes CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
 <!ELEMENT ccrmtype EMPTY>
@@ -2764,6 +2994,7 @@
           comment CDATA #IMPLIED
           ignore %boolean; #IMPLIED
           typekind CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED
           objselect CDATA #IMPLIED
           cleartooldir CDATA #IMPLIED
           taskname CDATA #IMPLIED
@@ -2791,12 +3022,13 @@
           excludes CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT ear (patternset | exclude | include | custom | present | none | not | manifest | type | metainf | modified | or | contains | depend | fileset | different | size | majority | containsregexp | archives | filename | selector | includesfile | zipgroupfileset | zipfileset | date | excludesfile | depth | and)*>
+<!ELEMENT ear (patternset | exclude | include | custom | present | none | not | manifest | type | metainf | modified | or | contains | depend | fileset | different | size | majority | containsregexp | archives | indexjars | filename | selector | includesfile | zipgroupfileset | zipfileset | date | excludesfile | depth | and)*>
 <!ATTLIST ear
           id ID #IMPLIED
           keepcompression %boolean; #IMPLIED
           whenempty (fail | skip | create) #IMPLIED
           duplicate (add | preserve | fail) #IMPLIED
+          roundup %boolean; #IMPLIED
           excludes CDATA #IMPLIED
           basedir CDATA #IMPLIED
           encoding CDATA #IMPLIED
@@ -2822,7 +3054,7 @@
           filesetmanifest (skip | merge | mergewithoutmain) #IMPLIED
           zipfile CDATA #IMPLIED>
 
-<!ELEMENT archives (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT archives (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST archives
           id ID #IMPLIED
           src CDATA #IMPLIED
@@ -2993,15 +3225,15 @@
           description CDATA #IMPLIED
           encoding CDATA #IMPLIED
           property CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
-          srcfile CDATA #IMPLIED>
+          srcfile CDATA #IMPLIED
+          failonerror %boolean; #IMPLIED>
 
 <!ELEMENT vsscheckout EMPTY>
 <!ATTLIST vsscheckout
           id ID #IMPLIED
           ssdir CDATA #IMPLIED
-          date CDATA #IMPLIED
           recursive %boolean; #IMPLIED
+          date CDATA #IMPLIED
           autoresponse CDATA #IMPLIED
           vsspath CDATA #IMPLIED
           getlocalcopy %boolean; #IMPLIED
@@ -3016,14 +3248,14 @@
           localpath CDATA #IMPLIED
           writablefiles (replace | skip | fail) #IMPLIED>
 
-<!ELEMENT stylebook (classpath | sysproperty | bootclasspath | syspropertyset | env | permissions | jvmarg | arg | assertions)*>
+<!ELEMENT stylebook (classpath | sysproperty | redirector | bootclasspath | syspropertyset | env | permissions | jvmarg | arg | assertions)*>
 <!ATTLIST stylebook
           id ID #IMPLIED
           resultproperty CDATA #IMPLIED
           jvmargs CDATA #IMPLIED
           loaderconfig CDATA #IMPLIED
-          fork %boolean; #IMPLIED
           args CDATA #IMPLIED
+          fork %boolean; #IMPLIED
           maxmemory CDATA #IMPLIED
           classpathref IDREF #IMPLIED
           jar CDATA #IMPLIED
@@ -3032,9 +3264,9 @@
           output CDATA #IMPLIED
           timeout CDATA #IMPLIED
           spawn %boolean; #IMPLIED
-          jvm CDATA #IMPLIED
           skindirectory CDATA #IMPLIED
           input CDATA #IMPLIED
+          jvm CDATA #IMPLIED
           inputstring CDATA #IMPLIED
           book CDATA #IMPLIED
           classpath CDATA #IMPLIED
@@ -3044,8 +3276,8 @@
           description CDATA #IMPLIED
           jvmversion CDATA #IMPLIED
           outputproperty CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
           append %boolean; #IMPLIED
+          failonerror %boolean; #IMPLIED
           taskname CDATA #IMPLIED
           newenvironment %boolean; #IMPLIED
           classname CDATA #IMPLIED>
@@ -3127,6 +3359,7 @@
           encoding CDATA #IMPLIED
           append %boolean; #IMPLIED
           destfile CDATA #IMPLIED
+          binary %boolean; #IMPLIED
           eol (asis | cr | lf | crlf | mac | unix | dos) #IMPLIED
           outputencoding CDATA #IMPLIED
           taskname CDATA #IMPLIED
@@ -3146,12 +3379,12 @@
           casesensitive %boolean; #IMPLIED
           description CDATA #IMPLIED
           excludesfile CDATA #IMPLIED
-          excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
+          excludes CDATA #IMPLIED
           includes CDATA #IMPLIED
           options CDATA #IMPLIED>
 
-<!ELEMENT touch (fileset)*>
+<!ELEMENT touch (fileset | filelist)*>
 <!ATTLIST touch
           id ID #IMPLIED
           taskname CDATA #IMPLIED
@@ -3181,8 +3414,8 @@
           port CDATA #IMPLIED
           user CDATA #IMPLIED
           proxy CDATA #IMPLIED
-          taskname CDATA #IMPLIED
           imageurl CDATA #IMPLIED
+          taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           password CDATA #IMPLIED
           showduration CDATA #IMPLIED
@@ -3205,6 +3438,7 @@
           nlabel %boolean; #IMPLIED
           full %boolean; #IMPLIED
           nowarn %boolean; #IMPLIED
+          failonerr %boolean; #IMPLIED
           objselect CDATA #IMPLIED
           cleartooldir CDATA #IMPLIED
           identical %boolean; #IMPLIED
@@ -3219,10 +3453,12 @@
           reserved %boolean; #IMPLIED
           viewpath CDATA #IMPLIED
           out CDATA #IMPLIED
-          comment CDATA #IMPLIED
+          notco %boolean; #IMPLIED
           nodata %boolean; #IMPLIED
+          comment CDATA #IMPLIED
           version %boolean; #IMPLIED
           nowarn %boolean; #IMPLIED
+          failonerr %boolean; #IMPLIED
           objselect CDATA #IMPLIED
           cleartooldir CDATA #IMPLIED
           taskname CDATA #IMPLIED
@@ -3298,6 +3534,7 @@
           includeemptydirs %boolean; #IMPLIED
           overwrite %boolean; #IMPLIED
           enablemultiplemappings %boolean; #IMPLIED
+          granularity CDATA #IMPLIED
           outputencoding CDATA #IMPLIED
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
@@ -3410,6 +3647,7 @@
           casesensitive %boolean; #IMPLIED
           description CDATA #IMPLIED
           failonerror %boolean; #IMPLIED
+          deleteonexit %boolean; #IMPLIED
           excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
           excludesfile CDATA #IMPLIED
@@ -3462,7 +3700,7 @@
           home CDATA #IMPLIED
           granularity (compilation-units | files | methods | types | packages) #IMPLIED>
 
-<!ELEMENT attrib (arg | fileset | dirset | env | filelist | targetfile | srcfile | mapper)*>
+<!ELEMENT attrib (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
 <!ATTLIST attrib
           id ID #IMPLIED
           addsourcefile %boolean; #IMPLIED
@@ -3491,6 +3729,7 @@
           resolveexecutable %boolean; #IMPLIED
           taskname CDATA #IMPLIED
           resultproperty CDATA #IMPLIED
+          ignoremissing %boolean; #IMPLIED
           failifexecutionfails %boolean; #IMPLIED
           append %boolean; #IMPLIED
           timeout CDATA #IMPLIED
@@ -3546,7 +3785,7 @@
           property CDATA #IMPLIED
           filepath CDATA #IMPLIED>
 
-<!ELEMENT filepath (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT filepath (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST filepath
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -3600,7 +3839,7 @@
           targetfile CDATA #IMPLIED
           srcfile CDATA #IMPLIED>
 
-<!ELEMENT srcfiles (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT srcfiles (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST srcfiles
           id ID #IMPLIED
           refid IDREF #IMPLIED
@@ -3626,12 +3865,15 @@
           encoding CDATA #IMPLIED
           src CDATA #IMPLIED>
 
-<!ELEMENT loadproperties (filterchain)*>
+<!ELEMENT loadproperties (filterchain | classpath)*>
 <!ATTLIST loadproperties
           id ID #IMPLIED
+          classpath CDATA #IMPLIED
           taskname CDATA #IMPLIED
+          classpathref IDREF #IMPLIED
           description CDATA #IMPLIED
           encoding CDATA #IMPLIED
+          resource CDATA #IMPLIED
           srcfile CDATA #IMPLIED>
 
 <!ELEMENT echoproperties (propertyset)*>
@@ -3645,7 +3887,7 @@
           failonerror %boolean; #IMPLIED
           destfile CDATA #IMPLIED>
 
-<!ELEMENT chgrp (arg | fileset | dirset | env | filelist | targetfile | srcfile | mapper)*>
+<!ELEMENT chgrp (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
 <!ATTLIST chgrp
           id ID #IMPLIED
           resultproperty CDATA #IMPLIED
@@ -3673,11 +3915,12 @@
           description CDATA #IMPLIED
           outputproperty CDATA #IMPLIED
           resolveexecutable %boolean; #IMPLIED
-          failonerror %boolean; #IMPLIED
           append %boolean; #IMPLIED
+          failonerror %boolean; #IMPLIED
           taskname CDATA #IMPLIED
-          newenvironment %boolean; #IMPLIED
+          ignoremissing %boolean; #IMPLIED
           vmlauncher %boolean; #IMPLIED
+          newenvironment %boolean; #IMPLIED
           file CDATA #IMPLIED
           relative %boolean; #IMPLIED
           parallel %boolean; #IMPLIED>
@@ -3760,7 +4003,7 @@
           description CDATA #IMPLIED
           failonerror %boolean; #IMPLIED>
 
-<!ELEMENT macrodef (sequential | element | attribute)*>
+<!ELEMENT macrodef (sequential | element | attribute | text)*>
 <!ATTLIST macrodef
           id ID #IMPLIED
           taskname CDATA #IMPLIED
@@ -3771,11 +4014,20 @@
 <!ELEMENT element EMPTY>
 <!ATTLIST element
           id ID #IMPLIED
+          implicit %boolean; #IMPLIED
           optional %boolean; #IMPLIED
-          description CDATA #IMPLIED
-          name CDATA #IMPLIED>
+          name CDATA #IMPLIED
+          description CDATA #IMPLIED>
 
-<!ELEMENT ejbc (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT text EMPTY>
+<!ATTLIST text
+          id ID #IMPLIED
+          trim %boolean; #IMPLIED
+          optional %boolean; #IMPLIED
+          name CDATA #IMPLIED
+          description CDATA #IMPLIED>
+
+<!ELEMENT ejbc (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST ejbc
           id ID #IMPLIED
           src CDATA #IMPLIED
@@ -3863,12 +4115,6 @@
           dir CDATA #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT condition (isfalse | isreference | equals | available | not | contains | os | or | and | filesmatch | checksum | istrue | isset | socket | http | uptodate)*>
-<!ATTLIST condition
-          id ID #IMPLIED
-          value CDATA #IMPLIED
-          property CDATA #IMPLIED>
-
 <!ELEMENT cvs (commandline)*>
 <!ATTLIST cvs
           id ID #IMPLIED
@@ -3881,8 +4127,8 @@
           reallyquiet %boolean; #IMPLIED
           output CDATA #IMPLIED
           port CDATA #IMPLIED
-          compressionlevel CDATA #IMPLIED
           dest CDATA #IMPLIED
+          compressionlevel CDATA #IMPLIED
           noexec %boolean; #IMPLIED
           error CDATA #IMPLIED
           description CDATA #IMPLIED
@@ -3893,23 +4139,11 @@
           compression %boolean; #IMPLIED
           tag CDATA #IMPLIED>
 
-<!ELEMENT commandline (marker | argument)*>
-<!ATTLIST commandline
+<!ELEMENT condition (isfalse | isreference | equals | available | not | contains | os | or | and | filesmatch | checksum | istrue | isset | socket | http | uptodate)*>
+<!ATTLIST condition
           id ID #IMPLIED
-          executable CDATA #IMPLIED>
-
-<!ELEMENT marker EMPTY>
-<!ATTLIST marker
-          id ID #IMPLIED>
-
-<!ELEMENT argument EMPTY>
-<!ATTLIST argument
-          id ID #IMPLIED
-          line CDATA #IMPLIED
-          file CDATA #IMPLIED
-          pathref IDREF #IMPLIED
           value CDATA #IMPLIED
-          path CDATA #IMPLIED>
+          property CDATA #IMPLIED>
 
 <!ELEMENT tempfile EMPTY>
 <!ATTLIST tempfile
@@ -3936,6 +4170,23 @@
           styledir CDATA #IMPLIED
           format (frames | noframes) #IMPLIED
           extension CDATA #IMPLIED>
+
+<!ELEMENT ccmkattr EMPTY>
+<!ATTLIST ccmkattr
+          id ID #IMPLIED
+          recurse %boolean; #IMPLIED
+          typevalue CDATA #IMPLIED
+          replace %boolean; #IMPLIED
+          viewpath CDATA #IMPLIED
+          typename CDATA #IMPLIED
+          comment CDATA #IMPLIED
+          version CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED
+          objselect CDATA #IMPLIED
+          cleartooldir CDATA #IMPLIED
+          taskname CDATA #IMPLIED
+          description CDATA #IMPLIED
+          commentfile CDATA #IMPLIED>
 
 <!ELEMENT taskdef (classpath)*>
 <!ATTLIST taskdef
@@ -3974,6 +4225,7 @@
           viewpath CDATA #IMPLIED
           log CDATA #IMPLIED
           overwrite %boolean; #IMPLIED
+          failonerr %boolean; #IMPLIED
           objselect CDATA #IMPLIED
           cleartooldir CDATA #IMPLIED
           graphical %boolean; #IMPLIED
@@ -3981,7 +4233,7 @@
           currenttime %boolean; #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT java (classpath | sysproperty | bootclasspath | syspropertyset | env | permissions | jvmarg | arg | assertions)*>
+<!ELEMENT java (classpath | sysproperty | redirector | bootclasspath | syspropertyset | env | permissions | jvmarg | arg | assertions)*>
 <!ATTLIST java
           id ID #IMPLIED
           resultproperty CDATA #IMPLIED
@@ -3995,8 +4247,8 @@
           output CDATA #IMPLIED
           timeout CDATA #IMPLIED
           spawn %boolean; #IMPLIED
-          jvm CDATA #IMPLIED
           input CDATA #IMPLIED
+          jvm CDATA #IMPLIED
           inputstring CDATA #IMPLIED
           classpath CDATA #IMPLIED
           logerror %boolean; #IMPLIED
@@ -4005,8 +4257,8 @@
           description CDATA #IMPLIED
           jvmversion CDATA #IMPLIED
           outputproperty CDATA #IMPLIED
-          failonerror %boolean; #IMPLIED
           append %boolean; #IMPLIED
+          failonerror %boolean; #IMPLIED
           taskname CDATA #IMPLIED
           newenvironment %boolean; #IMPLIED
           classname CDATA #IMPLIED>
@@ -4026,7 +4278,7 @@
           description CDATA #IMPLIED
           failonerror %boolean; #IMPLIED>
 
-<!ELEMENT renameext (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT renameext (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST renameext
           id ID #IMPLIED
           replace %boolean; #IMPLIED
@@ -4038,9 +4290,9 @@
           casesensitive %boolean; #IMPLIED
           srcdir CDATA #IMPLIED
           description CDATA #IMPLIED
+          excludesfile CDATA #IMPLIED
           excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
-          excludesfile CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
 <!ELEMENT basename EMPTY>
@@ -4115,7 +4367,7 @@
           nodeprecated %boolean; #IMPLIED
           overview CDATA #IMPLIED>
 
-<!ELEMENT tar (patternset | exclude | include | custom | tarfileset | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT tar (patternset | exclude | include | tarfileset | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST tar
           id ID #IMPLIED
           tarfile CDATA #IMPLIED
@@ -4127,25 +4379,27 @@
           casesensitive %boolean; #IMPLIED
           description CDATA #IMPLIED
           excludesfile CDATA #IMPLIED
-          excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
+          excludes CDATA #IMPLIED
           compression (none | gzip | bzip2) #IMPLIED
           longfile (warn | fail | truncate | gnu | omit) #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT tarfileset (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT tarfileset (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST tarfileset
           id ID #IMPLIED
           excludes CDATA #IMPLIED
           preserveleadingslashes %boolean; #IMPLIED
           username CDATA #IMPLIED
           defaultexcludes %boolean; #IMPLIED
+          uid CDATA #IMPLIED
           fullpath CDATA #IMPLIED
           group CDATA #IMPLIED
           followsymlinks %boolean; #IMPLIED
           refid IDREF #IMPLIED
           casesensitive %boolean; #IMPLIED
           mode CDATA #IMPLIED
+          gid CDATA #IMPLIED
           dir CDATA #IMPLIED
           includes CDATA #IMPLIED
           description CDATA #IMPLIED
@@ -4176,8 +4430,8 @@
           importsources %boolean; #IMPLIED
           taskname CDATA #IMPLIED
           project CDATA #IMPLIED
-          importresources %boolean; #IMPLIED
           description CDATA #IMPLIED
+          importresources %boolean; #IMPLIED
           importclasses %boolean; #IMPLIED>
 
 <!ELEMENT p4fstat (fileset)*>
@@ -4284,7 +4538,7 @@
           soscmd CDATA #IMPLIED
           password CDATA #IMPLIED>
 
-<!ELEMENT apply (arg | fileset | dirset | env | filelist | targetfile | srcfile | mapper)*>
+<!ELEMENT apply (mapper | srcfile | targetfile | redirector | filelist | env | fileset | dirset | arg)*>
 <!ATTLIST apply
           id ID #IMPLIED
           resultproperty CDATA #IMPLIED
@@ -4311,11 +4565,12 @@
           description CDATA #IMPLIED
           outputproperty CDATA #IMPLIED
           resolveexecutable %boolean; #IMPLIED
-          failonerror %boolean; #IMPLIED
           append %boolean; #IMPLIED
+          failonerror %boolean; #IMPLIED
           taskname CDATA #IMPLIED
-          newenvironment %boolean; #IMPLIED
+          ignoremissing %boolean; #IMPLIED
           vmlauncher %boolean; #IMPLIED
+          newenvironment %boolean; #IMPLIED
           relative %boolean; #IMPLIED
           parallel %boolean; #IMPLIED>
 
@@ -4327,7 +4582,8 @@
           taskname CDATA #IMPLIED
           description CDATA #IMPLIED
           cleartooldir CDATA #IMPLIED
-          viewpath CDATA #IMPLIED>
+          viewpath CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED>
 
 <!ELEMENT jarlib-resolve (ant | location | url | extension)*>
 <!ATTLIST jarlib-resolve
@@ -4361,13 +4617,13 @@
           taskname CDATA #IMPLIED
           casesensitive %boolean; #IMPLIED
           description CDATA #IMPLIED
+          excludesfile CDATA #IMPLIED
           excludes CDATA #IMPLIED
           includesfile CDATA #IMPLIED
-          excludesfile CDATA #IMPLIED
           mergefiles CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT mergefiles (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT mergefiles (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST mergefiles
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -4375,7 +4631,7 @@
           description CDATA #IMPLIED
           path CDATA #IMPLIED>
 
-<!ELEMENT addfiles (fileset | dirset | extdirs | existing | filelist | pathelement | path)*>
+<!ELEMENT addfiles (fileset | dirset | extdirs | filelist | existing | pathelement | path)*>
 <!ATTLIST addfiles
           id ID #IMPLIED
           location CDATA #IMPLIED
@@ -4442,7 +4698,7 @@
           usertokenmanager %boolean; #IMPLIED
           errorreporting %boolean; #IMPLIED>
 
-<!ELEMENT chmod (mapper | include | srcfile | exclude | targetfile | patternset | env | filelist | fileset | dirset | arg)*>
+<!ELEMENT chmod (mapper | include | srcfile | exclude | targetfile | patternset | redirector | env | filelist | fileset | dirset | arg)*>
 <!ATTLIST chmod
           id ID #IMPLIED
           addsourcefile %boolean; #IMPLIED
@@ -4472,6 +4728,7 @@
           resolveexecutable %boolean; #IMPLIED
           taskname CDATA #IMPLIED
           resultproperty CDATA #IMPLIED
+          ignoremissing %boolean; #IMPLIED
           failifexecutionfails %boolean; #IMPLIED
           append %boolean; #IMPLIED
           timeout CDATA #IMPLIED
@@ -4488,8 +4745,8 @@
           updateonly %boolean; #IMPLIED
           force CDATA #IMPLIED
           config CDATA #IMPLIED
-          workspace CDATA #IMPLIED
           pvcsbin CDATA #IMPLIED
+          workspace CDATA #IMPLIED
           pvcsproject CDATA #IMPLIED
           filenameformat CDATA #IMPLIED
           userid CDATA #IMPLIED
@@ -4526,12 +4783,13 @@
           refid IDREF #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT jar (patternset | exclude | include | custom | present | none | not | manifest | type | metainf | modified | or | contains | depend | fileset | different | size | majority | containsregexp | filename | selector | includesfile | zipgroupfileset | zipfileset | date | excludesfile | depth | and)*>
+<!ELEMENT jar (patternset | exclude | include | custom | present | none | not | manifest | type | metainf | modified | or | contains | depend | fileset | different | size | majority | containsregexp | indexjars | filename | selector | includesfile | zipgroupfileset | zipfileset | date | excludesfile | depth | and)*>
 <!ATTLIST jar
           id ID #IMPLIED
           whenempty (fail | skip | create) #IMPLIED
           keepcompression %boolean; #IMPLIED
           duplicate (add | preserve | fail) #IMPLIED
+          roundup %boolean; #IMPLIED
           excludes CDATA #IMPLIED
           basedir CDATA #IMPLIED
           encoding CDATA #IMPLIED
@@ -4563,8 +4821,9 @@
           shared %boolean; #IMPLIED
           viewpath CDATA #IMPLIED
           typename CDATA #IMPLIED
-          comment CDATA #IMPLIED
           pbranch %boolean; #IMPLIED
+          comment CDATA #IMPLIED
+          failonerr %boolean; #IMPLIED
           objselect CDATA #IMPLIED
           cleartooldir CDATA #IMPLIED
           taskname CDATA #IMPLIED
@@ -4700,6 +4959,24 @@
 <!ATTLIST class
           id ID #IMPLIED
           name CDATA #IMPLIED>
+
+<!ELEMENT ccmkelem EMPTY>
+<!ATTLIST ccmkelem
+          id ID #IMPLIED
+          preservetime %boolean; #IMPLIED
+          master %boolean; #IMPLIED
+          eltype CDATA #IMPLIED
+          viewpath CDATA #IMPLIED
+          comment CDATA #IMPLIED
+          nowarn %boolean; #IMPLIED
+          failonerr %boolean; #IMPLIED
+          objselect CDATA #IMPLIED
+          cleartooldir CDATA #IMPLIED
+          taskname CDATA #IMPLIED
+          nocheckout %boolean; #IMPLIED
+          description CDATA #IMPLIED
+          commentfile CDATA #IMPLIED
+          checkin %boolean; #IMPLIED>
 
 <!ELEMENT ccmreconfigure EMPTY>
 <!ATTLIST ccmreconfigure
@@ -4843,8 +5120,8 @@
 <!ATTLIST vssget
           id ID #IMPLIED
           ssdir CDATA #IMPLIED
-          date CDATA #IMPLIED
           recursive %boolean; #IMPLIED
+          date CDATA #IMPLIED
           autoresponse CDATA #IMPLIED
           quiet %boolean; #IMPLIED
           vsspath CDATA #IMPLIED
@@ -4867,7 +5144,7 @@
           dir CDATA #IMPLIED
           description CDATA #IMPLIED>
 
-<!ELEMENT ddcreator (patternset | exclude | include | custom | present | none | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
+<!ELEMENT ddcreator (patternset | exclude | include | custom | none | present | not | type | modified | or | contains | depend | different | size | majority | containsregexp | filename | selector | includesfile | date | excludesfile | depth | and)*>
 <!ATTLIST ddcreator
           id ID #IMPLIED
           classpath CDATA #IMPLIED
@@ -4883,7 +5160,7 @@
           descriptors CDATA #IMPLIED
           includes CDATA #IMPLIED>
 
-<!ELEMENT junit (batchtest | jvmarg | classpath | sysproperty | formatter | env | test)*>
+<!ELEMENT junit (classpath | jvmarg | sysproperty | syspropertyset | env | bootclasspath | permissions | assertions | formatter | batchtest | test)*>
 <!ATTLIST junit
           id ID #IMPLIED
           showoutput %boolean; #IMPLIED
@@ -4915,6 +5192,21 @@
           filtertrace %boolean; #IMPLIED
           haltonfailure %boolean; #IMPLIED
           errorproperty CDATA #IMPLIED>
+		  
+  <!ELEMENT test (formatter)*>
+  <!ATTLIST test
+  			name CDATA #REQUIRED
+            id ID #IMPLIED
+            if CDATA #IMPLIED
+            unless CDATA #IMPLIED
+            haltonerror %boolean; #IMPLIED
+            fork %boolean; #IMPLIED
+            todir CDATA #IMPLIED
+			outfile CDATA #IMPLIED
+            failureproperty CDATA #IMPLIED
+            filtertrace %boolean; #IMPLIED
+            haltonfailure %boolean; #IMPLIED
+            errorproperty CDATA #IMPLIED>
 
 <!ELEMENT formatter EMPTY>
 <!ATTLIST formatter
@@ -4923,45 +5215,3 @@
           type (plain | xml | brief) #IMPLIED
           classname CDATA #IMPLIED
           extension CDATA #IMPLIED>
-
-<!ELEMENT stcheckout EMPTY>
-<!ATTLIST stcheckout
-          id ID #IMPLIED
-          password CDATA #IMPLIED
-          projectname CDATA #IMPLIED
-          servername CDATA #IMPLIED
-          excludes CDATA #IMPLIED
-          username CDATA #IMPLIED
-          url CDATA #IMPLIED
-          rootstarteamfolder CDATA #IMPLIED
-          label CDATA #IMPLIED
-          viewname CDATA #IMPLIED
-          rootlocalfolder CDATA #IMPLIED
-          serverport CDATA #IMPLIED
-          deleteuncontrolled %boolean; #IMPLIED
-          includes CDATA #IMPLIED
-          description CDATA #IMPLIED
-          unlocked %boolean; #IMPLIED
-          taskname CDATA #IMPLIED
-          recursive %boolean; #IMPLIED
-          locked %boolean; #IMPLIED
-          createworkingdirs %boolean; #IMPLIED
-          forced %boolean; #IMPLIED>
-          
-<!ELEMENT image (include | patternset | exclude)*>
-<!ATTLIST image
-          id ID #IMPLIED
-          failonerror %boolean; #IMPLIED
-          srcdir IDREF #IMPLIED
-          description CDATA #IMPLIED
-          encoding CDATA #IMPLIED
-          overwrite %boolean; #IMPLIED
-          gc %boolean; #IMPLIED
-          destdir CDATA #IMPLIED
-          includes CDATA #IMPLIED
-          includesfile CDATA #IMPLIED
-          excludes CDATA #IMPLIED
-	      excludesfile CDATA #IMPLIED
-	      defaultexcludes CDATA #IMPLIED
-	      caseSensitive %boolean; #IMPLIED
-	      followSymlinks %boolean; #IMPLIED>
