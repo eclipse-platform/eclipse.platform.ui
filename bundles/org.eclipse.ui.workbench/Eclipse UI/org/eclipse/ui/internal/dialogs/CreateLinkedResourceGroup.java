@@ -361,6 +361,11 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 	if (createLink == false)
 		return createStatus(IStatus.OK, "");
 		
+	if (linkHandle.getParent() instanceof IProject == false)
+		return createStatus(
+			IStatus.ERROR,
+			WorkbenchMessages.getString("CreateLinkedResourceGroup.parentNotProject"));	//$NON-NLS-1$
+
 	String linkTargetName = linkTargetField.getText();
 	status = validateLinkTargetName(linkTargetName); 
 	if (status.isOK() == false)
