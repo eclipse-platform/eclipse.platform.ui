@@ -43,6 +43,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * <code>openEditor</code> is called.
 	 *
 	 * @see #openEditor
+	 * @deprecated Not applicable for generic workbench. Use IDE.EDITOR_ID_ATTR is IDE project.
  	 */	
 	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
 
@@ -340,11 +341,12 @@ public boolean isEditorAreaVisible();
  */
 public void reuseEditor(IReusableEditor editor,IEditorInput input);
 /**
- * Opens an editor on the given object.  
+ * Opens an editor on the given input.  
  * <p>
- * If this page already has an editor open on the target object that editor is 
- * activated; otherwise, a new editor is opened. 
- * <p><p>
+ * If this page already has an editor open on the target input that editor is 
+ * activated; otherwise, a new editor is opened. Two editor inputs, input1 and
+ * input2, are considered the same if <pre>input1.equals(input2) == true</pre>.
+ * </p><p>
  * The editor type is determined by mapping <code>editorId</code> to an editor
  * extension registered with the workbench.  An editor id is passed rather than
  * an editor object to prevent the accidental creation of more than one editor
@@ -355,18 +357,19 @@ public void reuseEditor(IReusableEditor editor,IEditorInput input);
  *
  * @param input the editor input
  * @param editorId the id of the editor extension to use
- * @return an open and active editor
- * @exception PartInitException if the editor could not be initialized
+ * @return an open and active editor or <code>null</code> if external editor open
+ * @exception PartInitException if the editor could not be created or initialized
  */
-public IEditorPart openEditor(IEditorInput input, String editorId)
-	throws PartInitException;
+public IEditorPart openEditor(IEditorInput input, String editorId) throws PartInitException;
 /**
- * Opens an editor on the given object.  
+ * Opens an editor on the given input.  
  * <p>
- * If this page already has an editor open on the target object that editor is 
- * brought to the front; otherwise, a new editor is opened.  If 
- * <code>activate == true</code> the editor will be activated.  
- * <p><p>
+ * If this page already has an editor open on the target input that editor is 
+ * brought to the front; otherwise, a new editor is opened. Two editor inputs 
+ * are considered the same if they equal. See <code>Object.equals(Object)<code>
+ * and <code>IEditorInput</code>. If <code>activate == true</code> the editor
+ * will be activated.  
+ * </p><p>
  * The editor type is determined by mapping <code>editorId</code> to an editor
  * extension registered with the workbench.  An editor id is passed rather than
  * an editor object to prevent the accidental creation of more than one editor
@@ -378,8 +381,8 @@ public IEditorPart openEditor(IEditorInput input, String editorId)
  * @param input the editor input
  * @param editorId the id of the editor extension to use
  * @param activate if <code>true</code> the editor will be activated
- * @return an open editor
- * @exception PartInitException if the editor could not be initialized
+ * @return an open editor or <code>null</code> if external editor open
+ * @exception PartInitException if the editor could not be created or initialized
  */
 public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate)
 	throws PartInitException;
