@@ -501,6 +501,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
 		
+		actionBars.updateActionBars();
 		addVerifyKeyListener();
 		// set initial content here, as viewer has to be set
 		setInitialContent();
