@@ -13,6 +13,7 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -162,6 +163,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		processAttributes.put(IProcess.ATTR_PROCESS_TYPE, programName);
 		
 		if (p != null) {
+			monitor.beginTask(MessageFormat.format(ExternalToolsProgramMessages.getString("ProgramLaunchDelegate.3"), new String[] {configuration.getName()}), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdLine));
