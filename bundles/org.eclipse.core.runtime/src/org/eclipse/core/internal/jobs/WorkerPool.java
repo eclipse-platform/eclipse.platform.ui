@@ -12,7 +12,6 @@ package org.eclipse.core.internal.jobs;
 import java.util.ArrayList;
 
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -90,7 +89,7 @@ class WorkerPool {
 			worker.start();
 			return;
 		} else if (threadCount > MAX_THREADS) {
-			String msg = Policy.bind("jobs.poolFull");//$NON-NLS-1$
+			String msg = "The job manager has stopped allocating worker threads because too many background tasks are running.";//$NON-NLS-1$
 			InternalPlatform.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 		}
 	}
