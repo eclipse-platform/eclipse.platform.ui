@@ -810,7 +810,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			String location = oldBundles[i].getLocation();
 			location = location.substring(start);
 			// If any existing bundle is removed in the new configuration, don't apply the changes.
-			if (!(newMap.get(location) != null || newMap.get(location+'/') != null)) {
+			// TODO remove when platform fixes file:/ correctly
+			if (!(newMap.get(location) != null || newMap.get(location+'/') != null || newMap.get("file:/"+location.substring(5)) != null)) {
 				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 					UpdateCore.debug("Bundle " + location + " has been removed");
 				return true;

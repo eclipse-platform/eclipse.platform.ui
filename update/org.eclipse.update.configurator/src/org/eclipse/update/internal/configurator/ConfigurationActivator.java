@@ -153,8 +153,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		try {
 			// Get the list of cached bundles and compare with the ones to be installed.
 			// Uninstall all the cached bundles that do not appear on the new list
-			Bundle[] cachedBundles = context.getBundles();
+			Bundle[] cachedBundles = context.getBundles();		
 			URL[] plugins = configuration.getPluginPath();
+				
 			Bundle[] bundlesToUninstall = getBundlesToUninstall(cachedBundles, plugins);
 			for (int i=0; i<bundlesToUninstall.length; i++) {
 				try {
@@ -168,27 +169,23 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			
 			// starts the list of bundles to refresh with all currently unresolved bundles (see bug 50680)
 			List toRefresh = getUnresolvedBundles();
+			
+			// Get the urls to install
+			String[] bundlesToInstall = getBundlesToInstall(cachedBundles, plugins);
 
-			for (int i = 0; i < plugins.length; i++) {
-				String location = plugins[i].toExternalForm();
+			for (int i = 0; i < bundlesToInstall.length; i++) {
 				try {
-					// TODO this is only because of PDE writing "plugin.xml" in platform.xml
-					if(location.endsWith(".xml"))
-						location = location.substring(0, location.lastIndexOf('/')+1);
-					//
-					location = "reference:" + location;
-					if (!isInstalled(location)) {
-						if (DEBUG)
-							Utils.debug("Installing " + location);
-						Bundle target = context.installBundle(location);
-						// any new bundle should be refreshed as well
-						toRefresh.add(target);
-						if (start != null)
-							start.setBundleStartLevel(target, 4);
-					}
+					if (DEBUG)
+						Utils.debug("Installing " + bundlesToInstall[i]);
+					Bundle target = context.installBundle(bundlesToInstall[i]);
+					// any new bundle should be refreshed as well
+					toRefresh.add(target);
+					if (start != null)
+						start.setBundleStartLevel(target, 4);
+				
 				} catch (Exception e) {
-					if ((location.indexOf("org.eclipse.core.boot") == -1) && (location.indexOf("org.eclipse.osgi") == -1)) {
-						Utils.log(Utils.newStatus("Ignoring bundle at: " + location, e));
+					if ( bundlesToInstall[i].indexOf("org.eclipse.osgi") == -1) {
+						Utils.log(Utils.newStatus("Bundle is already installed: " + bundlesToInstall[i], e));
 					}
 				}
 			}
@@ -219,7 +216,53 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		return unresolved;
 	}
 
+	private String[] getBundlesToInstall(Bundle[] cachedBundles, URL[] newPlugins) {
+		// First, create a map of the cached bundles, for faster lookup
+		HashSet cachedBundlesSet = new HashSet(cachedBundles.length);
+		for (int i=0; i<cachedBundles.length; i++) {
+			if (cachedBundles[i].getBundleId() == 0)
+				continue; // skip the system bundle
+			String bundleLocation = cachedBundles[i].getLocation();
+			// TODO fix this when the platform correctly resolves local file urls:
+			// test if the url starts with reference:file:/ and if not, insert the / after reference:file:
+			if (isWindows && 
+					bundleLocation.startsWith("reference:file:") && 
+					!bundleLocation.startsWith(":/", 14))
+				bundleLocation = "reference:file:/"+bundleLocation.substring(15);
+			cachedBundlesSet.add(bundleLocation);
+			// On windows, we will be doing case insensitive search as well, so lower it now
+			if (isWindows)
+				cachedBundlesSet.add(bundleLocation.toLowerCase());
+		}
+		
+		ArrayList bundlesToInstall = new ArrayList(newPlugins.length);
+		for (int i = 0; i < newPlugins.length; i++) {
+			String location = newPlugins[i].toExternalForm();
+			location = "reference:" + location;
+			// check if already installed
+			if (cachedBundlesSet.contains(location))
+				continue;
+			if (isWindows && cachedBundlesSet.contains(location.toLowerCase()))
+				continue;
+			
+			bundlesToInstall.add(location);
+		}
+		return (String[])bundlesToInstall.toArray(new String[bundlesToInstall.size()]);	
+	}
+	
+	
 	private Bundle[] getBundlesToUninstall(Bundle[] cachedBundles, URL[] newPlugins) {
+		// First, create a map for faster lookups
+		HashSet newPluginsSet = new HashSet(newPlugins.length);
+		for (int i=0; i<newPlugins.length; i++) {
+			
+			String pluginLocation = "reference:" + newPlugins[i].toExternalForm();
+			newPluginsSet.add(pluginLocation);
+			// On windows, we will be doing case insensitive search as well, so lower it now
+			if (isWindows)
+				newPluginsSet.add(pluginLocation.toLowerCase());
+		}
+		
 		ArrayList bundlesToUninstall = new ArrayList();
 		for (int i=0; i<cachedBundles.length; i++) {
 			if (cachedBundles[i].getBundleId() == 0)
@@ -227,33 +270,26 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			String cachedBundleLocation = cachedBundles[i].getLocation();
 			// TODO fix this when the platform correctly resolves local file urls
 			if (isWindows && 
-					cachedBundleLocation.startsWith("reference:file:") && 
-					!cachedBundleLocation.startsWith("reference:file:/"))
+					!cachedBundleLocation.startsWith("reference:file:/") && 
+					cachedBundleLocation.startsWith("reference:file:"))
 				cachedBundleLocation = "reference:file:/"+cachedBundleLocation.substring(15);
-			boolean found = false;
-			for (int j=0; !found && j<newPlugins.length; j++) {
-				String newPluginLocation = newPlugins[j].toExternalForm();
-				// TODO this is only because of PDE writing "plugin.xml" in platform.xml
-				if(newPluginLocation.endsWith(".xml"))
-					newPluginLocation = newPluginLocation.substring(0, newPluginLocation.lastIndexOf('/')+1);
-				//
-				newPluginLocation = "reference:" + newPluginLocation;
-				if (newPluginLocation.equals(cachedBundleLocation))
-					found = true;
-				else if (isWindows && newPluginLocation.equalsIgnoreCase(cachedBundleLocation))
-					found = true;
-			}
-			if (!found)
-				bundlesToUninstall.add(cachedBundles[i]);
+			
+			if (newPluginsSet.contains(cachedBundleLocation))
+				continue;
+			if (isWindows && newPluginsSet.contains(cachedBundleLocation.toLowerCase()))
+				continue;
+			
+			bundlesToUninstall.add(cachedBundles[i]);
 		}
 		return (Bundle[])bundlesToUninstall.toArray(new Bundle[bundlesToUninstall.size()]);
 	}
+	
 
 	/**
-	 * This is a major hack to try to get the reconciler application running. However we should find a way to not run it.
+	 * Creates and starts the platform configuration.
 	 * @param args
 	 * @param metaPath
-	 * @return
+	 * @return the just started platform configuration
 	 */
 	private PlatformConfiguration getPlatformConfiguration(URL installURL, Location configLocation) {
 		try {
@@ -311,22 +347,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		}
 		context.removeFrameworkListener(listener);
 		context.ungetService(packageAdminRef);
-	}
-
-	/*
-	 * location ends in /  (later we will support jar as well)
-	 */
-	private boolean isInstalled(String location) {
-		Bundle[] installed = context.getBundles();
-		for (int i = 0; i < installed.length; i++) {
-			Bundle bundle = installed[i];
-			String bundleLocation = bundle.getLocation();
-			if (location.equals(bundleLocation))
-				return true;
-			else if (isWindows && location.equalsIgnoreCase(bundleLocation))
-				return true;
-		}
-		return false;
 	}
 	
 	private void writePlatformConfigurationTimeStamp() {
