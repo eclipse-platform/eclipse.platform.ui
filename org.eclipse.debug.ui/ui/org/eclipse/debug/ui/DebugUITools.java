@@ -30,11 +30,13 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
@@ -57,6 +59,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * This class provides utilities for clients of the debug UI.
@@ -581,4 +584,17 @@ public class DebugUITools {
 		DebugUIPlugin.getDefault().getPerspectiveManager().setLaunchPerspective(type, mode, perspective);
 	}	
 	
+	
+	/**
+	 * Adds an instruction  pointer annotation to the given text editor for the 
+	 * specified stack frame. The instruction pointer will be removed when the
+	 * thread associated with the stack frame is resumed or terminated.
+	 * 
+	 * @param editor the text editor to add an instruction pointer to
+	 * @param frame the stack frame describing the location of the instruction pointer
+	 * @since 3.0
+	 */
+	public static void addInstructionPointer(ITextEditor editor, IStackFrame frame) {
+		InstructionPointerManager.getDefault().addAnnotation(editor, frame);
+	}
 }

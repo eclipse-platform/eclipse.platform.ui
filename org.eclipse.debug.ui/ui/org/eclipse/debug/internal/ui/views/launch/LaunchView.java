@@ -43,10 +43,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
@@ -682,7 +682,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 			// add instruction pointer annotation (for text editors only)
 			if (editor instanceof ITextEditor) {
-				InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
+				DebugUITools.addInstructionPointer((ITextEditor)editor, stackFrame);
 			}
 			// decorate the editor
 			decorateEditor(editor, stackFrame);		
