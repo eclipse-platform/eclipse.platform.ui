@@ -158,10 +158,10 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 	}
 	public static TestSuite suite() {
-//		return new TestSuite(BeginEndRuleTest.class);
-		TestSuite suite = new TestSuite();
-		suite.addTest(new BeginEndRuleTest("testComplexRuleStarting"));
-		return suite;
+		return new TestSuite(BeginEndRuleTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new BeginEndRuleTest("testComplexRuleStarting"));
+//		return suite;
 	}
 	public BeginEndRuleTest() {
 		super();
