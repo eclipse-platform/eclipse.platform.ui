@@ -124,6 +124,7 @@ public final class Workbench implements IWorkbench {
 	private static final String RIGHT_TO_LEFT = "rtl";//$NON-NLS-1$
 	private static final String ORIENTATION_COMMAND_LINE = "-dir";//$NON-NLS-1$
 	private static final String ORIENTATION_PROPERTY = "eclipse.orientation";//$NON-NLS-1$
+	private static final String NL_COMMAND_LINE = "-nl"; //$NON-NLS-1$
     private static final String VERSION_STRING[] = { "0.046", "2.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 
     private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml"; //$NON-NLS-1$
@@ -197,6 +198,7 @@ public final class Workbench implements IWorkbench {
      * <code>largeUpdateStart()</code> and <code>largeUpdateEnd()</code>.
      */
     private int largeUpdates = 0;
+	
 
     /**
      * Creates a new workbench.
@@ -906,6 +908,40 @@ public final class Workbench implements IWorkbench {
 		if(orientation != SWT.NONE)
 			return orientation;
 
+		return checkCommandLineLocale(commandLineArgs); //Use the default value if there is nothing specified
+	}
+
+	/**
+	 * Check to see if the command line parameter for -nl
+	 * has been set. If so imply the orientation from this 
+	 * specified Locale. If it is a bidirectional Locale
+	 * return SWT#RIGHT_TO_LEFT.
+	 * If it has not been set or has been set to 
+	 * a unidirectional Locale then return SWT#NONE.
+	 * 
+	 * Locale is determined differently by different JDKs 
+	 * and may not be consistent with the users expectations.
+	 * 
+	 * @param commandLineArgs. The command line arguments passed
+	 * to the Eclipse runtime.
+	 * @return int
+	 * @see SWT#NONE
+	 * @see SWT#RIGHT_TO_LEFT
+	 */
+	private int checkCommandLineLocale(String[] commandLineArgs) {
+		boolean abortCheck = false;
+		
+		//Do not process the last one as it will never have a parameter
+		for (int i = 0; i < commandLineArgs.length - 1; i++) {
+			if(commandLineArgs[i].equalsIgnoreCase(NL_COMMAND_LINE)){
+				abortCheck = true;
+				break;
+			}
+		}
+		
+		if(abortCheck)
+			return SWT.NONE;
+		
 		Locale locale = Locale.getDefault();
 		String lang = locale.getLanguage();
 
@@ -913,7 +949,7 @@ public final class Workbench implements IWorkbench {
 			|| "ur".equals(lang)) //$NON-NLS-1$
 			return SWT.RIGHT_TO_LEFT;
 			
-		return SWT.NONE; //Use the default value if there is nothing specified
+		return SWT.NONE;
 	}
 
 	/**
