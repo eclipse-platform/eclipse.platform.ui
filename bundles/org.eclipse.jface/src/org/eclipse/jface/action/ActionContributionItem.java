@@ -170,6 +170,22 @@ public class ActionContributionItem extends ContributionItem {
 	 * The action.
 	 */
 	private IAction action;
+	
+	/**
+     * The listener for changes to the text of the action contributed by an
+     * external source.
+     */
+    private final ExternalActionManager.IActionTextListener actionTextListener = new ExternalActionManager.IActionTextListener() {
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.action.CommandResolver.IActionTextListener#textChanged()
+         */
+        public void textChanged() {
+            update(IAction.TEXT);
+        }
+    };
 
 	/**
 	 * Listener for SWT button widget events.
@@ -211,27 +227,6 @@ public class ActionContributionItem extends ContributionItem {
     public ActionContributionItem(IAction action) {
         super(action.getId());
         this.action = action;
-
-        if (action != null) {
-            String commandId = action.getActionDefinitionId();
-            ExternalActionManager.ICallback callback = ExternalActionManager.getInstance()
-                    .getCallback();
-
-            if ((callback != null) && (commandId != null)) {
-                callback.addActionTextListener(commandId,
-                        new ExternalActionManager.IActionTextListener() {
-
-                            /*
-                             * (non-Javadoc)
-                             * 
-                             * @see org.eclipse.jface.action.CommandResolver.IActionTextListener#textChanged()
-                             */
-                            public void textChanged() {
-                                update(IAction.TEXT);
-                            }
-                        });
-            }
-        }
     }
 	
 	/**
@@ -293,7 +288,17 @@ public class ActionContributionItem extends ContributionItem {
 
 			update(null);
 
+			// Attach some extra listeners.
 			action.addPropertyChangeListener(propertyListener);
+	        if (action != null) {
+	            String commandId = action.getActionDefinitionId();
+	            ExternalActionManager.ICallback callback = ExternalActionManager.getInstance()
+	                    .getCallback();
+
+	            if ((callback != null) && (commandId != null)) {
+	                callback.addActionTextListener(commandId, actionTextListener);
+	            }
+	        }
 		}
 	}
 	/**
@@ -341,7 +346,17 @@ public class ActionContributionItem extends ContributionItem {
 
 			update(null);
 
+			// Attach some extra listeners.
 			action.addPropertyChangeListener(propertyListener);
+	        if (action != null) {
+	            String commandId = action.getActionDefinitionId();
+	            ExternalActionManager.ICallback callback = ExternalActionManager.getInstance()
+	                    .getCallback();
+
+	            if ((callback != null) && (commandId != null)) {
+	                callback.addActionTextListener(commandId, actionTextListener);
+	            }
+	        }
 		}
 	}
 	/**
@@ -378,7 +393,17 @@ public class ActionContributionItem extends ContributionItem {
 
 			update(null);
 
+			// Attach some extra listeners.
 			action.addPropertyChangeListener(propertyListener);
+	        if (action != null) {
+	            String commandId = action.getActionDefinitionId();
+	            ExternalActionManager.ICallback callback = ExternalActionManager.getInstance()
+	                    .getCallback();
+
+	            if ((callback != null) && (commandId != null)) {
+	                callback.addActionTextListener(commandId, actionTextListener);
+	            }
+	        }
 		}
 	}
 	/**
@@ -507,15 +532,29 @@ public class ActionContributionItem extends ContributionItem {
 	 * Handles a widget dispose event for the widget corresponding to this item.
 	 */
 	private void handleWidgetDispose(Event e) {
+	    // Check if our widget is the one being disposed.
 		if (e.widget == widget) {
-			// the item is being disposed
+			// Dispose of the menu creator.
 			if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
 				IMenuCreator mc = action.getMenuCreator();
 				if (mc != null) {
 					mc.dispose();
 				}
 			}
+			
+			// Unhook all of the listeners.
 			action.removePropertyChangeListener(propertyListener);
+	        if (action != null) {
+	            String commandId = action.getActionDefinitionId();
+	            ExternalActionManager.ICallback callback = ExternalActionManager.getInstance()
+	                    .getCallback();
+
+	            if ((callback != null) && (commandId != null)) {
+	                callback.removeActionTextListener(commandId, actionTextListener);
+	            }
+	        }
+	        
+	        // Clear the widget field.
 			widget = null;
 		}
 	}
