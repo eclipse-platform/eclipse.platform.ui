@@ -15,12 +15,12 @@
 		<mkdir dir="${destdir}" />
 		<delete dir="${dest}" />
 		<mkdir dir="${dest}" />
-		<jar jarfile="${dest}/externaltools.jar">
+		<jar destfile="${dest}/externaltools.jar">
 			<fileset dir="bin">
 			</fileset>
 		</jar>
 		<!-- Create the source zip -->
-		<zip zipfile="${dest}/externaltoolssrc.zip">
+		<zip destfile="${dest}/externaltoolssrc.zip">
 			<fileset dir="External Tools Base"/>
 			<fileset dir="Program Tools Support"/>
 		</zip>
