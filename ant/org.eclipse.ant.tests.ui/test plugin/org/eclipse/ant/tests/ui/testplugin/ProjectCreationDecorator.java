@@ -44,25 +44,27 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 	}
 	
 	public void testProjectCreation() throws Exception {
-		// delete any pre-existing project
-		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
-		if (pro.exists()) {
-			pro.delete(true, true, null);
+		try {
+			// delete any pre-existing project
+			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
+			if (pro.exists()) {
+				pro.delete(true, true, null);
+			}
+			// create project and import buildfiles and support files
+			IProject project = ProjectHelper.createProject(ProjectHelper.PROJECT_NAME);
+			IFolder folder = ProjectHelper.addFolder(project, "buildfiles");
+			ProjectHelper.addFolder(project, "launchConfigurations");
+			File root = AntUITestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_BUILDFILES_DIR);
+			ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
+			
+			createLaunchConfiguration("echoing");
+			createLaunchConfiguration("build");
+			createLaunchConfiguration("bad");
+			createLaunchConfigurationForSeparateVM("echoingSepVM");
+		} finally {
+			//do not show the Ant build failed error dialog
+			AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, false);
 		}
-		// create project and import buildfiles and support files
-		IProject project = ProjectHelper.createProject(ProjectHelper.PROJECT_NAME);
-		IFolder folder = ProjectHelper.addFolder(project, "buildfiles");
-		ProjectHelper.addFolder(project, "launchConfigurations");
-		File root = AntUITestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_BUILDFILES_DIR);
-		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
-		
-		createLaunchConfiguration("echoing");
-		createLaunchConfiguration("build");
-		createLaunchConfiguration("bad");
-		createLaunchConfigurationForSeparateVM("echoingSepVM");
-		
-		//do not show the Ant build failed error dialog
-		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, false);
 	}
 	
 	/**
@@ -111,10 +113,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 
 	private void setClasspath(ILaunchConfigurationWorkingCopy config) {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-			
-		//Path newJavaPath= new Path(vm.getInstallLocation().getAbsolutePath());
-		//URL newToolsURL= prefs.getToolsJarURL(newJavaPath);
-
+		
 		StringBuffer urlString= new StringBuffer();
 
 		IAntClasspathEntry[] entries= prefs.getDefaultAntHomeEntries();
@@ -130,5 +129,4 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 				
 		config.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
 	}
-	
 }
