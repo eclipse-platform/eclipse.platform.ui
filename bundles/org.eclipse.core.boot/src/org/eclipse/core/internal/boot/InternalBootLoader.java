@@ -46,9 +46,9 @@ public final class InternalBootLoader {
 	private static boolean inDevelopmentMode = false;
 
 	// state for tracking the Platform context (e.g., the OS, Window system, locale, ...)
-	private static String NL = null;
-	private static String WS = null;
-	private static String OS = null;
+	private static String nl = null;
+	private static String ws = null;
+	private static String os = null;
 	private static final String[] OS_LIST = { BootLoader.OS_WIN32, BootLoader.OS_LINUX, BootLoader.OS_AIX, BootLoader.OS_SOLARIS, BootLoader.OS_HPUX };
 	
 	private static final String PLATFORM_ENTRYPOINT = "org.eclipse.core.internal.runtime.InternalPlatform";
@@ -96,6 +96,7 @@ public final class InternalBootLoader {
 	private static final String PLUGINS = "-plugins";
 	private static final String APPLICATION = "-application";
 	private static final String DEV = "-dev";
+	private static final String WS = "-ws";
 	private static final String USAGE = "-?";
 
 	// Development mode constants
@@ -273,13 +274,13 @@ private static String[] getListOption(String option) {
  * @see BootLoader
  */
 public static String getNL() {
-	return NL;
+	return nl;
 }
 /**
  * @see BootLoader
  */
 public static String getOS() {
-	return OS;
+	return os;
 }
 private static Object[] getPlatformClassLoaderPath(Properties config) {
 	// If running in va, check for va properties file. 
@@ -519,7 +520,7 @@ public static IPlatformRunnable getRunnable(String pluginId, String className, O
  * @see BootLoader
  */
 public static String getWS() {
-	return WS;
+	return ws;
 }
 /**
  * @see BootLoader
@@ -774,6 +775,12 @@ private static String[] processCommandLine(String[] args) throws Exception {
 				application = arg;
 		}
 
+		// look for the window system.  
+		if (args[i - 1].equalsIgnoreCase(WS)) {
+			found = true;
+			ws = arg;
+		}
+
 		// done checking for args.  Remember where an arg was found 
 		if (found) {
 			configArgs[configArgIndex++] = i - 1;
@@ -890,18 +897,18 @@ public static void setupOptions() {
  * includes information about the locale, operating system and window system.
  */
 private static void setupSystemContext() {
-	if (NL == null)
-		NL = Locale.getDefault().toString();
-	if (OS == null) {
+	if (nl == null)
+		nl = Locale.getDefault().toString();
+	if (os == null) {
 		String name = System.getProperty("os.name");
 		for (int i = 0; i < OS_LIST.length; i++)
 			if (name.regionMatches(true, 0, OS_LIST[i], 0, 3))
-				OS = OS_LIST[i];
-		if (OS == null)
-			OS = BootLoader.OS_UNKNOWN;
+				os = OS_LIST[i];
+		if (os == null)
+			os = BootLoader.OS_UNKNOWN;
 	}
-	if (WS == null)
-		WS = BootLoader.WS_UNKNOWN;
+	if (ws == null)
+		ws = BootLoader.WS_UNKNOWN;
 }
 /**
  * @see BootLoader
