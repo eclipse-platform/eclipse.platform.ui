@@ -550,6 +550,7 @@ public class HistoryView extends ViewPart {
 					historyTableProvider.setFile(remoteFile);
 					tableViewer.setInput(remoteFile);
 					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+					selectRevision(remoteFile.getRevision());
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 				}				
@@ -575,9 +576,10 @@ public class HistoryView extends ViewPart {
 			historyTableProvider.setFile(remoteFile);
 			tableViewer.setInput(remoteFile);
 			setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-		} catch (CVSException e) {
+			selectRevision(remoteFile.getRevision());
+		} catch (TeamException e) {
 			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
-		}
+		} 
 	}
 	
 	private Action getContextMenuAction(String title, final boolean needsProgressDialog, final IWorkspaceRunnable action) {
