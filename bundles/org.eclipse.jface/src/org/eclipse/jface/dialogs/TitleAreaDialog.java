@@ -137,7 +137,7 @@ protected Control createContents(Composite parent) {
  * <p>
  * The <code>Dialog</code> implementation of this framework method
  * creates and returns a new <code>Composite</code> with
- * standard margins and spacing. Subclasses should override.
+ * no margins and spacing. Subclasses should override.
  * </p>
  *
  * @param the parent composite to contain the dialog area
