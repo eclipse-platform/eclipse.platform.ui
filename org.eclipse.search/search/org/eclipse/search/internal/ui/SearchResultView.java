@@ -22,7 +22,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -162,7 +161,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		if (labelProvider == null)
 			return null;
 		
-		return ((SearchResultLabelProvider)((DecoratingLabelProvider)labelProvider).getLabelProvider()).getLabelProvider();
+		return ((SearchResultLabelProvider)labelProvider).getLabelProvider();
 	}
 
 	private void setContextMenuContributor(final IContextMenuContributor contributor) {

@@ -10,6 +10,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
 
+import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.search.ui.ISearchResultViewEntry;
 
 class SearchResultLabelProvider extends LabelProvider {
@@ -49,6 +51,7 @@ class SearchResultLabelProvider extends LabelProvider {
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
 		fLabelProvider.addListener(listener);
+		PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator().addListener(listener);
 	}
 
 	public boolean isLabelProperty(Object element, String property) {
@@ -58,5 +61,6 @@ class SearchResultLabelProvider extends LabelProvider {
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
 		fLabelProvider.removeListener(listener);
+		PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator().removeListener(listener);
 	}
 }
