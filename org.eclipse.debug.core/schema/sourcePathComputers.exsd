@@ -7,7 +7,9 @@
       </appInfo>
       <documentation>
          Defines an extension point to register a computer that can describe a default source lookup path for
-         a launch configuration.
+         a launch configuration. Source path computers are associated with launch configuration types via the
+         launchConfigurationTypes extension point. As well, a source path computer can be associated with a
+         specific launch configuration via the launch configuration attribute ATTR_SOURCE_PATH_COMPUTER_ID.
       </documentation>
    </annotation>
    
@@ -52,13 +54,6 @@
             <annotation>
                <documentation>
                   The unique id used to refer to this computer.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="locationTypeID" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The id given to ISourceLocationTypes created by this computer.
                </documentation>
             </annotation>
          </attribute>

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
 
 /**
  * The launch manager manages the set of registered launches, maintaining
@@ -345,6 +346,22 @@ public interface ILaunchManager {
 	 */
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;
 	
+	/**
+	 * Returns a source path computer that can be used to computer a default source
+	 * lookup path for the given launch configuration, or <code>null</code> if
+	 * unspecified.
+	 * <p>
+	 * THIS METHOD IS EXPERIMENTAL AND SUBJECT TO CHANGE
+	 * </p>
+	 * @param configuration the launch configuration for which a source path computer is
+	 *  required
+	 * @return a source path computer that can be used to compute a default source lookup
+	 *  path for the given launch configration, or <code>null</code> if unspecified
+	 * @throws CoreException if an excpetion occurrs while instantiating a source
+	 *  path computer
+	 * @since 3.0
+	 */
+	public ISourcePathComputer newSourcePathComputer(ILaunchConfiguration configuration) throws CoreException;
 }
 
 

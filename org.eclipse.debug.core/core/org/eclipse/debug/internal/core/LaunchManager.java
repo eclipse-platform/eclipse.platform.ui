@@ -76,6 +76,7 @@ import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.core.sourcelookup.ISourcePathComputer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1622,4 +1623,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return fgNativeEnv;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#newSourcePathComputer(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public ISourcePathComputer newSourcePathComputer(ILaunchConfiguration configuration) throws CoreException {
+		// TODO: to be implemented
+		return null;
+	}
+
 }

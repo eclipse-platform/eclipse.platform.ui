@@ -15,7 +15,9 @@
 
 <p>
 <h6 class=CaptionFigColumn id=header>Description: </h6>Defines an extension point to register a computer that can describe a default source lookup path for
-         a launch configuration.</p>
+         a launch configuration. Source path computers are associated with launch configuration types via the
+         launchConfigurationTypes extension point. As well, a source path computer can be associated with a
+         specific launch configuration via the launch configuration attribute ATTR_SOURCE_PATH_COMPUTER_ID.</p>
 <p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>
 <p class=code id=dtd>&lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.sourcePathComputer">sourcePathComputer</a>*)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST extension</p>
@@ -28,7 +30,7 @@
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.sourcePathComputer">sourcePathComputer</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST sourcePathComputer</p>
-<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>locationTypeID&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED&gt;</p>
+<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>class&nbsp;CDATA #REQUIRED&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 Defines an extension point to register a computer that can describe a default source lookup path
@@ -36,7 +38,6 @@ Defines an extension point to register a computer that can describe a default so
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
 <li><b>id</b> - The unique id used to refer to this computer.</li>
-<li><b>locationTypeID</b> - The id given to ISourceLocationTypes created by this computer.</li>
 <li><b>class</b> - A class that implements ISourcePathComputer.</li>
 </ul>
 <br><h6 class=CaptionFigColumn id=header>API Information: </h6>Value of the attribute <b>class</b> must be a fully qualified name of a Java class that implements the interface <b>ISourcePathComputer</b>.

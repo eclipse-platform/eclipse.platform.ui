@@ -97,6 +97,13 @@ Launch configuration instances of this type will delegate to instances of this c
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="sourcePathComputerId" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier of a sourcePathComputers extension that is used to compute a default source lookup path for launch configurations of this type
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -162,9 +169,9 @@ The launch configuration is applicable to .txt and .gif files, and is the defaul
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
- &lt;img SRC="ngibmcpy.gif"
-   ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>

@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core.sourcelookup;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
@@ -20,12 +21,19 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * TODO: contribution exampl
  * TODO: add factory method to launch manager to create source path computer
  *  for a launch configuration
- * TODO: how does one associate a source path computer with a launch config?
- *  is it done via launch config types, or an attribute, or both?
  * 
  * @since 3.0
  */
 public interface ISourcePathComputer {
+	
+	/**
+	 * Launch configuration attribute to specify a source path computer
+	 * that should be used for a launch configuration. The value is an identifer
+	 * of a source path computer extension, or unspecified (<code>null</code>), if the
+	 * default source path computer should be used. A default source path computer
+	 * can be associated with a launch configuration type.
+	 */
+	public static final String ATTR_SOURCE_PATH_COMPUTER_ID = DebugPlugin.getUniqueIdentifier() + ".SOURCE_PATH_COMPUTER_ID"; //$NON-NLS-1$
 
 	/**
 	 * Returns a default collection source containers to be considered for the
