@@ -610,6 +610,10 @@ public class AntModel {
 	}
 
 	public void fatalError(Exception exception) {
+		if (fStillOpenElements.isEmpty()) {
+			//TODO do we need to handle this better
+			return;
+		}
 		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
 		generateExceptionOutline(node);
 		
