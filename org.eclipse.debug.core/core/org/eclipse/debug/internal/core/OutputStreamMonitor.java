@@ -138,6 +138,12 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 						}
 						fireStreamAppended(text);
 					}
+					try {
+					    //allow other threads to do some processing.
+					    //heavy console output can make this loop busy.
+					    Thread.sleep(10);
+					} catch (InterruptedException e) {
+					}
 				}
 			} catch (IOException ioe) {
 				DebugPlugin.log(ioe);
