@@ -829,7 +829,7 @@ public class ConfigurationView
 		createVerticalLine(rightContainer);
 		preview = new ConfigurationPreview(this);
 		preview.createControl(rightContainer);
-		preview.getScrollingControl().setLayoutData(
+		preview.getControl().setLayoutData(
 			new GridData(GridData.FILL_BOTH));
 		splitter.setWeights(new int[] { 2, 3 });
 		fillActionBars(getConfigurationWindow().getToolBarManager());
