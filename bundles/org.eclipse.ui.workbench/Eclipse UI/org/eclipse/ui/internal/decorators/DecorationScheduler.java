@@ -20,7 +20,6 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Color;
@@ -414,19 +413,11 @@ public class DecorationScheduler {
 					monitor.worked(5);
 					monitor.done();
 				}
+				if (!pendingUpdate.isEmpty())
+					decorated();
 				return Status.OK_STATUS;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.WorkbenchJob#performDone(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void performDone(IJobChangeEvent event) {
-				if (!pendingUpdate.isEmpty())
-					decorated();
-			}
-			
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 			 */
