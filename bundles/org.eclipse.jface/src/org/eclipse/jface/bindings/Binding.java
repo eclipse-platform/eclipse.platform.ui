@@ -162,7 +162,7 @@ public abstract class Binding {
 	 * @param commandId
 	 *            The command to which this binding applies; this value may be
 	 *            <code>null</code> if the binding is meant to "unbind" (no
-	 *            op).
+	 *            op). This identifier must be of non-zero length.
 	 * @param schemeId
 	 *            The scheme to which this binding belongs; this value must not
 	 *            be <code>null</code>.
@@ -186,6 +186,11 @@ public abstract class Binding {
 	protected Binding(final String commandId, final String schemeId,
 			final String contextId, final String locale, final String platform,
 			final String windowManager, final int type) {
+		if ((commandId != null) && (commandId.length() < 1)) {
+			throw new IllegalArgumentException(
+					"Cannot bind to an empty command id"); //$NON-NLS-1$
+		}
+
 		if (schemeId == null) {
 			throw new NullPointerException("The scheme cannot be null"); //$NON-NLS-1$
 		}
@@ -208,7 +213,7 @@ public abstract class Binding {
 	}
 
 	/**
-	 * Tests whether this binding is intended to delete another binding.  The
+	 * Tests whether this binding is intended to delete another binding. The
 	 * <code>binding</code> must be a <code>SYSTEM</code> binding, and the
 	 * receiver must have a <code>null</code> command identifier.
 	 * 
@@ -222,10 +227,10 @@ public abstract class Binding {
 		deletes &= Util.equals(getTriggerSequence(), binding
 				.getTriggerSequence());
 		if (getLocale() != null) {
-			deletes &= !Util.equals(getLocale(), binding.getLocale()); 
+			deletes &= !Util.equals(getLocale(), binding.getLocale());
 		}
 		if (getPlatform() != null) {
-			deletes &= !Util.equals(getPlatform(), binding.getPlatform()); 
+			deletes &= !Util.equals(getPlatform(), binding.getPlatform());
 		}
 		deletes &= Util.equals(binding.getType(), SYSTEM);
 		deletes &= Util.equals(getCommandId(), null);
