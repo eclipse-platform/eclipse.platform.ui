@@ -30,7 +30,6 @@ public class Response {
 		public void run() {
 			try {
 				connection = url.openConnection();
-				System.out.println("Connection Opened");
 			} catch (IOException e) {
 				throw new RuntimeException(e.toString());
 			}

@@ -334,29 +334,4 @@ public class Utilities {
 			bufferPool = new Stack();
 		bufferPool.push(buf);
 	}
-
-	public static void startTimer(String task) {
-		/*
-		Date d = new Date();
-		UpdateManagerPlugin.debug("TIMER: start " + task + " " + format(d));
-		timerMap.put(task, d);
-		*/
-	}
-
-	public static void stopTimer(String task) {
-		/*
-		Date d = new Date();
-		UpdateManagerPlugin.debug("TIMER: stop " + task + " " + format(d));
-		Date start = (Date) timerMap.get(task);
-		if (start == null) {
-			UpdateManagerPlugin.debug("Unknown task:" + task);
-			return;
-		}
-		long diff = d.getTime() - start.getTime();
-		Date delta = new Date(diff);
-		SimpleDateFormat simple = new SimpleDateFormat("mm:ss:SS");
-		UpdateManagerPlugin.debug("TIMER:" + task + " " + simple.format(delta));
-		*/
-	}
-
 }
