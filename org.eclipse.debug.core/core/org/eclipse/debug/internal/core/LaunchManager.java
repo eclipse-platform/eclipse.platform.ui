@@ -1427,10 +1427,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * The specified project has just opened - restore its
 	 * launch configuration index.
 	 * 
-	 * @param project the project that has been openned
+	 * @param project the project that has been opened
 	 * @exception CoreException if reading the index fails
 	 */
-	protected void projectOpenned(IProject project) throws CoreException {
+	protected void projectOpened(IProject project) throws CoreException {
 		restoreIndex(project);
 	}
 	
@@ -1464,7 +1464,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					IProject project = (IProject)delta.getResource();
 					try {
 						if (project.isOpen()) {
-							LaunchManager.this.projectOpenned(project);
+							LaunchManager.this.projectOpened(project);
 						} else { 
 						    LaunchManager.this.projectClosed(project);
 						}
@@ -1499,7 +1499,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 			return true;
 		}		
-
 	}
 	
 	/**
