@@ -1,5 +1,12 @@
 package org.eclipse.ui.internal;
 
+/*
+ * Copyright (c) 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ */
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -10,10 +17,7 @@ import org.eclipse.ui.part.CoolItemGroupMarker;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
- * @author Lynne
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
+ * CoolItemMultiToolBarManager class
  */
 public class CoolItemMultiToolBarManager extends CoolItemToolBarManager {
 	ArrayList coolBarItems = new ArrayList();

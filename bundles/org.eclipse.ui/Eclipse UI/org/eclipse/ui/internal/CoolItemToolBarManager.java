@@ -1,15 +1,19 @@
 package org.eclipse.ui.internal;
 
+/*
+ * Copyright (c) 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ */
+
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 
 /**
- * @author Lynne
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
+ * CoolItemToolBarManager class
  */
 public class CoolItemToolBarManager extends ToolBarManager {
 	CoolBarManager parentManager;
