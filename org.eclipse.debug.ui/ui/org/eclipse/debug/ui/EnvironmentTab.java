@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -48,6 +49,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Launch configuration tab for configuring the environment passed
@@ -170,6 +172,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create main composite
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
+		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
