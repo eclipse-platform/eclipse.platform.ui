@@ -87,6 +87,7 @@ public interface IAdapterManager {
 	 * @return <code>true</code> if there is an adapter factory that claims
 	 * it can convert <code>adaptable</code> to an object of type <code>adapterType</code>,
 	 * and <code>false</code> otherwise.
+	 * @since 3.0
 	 */
 	public boolean hasAdapter(Object adaptable, String adapterTypeName);
 	/**
