@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,6 +32,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 
 /**
@@ -57,14 +61,24 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	private Button workingSetScopeButton;
 	/**
+	 * The workspace scope radio button.
+	 */
+	private Button workspaceScopeButton;
+	/**
+	 * The text field that displays the current working set name
+	 */
+	private Text workingSetText;
+	/**
 	 * The button that allows the user to decide if error results should be
 	 * parsed
 	 */
 	private Button includeErrorResultButton;
-	private boolean includeErrorResults= false;
+	private static IPreferenceStore store= ExternalToolsPlugin.getDefault().getPreferenceStore();
+	//private boolean includeErrorResults= false;
 
 	public SearchForBuildFilesDialog() {
-		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):", "build.xml", new IInputValidator() {
+		super(Display.getCurrent().getActiveShell(), "Search for Build Files", "Input a build file name (* = any string, ? = any character):",
+				store.getString(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
 			public String isValid(String newText) {
 				String trimmedText = newText.trim();
 				if (trimmedText.length() == 0) {
@@ -76,11 +90,23 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	}
 
 	/**
-	 * Change the label on the "Ok" button.
+	 * Change the label on the "Ok" button and initialize the enabled state
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getOkButton().setText("Search");
+
+		String workingSetName= store.getString(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE);
+		if (workingSetName.length() > 0) {
+			IWorkingSet set= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
+			if (set != null) {
+				setWorkingSet(set);
+			}
+		}
+		if (!store.getBoolean(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE)) {
+			workspaceScopeButton.setSelection(true);
+			handleRadioButtonPressed();
+		}
 	}
 
 	/**
@@ -90,12 +116,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		Font font = parent.getFont();
 		
 		Composite composite = (Composite) super.createDialogArea(parent);
-		
-		includeErrorResultButton= new Button(composite, SWT.CHECK);
-		includeErrorResultButton.setFont(font);
-		includeErrorResultButton.setText("Include build files that contain errors");
-		includeErrorResultButton.setSelection(false);
-		
+		createIncludeErrorResultButton(composite, font);
+		createScopeGroup(composite, font);
+		return composite;
+	}
+	
+	private void createScopeGroup(Composite composite, Font font) {
 		Group scope= new Group(composite, SWT.NONE);
 		scope.setText("Scope");
 		GridData data= new GridData(GridData.FILL_BOTH);
@@ -104,50 +130,78 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		scope.setLayout(layout);
 		scope.setFont(font);
 		
+		// Create a composite for the radio buttons
 		Composite radioComposite= new Composite(scope, SWT.NONE);
 		GridLayout radioLayout= new GridLayout();
 		radioLayout.marginHeight= 0;
 		radioComposite.setLayout(radioLayout);
-		
+
 		SelectionAdapter selectionListener= new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						updateOkEnabled();
-					}
-				};
-		
-		Button workspaceScope= new Button(radioComposite, SWT.RADIO);
-		workspaceScope.setFont(font);
-		workspaceScope.setText("Workspace");
-		workspaceScope.setSelection(true);
-		workspaceScope.addSelectionListener(selectionListener);
-		
+			public void widgetSelected(SelectionEvent e) {
+				handleRadioButtonPressed();
+			}
+		};
+
+		workspaceScopeButton= new Button(radioComposite, SWT.RADIO);
+		workspaceScopeButton.setFont(font);
+		workspaceScopeButton.setText("Workspace");
+		workspaceScopeButton.setSelection(true);
+		workspaceScopeButton.addSelectionListener(selectionListener);
+
 		workingSetScopeButton=new Button(radioComposite, SWT.RADIO);
 		workingSetScopeButton.setFont(font);
 		workingSetScopeButton.setText("Working Set:");
 		workingSetScopeButton.addSelectionListener(selectionListener);
-		
-		final Text workingSetText= new Text(scope, SWT.BORDER);
+
+		workingSetText= new Text(scope, SWT.BORDER);
 		workingSetText.setEditable(false);
 		data= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_END);
 		workingSetText.setLayoutData(data);
 		workingSetText.setFont(font);
 
-		Button button = new Button(scope, SWT.PUSH);
+		Button chooseButton = new Button(scope, SWT.PUSH);
 		data= new GridData(GridData.VERTICAL_ALIGN_END);
-		button.setLayoutData(data);
-		button.setFont(font);
-		button.setText("Choose...");
-		button.addSelectionListener(new SelectionAdapter() {
+		chooseButton.setLayoutData(data);
+		chooseButton.setFont(font);
+		chooseButton.setText("Choose...");
+		chooseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				String workingSetName= handleChooseButtonPressed();
-				if (workingSetName != null) {
-					workingSetText.setText(workingSetName);
-					workingSetScopeButton.setSelection(true);
-				}
-				updateOkEnabled();
+				handleChooseButtonPressed();
 			}
 		});
-		return composite;
+	}
+	
+	/**
+	 * One of the search scope radio buttons has been pressed. Update the dialog
+	 * accordingly.
+	 */
+	private void handleRadioButtonPressed() {
+		if (workingSetScopeButton.getSelection()) {
+			IWorkingSet set= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(getWorkingSetName());
+			if (set != null) {
+				setWorkingSet(set);
+				return;
+			}
+		}
+		setWorkingSet(null);
+	}
+	
+	/**
+	 * Returns the working set name currently displayed.
+	 */
+	private String getWorkingSetName() {
+		return workingSetText.getText().trim();
+	}
+	
+	/**
+	 * Creates the button that allows the user to specify whether or not build
+	 * files should that cannot be parsed should be included in the results.
+	 */
+	private void createIncludeErrorResultButton(Composite composite, Font font) {
+		includeErrorResultButton= new Button(composite, SWT.CHECK);
+		includeErrorResultButton.setFont(font);
+		includeErrorResultButton.setText("Include build files that contain errors");
+		includeErrorResultButton.setSelection(store.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS));
 	}
 	
 	/**
@@ -168,8 +222,6 @@ public class SearchForBuildFilesDialog extends InputDialog {
 				getOkButton().setEnabled(false);
 				return;
 			}
-		} else {
-			searchScopes= null;
 		}
 		getOkButton().setEnabled(true);
 		getErrorMessageLabel().setText("");
@@ -180,16 +232,33 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Handles the working set choose button pressed. Returns the name of the
 	 * chosen working set or <code>null</code> if none.
 	 */
-	private String handleChooseButtonPressed() {
+	private void handleChooseButtonPressed() {
 		WorkingSetSelectionDialog dialog= new WorkingSetSelectionDialog(getShell(), false);
 		if (dialog.open() == Dialog.CANCEL) {
-			return null;
+			return;
 		}
 		IWorkingSet[] sets= dialog.getSelection();
 		if (sets == null) {
-			return null;
+			return;
 		}
-		IAdaptable[] elements= sets[0].getElements(); // We disallowed multi-selection
+		
+		setWorkingSet(sets[0]); // We disallowed multi-select
+	}
+	
+	/**
+	 * Sets the current working set search scope. This populates the search
+	 * scope with resources found in the given working set and updates the
+	 * enabled state of the dialog based on the sets contents.
+	 * 
+	 * @param set the working set scope for the search
+	 */
+	private void setWorkingSet(IWorkingSet set) {
+		if (set == null) {
+			searchScopes= null;
+			updateOkEnabled();
+			return;
+		}
+		IAdaptable[] elements= set.getElements();
 		searchScopes= new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			// Try to get an IResource object from each element
@@ -204,7 +273,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 				searchScopes.add(resource);
 			}
 		}
-		return sets[0].getName();
+		workingSetText.setText(set.getName());
+		workingSetScopeButton.setSelection(true);
+		
+		updateOkEnabled();
 	}
 
 	/**
@@ -226,7 +298,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * parsed.
 	 */
 	public boolean getIncludeErrorResults() {
-		return includeErrorResults;
+		return store.getBoolean(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS);
 	}
 
 	/**
@@ -235,7 +307,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 */
 	protected void okPressed() {
 		String input = getInput();
-		includeErrorResults= includeErrorResultButton.getSelection();
+		store.setValue(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, input);
+		store.setValue(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS, includeErrorResultButton.getSelection());
+		store.setValue(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, getWorkingSetName());
+		store.setValue(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE, workingSetScopeButton.getSelection());
 		results = new ArrayList(); // Clear previous results
 		StringMatcher matcher= new StringMatcher(input, true, false);
 		if (searchScopes == null || searchScopes.isEmpty()) {

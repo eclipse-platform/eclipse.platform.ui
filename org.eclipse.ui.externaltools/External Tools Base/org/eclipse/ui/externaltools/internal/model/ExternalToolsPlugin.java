@@ -143,6 +143,11 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_MIGRATION, true);
 		
+		prefs.setDefault(IPreferenceConstants.ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS, false);
+		prefs.setDefault(IPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "build.xml"); // $NON-NLS-1$
+		prefs.setDefault(IPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, ""); // $NON-NLS-1$
+		prefs.setDefault(IPreferenceConstants.ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE, false); // $NON-NLS-1$
+		
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_ERROR_RGB, new RGB(255, 0, 0)); // red - exactly the same as debug Consol
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_WARNING_RGB, new RGB(255, 100, 0)); // orange
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_INFO_RGB, new RGB(0, 0, 255)); // blue
