@@ -2603,7 +2603,8 @@ public class TextViewer extends Viewer implements
 				int widgetBottomIndex= widgetTopIndex + lines -1;
 				int modelLine= widgetLine2ModelLine(widgetBottomIndex);
 				if (modelLine == -1)
-					return d.getLineOfOffset(coverage.getOffset() + coverage.getLength());
+					return endLine;
+				return modelLine;
 			}
 				
 			return endLine;

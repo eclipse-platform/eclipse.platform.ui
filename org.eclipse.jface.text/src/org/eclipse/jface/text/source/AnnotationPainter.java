@@ -1207,12 +1207,13 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						
 						for (int i= startLine; i <= endLine; i++) {
 							int lineOffset= document.getLineOffset(i);
-							int lineLength= document.getLineLength(i);
 							int paintStart= Math.max(lineOffset, p.getOffset());
-							int paintEnd= Math.min(lineOffset + lineLength, p.getOffset() + p.getLength());
-							if (paintEnd >= paintStart) {
+							String lineDelimiter= document.getLineDelimiter(i);
+							int delimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
+							int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
+							if (paintLength >= 0 && overlapsWith(paintStart, paintLength, vOffset, vLength)) {
 								// otherwise inside a line delimiter
-								range.update(paintStart, paintEnd - paintStart);
+								range.update(paintStart, paintLength);
 								IRegion widgetRange= getWidgetRange(range);
 								if (widgetRange != null)
 									pp.fPainter.draw(a, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
@@ -1279,11 +1280,20 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @return <code>true</code> if intersection is not empty
 	 */
 	private boolean overlapsWith(IRegion range1, IRegion range2) {
-		int offset1= range1.getOffset();
-		int length1= range1.getLength();
-		int offset2= range2.getOffset();
-		int length2= range2.getLength();
-		
+		return overlapsWith(range1.getOffset(), range1.getLength(), range2.getOffset(), range2.getLength());
+	}
+	
+	/**
+	 * Checks whether the intersection of the given text ranges
+	 * is empty or not.
+	 *
+	 * @param offset1 offset of the first range
+	 * @param length1 length of the first range
+	 * @param offset2 offset of the second range
+	 * @param length2 length of the second range
+	 * @return <code>true</code> if intersection is not empty
+	 */
+	private boolean overlapsWith(int offset1, int length1, int offset2, int length2) {
 		int end= offset2 + length2;
 		int thisEnd= offset1 + length1;
 		
