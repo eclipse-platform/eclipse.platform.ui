@@ -31,7 +31,7 @@ public interface ITextEditorExtension2 {
 	 * value.
 	 *
 	 * @return <code>true</code> if the editor input is modifiable
-	 *	 */
+	 */
 	boolean isEditorInputModifiable();
 
 	/**

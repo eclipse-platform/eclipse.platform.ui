@@ -615,9 +615,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	private boolean skip(Annotation annotation) {
-		if (annotation == null)
-			return true;
-		
 		Object annotationType= annotation.getType();
 		if (fAllowedAnnotationTypes.contains(annotationType))
 			return false;
