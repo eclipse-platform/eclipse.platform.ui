@@ -124,9 +124,13 @@ public class IsModifiedTests extends EclipseTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(IsModifiedTests.class);
-		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new IsModifiedTests("testUpdateIgnoreLocal"));
+		String testName = System.getProperty("eclipse.cvs.testName");
+		if (testName == null) {
+			TestSuite suite = new TestSuite(IsModifiedTests.class);
+			return new CVSTestSetup(suite);
+		} else {
+			return new CVSTestSetup(new IsModifiedTests(testName));
+		}
 	}
 
 	/**

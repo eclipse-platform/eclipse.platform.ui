@@ -58,9 +58,13 @@ public class CVSProviderTest extends EclipseTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(CVSProviderTest.class);
-		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new CVSProviderTest("testMoveHandling"));
+		String testName = System.getProperty("eclipse.cvs.testName");
+		if (testName == null) {
+			TestSuite suite = new TestSuite(CVSProviderTest.class);
+			return new CVSTestSetup(suite);
+		} else {
+			return new CVSTestSetup(new CVSProviderTest(testName));
+		}
 	}
 	
 	public void testAdd() throws TeamException, CoreException {
