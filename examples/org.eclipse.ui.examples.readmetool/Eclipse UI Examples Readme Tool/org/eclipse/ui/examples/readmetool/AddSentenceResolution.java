@@ -16,6 +16,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * A resolution which inserts a sentence into the readme file 
@@ -39,17 +40,9 @@ public class AddSentenceResolution implements IMarkerResolution {
 		IWorkbenchPage page = w.getActivePage();
 		if (page == null)
 			return;
-		IEditorPart[] parts = page.getEditors();
-		IEditorPart editorPart = null;
-		for (int i = 0; i < parts.length; i++) {
-			IEditorInput input = parts[i].getEditorInput();
-			if (input instanceof IFileEditorInput) {
-				if (((IFileEditorInput)input).getFile().equals(marker.getResource())) {
-					editorPart = parts[i];
-					break;
-				}
-			}
-		}
+		IFileEditorInput input = new FileEditorInput((IFile)marker.getResource());
+		IEditorPart editorPart = page.findEditor(input);
+
 		if (editorPart == null) {
 			// open an editor
 			try {
