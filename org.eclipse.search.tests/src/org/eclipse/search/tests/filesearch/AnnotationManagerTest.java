@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -31,6 +32,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text.AnnotationManager;
+import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
@@ -39,6 +41,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class AnnotationManagerTest extends TestCase {
 	FileSearchQuery fQuery1;
 	FileSearchQuery fQuery2;
+	
+	LineBasedFileSearch fLineQuery;
 
 	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 
@@ -65,12 +69,15 @@ public class AnnotationManagerTest extends TestCase {
 		scope.addExtension("*.java");
 		fQuery1= new FileSearchQuery(scope,  "", "Test");
 		fQuery2= new FileSearchQuery(scope, "", "TestCase");
+		
+		fLineQuery= new LineBasedFileSearch(scope,  "", "Test");
 	}
 	
 	protected void tearDown() throws Exception {
 		InternalSearchUI.getInstance().removeAllQueries();
 		fQuery1= null;
 		fQuery2= null;
+		fLineQuery= null;
 		super.tearDown();
 	}
 	
@@ -102,6 +109,11 @@ public class AnnotationManagerTest extends TestCase {
 		}
 	}
 	
+	private Position computeDocumentPositionFromLineMatch(IDocument document, Match match) throws BadLocationException {
+		Position p= new Position(match.getOffset(), match.getLength());
+		return PositionTracker.convertToCharacterPosition(p, document);
+	}
+
 	public void testBogusAnnotation() throws Exception {
 		NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);

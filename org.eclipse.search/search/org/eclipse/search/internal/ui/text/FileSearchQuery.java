@@ -64,7 +64,7 @@ public class FileSearchQuery implements ISearchQuery {
 					start= 0;
 				if (length < 0)
 					length= 0;
-				textResult.addMatch(new FileMatch((IFile) resource, start, length));
+				textResult.addMatch(createMatch((IFile)resource, start, length, lineNumber));
 			}
 
 			public void done() {
@@ -162,5 +162,9 @@ public class FileSearchQuery implements ISearchQuery {
 			new SearchResultUpdater(fResult);
 		}
 		return fResult;
+	}
+
+	protected FileMatch createMatch(IFile file, int start, int length, int lineNumber) {
+		return new FileMatch(file, start, length);
 	}
 }

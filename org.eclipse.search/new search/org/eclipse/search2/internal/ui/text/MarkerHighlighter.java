@@ -20,9 +20,11 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.Position;
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.search2.internal.ui.InternalSearchUI;
 
 public class MarkerHighlighter extends Highlighter {
 	private IFile fFile;
@@ -40,7 +42,8 @@ public class MarkerHighlighter extends Highlighter {
 					for (int i = 0; i < matches.length; i++) {
 						IMarker marker;
 						marker = createMarker(matches[i]);
-						fMatchesToAnnotations.put(matches[i], marker);
+						if (marker != null)
+							fMatchesToAnnotations.put(matches[i], marker);
 					}
 				}
 			}, fFile, IWorkspace.AVOID_UPDATE, null);
@@ -51,10 +54,20 @@ public class MarkerHighlighter extends Highlighter {
 	}
 	
 	private IMarker createMarker(Match match) throws CoreException {
+		Position position= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
+		if (position == null) {
+			if (match.getOffset() < 0 || match.getLength() < 0)
+				return null;
+			position= new Position(match.getOffset(), match.getLength());
+		}
 		IMarker marker= fFile.createMarker(SearchUI.SEARCH_MARKER);
 		HashMap attributes= new HashMap(4);
-		attributes.put(IMarker.CHAR_START, new Integer(match.getOffset()));
-		attributes.put(IMarker.CHAR_END, new Integer(match.getOffset()+match.getLength()));
+		if (match.getBaseUnit() == Match.UNIT_CHARACTER) {
+			attributes.put(IMarker.CHAR_START, new Integer(position.getOffset()));
+			attributes.put(IMarker.CHAR_END, new Integer(position.getOffset()+position.getLength()));
+		} else {
+			attributes.put(IMarker.LINE_NUMBER, new Integer(position.getOffset()));
+		}
 		marker.setAttributes(attributes);
 		return marker;
 	}
