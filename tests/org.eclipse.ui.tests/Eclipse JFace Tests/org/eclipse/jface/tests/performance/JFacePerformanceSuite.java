@@ -27,5 +27,6 @@ public class JFacePerformanceSuite extends TestSuite {
 		addTest(new ComboViewerRefreshTest("testRefresh"));
 		addTest(new ComboViewerRefreshTest("testRefreshSmaller"));
 		addTest(new ComboViewerRefreshTest("testRefreshLarger"));
+		addTest(new TreeTest("testAdd"));
 	}
 }

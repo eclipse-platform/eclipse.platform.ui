@@ -1,6 +1,5 @@
 package org.eclipse.jface.tests.performance;
 
-
 public class TestTreeElement extends TestElement {
 
 	TestTreeElement parent;

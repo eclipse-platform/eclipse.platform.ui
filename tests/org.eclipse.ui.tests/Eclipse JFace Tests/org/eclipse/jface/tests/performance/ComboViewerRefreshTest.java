@@ -21,7 +21,7 @@ import org.eclipse.ui.tests.performance.ViewPerformanceSuite;
  * difference size in the combo viewer.
  *
  */
-public class ComboViewerRefreshTest extends LinearViewerTest {
+public class ComboViewerRefreshTest extends ViewerTest {
 
 	ComboViewer viewer;
 	private RefreshTestContentProvider contentProvider;

@@ -138,7 +138,7 @@ public class TreeTest extends ViewerTest {
 	 * Test addition to the tree with the items presorted.
 	 * 
 	 */
-	public void atestAddPreSort() {
+	public void testAddPreSort() {
 		openBrowser();
 		for (int i = 0; i < 25; i++) {
 
