@@ -194,6 +194,7 @@ public class ProjectDescriptionManager {
 								continue;
 							// First, check if the .vcm_meta file for the project is in the delta.
 							IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.ADDED | IResourceDelta.CHANGED);
+							boolean inSync = false;
 							for (int j = 0; j < children.length; j++) {
 								IResourceDelta childDelta = children[j];
 								IResource childResource = childDelta.getResource();
@@ -201,15 +202,17 @@ public class ProjectDescriptionManager {
 									switch (childDelta.getKind()) {
 										case IResourceDelta.REMOVED:
 											writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
-											return; // The file and description are in sync
+											inSync = true;
+											break;
 										case IResourceDelta.CHANGED:
 										case IResourceDelta.ADDED:
 											updateProjectIfNecessary(project, Policy.monitorFor(null));
-											return; // The file and description are in sync
+											inSync = true;
+											break;
 									}
 							}
 							// Check if we didn't do anything above and the project description changed.
-							if ((delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+							if (! inSync && (delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
 								writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
 							}
 						}
