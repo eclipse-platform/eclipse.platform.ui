@@ -126,7 +126,7 @@ public class TabFolderLayout {
 		topControls = upperRight;
 		
 		cache = new LayoutCache(upperRight);
-		layout();
+		//layout();
 	}
 	
 	/**
@@ -232,7 +232,7 @@ public class TabFolderLayout {
 		
 		if (centerAlign) {
 			int minimum = bounds.x + (bounds.width - leftSize.x) / 2;
-			int maximum = region.x + region.width - rightSize.x;
+			int maximum = region.x + region.width - rightSize.x - leftSize.x;
 			currentPos = Math.min(Math.max(minimum, region.x), maximum);
 		}
 		
