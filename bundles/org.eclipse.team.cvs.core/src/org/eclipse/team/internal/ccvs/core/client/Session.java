@@ -599,9 +599,11 @@ public class Session {
 	 * </p>
 	 * @param file the file to be received
 	 * @param isBinary is true if the file should be received without translation
+	 * @param responseType one of the ICVSFile updated types (UPDATED, CREATED, MERGED, UPDATE_EXISTING)
+	 * indicating what repsonse type provided the file contents
 	 * @param monitor the progress monitor
 	 */
-	public void receiveFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
+	public void receiveFile(ICVSFile file, boolean isBinary, int responseType, IProgressMonitor monitor)
 	throws CVSException {
 		// update progress monitor
 		String title = Policy.bind("Session.receiving", new Object[]{ Util.toTruncatedPath(file, localRoot, 3) }); //$NON-NLS-1$
@@ -614,7 +616,7 @@ public class Session {
 			throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
 		}
 		// obtain an output stream for the file
-		OutputStream out = file.getOutputStream();
+		OutputStream out = file.getOutputStream(responseType);
 		try {
 			transferWithProgress(connection.getInputStream(), out, size, SERVER_NEWLINE_BYTE,
 				isBinary ? null : PLATFORM_NEWLINE_BYTES, monitor, title);

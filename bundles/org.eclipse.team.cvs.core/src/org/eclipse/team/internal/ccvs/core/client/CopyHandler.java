@@ -49,7 +49,7 @@ class CopyHandler extends ResponseHandler {
 		Assert.isTrue(mFile.exists() && mFile.isManaged());
 		
 		// rename the file
-		mFile.moveTo(newFile);
+		mFile.copyTo(newFile);
 	}
 }
 

@@ -43,10 +43,10 @@ class UpdatedHandler extends ResponseHandler {
 	
 	private int handlerType;
 	
-	protected static final int HANDLE_UPDATED = 1;
-	protected static final int HANDLE_MERGED = 2;
-	protected static final int HANDLE_UPDATE_EXISTING = 3;
-	protected static final int HANDLE_CREATED = 4;
+	protected static final int HANDLE_UPDATED = ICVSFile.UPDATED;
+	protected static final int HANDLE_MERGED = ICVSFile.MERGED;
+	protected static final int HANDLE_UPDATE_EXISTING = ICVSFile.UPDATE_EXISTING;
+	protected static final int HANDLE_CREATED = ICVSFile.CREATED;
 	
 	private static final EntryFileDateFormat dateFormatter = new EntryFileDateFormat();
 	private static final String READ_ONLY_FLAG = "u=rw"; //$NON-NLS-1$
@@ -86,7 +86,7 @@ class UpdatedHandler extends ResponseHandler {
 		boolean binary = entryLine.indexOf("/" + ResourceSyncInfo.BINARY_TAG) != -1; //$NON-NLS-1$
 		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
 		
-		session.receiveFile(mFile, binary, monitor);
+		session.receiveFile(mFile, binary, handlerType, monitor);
 		if (readOnly) mFile.setReadOnly(true);
 		
 		// Set the timestamp in the file, set the result in the fileInfo

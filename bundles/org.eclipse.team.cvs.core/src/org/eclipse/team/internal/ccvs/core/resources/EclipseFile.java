@@ -36,6 +36,8 @@ import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
  */
 class EclipseFile extends EclipseResource implements ICVSFile {
 
+	private static final String TEMP_FILE_EXTENSION = ".tmp";
+	
 	/**
 	 * Create a handle based on the given local resource.
 	 */
@@ -66,15 +68,21 @@ class EclipseFile extends EclipseResource implements ICVSFile {
  		}
  	}
 	
-	public OutputStream getOutputStream() throws CVSException {
+	public OutputStream getOutputStream(final int responseType) throws CVSException {
 		return new ByteArrayOutputStream() {
 			public void close() throws IOException {
 				try {
 					IFile file = getIFile();
-					if(resource.exists()) {
+					if (responseType == CREATED || (responseType == UPDATED && ! resource.exists())) {
+						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
+					} else if(responseType == UPDATE_EXISTING) {
 						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, true /*keep history*/, null);
 					} else {
-						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
+						// Ensure we don't leave the file in a partially written state
+						IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
+						tempFile.create(new ByteArrayInputStream(toByteArray()), true /*force*/, null);
+						file.delete(false, true, null);
+						tempFile.move(new Path(file.getName()), true, true, null);
 					}
 				} catch(CoreException e) {
 					throw new IOException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$
@@ -183,9 +191,9 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 	/*
 	 * This is to be used by the Copy handler. The filename of the form .#filename
 	 */
-	public void moveTo(String filename) throws CVSException {
+	public void copyTo(String filename) throws CVSException {
 		try {
-			getIFile().move(new Path(filename), true /*force*/, true /*keep history*/, null);
+			getIFile().copy(new Path(filename), true /*force*/, null);
 		} catch(CoreException e) {
 			throw new CVSException(e.getStatus());
 		}

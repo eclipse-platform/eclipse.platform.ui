@@ -285,7 +285,7 @@ public class SyncFileWriter {
 	 * compatibility with other CVS clients.
 	 */
 	private static void writeLines(ICVSFile file, String[] contents) throws CVSException {
-		OutputStream os = new BufferedOutputStream(file.getOutputStream());
+		OutputStream os = new BufferedOutputStream(file.getOutputStream(ICVSFile.UPDATED));
 		writeLinesToStreamAndClose(os, contents);
 	}
 	

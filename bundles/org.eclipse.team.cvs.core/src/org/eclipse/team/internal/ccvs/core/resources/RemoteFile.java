@@ -85,7 +85,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		// use the contents of the file on disk so that the server can calculate the relative
 		// sync state. This is a trick to allow the server to calculate sync state for us.
 		InputStream is = managed.getInputStream();
-		OutputStream os = file.getOutputStream();
+		OutputStream os = file.getOutputStream(ICVSFile.UPDATED);
 		try {		
 			FileUtil.transfer(is, os);
 		} catch(IOException e) {			
@@ -310,7 +310,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/*
 	 * @see ICVSFile#getOutputStream()
 	 */
-	public OutputStream getOutputStream() throws CVSException {
+	public OutputStream getOutputStream(int responseType) throws CVSException {
 		// stores the contents of the file when the stream is closed
 		// could perhaps be optimized in some manner to avoid excessive array copying
 		return new ByteArrayOutputStream() {
@@ -362,7 +362,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/**
 	 * @see IManagedFile#moveTo(IManagedFile)
 	 */
-	public void moveTo(String mFile) throws CVSException, ClassCastException {		
+	public void copyTo(String mFile) throws CVSException, ClassCastException {		
 		// Do nothing
 	}
 	

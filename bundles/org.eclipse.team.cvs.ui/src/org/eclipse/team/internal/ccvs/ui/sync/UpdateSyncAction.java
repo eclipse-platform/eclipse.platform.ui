@@ -192,6 +192,7 @@ public class UpdateSyncAction extends MergeAction {
 						case Differencer.ADDITION:
 							// To do: conflicting addition: must make incoming first
 							makeIncoming.add(changedNode);
+							deletions.add(changedNode);
 							updateIgnoreLocalShallow.add(changedNode);
 							break;
 						case Differencer.DELETION:

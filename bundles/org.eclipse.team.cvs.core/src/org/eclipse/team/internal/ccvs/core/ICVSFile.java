@@ -21,6 +21,13 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
  */
 public interface ICVSFile extends ICVSResource {
 	
+	// Constants used to indicate the type of updated response from the server
+	public static final int UPDATED = 1;
+	public static final int MERGED = 2;
+	public static final int UPDATE_EXISTING = 3;
+	public static final int CREATED = 4;
+	
+	
 	/**
 	 * Answers the size of the file. 
 	 */
@@ -35,8 +42,15 @@ public interface ICVSFile extends ICVSResource {
  	/**
 	 * Gets an output stream for writing to the file.
 	 * It is the responsibility of the caller to close the stream when finished.
+	 * 
+	 * @param responseType the type of reponse that was received from the server
+	 * 
+	 *    UPDATED - could be a new file or an existing file
+	 *    MERGED - merging remote changes with local changes. Failure could result in loss of local changes
+	 *    CREATED - contents for a file that doesn't exist locally
+	 *    UPDATE_EXISTING - Replacing a local file with no local changes with remote changes.
  	 */
-	OutputStream getOutputStream() throws CVSException;
+	OutputStream getOutputStream(int responseType) throws CVSException;
 	
 	/**
 	 * Gets an appending output stream for writing to the file.
@@ -58,7 +72,7 @@ public interface ICVSFile extends ICVSResource {
 	 * Move the resource to another location. Does overwrite without
 	 * promting.
 	 */
-	void moveTo(String filename) throws CVSException;
+	void copyTo(String filename) throws CVSException;
 	
 	/**
 	 * Answers the current timestamp for this file. The returned format must be in the
