@@ -13,8 +13,10 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -420,7 +422,7 @@ public class CVSLightweightDecorator
 	 * Add resource and its parents to the List
 	 */
 	 
-	private void addWithParents(IResource resource, List resources) {
+	private void addWithParents(IResource resource, Set resources) {
 		IResource current = resource;
 
 		while (current.getType() != IResource.ROOT) {
@@ -482,7 +484,7 @@ public class CVSLightweightDecorator
 	public void resourceStateChanged(IResource[] changedResources) {
 		// add depth first so that update thread processes parents first.
 		//System.out.println(">> State Change Event");
-		List resourcesToUpdate = new ArrayList();
+		Set resourcesToUpdate = new HashSet();
 
 		boolean showingDeepDirtyIndicators = CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
 
