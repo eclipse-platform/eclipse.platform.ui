@@ -387,16 +387,20 @@ public class AntClasspathBlock {
 		boolean first = false;
 		boolean last = false;
 		boolean canRemove= true;
-		
+		boolean canAdd= true;
 		while (selected.hasNext()) {
 			IClasspathEntry element = (IClasspathEntry) selected.next();
 			
 			if (element instanceof GlobalClasspathEntries) {
-				if (!((GlobalClasspathEntries)element).canBeRemoved()) {
-					canRemove= false;
-				}
+				GlobalClasspathEntries global= (GlobalClasspathEntries)element;
+				canRemove= global.canBeRemoved();
+				canAdd= global.getType() != ClasspathModel.CONTRIBUTED;
 			}
 			IClasspathEntry parent= element.getParent();
+			if (parent instanceof GlobalClasspathEntries) {
+				canAdd= ((GlobalClasspathEntries)parent).getType() != ClasspathModel.CONTRIBUTED;
+				canRemove= canAdd;
+			}
 			Object[] childEntries = contentProvider.getChildren(parent);
 			List entries = Arrays.asList(childEntries);
 			int lastEntryIndex = entries.size() - 1;
@@ -408,7 +412,9 @@ public class AntClasspathBlock {
 			}
 		}
 
-		boolean canAdd= resolveCurrentParent(selection) && notEmpty;	
+		if (canAdd) {
+			canAdd= resolveCurrentParent(selection) && notEmpty;
+		}
 		
 		if (addJARButton != null) {
 			addJARButton.setEnabled(canAdd);

@@ -11,11 +11,9 @@
 
 package org.eclipse.ant.internal.ui.preferences;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.ant.core.IAntClasspathEntry;
 
 public class ClasspathModel extends AbstractClasspathEntry {
@@ -31,14 +29,14 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public Object addEntry(Object entry) {
 		if (entry instanceof GlobalClasspathEntries) {
-			if (!childEntries.contains(entry)) {
-				childEntries.add(entry);
+			if (!fChildEntries.contains(entry)) {
+				fChildEntries.add(entry);
 				return entry;
 			}
 			return null;
 		} 
 		ClasspathEntry newEntry= createEntry(entry, null);
-		Iterator entries= childEntries.iterator();
+		Iterator entries= fChildEntries.iterator();
 		while (entries.hasNext()) {
 			Object element = entries.next();
 			if (element instanceof GlobalClasspathEntries) {
@@ -49,7 +47,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 				return null;
 			}
 		}
-		childEntries.add(newEntry);
+		fChildEntries.add(newEntry);
 		return newEntry;
 	}
 	
@@ -72,7 +70,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 				break;
             case CONTRIBUTED :
                 if (fContributedGlobalEntry == null) {
-                    String name= "Contributed Entries";
+                    String name= AntPreferencesMessages.getString("ClasspathModel.0"); //$NON-NLS-1$
                     fContributedGlobalEntry= createGlobalEntry(new IAntClasspathEntry[0], name, true, true, CONTRIBUTED);
                 }
                 entryParent= fContributedGlobalEntry;
@@ -82,7 +80,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 			
 		ClasspathEntry newEntry= createEntry(entry, entryParent);
-		Iterator entries= childEntries.iterator();
+		Iterator entries= fChildEntries.iterator();
 		while (entries.hasNext()) {
 			Object element = entries.next();
 			if (element instanceof GlobalClasspathEntries) {
@@ -96,7 +94,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		if (entryParent != null) {
 			((GlobalClasspathEntries)entryParent).addEntry(newEntry);
 		} else {
-			childEntries.add(newEntry);
+			fChildEntries.add(newEntry);
 		}
 		return newEntry;		
 	}
@@ -126,7 +124,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 	}
 	
 	public void remove(Object entry) {
-		childEntries.remove(entry);
+		fChildEntries.remove(entry);
 		if (entry == fUserGlobalEntry) {
 			fUserGlobalEntry= null;
 		}
@@ -222,8 +220,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
     
     public void setContributedEntries(IAntClasspathEntry[] entries) {
         if (fContributedGlobalEntry == null) {
-            String name= "Contributed Entries";
-            fContributedGlobalEntry= createGlobalEntry(entries, name, true, true, CONTRIBUTED);
+            String name= AntPreferencesMessages.getString("ClasspathModel.0"); //$NON-NLS-1$
+            fContributedGlobalEntry= createGlobalEntry(entries, name, false, true, CONTRIBUTED);
         } else {
             fContributedGlobalEntry.removeAll();
             for (int i = 0; i < entries.length; i++) {
@@ -233,8 +231,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
     }
 	
 	private IAntClasspathEntry[] getUserEntries() {
-		List userEntries= new ArrayList(childEntries.size());
-		Iterator itr= childEntries.iterator();
+		List userEntries= new ArrayList(fChildEntries.size());
+		Iterator itr= fChildEntries.iterator();
 		while (itr.hasNext()) {
 			IClasspathEntry element = (IClasspathEntry) itr.next();
 			if (element instanceof GlobalClasspathEntries) {
@@ -244,16 +242,4 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 		return (IAntClasspathEntry[])userEntries.toArray(new IAntClasspathEntry[userEntries.size()]);
 	}
-	
-	private boolean sameURL(IAntClasspathEntry first, IAntClasspathEntry second) {
-		if (first == null || second == null) {
-			return false;
-		}
-		File newFile= new File(first.getEntryURL().getFile());
-		File existingFile= new File(second.getEntryURL().getFile());
-		if (existingFile.equals(newFile)) {
-			return true;
-		}
-		return false;
-    }
 }
