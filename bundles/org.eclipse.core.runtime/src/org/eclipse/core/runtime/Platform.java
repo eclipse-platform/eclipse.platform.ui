@@ -74,7 +74,10 @@ public final class Platform {
 	 * speed of the user's machine.  The platform job manager uses this value to make
 	 * scheduling decisions about background jobs.
 	 * </p>
-	 * @return a value between MIN_PERFORMANCE and MAX_PERFORMANCE
+	 * <p>
+	 * The preference value must be an integer between the constant values
+	 * MIN_PERFORMANCE and MAX_PERFORMANCE
+	 * </p>
 	 * @see #MIN_PERFORMANCE
 	 * @see #MAX_PERFORMANCE
 	 * @since 3.0
