@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.target.Site;
@@ -25,15 +26,15 @@ public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 	private Site[] sites = null;
 
 	// progress monitoring support
-	private IProgressMonitor monitor;
-	private Shell shell;
+	private IRunnableContext runContext;
 
-	public SiteRootsElement(Site[] sites) {
+	public SiteRootsElement(Site[] sites, IRunnableContext runContext) {
 		this.sites = sites;
+		this.runContext = runContext;
 	}
 	
-	public SiteRootsElement() {
-		this.sites = null;
+	public SiteRootsElement(IRunnableContext runContext) {
+		this(null, runContext);
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
@@ -49,21 +50,11 @@ public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 		}
 		SiteElement[] siteElements = new SiteElement[childSites.length];
 		for (int i = 0; i < childSites.length; i++) {
-			siteElements[i] = new SiteElement(childSites[i]);
-			siteElements[i].setShell(shell);
-			siteElements[i].setProgressMonitor(monitor);
+			siteElements[i] = new SiteElement(childSites[i], runContext);
 		}
 		return siteElements;
 	}
 	
-	public void setProgressMonitor(IProgressMonitor monitor) {
-		this.monitor = monitor;
-	}
-	
-	public void setShell(Shell shell) {
-		this.shell = shell;
-	}
-
 	public String getLabel(Object o) {
 		return null;
 	}

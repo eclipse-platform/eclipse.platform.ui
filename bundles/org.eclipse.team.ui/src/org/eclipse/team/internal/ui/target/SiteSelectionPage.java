@@ -139,7 +139,7 @@ public class SiteSelectionPage extends TargetWizardPage {
 	 */
 	private void initializeValues() {
 		Site[] sites = TargetManager.getSites();
-		table.setInput(new SiteRootsElement());
+		table.setInput(new SiteRootsElement(null /* no progress monitoring required */));
 		if (sites.length == 0) {
 			useNewRepo.setSelection(true);	
 		} else {

@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -49,12 +51,16 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 	private int size = 0;
 	private String lastModified = null;
 
-	// embeded progress monitoring support
-	private Shell shell;
-	private IProgressMonitor monitor;
+	// context in which to perform long-running operations
+	private IRunnableContext runContext;
 	
 	public RemoteResourceElement(IRemoteTargetResource remote) {
 		this.remote = remote;
+	}
+	
+	public RemoteResourceElement(IRemoteTargetResource remote, IRunnableContext runContext) {
+		this(remote);
+		this.runContext = runContext;
 	}
 	
 	public IRemoteTargetResource getRemoteResource() {
@@ -72,26 +78,23 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						monitor.beginTask(null, 100);
+						// progress for fetching remote children is always unknown
+						// let's not bother even trying to guess.
+						monitor.beginTask(null, IProgressMonitor.UNKNOWN);
 						if(children == null) {
 							setCachedChildren(remote.members(Policy.subMonitorFor(monitor, 50)));
 						}
 						List remoteElements = new ArrayList();
 						for (int i = 0; i < children.length; i++) {
 							IRemoteTargetResource child = (IRemoteTargetResource)children[i];
-							RemoteResourceElement element = new RemoteResourceElement(child);
-							
-							// setup progress monitors
-							element.setShell(shell);
-							element.setProgressMonitor(monitor);
-							
-							// decide which children to return based on filter settings
-							element.setLastModified(child.getLastModified(Policy.subMonitorFor(monitor, 25)));
+							RemoteResourceElement element = new RemoteResourceElement(child, runContext);
+									
 							// cache size and last modified
+							element.setLastModified(child.getLastModified(Policy.subMonitorFor(monitor, 25)));
 							element.setSize(child.getSize(Policy.subMonitorFor(monitor, 25)));								
 							remoteElements.add(element);
-						}
-						result[0] = (RemoteResourceElement[])remoteElements.toArray(new RemoteResourceElement[remoteElements.size()]);							
+						}						
+						result[0] = (RemoteResourceElement[])remoteElements.toArray(new RemoteResourceElement[remoteElements.size()]);														
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					} finally {
@@ -100,7 +103,11 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 				}
 			};
 			
-			TeamUIPlugin.runWithProgress(null, true /*cancelable*/, runnable);
+			if(runContext == null) {
+				TeamUIPlugin.runWithProgress(null, true /*cancelable*/, runnable);
+			} else {
+				runContext.run(true, true, runnable);
+			}
 		} catch (InterruptedException e) {
 			return new Object[0];
 		} catch (InvocationTargetException e) {
@@ -153,22 +160,6 @@ public class RemoteResourceElement implements IWorkbenchAdapter, IAdaptable {
 	
 	protected void setRemoteResource(IRemoteTargetResource remote) {
 		this.remote = remote;
-	}
-	
-	public void setShell(Shell shell) {
-		this.shell = shell;
-	}
-	
-	public void setProgressMonitor(IProgressMonitor monitor) {
-		this.monitor = monitor;
-	}
-	
-	public Shell getShell() {
-		return shell;
-	}
-
-	public IProgressMonitor getProgressMonitor() {
-		return monitor;
 	}
 	
 	public String getLastModified() {

@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -37,6 +38,11 @@ public class SiteElement extends RemoteResourceElement {
 	
 	public SiteElement(Site site) {
 		super(null);
+		this.site = site;
+	}
+	
+	public SiteElement(Site site, IRunnableContext runContext) {
+		super(null, runContext);
 		this.site = site;
 	}
 	

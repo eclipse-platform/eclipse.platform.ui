@@ -175,7 +175,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 	private void setViewerInput() {
 		if(this.site == null || viewer == null)
 			return;
-		viewer.setInput(new SiteRootsElement(new Site[] {site}));		
+		viewer.setInput(new SiteRootsElement(new Site[] {site}, getContainer()));		
 	}
 
 	/**
