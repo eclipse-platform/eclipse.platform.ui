@@ -1058,6 +1058,57 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 			getWorkspace().removeResourceChangeListener(listener2);
 		}
 	}
+	public void testProjectDescriptionComment() {
+		try {
+			/* change file1's contents */
+			verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+			verifier.addExpectedChange(project1MetaData, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+			IProjectDescription description = project1.getDescription();
+			description.setComment("new comment");
+			project1.setDescription(description, IResource.NONE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+	public void testProjectDescriptionStaticRefs() {
+		try {
+			/* change file1's contents */
+			verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+			verifier.addExpectedChange(project1MetaData, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+			IProjectDescription description = project1.getDescription();
+			description.setReferencedProjects(new IProject[] {project2});
+			project1.setDescription(description, IResource.NONE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+	public void testProjectDescriptionDynamicRefs() {
+		try {
+			/* change file1's contents */
+			verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+			IProjectDescription description = project1.getDescription();
+			description.setDynamicReferences(new IProject[] {project2});
+			project1.setDescription(description, IResource.NONE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+	public void testProjectDescriptionNatures() {
+		try {
+			/* change file1's contents */
+			verifier.addExpectedChange(project1, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+			verifier.addExpectedChange(project1MetaData, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+			IProjectDescription description = project1.getDescription();
+			description.setNatureIds(new String[] {NATURE_SIMPLE});
+			project1.setDescription(description, IResource.NONE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
 
 	public void testRemoveFile() {
 		try {
