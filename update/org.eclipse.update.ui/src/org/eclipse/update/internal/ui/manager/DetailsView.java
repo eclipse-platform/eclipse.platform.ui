@@ -28,6 +28,7 @@ public static final String SITE_PAGE = "Site";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
 public static final String CONFIG_PAGE = "Config";
+public static final String INSTALL_SITE_PAGE = "InstallSite";
 
 private Action homeAction;
 private UpdateAction backAction;
@@ -60,6 +61,7 @@ public void createPages() {
 		new SitePage(this, "Site");
 	addPage(SITE_PAGE, sitePage);
 	addPage(CONFIG_PAGE, new LocalSitePage(this, "Configuration"));
+	addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
 	if (SWT.getPlatform().equals("win32")) {
 		addWebBrowser();
 	}
@@ -152,6 +154,10 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 			}
 			if (el instanceof ILocalSite) {
 				showPageWithInput(CONFIG_PAGE, el);
+				return;
+			}
+			if (el instanceof ISite) {
+				showPageWithInput(INSTALL_SITE_PAGE, el);
 				return;
 			}
 		}
