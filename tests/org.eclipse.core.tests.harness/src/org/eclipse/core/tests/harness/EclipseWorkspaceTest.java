@@ -42,6 +42,8 @@ public class EclipseWorkspaceTest extends TestCase {
 	protected static final String NATURE_CYCLE3 = "org.eclipse.core.tests.resources.cycle3";
 	//missing nature
 	protected static final String NATURE_MISSING= "no.such.nature.Missing";
+	//missing pre-req nature
+	protected static final String NATURE_MISSING_PREREQ= "org.eclipse.core.tests.resources.missingPrerequisiteNature";
 
 	/** delta change listener if requested */
 	public static IResourceChangeListener deltaListener;
@@ -618,6 +620,8 @@ protected String[][] getInvalidNatureSets() {
 		{NATURE_SIMPLE, NATURE_SNOW, NATURE_WATER, NATURE_MUD},//dups from other-set, missing pre-req
 		{NATURE_MISSING},//doesn't exist
 		{NATURE_SIMPLE, NATURE_MISSING},//missing doesn't exist
+		{NATURE_MISSING_PREREQ},//requires nature that doesn't exist
+		{NATURE_SIMPLE, NATURE_MISSING_PREREQ},//requires nature that doesn't exist
 		{NATURE_CYCLE1},//missing pre-req
 		{NATURE_CYCLE2, NATURE_CYCLE3},//missing pre-req
 		{NATURE_CYCLE1, NATURE_SIMPLE, NATURE_CYCLE2, NATURE_CYCLE3},//cycle
