@@ -686,10 +686,15 @@ public class CopyFilesAndFoldersOperation {
 			IResource sourceResource = sourceResources[i];
 			IPath sourcePath = sourceResource.getFullPath();
 
+			if (sourceResource.exists() == false) {
+				return WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
+					new Object[] {sourceResource.getName()});				
+			}
 			if (sourcePath.equals(destinationPath)) {
 				return WorkbenchMessages.format(
 					"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
-					new Object[] { sourceResource.getName()});
+					new Object[] {sourceResource.getName()});
 			}
 			// is the source a parent of the destination path?
 			if (sourcePath.isPrefixOf(destinationPath)) {
@@ -721,6 +726,11 @@ public class CopyFilesAndFoldersOperation {
 			File sourceFile = sourcePath.toFile();
 			File sourceParentFile = sourcePath.removeLastSegments(1).toFile();			
 			if (sourceFile != null) {
+				if (sourceFile.exists() == false) {
+					return WorkbenchMessages.format(
+						"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
+						new Object[] {sourceFile.getName()});				
+				}
 				if (destinationFile.compareTo(sourceFile) == 0 || 
 					(sourceParentFile != null && destinationFile.compareTo(sourceParentFile) == 0)) {
 					return WorkbenchMessages.format("CopyFilesAndFoldersOperation.importSameSourceAndDest", //$NON-NLS-1$

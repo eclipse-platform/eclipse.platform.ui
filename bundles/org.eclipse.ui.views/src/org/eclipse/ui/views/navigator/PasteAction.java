@@ -4,6 +4,7 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -169,6 +170,19 @@ protected boolean updateSelection(IStructuredSelection selection) {
 				if (targetResource.equals(resourceData[i]))
 					return false;
 			}
+	}
+	if (resourceData != null) {
+		for (int i = 0; i < resourceData.length; i++) {
+			if (resourceData[i].exists() == false)
+				return false;
+		}
+	}
+	if (fileData != null) {
+		for (int i = 0; i < fileData.length; i++) {
+			File file = new File(fileData[i]);
+			if (file.exists() == false)
+				return false;
+		}
 	}
 	return true;
 }
