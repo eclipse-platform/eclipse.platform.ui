@@ -2463,6 +2463,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.DELETE, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
+		markAsStateDependentAction(ITextEditorActionConstants.FIND, true);
 		
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
