@@ -170,7 +170,7 @@ public final class DebugEvent extends EventObject {
 	 * Model specific event kind. The detail codes
 	 * for a model specific event are client defined.
 	 * 
-	 * @since 3.0
+	 * @since 2.1.2
 	 */
 	public static final int MODEL_SPECIFIC= 0x0020;	
 
@@ -272,7 +272,7 @@ public final class DebugEvent extends EventObject {
 	/**
 	 * Client defined data field.
 	 * 
-	 * @since 3.0
+	 * @since 2.1.2
 	 */
 	private Object fData = null;
 	
@@ -357,7 +357,7 @@ public final class DebugEvent extends EventObject {
 	 * Sets this event's application defined data.
 	 * 
 	 * @param data application defined data
-	 * @since 3.0
+	 * @since 2.1.2
 	 */
 	public void setData(Object data) {
 		fData = data;
@@ -367,7 +367,7 @@ public final class DebugEvent extends EventObject {
 	 * Returns this event's application defined data, or <code>null</code> if none
 	 * 
 	 * @return application defined data, or <code>null</code> if none
-	 * @since 3.0
+	 * @since 2.1.2
 	 */
 	public Object getData() {
 		return fData;
