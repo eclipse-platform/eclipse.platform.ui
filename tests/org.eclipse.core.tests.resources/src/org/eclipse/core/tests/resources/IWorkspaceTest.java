@@ -743,6 +743,47 @@ public void testMultiDeletion() throws Throwable {
 	assertDoesNotExistInWorkspace(before);
 }
 /**
+ * Test thread safety of the API method IWorkspace.setDescription.
+ */
+public void testMultiSetDescription() {
+	final int THREAD_COUNT = 2;
+	final CoreException[] errorPointer = new CoreException[1];
+	Thread[] threads = new Thread[THREAD_COUNT];
+	for (int i = 0; i < THREAD_COUNT; i++) {
+		threads[i] = new Thread(new Runnable() {
+			public void run() {
+				IWorkspace workspace = ResourcesPlugin.getWorkspace();
+				IWorkspaceDescription description = workspace.getDescription();
+				for (int j = 0; j < 100; j++) {
+					description.setAutoBuilding(false);
+					try {
+						workspace.setDescription(description);
+					} catch (CoreException e) {
+						errorPointer[0] = e;
+						return;
+					}
+					description.setAutoBuilding(true);
+					try {
+						workspace.setDescription(description);
+					} catch (CoreException e) {
+						errorPointer[0] = e;
+						return;
+					}
+				}
+			}
+		}, "Autobuild " + i);
+		threads[i].start();
+	}
+	for (int i = 0; i < threads.length; i++) {
+		try {
+			threads[i].join();
+		} catch (InterruptedException e) {
+		}
+	}
+	if (errorPointer[0] != null)
+		fail("1.0", errorPointer[0]);
+}
+/**
  * Performs black box testing of the following method:
  *     String[] sortNatureSet(String[])
  */
