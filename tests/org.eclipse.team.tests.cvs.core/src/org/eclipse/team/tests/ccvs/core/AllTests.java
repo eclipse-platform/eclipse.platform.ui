@@ -15,7 +15,6 @@ import junit.framework.TestSuite;
 import org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources;
 import org.eclipse.team.tests.ccvs.core.provider.AllTestsProvider;
 import org.eclipse.team.tests.ccvs.core.subscriber.AllTestsTeamSubscriber;
-import org.eclipse.team.tests.ccvs.ui.sync.AllTestsSynchronizeView;
 
 public class AllTests extends EclipseTest {
 
