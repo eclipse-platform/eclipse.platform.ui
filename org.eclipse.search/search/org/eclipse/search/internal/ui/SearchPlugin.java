@@ -8,12 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.util.Assert;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,6 +17,16 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.Assert;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -30,6 +34,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
 
@@ -51,12 +56,14 @@ public class SearchPlugin extends AbstractUIPlugin {
 		Assert.isTrue(fgSearchPlugin == null);
 		fgSearchPlugin= this;
 	}
+
 	/**
 	 * Returns the search plugin instance.
 	 */
 	public static SearchPlugin getDefault() {
 		return fgSearchPlugin;
 	}
+
 	/**
 	 * Returns the active workbench window.
 	 * <code>null</code> if the active window is not a workbench window
@@ -103,6 +110,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 			}
 		}
 	}
+
 	/**
 	 * Returns the shell of the active workbench window.
 	 */
@@ -112,24 +120,28 @@ public class SearchPlugin extends AbstractUIPlugin {
 			return window.getShell();
 		return null;
 	}
+
 	/**
 	 * Beeps using the display of the active workbench window.
 	 */
 	public static void beep() {
 		getActiveWorkbenchShell().getDisplay().beep();
 	}
+
 	/**
 	 * Returns the active workbench window's currrent page.
 	 */
 	public static IWorkbenchPage getActivePage() {
 		return getActiveWorkbenchWindow().getActivePage();
 	} 
+
 	/**
 	 * Returns the workbench from which this plugin has been loaded.
 	 */	
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
+
 	/**
 	 * Activates the search result view in the active page.
 	 * This call has no effect, if the search result view is
@@ -145,6 +157,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 			return false;
 		}	
 	}
+
 	/**
 	 * Returns the search result view of the active workbench window. Returns <code>
 	 * null</code> if the active workbench window doesn't have any search result
@@ -167,6 +180,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.setDescription.title"), SearchMessages.getString("Search.Error.setDescription.message")); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * Shuts down this plug-in.
 	 */
@@ -175,6 +189,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		getWorkspace().removeResourceChangeListener(SearchManager.getDefault());
 		fgSearchPlugin = null;
 	}
+
 	/**
 	 * Returns all search pages contributed to the workbench.
 	 */
@@ -202,6 +217,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		Collections.sort(result);
 		return result;
 	}
+
 	/**
 	 * Returns all sorters contributed to the workbench.
 	 */
@@ -213,6 +229,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}	
 		return fSorterDescriptors;
 	} 
+
 	/**
 	 * Creates all necessary sorter description nodes.
 	 */
@@ -225,10 +242,30 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 		return result;
 	}
+
 	/**
 	 * Log status to platform log
 	 */	
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+
+	/**
+	 * Creates the Search plugin standard groups in a context menu.
+	 */
+	public static void createStandardGroups(IMenuManager menu) {
+		if (!menu.isEmpty())
+			return;
+		menu.add(new Separator(IContextMenuConstants.GROUP_NEW));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GOTO));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_OPEN));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SHOW));
+		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
+		menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
+		menu.add(new GroupMarker(IContextMenuConstants.GROUP_GENERATE));
+		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
+		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
+		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
+		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 	}
 }
