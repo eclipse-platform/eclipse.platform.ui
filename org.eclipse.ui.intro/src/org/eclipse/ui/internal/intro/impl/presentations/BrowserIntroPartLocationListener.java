@@ -56,8 +56,13 @@ public class BrowserIntroPartLocationListener implements LocationListener {
             return;
         }
 
-        if (implementation.getModel().isDynamic()
-                && !url.equalsIgnoreCase("about:blank")) {
+        if (!parser.hasProtocol())
+            // this will filter out two navigation events fired by the browser
+            // on a setText. (about:blank and
+            // res://C:\WINDOWS\System32\shdoclc.dll/navcancl.htm)
+            return;
+
+        if (implementation.getModel().isDynamic()) {
             // Update the history even with real URLs. Note that if we have
             // multiple embedded URL navigations due to frames, the
             // frameNavigation flag filters them. This flag is set here, and is
