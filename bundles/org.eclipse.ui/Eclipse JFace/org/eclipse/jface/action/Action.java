@@ -643,9 +643,10 @@ public void setDisabledImageDescriptor(ImageDescriptor newImage) {
  */
 public void setEnabled(boolean enabled) {
 	if (enabled != this.enabled) {
-		Object old = new Boolean(this.enabled);
+		Boolean oldVal = this.enabled ? Boolean.TRUE : Boolean.FALSE;
+		Boolean newVal = enabled ? Boolean.TRUE : Boolean.FALSE;
 		this.enabled = enabled;
-		firePropertyChange(ENABLED, old, new Boolean(enabled));
+		firePropertyChange(ENABLED, oldVal, newVal);
 	}
 }
 /* (non-Javadoc)
