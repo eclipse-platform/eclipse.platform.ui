@@ -359,7 +359,9 @@ public abstract class PopupInformationControl implements IInformationControl, II
 		 */
 		public Object execute(Map parameter) throws ExecutionException {
 			performCommand();
-			shell.dispose();
+			if (shell != null) {
+				shell.dispose();
+			}
 			return null;
 		}
 		
