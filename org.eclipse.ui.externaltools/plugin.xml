@@ -81,7 +81,7 @@
 			category="org.eclipse.debug.ui.category.run"
 			id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar"
 			name= "%ActionDefinition.externalToolMenuDelegateToolbar.name"
-			description="%ActionDefinition.externalToolMenuDelegateToolbar.description"/>
+			description="%ActionDefinition.externalToolMenuDelegateToolbar.description"
 		/>
 		<keyBinding
 			string=""
