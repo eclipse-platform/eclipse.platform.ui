@@ -76,9 +76,6 @@ boolean containsSubstring(String string, String substring) {
 	}
 	return false;
 }
-public boolean equals(Object o) {
-	return this == o;
-}
 public void reset() {
 	types = ROOT_TYPES;
 	onResource = ON_ANY_RESOURCE;

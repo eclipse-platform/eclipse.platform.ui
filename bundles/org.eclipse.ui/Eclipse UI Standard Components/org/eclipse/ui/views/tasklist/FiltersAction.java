@@ -28,10 +28,9 @@ public FiltersAction(TaskList tasklist, String id) {
 public void run() {
 	FiltersDialog dialog = new FiltersDialog(getShell());
 	TasksFilter filter = getTaskList().getFilter();
-	TasksFilter oldFilter = (TasksFilter) filter.clone();
 	dialog.setFilter(filter);
 	int result = dialog.open();
-	if (result == FiltersDialog.OK && !oldFilter.equals(dialog.getFilter())) {
+	if (result == FiltersDialog.OK) {
 		getTaskList().filterChanged();
 	}
 }
