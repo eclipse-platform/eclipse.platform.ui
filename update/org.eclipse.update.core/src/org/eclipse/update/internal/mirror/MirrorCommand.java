@@ -87,7 +87,7 @@ public class MirrorCommand extends ScriptedCommand {
 		}
 	}
 	private boolean validateParameters() {
-		if (fromSiteUrl == null && fromSiteUrl.length() <= 0) {
+		if (fromSiteUrl == null || fromSiteUrl.length() <= 0) {
 			System.out.println("from parameter missing.");
 			return false;
 		}
@@ -97,7 +97,7 @@ public class MirrorCommand extends ScriptedCommand {
 			System.out.println("from must be valid URL");
 			return false;
 		}
-		if (toSiteDir == null && toSiteDir.length() <= 0) {
+		if (toSiteDir == null || toSiteDir.length() <= 0) {
 			System.out.println("to parameter missing.");
 			return false;
 		}

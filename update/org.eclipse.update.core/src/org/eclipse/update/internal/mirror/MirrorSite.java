@@ -63,7 +63,7 @@ public class MirrorSite extends Site {
 			"Updating site description finished. Saving site.xml ...");
 		save();
 		if (mirrorSiteUrl != null) {
-			generatePolicyFragment(mirrorSiteUrl);
+			generateUpdatePolicy(mirrorSiteUrl);
 		}
 	}
 	private void mirrorAndExposeFeatures(
@@ -456,7 +456,8 @@ public class MirrorSite extends Site {
 		try {
 			URL siteURL = new URL(this.getURL(), "site.xml");
 			fos = new FileOutputStream(new File(siteURL.getFile()));
-			PrintWriter writer = new PrintWriter(fos);
+			OutputStreamWriter outWriter = new OutputStreamWriter(fos, "UTF-8");
+			PrintWriter writer = new PrintWriter(outWriter);
 			save(writer);
 			writer.flush();
 		} catch (IOException ioe) {
@@ -695,13 +696,24 @@ public class MirrorSite extends Site {
 				new CategoryModel[newCategoryModels.size()]));
 
 	}
-	private void generatePolicyFragment(String url) {
+	private void generateUpdatePolicy(String url) {
 		FileOutputStream fos = null;
 		try {
-			URL siteURL = new URL(this.getURL(), "policy.inc");
+			URL siteURL = new URL(this.getURL(), "policy.xml");
 			fos = new FileOutputStream(new File(siteURL.getFile()));
-			PrintWriter writer = new PrintWriter(fos);
+			OutputStreamWriter outWriter = new OutputStreamWriter(fos, "UTF-8");
+			PrintWriter writer = new PrintWriter(outWriter);
+
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.println("<update-policy>");
+
+			writer.println(
+				"<!-- You can paste the following fragment, containing url-map elements, into another policy file. -->");
 			writeUrlMaps(writer, url);
+			writer.println("<!-- End of fragment with url-map elements. -->");
+
+			writer.println("</update-policy>");
+
 			writer.flush();
 		} catch (IOException ioe) {
 		} finally {
