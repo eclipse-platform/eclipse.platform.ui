@@ -855,26 +855,26 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		expected.add(scopeRoot.absolutePath());
 		assertEquals("0.1", expected.toArray(new String[0]), actual.toArray(new String[0]));
 
-		// make sure the root and all scopes are visited
-		expected.clear();
+		Set children = new HashSet();
+		children.add(getUniqueString());
+		children.add(getUniqueString());
+		children.add(getUniqueString());
+
+		// visit some children nodes
 		actual.clear();
+		expected.clear();
+		expected.add(scopeRoot.absolutePath());
+		for (Iterator i = children.iterator(); i.hasNext();) {
+			String s = (String) i.next();
+			expected.add(scopeRoot.absolutePath() + '/' + s);
+			scopeRoot.node(s);
+		}
 		try {
-			Platform.getPreferencesService().getRootNode().accept(visitor);
+			scopeRoot.accept(visitor);
 		} catch (BackingStoreException e) {
 			fail("1.99", e);
 		}
-		expected.add(Path.ROOT.toString());
-		try {
-			String[] scopes = Platform.getPreferencesService().getRootNode().childrenNames();
-			for (int i = 0; i < scopes.length; i++)
-				expected.add('/' + scopes[i]);
-		} catch (BackingStoreException e) {
-			fail("1.100", e);
-		}
-		for (Iterator i = expected.iterator(); i.hasNext();) {
-			String path = (String) i.next();
-			assertTrue("1.0 (" + actual + ", " + path + ")", actual.contains(path));
-		}
+		assertEquals("1.0", expected.toArray(new String[0]), actual.toArray(new String[0]));
 	}
 
 	public void testPreferenceChangeListeners() {
