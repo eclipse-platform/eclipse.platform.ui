@@ -15,6 +15,7 @@ Contributors:
 public interface IPreferenceConstants {
 	
 	public static final String PROMPT_FOR_MIGRATION = "externaltools.builders.promptForMigration"; //$NON-NLS-1$
+	public static final String SHOW_CONSOLE_FOR_BUILDERS = "externaltools.builders.showConsole"; //$NON-NLS-1$
 	
 	public static final String CONSOLE_ERROR_RGB = "externaltools.console.errorColor"; //$NON-NLS-1$
 	public static final String CONSOLE_WARNING_RGB = "externaltools.console.warningColor"; //$NON-NLS-1$

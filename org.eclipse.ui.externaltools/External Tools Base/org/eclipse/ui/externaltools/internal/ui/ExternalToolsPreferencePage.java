@@ -27,6 +27,7 @@ import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 public class ExternalToolsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	private Button promptForMigrationButton;
+	private Button showConsoleButton;
 	
 	public ExternalToolsPreferencePage() {
 		setDescription("Preferences for external tools:");
@@ -51,20 +52,31 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		data.horizontalAlignment = GridData.FILL;
 		composite.setLayoutData(data);
 		
-		Group group= new Group(composite, SWT.NONE);
+		createProjectBuilderOptions(composite, font);
+		
+		return composite;
+	}
+	
+	private void createProjectBuilderOptions(Composite parent, Font font) {
+		Group group= new Group(parent, SWT.NONE);
 		group.setText("Project Builders");
-		data= new GridData(GridData.FILL_HORIZONTAL);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
-		layout= new GridLayout();
+		GridLayout layout= new GridLayout();
 		group.setLayout(layout);
 		group.setFont(font);
 		
 		promptForMigrationButton= new Button(group, SWT.CHECK | SWT.LEFT);
 		promptForMigrationButton.setFont(font);
 		promptForMigrationButton.setText("Always &prompt before migrating project builders");
+		promptForMigrationButton.setToolTipText("Check this button to be prompted whenever a project builder needs to be migrated to the new format");
 		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
 		
-		return composite;
+		showConsoleButton= new Button(group, SWT.CHECK | SWT.LEFT);
+		showConsoleButton.setFont(font);
+		showConsoleButton.setText("Show &console when project builders write output");
+		showConsoleButton.setToolTipText("Check this button to show the console whenever a project builder generates output");
+		showConsoleButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_CONSOLE_FOR_BUILDERS));
 	}
 	
 	/**
@@ -78,6 +90,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 */
 	public boolean performOk() {
 		getPreferenceStore().setValue(IPreferenceConstants.PROMPT_FOR_MIGRATION, promptForMigrationButton.getSelection());
+		getPreferenceStore().setValue(IPreferenceConstants.SHOW_CONSOLE_FOR_BUILDERS, showConsoleButton.getSelection());
 		return super.performOk();
 	}
 
@@ -86,6 +99,7 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 */
 	protected void performDefaults() {
 		promptForMigrationButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
+		showConsoleButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.SHOW_CONSOLE_FOR_BUILDERS));
 		super.performDefaults();
 	}
 
