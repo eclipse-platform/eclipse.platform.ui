@@ -64,19 +64,19 @@ public class RemoteAntBuildListener implements ILaunchesListener{
 	 * Reads the message stream from the RemoteAntBuildLogger
 	 */
 	private class ServerConnection extends Thread {
-		private int fPort;
+		private int fServerPort;
 		
 		public ServerConnection(int port) {
 			super("Ant Build Server Connection"); //$NON-NLS-1$
-			fPort= port;
+			fServerPort= port;
 		}
 		
 		public void run() {
 			try {
 				if (fDebug) {
-					System.out.println("Creating server socket " + fPort); //$NON-NLS-1$
+					System.out.println("Creating server socket " + fServerPort); //$NON-NLS-1$
 				}
-				fServerSocket= new ServerSocket(fPort);
+				fServerSocket= new ServerSocket(fServerPort);
 				fSocket= fServerSocket.accept();			
 				if (fDebug) {
 					System.out.println("Connection"); //$NON-NLS-1$
