@@ -47,6 +47,24 @@ public interface IWorkbenchConfigurer {
 	public AboutInfo getPrimaryFeatureAboutInfo();
 	
 	/**
+	 * Returns whether the workbench state should be saved on close and 
+	 * restored on subsequence open.
+	 * 
+	 * @return <code>true</code> to save and restore workbench state, or
+	 * 	<code>false</code> to forget current workbench state on close.
+	 */
+	public boolean getSaveAndRestore();
+
+	/**
+	 * Sets whether the workbench state should be saved on close and 
+	 * restored on subsequence open.
+	 * 
+	 * @param enabled <code>true</code> to save and restore workbench state, or
+	 * 	<code>false</code> to forget current workbench state on close.
+	 */	
+	public void setSaveAndRestore(boolean enabled);
+	
+	/**
 	 * Returns the workbench window manager.
 	 *
 	 * @return the workbench window manager

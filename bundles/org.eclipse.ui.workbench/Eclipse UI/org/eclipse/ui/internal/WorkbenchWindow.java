@@ -32,6 +32,7 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IContributionManagerOverrides;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -523,6 +524,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	protected void addShortcutBar(int style) {
 		if ((getShell() == null) && (shortcutBar == null)) {
 			shortcutBar = new ToolBarManager(style);
+			shortcutBar.add(new PerspectiveContributionItem(this));
+			shortcutBar.add(new Separator(WorkbenchWindow.GRP_PAGES));
+			shortcutBar.add(new Separator(WorkbenchWindow.GRP_PERSPECTIVES));
+			shortcutBar.add(new Separator(WorkbenchWindow.GRP_FAST_VIEWS));
+			shortcutBar.add(new ShowFastViewContribution(this));
 		}
 	}
 	/**

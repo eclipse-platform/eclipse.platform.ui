@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 
 /**
@@ -50,10 +51,11 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	private Map extraData = new HashMap();
 	
 	/**
-	 * The workbench associated with this configurer.
+	 * Indicates whether workbench state should be saved on close and 
+	 * restored on subsequence open.
 	 */
-	private Workbench workbench;
-
+	private boolean saveAndRestore = false;
+	
 	/**
 	 * The configuration information read from the <code>about.ini</code>
 	 * file of the primary feature.
@@ -67,18 +69,15 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	 * only via {@link WorkbenchAdviser#initialize WorkbenchAdviser.initialize}
 	 * </p>
 	 */
-	/* package */ WorkbenchConfigurer(Workbench workbench) {
-		if (workbench == null) {
-			throw new IllegalArgumentException();
-		}
-		this.workbench = workbench;
+	/* package */ WorkbenchConfigurer() {
+		super();
 	}
 
 	/* (non-javadoc)
 	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWorkbench
 	 */
 	public IWorkbench getWorkbench() {
-		return workbench;
+		return PlatformUI.getWorkbench();
 	}
 
 	/* (non-javadoc)
@@ -94,7 +93,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	 */
 	public WindowManager getWorkbenchWindowManager() {
 		// return the global workbench window manager
-		return workbench.getWindowManager();
+		return ((Workbench)getWorkbench()).getWindowManager();
 	}	
 	
 	/* (non-javadoc)
@@ -115,12 +114,23 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 		return ((WorkbenchWindow) window).getWindowConfigurer();
 	}
 
-	/**
-	 * Returns the data associated with the workbench at the given key.
-	 * 
-	 * @param key the key
-	 * @return the data, or <code>null</code> if there is no data at the given
-	 * key
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getSaveAndRestore()
+	 */
+	public boolean getSaveAndRestore() {
+		return saveAndRestore;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#setSaveAndRestore(boolean)
+	 */
+	public void setSaveAndRestore(boolean enabled) {
+		saveAndRestore = enabled;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getData
 	 */
 	public Object getData(String key) {
 		if (key == null) {
@@ -129,11 +139,8 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 		return extraData.get(key);
 	}
 	
-	/**
-	 * Sets the data associated with the workbench at the given key.
-	 * 
-	 * @param key the key
-	 * @param data the data, or <code>null</code> to delete existing data
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#setData(String, Object)
 	 */
 	public void setData(String key, Object data) {
 		if (key == null) {
@@ -144,6 +151,14 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 		} else {
 			extraData.remove(key);
 		}
+	}
+	
+	/**
+	 * Allows the configurer to initialize its state that
+	 * depends on a Display existing.
+	 */
+	/* package */ void init() {
+		saveAndRestore = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE);
 	}
 	
 	/* package */ void readPrimaryFeatureAboutInfo() throws CoreException {

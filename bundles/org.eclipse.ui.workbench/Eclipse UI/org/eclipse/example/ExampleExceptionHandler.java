@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 //this should be in some other package
-package org.eclipse.ui.internal;
+package org.eclipse.example;
 
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
@@ -19,6 +19,9 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.InternalErrorDialog;
 import org.eclipse.ui.internal.misc.Policy;
 

@@ -108,13 +108,13 @@ public abstract class WorkbenchAdviser {
 	}
 
 	/**
-	 * Performs arbitrary actions after the first workbench window has been
+	 * Performs arbitrary actions after the workbench windows have been
 	 * opened (or restored), but before the main event loop is run.
 	 * <p>
-	 * This method is called just after the first window has been opened.
+	 * This method is called just after the windows have been opened.
 	 * Clients must not call this method.
 	 * The default implementation does nothing. Subclasses may override.
-	 * It is okay to IWorkbench.close() from this method.
+	 * It is okay to <code>IWorkbench.close()</code> from this method.
 	 * </p>
 	 */
 	public void postStartup() {

@@ -131,12 +131,6 @@ public final class Workbench implements IWorkbench {
 	};
 	
 	/**
-	 * Indicates whether workbench state should be saved on close and 
-	 * restored on subsequence open.
-	 */
-	private boolean saveAndRestore = false;
-	
-	/**
 	 * Adviser providing application-specific configuration and customization
 	 * of the workbench.
 	 */
@@ -290,7 +284,7 @@ public final class Workbench implements IWorkbench {
 			}
 		}
 
-		if (saveAndRestore) {
+		if (getWorkbenchConfigurer().getSaveAndRestore()) {
 			Platform.run(new SafeRunnable() {
 				public void run() {
 					XMLMemento mem = recordWorkbenchState();
@@ -338,9 +332,6 @@ public final class Workbench implements IWorkbench {
 		final boolean[] result = new boolean[1];
 		result[0] = true;
 
-		if (isStarting)
-			throw new IllegalStateException();
-			
 		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
 				//Collect dirtyEditors
@@ -428,7 +419,7 @@ public final class Workbench implements IWorkbench {
 		// Display will be null if SWT has not been initialized or
 		// this method was called from wrong thread.
 		Display display = Display.getCurrent();
-		if (display == null || isStarting)
+		if (display == null)
 			return null;
 
 		// Look at the current shell and up its parent
@@ -544,8 +535,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public ISharedImages getSharedImages() {
-		if (isStarting)
-			throw new IllegalStateException();
 		return WorkbenchPlugin.getDefault().getSharedImages();
 	}
 	/* (non-Javadoc)
@@ -586,8 +575,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow[] getWorkbenchWindows() {
-		if (isStarting)
-			return new IWorkbenchWindow[0];
 		Window[] windows = windowManager.getWindows();
 		IWorkbenchWindow[] dwindows = new IWorkbenchWindow[windows.length];
 		System.arraycopy(windows, 0, dwindows, 0, windows.length);
@@ -598,8 +585,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkingSetManager getWorkingSetManager() {
-		if (isStarting)
-			throw new IllegalStateException();
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
 
@@ -626,12 +611,15 @@ public final class Workbench implements IWorkbench {
 	 * @return true if init succeeded.
 	 */
 	private boolean init() {	
-
+		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
 			ModalContext.setDebugMode(true);
 		}
-		
+
+		// allow the workbench configurer to initialize
+		getWorkbenchConfigurer().init();
+				
 		// create workbench window manager
 		windowManager = new WindowManager();
 
@@ -916,8 +904,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
-		if (isStarting)
-			throw new IllegalStateException();
 		return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
 	
@@ -925,9 +911,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) throws WorkbenchException {
-		if (isStarting)
-			throw new IllegalStateException();
-			
 		// Run op in busy cursor.
 		final Object[] result = new Object[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -1190,6 +1173,7 @@ public final class Workbench implements IWorkbench {
 		}
 		
 		// restart or exit based on returnCode
+		Workbench.instance = null;
 		return (IPlatformRunnable.EXIT_RESTART.equals(returnCode));
 	}
 
@@ -1259,9 +1243,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window) throws WorkbenchException {
-		if (isStarting)
-			throw new IllegalStateException();
-			
 		Assert.isNotNull(perspectiveId);
 
 		// If the specified window has the requested perspective open, then the window
@@ -1348,9 +1329,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window, IAdaptable input) throws WorkbenchException {
-		if (isStarting)
-			throw new IllegalStateException();
-			
 		Assert.isNotNull(perspectiveId);
 
 		// If the specified window has the requested perspective open and the same requested
@@ -1473,9 +1451,6 @@ public final class Workbench implements IWorkbench {
 	 * Method declared on IWorkbench.
 	 */
 	public IDecoratorManager getDecoratorManager() {
-		if (isStarting)
-			throw new IllegalStateException();
-			
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
@@ -1513,7 +1488,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	/* package */ WorkbenchConfigurer getWorkbenchConfigurer() {
 		if (workbenchConfigurer == null) {
-			workbenchConfigurer = new WorkbenchConfigurer(this);
+			workbenchConfigurer = new WorkbenchConfigurer();
 		}
 		return workbenchConfigurer;
 	}
