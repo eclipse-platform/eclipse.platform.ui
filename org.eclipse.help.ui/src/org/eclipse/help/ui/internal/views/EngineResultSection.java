@@ -314,7 +314,7 @@ public class EngineResultSection {
 	private void updateNavigation() {
 		if (hits.size() > HITS_PER_PAGE) {
 			if (prevLink == null) {
-				FormToolkit toolkit = part.getManagedForm().getToolkit();
+				FormToolkit toolkit = part.getToolkit();
 				Composite navContainer = toolkit.createComposite(container);
 				TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
 				navContainer.setLayoutData(td);

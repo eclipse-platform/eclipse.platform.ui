@@ -53,6 +53,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	private ArrayList results;
 
 	private String phrase;
+	
+	private FormToolkit innerToolkit;
 
 	/**
 	 * @param parent
@@ -64,14 +66,15 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
-		container = toolkit.createComposite(parent);
+		innerToolkit = new FormToolkit(parent.getDisplay());
+		container = innerToolkit.createComposite(parent);
 		container.setLayout(layout);
-		separator = toolkit.createCompositeSeparator(container);
+		separator = innerToolkit.createCompositeSeparator(container);
 		separator.setVisible(false);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 1;
 		separator.setLayoutData(gd);
-		innerForm = toolkit.createScrolledForm(container);
+		innerForm = innerToolkit.createScrolledForm(container);
 		innerForm.setDelayedReflow(true);
 		innerForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableWrapLayout tlayout = new TableWrapLayout();
@@ -116,6 +119,11 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showDescriptionAction.setId("description"); //$NON-NLS-1$
 		tbm.insertAfter("categories", showDescriptionAction); //$NON-NLS-1$
 		tbm.insertAfter("description", new Separator()); //$NON-NLS-1$
+	}
+	
+	public void dispose() {
+		innerToolkit.dispose();
+		super.dispose();
 	}
 
 	private void updateResultSections() {
@@ -259,8 +267,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 				.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
-				Control c = er.createControl(innerForm.getBody(), parent
-						.getForm().getToolkit());
+				Control c = er.createControl(innerForm.getBody(), innerToolkit);
 				c.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 			}
 		});
@@ -270,8 +277,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	private void add(EngineDescriptor ed) {
 		final EngineResultSection er = new EngineResultSection(this, ed);
-		Control c = er.createControl(innerForm.getBody(), parent.getForm()
-				.getToolkit());
+		Control c = er.createControl(innerForm.getBody(), innerToolkit);
 		c.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		results.add(er);
 	}
@@ -292,5 +298,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		if (id.equals(ActionFactory.COPY.getId()))
 			return parent.getCopyAction();
 		return null;
+	}
+	FormToolkit getToolkit() {
+		return innerToolkit;
 	}
 }

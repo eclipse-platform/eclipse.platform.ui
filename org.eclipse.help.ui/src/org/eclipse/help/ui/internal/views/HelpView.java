@@ -59,7 +59,8 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		//toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
-    	//toolkit.setBackground(toolkit.getColors().createColor("bg", 245, 250, 255));
+    	//toolkit.setBackground(toolkit.getColors().createNoContentColor());
+		toolkit.getColors().initializeSectionToolBarColors();
 		reusableHelpPart.createControl(parent, toolkit);
 		//reusableHelpPart.setShowDocumentsInPlace(false);
 		reusableHelpPart
