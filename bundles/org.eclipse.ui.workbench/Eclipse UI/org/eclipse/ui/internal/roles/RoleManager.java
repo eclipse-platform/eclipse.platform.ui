@@ -20,12 +20,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.roles.IActivityBinding;
 import org.eclipse.ui.roles.IRole;
+import org.eclipse.ui.roles.IRoleEvent;
 import org.eclipse.ui.roles.IRoleManager;
 import org.eclipse.ui.roles.IRoleManagerEvent;
 import org.eclipse.ui.roles.IRoleManagerListener;
@@ -111,16 +112,18 @@ public final class RoleManager implements IRoleManager {
 				((IRoleManagerListener) roleManagerListeners.get(i)).roleManagerChanged(roleManagerEvent);
 			}				
 	}
-	
-	private void notifyRoles(Collection roleIds) {	
-		for (Iterator iterator = roleIds.iterator(); iterator.hasNext();) {	
-			String roleId = (String) iterator.next();					
+
+	private void notifyRoles(Map roleEventsByRoleId) {	
+		for (Iterator iterator = roleEventsByRoleId.entrySet().iterator(); iterator.hasNext();) {	
+			Map.Entry entry = (Map.Entry) iterator.next();			
+			String roleId = (String) entry.getKey();
+			IRoleEvent roleEvent = (IRoleEvent) entry.getValue();
 			Role role = (Role) rolesById.get(roleId);
 			
 			if (role != null)
-				role.fireRoleChanged();
+				role.fireRoleChanged(roleEvent);
 		}
-	}
+	}	
 
 	private void readRegistry() {
 		Collection roleDefinitions = new ArrayList();
@@ -175,37 +178,44 @@ public final class RoleManager implements IRoleManager {
 			roleManagerChanged = true;	
 		}
 
-		Collection updatedRoleIds = updateRoles(rolesById.keySet());	
+		Map roleEventsByRoleId = updateRoles(rolesById.keySet());	
 		
 		if (roleManagerChanged)
 			fireRoleManagerChanged();
 
-		if (updatedRoleIds != null)
-			notifyRoles(updatedRoleIds);		
+		if (roleEventsByRoleId != null)
+			notifyRoles(roleEventsByRoleId);		
 	}
 
-	private boolean updateRole(Role role) {
-		boolean updated = false;
-		IRoleDefinition roleDefinition = (IRoleDefinition) roleDefinitionsById.get(role.getId());
-		updated |= role.setDefined(roleDefinition != null);
-		updated |= role.setDescription(roleDefinition != null ? roleDefinition.getDescription() : null);		
-		updated |= role.setName(roleDefinition != null ? roleDefinition.getName() : null);
+	private IRoleEvent updateRole(Role role) {
 		Set activityBindings = (Set) activityBindingsByRoleId.get(role.getId());
-		updated |= role.setActivityBindings(activityBindings != null ? activityBindings : Collections.EMPTY_SET);
-		return updated;
-	}
+		boolean activityBindingsChanged = role.setActivityBindings(activityBindings != null ? activityBindings : Collections.EMPTY_SET);		
+		IRoleDefinition roleDefinition = (IRoleDefinition) roleDefinitionsById.get(role.getId());
+		boolean definedChanged = role.setDefined(roleDefinition != null);
+		boolean descriptionChanged = role.setDescription(roleDefinition != null ? roleDefinition.getDescription() : null);		
+		boolean nameChanged = role.setName(roleDefinition != null ? roleDefinition.getName() : null);
 
-	private Collection updateRoles(Collection roleIds) {
-		Collection updatedIds = new TreeSet();
+		if (activityBindingsChanged || definedChanged || descriptionChanged || nameChanged)
+			return new RoleEvent(role, activityBindingsChanged, definedChanged, descriptionChanged, nameChanged); 
+		else 
+			return null;
+	}
+	
+	private Map updateRoles(Collection roleIds) {
+		Map roleEventsByRoleId = new TreeMap();
 		
 		for (Iterator iterator = roleIds.iterator(); iterator.hasNext();) {		
 			String roleId = (String) iterator.next();					
 			Role role = (Role) rolesById.get(roleId);
 			
-			if (role != null && updateRole(role))
-				updatedIds.add(roleId);			
+			if (role != null) {
+				IRoleEvent roleEvent = updateRole(role);
+				
+				if (roleEvent != null)
+					roleEventsByRoleId.put(roleId, roleEvent);
+			}
 		}
 		
-		return updatedIds;			
-	}
+		return roleEventsByRoleId;			
+	}	
 }

@@ -231,15 +231,13 @@ final class Activity implements IActivity {
 		return string;		
 	}
 	
-	void fireActivityChanged() {
-		if (activityListeners != null) {
-			for (int i = 0; i < activityListeners.size(); i++) {
-				if (activityEvent == null)
-					activityEvent = new ActivityEvent(this, false, false, false, false, false, false, false);
-							
+	void fireActivityChanged(IActivityEvent activityEvent) {
+		if (activityEvent == null)
+			throw new NullPointerException();
+		
+		if (activityListeners != null)
+			for (int i = 0; i < activityListeners.size(); i++)
 				((IActivityListener) activityListeners.get(i)).activityChanged(activityEvent);
-			}				
-		}			
 	}
 	
 	boolean setActive(boolean active) {

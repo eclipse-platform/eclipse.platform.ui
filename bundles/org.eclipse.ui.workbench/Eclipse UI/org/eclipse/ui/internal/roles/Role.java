@@ -172,15 +172,13 @@ final class Role implements IRole {
 		return string;		
 	}
 	
-	void fireRoleChanged() {
-		if (roleListeners != null) {
-			for (int i = 0; i < roleListeners.size(); i++) {
-				if (roleEvent == null)
-					roleEvent = new RoleEvent(this, false, false, false, false);
-							
+	void fireRoleChanged(IRoleEvent roleEvent) {
+		if (roleEvent == null)
+			throw new NullPointerException();
+		
+		if (roleListeners != null)
+			for (int i = 0; i < roleListeners.size(); i++)
 				((IRoleListener) roleListeners.get(i)).roleChanged(roleEvent);
-			}				
-		}			
 	}
 	
 	boolean setActivityBindings(Set activityBindings) {

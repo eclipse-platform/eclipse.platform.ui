@@ -20,12 +20,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.TreeMap;
 import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityEvent;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
@@ -140,37 +141,37 @@ public final class ActivityManager implements IActivityManager {
 	public void setActiveActivityIds(Set activeActivityIds) {
 		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
 		boolean activityManagerChanged = false;
-		Collection updatedActivityIds = null;
+		Map activityEventsByActivityId = null;
 
 		if (!this.activeActivityIds.equals(activeActivityIds)) {
 			this.activeActivityIds = activeActivityIds;
 			activityManagerChanged = true;	
-			updatedActivityIds = updateActivities(activitiesById.keySet());	
+			activityEventsByActivityId = updateActivities(activitiesById.keySet());	
 		}
 		
 		if (activityManagerChanged)
 			fireActivityManagerChanged();
 
-		if (updatedActivityIds != null)
-			notifyActivities(updatedActivityIds);	
+		if (activityEventsByActivityId != null)
+			notifyActivities(activityEventsByActivityId);	
 	}
 	
 	public void setEnabledActivityIds(Set enabledActivityIds) {	
 		enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
 		boolean activityManagerChanged = false;
-		Collection updatedActivityIds = null;
+		Map activityEventsByActivityId = null;
 
 		if (!this.enabledActivityIds.equals(enabledActivityIds)) {
 			this.enabledActivityIds = enabledActivityIds;
 			activityManagerChanged = true;	
-			updatedActivityIds = updateActivities(this.definedActivityIds);	
+			activityEventsByActivityId = updateActivities(this.definedActivityIds);	
 		}
 		
 		if (activityManagerChanged)
 			fireActivityManagerChanged();
 
-		if (updatedActivityIds != null)
-			notifyActivities(updatedActivityIds);	
+		if (activityEventsByActivityId != null)
+			notifyActivities(activityEventsByActivityId);	
 	}	
 	
 	Set getActivitiesWithListeners() {
@@ -187,13 +188,15 @@ public final class ActivityManager implements IActivityManager {
 			}				
 	}
 	
-	private void notifyActivities(Collection activityIds) {	
-		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {	
-			String activityId = (String) iterator.next();					
+	private void notifyActivities(Map activityEventsByActivityId) {	
+		for (Iterator iterator = activityEventsByActivityId.entrySet().iterator(); iterator.hasNext();) {	
+			Map.Entry entry = (Map.Entry) iterator.next();			
+			String activityId = (String) entry.getKey();
+			IActivityEvent activityEvent = (IActivityEvent) entry.getValue();
 			Activity activity = (Activity) activitiesById.get(activityId);
 			
 			if (activity != null)
-				activity.fireActivityChanged();
+				activity.fireActivityChanged(activityEvent);
 		}
 	}
 
@@ -254,40 +257,47 @@ public final class ActivityManager implements IActivityManager {
 			activityManagerChanged = true;	
 		}
 
-		Collection updatedActivityIds = updateActivities(activitiesById.keySet());	
+		Map activityEventsByActivityId = updateActivities(activitiesById.keySet());	
 		
 		if (activityManagerChanged)
 			fireActivityManagerChanged();
 
-		if (updatedActivityIds != null)
-			notifyActivities(updatedActivityIds);		
+		if (activityEventsByActivityId != null)
+			notifyActivities(activityEventsByActivityId);		
 	}
 
-	private boolean updateActivity(Activity activity) {
-		boolean updated = false;
-		updated |= activity.setActive(activeActivityIds.contains(activity.getId()));		
+	private IActivityEvent updateActivity(Activity activity) {
+		boolean activeChanged = activity.setActive(activeActivityIds.contains(activity.getId()));		
 		IActivityDefinition activityDefinition = (IActivityDefinition) activityDefinitionsById.get(activity.getId());
-		updated |= activity.setDefined(activityDefinition != null);
-		updated |= activity.setDescription(activityDefinition != null ? activityDefinition.getDescription() : null);		
-		updated |= activity.setEnabled(enabledActivityIds.contains(activity.getId()));
-		updated |= activity.setName(activityDefinition != null ? activityDefinition.getName() : null);
-		updated |= activity.setParentId(activityDefinition != null ? activityDefinition.getParentId() : null);				
+		boolean definedChanged = activity.setDefined(activityDefinition != null);
+		boolean descriptionChanged = activity.setDescription(activityDefinition != null ? activityDefinition.getDescription() : null);		
+		boolean enabledChanged = activity.setEnabled(enabledActivityIds.contains(activity.getId()));
+		boolean nameChanged = activity.setName(activityDefinition != null ? activityDefinition.getName() : null);
+		boolean parentIdChanged = activity.setParentId(activityDefinition != null ? activityDefinition.getParentId() : null);				
 		List patternBindings = (List) patternBindingsByActivityId.get(activity.getId());
-		updated |= activity.setPatternBindings(patternBindings != null ? patternBindings : Collections.EMPTY_LIST);
-		return updated;
+		boolean patternBindingsChanged = activity.setPatternBindings(patternBindings != null ? patternBindings : Collections.EMPTY_LIST);
+
+		if (activeChanged || definedChanged || descriptionChanged || enabledChanged || nameChanged || parentIdChanged || patternBindingsChanged)
+			return new ActivityEvent(activity, activeChanged, definedChanged, descriptionChanged, enabledChanged, nameChanged, parentIdChanged, patternBindingsChanged); 
+		else 
+			return null;
 	}
 
-	private Collection updateActivities(Collection activityIds) {
-		Collection updatedIds = new TreeSet();
+	private Map updateActivities(Collection activityIds) {
+		Map activityEventsByActivityId = new TreeMap();
 		
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {		
 			String activityId = (String) iterator.next();					
 			Activity activity = (Activity) activitiesById.get(activityId);
 			
-			if (activity != null && updateActivity(activity))
-				updatedIds.add(activityId);			
+			if (activity != null) {
+				IActivityEvent activityEvent = updateActivity(activity);
+				
+				if (activityEvent != null)
+					activityEventsByActivityId.put(activityId, activityEvent);
+			}
 		}
 		
-		return updatedIds;			
+		return activityEventsByActivityId;			
 	}
 }
