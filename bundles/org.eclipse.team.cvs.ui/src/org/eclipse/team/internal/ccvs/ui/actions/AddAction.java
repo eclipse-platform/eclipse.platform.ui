@@ -73,11 +73,13 @@ public class AddAction extends WorkspaceAction {
 		for (int i = 0; i < resources.length; i++) {
 			ICVSResource resource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
 			try {
-				if (resource.isIgnored()) prompt = true;
+				if (resource.isIgnored()) {
+					prompt = true;
+					break;
+				} 
 			} catch (CVSException e) {
 				handle(e);
 			}
-			break;
 		}
 		if (prompt) {
 			return MessageDialog.openQuestion(getShell(), Policy.bind("AddAction.addIgnoredTitle"), Policy.bind("AddAction.addIgnoredQuestion")); //$NON-NLS-1$ //$NON-NLS-2$
