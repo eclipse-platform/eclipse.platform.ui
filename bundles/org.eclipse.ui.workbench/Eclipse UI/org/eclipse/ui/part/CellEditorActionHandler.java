@@ -464,10 +464,12 @@ public void removeCellEditor(CellEditor editor) {
 	}
 	
 	Control control = editor.getControl();
-	controlToEditor.remove(control);
-	if (!control.isDisposed()) {
-		control.removeListener(SWT.Activate, controlListener);
-		control.removeListener(SWT.Deactivate, controlListener);
+	if (control != null) {
+		controlToEditor.remove(control);
+		if (!control.isDisposed()) {
+			control.removeListener(SWT.Activate, controlListener);
+			control.removeListener(SWT.Deactivate, controlListener);
+		}
 	}
 }
 /**
