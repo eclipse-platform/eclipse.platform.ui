@@ -34,8 +34,6 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
 	 */
 	public void dispose() {
-		console = null;
-		lines= new ArrayList();
 	}
 
 	/**
