@@ -59,13 +59,11 @@ public class AntRunTargetAction extends Action {
     public static final RunTargetMode MODE_IMMEDIATE_EXECUTE = new RunTargetMode() {
 
         public String getText() {
-            return AntOutlineMessages
-                    .getString("PopupMenu.runAntTargetNoDialog"); //$NON-NLS-1$
+            return AntOutlineMessages.getString("PopupMenu.runAntTargetNoDialog"); //$NON-NLS-1$
         }
 
         public String getToolTipText() {
-            return AntOutlineMessages
-                    .getString("PopupMenu.runAntTargetNoDialogTip"); //$NON-NLS-1$
+            return AntOutlineMessages.getString("PopupMenu.runAntTargetNoDialogTip"); //$NON-NLS-1$
         }
 
         public boolean isDialogDisplayed() {

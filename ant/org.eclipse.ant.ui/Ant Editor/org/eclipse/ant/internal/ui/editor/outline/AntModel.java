@@ -893,7 +893,7 @@ public class AntModel {
 		int lineNumber= exception.getLineNumber();
 		StringBuffer message= new StringBuffer(exception.getMessage());
 		if (lineNumber != -1){
-			message.append(AntOutlineMessages.getString("OutlinePreparingHandler._line___2") + lineNumber); //$NON-NLS-1$
+			message.append(AntOutlineMessages.getString("AntModel.1") + lineNumber); //$NON-NLS-1$
 		}
 
 		AntElementNode errorNode= new AntElementNode(message.toString());
