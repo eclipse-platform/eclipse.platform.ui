@@ -386,13 +386,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
-		
-		Display.getDefault().asyncExec(
-			new Runnable() {
-				public void run() {
-					createImageRegistry();
-				}
-			});
 	}
 
 	/**
@@ -1066,6 +1059,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 			return false;
 		}
 		return true;
-	}		
+	}	
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated disaply. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display;
+		display= Display.getCurrent();
+		if (display == null)
+			display= Display.getDefault();
+		return display;		
+	}	
 }
 

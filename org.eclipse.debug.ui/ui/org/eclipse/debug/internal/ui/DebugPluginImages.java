@@ -244,7 +244,7 @@ public class DebugPluginImages {
 	 *	@see JFace's ImageRegistry
 	 */
 	public static ImageRegistry initializeImageRegistry() {
-		imageRegistry= new ImageRegistry();
+		imageRegistry= new ImageRegistry(DebugUIPlugin.getStandardDisplay());
 		imageDescriptors = new HashMap(30);
 		declareImages();
 		return imageRegistry;
