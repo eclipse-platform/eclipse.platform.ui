@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
@@ -42,6 +43,7 @@ public class AntClasspathContentProvider extends AntContentProvider {
 			}
 			elements.add(o);
 			tableViewer.add(o);
+			tableViewer.setSelection(new StructuredSelection(o), true);
 		} else {
 			super.add(o);
 		}
