@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.osgi;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.runtime.adaptor.testsupport.SimpleBundleInstaller;
 import org.eclipse.core.runtime.adaptor.testsupport.SimplePlatformAdmin;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.osgi.service.resolver.*;
