@@ -254,7 +254,6 @@ public interface IPluginPrerequisite {
 	 *         return true;
 	 *     return false;
 	 * </pre>
-	 * TODO verify that this method is the same as isMatchedAsEquivalent()
 	 */
 	public boolean isMatchedAsExact();
 
