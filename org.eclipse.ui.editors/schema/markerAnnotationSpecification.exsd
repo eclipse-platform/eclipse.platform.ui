@@ -10,10 +10,10 @@
 &lt;p&gt;
 Note that an extension will only be returned from &lt;code&gt;MarkerAnnotationPreferences.getAnnotationPreferences&lt;/code&gt; (and thus included in the preference pages) if it contains the following four attributes in addition to the required &lt;code&gt;annotationType&lt;/code&gt;:
 &lt;ul&gt;
-	&lt;li&gt;&lt;code&gt;colorPreferenceKey&lt;/code&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;code&gt;colorPreferenceValue&lt;/code&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;code&gt;overviewRulerPreferenceKey&lt;/code&gt;&lt;/li&gt;
-	&lt;li&gt;&lt;code&gt;textPreferenceKey&lt;/code&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;code&gt;colorPreferenceKey&lt;/code&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;code&gt;colorPreferenceValue&lt;/code&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;code&gt;overviewRulerPreferenceKey&lt;/code&gt;&lt;/li&gt;
+ &lt;li&gt;&lt;code&gt;textPreferenceKey&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/p&gt;
 &lt;p&gt;
@@ -56,7 +56,7 @@ Annotation preference types that extend another annotation preference are allowe
          <attribute name="annotationType" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The annotation type.
                </documentation>
             </annotation>
          </attribute>
@@ -104,36 +104,12 @@ since: 3.0
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="markerType" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="colorPreferenceValue" type="string">
             <annotation>
                <documentation>
                   The color preference value must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences.
                </documentation>
             </annotation>
-         </attribute>
-         <attribute name="markerSeverity">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="0">
-                  </enumeration>
-                  <enumeration value="1">
-                  </enumeration>
-                  <enumeration value="2">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
          <attribute name="presentationLayer" type="string">
             <annotation>

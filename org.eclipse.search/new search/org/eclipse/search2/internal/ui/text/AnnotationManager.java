@@ -18,6 +18,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
@@ -43,7 +45,7 @@ public class AnnotationManager implements ISearchResultChangedListener, IPartLis
 	private ITextSearchResult fResult;
 	private Map fMatchesToAnnotations;
 	private ITextEditor fEditor;
-	private AnnotationTypeLookup fAnnotationTypeLookup= new AnnotationTypeLookup();
+	private AnnotationTypeLookup fAnnotationTypeLookup= EditorsUI.getAnnotationTypeLookup();
 	
 	public AnnotationManager() {
 		fMatchesToAnnotations= new HashMap();

@@ -33,6 +33,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 
+import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.PlatformUI;
 
 
@@ -148,16 +150,6 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		return new MarkerAnnotation(marker);
 	}
 	
-	/**
-	 * Returns the annotation type lookup used by this annotation model.
-	 * 
-	 * @return the annotation type lookup
-	 * @since 3.0
-	 */
-	protected AnnotationTypeLookup getAnnotationTypeLookup() {
-		return EditorsUI.getAnnotationTypeLookup();
-	}
-
 	/**
 	 * Handles an unanticipated <code>CoreException</code> in 
 	 * a standard manner.
