@@ -162,7 +162,7 @@ class SearchResultViewer extends TableViewer {
 		getTable().removeAll();
 		super.inputChanged(input, oldInput);
 		fMarkerToShow= -1;
-		updateTitle();
+		updateTitle(true);
 		enableActions();
 	}
 	protected int getSelectedEntriesCount() {
@@ -360,12 +360,12 @@ class SearchResultViewer extends TableViewer {
 	/**
 	 * Update the title and the title's tooltip
 	 */
-	protected void updateTitle() {
+	protected void updateTitle(boolean showZero) {
 		int count= SearchManager.getDefault().getCurrentItemCount();
 		boolean hasCurrentSearch= SearchManager.getDefault().getCurrentSearch() != null;
 		String title= SearchMessages.getString("SearchResultView.title"); //$NON-NLS-1$
-		if (count > 0 || hasCurrentSearch)
-		title= title + " (" + count + MATCHES_POSTFIX; //$NON-NLS-1$
+		if (showZero && (count > 0 || hasCurrentSearch))
+			title= title + " (" + count + MATCHES_POSTFIX; //$NON-NLS-1$
 		if (!title.equals(fOuterPart.getTitle()))
 			fOuterPart.setTitle(title);
 		String toolTip= null;
