@@ -100,30 +100,32 @@ public class JobManager implements IJobManager {
 	 * Cancels a job
 	 */
 	protected boolean cancel(InternalJob job) {
-		boolean canceled = true;
 		synchronized (lock) {
 			switch (job.getState()) {
-				case Job.WAITING:
+				case Job.WAITING :
 					waiting.remove(job);
 					break;
-				case Job.SLEEPING:
+				case Job.SLEEPING :
 					sleeping.remove(job);
 					break;
-				case Job.RUNNING:
-					job.getMonitor().setCanceled(true);
-					canceled = false;
+				case Job.RUNNING :
+					IProgressMonitor monitor = job.getMonitor();
+					if (monitor != null) {
+						monitor.setCanceled(true);
+						return false;
+					}
+					//job hasn't started running yet (aboutToRun listener)
+					running.remove(job);
 					break;
-				case Job.NONE:
-				default:
+				case Job.NONE :
+				default :
 					return true;
 			}
+			job.setState(Job.NONE);
 		}
 		//only notify listeners if the job was waiting or sleeping
-		if (canceled) {
-			job.setState(Job.NONE);
-			jobListeners.done((Job)job, Status.CANCEL_STATUS);
-		}
-		return canceled;
+		jobListeners.done((Job) job, Status.CANCEL_STATUS);
+		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#cancel(java.lang.String)
@@ -290,6 +292,7 @@ public class JobManager implements IJobManager {
 			//the sync block, otherwise two jobs with conflicting rules could start at once
 			if (job != null)  {
 				running.add(job);
+				job.setState(Job.RUNNING);
 				if (JobManager.DEBUG)
 					JobManager.debug("Starting job: " + job); //$NON-NLS-1$
 			}
@@ -406,21 +409,24 @@ public class JobManager implements IJobManager {
 			switch (job.getState()) {
 				case Job.RUNNING :
 					//cannot be paused if it is already running
-					return false;
+					if (job.getMonitor() != null)
+						return false;
+					//job hasn't started running yet (aboutToRun listener)
+					break;
 				case Job.SLEEPING :
 					//update the job wake time
 					job.setStartTime(NEVER);
 					return true;
-				case Job.NONE:
+				case Job.NONE :
 					return true;
 				case Job.WAITING :
 					//put the job to sleep
 					waiting.remove(job);
-					job.setStartTime(NEVER);
-					job.setState(Job.SLEEPING);
-					sleeping.enqueue(job);
-					//fall through and notify listeners
+					break;
 			}
+			job.setStartTime(NEVER);
+			job.setState(Job.SLEEPING);
+			sleeping.enqueue(job);
 		}
 		jobListeners.sleeping((Job) job);
 		return true;
@@ -461,9 +467,8 @@ public class JobManager implements IJobManager {
 				//check for listener veto
 				jobListeners.aboutToRun(job);
 				//listeners may have canceled or put the job to sleep
-				if (job.getState() == Job.WAITING) {
+				if (job.getState() == Job.RUNNING) {
 					((InternalJob)job).setMonitor(createMonitor(job));
-					((InternalJob)job).setState(Job.RUNNING);
 					jobListeners.running(job);
 					return job;
 				}
