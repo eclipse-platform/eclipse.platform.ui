@@ -83,10 +83,10 @@ private void inputChanged(IInstallConfiguration configuration) {
 	dateLabel.setText(date.toString());
 	String isCurrent = configuration.isCurrent()?"Yes": "No";
 	currentLabel.setText(isCurrent);
-	
+
+	activitySection.configurationChanged(configuration);
 	// reflow
 	dateLabel.getParent().layout();
-	activitySection.configurationChanged(configuration);
 	((Composite)getControl()).layout();
 	getControl().redraw();
 	currentConfiguration = configuration;

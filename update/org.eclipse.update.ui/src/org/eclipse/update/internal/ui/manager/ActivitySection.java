@@ -29,19 +29,21 @@ public class ActivitySection extends UpdateSection {
 		layout.horizontalSpacing = 10;
 		container = factory.createComposite(parent);
 		container.setLayout(layout);
-		layout.numColumns = 3;
+		layout.numColumns = 4;
 		
-		headers = new Control [4];
+		headers = new Control [5];
 		
 		headers[0] = createHeader(container, factory, "Date");
-		headers[1] = createHeader(container, factory, "Activity");
-		headers[2] = createHeader(container, factory, "Status");
-		headers[3] = factory.createCompositeSeparator(container);
+		headers[1] = createHeader(container, factory, "Target");
+		headers[2] = createHeader(container, factory, "Action");
+		headers[3] = createHeader(container, factory, "Status");
+		Composite separator = factory.createCompositeSeparator(container);
+		headers[4] = separator;
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 1;
-		gd.horizontalSpan = 3;
-		headers[3].setLayoutData(gd);
-		headers[3].setBackground(factory.getBorderColor());
+		gd.horizontalSpan = 4;
+		separator.setLayoutData(gd);
+		separator.setBackground(factory.getBorderColor());
 		return container;
 	}
 	
@@ -65,7 +67,7 @@ public class ActivitySection extends UpdateSection {
 			IActivity activity = activities[i];
 			factory.createLabel(container, activity.getDate().toString());
 			factory.createLabel(container, activity.getLabel());
-			//factory.createLabel(container, getActionLabel(activity));
+			factory.createLabel(container, getActionLabel(activity));
 			factory.createLabel(container, getStatusLabel(activity));
 		}
 		container.layout();
@@ -79,20 +81,23 @@ public class ActivitySection extends UpdateSection {
 	}
 	
 	private String getActionLabel(IActivity activity) {
-		String action = activity.getAction();
-		if (IActivity.ACTION_CONFIGURE.equals(action))
-			return "Configure";
-		if (IActivity.ACTION_FEATURE_INSTALL.equals(action))
-			return "Feature Installed";
-		if (IActivity.ACTION_FEATURE_REMOVE.equals(action))
-			return "Feature Removed";
-		if (IActivity.ACTION_SITE_INSTALL.equals(action))
-			return "Site Installed";
-		if (IActivity.ACTION_SITE_REMOVE.equals(action))
-			return "Site Removed";
-		if (IActivity.ACTION_UNCONFIGURE.equals(action))
-			return "Unconfigure";
-		return "Unknown";
+		int action = activity.getAction();
+		switch (action) {
+			case IActivity.ACTION_CONFIGURE:
+				return "Configure";
+			case IActivity.ACTION_FEATURE_INSTALL:
+				return "Feature Installed";
+			case IActivity.ACTION_FEATURE_REMOVE:
+				return "Feature Removed";
+			case IActivity.ACTION_SITE_INSTALL:
+				return "Site Installed";
+			case IActivity.ACTION_SITE_REMOVE:
+				return "Site Removed";
+			case IActivity.ACTION_UNCONFIGURE:
+				return "Unconfigure";
+			default:
+				return "Unknown";
+		}
 	}
 	
 	private String getStatusLabel(IActivity activity) {
