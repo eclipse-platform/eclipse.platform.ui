@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * An operation which potentially makes changes to the workspace. All resource 
@@ -26,17 +29,34 @@ import java.lang.reflect.InvocationTargetException;
  * performance of autobuilds, etc.) are deferred until the outermost operation
  * has successfully completed.
  * <p>
+ * If a scheduling rule is provided, the operation will obtain that scheduling
+ * rule for the duration of its <code>execute</code> method.  If no scheduling
+ * rule is provided, the operation will obtain a scheduling rule that locks
+ * the entire workspace for the duration of the operation.
+ * </p>
+ * <p>
  * Subclasses must implement <code>execute</code> to do the work of the
  * operation.
  * </p>
+ * @see ISchedulingRule
+ * @see IWorkspace#run
  */
-public abstract class WorkspaceModifyOperation
-	implements IRunnableWithProgress
-{
+public abstract class WorkspaceModifyOperation implements IRunnableWithProgress {
+	private ISchedulingRule rule;
 /**
  * Creates a new operation.
  */
 protected WorkspaceModifyOperation() {
+	this(IDEWorkbenchPlugin.getPluginWorkspace().getRoot());
+}
+/**
+ * Creates a new operation that will run using the provided
+ * scheduling rule.
+ * @param rule. The ISchedulingRule to use or <code>null</code>.
+ * @since 3.0
+ */
+protected WorkspaceModifyOperation(ISchedulingRule rule) {
+	this.rule = rule;
 }
 /**
  * Performs the steps that are to be treated as a single logical workspace
@@ -82,7 +102,7 @@ public synchronized final void run(IProgressMonitor monitor) throws InvocationTa
 				// CoreException and OperationCanceledException are propagated
 			}
 		};
-		IDEWorkbenchPlugin.getPluginWorkspace().run(workspaceRunnable, monitor);
+		IDEWorkbenchPlugin.getPluginWorkspace().run(workspaceRunnable, rule, IResource.NONE, monitor);
 	} catch (CoreException e) {
 		throw new InvocationTargetException(e);
 	} catch (OperationCanceledException e) {
@@ -93,4 +113,5 @@ public synchronized final void run(IProgressMonitor monitor) throws InvocationTa
 		throw iteHolder[0];
 	}
 }
+
 }
