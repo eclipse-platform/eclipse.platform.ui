@@ -29,10 +29,7 @@ public class LogConsoleDocument {
 	
 	// class variables that handle the colors and the font;
 	private static AntPropertyChangeListener changeListener = AntPropertyChangeListener.getInstance();
-	private static LogConsoleDocument instance;
-	static {
-		instance = new LogConsoleDocument();
-	}
+	private static LogConsoleDocument instance = null;
 	
 	/*package*/ ArrayList views = new ArrayList();
 	private Document document;
@@ -113,8 +110,8 @@ public class LogConsoleDocument {
 	
 	public void initializeOutputStructure() {
 		// root is the first element of the structure: it is a fake so it doesn't need a real name
-		root = new OutputStructureElement("-- root --");
-		currentElement = new OutputStructureElement(ToolScriptMessages.getString("ToolScriptConsole.antScript"), root, 0);
+		root = new OutputStructureElement("-- root --"); // $NON-NLS-1$
+		currentElement = new OutputStructureElement(ToolScriptMessages.getString("LogConsoleDocument.externalTool"), root, 0); // $NON-NLS-1$
 		
 		for (int i=0; i < views.size(); i++) {
 			LogConsoleView view = (LogConsoleView)views.get(i);
@@ -154,6 +151,8 @@ public class LogConsoleDocument {
 	}
 	
 	public static LogConsoleDocument getInstance() {
+		if (instance == null)
+			instance = new LogConsoleDocument();
 		return instance;	
 	}
 	
