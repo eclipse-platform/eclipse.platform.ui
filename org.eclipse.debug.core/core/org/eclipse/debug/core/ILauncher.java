@@ -5,9 +5,10 @@ package org.eclipse.debug.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.core.model.ILauncherDelegate;
-import org.eclipse.core.runtime.IConfigurationElement;
 import java.util.Set;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.model.ILauncherDelegate;
 
 /**
  * A launcher is a proxy to a launcher extension (<code>"org.eclipse.debug.core.launchers"</code>).
@@ -92,4 +93,14 @@ public interface ILauncher {
 	 * @return the underlying launcher extension
 	 */
 	ILauncherDelegate getDelegate();
+	
+	/**
+	 * Returns the icon path defined by the underlying launcher extension.
+	 * The path is relative to the plugin.xml of the contributing plug-in.
+	 * This will not cause the extension to be instantiated. Returns
+	 * <code>null</code> if no icon attribute is specified.
+	 *
+	 * @return a relative path to an icon or <code>null</code>
+	 */
+	String getIconPath();	
 }

@@ -5,13 +5,14 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.core.ILauncher;
-import org.eclipse.debug.core.model.ILauncherDelegate;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.ILauncher;
+import org.eclipse.debug.core.model.ILauncherDelegate;
 
 /**
  * A handle to a launcher extension that instantiates the actual
@@ -69,7 +70,7 @@ public class Launcher implements ILauncher {
 	}
 	
 	/**
-	 * Returns the label specified in the configuration data.
+	 * @see ILauncher.
 	 */
 	public String getLabel() {
 		return fConfigElement.getAttribute("label");
@@ -108,5 +109,12 @@ public class Launcher implements ILauncher {
 	 */
 	public IConfigurationElement getConfigurationElement() {
 		return fConfigElement;
+	}
+	
+	/**
+	 * @see ILanucher.
+	 */
+	public String getIconPath() {
+		return fConfigElement.getAttribute("icon");
 	}
 }

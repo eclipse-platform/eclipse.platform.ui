@@ -24,6 +24,7 @@ registering the result with the launch manager.</p>
 <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes		CDATA #REQUIRED
 </tt>      label		CDATA #REQUIRED
       wizard		CDATA #IMPLIED
+      icon		CDATA #IMPLIED
       public		CDATA #IMPLIED
       description	CDATA #IMPLIED
       <tt>perspective	CDATA #IMPLIED
@@ -44,6 +45,10 @@ registering the result with the launch manager.</p>
     <b>org.eclipse.debug.ui.ILaunchWizard</b>. This attribute is used by
     the debug UI. A launcher may contribute a wizard that allows users to configure and launch
     specific attributes.</li>
+  <li><strong>icon </strong>- a relative path for an icon that will be used to visually
+    represent the launcher. If omitted, a default icon will be used for this launcher.
+    The path is relative to the location of the plugin.xml file of the contributing
+    plug-in.</li>
   <li><strong>public</strong> - whether a launcher is publically visible in the debug UI.
     &nbsp; If &quot;true&quot;,&nbsp; the launcher will be available from the debug UI - the
     launcher will appear as a choice for a default launcher, launches created by this launcher
@@ -68,6 +73,7 @@ registering the result with the launch manager.</p>
 <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes = &quot;run, debug&quot;
   	     label = &quot;Example Launcher&quot;
 	     wizard = &quot;com.example.launchers.ui.ExampleLaunchWizard&quot;     
+	     icon = &quot;icons/exampleLauncher.gif&quot;
 	     public = &quot;true&quot;
 	     description = &quot;Launches example programs&quot;
 	     perspective= &quot;com.example.JavaPerspective&quot;&gt;</tt>  
