@@ -7,13 +7,14 @@ package org.eclipse.ui.internal;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
+
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 
 /**
  * CoolItemToolBarManager class
@@ -41,6 +42,12 @@ public class CoolItemToolBarManager extends ToolBarManager {
 	}
 	protected CoolBarManager getParentManager() {
 		return parentManager;
+	}
+	protected boolean isVisible() {
+		if (coolBarItem == null) {
+			return false;
+		}
+		return coolBarItem.isVisible();
 	}
 	protected void itemAdded(IContributionItem item) {
 		super.itemAdded(item);

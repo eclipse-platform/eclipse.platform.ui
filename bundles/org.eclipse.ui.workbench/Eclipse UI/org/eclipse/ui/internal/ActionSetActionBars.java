@@ -30,7 +30,8 @@ protected SubMenuManager createSubMenuManager(IMenuManager parent) {
  * Inherited from SubActionBars.
  */
 protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
-	return new ActionSetToolBarManager(parent, actionSetId);
+	// return null, action sets are managed by CoolItemToolBarManagers
+	return null;
 }
 /**
  * Dispose the contributions.
@@ -48,22 +49,19 @@ public void dispose() {
  */
 public IToolBarManager getToolBarManager() {
 	IToolBarManager parentMgr = parent.getToolBarManager();
-	if (parentMgr instanceof ToolBarManager) {
-		return super.getToolBarManager();
-	} else if (parentMgr instanceof CoolBarManager) {
-		if (coolItemToolBarMgr == null) {
-			// Create a CoolBar item for this action bar.
-			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			coolItemToolBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
-			toolBarMgr = createSubToolBarManager(coolItemToolBarMgr);
-			// Just create the CoolBarContributionItem, PluginActionSetBuilder will add the item to
-			// the CoolBarManager.
-			new CoolBarContributionItem(cBarMgr, coolItemToolBarMgr, actionSetId);
-			coolItemToolBarMgr.setVisible(active);
-		}
-		return coolItemToolBarMgr;
+	if (parentMgr == null) {
+		return null;
 	}
-	return null;
+	if (coolItemToolBarMgr == null) {
+		// Create a CoolBar item for this action bar.
+		CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
+		coolItemToolBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
+		// Just create the CoolBarContributionItem, PluginActionSetBuilder will add the item to
+		// the CoolBarManager.
+		new CoolBarContributionItem(cBarMgr, coolItemToolBarMgr, actionSetId);
+		coolItemToolBarMgr.setVisible(active);
+	}
+	return coolItemToolBarMgr;
 }
 /**
  * Activate / Deactivate the contributions.
