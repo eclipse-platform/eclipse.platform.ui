@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 import java.io.*;
+import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -18,6 +19,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.toc.*;
+import org.eclipse.help.internal.model.*;
 
 /**
  * Helper class for tocView.jsp initialization
@@ -48,7 +50,7 @@ public class TocData extends RequestData {
 	private int topicsGenerated = 0;
 
 	// List of TOC's, unfiltered
-	private IToc[] tocs;
+	private ITocElement[] tocs;
 	// List of TOC's, filtered by roles
 	private IToc[] filteredTocs;
 
@@ -160,7 +162,7 @@ public class TocData extends RequestData {
 	 * 
 	 * @return Element[]
 	 */
-	public IToc[] getTocs() {
+	public ITocElement[] getTocs() {
 		return tocs;
 	}
 
@@ -172,9 +174,17 @@ public class TocData extends RequestData {
 	 */
 	public boolean isEnabled(int toc) {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
-		return HelpBasePlugin.getActivitySupport().isEnabled(tocs[toc].getHref());
+		return isEnabled(tocs[toc]);
 	}
-
+	/**
+	 * Check if given TOC is visible (belongs to an enabled activity)
+	 * @param toc
+	 * @return true if TOC should be visible
+	 */
+	private boolean isEnabled(IToc toc) {
+		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref());
+	}
+	
 	private void loadTocs() {
 		tocs = HelpPlugin.getTocManager().getTocs(getLocale());
 		// Find the requested TOC
@@ -264,8 +274,7 @@ public class TocData extends RequestData {
 	 * @throws IOException
 	 */
 	public void generateToc(int toc, Writer out) throws IOException {
-		ITopic[] topics = tocs[toc].getTopics();
-		tocs[toc].getTopics();
+		ITopicElement[] topics = getEnabledSubtopics(tocs[toc]);
 
 		int maxLevels = dynamicLoadDepths;
 		if (tocs[toc] instanceof Toc
@@ -280,7 +289,7 @@ public class TocData extends RequestData {
 				if (id.length() > 0) {
 					id.append('_');
 				}
-				topics = topics[rootPath[p]].getSubtopics();
+				topics = getEnabledSubtopics(topics[rootPath[p]]);
 				id.append(rootPath[p]);
 			}
 			out.write("<ul class='expanded' id=\"" + id.toString() + "\">\n");
@@ -319,7 +328,7 @@ public class TocData extends RequestData {
 	 * @throws IOException
 	 */
 	private void generateTopic(
-		ITopic topic,
+		ITopicElement topic,
 		Writer out,
 		String id,
 		int maxLevels,
@@ -334,7 +343,8 @@ public class TocData extends RequestData {
 			maxLevels = 1;
 		}
 
-		boolean hasNodes = topic.getSubtopics().length > 0;
+		ITopicElement[] topics = getEnabledSubtopics(topic);
+		boolean hasNodes = topics.length > 0;
 
 		if (hasNodes) {
 			out.write("<li>");
@@ -361,7 +371,6 @@ public class TocData extends RequestData {
 				out.write("<ul class='collapsed' id=\"" + id + "\">\n");
 			}
 
-			ITopic[] topics = topic.getSubtopics();
 			if (1 <= maxLevels
 				&& maxLevels <= dynamicLoadDepths
 				&& isAncestor) {
@@ -410,18 +419,19 @@ public class TocData extends RequestData {
 	 * @throws IOException
 	 */
 	public void generateBasicToc(int toc, Writer out) throws IOException {
-		ITopic[] topics = tocs[toc].getTopics();
+		ITopicElement[] topics = getEnabledSubtopics(tocs[toc]);
 		for (int i = 0; i < topics.length; i++) {
 			generateBasicTopic(topics[i], out);
 		}
 
 	}
 
-	private void generateBasicTopic(ITopic topic, Writer out)
+	private void generateBasicTopic(ITopicElement topic, Writer out)
 		throws IOException {
 
 		out.write("<li>");
-		boolean hasNodes = topic.getSubtopics().length > 0;
+		ITopicElement[] topics = getEnabledSubtopics(topic);
+		boolean hasNodes = topics.length > 0;
 		if (hasNodes) {
 			out.write("<nobr>");
 			out.write("<a ");
@@ -438,7 +448,6 @@ public class TocData extends RequestData {
 
 			out.write("<ul>\n");
 
-			ITopic[] topics = topic.getSubtopics();
 			for (int i = 0; i < topics.length; i++) {
 				generateBasicTopic(topics[i], out);
 			}
@@ -483,5 +492,42 @@ public class TocData extends RequestData {
 			}
 		}
 		return topicHelpHref;
+	}
+	/**
+	 * Obtains children topics for a given navigation element.
+	 * Topics from TOCs not matching enabled activities are filtered out.
+	 * @param navigationElement
+	 * @return ITopic[]
+	 */
+	private ITopicElement[] getEnabledSubtopics(INavigationElement navigationElement) {
+		List topics = getEnabledSubtopicList(navigationElement);
+		return (ITopicElement[]) topics.toArray(
+			new ITopicElement[topics.size()]);
+	}
+	/**
+	 * Obtains children topics for a given navigation element. Topics from TOCs
+	 * not matching enabled activities are filtered out.
+	 * 
+	 * @param navigationElement
+	 * @return List of ITopicElement
+	 */
+	private List getEnabledSubtopicList(INavigationElement navigationElement) {
+		if(navigationElement instanceof IToc && !isEnabled((IToc)navigationElement))
+			return Collections.EMPTY_LIST;
+		List children = navigationElement.getChildren();
+		List childTopics = new ArrayList(children.size());
+		for (Iterator childrenIt = children.iterator();
+			childrenIt.hasNext();
+			) {
+			INavigationElement c = (INavigationElement) childrenIt.next();
+			if ((c instanceof ITopicElement)) {
+				childTopics.add(c);
+			} else {
+				// it is a Toc, Anchor or Link,
+				// which may have children attached to it.
+				childTopics.addAll(getEnabledSubtopicList(c));
+			}
+		}
+		return childTopics;
 	}
 }
