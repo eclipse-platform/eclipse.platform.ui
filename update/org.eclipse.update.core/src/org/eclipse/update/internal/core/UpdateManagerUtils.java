@@ -66,11 +66,30 @@ public class UpdateManagerUtils {
 	 */
 	public static String getURLAsString(URL rootURL, URL url) {
 		String result = null;
-		String rootString = rootURL.toExternalForm();
 
 		// if no URL , return null
 		if (url != null) {
-			String urlString = url.toExternalForm();
+			result = url.toExternalForm();
+			
+			if (rootURL.getHost()!=null && !rootURL.getHost().equals(url.getHost()))
+				return result;
+			
+			if (rootURL.getProtocol()!=null && !rootURL.getProtocol().equals(url.getProtocol()))
+				return result;
+			
+			if (rootURL.getPort()!=url.getPort())
+				return result;
+			
+			String rootString = url.getFile();
+			rootString.replace(File.separatorChar,'/');
+			if (!rootString.endsWith("/")){
+				int index = rootString.lastIndexOf('/');
+				if (index!=-1){
+					rootString = rootString.substring(0,index);
+				}
+			}
+			String urlString = url.getFile();
+						
 			if (urlString.indexOf(rootString)!=-1){
 				result = urlString.substring(rootString.length());
 			} else {

@@ -4,14 +4,12 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved. 
  */
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
@@ -23,7 +21,9 @@ import org.xml.sax.SAXException;
  * This class manages the configurations.
  */
 
-public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
+public class SiteLocal
+	extends SiteLocalModel
+	implements ILocalSite, IWritable {
 
 	private static IPluginEntry[] allRunningPluginEntry;
 	private ListenersList listeners = new ListenersList();
@@ -43,11 +43,20 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		SiteLocal localSite = new SiteLocal();
 
 		// obtain read/write location
-		IPlatformConfiguration currentPlatformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration currentPlatformConfiguration =
+			BootLoader.getCurrentPlatformConfiguration();
 		localSite.isTransient(currentPlatformConfiguration.isTransient());
-		
+
 		try {
-			URL location = getUpdateStateLocation(currentPlatformConfiguration);
+			URL location;
+			try {
+				location = getUpdateStateLocation(currentPlatformConfiguration);
+			} catch (IOException exception) {
+				throw Utilities.newCoreException(
+					Policy.bind("Unable to retrieve update state location"),
+					exception);
+			}
+
 			configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 
 			// set it into the ILocalSite
@@ -56,13 +65,48 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 			//attempt to parse the SITE_LOCAL_FILE file	
 			URL resolvedURL = URLEncoder.encode(configXML);
-			new SiteLocalParser(resolvedURL.openStream(), localSite);
+			try {
+				new SiteLocalParser(resolvedURL.openStream(), localSite);
+			} catch (FileNotFoundException exception) {
+				// file SITE_LOCAL_FILE doesn't exist, ok, log it 
+				// and reconcile
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+					UpdateManagerPlugin.getPlugin().debug(
+						localSite.getLocationURLString()
+							+ " does not exist, there is no previous state or install history we can recover, we shall use default.");
+					//$NON-NLS-1$
+				}
+				long bootStamp = currentPlatformConfiguration.getChangeStamp();
+				localSite.setStamp(bootStamp);
+				localSite.reconcile();
+				localSite.save();
+
+			} catch (SAXException exception) {
+				Utilities.logException(
+					Policy.bind(
+						"SiteLocal.ErrorParsingSavedState",
+						localSite.getLocationURLString()),
+					exception);
+				//$NON-NLS-1$
+				recoverSiteLocal(resolvedURL, localSite);
+			} catch (IOException exception) {
+				Utilities.logException(
+					Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()),
+					exception);
+				//$NON-NLS-1$
+				recoverSiteLocal(resolvedURL, localSite);
+			}
 
 			// check if we have to reconcile
 			long bootStamp = currentPlatformConfiguration.getChangeStamp();
 			if (localSite.getStamp() != bootStamp) {
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-					UpdateManagerPlugin.getPlugin().debug("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + localSite.getStamp()); //$NON-NLS-1$ //$NON-NLS-2$
+					UpdateManagerPlugin.getPlugin().debug(
+						"Reconcile platform stamp:"
+							+ bootStamp
+							+ " is different from LocalSite stamp:"
+							+ localSite.getStamp());
+					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				localSite.setStamp(bootStamp);
 				localSite.reconcile();
@@ -72,23 +116,13 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				localSite.preserveRuntimePluginPath();
 			}
 
-		} catch (FileNotFoundException exception) {
-			// file SITE_LOCAL_FILE doesn't exist, ok, log it 
-			// and reconcile
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(localSite.getLocationURLString() + " does not exist, there is no previous state or install history we can recover, we shall use default."); //$NON-NLS-1$
-			}
-			long bootStamp = currentPlatformConfiguration.getChangeStamp();
-			localSite.setStamp(bootStamp);
-			localSite.reconcile();
-			localSite.save();
-
-		} catch (SAXException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.ErrorParsingSavedState", localSite.getLocationURLString()), exception); //$NON-NLS-1$
 		} catch (MalformedURLException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + SITE_LOCAL_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
-		} catch (IOException exception) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToAccessFile", configXML.toExternalForm()), exception); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"SiteLocal.UnableToCreateURLFor",
+					localSite.getLocationURLString() + " & " + SITE_LOCAL_FILE),
+				exception);
+			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		return localSite;
@@ -112,14 +146,20 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				if (removeConfigurationModel(removedConfig)) {
 
 					// DEBUG:
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
-						UpdateManagerPlugin.getPlugin().debug("Removed configuration :" + removedConfig.getLabel()); //$NON-NLS-1$
+					if (UpdateManagerPlugin.DEBUG
+						&& UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
+						UpdateManagerPlugin.getPlugin().debug(
+							"Removed configuration :" + removedConfig.getLabel());
+						//$NON-NLS-1$
 					}
 
 					// notify listeners
 					Object[] siteLocalListeners = listeners.getListeners();
 					for (int i = 0; i < siteLocalListeners.length; i++) {
-						((ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved((IInstallConfiguration) removedConfig);
+						(
+							(
+								ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved(
+							(IInstallConfiguration) removedConfig);
 					}
 				}
 				// FIXME: should we remove file ? Can they be shared or remote !!!
@@ -135,7 +175,11 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// notify listeners
 			Object[] siteLocalListeners = listeners.getListeners();
 			for (int i = 0; i < siteLocalListeners.length; i++) {
-				((ILocalSiteChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
+				(
+					(
+						ILocalSiteChangedListener) siteLocalListeners[i])
+							.currentInstallConfigurationChanged(
+					config);
 			}
 		}
 
@@ -172,7 +216,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		if (getLocationURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
 			File file = null;
 			try {
-				URL newURL = UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
+				URL newURL =
+					UpdateManagerUtils.getURL(getLocationURL(), SITE_LOCAL_FILE, null);
 				file = new File(newURL.getFile());
 				if (isTransient())
 					file.deleteOnExit();
@@ -181,9 +226,18 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				writer.writeSite(this, fileWriter);
 				fileWriter.close();
 			} catch (FileNotFoundException e) {
-				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToSaveStateIn") + file.getAbsolutePath(), e); //$NON-NLS-1$
+				throw Utilities.newCoreException(
+					Policy.bind("SiteLocal.UnableToSaveStateIn") + file.getAbsolutePath(),
+					e);
+				//$NON-NLS-1$
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + getLocationURL().toExternalForm() + " : " + SITE_LOCAL_FILE, e); //$NON-NLS-2$ //$NON-NLS-1$
+				throw Utilities.newCoreException(
+					Policy.bind("SiteLocal.UnableToCreateURLFor")
+						+ getLocationURL().toExternalForm()
+						+ " : "
+						+ SITE_LOCAL_FILE,
+					e);
+				//$NON-NLS-2$ //$NON-NLS-1$
 			}
 		}
 	}
@@ -200,15 +254,18 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			increment += " "; //$NON-NLS-1$
 
 		// force the recalculation to avoid reconciliation
-		IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration platformConfig =
+			BootLoader.getCurrentPlatformConfiguration();
 		platformConfig.refresh();
 		long changeStamp = platformConfig.getChangeStamp();
 
 		w.print(gap + "<" + SiteLocalParser.SITE + " "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (getLabel() != null) {
-			w.print("label=\"" + Writer.xmlSafe(getLabel()) + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+			w.print("label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
+			//$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.print("history=\"" + getMaximumHistoryCount() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.print("history=\"" + getMaximumHistoryCount() + "\" ");
+		//$NON-NLS-1$ //$NON-NLS-2$
 		w.print("stamp=\"" + changeStamp + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
 		w.println(""); //$NON-NLS-1$
@@ -222,26 +279,35 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			}
 		}
 		// write current configuration last
-		writeConfig(gap + increment, w, (InstallConfigurationModel) getCurrentConfiguration());
+		writeConfig(
+			gap + increment,
+			w,
+			(InstallConfigurationModel) getCurrentConfiguration());
 		w.println(""); //$NON-NLS-1$
 
 		if (getPreservedConfigurations() != null) {
 			// write preserved configurations
-			w.print(gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+			w.print(
+				gap + increment + "<" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
+			//$NON-NLS-1$ //$NON-NLS-2$
 
-			InstallConfigurationModel[] preservedConfig = getPreservedConfigurationsModel();
+			InstallConfigurationModel[] preservedConfig =
+				getPreservedConfigurationsModel();
 			for (int index = 0; index < preservedConfig.length; index++) {
 				InstallConfigurationModel element = preservedConfig[index];
 				writeConfig(gap + increment + increment, w, element);
 			}
 			w.println(""); //$NON-NLS-1$
-			w.print(gap + increment + "</" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+			w.print(
+				gap + increment + "</" + SiteLocalParser.PRESERVED_CONFIGURATIONS + ">");
+			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// end
 		w.println("</" + SiteLocalParser.SITE + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-			UpdateManagerPlugin.getPlugin().debug("Saved change stamp:" + changeStamp); //$NON-NLS-1$
+			UpdateManagerPlugin.getPlugin().debug("Saved change stamp:" + changeStamp);
+			//$NON-NLS-1$
 		}
 
 	}
@@ -249,13 +315,19 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/**
 	 * @since 2.0
 	 */
-	private void writeConfig(String gap, PrintWriter w, InstallConfigurationModel config) {
+	private void writeConfig(
+		String gap,
+		PrintWriter w,
+		InstallConfigurationModel config) {
 		w.print(gap + "<" + SiteLocalParser.CONFIG + " "); //$NON-NLS-1$ //$NON-NLS-2$
-		String URLInfoString = UpdateManagerUtils.getURLAsString(getLocationURL(), config.getURL());
-		w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		String URLInfoString =
+			UpdateManagerUtils.getURLAsString(getLocationURL(), config.getURL());
+		w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+		//$NON-NLS-1$ //$NON-NLS-2$
 
 		if (config.getLabel() != null) {
-			w.print("label=\"" + Writer.xmlSafe(config.getLabel()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			w.print("label=\"" + Writer.xmlSafe(config.getLabel()) + "\"");
+			//$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		w.println("/>"); //$NON-NLS-1$
@@ -264,16 +336,22 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/**
 	 * @since 2.0
 	 */
-	private IInstallConfiguration cloneConfigurationSite(IInstallConfiguration installConfig, URL newFile, String name) throws CoreException {
+	private IInstallConfiguration cloneConfigurationSite(
+		IInstallConfiguration installConfig,
+		URL newFile,
+		String name)
+		throws CoreException {
 
 		// save previous current configuration
 		if (getCurrentConfiguration() != null)
-			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile(isTransient());
+			((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile(
+				isTransient());
 
 		InstallConfiguration result = null;
 		Date currentDate = new Date();
 
-		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE, currentDate);
+		String newFileName =
+			UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE, currentDate);
 		try {
 			if (newFile == null)
 				newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
@@ -284,7 +362,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName,
+				e);
+			//$NON-NLS-1$
 		}
 		return result;
 	}
@@ -292,18 +373,24 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/**
 	 * @since 2.0
 	 */
-	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException {
+	public IInstallConfiguration cloneCurrentConfiguration()
+		throws CoreException {
 		return cloneConfigurationSite(getCurrentConfiguration(), null, null);
 	}
 
 	/**
 	 * @since 2.0
 	 */
-	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor, IProblemHandler handler) throws CoreException {
+	public void revertTo(
+		IInstallConfiguration configuration,
+		IProgressMonitor monitor,
+		IProblemHandler handler)
+		throws CoreException {
 
 		// create the activity 
 		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_REVERT);
+		ConfigurationActivity activity =
+			new ConfigurationActivity(IActivity.ACTION_REVERT);
 		activity.setLabel(configuration.getLabel());
 		activity.setDate(new Date());
 		IInstallConfiguration newConfiguration = null;
@@ -316,7 +403,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// process delta
 			// the Configured featuresConfigured are the same as the old configuration
 			// the unconfigured featuresConfigured are the rest...
-			 ((InstallConfiguration) newConfiguration).revertTo(configuration, monitor, handler);
+			((InstallConfiguration) newConfiguration).revertTo(
+				configuration,
+				monitor,
+				handler);
 
 			// add to the stack which will set up as current
 			addConfiguration(newConfiguration);
@@ -332,7 +422,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			// because we didn't add the configuration to the history
 		} finally {
 			if (newConfiguration != null)
-				 ((InstallConfiguration) newConfiguration).addActivityModel((ConfigurationActivityModel) activity);
+				((InstallConfiguration) newConfiguration).addActivityModel(
+					(ConfigurationActivityModel) activity);
 		}
 
 	}
@@ -340,12 +431,16 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/**
 	 * @since 2.0
 	 */
-	public void addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException {
+	public void addToPreservedConfigurations(IInstallConfiguration configuration)
+		throws CoreException {
 		if (configuration != null) {
 
 			// create new configuration based on the one to preserve
 			InstallConfiguration newConfiguration = null;
-			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_PRESERVED_CONFIG_FILE, new Date());
+			String newFileName =
+				UpdateManagerUtils.getLocalRandomIdentifier(
+					DEFAULT_PRESERVED_CONFIG_FILE,
+					new Date());
 			try {
 				URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
 				// pass the date onto teh name
@@ -356,12 +451,16 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				newConfiguration.setCreationDate(currentDate);
 
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e); //$NON-NLS-1$
+				throw Utilities.newCoreException(
+					Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName,
+					e);
+				//$NON-NLS-1$
 			}
 			((InstallConfiguration) newConfiguration).saveConfigurationFile(isTransient());
 
 			// add to the list			
-			addPreservedInstallConfigurationModel((InstallConfigurationModel) newConfiguration);
+			addPreservedInstallConfigurationModel(
+				(InstallConfigurationModel) newConfiguration);
 		}
 	}
 
@@ -373,10 +472,15 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		// based on time stamp for now
 		InstallConfigurationModel preservedConfig = null;
 		if (configuration != null) {
-			InstallConfigurationModel[] preservedConfigurations = getPreservedConfigurationsModel();
+			InstallConfigurationModel[] preservedConfigurations =
+				getPreservedConfigurationsModel();
 			if (preservedConfigurations != null) {
-				for (int indexPreserved = 0; indexPreserved < preservedConfigurations.length; indexPreserved++) {
-					if (configuration.getCreationDate().equals(preservedConfigurations[indexPreserved].getCreationDate())) {
+				for (int indexPreserved = 0;
+					indexPreserved < preservedConfigurations.length;
+					indexPreserved++) {
+					if (configuration
+						.getCreationDate()
+						.equals(preservedConfigurations[indexPreserved].getCreationDate())) {
 						preservedConfig = preservedConfigurations[indexPreserved];
 						break;
 					}
@@ -419,7 +523,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * @see ILocalSite#removeFromPreservedConfigurations(IInstallConfiguration)
 	 */
 	public void removeFromPreservedConfigurations(IInstallConfiguration configuration) {
-		if (removePreservedConfigurationModel((InstallConfigurationModel) configuration))
+		if (
+			removePreservedConfigurationModel((InstallConfigurationModel) configuration))
 			 ((InstallConfiguration) configuration).remove();
 	}
 
@@ -455,11 +560,14 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 */
 	public void reconcile() throws CoreException {
 
-		IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
-		IPlatformConfiguration.ISiteEntry[] newSiteEntries = platformConfig.getConfiguredSites();
-		IInstallConfiguration newDefaultConfiguration = cloneConfigurationSite(null, null, null);
+		IPlatformConfiguration platformConfig =
+			BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.ISiteEntry[] newSiteEntries =
+			platformConfig.getConfiguredSites();
+		IInstallConfiguration newDefaultConfiguration =
+			cloneConfigurationSite(null, null, null);
 		IConfiguredSite[] oldConfiguredSites = new IConfiguredSite[0];
-		
+
 		// sites from the current configuration
 		if (getCurrentConfiguration() != null)
 			oldConfiguredSites = getCurrentConfiguration().getConfiguredSites();
@@ -480,7 +588,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				if (currentConfigurationSite.getSite().getURL().equals(resolvedURL)) {
 					found = true;
 					ConfiguredSite reconciledConfiguredSite = reconcile(currentConfigurationSite);
-					reconciledConfiguredSite.setPreviousPluginPath(currentSiteEntry.getSitePolicy().getList());					
+					reconciledConfiguredSite.setPreviousPluginPath(
+						currentSiteEntry.getSitePolicy().getList());
 					newDefaultConfiguration.addConfiguredSite(reconciledConfiguredSite);
 				}
 			}
@@ -490,8 +599,12 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				ISite site = SiteManager.getSite(resolvedURL);
 
 				//site policy
-				IPlatformConfiguration.ISitePolicy sitePolicy = currentSiteEntry.getSitePolicy();
-				ConfiguredSite configSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteModel) site, sitePolicy.getType());
+				IPlatformConfiguration.ISitePolicy sitePolicy =
+					currentSiteEntry.getSitePolicy();
+				ConfiguredSite configSite =
+					(ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(
+						(SiteModel) site,
+						sitePolicy.getType());
 				configSite.setPlatformURLString(currentSiteEntry.getURL().toExternalForm());
 				configSite.setPreviousPluginPath(currentSiteEntry.getSitePolicy().getList());
 
@@ -501,10 +614,12 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				// Add the features as configured
 				IFeatureReference[] newFeaturesRef = site.getFeatureReferences();
 				for (int i = 0; i < newFeaturesRef.length; i++) {
-					FeatureReferenceModel newFeatureRefModel = (FeatureReferenceModel) newFeaturesRef[i];
-					configSite.getConfigurationPolicy().addConfiguredFeatureReference(newFeatureRefModel);
+					FeatureReferenceModel newFeatureRefModel =
+						(FeatureReferenceModel) newFeaturesRef[i];
+					configSite.getConfigurationPolicy().addConfiguredFeatureReference(
+						newFeatureRefModel);
 				}
-				
+
 				newDefaultConfiguration.addConfiguredSite(configSite);
 			}
 		}
@@ -515,11 +630,12 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// add Activity reconciliation
 		BaseSiteLocalFactory siteLocalFactory = new BaseSiteLocalFactory();
-		ConfigurationActivityModel activity = siteLocalFactory.createConfigurationAcivityModel();
+		ConfigurationActivityModel activity =
+			siteLocalFactory.createConfigurationAcivityModel();
 		activity.setAction(IActivity.ACTION_RECONCILIATION);
 		activity.setDate(new Date());
 		activity.setLabel(getLocationURLString());
-		((InstallConfiguration)newDefaultConfiguration).addActivityModel(activity);
+		((InstallConfiguration) newDefaultConfiguration).addActivityModel(activity);
 
 		// add the configuration as the currentConfig
 		this.addConfiguration(newDefaultConfiguration);
@@ -529,12 +645,18 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/**
 	 * 
 	 */
-	private URL resolveSiteEntry(IPlatformConfiguration.ISiteEntry newSiteEntry) throws CoreException {
+	private URL resolveSiteEntry(IPlatformConfiguration.ISiteEntry newSiteEntry)
+		throws CoreException {
 		URL resolvedURL = null;
 		try {
 			resolvedURL = Platform.resolve(newSiteEntry.getURL());
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToResolve", newSiteEntry.getURL().toExternalForm()), e); //$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"SiteLocal.UnableToResolve",
+					newSiteEntry.getURL().toExternalForm()),
+				e);
+			//$NON-NLS-1$
 		}
 		return resolvedURL;
 	}
@@ -554,22 +676,27 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * If they didn't exist before we add them as configured
 	 * Otherwise we use the old policy and add them to teh new configuration site
 	 */
-	private ConfiguredSite reconcile(IConfiguredSite oldConfiguredSite) throws CoreException {
+	private ConfiguredSite reconcile(IConfiguredSite oldConfiguredSite)
+		throws CoreException {
 
 		ConfiguredSite newConfiguredSite = createNewConfigSite(oldConfiguredSite);
-		ConfigurationPolicyModel newSitePolicyModel = newConfiguredSite.getConfigurationPolicyModel();
-		ConfigurationPolicyModel oldSitePolicyModel = ((ConfiguredSite) oldConfiguredSite).getConfigurationPolicyModel();
+		ConfigurationPolicyModel newSitePolicyModel =
+			newConfiguredSite.getConfigurationPolicyModel();
+		ConfigurationPolicyModel oldSitePolicyModel =
+			((ConfiguredSite) oldConfiguredSite).getConfigurationPolicyModel();
 
 		// check the Features that are still on the new version of the Config Site
 		// and the new one. Add the new Features as Configured
 		List toCheck = new ArrayList();
 		ISite site = oldConfiguredSite.getSite();
 		IFeatureReference[] foundFeatures = site.getFeatureReferences();
-		IFeatureReference[] oldConfiguredFeaturesRef = oldConfiguredSite.getFeaturesReferences();
+		IFeatureReference[] oldConfiguredFeaturesRef =
+			oldConfiguredSite.getFeaturesReferences();
 
 		for (int i = 0; i < foundFeatures.length; i++) {
 			boolean newFeatureFound = false;
-			FeatureReferenceModel currentFeatureRefModel = (FeatureReferenceModel) foundFeatures[i];
+			FeatureReferenceModel currentFeatureRefModel =
+				(FeatureReferenceModel) foundFeatures[i];
 			for (int j = 0; j < oldConfiguredFeaturesRef.length; j++) {
 				IFeatureReference oldFeatureRef = oldConfiguredFeaturesRef[j];
 				if (oldFeatureRef != null && oldFeatureRef.equals(currentFeatureRefModel)) {
@@ -587,7 +714,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		// if a feature has been found in new and old state use old state (configured/unconfigured)
 		Iterator featureIter = toCheck.iterator();
 		while (featureIter.hasNext()) {
-			FeatureReferenceModel oldFeatureRef = (FeatureReferenceModel) featureIter.next();
+			FeatureReferenceModel oldFeatureRef =
+				(FeatureReferenceModel) featureIter.next();
 			if (oldSitePolicyModel.isConfigured(oldFeatureRef)) {
 				newSitePolicyModel.addConfiguredFeatureReference(oldFeatureRef);
 			} else {
@@ -605,26 +733,41 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * If we find 2 features, the one with a higher version is configured
 	 * If they have teh same version, the first feature is configured
 	 */
-	private void checkConfiguredFeatures(IInstallConfiguration newDefaultConfiguration) throws CoreException {
+	private void checkConfiguredFeatures(IInstallConfiguration newDefaultConfiguration)
+		throws CoreException {
 
-		IConfiguredSite[] configuredSites = newDefaultConfiguration.getConfiguredSites();
+		IConfiguredSite[] configuredSites =
+			newDefaultConfiguration.getConfiguredSites();
 		if (configuredSites.length > 1) {
-			for (int indexConfiguredSites = 0; indexConfiguredSites < configuredSites.length - 1; indexConfiguredSites++) {
-				IFeatureReference[] configuredFeatures = configuredSites[indexConfiguredSites].getConfiguredFeatures();
-				for (int indexConfiguredFeatures = 0; indexConfiguredFeatures < configuredFeatures.length; indexConfiguredFeatures++) {
-					IFeatureReference featureToCompare = configuredFeatures[indexConfiguredFeatures];
+			for (int indexConfiguredSites = 0;
+				indexConfiguredSites < configuredSites.length - 1;
+				indexConfiguredSites++) {
+				IFeatureReference[] configuredFeatures =
+					configuredSites[indexConfiguredSites].getConfiguredFeatures();
+				for (int indexConfiguredFeatures = 0;
+					indexConfiguredFeatures < configuredFeatures.length;
+					indexConfiguredFeatures++) {
+					IFeatureReference featureToCompare =
+						configuredFeatures[indexConfiguredFeatures];
 					for (int i = indexConfiguredSites + 1; i < configuredSites.length; i++) {
-						IFeatureReference[] possibleFeatureReference = configuredSites[i].getConfiguredFeatures();
+						IFeatureReference[] possibleFeatureReference =
+							configuredSites[i].getConfiguredFeatures();
 						for (int j = 0; j < possibleFeatureReference.length; j++) {
 							int result = compare(featureToCompare, possibleFeatureReference[j]);
 							if (result != 0) {
 								if (result == 1) {
-									FeatureReferenceModel FeatureRefModel = (FeatureReferenceModel) possibleFeatureReference[j];
-									((ConfiguredSite)configuredSites[i]).getConfigurationPolicy().addUnconfiguredFeatureReference(FeatureRefModel);
+									FeatureReferenceModel FeatureRefModel =
+										(FeatureReferenceModel) possibleFeatureReference[j];
+									((ConfiguredSite) configuredSites[i])
+										.getConfigurationPolicy()
+										.addUnconfiguredFeatureReference(FeatureRefModel);
 								};
 								if (result == 2) {
-									FeatureReferenceModel FeatureRefModel = (FeatureReferenceModel) featureToCompare;
-									((ConfiguredSite)configuredSites[i]).getConfigurationPolicy().addUnconfiguredFeatureReference(FeatureRefModel);									
+									FeatureReferenceModel FeatureRefModel =
+										(FeatureReferenceModel) featureToCompare;
+									((ConfiguredSite) configuredSites[i])
+										.getConfigurationPolicy()
+										.addUnconfiguredFeatureReference(FeatureRefModel);
 									// do not break, we can continue, even if the feature is unconfigured
 									// if we find another feature in another site, we may unconfigure it.
 									// but it would have been unconfigured anyway because we confured another version of the same feature
@@ -644,7 +787,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * returns 1 if the version of feature 1 is > version of feature 2
 	 * returns 2 if opposite
 	 */
-	private int compare(IFeatureReference featureRef1, IFeatureReference featureRef2) throws CoreException {
+	private int compare(
+		IFeatureReference featureRef1,
+		IFeatureReference featureRef2)
+		throws CoreException {
 		if (featureRef1 == null)
 			return 0;
 
@@ -676,8 +822,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 */
 	private void preserveRuntimePluginPath() throws CoreException {
 
-		IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
-		IPlatformConfiguration.ISiteEntry[] siteEntries = platformConfig.getConfiguredSites();
+		IPlatformConfiguration platformConfig =
+			BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration.ISiteEntry[] siteEntries =
+			platformConfig.getConfiguredSites();
 
 		// sites from the current configuration
 		IConfiguredSite[] configured = new IConfiguredSite[0];
@@ -705,17 +853,23 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	}
 
-	private ConfiguredSite createNewConfigSite(IConfiguredSite oldConfiguredSiteToReconcile) throws CoreException {
+	private ConfiguredSite createNewConfigSite(IConfiguredSite oldConfiguredSiteToReconcile)
+		throws CoreException {
 		// create a copy of the ConfigSite based on old ConfigSite
 		// this is not a clone, do not copy any features
-		ConfiguredSite cSiteToReconcile = (ConfiguredSite) oldConfiguredSiteToReconcile;
+		ConfiguredSite cSiteToReconcile =
+			(ConfiguredSite) oldConfiguredSiteToReconcile;
 		SiteModel siteModel = cSiteToReconcile.getSiteModel();
 		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
 
 		// copy values of the old ConfigSite that should be preserved except Features
-		ConfiguredSite newConfigurationSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
+		ConfiguredSite newConfigurationSite =
+			(ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(
+				siteModel,
+				policy);
 		newConfigurationSite.isUpdateable(cSiteToReconcile.isUpdateable());
-		newConfigurationSite.setPlatformURLString(cSiteToReconcile.getPlatformURLString());
+		newConfigurationSite.setPlatformURLString(
+			cSiteToReconcile.getPlatformURLString());
 
 		return newConfigurationSite;
 	}
@@ -723,7 +877,8 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	/*
 	 * Get update state location relative to platform configuration
 	 */
-	private static URL getUpdateStateLocation(IPlatformConfiguration config) throws IOException {
+	private static URL getUpdateStateLocation(IPlatformConfiguration config)
+		throws IOException {
 		// Create a directory location for update state files. This
 		// directory name is constructed by adding a well-known suffix
 		// to the name of the corresponding platform  configuration. This
@@ -746,7 +901,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 				} else
 					path = null;
 			}
-			for (int i = list.size() - 1; i >= 0; i--) { // walk down to create missing dirs
+			for (int i = list.size() - 1;
+				i >= 0;
+				i--) { // walk down to create missing dirs
 				path = (File) list.get(i);
 				path.mkdir();
 				if (config.isTransient())
@@ -770,6 +927,110 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 */
 	private void isTransient(boolean isTransient) {
 		this.isTransient = isTransient;
+	}
+
+	/**
+	 * if we are unable to parse the SiteLoca we will attempt to parse the file system
+	 */
+	private static void recoverSiteLocal(URL url, SiteLocal site)
+		throws CoreException, MalformedURLException {
+
+		if (url == null)
+			throw Utilities.newCoreException(
+				"Internal Error: URL of local site is null",
+				null);
+
+		// parse site information
+		site.setLabel(url.toExternalForm());
+
+		//stamp
+		long stamp = 0L;
+		site.setStamp(stamp);
+
+		// retrieve XML files
+		File localXml = new File(url.getFile());
+		File dir = localXml.getParentFile();
+		File[] configFiles = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return (name.startsWith("Config") && name.endsWith("xml"));
+			}
+		});
+		File[] preservedFiles = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return (name.startsWith("PreservedConfig") && name.endsWith("xml"));
+			}
+		});
+
+		// history
+		int history = 0;
+		if (configFiles != null && configFiles.length > 0) {
+			history = configFiles.length;
+		} else {
+			history = SiteLocalModel.DEFAULT_HISTORY;
+		}
+		site.setMaximumHistoryCount(history);
+
+		// parse configuration information
+
+		for (int i = 0; i < configFiles.length; i++) {
+			URL configURL = configFiles[i].toURL();
+			String label = configFiles[i].getName();
+			//
+			InstallConfigurationModel config =
+				new BaseSiteLocalFactory().createInstallConfigurationModel();
+			config.setLocationURLString(configURL.toExternalForm());
+			config.resolve(configURL, getResourceBundle(url));
+			try {
+				config.initialize();
+				config.setLabel(config.getCreationDate().toString());
+				site.addConfigurationModel(config);
+			} catch (CoreException e) {
+				UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			}
+
+		}
+
+		// parse preserved configuration information
+		for (int i = 0; i < preservedFiles.length; i++) {
+			URL configURL = configFiles[i].toURL();
+			String label = configFiles[i].getName();
+			InstallConfigurationModel config =
+				new BaseSiteLocalFactory().createInstallConfigurationModel();
+			config.setLocationURLString(configURL.toExternalForm());
+			config.resolve(configURL, getResourceBundle(url));
+			try {
+				config.initialize();
+				config.setLabel(config.getCreationDate().toString());
+				site.addPreservedInstallConfigurationModel(config);
+			} catch (CoreException e) {
+				UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
+			}
+		}
+	}
+
+	/**
+	 * return the appropriate resource bundle for this sitelocal
+	 */
+	private static ResourceBundle getResourceBundle(URL url)
+		throws CoreException {
+		ResourceBundle bundle = null;
+		try {
+			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+			bundle =
+				ResourceBundle.getBundle(
+					SiteLocalModel.SITE_LOCAL_FILE,
+					Locale.getDefault(),
+					l);
+		} catch (MissingResourceException e) {
+			//ok, there is no bundle, keep it as null
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(
+					e.getLocalizedMessage() + ":" + url.toExternalForm());
+				//$NON-NLS-1$
+			}
+		}
+		return bundle;
 	}
 
 }

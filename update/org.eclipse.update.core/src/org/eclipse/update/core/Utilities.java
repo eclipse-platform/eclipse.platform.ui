@@ -160,9 +160,14 @@ public class Utilities {
 	}
 
 	public static CoreException newCoreException(String s, Throwable e) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
 		return new CoreException(new Status(IStatus.ERROR,id,0,s,e)); //$NON-NLS-1$
 	}
 	
+	public static void logException(String s, Throwable e) {
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
+		IStatus status = new Status(IStatus.ERROR,id,0,s,e);
+		UpdateManagerPlugin.getPlugin().getLog().log(status);
+	}	
 
 }

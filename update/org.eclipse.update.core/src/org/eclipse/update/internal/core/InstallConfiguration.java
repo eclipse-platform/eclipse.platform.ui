@@ -12,6 +12,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.model.*;
@@ -25,11 +26,14 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 
 	private ListenersList listeners = new ListenersList();
 
+	/**
+	 * default constructor. 
+	 */
 	public InstallConfiguration() {
 	}
 
 	/**
-	 * default constructor. Create
+	 * default constructor. 
 	 */
 	public InstallConfiguration(URL newLocation, String label) throws MalformedURLException {
 		setLocationURLString(newLocation.toExternalForm());
@@ -38,7 +42,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		resolve(newLocation, null);
 	}
 
-	/*
+	/**
 	 * copy constructor
 	 */
 	public InstallConfiguration(IInstallConfiguration config, URL newLocation, String label) throws MalformedURLException {
@@ -80,7 +84,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (!isCurrent() && isReadOnly())
 			return;
 
-		//Start UOW ?
+		//FIXME: Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_INSTALL);
 		activity.setLabel(site.getSite().getURL().toExternalForm());
 		activity.setDate(new Date());
@@ -97,22 +101,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		this.addActivityModel((ConfigurationActivityModel) activity);
 	}
 
-	/**
-	 * add multiple sites in one activity
-	 */
-	public void setConfigurationSites(IConfiguredSite[] site) {
-		if (!isCurrent() && isReadOnly())
-			return;
-
-		if (site == null)
-			return;
-
-		for (int index = 0; index < site.length; index++) {
-			addConfiguredSite(site[index]);
-		}
-
-	}
-
+	
 	/**
 	 * 
 	 */
@@ -134,7 +123,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		}
 	}
 
-	/*
+	/**
 	 * @see IInstallConfiguration#addInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
 	 */
 	public void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener) {
@@ -142,7 +131,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			listeners.add(listener);
 		}
 	}
-	/*
+	
+	/**
 	 * @see IInstallConfiguration#removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener)
 	 */
 	public void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener) {
@@ -150,7 +140,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			listeners.remove(listener);
 		}
 	}
-	/*
+	
+	/**
 	 * @see IInstallConfiguration#export(File)
 	 */
 	public void export(File exportFile) throws CoreException {
@@ -165,6 +156,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			throw new CoreException(status);
 		}
 	}
+	
 	/**
 	 * Deletes the configuration from its URL/location
 	 */
@@ -176,8 +168,10 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			UpdateManagerUtils.removeFromFileSystem(file);
 		}
 	}
+	
 	/**
 	 * Saves the configuration into its URL/location
+	 * and changes the platform configuration
 	 */
 	public void save(boolean isTransient) throws CoreException {
 
@@ -188,25 +182,26 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		IPlatformConfiguration runtimeConfiguration = BootLoader.getCurrentPlatformConfiguration();
 		ConfiguredSiteModel[] configurationSites = getConfigurationSitesModel();
 
-		for (int i = 0; i < configurationSites.length; i++) {
-			IConfiguredSite element = (IConfiguredSite) configurationSites[i];
-			ConfigurationPolicy configurationPolicy = ((ConfiguredSite) element).getConfigurationPolicy();
+		// clean configured Entries
+		IPlatformConfiguration.IFeatureEntry[] configuredFeatureEntries = runtimeConfiguration.getConfiguredFeatureEntries();
+		for (int i = 0; i < configuredFeatureEntries.length; i++) {
+			runtimeConfiguration.unconfigureFeatureEntry(configuredFeatureEntries[i]);
+		}
 
-			// obtain the list of plugins
-			ConfiguredSite cSite = ((ConfiguredSite) element);
-			String[] pluginPath = configurationPolicy.getPluginPath(element.getSite(), cSite.getPreviousPluginPath());
+		// Write the plugin path
+		for (int i = 0; i < configurationSites.length; i++) {
+			ConfiguredSite cSite = ((ConfiguredSite) configurationSites[i]);
+			ConfigurationPolicy configurationPolicy = cSite.getConfigurationPolicy();
+			String[] pluginPath = configurationPolicy.getPluginPath(cSite.getSite(), cSite.getPreviousPluginPath());
 
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(), pluginPath);
 
-			// determine the URL to check 
 			URL urlToCheck = null;
-			ConfiguredSiteModel configSiteModel = null;
 			try {
-				configSiteModel = (ConfiguredSiteModel) element;
-				urlToCheck = new URL(configSiteModel.getPlatformURLString());
+				urlToCheck = new URL(cSite.getPlatformURLString());
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToCreateURL",configSiteModel.getPlatformURLString()), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToCreateURL",cSite.getPlatformURLString()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			} catch (ClassCastException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -223,6 +218,25 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToFindConfiguredSite",urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm()), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
+			
+			// write the primary features
+			IFeatureReference[] configuredFeaturesRef = configurationPolicy.getConfiguredFeatures();
+			for (int j = 0; j < configuredFeaturesRef.length; j++) {
+				IFeature feature = configuredFeaturesRef[j].getFeature();
+				if (feature.isPrimary()){
+					String id = feature.getVersionedIdentifier().getIdentifier();
+					String version = feature.getVersionedIdentifier().getVersion().toString();
+					String application = feature.getApplication();
+					URL url = feature.getURL();
+					IPlatformConfiguration.IFeatureEntry featureEntry = runtimeConfiguration.createFeatureEntry(id,version,application,url);
+					runtimeConfiguration.configureFeatureEntry(featureEntry);
+				}
+			}
+			
+			
+			// write the platform 
+			
+					
 		}
 
 		try {
@@ -246,7 +260,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			export(file);
 		}
 	}
-	/*
+	
+	/**
 	 * @see IWritable#write(int, PrintWriter)
 	 */
 	public void write(int indent, PrintWriter w) {
@@ -280,13 +295,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// end
 		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
 	/**
 	 * reverts this configuration to the match the new one
-	 * 
 	 * remove any site that are in the current but not in the old state
-	 * 
 	 * replace all the config sites of the current state with the old one
-	 * 
 	 * for all the sites left in the current state, calculate the revert
 	 * 
 	 */
@@ -335,14 +348,16 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			}
 		}
 	}
-	/*
-	* @see IAdaptable#getAdapter(Class)
-	*/
+	
+	
+	/**
+	 * @see IAdaptable#getAdapter(Class)
+	 */
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see IInstallConfiguration#getActivities()
 	 */
 	public IActivity[] getActivities() {

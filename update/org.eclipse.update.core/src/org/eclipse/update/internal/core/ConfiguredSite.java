@@ -158,6 +158,7 @@ public class ConfiguredSite
 		IVerificationListener verificationListener,
 		IProgressMonitor monitor)
 		throws CoreException {
+
 		if (!isUpdateable()) {
 			String id =
 				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -189,7 +190,7 @@ public class ConfiguredSite
 		}
 
 		IFeatureReference installedFeature;
-		//Start UOW ?
+		//FIXME: Start UOW ?
 		ConfigurationActivity activity =
 			new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
 		activity.setLabel(feature.getVersionedIdentifier().toString());
@@ -207,16 +208,16 @@ public class ConfiguredSite
 				((IConfiguredSiteChangedListener) siteListeners[i]).featureInstalled(
 					installedFeature.getFeature());
 			}
+
+			// check if this is a primary feature
+
 		} catch (CoreException e) {
 			activity.setStatus(IActivity.STATUS_NOK);
 			throw e;
 		} finally {
-			(
-				(InstallConfiguration) SiteManager
-					.getLocalSite()
-					.getCurrentConfiguration())
-					.addActivityModel(
-				(ConfigurationActivityModel) activity);
+			IInstallConfiguration current =
+				SiteManager.getLocalSite().getCurrentConfiguration();
+			((InstallConfiguration) current).addActivityModel(activity);
 		}
 
 		configure(installedFeature.getFeature(), false /*callInstallHandler*/
@@ -271,15 +272,17 @@ public class ConfiguredSite
 						((IFeatureReference) referenceToRemove).getFeature();
 					String featureLabel =
 						(featureToRemove == null) ? null : featureToRemove.getLabel();
-					throw Utilities.newCoreException(
-						Policy.bind("ConfiguredSite.UnableToRemoveConfiguredFeature" //$NON-NLS-1$
-							,featureLabel),
-						null);
+					throw Utilities
+						.newCoreException(Policy.bind("ConfiguredSite.UnableToRemoveConfiguredFeature"
+					//$NON-NLS-1$
+					, featureLabel), null);
 				}
 			} else {
-				throw Utilities.newCoreException(
-					Policy.bind("ConfiguredSite.UnableToFindFeature", feature.getURL().toString()), //$NON-NLS-1$
-					null);
+				throw Utilities
+					.newCoreException(
+						Policy.bind("ConfiguredSite.UnableToFindFeature", feature.getURL().toString()),
+				//$NON-NLS-1$
+				null);
 
 			}
 
@@ -364,7 +367,7 @@ public class ConfiguredSite
 		}
 		if (unconfLen > 0) {
 			System.arraycopy(unconfiguredFeatures, 0, result, confLen, unconfLen);
-		}		
+		}
 
 		return result;
 	}
