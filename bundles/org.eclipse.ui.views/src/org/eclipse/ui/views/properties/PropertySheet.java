@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
