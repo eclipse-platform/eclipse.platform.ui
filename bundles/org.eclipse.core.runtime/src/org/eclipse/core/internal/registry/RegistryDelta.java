@@ -14,16 +14,15 @@ import java.util.*;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 
-/*
- * Basic implementation for now...
- * Aggregates extension deltas related to extension points declared by a specific host.
+/**
+ * The extension deltas are grouped by namespace. There is one registry delta by namespace.
  */
 public class RegistryDelta {
-	private Set extensionDeltas = new HashSet();
-	private String hostName;
-
-	RegistryDelta(String hostName) {
-		this.hostName = hostName;
+	private Set extensionDeltas = new HashSet(); //the extension deltas (each element indicate the type of the delta)
+	private IObjectManager objectManager;	//The object manager from which all the objects contained in the deltas will be found.
+	
+	RegistryDelta() {
+		//Nothing to do
 	}
 
 	public int getExtensionDeltasCount() {
@@ -31,7 +30,7 @@ public class RegistryDelta {
 	}
 
 	public IExtensionDelta[] getExtensionDeltas() {
-		return (IExtensionDelta[]) extensionDeltas.toArray(new IExtensionDelta[extensionDeltas.size()]);
+		return (IExtensionDelta[]) extensionDeltas.toArray(new ExtensionDelta[extensionDeltas.size()]);
 	}
 
 	public IExtensionDelta[] getExtensionDeltas(String extensionPoint) {
@@ -60,10 +59,19 @@ public class RegistryDelta {
 
 	void addExtensionDelta(IExtensionDelta extensionDelta) {
 		this.extensionDeltas.add(extensionDelta);
+		((ExtensionDelta) extensionDelta).setContainingDelta(this);
 	}
 
 	public String toString() {
-		return "\n\tHost " + hostName + ": " + extensionDeltas; //$NON-NLS-1$//$NON-NLS-2$
+		return "\n\tHost " +  ": " + extensionDeltas; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	void setObjectManager(IObjectManager objectManager) {
+		this.objectManager = objectManager;
+		//TODO May want to add into the existing one here... if it is possible to have batching 
+	}
+	
+	IObjectManager getObjectManager() {
+		return objectManager;
+	}
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import java.util.*;
+import java.util.Hashtable;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
@@ -19,20 +19,46 @@ import org.osgi.framework.Bundle;
 /**
  * An object which represents the user-defined contents of an extension
  * in a plug-in manifest.
- * <p>
- * This class may be instantiated, or further subclassed.
- * </p>
  */
+public class ConfigurationElement extends RegistryObject {
+	static final ConfigurationElement[] EMPTY_ARRAY = new ConfigurationElement[0];
+	static final int PLUGIN_ERROR = 1;
 
-public class ConfigurationElement extends NestedRegistryModelObject implements IConfigurationElement {
-	int PLUGIN_ERROR = 1;
+	//The id of the parent element. It can be a configuration element or an extension
+	int parentId;
+	byte parentType; //This value is only interesting when running from cache.
 
-	// DTD properties (included in plug-in manifest)
-	private String value = null;
-	private ConfigurationProperty[] properties = null;
-	private IConfigurationElement[] children = null;
+	//Store the properties and the value of the configuration element.
+	//The format is the following: 
+	//	[p1, v1, p2, v2, configurationElementValue]
+	//If the array size is even, there is no "configurationElementValue (ie getValue returns null)".
+	//The properties and their values are alternated (v1 is the value of p1). 
+	private String[] propertiesAndValue;
 
-	public Object createExecutableExtension(String attributeName) throws CoreException {
+	//The name of the configuration element
+	private String name;
+
+	//The bundle from which classes will be loaded. It is never a fragment
+	//This value can be null when the element is loaded from disk and the bundle has been uninstalled.
+	//This happens when the configuration is obtained from a delta containing removed extension.
+	private Bundle contributingBundle;
+
+	ConfigurationElement() {
+		//Nothing to do
+	}
+
+	ConfigurationElement(int self, Bundle bundle, String name, String[] propertiesAndValue, int[] children, int extraDataOffset, int parent, byte parentType) {
+		setObjectId(self);
+		contributingBundle = bundle;
+		this.name = name;
+		this.propertiesAndValue = propertiesAndValue;
+		setRawChildren(children);
+		this.extraDataOffset = extraDataOffset;
+		parentId = parent;
+		this.parentType = parentType;
+	}
+
+	Object createExecutableExtension(String attributeName) throws CoreException {
 		String prop = null;
 		String executable;
 		String pluginName = null;
@@ -54,9 +80,9 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 
 		if (prop == null) {
 			// property not defined, try as a child element
-			IConfigurationElement[] exec;
-			IConfigurationElement[] parms;
-			IConfigurationElement element;
+			ConfigurationElement[] exec;
+			ConfigurationElement[] parms;
+			ConfigurationElement element;
 			Hashtable initParms;
 			String pname;
 
@@ -66,7 +92,7 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 				pluginName = element.getAttribute("plugin"); //$NON-NLS-1$
 				className = element.getAttribute("class"); //$NON-NLS-1$
 				parms = element.getChildren("parameter"); //$NON-NLS-1$
-				if (parms != null) {
+				if (parms.length != 0) {
 					initParms = new Hashtable(parms.length + 1);
 					for (i = 0; i < parms.length; i++) {
 						pname = parms[i].getAttribute("name"); //$NON-NLS-1$
@@ -106,25 +132,29 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 			String message = Policy.bind("plugin.extDefNoClass", attributeName); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, PLUGIN_ERROR, message, null); //$NON-NLS-1$ 
 			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status); //$NON-NLS-1$
-
 			throw new CoreException(status);
 		}
 
-		return createExecutableExtension(InternalPlatform.getDefault().getBundle(getDeclaringExtension().getNamespace()), pluginName, className, initData, this, attributeName);
+		return createExecutableExtension(pluginName, className, initData, this, attributeName);
 	}
 
-	Object createExecutableExtension(Bundle bundle, String pluginName, String className, Object initData, IConfigurationElement cfig, String propertyName) throws CoreException {
-		String id = bundle.getSymbolicName(); // this plugin id
-		// check if we need to delegate to some other plugin
+	private Object createExecutableExtension(String pluginName, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
+		if(contributingBundle==null) {
+			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidHandleException("registry.staleHandle"));  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+		}
+		String id = contributingBundle.getSymbolicName(); // this plugin id check if we need to delegate to some other plugin
 		if (pluginName != null && !pluginName.equals("") && !pluginName.equals(id)) { //$NON-NLS-1$
 			Bundle otherBundle = null;
 			otherBundle = InternalPlatform.getDefault().getBundle(pluginName);
 			return createExecutableExtension(otherBundle, className, initData, cfig, propertyName);
 		}
-		return createExecutableExtension(bundle, className, initData, cfig, propertyName);
+		return createExecutableExtension(contributingBundle, className, initData, cfig, propertyName);
 	}
 
-	public Object createExecutableExtension(Bundle bundle, String className, Object initData, IConfigurationElement cfig, String propertyName) throws CoreException {
+	private Object createExecutableExtension(Bundle bundle, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
+		if(contributingBundle==null) {
+			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidHandleException("registry.staleHandle"));  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+		}
 		// load the requested class from this plugin
 		Class classInstance = null;
 		try {
@@ -147,7 +177,8 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 		if (result instanceof IExecutableExtension) {
 			try {
 				// make the call even if the initialization string is null
-				((IExecutableExtension) result).setInitializationData(cfig, propertyName, initData);
+				//TODO Need to change here the access to the registry manager
+				((IExecutableExtension) result).setInitializationData(new ConfigurationElementHandle(((ExtensionRegistry)InternalPlatform.getDefault().getRegistry()).getObjectManager(),cfig.getObjectId()), propertyName, initData);
 			} catch (CoreException ce) {
 				// user code threw exception
 				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(ce.getStatus());
@@ -166,128 +197,114 @@ public class ConfigurationElement extends NestedRegistryModelObject implements I
 		throw new CoreException(status);
 	}
 
-	/**
-	 * Returns the extension in which this configuration element is declared.
-	 * If this element is a top-level child of an extension, the returned value
-	 * is equivalent to <code>getParent</code>.
-	 *
-	 * @return the extension in which this configuration element is declared
-	 *  or <code>null</code>
-	 */
-	public Extension getParentExtension() {
-		Object p = getParent();
-		while (p != null && p instanceof ConfigurationElement)
-			p = ((ConfigurationElement) p).getParent();
-		return (Extension) p;
-	}
-
-	public IExtension getDeclaringExtension() {
-		return getParentExtension();
-	}
-
-	/**
-	 * Returns the properties associated with this element.
-	 *
-	 * @return the properties associated with this element
-	 *  or <code>null</code>
-	 */
-	public ConfigurationProperty[] getProperties() {
-		return properties;
-	}
-
-	/**
-	 * Returns the value of this element.
-	 * 
-	 * @return the value of this element or <code>null</code>
-	 */
-	public String getValue() {
+	String getValue() {
 		return getValueAsIs();
 	}
 
-	public String getValueAsIs() {
-		return value;
-	}
-
-	/**
-	 * Returns this element's sub-elements.
-	 *
-	 * @return the sub-elements of this element or <code>null</code>
-	 */
-	public IConfigurationElement[] getChildren() {
-		return children == null ? new IConfigurationElement[0] : children;
-	}
-
-	public IConfigurationElement[] getChildren(String name) {
-		IConfigurationElement[] list = getChildren();
-		if (list == null)
-			return new IConfigurationElement[0];
-		List children = new ArrayList();
-		for (int i = 0; i < list.length; i++) {
-			IConfigurationElement element = list[i];
-			if (name.equals(element.getName()))
-				children.add(list[i]);
-		}
-		return (IConfigurationElement[]) children.toArray(new IConfigurationElement[children.size()]);
-	}
-
-	public String getAttribute(String name) {
-		return getAttributeAsIs(name);
-	}
-
-	public String getAttributeAsIs(String name) {
-		ConfigurationProperty[] list = getProperties();
-		if (list == null)
-			return null;
-		for (int i = 0; i < list.length; i++)
-			if (name.equals(list[i].getName()))
-				return list[i].getValue();
+	String getValueAsIs() {
+		if (propertiesAndValue.length != 0 && propertiesAndValue.length % 2 == 1)
+			return propertiesAndValue[propertiesAndValue.length - 1];
 		return null;
 	}
 
-	public String[] getAttributeNames() {
-		ConfigurationProperty[] list = getProperties();
-		if (list == null)
-			return new String[0];
-		String[] result = new String[list.length];
-		for (int i = 0; i < list.length; i++)
-			result[i] = list[i].getName();
+	String getAttribute(String attrName) {
+		return getAttributeAsIs(attrName);
+	}
+
+	String getAttributeAsIs(String attrName) {
+		if (propertiesAndValue.length <= 1)
+			return null;
+		int size = propertiesAndValue.length - (propertiesAndValue.length % 2);
+		for (int i = 0; i < size; i += 2) {
+			if (propertiesAndValue[i].equals(attrName))
+				return propertiesAndValue[i + 1];
+		}
+		return null;
+	}
+
+	String[] getAttributeNames() {
+		if (propertiesAndValue.length <= 1)
+			return RegistryObjectManager.EMPTY_STRING_ARRAY;
+
+		int size = propertiesAndValue.length / 2;
+		String[] result = new String[size];
+		for (int i = 0; i < size; i++) {
+			result[i] = propertiesAndValue[i * 2];
+		}
 		return result;
 	}
 
-	/**
-	 * Sets the properties associated with this element. 
-	 *
-	 * @param value the properties to associate with this element.  May be <code>null</code>.
-	 */
-	public void setProperties(ConfigurationProperty[] value) {
-		properties = value;
+	void setProperties(String[] value) {
+		propertiesAndValue = value;
 	}
 
-	/**
-	 * Sets configuration elements contained by this element
-	 *
-	 * @param value the configuration elements to be associated with this element.  
-	 *		May be <code>null</code>.
-	 */
-	public void setChildren(IConfigurationElement[] value) {
-		children = value;
+	String[] getPropertiesAndValue() {
+		return propertiesAndValue;
 	}
 
-	/**
-	 * Sets the value of this element.  
-	 * 
-	 * @param value the new value of this element.  May be <code>null</code>.
-	 */
-	public void setValue(String value) {
-		this.value = value;
+	void setValue(String value) {
+		if (propertiesAndValue.length == 0) {
+			propertiesAndValue = new String[] {value};
+			return;
+		}
+		if (propertiesAndValue.length % 2 == 1) {
+			propertiesAndValue[propertiesAndValue.length - 1] = value;
+			return;
+		}
+		String[] newPropertiesAndValue = new String[propertiesAndValue.length + 1];
+		System.arraycopy(propertiesAndValue, 0, newPropertiesAndValue, 0, propertiesAndValue.length);
+		newPropertiesAndValue[propertiesAndValue.length] = value;
+		propertiesAndValue = newPropertiesAndValue;
 	}
 
-	/**
-	 * Optimization to replace a non-localized key with its localized value.  Avoids having
-	 * to access resource bundles for further lookups.
-	 */
-	public void setLocalizedValue(String value) {
-		this.value = value;
-		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);
+	void setContributingBundle(Bundle b) {
+		contributingBundle = b;
+	}
+
+	Bundle getContributingBundle() {
+		return contributingBundle;
+	}
+
+	ConfigurationElement[] getChildren(String childrenName) {
+		if (getRawChildren().length == 0)
+			return ConfigurationElement.EMPTY_ARRAY;
+
+		ConfigurationElement[] result = new ConfigurationElement[1]; //Most of the time there is only one match
+		int idx = 0;
+		RegistryObjectManager objectManager = ((ExtensionRegistry)InternalPlatform.getDefault().getRegistry()).getObjectManager(); //TODO To change
+		for (int i = 0; i < children.length; i++) {
+			ConfigurationElement toTest = (ConfigurationElement) objectManager.getObject(children[i], extraDataOffset == -1 ? RegistryObjectManager.CONFIGURATION_ELEMENT : RegistryObjectManager.THIRDLEVEL_CONFIGURATION_ELEMENT);
+			if (toTest.name.equals(childrenName)) {
+				if (idx != 0) {
+					ConfigurationElement[] copy = new ConfigurationElement[result.length + 1];
+					System.arraycopy(result, 0, copy, 0, result.length);
+					result = copy;
+				}
+				result[idx++] = toTest;
+			}
+		}
+		if (idx == 0)
+			result = ConfigurationElement.EMPTY_ARRAY;
+		return result;
+	}
+
+	void setParentId(int objectId) {
+		parentId = objectId;
+	}
+
+	String getName() {
+		return name;
+	}
+
+	void setName(String name) {
+		this.name = name;
+	}
+
+	void setParentType(byte type) {
+		parentType = type;
+	}
+	
+	String getNamespace() {
+		return contributingBundle == null ? null : contributingBundle.getSymbolicName();
 	}
 }

@@ -516,7 +516,7 @@ public abstract class Plugin implements BundleActivator {
 	 * org.eclipse.core.runtime.compatibility plug-in.
 	 */
 	public void shutdown() throws CoreException {
-		if (CompatibilityHelper.getCompatibility() == null)
+		if (CompatibilityHelper.initializeCompatibility() == null)
 			return;
 		Throwable exception = null;
 		Method m;
@@ -656,7 +656,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated Marked as deprecated to suppress deprecation warnings.
 	 */
 	private void initializeDescriptor(String symbolicName) {
-		if (CompatibilityHelper.getCompatibility() == null)
+		if (CompatibilityHelper.initializeCompatibility() == null)
 			return;
 		
 		//This associate a descriptor to any real bundle that uses this to start

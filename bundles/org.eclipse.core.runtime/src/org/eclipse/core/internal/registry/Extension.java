@@ -10,156 +10,111 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.internal.runtime.*;
-import org.eclipse.core.runtime.*;
+import java.lang.ref.SoftReference;
+import org.eclipse.core.internal.runtime.CompatibilityHelper;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 /**
- * An object which represents the user-defined extension in a 
- * plug-in manifest.  
- * <p>
- * This class may be instantiated, or further subclassed.
- * </p>
+ * An object which represents the user-defined extension in a plug-in manifest.  
  */
-public class Extension extends NestedRegistryModelObject implements IExtension {
+public class Extension extends RegistryObject {
+	public static final Extension[] EMPTY_ARRAY = new Extension[0];
+	
+	//Extension simple identifier
+	private String simpleId;
+	//The namespace for the extension. For fragments the namespace is the namespace of the host bundle. 
+	private String namespace;
+	
+	//	Place holder for the label and  the extension point. It contains either a String[] or a SoftReference to a String[].
+	//The array layout is [label, extension point name]
+	private Object extraInformation;
+	private static final byte LABEL = 0;	//The human readable name of the extension
+	private static final byte XPT_NAME = 1; // The fully qualified name of the extension point to which this extension is attached to
+	private static final int EXTRA_SIZE = 2;
+	
+	Extension() {
+		//nothing to do
+	}
+	
+	Extension(int self, String simpleId, String namespace, int[] children, int extraData) {
+		setObjectId(self);
+		this.simpleId = simpleId;
+		setRawChildren(children);
+		this.extraDataOffset = extraData;
+		this.namespace = namespace;
+	}
 
-	// DTD properties (included in plug-in manifest)
-	private String extensionPoint;
-	private String id;
-	protected Object elements;
-	// this extension's elements data offset in the registry cache
-	protected int subElementsCacheOffset;
-	// is this extension already fully loaded?
-	protected boolean fullyLoaded = true;
+	String getExtensionPointIdentifier() {
+		return getExtraData()[XPT_NAME];
+	}
 
-	/**
-	 * Two Extensions are equal if they have the same Id
-	 * and target the same extension point.
-	 */
-	public boolean equals(Object object) {
-		if (object instanceof Extension) {
-			Extension em = (Extension) object;
-			return (id == em.id) && (extensionPoint == em.extensionPoint);
+	String getSimpleIdentifier() {
+		return simpleId;
+	}
+
+	String getUniqueIdentifier() {
+		return simpleId == null ? null : this.getNamespace() + '.' + simpleId;
+	}
+
+	void setExtensionPointIdentifier(String value) {
+		ensureExtraInformationType();
+		((String[]) extraInformation)[XPT_NAME] = value;
+	}
+
+	void setSimpleIdentifier(String value) {
+		simpleId = value;
+	}
+
+	private String[] getExtraData() {
+		//The extension has been created by parsing, or does not have any extra data 
+		if (extraDataOffset == -1) {
+			if (extraInformation != null)
+				return (String[]) extraInformation;
+			return null;
 		}
-		return false;
-	}
 
-	/**
-	 * Returns the extension point with which this extension is associated.
-	 *
-	 * @return the extension point with which this extension is associated
-	 *  or <code>null</code>
-	 */
-	public String getExtensionPointIdentifier() {
-		return extensionPoint;
-	}
-
-	/**
-	 * Returns the simple identifier of this extension, or <code>null</code>
-	 * if this extension does not have an identifier.
-	 * This identifier is specified in the plug-in manifest as a non-empty
-	 * string containing no period characters (<code>'.'</code>) and 
-	 * must be unique within the defining plug-in.
-	 *
-	 * @return the simple identifier of the extension (e.g. <code>"main"</code>)
-	 *  or <code>null</code>
-	 */
-	public String getSimpleIdentifier() {
-		return id;
-	}
-
-	public String getUniqueIdentifier() {
-		return id == null ? null : this.getParentIdentifier() + "." + id; //$NON-NLS-1$
-	}
-
-	public String getParentIdentifier() {
-		return getNamespace();
-	}
-
-	public String getNamespace() {
-		Namespace parent = (Namespace) this.getParent();
-		return parent.isFragment() ? parent.getHostIdentifier() : parent.getName();
-	}
-
-	public IConfigurationElement[] getConfigurationElements() {
-		// synchronization is needed to avoid two threads trying to load the same 
-		// extension at the same time (see bug 36659) 
-		synchronized (this) {
-			// maybe it was lazily loaded
-			if (!fullyLoaded) {
-				fullyLoaded = true;
-				RegistryCacheReader reader = getRegistry().getCacheReader();
-				if (reader != null)
-					elements = reader.loadConfigurationElements(this, subElementsCacheOffset);
-			}
-			if (elements == null)
-				elements = new IConfigurationElement[0];
+		//The extension has been loaded from the cache. 
+		String[] result = null;
+		if (extraInformation == null || (result = ((extraInformation instanceof SoftReference) ?  (String[]) ((SoftReference) extraInformation).get() : (String[]) extraInformation)) == null) {
+			result = new TableReader().loadExtensionExtraData(extraDataOffset);
+			extraInformation = new SoftReference(result);
 		}
-		return (IConfigurationElement[]) elements;
+		return result;
 	}
-
-	/**
-	 * Set the extension point with which this extension is associated.
-	 *	May be <code>null</code>. 
-	 */
-	public void setExtensionPointIdentifier(String value) {
-		extensionPoint = value;
-	}
-
-	/**
-	 * Sets the simple identifier of this extension, or <code>null</code>
-	 * if this extension does not have an identifier.
-	 * This identifier is specified in the plug-in manifest as a non-empty
-	 * string containing no period characters (<code>'.'</code>) and 
-	 * must be unique within the defining plug-in.
-	 *
-	 * @param value the simple identifier of the extension (e.g. <code>"main"</code>).
-	 *		May be <code>null</code>.
-	 */
-	public void setSimpleIdentifier(String value) {
-		id = value;
-	}
-
-	/**
-	 * Sets the configuration element children of this extension.
-	 *
-	 * @param value the configuration elements in this extension.  
-	 *		May be <code>null</code>.
-	 */
-	public void setSubElements(IConfigurationElement[] value) {
-		elements = value;
-	}
-
-	public String getLabel() {
-		String s = getName();
+	
+	String getLabel() {
+		String s = getExtraData()[LABEL];
 		if (s == null)
 			return ""; //$NON-NLS-1$
 		return s;
 	}
 
+	void setLabel(String value) {
+		ensureExtraInformationType();
+		((String[]) extraInformation)[LABEL] = value;
+	}
+	
+	String getNamespace() {
+		return namespace;
+	}
+
+	void setNamespace(String value) {
+		namespace = value;
+	}
+	
 	public String toString() {
 		return getUniqueIdentifier() + " -> " + getExtensionPointIdentifier(); //$NON-NLS-1$
-	}
-
-	void setSubElementsCacheOffset(int value) {
-		subElementsCacheOffset = value;
-	}
-
-	public boolean isFullyLoaded() {
-		return fullyLoaded;
-	}
-
-	public void setFullyLoaded(boolean value) {
-		fullyLoaded = value;
 	}
 
 	/**
 	 * @deprecated
 	 */
-	public IPluginDescriptor getDeclaringPluginDescriptor() {
-		IPluginDescriptor result = CompatibilityHelper.getPluginDescriptor(((Namespace) getParent()).getName());
+	org.eclipse.core.runtime.IPluginDescriptor getDeclaringPluginDescriptor() {
+		org.eclipse.core.runtime.IPluginDescriptor result = CompatibilityHelper.getPluginDescriptor(getNamespace());
 		if (result == null) {
-			Bundle underlyingBundle = Platform.getBundle(((Namespace) getParent()).getName());
+			Bundle underlyingBundle = Platform.getBundle(getNamespace());
 			if (underlyingBundle != null) {
 				Bundle[] hosts = Platform.getHosts(underlyingBundle);
 				if (hosts != null)
@@ -167,20 +122,19 @@ public class Extension extends NestedRegistryModelObject implements IExtension {
 			}
 		}
 		if (CompatibilityHelper.DEBUG && result == null)
-			Policy.debug("Could not obtain plug-in descriptor for bundle " + ((Namespace) getParent()).getName()); //$NON-NLS-1$
+			Policy.debug("Could not obtain plug-in descriptor for bundle " + getNamespace()); //$NON-NLS-1$
 		return result;
 	}
 
-	public String getExtensionPointUniqueIdentifier() {
-		return getExtensionPointIdentifier();
-	}
-
 	/**
-	 * Optimization to replace a non-localized key with its localized value.  Avoids having
-	 * to access resource bundles for further lookups.
+	 * At the end of this method, extra information will be a string[]
 	 */
-	public void setLocalizedName(String value) {
-		name = value;
-		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);
+	private void ensureExtraInformationType() {
+		if (extraInformation instanceof SoftReference) {
+			extraInformation = ((SoftReference) extraInformation).get();
+		}
+		if (extraInformation == null) {
+			extraInformation = new String[EXTRA_SIZE];
+		}
 	}
 }

@@ -14,14 +14,26 @@ import org.eclipse.core.runtime.*;
 
 public class ExtensionDelta implements IExtensionDelta {
 	private int kind;
-	private IExtension extension;
-	private IExtensionPoint extensionPoint;
+	private int extension;
+	private int extensionPoint;
+	private RegistryDelta containingDelta;
 
-	public IExtensionPoint getExtensionPoint() {
+	void setContainingDelta(RegistryDelta containingDelta) {
+		this.containingDelta = containingDelta;
+	}
+	int getExtensionId() {
+		return extension;
+	}
+	
+	int getExtensionPointId() {
 		return extensionPoint;
 	}
+	
+	public IExtensionPoint getExtensionPoint() {
+		return new ExtensionPointHandle(containingDelta.getObjectManager(), extensionPoint);
+	}
 
-	public void setExtensionPoint(IExtensionPoint extensionPoint) {
+	public void setExtensionPoint(int extensionPoint) {
 		this.extensionPoint = extensionPoint;
 	}
 
@@ -30,10 +42,10 @@ public class ExtensionDelta implements IExtensionDelta {
 	}
 
 	public IExtension getExtension() {
-		return extension;
+		return new ExtensionHandle(containingDelta.getObjectManager(), extension);
 	}
 
-	public void setExtension(IExtension extension) {
+	public void setExtension(int extension) {
 		this.extension = extension;
 	}
 
@@ -42,7 +54,7 @@ public class ExtensionDelta implements IExtensionDelta {
 	}
 
 	public String toString() {
-		return "\n\t\t" + this.extension.getExtensionPointUniqueIdentifier() + " - " + this.extension.getNamespace() + '.' + extension.getSimpleIdentifier() + " (" + getKindString(this.getKind()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$		
+		return "\n\t\t" + getExtensionPoint().getUniqueIdentifier() + " - " + getExtension().getNamespace() + '.' + getExtension().getSimpleIdentifier() + " (" + getKindString(this.getKind()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$		
 	}
 
 	public static String getKindString(int kind) {

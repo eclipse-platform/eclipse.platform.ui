@@ -57,6 +57,7 @@ public class ReadWriteMonitor {
 					// ignore
 				}
 			}
+//			System.out.println(this + "lockowner:" + Thread.currentThread()); //$NON-NLS-1$
 			writeLockowner = Thread.currentThread();
 		}
 		status--;
@@ -80,6 +81,7 @@ public class ReadWriteMonitor {
 		if (writeLockowner != Thread.currentThread())
 			throw new IllegalStateException("Current owner is " + writeLockowner); //$NON-NLS-1$
 		if (++status == 0) {
+//			System.out.println(this + "exitWrite:" + Thread.currentThread());
 			writeLockowner = null;
 			notifyAll();
 		}
@@ -87,6 +89,7 @@ public class ReadWriteMonitor {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
+		buffer.append(this.hashCode());
 		if (status == 0) {
 			buffer.append("Monitor idle "); //$NON-NLS-1$
 		} else if (status < 0) {

@@ -209,6 +209,7 @@ public interface IExtensionRegistry {
 	 * @return all namespaces known to this registry
 	 * @since 3.0 
 	 */
+	//TODO This needs to be clarified.
 	public String[] getNamespaces();
 
 	/** 

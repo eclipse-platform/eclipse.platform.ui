@@ -224,4 +224,16 @@ public interface IConfigurationElement {
 	 * @return the untranslated text value of this configuration element or <code>null</code>
 	 */
 	public String getValueAsIs();
+	
+	/**
+	 * Returns the namespace for this configuration element. This value can be used
+	 * in various global facilities to discover this configuration element's provider.
+	 * <p>
+	 * 
+	 * @return the namespace for this configuration element
+	 * @see Platform#getBundle(String)
+	 * @see IExtensionRegistry
+	 * @since 3.1
+	 */
+	public String getNamespace();
 }

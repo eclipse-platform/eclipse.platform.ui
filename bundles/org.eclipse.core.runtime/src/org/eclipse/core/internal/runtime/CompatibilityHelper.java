@@ -27,7 +27,7 @@ public class CompatibilityHelper {
 	public static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$
 	public static Bundle compatibility = null;
 
-	public static Bundle getCompatibility() {
+	public static Bundle initializeCompatibility() {
 		if (compatibility == null)
 			compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(PI_RUNTIME_COMPATIBILITY);
 		return compatibility;
@@ -35,7 +35,7 @@ public class CompatibilityHelper {
 
 	public static void setPlugin(IPluginDescriptor descriptor, Plugin plugin) {
 		//Here we use reflection so the runtime code can run without the compatibility plugin
-		if (getCompatibility() == null)
+		if (initializeCompatibility() == null)
 			throw new IllegalStateException();
 
 		try {
@@ -48,7 +48,7 @@ public class CompatibilityHelper {
 
 	public static IPluginDescriptor getPluginDescriptor(String pluginId) {
 		//Here we use reflection so the runtime code can run without the compatibility
-		Bundle compatibility = getCompatibility();
+		initializeCompatibility();
 		if (compatibility == null)
 			throw new IllegalStateException();
 
@@ -69,7 +69,7 @@ public class CompatibilityHelper {
 	}
 
 	public static void setActive(IPluginDescriptor descriptor) {
-		Bundle compatibility = getCompatibility();
+		initializeCompatibility();
 		if (compatibility == null)
 			throw new IllegalStateException();
 
@@ -82,7 +82,7 @@ public class CompatibilityHelper {
 	}
 
 	public static boolean hasPluginObject(IPluginDescriptor descriptor) {
-		Bundle compatibility = getCompatibility();
+		initializeCompatibility();
 		if (compatibility == null)
 			throw new IllegalStateException();
 

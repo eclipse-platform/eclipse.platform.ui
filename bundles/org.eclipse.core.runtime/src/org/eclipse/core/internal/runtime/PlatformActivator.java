@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Hashtable;
 import java.util.Locale;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.internal.registry.*;
+import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
-import org.eclipse.osgi.service.datalocation.FileManager;
-import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
 import org.eclipse.osgi.service.systembundle.EntryLocator;
@@ -42,13 +38,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private static final String NL_PROP_EXT = ".properties"; //$NON-NLS-1$
 
 	private static BundleContext context;
-	private EclipseBundleListener pluginBundleListener;
 	private ServiceReference environmentServiceReference;
 	private ServiceReference urlServiceReference;
 	private ServiceReference logServiceReference;
 	private ServiceReference packageAdminReference;
 	private ServiceRegistration entryLocatorRegistration;
-	private long registryStamp;
 
 	public static BundleContext getContext() {
 		return context;
@@ -83,101 +77,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.registerService(URLStreamHandlerService.class.getName(), new PlatformURLHandler(), properties);
 	}
 
-	private void startRegistry(BundleContext runtimeContext) {
-		boolean fromCache = true;
-		ExtensionRegistry registry = null;
-		if (!"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_CACHE))) { //$NON-NLS-1$
-			// Try to read the registry from the cache first. If that fails, create a new registry
-			MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, ExtensionsParser.PARSE_PROBLEM, "Registry cache problems", null); //$NON-NLS-1$
-
-			long start = 0;
-			if (InternalPlatform.DEBUG)
-				start = System.currentTimeMillis();
-
-			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
-			File cacheFile = null;
-			try {
-				cacheFile = InternalPlatform.getDefault().getRuntimeFileManager().lookup(".registry", false); //$NON-NLS-1$
-			} catch (IOException e) {
-				//Ignore the exception. The registry will be rebuilt from the xml files.
-			}
-			if (cacheFile == null || !cacheFile.isFile()) {
-				Location currentLocation = Platform.getConfigurationLocation();
-				Location parentLocation = null;
-				if (currentLocation != null && (parentLocation = currentLocation.getParentLocation()) != null) {
-					try {
-						FileManager fileManagerShared = new FileManager(new File(parentLocation.getURL().getFile() + '/' + Platform.PI_RUNTIME), "none"); //$NON-NLS-1$
-						fileManagerShared.open(false);
-						cacheFile = fileManagerShared.lookup(".registry", false);
-					} catch (IOException e) {
-						//Ignore the exception. The registry will be rebuilt from the xml files.
-					}
-				}
-			}
-			if (cacheFile != null && cacheFile.isFile()) {
-				registryStamp = computeRegistryStamp(); //$NON-NLS-1$
-				boolean flushable = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_REGISTRY_FLUSHING)); //$NON-NLS-1$
-				registry = new RegistryCacheReader(cacheFile, problems, lazyLoading, flushable).loadCache(registryStamp);
-			}
-			if (InternalPlatform.DEBUG && registry != null)
-				System.out.println("Reading registry cache: " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
-
-			if (InternalPlatform.DEBUG_REGISTRY) {
-				if (registry == null)
-					System.out.println("Reloading registry from manifest files..."); //$NON-NLS-1$
-				else
-					System.out.println("Using registry cache " + (lazyLoading ? "with" : "without") + " lazy element loading..."); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
-			}
-			// TODO log any problems that occurred in loading the cache.
-			if (!problems.isOK())
-				System.out.println(problems);
-		}
-		if (registry == null) {
-			fromCache = false;
-			registry = new ExtensionRegistry();
-		}
-		// need to set the registry in InternalPlatform before calling any code that may rely on it
-		InternalPlatform.getDefault().setExtensionRegistry(registry);
-
-		// register a listener to catch new bundle installations/resolutions.
-		pluginBundleListener = new EclipseBundleListener(registry);
-		runtimeContext.addBundleListener(pluginBundleListener);
-
-		// populate the registry with all the currently installed bundles.
-		// There is a small window here while processBundles is being
-		// called where the pluginBundleListener may receive a BundleEvent 
-		// to add/remove a bundle from the registry.  This is ok since
-		// the registry is a synchronized object and will not add the
-		// same bundle twice.
-		if (!fromCache)
-			pluginBundleListener.processBundles(runtimeContext.getBundles());
-
-		runtimeContext.registerService(IExtensionRegistry.class.getName(), registry, new Hashtable()); //$NON-NLS-1$
+	private void startRegistry(BundleContext runtimeContext) {		
+		InternalPlatform.getDefault().setExtensionRegistry(new ExtensionRegistry());	
 	}
 
-	private long computeRegistryStamp() {
-		// If the check config prop is false or not set then exit
-		if (!"true".equalsIgnoreCase(System.getProperty(InternalPlatform.PROP_CHECK_CONFIG))) //$NON-NLS-1$  
-			return 0;
-		Bundle[] allBundles = context.getBundles();
-		long result = 0;
-		for (int i = 0; i < allBundles.length; i++) {
-			URL pluginManifest = allBundles[i].getEntry("plugin.xml"); //$NON-NLS-1$
-			if (pluginManifest == null)
-				pluginManifest = allBundles[i].getEntry("fragment.xml"); //$NON-NLS-1$
-			if (pluginManifest == null)
-				continue;
-			try {
-				URLConnection connection = pluginManifest.openConnection();
-				result ^= connection.getLastModified() + allBundles[i].getBundleId();
-			} catch (IOException e) {
-				return 0;
-			}
-		}
-		return result;
-	}
-
-	public void stop(BundleContext runtimeContext) throws IOException {
+	public void stop(BundleContext runtimeContext) {
 		// Stop the registry
 		stopRegistry(runtimeContext);
 		// unregister the EntryLocator to prevent the Framework from calling it
@@ -193,30 +97,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	}
 
 	private void stopRegistry(BundleContext runtimeContext) {
-		runtimeContext.removeBundleListener(this.pluginBundleListener);
 		ExtensionRegistry registry = (ExtensionRegistry) InternalPlatform.getDefault().getRegistry();
 		if (registry == null)
 			return;
-		try {
-			if (!registry.isDirty())
-				return;
-			FileManager manager = InternalPlatform.getDefault().getRuntimeFileManager();
-			File cacheFile = null;
-			try {
-				manager.lookup(".registry", true); //$NON-NLS-1$
-				cacheFile = File.createTempFile("registry", ".new", manager.getBase()); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (IOException e) {
-				return; //Ignore the exception since we can recompute the cache
-			}
-			new RegistryCacheWriter(cacheFile).saveCache(registry, computeRegistryStamp());
-			try {
-				manager.update(new String[] {".registry"}, new String[] {cacheFile.getName()}); //$NON-NLS-1$
-			} catch (IOException e) {
-				//Ignore the exception since we can recompute the cache
-			}
-		} finally {
-			InternalPlatform.getDefault().setExtensionRegistry(null);
-		}
+		registry.stop();
+		InternalPlatform.getDefault().setExtensionRegistry(null);
 	}
 
 	private void acquireInfoService() throws Exception {
@@ -350,11 +235,11 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			public URL getProperties(String basename, Locale locale) {
 				basename = basename.replace('.', '/');
 				IPath propertiesPath = new Path(NL_SYSTEM_BUNDLE + '/' + basename + '_' + locale.getLanguage() + '_' + locale.getCountry() + NL_PROP_EXT);
-				URL result = Platform.find(context.getBundle(), propertiesPath);
+				URL result = Platform.find(getContext().getBundle(), propertiesPath);
 				if (result != null)
 					return result;
 				propertiesPath = new Path(NL_SYSTEM_BUNDLE + '/' + basename + '_' + locale.getLanguage() + NL_PROP_EXT);
-				return Platform.find(context.getBundle(), propertiesPath);
+				return Platform.find(getContext().getBundle(), propertiesPath);
 			}
 		};
 		entryLocatorRegistration = context.registerService(EntryLocator.class.getName(), systemResources, null);
