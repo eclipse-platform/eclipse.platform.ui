@@ -108,8 +108,7 @@ public class AnimationItem {
 				if (manager.isAnimated())
 					arg0.result = ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
 				else
-					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus");//$NON-NLS-1$
-				//$NON-NLS-1$
+					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
 			}
 		});
 		imageCanvas.addHelpListener(new HelpListener() {
@@ -179,19 +178,25 @@ public class AnimationItem {
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				synchronized (windowLock) {
+					//Clear the window if the parent is not visibile
+					if (!window.getShell().isVisible() || getControl().isDisposed())
+						floatingWindow = null;
+					
 					if (floatingWindow == null)
 						return Status.CANCEL_STATUS;
-					else {
-						//Do not bother if the control is disposed
-						if (getControl().isDisposed()) {
-							floatingWindow = null;
-							return Status.CANCEL_STATUS;
-						} else {
-							floatingWindow.open();
-							return Status.OK_STATUS;
-						}
-					}
+					floatingWindow.open();
+					return Status.OK_STATUS;
 				}
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
+			 */
+			public boolean shouldRun() {
+				if (AnimationManager.getInstance().isAnimated())
+					return true;
+				//If there is no window than do not run
+				floatingWindow = null;
+				return false;
 			}
 		};
 		floatingJob.setSystem(true);
