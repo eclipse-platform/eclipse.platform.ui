@@ -34,6 +34,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -50,6 +51,7 @@ import org.eclipse.swt.printing.Printer;
 import org.eclipse.swt.printing.PrinterData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -1007,6 +1009,118 @@ public class TextViewer extends Viewer implements
 			return reverse ? new Point(offset - length, -length) : new Point(offset, length);
 		}
 	};
+
+	/**
+	 * Internal cursor listener i.e. aggregation 
+	 * of mouse and key listener.
+	 * 
+	 * @since 3.0
+	 */
+	private class CursorListener implements KeyListener, MouseListener {
+
+		/**
+		 * Installs this cursor listener.
+		 */
+		private void install() {
+			if (fTextWidget != null && !fTextWidget.isDisposed()) {
+				fTextWidget.addKeyListener(this);
+				fTextWidget.addMouseListener(this);
+			}
+		}
+
+		/**
+		 * Uninstalls this cursor listener.
+		 */
+		private void uninstall() {
+			if (fTextWidget != null && !fTextWidget.isDisposed()) {
+				fTextWidget.removeKeyListener(this);
+				fTextWidget.removeMouseListener(this);
+			}
+		}
+
+		/*
+		 * @see TextViewer#getEmptySelectionChangedEventDelay()
+		 */
+		private final int EMPTY_SELECTION_CHANGED_EVENT_DELAY= getEmptySelectionChangedEventDelay(); 
+
+		/** Cursor event count. */
+		private final int[] fCursorEventCount= new int[1];
+
+		/*
+		 * @see KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+		 */
+		public void keyPressed(KeyEvent event) {
+			if (fTextWidget.getSelectionCount() == 0)
+				sendEmptySelectionChangedEvent();
+		}
+			
+		/*
+		 * @see KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
+		 */
+		public void keyReleased(KeyEvent e) {
+		}
+			
+		/*
+		 * @see MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent e) {
+		}
+			
+		/*
+		 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDown(MouseEvent e) {
+		}
+			
+		/*
+		 * @see MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseUp(MouseEvent event) {
+			if (fTextWidget.getSelectionCount() == 0)
+				sendEmptySelectionChangedEvent();
+		}
+
+		/**
+		 * Sends out an empty selection changed event as soon
+		 * as there are no new events coming in for a given
+		 * time.
+		 * 
+		 * @see TextViewer#EMPTY_SELECTION_EVENT_INTERVAL
+		 */
+		private void sendEmptySelectionChangedEvent() {
+			if (getDisplay() == null)
+				return; 		
+
+			fCursorEventCount[0]++;
+			getDisplay().timerExec(EMPTY_SELECTION_CHANGED_EVENT_DELAY, new Runnable() {
+				final int id= fCursorEventCount[0];
+				public void run() {
+					if (id == fCursorEventCount[0]) {
+						// Check again becaues this is executed later
+						if (getDisplay() != null)
+							selectionChanged(fTextWidget.getCaretOffset(), 0);
+					}
+				}
+			});
+		}
+
+		/**
+		 * Get the text widget's display.
+		 * 
+		 * @returns 	the display or <code>null</code> if the display cannot
+		 * 				be retrieved or if the display is disposed
+		 */
+		private Display getDisplay() {
+			if (fTextWidget == null || fTextWidget.isDisposed())
+				return null;
+			
+			Display display= fTextWidget.getDisplay();
+			if (display != null && display.isDisposed())
+				return null;
+			
+			return display;
+		}
+	}
 		
 	/** 
 	 * Identifies the scrollbars as originators of a view port change.
@@ -1033,7 +1147,7 @@ public class TextViewer extends Viewer implements
 	 */
 	protected static final int INTERNAL=		6;
 		
-	/** Internal name of the position category used selection preservation during shift */
+	/** Internal name of the position category used selection preservation during shift. */
 	protected static final String SHIFTING= "__TextViewer_shifting"; //$NON-NLS-1$
 
 	/** The viewer's text widget */
@@ -1069,6 +1183,8 @@ public class TextViewer extends Viewer implements
 	private DocumentCommand fDocumentCommand= new DocumentCommand();
 	/** The viewer's find/replace target */
 	private IFindReplaceTarget fFindReplaceTarget;
+	/** Cursor listener */
+	private CursorListener fCursorListener;
 	/** 
 	 * The viewer widget token keeper
 	 * @since 2.0
@@ -1241,6 +1357,9 @@ public class TextViewer extends Viewer implements
 				selectionChanged(event.x, event.y - event.x);
 			}
 		});
+
+		fCursorListener= new CursorListener();
+		fCursorListener.install();
 		
 		initializeViewportUpdate();
 	}
@@ -1356,6 +1475,11 @@ public class TextViewer extends Viewer implements
 			fSlaveDocumentManager= null;
 		}
 		
+		if (fCursorListener != null) {
+			fCursorListener.uninstall();
+			fCursorListener= null;
+		}
+		
 		fVisibleDocument= null;
 		fDocument= null;
 		fScroller= null;
@@ -1369,6 +1493,23 @@ public class TextViewer extends Viewer implements
 	 */
 	public StyledText getTextWidget() {
 		return fTextWidget;
+	}
+
+	/**
+	 * The delay in milliseconds before an empty selection
+	 * changed event is sent by the cursor listener.
+	 * <p>
+	 * Note: The return value is used to initialize the cursor
+	 * listener. To return a non-constant value has no effect.
+	 * <p>
+	 * The same value (<code>500</code>) is used in the <code>OpenStrategy</code>.
+	 * </p>
+	 * @see CursorListener
+	 * @see org.eclipse.jface.util.OpenStrategy#TIME
+	 * @since 3.0
+	 */
+	protected int getEmptySelectionChangedEventDelay() {
+		return 500;
 	}
 			
 	/*
