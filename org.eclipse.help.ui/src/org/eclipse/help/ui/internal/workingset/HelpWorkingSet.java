@@ -79,6 +79,8 @@ public class HelpWorkingSet extends org.eclipse.ui.internal.WorkingSet implement
 		AdaptableHelpResource[] res = new AdaptableHelpResource[elements.length];
 		System.arraycopy(elements, 0,res,0, elements.length);
 		workingSet.setElements(res);
+
+		HelpSystem.getWorkingSetManager().workingSetChanged(workingSet);
 	}
 
 	/**
@@ -86,6 +88,8 @@ public class HelpWorkingSet extends org.eclipse.ui.internal.WorkingSet implement
 	 */
 	public void setName(String name) {
 		workingSet.setName(name);
+		
+		HelpSystem.getWorkingSetManager().workingSetChanged(workingSet);
 	}
 
 	/**
