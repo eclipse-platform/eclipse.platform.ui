@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -83,6 +84,8 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
+import org.eclipse.team.internal.ui.jobs.JobBusyCursor;
+import org.eclipse.team.internal.ui.jobs.JobStatusHandler;
 import org.eclipse.team.internal.ui.sync.compare.SyncInfoCompareInput;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IActionDelegate;
@@ -136,6 +139,7 @@ public class HistoryView extends ViewPart {
 	private IPreferenceStore settings;
 	
 	private FetchLogEntriesJob fetchLogEntriesJob;
+	private JobBusyCursor jobBusyCursor;
 	
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView"; //$NON-NLS-1$
 	
@@ -153,6 +157,7 @@ public class HistoryView extends ViewPart {
 		public void partOpened(IWorkbenchPart part) {
 		}
 	};
+	private QualifiedName HISTORY_VIEW_JOB_TYPE = new QualifiedName(VIEW_ID, "jobs"); //$NON-NLS-1$
 
 	private class FetchLogEntriesJob extends Job {
 		public ICVSRemoteFile remoteFile;
@@ -407,6 +412,9 @@ public class HistoryView extends ViewPart {
 		WorkbenchHelp.setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
 		initDragAndDrop();
 		
+		//	Create the busy cursor with no control to start with (createViewer will set it)
+		 jobBusyCursor = new JobBusyCursor(parent, HISTORY_VIEW_JOB_TYPE);
+		 
 		// add listener for editor page activation - this is to support editor linking
 		getSite().getPage().addPartListener(partListener);		
 	}
@@ -443,11 +451,11 @@ public class HistoryView extends ViewPart {
 					try {
 						fetchLogEntriesJob.join();
 					} catch (InterruptedException e) {
-						//
+						CVSUIPlugin.log(new CVSException(Policy.bind("HistoryView.errorFetchingEntries", remoteFile.getName()), e)); //$NON-NLS-1$
 					}
 				}
 				fetchLogEntriesJob.setRemoteFile(remoteFile);
-				fetchLogEntriesJob.schedule();
+				JobStatusHandler.schedule(fetchLogEntriesJob, HISTORY_VIEW_JOB_TYPE);
 				return new Object[0];
 			}
 			public void dispose() {
@@ -544,6 +552,7 @@ public class HistoryView extends ViewPart {
 			versionImage = null;
 		}
 		getSite().getPage().removePartListener(partListener);
+		jobBusyCursor.dispose();
 	}	
 	/**
 	 * Returns the table viewer contained in this view.
