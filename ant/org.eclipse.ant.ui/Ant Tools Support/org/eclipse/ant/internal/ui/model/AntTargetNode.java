@@ -175,7 +175,11 @@ public class AntTargetNode extends AntElementNode {
             results.add(new Integer(getOffset() + nameOffset));
         }
         int dependsOffset= textToSearch.indexOf("depends"); //$NON-NLS-1$
+		while (dependsOffset > 0 && !Character.isWhitespace(textToSearch.charAt(dependsOffset - 1))) {
+			dependsOffset= textToSearch.indexOf("depends", dependsOffset + 1); //$NON-NLS-1$
+		}
         if (dependsOffset != -1) {
+			dependsOffset+= 7;
             int dependsOffsetEnd= textToSearch.indexOf('"', dependsOffset);
             dependsOffsetEnd= textToSearch.indexOf('"', dependsOffsetEnd+1);
             while(dependsOffset < dependsOffsetEnd) {
