@@ -78,6 +78,7 @@ public interface IPageLayout {
 
 	/**
 	 * The view id for the workbench's Problems View standard component.
+	 * @since 3.0
 	 */
 	public static String ID_PROBLEM_VIEW = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
 
