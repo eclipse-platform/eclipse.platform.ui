@@ -35,7 +35,7 @@ public class LocalFile extends LocalResource implements ICVSFile {
 	/**
 	 * Constants for file transfer transformations to the CVS server.
 	 */
-	protected static final String PLATFORM_NEWLINE = FileUtil.PLATFORM_NEWLINE;
+	protected static final String PLATFORM_NEWLINE = System.getProperty("line.separator");
 	protected static final String SERVER_NEWLINE = "\n";
 	
 	protected static final byte[] PLATFORM_NEWBYTE = PLATFORM_NEWLINE.getBytes();

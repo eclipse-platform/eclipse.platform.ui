@@ -6,14 +6,13 @@ package org.eclipse.team.internal.ccvs.core.commands;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.StringMatcher;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
 
 /**
  * A FileNameMatcher associates a String with a String pattern
@@ -87,7 +86,7 @@ public class FileNameMatcher {
 		if (!cvsignore.exists()) {
 			return new FileNameMatcher(new String[0]);			
 		} else {
-			return new FileNameMatcher(FileUtil.readLines(cvsignore));
+			return new FileNameMatcher(SyncFileUtil.readLines(cvsignore));
 		}
 	}	
 }
