@@ -10,7 +10,9 @@ import java.util.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
 /**
  * Concrete implementation of the IResourceDelta interface.  Each ResourceDelta
  * object represents changes that have occurred between two states of the
@@ -74,6 +76,29 @@ protected void checkForMarkerDeltas() {
 			}
 		}
 	}
+}
+/**
+ * @see IResourceDelta#findMember(IPath)
+ */
+public IResourceDelta findMember(IPath path) {
+	int segmentCount = path.segmentCount();
+	if (segmentCount == 0)
+		return this;
+		
+	//iterate over the path and find matching child delta
+	ResourceDelta current = this;
+	segments: for (int i = 0; i < segmentCount; i++) {
+		IResourceDelta[] currentChildren = current.children;
+		for (int j = 0, jmax = currentChildren.length; j < jmax; j++) {
+			if (currentChildren[j].getFullPath().lastSegment().equals(path.segment(i))) {
+				current = (ResourceDelta)currentChildren[j];
+				continue segments;
+			}
+		}
+		//matching child not found, return
+		return null;
+	}
+	return current;
 }
 /**
  * Delta information on moves and on marker deltas can only be computed after
@@ -153,6 +178,9 @@ public IResourceDelta[] getAffectedChildren(int mask) {
 		if ((children[i].getKind() & mask) != 0)
 			result[matching++] = children[i];
 	return result;
+}
+protected ResourceDeltaInfo getDeltaInfo() {
+	return deltaInfo;
 }
 /**
  * @see IResourceDelta#getFlags

@@ -192,15 +192,24 @@ public void setAttribute(String attributeName, int value) throws CoreException {
 public void setAttribute(String attributeName, Object value) throws CoreException {
 	Assert.isNotNull(attributeName);
 	Workspace workspace = getWorkspace();
+	MarkerManager manager = workspace.getMarkerManager();
 	try {
 		workspace.prepareOperation();
 		workspace.beginOperation(true);
-		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false ,true);
+		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false, true);
 		MarkerInfo markerInfo = (MarkerInfo)resourceInfo.getMarkers().get(id);
 		checkInfo(markerInfo);
+		
+		//only need to generate delta info if none already
+		boolean needDelta = !manager.hasDelta(resource.getFullPath(), id);
+		MarkerInfo oldInfo = needDelta ? (MarkerInfo)markerInfo.clone() : null;
 		markerInfo.setAttribute(attributeName, value);
-		resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
-		workspace.getMarkerManager().changedMarker(IResourceDelta.CHANGED, resource, resourceInfo, markerInfo);
+		if (manager.isPersistent(markerInfo))
+			resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+		if (needDelta) {
+			MarkerDelta delta = new MarkerDelta(IResourceDelta.CHANGED, resource, oldInfo);
+			manager.changedMarkers(resource, new MarkerDelta[] {delta});
+		}
 	} finally {
 		workspace.endOperation(false, null);
 	}
@@ -217,34 +226,54 @@ public void setAttribute(String attributeName, boolean value) throws CoreExcepti
 public void setAttributes(String[] attributeNames, Object[] values) throws CoreException {
 	Assert.isNotNull(attributeNames);
 	Assert.isNotNull(values);
+	Workspace workspace = getWorkspace();
+	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		getWorkspace().prepareOperation();
-		getWorkspace().beginOperation(true);
-		MarkerInfo info = getInfo();
-		checkInfo(info);
-		info.setAttributes(attributeNames, values);
-		((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
-		IMarkerDelta[] change = new IMarkerDelta[] { new MarkerDelta(IResourceDelta.CHANGED, resource, info)};
-		getWorkspace().getMarkerManager().changedMarkers(resource, change);
+		workspace.prepareOperation();
+		workspace.beginOperation(true);
+		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false, true);
+		MarkerInfo markerInfo = (MarkerInfo)resourceInfo.getMarkers().get(id);
+		checkInfo(markerInfo);
+		
+		//only need to generate delta info if none already
+		boolean needDelta = !manager.hasDelta(resource.getFullPath(), id);
+		MarkerInfo oldInfo = needDelta ? (MarkerInfo)markerInfo.clone() : null;
+		markerInfo.setAttributes(attributeNames, values);
+		if (manager.isPersistent(markerInfo))
+			resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+		if (needDelta) {
+			MarkerDelta delta = new MarkerDelta(IResourceDelta.CHANGED, resource, oldInfo);
+			manager.changedMarkers(resource, new MarkerDelta[] {delta});
+		}
 	} finally {
-		getWorkspace().endOperation(false, null);
+		workspace.endOperation(false, null);
 	}
 }
 /**
  * @see IMarker#setAttributes
  */
 public void setAttributes(Map values) throws CoreException {
+	Workspace workspace = getWorkspace();
+	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		getWorkspace().prepareOperation();
-		getWorkspace().beginOperation(true);
-		MarkerInfo info = getInfo();
-		checkInfo(info);
-		info.setAttributes(values);
-		((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
-		IMarkerDelta[] change = new IMarkerDelta[] { new MarkerDelta(IResourceDelta.CHANGED, resource, info)};
-		getWorkspace().getMarkerManager().changedMarkers(resource, change);
+		workspace.prepareOperation();
+		workspace.beginOperation(true);
+		ResourceInfo resourceInfo = ((Resource)resource).getResourceInfo(false, true);
+		MarkerInfo markerInfo = (MarkerInfo)resourceInfo.getMarkers().get(id);
+		checkInfo(markerInfo);
+		
+		//only need to generate delta info if none already
+		boolean needDelta = !manager.hasDelta(resource.getFullPath(), id);
+		MarkerInfo oldInfo = needDelta ? (MarkerInfo)markerInfo.clone() : null;
+		markerInfo.setAttributes(values);
+		if (manager.isPersistent(markerInfo))
+			resourceInfo.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+		if (needDelta) {
+			MarkerDelta delta = new MarkerDelta(IResourceDelta.CHANGED, resource, oldInfo);
+			manager.changedMarkers(resource, new MarkerDelta[] {delta});
+		}
 	} finally {
-		getWorkspace().endOperation(false, null);
+		workspace.endOperation(false, null);
 	}
 }
 void setId(int value) {

@@ -116,44 +116,7 @@ public String getType() {
 public boolean isSubtypeOf(String superType) {
 	return ((Workspace) getResource().getWorkspace()).getMarkerManager().getCache().isSubtype(getType(), superType);
 }
-/**
- * Merges a single marker change into the existing set of marker changes.
- * add + add = N/A
- * add + remove = nothing (no delta)
- * add + change = add
- * remove + add = N/A
- * remove + remove = N/A
- * remove + change = N/A
- * change + add = N/A
- * change + change = change  (note: info held onto by the marker delta should be that of the oldest change, and not replaced when composed)
- * change + remove = remove (note: info held onto by the marker delta should be that of the oldest change, and not replaced when changed to a remove)
- */
-protected static MarkerSet mergeSingle(MarkerSet oldChanges, int newKind, IResource resource, MarkerInfo newInfo) {
-	if (oldChanges == null) {
-		MarkerSet result = new MarkerSet(1);
-		result.add(new MarkerDelta(newKind, resource, newInfo));
-		return result;
-	}
-	MarkerDelta oldDelta = (MarkerDelta) oldChanges.get(newInfo.getId());
-	if (oldDelta == null) {
-		oldChanges.add(new MarkerDelta(newKind, resource, newInfo));
-		return oldChanges;
-	}
-	//this is a simplification of the big switch in MarkerDelta#merge
-	if (newKind == IResourceDelta.REMOVED) {
-		int oldKind = oldDelta.getKind();
-		if (oldKind == IResourceDelta.ADDED) {
-			// add + remove = nothing
-			// Remove the original ADD delta.
-			oldChanges.remove(oldDelta);
-		} else if (oldKind == IResourceDelta.CHANGED) {
-			// change + remove = remove
-			// Change the delta kind.
-			oldDelta.setKind(IResourceDelta.REMOVED);
-		}
-	}
-	return oldChanges;
-}
+
 /**
  * Merge two sets of marker changes.  Both sets must be on the same resource. Use the original set
  * of changes to store the result so we don't have to build a completely different set to return.

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.eclipse.core.internal.utils.Assert;
 
-public class MarkerInfo implements IMarkerSetElement {
+public class MarkerInfo implements IMarkerSetElement, Cloneable {
 
 	//
 	protected static final long UNDEFINED_ID = -1;
@@ -27,6 +27,20 @@ public Object getAttribute(String attributeName) {
 }
 public Map getAttributes() {
 	return getAttributes(true);
+}
+/**
+ * See Object#clone.
+ */
+public Object clone() {
+	try {
+		MarkerInfo copy = (MarkerInfo)super.clone();
+		//copy the attribute table contents
+		copy.setAttributes(getAttributes());
+		return copy;
+	} catch (CloneNotSupportedException e) {
+		//cannot happen because this class implements Cloneable
+		return null;
+	}
 }
 public Object[] getAttributes(String[] attributeNames) {
 	Object[] result = new Object[attributeNames.length];

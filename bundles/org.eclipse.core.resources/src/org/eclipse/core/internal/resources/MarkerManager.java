@@ -16,7 +16,14 @@ import java.util.*;
  * A marker manager stores and retrieves markers on resources in the workspace.
  */
 public class MarkerManager implements IManager {
-	protected Workspace workspace;
+	/**
+ * Returns true if the given marker is persistent, and false
+ * otherwise.
+ */
+public boolean isPersistent(MarkerInfo info) {
+	return cache.isPersistent(info.getType());
+}
+protected Workspace workspace;
 	protected MarkerTypeDefinitionCache cache = new MarkerTypeDefinitionCache();
 	protected Hashtable markerDeltas = null;
 	protected MarkerWriter writer = new MarkerWriter(this);
@@ -46,7 +53,8 @@ public void add(IResource resource, MarkerInfo[] newMarkers) throws CoreExceptio
 	info = workspace.getResourceInfo(resource.getFullPath(), false, true);
 	// set the M_MARKERS_SNAP_DIRTY flag to indicate that this
 	// resource's markers have changed since the last snapshot
-	info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+	if (isPersistent(newMarkers))
+		info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 	MarkerSet markers = info.getMarkers();
 	if (markers == null)
 		markers = new MarkerSet(newMarkers.length);
@@ -160,25 +168,7 @@ private void buildMarkers(IMarkerSetElement[] markers, IPath path, ArrayList lis
 		list.add(new Marker(resource, ((MarkerInfo) markers[i]).getId()));
 	}
 }
-/**
- * A marker has changed on a given resource. This is an optimized marker
- * merge for the common case of a single attribute change.
- */
-protected void changedMarker(int changeKind, IResource resource, ResourceInfo resourceInfo, MarkerInfo markerInfo) {
-	if (markerDeltas == null)
-		markerDeltas = new Hashtable(11);
-	IPath path = resource.getFullPath();
-	MarkerSet previousChanges = (MarkerSet) markerDeltas.get(path);
-	
-	MarkerSet result = MarkerDelta.mergeSingle(previousChanges, changeKind, resource, markerInfo);
-	if (result.size() == 0)
-		markerDeltas.remove(path);
-	else if(previousChanges != result)
-		markerDeltas.put(path, result);
-	changeId++;
-	if (resourceInfo != null)
-		resourceInfo.incrementMarkerGenerationCount();
-}
+
 /**
  * Markers have changed on the given resource.  Remember the changes for subsequent notification.
  */
@@ -248,8 +238,40 @@ public IMarker[] findMarkers(IResource target, final String type, final boolean 
 	}
 	return (IMarker[])result.toArray(new IMarker[result.size()]);
 }
-public boolean hasDeltas() {
-	return markerDeltas != null && !markerDeltas.isEmpty();
+/**
+ * Returns true if this manager has a marker delta record
+ * for the given marker id, and false otherwise.
+ */
+boolean hasDelta(IPath path, long id) {
+	if (markerDeltas == null)
+		return false;
+	MarkerSet set = (MarkerSet)markerDeltas.get(path);
+	if (set == null)
+		return false;
+	return set.get(id) != null;
+}
+/**
+ * Returns true if the given marker is persistent, and false
+ * otherwise.
+ */
+public boolean isPersistent(IMarker marker) {
+	try {
+		return cache.isPersistent(marker.getType());
+	} catch (CoreException e) {
+		//exception here means the marker doesn't exist, hence it's not persistent
+	}
+	return false;
+}
+/**
+ * Returns true if any of the given markers are persistent,
+ * and false if all are transient.
+ */
+public boolean isPersistent(MarkerInfo[] infos) {
+	for (int i = 0; i < infos.length; i++) {
+		if (cache.isPersistent(infos[i].getType()))
+			return true;
+	}
+	return false;
 }
 public MarkerTypeDefinitionCache getCache() {
 	return cache;
@@ -368,7 +390,8 @@ public void removeMarker(IResource resource, long id) {
 		info.setMarkers(null);
 	// if we actually did remove a marker, post a delta for the change.
 	if (markers.size() != size) {
-		info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
+		if (isPersistent(markerInfo))
+			info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 		IMarkerDelta[] change = new IMarkerDelta[] { new MarkerDelta(IResourceDelta.REMOVED, resource, markerInfo)};
 		changedMarkers(resource, change);
 	}
