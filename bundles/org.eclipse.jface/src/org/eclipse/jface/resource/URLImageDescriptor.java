@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 /**
  * An ImageDescriptor that gets its information from a URL.
@@ -47,6 +48,9 @@ public ImageData getImageData() {
 	if (in != null) {
 		try {
 			return new ImageData(in);
+		}
+		catch (SWTException e) {
+			return null;
 		}
 		finally {
 			try {
