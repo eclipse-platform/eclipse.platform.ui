@@ -12,7 +12,7 @@
 Project Natures</h1></center>
 <b><i>Identifier: </i></b>org.eclipse.core.resources.natures
 <p><b><i>Description:</i></b> The workspace supports the notion of project
-natures (or "natures" for short).&nbsp; A nature associates lifecycle behaviour
+natures (or "natures" for short).&nbsp; A nature associates lifecycle behavior
 with a project.&nbsp; Natures are installed on a per-project basis using
 the <tt>setDescription</tt> method defined on <tt>org.eclipse.core.resources.IProject.</tt>&nbsp;
 They are configured automatically when added to a project and deconfigured
@@ -23,10 +23,10 @@ nature implementation under a symbolic name that is then used from within
 the workspace to find and configure natures. The symbolic name is the id
 of the nature extension.&nbsp; When defining a nature extension, users
 are encouraged to include a human-readable value for the "<tt>name</tt>"
-attribute which indentifies their meaning and potentially may be presented
+attribute which identifies their meaning and potentially may be presented
 to users.
 <p>Natures can specify relationship constraints with other natures.&nbsp;
-The "one-of-nature" constraint species that at most one nature belonging
+The "one-of-nature" constraint specifies that at most one nature belonging
 to a given set can exist on a project at any given time.&nbsp; This enforces
 mutual exclusion between natures that are not compatible with each other.&nbsp;
 The "requires-nature" constraint specifies a dependency on another nature.&nbsp;
