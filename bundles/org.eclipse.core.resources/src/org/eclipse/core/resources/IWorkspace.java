@@ -1148,6 +1148,11 @@ public String[] sortNatureSet(String[] natureIds);
  * validator, this method returns a status with an <code>IResourceStatus.READ_ONLY_LOCAL</code> 
  * code if one of the files is read-only, and a status with an <code>IStatus.OK</code> code otherwise.
  * </p>
+ * <p>
+ * This method may be called from any thread.  If the UI context
+ * is used, it is the responsibility of the implementor of <code>IFileModificationValidator.validateEdit</code>
+ * to interact with the UI context in an appropriate thread.
+ * </p>
  * 
  * @param files the files that are to be modified; these files must all exist in the workspace
  * @param context the <code>org.eclipse.swt.widgets.Shell</code> that is to be used to
