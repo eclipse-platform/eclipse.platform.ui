@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -191,17 +190,15 @@ public class ExternalToolsUtil {
 	 * 
 	 * @param configuration launch configuration
 	 * @param context context used to expand variables
-	 * @param monitor progress monitor
 	 * @throws CoreException if an exception occurs while retrieving the resources
 	 */
-	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration) throws CoreException {
 		String scope = configuration.getAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String) null);
 		if (scope == null) {
 			return null;
 		}
 	
-		return RefreshTab.getRefreshResources(scope, monitor);
-	
+		return RefreshTab.getRefreshResources(scope);
 	}
 
 	/**

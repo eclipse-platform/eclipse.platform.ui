@@ -112,7 +112,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	private void doBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
-		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config, monitor);
+		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config);
 		if (resources != null && resources.length > 0) {
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];

@@ -46,7 +46,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -55,7 +54,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A launch configuration tab which allows the user to specify
@@ -289,7 +287,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			} else if (scope.startsWith("${resource:")) { //$NON-NLS-1$
 				fWorkingSetButton.setSelection(true);
 				try {
-					IResource[] resources = getRefreshResources(scope, null);
+					IResource[] resources = getRefreshResources(scope);
 					IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
 					fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.getString("RefreshTab.40"), resources);					 //$NON-NLS-1$
 				} catch (CoreException e) {
@@ -426,7 +424,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		String scope = getRefreshScope(configuration);
 		IResource[] resources= null;
 		if (scope != null) {
-			resources = getRefreshResources(scope, monitor);
+			resources = getRefreshResources(scope);
 		}
 		if (resources == null || resources.length == 0){
 			return;
@@ -466,11 +464,10 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * Returns a collection of resources referred to by a refresh scope attribute.
 	 * 
 	 * @param scope refresh scope attribute (<code>ATTR_REFRESH_SCOPE</code>)
-	 * @param monitor progress monitor
 	 * @return collection of resources referred to by the refresh scope attribute
 	 * @throws CoreException if unable to resolve a set of resources
 	 */
-	public static IResource[] getRefreshResources(String scope, IProgressMonitor monitor) throws CoreException {
+	public static IResource[] getRefreshResources(String scope) throws CoreException {
 		if (scope.startsWith("${resource:")) { //$NON-NLS-1$
 			// This is an old format that is replaced with 'working_set'
 			String pathString = scope.substring(11, scope.length() - 1);
@@ -519,9 +516,8 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * Restores a working set based on the XMLMemento represented within
-	 * the varValue.
+	 * the mementoString.
 	 * 
-	 * see bug 37143.
 	 * @param mementoString The string memento of the working set
 	 * @return the restored working set or <code>null</code> if problems occurred restoring the
 	 * working set.
@@ -539,27 +535,8 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			return null;
 		}
 
-		String factoryID = memento.getString(TAG_FACTORY_ID);
-
-		if (factoryID == null) {
-			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.2")); //$NON-NLS-1$
-			return null;
-		}
-		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
-		if (factory == null) {
-			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.3") + factoryID); //$NON-NLS-1$
-			return null;
-		}
-		IAdaptable adaptable = factory.createElement(memento);
-		if (adaptable == null) {
-			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.4") + factoryID); //$NON-NLS-1$
-		}
-		if ((adaptable instanceof IWorkingSet) == false) {
-			DebugUIPlugin.logErrorMessage(StringSubstitutionMessages.getString("RefreshTab.5") + factoryID); //$NON-NLS-1$
-			return null;
-		}
-			
-		return (IWorkingSet) adaptable;
+		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
+		return workingSetManager.createWorkingSet(memento);
 	}	
 	
 	/**
@@ -655,5 +632,4 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}
-
 }
