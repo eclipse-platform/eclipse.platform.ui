@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="Ant Editor Tests"/>
+    <classpathentry kind="src" path="/org.eclipse.ui.externaltools"/>
+    <classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
+    <classpathentry kind="output" path="bin"/>
+</classpath>
