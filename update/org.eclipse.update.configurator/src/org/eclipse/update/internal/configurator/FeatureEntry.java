@@ -41,6 +41,7 @@ public class FeatureEntry
 	private String pluginIdentifier;
 	private String url;
 	private String description;
+	private String licenseURL;
 	private ArrayList plugins;
 	private AboutInfo branding;
 	private SiteEntry site;
@@ -264,7 +265,8 @@ public class FeatureEntry
 					windowImagesURLs.append(',');
 			}
 			return windowImagesURLs.toString();
-		}
+		} else if (key.equals(LICENSE_HREF))
+			return getLicenseURL();
 		
 		return null;
 	}
@@ -314,5 +316,24 @@ public class FeatureEntry
 			Utils.log(e.getLocalizedMessage()); 
 		}
 		return bundle;
+	}
+	
+	public void setLicenseURL(String licenseURL) {
+		this.licenseURL = licenseURL;
+	}
+	
+	public String getLicenseURL() {
+		if (licenseURL == null)
+			return null;
+		String resolvedURL = Utils.getResourceString(getResourceBundle(), licenseURL);
+		if (resolvedURL.startsWith("http://"))
+			return resolvedURL;
+		else {
+			try {
+				return new URL(getSite().getResolvedURL(), getURL() + resolvedURL).toExternalForm();
+			} catch (MalformedURLException e) {
+				return resolvedURL;
+			}
+		}
 	}
 }

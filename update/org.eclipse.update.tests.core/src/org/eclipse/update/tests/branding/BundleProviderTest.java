@@ -34,6 +34,7 @@ public class BundleProviderTest extends UpdateManagerTestCase {
 						"id:" + bundleGroups[j].getIdentifier() + "\n" +
 						"provider:" + bundleGroups[j].getProviderName() + "\n" +
 						"version:" + bundleGroups[j].getVersion() + "\n" +
+						"license:" + bundleGroups[j].getProperty(IBundleGroupConstants.LICENSE_HREF) + "\n" +
 						"featureImage:" + bundleGroups[j].getProperty(IBundleGroupConstants.FEATURE_IMAGE) + "\n" +
 						"tips and tricks:" + bundleGroups[j].getProperty(IBundleGroupConstants.TIPS_AND_TRICKS_HREF) + "\n" +
 						"welcomePage:" + bundleGroups[j].getProperty(IBundleGroupConstants.WELCOME_PAGE) + "\n" +

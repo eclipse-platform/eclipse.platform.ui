@@ -85,8 +85,9 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 			processPlugin(attributes);
 		} else if ("description".equals(localName)){
 			isDescription = true;
+		} else if ("license".equals(localName)) {
+			processLicense(attributes);
 		}
-		
 	}
 
 	/*
@@ -116,12 +117,16 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 			plugin.setPluginIdentifier(id);
 			plugin.setPluginVersion(ver);
 			feature.addPlugin(plugin);
-
 			
 			Utils.
 				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	
 		}
 	}
+	
+	private void processLicense(Attributes attributes ){
+		feature.setLicenseURL(attributes.getValue("url"));
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ContentHandler#characters(char[], int, int)
 	 */
