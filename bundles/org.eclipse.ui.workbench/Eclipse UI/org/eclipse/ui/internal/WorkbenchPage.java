@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -74,9 +75,14 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.activities.ActivationServiceFactory;
+import org.eclipse.ui.activities.DisposedException;
+import org.eclipse.ui.activities.IActivationService;
+import org.eclipse.ui.activities.IActivationServiceEvent;
+import org.eclipse.ui.activities.IActivationServiceListener;
+import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -90,6 +96,7 @@ import org.eclipse.ui.part.MultiEditor;
  * A collection of views and editors in a workbench.
  */
 public class WorkbenchPage implements IWorkbenchPage {
+		
 	private WorkbenchWindow window;
 	private IAdaptable input;
 	private IWorkingSet workingSet;
@@ -353,7 +360,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		} 
 		
 	}
-
+	
 /**
  * Constructs a new page with a given perspective and input.
  *
@@ -383,6 +390,51 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 	super();
 	init(w, null, input);
 }
+
+
+
+
+private final IActivationService activationService = ActivationServiceFactory.getActivationService();
+private final HashSet activationServices = new HashSet();
+
+private final IActivationServiceListener activationServiceListener = new IActivationServiceListener() {
+	public void activationServiceChanged(IActivationServiceEvent activationServiceEvent) {
+		Set activeActivityIds = new HashSet();
+			
+		for (Iterator iterator = activationServices.iterator(); iterator.hasNext();) {
+			IActivationService activationService = (IActivationService) iterator.next();
+				
+			try {
+				activeActivityIds.addAll(activationService.getActiveActivityIds());					
+			} catch (DisposedException eDisposed) {
+				iterator.remove();
+			}
+		}
+		
+		try {
+			activationService.setActiveActivityIds(activeActivityIds);
+		} catch (DisposedException eDisposed) {			
+		}
+	}
+};
+
+public IActivationService getActivationService() {
+	IActivationService activationService = ActivationServiceFactory.getActivationService();
+	activationServices.add(activationService);	
+	activationService.addActivationServiceListener(activationServiceListener);
+	return activationService;	
+}
+
+public Set getActiveActivityIds() {
+	try {
+		return activationService.getActiveActivityIds();
+	} catch (DisposedException eDisposed) {
+		return Collections.EMPTY_SET;
+	}
+}
+
+
+
 
 private IActionService actionService;
 

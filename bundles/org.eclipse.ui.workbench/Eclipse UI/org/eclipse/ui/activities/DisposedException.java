@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.roles;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
- * Signals that an attempt was made to access the attributes of an undefined
+ * Signals that an attempt was made to access the attributes of an disposed
  * object.
  * </p>
  * <p>
@@ -25,22 +25,22 @@ package org.eclipse.ui.roles;
  * 
  * @since 3.0
  */
-public final class NotDefinedException extends Exception {
+public class DisposedException extends Exception {
 
 	/**
-	 * Constructs a <code>NotDefinedException</code> with no specified detail 
+	 * Constructs a <code>DisposedException</code> with no specified detail 
 	 * message. 
 	 */	
-	public NotDefinedException() {
+	public DisposedException() {
 	}
 
 	/**
-	 * Constructs a <code>NotDefinedException</code> with the specified detail 
+	 * Constructs a <code>DisposedException</code> with the specified detail 
 	 * message. 
 	 *
 	 * @param s	the detail message.
 	 */	
-	public NotDefinedException(String s) {
+	public DisposedException(String s) {
 		super(s);
 	}
 }

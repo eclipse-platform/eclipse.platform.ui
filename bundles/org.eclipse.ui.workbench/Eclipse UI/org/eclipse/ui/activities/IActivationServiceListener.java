@@ -13,9 +13,9 @@ package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IActivityServiceListener</code> can be used by clients 
+ * An instance of <code>IActivationServiceListener</code> can be used by clients 
  * to receive notification of changes to one or more instances of 
- * <code>IActivityService</code>.
+ * <code>IActivationService</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -25,19 +25,19 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IActivityService#addRoleManagerListener
- * @see IActivityService#removeRoleManagerListener
- * @see IActivityServiceEvent
+ * @see IActivationService#addRoleManagerListener
+ * @see IActivationService#removeRoleManagerListener
+ * @see IActivationServiceEvent
  */
-public interface IActivityServiceListener {
+public interface IActivationServiceListener {
 
 	/**
 	 * Notifies that one or more attributes of an instance of 
-	 * <code>IActivityService</code> have changed. Specific details are 
-	 * described in the <code>IActivityServiceEvent</code>.
+	 * <code>IActivationService</code> have changed. Specific details are 
+	 * described in the <code>IActivationServiceEvent</code>.
 	 *
-	 * @param activityServiceEvent the activity service event. Guaranteed not to 
+	 * @param activationServiceEvent the activity service event. Guaranteed not to 
 	 * 							   be <code>null</code>.
 	 */
-	void activityServiceChanged(IActivityServiceEvent activityServiceEvent);
+	void activationServiceChanged(IActivationServiceEvent activationServiceEvent);
 }

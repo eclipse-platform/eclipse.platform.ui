@@ -14,7 +14,7 @@ package org.eclipse.ui.activities;
 /**
  * <p>
  * Signals that an attempt was made to access the attributes of an undefined
- * activity.
+ * object.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -25,18 +25,18 @@ package org.eclipse.ui.activities;
  * 
  * @since 3.0
  */
-public class NotDefinedException extends Exception {
+public final class NotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>ActivityNotDefinedException</code> with no specified 
-	 * detail message. 
+	 * Constructs a <code>NotDefinedException</code> with no specified detail 
+	 * message. 
 	 */	
 	public NotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>ActivityNotDefinedException</code> with the specified 
-	 * detail message. 
+	 * Constructs a <code>NotDefinedException</code> with the specified detail 
+	 * message. 
 	 *
 	 * @param s	the detail message.
 	 */	

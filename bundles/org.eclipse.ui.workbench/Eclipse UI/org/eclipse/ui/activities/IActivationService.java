@@ -25,25 +25,31 @@ import java.util.Set;
  * </p>
  * 
  * @since 3.0
- * @see IActivityServiceListener
+ * @see IActivationServiceListener
  */
-public interface IActivityService {
+public interface IActivationService {
 
 	/**
-	 * Registers an instance of <code>IActivityServiceListener</code> to listen 
+	 * Registers an instance of <code>IActivationServiceListener</code> to listen 
 	 * for changes to attributes of this instance.
 	 *
-	 * @param activityServiceListener the instance of 
-	 *                                <code>IActivityServiceListener</code> to 
+	 * @param activationServiceListener the instance of 
+	 *                                <code>IActivationServiceListener</code> to 
 	 * 						          register. Must not be <code>null</code>. 
 	 *                                If an attempt is made to register an 
 	 *                                instance of 
-	 *                                <code>IActivityServiceListener</code> 
+	 *                                <code>IActivationServiceListener</code> 
 	 *                                which is already registered with this 
-	 *                                instance, no operation is performed.
+	 *                                instance, or if this instance is disposed,
+	 * 								  no operation is performed.
 	 */	
-	void addActivityServiceListener(IActivityServiceListener activityServiceListener);
-		
+	void addActivationServiceListener(IActivationServiceListener activationServiceListener);
+	
+	/**
+	 * TODO javadoc
+	 */
+	void dispose();	
+	
 	/**
 	 * <p>
 	 * Returns the set of identifiers to active activities.
@@ -57,9 +63,17 @@ public interface IActivityService {
 	 *         empty, but is guaranteed not to be <code>null</code>. If this set 
 	 *         is not empty, it is guaranteed to only contain instances of 
 	 *         <code>String</code>.
+	 * @throws DisposedException if this activity service has already been
+	 * 							 diposed.
 	 */	
-	Set getActiveActivityIds();
+	Set getActiveActivityIds()
+		throws DisposedException;
 
+	/**
+	 * TODO javadoc
+	 */
+	boolean isDisposed();
+	
 	/**
 	 * Sets the set of identifiers to active activities. 
 	 *
@@ -68,21 +82,25 @@ public interface IActivityService {
 	 *                          <code>null</code>. If this set is not empty, it 
 	 *                          must only contain instances of 
 	 *                          <code>String</code>.	
+	 * @throws DisposedException if this activity service has already been
+	 * 							 diposed.
 	 */
-	void setActiveActivityIds(Set activeActivityIds);
+	void setActiveActivityIds(Set activeActivityIds)
+		throws DisposedException;
 	
 	/**
-	 * Unregisters an instance of <code>IActivityServiceListener</code> 
+	 * Unregisters an instance of <code>IActivationServiceListener</code> 
 	 * listening for changes to attributes of this instance.
 	 *
-	 * @param activityServiceListener the instance of 
-	 *                                <code>IActivityServiceListener</code> to 
+	 * @param activationServiceListener the instance of 
+	 *                                <code>IActivationServiceListener</code> to 
 	 * 						          unregister. Must not be <code>null</code>. 
 	 *                                If an attempt is made to unregister an 
 	 *                                instance of 
-	 *                                <code>IActivityServiceListener</code> 
+	 *                                <code>IActivationServiceListener</code> 
 	 *                                which is not already registered with this 
-	 *                                instance, no operation is performed.
+	 *                                instance, or if this instance is disposed, 
+	 * 								  no operation is performed.
 	 */
-	void removeActivityServiceListener(IActivityServiceListener activityServiceListener);
+	void removeActivationServiceListener(IActivationServiceListener activationServiceListener);
 }

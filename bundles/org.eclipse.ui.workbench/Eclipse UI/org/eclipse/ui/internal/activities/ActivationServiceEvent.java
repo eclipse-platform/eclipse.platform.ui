@@ -11,27 +11,34 @@
 
 package org.eclipse.ui.internal.activities;
 
-import org.eclipse.ui.activities.IActivityService;
-import org.eclipse.ui.activities.IActivityServiceEvent;
+import org.eclipse.ui.activities.IActivationService;
+import org.eclipse.ui.activities.IActivationServiceEvent;
 
-final class ActivityServiceEvent implements IActivityServiceEvent {
+
+final class ActivationServiceEvent implements IActivationServiceEvent {
 
 	private boolean activeActivityIdsChanged;
-	private IActivityService activityService;
+	private IActivationService activationService;
+	private boolean disposed; 
 	
-	ActivityServiceEvent(IActivityService activityService, boolean activeActivityIdsChanged) {
-		if (activityService == null)
+	ActivationServiceEvent(IActivationService activationService, boolean activeActivityIdsChanged, boolean disposed) {
+		if (activationService == null)
 			throw new NullPointerException();
 		
 		this.activeActivityIdsChanged = activeActivityIdsChanged;
-		this.activityService = activityService;
+		this.activationService = activationService;
+		this.disposed = disposed;
 	}
 
-	public IActivityService getActivityService() {
-		return activityService;
+	public IActivationService getActivationService() {
+		return activationService;
 	}
 	
 	public boolean haveActiveActivityIdsChanged() {
 		return activeActivityIdsChanged;
+	}
+	
+	public boolean isDisposed() {
+		return disposed;
 	}
 }

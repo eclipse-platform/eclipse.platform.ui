@@ -13,8 +13,8 @@ package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IActivityServiceEvent</code> describes changes to an 
- * instance of <code>IActivityService</code>. 
+ * An instance of <code>IActivationServiceEvent</code> describes changes to an 
+ * instance of <code>IActivationService</code>. 
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -24,21 +24,26 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IActivityService
- * @see IActivityServiceListener#activityServiceChanged
+ * @see IActivationService
+ * @see IActivationServiceListener#activationServiceChanged
  */
-public interface IActivityServiceEvent {
+public interface IActivationServiceEvent {
 
 	/**
-	 * Returns the instance of <code>IActivityService</code> that has changed.
+	 * Returns the instance of <code>IActivationService</code> that has changed.
 	 *
-	 * @return the instance of <code>IActivityService</code> that has changed. 
+	 * @return the instance of <code>IActivationService</code> that has changed. 
 	 * 		   Guaranteed not to be <code>null</code>.
 	 */
-	IActivityService getActivityService();
+	IActivationService getActivationService();
 	
 	/**
 	 * TODO javadoc
 	 */		
-	boolean haveActiveActivityIdsChanged();	
+	boolean haveActiveActivityIdsChanged();
+	
+	/**
+	 * TODO javadoc
+	 */
+	boolean isDisposed();
 }
