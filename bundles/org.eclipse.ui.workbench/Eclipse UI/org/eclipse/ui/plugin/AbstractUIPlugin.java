@@ -16,8 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
@@ -40,6 +38,7 @@ import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * Abstract base class for plug-ins that integrate with the Eclipse platform UI.
@@ -813,30 +812,28 @@ public abstract class AbstractUIPlugin extends Plugin {
 		savePluginPreferences();
 	}
 
-	/**
-	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
-	 * method refreshes the plug-in actions.  Subclasses may extend this method,
-	 * but must send super first.
-	 * <p>
-	 * WARNING: Plug-ins may not be started in the UI thread.
-	 * The <code>startup()</code> method should not assume that its code runs in
-	 * the UI thread, otherwise SWT thread exceptions may occur on startup.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		refreshPluginActions();
 	}
-	/**
-	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
-	 * method saves this plug-in's preference and dialog stores and shuts down 
-	 * its image registry (if they are in use). Subclasses may extend this method,
-	 * but must send super first.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
-		saveDialogSettings();
-		savePreferenceStore();
-		preferenceStore = null;
-		imageRegistry = null;
+	public void stop(BundleContext context) throws Exception {
+		try {
+			saveDialogSettings();
+			savePreferenceStore();
+			preferenceStore = null;
+			imageRegistry = null;
+		   } 
+		finally {
+			super.stop(context);
+		}
 	}
 
 	/**
