@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.commands.ws.HandlerProxy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -216,14 +216,13 @@ final class Persistence {
      * @since 3.1
      */
     static final ActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition() {
-        final IPreferenceStore store = PlatformUI.getWorkbench()
-                .getPreferenceStore();
-        if (!store.contains(IPreferenceConstants.KEY_CONFIGURATION_ID)) {
+        final IPreferenceStore store = PlatformUI.getPreferenceStore();
+        if (!store.contains(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID)) {
             return null;
         }
 
         final String keyConfigurationId = store
-                .getString(IPreferenceConstants.KEY_CONFIGURATION_ID);
+                .getString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
         return new ActiveKeyConfigurationDefinition(keyConfigurationId, null);
     }
 
@@ -552,9 +551,8 @@ final class Persistence {
      */
     static final void writeActiveKeyConfigurationDefinition(
             final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
-        final IPreferenceStore store = PlatformUI.getWorkbench()
-                .getPreferenceStore();
-        store.setValue(IPreferenceConstants.KEY_CONFIGURATION_ID,
+        final IPreferenceStore store = PlatformUI.getPreferenceStore();
+        store.setValue(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID,
                 activeKeyConfigurationDefinition.getKeyConfigurationId());
     }
 
@@ -583,16 +581,16 @@ final class Persistence {
             Util.assertInstance(iterator.next(),
                     ActiveKeyConfigurationDefinition.class);
 
-        final IPreferenceStore store = PlatformUI.getWorkbench()
-                .getPreferenceStore();
+        final IPreferenceStore store = PlatformUI.getPreferenceStore();
         final String defaultConfig = store
-                .getDefaultString(IPreferenceConstants.KEY_CONFIGURATION_ID);
+                .getDefaultString(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
 
-		iterator = activeKeyConfigurationDefinitions.iterator();
+        iterator = activeKeyConfigurationDefinitions.iterator();
         while (iterator.hasNext()) {
             final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) iterator
                     .next();
-            final String currentConfig = activeKeyConfigurationDefinition.getKeyConfigurationId();
+            final String currentConfig = activeKeyConfigurationDefinition
+                    .getKeyConfigurationId();
             if ((defaultConfig == null) ? (currentConfig != null)
                     : (!defaultConfig.equals(currentConfig))) {
                 writeActiveKeyConfigurationDefinition(
@@ -600,7 +598,8 @@ final class Persistence {
                         activeKeyConfigurationDefinition);
                 writeActiveKeyConfigurationDefinition(activeKeyConfigurationDefinition);
             } else {
-                store.setToDefault(IPreferenceConstants.KEY_CONFIGURATION_ID);
+                store
+                        .setToDefault(IWorkbenchPreferenceConstants.KEY_CONFIGURATION_ID);
             }
         }
     }

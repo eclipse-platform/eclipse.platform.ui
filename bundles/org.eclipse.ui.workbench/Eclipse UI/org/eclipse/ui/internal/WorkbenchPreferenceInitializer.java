@@ -74,8 +74,6 @@ public class WorkbenchPreferenceInitializer extends
         store.setDefault(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB, 0);
         store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, true);
         store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
-        store.setDefault(IPreferenceConstants.KEY_CONFIGURATION_ID,
-                "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$
 
         //Option to show user jobs in a dialog
         store.setDefault(IPreferenceConstants.RUN_IN_BACKGROUND, false);

@@ -271,4 +271,18 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
      */
     public static final String ENABLE_ANIMATIONS = "ENABLE_ANIMATIONS"; //$NON-NLS-1$
+    
+    /**
+     * <p>
+     * Workbench preference id for the key configuration identifier to be
+     * treated as the default.
+     * </p>
+     * <p>
+     * The default value for this preference is
+     * <code>"org.eclipse.ui.defaultAcceleratorConfiguration"</code>.
+     * <p>
+     * 
+     * @since 3.1
+     */
+    public static final String KEY_CONFIGURATION_ID = "KEY_CONFIGURATION_ID"; //$NON-NLS-1$
 }
