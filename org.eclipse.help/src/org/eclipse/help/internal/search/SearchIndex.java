@@ -406,7 +406,7 @@ public class SearchIndex {
 		String indexPluginId =
 			HelpPlugin.getDefault().getPluginPreferences().getString(
 				"productIndex");
-		if (indexPluginId == null && indexPluginId.length() <= 0) {
+		if (indexPluginId == null || indexPluginId.length() <= 0) {
 			return;
 		}
 		InputStream zipIn =
