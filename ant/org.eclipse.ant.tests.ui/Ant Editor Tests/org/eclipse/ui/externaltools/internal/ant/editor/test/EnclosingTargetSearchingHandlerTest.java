@@ -63,7 +63,7 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
 	
     
     /**
-     * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
+     * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
     public void testParsingOfBuildFileWithoutTargetElement() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
@@ -105,7 +105,7 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
     
     
     /**
-     * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
+     * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
     public void testParsingOfBuildFileWithTargetElement() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
@@ -149,7 +149,7 @@ public class EnclosingTargetSearchingHandlerTest extends TestCase {
     }
     
     /**
-     * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
+     * Tests parsing an XML file with the use of our EnclosingTargetSearchingHandler.
      */
     public void testParsingOfEmptyBuildFile() throws SAXException, ParserConfigurationException, IOException {
         SAXParser tempParser = SAXParserFactory.newInstance().newSAXParser();
