@@ -149,6 +149,10 @@ public class CheatSheetManager implements ICheatSheetManager {
 		if (listeners == null)
 			return;
 
+		// TODO (lorne) - must be careful when notifying listeners since
+		// there is a real possibility that the listener code will
+		// remove or add more listeners to this list
+		// safe thing it to iterate over a copy of listener list
 		for (int i = 0; i < listeners.size(); i++) {
 			((CheatSheetListener) listeners.get(i)).cheatSheetEvent(e);
 		}
@@ -207,8 +211,10 @@ public class CheatSheetManager implements ICheatSheetManager {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#setData(java.lang.String, java.lang.String)
 	 */
 	public void setData(String key, String data) {
+		if (key == null) {
+			throw new IllegalArgumentException();
+		}
 		// TODO Auto-generated method stub
-		
 	}
 
 
@@ -216,8 +222,13 @@ public class CheatSheetManager implements ICheatSheetManager {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#addCheatSheetListener(org.eclipse.ui.cheatsheets.CheatSheetListener)
 	 */
 	public void addCheatSheetListener(CheatSheetListener listener) {
-		// TODO Auto-generated method stub
-		
+		if (listener == null) {
+			throw new IllegalArgumentException();
+		}
+		// TODO (lorne) - ensure that duplicate (==) listeners are quietly ignored
+		// N.B. - must be careful when notifying listeners since there is a good
+		// chance that this method will be called from within a notification
+		throw new RuntimeException("Not implemented yet");
 	}
 
 
@@ -225,8 +236,13 @@ public class CheatSheetManager implements ICheatSheetManager {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetManager#removeCheatSheetListener(org.eclipse.ui.cheatsheets.CheatSheetListener)
 	 */
 	public void removeCheatSheetListener(CheatSheetListener listener) {
-		// TODO Auto-generated method stub
-		
+		if (listener == null) {
+			throw new IllegalArgumentException();
+		}
+		// TODO (lorne) - ensure that unknown listeners are quitely ignored
+		// N.B. - must be careful when notifying listeners since there is a good
+		// chance that this method will be called from within a notification
+		throw new RuntimeException("Not implemented yet");
 	}
 
 }

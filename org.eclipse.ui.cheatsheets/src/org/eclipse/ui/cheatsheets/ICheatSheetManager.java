@@ -11,51 +11,69 @@
 package org.eclipse.ui.cheatsheets;
 
 /**
- * <p>While a cheat sheet is running, an implementation of ICheatSheetManager is passed to actions
- * launched by the cheat sheet that implement ICheatSheetAction.  The implementaion of ICheatSheetManager
- * is specific to each cheat sheet available to the user.  It's data is reset when the cheat sheet is
- * restarted and it's data is maintained until the cheat sheet is either re-started or completed.
- * Each cheat sheet that is opened has a unique implementation of ICheatSheetManager.  Data may be stored
- * and retrieved from the implementation of ICheatSheetManager during the lifetime of a cheat sheet.
- * The lifetime of a cheat sheet is from the moment the introductory item is kicked off until the cheat sheet
- * is either completed or re-started.</p>
+ * Manages the running of a cheat sheet.
+ * <p>
+ * Each cheat sheet that is opened in the UI is assigned its own cheat sheet
+ * manager, which stays with it until the cheat sheet is completed (or
+ * restarted). The cheat sheet manager is passed as a parameter to cheat
+ * sheet-aware actions which implement {@link ICheatSheetAction}. The manager
+ * carries arbitrary key-value data (strings) for the lifetime of a cheat sheet,
+ * and can be accessed via {@link #getData(String)}and
+ * {@link #setData(String, String)}. If the workbench is shut down while the
+ * cheat sheet is in progress, this data will generally be saved and later
+ * restored when the workbench is restarted and cheat sheet is resumed. The
+ * manager also supports listeners, which are kept informed of life cycle events
+ * over the course of the cheat sheet's life time.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @since 3.0
  */
 public interface ICheatSheetManager {
 
 	/**
-	 * This method returns the id of the current cheat sheet that is open.
-	 * @return the id of the current cheat sheet
+	 * Returns the id of the cheat sheet managed by this manager.
+	 * 
+	 * @return the cheat sheet id
 	 */
 	public String getCheatSheetID();
 
 	/**
-	 * This method sets string data to be stored by the ICheatSheetManager using the specified key.
-	 * Any data added is persisted accross cheat sheet sessions.
-	 * Data is stored until the cheat sheet is completed or restarted.  Any data previously stored
-	 * using the key specified will be replaced.
-	 * @param key the key to store the data against
-	 * @param data string data to be stored
-	 */
-	public void setData(String key, String data);
-
-	/**
-	 * This method returns data that has been stored with the specified key.
-	 * @param key the key the data was stored against
-	 * @return the string data that was stored against the key.  Null if non existant key
+	 * Returns the data value associated with the given key.
+	 * 
+	 * @param key the key
+	 * @return the string data associated with the key, or
+	 * <code>null</code> none
 	 */
 	public String getData(String key);
 
 	/**
-	 * Adds a cheat sheet listener.
+	 * Sets the data value associated with the given key.
+	 * <p>
+	 * Data associated with a cheat sheet manager is remembered
+	 * for the life of the manager. All data is discarded when 
+	 * the cheat sheet is completed (or restarted).
+	 * </p>
+	 * 
+	 * @param key the key
+	 * @param data the string data associated with the key,
+	 * or <code>null</code> to remove
+	 */
+	public void setData(String key, String data);
+
+	/**
+	 * Adds a cheat sheet listener to this cheat sheet manager.
+     * Has no effect if an identical listener is already registered.
 	 * 
 	 * @param listener the cheat sheet listener to add
 	 */
 	public void addCheatSheetListener(CheatSheetListener listener);
 
 	/**
-	 * Removes a cheat sheet listener.
+	 * Removes a cheat sheet listener from this cheat sheet manager.
+     * Has no affect if the listener is not registered.
 	 * 
 	 * @param listener the cheat sheet listener to remove
 	 */
