@@ -63,7 +63,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates the volume could not be determined from path
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -77,7 +76,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates the volume is removable (other than floppy disk)
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -91,7 +89,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates the volume is fixed (hard drive)
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -105,7 +102,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates a remote (network) volume
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -119,7 +115,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates a cdrom volume (compact disc)
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -133,7 +128,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates a ramdisk volume (memory)
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -147,7 +141,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates the volume is removable (floppy disk 5 1/4)
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
@@ -161,7 +154,6 @@ public class LocalSystemInfo {
 	/**
 	 * Indicates the volume is removable (floppy disk 3 1/2)
 	 * 
-	 * @see LocalSystemInfo#getType(File)
 	 * @since 2.0
 	 * <p>
 	 * <b>Note:</b> This field is part of an interim API that is still under development and expected to
