@@ -68,8 +68,11 @@ public abstract class ResponseHandler {
 			String repositoryDir) throws CVSException {
 		
 		ICVSFolder folder = session.getLocalRoot().getFolder(localDir);
-		if (!CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() && !folder.exists()) {
-			// Only create the folder if prunign is disabled.
+		if (!folder.exists() 
+				&&  (!CVSProviderPlugin.getPlugin().getPruneEmptyDirectories() 
+						|| !folder.getParent().isCVSFolder())) {
+			// Only create the folder if pruning is disabled or the
+			// folder's parent is not a CVS folder (which occurs on checkout).
 			// When pruning is enabled, the folder will be lazily created
 			// when it contains a file (see getExistingFolder)
 			folder.mkdir();
