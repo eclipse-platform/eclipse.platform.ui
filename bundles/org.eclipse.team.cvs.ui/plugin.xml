@@ -55,8 +55,8 @@
             class="org.eclipse.team.internal.ccvs.ui.CVSFilePropertiesPage"
             id="org.eclipse.team.ccvs.ui.propertyPages.CVSFilePropertiesPage">
          <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
       </page>
       <page
@@ -66,8 +66,8 @@
             class="org.eclipse.team.internal.ccvs.ui.CVSFolderPropertiesPage"
             id="org.eclipse.team.ccvs.ui.propertyPages.CVSFolderPropertiesPage">
          <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
       </page>
       <page
@@ -77,8 +77,8 @@
             class="org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage"
             id="org.eclipse.team.ccvs.ui.propertyPages.CVSProjectPropertiesPage">
          <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
       </page>
       <page
@@ -96,14 +96,15 @@
             adaptable="true"
             id="org.eclipse.team.ccvs.ui.IFileContributions">
          <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
          <action
                label="%IgnoreAction.label"
                tooltip="%IgnoreAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
                menubarPath="team.main/group3"
+               helpContextId="org.eclipse.team.cvs.ui.team_ignore_action_context"
                id="org.eclipse.team.ccvs.ui.ignore">
          </action>
          <action
@@ -111,6 +112,7 @@
                tooltip="%AddAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
                menubarPath="team.main/group3"
+               helpContextId="org.eclipse.team.cvs.ui.team_add_action_context"
                id="org.eclipse.team.ccvs.ui.add">
          </action>
          <action
@@ -118,6 +120,7 @@
                tooltip="%ShowHistoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
                menubarPath="team.main/group2"
+               helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                id="org.eclipse.team.ccvs.ui.showHistory">
          </action>
          <action
@@ -125,6 +128,7 @@
                tooltip="%CompareWithRevisionAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
                menubarPath="compareWithMenu/compareWithGroup"
+               helpContextId="org.eclipse.team.cvs.ui.compare_with_revision_action_context"
                id="org.eclipse.team.ccvs.ui.compareWithRevision">
          </action>
          <action
@@ -132,6 +136,7 @@
                tooltip="%ReplaceWithRevisionAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
                menubarPath="replaceWithMenu/replaceWithGroup"
+               helpContextId="org.eclipse.team.cvs.ui.replace_with_revision_action_context"
                id="org.eclipse.team.ccvs.ui.replaceWithRevision">
          </action>
       </objectContribution>
@@ -140,8 +145,8 @@
             adaptable="true"
             id="org.eclipse.team.ccvs.ui.ResourceContributions">
          <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
          <action
                label="%SetKeywordSubstitutionAction.label"
@@ -180,6 +185,7 @@
                tooltip="%CompareWithTagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
                menubarPath="compareWithMenu/compareWithGroup"
+               helpContextId="org.eclipse.team.cvs.ui.compare_with_tag_action_context"
                id="org.eclipse.team.ccvs.ui.compareWithTag">
          </action>      
         <action
@@ -187,6 +193,7 @@
                tooltip="%CompareWithRemoteAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
                menubarPath="compareWithMenu/compareWithGroup"
+               helpContextId="org.eclipse.team.cvs.ui.compare_with_latest_action_context"
                id="org.eclipse.team.ccvs.ui.compareWithRemote">
          </action>
          <action
@@ -194,6 +201,7 @@
                tooltip="%ReplaceWithTagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
                menubarPath="replaceWithMenu/replaceWithGroup"
+               helpContextId="org.eclipse.team.cvs.ui.replace_with_tag_action_context"
                id="org.eclipse.team.ccvs.ui.replaceWithTag">
          </action>
          <action
@@ -201,6 +209,7 @@
                tooltip="%ReplaceWithAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"
                menubarPath="replaceWithMenu/replaceWithGroup"
+               helpContextId="org.eclipse.team.cvs.ui.replace_with_latest_action_context"
                id="org.eclipse.team.ccvs.ui.replace">
          </action>
          <action
@@ -230,20 +239,24 @@
          <action
                label="%SynchronizeOutgoing.label"
                tooltip="%SynchronizeOutgoing.tooltip"
-               helpContextId="org.eclipse.team.cvs.ui.team_synchronize_outgoing_action_context"
                class="org.eclipse.team.internal.ccvs.ui.actions.SyncOutgoingAction"
                menubarPath="team.main/group1"
+               helpContextId="org.eclipse.team.cvs.ui.team_synchronize_outgoing_action_context"
                id="org.eclipse.team.ccvs.ui.syncOutgoing">
          </action>
          <action
                label="%Synchronize.label"
                tooltip="%Synchronize.tooltip"
-               helpContextId="org.eclipse.team.cvs.ui.team_synchronize_action_context"
                class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
-               menubarPath="team.main/group1"
+               menubarPath="team.main/group1
+               helpContextId="org.eclipse.team.cvs.ui.team_synchronize_action_context"
                id="org.eclipse.team.ccvs.ui.sync">
          </action>
       </objectContribution>
+
+      <!-- ************** Project Menu *************** -->
+
+      
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -251,6 +264,24 @@
          <filter
                name="projectNature"
                value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="%ConvertNature.label"
+               tooltip="%ConvertNature.tooltip"
+               class="org.eclipse.team.internal.ui.NatureToPropertyAction"
+               menubarPath="team.main/projectGroup"
+               helpContextId="org.eclipse.team.cvs.ui.team_nature_to_property_action_context"
+               id="org.eclipse.team.ccvs.ui.convertNature">
+         </action>
+      </objectContribution>
+
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.IProjectContributions">
+         <filter
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
          <action
                label="%UnmanageFolder.label"
@@ -266,8 +297,8 @@
             adaptable="true"
             id="org.eclipse.team.ccvs.ui.IFolderContributions">
          <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
+               name="projectPersistentProperty"
+               value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>
          <action
                label="%IgnoreAction.label"
@@ -294,6 +325,7 @@
                tooltip="%CheckoutAsAction.tooltip"
                menubarPath="checkoutGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAsAction"
+               helpContextId="org.eclipse.team.cvs.ui.checkout_as_action_context"
                id="org.eclipse.team.ccvs.ui.checkoutAs">
          </action>
          <action
@@ -301,12 +333,13 @@
                tooltip="%AddToWorkspaceAction.tooltip"
                menubarPath="checkoutGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"
+               helpContextId="org.eclipse.team.cvs.ui.checkout_as_project_action_context"
                id="org.eclipse.team.ccvs.ui.addToWorkspace">
          </action>
 	     <action
 				id="org.eclipse.team.ccvs.ui.configureTagsOnRemoteFolder"
 				label="%ConfigureTags.label"
-               menubarPath="miscGroup"
+                menubarPath="miscGroup"
 				tooltip="%ConfigureTags.label"
 				icon="icons/full/clcl16/newstream_wiz.gif"
 				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"				
@@ -319,12 +352,14 @@
                label="%OpenRemoteFileAction.label"
                tooltip="%OpenRemoteFileAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction"
+               helpContextId="org.eclipse.team.cvs.ui.open_remote_file_action_context"
                id="org.eclipse.team.ccvs.ui.openRemoteFile">
          </action>
          <action
                label="%ShowHistoryAction.label"
                tooltip="%ShowHistoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"
+               helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                id="org.eclipse.team.ccvs.ui.showHistory">
          </action>
       </objectContribution>
@@ -335,6 +370,7 @@
                label="%CheckoutAction.label"
                tooltip="%CheckoutAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAction"
+               helpContextId="org.eclipse.team.cvs.ui.checkout_module_action_context"
                id="org.eclipse.team.ccvs.ui.checkout">
          </action>       
       </objectContribution>
@@ -345,6 +381,7 @@
                label="%OpenLogEntryAction.label"
                tooltip="%OpenLogEntryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction"
+               helpContextId="org.eclipse.team.cvs.ui.open_remote_file_action_context"
                id="org.eclipse.team.ccvs.ui.openLogEntry">
          </action>
          <action
@@ -352,6 +389,7 @@
                tooltip="%CompareRemoteResourcesAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"
                enablesFor="2"
+               helpContextId="org.eclipse.team.cvs.ui.compare_remote_resources_action_context"
                id="org.eclipse.team.ccvs.ui.compareLogEntries">
          </action>
       </objectContribution>
@@ -386,6 +424,7 @@
                tooltip="%CopyRepositoryNameAction.tooltip"
                menubarPath="miscGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.CopyRepositoryNameAction"
+               helpContextId="org.eclipse.team.cvs.ui.copy_repository_name_action_context"
                id="org.eclipse.team.ccvs.ui.copyNames">
          </action>
          <action
@@ -393,6 +432,7 @@
                tooltip="%RemoveRootAction.tooltip"
                menubarPath="miscGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.RemoveRootAction"
+               helpContextId="org.eclipse.team.cvs.ui.remove_root_action_context"
                id="org.eclipse.team.ccvs.ui.removeRoot">
          </action>
          <action
@@ -401,6 +441,7 @@
                tooltip="%DefineBranchAction.tooltip"
                menubarPath="tagGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
+               helpContextId="org.eclipse.team.cvs.ui.define_branch_action_context"
                id="org.eclipse.team.ccvs.ui.defineBranch">
          </action>
 	     <action
@@ -420,6 +461,7 @@
                icon="icons/full/clcl16/newstream_wiz.gif"
                tooltip="%DefineBranchAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
+               helpContextId="org.eclipse.team.cvs.ui.define_branch_action_context"
                id="org.eclipse.team.ccvs.ui.defineBranch">
          </action>
     	 <action
@@ -437,6 +479,7 @@
                label="%RemoveBranchTagAction.label"
                tooltip="%RemoveBranchTagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.RemoveBranchTagAction"
+               helpContextId="org.eclipse.team.cvs.ui.remove_branch_action_context"
                id="org.eclipse.team.ccvs.ui.removeBranchTag">
          </action>
       </objectContribution>
@@ -449,6 +492,7 @@
                tooltip="%CompareRemoteResourcesAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"
                enablesFor="2"
+               helpContextId="org.eclipse.team.cvs.ui.compare_remote_resources_action_context"
                id="org.eclipse.team.ccvs.ui.compareRemoteResources">
          </action>
          <action
@@ -456,6 +500,7 @@
                menubarPath="tagGroup"
                tooltip="%MoveTagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction"
+               helpContextId="org.eclipse.team.cvs.ui.move_remote_tag_action_context"
                id="org.eclipse.team.ccvs.ui.moveTagInRepository">
          </action>
          <action
@@ -463,6 +508,7 @@
                menubarPath="tagGroup"
                tooltip="%TagInRepositoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"
+               helpContextId="org.eclipse.team.cvs.ui.tag_remote_action_context"
                id="org.eclipse.team.ccvs.ui.tagInRepository">
          </action>
       </objectContribution>

@@ -15,22 +15,22 @@
  	<!-- ********************************** -->
 	
 	<context id="replace_tag_selection_dialog_context">
-   		<description>This lets you replace the selected tag with another one, methinks ;-)
+   		<description>Replace the selected resource(s) with those that are tagged with the selected tag. 
 		</description>
    	</context>
    	
    	<context id="compare_tag_selection_dialog_context">
-   		<description>This lets you compare the selected tag to another one, methinks ;-)
+   		<description>Compare the selected resource(s) with those that are tagged with the selected tag.
 		</description>
    	</context>
    	
    	<context id="tag_remote_with_existing_dialog_context">
-   		<description>You get here by selecting "Tag with existing" from the popup menu in the CVS repo view.
+   		<description>Tags the selected resource(s) with the selected tag, moving the tag if required.
 		</description>
    	</context>
    	
    	<context id="share_with_existing_tag_selection_dialog_context">
-   		<description>Cor! No idea what this does.
+   		<description>Synchronizes the previously unshared project with the selected branch of the corresponding remote project
 		</description>
    	</context>
    	
@@ -39,7 +39,7 @@
  	<!-- ********************************** -->
  	
  	<context id="tag_as_version_dialog_context">
-   		<description>Tags the project with the version name you provide, methinks ;-)
+   		<description>Tags the project with the version name provided.
 		</description>
    	</context>
    	
@@ -48,7 +48,7 @@
  	<!-- ********************************** -->
  	
  	<context id="sharing_autoconnect_page_context">
-   		<description>This should be obvious, methinks ;-)
+   		<description>Project already has CVS information. Continuing will allow the use of CVS operations.
 		</description>
    	</context>
    	
@@ -78,7 +78,7 @@
    	</context>
 
  	<context id="patch_options_page_context">
-   		<description>Here you can specify the kind of patch you would like, methinks ;-)
+   		<description>Here you can specify the kind of patch you would like.
 		</description>
    	</context>
 
@@ -166,6 +166,105 @@
 		</description>
    	</context>
 
+ 	<context id="team_nature_to_property_action_context">
+   		<description>Convert a project that has a CVS nature on it to one that has a persitant property.
+		</description>
+   	</context>
+   		
+   	<!-- ********************************** -->
+ 	<!-- Other Menu Actions 					-->
+ 	<!-- ********************************** -->
+	
+	<context id="compare_with_tag_action_context">
+   		<description>Compare the selected resource(s) with the corresponding remote resources tagged with a given version or branch tag.
+		</description>
+   	</context>
+   	
+   	<context id="compare_with_latest_action_context">
+   		<description>Compare the selected resource(s) with the corresponding remote resources on the same branch (or HEAD).
+		</description>
+   	</context>
+
+   	<context id="compare_with_revision_action_context">
+   		<description>Compare the selected file with a given remote revision of the file.
+		</description>
+   	</context>
+   	
+ 	<context id="replace_with_tag_action_context">
+   		<description>Replace the selected resource(s) with the corresponding remote resources tagged with a given version or branch tag.
+		</description>
+   	</context>
+   	
+   	 <context id="replace_with_latest_action_context">
+   		<description>Replace the selected resource(s) with the corresponding remote resources on the same branch (or HEAD).
+		</description>
+   	</context>
+    
+   	<context id="replace_with_revision_action_context">
+   		<description>Replace the selected file with a given remote revision of the file.
+		</description>
+   	</context>
+   	
+   	<context id="checkout_as_action_context">
+   		<description>Checkout the selected resource into a user configured project.
+		</description>
+   	</context>
+   	
+   	<context id="checkout_as_project_action_context">
+   		<description>Checkout the selected resource(s) into a project(s) that corresponds to the name of the remote resource.
+		</description>
+   	</context>
+
+   	<context id="checkout_module_action_context">
+   		<description>Checkout the selected module(s) into the local workspace.
+		</description>
+   	</context>
+   	   	
+   	<context id="open_remote_file_action_context">
+   		<description>Open the contents of the selected remote file into an editor.
+		</description>
+   	</context>
+
+ 	<context id="show_in_history_action_context">
+   		<description>Display the revision history of the selected local or remote file in the history view.
+		</description>
+   	</context>
+
+ 	<context id="compare_remote_resources_action_context">
+   		<description>Compare the 2 selected remote resources with each other.
+		</description>
+   	</context>
+   	
+   	<context id="copy_repository_name_action_context">
+   		<description>Copy the name of the selected repository location to the clipboard.
+		</description>
+   	</context>
+   	
+   	<context id="remove_root_action_context">
+   		<description>Remove the selected repository location(s) from the Repositories View.
+		</description>
+   	</context>
+   	
+   	<context id="define_branch_action_context">
+   		<description>Add a branch to the selected repository location. This operation only adds the branch to the view and does not effect the repository itself.
+		</description>
+   	</context>
+   	
+   	<context id="remove_branch_action_context">
+   		<description>Remove a branch from the selected repository location. This operation only removes the branch to the view and does not effect the repository itself.
+		</description>
+   	</context>
+   	
+   	<context id="move_remote_tag_action_context">
+   		<description>Tags the selected resource(s) with the selected tag, moving the tag if required.
+		</description>
+   	</context>
+   	
+   	<context id="tag_remote_action_context">
+   		<description>Tags the selected resource(s) with the selected tag.
+		</description>
+   	</context>
+   	   	  	
  	<!-- ********************************** -->
  	<!-- TagConfiguration 					-->
  	<!-- ********************************** -->
