@@ -38,7 +38,6 @@ function printContent(button)
 {
 	parent.MainFrame.focus();
 	print();
-	if (isIE) button.blur();
 }
 
 function setTitle(label)
@@ -89,7 +88,7 @@ TABLE {
 	<!--
 		<a  href="#" onclick="parent.resynch(this);"><img src="../images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" ></a>&nbsp;
 	-->
-		<a  href="#" onclick="parent.printContent(this);" onmouseover="window.status='<%=WebappResources.getString("Print", request)%>';return true;" onmouseout="window.status=''"><img src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" ></a>&nbsp;
+		<a  href="#" onclick="printContent(this);" onmouseover="window.status='<%=WebappResources.getString("Print", request)%>';return true;" onmouseout="window.status=''"><img src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" ></a>&nbsp;
 	</td>
 	</tr>
 	</table>	
