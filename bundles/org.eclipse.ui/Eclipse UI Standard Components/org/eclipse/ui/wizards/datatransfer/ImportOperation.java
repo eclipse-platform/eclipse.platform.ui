@@ -154,11 +154,15 @@ IContainer createContainersFor(IPath path) throws CoreException {
 
 	IContainer currentFolder = (IContainer) destinationContainer;
 	
+	int segmentCount = path.segmentCount();
+	
+	//No containers to create
+	if(segmentCount == 0)
+		return currentFolder;
+	
 	//Needs to be handles differently at the root
 	if(currentFolder.getType() == IResource.ROOT)
 		return createFromRoot(path);
-		
-	int segmentCount = path.segmentCount();
 
 	
 	for (int i = 0; i < segmentCount; i++) {
