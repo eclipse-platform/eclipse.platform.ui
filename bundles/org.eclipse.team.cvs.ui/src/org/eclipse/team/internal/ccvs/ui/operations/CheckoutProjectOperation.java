@@ -388,7 +388,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				// There is no custom location. However, still prompt
 				// if the project directory in the workspace directory 
 				// would be overwritten.
-				if (!project.exists() || project.getDescription().getLocation() != null) {
+				if (!project.exists() || !project.isOpen() || project.getDescription().getLocation() != null) {
 					localLocation = getFileLocation(project);
 				}
 			} catch (CoreException e) {

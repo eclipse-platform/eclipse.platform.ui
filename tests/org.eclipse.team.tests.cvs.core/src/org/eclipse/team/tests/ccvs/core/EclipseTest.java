@@ -288,9 +288,8 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		}
 	}
 	public void makeBranch(IResource[] resources, CVSTag version, CVSTag branch, boolean update) throws CVSException {
-		BranchOperation op = new BranchOperation(null, resources) {
-			
-		};
+		BranchOperation op = new BranchOperation(null, resources);
+		op.setTags(version, branch, update);
 		executeHeadless(op);
 	}
 	/**

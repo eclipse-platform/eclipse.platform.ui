@@ -52,6 +52,12 @@ public class BranchOperation extends RepositoryProviderOperation {
 		super(part, resources);
 	}
 	
+	public void setTags(CVSTag rootVersionTag, CVSTag branchTag, boolean updateToBranch) {
+		this.rootVersionTag = rootVersionTag;
+		this.branchTag = branchTag;
+		this.update = updateToBranch;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.TeamOperation#shouldRun()
 	 */
