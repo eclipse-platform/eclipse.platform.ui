@@ -50,6 +50,9 @@ import org.eclipse.ui.help.*;
 			Display display = resourceNames.getDisplay();
 			final boolean first[] = {true};
 			for (int i = 0; i < descriptorsSize;i++) {
+				if(i % 50 == 0) {
+					try { Thread.sleep(10); } catch(InterruptedException e){}
+				}
 				if(stop || resourceNames.isDisposed()) return;
 				final int index = i;
 				if(match(descriptors[index].label)) {
@@ -127,7 +130,7 @@ protected Control createDialogArea(Composite parent) {
 	l.setLayoutData(data);
 	
 	folderNames = new Table(dialogArea,SWT.SINGLE|SWT.BORDER|SWT.V_SCROLL|SWT.H_SCROLL);
-	data = new GridData(GridData.FILL_HORIZONTAL);
+	data = new GridData(GridData.FILL_BOTH);
 	data.widthHint = 250;
 	data.heightHint = 3 * folderNames.getItemHeight();
 	folderNames.setLayoutData(data);
@@ -254,10 +257,13 @@ private void startNewThread() {
  * update tread.
  */
 private void textChanged() {
-	updateThread.stop = true;
+	String oldPattern = patternString;
 	patternString = pattern.getText();
 	if(!patternString.endsWith("*"))//$NON-NLS-1$
 		patternString = patternString + "*";//$NON-NLS-1$
+	if(patternString.equals(oldPattern))
+		return;
+	updateThread.stop = true;
 	stringMatcher = new StringMatcher(patternString,true,false);
 	resourceNames.removeAll();
 	startNewThread();
