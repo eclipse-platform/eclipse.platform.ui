@@ -8,6 +8,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.ViewPart;
+
 public class FormView extends ViewPart {
 	private FormToolkit toolkit;
 	private ScrolledForm form;
@@ -26,6 +27,7 @@ public class FormView extends ViewPart {
 		form.setText("Hello, Eclipse Forms");
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);
+		
 		Hyperlink link = toolkit.createHyperlink(form.getBody(), "Click here.",
 				SWT.WRAP);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
@@ -115,6 +117,28 @@ public class FormView extends ViewPart {
 				System.out.println("Link active: "+e.getHref());
 			}
 		});
+/*		layout.numColumns = 3;
+		Label label;
+		TableWrapData td;
+		
+		label = toolkit.createLabel(form.getBody(), "Some text to put in the first column", SWT.WRAP);
+		label = toolkit.createLabel(form.getBody() ,"Some text to put in the second column and make it a bit longer so that we can see what happens with column distribution. This text must be the longest so that it can get more space allocated to the columns it belongs to.", SWT.WRAP);
+		td = new TableWrapData();
+		td.colspan = 2;
+		label.setLayoutData(td);
+		label = toolkit.createLabel(form.getBody(), "This text will span two rows and should not grow the column.", SWT.WRAP);
+		td = new TableWrapData();
+		td.rowspan = 2;
+		label.setLayoutData(td);
+		label = toolkit.createLabel(form.getBody(), "This text goes into column 2 and consumes only one cell", SWT.WRAP);
+		label.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		label = toolkit.createLabel(form.getBody(), "This text goes into column 3 and consumes only one cell too", SWT.WRAP);
+		label.setLayoutData(new TableWrapData(TableWrapData.FILL));
+		label = toolkit.createLabel(form.getBody(), "This text goes into column 2 and consumes only one cell", SWT.WRAP);
+		label.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		label = toolkit.createLabel(form.getBody(), "This text goes into column 3 and consumes only one cell too", SWT.WRAP);
+		label.setLayoutData(new TableWrapData(TableWrapData.FILL));
+		form.getBody().setBackground(form.getBody().getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));*/
 	}
 	/**
 	 * Passing the focus request to the form.
