@@ -726,9 +726,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		buttonAddKey.setText(Util.translateString(resourceBundle, "buttonAddKey")); //$NON-NLS-1$
-		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		gridData.widthHint = Math.max(widthHint, buttonAddKey.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonAddKey.setLayoutData(gridData);
-		buttonAddKey.addSelectionAdapter() {
+		buttonAddKey.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedButtonAddKey();
 			}	
@@ -1178,8 +1178,16 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	private void selectedButtonAddKey() {
-		String item = comboTrappedKeys.getItem(comboTrappedKeys.getSelectionIndex());
-		textKeySequence.insert(item);
+		int index = comboTrappedKeys.getSelectionIndex();
+		List trappedKeys = KeySequenceText.TRAPPED_KEYS;
+		
+		// Protect against an index out-of-bounds....
+		if ((index >= 0) && (index < trappedKeys.size())) {
+			KeyStroke stroke = (KeyStroke) trappedKeys.get(index);
+			if (stroke != null) {
+				textKeySequence.insert(stroke);
+			}
+		}
 	}
 
 	private void selectedButtonRemove() {
