@@ -70,9 +70,11 @@ public class TeamProvider implements ISaveParticipant {
 	}
 	
 	static public void deregisterSubscriber(TeamSubscriber subscriber) {
-		subscribers.remove(subscriber.getId());
-		fireTeamResourceChange(new TeamDelta[] {
-				new TeamDelta(subscriber, TeamDelta.SUBSCRIBER_DELETED, null)});
+		if (subscribers.remove(subscriber.getId()) != null) {
+			// Only notify if the subscriber was registered in the first place
+			fireTeamResourceChange(new TeamDelta[] {
+					new TeamDelta(subscriber, TeamDelta.SUBSCRIBER_DELETED, null)});
+		}
 	}
 	
 	/* (non-Javadoc)
