@@ -287,16 +287,23 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	public synchronized void applyTextPresentation(TextPresentation tp) {
 		IRegion region= tp.getExtent();
-		
-		for (Iterator iter= fHighlightedDecorations.iterator(); iter.hasNext();) {
 
-			Decoration pp = (Decoration)iter.next();
-			Position p= pp.fPosition;
-			if (!fSourceViewer.overlapsWithVisibleRegion(p.offset, p.length))
-				continue;
-
-			if (p.getOffset() + p.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > p.getOffset())
-				tp.mergeStyleRange(new StyleRange(p.getOffset(), p.getLength(), null, pp.fColor));
+		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
+			
+			for (Iterator iter= fHighlightedDecorations.iterator(); iter.hasNext();) {
+					
+				Decoration pp = (Decoration)iter.next();
+					maxLayer= Math.max(maxLayer, pp.fLayer + 1); // dynamically update layer maximum
+					if (pp.fLayer != layer)	// wrong layer: skip annotation
+						continue;
+				
+				Position p= pp.fPosition;
+				if (!fSourceViewer.overlapsWithVisibleRegion(p.offset, p.length))
+					continue;
+	
+				if (p.getOffset() + p.getLength() >= region.getOffset() && region.getOffset() + region.getLength() > p.getOffset())
+					tp.mergeStyleRange(new StyleRange(p.getOffset(), p.getLength(), null, pp.fColor));
+			}
 		}
 	}
 	
