@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -321,6 +322,20 @@ public final class Platform {
 	public static String[] getCommandLineArgs() {
 		return InternalPlatform.getDefault().getCommandLineArgs();
 	}
+	/**
+	 * Returns the content type manager.
+	 * <p>
+	 *  <b>Note</b>: This method is part of early access API that may well 
+	 * change in incompatible ways until it reaches its finished form. 
+	 * </p>
+	 * 
+	 * @return the content type manager
+	 * @since 3.0
+	 */
+	public static IContentTypeManager getContentTypeManager() {
+		return InternalPlatform.getDefault().getContentTypeManager();
+	}
+
 	/**
 	 * Returns the identified option.  <code>null</code>
 	 * is returned if no such option is found.   Options are specified

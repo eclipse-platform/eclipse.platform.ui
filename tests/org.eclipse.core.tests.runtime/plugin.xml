@@ -30,6 +30,35 @@
 			protocol="stream">
 		</handler>
 	</extension>
+	
+	<extension point="org.eclipse.core.runtime.contentTypes">
+		<content-type 
+			id="fooBar" 
+			name="Foo Bar" 
+			file-extensions="bar"
+			file-names="foo.bar"/>	
+		<content-type 
+			id="xml-based-different-extension" 
+			name="XML Based with Different Extension" 
+			base-type="org.eclipse.core.runtime.xml" 
+			charset="UTF-16LE"
+			file-extensions="xml2"/>
+		<content-type 
+			id="xml-based-specific-name" 
+			name="XML Based with Specific Name" 
+			base-type="org.eclipse.core.runtime.xml"
+			file-names="xml-based.xml"/>		
+		<content-type 
+			id="sample-binary"
+			name="Sample Binary"
+			file-extensions="samplebin"/>
+		<content-type 
+			id="orphan" 
+			name="Orphan Type" 
+			base-type="org.eclipse.foo.bar"
+			file-extensions="orphan"
+			file-names="foo.orphan"/>						
+	</extension>	
 
 	<extension point="org.eclipse.core.runtime.adapters">
 		<factory class="org.eclipse.core.tests.runtime.TestAdapterFactory"

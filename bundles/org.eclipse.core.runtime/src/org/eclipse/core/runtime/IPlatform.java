@@ -13,6 +13,8 @@ package org.eclipse.core.runtime;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -745,6 +747,13 @@ public interface IPlatform {
 	 * @deprecated see getConfigurationLocation This method will be removed by M8
 	 */
 	public IPath getConfigurationMetadataLocation();
+	
+	/**
+	 * Returns the content type manager.
+	 * 
+	 * @return the content type manager
+	 */
+	public IContentTypeManager getContentTypeManager();
 	
 	/**
 	 * Returns all command line arguments specified when the running framework was started.

@@ -24,7 +24,8 @@
    <extension-point id="applicationShutdownHook" name="%shutdownHook"/>
    <extension-point id="products" name="%productsName" schema="schema/products.exsd"/>
    <extension-point id="adapters" name="%adaptersName" schema="schema/adapters.exsd"/>
-	<extension-point name="preferences" id="preferences"/>
+   <extension-point name="preferences" id="preferences"/>
+   <extension-point id="contentTypes" name="%contentTypesName"/>
 
 	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="platform-preferences">
 		<preferences scope="user" class="org.eclipse.core.internal.preferences.UserPreferences"/>
@@ -32,5 +33,18 @@
 		<preferences scope="instance" class="org.eclipse.core.internal.preferences.InstancePreferences"/>
 		<preferences scope="default" class="org.eclipse.core.internal.preferences.EclipsePreferences"/>
 	</extension>
+
+	<extension point="org.eclipse.core.runtime.contentTypes">
+		<content-type id="text" name="%textFileName" 
+			mime-type="text/plain"
+			file-extensions="txt"/>
+		<content-type id="xml" name="%xmlFileName" 
+			base-type="text"
+			mime-type="text/xml"
+			file-extensions="xml"
+			default-charset="UTF-8"
+			describer-class="org.eclipse.core.internal.content.XMLContentDescriber"/>
+	</extension>		 
+
 
 </plugin>

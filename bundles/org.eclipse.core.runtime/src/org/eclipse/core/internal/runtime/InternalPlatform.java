@@ -14,11 +14,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.registry.BundleModel;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.osgi.framework.log.FrameworkLog;
@@ -1007,6 +1009,10 @@ public final class InternalPlatform implements IPlatform {
 	public Location getConfigurationLocation() {
 		assertInitialized();
 		return (Location)configurationLocation.getService();
+	}
+	
+	public IContentTypeManager getContentTypeManager() {
+		return ContentTypeManager.getInstance();
 	}
 	
 	private void initializeLocationTrackers() {

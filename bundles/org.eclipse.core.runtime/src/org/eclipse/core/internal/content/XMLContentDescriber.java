@@ -1,0 +1,55 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.internal.content;
+
+import java.io.*;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentDescriber;
+
+/**
+ * A content interpreter for XML files. 
+ * 
+ * @see http://www.w3.org/TR/REC-xml *
+ */
+public class XMLContentDescriber implements IContentDescriber {
+	private static final String XML_PREFIX = "<?xml ";
+	private static final String ENCODING = "encoding=\"";
+	public boolean describe(InputStream input, IContentDescription description, int flags) throws IOException {
+		//TODO: support BOM
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+		String line = reader.readLine();
+		// end of stream
+		if (line == null)
+			return false;
+		// XMLDecl should be the first string (no blanks allowed)
+		if (!line.startsWith(XML_PREFIX))
+			return false;
+		// if only the content type should be checked
+		if ((flags & IContentDescription.CHARSET) != 0)
+			description.setCharset(getCharset(line));
+		return true;
+	}
+	public int getSupportedOptions() {
+		return IContentDescription.CHARSET;
+	}
+	private String getCharset(String firstLine) {
+		int encodingPos = firstLine.indexOf(ENCODING);
+		if (encodingPos == -1)
+			return null;
+		int firstQuote = firstLine.indexOf('"', encodingPos);
+		if (firstQuote == -1 || firstLine.length() == firstQuote - 1)
+			return null;
+		int secondQuote = firstLine.indexOf('"', firstQuote + 1);
+		if (secondQuote == -1)
+			return null;
+		return firstLine.substring(firstQuote + 1, secondQuote);
+	}
+}

@@ -10,10 +10,12 @@ Provide-Package:
  org.eclipse.core.internal.registry,
  org.eclipse.core.internal.runtime,
  org.eclipse.core.internal.preferences,
+ org.eclipse.core.internal.content, 
  org.eclipse.core.internal.boot,
  org.eclipse.core.runtime.preferences,
  org.eclipse.core.internal.jobs,
  org.eclipse.core.runtime.jobs,
+ org.eclipse.core.runtime.content,
  org.eclipse.core.runtime,
  org.eclipse.core.boot
 Require-Bundle: 

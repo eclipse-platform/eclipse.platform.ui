@@ -11,9 +11,6 @@
 package org.eclipse.core.tests.runtime;
 
 import junit.framework.*;
-import org.eclipse.core.tests.internal.osgi.PlatformAdminTest;
-import org.eclipse.core.tests.runtime.model.ConfigurationElementModelTest;
-
 
 public class AllTests extends TestCase {
 /**
@@ -37,15 +34,15 @@ public static Test suite() {
 	suite.addTest(PreferencesTest.suite());
 	suite.addTest(PreferenceExportTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
-	suite.addTest(ConfigurationElementModelTest.suite());
+	suite.addTest(org.eclipse.core.tests.runtime.model.ConfigurationElementModelTest.suite());
 	suite.addTest(IRegistryChangeEventTest.suite());
-	suite.addTest(PlatformAdminTest.suite());
 //	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
 	suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
 	suite.addTest(PreferenceForwarderTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.osgi.AllTests.suite());
+	suite.addTest(org.eclipse.core.tests.runtime.content.IContentTypeManagerTest.suite());	
 	return suite;
 }
 }
