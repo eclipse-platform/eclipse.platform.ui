@@ -7,10 +7,9 @@ package org.eclipse.update.internal.ui.forms;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -56,11 +55,6 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_DO_UPDATE = "FeaturePage.doButton.update";
 	private static final String KEY_DO_INSTALL = "FeaturePage.doButton.install";
 	private static final String KEY_DO_UNINSTALL = "FeaturePage.doButton.uninstall";
-	private static final String KEY_OS_WIN32 = "FeaturePage.os.win32";
-	private static final String KEY_OS_LINUX = "FeaturePage.os.linux";
-	private static final String KEY_WS_WIN32 = "FeaturePage.ws.win32";
-	private static final String KEY_WS_MOTIF = "FeaturePage.ws.motif";
-	private static final String KEY_WS_GTK = "FeaturePage.ws.gtk";
 	private static final String KEY_DIALOG_UTITLE = "FeaturePage.dialog.utitle";
 	private static final String KEY_DIALOG_TITLE = "FeaturePage.dialog.title";
 	private static final String KEY_DIALOG_CTITLE = "FeaturePage.dialog.ctitle";
@@ -73,8 +67,6 @@ public class DetailsForm extends PropertyWebForm {
 	private static final String KEY_MISSING_TITLE = "FeaturePage.missing.title";
 	private static final String KEY_MISSING_MESSAGE = "FeaturePage.missing.message";
 	private static final String KEY_MISSING_SEARCH = "FeaturePage.missing.search";
-	private static final String KEY_MISSING_CONTINUE =
-		"FeaturePage.missing.continue";
 	private static final String KEY_MISSING_ABORT = "FeaturePage.missing.abort";
 	private static final String KEY_SEARCH_OBJECT_NAME =
 		"FeaturePage.missing.searchObjectName";
@@ -419,7 +411,6 @@ public class DetailsForm extends PropertyWebForm {
 				}
 			}
 		} catch (CoreException e) {
-			// FIXME at least log
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
@@ -582,20 +573,10 @@ public class DetailsForm extends PropertyWebForm {
 	}
 
 	private String mapOS(String key) {
-		if (key.equals("OS_WIN32"))
-			return UpdateUIPlugin.getResourceString(KEY_OS_WIN32);
-		if (key.equals("OS_LINUX"))
-			return UpdateUIPlugin.getResourceString(KEY_OS_LINUX);
 		return key;
 	}
 
 	private String mapWS(String key) {
-		if (key.equals("WS_WIN32"))
-			return UpdateUIPlugin.getResourceString(KEY_WS_WIN32);
-		if (key.equals("WS_MOTIF"))
-			return UpdateUIPlugin.getResourceString(KEY_WS_MOTIF);
-		if (key.equals("WS_GTK"))
-			return UpdateUIPlugin.getResourceString(KEY_WS_GTK);
 		return key;
 	}
 
@@ -674,6 +655,11 @@ public class DetailsForm extends PropertyWebForm {
 					return;
 			}
 			final PendingChange job = createPendingChange(mode);
+			IStatus validationStatus = ActivityConstraints.validatePendingChange(job);
+			if (validationStatus!=null) {
+		   		ErrorDialog.openError(UpdateUIPlugin.getActiveWorkbenchShell(), null, null, validationStatus);
+		   		return;
+			}
 			BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 				public void run() {
 					InstallWizard wizard = new InstallWizard(job);
@@ -735,7 +721,6 @@ public class DetailsForm extends PropertyWebForm {
 					MessageDialog.WARNING,
 					new String[] {
 						UpdateUIPlugin.getResourceString(KEY_MISSING_SEARCH),
-						UpdateUIPlugin.getResourceString(KEY_MISSING_CONTINUE),
 						UpdateUIPlugin.getResourceString(KEY_MISSING_ABORT)},
 					0);
 			int result = dialog.open();
