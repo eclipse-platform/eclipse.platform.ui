@@ -161,7 +161,7 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 				try {
 					file.setResourceAttributes(attributes);
 				} catch (CoreException e) {
-					CVSUIPlugin.log(e);
+					return CVSException.wrapException(e).getStatus();
 				}
 			}
 		}
