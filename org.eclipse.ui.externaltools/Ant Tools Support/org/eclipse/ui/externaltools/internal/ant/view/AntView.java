@@ -72,6 +72,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectActio
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.SearchForBuildFilesAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.ShowTargetViewerAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.SwitchAntViewOrientation;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.TargetMoveDownAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.TargetMoveUpAction;
@@ -135,21 +136,31 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	/**
 	 * The sash form containing the project viewer and target viewer
 	 */
-	SashForm sashForm;
+	private SashForm sashForm;
+	
+	private ViewForm projectForm;
+	
+	/**
+	 * These are used to initialize and persist the position of the sash that
+	 * separates the tree viewer from the detail pane.
+	 */
+	private static final int[] DEFAULT_SASH_WEIGHTS = {4, 4};
+	private int[] lastSashWeights;
+	private boolean toggledDetailOnce;
 
 	/**
 	 * The tree viewer that displays the users ant projects
 	 */
-	TreeViewer projectViewer;
-	ToolBar projectToolBar;
-	AntProjectContentProvider projectContentProvider;
+	private TreeViewer projectViewer;
+	private ToolBar projectToolBar;
+	private AntProjectContentProvider projectContentProvider;
 
 	/**
 	 * The table viewer that displays the users selected targets
 	 */
-	TableViewer targetViewer;
-	ToolBar targetToolBar;
-	AntTargetContentProvider targetContentProvider;
+	private TableViewer targetViewer;
+	private ToolBar targetToolBar;
+	private AntTargetContentProvider targetContentProvider;
 
 	/**
 	 * Collection of <code>IUpdate</code> actions that need to update on
@@ -161,6 +172,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private SearchForBuildFilesAction searchForBuildFilesAction;
 	private SwitchAntViewOrientation horizontalOrientationAction;
 	private SwitchAntViewOrientation verticalOrientationAction;
+	private ShowTargetViewerAction showTargetViewerAction;
 	// ProjectViewer actions
 	private RunTargetAction runTargetAction;
 	private RemoveProjectAction removeProjectAction;
@@ -179,11 +191,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	private void handleBuildFileChanged(final ProjectNode project) {
 		project.parseBuildFile();
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				projectViewer.refresh(project);
-			}
-		});
 		// Update targets pane for removed targets
 		List activeTargets = targetContentProvider.getTargets();
 		ListIterator iter = activeTargets.listIterator();
@@ -208,6 +215,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		}
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
+				projectViewer.refresh(project);
 				targetViewer.refresh();
 			}
 		});
@@ -230,6 +238,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			orientation= SWT.VERTICAL;
 		}		
 		setViewOrientation(orientation);
+		showTargetViewerAction.setChecked(!restoredTargets.isEmpty());
 	}
 	
 	private IDialogSettings getDialogSettings() {
@@ -313,6 +322,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		IToolBarManager toolBarMgr = actionBars.getToolBarManager();
 		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
+		toolBarMgr.add(showTargetViewerAction);
 
 		ToolBarManager projectManager = new ToolBarManager(projectToolBar);
 		projectManager.add(runTargetAction);
@@ -353,6 +363,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		openWithMenu= new AntViewOpenWithMenu(this.getViewSite().getPage());
 		horizontalOrientationAction= new SwitchAntViewOrientation(this, SWT.HORIZONTAL);
 		verticalOrientationAction= new SwitchAntViewOrientation(this, SWT.VERTICAL);
+		showTargetViewerAction= new ShowTargetViewerAction(this);
 	}
 	
 	/**
@@ -431,7 +442,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * Create the viewer which displays the ant projects
 	 */
 	private void createProjectViewer() {
-		ViewForm projectForm = new ViewForm(sashForm, SWT.NONE);
+		projectForm = new ViewForm(sashForm, SWT.NONE);
 		CLabel title = new CLabel(projectForm, SWT.NONE);
 		title.setText(AntViewMessages.getString("AntView.Build_Files_6")); //$NON-NLS-1$
 		projectForm.setTopLeft(title);
@@ -599,6 +610,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * viewer.
 	 */
 	public void activateSelectedTargets() {
+		toggleTargetViewer(true);
 		TreeItem[] items = projectViewer.getTree().getSelection();
 		for (int i = 0; i < items.length; i++) {
 			Object data = items[i].getData();
@@ -607,6 +619,46 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			}
 		}
 		targetViewer.refresh();
+	}
+	
+	/**
+	 * Show or hide the target viewer pane, based on the value of
+	 * <code>on</code>. If showing, reset the sash form to use the relative
+	 * weights that were in effect the last time the target viewer was visible,
+	 * and populate it with active targets.  If hiding, save the current
+	 * relative weights, unless the target viewer hasn't yet been shown.
+	 */
+	public void toggleTargetViewer(boolean on) {
+		if (on && sashForm.getMaximizedControl() != null) {
+			sashForm.setMaximizedControl(null);
+			sashForm.setWeights(getLastSashWeights());
+			toggledDetailOnce = true;
+		} else {
+			if (toggledDetailOnce) {
+				setLastSashWeights(sashForm.getWeights());
+			}
+			sashForm.setMaximizedControl(projectForm);
+		}
+	}
+	
+	/**
+	 * Set the current relative weights of the controls in the sash form, so that
+	 * the sash form can be reset to this layout at a later time.
+	 */
+	private void setLastSashWeights(int[] weights) {
+		lastSashWeights = weights;
+	}
+	
+	/**
+	 * Return the relative weights that were in effect the last time both panes were
+	 * visible in the sash form, or the default weights if both panes have not yet been
+	 * made visible.
+	 */
+	private int[] getLastSashWeights() {
+		if (lastSashWeights == null) {
+			lastSashWeights = DEFAULT_SASH_WEIGHTS;
+		}
+		return lastSashWeights;
 	}
 
 	/**
