@@ -1,8 +1,9 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.views.internal.navigator;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.views.navigator.*;
 
 /**
  * ActionBarMenuContributionFactory is the factory for the
@@ -60,9 +61,9 @@ public class ActionBarMenuContributionFactory
 	}
 
 	/**
-		 * Updates the checked state of the sort actions.
-		 */
-	protected void updateSortActions(ResourceSorter sorter) {
+	 * Updates the checked state of the sort actions.
+	 */
+	public void updateSortActions(ResourceSorter sorter) {
 		int criteria = sorter.getCriteria();
 		if (sortByNameAction != null && sortByTypeAction != null) {
 			sortByNameAction.setChecked(criteria == ResourceSorter.NAME);

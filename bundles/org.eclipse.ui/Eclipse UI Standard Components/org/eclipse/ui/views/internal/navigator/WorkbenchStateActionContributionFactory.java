@@ -1,4 +1,4 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.views.internal.navigator;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.jface.action.IMenuManager;
@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.views.navigator.SelectionUtil;
 
 /**
  * The WorkbenchStateActionContributionFactory is the 
@@ -86,7 +87,7 @@ public class WorkbenchStateActionContributionFactory
 	 * to the key strokes.
 	 */
 
-	protected void addKeyListeners() {
+	public void addKeyListeners() {
 
 		control.addKeyListener(localRefreshAction);
 	}

@@ -1,10 +1,11 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.views.internal.navigator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.views.internal.framelist.*;
+import org.eclipse.ui.views.navigator.*;
 
 /**
  * The GotoActionContributionFactory is the class

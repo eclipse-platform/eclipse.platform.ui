@@ -1,10 +1,11 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.views.internal.navigator;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.views.navigator.*;
 
 /**
  * The ActionContributionFactory is a class that 

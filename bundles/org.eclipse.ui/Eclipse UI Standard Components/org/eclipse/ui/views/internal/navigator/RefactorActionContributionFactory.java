@@ -1,4 +1,4 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.views.internal.navigator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.views.navigator.*;
 
 /**
  * The RefactorActionContributionFactory is the factory for

@@ -1,4 +1,4 @@
-package org.eclipse.ui.views.navigator;
+package org.eclipse.ui.views.internal.navigator;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
@@ -9,6 +9,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.views.internal.navigator.*;
+import org.eclipse.ui.views.navigator.*;
 
 public class OpenActionContributionFactory extends ActionContributionFactory {
 
@@ -122,7 +124,7 @@ public class OpenActionContributionFactory extends ActionContributionFactory {
 	 * to the mouse events.
 	 */
 
-	protected void addMouseListeners(StructuredViewer viewer) {
+	public void addMouseListeners(StructuredViewer viewer) {
 
 		viewer.addDoubleClickListener(openFileAction);
 	}
