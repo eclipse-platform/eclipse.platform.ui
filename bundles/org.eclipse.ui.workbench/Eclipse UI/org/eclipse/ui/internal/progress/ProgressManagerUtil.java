@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.Viewer;
@@ -27,6 +26,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.util.BundleUtility;
 /**
  * The ProgressUtil is a class that contains static utility methods used for the
  * progress API.
@@ -52,8 +52,7 @@ public class ProgressManagerUtil {
 	 * @param exception
 	 */
 	static void logException(Throwable exception) {
-		Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-				exceptionStatus(exception));
+     BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
 	}
 	/**
 	 * Sets the label provider for the viewer.

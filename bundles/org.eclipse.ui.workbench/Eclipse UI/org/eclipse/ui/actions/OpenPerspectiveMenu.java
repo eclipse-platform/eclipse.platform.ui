@@ -98,11 +98,9 @@ private boolean canRun() {
  * @return String
  */
 private String openPerspectiveSetting() {
-	
-	AbstractUIPlugin uiPlugin =
-			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-	return uiPlugin.getPreferenceStore().getString(
-		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+    return Platform.getPreferencesService().getString(PlatformUI.PLUGIN_ID,
+            IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, "", //$NON-NLS-1$
+            null);
 }
 /**
  * Runs an action for a particular perspective. Opens the perspective supplied

@@ -8,8 +8,10 @@ package org.eclipse.ui.internal.util;
 
 import java.net.URL;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Bundle;
 
 // TODO: needs a better name
@@ -61,4 +63,15 @@ public class BundleUtility {
 	public static URL find(String bundleId, String path) {
 	    return find(Platform.getBundle(bundleId), path);
 	}
+ 
+ public static void log(String bundleId, Throwable exception) {
+        Bundle bundle = Platform.getBundle(bundleId);
+        if (bundle == null)
+            return;
+
+        IStatus status = new Status(IStatus.ERROR, bundleId, IStatus.ERROR,
+                exception.getMessage(), exception);
+
+        Platform.getLog(bundle).log(status);
+    }
 }
