@@ -13,10 +13,13 @@ package org.eclipse.ant.tests.ui.editor.performance;
 
 import java.io.File;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.ant.tests.ui.testplugin.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.PartInitException;
@@ -41,6 +44,17 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 		measureOpenInEditor(file);
 	}
 	
+	public void testOpenAntEditorNoFolding() throws PartInitException {
+	    IPreferenceStore store= AntUIPlugin.getDefault().getPreferenceStore();
+	    try {
+		IFile file= getIFile("build.xml");
+		store.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
+		measureOpenInEditor(file);
+	    } finally {
+	        store.setToDefault(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
+	    }
+	}
+	
 	protected IFile getIFile(String buildFileName) {
 		return getProject().getFolder("buildfiles").getFolder("performance").getFile(buildFileName);	
 	}
@@ -62,7 +76,7 @@ public class OpenAntEditorTest extends PerformanceTestCase {
 	
 	protected void measureOpenInEditor(IFile file) throws PartInitException {
 		try {
-			for (int i= 0; i < 20; i++) {
+			for (int i= 0; i < 15; i++) {
 				startMeasuring();
 				EditorTestHelper.openInEditor(file, true);
 				stopMeasuring();
