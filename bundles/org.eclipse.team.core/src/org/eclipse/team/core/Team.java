@@ -11,12 +11,10 @@
 package org.eclipse.team.core;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +59,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
 public final class Team {
 	
 	public static final String PREF_TEAM_IGNORES = "ignore_files"; //$NON-NLS-1$
+	public static final String PREF_TEAM_TYPES = "file_types"; //$NON-NLS-1$
 	public static final String PREF_TEAM_SEPARATOR = "\n"; //$NON-NLS-1$
 	public static final Status OK_STATUS = new Status(Status.OK, TeamPlugin.ID, Status.OK, Policy.bind("ok"), null); //$NON-NLS-1$
 	
@@ -69,11 +68,8 @@ public final class Team {
 	public static final int TEXT = 1;
 	public static final int BINARY = 2;
 	
-	// File name of the persisted file type information
-	private static final String STATE_FILE = ".fileTypes"; //$NON-NLS-1$
-	
 	// Keys: file extensions. Values: Integers
-	private static Hashtable fileTypes;
+	private static Hashtable fileTypes, pluginTypes;
 
 	// The ignore list that is read at startup from the persisted file
 	private static Map globalIgnore, pluginIgnore;
@@ -241,6 +237,23 @@ public final class Team {
 		for (int i = 0; i < extensions.length; i++) {
 			fileTypes.put(extensions[i], new Integer(types[i]));
 		}
+		// Now set into preferences
+		StringBuffer buf = new StringBuffer();
+		Iterator e = fileTypes.keySet().iterator();
+		while (e.hasNext()) {
+			String extension = (String)e.next();
+			boolean isCustom = (!pluginTypes.containsKey(extension)) ||
+				!((Integer)pluginTypes.get(extension)).equals((Integer)pluginTypes.get(extension));
+			if (isCustom) {
+				buf.append(extension);
+				buf.append(PREF_TEAM_SEPARATOR);
+				Integer type = (Integer)fileTypes.get(extension);
+				buf.append(type);
+				buf.append(PREF_TEAM_SEPARATOR);
+			}
+			
+		}
+		TeamPlugin.getPlugin().getPluginPreferences().setValue(PREF_TEAM_TYPES, buf.toString());
 	}
 	
 	/**
@@ -325,6 +338,7 @@ public final class Team {
 	 * Reads the text patterns currently defined by extensions.
 	 */
 	private static void initializePluginPatterns() {
+		pluginTypes = new Hashtable();
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
 			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.FILE_TYPES_EXTENSION);
@@ -339,9 +353,11 @@ public final class Team {
 							// If the extension doesn't already exist, add it.
 							if (!fileTypes.containsKey(ext)) {
 								if (type.equals("text")) { //$NON-NLS-1$
+									pluginTypes.put(ext, new Integer(TEXT));
 									fileTypes.put(ext, new Integer(TEXT));
 								} else if (type.equals("binary")) { //$NON-NLS-1$
 									fileTypes.put(ext, new Integer(BINARY));
+									pluginTypes.put(ext, new Integer(BINARY));
 								}
 							}
 						}
@@ -378,77 +394,57 @@ public final class Team {
 	/*
 	 * TEXT
 	 * 
-	 * Write the current state to the given output stream.
-	 * 
-	 * @param dos  the output stream to write the saved state to
-	 * @throws IOException if an I/O problem occurs
-	 */
-	private static void writeTextState(DataOutputStream dos) throws IOException {
-		Hashtable table = getFileTypeTable();
-		dos.writeInt(table.size());
-		Iterator it = table.keySet().iterator();
-		while (it.hasNext()) {
-			String extension = (String)it.next();
-			dos.writeUTF(extension);
-			Integer integer = (Integer)table.get(extension);
-			dos.writeInt(integer.intValue());
-		}
-	}
-	
-	/*
-	 * TEXT
-	 * 
 	 * Load the file type registry saved state. This loads the previously saved
 	 * contents, as well as discovering any values contributed by plug-ins.
 	 */
 	private static void loadTextState() {
 		fileTypes = new Hashtable(11);
+		boolean old = loadBackwardCompatibleTextState();
+		if (!old) loadTextPreferences();
+		initializePluginPatterns();
+		if (old) TeamPlugin.getPlugin().savePluginPreferences();
+	}
+
+	private static void loadTextPreferences() {
+		Preferences pref = TeamPlugin.getPlugin().getPluginPreferences();
+		if (!pref.contains(PREF_TEAM_TYPES)) return;
+		String prefTypes = pref.getString(PREF_TEAM_TYPES);
+		StringTokenizer tok = new StringTokenizer(prefTypes, PREF_TEAM_SEPARATOR);
+		String extension, integer;
+		try {
+			while (true) {
+				extension = tok.nextToken();
+				if (extension.length()==0) return;
+				integer = tok.nextToken();
+				fileTypes.put(extension, Integer.valueOf(integer));
+			} 
+		} catch (NoSuchElementException e) {
+			return;
+		}
+			
+	}
+	/*
+	 * If the workspace is an old 2.0 one, read the old file and delete it
+	 */
+	private static boolean loadBackwardCompatibleTextState() {
+		// File name of the persisted file type information
+		String STATE_FILE = ".fileTypes"; //$NON-NLS-1$
 		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation().append(STATE_FILE);
 		File f = pluginStateLocation.toFile();
-		if (f.exists()) {
-			try {
-				DataInputStream dis = new DataInputStream(new FileInputStream(f));
-				try {
-					readTextState(dis);
-				} finally {
-					dis.close();
-				}
-			} catch (IOException ex) {
-				TeamPlugin.log(Status.ERROR, ex.getMessage(), ex);
-			}
-		}
-		// Read values contributed by plugins
-		initializePluginPatterns();
-	}
-	
-	/*
-	 * TEXT
-	 * 
-	 * Save the file type registry state.
-	 */
-	private static void saveTextState() {
-		IPath pluginStateLocation = TeamPlugin.getPlugin().getStateLocation();
-		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile(); //$NON-NLS-1$
-		File stateFile = pluginStateLocation.append(STATE_FILE).toFile();
+		if (!f.exists()) return false;
 		try {
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
+			DataInputStream dis = new DataInputStream(new FileInputStream(f));
 			try {
-				writeTextState(dos);
+				readTextState(dis);
 			} finally {
-				dos.close();
+				dis.close();
 			}
-			if (stateFile.exists() && !stateFile.delete()) {
-				TeamPlugin.log(Status.ERROR, Policy.bind("Team.Could_not_delete_state_file_1"), null); //$NON-NLS-1$
-				return;
-			}
-			boolean renamed = tempFile.renameTo(stateFile);
-			if (!renamed) {
-				TeamPlugin.log(Status.ERROR, Policy.bind("Team.Could_not_rename_state_file_2"), null); //$NON-NLS-1$
-				return;
-			}
-		} catch (Exception e) {
-			TeamPlugin.log(Status.ERROR, e.getMessage(), e);
+		} catch (IOException ex) {
+			TeamPlugin.log(Status.ERROR, ex.getMessage(), ex);
+			return false;
 		}
+		f.delete();
+		return true;
 	}
 	
 	/*
@@ -575,7 +571,6 @@ public final class Team {
 	 * This method is called by the plug-in upon shutdown, clients should not call this method
 	 */	
 	public static void shutdown() {
-		saveTextState();
 		TeamPlugin.getPlugin().savePluginPreferences();
 	}
 	public static IProjectSetSerializer getProjectSetSerializer(String id) {
