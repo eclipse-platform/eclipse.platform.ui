@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.debug.core; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: dtcore.jar
+Bundle-Activator: org.eclipse.debug.core.DebugPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.debug.core,
+ org.eclipse.debug.core.model,
+ org.eclipse.debug.core.sourcelookup,
+ org.eclipse.debug.core.sourcelookup.containers,
+ org.eclipse.debug.internal.core,
+ org.eclipse.debug.internal.core.sourcelookup,
+ org.eclipse.debug.internal.core.sourcelookup.containers
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.core.variables,
+ org.eclipse.core.runtime
+Eclipse-AutoStart: true

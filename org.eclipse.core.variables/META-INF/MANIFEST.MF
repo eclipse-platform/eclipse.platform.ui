@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.core.variables; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: variables.jar
+Bundle-Activator: org.eclipse.core.variables.VariablesPlugin
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.core.internal.variables,
+ org.eclipse.core.variables
+Require-Bundle: org.eclipse.core.runtime
+Eclipse-AutoStart: true

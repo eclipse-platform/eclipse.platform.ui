@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Plugin.name
+Bundle-SymbolicName: org.eclipse.ui.externaltools; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: externaltools.jar
+Bundle-Activator: org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin
+Bundle-Vendor: %Plugin.providerName
+Bundle-Localization: plugin
+Export-Package: org.eclipse.ui.externaltools.internal.launchConfigurations,
+ org.eclipse.ui.externaltools.internal.menu,
+ org.eclipse.ui.externaltools.internal.model,
+ org.eclipse.ui.externaltools.internal.program.launchConfigurations,
+ org.eclipse.ui.externaltools.internal.registry,
+ org.eclipse.ui.externaltools.internal.ui,
+ org.eclipse.ui.externaltools.internal.variables
+Require-Bundle: org.eclipse.ui.ide;resolution:=optional,
+ org.eclipse.core.resources,
+ org.eclipse.core.variables,
+ org.eclipse.ui,
+ org.eclipse.debug.core,
+ org.eclipse.debug.ui,
+ org.eclipse.core.runtime
+Eclipse-AutoStart: true
