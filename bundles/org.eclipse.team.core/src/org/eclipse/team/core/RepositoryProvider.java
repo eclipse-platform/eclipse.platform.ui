@@ -10,30 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.core;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.resources.IFileModificationValidator;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IProjectNature;
-import org.eclipse.core.resources.IProjectNatureDescriptor;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
@@ -79,6 +61,9 @@ public abstract class RepositoryProvider implements IProjectNature {
 	// the project instance that this nature is assigned to
 	private IProject project;	
 	
+	// lock to ensure that map/unmap and getProvider support concurrency
+	private static final ILock mappingLock = Platform.getJobManager().newLock();
+	
 	/**
 	 * Instantiate a new RepositoryProvider with concrete class by given providerID
 	 * and associate it with project.
@@ -95,44 +80,58 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 */
 	public static void map(IProject project, String id) throws TeamException {
 		try {
-			RepositoryProvider existingProvider = null;
-
-			if(project.getPersistentProperty(PROVIDER_PROP_KEY) != null)
-				existingProvider = getProvider(project);	// get the real one, not the nature one
-			
-			//if we already have a provider, and its the same ID, we're ok
-			//if the ID's differ, unmap the existing.
-			if(existingProvider != null) {
-				if(existingProvider.getID().equals(id))
-					return;	//nothing to do
-				else
-					unmap(project);
-			}
-			
-			// Create the provider as a session property before adding the persistant
-			// property to ensure that the provider can be instantiated
-			RepositoryProvider provider = mapNewProvider(project, id);
-
-			//mark it with the persistent ID for filtering
+			// Obtain a scheduling rule on the project before obtaining the
+			// mappingLock. This is required because a caller of getProvider
+			// may hold a scheduling rule before getProvider is invoked but
+			// getProvider itself does not (and can not) obtain a scheduling rule.
+			// Thus, the locking order is always scheduling rule followed by 
+			// mappingLock.
+			Platform.getJobManager().beginRule(project, null);
 			try {
-				project.setPersistentProperty(PROVIDER_PROP_KEY, id);
-			} catch (CoreException outer) {
-				// couldn't set the persistant property so clear the session property
-				try {
-					project.setSessionProperty(PROVIDER_PROP_KEY, null);
-				} catch (CoreException inner) {
-					// something is seriously wrong
-					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotClearAfterError", project.getName(), id), inner);//$NON-NLS-1$
+				mappingLock.acquire();
+				RepositoryProvider existingProvider = null;
+	
+				if(project.getPersistentProperty(PROVIDER_PROP_KEY) != null)
+					existingProvider = getProvider(project);	// get the real one, not the nature one
+				
+				//if we already have a provider, and its the same ID, we're ok
+				//if the ID's differ, unmap the existing.
+				if(existingProvider != null) {
+					if(existingProvider.getID().equals(id))
+						return;	//nothing to do
+					else
+						unmap(project);
 				}
-				throw outer;
-			}	
-			
-			provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
-
-			//adding the nature would've caused project description delta, so trigger one
-			project.touch(null);
+				
+				// Create the provider as a session property before adding the persistant
+				// property to ensure that the provider can be instantiated
+				RepositoryProvider provider = mapNewProvider(project, id);
+	
+				//mark it with the persistent ID for filtering
+				try {
+					project.setPersistentProperty(PROVIDER_PROP_KEY, id);
+				} catch (CoreException outer) {
+					// couldn't set the persistant property so clear the session property
+					try {
+						project.setSessionProperty(PROVIDER_PROP_KEY, null);
+					} catch (CoreException inner) {
+						// something is seriously wrong
+						TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotClearAfterError", project.getName(), id), inner);//$NON-NLS-1$
+					}
+					throw outer;
+				}	
+				
+				provider.configure();	//xxx not sure if needed since they control with wiz page and can configure all they want
+	
+				//adding the nature would've caused project description delta, so trigger one
+				project.touch(null);
+			} finally {
+				mappingLock.release();
+			}
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
+		} finally {
+			Platform.getJobManager().endRule(project);
 		}
 	}	
 
@@ -178,6 +177,33 @@ public abstract class RepositoryProvider implements IProjectNature {
 		return provider;
 	}	
 
+	private static RepositoryProvider mapExistingProvider(IProject project, String id) throws TeamException {
+		try {
+			// Obtain the mapping lock before creating the instance so we can make sure
+			// that a disconnect is not happening at the same time
+			mappingLock.acquire();
+			try {
+				// Ensure that the persistant property is still set
+				// (i.e. an unmap may have come in since we checked it last
+				String currentId = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				if (currentId == null) {
+					// The provider has been unmapped
+					return null;
+				}
+				if (!currentId.equals(id)) {
+					// A provider has been disconnected and another connected
+					// Since mapping creates the session property, we
+					// can just return it
+					return lookupProviderProp(project);
+				}
+			} catch (CoreException e) {
+				throw TeamPlugin.wrapException(e);
+			}
+			return mapNewProvider(project, id);
+		} finally {
+			mappingLock.release();
+		}
+	}
 	/**
 	 * Disassoociates project with the repository provider its currently mapped to.
 	 * @param project
@@ -185,34 +211,43 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 */
 	public static void unmap(IProject project) throws TeamException {
 		try{
-			String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
-			
-			//If you tried to remove a non-existant nature it would fail, so we need to as well with the persistent prop
-			if(id == null) {
-				throw new TeamException(Policy.bind("RepositoryProvider.No_Provider_Registered", project.getName())); //$NON-NLS-1$
+			// See the map(IProject, String) method for a description of lock ordering
+			Platform.getJobManager().beginRule(project, null);
+			try {
+				mappingLock.acquire();
+				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
+				
+				//If you tried to remove a non-existant nature it would fail, so we need to as well with the persistent prop
+				if(id == null) {
+					throw new TeamException(Policy.bind("RepositoryProvider.No_Provider_Registered", project.getName())); //$NON-NLS-1$
+				}
+				
+				//This will instantiate one if it didn't already exist,
+				//which is ok since we need to call deconfigure() on it for proper lifecycle
+				RepositoryProvider provider = getProvider(project);
+				if (provider == null) {
+					// There is a persistant property but the provider cannot be obtained.
+					// The reason could be that the provider's plugin is no longer available.
+					// Better log it just in case this is unexpected.
+					TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null);  //$NON-NLS-1$
+				}
+	
+				if (provider != null) provider.deconfigure();
+								
+				project.setSessionProperty(PROVIDER_PROP_KEY, null);
+				project.setPersistentProperty(PROVIDER_PROP_KEY, null);
+				
+				if (provider != null) provider.deconfigured();
+				
+				//removing the nature would've caused project description delta, so trigger one
+				project.touch(null);
+			} finally {
+				mappingLock.release();
 			}
-			
-			//This will instantiate one if it didn't already exist,
-			//which is ok since we need to call deconfigure() on it for proper lifecycle
-			RepositoryProvider provider = getProvider(project);
-			if (provider == null) {
-				// There is a persistant property but the provider cannot be obtained.
-				// The reason could be that the provider's plugin is no longer available.
-				// Better log it just in case this is unexpected.
-				TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null);  //$NON-NLS-1$
-			}
-
-			if (provider != null) provider.deconfigure();
-							
-			project.setSessionProperty(PROVIDER_PROP_KEY, null);
-			project.setPersistentProperty(PROVIDER_PROP_KEY, null);
-			
-			if (provider != null) provider.deconfigured();
-			
-			//removing the nature would've caused project description delta, so trigger one
-			project.touch(null);	
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
+		} finally {
+			Platform.getJobManager().endRule(project);
 		}
 	}	
 	
@@ -363,7 +398,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 				//Next, check if it has the ID as a persistent property, if yes then instantiate provider
 				String id = project.getPersistentProperty(PROVIDER_PROP_KEY);
 				if(id != null)
-					return mapNewProvider(project, id);
+					return mapExistingProvider(project, id);
 				
 				//Couldn't find using new method, fall back to lookup using natures for backwards compatibility
 				//-----------------------------		
@@ -412,7 +447,13 @@ public abstract class RepositoryProvider implements IProjectNature {
 					if(provider != null)
 						return provider;
 					//otherwise instantiate and map a new one					
-					return mapNewProvider(project, id);
+					RepositoryProvider newProvider = mapExistingProvider(project, id);
+					if (newProvider!= null && newProvider.getID().equals(id)) {
+						return newProvider;
+					} else {
+						// The id changed before we could create the desired provider
+						return null;
+					}
 				}
 					
 				//couldn't find using new method, fall back to lookup using natures for backwards compatibility
