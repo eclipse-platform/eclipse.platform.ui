@@ -13,24 +13,15 @@ package org.eclipse.ant.internal.ui.editor.formatter;
 
 import java.util.LinkedList;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.Assert;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.TypedPosition;
 import org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy;
 import org.eclipse.jface.text.formatter.FormattingContext;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.xml.sax.SAXException;
 
-public class XmlDocumentFormattingStrategy extends
-        ContextBasedFormattingStrategy {
+public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrategy {
 
     /** Indentations to use by this strategy */
     private final LinkedList fIndentations = new LinkedList();
@@ -42,14 +33,11 @@ public class XmlDocumentFormattingStrategy extends
     private final LinkedList fPositions = new LinkedList();
 
     // TODO connect with preferences
-    private final boolean addNewlines = true;
+    //private final boolean addNewlines = true;
 
     // TODO connect with preferences
-    private final String canonicalIndentStep = "\t"; //$NON-NLS-1$
+   // private final String canonicalIndentStep = "\t"; //$NON-NLS-1$
 
-    /**
-     * @param viewer
-     */
     public XmlDocumentFormattingStrategy(ISourceViewer viewer) {
         super(viewer);
     }
@@ -67,12 +55,11 @@ public class XmlDocumentFormattingStrategy extends
         Assert.isLegal(fPartitions.size() > 0);
         Assert.isLegal(fIndentations.size() > 0);
 
-        final TypedPosition partition = (TypedPosition) fPartitions
-                .removeFirst();
-        final String indent = fIndentations.removeFirst().toString();
-        final IDocument document = getViewer().getDocument();
+//        final TypedPosition partition = (TypedPosition) fPartitions.removeFirst();
+//        final String indent = fIndentations.removeFirst().toString();
+       IDocument document = getViewer().getDocument();
 
-        // Since we are running short on time, we'll
+        // TODO Since we are running short on time, we'll
         // format the whole document, not just a single partition.
         // We can correct this later--if we want to.
         
@@ -91,38 +78,19 @@ public class XmlDocumentFormattingStrategy extends
         if(formattedText != null && ! formattedText.equals(documentText)) {
             document.set(formattedText);
         }
-  
-
     }
 
-    private boolean partitionsShareLine(IDocument document,
-            TypedPosition partition1, TypedPosition partition2)
-            throws BadLocationException {
-
-        Assert.isNotNull(document);
-        Assert.isNotNull(partition1);
-        Assert.isNotNull(partition2);
-
-        int lineNumber1 = document.getLineOfOffset(partition1.getOffset());
-        int lineNumber2 = document.getLineOfOffset(partition2.getOffset());
-        return lineNumber1 == lineNumber2;
-    }
-
-    /*
-     * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
      */
     public void formatterStarts(IFormattingContext context) {
         super.formatterStarts(context);
 
         final FormattingContext current = (FormattingContext) context;
 
-        fIndentations.addLast(current
-                .getProperty(FormattingContextProperties.CONTEXT_INDENTATION));
-        fPartitions.addLast(current
-                .getProperty(FormattingContextProperties.CONTEXT_PARTITION));
-        fPositions.addLast(current
-                .getProperty(FormattingContextProperties.CONTEXT_POSITIONS));
-
+        fIndentations.addLast(current.getProperty(FormattingContextProperties.CONTEXT_INDENTATION));
+        fPartitions.addLast(current.getProperty(FormattingContextProperties.CONTEXT_PARTITION));
+        fPositions.addLast(current.getProperty(FormattingContextProperties.CONTEXT_POSITIONS));
     }
 
     /*
@@ -134,17 +102,5 @@ public class XmlDocumentFormattingStrategy extends
         fIndentations.clear();
         fPartitions.clear();
         fPositions.clear();
-    }
-
-    private SAXParser getSAXParser() {
-        SAXParser parser = null;
-        try {
-            parser = SAXParserFactory.newInstance().newSAXParser();
-        } catch (ParserConfigurationException e) {
-            AntUIPlugin.log(e);
-        } catch (SAXException e) {
-            AntUIPlugin.log(e);
-        }
-        return parser;
     }
 }

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     	IBM Corporation - initial API and implementation
+ * 		John-Mason P. Shackelford - bug 40255
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.formatter;

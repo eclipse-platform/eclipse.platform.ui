@@ -26,8 +26,7 @@ import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.jface.text.source.ISourceViewer;
 
-public class XmlElementFormattingStrategy extends
-        ContextBasedFormattingStrategy {
+public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy {
 
     /** Indentations to use by this strategy */
     private final LinkedList fIndentations = new LinkedList();
@@ -38,18 +37,12 @@ public class XmlElementFormattingStrategy extends
     /** The position sets to keep track of during formatting */
     private final LinkedList fPositions = new LinkedList();
 
-    /**
-     * @param viewer
-     */
     public XmlElementFormattingStrategy(ISourceViewer viewer) {
         super(viewer);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.text.formatter.IFormattingStrategy#format(java.lang.String,
-     *      boolean, java.lang.String, int[])
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#format()
      */
     public void format() {
 
@@ -58,10 +51,9 @@ public class XmlElementFormattingStrategy extends
         Assert.isLegal(fPartitions.size() > 0);
         Assert.isLegal(fIndentations.size() > 0);
 
-        final TypedPosition partition = (TypedPosition) fPartitions
-                .removeFirst();
-        final String lineIndent = fIndentations.removeFirst().toString();
-        final IDocument document = getViewer().getDocument();
+        TypedPosition partition = (TypedPosition) fPartitions.removeFirst();
+        String lineIndent = fIndentations.removeFirst().toString();
+        IDocument document = getViewer().getDocument();
 
         try {
 
@@ -71,45 +63,30 @@ public class XmlElementFormattingStrategy extends
             prefs.setPrintMargin(80);
             prefs.setUseElementWrapping(true);
 
-            String formatted = formatElement(document, partition, lineIndent,
-                    prefs);
+            String formatted = formatElement(document, partition, lineIndent, prefs);
 
-            String partitionText = document.get(partition.getOffset(),
-                    partition.getLength());
+            String partitionText = document.get(partition.getOffset(), partition.getLength());
 
             if (formatted != null && !formatted.equals(partitionText))
-                    document.replace(partition.getOffset(), partition
-                            .getLength(), formatted);
+                    document.replace(partition.getOffset(), partition.getLength(), formatted);
 
         } catch (BadLocationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
 
     }
 
-    /**
-     * @param partitionText
-     * @param prefs
-     * @return
-     */
-    private String formatElement(IDocument document, TypedPosition partition,
-            String indentation, FormattingPreferences prefs)
-            throws BadLocationException {
+    private String formatElement(IDocument document, TypedPosition partition, String indentation, FormattingPreferences prefs) throws BadLocationException {
 
-        final String partitionText = document.get(partition.getOffset(),
-                partition.getLength());
+        String partitionText = document.get(partition.getOffset(), partition.getLength());
 
         StringBuffer formattedElement = null;
 
         // do we even need to think about wrapping?
         if (prefs.useElementWrapping() && !partitionText.startsWith("</")) { //$NON-NLS-1$
 
-            final IRegion line = document.getLineInformationOfOffset(partition
-                    .getOffset());
+            IRegion line = document.getLineInformationOfOffset(partition.getOffset());
 
-            final int partitionLineOffset = partition.getOffset()
-                    - line.getOffset();
+            int partitionLineOffset = partition.getOffset() - line.getOffset();
 
             // do we have a good candidate for a wrap?
             if (line.getLength() > prefs.getPrintMargin()) {
@@ -151,10 +128,6 @@ public class XmlElementFormattingStrategy extends
         return formattedElement != null ? formattedElement.toString() : null;
     }
 
-    /**
-     * @param partitionText
-     * @return
-     */
     private List getAttributes(String text) {
 
         List attributes = new ArrayList();
@@ -205,37 +178,22 @@ public class XmlElementFormattingStrategy extends
         return text.substring(0, firstWhitespaceIn(text));
     }
 
-    /**
-     * @param partitionText
-     * @return
-     */
     private int firstWhitespaceIn(String text) {
         for (int i = 0; i < text.length(); i++) {
-            if (Character.isWhitespace(text.charAt(i))) { return i; }
+            if (Character.isWhitespace(text.charAt(i))) { 
+            	return i; 
+            }
         }
         return -1;
     }
 
-    private boolean partitionsShareLine(IDocument document,
-            TypedPosition partition1, TypedPosition partition2)
-            throws BadLocationException {
-
-        Assert.isNotNull(document);
-        Assert.isNotNull(partition1);
-        Assert.isNotNull(partition2);
-
-        int lineNumber1 = document.getLineOfOffset(partition1.getOffset());
-        int lineNumber2 = document.getLineOfOffset(partition2.getOffset());
-        return lineNumber1 == lineNumber2;
-    }
-
-    /*
-     * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#formatterStarts(org.eclipse.jface.text.formatter.IFormattingContext)
      */
     public void formatterStarts(IFormattingContext context) {
         super.formatterStarts(context);
 
-        final FormattingContext current = (FormattingContext) context;
+        FormattingContext current = (FormattingContext) context;
 
         fIndentations.addLast(current
                 .getProperty(FormattingContextProperties.CONTEXT_INDENTATION));
@@ -246,8 +204,8 @@ public class XmlElementFormattingStrategy extends
 
     }
 
-    /*
-     * @see org.eclipse.jface.text.formatter.ContextBasedFormattingStrategy#formatterStops()
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#formatterStops()
      */
     public void formatterStops() {
         super.formatterStops();
