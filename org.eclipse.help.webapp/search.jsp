@@ -172,7 +172,7 @@ function onloadHandler(e)
 					&nbsp;<%=WebappResources.getString("Search", request)%>:
 				</td>
 				<td>
-					<input type="text" id="searchWord" name="searchWord" value='<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>' size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
 				</td>
 				<td >
 					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("GO", request)%>' id="go" alt='<%=WebappResources.getString("GO", request)%>'>

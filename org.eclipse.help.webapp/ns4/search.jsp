@@ -120,11 +120,17 @@ function doSearch()
 		parent.doSearch("searchWordJS13="+escape(searchWord)+"&maxHits="+maxHits);
 }
 
+function onloadHandler(e)
+{
+	var form = document.forms["searchForm"];
+	form.searchWord.value = '<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.JavaScriptEncode(UrlUtil.getRequestParameter(request, "searchWord")):""%>';
+}
+
 </script>
 
 </head>
 
-<body onunload="closeAdvanced()">
+<body onunload="closeAdvanced()" onload="onloadHandler()">
 
 	<form  name="searchForm"   onsubmit="doSearch()">
 		<table id="searchTable" align="left" valign="top" cellspacing="0" cellpadding="0" border="0">
@@ -133,7 +139,7 @@ function doSearch()
 					&nbsp;<%=WebappResources.getString("Search", request)%>:
 				</td>
 				<td>
-					<input type="text" id="searchWord" name="searchWord" value="<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>" size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value="" size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
 				</td>
 				<td >
 					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("GO", request)%>' id="go" alt='<%=WebappResources.getString("GO", request)%>'>
