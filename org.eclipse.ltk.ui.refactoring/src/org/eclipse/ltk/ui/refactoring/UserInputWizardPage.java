@@ -21,10 +21,12 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.FinishResult;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
+import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 
 /**
  * An abstract wizard page that is to be used to implement user input pages presented 
@@ -146,7 +148,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 			CreateChangeOperation create= new CreateChangeOperation(
 				new CheckConditionsOperation(refactoring, CheckConditionsOperation.FINAL_CONDITIONS),
 				threshold);
-			PerformChangeOperation perform= new PerformChangeOperation(create);
+			PerformChangeOperation perform= new UIPerformChangeOperation(getShell().getDisplay(), create, getContainer());
 			
 			FinishResult result= wizard.internalPerformFinish(InternalAPI.INSTANCE, perform);
 			wizard.internalSetChange(InternalAPI.INSTANCE, create.getChange());

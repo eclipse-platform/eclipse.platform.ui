@@ -186,6 +186,10 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			fSettings.put(HEIGHT, size.y);
 		}
 	}
+	
+	public Button getCancelButton() {
+		return getButton(IDialogConstants.CANCEL_ID);
+	}
 
 	//---- IRefactoringWizardDialog ------------------------------------
 	

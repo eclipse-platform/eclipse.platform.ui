@@ -103,4 +103,8 @@ public class RefactoringWizardDialog extends WizardDialog {
 	public void makeNextButtonDefault() {
 		fMakeNextButtonDefault= true;
 	}
+	
+	public Button getCancelButton() {
+		return getButton(IDialogConstants.CANCEL_ID);
+	}
 }

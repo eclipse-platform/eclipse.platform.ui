@@ -530,7 +530,7 @@ public abstract class RefactoringWizard extends Wizard {
 		op.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
 		Shell parent= getContainer().getShell();
 		try{
-			getContainer().run(false, false, new WorkbenchRunnableAdapter(op, ResourcesPlugin.getWorkspace().getRoot()));
+			getContainer().run(true, true, new WorkbenchRunnableAdapter(op, ResourcesPlugin.getWorkspace().getRoot()));
 		} catch (InvocationTargetException e) {
 			Throwable inner= e.getTargetException();
 			if (op.changeExecutionFailed()) {

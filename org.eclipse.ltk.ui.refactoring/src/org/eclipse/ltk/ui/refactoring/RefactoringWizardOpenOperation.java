@@ -12,6 +12,7 @@ package org.eclipse.ltk.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobManager;
 
@@ -103,11 +104,11 @@ public class RefactoringWizardOpenOperation {
 		final IJobManager manager= Platform.getJobManager();
 		try {
 			// we are getting the block dialog for free if we pass in null
-//			try {
-//				manager.suspend(ResourcesPlugin.getWorkspace().getRoot(), null);
-//			} catch(OperationCanceledException e) {
-//				throw new InterruptedException(e.getMessage());
-//			}
+			try {
+				manager.suspend(ResourcesPlugin.getWorkspace().getRoot(), null);
+			} catch(OperationCanceledException e) {
+				throw new InterruptedException(e.getMessage());
+			}
 			
 			fInitialConditions= checkInitialConditions(refactoring, parent, dialogTitle);
 			if (fInitialConditions.hasFatalError()) {
@@ -120,7 +121,7 @@ public class RefactoringWizardOpenOperation {
 				return dialog.open();
 			} 
 		} finally {
-//			manager.resume(ResourcesPlugin.getWorkspace().getRoot());
+			manager.resume(ResourcesPlugin.getWorkspace().getRoot());
 		}		
 	}
 	

@@ -16,7 +16,11 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.text.IRewriteTarget;
+import org.eclipse.jface.wizard.IWizardContainer;
 
 import org.eclipse.ui.IEditorPart;
 
@@ -24,23 +28,58 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 
-
 public class UIPerformChangeOperation extends PerformChangeOperation {
 
-	public UIPerformChangeOperation(Change change) {
+	private Display fDisplay;
+	private IWizardContainer fWizardContainer;
+	
+	public UIPerformChangeOperation(Display display, Change change, IWizardContainer container) {
 		super(change);
+		fDisplay= display;
+		fWizardContainer= container;
 	}
 
-	public UIPerformChangeOperation(CreateChangeOperation op) {
+	public UIPerformChangeOperation(Display display, CreateChangeOperation op, IWizardContainer container) {
 		super(op);
+		fDisplay= display;
+		fWizardContainer= container;
 	}
 	
-	protected void executeChange(IProgressMonitor pm) throws CoreException {
+	protected void executeChange(final IProgressMonitor pm) throws CoreException {
 		IRewriteTarget[] targets= null;
 		try {
 			targets= getRewriteTargets();
 			beginCompoundChange(targets);
-			super.executeChange(pm);
+			final Button cancel= getCancelButton();
+			if (fDisplay != null && !fDisplay.isDisposed()) {
+				final CoreException[] exception= new CoreException[1]; 
+				Runnable r= new Runnable() {
+					public void run() {
+						try {
+							boolean enabled= true;
+							if (cancel != null && !cancel.isDisposed()) {
+								enabled= cancel.isEnabled();
+								cancel.setEnabled(false);
+							}
+							try {
+								UIPerformChangeOperation.super.executeChange(pm);
+							} finally {
+								if (cancel != null && !cancel.isDisposed()) {
+									cancel.setEnabled(enabled);
+								}
+							}
+							
+						} catch (CoreException e) {
+							exception[0]= e;
+						}
+					}
+				};
+				fDisplay.syncExec(r);
+				if (exception[0] != null)
+					throw new CoreException(exception[0].getStatus());
+			} else {
+				super.executeChange(pm);
+			}
 		} finally {
 			if (targets != null)
 				endCompoundChange(targets);
@@ -69,5 +108,14 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			}
 		}
 		return (IRewriteTarget[]) result.toArray(new IRewriteTarget[result.size()]);
+	}
+	
+	private Button getCancelButton() {
+		if (fWizardContainer instanceof RefactoringWizardDialog2) {
+			return ((RefactoringWizardDialog2)fWizardContainer).getCancelButton();
+		} else if (fWizardContainer instanceof RefactoringWizardDialog) {
+			return ((RefactoringWizardDialog)fWizardContainer).getCancelButton();
+		}
+		return null;
 	}
 }

@@ -12,6 +12,10 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.OperationCanceledException;
+
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
@@ -28,6 +32,7 @@ import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
+
 import org.eclipse.ltk.ui.refactoring.RefactoringUI;
 
 public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
@@ -135,8 +140,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 		Shell parent= fWorkbenchWindow.getShell();
 		IRunnableWithProgress op= createOperation(parent);
 		try {
-			// Don't execute in separate thread since it updates the UI.
-			PlatformUI.getWorkbench().getProgressService().run(false, false, op);
+			ProgressService.runSuspended(false, false, op, ResourcesPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			RefactoringCore.getUndoManager().flush();
 			ExceptionHandler.handle(e,
@@ -145,6 +149,8 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 				RefactoringUIMessages.getString("UndoManagerAction.internal_error.message")); //$NON-NLS-1$
 		} catch (InterruptedException e) {
 			// Opertation isn't cancelable.
+		} catch (OperationCanceledException e) {
+			// the waiting dialog got canceled.
 		}
 	}
 }

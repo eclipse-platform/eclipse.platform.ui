@@ -93,6 +93,6 @@ public class RefactoringUI {
 	 *  undo operations for open editors
 	 */
 	public static PerformChangeOperation createUIAwareChangeOperation(Change change) {
-		return new UIPerformChangeOperation(change);
+		return new UIPerformChangeOperation(null, change, null);
 	}	
 }

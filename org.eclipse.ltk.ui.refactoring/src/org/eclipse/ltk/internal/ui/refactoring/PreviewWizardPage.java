@@ -171,7 +171,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 * Method defined in RefactoringWizardPage
 	 */
 	protected boolean performFinish() {
-		UIPerformChangeOperation operation= new UIPerformChangeOperation(fChange);
+		UIPerformChangeOperation operation= new UIPerformChangeOperation(getShell().getDisplay(), fChange, getContainer());
 		FinishResult result= getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, operation);
 		if (result.isException())
 			return true;

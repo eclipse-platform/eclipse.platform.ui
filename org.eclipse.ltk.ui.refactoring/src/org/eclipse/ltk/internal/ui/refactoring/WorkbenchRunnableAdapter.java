@@ -40,8 +40,14 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress {
 	 * @param rule the scheduling rule
 	 */
 	public WorkbenchRunnableAdapter(IWorkspaceRunnable runnable, ISchedulingRule rule) {
+		Assert.isNotNull(runnable);
+		Assert.isNotNull(rule);
 		fWorkspaceRunnable= runnable;
 		fRule= rule;
+	}
+	
+	public ISchedulingRule getSchedulingRule() {
+		return fRule;
 	}
 
 	/*

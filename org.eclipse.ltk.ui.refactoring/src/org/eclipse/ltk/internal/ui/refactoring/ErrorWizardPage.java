@@ -131,10 +131,10 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 		Change change= wizard.getChange();
 		PerformChangeOperation operation= null;
 		if (change != null) {
-			operation= new UIPerformChangeOperation(change);
+			operation= new UIPerformChangeOperation(getShell().getDisplay(), change, getContainer());
 		} else {
 			CreateChangeOperation ccop= new CreateChangeOperation(getRefactoring());
-			operation= new UIPerformChangeOperation(ccop);
+			operation= new UIPerformChangeOperation(getShell().getDisplay(), ccop, getContainer());
 		}
 		FinishResult result= wizard.internalPerformFinish(InternalAPI.INSTANCE, operation);
 		if (result.isException())
