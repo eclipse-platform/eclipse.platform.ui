@@ -84,6 +84,10 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);
 		// cleanup info about just installed plugins
 		InstallRegistry.cleanup();
+		
+		// setup cache site to false. 
+		// Note: the standalone tests will set it back to true
+		InternalSiteManager.globalUseCache = false;
 	}
 
 	/**

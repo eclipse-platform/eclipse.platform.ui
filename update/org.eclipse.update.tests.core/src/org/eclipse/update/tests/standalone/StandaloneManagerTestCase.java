@@ -29,9 +29,6 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	public static URL TARGET_FILE_SITE;
 	
 	static {
-		// setup cache site to true
-		InternalSiteManager.globalUseCache = true;
-		
 		File targetDir = new File(System.getProperty("java.io.tmpdir"));
 		targetDir = new File(targetDir, "standalone");
 		targetDir = new File(targetDir, "mytarget");
@@ -46,6 +43,8 @@ public class StandaloneManagerTestCase extends UpdateManagerTestCase {
 	
 	public StandaloneManagerTestCase (String arg0){
 		super(arg0);
+		// setup cache site to true
+		InternalSiteManager.globalUseCache = true;
 	}
 	
 	public void checkConfiguredSites(){

@@ -38,9 +38,6 @@ public class UpdateTestsPlugin extends Plugin {
 	 * Called by Platform after loading the plugin
 	 */
 	public void startup() throws CoreException {
-		// setup cache site to false. 
-		// Note: the standalone tests will set it back to true
-		InternalSiteManager.globalUseCache = false;
 	}
 
 	/**
