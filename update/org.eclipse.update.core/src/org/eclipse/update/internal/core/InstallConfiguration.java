@@ -291,7 +291,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * and changes the platform configuration.
 	 * The runtime site entries from platform.xml are updated as required
 	 * (cannot recreate these because must preserve other runtime state) [18520]
-	 * @return true if changes were applied to the current configuration.
+	 * @return true if restart is needed
 	 */
 	public boolean save(boolean isTransient) throws CoreException {
 		saveConfigurationLog();
@@ -363,7 +363,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			//$NON-NLS-1$
 			UpdateCore.warn("",exc);
 		}
-		return false;
+		return true;
 	}
 
 	/*
