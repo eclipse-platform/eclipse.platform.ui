@@ -332,9 +332,18 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	}
 	
 	private IResource[] getResourcesFromSelection() {
-		ISelection selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().getActivePart().getSite().getSelectionProvider().getSelection();
-		if(selection instanceof IStructuredSelection) {
-			return Utils.getResources(((IStructuredSelection)selection).toArray());
+		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow != null) {
+			IWorkbenchPart activePart = activeWorkbenchWindow.getPartService().getActivePart();
+			if (activePart != null) {
+				ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
+				if (selectionProvider != null) {
+					ISelection selection = selectionProvider.getSelection();
+					if(selection instanceof IStructuredSelection) {
+						return Utils.getResources(((IStructuredSelection)selection).toArray());
+					}
+				}
+			}
 		}
 		return new IResource[0];
 	}
