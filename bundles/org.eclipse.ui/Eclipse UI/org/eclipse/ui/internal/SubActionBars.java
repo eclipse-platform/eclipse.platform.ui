@@ -22,11 +22,11 @@ import java.util.*;
 public class SubActionBars implements IActionBars
 {
 	private IActionBars parent;
-	private boolean active = false;
+	protected boolean active = false;
 	private Map actionHandlers;
-	private SubMenuManager menuMgr;
-	private SubStatusLineManager statusLineMgr;
-	private SubToolBarManager toolBarMgr;
+	protected SubMenuManager menuMgr;
+	protected SubStatusLineManager statusLineMgr;
+	protected SubToolBarManager toolBarMgr;
 	private ListenerList propertyChangeListeners = new ListenerList();
 	private boolean actionHandlersChanged;
 
@@ -42,6 +42,17 @@ public SubActionBars(IActionBars parent) {
  * Activate the contributions.
  */
 public void activate() {
+	activate(true);
+}
+/**
+ * Activate the contributions.
+ * <p>
+ * Workaround for toolbar layout flashing when editors contribute
+ * large amounts of items. In this case we want to force the items
+ * to be visible/hidden only when required, otherwise just change
+ * the enablement state.</p>
+ */
+public void activate(boolean forceVisibility) {
 	setActive(true);
 }
 /**
@@ -84,6 +95,17 @@ protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
  * Deactivate the contributions.
  */
 public void deactivate() {
+	deactivate(true);
+}
+/**
+ * Deactivate the contributions.
+ * <p>
+ * Workaround for toolbar layout flashing when editors contribute
+ * large amounts of items. In this case we want to force the items
+ * to be visible/hidden only when required, otherwise just change
+ * the enablement state.</p>
+ */
+public void deactivate(boolean forceHide) {
 	setActive(false);
 }
 /**
@@ -194,8 +216,10 @@ private void setActive(boolean set) {
 	active = set;
 	if (menuMgr != null)
 		menuMgr.setVisible(set);
+	
 	if (statusLineMgr != null)
 		statusLineMgr.setVisible(set);
+		
 	if (toolBarMgr != null)
 		toolBarMgr.setVisible(set);
 }

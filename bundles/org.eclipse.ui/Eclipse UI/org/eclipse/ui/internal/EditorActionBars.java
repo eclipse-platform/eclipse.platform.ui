@@ -28,6 +28,12 @@ public EditorActionBars(IActionBars parent, String type) {
 	this.type = type;
 }
 /**
+ * Activate the contributions.
+ */
+public void activate(boolean forceVisibility) {
+	setActive(true, forceVisibility);
+}
+/**
  * Add one ref to the bars.
  */
 public void addRef() {
@@ -44,6 +50,12 @@ protected SubMenuManager createSubMenuManager(IMenuManager parent) {
  */
 protected SubToolBarManager createSubToolBarManager(IToolBarManager parent) {
 	return new EditorToolBarManager(parent);
+}
+/**
+ * Deactivate the contributions.
+ */
+public void deactivate(boolean forceVisibility) {
+	setActive(false, forceVisibility);
 }
 /**
  * Gets the editor contributor
@@ -83,6 +95,25 @@ public void partChanged(IWorkbenchPart part) {
  */
 public void removeRef() {
 	-- refCount;
+}
+/**
+ * Activate / Deactivate the contributions.
+ * 
+ * Workaround for flashing when editor contributes
+ * many tool items. In this case, the force visibility
+ * flag determines if the tool items should be actually
+ * made visible/hidden or just change the enablement state.
+ */
+private void setActive(boolean set, boolean forceVisibility) {
+	active = set;
+	if (menuMgr != null)
+		menuMgr.setVisible(set);
+	
+	if (statusLineMgr != null)
+		statusLineMgr.setVisible(set);
+		
+	if (toolBarMgr != null)
+		((EditorToolBarManager)toolBarMgr).setVisible(set, forceVisibility);
 }
 /**
  * Sets the editor contributor

@@ -37,6 +37,7 @@ public class WorkbenchPage implements IWorkbenchPage
 	private Composite composite;
 	private ControlListener resizeListener;
 	private IWorkbenchPart activePart;
+	private IEditorPart lastActiveEditor;
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
 	private PartListenerList partListeners = new PartListenerList();
@@ -101,7 +102,7 @@ public void activate(IWorkbenchPart part) {
 /**
  * Activates a part.  The part is given focus, the pane is hilighted and the action bars are shown.
  */
-static private void activatePart(final IWorkbenchPart part, final boolean switchActions) {
+static private void activatePart(final IWorkbenchPart part, final boolean switchActions, final boolean switchActionsForced) {
 	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
 		public void run() {
 			if (part != null) {
@@ -111,7 +112,7 @@ static private void activatePart(final IWorkbenchPart part, final boolean switch
 				SubActionBars bars = (SubActionBars)site.getActionBars();
 				bars.partChanged(part);
 				if (switchActions)
-					bars.activate();
+					bars.activate(switchActionsForced);
 			}
 		}
 	});
@@ -166,6 +167,15 @@ public void bringToTop(IWorkbenchPart part) {
 	boolean broughtToTop = false;
 	if (part instanceof IEditorPart) {
 		broughtToTop = getEditorManager().setVisibleEditor((IEditorPart)part, false);
+		if (lastActiveEditor != null && broughtToTop) {
+			String newID = part.getSite().getId();
+			String oldID = lastActiveEditor.getSite().getId();
+			if (newID != oldID) {
+				deactivateLastEditor();
+				lastActiveEditor = null;
+				updateActionBars();
+			}
+		}
 	} else if (part instanceof IViewPart) {
 		broughtToTop = getPersp().bringToTop((IViewPart)part);
 	}
@@ -345,6 +355,11 @@ public boolean closeAllEditors(boolean save) {
 	// Deactivate part.
 	if (activePart instanceof IEditorPart)
 		setActivePart(null);
+	if (lastActiveEditor != null) {
+		deactivateLastEditor();
+		updateActionBars();
+		lastActiveEditor = null;
+	}
 			
 	// Close all editors.
 	IEditorPart [] editors = getEditorManager().getEditors();
@@ -382,6 +397,11 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	boolean partWasActive = (editor == activePart);
 	if (partWasActive)
 		setActivePart(null);
+	if (lastActiveEditor == editor) {
+		deactivateLastEditor();
+		updateActionBars();
+		lastActiveEditor = null;
+	}
 
 	// Close the part.
 	getEditorManager().closeEditor(editor);
@@ -428,15 +448,26 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 	}
 }
 /**
+ * Deactivate the last known active editor to force its
+ * action items to be removed, not just disabled.
+ */
+private void deactivateLastEditor() {
+	if (lastActiveEditor == null)
+		return;
+	PartSite site = (PartSite) lastActiveEditor.getSite();
+	SubActionBars actionBars = (SubActionBars) site.getActionBars();
+	actionBars.deactivate(true);
+}
+/**
  * Deactivates a part.  The pane is unhilighted and the action bars are hidden.
  */
-static private void deactivatePart(IWorkbenchPart part, boolean switchActions) {
+static private void deactivatePart(IWorkbenchPart part, boolean switchActions, boolean switchActionsForced) {
 	if (part != null) {
 		PartSite site = (PartSite)part.getSite();
 		site.getPane().showFocus(false);
 		if (switchActions) {
 			SubActionBars bars = (SubActionBars)site.getActionBars();
-			bars.deactivate();
+			bars.deactivate(switchActionsForced);
 		}
 	}
 }
@@ -806,6 +837,26 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 	}
 }
 /**
+ * Determine if the new active part will cause the
+ * the actions to change the visibility state or
+ * just change the enablement state.
+ * 
+ * @return boolean true to change the visibility state, or
+ *	false to just changed the enablement state.
+ */
+private boolean isActionSwitchForced(IWorkbenchPart newPart) {
+	if (lastActiveEditor == null)
+		return true;
+		
+	if (lastActiveEditor == newPart)
+		return false;
+		
+	if (newPart instanceof IViewPart)
+		return false;
+		
+	return true;
+}
+/**
  * See IWorkbenchPage.
  */
 public boolean isEditorAreaVisible() {
@@ -842,7 +893,9 @@ protected void onActivate() {
 	composite.setVisible(true);
 	getPersp().onActivate();
 	if (activePart != null) {
-		activatePart(activePart, true);
+		activatePart(activePart, true, true);
+		if (activePart instanceof IEditorPart)
+			lastActiveEditor = (IEditorPart) activePart;
 		firePartActivated(activePart);
 	} else {
 		composite.setFocus();
@@ -855,9 +908,11 @@ protected void onActivate() {
  */
 protected void onDeactivate() {
 	if (activePart != null) {
-		deactivatePart(activePart, true);
+		deactivatePart(activePart, true, true);
 		firePartDeactivated(activePart);
 	}
+	deactivateLastEditor();
+	lastActiveEditor = null;
 	getPersp().onDeactivate();
 	composite.setVisible(false);
 }
@@ -1239,19 +1294,36 @@ private void setActivePart(IWorkbenchPart newPart) {
 		String oldID = activePart.getSite().getId();
 		switchActions = (oldID != newID);
 	}
+	// Try to get away with only changing the enablement of the
+	// tool items if possible - workaround for layout flashing
+	// when editors contribute lots of items in the toolbar.
+	boolean switchActionsForced = false;
+	if (switchActions)
+		switchActionsForced = isActionSwitchForced(newPart);
 
 	// Clear active part.
 	IWorkbenchPart oldPart = activePart;
 	activePart = null;		
 	if (oldPart != null) {
-		deactivatePart(oldPart, switchActions);
+		deactivatePart(oldPart, switchActions, switchActionsForced);
 		firePartDeactivated(oldPart);
 	}
 
 	// Set active part.
 	activePart = newPart;
 	if (newPart != null) {
-		activatePart(newPart, switchActions);
+		// Upon a new editor being activated, make sure the previously
+		// active editor's toolbar contributions are removed.
+		if (newPart instanceof IEditorPart) {
+			if (lastActiveEditor != null) {
+				String newID = newPart.getSite().getId();
+				String oldID = lastActiveEditor.getSite().getId();
+				if (newID != oldID)
+					deactivateLastEditor();
+			}
+			lastActiveEditor = (IEditorPart)newPart;
+		}
+		activatePart(newPart, switchActions, switchActionsForced);
 		firePartActivated(newPart);
 	}
 
