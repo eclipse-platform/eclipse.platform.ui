@@ -419,8 +419,6 @@ public abstract class Plugin implements BundleActivator {
 		// lazily create preference store
 		// important: set preferences instance field to prevent re-entry
 		preferences = new PreferenceForwarder(bundle.getSymbolicName());
-		// load settings into preference store 
-		loadPluginPreferences();
 
 		// 1. fill in defaults supplied by this plug-in
 		initializeDefaultPluginPreferences();
@@ -432,72 +430,6 @@ public abstract class Plugin implements BundleActivator {
 			System.out.println("Completed loading preferences for plugin " + bundle.getSymbolicName()); //$NON-NLS-1$
 		}
 		return preferences;
-	}
-
-	/**
-	 * Loads preferences settings for this plug-in from the plug-in preferences
-	 * file in the plug-in's state area. This plug-in must have a preference store
-	 * object.
-	 * 
-	 * @see Preferences#load(InputStream)
-	 * @since 2.0
-	 */
-	private void loadPluginPreferences() {
-		// if we have new node prefs do nothing, the prefs will be initialized lazily on a per-node basis
-		if (preferences instanceof PreferenceForwarder)
-			return;
-
-		// the preferences file is located in the plug-in's state area at a well-known name
-		// don't need to create the directory if there are no preferences to load
-		File prefFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(bundle, false).toFile();
-		if (!prefFile.exists()) {
-			// no preference file - that's fine
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("Plugin preference file " + prefFile + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return;
-		}
-
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Loading preferences from " + prefFile); //$NON-NLS-1$
-		}
-		// load preferences from file
-		SafeFileInputStream in = null;
-		try {
-			in = new SafeFileInputStream(prefFile);
-			preferences.load(in);
-		} catch (IOException e) {
-			// problems loading preference store - quietly ignore
-			if (InternalPlatform.DEBUG_PREFERENCES) {
-				System.out.println("IOException encountered loading preference file " + prefFile); //$NON-NLS-1$
-				e.printStackTrace();
-			}
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// ignore problems with close
-					if (InternalPlatform.DEBUG_PREFERENCES) {
-						System.out.println("IOException encountered closing preference file " + prefFile); //$NON-NLS-1$
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		if (InternalPlatform.DEBUG_PREFERENCES) {
-			System.out.println("Preferences now set as follows:"); //$NON-NLS-1$
-			String[] prefNames = preferences.propertyNames();
-			for (int i = 0; i < prefNames.length; i++) {
-				String value = preferences.getString(prefNames[i]);
-				System.out.println("\t" + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			prefNames = preferences.defaultPropertyNames();
-			for (int i = 0; i < prefNames.length; i++) {
-				String value = preferences.getDefaultString(prefNames[i]);
-				System.out.println("\tDefault values: " + prefNames[i] + " = " + value); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
 	}
 
 	/**
