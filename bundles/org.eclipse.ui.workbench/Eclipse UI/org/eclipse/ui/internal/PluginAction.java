@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -38,6 +36,7 @@ import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
@@ -171,7 +170,7 @@ public abstract class PluginAction extends Action
 			configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
 		return plugin.isPluginActivated();
 	}
-
+	
 	/**
 	 * Return whether or not this action could have been registered
 	 * due to an adaptable - i.e. it is a resource type.
@@ -188,7 +187,13 @@ public abstract class PluginAction extends Action
 				adaptableNotChecked = false;
 				return false;
 			}
-			Class resourceClass = IResource.class;
+			Class resourceClass = ObjectContributorManager.getResourceClass();
+			if (resourceClass == null) {
+				// resources plug-in not even present
+				isAdaptableAction = false;
+				adaptableNotChecked = false;
+				return false;
+			}
 
 			if (typeName.equals(resourceClass.getName())) {
 				isAdaptableAction = true;
@@ -318,9 +323,13 @@ public abstract class PluginAction extends Action
 			for (int i = 0; i < elements.length; i++) {
 				Object originalValue = elements[i];
 				if (originalValue instanceof IAdaptable) {
-					Object adaptedValue = ((IAdaptable)originalValue).getAdapter(IResource.class);
-					if (adaptedValue != null)
-						adaptables.add(adaptedValue);
+					Class resourceClass = ObjectContributorManager.getResourceClass();
+                    if (resourceClass != null) {
+					   Object adaptedValue = ((IAdaptable)originalValue).getAdapter(resourceClass);
+					   if (adaptedValue != null) {
+						   adaptables.add(adaptedValue);
+                       }
+                    }
 				}
 			}
 			return new StructuredSelection(adaptables);
@@ -338,13 +347,13 @@ public abstract class PluginAction extends Action
 	public String getOverrideActionId() {
 		return null;
 	}
-    
-    /**
-     * @return the IConfigurationElement used to create this PluginAction.
-     * 
-     * @since 3.0
-     */
-    protected IConfigurationElement getConfigElement() {
-        return configElement;
-    }
+	
+	/**
+	 * @return the IConfigurationElement used to create this PluginAction.
+	 * 
+	 * @since 3.0
+	 */
+	protected IConfigurationElement getConfigElement() {
+		return configElement;
+	}
 }

@@ -16,13 +16,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -35,7 +31,7 @@ import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.registry.ICategory;
+import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
@@ -53,13 +49,6 @@ public class WorkbenchActivityHelper {
 	 * Prefix for all role preferences
 	 */
     private static String PREFIX = "UIRoles."; //$NON-NLS-1$    
-
-    /**
-	 * 
-	 * Resource listener that reacts to new projects (and associated natures)
-	 * coming into the workspace.
-	 */
-    private IResourceChangeListener listener;
 
     /**
 	 * Singleton instance.
@@ -92,7 +81,7 @@ public class WorkbenchActivityHelper {
 	 * @since 3.0
 	 */
     public static boolean isEnabled(String idToMatchAgainst) {
-        return isEnabled(((Workbench) PlatformUI.getWorkbench()).getActivityManager(), idToMatchAgainst);
+        return isEnabled(PlatformUI.getWorkbench().getActivityManager(), idToMatchAgainst);
     }
 
     /**
@@ -134,15 +123,12 @@ public class WorkbenchActivityHelper {
 	 * contributions.
 	 */
     private WorkbenchActivityHelper() {
-        listener = getChangeListener();
-        WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(listener);
         loadEnabledStates();
 
         // TODO start enables all activities by default unless command line
 		// parameter -activities is specified
 
-        Workbench workbench = (Workbench) PlatformUI.getWorkbench();
-        String[] commandLineArgs = workbench.getCommandLineArgs();
+        String[] commandLineArgs = Platform.getCommandLineArgs();
         boolean activities = false;
 
         for (int i = 0; i < commandLineArgs.length; i++)
@@ -152,7 +138,7 @@ public class WorkbenchActivityHelper {
             }
 
         if (!activities) {
-            IActivityManager activityManager = workbench.getActivityManager();
+            IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
             activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
         }
 
@@ -164,50 +150,7 @@ public class WorkbenchActivityHelper {
         createPerspectiveMappings();
         createViewMappings();
     }
-
-    /**
-	 * Get a change listener for listening to resource changes.
-	 * 
-	 * @return
-	 */
-    private IResourceChangeListener getChangeListener() {
-        return new IResourceChangeListener() {
-            /*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-			 */
-            public void resourceChanged(IResourceChangeEvent event) {
-
-                IResourceDelta mainDelta = event.getDelta();
-
-                if (mainDelta == null)
-                    return;
-                //Has the root changed?
-                if (mainDelta.getKind() == IResourceDelta.CHANGED && mainDelta.getResource().getType() == IResource.ROOT) {
-
-                    try {
-                        IResourceDelta[] children = mainDelta.getAffectedChildren();
-                        for (int i = 0; i < children.length; i++) {
-                            IResourceDelta delta = children[i];
-                            if (delta.getResource().getType() == IResource.PROJECT) {
-                                IProject project = (IProject) delta.getResource();
-                                String[] ids = project.getDescription().getNatureIds();
-                                for (int j = 0; j < ids.length; j++) {
-                                    enableActivities(ids[j]);
-                                }
-                            }
-                        }
-
-                    }
-                    catch (CoreException exception) {
-                        //Do nothing if there is a CoreException
-                    }
-                }
-            }
-        };
-    }
-
+    
     /**
 	 * Enable all IActivity objects that match the given id.
 	 * 
@@ -216,7 +159,7 @@ public class WorkbenchActivityHelper {
 	 * @since 3.0
 	 */
     public static void enableActivities(String id) {
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
         Set activities = new HashSet(activityManager.getEnabledActivityIds());
         for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext();) {
             String activityId = (String) i.next();
@@ -229,13 +172,10 @@ public class WorkbenchActivityHelper {
     }
 
     /**
-	 * Save the enabled state of all Activities and unhook the <code>IResourceChangeListener</code>.
+	 * Save the enabled state of all Activities.
 	 */
     public void shutdown() {
         saveEnabledStates();
-        if (listener != null) {
-            WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(listener);
-        }
     }
 
     /**
@@ -244,7 +184,7 @@ public class WorkbenchActivityHelper {
 	 */
     private void createNewWizardMappings() {
         NewWizardsRegistryReader reader = new NewWizardsRegistryReader(false);
-        WizardCollectionElement wizardCollection = (WizardCollectionElement) reader.getWizards();
+        WizardCollectionElement wizardCollection = reader.getWizardElements();
         IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_NEW, true);
         Object[] wizards = flattenWizards(wizardCollection);
         for (int i = 0; i < wizards.length; i++) {
@@ -329,11 +269,10 @@ public class WorkbenchActivityHelper {
                 viewDescriptors[i].getId(),
                 viewDescriptors[i].getId());
         }
-
-        // this is a temporary hack until we decide whether categories warrent
-		// their own
-        // object manager.
-        ICategory[] categories = viewRegistry.getCategories();
+        
+        // this is a temporary hack until we decide whether categories warrent their own
+        // object manager.  
+        Category[] categories = viewRegistry.getCategories();
         for (int i = 0; i < categories.length; i++) {
             IConfigurationElement element = (IConfigurationElement) categories[i].getAdapter(IConfigurationElement.class);
             if (element != null) {
@@ -412,7 +351,7 @@ public class WorkbenchActivityHelper {
         //allow for switching off and on of roles
         //        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
         //            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
         Iterator values = activityManager.getDefinedActivityIds().iterator();
         Set enabledActivities = new HashSet();
         while (values.hasNext()) {
@@ -431,7 +370,7 @@ public class WorkbenchActivityHelper {
     private void saveEnabledStates() {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
         //        store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
-        IActivityManager activityManager = ((Workbench) PlatformUI.getWorkbench()).getActivityManager();
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
         Iterator values = activityManager.getDefinedActivityIds().iterator();
         while (values.hasNext()) {
             IActivity activity = activityManager.getActivity((String) values.next());

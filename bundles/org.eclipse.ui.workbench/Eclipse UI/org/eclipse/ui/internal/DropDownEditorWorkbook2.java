@@ -252,15 +252,6 @@ public void reorderTab(EditorPane pane, int newIndex) {
 	
 }
 
-
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.EditorWorkbook#setBorderVisible(boolean)
- */
-protected void setBorderVisible(boolean visible) {
-	// TODO Auto-generated method stub
-	
-}
-
 public void dropDown() {
 	int shellStyle= SWT.RESIZE;
 	int tableStyle= SWT.V_SCROLL | SWT.H_SCROLL;

@@ -34,6 +34,10 @@ public interface IWorkbenchPreferenceConstants {
 	 * OPEN_PERSPECTIVE_REPLACE</code>.
 	 * </p>
 	 * 
+	 * @see #OPEN_PERSPECTIVE_WINDOW
+	 * @see #OPEN_PERSPECTIVE_PAGE
+	 * @see #OPEN_PERSPECTIVE_REPLACE
+	 * @see #NO_NEW_PERSPECTIVE
 	 */
 	public static final String OPEN_NEW_PERSPECTIVE = "OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 	
@@ -60,6 +64,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * by <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE and 
 	 * OPEN_PERSPECTIVE_REPLACE</code>.
 	 * </p>
+	 * 
 	 * @deprecated Workbench no longer supports shift key modifier to open
 	 * 		a new perspective. Callers should use IWorkbench.showPerspective methods.
 	 */
@@ -71,9 +76,18 @@ public interface IWorkbenchPreferenceConstants {
 	 * when a new project is created.
 	 * <p>
 	 * Value is of type <code>String</code>.  The possible values are defined 
-	 * by <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE, 
-	 * OPEN_PERSPECTIVE_REPLACE and NO_NEW_PERSPECTIVE</code>.
+	 * by the constants <code>OPEN_PERSPECTIVE_WINDOW, OPEN_PERSPECTIVE_PAGE, 
+	 * OPEN_PERSPECTIVE_REPLACE, and NO_NEW_PERSPECTIVE</code>.
 	 * </p>
+	 * 
+	 * @see #OPEN_PERSPECTIVE_WINDOW
+	 * @see #OPEN_PERSPECTIVE_PAGE
+	 * @see #OPEN_PERSPECTIVE_REPLACE
+	 * @see #NO_NEW_PERSPECTIVE
+	 * @deprecated in 3.0. This preference is IDE-specific, and is therefore found
+	 * only in IDE configurations. IDE-specific tools should use 
+	 * <code>org.eclipse.ui.ide.IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE</code>
+	 * instead.
 	 */
 	public static final String PROJECT_OPEN_NEW_PERSPECTIVE =
 		"PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
@@ -81,6 +95,8 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new window.
+	 * 
+	 * @see #PROJECT_OPEN_NEW_PERSPECTIVE
 	 */
 	public static final String OPEN_PERSPECTIVE_WINDOW = "OPEN_PERSPECTIVE_WINDOW"; //$NON-NLS-1$
 	
@@ -88,6 +104,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new page.
 	 * 
+	 * @see #PROJECT_OPEN_NEW_PERSPECTIVE
 	 * @deprecated Opening a Perspective in a new page is no longer
 	 * supported functionality as of 2.0.
 	 */
@@ -97,6 +114,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * A preference value indicating that an action should open a new 
 	 * perspective by replacing the current perspective.
 	 * 
+	 * @see #PROJECT_OPEN_NEW_PERSPECTIVE
 	 */
 	public static final String OPEN_PERSPECTIVE_REPLACE =
 		"OPEN_PERSPECTIVE_REPLACE"; //$NON-NLS-1$
@@ -105,11 +123,12 @@ public interface IWorkbenchPreferenceConstants {
 	 * A preference value indicating that an action should not open a 
 	 * new perspective.
 	 * 
+	 * @see #PROJECT_OPEN_NEW_PERSPECTIVE
 	 */
 	public static final String NO_NEW_PERSPECTIVE = "NO_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
-	 * A preference value indicating the default workbench perspective
+	 * A preference value indicating the default workbench perspective.
 	 */
 	public static final String DEFAULT_PERSPECTIVE_ID = "defaultPerspectiveId"; //$NON-NLS-1$
 }

@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -22,13 +21,13 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class ExternalEditor {
-	private IFile file;
+	private IPath filePath;
 	private EditorDescriptor descriptor;
 /**
  * Create an external editor.
  */
-public ExternalEditor(IFile newFile, EditorDescriptor editorDescriptor) {
-	this.file = newFile;
+public ExternalEditor(IPath newFilePath, EditorDescriptor editorDescriptor) {
+	this.filePath = newFilePath;
 	this.descriptor = editorDescriptor;
 }
 /**
@@ -42,10 +41,9 @@ public void open() throws CoreException {
 	if (program == null) {
 		openWithUserDefinedProgram();
 	} else {
-		String path = new String();
-		IPath location = file.getLocation();
-		if(location != null) {
-			path = location.toOSString();
+		String path = ""; //$NON-NLS-1$
+		if(filePath != null) {
+			path = filePath.toOSString();
 			if(program.execute(path))
 				return;
 		}
@@ -92,8 +90,7 @@ public void openWithUserDefinedProgram() throws CoreException {
 		programFileName = descriptor.getFileName();
 
 	// Get the full path of the file to open
-	IPath location = file.getLocation();
-	if(location == null) {
+	if(filePath == null) {
 		throw new CoreException(new Status(
 			Status.ERROR, 
 			WorkbenchPlugin.PI_WORKBENCH, 
@@ -101,7 +98,7 @@ public void openWithUserDefinedProgram() throws CoreException {
 			WorkbenchMessages.format("ExternalEditor.errorMessage", new Object[] {programFileName}), //$NON-NLS-1$
 			null));
 	}
-	String path = location.toOSString();
+	String path = filePath.toOSString();
 
 	// Open the file
 	

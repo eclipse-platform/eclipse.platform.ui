@@ -12,22 +12,24 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
 
+import org.eclipse.ui.IWorkbenchWindow;
+
 /**
  * The <code>EditorsDropDownAction</code> is used to show the
  * editors drop-down.
  */
 public class EditorsDropDownAction extends Action {
-	private WorkbenchWindow window;
+	private IWorkbenchWindow window;
 	
 	/**
 	 * Create a new instance of <code>EditorsDropDownAction</code>
 	 * 
 	 * @param window the workbench window this action applies to
 	 */
-	public EditorsDropDownAction(WorkbenchWindow window) {
-		super("Editors..."); 
+	public EditorsDropDownAction(IWorkbenchWindow window) {
+		super("Editors...");  // @issue need to externalize
 		this.window = window;
-		setToolTipText("Editors...");
+		setToolTipText("Editors...");  // @issue need to externalize
 		setActionDefinitionId("org.eclipse.ui.window.editorsDropDown"); //$NON-NLS-1$
 //		WorkbenchHelp.setHelp(this, ...);
 	}

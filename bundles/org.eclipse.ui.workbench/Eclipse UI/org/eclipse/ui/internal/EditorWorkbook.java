@@ -247,7 +247,6 @@ public void drawGradient() {
 }
 
 protected abstract void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents);
-protected abstract void setBorderVisible(boolean visible);
 
 /**
  * enableDrop
@@ -482,8 +481,7 @@ public void replace(LayoutPart oldPart, LayoutPart newPart) {
 private void setActiveState(int state) {
 	if (activeState != state) {
 		activeState = state;
-		//drawGradient();
-		setBorderVisible(state == ACTIVE_FOCUS);
+		drawGradient();
 	}
 }
 /**

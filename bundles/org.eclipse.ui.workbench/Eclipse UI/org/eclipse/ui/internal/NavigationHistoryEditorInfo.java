@@ -16,6 +16,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 /**
  * Keeps the info to save, restore or identify and editor.
@@ -59,7 +60,7 @@ public class NavigationHistoryEditorInfo {
  		if(memento == null)
  			return;
 		String factoryID= memento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
-		IElementFactory factory= WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+		IElementFactory factory= PlatformUI.getWorkbench().getElementFactory(factoryID);
 		if (factory != null) {
 			IAdaptable element= factory.createElement(memento);
 			if (element instanceof IEditorInput) {

@@ -42,7 +42,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -476,7 +476,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 		if (desc != null)
 			return;
 
-		// Step 3. Use internal workbench default.
-		defaultPerspID = IWorkbenchConstants.DEFAULT_LAYOUT_ID;
+		// Step 3. Use application-specific default
+		defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();
 	}
 }

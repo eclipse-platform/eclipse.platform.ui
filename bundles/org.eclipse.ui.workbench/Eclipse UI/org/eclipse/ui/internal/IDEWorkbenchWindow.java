@@ -29,11 +29,10 @@ public class IDEWorkbenchWindow extends WorkbenchWindow {
 	/**
 	 * Create a new instance of the receiver.
 	 * 
-	 * @param workbench
 	 * @param number
 	 */
-	public IDEWorkbenchWindow(Workbench workbench, int number) {
-		super(workbench, number);
+	public IDEWorkbenchWindow(int number) {
+		super(number);
 	}
 
 	/*

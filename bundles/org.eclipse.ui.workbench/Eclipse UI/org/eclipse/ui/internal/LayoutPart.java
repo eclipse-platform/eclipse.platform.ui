@@ -185,22 +185,28 @@ public void moveAbove(Control refControl) {
  * Reparent a part.
  */
 public void reparent(Composite newParent) {
-	if (!newParent.isReparentable())
-		return;
-		
 	Control control = getControl();
-	if ((control == null) || (control.getParent() == newParent))
+	if ((control == null) || (control.getParent() == newParent)) {
 		return;
-		
-	// make control small in case it is not resized with other controls
-	control.setBounds(0, 0, 0, 0);
-	// By setting the control to disabled before moving it,
-	// we ensure that the focus goes away from the control and its children
-	// and moves somewhere else
-	boolean enabled = control.getEnabled();
-	control.setEnabled(false);
-	control.setParent(newParent);
-	control.setEnabled(enabled);
+	}
+	
+	if (!control.isReparentable()) {
+		// WARNING!!! The commented code here doesn't work... but something
+		// similar will be needed to get undockable views working on all
+		// platforms.
+		//dispose();
+		//createControl(newParent);
+	} else {
+		// make control small in case it is not resized with other controls
+		control.setBounds(0, 0, 0, 0);
+		// By setting the control to disabled before moving it,
+		// we ensure that the focus goes away from the control and its children
+		// and moves somewhere else
+		boolean enabled = control.getEnabled();
+		control.setEnabled(false);
+		control.setParent(newParent);
+		control.setEnabled(enabled);
+	}
 }
 /**
  * Returns true if this part is visible.

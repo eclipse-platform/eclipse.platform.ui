@@ -51,6 +51,7 @@ public LabelRetargetAction(String actionID, String text) {
  * @param style one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
  * 		<code>AS_DROP_DOWN_MENU</code>, <code>AS_RADIO_BUTTON</code>, and
  * 		<code>AS_UNSPECIFIED</code>.
+ * @since 3.0
  */
 public LabelRetargetAction(String actionID, String text, int style) {
 	super(actionID, text, style);

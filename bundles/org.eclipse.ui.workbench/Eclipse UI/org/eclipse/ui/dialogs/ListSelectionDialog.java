@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *   new ListSelectionDialog(
  *       getShell(),
  *       input,
- *       new WorkbenchContentProvider(),
+ *       new BaseWorkbenchContentProvider(),
  *		 new WorkbenchLabelProvider(),
  *		 "Select the resources to save.");
  *	dlg.setInitialSelections(dirtyEditors);

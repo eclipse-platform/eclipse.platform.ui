@@ -30,11 +30,10 @@ public class ClassicWorkbenchWindow
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param workbench
 	 * @param number
 	 */
-	public ClassicWorkbenchWindow(Workbench workbench, int number) {
-		super(workbench, number);
+	public ClassicWorkbenchWindow(int number) {
+		super(number);
 	}
 
 	/**

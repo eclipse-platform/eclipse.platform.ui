@@ -13,8 +13,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.MenuManager;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -24,6 +23,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
+
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
@@ -49,6 +54,7 @@ import org.eclipse.ui.internal.commands.ActionService;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.keys.KeySupport;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
@@ -221,18 +227,6 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 		public final void activityManagerChanged(final IActivityManagerEvent activityManagerEvent) {
 			updateActiveActivityIds();
-
-			Set activeActivityIds = activityManagerEvent.getActivityManager().getActiveActivityIds();
-
-			if (!Util.equals(this.activeActivityIds, activeActivityIds)) {
-				this.activeActivityIds = activeActivityIds;
-				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
-
-				if (workbenchWindow instanceof WorkbenchWindow) {
-					MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-					menuManager.updateAll(true);
-				}
-			}
 		}
 	};
 
@@ -434,6 +428,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		return contextActivationService;
 	}
 
+	// TODO remove this unused method once nick checks in RCP work (nov 5 2003)
 	public String getName(String commandId) {
 		String name = null;
 
@@ -496,7 +491,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 				
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
 			KeySequence modeAfterKeyStroke = KeySequence.getInstance(modeBeforeKeyStroke, (KeyStroke) iterator.next());		
-
+			
 			if (isPartialMatch(modeAfterKeyStroke)) {
 				setMode(modeAfterKeyStroke);
 				return true;				
@@ -554,8 +549,10 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		}
 	}
 
-	public void updateActiveActivityIds() {
-		workbench.getCommandManager().setActiveActivityIds(workbench.getActivityManager().getActiveActivityIds());
+	Set activeActivityIds = new HashSet();
+	
+	public void updateActiveActivityIds() {		
+		workbench.getCommandManager().setActiveActivityIds(activeActivityIds);
 	}
 
 	void updateActiveCommandIdsAndActiveActivityIds() {
@@ -699,8 +696,21 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 		if (this.activeWorkbenchPartContextActivationService != null)
 			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
+	
+		Set activeActivityIds = new HashSet(activeContextIds);
 
-		workbench.getActivityManager().setActiveActivityIds(new HashSet(activeContextIds));
+		if (!Util.equals(this.activeActivityIds, activeActivityIds)) {
+			this.activeActivityIds = activeActivityIds;
+
+			updateActiveActivityIds();
+			
+			IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+
+			if (workbenchWindow instanceof WorkbenchWindow) {
+				MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
+				menuManager.updateAll(true);
+			}
+		}
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {
@@ -726,9 +736,23 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		// Update each open window's status line.
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchWindow window = windows[i];
-			if (window instanceof WorkbenchWindow) {
-				((WorkbenchWindow) window).getActionBuilder().updateModeLine(text);
+			updateModeLine(windows[i], text);
+		}
+	}
+	
+	/**
+	 * Updates the text of the given window's mode line with the given text.
+	 * 
+	 * @param window the window
+	 * @param text the text
+	 */
+	private void updateModeLine(IWorkbenchWindow window, String text) {
+		if (window instanceof WorkbenchWindow) {
+			IStatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
+			// @issue implicit dependency on IDE's action builder
+			IContributionItem item = statusLine.find("ModeContributionItem"); //$NON-NLS-1$
+			if (item instanceof StatusLineContributionItem) {
+				((StatusLineContributionItem) item).setText(text);
 			}
 		}
 	}

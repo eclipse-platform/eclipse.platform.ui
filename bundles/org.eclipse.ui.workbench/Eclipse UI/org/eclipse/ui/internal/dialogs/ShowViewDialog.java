@@ -33,7 +33,6 @@ public class ShowViewDialog extends org.eclipse.jface.dialogs.Dialog
 	private IViewRegistry viewReg;
 	private IViewDescriptor[] viewDescs = new IViewDescriptor[0];
 	private Button okButton;
-	private Button cancelButton;
 
 	private static final int LIST_WIDTH = 250;
 	private static final int LIST_HEIGHT = 300;
@@ -87,7 +86,7 @@ protected void configureShell(Shell shell) {
  */
 protected void createButtonsForButtonBar(Composite parent) {
 	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 }
 /**
  * Creates and returns the contents of the upper part 
@@ -169,7 +168,7 @@ protected void restoreWidgetValues() {
 	ViewRegistry reg = (ViewRegistry)viewReg;
 	ArrayList categoriesToExpand = new ArrayList(expandedCategoryIds.length);
 	for (int i = 0; i < expandedCategoryIds.length; i++) {
-		ICategory category = reg.findCategory(expandedCategoryIds[i]);
+		Category category = reg.findCategory(expandedCategoryIds[i]);
 		if (category != null)	// ie.- it still exists
 			categoriesToExpand.add(category);
 	}
@@ -189,7 +188,7 @@ protected void saveWidgetValues() {
 	Object[] expandedElements = tree.getExpandedElements();
 	String[] expandedCategoryIds = new String[expandedElements.length];
 	for (int i = 0; i < expandedElements.length; ++i)
-		expandedCategoryIds[i] = ((ICategory)expandedElements[i]).getId();
+		expandedCategoryIds[i] = ((Category)expandedElements[i]).getId();
 
 	// Save them for next time.
 	settings.put(

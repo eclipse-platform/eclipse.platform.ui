@@ -18,16 +18,24 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -41,18 +49,12 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
@@ -74,16 +76,20 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.activities.ActivationServiceFactory;
+import org.eclipse.ui.activities.DisposedException;
+import org.eclipse.ui.activities.IActivationService;
+import org.eclipse.ui.activities.IActivationServiceEvent;
+import org.eclipse.ui.activities.IActivationServiceListener;
+import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditor;
  
 /**
@@ -384,6 +390,41 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 	init(w, null, input);
 }
 
+private final HashSet activationServices = new HashSet();
+private final IActivationService compositeActivationService = ActivationServiceFactory.getActivationService();
+
+private final IActivationServiceListener activationServiceListener = new IActivationServiceListener() {
+	public void activationServiceChanged(IActivationServiceEvent activationServiceEvent) {
+		Set activeActivityIds = new HashSet();
+		
+		for (Iterator iterator = activationServices.iterator(); iterator.hasNext();) {
+			IActivationService activationService = (IActivationService) iterator.next();
+			
+			try {
+				activeActivityIds.addAll(activationService.getActiveActivityIds());					
+			} catch (DisposedException eDisposed) {
+				iterator.remove();
+			}
+		}
+		
+		try {
+			compositeActivationService.setActiveActivityIds(activeActivityIds);
+		} catch (DisposedException eDisposed) {			
+		}
+	}
+};
+
+public IActivationService getActivationService() {
+	IActivationService activationService = ActivationServiceFactory.getActivationService();
+	activationServices.add(activationService);	
+	activationService.addActivationServiceListener(activationServiceListener);
+	return activationService;	
+}
+
+public IActivationService getCompositeActivationService() {
+	return compositeActivationService;
+}
+
 private IActionService actionService;
 
 public IActionService getActionService() {
@@ -556,7 +597,6 @@ public void bringToTop(IWorkbenchPart part) {
 			if (broughtToTop) {
 				lastActiveEditor = null;
 			}
-			window.updateTitle();
 		} else if (part instanceof IViewPart) {
 			IViewReference ref = (IViewReference)getReference(part);
 			broughtToTop = persp.bringToTop(ref);
@@ -712,7 +752,7 @@ private boolean certifyPart(IWorkbenchPart part) {
  * Closes the perspective.
  */
 public boolean close() {
-	final boolean [] ret = new boolean[1];;
+	final boolean [] ret = new boolean[1];
 	BusyIndicator.showWhile(null, new Runnable() {
 		public void run() {
 			ret[0] = window.closePage(WorkbenchPage.this, true);
@@ -793,8 +833,6 @@ public boolean closeAllEditors(boolean save) {
 	
 	if (!window.isClosing() && deactivate)
 		activate(activationList.getActive());
-		
-	window.updateTitle();
 		
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
@@ -887,7 +925,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	
 	//if it was the last part, close the perspective
 	lastPartClosePerspective();
-	window.updateTitle();
 	
 	// Return true on success.
 	return true;
@@ -1098,7 +1135,7 @@ public void dispose() {
 		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 	}
 	activePart = null;
-	activationList = new ActivationList();;
+	activationList = new ActivationList();
 
 	// Get rid of editor presentation.
 	editorPresentation.dispose();
@@ -1719,10 +1756,6 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 			return;
 		perspList.setActive(persp);
 		window.firePerspectiveActivated(this, desc);
-		
-		// Update MRU list.
-		Workbench wb = (Workbench)window.getWorkbench();
-		wb.getPerspectiveHistory().add(desc);
 	}
 }
 /**
@@ -1824,7 +1857,7 @@ protected void onActivate() {
 		persp.onActivate();
 		updateVisibility(null,persp);
 	}
-	if (activePart == null) {
+	if (activePart == null && persp != null) {
 		IViewReference refs[] = persp.getViewReferences();
 		for (int i = 0; i < refs.length; i++) {
 			IViewReference ref = refs[i];
@@ -1890,122 +1923,17 @@ public void reuseEditor(IReusableEditor editor,IEditorInput input) {
 /**
  * See IWorkbenchPage.
  */
-public IEditorPart openEditor(IFile file) 
-	throws PartInitException
-{
-	return openEditor(new FileEditorInput(file),null,true,false,null, false);
-}
-/**
- * See IWorkbenchPage.
- */
-public IEditorPart openEditor(IFile file, String editorID)
-	throws PartInitException 
-{
-	return openEditor(new FileEditorInput(file),editorID,true,true,file, false);
-}
-/**
- * See IWorkbenchPage.
- */
-public IEditorPart openEditor(IFile file, String editorID,boolean activate)
-	throws PartInitException 
-{
-	return openEditor(new FileEditorInput(file),editorID,activate,editorID != null,file, false);
-}
-/**
- * See IWorkbenchPage.
- */
-public IEditorPart openEditor(IMarker marker)
-	throws PartInitException
-{
-	return openEditor(marker, true);
-}
-/**
- * @see IWorkbenchPage
- */
-public IEditorPart openEditor(IMarker marker, boolean activate) 
-	throws PartInitException 
-{
-	return openMarker(marker, activate, false);
-}
-/**
- * See IWorkbenchPage.
- */
-public IEditorPart openEditor(IEditorInput input, String editorID) 
-	throws PartInitException
-{
+public IEditorPart openEditor(IEditorInput input, String editorID) throws PartInitException {
 	return openEditor(input, editorID, true);
 }
 /**
  * See IWorkbenchPage.
  */
-public IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) 
-	throws PartInitException
-{
-	return openEditor(input,editorID,activate,true,null, false);
-}
-/**
- * Method openInternalEditor.
- * @param input
- * @param editorId
- */
-public IEditorPart openInternalEditor(IEditorInput input, String editorId)
-	throws PartInitException {
-	return openEditor(input,editorId,true,true,null, true);
-
-}
-/**
- * Method openInternalEditor.
- * @param iMarker
- */
-public IEditorPart openInternalEditor(IMarker marker)
-	throws PartInitException {
-		
-	return openMarker(marker, true, true);
-}
-
-private IEditorPart openMarker(IMarker marker, boolean activate, boolean forceInternal)
-	throws PartInitException {
-	// Get the resource.
-	Object resource = marker.getResource();
-	if(!(resource instanceof IFile))
-		return null;
-		
-	IFile file = (IFile)resource;
-
-	// Get the preferred editor id.
-	String editorID = null;
-	try {
-		editorID = (String)marker.getAttribute(EDITOR_ID_ATTR);
+public IEditorPart openEditor(final IEditorInput input, final String editorID, final boolean activate) throws PartInitException {
+	if (input == null || editorID == null) {
+		throw new IllegalArgumentException();
 	}
-	catch (CoreException e) {
-		WorkbenchPlugin.log(WorkbenchMessages.getString("WorkbenchPage.ErrorExtractingEditorIDFromMarker"), e.getStatus()); //$NON-NLS-1$
-		return null;
-	}
-
-	// Create a new editor.
-	IEditorPart editor = null;
-	if (editorID == null)
-		editor = openEditor(new FileEditorInput(file),null,activate,false,null, forceInternal);
-	else
-		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file, forceInternal);
-
-	// Goto the bookmark.
-	if (editor != null)
-		editor.gotoMarker(marker);
-	return editor;
-}
-/**
- * Method openInternalEditor.
- * @param iFile
- */
-public IEditorPart openInternalEditor(IFile file)
-	throws PartInitException {
-	return openEditor(new FileEditorInput(file),null,true,false,null, true);
-}
-/**
- * See IWorkbenchPage.
- */
-private IEditorPart openEditor(final IEditorInput input,final String editorID,final boolean activate,final boolean useEditorID,final IFile file,final boolean forceInternal) throws PartInitException {
+	
 	final IEditorPart result[] = new IEditorPart[1];
 	final PartInitException ex[] = new PartInitException[1];
 	BusyIndicator.showWhile(
@@ -2013,7 +1941,7 @@ private IEditorPart openEditor(final IEditorInput input,final String editorID,fi
 		new Runnable() {
 			public void run() {
 				try {
-					result[0] = busyOpenEditor(input,editorID,activate,useEditorID,file,forceInternal);
+					result[0] = busyOpenEditor(input, editorID, activate);
 				} catch (PartInitException e) {
 					ex[0] = e;
 				}
@@ -2026,12 +1954,12 @@ private IEditorPart openEditor(final IEditorInput input,final String editorID,fi
 /**
  * See IWorkbenchPage.openEditor
  */
-private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file, boolean forceInternal) throws PartInitException {			
+private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean activate) throws PartInitException {			
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
 	if (editor != null) {
-		if(IWorkbenchConstants.SYSTEM_EDITOR_ID.equals(editorID)) {
-			if(editor.isDirty()) {
+		if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals(editorID)) {
+			if (editor.isDirty()) {
 				MessageDialog dialog = new MessageDialog(
 					getWorkbenchWindow().getShell(),
 					WorkbenchMessages.getString("Save"),  //$NON-NLS-1$
@@ -2041,7 +1969,7 @@ private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean 
 					new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 
 					0);	
 				int saveFile = dialog.open();
-				if(saveFile == 0) {
+				if (saveFile == 0) {
 					try {
 						final IEditorPart editorToSave = editor;
 						getWorkbenchWindow().run(false,false,new IRunnableWithProgress() {
@@ -2074,13 +2002,8 @@ private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean 
 	// Otherwise, create a new one. This may cause the new editor to
 	// become the visible (i.e top) editor.
 	IEditorReference ref = null;
-
-	if(useEditorID)
-		ref = getEditorManager().openEditor(editorID, input,true, forceInternal);
-	else
-		ref = getEditorManager().openEditor(null,input,true, forceInternal);
-		
-	if(ref != null) {
+	ref = getEditorManager().openEditor(editorID, input, true);
+	if (ref != null) {
 		editor = ref.getEditor(true);
 		addPart(ref);
 	}
@@ -2090,23 +2013,25 @@ private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean 
 		zoomOutIfNecessary(editor);
 		setEditorAreaVisible(true);
 		if (activate) {
-			if(editor instanceof MultiEditor)
+			if (editor instanceof MultiEditor)
 				activate(((MultiEditor)editor).getActiveEditor());
 			else
 				activate(editor);
 		} else {
 			activationList.setActive(editor);
-			if (activePart != null)
+			if (activePart != null) {
 				// ensure the activation list is in a valid state
 				activationList.setActive(activePart);
+			}
 			// The previous openEditor call may create a new editor
 			// and make it visible, so send the notification.
 			IEditorPart visibleEditor = getEditorManager().getVisibleEditor();
 			if ((visibleEditor == editor) && (oldVisibleEditor != editor)) {
 				actionSwitcher.updateTopEditor(editor);
 				firePartBroughtToTop(editor);
-			} else
+			} else {
 				bringToTop(editor);
+			}
 		}
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 	}
@@ -2128,14 +2053,6 @@ private void showEditor(boolean activate, IEditorPart editor) {
  */
 public boolean isEditorPinned(IEditorPart editor) {
 	return !((EditorSite)editor.getEditorSite()).getReuseEditor();
-}
-/**
- * See IWorkbenchPage.
- */
-public void openSystemEditor(IFile input) 
-	throws PartInitException
-{
-	getEditorManager().openSystemEditor(input);
 }
 /**
  * Returns whether changes to a part will affect zoom.
@@ -2421,10 +2338,6 @@ public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 
 	persp.saveDescAs(newDesc);
 	window.updatePerspectiveShortcut(oldDesc, newDesc, this);
-	
-	// Update MRU list.
-	Workbench wb = (Workbench)window.getWorkbench();
-	wb.getPerspectiveHistory().add(newDesc);
 }
 /**
  * Save the state of the page.
@@ -2515,7 +2428,6 @@ private void setActivePart(IWorkbenchPart newPart) {
 		// Update actions now so old actions have heard part deactivated and 
 		// new actions can hear part activated.
 		actionSwitcher.updateActivePart(newPart);	
-		window.updateTitle();
 		if (newPart != null)
 			firePartActivated(newPart);
 	} finally {
@@ -2592,10 +2504,6 @@ private void setPerspective(Perspective newPersp) {
 		// Notify listeners of activation
 		window.firePerspectiveActivated(this, newPersp.getDesc());
 	
-		// Update MRU list.
-		Workbench wb = (Workbench)window.getWorkbench();
-		wb.getPerspectiveHistory().add(newPersp.getDesc());
-	
 		// Update the shortcut	
 		window.selectPerspectiveShortcut(newPersp.getDesc(), this, true);
 	} else {
@@ -2606,7 +2514,6 @@ private void setPerspective(Perspective newPersp) {
 	
 	// Update the window
 	window.updateActionSets();
-	window.updateTitle();
 	window.getShortcutBar().update(true);
 	
 	updateVisibility(oldPersp, newPersp);

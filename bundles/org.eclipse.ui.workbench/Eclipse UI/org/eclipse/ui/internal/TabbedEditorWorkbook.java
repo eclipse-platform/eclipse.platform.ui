@@ -147,8 +147,7 @@ protected void createPresentation(Composite parent) {
 	int shellStyle= SWT.RESIZE;
 	int tableStyle= SWT.V_SCROLL | SWT.H_SCROLL;
 	final EditorsInformationControl info = new EditorsInformationControl(tabFolder.getShell(), shellStyle, tableStyle);
-	info.setInput(this);
-	
+
 	tabFolder.addCTabFolderListListener(new CTabFolderListListener() {
 
 		public void showList(CTabFolderEvent event) {
@@ -159,6 +158,7 @@ protected void createPresentation(Composite parent) {
 		}
 
 		void showList(Shell parentShell, int x, int y) {
+			info.setInput(TabbedEditorWorkbook.this);
 			Point size= info.computeSizeHint();
 			int minX = 50;//labelComposite.getSize().x;
 			int minY = 300;

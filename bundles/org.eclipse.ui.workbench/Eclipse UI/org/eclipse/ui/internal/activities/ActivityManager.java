@@ -49,7 +49,6 @@ public final class ActivityManager implements IActivityManager {
 		return false;
 	}	
 
-	private Set activeActivityIds = new HashSet();
 	private Map activitiesById = new WeakHashMap();
 	private Set activitiesWithListeners = new HashSet();
 	private Map activityDefinitionsById = new HashMap();
@@ -89,10 +88,6 @@ public final class ActivityManager implements IActivityManager {
 			activityManagerListeners.add(activityManagerListener);
 	}
 
-	public Set getActiveActivityIds() {
-		return Collections.unmodifiableSet(activeActivityIds);
-	}
-
 	public IActivity getActivity(String activityId) {
 		if (activityId == null)
 			throw new NullPointerException();
@@ -120,7 +115,8 @@ public final class ActivityManager implements IActivityManager {
 		activityIds = Util.safeCopy(activityIds, String.class);
 		
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {			
-			IActivity activity = getActivity((String) iterator.next());
+			String activityId = (String) iterator.next();
+			IActivity activity = getActivity(activityId);			
 						
 			if (activity.match(string))
 				return true;
@@ -129,30 +125,27 @@ public final class ActivityManager implements IActivityManager {
 		return false;
 	}	
 
+	public Set matches(String string, Set activityIds) {
+		Set matches = new HashSet();
+		activityIds = Util.safeCopy(activityIds, String.class);
+		
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {			
+			String activityId = (String) iterator.next();
+			IActivity activity = getActivity(activityId);
+			
+			if (activity.match(string))
+				matches.add(activityId);
+		}
+		
+		return Collections.unmodifiableSet(matches);	
+	}
+
 	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
 		if (activityManagerListener == null)
 			throw new NullPointerException();
 			
 		if (activityManagerListeners != null)
 			activityManagerListeners.remove(activityManagerListener);
-	}
-
-	public void setActiveActivityIds(Set activeActivityIds) {
-		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
-		boolean activityManagerChanged = false;
-		Map activityEventsByActivityId = null;
-
-		if (!this.activeActivityIds.equals(activeActivityIds)) {
-			this.activeActivityIds = activeActivityIds;
-			activityManagerChanged = true;	
-			activityEventsByActivityId = updateActivities(activitiesById.keySet());	
-		}
-		
-		if (activityManagerChanged)
-			fireActivityManagerChanged(new ActivityManagerEvent(this, true, false, false));
-
-		if (activityEventsByActivityId != null)
-			notifyActivities(activityEventsByActivityId);	
 	}
 	
 	public void setEnabledActivityIds(Set enabledActivityIds) {	
@@ -167,7 +160,7 @@ public final class ActivityManager implements IActivityManager {
 		}
 		
 		if (activityManagerChanged)
-			fireActivityManagerChanged(new ActivityManagerEvent(this, false, false, true));
+			fireActivityManagerChanged(new ActivityManagerEvent(this, false, true));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);	
@@ -258,14 +251,13 @@ public final class ActivityManager implements IActivityManager {
 		Map activityEventsByActivityId = updateActivities(activitiesById.keySet());	
 		
 		if (activityManagerChanged)
-			fireActivityManagerChanged(new ActivityManagerEvent(this, false, true, false));
+			fireActivityManagerChanged(new ActivityManagerEvent(this, true, false));
 
 		if (activityEventsByActivityId != null)
 			notifyActivities(activityEventsByActivityId);		
 	}
 
 	private IActivityEvent updateActivity(Activity activity) {
-		boolean activeChanged = activity.setActive(activeActivityIds.contains(activity.getId()));		
 		IActivityDefinition activityDefinition = (IActivityDefinition) activityDefinitionsById.get(activity.getId());
 		boolean definedChanged = activity.setDefined(activityDefinition != null);
 		boolean descriptionChanged = activity.setDescription(activityDefinition != null ? activityDefinition.getDescription() : null);		
@@ -275,8 +267,8 @@ public final class ActivityManager implements IActivityManager {
 		List patternBindings = (List) patternBindingsByActivityId.get(activity.getId());
 		boolean patternBindingsChanged = activity.setPatternBindings(patternBindings != null ? patternBindings : Collections.EMPTY_LIST);
 
-		if (activeChanged || definedChanged || descriptionChanged || enabledChanged || nameChanged || parentIdChanged || patternBindingsChanged)
-			return new ActivityEvent(activity, activeChanged, definedChanged, descriptionChanged, enabledChanged, nameChanged, parentIdChanged, patternBindingsChanged); 
+		if (definedChanged || descriptionChanged || enabledChanged || nameChanged || parentIdChanged || patternBindingsChanged)
+			return new ActivityEvent(activity, definedChanged, descriptionChanged, enabledChanged, nameChanged, parentIdChanged, patternBindingsChanged); 
 		else 
 			return null;
 	}

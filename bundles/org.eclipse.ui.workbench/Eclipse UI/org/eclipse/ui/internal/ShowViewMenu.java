@@ -88,7 +88,8 @@ public class ShowViewMenu extends ContributionItem {
 	 * 
 	 * @param window the window containing the menu
 	 */
-	public ShowViewMenu(IWorkbenchWindow window) {
+	public ShowViewMenu(IWorkbenchWindow window, String id) {
+		super(id);
 		this.window = window;
 		WorkbenchHelp.setHelp(showDlgAction, IHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 	}
@@ -117,7 +118,7 @@ public class ShowViewMenu extends ContributionItem {
 
 		// If no active perspective disable all
 		if (page.getPerspective() == null)
-			return;    
+			return;
 
 		// Get visible actions. (copy, we're going to be modifying it)
 		List viewIds = new ArrayList(((WorkbenchPage) page).getShowViewActionIds());

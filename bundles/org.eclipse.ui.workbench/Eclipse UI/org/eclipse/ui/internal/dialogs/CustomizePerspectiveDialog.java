@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelProvider;
@@ -48,6 +49,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+// @issue add class doc
+// @issue need to break this not to show menu specific page
 public class CustomizePerspectiveDialog extends Dialog {
 	private Perspective perspective;
 	WorkbenchWindow window;
@@ -121,6 +124,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			}
 			return null;
 		}
+			
 		public void fillMenusFor(String actionSetId, IContributionItem item) {
 			if (item instanceof ContributionManager) {
 				ContributionManager mgr = (ContributionManager)item;
@@ -219,7 +223,8 @@ public class CustomizePerspectiveDialog extends Dialog {
 			return parent.parent == null;
 		}
 	}
-	public class CustomizeActionBars extends WWinActionBars {
+	
+	public class CustomizeActionBars extends AbstractActionBarConfigurer implements IActionBars {
 		/**
 		 * Fake action bars to use to build the menus and toolbar contributions for the
 		 * workbench.  We cannot use the actual workbench action bars, since doing so would
@@ -229,13 +234,13 @@ public class CustomizePerspectiveDialog extends Dialog {
 		CoolBarManager coolBarManager;
 		
 		public CustomizeActionBars() {
-			super(null);
 		}
+		
 		public CustomizeActionBars(MenuManager menuManager, CoolBarManager coolBarManager) {
-			super(null);
 			this.menuManager = menuManager;
 			this.coolBarManager = coolBarManager;
 		}
+		
 		public void clearGlobalActionHandlers() {
 		}
 		public CoolBarManager getCoolBarManager() {
@@ -257,7 +262,13 @@ public class CustomizePerspectiveDialog extends Dialog {
 		}
 		public void updateActionBars() {
 		}
+
+		public void addEditorToolBarGroup() {
+			// do nothing
+		}
+		
 	}
+	
 	class ShortcutMenuItemContentProvider implements IStructuredContentProvider {
 	
 		ShortcutMenuItemContentProvider() {
@@ -341,6 +352,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 			return text; 
 		}
 	}
+	
 	class ShortcutMenu extends Object  {
 		/**
 		 * Tree representation for the shortcut items.  
@@ -558,17 +570,30 @@ public class CustomizePerspectiveDialog extends Dialog {
 			return 0;
 		}
 	}
+	
 public CustomizePerspectiveDialog(Shell parentShell, Perspective persp) {
 	super(parentShell);
 	perspective = persp;
-	window = (WorkbenchWindow)((Workbench)WorkbenchPlugin.getDefault().getWorkbench()).getActiveWorkbenchWindow();
+	// @issue should pass in the parent window, not use getActiveWorkbenchWindow()
+	window = (WorkbenchWindow)PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+	
 	// build a structure for the menuitems and toolitems that the workbench contributes
 	customizeWorkbenchActionBars = new CustomizeActionBars(new MenuManager(), new CoolBarManager());
-	window.fillActionBars(customizeWorkbenchActionBars);
+	
+	// Fill current actionBars in the "fake" workbench actionbars
+	window.fillActionBars(customizeWorkbenchActionBars, 
+		WorkbenchAdviser.FILL_PROXY | WorkbenchAdviser.FILL_MENU_BAR | WorkbenchAdviser.FILL_TOOL_BAR );
+	
 	initializeActionSetInput();
 	initializeShortcutMenuInput();
 }
-private void addListeners() {
+
+/**
+ * Adds listeners for the Commands tab.
+ * 
+ * @since 3.0
+ */
+private void addActionSetsListeners() {
 	tabFolder.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
 			handleTabSelected(event);
@@ -597,6 +622,14 @@ private void addListeners() {
 		}
 		public void keyReleased(KeyEvent e) {}
 	});
+}
+
+/**
+ * Adds listeners for the Shortcuts tab.
+ * 
+ * @since 3.0
+ */
+private void addShortcutListeners() {
 	menusCombo.addSelectionListener(new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
 			// do nothing
@@ -626,6 +659,7 @@ private void addListeners() {
 		}
 	});
 }
+
 private void buildMenusAndToolbarsFor (ActionSetDescriptor actionSetDesc) {
 	String id = actionSetDesc.getId();
 	ActionSetActionBars bars = new ActionSetActionBars(customizeWorkbenchActionBars, id);
@@ -659,7 +693,9 @@ private void checkInitialMenuCategorySelections(ShortcutMenu menu) {
 	}
 }
 public boolean close() {
-	lastSelectedMenuIndex = menusCombo.getSelectionIndex();
+	if (showShortcutTab()) {
+		lastSelectedMenuIndex = menusCombo.getSelectionIndex();
+	}
 	lastSelectedTab = tabFolder.getSelectionIndex();
 	StructuredSelection selection = (StructuredSelection)actionSetsViewer.getSelection();
 	if (selection.isEmpty()) lastSelectedActionSetId = null;
@@ -792,30 +828,51 @@ private Composite createActionSetsPage(Composite parent) {
 
 	return actionSetsComposite;
 }
+/**
+ * Returns whether the shortcut tab should be shown.
+ * 
+ * @return <code>true</code> if the shortcut tab should be shown,
+ * and <code>false</code> otherwise
+ * @since 3.0
+ */
+private boolean showShortcutTab() {
+	return window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)
+			|| window.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)
+			|| window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
+}
+
+
 protected Control createDialogArea(Composite parent) {
 	Composite composite = (Composite)super.createDialogArea(parent);
 	
+	// tab folder
 	tabFolder = new TabFolder(composite, SWT.NONE);
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	tabFolder.setLayoutData(gd);
 	
+	// Shortcuts tab
+	if (showShortcutTab()) {	
+		TabItem item1 = new TabItem(tabFolder, SWT.NONE);
+		item1.setText(WorkbenchMessages.getString("ActionSetSelection.menuTab")); //$NON-NLS-1$
+		item1.setControl(createMenusPage(tabFolder));
+		addShortcutListeners();
+		ArrayList children = rootMenu.getChildren();
+		String[] itemNames = new String[children.size()];
+		for (int i=0; i<children.size(); i++) {
+			itemNames[i]=((ShortcutMenu)children.get(i)).label;
+		}
+		menusCombo.setItems(itemNames);
+	}
+	
+	// Commands tab
 	TabItem item = new TabItem(tabFolder, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ActionSetSelection.menuTab")); //$NON-NLS-1$
-	item.setControl(createMenusPage(tabFolder));
-
-	item = new TabItem(tabFolder, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("ActionSetSelection.actionSetsTab")); //$NON-NLS-1$
 	item.setControl(createActionSetsPage(tabFolder));
-		
-	addListeners();
+	addActionSetsListeners();
 	actionSetsViewer.setInput(actionSets);
 	checkInitialActionSetSelections();
-	ArrayList children = rootMenu.getChildren();
-	String[] itemNames = new String[children.size()];
-	for (int i=0; i<children.size(); i++) {
-		itemNames[i]=((ShortcutMenu)children.get(i)).label;
-	}
-	menusCombo.setItems(itemNames);
+	
+	// now that both tabs are set up, initialize selections
 	setInitialSelections();
 
 	return composite;
@@ -935,9 +992,11 @@ void handleActionSetSelected(SelectionChangedEvent event) {
 	ActionSetDescriptor element = (ActionSetDescriptor)sel.getFirstElement();
 	if (element == selectedActionSet) return;
 	String actionSetId = element.getId();
+	// Hash table is used to cache previous selections
 	ArrayList structures = (ArrayList)actionSetStructures.get(actionSetId);
 	ActionSetDisplayItem menubarStructure = null;
 	ActionSetDisplayItem toolbarStructure = null;
+	// If the actionset has never been selected then we need to populate the structures
 	if (structures == null) {
 		structures = new ArrayList(2);
 		menubarStructure = new ActionSetDisplayItem("Menubar"); //$NON-NLS-1$
@@ -955,13 +1014,18 @@ void handleActionSetSelected(SelectionChangedEvent event) {
 			buildMenusAndToolbarsFor(element);
 			menubarStructure.fillMenusFor(actionSetId, customizeWorkbenchActionBars.menuManager);
 			toolbarStructure.fillToolsFor(actionSetId, customizeWorkbenchActionBars.coolBarManager);
+			
 		}
+		// Add menubarStructure and toolbarStructure to arrayList
 		structures.add(menubarStructure);
-		structures.add(toolbarStructure);			
+		structures.add(toolbarStructure);
+		// Add the structure to the hash table with key actionSetId
 		actionSetStructures.put(actionSetId, structures);
 	}
+	// retrieve the actionsets from the arraylist
 	if (menubarStructure == null) menubarStructure = (ActionSetDisplayItem)structures.get(0);
 	if (toolbarStructure == null) toolbarStructure = (ActionSetDisplayItem)structures.get(1);
+	
 	// fill the menu structure table
 	if (element != actionSetMenuViewer.getInput()) {
 		try {
@@ -1147,65 +1211,80 @@ private void initializeShortCutMenu(ShortcutMenu menu, WizardCollectionElement e
 		category.addItem(wizard);
 		if (activeIds.contains(wizard.getID())) category.addCheckedItem(wizard);
 	}
-	Object[] children = element.getChildren();
+	// @issue should not pass in null
+	Object[] children = element.getChildren(null);
 	for (int i = 0; i < children.length; i++) {
 		initializeShortCutMenu(category, (WizardCollectionElement)children[i], activeIds);
 	}
 }
 private void initializeShortcutMenuInput() {
 	rootMenu = new ShortcutMenu(null, "Root", ""); //$NON-NLS-1$ //$NON-NLS-2$
-	ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_WIZARD, WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
-	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
-	WizardCollectionElement wizardCollection = (WizardCollectionElement)rdr.getWizards();
-	Object [] wizardCategories = wizardCollection.getChildren();
-	ArrayList activeIds = perspective.getNewWizardActionIds();
-	for (int i = 0; i < wizardCategories.length; i ++) {
-		WizardCollectionElement element = (WizardCollectionElement)wizardCategories[i];
-		initializeShortCutMenu(wizardMenu, element, activeIds);
+	ArrayList activeIds;
+	
+	if (window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)) {	
+		ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_WIZARD, WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
+		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
+		WizardCollectionElement wizardCollection = rdr.getWizardElements();
+		
+		// @issue should not pass in null
+		Object [] wizardCategories = wizardCollection.getChildren(null);
+		activeIds = perspective.getNewWizardActionIds();
+		for (int i = 0; i < wizardCategories.length; i ++) {
+			WizardCollectionElement element = (WizardCollectionElement)wizardCategories[i];
+			initializeShortCutMenu(wizardMenu, element, activeIds);
+		}
 	}
-
-	ShortcutMenu perspMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_PERSP, WorkbenchMessages.getString("ActionSetDialogInput.perspectiveCategory")); //$NON-NLS-1$
-	IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-	IPerspectiveDescriptor [] persps = perspReg.getPerspectives();
-	for (int i = 0; i < persps.length; i ++) {
-		perspMenu.addItem(persps[i]);
+	
+	if (window.containsSubmenu(WorkbenchWindow.OPEN_PERSPECTIVE_SUBMENU)) {
+		ShortcutMenu perspMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_PERSP, WorkbenchMessages.getString("ActionSetDialogInput.perspectiveCategory")); //$NON-NLS-1$
+		IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+		IPerspectiveDescriptor [] persps = perspReg.getPerspectives();
+		for (int i = 0; i < persps.length; i ++) {
+			perspMenu.addItem(persps[i]);
+		}
+		activeIds = perspective.getPerspectiveActionIds();
+		for (int i = 0; i < activeIds.size(); i++) {
+			String id = (String)activeIds.get(i);
+			Object item = perspMenu.getItem(id);
+			if (item != null) perspMenu.addCheckedItem(item);
+		}
 	}
-	activeIds = perspective.getPerspectiveActionIds();
-	for (int i = 0; i < activeIds.size(); i++) {
-		String id = (String)activeIds.get(i);
-		Object item = perspMenu.getItem(id);
-		if (item != null) perspMenu.addCheckedItem(item);
-	}
-
-	ShortcutMenu viewMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_VIEW, WorkbenchMessages.getString("ActionSetDialogInput.viewCategory")); //$NON-NLS-1$
-	IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
-	ICategory[] categories = viewReg.getCategories();
-	activeIds = perspective.getShowViewActionIds();
-	for (int i=0; i<categories.length; i++) {
-		ICategory category = categories[i];
-		ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category.getId(), category.getLabel());
-		ArrayList views = category.getElements();
-		if (views != null) {
-			for (int j=0; j<views.size(); j++) {
-				IViewDescriptor view = (IViewDescriptor)views.get(j);
-				viewCategory.addItem(view);
-				if (activeIds.contains(view.getId())) viewCategory.addCheckedItem(view);
+	
+	if (window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU)) {
+		ShortcutMenu viewMenu = new ShortcutMenu(rootMenu, ShortcutMenu.ID_VIEW, WorkbenchMessages.getString("ActionSetDialogInput.viewCategory")); //$NON-NLS-1$
+		IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
+		Category[] categories = viewReg.getCategories();
+		activeIds = perspective.getShowViewActionIds();
+		for (int i=0; i<categories.length; i++) {
+			Category category = categories[i];
+			ShortcutMenu viewCategory = new ShortcutMenu(viewMenu, category.getId(), category.getLabel());
+			ArrayList views = category.getElements();
+			if (views != null) {
+				for (int j=0; j<views.size(); j++) {
+					IViewDescriptor view = (IViewDescriptor)views.get(j);
+					viewCategory.addItem(view);
+					if (activeIds.contains(view.getId())) viewCategory.addCheckedItem(view);
+				}
 			}
 		}
 	}
+	
 }
 protected void okPressed() {
-	ArrayList menus = rootMenu.children;
-	for (int i=0; i < menus.size(); i++) {
-		ShortcutMenu menu = (ShortcutMenu)menus.get(i);
-		if (menu.id == ShortcutMenu.ID_VIEW) {
-			perspective.setShowViewActionIds(menu.getCheckedItemIds());
-		} else if (menu.id == ShortcutMenu.ID_PERSP) {
-			perspective.setPerspectiveActionIds(menu.getCheckedItemIds());
-		} else if (menu.id == ShortcutMenu.ID_WIZARD) {
-			perspective.setNewWizardActionIds(menu.getCheckedItemIds());
+	if (showShortcutTab()) {
+		ArrayList menus = rootMenu.children;
+		for (int i=0; i < menus.size(); i++) {
+			ShortcutMenu menu = (ShortcutMenu)menus.get(i);
+			if (ShortcutMenu.ID_VIEW.equals(menu.id)) {
+				perspective.setShowViewActionIds(menu.getCheckedItemIds());
+			} else if (ShortcutMenu.ID_PERSP.equals(menu.id)) {
+				perspective.setPerspectiveActionIds(menu.getCheckedItemIds());
+			} else if (ShortcutMenu.ID_WIZARD.equals(menu.id)) {
+				perspective.setNewWizardActionIds(menu.getCheckedItemIds());
+			}
 		}
 	}
+	
 	ArrayList actionSetList = new ArrayList();
 	Object[] selected = actionSetsViewer.getCheckedElements();
 	for (int i = 0; i < selected.length; i ++) {
@@ -1296,17 +1375,21 @@ private void setInitialSelections() {
 	StructuredSelection sel = new StructuredSelection(item);
 	actionSetsViewer.setSelection(sel, true);
 	
-	menusCombo.select(lastSelectedMenuIndex);
-
+	if (showShortcutTab()) {
+		menusCombo.select(lastSelectedMenuIndex);
+	}
+	
 	if (lastSelectedTab != -1) {
 		tabFolder.setSelection(lastSelectedTab);
 	}
-	if (tabFolder.getSelectionIndex() == 0) {
+	
+	if ((tabFolder.getSelectionIndex() == 0) && showShortcutTab()) {
 		menusCombo.setFocus();
 	} else {
 		actionSetsViewer.getControl().setFocus();
 	}
 }
+
 private void updateMenuCategoryCheckedState(ShortcutMenu menu) {
 	if (menu == rootMenu) return;
 	if (menu.isFullyChecked()) {

@@ -304,13 +304,13 @@ public final class SpecialKey extends NaturalKey {
 			*/
 			
 			if (HOME_NAME.equals(name))
-				Character.toString('\u2196');				
+				return Character.toString('\u2196');				
 			
 			if (PAGE_DOWN_NAME.equals(name))
-				Character.toString('\u21DF');					
+				return Character.toString('\u21DF');					
 			
 			if (PAGE_UP_NAME.equals(name))
-				Character.toString('\u21DE');	
+				return Character.toString('\u21DE');	
 		}
 		
 		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);

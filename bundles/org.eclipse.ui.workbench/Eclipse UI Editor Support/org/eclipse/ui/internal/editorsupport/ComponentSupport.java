@@ -13,42 +13,49 @@ package org.eclipse.ui.internal.editorsupport;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IEditorPart;
+
 /**
  * This class provides an OS independent interface to the
  * components available on the platform
  */
 public final class ComponentSupport {
+	
 	/**
-	 * Return the default component Editor.
-	 * <p>
-	 * Check if we are on Win32 - if so then return an OLEEditor, if not return
-	 * null.
-	 * @see ComponentSupport
+	 * Returns whether the current platform has support
+	 * for system in-place editor.
 	 */
-	public static IEditorPart getComponentEditor() {
-		if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
+	public static boolean inPlaceEditorSupported() {
+		// only Win32 is supported
+		return SWT.getPlatform().equals("win32"); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Return the default system in-place editor part
+	 * or <code>null</code> if not support by platform.
+	 */
+	public static IEditorPart getSystemInPlaceEditor() {
+		if (inPlaceEditorSupported()) {
 			return getOleEditor();
 		}
 		return null;
 	}
+
 	/**
-	 * Return Component Editor associated with the file input
-	 * is to be opened on. Only return one if in Win32.
-	 * <p>
-	 * @param IFile the input on which the componenet editor
-	 * @return IEditorPart or <code>null</code> if no editor exists
-	 * @see ComponentSupport
+	 * Returns whether an in-place editor is available to
+	 * edit the file.
+	 * 
+	 * @param filename the file name in the system
 	 */
-	public static IEditorPart getComponentEditor(IFile input) {
-		if ((SWT.getPlatform().equals("win32")) //$NON-NLS-1$
-			&& testForOleEditor(input)) { //$NON-NLS-1$
-			return getOleEditor();
+	public static boolean inPlaceEditorAvailable(String filename) {
+		if (inPlaceEditorSupported()) {
+			return testForOleEditor(filename);
+		} else {
+			return false;
 		}
-		return null;
 	}
+
 	/**
 	 * Get a new OLEEditor
 	 * @return IEditorPart
@@ -69,12 +76,11 @@ public final class ComponentSupport {
 		}
 	}
 
-	public static boolean testForOleEditor(IFile input) {
-		String strName = input.getName();
-		int nDot = strName.lastIndexOf('.');
+	public static boolean testForOleEditor(String filename) {
+		int nDot = filename.lastIndexOf('.');
 		if (nDot >= 0) {
 			try {
-				strName = strName.substring(nDot);
+				String strName = filename.substring(nDot);
 				Class oleClass = Class.forName("org.eclipse.swt.ole.win32.OLE"); //$NON-NLS-1$
 				Method findMethod =
 					oleClass.getDeclaredMethod("findProgramID", new Class[] { String.class }); //$NON-NLS-1$

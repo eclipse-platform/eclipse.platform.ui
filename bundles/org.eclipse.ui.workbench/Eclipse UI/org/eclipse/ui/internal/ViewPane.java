@@ -14,20 +14,42 @@ package org.eclipse.ui.internal;
 **********************************************************************/
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder2;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.part.WorkbenchPart;
-
-import sun.security.action.GetLongAction;
 
 
 /**
@@ -50,7 +72,10 @@ public class ViewPane extends PartPane
 	private ToolBar viewToolBar;
 	private ToolBarManager viewToolBarMgr;
 	ToolBar isvToolBar;
+	ToolBar isvToolBar2;
 	private ToolBarManager isvToolBarMgr;
+	private ToolBarManager isvToolBarMgr2;
+	private Shell isvToolBarShell;
 	private MenuManager isvMenuMgr;
 	private ToolItem pullDownButton;
 	
@@ -194,10 +219,10 @@ public void createControl(Composite parent) {
 	// All actions on the System toolbar should be accessible on the pane menu.
 	if (control.getContent() == null) {
 		// content can be null if view creation failed
-		control.setTabList(new Control[] { isvToolBar, viewToolBar });
+		control.setTabList(new Control[] { isvToolBar , viewToolBar });
 	}
 	else {
-		control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
+		control.setTabList(new Control[] {  isvToolBar , viewToolBar, control.getContent() });
 	}
 }
 
@@ -309,18 +334,80 @@ protected void createTitleBar() {
 	viewToolBarMgr.add(systemContribution);
 	
 	// ISV toolbar.
+	isvToolBarShell = new Shell(control.getShell(), SWT.ON_TOP | SWT.NO_TRIM);
+	Point loc = control.toDisplay(0,0);
+	loc.x += control.getSize().x;
+	isvToolBarShell.setLocation(loc);
+	//isvToolBarShell.setSize(100,100);
+	// isvToolBarShell.setVisible(true);
+	GridLayout layout = new GridLayout();
+	isvToolBarShell.setLayout(layout);
+	Composite composite = new Composite(isvToolBarShell, SWT.NONE);
+	GridLayout layout2 = new GridLayout();
+	composite.setLayout(layout2);
+	
+	isvToolBar2 = new ToolBar(composite, SWT.VERTICAL | SWT.FLAT | SWT.WRAP);
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 	
 	control.setTopLeft(isvToolBar);
 	
-	isvToolBar.addMouseListener(new MouseAdapter(){
+	isvToolBar2.addMouseListener(new MouseAdapter(){
 		public void mouseDoubleClick(MouseEvent event) {
 			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
 			if (isvToolBar.getItem(new Point(event.x, event.y)) == null)
 				doZoom();
 		}
 	});
+	
+	control.getShell().addControlListener(new ControlListener() {
+
+		public void controlMoved(ControlEvent e) {
+			setToolBarShellPosition();
+		}
+
+		public void controlResized(ControlEvent e) {
+			// TODO Auto-generated method stub
+			
+		}});
+	
+	control.addControlListener(new ControlListener() {
+
+		public void controlMoved(ControlEvent e) {
+			setToolBarShellPosition();
+		}
+
+		public void controlResized(ControlEvent e) {
+			// TODO Auto-generated method stub
+			
+		}});
+	
+	control.getShell().addShellListener(new ShellListener() {
+
+		public void shellActivated(ShellEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void shellClosed(ShellEvent e) {
+			isvToolBarShell.dispose();
+			
+		}
+
+		public void shellDeactivated(ShellEvent e) {
+			isvToolBarShell.setVisible(false);
+			
+		}
+
+		public void shellDeiconified(ShellEvent e) {
+			isvToolBarShell.setVisible(true);
+			
+		}
+
+		public void shellIconified(ShellEvent e) {
+			isvToolBarShell.setVisible(false);
+		}});
 	isvToolBarMgr = new PaneToolBarManager(isvToolBar);
+	isvToolBarMgr2 = new PaneToolBarManager(isvToolBar2);
 }
 public void dispose() {
 	super.dispose();
@@ -335,6 +422,8 @@ public void dispose() {
 		isvMenuMgr.dispose();
 	if (isvToolBarMgr != null)
 		isvToolBarMgr.dispose();
+	if (isvToolBarMgr2 != null)
+		isvToolBarMgr2.dispose();
 	if (viewToolBarMgr != null)
 		viewToolBarMgr.dispose();
 }
@@ -404,7 +493,8 @@ public Control[] getTabList() {
  * @see ViewActionBars
  */
 public ToolBarManager getToolBarManager() {
-	return isvToolBarMgr;
+	//return isvToolBarMgr;
+	return isvToolBarMgr2;
 }
 /**
  * Answer the view part child.
@@ -449,6 +539,7 @@ public void setFastViewSash(Sash s) {
  * Method declared on PartPane.
  */
 /* package */ void shellDeactivated() {
+	//isvToolBarShell.setVisible(false);
 //	drawGradient();
 }
 
@@ -625,10 +716,34 @@ public void updateActionBars() {
 		viewToolBarMgr.update(false);
 	if (isvToolBarMgr != null)
 		isvToolBarMgr.update(false);
+	if (isvToolBarMgr2 != null)
+		isvToolBarMgr2.update(false);
 }
 /**
  * Update the title attributes.
  */
-public void updateTitles() {}
+public void updateTitles() {
+}
+
+/**
+ * Locate the floating shell according to the Panes size and location 
+ */
+void setToolBarShellPosition() {
+	// this should not be necessary if toolbars are static
+	isvToolBarShell.setSize(isvToolBarShell.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+	
+	
+	Control c = getControl();
+	if (c == null) 
+		return;
+	Rectangle displayRect = c.getMonitor().getClientArea();
+	Point size = c.getSize();
+	Point p = c.getDisplay().map(c, null, c.getLocation());
+	p.x += size.x;
+	if (p.y + size.y > displayRect.y + displayRect.height) 
+		p.y -= size.y;
+	isvToolBarShell.setLocation(p);	
+}
 
 }
+

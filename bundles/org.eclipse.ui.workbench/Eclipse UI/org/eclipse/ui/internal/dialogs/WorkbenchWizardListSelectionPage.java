@@ -19,8 +19,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardSelectionPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.*;
 
 /**
@@ -86,7 +87,7 @@ public void createControl(Composite parent) {
 
 	// the list viewer		
 	wizardSelectionViewer = new TableViewer(table);
-	wizardSelectionViewer.setContentProvider(new WorkbenchContentProvider());
+	wizardSelectionViewer.setContentProvider(new BaseWorkbenchContentProvider());
 	wizardSelectionViewer.setLabelProvider(new WorkbenchLabelProvider());
 	wizardSelectionViewer.setSorter(new WorkbenchViewerSorter());
 	wizardSelectionViewer.addSelectionChangedListener(this);

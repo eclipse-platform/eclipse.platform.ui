@@ -38,8 +38,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * public class MyApplication implements IPlatformRunnable {
  *   public Object run(Object args) {
  *     WorkbenchAdviser workbenchAdviser = new MyWorkbenchAdviser();
- *     Display display = PlatformUI.createDisplay();
- *     int returnCode = PlatformUI.createAndRunWorkbench(display, workbenchAdviser);
+ *     int returnCode = PlatformUI.createAndRunWorkbench(workbenchAdviser);
  *     if (returnCode == PlatformUI.RETURN_RESTART) {
  *        return IPlatformRunnable.EXIT_RESTART;
  *     } else {

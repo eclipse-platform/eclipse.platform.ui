@@ -18,39 +18,24 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * like a file name but more abstract.  It is not a model.  It is a 
  * description of the model source for an <code>IEditorPart</code>.
  * <p>
+ * Clients implementing this editor input interface should override
+ * <code>Object.equals(Object)</code> to answer true for two inputs
+ * that are the same. The <code>IWorbenchPage.openEditor</code> APIs
+ * are dependent on this to find an editor with the same input.
+ * </p><p>
  * Clients should extend this interface to declare new types of editor
  * inputs.
- * </p>
- * <p>
+ * </p><p>
  * An editor input is passed to an editor via the <code>IEditorPart.init</code>
  * method. Due to the wide range of valid editor inputs, it is not possible to
- * define generic methods for getting and setting bytes. However, two subtypes 
- * of <code>IEditorInput</code> have been defined for greater type clarity when
- * IStorage (<code>IStorageEditorInput</code>) and IFiles 
- * (<code>IFileEditorInput</code>) are used. Any editor which is file-oriented
- * should handle these two types. The same pattern may be used to define
- * other editor input types.  
- * </p>
- * <p>
- * The <code>IStorageEditorInput</code> interface is used to wrap an 
- * <code>IStorage</code> object.  This may represent read-only data
- * in a repository, external jar, or file system. The editor should provide 
- * viewing (but not editing) functionality.
- * </p>
- * <p>
- * The <code>IFileEditorInput</code> interface is used to wrap an 
- * file resource (<code>IFile</code>). The editor should provide read and write
- * functionality.
- * </p>
- * <p>
+ * define generic methods for getting and setting bytes.
+ * </p><p>
  * Editor input must implement the <code>IAdaptable</code> interface; extensions
  * are managed by the platform's adapter manager.
  * </p>
  *
  * @see org.eclipse.ui.IEditorPart
- * @see org.eclipse.core.resources.IFile
- * @see org.eclipse.ui.IStorageEditorInput
- * @see org.eclipse.ui.IFileEditorInput
+ * @see org.eclipse.ui.IWorkbenchPage#openEditor
  */
 public interface IEditorInput extends IAdaptable {
 /**
@@ -74,9 +59,8 @@ public ImageDescriptor getImageDescriptor();
 /**
  * Returns the name of this editor input for display purposes.
  * <p>
- * For instance, if the fully qualified input name is
- * <code>"a\b\MyFile.gif"</code>, the return value would be just
- * <code>"MyFile.gif"</code>.
+ * For instance, when the input is from a file, the return value would
+ * ordinarily be just the file name.
  *
  * @return the name string
  */ 
@@ -92,11 +76,7 @@ public IPersistableElement getPersistable();
  * Returns the tool tip text for this editor input.  This text
  * is used to differentiate between two input with the same name.
  * For instance, MyClass.java in folder X and MyClass.java in folder Y.
- * <p> 
- * The format of the path will vary with each input type.  For instance,
- * if the editor input is of type <code>IFileEditorInput</code> this method
- * should return the fully qualified resource path.  For editor input of
- * other types it may be different. 
+ * The format of the text varies between input types.
  * </p>
  * @return the tool tip text
  */ 

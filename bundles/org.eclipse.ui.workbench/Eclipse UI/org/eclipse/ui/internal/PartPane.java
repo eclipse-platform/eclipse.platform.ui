@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Sash;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.part.WorkbenchPart;
 
@@ -160,7 +161,7 @@ protected void createChildControl() {
 		}
 		public void handleException(Throwable e) {
 			// Log error.
-			Workbench wb = (Workbench)WorkbenchPlugin.getDefault().getWorkbench();
+			Workbench wb = (Workbench)PlatformUI.getWorkbench();
 			if (!wb.isStarting())
 				super.handleException(e);
 
@@ -509,11 +510,8 @@ protected void doDock() {}
  * Progress on a job that blocks the site has begun.
  * @param Job the job starting.
  */
-
 public void progressStart(Job job) {
-
 }
-
 /**
  * Progress on a job that blocks the site has finished.
  * @param Job the job finishing.
@@ -521,7 +519,3 @@ public void progressStart(Job job) {
 public void progressEnd(Job job) {
 }
 }
-
-
-
-

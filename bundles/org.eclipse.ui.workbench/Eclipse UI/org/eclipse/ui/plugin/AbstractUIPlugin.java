@@ -10,21 +10,35 @@
  *******************************************************************************/
 package org.eclipse.ui.plugin;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.Workbench;
 
 /**
@@ -736,19 +750,20 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * </p>
 	 */
 	protected void refreshPluginActions() {
-		final Workbench wb = (Workbench) PlatformUI.getWorkbench();
-		if (wb != null) {
-			// startup() is not guaranteed to be called in the UI thread,
-			// but refreshPluginActions must run in the UI thread, 
-			// so use asyncExec.  See bug 6623 for more details.
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					wb.refreshPluginActions(
-						getDescriptor().getUniqueIdentifier());
-				}
-			});
-		}
+		// If the workbench is not created yet, do nothing.
+		if (Workbench.getInstance() == null)
+			return;
+
+		// startup() is not guaranteed to be called in the UI thread,
+		// but refreshPluginActions must run in the UI thread, 
+		// so use asyncExec.  See bug 6623 for more details.
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				WWinPluginAction.refreshActionList();
+			}
+		});
 	}
+	
 	/**
 	 * Saves this plug-in's dialog settings.
 	 * Any problems which arise are silently ignored.
@@ -804,5 +819,51 @@ public abstract class AbstractUIPlugin extends Plugin {
 		savePreferenceStore();
 		preferenceStore = null;
 		imageRegistry = null;
+	}
+
+	/**
+	 * Creates and returns a new image descriptor for an image file located
+	 * within the specified plug-in.
+	 * <p>
+	 * This is a convenience method that simply locates the image file in
+	 * within the plug-in (no image registries are involved). The path is
+	 * relative to the root of the plug-in, and takes into account files
+	 * coming from plug-in fragments. The path may include $arg$ elements.
+	 * However, the path must not have a leading "." or path separator.
+	 * Clients should use a path like "icons/mysample.gif" rather than 
+	 * "./icons/mysample.gif" or "/icons/mysample.gif".
+	 * </p>
+	 * 
+	 * @param pluginId the id of the plug-in containing the image file; 
+	 * <code>null</code> is returned if the plug-in does not exist
+	 * @param imageFilePath the relative path of the image file, relative to the
+	 * root of the plug-in; the path must be legal
+	 * @return an image descriptor, or <code>null</code> if no image
+	 * could be found
+	 * @since 3.0
+	 */
+	public static ImageDescriptor imageDescriptorFromPlugin(String pluginId, String imageFilePath) {
+		if (pluginId == null || imageFilePath == null) {
+			throw new IllegalArgumentException();
+		}
+		// go for the plug-in descriptor - avoid activating the plug-in
+		IPluginDescriptor plugin = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
+		if (plugin == null) {
+			// no plug-in -> no image
+			return null;
+		}
+		URL fullPathString = plugin.find(new Path(imageFilePath));
+		if (fullPathString != null) {
+			return ImageDescriptor.createFromURL(fullPathString);
+		}
+		// @issue add explanation of why following code is not redundant
+		URL path = plugin.getInstallURL();
+		try {
+			fullPathString = new URL(path, imageFilePath);
+			return ImageDescriptor.createFromURL(fullPathString);
+		} catch (MalformedURLException e) {
+			// never mind
+			return null;
+		}
 	}
 }

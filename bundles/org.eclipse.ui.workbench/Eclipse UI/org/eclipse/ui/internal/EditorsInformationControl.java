@@ -61,6 +61,7 @@ public class EditorsInformationControl
 			workbook.setVisibleEditor(editor);
 			editor.setFocus();
 		}
-		dispose();
+		hide();
+		//dispose();
 	}
 }

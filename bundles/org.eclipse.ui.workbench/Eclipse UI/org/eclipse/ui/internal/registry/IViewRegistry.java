@@ -32,7 +32,7 @@ public IViewDescriptor find(String id);
 /**
  * Returns an enumeration of view categories, if defined.
  */
-public ICategory [] getCategories();
+public Category [] getCategories();
 /**
  * Return the view category count.
  */

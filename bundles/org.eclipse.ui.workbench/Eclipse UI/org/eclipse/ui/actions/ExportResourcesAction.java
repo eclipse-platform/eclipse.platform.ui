@@ -10,52 +10,105 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-
-import java.util.List;
-
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.dialogs.ExportWizard;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.ExportWizard;
+import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
- * Action representing the initiation of an Export operation by the user.
+ * Action representing a generic export operation.
  * <p>
  * This class may be instantiated. It is not intended to be subclassed.
  * </p>
+ * <p>
+ * This method automatically registers listeners so that it can keep its
+ * enablement state up to date. Ordinarily, the window's references to these
+ * listeners will be dropped automatically when the window closes. However,
+ * if the client needs to get rid of an action while the window is still open,
+ * the client must call {@link IWorkbenchAction#dispose dispose} to give the
+ * action an opportunity to deregister its listeners and to perform any other
+ * cleanup.
+ * </p>
+ * <p>
+ * Note: Despite the name, an export operation can deal with things other than
+ * resources; the current name was retained for historical reasons.
+ * </p>
+ * 
  * @since 2.0
  */
-public class ExportResourcesAction extends SelectionListenerAction {
+public class ExportResourcesAction
+		extends BaseSelectionListenerAction
+		implements ActionFactory.IWorkbenchAction {
+
 	private static final int SIZING_WIZARD_WIDTH = 470;
 	private static final int SIZING_WIZARD_HEIGHT = 550;
-	private IWorkbenchWindow window;
-	
+
 	/**
-	 * Create a new instance of this class
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
+	 */
+	private IWorkbenchWindow workbenchWindow;
+	
+	/** 
+	 * Listen for the selection changing and update the
+	 * actions that are interested
+	 */
+	private final ISelectionListener selectionListener = new ISelectionListener() {
+		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structured =
+					(IStructuredSelection) selection;
+				ExportResourcesAction.this.selectionChanged(structured);
+			}
+		}
+	};
+
+	/**
+	 * Create a new instance of this class.
 	 */
 	public ExportResourcesAction(IWorkbenchWindow window) {
 		this(window, WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
 	}
 
 	/**
-	 * Create a new instance of this class
+	 * Create a new instance of this class.
 	 */
 	public ExportResourcesAction(IWorkbenchWindow window, String label) {
 		super(label); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		setActionDefinitionId("org.eclipse.ui.file.export"); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
-		setId(IWorkbenchActionConstants.EXPORT);
+		setId("export"); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.EXPORT_ACTION);
-		this.window = window;
+		// self-register selection listener (new for 3.0)
+		workbenchWindow.getSelectionService().addSelectionListener(selectionListener);
+
+		setText(WorkbenchMessages.getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
+		setImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ));
+		setHoverImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_HOVER));
+		setDisabledImageDescriptor(
+			WorkbenchImages.getImageDescriptor(
+				IWorkbenchGraphicConstants.IMG_CTOOL_EXPORT_WIZ_DISABLED));
 	}
 
 	/**
@@ -82,21 +135,21 @@ public class ExportResourcesAction extends SelectionListenerAction {
 	 * @param browser Window
 	 */
 	public void run() {
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		ExportWizard wizard = new ExportWizard();
 		IStructuredSelection selectionToPass;
-		List selectedResources = getSelectedResources();
+		// get the current workbench selection
+		ISelection workbenchSelection = workbenchWindow.getSelectionService().getSelection();
+		if (workbenchSelection instanceof IStructuredSelection) {
+			selectionToPass = (IStructuredSelection) workbenchSelection;
+		} else {
+			selectionToPass = StructuredSelection.EMPTY;
+		}
 
-		if (selectedResources.isEmpty()) {
-			// get the current workbench selection
-			ISelection workbenchSelection = window.getSelectionService().getSelection();
-			if (workbenchSelection instanceof IStructuredSelection)
-				selectionToPass = (IStructuredSelection) workbenchSelection;
-			else
-				selectionToPass = StructuredSelection.EMPTY;
-		} else
-			selectionToPass = new StructuredSelection(selectedResources);
-
-		wizard.init(window.getWorkbench(), selectionToPass);
+		wizard.init(workbenchWindow.getWorkbench(), selectionToPass);
 		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
 		IDialogSettings wizardSettings = workbenchSettings.getSection("ExportResourcesAction"); //$NON-NLS-1$
 		if (wizardSettings == null)
@@ -104,7 +157,7 @@ public class ExportResourcesAction extends SelectionListenerAction {
 		wizard.setDialogSettings(wizardSettings);
 		wizard.setForcePreviousAndNextButtons(true);
 
-		Shell parent = window.getShell();
+		Shell parent = workbenchWindow.getShell();
 		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
 		dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
@@ -120,5 +173,18 @@ public class ExportResourcesAction extends SelectionListenerAction {
 	 */
 	public void setSelection(IStructuredSelection selection) {
 		selectionChanged(selection);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 * @since 3.0
+	 */
+	public void dispose() {
+		if (workbenchWindow == null) {
+			// action has already been disposed
+			return;
+		}
+		workbenchWindow.getSelectionService().removeSelectionListener(selectionListener);
+		workbenchWindow = null;
 	}
 }

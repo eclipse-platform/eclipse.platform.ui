@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -27,6 +27,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ReferenceCounter;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -211,11 +212,12 @@ public void setInitializationData(IConfigurationElement cfig, String propertyNam
 	// Icon.
 	String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
 	if (strIcon != null) {
+		IExtension extension = configElement.getDeclaringExtension();
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
 		imageDescriptor = 
-			WorkbenchImages.getImageDescriptorFromExtension(
-				configElement.getDeclaringExtension(), 
-				strIcon); 
-					
+			AbstractUIPlugin.imageDescriptorFromPlugin(
+				extendingPluginId, strIcon);					
 		
 		/* remember the image in a separatly from titleImage,
 		 * since it must be disposed even if the titleImage is changed
@@ -247,7 +249,7 @@ protected void setSite(IWorkbenchPartSite site) {
  *
  * @param title the title, or <code>null</code> to clear
  */
-public void setTitle(String title) {
+protected void setTitle(String title) {
 	this.title = title;
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
@@ -270,6 +272,12 @@ protected void setTitleToolTip(String text) {
 	firePropertyChange(IWorkbenchPart.PROP_TITLE);
 }
 /**
+ * Progress on a job that blocks the site has begun.
+ * @param Job the job starting.
+ */
+public void progressStart(Job job) {
+}
+/**
  * Progress on a job that blocks the site has finished.
  * @param Job the job finishing.
  */
@@ -277,10 +285,4 @@ public void progressEnd(Job job) {
 	
 }
 
-/**
- * Progress on a job that blocks the site has begun.
- * @param Job the job starting.
- */
-public void progressStart(Job job) {
-}
 }

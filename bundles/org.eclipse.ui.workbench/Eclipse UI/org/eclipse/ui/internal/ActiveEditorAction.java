@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * The abstract superclass for actions that depend on the active editor.
@@ -43,9 +46,21 @@ import org.eclipse.ui.*;
  *   <li><code>pageOpened</code></li>
  * </ul>
  * </p>
+ * <p>
+ * This method implements the <code>IPartListener</code> and
+ * <code>IPageListener</code>interfaces, and automatically registers listeners
+ * so that it can keep its enablement state up to date. Ordinarily, the
+ * window's references to these listeners will be dropped automatically when
+ * the window closes. However, if the client needs to get rid of an action
+ * while the window is still open, the client must call 
+ * {@link IWorkbenchAction#dispose dispose} to give the action an
+ * opportunity to deregister its listeners and to perform any other cleanup.
+ * </p>
  */
 public abstract class ActiveEditorAction extends PageEventAction {
+
 	private IEditorPart activeEditor;
+	
 /**
  * Creates a new action with the given text.
  *
@@ -62,7 +77,7 @@ protected ActiveEditorAction(String text, IWorkbenchWindow window) {
  * Notification that the active editor tracked
  * by the action is being activated.
  *
- * Subclasses can overwrite.
+ * Subclasses may override.
  */
 protected void editorActivated(IEditorPart part) {
 }
@@ -70,7 +85,7 @@ protected void editorActivated(IEditorPart part) {
  * Notification that the active editor tracked
  * by the action is being deactivated.
  *
- * Subclasses can overwrite.
+ * Subclasses may override.
  */
 protected void editorDeactivated(IEditorPart part) {
 }
@@ -80,7 +95,7 @@ protected void editorDeactivated(IEditorPart part) {
  * @return the page's active editor, and <code>null</code>
  *		if no active editor or no active page.
  */
-public IEditorPart getActiveEditor() {
+public final IEditorPart getActiveEditor() {
 	return activeEditor;
 }
 /* (non-Javadoc)
@@ -143,31 +158,36 @@ public void partDeactivated(IWorkbenchPart part) {
  * Set the active editor
  */
 private void setActiveEditor(IEditorPart part) {
-	if (activeEditor == part)
+	if (activeEditor == part) {
 		return;
-	if (activeEditor != null)
+	}
+	if (activeEditor != null) {
 		editorDeactivated(activeEditor);
+	}
 	activeEditor = part;
-	if (activeEditor != null)
+	if (activeEditor != null) {
 		editorActivated(activeEditor);
+	}
 }
 /**
  * Update the active editor based on the current
  * active page.
  */
 private void updateActiveEditor() {
-	if (getActivePage() == null)
+	if (getActivePage() == null) {
 		setActiveEditor(null);
-	else
+	} else {
 		setActiveEditor(getActivePage().getActiveEditor());
+	}
 }
 /**
  * Update the state of the action. By default, the action
  * is enabled if there is an active editor.
  *
- * Subclasses may overwrite this method.
+ * Subclasses may override or extend this method.
  */
 protected void updateState() {
 	setEnabled(getActiveEditor() != null);
 }
+
 }

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
@@ -58,13 +56,6 @@ public class PropertySheet extends PageBookView implements ISelectionListener {
 	 */
 	public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW;
 	
-	/**
-	 * Register the adapters for the standard properties.
-	 */
-	static {
-		registerAdapters();
-	}
-
 	/**
 	 * The initial selection when the property sheet opens
 	 */
@@ -178,19 +169,7 @@ public void partActivated(IWorkbenchPart part) {
 		bootstrapSelection = null;	
 	}
 }
-/**
- * Registers the adapters for the standard properties.
- */
-static void registerAdapters() {
-	IAdapterManager manager = Platform.getAdapterManager();
-	IAdapterFactory factory = new StandardPropertiesAdapterFactory();
-	manager.registerAdapters(factory, IWorkspace.class);
-	manager.registerAdapters(factory, IWorkspaceRoot.class);
-	manager.registerAdapters(factory, IProject.class);
-	manager.registerAdapters(factory, IFolder.class);
-	manager.registerAdapters(factory, IFile.class);
-	manager.registerAdapters(factory, IMarker.class);
-}
+
 /* (non-Javadoc)
  * Method declared on ISelectionListener.
  * Notify the current page that the selection has changed.

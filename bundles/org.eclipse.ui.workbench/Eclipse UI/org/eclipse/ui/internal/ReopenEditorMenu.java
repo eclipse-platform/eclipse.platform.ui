@@ -13,6 +13,8 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -23,30 +25,41 @@ import org.eclipse.ui.*;
  * A dynamic menu item which supports to switch to other Windows.
  */
 public class ReopenEditorMenu extends ContributionItem {
-	private WorkbenchWindow fWindow;
+	private IWorkbenchWindow window;
 	private EditorHistory history;
 	private boolean showSeparator;
 	private boolean dirty = true;
-	private IMenuListener menuListener = new IMenuListener() {
-		public void menuAboutToShow(IMenuManager manager) {
-			manager.markDirty();
-			dirty = true;
-		}
-	};
+	private int itemsToShow = 0;
 
 	// the maximum length for a file name; must be >= 4
 	private static final int MAX_TEXT_LENGTH = 40;
 	// only assign mnemonic to the first nine items 
 	private static final int MAX_MNEMONIC_SIZE = 9;
+	
+	// preference store listener
+	private final IPropertyChangeListener prefListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(IPreferenceConstants.RECENT_FILES)) {
+				itemsToShow = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.RECENT_FILES);
+				dirty = true;
+				getParent().markDirty();
+				getParent().update(false);
+			}
+		}
+	};
+	
 	/**
 	 * Create a new instance.
 	 */
-	public ReopenEditorMenu(WorkbenchWindow window, EditorHistory history, boolean showSeparator) {
-		super("Reopen Editor"); //$NON-NLS-1$
-		fWindow = window;
-		this.history = history;
+	public ReopenEditorMenu(IWorkbenchWindow window, String id, boolean showSeparator) {
+		super(id);
+		this.window = window;
 		this.showSeparator = showSeparator;
+		
+		// listen for the preference changing
+		WorkbenchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(prefListener);
 	}
+	
 	/**
 	 * Returns the text for a history item.  This may be truncated to fit
 	 * within the MAX_TEXT_LENGTH.
@@ -145,22 +158,23 @@ public class ReopenEditorMenu extends ContributionItem {
 		}
 		return sb.toString();
 	}
+	
 	/**
 	 * Fills the given menu with
 	 * menu items for all windows.
 	 */
 	public void fill(final Menu menu, int index) {
-		if (fWindow.getActivePage() == null
-			|| fWindow.getActivePage().getPerspective() == null)
+		if (window.getActivePage() == null
+			|| window.getActivePage().getPerspective() == null) {
 			return;
+		}
 
-		if(getParent() instanceof MenuManager)
-			((MenuManager)getParent()).addMenuListener(menuListener);
-				
-		if(!dirty)
+		if (itemsToShow == 0) {
 			return;
-			
+		}
+		
 		// Get items.
+		history = ((Workbench) PlatformUI.getWorkbench()).getEditorHistory();
 		EditorHistoryItem[] array = history.getItems();
 
 		// If no items return.
@@ -175,8 +189,9 @@ public class ReopenEditorMenu extends ContributionItem {
 		}
 
 		final int menuIndex[] = new int[]{index};
+		
 		// Add one item for each item.
-		for (int i = 0; i < array.length; i++) {
+		for (int i = 0; i < itemsToShow; i++) {
 			final EditorHistoryItem item = array[i];
 			final int historyIndex = i;
 			Platform.run(new SafeRunnable() {
@@ -194,7 +209,7 @@ public class ReopenEditorMenu extends ContributionItem {
 				public void handleException(Throwable e) {
 					// just skip the item if there's an error,
 					// e.g. in the calculation of the shortened name
-					WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e);  // $NON-NLS-1 //$NON-NLS-1$
+					WorkbenchPlugin.log("Error in ReopenEditorMenu.fill: " + e); //$NON-NLS-1$
 				}
 			});
 		}
@@ -215,42 +230,38 @@ public class ReopenEditorMenu extends ContributionItem {
 	/**
 	 * Reopens the editor for the given history item.
 	 */
-	void open(EditorHistoryItem item) {
-		IWorkbenchPage page = fWindow.getActivePage();
+	private void open(EditorHistoryItem item) {
+		IWorkbenchPage page = window.getActivePage();
 		if (page != null) {
 			try {
-				// Fix for 1GF6HQ1: ITPUI:WIN2000 - NullPointerException: opening a .ppt file
-				// Descriptor is null if opened on OLE editor.
 				String itemName = item.getName();
 				if (!item.isRestored()) {
 					item.restoreState();
 				}
 				IEditorInput input = item.getInput();
 				IEditorDescriptor desc = item.getDescriptor();
-				if (input == null) {
+				if (input == null || desc == null) {
 					String title = WorkbenchMessages.getString("OpenRecent.errorTitle"); //$NON-NLS-1$
 					String msg = WorkbenchMessages.format("OpenRecent.unableToOpen",new String[]{itemName}); //$NON-NLS-1$
-					MessageDialog.openWarning(fWindow.getShell(), title, msg);
+					MessageDialog.openWarning(window.getShell(), title, msg);
 					history.remove(item);
 				} else {
-					if (desc == null) {
-						// There's no openEditor(IEditorInput) call, and openEditor(IEditorInput, String)
-						// doesn't allow null id.
-						// However, if id is null, the editor input must be an IFileEditorInput,
-						// so we can use openEditor(IFile).  
-						// Do nothing if for some reason input was not an IFileEditorInput.
-						if (input instanceof IFileEditorInput) {
-							page.openEditor(((IFileEditorInput) input).getFile());
-						}
-					} else {
-						page.openEditor(input, desc.getId());
-					}
+					page.openEditor(input, desc.getId());
 				}
 			} catch (PartInitException e2) {
 				String title = WorkbenchMessages.getString("OpenRecent.errorTitle"); //$NON-NLS-1$
-				MessageDialog.openWarning(fWindow.getShell(), title, e2.getMessage());
+				MessageDialog.openWarning(window.getShell(), title, e2.getMessage());
 				history.remove(item);
 			}
 		}
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IContributionItem#dispose()
+	 */
+	public void dispose() {
+		// remove the preference change listener
+		WorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(prefListener);
+		super.dispose();
+	}
+
 }

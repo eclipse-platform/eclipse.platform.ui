@@ -20,8 +20,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
-
-
 /**
  * The layout for the workbench window's shell.
  */
@@ -30,8 +28,8 @@ class ClassicWorkbenchWindowLayout extends Layout {
 	private final ClassicWorkbenchWindow window;
 
 	/**
-	 * Create a new instance of the reciever with the supplied
-	 * window.
+	 * Create a new instance of the reciever with the supplied window.
+	 * 
 	 * @param WorkbenchWindow
 	 */
 	ClassicWorkbenchWindowLayout(ClassicWorkbenchWindow window) {
@@ -78,7 +76,7 @@ class ClassicWorkbenchWindowLayout extends Layout {
 		Rectangle clientArea = composite.getClientArea();
 
 		//Null on carbon
-		if (window.getPrimarySeperator()!= null) {
+		if (window.getPrimarySeperator() != null) {
 			//Layout top seperator
 			Point sep1Size =
 				window.getPrimarySeperator().computeSize(
@@ -96,46 +94,37 @@ class ClassicWorkbenchWindowLayout extends Layout {
 
 		int toolBarWidth = clientArea.width;
 
-		//Layout the toolbar	
+		//Layout the toolbar
 		Control toolBar = this.window.getToolBarControl();
 		if (toolBar != null) {
-			if (this.window.getShowToolBar()) {
-				int height = WorkbenchWindow.BAR_SIZE;
+			int height = WorkbenchWindow.BAR_SIZE;
 
-				if (this.window.toolBarChildrenExist()) {
-					Point toolBarSize =
-						toolBar.computeSize(
-							clientArea.width,
-							SWT.DEFAULT,
-							flushCache);
-					height = toolBarSize.y;
-				}
-				toolBar.setBounds(
-					clientArea.x,
-					clientArea.y,
-					toolBarWidth,
-					height);
-				clientArea.y += height;
-				clientArea.height -= height;
-			} else
-				this.window.getToolBarControl().setBounds(0, 0, 0, 0);
+			if (this.window.toolBarChildrenExist()) {
+				Point toolBarSize =
+					toolBar.computeSize(
+						clientArea.width,
+						SWT.DEFAULT,
+						flushCache);
+				height = toolBarSize.y;
+			}
+			toolBar.setBounds(clientArea.x, clientArea.y, toolBarWidth, height);
+			clientArea.y += height;
+			clientArea.height -= height;
+
 		}
 
 		//Layout side seperator
 		Control sep2 = this.window.getSeparator2();
 		if (sep2 != null) {
-			if (this.window.getShowToolBar()) {
-				Point sep2Size =
-					sep2.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-				sep2.setBounds(
-					clientArea.x,
-					clientArea.y,
-					clientArea.width,
-					sep2Size.y);
-				clientArea.y += sep2Size.y;
-				clientArea.height -= sep2Size.y;
-			} else
-				sep2.setBounds(0, 0, 0, 0);
+			Point sep2Size =
+				sep2.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+			sep2.setBounds(
+				clientArea.x,
+				clientArea.y,
+				clientArea.width,
+				sep2Size.y);
+			clientArea.y += sep2Size.y;
+			clientArea.height -= sep2Size.y;
 		}
 
 		int width = WorkbenchWindow.BAR_SIZE;
@@ -158,96 +147,88 @@ class ClassicWorkbenchWindowLayout extends Layout {
 		}
 
 		if (this.window.getStatusLineManager() != null) {
-			Control statusLine = this.window.getStatusLineManager().getControl();
+			Control statusLine =
+				this.window.getStatusLineManager().getControl();
 			if (statusLine != null) {
-				if (this.window.getShowStatusLine()) {
-
-					if (this.window.getShortcutBar() != null && this.window.getShowShortcutBar()) {
-						Widget shortcutBar = this.window.getShortcutBar().getControl();
-						if (shortcutBar != null
-							&& shortcutBar instanceof ToolBar) {
-							ToolBar bar = (ToolBar) shortcutBar;
-							if (bar.getItemCount() > 0) {
-								ToolItem item = bar.getItem(0);
-								width = Math.max(width, item.getWidth());
-								Rectangle trim =
-									bar.computeTrim(0, 0, width, width);
-								width = trim.width;
-							}
+				if (this.window.getShortcutBar() != null) {
+					Widget shortcutBar =
+						this.window.getShortcutBar().getControl();
+					if (shortcutBar != null
+						&& shortcutBar instanceof ToolBar) {
+						ToolBar bar = (ToolBar) shortcutBar;
+						if (bar.getItemCount() > 0) {
+							ToolItem item = bar.getItem(0);
+							width = Math.max(width, item.getWidth());
+							Rectangle trim =
+								bar.computeTrim(0, 0, width, width);
+							width = trim.width;
 						}
 					}
+				}
 
-					Point statusLineSize =
-						statusLine.computeSize(
-							SWT.DEFAULT,
-							SWT.DEFAULT,
-							flushCache);
-					statusLine.setBounds(
-						clientArea.x + width,
-						clientArea.y + clientArea.height - statusLineSize.y,
-						clientArea.width - width,
-						statusLineSize.y);
-					clientArea.height -= statusLineSize.y + WorkbenchWindow.VGAP;
-				} else
-					this.window.getStatusLineManager().getControl().setBounds(
-						0,
-						0,
-						0,
-						0);
+				Point statusLineSize =
+					statusLine.computeSize(
+						SWT.DEFAULT,
+						SWT.DEFAULT,
+						flushCache);
+				statusLine.setBounds(
+					clientArea.x + width,
+					clientArea.y + clientArea.height - statusLineSize.y,
+					clientArea.width - width,
+					statusLineSize.y);
+				clientArea.height -= statusLineSize.y + WorkbenchWindow.VGAP;
+
 			}
 		}
 
 		if (this.window.getShortcutBar() != null) {
 			Control shortCutBar = this.window.getShortcutBar().getControl();
 			if (shortCutBar != null) {
-				if (this.window.getShowShortcutBar()) {
-
-					if (shortCutBar instanceof ToolBar) {
-						ToolBar bar = (ToolBar) shortCutBar;
-						if (bar.getItemCount() > 0) {
-							ToolItem item = bar.getItem(0);
-							width = item.getWidth();
-							Rectangle trim =
-								bar.computeTrim(0, 0, width, width);
-							width = trim.width;
-						}
+				if (shortCutBar instanceof ToolBar) {
+					ToolBar bar = (ToolBar) shortCutBar;
+					if (bar.getItemCount() > 0) {
+						ToolItem item = bar.getItem(0);
+						width = item.getWidth();
+						Rectangle trim = bar.computeTrim(0, 0, width, width);
+						width = trim.width;
 					}
-					shortCutBar.setBounds(
-						clientArea.x,
-						clientArea.y,
-						width,
-						clientArea.height);
-					clientArea.x += width + WorkbenchWindow.VGAP;
-					clientArea.width -= width + WorkbenchWindow.VGAP;
+				}
+				shortCutBar.setBounds(
+					clientArea.x,
+					clientArea.y,
+					width,
+					clientArea.height);
+				clientArea.x += width + WorkbenchWindow.VGAP;
+				clientArea.width -= width + WorkbenchWindow.VGAP;
 
 			}
-		}
 
-		} else
-			this.window.getShortcutBar().getControl().setBounds(0, 0, 0, 0);
+		}
 
 		Control sep3 = this.window.getSeparator3();
 
 		if (sep3 != null) {
-			if (this.window.getShowShortcutBar()) {
-				Point sep3Size =
-					sep3.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-				sep3.setBounds(
-					clientArea.x,
-					clientArea.y,
-					sep3Size.x,
-					clientArea.height);
-				clientArea.x += sep3Size.x;
-			} else
-				sep3.setBounds(0, 0, 0, 0);
+			Point sep3Size =
+				sep3.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+			sep3.setBounds(
+				clientArea.x,
+				clientArea.y,
+				sep3Size.x,
+				clientArea.height);
+			clientArea.x += sep3Size.x;
+
 		}
 
 		if (this.window.getClientComposite() != null)
 			this.window.getClientComposite().setBounds(
 				clientArea.x + WorkbenchWindow.CLIENT_INSET,
-				clientArea.y + WorkbenchWindow.CLIENT_INSET + WorkbenchWindow.VGAP,
+				clientArea.y
+					+ WorkbenchWindow.CLIENT_INSET
+					+ WorkbenchWindow.VGAP,
 				clientArea.width - (2 * WorkbenchWindow.CLIENT_INSET),
-				clientArea.height - WorkbenchWindow.VGAP - (2 * WorkbenchWindow.CLIENT_INSET));
+				clientArea.height
+					- WorkbenchWindow.VGAP
+					- (2 * WorkbenchWindow.CLIENT_INSET));
 
 	}
 }

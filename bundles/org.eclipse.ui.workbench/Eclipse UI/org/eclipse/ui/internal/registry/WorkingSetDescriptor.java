@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A working set descriptor stores the plugin registry data for 
@@ -92,9 +96,11 @@ public class WorkingSetDescriptor {
 		if (icon == null)
 			return null;
 
-		return WorkbenchImages.getImageDescriptorFromExtension(
-			configElement.getDeclaringExtension(), 
-			icon); 
+		IExtension extension = configElement.getDeclaringExtension();
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		return AbstractUIPlugin.imageDescriptorFromPlugin(
+			extendingPluginId, icon);
 	}
 	/**
 	 * Returns the working set page id.

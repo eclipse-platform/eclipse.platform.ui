@@ -10,18 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.*;
-
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.internal.SelectionEnabler;
+import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  *	Instances represent registered wizards.
@@ -185,23 +182,25 @@ public void setImageDescriptor(ImageDescriptor value) {
  * @return IStructuredSelection
  */
 private IStructuredSelection convertToResources(IStructuredSelection originalSelection) {
-	List result = new ArrayList();
-	Iterator elements = originalSelection.iterator();
-	
-	while (elements.hasNext()) {
-		Object currentElement = elements.next();
-		if (currentElement instanceof IResource) {				// already a resource
-			result.add(currentElement);
-		} else if (!(currentElement instanceof IAdaptable))	{	// cannot be converted to resource
-			return StructuredSelection.EMPTY;					// so fail
-		} else {
-			Object adapter = ((IAdaptable)currentElement).getAdapter(IResource.class);
-			if (!(adapter instanceof IResource))				// chose not to be converted to resource
-				return StructuredSelection.EMPTY;				// so fail
-			result.add(adapter);							// add the converted resource
-		}
-	}
-	
-	return new StructuredSelection(result.toArray());						// all converted fine, answer new selection
+	return originalSelection;
+//	@issue resource-specific code temporarily removed - needs to be pushed into IDE
+//	List result = new ArrayList();
+//	Iterator elements = originalSelection.iterator();
+//	
+//	while (elements.hasNext()) {
+//		Object currentElement = elements.next();
+//		if (currentElement instanceof IResource) {				// already a resource
+//			result.add(currentElement);
+//		} else if (!(currentElement instanceof IAdaptable))	{	// cannot be converted to resource
+//			return StructuredSelection.EMPTY;					// so fail
+//		} else {
+//			Object adapter = ((IAdaptable)currentElement).getAdapter(IResource.class);
+//			if (!(adapter instanceof IResource))				// chose not to be converted to resource
+//				return StructuredSelection.EMPTY;				// so fail
+//			result.add(adapter);							// add the converted resource
+//		}
+//	}
+//	
+//	return new StructuredSelection(result.toArray());						// all converted fine, answer new selection
 }
 }

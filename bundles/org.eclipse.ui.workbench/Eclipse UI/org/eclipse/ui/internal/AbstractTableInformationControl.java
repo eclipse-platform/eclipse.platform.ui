@@ -463,6 +463,16 @@ public abstract class AbstractTableInformationControl {
 	}
 
 	/*
+	 * @see IInformationControl#dispose()
+	 */
+	public void hide() {
+		if (fShell != null) {
+			if (!fShell.isDisposed())
+				fShell.setVisible(false);
+		}
+	}
+	
+	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
 	 */
 	public boolean hasContents() {

@@ -11,11 +11,17 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.activities.IActivationService;
+import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
+import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.roles.IRoleManager;
 
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
@@ -47,9 +53,33 @@ import org.eclipse.ui.progress.IProgressService;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see org.eclipse.ui.plugin.AbstractUIPlugin#getWorkbench()
+ * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
 public interface IWorkbench {
+/**
+ * Returns the display for this workbench.
+ * <p>
+ * Code should always ask the workbench for the display rather than rely on
+ * {@link Display#getDefault Display.getDefault()}.
+ * </p>
+ * 
+ * @return the display to be used for all UI interactions with this workbench
+ * @since 3.0
+ */
+public Display getDisplay();
+	
+/**
+ * Returns the progress service for the workbench.
+ * <p>
+ * <b>NOTE:</b> This is experimental API and subject to change at any
+ * time.
+ * </p>
+ * 
+ * @return the progress service
+ * @since 3.0
+ */
+public IProgressService getProgressService();
+
 /**
  * Adds a window listener.
  * 
@@ -114,14 +144,17 @@ public IPreferenceStore getPreferenceStore();
  */
 public ISharedImages getSharedImages();
 /**
- * Returns the marker help registry for the workbench.
+ * Returns the number of open main windows associated with this workbench.
+ * Note that wizards and dialogs are not included in this list since they
+ * are not considered main windows.
  * 
- * @since 2.0
- * @return the marker help registry
+ * @return the number of open windows
+ * @since 3.0
+ * @issue Use getWorkbenchWindows().length?
  */
-public IMarkerHelpRegistry getMarkerHelpRegistry();
+public int getWorkbenchWindowCount();
 /**
- * Returns a list of the open main windows associated with this workbench.
+* Returns a list of the open main windows associated with this workbench.
  * Note that wizards and dialogs are not included in this list since they
  * are not considered main windows.
  *
@@ -316,6 +349,16 @@ public IDecoratorManager getDecoratorManager();
 public boolean saveAllEditors(boolean confirm);
 
 /**
+ * Returns the element factory with the given id.
+
+ * @param factoryId the id of the element factory
+ * @return the elment factory, or <code>null</code> if none
+ * @see IElementFactory
+ * @since 3.0
+ */
+public IElementFactory getElementFactory(String factoryId);
+
+/**
  * Get the manager for a given id, optionally creating it if it 
  * doesn't exist.
  * @param id. The id for the type of contribution that is to be looked
@@ -329,12 +372,37 @@ public boolean saveAllEditors(boolean confirm);
 public IObjectActivityManager getObjectActivityManager(String id, boolean create);
 
 /**
- * Return the progress manager for the workbench.
- * @return IProgressManager
+ * Returns the activity manager for the workbench. 
+ * 
+ * @return the activity manager for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
  * @since 3.0
- * <b>NOTE: This is experimental API and subject to change at any
- * time</b>.
  */
-public IProgressService getProgressManager();
+public IActivityManager getActivityManager();
 
+/**
+ * Returns the command manager for the workbench. 
+ * 
+ * @return the command manager for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
+ * @since 3.0
+ */
+public ICommandManager getCommandManager();
+
+/**
+ * Returns the role manager for the workbench. 
+ * 
+ * @return the role manager for the workbench. Guaranteed not to be 
+ * 		   <code>null</code>.
+ * @since 3.0
+ */
+public IRoleManager getRoleManager();
+
+/**
+ * TODO javadoc
+ * 
+ * @return
+ * @since 3.0
+ */
+public IActivationService getActivationService();
 }

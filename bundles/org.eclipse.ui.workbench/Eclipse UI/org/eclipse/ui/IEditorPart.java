@@ -11,8 +11,6 @@
 
 package org.eclipse.ui;
 
-import org.eclipse.core.resources.IMarker;
-
 /**
  * An editor is a visual component within a workbench page. It is
  * typically used to edit or browse a document or input object. The input 
@@ -61,7 +59,7 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 	 * The property id for <code>getEditorInput</code>.
 	 */
 	public static final int PROP_INPUT = 0x102;
-	
+
 	/**
 	 * Returns the input for this editor.  If this value changes the part must 
 	 * fire a property listener event with <code>PROP_INPUT</code>.
@@ -77,15 +75,7 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 	 * @return the editor site
 	 */
 	public IEditorSite getEditorSite();
-	
-	/**
-	 * Sets the cursor and selection state for this editor to the passage defined
-	 * by the given marker.
-	 *
-	 * @param marker the marker
-	 */
-	public void gotoMarker(IMarker marker);
-	
+		
 	/**
 	 * Initializes this editor with the given editor site and input.
 	 * <p>

@@ -46,7 +46,7 @@ public Image getImage(Object element) {
 		ImageDescriptor desc = ((IViewDescriptor)element).getImageDescriptor();
 		if (desc != null)
 			return cacheImage(desc);
-	} else if (element instanceof ICategory) {
+	} else if (element instanceof Category) {
 		ImageDescriptor desc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 		return cacheImage(desc);
 	}
@@ -54,8 +54,8 @@ public Image getImage(Object element) {
 }
 public String getText(Object element) {
 	String label = WorkbenchMessages.getString("ViewLabel.unknown"); //$NON-NLS-1$
-	if (element instanceof ICategory)
-		label = ((ICategory)element).getLabel();
+	if (element instanceof Category)
+		label = ((Category)element).getLabel();
 	else if (element instanceof IViewDescriptor)
 		label = ((ViewDescriptor)element).getLabel();
 	return DialogUtil.removeAccel(label);
