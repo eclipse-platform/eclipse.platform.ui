@@ -2,6 +2,7 @@
 <project-description>
 	<comment></comment>
 	<nature id="org.eclipse.jdt.core.javanature"/>
+	<reference project-name="org.eclipse.core.boot"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 </project-description>
