@@ -165,13 +165,11 @@ public boolean isVisible() {
 		String commandId = action.getActionDefinitionId();
 		CommandResolver.ICallback callback = CommandResolver.getInstance().getCommandResolver();
 		
-		if (callback != null) {
+		if (callback != null)
 			return callback.inContext(commandId);
-		}
 	}
 	
 	return true;	
-	//return visible;
 }
 
 /**
@@ -593,7 +591,7 @@ protected boolean isEnabledAllowed() {
  * method calls <code>update(null)</code>.
  */
 public final void update() {
-	update(null);
+	update(null);	
 }
 /**
  * Synchronizes the UI with the given property.

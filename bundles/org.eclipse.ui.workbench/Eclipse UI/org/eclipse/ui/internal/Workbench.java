@@ -756,6 +756,8 @@ public class Workbench
 	public void updateActiveContextIds() {
 		commandManager.setActiveContextIds(
 			contextManager.getActiveContextIds());
+		
+		updateActiveWorkbenchWindowMenuManager();
 	}
 
 	public void updateActiveWorkbenchWindowMenuManager() {
@@ -764,7 +766,7 @@ public class Workbench
 		if (workbenchWindow instanceof WorkbenchWindow) {
 			MenuManager menuManager =
 				((WorkbenchWindow) workbenchWindow).getMenuManager();
-			menuManager.update(IAction.TEXT);
+			menuManager.updateAll(true); // menuManager.update(IAction.TEXT);
 		}
 	}
 
@@ -994,7 +996,7 @@ public class Workbench
 			public final boolean inContext(final String commandId) {
 				if (commandId != null) {
 					final ICommand command = commandManager.getCommand(commandId);
-
+	
 					if (command != null)
 						return command.isDefined() && command.isActive();
 				}
