@@ -407,9 +407,9 @@ public boolean setGrayed(Object element, boolean state) {
 
 /**
  * Check and gray the selection rather than calling both
- * setGrayed and setChecked so as to avoid the extra internalExpand.
- * @param element - the item being checked
- * @param state - a boolean indicating selection or deselection
+ * setGrayed and setChecked as an optimization.
+ * @param element the item being checked
+ * @param state a boolean indicating selection or deselection
  * @return boolean indicating success or failure.
  */
 public boolean setGrayChecked(Object element, boolean state) {
