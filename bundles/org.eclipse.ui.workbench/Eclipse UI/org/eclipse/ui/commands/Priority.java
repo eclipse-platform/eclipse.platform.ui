@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.commands;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.util.Util;
 
@@ -19,7 +20,7 @@ import org.eclipse.ui.internal.util.Util;
  * <code>HandlerSubmission</code>.
  * </p>
  * <p>
- * The order of precedence (from highest to lowest) is as follows.  Submissions
+ * The order of precedence (from highest to lowest) is as follows. Submissions
  * with higher priority will be preferred over those with lower priority.
  * </p>
  * <ol>
@@ -34,116 +35,120 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.0
  * @see HandlerSubmission
+ * @see org.eclipse.ui.ISources
+ * @see org.eclipse.ui.handlers.IHandlerService#activateHandler(String,
+ *      IHandler, Expression, int)
+ * @deprecated This concept is now captured in the <code>ISources</code>
+ *             integer constants.
+ * 
  */
 public final class Priority implements Comparable {
 
-    /**
-     * An internal factor used in the hash function.
-     */
-    private final static int HASH_FACTOR = 89;
+	/**
+	 * An internal factor used in the hash function.
+	 */
+	private final static int HASH_FACTOR = 89;
 
-    /**
-     * The hash seed is the hash code of this class' name.
-     */
-    private final static int HASH_INITIAL = Priority.class.getName().hashCode();
+	/**
+	 * The hash seed is the hash code of this class' name.
+	 */
+	private final static int HASH_INITIAL = Priority.class.getName().hashCode();
 
-    /**
+	/**
 	 * An instance representing 'legacy' priority.
 	 */
-	public final static Priority LEGACY = new Priority(
-			ISources.LEGACY_LEGACY);
+	public final static Priority LEGACY = new Priority(ISources.LEGACY_LEGACY);
 
 	/**
 	 * An instance representing 'low' priority.
 	 */
-	public final static Priority LOW = new Priority(
-			ISources.LEGACY_LOW);
+	public final static Priority LOW = new Priority(ISources.LEGACY_LOW);
 
 	/**
 	 * An instance representing 'medium' priority.
 	 */
-	public final static Priority MEDIUM = new Priority(
-			ISources.LEGACY_MEDIUM);
+	public final static Priority MEDIUM = new Priority(ISources.LEGACY_MEDIUM);
 
-    /**
+	/**
 	 * The generated hash code. The hash code is only computed once (lazily).
 	 * After that, requests for the hash code simply get this value.
 	 */
-    private transient int hashCode;
+	private transient int hashCode;
 
-    /**
-     * Whether the hash code has been computed yet.
-     */
-    private transient boolean hashCodeComputed;
+	/**
+	 * Whether the hash code has been computed yet.
+	 */
+	private transient boolean hashCodeComputed;
 
-    /**
-     * The string representation of this priority.  This is computed once
-     * (lazily).  Before it is computed, this value is <code>null</code>.
-     */
-    private transient String string = null;
+	/**
+	 * The string representation of this priority. This is computed once
+	 * (lazily). Before it is computed, this value is <code>null</code>.
+	 */
+	private transient String string = null;
 
-    /**
-     * The priority value for this instance.  A lesser integer is considered to
-     * have a higher priority.
-     */
-    private int value;
+	/**
+	 * The priority value for this instance. A lesser integer is considered to
+	 * have a higher priority.
+	 */
+	private int value;
 
-    /**
-     * Constructs a new instance of <code>Priority</code> using a value. This
-     * constructor should only be used internally. Priority instances should be
-     * retrieved from the static members defined above.
-     * 
-     * @param value
-     *            The priority value; a lesser integer is consider to have a
-     *            higher priority value.
-     */
-    private Priority(int value) {
-        this.value = value;
-    }
+	/**
+	 * Constructs a new instance of <code>Priority</code> using a value. This
+	 * constructor should only be used internally. Priority instances should be
+	 * retrieved from the static members defined above.
+	 * 
+	 * @param value
+	 *            The priority value; a lesser integer is consider to have a
+	 *            higher priority value.
+	 */
+	private Priority(int value) {
+		this.value = value;
+	}
 
-    /**
-     * @see Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object object) {
-        Priority castedObject = (Priority) object;
-        int compareTo = Util.compare(value, castedObject.value);
-        return compareTo;
-    }
+	/**
+	 * @see Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object object) {
+		Priority castedObject = (Priority) object;
+		int compareTo = Util.compare(value, castedObject.value);
+		return compareTo;
+	}
 
-    /**
-     * The value for this priority.  The lesser the value, the higher priority
-     * this represents.
-     * @return The integer priority value.
-     */
-    int getValue() {
-        return value;
-    }
+	/**
+	 * The value for this priority. The lesser the value, the higher priority
+	 * this represents.
+	 * 
+	 * @return The integer priority value.
+	 */
+	int getValue() {
+		return value;
+	}
 
-    /**
-     * @see Object#hashCode()
-     */
-    public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
-            hashCodeComputed = true;
-        }
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
+			hashCodeComputed = true;
+		}
 
-        return hashCode;
-    }
+		return hashCode;
+	}
 
-    /**
-     * @see Object#toString()
-     */
-    public String toString() {
-        if (string == null) {
-            final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("[value="); //$NON-NLS-1$
-            stringBuffer.append(value);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+	/**
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		if (string == null) {
+			final StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append("[value="); //$NON-NLS-1$
+			stringBuffer.append(value);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
 
-        return string;
-    }
+		return string;
+	}
 }
