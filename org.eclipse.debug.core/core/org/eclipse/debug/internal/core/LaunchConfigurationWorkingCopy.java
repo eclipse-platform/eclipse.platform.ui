@@ -188,14 +188,27 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	private ISchedulingRule getSchedulingRule() {
 		List rules= new ArrayList(2);
+		IResourceRuleFactory fac = ResourcesPlugin.getWorkspace().getRuleFactory();
 		if (!isLocal()) {
-			//working copy will be saved to a workspace location
-			addSchedulingRule(rules, getLocation());
+			//working copy will be saved to a workspace location - create or modify
+			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
+			if (files.length > 0) {
+				IFile file = files[0];
+				ISchedulingRule rule = null;
+				if (file.exists()) {
+					rule = fac.modifyRule(file);
+				} else {
+					rule = fac.createRule(file);
+				}
+				rules.add(MultiRule.combine(rule, fac.validateEditRule(files)));
+			}
 		}
 		ILaunchConfiguration original = getOriginal();
-		if (original != null && !original.isLocal()) {
-			//original will be deleted from a workspace location
-			addSchedulingRule(rules, original.getLocation());
+		if (!isNew() && isMoved() && !original.isLocal()) {
+			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(original.getLocation());
+			if (files.length > 0) {
+				rules.add(MultiRule.combine(fac.deleteRule(files[0]), fac.validateEditRule(files)));
+			}
 		}
 		if (rules.isEmpty()) {
 			return null;
@@ -203,14 +216,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
 	}
 	
-	private void addSchedulingRule(List rules, IPath location) {
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
-		if (files.length > 0) {
-			IResourceRuleFactory fac = ResourcesPlugin.getWorkspace().getRuleFactory();
-			rules.add(MultiRule.combine(fac.createRule(files[0]), fac.validateEditRule(files)));
-		}
-	}
-
 	private void doSave0() throws CoreException {
 		// set up from/to information if this is a move
 		boolean moved = (!isNew() && isMoved());
