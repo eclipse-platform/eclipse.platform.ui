@@ -232,8 +232,12 @@ public abstract class FormSection implements IPropertyChangeListener {
 	}
 
 	protected void reflow() {
+		control.setRedraw(false);
+		control.getParent().setRedraw(false);
 		control.layout(true);
 		control.getParent().layout(true);
+		control.setRedraw(true);
+		control.getParent().setRedraw(true);
 	}
 
 	protected Text createText(
