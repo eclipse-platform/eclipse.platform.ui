@@ -36,7 +36,7 @@ import org.eclipse.ui.themes.ITheme;
  * 
  * @since 3.0
  */
-public class EditorStackPresentation extends BasicStackPresentation {
+public class EditorPresentation extends BasicStackPresentation {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
@@ -81,7 +81,7 @@ public class EditorStackPresentation extends BasicStackPresentation {
         }
     };
 
-    public EditorStackPresentation(Composite parent, IStackPresentationSite newSite,
+    public EditorPresentation(Composite parent, IStackPresentationSite newSite,
             int flags) {
         super(new CTabFolder(parent, SWT.BORDER), newSite);
         CTabFolder tabFolder = getTabFolder();

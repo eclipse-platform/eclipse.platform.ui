@@ -16,6 +16,7 @@ import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.presentations.EditorPresentation;
 import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
 
 /**
@@ -31,29 +32,46 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
-    public StackPresentation createPresentation(Composite parent, IStackPresentationSite site, int role, int flags, String perspectiveId, String folderId) {
+    public StackPresentation createPresentation(Composite parent,
+            IStackPresentationSite site, int role, int flags,
+            String perspectiveId, String folderId) {
         switch (role) {
-        	case ROLE_DOCKED_VIEW:
-        	    return new PartTabFolderPresentation(parent, site, flags);
-            default:
-                throw new Error("not implemented");
+        case ROLE_EDITOR_WORKBOOK:
+            return new EditorPresentation(parent, site, flags);
+        case ROLE_DOCKED_VIEW:
+            return new PartTabFolderPresentation(parent, site, flags);
+        case ROLE_FAST_VIEW:
+            // TODO 
+            return new PartTabFolderPresentation(parent, site, flags);
+        case ROLE_DETACHED_VIEW:
+            // TODO
+            return new PartTabFolderPresentation(parent, site, flags);
+        default:
+            throw new Error("not implemented");
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.presentations.AbstractPresentationFactory
+     */
+    public Control createStatusLineControl(IStatusLineManager statusLine,
+            Composite parent) {
+        return ((StatusLineManager) statusLine).createControl(parent, SWT.NONE);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory
      */
     public IStatusLineManager createStatusLineManager() {
         return new StatusLineManager();
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.presentations.AbstractPresentationFactory
-     */
-    public Control createStatusLineControl(IStatusLineManager statusLine, Composite parent) {
-        return ((StatusLineManager) statusLine).createControl(parent, SWT.NONE);
     }
 }

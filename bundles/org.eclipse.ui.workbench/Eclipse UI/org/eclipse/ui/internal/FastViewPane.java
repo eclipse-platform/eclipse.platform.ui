@@ -251,6 +251,13 @@ class FastViewPane {
 			ctrl = pane.getControl();			
 		}
 		
+		// TODO this should go through the factory
+//		AbstractPresentationFactory factory = ((WorkbenchWindow) page.getWorkbenchWindow())
+//        .getWindowConfigurer().getPresentationFactory();
+//		site.setPresentation(factory.createPresentation(newClientComposite,
+//        site, AbstractPresentationFactory.ROLE_FAST_VIEW,
+//        flags, page.getPerspective().getId(), getID()));
+
 		StackPresentation presentation = new PartTabFolderPresentation(newClientComposite, site, SWT.MIN | SWT.MAX);
 		
 		site.setPresentation(presentation);
