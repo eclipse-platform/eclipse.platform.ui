@@ -1,10 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
-import java.io.File;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
@@ -57,30 +62,6 @@ public PasteAction(Shell shell, Clipboard clipboard) {
 	setToolTipText(ResourceNavigatorMessages.getString("PasteAction.toolTip")); //$NON-NLS-1$
 	setId(PasteAction.ID);
 	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.PASTE_ACTION);
-}
-/**
- * Returns whether the given resources and files exist.
- * 
- * @param resources IResources to check for existence. may be null
- * @param files IFiles to check for existence. may be null 
- * @return true=all given resources and files exist.
- * 	false=none of the resources and files exist
- */
-private boolean exists(IResource[] resources, String[] files) {
-	if (resources != null) {
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i].exists() == false)
-				return false;
-		}
-	}
-	if (files != null) {
-		for (int i = 0; i < files.length; i++) {
-			File file = new File(files[i]);
-			if (file.exists() == false)
-				return false;
-		}
-	}
-	return true;
 }
 /**
  * Returns the actual target of the paste action. Returns null
@@ -223,8 +204,6 @@ protected boolean updateSelection(IStructuredSelection selection) {
 				return false;
 		}
 	}
-	if (exists(resourceData, fileData) == false)
-		return false;
 		
 	return true;
 }

@@ -1,11 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
 
-/*
- * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
- * This file is made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- */
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -210,21 +214,63 @@ public class CopyFilesAndFoldersOperation {
 	 *
 	 * @param names path to the file. must not be null.
 	 * 	If the path is not valid it will not be tested. 
-	 * @return error message if one of the files does not exist.
-	 * 	null if all files specified in names exist.
+	 * @return Multi status with one error message for each missing file.
 	 */
-	String checkExist(String[] names) {
+	IStatus checkExist(String[] names) {
+		MultiStatus multiStatus = new MultiStatus(
+			PlatformUI.PLUGIN_ID, 
+			IStatus.OK,
+			getProblemsMessage(),
+			null);
+			 		
 		for (int i = 0; i < names.length; i++) {
 			IPath path = new Path(names[i]);
 			File file = path.toFile();
 			
 			if (file != null && file.exists() == false) {
-				return WorkbenchMessages.format(
+				String message = WorkbenchMessages.format(
 					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
 					new Object[] {file.getName()});				
+				IStatus status = new Status(
+					IStatus.ERROR, 
+					PlatformUI.PLUGIN_ID, 
+					IStatus.OK, 
+					message, 
+					null);
+				multiStatus.add(status);
 			}
 		}
-		return null;		
+		return multiStatus;
+	}
+	/**
+	 * Checks whether the files with the given names exist. 
+	 *
+	 * @param names path to the file. must not be null.
+	 * 	If the path is not valid it will not be tested. 
+	 * @return Multi status with one error message for each missing file.
+	 */
+	IStatus checkExist(IResource[] resources) {
+		MultiStatus multiStatus = new MultiStatus(
+			PlatformUI.PLUGIN_ID, 
+			IStatus.OK,
+			getProblemsMessage(),
+			null);
+			 		
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i] != null && resources[i].exists() == false) {
+				String message = WorkbenchMessages.format(
+					"CopyFilesAndFoldersOperation.resourceDeleted",	//$NON-NLS-1$
+					new Object[] {resources[i].getName()});				
+				IStatus status = new Status(
+					IStatus.ERROR, 
+					PlatformUI.PLUGIN_ID, 
+					IStatus.OK, 
+					message, 
+					null);
+				multiStatus.add(status);
+			}
+		}
+		return multiStatus;
 	}
 	/**
 	 * Check if the user wishes to overwrite the supplied resource or 
@@ -403,6 +449,18 @@ public class CopyFilesAndFoldersOperation {
 
 		alwaysDeepCopy = false;
 		neverDeepCopy = false;
+		// test resources for existence separate from validate API.
+		// Validate is performance critical and resource exists
+		// check is potentially slow. Fixes bugs 16129/28602. 
+		IStatus resourceStatus = checkExist(resources);
+		if (resourceStatus.getSeverity() != IStatus.OK) {
+			ErrorDialog.openError(
+				parentShell, 
+				getProblemsTitle(),
+				null, // no special message
+				resourceStatus);
+			return copiedResources[0];
+		}
 		String errorMsg = validateDestination(destination, resources);
 		if (errorMsg != null) {
 			displayError(errorMsg);
@@ -494,10 +552,16 @@ public class CopyFilesAndFoldersOperation {
 		// test files for existence separate from validate API 
 		// because an external file may not exist until the copy actually 
 		// takes place (e.g., WinZip contents).
-		String errorMsg = checkExist(fileNames);
-		if (errorMsg == null) {
-			errorMsg = validateImportDestination(destination, fileNames);
+		IStatus fileStatus = checkExist(fileNames);
+		if (fileStatus.getSeverity() != IStatus.OK) {
+			ErrorDialog.openError(
+				parentShell, 
+				getProblemsTitle(),
+				null, // no special message
+				fileStatus);
+			return;
 		}
+		String errorMsg = validateImportDestination(destination, fileNames);
 		if (errorMsg != null) {
 			displayError(errorMsg);
 			return;
@@ -982,11 +1046,6 @@ public class CopyFilesAndFoldersOperation {
 			IResource sourceResource = sourceResources[i];
 			IPath sourceLocation = sourceResource.getLocation();
 
-			if (sourceResource.exists() == false) {
-				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.resourceDeleted",			//$NON-NLS-1$
-					new Object[] {sourceResource.getName()});				
-			}
 			/*
 			 * Remove once bug 28754 is fixed
 			 */
