@@ -827,7 +827,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Button deleteButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
 		setButtonActionDelete(new ButtonActionDelete(deleteButton.getText(), deleteButton));
 		
-		setButtonActionDuplicate(new ButtonActionDuplicate("Duplicate", null));
+		setButtonActionDuplicate(new ButtonActionDuplicate(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Duplicate_1"), null)); //$NON-NLS-1$
 		
 		return comp;
 	}	
