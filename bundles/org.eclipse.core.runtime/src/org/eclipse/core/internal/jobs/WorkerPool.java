@@ -57,12 +57,12 @@ class WorkerPool {
 	protected WorkerPool(JobManager manager) {
 		this.manager = manager;
 		computeMaxThreads();
-		//		Platform.getPlugin(IPlatform.PI_RUNTIME).getPluginPreferences().addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
-		//			public void propertyChange(PropertyChangeEvent event) {
-		//				if (event.getProperty().equalsIgnoreCase(IPlatform.PREF_PLATFORM_PERFORMANCE))
-		//					computeMaxThreads();
-		//			}
-		//		});
+		Platform.getPlugin(IPlatform.PI_RUNTIME).getPluginPreferences().addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+			public void propertyChange(Preferences.PropertyChangeEvent event) {
+				if (event.getProperty().equalsIgnoreCase(IPlatform.PREF_PLATFORM_PERFORMANCE))
+					computeMaxThreads();
+			}
+		});
 	}
 	/**
 	 * Adds a worker to the list of workers.
@@ -81,7 +81,7 @@ class WorkerPool {
 	 * preference.
 	 */
 	protected void computeMaxThreads() {
-		int speed = 5; //InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME).getPluginPreferences().getInt(IPlatform.PREF_PLATFORM_PERFORMANCE);
+		int speed = Platform.getPlugin(IPlatform.PI_RUNTIME).getPluginPreferences().getInt(IPlatform.PREF_PLATFORM_PERFORMANCE);
 		switch (speed) {
 			case 1 :
 				MAX_THREADS = DEFAULT_MAX_THREADS / 5;
