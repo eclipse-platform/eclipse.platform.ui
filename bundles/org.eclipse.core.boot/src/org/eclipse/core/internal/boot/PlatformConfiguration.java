@@ -62,7 +62,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String PLUGINS = "plugins";
 	private static final String INSTALL = "install";
 	private static final String CONFIG_FILE = "platform.cfg";
-	private static final String CONFIG_FILE_INIT = "install.properties";
+	private static final String CONFIG_FILE_INIT = "install.ini";
 	private static final String FEATURES = INSTALL + "/features";
 	private static final String LINKS = "links";
 	private static final String PLUGIN_XML = "plugin.xml";
@@ -1586,7 +1586,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		Properties initProps = new Properties();
 		InputStream is = null;
 		try {
-			URL initURL = new URL(url,"../"+CONFIG_FILE_INIT);
+			URL initURL = new URL(url, CONFIG_FILE_INIT);
 			is = initURL.openStream();
 			initProps.load(is);
 		} catch(IOException e) {
