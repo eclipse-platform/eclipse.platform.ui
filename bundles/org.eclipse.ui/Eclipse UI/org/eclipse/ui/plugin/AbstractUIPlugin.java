@@ -1,20 +1,40 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 International Business Machines Corp. and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.plugin;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.DialogSettings;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * Abstract base class for plug-ins that integrate with the Eclipse platform UI.
@@ -24,30 +44,31 @@ import java.util.*;
  * <p>
  * Preferences
  * <ul>
- * <li> Preferences are read the first time <code>getPreferenceStore</code> is
- *      called. </li>
- * <li> Preferences are found in the file whose name is given by the constant
- *      <code>FN_PREF_STORE</code>. A preference file is looked for in the plug-in's 
- *		read/write state area.</li>
- * <li> Subclasses should reimplement <code>initializeDefaultPreferences</code>
- *      to set up any default values for preferences. These are the values 
- *      typically used if the user presses the Default button in a preference
- *      dialog. </li>
- * <li>	The plug-in's install directory is checked for a file whose name is given by 
- *		<code>FN_DEFAULT_PREFERENCES</code>.
- *      This allows a plug-in to ship with a read-only copy of a preference file 
- *      containing default values for certain settings different from the 
- *      hard-wired default ones (perhaps as a result of localizing, or for a
- *      common configuration).</li>
- * <li> Plug-in code can call <code>savePreferenceStore</code> to cause 
- *      non-default settings to be saved back to the file in the plug-in's
- *      read/write state area. </li>
- * <li> Preferences are also saved automatically on plug-in shutdown.</li>
+ * <li> The platform core runtime contains general support for plug-in
+ *      preferences (<code>org.eclipse.core.runtime.Preferences</code>). 
+ *      This class provides appropriate conversion to the older JFace preference 
+ *      API (<code>org.eclipse.jface.preference.IPreferenceStore</code>).</li>
+ * <li> The method <code>getPreferenceStore</code> returns the JFace preference
+ *      store (cf. <code>Plugin.getPluginPreferences</code> which returns
+ *      a core runtime preferences object.</li>
+ * <li> Subclasses may reimplement <code>initializeDefaultPreferences</code>
+ *      to set up any default values for preferences using JFace API. In this
+ *      case, <code>initializeDefaultPluginPreferences</code> should not be
+ *      overridden.</li>
+ * <li> Subclasses may reimplement
+ *      <code>initializeDefaultPluginPreferences</code> to set up any default
+ *      values for preferences using core runtime API. In this
+ *      case, <code>initializeDefaultPreferences</code> should not be
+ *      overridden.</li>
+ * <li> Preferences are also saved automatically on plug-in shutdown.
+ *      However, saving preferences immediately after changing them is
+ *      strongly recommended, since that ensures that preference settings
+ *      are not lost even in the event of a platform crash.</li>
  * </ul>
  * Dialogs
  * <ul>
- * <li> Dialog store are read the first time <code>getDialogSettings</code> is 
- *      called.</li>
+ * <li> The dialog store is read the first time <code>getDialogSettings</code> 
+ *      is called.</li>
  * <li> The dialog store allows the plug-in to "record" important choices made
  *      by the user in a wizard or dialog, so that the next time the
  *      wizard/dialog is used the widgets can be defaulted to better values. A
@@ -85,16 +106,6 @@ import java.util.*;
  */
 public abstract class AbstractUIPlugin extends Plugin
 {
-	/**
-	 * The name of the preference storage file (value
-	 * <code>"pref_store.ini"</code>).
-	 */
-	private static final String FN_PREF_STORE= "pref_store.ini";//$NON-NLS-1$
-	/**
-	 * The name of the default preference settings file (value
-	 * <code>"preferences.ini"</code>).
-	 */
-	private static final String FN_DEFAULT_PREFERENCES= "preferences.ini";//$NON-NLS-1$
 
 	/**
 	 * The name of the dialog settings file (value 
@@ -102,7 +113,6 @@ public abstract class AbstractUIPlugin extends Plugin
 	 */
 	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml";//$NON-NLS-1$
 
-	
 	/**
 	 * Storage for dialog and wizard data; <code>null</code> if not yet
 	 * initialized.
@@ -110,15 +120,356 @@ public abstract class AbstractUIPlugin extends Plugin
 	private DialogSettings dialogSettings = null;
 
 	/**
-	 * Storage for preferences; <code>null</code> if not yet initialized.
+	 * Storage for preferences.
 	 */
-	private PreferenceStore preferenceStore = null;
+	private CompatibilityPreferenceStore preferenceStore;
 
 	/**
 	 * The registry for all graphic images; <code>null</code> if not yet
 	 * initialized.
 	 */
 	private ImageRegistry imageRegistry = null;
+	
+	/**
+	 * Internal implementation of a JFace preference store atop a core runtime
+	 * preference store.
+	 * 
+	 * @since 2.0
+	 */
+	private class CompatibilityPreferenceStore implements IPreferenceStore {
+	
+		/**
+		 * The underlying core runtime preference store; <code>null</code> if it
+		 * has not been initialized yet.
+		 */
+		private Preferences prefs = null;
+	
+		/**
+		 * Identity list of old listeners (element type: 
+		 * <code>org.eclipse.jface.util.IPropertyChangeListener</code>).
+		 */
+		private List listeners = new ArrayList(1);
+	
+		/**
+		 * Indicates whether property change events should be suppressed
+		 * (used in implementation of <code>putValue</code>). Initially
+		 * and usually <code>false</code>.
+		 * 
+		 * @see IPreferenceStore#putValue
+		 */
+		private boolean silentRunning = false;
+	
+		/**
+		 * Creates a new instance for the this plug-in.
+		 */
+		public CompatibilityPreferenceStore() {
+		}
+		
+		/**
+		 * Initializes this preference store.
+		 */
+		void initialize() {
+			// here's where we first ask for the plug-in's core runtime preferences
+			this.prefs = getPluginPreferences();
+			// register listener that funnels everything to firePropertyChangeEvent
+			this
+				.prefs
+				.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
+				public void propertyChange(Preferences.PropertyChangeEvent event) {
+					if (!silentRunning) {
+						firePropertyChangeEvent(
+							event.getProperty(),
+							event.getOldValue(),
+							event.getNewValue());
+					}
+				}
+			});
+		}
+	
+		/**
+		 * Returns the underlying preference store. Initializes it is required.
+		 * 
+		 * @return the underlying preference store
+		 */
+		private Preferences getPrefs() {
+			if (prefs == null) {
+				initialize();
+			}
+			return prefs;
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void addPropertyChangeListener(final IPropertyChangeListener listener) {
+			if (listener == null) {
+				throw new IllegalArgumentException();
+			}
+	
+			// look for identical listener (DO NOT USE equals())
+			for (Iterator it = listeners.iterator(); it.hasNext();) {
+				if (listener == it.next()) {
+					// ignore - identical listener is already present
+					return;
+				}
+			}
+			listeners.add(listener);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void removePropertyChangeListener(IPropertyChangeListener listener) {
+			if (listener == null) {
+				throw new IllegalArgumentException();
+			}
+	
+			// look for identical listener (DO NOT USE equals())
+			for (Iterator it = listeners.iterator(); it.hasNext();) {
+				if (listener == it.next()) {
+					// remove listener
+					it.remove();
+					return;
+				}
+			}
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void firePropertyChangeEvent(
+			String name,
+			Object oldValue,
+			Object newValue) {
+	
+			// efficiently handle case of 0 listeners
+			if (listeners.size() == 0) {
+				// no one interested
+				return;
+			}
+	
+			// important: create intermediate array to protect against listeners 
+			// being added/removed during the notification
+			IPropertyChangeListener[] listenerCopy =
+				new IPropertyChangeListener[listeners.size()];
+			listeners.toArray(listenerCopy);
+			PropertyChangeEvent event =
+				new PropertyChangeEvent(this, name, oldValue, newValue);
+			for (int i = 0; i < listenerCopy.length; i++) {
+				listenerCopy[i].propertyChange(event);
+			}
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public boolean contains(String name) {
+			return getPrefs().contains(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public boolean getBoolean(String name) {
+			return getPrefs().getBoolean(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public boolean getDefaultBoolean(String name) {
+			return getPrefs().getDefaultBoolean(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public double getDefaultDouble(String name) {
+			return getPrefs().getDefaultDouble(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public float getDefaultFloat(String name) {
+			return getPrefs().getDefaultFloat(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public int getDefaultInt(String name) {
+			return getPrefs().getDefaultInt(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public long getDefaultLong(String name) {
+			return getPrefs().getDefaultLong(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public String getDefaultString(String name) {
+			return getPrefs().getDefaultString(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public double getDouble(String name) {
+			return getPrefs().getDouble(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public float getFloat(String name) {
+			return getPrefs().getFloat(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public int getInt(String name) {
+			return getPrefs().getInt(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public long getLong(String name) {
+			return getPrefs().getLong(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public String getString(String name) {
+			return getPrefs().getString(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public boolean isDefault(String name) {
+			return getPrefs().isDefault(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public boolean needsSaving() {
+			return getPrefs().needsSaving();
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void putValue(String name, String value) {
+			try {
+				// temporarily suppress event notification while setting value
+				silentRunning = true;
+				getPrefs().setValue(name, value);
+			} finally {
+				silentRunning = false;
+			}
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setDefault(String name, double value) {
+			getPrefs().setDefault(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setDefault(String name, float value) {
+			getPrefs().setDefault(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setDefault(String name, int value) {
+			getPrefs().setDefault(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setDefault(String name, long value) {
+			getPrefs().setDefault(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setDefault(String name, String value) {
+			getPrefs().setDefault(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setDefault(String name, boolean value) {
+			getPrefs().setDefault(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setToDefault(String name) {
+			getPrefs().setToDefault(name);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setValue(String name, double value) {
+			getPrefs().setValue(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setValue(String name, float value) {
+			getPrefs().setValue(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setValue(String name, int value) {
+			getPrefs().setValue(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setValue(String name, long value) {
+			getPrefs().setValue(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setValue(String name, String value) {
+			getPrefs().setValue(name, value);
+		}
+	
+		/* (non-javadoc)
+		 * Method declared on IPreferenceStore
+		 */
+		public void setValue(String name, boolean value) {
+			getPrefs().setValue(name, value);
+		}
+	}	
+	
 /**
  * Creates an abstract UI plug-in runtime object for the given plug-in descriptor.
  * <p>
@@ -130,7 +481,11 @@ public abstract class AbstractUIPlugin extends Plugin
  */
 public AbstractUIPlugin(IPluginDescriptor descriptor) {
 	super(descriptor);
+	
+	// N.B. this plug-ins's core runtime preference store is not created yet
+	preferenceStore = new CompatibilityPreferenceStore();
 }
+
 /** 
  * Returns a new image registry for this plugin-in.  The registry will be
  * used to manage images which are frequently used by the plugin-in.
@@ -206,14 +561,11 @@ public ImageRegistry getImageRegistry() {
  * @return the preference store 
  */
 public IPreferenceStore getPreferenceStore() {
-	if (preferenceStore == null) {
-		loadPreferenceStore();
-		initializeDefaultPreferences(preferenceStore);
-		initializePluginPreferences(preferenceStore);
-		initializeConfigurationPreferences(preferenceStore);
-	}
+	// force initialization
+	preferenceStore.initialize();
 	return preferenceStore;
 }
+
 /**
  * Returns the Platform UI workbench.  
  * <p> 
@@ -224,37 +576,57 @@ public IPreferenceStore getPreferenceStore() {
 public IWorkbench getWorkbench() {
 	return PlatformUI.getWorkbench();
 }
-/**
- * Sets default preferences based on the current configuration
- */
-private void initializeConfigurationPreferences(IPreferenceStore store) {
-	Hashtable table= ((Workbench)getWorkbench()).getProductInfo().getConfigurationPreferences();
-	if (table == null) return;
-	Object preferences= table.get(getDescriptor().getUniqueIdentifier());
-	if (preferences == null) return;
-	String[] preferenceArray= (String[]) preferences;
-	for (int i= 0; i < preferenceArray.length; i+=2) {
-		String name= preferenceArray[i];
-		String value= preferenceArray[i+1];
-		store.setDefault(name, value);
-	}
 
-}
 /** 
  * Initializes a preference store with default preference values 
  * for this plug-in.
  * <p>
  * This method is called after the preference store is initially loaded
  * (default values are never stored in preference stores).
- * <p><p>
+ * </p>
+ * <p>
  * The default implementation of this method does nothing.
  * Subclasses should reimplement this method if the plug-in has any preferences.
+ * </p>
+ * <p>
+ * A subclass may reimplement this method to set default values for the 
+ * preference store using JFace API. This is the older way of initializing 
+ * default values. If this method is reimplemented, do not override
+ * <code>initializeDefaultPluginPreferences()</code>.
  * </p>
  *
  * @param store the preference store to fill
  */
 protected void initializeDefaultPreferences(IPreferenceStore store) {
 }
+
+/**
+ * The <code>AbstractUIPlugin</code> implementation of this 
+ * <code>Plugin</code> method forwards to 
+ * <code>initializeDefaultPreferences(IPreferenceStore)</code>.
+ * <p>
+ * A subclass may reimplement this method to set default values for the core
+ * runtime preference store in the standard way. This is the recommended way
+ * to do this. 
+ * The older <code>initializeDefaultPreferences(IPreferenceStore)</code> method
+ * serves a similar purpose. If this method is reimplemented, do not send super,
+ * and do not override <code>initializeDefaultPreferences(IPreferenceStore)</code>.
+ * </p>
+ * 
+ * @see #initializeDefaultPreferences
+ * @since 2.0
+ */
+protected void initializeDefaultPluginPreferences() {
+	// N.B. by the time this method is called, the plug-in has a 
+	// core runtime preference store (no default values)
+
+	// call loadPreferenceStore (only) for backwards compatibility with Eclipse 1.0
+	loadPreferenceStore();
+	// call initializeDefaultPreferences (only) for backwards compatibility 
+	// with Eclipse 1.0
+	initializeDefaultPreferences(preferenceStore);
+}
+
 /** 
  * Initializes an image registry with images which are frequently used by the 
  * plugin-in.
@@ -278,44 +650,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
  */
 protected void initializeImageRegistry(ImageRegistry reg) {
 }
-/**
- * Sets default preferences defined in the plugin directory.
- * If there are no default preferences defined, or some other
- * problem occurs, we fail silently.
- */
-private void initializePluginPreferences(IPreferenceStore store) {
-	URL baseURL = getDescriptor().getInstallURL();
 
-	URL iniURL= null;
-	try {
-		iniURL = new URL(baseURL, FN_DEFAULT_PREFERENCES);
-	} catch (MalformedURLException e) {
-		return;
-	}
-
-	Properties ini = new Properties();
-	InputStream is = null;
-	try {
-		is = iniURL.openStream();
-		ini.load(is);
-	}
-	catch (IOException e) {
-		// Cannot read ini file;
-		return;
-	}
-	finally {
-		try { 
-			if (is != null)
-				is.close(); 
-		} catch (IOException e) {}
-	}
-
-	Enumeration enum = ini.propertyNames();
-	while (enum.hasMoreElements()) {
-		String key = (String)enum.nextElement();
-		store.setDefault(key, ini.getProperty(key));
-	}
-}
 /**
  * Loads the dialog settings for this plug-in.
  * The default implementation first looks for a standard named file in the 
@@ -369,6 +704,7 @@ protected void loadDialogSettings() {
 		}
 	}
 }
+
 /**
  * Loads the preference store for this plug-in.
  * The default implementation looks for a standard named file in the 
@@ -378,19 +714,16 @@ protected void loadDialogSettings() {
  * This framework method may be overridden, although this is typically 
  * unnecessary.
  * </p>
+ * 
+ * @deprecated As of Eclipse 2.0, a basic preference store exists for all
+ * plug-ins. This method now exists only for backwards compatibility.
+ * It is called as the plug-in's preference store is being initialized.
+ * The plug-ins preferences are loaded from the file regardless of what
+ * this method does.
  */
 protected void loadPreferenceStore() {
-	String readWritePath = getStateLocation().append(FN_PREF_STORE).toOSString();
-	preferenceStore = new PreferenceStore(readWritePath);
-	try {
-		preferenceStore.load();
-	}
-	catch (IOException e) {
-		// Load failed, perhaps because the file does not yet exist.
-		// At any rate we just return and leave the store empty.
-	}
-	return;
 }
+
 /**
  * Refreshes the actions for the plugin.
  * This method is called from <code>startup</code>.
@@ -430,20 +763,19 @@ protected void saveDialogSettings() {
 	catch (IOException e) {
 	}
 }
+
 /**
  * Saves this plug-in's preference store.
  * Any problems which arise are silently ignored.
+ * 
+ * @see Plugin#savePluginPreferences
+ * @deprecated As of Eclipse 2.0, preferences exist for all plug-ins. The 
+ * equivalent of this method is <code>Plugin.savePluginPreferences</code>. 
+ * This method now calls <code>savePluginPreferences</code>, and exists only for
+ * backwards compatibility.
  */
 protected void savePreferenceStore() {
-	if (preferenceStore == null) {
-		return;
-	}
-	try {
-		if (preferenceStore.needsSaving())
-			preferenceStore.save(); // the store knows its filename - no need to pass it
-	}
-	catch (IOException e) {
-	}
+	savePluginPreferences();
 }
 
 /**
