@@ -314,7 +314,7 @@ public class IntroURL implements IIntroURL {
                 message = URLDecoder.decode(message, "UTF-8"); //$NON-NLS-1$
                 DialogUtil.displayInfoMessage(null, message);
             } catch (UnsupportedEncodingException e) {
-                DialogUtil.displayInfoMessage(null, "IntroURL.failedToDecode",
+                DialogUtil.displayInfoMessage(null, "IntroURL.failedToDecode", //$NON-NLS-1$
                         new Object[] { message});
                 return;
             }
@@ -353,21 +353,21 @@ public class IntroURL implements IIntroURL {
         IntroURLCommand command = ExtensionPointManager.getInst()
                 .getSharedConfigExtensionsManager().getCommand(action);
         if (command == null) {
-            DialogUtil.displayInfoMessage(null, "IntroURL.badCommand",
+            DialogUtil.displayInfoMessage(null, "IntroURL.badCommand", //$NON-NLS-1$
                     new Object[] { action});
             return;
         }
 
         // custom command. execute it.
         StringBuffer url = new StringBuffer();
-        url.append("http://org.eclipse.ui.intro/");
+        url.append("http://org.eclipse.ui.intro/"); //$NON-NLS-1$
         url.append(command.getResolvedValue().trim());
-        if (command.getResolvedValue().indexOf("?") == -1)
+        if (command.getResolvedValue().indexOf("?") == -1) //$NON-NLS-1$
             // command does not have parameters.
-            url.append("?");
+            url.append("?"); //$NON-NLS-1$
         else
             // command already has parameters.
-            url.append("&");
+            url.append("&"); //$NON-NLS-1$
         url.append(retrieveInitialQuery());
         IIntroURL introURL = IntroURLFactory.createIntroURL(url.toString());
         if (introURL != null)
@@ -386,10 +386,10 @@ public class IntroURL implements IIntroURL {
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             query.append(key);
-            query.append("=");
+            query.append("="); //$NON-NLS-1$
             query.append(parameters.get(key));
             if (keys.hasMoreElements())
-                query.append("&");
+                query.append("&"); //$NON-NLS-1$
         }
         return query.toString();
     }
