@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
@@ -125,4 +127,90 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		}
 	}
 
+	public void testListener() {
+		// setup
+		IProject project = getWorkspace().getRoot().getProject("foo");
+		String qualifier = "org.eclipse.core.tests.resources";
+		String key = "key" + getUniqueString();
+		String value = "value" + getUniqueString();
+		IScopeContext projectContext = new ProjectScope(project);
+		// create project
+		ensureExistsInWorkspace(project, true);
+		// set preferences
+		Preferences node = projectContext.getNode(qualifier);
+		node.put(key, value);
+		String actual = node.get(key, null);
+		assertNotNull("1.0", actual);
+		assertEquals("1.1", value, actual);
+		try {
+			// flush
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("0.0", e);
+		}
+
+		// get settings filename
+		File file = project.getLocation().append(".settings").append(qualifier + ".prefs").toFile();
+		Properties props = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(new FileInputStream(file));
+			props.load(input);
+		} catch (IOException e) {
+			fail("1.0", e);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+
+		// change settings in the file
+		String newKey = "newKey" + getUniqueString();
+		String fullPath = Path.ROOT.append(ProjectScope.SCOPE).append(project.getName()).append(qualifier).append(newKey).toString();
+		String newValue = "newValue" + getUniqueString();
+		props.put(fullPath, newValue);
+
+		// save the file and ensure timestamp is different
+		OutputStream output = null;
+		try {
+			output = new BufferedOutputStream(new FileOutputStream(file));
+			props.store(output, null);
+		} catch (IOException e) {
+			fail("2.0", e);
+		} finally {
+			if (output != null)
+				try {
+					output.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+
+		// resource change is fired
+		IFile workspaceFile = project.getFolder(".settings").getFile(qualifier + ".prefs");
+		try {
+			workspaceFile.refreshLocal(IResource.DEPTH_ZERO, getMonitor());
+		} catch (CoreException e) {
+			fail("3.1", e);
+		}
+		// wait for notification to happen
+		try {
+			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+		} catch (OperationCanceledException e) {
+			fail("3.2", e);
+		} catch (InterruptedException e) {
+			fail("3.3", e);
+		}
+
+		// validate new settings
+		actual = node.get(key, null);
+		assertNotNull("4.0", actual);
+		assertEquals("4.1", value, actual);
+		actual = node.get(newKey, null);
+		assertNotNull("4.2", actual);
+		assertEquals("4.3", newValue, actual);
+	}
 }
