@@ -537,7 +537,11 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 					editor = openEditorReuse(marker);
 				else
 					editor = openEditorNoReuse(marker);
-				editor.selectAndReveal(marker.getOffset(), marker.getLength());
+				Position p= InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(marker);
+				if (p != null)
+					editor.selectAndReveal(p.getOffset(), p.getLength());
+				else
+					editor.selectAndReveal(marker.getOffset(), marker.getLength());
 				if (focusControl != null && !focusControl.isDisposed())
 					focusControl.setFocus();
 			} catch (PartInitException e) {
