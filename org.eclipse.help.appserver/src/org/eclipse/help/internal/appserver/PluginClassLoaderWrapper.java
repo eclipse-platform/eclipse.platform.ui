@@ -101,7 +101,6 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 				return reqs;
 			}
 		} catch (BundleException e) {
-			e.printStackTrace();
 		}
 		return new String[0];
 	}
