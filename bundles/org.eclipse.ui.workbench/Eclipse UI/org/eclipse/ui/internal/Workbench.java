@@ -776,10 +776,11 @@ public final class Workbench implements IWorkbench {
 
 				if (command.isDefined()) {
 					List keySequenceBindings = command.getKeySequenceBindings();
-
-					if (!keySequenceBindings.isEmpty()) {
+					final int size = keySequenceBindings.size();
+					
+					for (int i = 0; i < size; i++) {
 						IKeySequenceBinding keySequenceBinding =
-							(IKeySequenceBinding) keySequenceBindings.get(0);
+							(IKeySequenceBinding) keySequenceBindings.get(i);
 						KeySequence keySequence = keySequenceBinding.getKeySequence();
 						List keyStrokes = keySequence.getKeyStrokes();
 
@@ -787,6 +788,7 @@ public final class Workbench implements IWorkbench {
 							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
 							accelerator =
 								new Integer(SWTKeySupport.convertKeyStrokeToAccelerator(keyStroke));
+							break;
 						}
 					}
 				}
