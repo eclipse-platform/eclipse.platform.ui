@@ -669,7 +669,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 				fAdditionalInfoController.install(fProposalTable);		
 				fAdditionalInfoController.handleTableSelectionChanged();
 			}
-		}
+		} else
+			hide();
 	}
 	
 	/*
