@@ -30,20 +30,7 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */ static final String F_TREE = ".tree";
 public LocalMetaArea() {
 }
-private Properties buildPathProperties(Hashtable paths) {
-	Properties result = new Properties();
-	for (Enumeration keys = paths.keys(); keys.hasMoreElements();) {
-		String key = (String) keys.nextElement();
-		StringBuffer entry = new StringBuffer(100);
-		IPath[] list = (IPath[]) paths.get(key);
-		for (int i = 0; i < list.length; i++) {
-			entry.append(list[i].toOSString());
-			entry.append(";");
-		}
-		result.put(key, entry.toString());
-	}
-	return result;
-}
+
 /**
  * 
  */
