@@ -89,7 +89,6 @@ public class DialogMessageArea extends Object {
 	 */
 	public void setTitleLayoutData(Object layoutData) {
 		titleLabel.setLayoutData(layoutData);
-		messageComposite.setLayoutData(layoutData);
 	}
 	
 	/**
@@ -101,7 +100,6 @@ public class DialogMessageArea extends Object {
 	 * @see setTitleLayoutData(Object)
 	 */
 	public void setMessageLayoutData(Object layoutData) {
-		titleLabel.setLayoutData(layoutData);
 		messageComposite.setLayoutData(layoutData);
 	}
 	
