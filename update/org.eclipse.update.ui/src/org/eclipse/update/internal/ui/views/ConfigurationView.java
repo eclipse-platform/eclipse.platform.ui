@@ -351,7 +351,7 @@ public class ConfigurationView
 			if (obj instanceof IConfiguredSiteAdapter) {
 				IConfiguredSite csite =
 					((IConfiguredSiteAdapter) obj).getConfigurationSite();
-				if (csite.isUpdatable())
+				if (csite.verifyUpdatableStatus().isOK())
 					return installSiteImage;
 				else
 					return linkedSiteImage;

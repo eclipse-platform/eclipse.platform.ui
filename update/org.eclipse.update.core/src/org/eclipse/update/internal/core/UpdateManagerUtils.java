@@ -159,7 +159,7 @@ public class UpdateManagerUtils {
 		InstallMonitor monitor)
 		throws MalformedURLException, IOException {
 		URL result = null;
-		// create the Dir is they do not exist
+		// create the Dir if they do not exist
 		// get the path from the File to resolve File.separator..
 		// do not use the String as it may contain URL like separator
 		File localFile = new File(localName);

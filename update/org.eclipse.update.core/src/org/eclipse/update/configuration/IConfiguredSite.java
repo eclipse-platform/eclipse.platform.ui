@@ -27,21 +27,16 @@ public interface IConfiguredSite extends IAdaptable {
 
 	/**
 	 * Indicates whether updates can be applied to the site.
+	 * <code>IStatus.isOk()</code> return <code>true</code> if
+	 * the site can be updated, <code>false</code> otherwise.
+	 * If updates cannot be aplied, the status contains the error message, and
+	 * the possible exception. 
 	 * 
-	 * @return <code>true</code> if the site can be updated, 
-	 * <code>false</code> otherwise
+	 * @see IStatus
+	 * @return an IStatus
 	 * @since 2.0 
 	 */
-	public boolean isUpdatable();
-
-	/**
-	 * Sets the site as updatable.
-	 * 
-	 * @param value <code>true</code> if the site can be updated, 
-	 * <code>false</code> otherwise
-	 * @since 2.0 
-	 */
-	public void isUpdatable(boolean value);
+	public IStatus verifyUpdatableStatus();
 
 	/**
 	 * Install the specified feature on this site.

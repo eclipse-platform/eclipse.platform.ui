@@ -242,6 +242,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		IConfiguredSite site =
 			localSite.getCurrentConfiguration().getConfiguredSites()[0];
 
+		((ConfiguredSite)site).isUpdatable(true);
 		site.install(remoteFeature, null, null);
 
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();

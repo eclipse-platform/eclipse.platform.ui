@@ -9,6 +9,8 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.xerces.parsers.SAXParser;
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
@@ -143,7 +145,6 @@ public class InstallConfigurationParser extends DefaultHandler {
 		ISite site = SiteManager.getSite(siteURL);
 		sites.put(urlString,site);
 
-
 		// policy
 		String policyString = attributes.getValue("policy"); //$NON-NLS-1$
 		int policy = Integer.parseInt(policyString);
@@ -156,17 +157,24 @@ public class InstallConfigurationParser extends DefaultHandler {
 		String platformURLString = attributes.getValue("platformURL"); //$NON-NLS-1$
 		configSite.setPlatformURLString(platformURLString);
 
-		// install
-		String installString = attributes.getValue("install"); //$NON-NLS-1$
-		boolean installable = installString.trim().equalsIgnoreCase("true") ? true : false; //$NON-NLS-1$
-		configSite.isUpdatable(installable);
+		// check if the site exists and is updatable
+		// update configSite
+		URL	urlToCheck = new URL(configSite.getPlatformURLString());
+	 	IPlatformConfiguration runtimeConfig = BootLoader.getCurrentPlatformConfiguration();			
+	 	IPlatformConfiguration.ISiteEntry entry = runtimeConfig.findConfiguredSite(urlToCheck);	 
+	 	if (entry!=null){	
+		 	configSite.isUpdatable(entry.isUpdateable());
+	 	} else {
+	 		UpdateManagerPlugin.warn("Unable to retrieve site:" +platformURLString+" from platform.");
+	 	}
+	 	String updatable = configSite.isUpdatable()?"true":"false";
 
 		// add to install configuration
 		config.addConfigurationSiteModel(configSite);
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-			UpdateManagerPlugin.debug("End process config site url:" + urlString + " policy:" + policyString + " install:" + installString); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			UpdateManagerPlugin.debug("End process config site url:" + urlString + " policy:" + policyString + " updatable:"+updatable ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 	}
@@ -267,5 +275,4 @@ public class InstallConfigurationParser extends DefaultHandler {
 		}
 
 	}
-
 }

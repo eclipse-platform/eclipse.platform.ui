@@ -178,7 +178,7 @@ public class TargetPage extends BannerPage {
 		tableViewer.addFilter(new ViewerFilter() {
 			public boolean select(Viewer v, Object parent, Object obj) {
 				IConfiguredSite site = (IConfiguredSite) obj;
-				return site.isUpdatable();
+				return site.verifyUpdatableStatus().isOK();
 			}
 		});
 		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -214,7 +214,7 @@ public class TargetPage extends BannerPage {
 		IConfiguredSite firstSite = null;
 		for (int i = 0; i < sites.length; i++) {
 			IConfiguredSite csite = sites[i];
-			if (csite.isUpdatable()) {
+			if (csite.verifyUpdatableStatus().isOK()) {
 				firstSite = csite;
 				break;
 			}
@@ -233,7 +233,7 @@ public class TargetPage extends BannerPage {
 			try {
 				File file = new File(path);
 				IConfiguredSite csite = config.createConfiguredSite(file);
-				if (csite.isUpdatable())
+				if (csite.verifyUpdatableStatus().isOK())
 					config.addConfiguredSite(csite);
 				else {
 					String title = UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);

@@ -5,10 +5,11 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -22,6 +23,10 @@ import org.eclipse.update.internal.model.*;
 public class ConfiguredSite
 	extends ConfiguredSiteModel
 	implements IConfiguredSite, IWritable {
+
+	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct";
+	private static final String EXTENSION_SITE_MARKER = ".eclipseextension";
+	private static final String PRIVATE_SITE_MARKER = ".eclipseUM";
 
 	// listeners	
 	private ListenersList listeners = new ListenersList();
@@ -41,7 +46,7 @@ public class ConfiguredSite
 		setSiteModel((SiteModel) cSite.getSite());
 		setConfigurationPolicyModel(
 			new ConfigurationPolicy(cSite.getConfigurationPolicy()));
-		isUpdatable(cSite.isUpdatable());
+		isUpdatable(cSite.isUpdatable()); 
 		setPreviousPluginPath(cSite.getPreviousPluginPath());
 		setPlatformURLString(cSite.getPlatformURLString());
 	}
@@ -90,10 +95,6 @@ public class ConfiguredSite
 				+ "policy=\""
 				+ getConfigurationPolicy().getPolicy()
 				+ "\" ");
-		//$NON-NLS-1$ //$NON-NLS-2$
-		String install = isUpdatable() ? "true" : "false";
-		//$NON-NLS-1$ //$NON-NLS-2$
-		w.print(gap + increment + "install=\"" + install + "\" ");
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(">"); //$NON-NLS-1$
 
@@ -172,13 +173,16 @@ public class ConfiguredSite
 		throws CoreException {
 
 		// ConfigSite is read only
-		if (!isUpdatable()) {
-			String errorMessage =
+		IStatus installStatus = verifyUpdatableStatus();
+		if (!installStatus.isOK()) {
+			// FIXME - remove ConfiguredSite.NonInstallableSite from messages
+/*			String errorMessage =
 				Policy.bind(
 					"ConfiguredSite.NonInstallableSite",
 					getSite().getURL().toExternalForm());
 			//$NON-NLS-1$
-			throw Utilities.newCoreException(errorMessage, null);
+			 * */
+			throw Utilities.newCoreException(installStatus.getMessage(), installStatus.getException());
 		}
 
 		// feature is null
@@ -254,13 +258,16 @@ public class ConfiguredSite
 		throws CoreException {
 
 		// ConfigSite is read only
-		if (!isUpdatable()) {
-			String errorMessage =
+		IStatus uninstallStatus = verifyUpdatableStatus();
+		//FIXME - remove ConfiguredSite.NonUninstallableSite from messages
+		if (!uninstallStatus.isOK()) {
+			/*String errorMessage =
 				Policy.bind(
 					"ConfiguredSite.NonUninstallableSite",
 					getSite().getURL().toExternalForm());
 			//$NON-NLS-1$
-			throw Utilities.newCoreException(errorMessage, null);
+			 * */
+			throw Utilities.newCoreException(uninstallStatus.getMessage(),uninstallStatus.getException());
 		}
 
 		// create the Activity
@@ -826,4 +833,207 @@ public class ConfiguredSite
 		return getSite().getURL().toExternalForm();
 	}
 
+	/**
+	 * @see IConfiguredSite#verifyUpdatableStatus()
+	 */
+	public IStatus verifyUpdatableStatus() {
+		
+		URL siteURL = getSite().getURL();
+		if (siteURL==null)
+			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.SiteURLNull"),null); //$NON-NLS-1$
+		
+		if (!"file".equalsIgnoreCase(siteURL.getProtocol()))
+			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NonLocalSite"),null); //$NON-NLS-1$
+			
+		String siteLocation = siteURL.getFile();
+		File file = new File(siteLocation);
+		
+		if (!isUpdatable())
+			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NonUpdatableSite"),null); //$NON-NLS-1$
+
+		if (!sameProduct(file))
+			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NotSameProductId"),null); //$NON-NLS-1$
+			
+		if (containsAnotherSite(file))
+			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainsAnotherSite"),null); //$NON-NLS-1$
+
+		if (isContainedInAnotherSite(file))
+			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainedInAnotherSite"),null);	//$NON-NLS-1$
+			
+		if (!canWrite(file))
+			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ReadOnlySite"),null); //$NON-NLS-1$
+		
+		return createStatus(IStatus.OK,"",null);
+	}
+	
+	/*
+	 * Verify we can write on the file system
+	 */
+	private static boolean canWrite(File file) {
+		if (!file.isDirectory() && file.getParentFile() != null) {
+			file = file.getParentFile();
+		}
+
+		File tryFile = null;
+		FileOutputStream out = null;
+		try {
+			tryFile = new File(file, "toDelete");
+			out = new FileOutputStream(tryFile);
+			out.write(0);
+		} catch (IOException e) {
+			return false;
+		} finally {
+			try {
+				out.close();
+				tryFile.delete();
+			} catch (Exception e) {
+			};
+		}
+		return true;
+	}
+	
+	/*
+	 * check if the directory contains a marker, 
+	 * if not ask the parent directory to check itself
+	 * if we end up with no parent, return false
+	 */
+	private static boolean containsAnotherSite(File file) {
+		if (file == null)
+			return false;
+		if (!file.isDirectory())
+			return containsAnotherSite(file.getParentFile());
+
+		File productFile = new File(file, PRODUCT_SITE_MARKER);
+		File extensionFile = new File(file, EXTENSION_SITE_MARKER);
+		File privateFile = new File(file, PRIVATE_SITE_MARKER);
+		if (productFile.exists() || extensionFile.exists() || privateFile.exists())
+			return true;
+		return containsAnotherSite(file.getParentFile());
+	}
+	
+	/*
+	 * Check if the directory contains a marker
+	 * if not ask all directory children to check
+	 * if one validates the condition, returns true
+	 */
+	private static boolean isContainedInAnotherSite(File file) {
+
+		if (!file.isDirectory())
+			return isContainedInAnotherSite(file.getParentFile());
+
+		File productFile = new File(file, PRODUCT_SITE_MARKER);
+		File extensionFile = new File(file, EXTENSION_SITE_MARKER);
+		File privateFile = new File(file, PRIVATE_SITE_MARKER);
+		if (productFile.exists() || extensionFile.exists() || privateFile.exists())
+			return true;
+
+		File[] childrenFiles = file.listFiles();
+		for (int i = 0; i < childrenFiles.length; i++) {
+			if (childrenFiles[i].isDirectory() && !childrenFiles[i].equals(file)) {
+				if (isContainedInAnotherSite(childrenFiles[i]))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * Returns true if the identifier of the private Site markup is
+	 * the same as the identifier of the product the workbench was started with 
+	 */
+	private static boolean sameProduct(File file) {
+		File privateFile = new File(file, PRIVATE_SITE_MARKER);
+		File productFile = getProductFile();
+		if (productFile!=null){		
+			String productId = getProductIdentifier(productFile);
+			String privateId = getProductIdentifier(privateFile);
+			if (productId == null){
+				UpdateManagerPlugin.warn("Product ID is null at:"+productFile);
+				return true;
+			}
+			if (productId.equalsIgnoreCase(privateId))
+				return true;
+			else {
+				UpdateManagerPlugin.warn("Product id at"+productFile+" Different than:" + privateFile);
+			}
+		} else {
+			UpdateManagerPlugin.warn("Product Marker doesn't exist:"+productFile);			
+			return true;
+		}
+		return false;
+	}
+	
+	/*
+	 * Returns the identifier of the product from the property file
+	 */
+	private static String getProductIdentifier(File propertyFile) {
+		String identifier = null;
+		try {
+			InputStream in = new FileInputStream(propertyFile);
+			PropertyResourceBundle bundle = new PropertyResourceBundle(in);
+			identifier = bundle.getString("id");
+		} catch (IOException e) {
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
+				UpdateManagerPlugin.debug(
+					"Exception reading 'id' from property file:"
+						+ propertyFile);
+		}
+		return identifier;
+	}
+	
+	
+	/*
+	 * Returns the identifier of the product from the property file
+	 */
+	private static File getProductFile() {
+	
+		String productInstallDirectory = BootLoader.getInstallURL().getFile();
+		if (productInstallDirectory != null) {
+			File productFile = new File(productInstallDirectory, PRODUCT_SITE_MARKER);
+			if (productFile.exists()) {
+				return productFile;
+			} else {
+				UpdateManagerPlugin.warn("Product marker doesn't exist:" + productFile);
+			}
+		} else {
+			UpdateManagerPlugin.warn("Cannot retrieve install URL from BootLoader");
+		}
+		return null;	
+	}
+	
+	/*
+	 * 
+	 */
+	 /*package*/ void createPrivateSiteMarker(){
+		URL siteURL = getSite().getURL();
+		if (siteURL==null)
+			UpdateManagerPlugin.warn("Unable to create marker. The Site url is null.");
+		
+		if (!"file".equalsIgnoreCase(siteURL.getProtocol()))
+			UpdateManagerPlugin.warn("Unable to create private marker. The Site is not on the local file system.");
+			
+		String siteLocation = siteURL.getFile();
+		File productFile = getProductFile();
+		if (productFile!=null){
+			String productId = getProductIdentifier(productFile);
+			if (productId!=null){
+				File file = new File(siteLocation,PRIVATE_SITE_MARKER);				
+				if (!file.exists()){
+					PrintWriter w=null;
+					try {
+						OutputStream out = new FileOutputStream(file);
+						OutputStreamWriter outWriter = new OutputStreamWriter(out, "UTF8"); //$NON-NLS-1$
+						BufferedWriter buffWriter = new BufferedWriter(outWriter);
+						w = new PrintWriter(buffWriter);
+						w.println("id="+productId);
+					} catch (Exception e){
+						UpdateManagerPlugin.warn("Unable to create private Marker at:"+file,e);
+					} finally {
+						try {w.close();} catch (Exception e){};
+					}
+				}
+			}	 	
+	 	}
+	 }
 }

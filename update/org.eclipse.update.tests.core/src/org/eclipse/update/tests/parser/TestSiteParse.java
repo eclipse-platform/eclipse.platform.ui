@@ -5,8 +5,10 @@ package org.eclipse.update.tests.parser;
  */
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.DefaultSiteParser;
@@ -163,9 +165,15 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of features", featureRef.length == 1);
 		assertTrue("Wrong number of archives", archives.length == 0);
 		
-
-		((FeatureReference)featureRef[0]).getFeature();
-		
+		try {
+			((FeatureReference)featureRef[0]).getFeature();
+		} catch (CoreException e){
+			Throwable e1 = e.getStatus().getException();
+				if (!e1.getMessage().endsWith("www.eclipse.org/feature3/feature.xml")){
+					System.err.println("** "+e1.getMessage());
+					throw e;
+				}
+		}		
 	}
 
 	public void testParseValid6() throws Exception {
@@ -183,9 +191,16 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of features", featureRef.length == 2);
 		assertTrue("Wrong number of archives", archives.length == 0);
 		
-
-		((FeatureReference)featureRef[0]).getFeature();
-		
+		try {
+			((FeatureReference)featureRef[0]).getFeature();
+		} catch (CoreException e){
+			Throwable e1 = e.getStatus().getException();
+			String msg = e1.getMessage().replace(File.separatorChar,'/');
+				if (msg.indexOf("_1.0.0.jar/feature.xml")==-1){
+					System.err.println("** "+msg);
+					throw e;
+				}
+		}
 	}
 
 	public void testParseUnknownCategory() throws Exception {

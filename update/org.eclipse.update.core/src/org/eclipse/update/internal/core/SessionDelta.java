@@ -62,6 +62,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 */
 	public void process(IProgressMonitor pm) throws CoreException {
 
+		createInstallConfiguration();
 
 		// process all feature references to configure
 		// find the configured site each feature belongs to
@@ -97,7 +98,13 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 								
 								if (featureToConfigure!=null){
 									if (pm!=null) pm.worked(1);
-									configSites[i].configure(featureToConfigure);									
+									try {
+										configSites[i].configure(featureToConfigure);									
+									} catch (CoreException e){
+										// if I cannot configure one, 
+										//then continue with others 
+										UpdateManagerPlugin.warn("Unable to configure feature:"+featureToConfigure,e);
+									}
 								}
 							}
 						}
@@ -109,6 +116,8 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		// remove the file from the file system
 		if (file != null)
 			UpdateManagerUtils.removeFromFileSystem(file);
+			
+		saveLocalSite();
 	}
 
 	/**
@@ -149,4 +158,16 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		return process;
 	}
 
+	private void createInstallConfiguration() throws CoreException {
+		ILocalSite localSite = SiteManager.getLocalSite();
+		IInstallConfiguration config = localSite.cloneCurrentConfiguration();
+		config.setLabel(Utilities.format(config.getCreationDate()));
+		localSite.addConfiguration(config);
 	}
+
+	private void saveLocalSite() throws CoreException {
+		ILocalSite localSite = SiteManager.getLocalSite();
+		localSite.save();
+	}
+
+}

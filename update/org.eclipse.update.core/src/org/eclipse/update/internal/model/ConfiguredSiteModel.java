@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * 
@@ -135,5 +136,25 @@ public class ConfiguredSiteModel extends ModelObject {
 		this.previousPluginPath = new String[previousPluginPath.length];
 		System.arraycopy(previousPluginPath, 0, this.previousPluginPath, 0, previousPluginPath.length);
 	}
+
+	/*
+	 * creates a Status
+	 */
+	protected IStatus createStatus(int statusType, String msg, Exception e){
+		String id =
+			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+	
+		StringBuffer completeString = new StringBuffer("");
+		if (msg!=null)
+			completeString.append(msg);
+		if (e!=null){
+			completeString.append("\r\n[");
+			completeString.append(e.toString());
+			completeString.append("]\r\n");
+		}
+		if (statusType!=IStatus.OK) statusType = IStatus.ERROR;
+		return new Status(statusType, id, IStatus.OK, completeString.toString(), e);
+	}
+
 
 }

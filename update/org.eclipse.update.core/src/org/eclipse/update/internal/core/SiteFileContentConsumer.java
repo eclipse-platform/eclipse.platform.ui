@@ -140,22 +140,24 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 		}
 
 		//rename file back 
-		ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);
-		boolean sucess = false;
-		File fileToRename = new File(newPath);
-		if (fileToRename.exists()){
-			File renamedFile = new File(oldPath);
-			if (renamedFile.exists()) {
-				UpdateManagerUtils.removeFromFileSystem(renamedFile);
-				UpdateManagerPlugin.warn("Removing already existing file:"+oldPath);
-			}
-			sucess = fileToRename.renameTo(renamedFile);
-		}	
-		if(!sucess){
-			String msg = Policy.bind("ContentConsumer.UnableToRename",newPath,oldPath);
-			throw Utilities.newCoreException(msg,new Exception(msg));
-		}			
-
+		if (newPath!=null){
+			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);
+			boolean sucess = false;
+			File fileToRename = new File(newPath);
+			if (fileToRename.exists()){
+				File renamedFile = new File(oldPath);
+				if (renamedFile.exists()) {
+					UpdateManagerUtils.removeFromFileSystem(renamedFile);
+					UpdateManagerPlugin.warn("Removing already existing file:"+oldPath);
+				}
+				sucess = fileToRename.renameTo(renamedFile);
+			}	
+			if(!sucess){
+				String msg = Policy.bind("ContentConsumer.UnableToRename",newPath,oldPath);
+				throw Utilities.newCoreException(msg,new Exception(msg));
+			}			
+		}
+		
 		if (ref != null) {
 			// FIXME make sure we rename the XML files before
 			commitPlugins(ref);

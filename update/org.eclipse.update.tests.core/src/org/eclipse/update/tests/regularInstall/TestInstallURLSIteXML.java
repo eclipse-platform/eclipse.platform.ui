@@ -200,6 +200,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		Listener listener = new Listener();
 		site.addConfiguredSiteChangedListener(listener);
 
+		((ConfiguredSite)site).isUpdatable(true);
 		site.install(remoteFeature, null, null);
 
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();

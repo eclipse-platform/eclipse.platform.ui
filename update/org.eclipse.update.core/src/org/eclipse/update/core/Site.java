@@ -161,8 +161,9 @@ public class Site extends SiteModel implements ISite {
 
 		//DEBUG:
 		if (!found) {
+			String URLString = (this.getURL()!=null)?this.getURL().toExternalForm():"<no site url>";
 			UpdateManagerPlugin.warn(
-				Policy.bind("Site.CannotFindCategory", key, this.getURL().toExternalForm()));
+				Policy.bind("Site.CannotFindCategory", key, URLString));
 			//$NON-NLS-1$ //$NON-NLS-2$
 			if (getCategoryModels().length <= 0)
 				UpdateManagerPlugin.warn(Policy.bind("Site.NoCategories"));

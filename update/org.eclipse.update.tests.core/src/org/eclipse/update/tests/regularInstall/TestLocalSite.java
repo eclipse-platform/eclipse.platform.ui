@@ -101,7 +101,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);
 		site.addConfiguration(newConfig);	
-		assertNotNull(feature);			
+		assertNotNull(feature);	
+		
+		((ConfiguredSite)configSite).isUpdatable(true);				
 		configSite.install(feature,null,null);
 
 				
@@ -180,7 +182,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
 		site.addConfiguration(newConfig);
-		assertNotNull(feature);				
+		assertNotNull(feature);			
+		
+		((ConfiguredSite)configSite).isUpdatable(true);			
 		configSite.install(feature,null,null);
 		site.save();
 		
@@ -259,7 +263,9 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
-		site.addConfiguration(newConfig);		
+		site.addConfiguration(newConfig);
+		
+		((ConfiguredSite)configSite).isUpdatable(true);				
 		configSite.install(feature,null,null);
 		site.save();
 

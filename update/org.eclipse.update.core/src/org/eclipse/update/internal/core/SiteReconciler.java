@@ -55,7 +55,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 * otherwise returns false
 	 */
 	public boolean reconcile(boolean isOptimistic) throws CoreException {
-
+	
 		IPlatformConfiguration platformConfig =
 			BootLoader.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.ISiteEntry[] newSiteEntries =
@@ -64,12 +64,12 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			siteLocal.cloneConfigurationSite(null, null, null);
 		IConfiguredSite[] oldConfiguredSites = new IConfiguredSite[0];
 		newFoundFeatures = new ArrayList();
-
+	
 		// sites from the current configuration
 		if (siteLocal.getCurrentConfiguration() != null)
 			oldConfiguredSites =
 				siteLocal.getCurrentConfiguration().getConfiguredSites();
-
+	
 		// TRACE
 		if (UpdateManagerPlugin.DEBUG
 			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
@@ -78,27 +78,27 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					"Old Site :" + oldConfiguredSites[i].getSite().getURL());
 			}
 		}
-
+	
 		// check if sites from the platform are new sites or modified sites
 		// if they are new add them, if they are modified, compare them with the old
 		// one and add them
 		for (int siteIndex = 0;
 			siteIndex < newSiteEntries.length;
 			siteIndex++) {
-
+	
 			IPlatformConfiguration.ISiteEntry currentSiteEntry =
 				newSiteEntries[siteIndex];
 			URL resolvedURL = resolveSiteEntry(currentSiteEntry);
 			boolean found = false;
 			IConfiguredSite currentConfigurationSite = null;
-
+	
 			// TRACE
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
 				UpdateManagerPlugin.debug(
 					"New Site?:" + resolvedURL);
 			}
-
+	
 			// check if SiteEntry has been possibly modified
 			// if it was part of the previously known configuredSite
 			for (int index = 0;
@@ -107,7 +107,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				currentConfigurationSite = oldConfiguredSites[index];
 				URL currentConfigURL =
 					currentConfigurationSite.getSite().getURL();
-
+	
 				if (sameURL(resolvedURL, currentConfigURL)) {
 					found = true;
 					ConfiguredSite reconciledConfiguredSite =
@@ -118,7 +118,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 						reconciledConfiguredSite);
 				}
 			}
-
+	
 			// old site not found, this is a new site, create it
 			if (!found) {
 				// TRACE
@@ -127,9 +127,9 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					UpdateManagerPlugin.debug(
 						"Configured Site to create:" + resolvedURL);
 				}
-
+	
 				ISite site = SiteManager.getSite(resolvedURL);
-
+	
 				//site policy
 				IPlatformConfiguration.ISitePolicy sitePolicy =
 					currentSiteEntry.getSitePolicy();
@@ -142,11 +142,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 					currentSiteEntry.getURL().toExternalForm());
 				configSite.setPreviousPluginPath(
 					currentSiteEntry.getSitePolicy().getList());
-
-				//the site may not be read-write
-				configSite.isUpdatable(
-					newSiteEntries[siteIndex].isUpdateable());
-
+	
 				// Add the features to the list of new found features
 				// and configure it based on reconciliation type
 				IFeatureReference[] newFeaturesRef =
@@ -154,7 +150,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				for (int i = 0; i < newFeaturesRef.length; i++) {
 					FeatureReferenceModel newFeatureRefModel =
 						(FeatureReferenceModel) newFeaturesRef[i];
-
+	
 					// TRACE
 					if (UpdateManagerPlugin.DEBUG
 						&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
@@ -185,11 +181,11 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				newDefaultConfiguration.addConfiguredSite(configSite);
 			}
 		}
-
+	
 		// verify we do not have 2 features with different version that
 		// are configured
 		checkConfiguredFeatures(newDefaultConfiguration);
-
+	
 		// add Activity reconciliation
 		BaseSiteLocalFactory siteLocalFactory = new BaseSiteLocalFactory();
 		ConfigurationActivityModel activity =
@@ -199,16 +195,16 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		activity.setLabel(siteLocal.getLocationURLString());
 		((InstallConfiguration) newDefaultConfiguration).addActivityModel(
 			activity);
-
+	
 		// add the configuration as the currentConfig
 		siteLocal.addConfiguration(newDefaultConfiguration);
 		siteLocal.save();
-
+	
 		if (getFeatureReferences().length != 0) {
 			saveNewFeatures();
 			return true;
 		}
-
+	
 		return false;
 	}
 

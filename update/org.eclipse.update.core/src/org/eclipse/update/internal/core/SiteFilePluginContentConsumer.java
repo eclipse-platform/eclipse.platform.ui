@@ -38,7 +38,6 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	 */
 	public void store(ContentReference contentReference, IProgressMonitor monitor)
 		throws CoreException {
-		//String path = site.getURL().getFile();
 		InputStream inStream = null;
 		String pluginPath = null;
 
@@ -81,19 +80,20 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	 */
 	public void close() throws CoreException {
 	
-		// rename file 
-		ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);		
-		File fileToRename = new File(newPath);
-		boolean sucess = false;
-		if (fileToRename.exists()){
-			File renamedFile = new File(oldPath);
-			sucess = fileToRename.renameTo(renamedFile);
+		if (newPath!=null){
+			// rename file 
+			ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.RENAME_ENTRY, newPath);		
+			File fileToRename = new File(newPath);
+			boolean sucess = false;
+			if (fileToRename.exists()){
+				File renamedFile = new File(oldPath);
+				sucess = fileToRename.renameTo(renamedFile);
+			}
+			if(!sucess){
+				String msg = Policy.bind("ContentConsumer.UnableToRename",newPath,oldPath);
+				throw Utilities.newCoreException(msg,new Exception(msg));
+			}
 		}
-		if(!sucess){
-			String msg = Policy.bind("ContentConsumer.UnableToRename",newPath,oldPath);
-			throw Utilities.newCoreException(msg,new Exception(msg));
-		}
-		
 		if (site instanceof SiteFile)
 			 ((SiteFile) site).addPluginEntry(pluginEntry);
 	}

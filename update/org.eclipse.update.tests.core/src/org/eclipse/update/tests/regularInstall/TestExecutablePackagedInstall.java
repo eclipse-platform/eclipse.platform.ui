@@ -6,6 +6,7 @@ package org.eclipse.update.tests.regularInstall;
 import java.io.File;
 import java.net.URL;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -94,7 +95,16 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 		if (featuresRef.length==0) fail ("no feature found");
 	
 		for (int i = 0; i < featuresRef.length; i++) {
-			remoteFeature = featuresRef[i].getFeature();
+			try {
+				remoteFeature = featuresRef[i].getFeature();
+			} catch (CoreException e){
+				Throwable e1 = e.getStatus().getException();
+				String msg = e1.getMessage().replace(File.separatorChar,'/');
+				if (msg.indexOf("CVS/feature.xml")==-1){
+					System.err.println("** "+msg);
+					throw e;
+				}				
+			}
 			if (remoteFeature!=null){
 			localSite.install(remoteFeature,null, null);
 			

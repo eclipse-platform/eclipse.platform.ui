@@ -65,6 +65,7 @@ public class ErrorRecoveryLog {
 	 */
 	public static String getLocalRandomIdentifier(String path) {
 		
+		if (path==null) return null;
 		
 		// verify if it will be a directory without creating the file
 		// as it doesn't exist yet
