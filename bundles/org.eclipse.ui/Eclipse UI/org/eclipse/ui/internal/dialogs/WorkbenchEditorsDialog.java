@@ -43,8 +43,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private Button saveSelected;
 	private Button closeSelected;
 
-	private boolean showAllPersp;
-	private boolean showHistory;
 	private int sortColumn;
 	private List elements = new ArrayList();
 	private HashMap imageCache = new HashMap(11);
@@ -82,12 +80,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		
 		IDialogSettings s = getDialogSettings();
 		if(s.get(ALLPERSP) == null) {
-			showAllPersp = true;
-			showHistory = true;
 			sortColumn = 0;			
 		} else {
-			showAllPersp = s.getBoolean(ALLPERSP);
-			showHistory = s.getBoolean(HISTORY);
 			sortColumn = s.getInt(SORT);
 			String[] array = s.getArray(BOUNDS);
 			if(array != null) {
@@ -148,13 +142,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				TableColumn c[] = editorsTable.getColumns();
 				if(columnsWidth == null) {
 					int w = editorsTable.getClientArea().width;
-					c[0].setWidth(w * 2 / 8);
-					c[1].setWidth(w * 3 / 8);
-					c[2].setWidth(w - c[0].getWidth() - c[1].getWidth());
+					c[0].setWidth(w * 1 / 3);
+					c[1].setWidth(w - c[0].getWidth());
 				} else {
 					c[0].setWidth(columnsWidth[0]);
 					c[1].setWidth(columnsWidth[1]);
-					c[2].setWidth(columnsWidth[2]);
 				}
 				editorsTable.setLayout(null);
 			}
@@ -168,11 +160,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		tc = new TableColumn(editorsTable,SWT.NONE);
 		tc.setResizable(true);
 		tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.path"));
-		tc.addSelectionListener(headerListener);
-		//Perspective column		
-		tc = new TableColumn(editorsTable,SWT.NONE);
-		tc.setResizable(true);
-		tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.perspective"));
 		tc.addSelectionListener(headerListener);
 		//A composite for save editors and close editors buttons
 		Composite selectionButtons = new Composite(dialogArea,SWT.NULL);
@@ -193,26 +180,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		saveSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				saveItems(editorsTable.getItems(),null);
-			}
-		});
-		//Show history check box
-		final Button showHistoryButton = new Button(dialogArea,SWT.CHECK);
-		showHistoryButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.includeRecentlyUsed"));
-		showHistoryButton.setSelection(showHistory);
-		showHistoryButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showHistory = showHistoryButton.getSelection();
-				updateItems();
-			}
-		});
-		//Show only active perspective button
-		final Button showAllPerspButton = new Button(dialogArea,SWT.CHECK);
-		showAllPerspButton.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.showAllPersp"));
-		showAllPerspButton.setSelection(showAllPersp);
-		showAllPerspButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showAllPersp = showAllPerspButton.getSelection();
-				updateItems();
 			}
 		});
 		//Create the items and update buttons state
@@ -327,24 +294,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private void updateItems() {
 		editorsTable.removeAll();
 		elements = new ArrayList();
-		if(showAllPersp) {
-			IWorkbenchWindow windows[] = window.getWorkbench().getWorkbenchWindows();
-			for (int i = 0; i < windows.length; i++)
-				updateEditors(windows[i].getPages());
-		} else {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				updateEditors(new IWorkbenchPage[]{page});
-			}
-		}
-		if(showHistory) {
-			Workbench wb = (Workbench)window.getWorkbench();
-			EditorHistory history = wb.getEditorHistory();
-			EditorHistoryItem editors[] = history.getItems();
-			for (int i = 0; i < editors.length; i ++) {
-				EditorHistoryItem editor = editors[i];
-				elements.add(new Adapter(editor.getInput(),editor.getDescriptor()));
-			}
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
+			updateEditors(new IWorkbenchPage[]{page});
 		}
 		sort();
 		Object selection = null;
@@ -393,8 +345,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 */
 	private void saveDialogSettings() {
 		IDialogSettings s = getDialogSettings();
-		s.put(ALLPERSP,showAllPersp);
-		s.put(HISTORY,showHistory);
 		s.put(SORT,sortColumn);
 		bounds = getShell().getBounds();
 		String array[] = new String[4];
@@ -458,36 +408,29 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		String[] getText() {
 			if(text != null)
 				return text;
-			text = new String[3];
+			text = new String[2];
 			if(editor != null) {	
 				if(editor.isDirty())
 					text[0] = "*" + editor.getTitle();
 				else
 					text[0] = editor.getTitle();
 				text[1] = editor.getTitleToolTip();
-				text[2] = editor.getEditorSite().getPage().getLabel();
 			} else {	
 				text[0] = input.getName();
 				text[1] = input.getToolTipText();
-				text[2] = WorkbenchMessages.getString("WorkbenchEditorsDialog.recentlyUsed");
 			}
 			return text;
 		}
 		Image[] getImage() {
 			if(images != null)
 				return images;
-			images = new Image[3];
+			images = new Image[2];
 			if(editor != null) {
 				images[0] = editor.getTitleImage();
 				IPerspectiveDescriptor persp = editor.getEditorSite().getPage().getPerspective();
 				ImageDescriptor image = persp.getImageDescriptor();
 				if(image == null)
 					image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE);
-				images[2] = (Image)imageCache.get(image);
-				if(images[2] == null) {
-					images[2] = image.createImage();
-					imageCache.put(image,images[2]);
-				}
 			} else {
 				ImageDescriptor image = null;
 				if(desc != null)
@@ -534,11 +477,15 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
 		}
 		public int compareTo(Object another) {
-			Adapter a = (Adapter)another;
+			Adapter adapter = (Adapter)another;
+			int result = collator.compare(getText()[sortColumn],adapter.getText()[sortColumn]);
+			if(result == 0) {
+				int column = sortColumn == 0 ? 1 : 0;
+				result = collator.compare(getText()[column],adapter.getText()[column]);
+			}
 			if(reverse)
-				return collator.compare(getText()[sortColumn],a.getText()[sortColumn]);
-			else
-				return collator.compare(a.getText()[sortColumn],getText()[sortColumn]);
+				return result * -1;
+			return result;
 		}
 	}
 }
