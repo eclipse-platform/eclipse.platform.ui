@@ -88,17 +88,11 @@ public class InfosetsMap extends Hashtable {
 				// set SystemId for error reporting only
 				source.setSystemId(remoteInfosetFile.toExternalForm());
 			} else {
-				String xmlFile =
-					HelpPlugin
-						.getDefault()
-						.getStateLocation()
-						.append(INFOSETS_FILENAME)
-						.toOSString();
-				input = new FileInputStream(xmlFile);
+				input = new FileInputStream(infosetsFile);
 				source = new InputSource(input);
 				// set id info for parser exceptions.
 				// use toString method to capture protocol...etc
-				source.setSystemId(xmlFile);
+				source.setSystemId(infosetsFile.toString());
 			}
 			ContributionParser parser =
 				new ContributionParser(new InfosetsContributionFactory().instance());
