@@ -53,6 +53,8 @@ public interface IManifestAttributes {
 	public static final String MANIFEST_FILE = "MANIFEST.MF";
 	public static final String INSTALL_MANIFEST = "install.xml";
 	public static final String INSTALL_INDEX = "install.index";
+	public static final String PLUGIN_MANIFEST = "plugin.xml";
+	public static final String PLUGIN_MANIFEST_OFF = "plugin.xml.off";
 	public static final String SETTINGS_FILE = "UMSettings";
 	public static final String UM_LOCK = "UM.lock";
 }
