@@ -22,6 +22,34 @@ import org.eclipse.ui.views.markers.internal.*;
  */
 public class MarkerViewAdapterFactory implements IAdapterFactory {
 	private MarkerViewContextHelpProvider provider;
+	
+	private class FakeContext implements IContext2 {
+		private IContext context;
+		public FakeContext(IContext context) {
+			this.context = context;
+		}
+		public IHelpResource[] getRelatedTopics() {
+			return context.getRelatedTopics();
+		}
+		public String getText() {
+			return context.getText();
+		}
+		public String getStyledText() {
+			if (context instanceof IContext2)
+				return ((IContext2)context).getStyledText();
+			return context.getText();
+		}
+		public String getCategory(IHelpResource topic) {
+			IHelpResource [] topics = context.getRelatedTopics();
+			for (int i=0; i<topics.length; i++) {
+				if (topic.equals(topics[i])) {
+					if (i==0) return null;
+					else return "Category "+i+":";
+				}
+			}
+			return null;
+		}
+	}
 
 	/**
 	 * 
@@ -30,7 +58,8 @@ public class MarkerViewAdapterFactory implements IAdapterFactory {
 		private String id;
 
 		public IContext getContext(Object widget) {
-			return HelpSystem.getContext(id);
+			IContext context = HelpSystem.getContext(id);
+			return new FakeContext(context);
 		}
 
 		public int getContextChangeMask() {
