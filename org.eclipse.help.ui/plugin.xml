@@ -102,6 +102,11 @@
 			factoryclass="org.eclipse.help.ui.internal.browser.aix.NetscapeFactory"
 			name="%netscape4" />
 	</extension>
+	<extension point="org.eclipse.help.ui.browser">
+		<browser id="org.eclipse.help.ui.netscapeHPUX"
+			factoryclass="org.eclipse.help.ui.internal.browser.hpux.NetscapeFactory"
+			name="%netscape4" />
+	</extension>
 
 	<!-- Search Page -->
 	<extension point="org.eclipse.search.searchPages">
