@@ -291,8 +291,10 @@ function mouseMoveHandler(e) {
 	  	return;
 	  	
 	  overNode = getTRNode(overNode);
-	  if (overNode == null)
+	  if (overNode == null){
+	   window.status = "";
 	   return;
+	  }
 	 
 	  if (isMozilla)
 	     e.cancelBubble = false;

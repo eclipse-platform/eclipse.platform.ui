@@ -404,8 +404,10 @@ function mouseMoveHandler(e) {
  	if (!overNode) return;
   	
 	overNode = getAnchorNode(overNode);
-	if (overNode == null)
-		return;
+	  if (overNode == null){
+	   window.status = "";
+	   return;
+	  }
  
 	if (isMozilla)
 		e.cancelBubble = false;
