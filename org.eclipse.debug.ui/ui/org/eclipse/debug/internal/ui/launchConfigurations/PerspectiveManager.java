@@ -320,6 +320,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					}
 					if (shouldSwitchPerspectiveForSuspend(window, targetId)) {
 						switchToPerspective(window, targetId);
+						// Showing the perspective can open a new window
+						// (based on user prefs). So check again in case a
+						// new window has been opened.
+						window = getWindowForPerspective(targetId);
 					}
 				}
 				if (window != null && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
