@@ -89,7 +89,7 @@ public class TextEditor extends StatusTextEditor {
 		setRulerContextMenuId("#TextRulerContext"); //$NON-NLS-1$
 		setHelpContextId(ITextEditorHelpContextIds.TEXT_EDITOR);
 		
-		Plugin plugin= Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		Plugin plugin= Platform.getPlugin("org.eclipse.ui.workbench"); //$NON-NLS-1$
 		if (plugin instanceof AbstractUIPlugin) {
 			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;		
 			setPreferenceStore(uiPlugin.getPreferenceStore());

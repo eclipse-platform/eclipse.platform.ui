@@ -57,7 +57,7 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 		super(GRID);
 		
 		setDescription(TextEditorMessages.getString("PreferencePage.description"));		 //$NON-NLS-1$
-		Plugin plugin= Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		Plugin plugin= Platform.getPlugin("org.eclipse.ui.workbench"); //$NON-NLS-1$
 		if (plugin instanceof AbstractUIPlugin) {
 			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;
 			setPreferenceStore(uiPlugin.getPreferenceStore());

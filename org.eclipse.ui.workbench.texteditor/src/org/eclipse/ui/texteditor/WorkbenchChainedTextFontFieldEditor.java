@@ -58,7 +58,7 @@ public class WorkbenchChainedTextFontFieldEditor extends PropagatingFontFieldEdi
 	 * @param targetKey the key to be used in the target preference store
 	 */
 	public static void startPropagate(IPreferenceStore target, String targetKey) {
-		Plugin plugin= Platform.getPlugin(PlatformUI.PLUGIN_ID);
+		Plugin plugin= Platform.getPlugin("org.eclipse.ui.workbench"); //$NON-NLS-1$
 		if (plugin instanceof AbstractUIPlugin) {
 			AbstractUIPlugin uiPlugin= (AbstractUIPlugin) plugin;
 			IPreferenceStore store= uiPlugin.getPreferenceStore();
