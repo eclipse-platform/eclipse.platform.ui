@@ -42,8 +42,8 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		update();
 	}
 	
-	/*
-	 * @see IAction#actionPerformed
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		
@@ -123,8 +123,8 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		}
 	}
 
-	/*
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(PreferenceConstants.EDITOR_SHOW_SEGMENTS))
