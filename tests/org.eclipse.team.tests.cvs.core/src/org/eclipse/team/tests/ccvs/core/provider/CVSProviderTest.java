@@ -42,8 +42,8 @@ public class CVSProviderTest extends EclipseTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CVSProviderTest.class);
-		//return new CVSTestSetup(suite);
-		return new CVSTestSetup(new CVSProviderTest("testAdd"));
+		return new CVSTestSetup(suite);
+		//return new CVSTestSetup(new CVSProviderTest("testVersionTag"));
 	}
 	
 	public void testAdd() throws TeamException, CoreException {
