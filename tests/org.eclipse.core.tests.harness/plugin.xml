@@ -10,6 +10,8 @@
     <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.core.runtime.compatibility"/> 
     <import plugin="org.junit"/>
+    <import plugin="org.eclipse.pde.junit.runtime" optional="true"/>
+    <import plugin="org.eclipse.test.performance" optional="true"/>
   </requires>
 
   <runtime>

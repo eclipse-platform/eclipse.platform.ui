@@ -11,7 +11,8 @@
 package org.eclipse.core.tests.harness;
 
 import java.io.*;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -20,6 +21,8 @@ import org.eclipse.core.runtime.*;
  * Tests that use the Eclipse Platform workspace.
  */
 public class EclipseWorkspaceTest extends TestCase {
+	public static final String PI_HARNESS = "org.eclipse.core.tests.harness"; //$NON-NLS-1$	
+	
 	//constants for nature sets	
 	protected static final String SET_STATE = "org.eclipse.core.tests.resources.stateSet";
 	protected static final String SET_OTHER = "org.eclipse.core.tests.resources.otherSet";

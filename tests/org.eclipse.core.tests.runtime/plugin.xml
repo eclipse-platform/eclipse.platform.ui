@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.tests.harness"/>
       <import plugin="org.junit"/>
+      <import plugin="org.eclipse.test.performance" optional="true"/>
    </requires>
 
    <extension

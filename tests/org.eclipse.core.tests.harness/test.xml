@@ -57,6 +57,15 @@
       <property name="classname" value="org.eclipse.osgi.tests.AutomatedTests"/>
     </ant>
   </target>
+	
+  <target name="RuntimePerformanceTests" depends="init,cleanup">
+    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${runtime_location}"/>
+      <property name="plugin-name" value="org.eclipse.core.tests.runtime"/>
+      <property name="classname" value="org.eclipse.core.tests.runtime.perf.AllTests"/>
+    </ant>
+  </target>  
+	
   
   <target name="OSGiPerformanceTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
@@ -157,6 +166,6 @@
   <!--target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests,PR_1G1N9GZ_SessionTests,PR_1GALH44_SessionTests,Snapshot_SessionTests,SaveManager_SessionTests"/-->
   
   <!-- This target defines the performance tests that need to be run. -->
-  <target name="performance-suite" depends="OSGiPerformanceTests"/>  
+  <target name="performance-suite" depends="RuntimePerformanceTests,OSGiPerformanceTests"/>  
 	
  </project>
