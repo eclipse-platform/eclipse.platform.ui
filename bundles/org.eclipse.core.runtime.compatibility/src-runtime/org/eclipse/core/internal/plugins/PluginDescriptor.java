@@ -27,6 +27,7 @@ import org.osgi.framework.*;
 
 public class PluginDescriptor implements IPluginDescriptor {
 
+	private static final String PLUGIN_CLASS = "Plugin-Class"; //$NON-NLS-1$
 	private boolean active = false; // plugin is active
 	private volatile boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
@@ -417,7 +418,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 }
 
 	private String getPluginClass() {
-		return (String) bundleOsgi.getHeaders().get("Plugin-Class"); //$NON-NLS-1$
+		return (String) bundleOsgi.getHeaders().get(PLUGIN_CLASS); //$NON-NLS-1$
 	}
 
 	private String getId() {
