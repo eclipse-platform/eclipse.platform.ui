@@ -256,24 +256,6 @@ public class EclipseSynchronizer {
 		CVSProviderPlugin.broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
 	}
 	
-	private void accumulateNonManagedChildren(IContainer folder, List possibleIgnores) throws CVSException {
-		try {
-			cacheResourceSyncForChildren(folder);
-			IResource[] children = folder.members();
-			for (int i = 0; i < children.length; i++) {
-				IResource child = children[i];
-				if(getCachedResourceSync(child)==null) {
-					possibleIgnores.add(child);
-				}
-				if(child.getType()!=IResource.FILE) {
-					accumulateNonManagedChildren((IContainer)child, possibleIgnores);
-				}
-			}
-		} catch(CoreException e) {
-			throw CVSException.wrapException(e);
-		}
-	}
-	
 	/**
 	 * Returns the members of this folder including deleted resources with sync info,
 	 * but excluding special resources such as CVS subdirectories.
@@ -321,21 +303,26 @@ public class EclipseSynchronizer {
 	 * Ends a batch of operations.  Pending changes are committed only when
 	 * the number of calls to endOperation() balances those to beginOperation().
 	 * <p>
-	 * Will throw a CVS Exception with a status with code = CVSStatus.DELETION_FAILED 
-	 * if the endOperation could not perform CVS folder deletions. In this case, all other
-	 * aspects of the operation succeeded.
+	 * Progress cancellation is ignored while writting the cache to disk. This
+	 * is to ensure cache to disk consistency.
 	 * </p>
+	 * 
 	 * @param monitor the progress monitor, may be null
+	 * @exception CVSException with a status with code <code>COMMITTING_SYNC_INFO_FAILED</code>
+	 * if all the CVS sync information could not be written to disk.
 	 */
-	public void endOperation(IProgressMonitor monitor) throws CVSException {
-		IStatus status = STATUS_OK;
-		if (nestingCount == 1) {
-			status = commitCache(monitor);
-		}
-		nestingCount -= 1;
-		Assert.isTrue(nestingCount>= 0);
-		if (status != STATUS_OK) {
-			throw new CVSException(status);
+	public void endOperation(IProgressMonitor monitor) throws CVSException {		
+		try {
+			IStatus status = STATUS_OK;
+			if (nestingCount == 1) {
+				status = commitCache(monitor);
+			}
+			if (status != STATUS_OK) {
+				throw new CVSException(status);
+			}
+		} finally {
+			nestingCount -= 1;
+			Assert.isTrue(nestingCount>= 0);
 		}
 	}
 	
@@ -401,12 +388,14 @@ public class EclipseSynchronizer {
 	/**
 	 * Commits the cache after a series of operations.
 	 * 
-	 * Will return STATUS_OK unless there were problems deleting the CVS folders, in 
-	 * which case a status with code = CVSStatus.DELETION_FAILED is returned.
+	 * Will return STATUS_OK unless there were problems writting sync 
+	 * information to disk. If an error occurs a multistatus is returned
+	 * with the list of reasons for the failures. Failures are recovered,
+	 * and all changed resources are given a chance to be written to disk.
 	 *
 	 * @param monitor the progress monitor, may be null
 	 */
-	private IStatus commitCache(IProgressMonitor monitor) throws CVSException {
+	private IStatus commitCache(IProgressMonitor monitor) {
 		if (changedFolders.isEmpty() && changedResources.isEmpty()) return STATUS_OK;
 		List errors = new ArrayList();
 		try {
@@ -423,28 +412,36 @@ public class EclipseSynchronizer {
 			int numDirty = dirtyParents.size();
 			int numResources = changedFolders.size() + numDirty;
 			monitor.beginTask(null, numResources);
-			monitor.subTask(Policy.bind("EclipseSynchronizer_updatingSyncEndOperation")); //$NON-NLS-1$
+			if(monitor.isCanceled()) {
+				monitor.subTask(Policy.bind("EclipseSynchronizer.UpdatingSyncEndOperationCancelled")); //$NON-NLS-1$
+			} else {
+				monitor.subTask(Policy.bind("EclipseSynchronizer.UpdatingSyncEndOperation")); //$NON-NLS-1$
+			}
 			
 			/*** write sync info to disk ***/
 			// folder sync info changes
 			for(Iterator it = changedFolders.iterator(); it.hasNext();) {
 				IContainer folder = (IContainer) it.next();
 				if (folder.exists() && folder.getType() != IResource.ROOT) {
-					FolderSyncInfo info = getCachedFolderSync(folder);
-					if (info == null) {
-						// deleted folder sync info since we loaded it
-						try {
+					try {
+						FolderSyncInfo info = getCachedFolderSync(folder);
+						if (info == null) {
+							// deleted folder sync info since we loaded it
 							SyncFileWriter.deleteFolderSync(folder);
-						} catch (CVSException e) {
-							errors.add(e.getStatus());
+							dirtyParents.remove(folder);
+						} else {
+							// modified or created new folder sync info since we loaded it
+							SyncFileWriter.writeFolderSync(folder, info);
 						}
-						dirtyParents.remove(folder);
-					} else {
-						// modified or created new folder sync info since we loaded it
-						SyncFileWriter.writeFolderSync(folder, info);
+					} catch(CVSException e) {					
+						try {
+							purgeCache(folder, true /* deep */);
+						} catch(CVSException pe) {
+							errors.add(pe.getStatus());
+						}
+						errors.add(e.getStatus());
 					}
 				}
-				Policy.checkCanceled(monitor);
 				monitor.worked(1);
 			}
 
@@ -456,11 +453,19 @@ public class EclipseSynchronizer {
 				IContainer folder = (IContainer) it.next();
 				if (folder.exists() && folder.getType() != IResource.ROOT) {
 					// write sync info for all children in one go
-					Collection infos = getCachedResourceSyncForChildren(folder);
-					SyncFileWriter.writeAllResourceSync(folder,
-						(ResourceSyncInfo[]) infos.toArray(new ResourceSyncInfo[infos.size()]));
+					try {
+						Collection infos = getCachedResourceSyncForChildren(folder);
+						SyncFileWriter.writeAllResourceSync(folder,
+							(ResourceSyncInfo[]) infos.toArray(new ResourceSyncInfo[infos.size()]));
+					} catch(CVSException e) {
+						try {
+							purgeCache(folder, false /* depth 1 */);
+						} catch(CVSException pe) {
+							errors.add(pe.getStatus());
+						}							
+						errors.add(e.getStatus());
+					}
 				}
-				Policy.checkCanceled(monitor);
 				monitor.worked(1);
 			}
 			
@@ -472,7 +477,10 @@ public class EclipseSynchronizer {
 			changedResources.clear();
 			changedFolders.clear();
 			if ( ! errors.isEmpty()) {
-				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.DELETION_FAILED, Policy.bind("EclipseSynchronizer.ErrorDeletingFolderSync"), null);//$NON-NLS-1$
+				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 
+											CVSStatus.COMMITTING_SYNC_INFO_FAILED, 
+											Policy.bind("EclipseSynchronizer.ErrorCommitting"), //$NON-NLS-1$
+											null);
 				for (int i = 0; i < errors.size(); i++) {
 					status.merge((IStatus)errors.get(i));
 				}
@@ -722,6 +730,31 @@ public class EclipseSynchronizer {
 		try {
 			container.setSessionProperty(IGNORE_SYNC_KEY, ignores);
 		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+	}
+	
+	/**
+	 * Recursively adds to the possibleIgnores list all children of the given 
+	 * folder that can be ignored.
+	 * 
+	 * @param folder the folder to be searched
+	 * @param possibleIgnores the list of IResources that can be ignored
+	 */
+	private void accumulateNonManagedChildren(IContainer folder, List possibleIgnores) throws CVSException {
+		try {
+			cacheResourceSyncForChildren(folder);
+			IResource[] children = folder.members();
+			for (int i = 0; i < children.length; i++) {
+				IResource child = children[i];
+				if(getCachedResourceSync(child)==null) {
+					possibleIgnores.add(child);
+				}
+				if(child.getType()!=IResource.FILE) {
+					accumulateNonManagedChildren((IContainer)child, possibleIgnores);
+				}
+			}
+		} catch(CoreException e) {
 			throw CVSException.wrapException(e);
 		}
 	}

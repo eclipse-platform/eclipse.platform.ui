@@ -20,7 +20,7 @@ public class CVSStatus extends Status {
 	public static final int CONFLICT = -12;
 	public static final int ERROR_LINE = -14; // generic uninterpreted E line from the server
 	public static final int TAG_ALREADY_EXISTS = -15;
-	public static final int DELETION_FAILED = -16;
+	public static final int COMMITTING_SYNC_INFO_FAILED = -16;
 	public static final int DOES_NOT_EXIST = -17;
 	public static final int FOLDER_NEEDED_FOR_FILE_DELETIONS = -18;
 	
