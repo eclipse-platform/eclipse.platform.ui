@@ -704,6 +704,7 @@ public class ConfigurationView
 				UpdateUIPlugin.logException(e);
 			}
 			viewer.refresh(savedFolder);
+			viewer.expandToLevel(savedFolder, 1);
 		}
 		if (errors.size() > 0) {
 			IStatus [] children = (IStatus[])errors.toArray(new IStatus[errors.size()]);
