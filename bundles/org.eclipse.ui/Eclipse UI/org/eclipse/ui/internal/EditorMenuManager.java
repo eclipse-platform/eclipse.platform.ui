@@ -100,6 +100,12 @@ public void setEnabledAllowed(boolean enabledAllowed) {
 		IContributionItem item = items[i];
 		item.setEnabledAllowed(enabledAllowed);
 	}
+	// pass it on to the created wrappers
+	if (wrappers != null) {
+		for (int i = 0; i < wrappers.size(); i++) {
+			((EditorMenuManager)wrappers.get(i)).setEnabledAllowed(enabledAllowed);
+		}
+	}
 	if (!enabledAllowed) {
 		// search for retarget actions and allow them to enable
 		setRetargetEnabledAllowed(this);
