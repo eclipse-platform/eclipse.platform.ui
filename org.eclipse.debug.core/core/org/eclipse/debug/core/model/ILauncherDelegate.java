@@ -61,6 +61,8 @@ import org.eclipse.debug.core.ILauncher;
  * @see org.eclipse.debug.core.Launch
  * @see org.eclipse.debug.core.ILaunchManager
  * @see org.eclipse.debug.core.ILauncher
+ * 
+ * @deprecated to be replaced with ILaunchConfiguration/ILaunchConfigurationDelegate
  */
 public interface ILauncherDelegate {
 	/**

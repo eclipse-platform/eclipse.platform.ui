@@ -203,6 +203,7 @@ public class DebugPlugin extends Plugin {
 	 *
 	 * @return an array of launchers
 	 * @see org.eclipse.debug.core.model.ILauncherDelegate
+	 * @deprecated to be removed
 	 */
 	public ILauncher[] getLaunchers() {
 		return fLaunchers;

@@ -54,6 +54,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * launched.
 	 *
 	 * @return the launcher, or <code>null</code>
+	 * @deprecated to be removed
 	 */
 	public ILauncher getLauncher();
 	/**

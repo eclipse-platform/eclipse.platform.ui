@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.ILauncherDelegate;
  * (repeatedly) as the API evolves.
  * </p>
  * @see ILauncherDelegate
+ * @deprecated to be replaced with ILaunchConfiguration/ILaunchConfigurationDelegate
  */
 public interface ILauncher {
 	/**
