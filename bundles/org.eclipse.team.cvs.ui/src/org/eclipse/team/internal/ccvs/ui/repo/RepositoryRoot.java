@@ -326,13 +326,15 @@ public class RepositoryRoot extends PlatformObject {
 			attributes.put(RepositoriesViewContentHandler.PATH_ATTRIBUTE, name);
 			writer.startTag(RepositoriesViewContentHandler.MODULE_TAG, attributes, true);
 			Set tagSet = (Set)knownTags.get(path);
-			Iterator tagIt = tagSet.iterator();
-			while (tagIt.hasNext()) {
-				CVSTag tag = (CVSTag)tagIt.next();
-				attributes.clear();
-				attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, tag.getName());
-				attributes.put(RepositoriesViewContentHandler.TYPE_ATTRIBUTE, RepositoriesViewContentHandler.TAG_TYPES[tag.getType()]);
-				writer.startAndEndTag(RepositoriesViewContentHandler.TAG_TAG, attributes, true);
+			if (tagSet != null) {
+				Iterator tagIt = tagSet.iterator();
+				while (tagIt.hasNext()) {
+					CVSTag tag = (CVSTag)tagIt.next();
+					attributes.clear();
+					attributes.put(RepositoriesViewContentHandler.NAME_ATTRIBUTE, tag.getName());
+					attributes.put(RepositoriesViewContentHandler.TYPE_ATTRIBUTE, RepositoriesViewContentHandler.TAG_TYPES[tag.getType()]);
+					writer.startAndEndTag(RepositoriesViewContentHandler.TAG_TAG, attributes, true);
+				}
 			}
 			Set refreshSet = (Set)autoRefreshFiles.get(path);
 			if (refreshSet != null) {
