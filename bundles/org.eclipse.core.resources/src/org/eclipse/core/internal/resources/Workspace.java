@@ -1511,8 +1511,17 @@ public void updateModificationStamp(ResourceInfo info) {
  */
 public IStatus validateEdit(final IFile[] files, final Object context) {
 	// if validation is turned off then just return
-	if (!shouldValidate)
-		return ResourceStatus.OK_STATUS;
+	if (!shouldValidate) {
+		String message = Policy.bind("resources.readOnly2"); //$NON-NLS-1$
+		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.OK, message, null);
+		for (int i=0; i<files.length; i++) {
+			if (files[i].isReadOnly()) {
+				message = Policy.bind("resources.readOnly"); //$NON-NLS-1
+				result.add(new ResourceStatus(IStatus.ERROR, files[i].getFullPath(), message));
+			}
+		}
+		return result.isOK() ? ResourceStatus.OK_STATUS : (IStatus) result;
+	}
 	// first time through the validator hasn't been initialized so try and create it
 	if (validator == null) 
 		initializeValidator();
