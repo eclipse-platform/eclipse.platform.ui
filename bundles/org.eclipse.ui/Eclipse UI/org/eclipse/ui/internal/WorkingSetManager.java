@@ -199,6 +199,7 @@ public class WorkingSetManager implements IWorkingSetManager {
 	 */
 	public void removeWorkingSet(IWorkingSet workingSet) {
 		workingSets.remove(workingSet);
+		recentWorkingSets.remove(workingSet);
 		saveState();
 		firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
 	}

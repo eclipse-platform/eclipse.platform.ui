@@ -11,22 +11,23 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
  * A filter dialog presents a list of filter patterns and
@@ -43,6 +44,36 @@ public class FilterDialog extends ListSelectionDialog {
 	private Combo mruList;
 	private Button selectButton;
 	private IWorkingSet workingSet;
+	/*
+	 * Used to update the mru list box when working sets are 
+	 * renamed in the working set selection dialog.
+	 */
+	private IPropertyChangeListener workingSetChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			Object newValue = event.getNewValue();
+			
+			if (IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE.equals(property) && 
+				newValue instanceof IWorkingSet) {
+				String newName = ((IWorkingSet) newValue).getName();
+				int count = mruList.getItemCount();
+				for (int i = 0; i < count; i++) {
+					String item = mruList.getItem(i);
+					IWorkingSet workingSet = (IWorkingSet) mruList.getData(item);
+					if (workingSet == newValue) {
+						boolean isTopItem = (mruList.getData(mruList.getText()) == workingSet);
+						mruList.remove(i);
+						mruList.add(newName, i);
+						mruList.setData(newName, workingSet);
+						if (isTopItem) {
+							mruList.setText(newName);
+						}
+						break;
+					}
+				}
+			}	
+		}
+	};
 	
 	/**
 	 * Creates a filter selection dialog.
@@ -129,6 +160,7 @@ public class FilterDialog extends ListSelectionDialog {
 		if (workingSet != null) {
 			dialog.setSelection(new IWorkingSet[]{workingSet});
 		}
+		workingSetManager.addPropertyChangeListener(workingSetChangeListener);		
 		if (dialog.open() == Window.OK) {
 			IWorkingSet[] result = dialog.getSelection();
 			if (result != null && result.length > 0) {
@@ -144,7 +176,15 @@ public class FilterDialog extends ListSelectionDialog {
 			else {
 				workingSet = null;
 			}				
+			// remove deleted working sets from the mru list box				
+			String[] mruNames = mruList.getItems();
+			for (int i = 0; i < mruNames.length; i++) {
+				if (workingSetManager.getWorkingSet(mruNames[i]) == null) {
+					mruList.remove(mruNames[i]);
+				}
+			}
 		}
+		workingSetManager.removePropertyChangeListener(workingSetChangeListener);
 	}
 	/**
 	 * Sets the enabled state of the most recently used working set list
