@@ -30,7 +30,7 @@ public class StandbyPart {
     private ImageHyperlink returnLink;
     private Composite container;
     private Composite content;
-    private ContextHelpStandbyPart helpPart;
+    //private ContextHelpStandbyPart helpPart;
     private IIntroPart introPart;
 
     // hastable has partIds as keys, and ControlKeys are values.
@@ -123,7 +123,7 @@ public class StandbyPart {
         content.setLayout(slayout);
 
         // By default, we always have the Context Help standby content.
-        addContextHelpPart();
+        //addContextHelpPart();
         updateReturnLinkLabel();
     }
 
@@ -133,13 +133,14 @@ public class StandbyPart {
         updateReturnLinkLabel();
         container.layout();
     }
-
+/*
     private void addContextHelpPart() {
         helpPart = new ContextHelpStandbyPart();
         addStandbyContentPart(IIntroConstants.HELP_CONTEXT_STANDBY_PART,
                 helpPart);
         setTopControl(IIntroConstants.HELP_CONTEXT_STANDBY_PART);
     }
+*/
 
     public void setTopControl(String key) {
         cachedControlKey = getCachedContent(key);
