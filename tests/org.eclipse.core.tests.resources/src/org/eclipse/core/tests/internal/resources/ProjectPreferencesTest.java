@@ -192,6 +192,10 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 				}
 		}
 
+		// ensure that the file is out-of-sync with the workspace
+		// by changing the lastModified time
+		touchInFilesystem(file);
+
 		// resource change is fired
 		IFile workspaceFile = project.getFolder(".settings").getFile(qualifier + ".prefs");
 		try {
@@ -202,7 +206,6 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 
 		// validate new settings
 		actual = node.get(key, null);
-		assertNotNull("4.0", actual);
 		assertEquals("4.1", value, actual);
 		actual = node.get(newKey, null);
 		assertEquals("4.2", newValue, actual);
@@ -446,4 +449,17 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 		assertEquals("2.2", value2, node.get(emptyKey, null));
 	}
 
+	private void touchInFilesystem(File file) {
+		long original = file.lastModified();
+		long current = original;
+		for (int count = 0; count < 10 && original == current; count++) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+			file.setLastModified(System.currentTimeMillis());
+			current = file.lastModified();
+		}
+	}
 }
