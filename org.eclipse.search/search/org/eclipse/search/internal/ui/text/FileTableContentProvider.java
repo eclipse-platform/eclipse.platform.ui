@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,25 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+
 import org.eclipse.search.internal.ui.SearchPreferencePage;
 
-public class FileTableContentProvider extends FileContentProvider implements IStructuredContentProvider {
+public class FileTableContentProvider implements IStructuredContentProvider, IFileSearchContentProvider {
+	
+	private final Object[] EMPTY_ARR= new Object[0];
+	
 	private FileSearchPage fPage;
+	private AbstractTextSearchResult fResult;
 
 	public FileTableContentProvider(FileSearchPage page) {
 		fPage= page;
 	}
+	
+	public void dispose() {
+		// nothing to do
+	}
+	
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof FileSearchResult) {
 			Object[] elements= ((FileSearchResult)inputElement).getElements();
@@ -61,6 +72,7 @@ public class FileTableContentProvider extends FileContentProvider implements ISt
 	private TableViewer getViewer() {
 		return (TableViewer) fPage.getViewer();
 	}
+	
 	public void clear() {
 		getViewer().refresh();
 	}

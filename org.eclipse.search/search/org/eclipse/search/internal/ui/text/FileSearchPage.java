@@ -96,7 +96,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$
 
 	private ActionGroup fActionGroup;
-	private FileContentProvider fContentProvider;
+	private IFileSearchContentProvider fContentProvider;
 	private int fCurrentSortOrder;
 	private SortAction fSortByNameAction;
 	private SortAction fSortByPathAction;
@@ -149,7 +149,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTableContentProvider(this));
 		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
-		fContentProvider= (FileContentProvider) viewer.getContentProvider();
+		fContentProvider= (IFileSearchContentProvider) viewer.getContentProvider();
 		addDragAdapters(viewer);
 	}
 
@@ -159,7 +159,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
 		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
-		fContentProvider= (FileContentProvider) viewer.getContentProvider();
+		fContentProvider= (IFileSearchContentProvider) viewer.getContentProvider();
 		addDragAdapters(viewer);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,10 +20,15 @@ import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
-public class FileTreeContentProvider extends FileContentProvider implements ITreeContentProvider {
+public class FileTreeContentProvider implements ITreeContentProvider, IFileSearchContentProvider {
+
+	private final Object[] EMPTY_ARR= new Object[0];
+
+	private AbstractTextSearchResult fResult;
 	private AbstractTreeViewer fTreeViewer;
 	private Map fChildrenMap;
 	
@@ -34,9 +40,19 @@ public class FileTreeContentProvider extends FileContentProvider implements ITre
 		return getChildren(inputElement);
 	}
 	
+	public void dispose() {
+		// nothing to do
+	}
+	
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (newInput instanceof FileSearchResult) {
+			initialize((FileSearchResult) newInput);
+		}
+	}
+	
 
 	protected synchronized void initialize(AbstractTextSearchResult result) {
-		super.initialize(result);
+		fResult= result;
 		fChildrenMap= new HashMap();
 		if (result != null) {
 			Object[] elements= result.getElements();
