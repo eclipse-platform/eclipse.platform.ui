@@ -77,11 +77,13 @@ public class TeamHookDispatcher extends TeamHook {
 	public IResourceRuleFactory getRuleFactory(IProject project) {
 		if (RepositoryProvider.isShared(project)) {
 			RepositoryProvider provider = getProvider(project);
-			return provider.getRuleFactory();
-		} else {
-			// Use the default provided by the superclass
-			return super.getRuleFactory(project);
-		} 
+			// Provider can be null if the provider plugin is not available
+			if (provider != null) {
+				return provider.getRuleFactory();
+			}
+		}
+		// Use the default provided by the superclass
+		return super.getRuleFactory(project);
 	}
 	
 }
