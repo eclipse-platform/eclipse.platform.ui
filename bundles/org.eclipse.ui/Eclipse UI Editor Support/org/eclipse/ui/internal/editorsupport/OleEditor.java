@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -56,12 +58,12 @@ public class OleEditor extends EditorPart {
 		 */
 		private boolean processDelta(final IResourceDelta delta) throws CoreException {
 
-			Runnable runnable = null;
+			Runnable changeRunnable = null;
 
 			switch (delta.getKind()) {
 				case IResourceDelta.REMOVED :
 					if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
-						runnable = new Runnable() {
+						changeRunnable = new Runnable() {
 							public void run() {
 								IPath path = delta.getMovedToPath();
 								IFile newFile = delta.getResource().getWorkspace().getRoot().getFile(path);
@@ -71,7 +73,7 @@ public class OleEditor extends EditorPart {
 							}
 						};
 					} else {
-						runnable = new Runnable() {
+						changeRunnable = new Runnable() {
 							public void run() {
 								sourceDeleted = true;
 								getSite().getPage().closeEditor(OleEditor.this, true);
@@ -83,27 +85,32 @@ public class OleEditor extends EditorPart {
 					break;
 			}
 
-			if (runnable != null)
-				update(runnable);
+			if (changeRunnable != null)
+				update(changeRunnable);
 
 			return true; // because we are sitting on files anyway
 		}
 
-		/*
-		 * Posts the update code "behind" the running operation.
-		 *
-		 * @param runnable the update code
-		 */
-		private void update(Runnable runnable) {
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-			if (windows != null && windows.length > 0) {
-				Display display = windows[0].getShell().getDisplay();
-				display.asyncExec(runnable);
-			} else
-				runnable.run();
-		}
+	};
 
+	ISelectionListener selectionListener = new ISelectionListener() {
+
+		private Runnable selectionRunnable = new Runnable() {
+			public void run() {
+				oleActivate();
+			}
+		};
+
+		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				if (structuredSelection.size() == 1
+					&& structuredSelection.getFirstElement().equals(resource))
+					update(selectionRunnable);
+			}
+
+		}
 	};
 
 	private OleFrame clientFrame;
@@ -373,6 +380,8 @@ public class OleEditor extends EditorPart {
 
 		// Listen for part activation.
 		site.getPage().addPartListener(partListener);
+
+		site.getPage().addSelectionListener(selectionListener);
 	}
 	/**
 	 *	Initialize the workbench menus for proper merging
@@ -510,6 +519,14 @@ public class OleEditor extends EditorPart {
 	 * Asks the part to take focus within the workbench.
 	 */
 	public void setFocus() {
+		oleActivate();
+		clientFrame.setFocus();
+	}
+	
+	/**
+	 * Make ole active so that the controls are rendered.
+	 */
+	private void oleActivate() {
 		//If there was an OLE Error or nothing has been created yet
 		if (clientFrame == null || clientFrame.isDisposed())
 			return;
@@ -518,8 +535,8 @@ public class OleEditor extends EditorPart {
 			clientSite.doVerb(OLE.OLEIVERB_SHOW);
 			oleActivated = true;
 		}
-		clientFrame.setFocus();
 	}
+	
 	/**
 	 *	Set the file resource that this object is displaying
 	 */
@@ -561,6 +578,21 @@ public class OleEditor extends EditorPart {
 	 */
 	public boolean isSaveOnCloseNeeded() {
 		return !sourceDeleted && super.isSaveOnCloseNeeded();
+	}
+
+	/*
+		 * Posts the update code "behind" the running operation.
+		 *
+		 * @param runnable the update code
+		 */
+	private void update(Runnable runnable) {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
+		if (windows != null && windows.length > 0) {
+			Display display = windows[0].getShell().getDisplay();
+			display.asyncExec(runnable);
+		} else
+			runnable.run();
 	}
 
 }
