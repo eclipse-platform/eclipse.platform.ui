@@ -83,11 +83,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			detailsButton.setText(ProgressMessages
 					.getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
 		} else {
-			if (ProgressManagerUtil.useNewProgress())
-				viewer = new NewProgressViewer(viewerComposite, SWT.MULTI
-						| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-			else
-				viewer = new ProgressTreeViewer(viewerComposite, SWT.MULTI
+			viewer = new NewProgressViewer(viewerComposite, SWT.MULTI
 						| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 			viewer.setUseHashlookup(true);
 			viewer.setSorter(new ViewerSorter() {

@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  */
 public class ProgressManagerUtil {
 	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
-	private static String NEW_PROGRESS_ID = "org.eclipse.ui.views.NewProgressView";//$NON-NLS-1$
 	public static long SHORT_OPERATION_TIME = 250;
 	private static String ellipsis = ProgressMessages
 			.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
@@ -90,10 +89,7 @@ public class ProgressManagerUtil {
 		if (page == null)
 			return;
 		try {
-			if (useNewProgress())
-				page.showView(NEW_PROGRESS_ID);
-			else
-				page.showView(PROGRESS_VIEW_ID);
+			page.showView(PROGRESS_VIEW_ID);
 		} catch (PartInitException exception) {
 			logException(exception);
 		}
