@@ -150,6 +150,10 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			if (oldConfig == null) {
 				return;
 			}
+            //Replace the movedFrom config in the list of newly created configs
+            if (newConfigList.remove(oldConfig)) {
+                newConfigList.add(configuration);
+            }
 			
 			Display.getDefault().asyncExec(new Runnable() {	
 				public void run() {
@@ -163,10 +167,6 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 							viewer.update(configuration, null);
 							break;
 						}
-					}
-					//Also replace the movedFrom config in the list of newly created configs
-					if (newConfigList.remove(oldConfig)) {
-						newConfigList.add(configuration);
 					}
 				}
 			});
@@ -562,13 +562,9 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				userHasMadeChanges= true;
 				//retrieve the last "new" config
 				//may have been changed by the user pressing apply in the edit dialog
-				Display.getDefault().asyncExec(new Runnable() {	
-					public void run() {
-						ILaunchConfiguration updatedConfig= (ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1);
-						viewer.add(updatedConfig);
-						viewer.setChecked(updatedConfig, isEnabled(updatedConfig));
-					}
-				});
+				config= (ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1);
+				viewer.add(config);
+				viewer.setChecked(config, isEnabled(config));
 			}
 		} catch (CoreException e) {
 			handleException(e);
