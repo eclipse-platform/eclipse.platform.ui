@@ -12,10 +12,14 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.INullSelectionListener;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Provides per-part selection tracking for the selection service.

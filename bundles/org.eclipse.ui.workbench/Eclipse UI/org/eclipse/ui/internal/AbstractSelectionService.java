@@ -13,10 +13,20 @@ package org.eclipse.ui.internal;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
+import org.eclipse.ui.INullSelectionListener;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Abstract selection service.
@@ -242,8 +252,8 @@ public void partActivated(IWorkbenchPart newPart) {
 			activeProvider.addSelectionChangedListener(selListener);
 			ISelection sel = activeProvider.getSelection();		
 			fireSelection(newPart, sel);
-			if(activeProvider instanceof StructuredViewer)
-				((StructuredViewer)activeProvider).addPostSelectionChangedListener(postSelListener);			
+			if(activeProvider instanceof IPostSelectionProvider)
+				((IPostSelectionProvider) activeProvider).addPostSelectionChangedListener(postSelListener);			
 			else
 				activeProvider.addSelectionChangedListener(postSelListener);
 			firePostSelection(newPart, sel);
@@ -309,8 +319,8 @@ public void reset() {
 		firePostSelection(null,null);
 		if (activeProvider != null) {
 			activeProvider.removeSelectionChangedListener(selListener);
-			if(activeProvider instanceof StructuredViewer)
-				((StructuredViewer)activeProvider).removePostSelectionChangedListener(postSelListener);
+			if(activeProvider instanceof IPostSelectionProvider)
+				((IPostSelectionProvider) activeProvider).removePostSelectionChangedListener(postSelListener);
 			else
 				activeProvider.removeSelectionChangedListener(postSelListener);
 			activeProvider = null;

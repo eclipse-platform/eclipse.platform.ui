@@ -11,8 +11,16 @@
 package org.eclipse.ui.internal;
 
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Provides debug view selection management/notification for
@@ -175,8 +183,8 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 			ISelectionProvider sp = fPart.getSite().getSelectionProvider();
 			if (sp != null) {
 				sp.removeSelectionChangedListener(selectionListener);
-				if(sp instanceof StructuredViewer)
-					((StructuredViewer)sp).removePostSelectionChangedListener(postSelectionListener);	
+				if(sp instanceof IPostSelectionProvider)
+					((IPostSelectionProvider) sp).removePostSelectionChangedListener(postSelectionListener);	
 				else
 					sp.removeSelectionChangedListener(postSelectionListener);
 			}			
@@ -187,8 +195,8 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker imple
 			ISelectionProvider sp = part.getSite().getSelectionProvider();
 			if (sp != null) {
 				sp.addSelectionChangedListener(selectionListener);
-				if(sp instanceof StructuredViewer)
-					((StructuredViewer)sp).addPostSelectionChangedListener(postSelectionListener);	
+				if(sp instanceof IPostSelectionProvider)
+					((IPostSelectionProvider) sp).addPostSelectionChangedListener(postSelectionListener);	
 				else
 					sp.addSelectionChangedListener(postSelectionListener);
 				if (notify) {

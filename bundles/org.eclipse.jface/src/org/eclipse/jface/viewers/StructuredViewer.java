@@ -44,7 +44,7 @@ import org.eclipse.jface.util.SafeRunnable;
  * @see ViewerFilter
  * @see ViewerSorter
  */
-public abstract class StructuredViewer extends ContentViewer {
+public abstract class StructuredViewer extends ContentViewer implements IPostSelectionProvider {
 
 	/**
 	 * A map from the viewer's model elements to SWT widgets.
@@ -150,14 +150,9 @@ public void addDoubleClickListener(IDoubleClickListener listener) {
 public void addOpenListener(IOpenListener listener) {
 	openListeners.add(listener);
 }
-/**
- * Adds a listener for post selection in this viewer.
- * It is equivalent to selection changed if the selection
- * was triggered by the mouse but it has a delay if the selection
- * is triggered by the keyboard arrows.
- * Has no effect if an identical listener is already registered.
- *
- * @param listener a double-click listener
+
+/* (non-Javadoc)
+ * Method declared on IPostSelectionProvider.
  */
 public void addPostSelectionChangedListener(ISelectionChangedListener listener) {
 	postSelectionChangedListeners.add(listener);
@@ -911,11 +906,8 @@ protected final void refreshItem(Widget widget, Object element) {
 public void removeOpenListener(IOpenListener listener) {
 	openListeners.remove(listener);
 }
-/**
- * Removes the given post selection listener from this viewer.
- * Has no affect if an identical listener is not registered.
- *
- * @param listener a double-click listener
+/* (non-Javadoc)
+ * Method declared on IPostSelectionProvider.
  */
 public void removePostSelectionChangedListener(ISelectionChangedListener listener) {
 	postSelectionChangedListeners.remove(listener);
