@@ -70,7 +70,7 @@ public final class ProjectScope implements IScopeContext {
 	 * @see org.eclipse.core.runtime.preferences.IScopeContext#getLocation()
 	 */
 	public IPath getLocation() {
-		if ((context == null) || !(context instanceof IResource))
+		if (context == null)
 			return null;
 		IProject project = ((IResource) context).getProject();
 		IPath location = project.getLocation();
