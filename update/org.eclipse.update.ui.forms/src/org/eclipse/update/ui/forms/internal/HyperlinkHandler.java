@@ -4,12 +4,24 @@ package org.eclipse.update.ui.forms.internal;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.events.*;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.*;
-import java.util.*;
-import org.eclipse.swt.*;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 
 public class HyperlinkHandler extends HyperlinkSettings
 								implements MouseListener, 
@@ -50,7 +62,10 @@ public void mouseHover(MouseEvent e) {
 public void mouseUp(MouseEvent e) {
 	if (e.button != 1)
 		return;
-	linkActivated((Control)e.widget);
+	Control linkControl = (Control)e.widget;
+	Rectangle bounds = linkControl.getBounds();
+	if (bounds.contains(e.x, e.y))
+		linkActivated(linkControl);
 }
 
 public void widgetDefaultSelected(SelectionEvent e) {
@@ -125,6 +140,7 @@ public void registerHyperlink(Control control, IHyperlinkListener listener) {
 		control.setForeground(foreground);
 	control.addMouseListener(this);
 	control.addMouseTrackListener(this);
+
 	if (hyperlinkUnderlineMode == UNDERLINE_ALWAYS && control instanceof Label)
 		control.addPaintListener(this);
 	if (control instanceof SelectableFormLabel) {

@@ -72,7 +72,6 @@ public class InstallWizard extends Wizard {
 			UpdateUIPlugin.logException(e);
 			return false;
 		} catch (InterruptedException e) {
-			UpdateUIPlugin.logException(e);
 			return false;
 		}
 		return true;

@@ -17,8 +17,8 @@ import org.eclipse.swt.graphics.*;
  */
 
 public abstract class AbstractSectionForm extends AbstractForm {
-	private static final int H_SCROLL_INCREMENT = 5;
-	private static final int V_SCROLL_INCREMENT = 64;
+	public static final int H_SCROLL_INCREMENT = 5;
+	public static final int V_SCROLL_INCREMENT = 64;
 	protected Vector sections = null;
 
 	public void registerSection(FormSection section) {
@@ -136,10 +136,10 @@ public abstract class AbstractSectionForm extends AbstractForm {
 		Point controlSize = control.getSize();
 		Rectangle area = scomp.getClientArea();
 		Point areaOrigin = scomp.toDisplay(new Point(area.x, area.y));
-		
+
 		Point scompOrigin = scomp.toDisplay(scomp.getOrigin());
 		Point controlOrigin = control.toDisplay(control.getLocation());
-		
+
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
 
@@ -157,17 +157,17 @@ public abstract class AbstractSectionForm extends AbstractForm {
 		}
 		scomp.setOrigin(scomp.toControl(new Point(x, y)));
 	}
-	
+
 	public static void scrollVertical(ScrolledComposite scomp, boolean up) {
-		scroll(scomp, 0, up?-V_SCROLL_INCREMENT:V_SCROLL_INCREMENT);
+		scroll(scomp, 0, up ? -V_SCROLL_INCREMENT : V_SCROLL_INCREMENT);
 	}
 	public static void scrollHorizontal(ScrolledComposite scomp, boolean left) {
-		scroll(scomp, left?-H_SCROLL_INCREMENT:H_SCROLL_INCREMENT, 0);
+		scroll(scomp, left ? -H_SCROLL_INCREMENT : H_SCROLL_INCREMENT, 0);
 	}
 	public static void scrollPage(ScrolledComposite scomp, boolean up) {
 		Point origin = scomp.getOrigin();
 		Rectangle clientArea = scomp.getClientArea();
-		int increment = up ?  -clientArea.height : clientArea.height;
+		int increment = up ? -clientArea.height : clientArea.height;
 		scroll(scomp, 0, increment);
 	}
 	private static void scroll(ScrolledComposite scomp, int xoffset, int yoffset) {
@@ -176,9 +176,18 @@ public abstract class AbstractSectionForm extends AbstractForm {
 		int xorigin = origin.x + xoffset;
 		int yorigin = origin.y + yoffset;
 		xorigin = Math.max(xorigin, 0);
-		xorigin = Math.min(xorigin, contentSize.x-1);
+		xorigin = Math.min(xorigin, contentSize.x - 1);
 		yorigin = Math.max(yorigin, 0);
-		yorigin = Math.min(yorigin, contentSize.y-1);
+		yorigin = Math.min(yorigin, contentSize.y - 1);
 		scomp.setOrigin(xorigin, yorigin);
+	}
+
+	public static void updatePageIncrement(ScrolledComposite scomp) {
+		ScrollBar vbar = scomp.getVerticalBar();
+		if (vbar != null) {
+			Rectangle clientArea = scomp.getClientArea();
+			int increment = clientArea.height - 5;
+			vbar.setPageIncrement(increment);
+		}
 	}
 }

@@ -23,11 +23,6 @@ public class ScrollableSectionForm extends SectionForm {
 	private boolean verticalFit;
 	private boolean scrollable=true;
 	
-	private static final int HBAR_INCREMENT = 10;
-	private static final int HPAGE_INCREMENT = 40;
-	private static final int VBAR_INCREMENT = 10;
-	private static final int VPAGE_INCREMENT = 40;
-
 public ScrollableSectionForm() {
 }
 public Control createControl(Composite parent) {
@@ -36,11 +31,6 @@ public Control createControl(Composite parent) {
 	if (container instanceof ScrolledComposite) {
 		ScrolledComposite sc = (ScrolledComposite)container;
 		sc.setContent(formControl);
-		/*
-		Point formSize = formControl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		sc.setMinWidth(formSize.x);
-		sc.setMinHeight(formSize.y);
-		*/
 	}
 	GridData gd = new GridData(GridData.FILL_BOTH);
 	formControl.setLayoutData(gd);
@@ -84,14 +74,13 @@ public void setVerticalFit(boolean newVerticalFit) {
 private void initializeScrollBars(ScrolledComposite scomp) {
 	ScrollBar hbar = scomp.getHorizontalBar();
 	if (hbar!=null) {
-		hbar.setIncrement(HBAR_INCREMENT);
-		hbar.setPageIncrement(HPAGE_INCREMENT);
+		hbar.setIncrement(H_SCROLL_INCREMENT);
 	}
 	ScrollBar vbar = scomp.getVerticalBar();
 	if (vbar!=null) {
-		vbar.setIncrement(VBAR_INCREMENT);
-		vbar.setPageIncrement(VPAGE_INCREMENT);
+		vbar.setIncrement(V_SCROLL_INCREMENT);
 	}	
+	updatePageIncrement(scomp);
 }
 
 public void update() {
@@ -113,6 +102,6 @@ public void updateScrolledComposite() {
 	Point newSize = formControl.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	formControl.setSize(newSize);
 	sc.setMinSize(newSize);
+	updatePageIncrement(sc);
 }
-
 }

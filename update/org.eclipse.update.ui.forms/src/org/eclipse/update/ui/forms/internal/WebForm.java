@@ -116,8 +116,20 @@ public class WebForm extends AbstractSectionForm {
 		this.control = form;
 		client = factory.createComposite(form);
 		createContents(client);
+		initializeScrollBars(scrollComposite);
 		//form.setFocus();
 		return scrollComposite;
+	}
+	private void initializeScrollBars(ScrolledComposite scomp) {
+		ScrollBar hbar = scomp.getHorizontalBar();
+		if (hbar != null) {
+			hbar.setIncrement(H_SCROLL_INCREMENT);
+		}
+		ScrollBar vbar = scomp.getVerticalBar();
+		if (vbar != null) {
+			vbar.setIncrement(V_SCROLL_INCREMENT);
+		}
+		updatePageIncrement(scomp);
 	}
 
 	private int getHeadingHeight(Composite parent) {
@@ -179,6 +191,7 @@ public class WebForm extends AbstractSectionForm {
 		Rectangle trim = control.computeTrim(0, 0, size.x, size.y);
 		size = new Point(trim.width, trim.height);
 		control.setSize(size);
+		updatePageIncrement(scrollComposite);
 	}
 
 	private void paint(PaintEvent e) {
