@@ -236,15 +236,6 @@ public class InternalAntRunner {
 		ProjectHelper.configureProject(project, buildFile);
 	}
 
-	/**
-	 * Returns the default target name that was last computed or <code>null</code>
-	 * if no default target has been computed.
-	 * @return the default target name
-	 */
-	public String getDefaultTarget() {
-		return defaultTarget;
-	}
-
 	private void printArguments(Project project) {
 		if ((messageOutputLevel != Project.MSG_DEBUG) && (messageOutputLevel != Project.MSG_VERBOSE)) {
 			return;
