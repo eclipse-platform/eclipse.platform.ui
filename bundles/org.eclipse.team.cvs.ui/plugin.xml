@@ -240,6 +240,13 @@
                id="org.eclipse.team.ccvs.ui.setKeywordSubstitution">
          </action>
          <action
+               label="%UpdateActionSwitch.label"
+               tooltip="%UpdateActionSwitch.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.ccvs.ui.updateSwitch">
+         </action>
+         <action
                label="%MergeAction.label"
                helpContextId="org.eclipse.team.cvs.ui.team_merge_action_context"
                tooltip="%MergeAction.tooltip"
@@ -307,7 +314,7 @@
                label="%UpdateAction.label"
                helpContextId="org.eclipse.team.cvs.ui.team_update_action_context"
                tooltip="%UpdateAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"
+               class="org.eclipse.team.internal.ccvs.ui.actions.UpdateSilentAction"
                menubarPath="team.main/group1"
                id="org.eclipse.team.ccvs.ui.update">
          </action>
