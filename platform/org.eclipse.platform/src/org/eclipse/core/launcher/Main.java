@@ -200,7 +200,11 @@ public class Main {
 	private static final String CONFIG_FILE_TEMP_SUFFIX = ".tmp"; //$NON-NLS-1$
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
 	private static final String ARG_USER_DIR = "user.dir"; //$NON-NLS-1$
-	
+	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
+	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct"; //$NON-NLS-1$
+	private static final String PRODUCT_SITE_ID = "id"; //$NON-NLS-1$
+	private static final String PRODUCT_SITE_VERSION = "version"; //$NON-NLS-1$
+
 	// constants: configuration file elements
 	private static final String CFG_CORE_BOOT = "bootstrap." + PI_BOOT;  //$NON-NLS-1$
 	private static final String CFG_FEATURE_ENTRY = "feature"; //$NON-NLS-1$
@@ -863,39 +867,69 @@ private URL getRootURL() throws MalformedURLException {
 	return url;
 }
 
+/**
+ * Returns the url of the default location for configuration.
+ *  1) We store the config state relative to the 'eclipse' directory if possible
+ *  2) If this directory is read-only
+ *     we store the state in <user.home>/.eclipse/<application-id>_<version> where <user.home> 
+ *     is unique for each local user, and <application-id> is the one 
+ *     defined in .eclipseproduct marker file. If .eclipseproduct does not
+ *     exist, use "eclipse" as the application-id.
+ */
+private URL getDefaultStateLocation() throws IOException {
+	
+	URL installURL = getRootURL();
+	File installDir = new File(installURL.getFile());
+		
+	if ("file".equals(installURL.getProtocol()) && installDir.canWrite()) { //$NON-NLS-1$
+		if (debug)
+			System.out.println("Using the installation directory."); //$NON-NLS-1$
+		return installURL;
+	} else {	
+		if (debug)
+			System.out.println("Using the user.home location."); //$NON-NLS-1$
+		String appName = "." + ECLIPSE; //$NON-NLS-1$
+		File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER );
+		if (eclipseProduct.exists()) {
+			Properties props = new Properties();
+			props.load(new FileInputStream(eclipseProduct));
+			String appId = props.getProperty(PRODUCT_SITE_ID);
+			if (appId == null || appId.trim().length() == 0)
+				appId = ECLIPSE;
+			String appVersion = props.getProperty(PRODUCT_SITE_VERSION);
+			if (appVersion == null || appVersion.trim().length() == 0)
+				appVersion = ""; //$NON-NLS-1$
+			appName += File.separator+ appId + "_" + appVersion; //$NON-NLS-1$
+		}
+				
+		String userHome = System.getProperty("user.home"); //$NON-NLS-1$
+		File configDir = new File(userHome, appName);
+		configDir.mkdirs();
+		return configDir.toURL();
+	}
+}		
+
 /*
- * Load the configuration file. If not specified, default to the workspace
+ * Load the configuration file. If not specified, default to default state location
  */
 private void loadConfiguration(URL url) {
 	if (url == null) {
 		// configuration URL was not specified ..... search
-		String base = baseLocation;
-		if (base == null) {
-			// determine default workspace
-			base = System.getProperty("user.dir"); //$NON-NLS-1$
-			if (!base.endsWith(File.separator))
-				base += File.separator;
-			base += "workspace" + File.separator; //$NON-NLS-1$
-		} else {
-			base = base.replace('/',File.separatorChar);
-		}
-		if (!base.endsWith(File.separator))
-			base += File.separator;
-		
-		File cfg = null;	
+		URL defaultStateURL = null;
 		try {
+			defaultStateURL = getDefaultStateLocation();
+			URL cfigURL = new URL(defaultStateURL, CONFIG_FILE);
 			// first look for configuration in base location (workspace or as specified)
-			cfg = new File(base + ".metadata" + File.separator + ".config" + File.separator + CONFIG_FILE); //$NON-NLS-1$ //$NON-NLS-2$
-			url = new URL("file", null, 0, cfg.getAbsolutePath()); //$NON-NLS-1$
-			props = loadProperties(url);
+			props = loadProperties(cfigURL);
 			if (debug)
-				System.out.println("Startup: using configuration " + url.toString()); //$NON-NLS-1$
+				System.out.println("Startup: using configuration " + cfigURL.toString()); //$NON-NLS-1$
 			return; // we're done looking
-		} catch(IOException e) {
-			// continue ...
+		} catch (IOException e1) {
+			// .continue
 		}
-		
+			
 		try {
+			File cfg = null;
 			// look for configuration in install root (set up by -initialize)
 			String install = getRootURL().getFile().replace('/',File.separatorChar);
 			if (!install.endsWith(File.separator))
