@@ -205,6 +205,8 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitor {
 			text = JFaceResources.format("Set_SubTask", new Object[] {fTaskName, text});//$NON-NLS-1$
 		}
 		fLabel.setText(escapeMetaCharacters(text));
+		//Force an update as we are in the UI Thread
+		fLabel.update();
 	}
 
 	/**
