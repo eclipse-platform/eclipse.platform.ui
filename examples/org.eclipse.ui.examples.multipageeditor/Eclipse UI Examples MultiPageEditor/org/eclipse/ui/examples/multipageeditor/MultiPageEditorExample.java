@@ -65,7 +65,7 @@ void createPage0() {
 		setPageText(index, editor.getTitle());
 	}
 	catch (PartInitException e) {
-		ErrorDialog.openError(getSite().getShell(), "Error creating nested text editor", null, e.getStatus());
+		ErrorDialog.openError(getSite().getShell(), MPEMessages.getString("ErrorCreatingNestedEditor"), null, e.getStatus()); //$NON-NLS-1$
 	}
 }
 /**
@@ -83,7 +83,7 @@ void createPage1() {
 	GridData gd = new GridData(GridData.BEGINNING);
 	gd.horizontalSpan = 2;
 	fontButton.setLayoutData(gd);
-	fontButton.setText("Font");
+	fontButton.setText(MPEMessages.getString("ChangeFont")); //$NON-NLS-1$
 
 	fontButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent event) {
@@ -92,7 +92,7 @@ void createPage1() {
 	});
 
 	int index = addPage(composite);
-	setPageText(index, "Properties");
+	setPageText(index, MPEMessages.getString("Properties")); //$NON-NLS-1$
 }
 /**
  * Creates page 2 of the multi-page editor,
@@ -106,7 +106,7 @@ void createPage2() {
 	text.setEditable(false);
 	
 	int index = addPage(composite);
-	setPageText(index, "Preview");
+	setPageText(index, MPEMessages.getString("Preview")); //$NON-NLS-1$
 }
 /**
  * Creates the pages of the multi-page editor.
@@ -146,7 +146,7 @@ public void gotoMarker(IMarker marker) {
  */
 public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
 	if (!(editorInput instanceof IFileEditorInput)) 
-		throw new PartInitException("Invalid Input: Must be IFileEditorInput");
+		throw new PartInitException(MPEMessages.getString("InvalidInput")); //$NON-NLS-1$
 	super.init(site, editorInput);
 }
 /* (non-Javadoc)
@@ -185,7 +185,7 @@ void sortWords() {
 
 	String editorText = editor.getDocumentProvider().getDocument(editor.getEditorInput()).get();
 
-	StringTokenizer tokenizer = new StringTokenizer(editorText, " \t\n\r\f!@#$%^&*()-_=+`~[]{};:'\",.<>/?|\\");
+	StringTokenizer tokenizer = new StringTokenizer(editorText, " \t\n\r\f!@#$%^&*()-_=+`~[]{};:'\",.<>/?|\\"); //$NON-NLS-1$
 	ArrayList editorWords = new ArrayList();
 	while (tokenizer.hasMoreTokens()) {
 		editorWords.add(tokenizer.nextToken());
@@ -195,7 +195,7 @@ void sortWords() {
 	StringWriter displayText = new StringWriter();
 	for (int i = 0; i < editorWords.size(); i++) {
 		displayText.write(((String) editorWords.get(i)));
-		displayText.write("\n");
+		displayText.write("\n"); //$NON-NLS-1$
 	}
 	text.setText(displayText.toString());
 }

@@ -5,7 +5,7 @@
 <!-- implementation of a multi-page editor.                                  -->
 <!-- ======================================================================= -->
 <plugin
-   name = "MultiPage Editor Example"
+   name = "%Plugin.name"
    id = "org.eclipse.ui.examples.editor"
    version = "0.9"
    provider-name = "Object Technology International, Inc.">
@@ -25,7 +25,7 @@
       point = "org.eclipse.ui.editors">
 	<editor
 		id = "org.eclipse.ui.examples.multipageeditor.MultiPageEditorExample"
-		name="Multi-Page Editor Example"
+		name="%Editors.MultiPageEditorExample"
 		icon="icons/copy.gif"     	  
 		extensions="mpe"
 		class="org.eclipse.ui.examples.multipageeditor.MultiPageEditorExample"
@@ -33,9 +33,3 @@
 	</editor>
    </extension>
 </plugin>
-
-
-
-
-
-
