@@ -100,7 +100,10 @@ private String checkValidLocation() {
 		return null;
 	else {
 		String locationFieldContents = locationPathField.getText();
-		if (!locationFieldContents.equals("")) {//$NON-NLS-1$
+		if (locationFieldContents.equals("")) {//$NON-NLS-1$
+			return(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
+		}
+		else{
 			IPath path = new Path("");//$NON-NLS-1$
 			if (!path.isValidPath(locationFieldContents)) {
 				return INVALID_LOCATION_MESSAGE;
