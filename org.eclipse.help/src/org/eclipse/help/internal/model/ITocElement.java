@@ -29,7 +29,7 @@ public interface ITocElement extends IToc, INavigationElement{
 	 * without looking in children TOCs
 	 * <br> If the TOC contains multiple 
 	 * topics with the same href only of them (arbitrarily chosen) will 
-	 * be returned.
+	 * be returned.  TOC Descritpion topic is ignored.
 	 * @param href the topic's URL.
 	 * @return ITopic or null
 	 */
