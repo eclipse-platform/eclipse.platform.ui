@@ -165,7 +165,7 @@ public class DumpContentsView extends SpyView {
 	private class LoadFileAction extends Action {
 		/** Sets action text and tool tip. */
 		LoadFileAction() {
-			this.setText("Load file..."); //$NON-NLS-1$
+			this.setText("Load File..."); //$NON-NLS-1$
 			this.setToolTipText("Load file..."); //$NON-NLS-1$
 		}
 

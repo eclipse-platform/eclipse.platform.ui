@@ -31,7 +31,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Metadata Perspective"
+            name="Metadata"
             icon="icons/spy.gif"
             class="org.eclipse.core.tools.metadata.MetadataPerspective"
             id="org.eclipse.core.tools.metadata.MetadataPerspective">

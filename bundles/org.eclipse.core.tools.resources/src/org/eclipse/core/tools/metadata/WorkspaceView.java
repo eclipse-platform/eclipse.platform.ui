@@ -46,7 +46,7 @@ public class WorkspaceView extends SpyView {
 		 * Constructs a DumpFileAction, initializing text and tool tip text.
 		 */
 		DumpFileAction() {
-			this.setText("Dump selected file"); //$NON-NLS-1$
+			this.setText("Dump Selected File"); //$NON-NLS-1$
 			this.setToolTipText("Dump selected file"); //$NON-NLS-1$
 		}
 
@@ -86,7 +86,7 @@ public class WorkspaceView extends SpyView {
 		 * Initializes action's text and tool tip text.
 		 */
 		SelectWorkspaceAction() {
-			this.setText("Select workspace..."); //$NON-NLS-1$
+			this.setText("Select Workspace..."); //$NON-NLS-1$
 			this.setToolTipText("Select workspace..."); //$NON-NLS-1$
 		}
 
