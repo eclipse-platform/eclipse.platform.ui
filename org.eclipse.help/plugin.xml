@@ -60,7 +60,7 @@
    <!--                           context help descriptions and links              -->
    <!-- Sample usage:                                                              -->
    <!--   <extension point="org.eclipse.help.contexts">                        -->
-   <!--       	<contexts name="xyzContexts.xml"/>                                 -->
+   <!--       	<contexts file="xyzContexts.xml"/>                                 -->
    <!--   </extension>                                                             -->
    <!-- ========================================================================== -->
    <extension-point id="contexts" name="%contexts_extention_point_name"/>
