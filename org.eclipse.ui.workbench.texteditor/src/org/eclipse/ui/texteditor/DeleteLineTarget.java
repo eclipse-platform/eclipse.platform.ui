@@ -11,8 +11,13 @@
 
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.FocusEvent;
@@ -31,6 +36,8 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
@@ -44,7 +51,7 @@ class DeleteLineTarget {
 	/**
 	 * A clipboard which concatenates subsequent delete line actions.
 	 */
-	private class DeleteLineClipboard implements MouseListener, ModifyListener, ISelectionChangedListener, ITextListener, FocusListener {
+	private static class DeleteLineClipboard implements MouseListener, ModifyListener, ISelectionChangedListener, ITextListener, FocusListener {
 
 		/** The text viewer. */
 		private final ITextViewer fViewer;
@@ -317,7 +324,21 @@ class DeleteLineTarget {
 		if (copyToClipboard) {
 
 			fClipboard.checkState();
-			fClipboard.append(document.get(offset, length));
+			try {
+				fClipboard.append(document.get(offset, length));
+			} catch (SWTError e) {
+				if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+					throw e;
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59459
+				// don't delete if copy to clipboard fails, rather log & abort
+				
+				// log
+				Status status= new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, e.code, EditorMessages.getString("Editor.error.clipboard.copy.failed.message"), e); //$NON-NLS-1$
+				TextEditorPlugin.getDefault().getLog().log(status);
+				
+				fClipboard.uninstall();
+				return; // don't delete
+			}
 	
 			fClipboard.setDeleting(true);
 			document.replace(offset, length, null);

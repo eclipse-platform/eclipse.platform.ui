@@ -17,8 +17,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.VerifyEvent;
@@ -1390,7 +1392,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			
 			Transfer[] dataTypes= new Transfer[] { TextTransfer.getInstance() };
 			Object[] data= new Object[] { document.get(offset, length) };
-			clipboard.setContents(data, dataTypes);
+			try {
+				clipboard.setContents(data, dataTypes);
+			} catch (SWTError e) {
+				if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+					throw e;
+				// TODO see https://bugs.eclipse.org/bugs/show_bug.cgi?id=59459
+				// we should either log and/or inform the user
+				// silently fail for now.
+				return;
+			}
 				
 			if (delete)
 				deleteTextRange(offset, length, textWidget);
