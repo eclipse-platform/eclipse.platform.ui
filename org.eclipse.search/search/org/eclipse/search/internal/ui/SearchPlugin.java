@@ -137,7 +137,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the search plugin's resource bundle.
 	 * 
-	 * @deprecated	Use a dedicated static resource bundle accessor class
+	 * @deprecated Use a dedicated static resource bundle accessor class
 	 */
 	public static String getResourceString(String key) {
 		return fgResourceBundle.getString(key);
@@ -145,7 +145,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	/**
 	 * Gets the Java UI resource bundle
 	 * 
-	 * @deprecated	Use a dedicated static resource bundle accessor class
+	 * @deprecated Use a dedicated static resource bundle accessor class
 	 */
 	public static ResourceBundle getResourceBundle() {
 		return fgResourceBundle;
