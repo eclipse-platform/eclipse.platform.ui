@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
- * Berlin, Duesseldorf, Frankfurt (Germany).
+ * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,7 +169,7 @@ public class XmlElement implements IAdaptable {
      * <P>
      * The default implementation returns just the same as the method <code>getName()</code>.
      * Override this method in your own subclass for special elements in order to provide a
-     * custome display name.
+     * custom display name.
      */
     public String getDisplayName() {
     	return getName();
