@@ -37,7 +37,7 @@ public class ShowActivitiesDialog extends Dialog {
 	 */
 	public ShowActivitiesDialog(Shell parentShell) {
 		super(parentShell);
-		setShellStyle(SWT.RESIZE | SWT.MIN | SWT.MAX);
+		setShellStyle(SWT.RESIZE | SWT.MIN | SWT.MAX | SWT.APPLICATION_MODAL);
 		readConfiguration();
 	}
 	

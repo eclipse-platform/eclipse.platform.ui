@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -41,7 +42,7 @@ public class NewExtensionLocationAction extends Action {
 		}
 		
 		DirectoryDialog dialog =
-			new DirectoryDialog(UpdateUI.getActiveWorkbenchShell());
+			new DirectoryDialog(UpdateUI.getActiveWorkbenchShell(), SWT.APPLICATION_MODAL);
 		dialog.setMessage(UpdateUI.getString("NewExtensionLocationAction.selectExtLocation")); //$NON-NLS-1$
 
 		String dir = dialog.open();
