@@ -242,7 +242,7 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String PREF_SWITCH_PERSPECTIVE_ON_SUSPEND = PLUGIN_ID + ".switch_perspective_on_suspend"; //$NON-NLS-1$
+	public static final String PREF_SWITCH_PERSPECTIVE_ON_SUSPEND= PLUGIN_ID + ".switch_perspective_on_suspend"; //$NON-NLS-1$
 	
 	/**
 	 * String preference controlling whether the debugger waits for a currently
@@ -254,6 +254,16 @@ public interface IDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String PREF_WAIT_FOR_BUILD= PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference controlling whether breakpoints are
+	 * automatically skipped during a Run To Line operation.
+	 * If true, breakpoints will be skipped automatically
+	 * during Run To Line. If false, they will be hit.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE= PLUGIN_ID + ".skip_breakpoints_during_run_to_line"; //$NON-NLS-1$
 	
 	// Debug views
 	
