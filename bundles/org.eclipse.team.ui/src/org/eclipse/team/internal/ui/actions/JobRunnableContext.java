@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * This runnable context executes it's operation in the context of a background job.
@@ -76,11 +77,11 @@ public final class JobRunnableContext implements ITeamRunnableContext {
 	
 	private void configureJob(Job job) {
 		if(keep)
-			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.TRUE); //$NON-NLS-1$ //$NON-NLS-2$
+			job.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE); 
 		if(gotoAction != null)
-			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), gotoAction); //$NON-NLS-1$ //$NON-NLS-2$
+			job.setProperty(IProgressConstants.ACTION_PROPERTY, gotoAction);
 		if(icon != null)
-			job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), icon);  //$NON-NLS-1$ //$NON-NLS-2$
+			job.setProperty(IProgressConstants.ICON_PROPERTY, icon);
 	}
 
 	/* (non-Javadoc)

@@ -13,28 +13,15 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.Policy;
@@ -44,6 +31,7 @@ import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -266,8 +254,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 				NonblockingProgressMonitor wrappedMonitor = new NonblockingProgressMonitor(monitor, this);
 				subscriber.refresh(roots, IResource.DEPTH_INFINITE, wrappedMonitor);
 				// Prepare the results
-				setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.valueOf(! isJobModal()));
-				setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keepone"), Boolean.valueOf(! isJobModal()));
+				setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.valueOf(! isJobModal()));
+				setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(! isJobModal()));
 				event.setStatus(calculateStatus(event));
 			} catch(OperationCanceledException e2) {
 				if (monitor.isCanceled()) {
@@ -381,8 +369,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		group.beginTask(taskName, 100);
 		setProgressGroup(group, 80);
 		getCollector().setProgressGroup(group, 20);
-		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), participant.getImageDescriptor());
-		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), actionWrapper);
+		setProperty(IProgressConstants.ICON_PROPERTY, participant.getImageDescriptor());
+		setProperty(IProgressConstants.ACTION_PROPERTY, actionWrapper);
 		// Listener delagate
 		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
 			public void refreshStarted(IRefreshEvent event) {
