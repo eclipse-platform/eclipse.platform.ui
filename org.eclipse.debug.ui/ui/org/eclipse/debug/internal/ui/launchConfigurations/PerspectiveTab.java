@@ -74,7 +74,7 @@ public class PerspectiveTab implements ILaunchConfigurationTab {
 		GridData gd;
 		
 		Label label = new Label(comp, SWT.HORIZONTAL | SWT.LEFT);
-		label.setText("Open/switch perspective when lanuched:");
+		label.setText("Open/switch perspective when launched:");
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 3;

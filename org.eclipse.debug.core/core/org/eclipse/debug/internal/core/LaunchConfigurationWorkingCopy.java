@@ -66,7 +66,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private IContainer fContainer;
 
 	/**
-	 * Constructs a working copy of the specified lanuch 
+	 * Constructs a working copy of the specified launch 
 	 * configuration.
 	 * 
 	 * @param original launch configuration to make
@@ -82,7 +82,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	}
 	
 	/**
-	 * Constructs a copy of the specified lanuch 
+	 * Constructs a copy of the specified launch 
 	 * configuration, with the given (new) name.
 	 * 
 	 * @param original launch configuration to make

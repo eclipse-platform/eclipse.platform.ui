@@ -394,7 +394,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			buff.append("]"); //$NON-NLS-1$
 			return buff.toString();
 		} else {
-			// new lanuch configuration
+			// new launch configuration
 			ILaunchConfiguration config = launch.getLaunchConfiguration();
 			StringBuffer buff= new StringBuffer(config.getName());
 			buff.append(" ["); //$NON-NLS-1$
@@ -410,7 +410,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	}
 	
 	/**
-	 * @see IDebugModelPresentation
+	 * @see IDebugModelPresentation#setAttribute(String, Object)
 	 */
 	public void setAttribute(String id, Object value) {
 		if (value == null) {

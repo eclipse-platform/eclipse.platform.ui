@@ -79,7 +79,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		
 		// listen to selection changes in the debug view
 		DebugSelectionManager.getDefault().addSelectionChangedListener(this,getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
-		// listen to lanuches
+		// listen to launches
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
 		setEventHandler(new ConsoleViewEventHandler(this, cv));

@@ -119,7 +119,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	
 	/**
 	 * The text widget displaying the name of the
-	 * lanuch configuration under edit
+	 * launch configuration under edit
 	 */
 	private Text fNameText;
 	
@@ -809,7 +809,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 					// all configs in workspace of a specific type
 					return getLaunchManager().getLaunchConfigurations(type);
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
+					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e.getStatus());
 				}
 			} else {
 				return getLaunchManager().getLaunchConfigurationTypes();
@@ -828,7 +828,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 				try {
 					return ((ILaunchConfiguration)element).getType();
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving lanuch configurations.", e.getStatus());
+					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e.getStatus());
 				}
 			} else if (element instanceof ILaunchConfigurationType) {
 				return ResourcesPlugin.getWorkspace().getRoot();
@@ -980,7 +980,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  	}
  	
  	/**
- 	 * Sets the 'lanuch' button.
+ 	 * Sets the 'launch' button.
  	 * 
  	 * @param button the 'launch' button.
  	 */	

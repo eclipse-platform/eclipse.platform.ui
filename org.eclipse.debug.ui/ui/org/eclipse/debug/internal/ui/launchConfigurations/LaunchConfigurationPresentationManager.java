@@ -77,7 +77,7 @@ public class LaunchConfigurationPresentationManager {
 	 * are returned in the order in which they should be
 	 * presented.
 	 * 
-	 * @param lanuchConfigurationType a launch configuration type
+	 * @param type a launch configuration type
 	 * @return the tab extentions to present a launch configuration of the
 	 *  specified type 
 	 */

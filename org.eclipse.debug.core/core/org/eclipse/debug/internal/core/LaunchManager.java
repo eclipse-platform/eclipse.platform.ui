@@ -83,7 +83,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	private HashMap fLaunchConfigurations = new HashMap(10);
 	
 	/**
-	 * Collection of all lanuch configurations in the workspace.
+	 * Collection of all launch configurations in the workspace.
 	 * <code>List</code> of <code>ILanuchConfiguratin</code>.
 	 */
 	private List fLaunchConfigurationIndex = new ArrayList(10);
@@ -348,7 +348,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				DebugCoreUtils.logError(e);
 			}
 		}
-		// persist project indicies of lanuch configs
+		// persist project indicies of launch configs
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (projects[i].isOpen()) {
@@ -366,7 +366,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 	
 	/**
-	 * Creates lanuch configuration types for each defined extension.
+	 * Creates launch configuration types for each defined extension.
 	 * 
 	 * @exception CoreException if an exception occurrs processing
 	 *  the extensions
@@ -773,7 +773,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}	
 	
 	/**
-	 * Traverses the delta looking for added/removed/changed lanuch
+	 * Traverses the delta looking for added/removed/changed launch
 	 * configuration files.
 	 * 
 	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)

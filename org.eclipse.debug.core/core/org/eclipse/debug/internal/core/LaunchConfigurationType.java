@@ -40,7 +40,7 @@ public class LaunchConfigurationType implements ILaunchConfigurationType {
 	private ILaunchConfigurationDelegate fDelegate;
 	
 	/**
-	 * Constructs a new lanuch configuration type on the
+	 * Constructs a new launch configuration type on the
 	 * given configuration element.
 	 * 
 	 * @param element configuration element

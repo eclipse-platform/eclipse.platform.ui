@@ -225,7 +225,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * Returns the launch manager
 	 * 
-	 * @return lanuch manager
+	 * @return launch manager
 	 */
 	protected LaunchManager getLaunchManager() {
 		return (LaunchManager)DebugPlugin.getDefault().getLaunchManager();

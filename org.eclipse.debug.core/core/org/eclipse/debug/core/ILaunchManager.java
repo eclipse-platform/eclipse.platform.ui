@@ -198,11 +198,11 @@ public interface ILaunchManager {
 	public ILaunchConfigurationType[] getLaunchConfigurationTypes();
 	
 	/**
-	 * Returns the lanuch configuration type extension with the specified
+	 * Returns the launch configuration type extension with the specified
 	 * id, or <code>null</code> if it does not exist.
 	 * 
 	 * @param id unique identifier for a launch configuration type extension
-	 * @return the lanuch configuration type extension with the specified
+	 * @return the launch configuration type extension with the specified
 	 * id, or <code>null</code> if it does not exist
 	 * @since 2.0
 	 */

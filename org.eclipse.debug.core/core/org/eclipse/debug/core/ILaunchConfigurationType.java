@@ -98,7 +98,7 @@ public interface ILaunchConfigurationType {
 	 * @param name name for the launch configuration
 	 * @return a new launch configuration instance of this type
 	 * @exception CoreException if an instance of this type
-	 *  of lanuch configuration could not be created for any
+	 *  of launch configuration could not be created for any
 	 *  reason
 	 */
 	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException;

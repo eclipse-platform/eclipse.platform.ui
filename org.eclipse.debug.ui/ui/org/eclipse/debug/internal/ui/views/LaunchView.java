@@ -78,7 +78,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		new String[] {IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};	
 	
 	/**
-	 * Creates a lanuch view and an instruction pointer marker for the view
+	 * Creates a launch view and an instruction pointer marker for the view
 	 */
 	public LaunchView() {
 		try {
@@ -170,11 +170,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 	
 	/**
-	 * Returns the first stack frame in the first suspened
-	 * thread of the given lanuch, or <code>null</code> if
+	 * Returns the first stack frame in the first suspended
+	 * thread of the given launch, or <code>null</code> if
 	 * none.
 	 * 
-	 * @param lanuch a launch in this view
+	 * @param launch a launch in this view
 	 * @return stack frame or <code>null</code>
 	 */
 	protected IStackFrame findFrame(ILaunch launch) {
