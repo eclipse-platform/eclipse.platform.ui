@@ -2396,7 +2396,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			extension.elementStateValidationChanged(input, false);
 		}
 		
-		fDefaultCaret= getSourceViewer().getTextWidget().getCaret();
+		if (fDefaultCaret == null)
+			fDefaultCaret= getSourceViewer().getTextWidget().getCaret();
+		
 		if (getInsertMode() == OVERWRITE)
 			fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
 		handleInsertModeChanged();
@@ -4339,6 +4341,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		InsertMode mode= getInsertMode();
 		
+		styledText.setCaret(null);
 		disposeNonDefaultCaret();
 		
 		if (INSERT == mode) {
