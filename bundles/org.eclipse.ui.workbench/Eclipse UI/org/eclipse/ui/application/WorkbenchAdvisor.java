@@ -622,7 +622,6 @@ public abstract class WorkbenchAdvisor {
      * @return the default input for a new workbench window page, or
      * <code>null</code> if none
      * 
-     * @deprecated since 3.1, override {@link WorkbenchWindowAdvisor#getDefaultPageInput()} instead
      * @see #createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer)
      */
     public IAdaptable getDefaultPageInput() {
