@@ -7,6 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -53,11 +54,13 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
 
 public class AddCustomDialog extends StatusDialog {
 	private ZipFileStructureProvider providerCache;
-	private ZipFileStructureProvider currentProvider;
+	private IImportStructureProvider currentProvider;
 	
 	//A boolean to indicate if the user has typed anything
 	private boolean entryChanged = false;
@@ -195,7 +198,7 @@ public class AddCustomDialog extends StatusDialog {
 		sourceContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 		Label groupLabel = new Label(sourceContainerGroup, SWT.NONE);
-		groupLabel.setText(AntPreferencesMessages.getString("AddCustomDialog.&Library__5")); //$NON-NLS-1$
+		groupLabel.setText(AntPreferencesMessages.getString("AddCustomDialog.&Location")); //$NON-NLS-1$
 		groupLabel.setFont(parent.getFont());
 
 		// source name entry field
@@ -269,20 +272,20 @@ public class AddCustomDialog extends StatusDialog {
 		StatusInfo status= new StatusInfo();
 		String name= nameField.getText().trim();
 		if (name.length() == 0) {
-			status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.A_name_must_be_provided_for_the_new_{0}_6"), new String[]{customLabel})); //$NON-NLS-1$
+			status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.name"), new String[]{customLabel})); //$NON-NLS-1$
 		} else {
 			Iterator names= existingNames.iterator();
 			while (names.hasNext()) {
 				String aName = (String) names.next();
 				if(aName.equals(name)) {
-					status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.A_{0}_with_the_name_{1}_already_exists_7"), new String[]{customLabel, name})); //$NON-NLS-1$
+					status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.exists"), new String[]{customLabel, name})); //$NON-NLS-1$
 					updateStatus(status);
 					return;
 				}
 			}
 		} 
 		if (selectionGroup.getListTableSelection().isEmpty()) {
-			status.setError(AntPreferencesMessages.getString("AddCustomDialog.A_class_file_must_be_selected_from_the_library_8")); //$NON-NLS-1$
+			status.setError(AntPreferencesMessages.getString("AddCustomDialog.mustSelect")); //$NON-NLS-1$
 		}
 		updateStatus(status);
 	}
@@ -366,17 +369,22 @@ public class AddCustomDialog extends StatusDialog {
 	*	currently defined then create and return it.
 	*/
 	protected MinimizedFileSystemElement getFileSystemTree() {
-
+		IImportStructureProvider provider= null;
+		MinimizedFileSystemElement element= null;
 		ZipFile sourceFile = getSpecifiedSourceFile();
 		if (sourceFile == null) {
-			//Clear out the provider as well
-			this.currentProvider = null;
-			return null;
+			File file= new File(sourceNameField.getText());
+			if (file.exists()) {
+				provider = FileSystemStructureProvider.INSTANCE;
+				element= selectFiles(file, provider);
+			} 
+		} else {
+			//zip file set as location
+			provider = getStructureProvider(sourceFile);
+			element= selectFiles(((ZipFileStructureProvider)provider).getRoot(), provider);
 		}
-
-		ZipFileStructureProvider provider = getStructureProvider(sourceFile);
 		this.currentProvider = provider;
-		return selectFiles(provider.getRoot(), provider);
+		return element;
 	}
 	
 	/**
@@ -384,7 +392,7 @@ public class AddCustomDialog extends StatusDialog {
 	 * structure provider.  If the user specifies files then this selection is
 	 * cached for later retrieval and is returned.
 	 */
-	protected MinimizedFileSystemElement selectFiles(final Object rootFileSystemObject, final ZipFileStructureProvider structureProvider) {
+	protected MinimizedFileSystemElement selectFiles(final Object rootFileSystemObject, final IImportStructureProvider structureProvider) {
 
 		final MinimizedFileSystemElement[] results = new MinimizedFileSystemElement[1];
 
@@ -402,7 +410,7 @@ public class AddCustomDialog extends StatusDialog {
 	 * Creates and returns a <code>MinimizedFileSystemElement</code> if the specified
 	 * file system object merits one.
 	 */
-	protected MinimizedFileSystemElement createRootElement(Object fileSystemObject, ZipFileStructureProvider provider) {
+	protected MinimizedFileSystemElement createRootElement(Object fileSystemObject, IImportStructureProvider provider) {
 		boolean isContainer = provider.isFolder(fileSystemObject);
 		String elementLabel = provider.getLabel(fileSystemObject);
 

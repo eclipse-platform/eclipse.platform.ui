@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 
 class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	private boolean populated = false;
@@ -35,7 +35,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 * @param parent the containing parent
 	 * @param isDirectory indicated if this could have children or not
 	 */
-	MinimizedFileSystemElement(String name, MinimizedFileSystemElement parent, boolean isDirectory) {
+	public MinimizedFileSystemElement(String name, MinimizedFileSystemElement parent, boolean isDirectory) {
 		this.name = name;
 		this.parent = parent;
 		this.isDirectory = isDirectory;
@@ -68,7 +68,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 *
 	 * @param child MinimizedFileSystemElement
 	 */
-	public void addChild(MinimizedFileSystemElement child) {
+	private void addChild(MinimizedFileSystemElement child) {
 		if (child.isDirectory()) {
 			if (folders == null) {
 				 folders = new ArrayList(1);
@@ -85,7 +85,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 * Returns a list of the files that are immediate children. Use the supplied provider
 	 * if it needs to be populated.
 	 */
-	public List getFiles(ZipFileStructureProvider provider) {
+	protected List getFiles(IImportStructureProvider provider) {
 		if (!populated) {
 			populate(provider);
 		}
@@ -100,7 +100,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 * Returns a list of the folders that are immediate children. Use the supplied provider
 	 * if it needs to be populated.
 	 */
-	public List getFolders(ZipFileStructureProvider provider) {
+	protected List getFolders(IImportStructureProvider provider) {
 		if (!populated) {
 			populate(provider);
 		}
@@ -109,7 +109,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 
 	}
 
-	public List getFolders() {
+	protected List getFolders() {
 		if (folders == null){
 			 return Collections.EMPTY_LIST;
 		}
@@ -118,20 +118,21 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	/**
 	 * Return whether or not population has happened for the receiver.
 	 */
-	boolean isPopulated() {
+	protected boolean isPopulated() {
 		return this.populated;
 	}
 	/**
 	 * Return whether or not population has not happened for the receiver.
 	 */
-	boolean notPopulated() {
+	protected boolean notPopulated() {
 		return !this.populated;
 	}
 	/**
-	 * Populate the files and folders of the receiver using the suppliec structure provider.
-	 * @param provider org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider
+	 * Populate the files and folders of the receiver using the supplied
+	 * structure provider.
+	 * @param provider org.eclipse.ui.wizards.datatransfer.IImportStructureProvider
 	 */
-	private void populate(ZipFileStructureProvider provider) {
+	private void populate(IImportStructureProvider provider) {
 
 		List children = provider.getChildren(fileSystemObject);
 		if (children == null) {
@@ -158,7 +159,7 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 *
 	 *	@return the file system object
 	 */
-	public Object getFileSystemObject() {
+	protected Object getFileSystemObject() {
 		return fileSystemObject;
 	}
 	
@@ -167,13 +168,13 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	 *
 	 *	@param value the file system object
 	 */
-	public void setFileSystemObject(Object value) {
+	protected void setFileSystemObject(Object value) {
 		fileSystemObject = value;
 	}
 	/**
 	 * Set whether or not population has happened for the receiver to true.
 	 */
-	void setPopulated() {
+	protected void setPopulated() {
 		this.populated = true;
 	}
 	/**
