@@ -1,0 +1,65 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>README Debug Action Groups</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Debug Action Groups</h1>
+
+<p><b><i>Identifier: </i></b>org.eclipse.debug.ui.debugActionGroups </p>
+
+<p><b><i>Description: </i></b>This extension point provides a mechanism to remove action
+groups from the toolbars and context menus of views that return an instance of
+IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class).</p>
+
+<p><b><i>Configuration Markup:</i></b> </p>
+
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT debugActionGroup (action)*</tt>&gt;
+<tt>&nbsp;&nbsp; &lt;!ATTLIST debugActionGroup</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; visible&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #IMPLIED</tt>&gt;
+</pre>
+
+<ul>
+ <li><code>id</code> specifies a unique identifier for this debug action group.</li>
+ <li><code>name</code> a translatable name that will be used for the debug action group label.</li>
+ <li><code>visible</code> an optional attribute indicating the visibility of the group.  If omitted the group is set to be visible</li>
+</ul>
+
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT action</tt>&gt;
+<tt>&nbsp;&nbsp; &lt;!ATTLIST action</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
+</pre>
+
+<ul>
+ <li><code>id</code> the unique identifier of an action that will be added to the debug action group</li>
+
+<p><b><i>Examples:</i></b> </p>
+
+<p>The following is an example of a debug action group extension point.  In all 
+debug views (views that return an instance of
+IDebugViewAdapter when queried with #getAdapter(IDebugViewAdapater.class)), these actions listed not be visible. </p>
+
+<pre>
+&lt;extension point = "org.eclipse.debug.ui.debugActionGroups"&gt;
+	&lt;debugActionGroup
+		id = "org.eclipse.jdt.debug.ui.javaDebugActionGroup"
+	   	visible="false"
+	   	name="Java Debug"&gt;
+	   	&lt;action id="org.eclipse.jdt.ui.actions.RunToLineToolbar"/&gt;
+	   	&lt;action id="org.eclipse.jdt.ui.breakpointViewActions.ShowQualified"/&gt;
+	&lt;/debugActionGroup&gt;
+&lt;/extension&gt;
+</pre>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001. All Rights Reserved."
+border="0" width="195" height="12"></a></p>
+</body>
+</html>
