@@ -1047,9 +1047,12 @@ public void snapshotIfNeeded() throws CoreException {
 	if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
 		try {
 			ResourceStats.startSnapshot();
-			if (ResourcesPlugin.getPlugin().isDebugging())
-				System.out.println("Snapshotting...");
+			long begin = System.currentTimeMillis();
 			save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
+			if (ResourcesPlugin.getPlugin().isDebugging()) {
+				long end = System.currentTimeMillis();
+				System.out.println("Snapshot took: " + (end - begin) + " milliseconds.");
+			}
 		} finally {
 			operationCount = 0;
 			snapshotRequested = false;
