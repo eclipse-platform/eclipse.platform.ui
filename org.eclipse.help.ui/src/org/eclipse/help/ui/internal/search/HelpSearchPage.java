@@ -6,14 +6,15 @@ package org.eclipse.help.ui.internal.search;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.IAppServer;
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
-import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.ui.browser.IBrowser;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -23,7 +24,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * HelpSearchPage
  */
-public class HelpSearchPage extends DialogPage implements ISearchPage {
+public class HelpSearchPage extends DialogPage implements ISearchPage
+{
 	private static final int ENTRY_FIELD_LENGTH = 256;
 	private static final int ENTRY_FIELD_ROW_COUNT = 1;
 	private Combo patternCombo = null;
@@ -39,11 +41,13 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	/**
 	 * Search Page
 	 */
-	public HelpSearchPage() {
+	public HelpSearchPage()
+	{
 		super();
 		searchQueryData = new SearchQueryData();
 	}
-	public void createControl(Composite parent) {
+	public void createControl(Composite parent)
+	{
 		Composite control = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -65,8 +69,10 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		patternCombo.setLayoutData(gd);
 		// Not done here to prevent page from resizing
 		// fPattern.setItems(getPreviousSearchPatterns());
-		patternCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+		patternCombo.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
 				if (patternCombo.getSelectionIndex() < 0)
 					return;
 				int index =
@@ -78,8 +84,10 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 				//searchOperation.getQueryData().getExcludedCategories());
 			}
 		});
-		patternCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		patternCombo.addModifyListener(new ModifyListener()
+		{
+			public void modifyText(ModifyEvent e)
+			{
 				scontainer.setPerformActionEnabled(patternCombo.getText().length() > 0);
 			}
 		});
@@ -112,7 +120,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	/**
 	 * @see ISearchPage#performAction()
 	 */
-	public boolean performAction() {
+	public boolean performAction()
+	{
 		searchQueryData.setExpression(patternCombo.getText());
 		searchQueryData.setFieldsSearch(false
 		/*headingsButton.getSelection()*/
@@ -126,46 +135,87 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		);
 		if (!previousSearchQueryData.contains(searchQueryData))
 			previousSearchQueryData.add(searchQueryData);
-		IRunnableContext context = null;
+		ProgressMonitorDialog pmd = null;
 		scontainer.getRunnableContext();
 		Shell shell = patternCombo.getShell();
 
-				try {
-					//Help.displayHelp(topicsURL);
-					IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
-					if (appServer == null)
-						return true; // may want to display an error message
-						
-					String url = 
-						"http://"
-							+ appServer.getHost()
-							+ ":"
-							+ appServer.getPort()
-							+ "/help?tab=search&query="+URLCoder.encode(searchQueryData.getExpression());
-					IBrowser browser=WorkbenchHelpPlugin.getDefault().getHelpBrowser();
-					browser.displayURL(url);
-				} catch (Exception e) {
+		if (pmd == null)
+			pmd = new ProgressMonitorDialog(shell);
+		try
+		{
+			//context.run(true, true, searchOperation);
+			// NOTE: For now, we directly ask the Search Manager to index.
+			// This should be looked at sometimes and maybe changed.
+			pmd.run(true, true, new IRunnableWithProgress()
+			{
+				public void run(IProgressMonitor pm)
+					throws InvocationTargetException, InterruptedException
+				{
+					try
+					{
+						if (HelpSystem
+							.getSearchManager()
+							.isIndexingNeeded(searchQueryData.getLocale()))
+							HelpSystem.getSearchManager().updateIndex(pm, searchQueryData.getLocale());
+					}
+					catch (Exception e)
+					{
+						throw new InterruptedException();
+					}
 				}
+			});
+		}
+		catch (InvocationTargetException ex)
+		{
+			return false;
+		}
+		catch (InterruptedException e)
+		{
+			return false;
+		}
+		try
+		{
+			//Help.displayHelp(topicsURL);
+			IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
+			if (appServer == null)
+				return true; // may want to display an error message
 
+			String url =
+				"http://"
+					+ appServer.getHost()
+					+ ":"
+					+ appServer.getPort()
+					+ "/help?tab=search&query="
+					+ URLCoder.encode(searchQueryData.getExpression());
+			IBrowser browser = WorkbenchHelpPlugin.getDefault().getHelpBrowser();
+			browser.displayURL(url);
+		}
+		catch (Exception e)
+		{
+		}
 
 		return true;
 	}
-	public void setContainer(ISearchPageContainer container) {
+	public void setContainer(ISearchPageContainer container)
+	{
 		scontainer = container;
 	}
 	/*
 	 * Implements method from IDialogPage
 	 */
-	public void setVisible(boolean visible) {
-		if (visible && patternCombo != null) {
-			if (firstTime) {
+	public void setVisible(boolean visible)
+	{
+		if (visible && patternCombo != null)
+		{
+			if (firstTime)
+			{
 				firstTime = false;
 				// Set item and text here to prevent page from resizing
 				String[] patterns = new String[previousSearchQueryData.size()];
-				for (int i = 0; i < previousSearchQueryData.size(); i++) {
+				for (int i = 0; i < previousSearchQueryData.size(); i++)
+				{
 					patterns[previousSearchQueryData.size() - 1 - i] =
-						((SearchQueryData) previousSearchQueryData.get(i))
-							.getExpression();
+						((SearchQueryData) previousSearchQueryData.get(i)).getExpression();
 				}
 				patternCombo.setItems(patterns);
 				//initializePatternControl();
