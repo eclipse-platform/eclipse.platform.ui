@@ -1250,10 +1250,12 @@ protected void updateChildren(Widget widget, Object parent, Object[] elementChil
 		if (item.getData() == null) {
 			Object newElement = elementChildren[i];
 			associate(newElement, item);
-			// restore expanded state for items that changed position
-			setExpanded(item, expanded.contains(newElement));
 			updatePlus(item, newElement);
 			updateItem(item, newElement);
+			// Restore expanded state for items that changed position.
+			// Make sure setExpanded is called after updatePlus, since
+			// setExpanded(false) fails if item has no children.
+			setExpanded(item, expanded.contains(newElement));
 		}
 	}
 	
