@@ -304,21 +304,14 @@ public class DetailsForm extends PropertyWebForm {
 		glayout.verticalSpacing = 0;
 
 		providerLabel =
-			createProperty(
-				properties,
-				UpdateUI.getString(KEY_PROVIDER));
+			createProperty(properties, UpdateUI.getString(KEY_PROVIDER));
 		versionLabel =
 			createProperty(properties, UpdateUI.getString(KEY_VERSION));
 		installedVersionLabel =
-			createProperty(
-				properties,
-				UpdateUI.getString(KEY_IVERSION));
-		sizeLabel =
-			createProperty(properties, UpdateUI.getString(KEY_SIZE));
+			createProperty(properties, UpdateUI.getString(KEY_IVERSION));
+		sizeLabel = createProperty(properties, UpdateUI.getString(KEY_SIZE));
 		estimatedTime =
-			createProperty(
-				properties,
-				UpdateUI.getString(KEY_ESTIMATE));
+			createProperty(properties, UpdateUI.getString(KEY_ESTIMATE));
 		supportedPlatformsGroup = new ReflowGroup() {
 			public void fillExpansion(
 				Composite expansion,
@@ -326,26 +319,14 @@ public class DetailsForm extends PropertyWebForm {
 				GridLayout layout = new GridLayout();
 				expansion.setLayout(layout);
 				layout.marginWidth = 0;
-				osLabel =
-					createProperty(
-						expansion,
-						UpdateUI.getString(KEY_OS));
-				wsLabel =
-					createProperty(
-						expansion,
-						UpdateUI.getString(KEY_WS));
-				nlLabel =
-					createProperty(
-						expansion,
-						UpdateUI.getString(KEY_NL));
+				osLabel = createProperty(expansion, UpdateUI.getString(KEY_OS));
+				wsLabel = createProperty(expansion, UpdateUI.getString(KEY_WS));
+				nlLabel = createProperty(expansion, UpdateUI.getString(KEY_NL));
 				archLabel =
-					createProperty(
-						expansion,
-						UpdateUI.getString(KEY_ARCH));
+					createProperty(expansion, UpdateUI.getString(KEY_ARCH));
 			}
 		};
-		supportedPlatformsGroup.setText(
-			UpdateUI.getString(KEY_PLATFORMS));
+		supportedPlatformsGroup.setText(UpdateUI.getString(KEY_PLATFORMS));
 		new Label(properties, SWT.NULL);
 		supportedPlatformsGroup.createControl(properties, factory);
 		setFocusControl(supportedPlatformsGroup.getControl());
@@ -356,8 +337,7 @@ public class DetailsForm extends PropertyWebForm {
 		//td.valign = TableData.MIDDLE;
 		imageLabel.setLayoutData(td);
 
-		Label label =
-			createHeading(container, UpdateUI.getString(KEY_DESC));
+		Label label = createHeading(container, UpdateUI.getString(KEY_DESC));
 		td = new TableData();
 		td.colspan = 2;
 		label.setLayoutData(td);
@@ -427,8 +407,7 @@ public class DetailsForm extends PropertyWebForm {
 		td.align = TableData.FILL;
 		//td.grabHorizontal = true;
 		batch.setLayoutData(td);
-		groupUpdatesLabel =
-			createHeading(batch, UpdateUI.getString(KEY_BATCH));
+		groupUpdatesLabel = createHeading(batch, UpdateUI.getString(KEY_BATCH));
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		groupUpdatesLabel.setLayoutData(gd);
@@ -595,11 +574,12 @@ public class DetailsForm extends PropertyWebForm {
 					pattern,
 					new String[] { hours, minutes });
 		} else {
-			estimateFormat =
-				UpdateUI.getString(KEY_UNKNOWN_ESTIMATE_VALUE);
+			estimateFormat = UpdateUI.getString(KEY_UNKNOWN_ESTIMATE_VALUE);
 		}
 		estimatedTime.setText(estimateFormat);
-		if (feature.getDescription() != null)
+
+		if (feature.getDescription() != null
+			&& feature.getDescription().getAnnotation() != null)
 			descriptionText.setText(feature.getDescription().getAnnotation());
 		else
 			descriptionText.setText("");
@@ -830,14 +810,11 @@ public class DetailsForm extends PropertyWebForm {
 		if (currentAdapter instanceof IConfiguredSiteContext) {
 			boolean configured = isConfigured();
 			if (configured) {
-				doButton.setText(
-					UpdateUI.getString(KEY_DO_UNCONFIGURE));
-				addButton.setText(
-					UpdateUI.getString(KEY_BATCH_UNCONFIGURE));
+				doButton.setText(UpdateUI.getString(KEY_DO_UNCONFIGURE));
+				addButton.setText(UpdateUI.getString(KEY_BATCH_UNCONFIGURE));
 			} else {
 				doButton.setText(UpdateUI.getString(KEY_DO_CONFIGURE));
-				addButton.setText(
-					UpdateUI.getString(KEY_BATCH_CONFIGURE));
+				addButton.setText(UpdateUI.getString(KEY_BATCH_CONFIGURE));
 			}
 		} else if (update && !alreadyInstalled) {
 			doButton.setText(UpdateUI.getString(KEY_DO_UPDATE));
