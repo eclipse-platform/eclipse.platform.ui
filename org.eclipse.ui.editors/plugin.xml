@@ -87,7 +87,7 @@
             id="org.eclipse.ui.edit.text.encoding.custom">
       </command>
       <command
-            name="%openExternalFile.label"
+            name="%openExternalFile.name"
             category="org.eclipse.ui.category.file"
             description="%openExternalFile.description"
             id="org.eclipse.ui.edit.text.openExternalFile">
