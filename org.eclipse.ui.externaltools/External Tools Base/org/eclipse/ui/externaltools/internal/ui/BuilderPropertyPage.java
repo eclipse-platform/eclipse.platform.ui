@@ -29,11 +29,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -42,19 +40,20 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -81,11 +80,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Property page to add external tools in between builders.
  */
-public final class BuilderPropertyPage extends PropertyPage {
-	private static final int BUILDER_TABLE_WIDTH = 250;
-
-	private static final String IMG_BUILDER = "icons/full/obj16/builder.gif"; //$NON-NLS-1$;
-	private static final String IMG_INVALID_BUILD_TOOL = "icons/full/obj16/invalid_build_tool.gif"; //$NON-NLS-1$
+public final class BuilderPropertyPage extends PropertyPage implements ICheckStateListener {
 
 	private static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
 
@@ -97,68 +92,21 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
 	private static final String TAG_BUILDER_TYPE= "builderType"; //$NON-NLS-1$
 
-	private Table builderTable;
-	private Button upButton, downButton, newButton, copyButton, editButton, removeButton, enableButton, disableButton;
-	private List imagesToDispose = new ArrayList();
-	private Image builderImage, invalidBuildToolImage;
+	private Button upButton, downButton, newButton, copyButton, editButton, removeButton;
 	
 	private boolean userHasMadeChanges= false;
 	
 	private List configsToBeDeleted= null;
 	
-	private ILabelProvider labelProvider;
+	private CheckboxTableViewer viewer= null;
 	
-	private class BuilderPageLabelProvider extends LabelProvider {
-		
-		private IDebugModelPresentation debugModelPresentation;
-		
-		public BuilderPageLabelProvider() {
-			debugModelPresentation= DebugUITools.newDebugModelPresentation();			
-		}
-
-		public Image getImage(Object element) {
-			if (element instanceof ILaunchConfiguration) {
-				try {
-					ILaunchConfiguration config= (ILaunchConfiguration) element;
-					String disabledBuilderName= config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
-					if (disabledBuilderName != null) {
-						//really a disabled builder wrapped as a launch configuration
-						return builderImage;
-					}
-				} catch (CoreException e) {
-				}
-			}
-			return debugModelPresentation.getImage(element);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
-		public String getText(Object element) {
-			StringBuffer buffer= new StringBuffer(debugModelPresentation.getText(element));
-			if (element instanceof ILaunchConfiguration) {
-				try {
-					ILaunchConfiguration config= (ILaunchConfiguration) element;
-					String disabledBuilderName= config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
-					if (disabledBuilderName != null) {
-						buffer= new StringBuffer(getBuilderName(disabledBuilderName));
-					} 
-					if (!ExternalToolsUtil.isBuilderEnabled(config)) {
-						buffer.append(ExternalToolsUIMessages.getString("BuilderPropertyPage.38")); //$NON-NLS-1$
-					}
-				} catch (CoreException e) {
-				}
-			}
-			return buffer.toString();
-		}
-		
-	}
+	private ILabelProvider labelProvider= new BuilderLabelProvider();
 	
 	/**
 	 * Error configs are objects representing entries pointing to
 	 * invalid launch configurations
 	 */
-	private class ErrorConfig {
+	public class ErrorConfig {
 	}
 	
 	/**
@@ -198,14 +146,14 @@ public final class BuilderPropertyPage extends PropertyPage {
 			
 			Display.getDefault().asyncExec(new Runnable() {	
 				public void run() {
-					TableItem[] items= builderTable.getItems();
+					TableItem[] items= viewer.getTable().getItems();
 					for (int i = 0; i < items.length; i++) {
 						TableItem item = items[i];
 						Object data= item.getData();
 						if (data == oldConfig) {
 							// Found the movedFrom config in the tree. Replace it with the new config 
 							item.setData(configuration);
-							updateConfigItem(item, configuration);
+							viewer.update(configuration, null);
 							break;
 						}
 					}
@@ -239,95 +187,40 @@ public final class BuilderPropertyPage extends PropertyPage {
 			return;
 		}
 		//add build spec entries to the table
+		ICommand[] commands= null;
 		try {
-			ICommand[] commands = project.getDescription().getBuildSpec();
-			for (int i = 0; i < commands.length; i++) {
-				ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
-				if (config != null) {
-					if (!config.isWorkingCopy() && !config.exists()) {
-						IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.Exists"), new String[]{config.getLocation().toOSString()}), null); 	 //$NON-NLS-1$
-						ErrorDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
-										MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.External_Tool_Builder_{0}_Not_Added_2"), new String[]{config.getName()}),  //$NON-NLS-1$
-										status);
-						userHasMadeChanges= true;
-					} else {
-						addConfig(config, false);
-					}
-				} else {
-					String builderID = commands[i].getBuilderName();
-					if (builderID.equals(ExternalToolBuilder.ID) && commands[i].getArguments().get(LAUNCH_CONFIG_HANDLE) != null) {
-						// An invalid external tool entry.
-						addErrorConfig(new ErrorConfig(), -1, false);
-					} else {
-						addCommand(commands[i], -1, false);
-					}
-				}
-			}
+			commands = project.getDescription().getBuildSpec();
 		} catch (CoreException e) {
 			handleException(e);
 		}
-	}
-
-	/**
-	 * Adds a build command to the table viewer.
-	 * 
-	 * @param command the command to be added
-	 * @param position the insertion position, or -1 to add at the end
-	 * @param select whether to select the newly created item.
-	 */
-	private void addCommand(ICommand command, int position, boolean select) {
-		TableItem newItem;
-		if (position < 0) {
-			newItem = new TableItem(builderTable, SWT.NONE);
-		} else {
-			newItem = new TableItem(builderTable, SWT.NONE, position);
+		List enabledBuilders= new ArrayList();
+		for (int i = 0; i < commands.length; i++) {
+			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(commands[i].getArguments());
+			Object element= null;
+			if (config != null) {
+				if (!config.isWorkingCopy() && !config.exists()) {
+					IStatus status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.Exists"), new String[]{config.getLocation().toOSString()}), null); 	 //$NON-NLS-1$
+					ErrorDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
+									MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.External_Tool_Builder_{0}_Not_Added_2"), new String[]{config.getName()}),  //$NON-NLS-1$
+									status);
+					userHasMadeChanges= true;
+				} else {
+					element= config;
+				}
+			} else {
+				String builderID = commands[i].getBuilderName();
+				if (builderID.equals(ExternalToolBuilder.ID) && commands[i].getArguments().get(LAUNCH_CONFIG_HANDLE) != null) {
+					// An invalid external tool entry.
+					element= new ErrorConfig();
+				} else {
+					element= commands[i];
+				}
+			}
+			if (element != null) {
+				viewer.add(element);
+				viewer.setChecked(element, isEnabled(element));
+			}
 		}
-		newItem.setData(command);
-		updateCommandItem(newItem, command);
-		if (select) {
-			builderTable.setSelection(position);
-		}
-	}
-	
-	/**
-	 * Adds the given erroneous configuration entry to the table
-	 * and selects it if <code>select</code> is <code>true</code>.
-	 */
-	private void addErrorConfig(ErrorConfig config, int position, boolean select) {
-		TableItem newItem;
-		if (position < 0) {
-			newItem = new TableItem(builderTable, SWT.NONE);
-		} else {
-			newItem = new TableItem(builderTable, SWT.NONE, position);
-		}
-		newItem.setData(config);
-		newItem.setText(ExternalToolsUIMessages.getString("BuilderPropertyPage.invalidBuildTool")); //$NON-NLS-1$
-		newItem.setImage(invalidBuildToolImage);
-		if (select) {
-			builderTable.setSelection(position);
-		}
-	}
-
-	/**
-	 * Adds the given launch configuration to the table and selects it if
-	 * <code>select</code> is <code>true</code>.
-	 */
-	private void addConfig(ILaunchConfiguration config, boolean select) {
-		TableItem newItem = new TableItem(builderTable, SWT.NONE);
-		newItem.setData(config);
-		updateConfigItem(newItem, config);
-		if (select) {
-			builderTable.setSelection(builderTable.getItemCount());
-		}
-	}
-
-	private void updateConfigItem(TableItem item, ILaunchConfiguration config) {
-		item.setText(labelProvider.getText(config));
-		Image configImage = labelProvider.getImage(config);
-		if (configImage == null) {
-			configImage= builderImage;
-		}
-		item.setImage(configImage);
 	}
 	
 	/**
@@ -391,13 +284,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE);
 		
 		Font font = parent.getFont();
-		
-		labelProvider = new BuilderPageLabelProvider();
-		builderImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_BUILDER).createImage();
-		invalidBuildToolImage = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_INVALID_BUILD_TOOL).createImage();
-
-		imagesToDispose.add(builderImage);
-		imagesToDispose.add(invalidBuildToolImage);
 
 		Composite topLevel = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -419,11 +305,12 @@ public final class BuilderPropertyPage extends PropertyPage {
 		layout.numColumns = 2;
 		tableAndButtons.setLayout(layout);
 
-		// table of builders and tools		
-		builderTable = new Table(tableAndButtons, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = BUILDER_TABLE_WIDTH;
-		builderTable.setLayoutData(data);
+		// table of builders and tools
+		viewer= CheckboxTableViewer.newCheckList(tableAndButtons, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		viewer.setLabelProvider(labelProvider);
+		viewer.addCheckStateListener(this);
+		Table builderTable= viewer.getTable();
+		builderTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 		builderTable.setFont(font);
 		builderTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -449,8 +336,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 		copyButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.&Copy..._3")); //$NON-NLS-1$
 		editButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
 		removeButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
-		enableButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.36")); //$NON-NLS-1$
-		disableButton= createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.37")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
 		upButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
 		downButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
@@ -462,18 +347,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 		addBuildersToTable();
 
 		return topLevel;
-	}
-
-	/**
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		for (Iterator i = imagesToDispose.iterator(); i.hasNext();) {
-			Image image = (Image) i.next();
-			image.dispose();
-		}
-		imagesToDispose.clear();
 	}
 	
 	/**
@@ -521,60 +394,55 @@ public final class BuilderPropertyPage extends PropertyPage {
 			moveSelectionUp();
 		} else if (button == downButton) {
 			moveSelectionDown();
-		} else if (button == enableButton) {
-			handleToggleEnabledButtonPressed(true);
-		} else if (button == disableButton) {
-			handleToggleEnabledButtonPressed(false);
 		}
 		handleTableSelectionChanged();
-		builderTable.setFocus();
+		viewer.getTable().setFocus();
 	}
 
-	/**
-	 * A button which toggles the builder enabled state has been 
-	 * pressed. The selected builder should be enabled or disabled.
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 	 */
-	private void handleToggleEnabledButtonPressed(boolean enable) {
-		TableItem[] selection = builderTable.getSelection();
-		TableItem item;
-		for (int i = 0; i < selection.length; i++) {
-			item= selection[i];
-			Object data= item.getData();
-			if (data instanceof ILaunchConfiguration) {
-				enableLaunchConfiguration(item, (ILaunchConfiguration) data, enable);
-			} else if (data instanceof ICommand) {
-				enableCommand(item, (ICommand)data, enable);
-			}
+	public void checkStateChanged(CheckStateChangedEvent event) {
+		Object element= event.getElement();
+		if (element instanceof ILaunchConfiguration) {
+			enableLaunchConfiguration((ILaunchConfiguration) element, event.getChecked());
+		} else if (element instanceof ICommand) {
+			enableCommand((ICommand)element, event.getChecked());
 		}
 	}
-	
-	private void enableLaunchConfiguration(TableItem item, ILaunchConfiguration configuration, boolean enable) {
-		ILaunchConfigurationWorkingCopy workingCopy;
+
+	private void enableLaunchConfiguration(ILaunchConfiguration configuration, boolean enable) {
+		ILaunchConfigurationWorkingCopy workingCopy= null;
 		try {
 			if (configuration instanceof ILaunchConfigurationWorkingCopy) {
 				workingCopy = (ILaunchConfigurationWorkingCopy) configuration;
 			} else {
 				// Replace the config with a working copy
-				workingCopy = configuration.getWorkingCopy();
-				item.setData(workingCopy);
+				TableItem[] items= viewer.getTable().getItems();
+				for (int i = 0; i < items.length; i++) {
+					TableItem item = items[i];
+					if (item.getData() == configuration) {
+						workingCopy = configuration.getWorkingCopy();
+						item.setData(workingCopy);
+					}
+				}
 			}
-			workingCopy.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, enable);
+			if (workingCopy != null) {
+				workingCopy.setAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, enable);
+			}
 		} catch (CoreException e) {
 			return;
 		}
 		userHasMadeChanges= true;
-		updateConfigItem(item, workingCopy);
 	}
 	
-	private void enableCommand(TableItem item, ICommand command, boolean enable) {
+	private void enableCommand(ICommand command, boolean enable) {
 		Map args= command.getArguments();
 		if (args == null) {
 			args= new HashMap(1);
 		}
 		args.put(COMMAND_ENABLED, Boolean.valueOf(enable));
 		command.setArguments(args);
-	
-		updateCommandItem(item, command);
 		userHasMadeChanges= true;
 	}
 
@@ -624,7 +492,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		if (newConfig != null) {
 			userHasMadeChanges= true;
-			addConfig(newConfig, true);
+			viewer.add(newConfig);
+			viewer.setChecked(newConfig, isEnabled(newConfig));
 			newConfigList.add(newConfig);
 		}
 	}
@@ -676,18 +545,20 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * The user has pressed the remove button. Delete the selected builder.
 	 */
 	private void handleRemoveButtonPressed() {
-		TableItem[] selection = builderTable.getSelection();
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
 		if (selection != null) {
+			int numSelected= selection.size();
 			if (configsToBeDeleted == null) {
-				configsToBeDeleted= new ArrayList(selection.length);
+				configsToBeDeleted= new ArrayList(numSelected);
 			}
 			userHasMadeChanges= true;
-			for (int i = 0; i < selection.length; i++) {
-				Object data= selection[i].getData();
-				if (data instanceof ILaunchConfiguration) {
-					configsToBeDeleted.add(data);
+			Iterator iterator= selection.iterator();
+			while (iterator.hasNext()) {
+				Object item= iterator.next();
+				if (item instanceof ILaunchConfiguration) {
+					configsToBeDeleted.add(item);
+					viewer.remove(item);
 				}
-				selection[i].dispose();
 			}
 		}
 	}
@@ -728,7 +599,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 				userHasMadeChanges= true;
 				//retrieve the last "new" config
 				//may have been changed by the user pressing apply in the edit dialog
-				addConfig((ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1), true);
+				config= (ILaunchConfiguration)newConfigList.get(newConfigList.size() - 1);
+				viewer.add(config);
+				viewer.setChecked(config, isEnabled(config));
 			}
 		} catch (CoreException e) {
 			handleException(e);
@@ -797,7 +670,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * dialog on the selection after migrating the tool if necessary.
 	 */
 	private void handleEditButtonPressed() {
-		TableItem selection = builderTable.getSelection()[0];
+		TableItem selection= viewer.getTable().getSelection()[0];
 		if (selection != null) {
 			Object data = selection.getData();
 			if (data instanceof ILaunchConfiguration) {
@@ -923,14 +796,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 */
 	private void handleTableSelectionChanged() {
 		newButton.setEnabled(true);
+		Table builderTable= viewer.getTable();
 		TableItem[] items = builderTable.getSelection();
 		boolean validSelection= items != null && items.length > 0;
 		boolean enableEdit= validSelection;
 		boolean enableRemove= validSelection;
 		boolean enableUp= validSelection;
 		boolean enableDown= validSelection;
-		boolean enableEnable= validSelection;
-		boolean enableDisable= validSelection;
 		if (validSelection) {
 			if (items.length > 1) {
 				enableEdit= false;
@@ -939,8 +811,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 			int max = builderTable.getItemCount();
 			enableUp= indices[0] != 0;
 			enableDown= indices[indices.length - 1] < max - 1;
-			boolean disabledSelected= false; // Any disabled configs selected?
-			boolean enabledSelected= false; // Any enabled configs selected?
 			for (int i = 0; i < items.length; i++) {
 				TableItem item = items[i];
 				Object data= item.getData();
@@ -952,33 +822,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 					} catch (CoreException e) {
 						ExternalToolsPlugin.getDefault().log(e);
 					}
-					if (configEnabled) {
-						enabledSelected= true;
-					} else {
-						disabledSelected= true;
-					}
-					if (isUnmigratedConfig(config)) {
-						enableEnable= false;
-						enableDisable= false;
-					}
 				} else {
-					if (data instanceof ICommand) {
-						ICommand command= (ICommand)data;
-						Boolean enabled= (Boolean)command.getArguments().get(COMMAND_ENABLED);
-						if (enabled != null) {
-							enableEnable= !enabled.booleanValue();
-							enableDisable= enabled.booleanValue();
-							enabledSelected=  enabled.booleanValue();
-							disabledSelected= !enabled.booleanValue();
-						} else {
-							enableDisable= true;
-							enabledSelected= true;
-							enableEnable= false;
-						}
-					} else {
-						enableEnable= false;
-						enableDisable= false;
-					}
 					enableEdit= false;
 					enableUp= false;
 					enableDown= false;
@@ -990,19 +834,35 @@ public final class BuilderPropertyPage extends PropertyPage {
 					break;
 				}
 			}
-			if (!disabledSelected) {
-				enableEnable= false;
-			}
-			if (!enabledSelected) {
-				enableDisable= false;
-			}
 		}
 		editButton.setEnabled(enableEdit);
 		removeButton.setEnabled(enableRemove);
 		upButton.setEnabled(enableUp);
 		downButton.setEnabled(enableDown);
-		enableButton.setEnabled(enableEnable);
-		disableButton.setEnabled(enableDisable);
+	}
+	
+	/**
+	 * Returns whether the given element (command or launch config)
+	 * is enabled.
+	 * 
+	 * @param element the element
+	 * @return whether the given element is enabled
+	 */
+	private boolean isEnabled(Object element) {
+		if (element instanceof ICommand) {
+			Boolean enabled= (Boolean)((ICommand) element).getArguments().get(COMMAND_ENABLED);
+			if (enabled != null) {
+				return enabled.booleanValue();
+			}
+		} else if (element instanceof ILaunchConfiguration) {
+			try {
+				return ExternalToolsUtil.isBuilderEnabled((ILaunchConfiguration) element);
+			} catch (CoreException e) {
+			}
+		} else if (element instanceof ErrorConfig) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -1011,19 +871,16 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void move(TableItem item, int index) {
 		userHasMadeChanges= true;
 		Object data = item.getData();
-		String text = item.getText();
-		Image image = item.getImage();
 		item.dispose();
-		TableItem newItem = new TableItem(builderTable, SWT.NONE, index);
-		newItem.setData(data);
-		newItem.setText(text);
-		newItem.setImage(image);
+		viewer.insert(data, index);
+		viewer.setChecked(data, isEnabled(data));
 	}
 
 	/**
 	 * Move the current selection in the build list down.
 	 */
 	private void moveSelectionDown() {
+		Table builderTable= viewer.getTable();
 		int indices[]= builderTable.getSelectionIndices();
 		if (indices.length < 1) {
 			return;
@@ -1044,6 +901,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Move the current selection in the build list up.
 	 */
 	private void moveSelectionUp() {
+		Table builderTable= viewer.getTable();
 		int indices[]= builderTable.getSelectionIndices();
 		int newSelection[]= new int[indices.length];
 		for (int i = 0; i < indices.length; i++) {
@@ -1067,6 +925,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		
 		IProject project = getInputProject();
 		//get all the build commands
+		Table builderTable= viewer.getTable();
 		int numCommands = builderTable.getItemCount();
 		ICommand[] commands = new ICommand[numCommands];
 		for (int i = 0; i < numCommands; i++) {
@@ -1303,49 +1162,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 		return false;	
 	}
 
-	/**
-	 * Update the table item with the given build command
-	 */
-	private void updateCommandItem(TableItem item, ICommand command) {
-		String builderID = command.getBuilderName();
-		if (builderID.equals(ExternalToolBuilder.ID)) {
-			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(command.getArguments());
-			if (config == null) {
-				item.setText(ExternalToolsUIMessages.getString("BuilderPropertyPage.invalidBuildTool")); //$NON-NLS-1$
-				item.setImage(invalidBuildToolImage);
-				return;
-			}
-			item.setText(config.getName());
-			Image configImage = labelProvider.getImage(config);
-			if (configImage != null) {
-				imagesToDispose.add(configImage);
-				item.setImage(configImage);
-			} else {
-				item.setImage(builderImage);
-			}
-		} else {
-			StringBuffer builderName = new StringBuffer(getBuilderName(builderID));
-			Boolean enabled= (Boolean)command.getArguments().get(COMMAND_ENABLED);
-			if (enabled != null && !enabled.booleanValue()) {
-				builderName.append(ExternalToolsUIMessages.getString("BuilderPropertyPage.38")); //$NON-NLS-1$
-			}
-			item.setText(builderName.toString());
-			item.setImage(builderImage);
-		}
-	}
-	
-	private String getBuilderName(String builderID) {
-		// Get the human-readable name of the builder
-		IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
-		String builderName;
-		if (extension != null) {
-			builderName = extension.getLabel();
-		} else {
-			builderName = MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.missingBuilder"), new Object[] { builderID }); //$NON-NLS-1$
-		}
-		return builderName;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
@@ -1369,6 +1185,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		
 		//remove the local marking of the enabled state of the commands
+		Table builderTable= viewer.getTable();
 		int numCommands = builderTable.getItemCount();
 		for (int i = 0; i < numCommands; i++) {
 			Object data = builderTable.getItem(i).getData();
