@@ -177,7 +177,6 @@ public class Main {
 	// configuration properties
 	private Properties props = new Properties();
 	private HashMap featureIndex = new HashMap();
-	private String baseLocation = null;
 	
 	// constants
 	private static final String APPLICATION = "-application"; //$NON-NLS-1$
@@ -232,13 +231,13 @@ public class Main {
 	static class Identifier {
 		private static final String DELIM = ". "; //$NON-NLS-1$
 		private int major, minor, service;
-		private Identifier(int major, int minor, int service) {
+		Identifier(int major, int minor, int service) {
 			super();
 			this.major = major;
 			this.minor = minor;
 			this.service = service;
 		}
-		private Identifier(String versionString) {
+		Identifier(String versionString) {
 			super();
 			StringTokenizer tokenizer = new StringTokenizer(versionString, DELIM);
 			
@@ -263,7 +262,7 @@ public class Main {
 		 * 1.3.2 >= 1.3.1 -> true
 		 * 2.0.0 >= 1.3.1 -> true
 		 */
-		private boolean isGreaterEqualTo(Identifier minimum) {
+		boolean isGreaterEqualTo(Identifier minimum) {
 			if (major < minimum.major)
 				return false;
 			if (major > minimum.major)
@@ -624,7 +623,7 @@ public static void main(String[] args) {
 public static void main(String argString) throws Exception {
 	Vector list = new Vector(5);
 	for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();) //$NON-NLS-1$
-		list.addElement((String) tokens.nextElement());
+		list.addElement(tokens.nextElement());
 	main((String[]) list.toArray(new String[list.size()]));
 }
 
@@ -697,8 +696,7 @@ protected String[] processCommandLine(String[] args) throws Exception {
 
 		// look for the location of workspace
 		if (args[i - 1].equalsIgnoreCase(DATA)) {
-			baseLocation = arg;
-			continue; // pass the arg on
+			continue; // don't store it but pass the arg on
 		}
 
 		// look for the application to run
@@ -907,12 +905,12 @@ private URL getDefaultStateLocation() throws IOException {
 		String appName = "." + ECLIPSE; //$NON-NLS-1$
 		File eclipseProduct = new File(installDir, PRODUCT_SITE_MARKER );
 		if (eclipseProduct.exists()) {
-			Properties props = new Properties();
-			props.load(new FileInputStream(eclipseProduct));
-			String appId = props.getProperty(PRODUCT_SITE_ID);
+			Properties properties = new Properties();
+			properties.load(new FileInputStream(eclipseProduct));
+			String appId = properties.getProperty(PRODUCT_SITE_ID);
 			if (appId == null || appId.trim().length() == 0)
 				appId = ECLIPSE;
-			String appVersion = props.getProperty(PRODUCT_SITE_VERSION);
+			String appVersion = properties.getProperty(PRODUCT_SITE_VERSION);
 			if (appVersion == null || appVersion.trim().length() == 0)
 				appVersion = ""; //$NON-NLS-1$
 			appName += File.separator+ appId + "_" + appVersion; //$NON-NLS-1$
@@ -934,7 +932,7 @@ private void loadConfiguration(URL url) {
 		URL defaultStateURL = null;
 		try {
 			defaultStateURL = getDefaultStateLocation();
-			URL cfigURL = new URL(defaultStateURL, ".config" +"/"+ CONFIG_FILE);
+			URL cfigURL = new URL(defaultStateURL, ".config" +"/"+ CONFIG_FILE); //$NON-NLS-1$ //$NON-NLS-2$
 			// first look for configuration in base location (workspace or as specified)
 			props = loadProperties(cfigURL);
 			if (debug)
@@ -977,24 +975,24 @@ private void loadConfiguration(URL url) {
 private Properties loadProperties(URL url) throws IOException {
 		
 	// try to load saved configuration file (watch for failed prior save())
-	Properties props = null;
+	Properties properties = null;
 	IOException originalException = null;
 	try {
-		props = load(url, null); // try to load config file
+		properties = load(url, null); // try to load config file
 	} catch(IOException e1) {
 		originalException = e1;
 		try {
-			props = load(url, CONFIG_FILE_TEMP_SUFFIX); // check for failures on save
+			properties = load(url, CONFIG_FILE_TEMP_SUFFIX); // check for failures on save
 		} catch(IOException e2) {
 			try {
-				props = load(url, CONFIG_FILE_BAK_SUFFIX); // check for failures on save
+				properties = load(url, CONFIG_FILE_BAK_SUFFIX); // check for failures on save
 			} catch(IOException e3) {
 				throw originalException; // we tried, but no config here ...
 			}
 		}
 	}
 	
-	return props;
+	return properties;
 }
  
 /*
@@ -1006,13 +1004,13 @@ private Properties load(URL url, String suffix) throws IOException {
 		url = new URL(url.getProtocol(),url.getHost(),url.getPort(),url.getFile()+suffix);
 			
 	// try to load saved configuration file
-	Properties props = new Properties();
+	Properties properties = new Properties();
 	InputStream is = null;
 	try {
 		is = url.openStream();
-		props.load(is);
+		properties.load(is);
 		// check to see if we have complete config file
-		if (!CFG_EOF.equals(props.getProperty(CFG_EOF))) {
+		if (!CFG_EOF.equals(properties.getProperty(CFG_EOF))) {
 			throw new IOException();
 		}
 	} finally {
@@ -1026,25 +1024,25 @@ private Properties load(URL url, String suffix) throws IOException {
 	}
 	
 	// load feature index
-	if (props != null) {
-		String id = props.getProperty(CFG_FEATURE_ENTRY+".0."+CFG_FEATURE_ENTRY_ID); //$NON-NLS-1$
+	if (properties != null) {
+		String id = properties.getProperty(CFG_FEATURE_ENTRY+".0."+CFG_FEATURE_ENTRY_ID); //$NON-NLS-1$
 		for (int i=1; id != null; i++) {
 			featureIndex.put(id, Integer.toString(i-1));
-			id = props.getProperty(CFG_FEATURE_ENTRY+"."+i+"."+CFG_FEATURE_ENTRY_ID); //$NON-NLS-1$ //$NON-NLS-2$
+			id = properties.getProperty(CFG_FEATURE_ENTRY+"."+i+"."+CFG_FEATURE_ENTRY_ID); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
-	return props;
+	return properties;
 }	
 	
 /*
  * Load a configuration attribute
  */	
-private String loadAttribute(Properties props, String name, String dflt) {
-	if (props == null)
+private String loadAttribute(Properties properties, String name, String dflt) {
+	if (properties == null)
 		return dflt;
 		
-	String prop = props.getProperty(name);
+	String prop = properties.getProperty(name);
 	if (prop == null)
 		return dflt;
 	else
@@ -1133,7 +1131,7 @@ private void handleSplash(URL[] bootPath) {
  * take down the splash screen. Try both take-down methods just in case
  * (only one should ever be set)
  */
-private void takeDownSplash() {
+protected void takeDownSplash() {
 	if (splashDown) // splash is already down
 		return;
 		
@@ -1439,7 +1437,7 @@ private int hexToByte(byte b) {
 		case 'F':
 		case 'f':return 15;
 		default:
-			throw new IllegalArgumentException("Switch error decoding URL");
+			throw new IllegalArgumentException("Switch error decoding URL"); //$NON-NLS-1$
 	}
 }
 
@@ -1511,6 +1509,7 @@ private static boolean isAlreadyRunning() {
 			try {
 				stream.close();
 			} catch (IOException e) {
+				// ignore
 			}
 	}
 }
