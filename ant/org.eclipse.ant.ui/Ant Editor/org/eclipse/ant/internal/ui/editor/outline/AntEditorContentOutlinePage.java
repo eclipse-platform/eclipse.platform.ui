@@ -486,7 +486,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		tbm.add(new FilterPropertiesAction(this));
 		tbm.add(new FilterImportedElementsAction(this));
 		tbm.add(new FilterTopLevelAction(this));
-		tbm.add(new ToggleLinkWithEditorAction(fEditor));
+		
+		IMenuManager viewMenu= site.getActionBars().getMenuManager();
+		viewMenu.add(new ToggleLinkWithEditorAction(fEditor));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
