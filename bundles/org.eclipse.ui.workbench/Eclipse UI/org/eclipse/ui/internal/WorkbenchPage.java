@@ -1945,9 +1945,28 @@ public IEditorPart openInternalEditor(IFile file)
 /**
  * See IWorkbenchPage.
  */
-private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file, boolean forceInternal) 
-	throws PartInitException
-{			
+private IEditorPart openEditor(final IEditorInput input,final String editorID,final boolean activate,final boolean useEditorID,final IFile file,final boolean forceInternal) throws PartInitException {
+	final IEditorPart result[] = new IEditorPart[1];
+	final PartInitException ex[] = new PartInitException[1];
+	BusyIndicator.showWhile(
+		window.getClientComposite().getDisplay(),
+		new Runnable() {
+			public void run() {
+				try {
+					result[0] = busyOpenEditor(input,editorID,activate,useEditorID,file,forceInternal);
+				} catch (PartInitException e) {
+					ex[0] = e;
+				}
+			}
+		});
+	if(ex[0] != null)
+		throw ex[0];
+	return result[0];
+}
+/**
+ * See IWorkbenchPage.openEditor
+ */
+private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file, boolean forceInternal) throws PartInitException {			
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
 	if (editor != null) {
