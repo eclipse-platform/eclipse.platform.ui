@@ -11,10 +11,17 @@ import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
 import org.eclipse.update.internal.ui.*;
+import java.io.*;
+import org.eclipse.ui.*;
+import org.eclipse.swt.graphics.Image;
 
-public class CDROM extends ModelObject implements IWorkbenchAdapter {
-private static final String KEY_LABEL = "CDROM.label";
-	public CDROM() {
+public class MyComputerFile extends ModelObject implements IWorkbenchAdapter {
+	private ModelObject parent;
+	private File file;
+
+	public MyComputerFile(ModelObject parent, File file) {
+		this.parent = parent;
+		this.file = file;
 	}
 	
 	public Object getAdapter(Class adapter) {
@@ -25,7 +32,7 @@ private static final String KEY_LABEL = "CDROM.label";
 	}
 	
 	public String getName() {
-		return UpdateUIPlugin.getResourceString(KEY_LABEL);
+		return file.getName();
 	}
 	
 	public String toString() {
@@ -35,6 +42,7 @@ private static final String KEY_LABEL = "CDROM.label";
 	/**
 	 * @see IWorkbenchAdapter#getChildren(Object)
 	 */
+	
 	public Object[] getChildren(Object parent) {
 		return new Object[0];
 	}
@@ -43,7 +51,11 @@ private static final String KEY_LABEL = "CDROM.label";
 	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
 	 */
 	public ImageDescriptor getImageDescriptor(Object obj) {
-		return UpdateUIPluginImages.DESC_CDROM_OBJ;
+		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+	}
+	
+	public Image getImage(Object obj) {
+		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	}
 
 	/**
@@ -57,10 +69,6 @@ private static final String KEY_LABEL = "CDROM.label";
 	 * @see IWorkbenchAdapter#getParent(Object)
 	 */
 	public Object getParent(Object arg0) {
-		return null;
-	}
-	
-	public boolean isAvailable() {
-		return false;
+		return parent;
 	}
 }

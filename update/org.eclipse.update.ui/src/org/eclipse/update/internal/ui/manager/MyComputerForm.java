@@ -18,13 +18,13 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import java.text.MessageFormat;
 
-public class CDROMForm extends UpdateWebForm {
+public class MyComputerForm extends UpdateWebForm {
 	private SiteBookmark currentBookmark;
-	private static final String KEY_TITLE = "CDROMPage.title";
-	private static final String KEY_NTITLE = "CDROMPage.ntitle";
-	private static final String KEY_DESC = "CDROMPage.desc";
+	private static final String KEY_TITLE = "MyComputerPage.title";
+	private static final String KEY_NTITLE = "MyComputerPage.ntitle";
+	private static final String KEY_DESC = "MyComputerPage.desc";
 	
-public CDROMForm(UpdateFormPage page) {
+public MyComputerForm(UpdateFormPage page) {
 	super(page);
 }
 
@@ -33,11 +33,10 @@ public void dispose() {
 }
 
 public void initialize(Object modelObject) {
-	setHeadingText(UpdateUIPlugin.getResourceString(KEY_NTITLE));
+	setHeadingText(UpdateUIPlugin.getResourceString(KEY_TITLE));
 	setHeadingImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_BANNER));
 	setHeadingUnderlineImage(UpdateUIPluginImages.get(UpdateUIPluginImages.IMG_FORM_UNDERLINE));
 	super.initialize(modelObject);
-	//((Composite)getControl()).layout(true);
 }
 
 protected void createContents(Composite parent) {
@@ -56,20 +55,16 @@ protected void createContents(Composite parent) {
 }
 
 public void expandTo(Object obj) {
-	if (obj instanceof CDROM) {
-		inputChanged((CDROM)obj);
+	if (obj instanceof MyComputer) {
+		inputChanged((MyComputer)obj);
 	}
 }
 
-private void inputChanged(CDROM cdrom) {
-	if (cdrom.isAvailable()) {
-		String pattern = UpdateUIPlugin.getResourceString(KEY_TITLE);
-		String message = MessageFormat.format(pattern, new Object[] {cdrom.getName()});
-		setHeadingText(message);
-	}
-	else {
-		setHeadingText(UpdateUIPlugin.getResourceString(KEY_NTITLE));
-	}
+private void inputChanged(MyComputer myComputer) {
+	String pattern = UpdateUIPlugin.getResourceString(KEY_TITLE);
+	String name = System.getProperty("user.name");
+	String message = MessageFormat.format(pattern, new Object[] {name});
+	setHeadingText(message);
 }
 
 }

@@ -6,13 +6,13 @@ package org.eclipse.update.internal.ui.manager;
 import org.eclipse.update.internal.ui.parts.UpdateFormPage;
 import org.eclipse.update.ui.forms.internal.*;
 
-public class CDROMPage extends UpdateFormPage {
+public class MyComputerPage extends UpdateFormPage {
 	
-	public CDROMPage(DetailsView view, String title) {
+	public MyComputerPage(DetailsView view, String title) {
 		super(view, title);
 	}
 	
 	public IForm createForm() {
-		return new CDROMForm(this);
+		return new MyComputerForm(this);
 	}
 }
