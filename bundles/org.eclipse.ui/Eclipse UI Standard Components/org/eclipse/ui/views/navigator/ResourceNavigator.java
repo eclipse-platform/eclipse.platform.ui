@@ -175,6 +175,11 @@ public void createPartControl(Composite parent) {
 	viewer.getTree().setMenu(menu);
 	getSite().registerContextMenu(menuMgr, viewer);
 	makeActions();
+	
+	// Update the global action enable state to match
+	// the current selection.
+	IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+	updateGlobalActions(selection);
 
 	viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
