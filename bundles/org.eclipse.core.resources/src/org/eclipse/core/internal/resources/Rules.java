@@ -8,9 +8,9 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.internal.resources;
+import java.util.HashSet;
+
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 /**
@@ -60,9 +60,20 @@ public class Rules {
 		public ISchedulingRule validateEditRule(IResource[] resources) {
 			if (resources.length == 0)
 				return null;
+			//optimize rule for single file
 			if (resources.length == 1)
-				return resources[0].isReadOnly() ? resources[0] : null;
-			return new MultiRule(resources);
+				return resources[0].isReadOnly() ? parent(resources[0]) : null;
+			//need a lock on the parents of all read-only files
+			HashSet rules = new HashSet();
+			for (int i = 0; i < resources.length; i++)
+				if (resources[i].isReadOnly())
+					rules.add(parent(resources[i]));
+			if (rules.isEmpty())
+				return null;
+			if (rules.size() == 1)
+				return (ISchedulingRule)rules.iterator().next();
+			ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]);
+			return new MultiRule(ruleArray);
 		}
 	}
 	private static IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
