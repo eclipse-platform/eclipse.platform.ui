@@ -31,9 +31,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -66,16 +64,7 @@ public class DebugView extends LaunchesView implements IPartListener {
 		new String[] {IMarker.CHAR_START, IMarker.CHAR_END};
 		
 	private final static String[] fgLineStartEnd = 
-		new String[] {IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};
-	
-	/**
-	 * The editor associated with this debug view,
-	 * or <code>null</code> if none.
-	 */
-	private IEditorPart fEditor;
-	private Integer fEditorMemento;
-	private static final String DEBUG_EDITOR= DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier() + ".DEBUG_EDITOR"; //$NON-NLS-1$
-	
+		new String[] {IMarker.LINE_NUMBER, IMarker.CHAR_START, IMarker.CHAR_END};	
 	
 	/**
 	 * Creates a debug view and an instruction pointer marker for the view
@@ -100,7 +89,6 @@ public class DebugView extends LaunchesView implements IPartListener {
 	public void dispose() {
 		super.dispose();
 		getSite().getPage().removePartListener(this);
-		fEditor = null;
 	}
 
 	/**
@@ -269,40 +257,13 @@ public class DebugView extends LaunchesView implements IPartListener {
 			return;
 		}
 		
-		IEditorPart[] editorParts= page.getEditors();
-		// restore editor on startup
-		if (fEditorMemento != null) {
-			if (editorParts.length > fEditorMemento.intValue())
-				fEditor = editorParts[fEditorMemento.intValue()];
-			fEditorMemento = null;
-		}
-		
-		IEditorPart editor= null;
-		for (int i= 0; i < editorParts.length; i++) {
-			IEditorPart part= editorParts[i];
-			if (input.equals(part.getEditorInput())) {
-				editor= part;
-				break;
-			}
-		}
-		
-		if (editor == null) {
-			if (fEditor != null) {
-				if (!fEditor.isDirty()) {
-					page.closeEditor(fEditor, false);
-				}
-			}
-			try {
-				editor= page.openEditor(input, editorId);
-				fEditor = editor;
-				page.activate(this);
-			} catch (PartInitException e) {
-				DebugUIPlugin.logError(e);
-			}
-
-		} else {
-			page.bringToTop(editor);
-		}
+		IEditorPart editor = null;
+		try {
+			editor = page.openEditor(input, editorId, false);
+		} catch (PartInitException e) {
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
+			 "Error", "Exception occurred opening editor for debugger.", e.getStatus());
+		}		
 		
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
 			//have an editor and either a lineNumber or a starting character
@@ -490,9 +451,6 @@ public class DebugView extends LaunchesView implements IPartListener {
 	 * @see IPartListener#partClosed(IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
-		if (part.equals(fEditor)) {
-			fEditor = null;
-		}
 	}
 	
 	/**
@@ -521,33 +479,5 @@ public class DebugView extends LaunchesView implements IPartListener {
 			showMarkerForCurrentSelection();
 		}		
 	}	
-
-	/**
-	 * @see IViewPart#init(IViewSite, IMemento)
-	 */
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site, memento);
-		if (memento != null) {
-			fEditorMemento = memento.getInteger(DEBUG_EDITOR);
-		}
-	}
-	
-	/**
-	 * @see IViewPart#saveState(IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		if (fEditor != null) {
-			IWorkbenchPage page = getSite().getPage();
-			if (page != null) {
-				IEditorPart[] editors = page.getEditors();
-				for (int i = 0; i < editors.length; i++) {
-					if (fEditor.equals(editors[i])) {
-						memento.putInteger(DEBUG_EDITOR, i);
-						break;
-					}
-				}
-			}
-		}
-	}
 
 }
