@@ -11,6 +11,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProjectCapabilitySelectionGroup;
 import org.eclipse.ui.internal.registry.Capability;
@@ -68,8 +69,11 @@ public class WizardNewProjectCapabilityPage extends WizardPage {
 				getWizard().getContainer().updateButtons();
 			}
 		});
+		
+		if (!reg.hasCapabilities())
+			setMessage(WorkbenchMessages.getString("WizardNewProjectCapabilityPage.noCapabilities"), WARNING_MESSAGE); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the collection of capabilities selected
 	 * by the user. The collection is not in prerequisite

@@ -17,8 +17,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -61,6 +63,15 @@ public class ProjectCapabilityPropertyPage extends PropertyPage {
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
 		noDefaultAndApplyButton();
 		CapabilityRegistry reg = WorkbenchPlugin.getDefault().getCapabilityRegistry();
+		
+		String instructions;
+		if (reg.hasCapabilities())
+			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
+		else
+			instructions = WorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(instructions);
+		
 		Capability[] caps = reg.getProjectCapabilities(getProject());
 		ICategory[] cats = new ICategory[0];
 		capabilityGroup = new ProjectCapabilitySelectionGroup(cats, caps, reg);

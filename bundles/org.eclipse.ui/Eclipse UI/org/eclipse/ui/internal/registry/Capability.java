@@ -110,7 +110,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	public String getName() {
 		IProjectNatureDescriptor desc = getNatureDescriptor();
 		if (desc == null)
-			return WorkbenchMessages.format("Capability.nameMissing", new Object[] {getNatureId()}); //$NON-NLS-1$
+			return WorkbenchMessages.format("Capability.nameMissing", new Object[] {getId()}); //$NON-NLS-1$
 		else
 			return desc.getLabel();
 	}

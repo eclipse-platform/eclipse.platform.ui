@@ -239,6 +239,13 @@ public class CapabilityRegistry extends WorkbenchAdapter implements IAdaptable {
 	}
 	
 	/**
+	 * Returns whether the registry contains any capabilities.
+	 */
+	public boolean hasCapabilities() {
+		return !capabilities.isEmpty();
+	}
+	
+	/**
 	 * Returns whether the specified capability has any prerequisites.
 	 */
 	public boolean hasPrerequisites(Capability capability) {

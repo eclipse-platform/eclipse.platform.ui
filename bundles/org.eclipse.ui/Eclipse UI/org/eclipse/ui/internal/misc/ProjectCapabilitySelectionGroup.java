@@ -66,7 +66,7 @@ public class ProjectCapabilitySelectionGroup {
 
 		// Add a label to identify the checkbox tree viewer of capabilities
 		Label capabilityLabel = new Label(composite, SWT.LEFT);
-		capabilityLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.available")); //$NON-NLS-1$
+		capabilityLabel.setText(WorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		capabilityLabel.setLayoutData(data);
