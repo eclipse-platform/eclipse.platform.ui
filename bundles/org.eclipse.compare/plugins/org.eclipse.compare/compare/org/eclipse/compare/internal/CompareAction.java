@@ -15,18 +15,16 @@ import org.eclipse.compare.CompareUI;
 
 public class CompareAction implements IActionDelegate {
 
-	private ISelection fSelection;
+	private ResourceCompareInput fInput;
 
 	public void run(IAction action) {
-		CompareUI.openCompareEditor(new ResourceCompareInput(new CompareConfiguration(), fSelection));
+		if (fInput != null)
+			CompareUI.openCompareEditor(fInput);
 	}
 
-	public void selectionChanged(IAction a, ISelection s) {
-		fSelection= s;
-		// the following check is disabled because it results in a confusing UI:
-		// action might be enabled if plugin is not loaded but
-		// it gets disabled after plugin has been loaded...
-		//Object[] selection= StructuredSelection.toArray(s);
-		//((Action)a).setEnabled(selection.length == 2);
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (fInput == null)
+			fInput= new ResourceCompareInput(new CompareConfiguration());
+		action.setEnabled(fInput.setSelection(selection));
 	}
 }
