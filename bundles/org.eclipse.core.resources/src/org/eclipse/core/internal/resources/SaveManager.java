@@ -1352,7 +1352,17 @@ protected void writeBuilderPersistentInfo(DataOutputStream output, List builders
 			output.writeInt(interestingProjects.length);
 			for (int j = 0; j < interestingProjects.length; j++)
 				output.writeUTF(interestingProjects[j].getName());
-			trees.add(info.getLastBuiltTree());
+			ElementTree last = info.getLastBuiltTree();
+			if (last ==null) {
+				//try to be resilient if a builder has no last built tree
+				//this shouldn't happen but save must be robust
+				ResourcesPlugin.getPlugin().getLog().log(new Status(
+					IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, 
+					"Internal Error: builder had null tree", //NON-NLS this is an internal error
+					new RuntimeException()));
+				last = workspace.getElementTree();
+			}
+			trees.add(last);
 		}
 	} finally {
 		monitor.done();
