@@ -784,7 +784,7 @@ public static Object run(String applicationName/*R1.0 compatibility*/, URL plugi
 		result = runnable.run(applicationArgs);
 	} catch (Throwable e) {
 		e.printStackTrace();
-		throw e;
+		throw new Exception(e.getMessage());
 	} finally {
 		shutdown();
 		return result;
