@@ -13,12 +13,12 @@ import org.eclipse.help.internal.contributors.ContextContributor;
 import org.eclipse.help.internal.util.TString;
 
 public class StyledLineWrapper implements StyledTextContent {
-	/** Text to display (with embedded styles) */
-	private String text;
 	/** Lines after splitting */
-	ArrayList lines = new ArrayList();
+	private ArrayList lines = new ArrayList();
 	/** Style ranges, per line */
-	ArrayList lineStyleRanges = new ArrayList();
+	private ArrayList lineStyleRanges = new ArrayList();
+	/** Character count */
+	private int charCount = -1;
 	/** Line breaker */
 	private static BreakIterator lineBreaker = BreakIterator.getLineInstance();
 	/** Beyond this length, lines should wrap */
@@ -43,10 +43,12 @@ public class StyledLineWrapper implements StyledTextContent {
 	 * @see StyledTextContent#getCharCount()
 	 */
 	public int getCharCount() {
-		int count = 0;
+		if (charCount != -1)
+			return charCount;
+		charCount = 0;
 		for (Iterator i=lines.iterator(); i.hasNext(); )
-			count += ((String)i.next()).length();
-		return count;
+			charCount += ((String)i.next()).length();
+		return charCount;
 	}
 
 	/**
@@ -61,6 +63,8 @@ public class StyledLineWrapper implements StyledTextContent {
 	 * @see StyledTextContent#getLineAtOffset(int)
 	 */
 	public int getLineAtOffset(int offset) {
+		if (offset >= getCharCount())
+			return getLineCount()-1;
 		int count = 0;
 		int line = -1;
 		while(count <= offset)
