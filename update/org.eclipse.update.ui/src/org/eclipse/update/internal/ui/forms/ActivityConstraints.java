@@ -13,6 +13,13 @@ import org.eclipse.update.internal.ui.model.PendingChange;
  *
  */
 public class ActivityConstraints {
+	private static final String KEY_ROOT_MESSAGE =
+		"ActivityConstraints.rootMessage";
+	private static final String KEY_PRIMARY = "ActivityConstraints.primary";
+	private static final String KEY_PREREQ = "ActivityConstraints.prereq";
+	private static final String KEY_CHILD_MESSAGE =
+		"ActivityConstraints.childMessage";
+
 	public static IStatus validatePendingChange(PendingChange job) {
 		ArrayList children = new ArrayList();
 		switch (job.getJobType()) {
@@ -32,8 +39,7 @@ public class ActivityConstraints {
 		if (children.size() > 0) {
 			IStatus[] carray =
 				(IStatus[]) children.toArray(new IStatus[children.size()]);
-			String message =
-				"Requested operation cannot be performed because it would invalidate the current configuration. See details for more information.";
+			String message = UpdateUIPlugin.getResourceString(KEY_ROOT_MESSAGE);
 			return new MultiStatus(
 				UpdateUIPlugin.getPluginId(),
 				IStatus.ERROR,
@@ -53,7 +59,7 @@ public class ActivityConstraints {
 				children.add(
 					createStatus(
 						feature,
-						"Platform or primary features must never be disabled"));
+						UpdateUIPlugin.getResourceString(KEY_PRIMARY)));
 			}
 			// test if unconfiguring will invalidate prereqs
 			ArrayList otherFeatures = computeOtherFeatures(feature);
@@ -219,7 +225,8 @@ public class ActivityConstraints {
 		for (int i = 0; i < imports.length; i++) {
 			IImport iimport = imports[i];
 			VersionedIdentifier vid = iimport.getVersionedIdentifier();
-			String message = "About to loose required plug-in \"" + vid + "\"";
+			String message =
+				UpdateUIPlugin.getFormattedMessage(KEY_PREREQ, vid.toString());
 			boolean found = false;
 
 			for (int j = 0; j < goingPlugins.size(); j++) {
@@ -294,7 +301,12 @@ public class ActivityConstraints {
 		String id = vid.getIdentifier();
 		PluginVersionIdentifier version = vid.getVersion();
 		String fullMessage =
-			feature.getLabel() + " (" + version.toString() + "): " + message;
+			UpdateUIPlugin.getFormattedMessage(
+				KEY_CHILD_MESSAGE,
+				new String[] {
+					feature.getLabel(),
+					version.toString(),
+					message });
 		return new Status(
 			IStatus.ERROR,
 			UpdateUIPlugin.getPluginId(),
