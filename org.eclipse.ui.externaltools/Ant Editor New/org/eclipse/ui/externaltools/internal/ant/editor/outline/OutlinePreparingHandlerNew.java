@@ -26,10 +26,10 @@ public class OutlinePreparingHandlerNew extends OutlinePreparingHandler {
 	}
 	
 	protected void generateErrorElementHierarchy(SAXParseException exception) {
-		if (getRootElement() == null)
+		if (getRootElement() == null) {
 			setRootElement(generateErrorNode(exception));
-		else
+		} else {
 			super.generateErrorElementHierarchy(exception);
+		}
 	}
-
 }

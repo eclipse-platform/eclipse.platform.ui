@@ -14,6 +14,7 @@ package org.eclipse.ui.externaltools.internal.ant.editor.outline;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -25,7 +26,7 @@ import org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor;
 
 public class NotifyingReconciler extends MonoReconciler implements IOutlineCreationListener {
 
-	private ArrayList fReconcilingParticipants= new ArrayList();
+	private List fReconcilingParticipants= new ArrayList();
 	
 	private PlantyEditor fEditor;
 	
@@ -57,17 +58,19 @@ public class NotifyingReconciler extends MonoReconciler implements IOutlineCreat
 
 	protected void notifyReconcilingParticipants() {
 		Iterator i= new ArrayList(fReconcilingParticipants).iterator();
-		while (i.hasNext())
+		while (i.hasNext()) {
 			((IReconcilingParticipant) i.next()).reconciled();
+		}
 	}
 
 	/*
 	 * @see org.eclipse.ui.externaltools.internal.ant.editor.IOutlineCreationListener#outlineCreated()
 	 */
 	public void outlineCreated() {
-		IReconcilingStrategy reconcilingStrategy= getReconcilingStrategy("");
-		if (reconcilingStrategy instanceof IOutlineCreationListener)
+		IReconcilingStrategy reconcilingStrategy= getReconcilingStrategy(""); //$NON-NLS-1$
+		if (reconcilingStrategy instanceof IOutlineCreationListener) {
 			((IOutlineCreationListener) reconcilingStrategy).outlineCreated();
+		}
 		forceReconciling();
 	}
 	
