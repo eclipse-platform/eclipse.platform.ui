@@ -11,27 +11,36 @@
 package org.eclipse.ui.internal.browser;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 /**
  * A Web browser viewer.
  */
-public class WebBrowserView extends ViewPart {
+public class WebBrowserView extends ViewPart implements IBrowserViewerContainer {
 	public static final String WEB_BROWSER_VIEW_ID = "org.eclipse.ui.browser.view";
     private static final int DEFAULT_STYLE = BrowserViewer.BUTTON_BAR | BrowserViewer.LOCATION_BAR;
+    private static final char STYLE_SEP = '-';
 
 	protected BrowserViewer viewer;
 
 	public void createPartControl(Composite parent) {
         int style = decodeStyle(getViewSite().getSecondaryId());
         viewer = new BrowserViewer(parent, style);
+        viewer.setContainer(this);
 	}
     
+    /**
+     * Encodes browser style in the secondary id as id-style
+     * @param browserId
+     * @param style
+     * @return
+     */
     public static String encodeStyle(String browserId, int style) {
-        return browserId+"-"+style;
+        return browserId+STYLE_SEP+style;
     }
     
     private int decodeStyle(String secondaryId) {
-        int sep = secondaryId.lastIndexOf('-');
+        int sep = secondaryId.lastIndexOf(STYLE_SEP);
         if (sep== -1) return DEFAULT_STYLE;
         String stoken = secondaryId.substring(sep+1);
         try {
@@ -50,4 +59,17 @@ public class WebBrowserView extends ViewPart {
 	public void setFocus() {
 		viewer.setFocus();
 	}
+
+    public boolean close() {
+        try {
+            getSite().getPage().hideView(this);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public IActionBars getActionBars() {
+        return getViewSite().getActionBars();
+    }
 }

@@ -101,7 +101,7 @@ public class BrowserViewer extends Composite {
 
     protected boolean newWindow;
 
-    public WebBrowserEditor editor;
+    private IBrowserViewerContainer container;
 
     protected String title;
 
@@ -274,9 +274,9 @@ public class BrowserViewer extends Composite {
         // updating the status line
         browser.addStatusTextListener(new StatusTextListener() {
             public void changed(StatusTextEvent event) {
-                if (editor != null) {
-                    IStatusLineManager status = editor.getEditorSite()
-                            .getActionBars().getStatusLineManager();
+                if (container != null) {
+                    IStatusLineManager status = container.getActionBars()
+                            .getStatusLineManager();
                     status.setMessage(event.text);
                 }
             }
@@ -312,7 +312,7 @@ public class BrowserViewer extends Composite {
                 if (newWindow)
                     getShell().dispose();
                 else
-                    editor.closeEditor();
+                    container.close();
             }
         });
 
@@ -324,10 +324,9 @@ public class BrowserViewer extends Composite {
                 boolean done = (event.current == event.total);
 
                 int percentProgress = event.current * 100 / event.total;
-                if (editor != null) {
-                    IProgressMonitor monitor = editor.getEditorSite()
-                            .getActionBars().getStatusLineManager()
-                            .getProgressMonitor();
+                if (container != null) {
+                    IProgressMonitor monitor = container.getActionBars()
+                            .getStatusLineManager().getProgressMonitor();
                     if (done) {
                         monitor.done();
                         progressWorked = 0;
@@ -344,8 +343,8 @@ public class BrowserViewer extends Composite {
                     if (!busy.isBusy() && !done)
                         loading = true;
                     else if (busy.isBusy() && done) // once the progress hits
-                                                    // 100 percent, done, set
-                                                    // busy to false
+                        // 100 percent, done, set
+                        // busy to false
                         loading = false;
 
                     updateBackNextBusy();
@@ -354,10 +353,9 @@ public class BrowserViewer extends Composite {
             }
 
             public void completed(ProgressEvent event) {
-                if (editor != null) {
-                    IProgressMonitor monitor = editor.getEditorSite()
-                            .getActionBars().getStatusLineManager()
-                            .getProgressMonitor();
+                if (container != null) {
+                    IProgressMonitor monitor = container.getActionBars()
+                            .getStatusLineManager().getProgressMonitor();
                     monitor.done();
                 }
                 if (showToolbar) {
@@ -750,5 +748,13 @@ public class BrowserViewer extends Composite {
         combo.setItems(historyList);
 
         combo.setText(temp);
+    }
+
+    public IBrowserViewerContainer getContainer() {
+        return container;
+    }
+
+    public void setContainer(IBrowserViewerContainer container) {
+        this.container = container;
     }
 }

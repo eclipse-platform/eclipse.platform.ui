@@ -14,6 +14,7 @@ import java.net.URL;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -40,7 +41,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * An integrated Web browser, defined as an editor to make
  * better use of the desktop.
  */
-public class WebBrowserEditor extends EditorPart {
+public class WebBrowserEditor extends EditorPart implements IBrowserViewerContainer {
 	public static final String WEB_BROWSER_EDITOR_ID = "org.eclipse.ui.browser.editor";
 
 	protected BrowserViewer webBrowser;
@@ -81,7 +82,7 @@ public class WebBrowserEditor extends EditorPart {
 		webBrowser = new BrowserViewer(parent, style);
 		
 		webBrowser.setURL(initialURL);
-		webBrowser.editor = this;
+		webBrowser.setContainer(this);
 	}
 	
 	public void dispose() {
@@ -278,12 +279,14 @@ public class WebBrowserEditor extends EditorPart {
 	/**
 	 * Close the editor correctly.
 	 */
-	public void closeEditor() {
+	public boolean close() {
+        final boolean [] result = new boolean[1];
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				getEditorSite().getPage().closeEditor(WebBrowserEditor.this, false);
+				result[0] = getEditorSite().getPage().closeEditor(WebBrowserEditor.this, false);
 			}
 		});
+        return result[0];
 	}
 	
 	/**
@@ -314,7 +317,7 @@ public class WebBrowserEditor extends EditorPart {
 									MessageDialog dialog = new MessageDialog(getEditorSite().getShell(), title, null, message, MessageDialog.INFORMATION, labels, 0);
 
 									if (dialog.open() != 0)
-										closeEditor();
+										close();
 								}
 							});
 							return false;
@@ -327,4 +330,8 @@ public class WebBrowserEditor extends EditorPart {
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener);
 	}
+
+    public IActionBars getActionBars() {
+        return getEditorSite().getActionBars();
+    }
 }
