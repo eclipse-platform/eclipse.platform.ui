@@ -15,15 +15,13 @@ package org.eclipse.core.boot;
  * entry points into plug-ins.  Runnables can be configured into the Platform's
  * <code>org.eclipse.core.runtime.applications</code> extension-point 
  * or be made available through code or extensions on other plug-in's extension-points.
- *
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0). </p>
+ * TODO @deprecated In Eclipse 3.0 the boot plug-in and packages were deprecated.
+ * This class has been replaced by an equivalent class in the org.eclipse.core.runtime package.
+ * 
+ * @see org.eclipse.core.runtime.IPlatformRunnable
  */
 
 public interface IPlatformRunnable extends org.eclipse.core.runtime.IPlatformRunnable {

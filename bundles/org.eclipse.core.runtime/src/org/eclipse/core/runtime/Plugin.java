@@ -166,11 +166,6 @@ public abstract class Plugin implements BundleActivator {
 	 * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
 	 * as this would lead to deadlock vulnerability.
 	 * </p>
-	 * <p>
-	 * <b>Note</b>: This is obsolete API that will be replaced in time with
-	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
-	 * This API will be deprecated once the APIs for the new Eclipse Platform
-	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @param descriptor the plug-in descriptor
 	 * @see #getDescriptor()
@@ -230,11 +225,6 @@ public abstract class Plugin implements BundleActivator {
 
 	/**
 	 * Returns the plug-in descriptor for this plug-in runtime object.
-	 * <p>
-	 * <b>Note</b>: This is obsolete API that will be replaced in time with
-	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
-	 * This API will be deprecated once the APIs for the new Eclipse Platform
-	 * Runtime achieve their final and stable form (post-3.0). </p>
 	 *
 	 * @return the plug-in descriptor for this plug-in runtime object
 	 * TODO @deprecated 

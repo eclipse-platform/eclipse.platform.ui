@@ -19,11 +19,6 @@ import java.net.URL;
  * changes do not take effect until next startup of the Eclipse
  * platform
  * 
- * <b>Note</b>: This is obsolete API that will be replaced in time with
- * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
- * This API will be deprecated once the APIs for the new Eclipse Platform
- * Runtime achieve their final and stable form (post-3.0).
- *
  * @since 2.0
  * TODO @deprecated 
  * In Eclipse 3.0 the Update mechanism was cleanly separated from the runtime.

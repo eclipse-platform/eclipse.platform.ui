@@ -33,21 +33,16 @@ public interface IExtension {
 
 	/**
 	 * Returns the descriptor of the plug-in that declares this extension.
-	 * <p>
-	 * <b>Note</b>: This is obsolete API that will be replaced in time with
-	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
-	 * This API will be deprecated once the APIs for the new Eclipse Platform
-	 * Runtime achieve their final and stable form (post-3.0). </p>
-	 * <p>
-	 * <b>Note</b>: This is method only available if runtime compatibility
-	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 * 
 	 * @return the plug-in that declares this extension
 	 * TODO @deprecated IPluginDescriptor is not part of the new runtime and its function
 	 * has been split over several parts of the new runtime.  This method
 	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
-	 * to get the symbolic id of the declaring plugin.  See IPluginDescriptor to see how to 
+	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
 	 * update your usecases.
+	 * <p>
+	 * <b>Note</b>: This is method only available if runtime compatibility
+	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
 

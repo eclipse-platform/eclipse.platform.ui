@@ -401,11 +401,6 @@ public final class Platform {
 	 * the plug-in is defined but not yet activated, the plug-in will
 	 * be activated before being returned.
 	 * <p>
-	 * <b>Note</b>: This is obsolete API that will be replaced in time with
-	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
-	 * This API will be deprecated once the APIs for the new Eclipse Platform
-	 * Runtime achieve their final and stable form (post-3.0). </p>
-	 * 
 	 * <b>Note</b>: This is method is only able to find and return plug-in
 	 * objects for plug-ins described using plugin.xml according to the 
 	 * traditional Eclipse conventions.  Eclipse 3.0 permits plug-ins to be
@@ -438,14 +433,6 @@ public final class Platform {
 
 	/**
 	 * Returns the plug-in registry for this platform.
-	 * <p>
-	 * <b>Note</b>: This is obsolete API that will be replaced in time with
-	 * the OSGI-based Eclipse Platform Runtime introduced with Eclipse 3.0.
-	 * This API will be deprecated once the APIs for the new Eclipse Platform
-	 * Runtime achieve their final and stable form (post-3.0). </p>
-	 * <p>
-	 * <b>Note</b>: This is method only available if runtime compatibility
-	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 *
 	 * @return the plug-in registry
 	 * @see IPluginRegistry
@@ -453,6 +440,9 @@ public final class Platform {
 	 * <code>IPluginRegistry</code> was refactored in Eclipse 3.0.
 	 * This method only works if the compatibility layer is present and must not be used otherwise.
 	 * See the comments on {@link IPluginRegistry} and its methods for details.
+	 * <p>
+	 * <b>Note</b>: This is method only available if runtime compatibility
+	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 */
 	public static IPluginRegistry getPluginRegistry() {
 		Bundle compatibility = InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY);
