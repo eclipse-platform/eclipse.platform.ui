@@ -20,11 +20,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.expressions.ExpressionTagNames;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
-import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -40,8 +44,8 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	private List fPerspectives = null;
 	private ILaunchShortcut fDelegate = null;
 	private Set fModes = null;
-	private ILaunchFilter fLaunchFilter = null;
-	private /* <Pair> */ List fFilters = null;
+	private IConfigurationElement fContextualLaunchConfigurationElement = null;
+	private Expression fContextualLaunchExpr = null;
 	
 	/**
 	 * The configuration element defining this tab.
@@ -93,17 +97,32 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	}
 	
 	/**
-	 * Returns the name filter of this shortcut or <code>null</code>
-	 * 
-	 * @return the name filter of this shortcut, or <code>null</code> if not
-	 *  specified
+	 * Returns the configuration element for the optional Contextual Launch
+	 * element of this Launch Configuration description.
+	 * @return contextualLaunch element
 	 */
-	public String getNameFilter() {
-		return getConfigurationElement().getAttribute("nameFilter"); //$NON-NLS-1$
+	public IConfigurationElement getContextualLaunchConfigurationElement() {
+		if (fContextualLaunchConfigurationElement == null) {
+			IConfigurationElement[] elements = getConfigurationElement().getChildren("contextualLaunch"); //$NON-NLS-1$
+			if (elements.length > 0) {
+				// remember so we don't have to hunt again
+				fContextualLaunchConfigurationElement = elements[0];
+			}
+		}
+		return fContextualLaunchConfigurationElement;
 	}
-	
 	/**
-	 * Returns the contextual launch label of this shortcut
+	 * Returns the contextual launch label of this shortcut for the named mode.
+	 * <p>
+	 * <samp>
+	 * <launchShortcut...>
+	 *   <contextualLaunch>
+	 *     <contextLabel mode="run" label="Run Java Application"/>
+	 *     <contextLabel mode="debug" label="Debug Java Application"/>
+	 *     ...
+	 *   </contextualLaunch>
+	 * </launchShortcut>
+	 * </samp>
 	 * 
 	 * @return the contextual label of this shortcut, or <code>null</code> if not
 	 *  specified
@@ -111,7 +130,11 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	public String getContextLabel(String mode) {
 		// remember the list of context labels for this shortcut
 		if (fContextLabels == null) {
-			IConfigurationElement[] labels = getConfigurationElement().getChildren("contextLabel"); //$NON-NLS-1$
+			IConfigurationElement context = getContextualLaunchConfigurationElement();
+			if (context == null) {
+				return null;
+			}
+			IConfigurationElement[] labels = context.getChildren("contextLabel"); //$NON-NLS-1$
 			fContextLabels = new ArrayList(labels.length);
 			for (int i = 0; i < labels.length; i++) {
 				fContextLabels.add(new Pair(labels[i].getAttribute("mode"), //$NON-NLS-1$
@@ -130,47 +153,49 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	}
 	
 	/**
-	 * Returns the filter class of this shortcut.
+	 * Evaluate the given expression within the given context and return
+	 * the result. Returns <code>true</code> iff result is either TRUE or NOT_LOADED.
+	 * This allows optimistic inclusion of shortcuts before plugins are loaded.
+	 * Returns <code>false</code> if exp is <code>null</code>.
 	 * 
-	 * @return the filter class of this shortcut., or <code>null</code> if not
-	 *  specified
+	 * @param exp the enablement expression to evaluate or <code>null</code>
+	 * @param context the context of the evaluation. Usually, the
+	 *  user's selection.
+	 * @return the result of evaluating the expression
+	 * @throws CoreException
 	 */
-	public ILaunchFilter getFilterClass() {
-		if (fLaunchFilter == null) {
-			try {
-				// The underlying code logs an error if the filterClass is missing,
-				// even though the attribute is optional, so check for existence first.
-				if (fConfig.getAttribute("filterClass") != null) { //$NON-NLS-1$
-					Object object = fConfig.createExecutableExtension("filterClass"); //$NON-NLS-1$
-					if (object instanceof ILaunchFilter) {
-						fLaunchFilter = (ILaunchFilter) object;
-					}
-				}
-			} catch (CoreException e) {
-				// silently ignore because filterClass is optional
-				// DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchShortcutExtension.Error_4"), LaunchConfigurationsMessages.getString("LaunchShortcutExtension.Unable_to_use_launch_shortcut_5"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		return fLaunchFilter;
+	public boolean evalContextualLaunchEnablementExpression(IEvaluationContext context, Expression exp) throws CoreException {
+		return (exp != null) ? ((exp.evaluate(context)) != EvaluationResult.FALSE) : false;
 	}
 	
 	/**
-	 * Returns all of the filter elements of this shortcut as a List of String Pairs.
-	 * 
-	 * @return all of the filter elements of this shortcut, or <code>null</code> if not
-	 *  specified
+	 * Returns an expression that represents the enablement logic for the
+	 * contextual launch element of this launch shortcut description or
+	 * <code>null</code> if none.
+	 * @return an evaluatable expression or <code>null</code>
+	 * @throws CoreException if the configuration element can't be
+	 *  converted. Reasons include: (a) no handler is available to
+	 *  cope with a certain configuration element or (b) the XML
+	 *  expression tree is malformed.
 	 */
-	public /* <Pair> */ List getFilters() {
-		if (fFilters == null) {
-			IConfigurationElement[] filters = getConfigurationElement().getChildren("filter"); //$NON-NLS-1$
-			fFilters = new ArrayList(filters.length);
-			for (int i = 0; i < filters.length; i++) {
-				fFilters.add(new Pair(filters[i].getAttribute("name"), //$NON-NLS-1$
-						filters[i].getAttribute("value"))); //$NON-NLS-1$
+	public Expression getContextualLaunchEnablementExpression() throws CoreException {
+		// all of this stuff is optional, so...tedius testing is required
+		if (fContextualLaunchExpr == null) {
+			IConfigurationElement contextualLaunchElement = getContextualLaunchConfigurationElement();
+			if (contextualLaunchElement == null) {
+				// not available
+				return null;
+			}
+			IConfigurationElement[] elements = contextualLaunchElement.getChildren(ExpressionTagNames.ENABLEMENT);
+			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
+
+			if (enablement != null) {
+				fContextualLaunchExpr= ExpressionConverter.getDefault().perform(enablement);
 			}
 		}
-		return fFilters;
+		return fContextualLaunchExpr;
 	}
+	
 	/**
 	 * Returns the id of this shortcut
 	 * 
@@ -305,7 +330,14 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 			}
 		}
 		return fModes;
-	}	
-
+	}
+	
+	/*
+	 * Only for debugging
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return getId();
+	}
 }
 

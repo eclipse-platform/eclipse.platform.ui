@@ -49,8 +49,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
       <complexType>
          <sequence>
             <element ref="perspective" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="contextLabel" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contextualLaunch" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -108,30 +107,6 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="contextLabel" type="string">
-            <annotation>
-               <documentation>
-                  an optional attribute that specifies the label to appear in the contextual launch menu (if this shortcut is not filtered according to the rules described in the filterClass attribute). If unspecified, the &lt;samp&gt;label&lt;/samp&gt; attribute will be used instead.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="filterClass" type="string">
-            <annotation>
-               <documentation>
-                  an optional attribute that specifies the fully qualified path of a Java class that implements the &lt;samp&gt;org.eclipse.ui.ILaunchFilter&lt;/samp&gt; interface. The testAttribute() method is called with the selected resource and the name/value pair specified by subsequent filter elements. If all return values of all filter elements are true, the shortcut will appear in the contextual launch menu of the selected resource. If the filterClass attribute is not specifies, the shortcut will not appear in the contextual launch menu. If the filterClass is specified, but no filter elements are found, the shortcut will appear in the menu.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchFilter"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="nameFilter" type="string">
-            <annotation>
-               <documentation>
-                  An expression (* and ? wildcards supported), matched against the name of a selected resource. A match allows this launch shortcut to appear in the contextual launch popup menu for the selected resource, unless one of the filters fails in filterClass. If the filterClass is not yet loaded (lazy plugin), the result of the nameFilter test will decide inclusion in the context menu.
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -147,27 +122,17 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
       </complexType>
    </element>
 
-   <element name="filter">
+   <element name="contextualLaunch">
       <annotation>
          <documentation>
-            specifies the name/value pair that will be tested for boolean true/false by calling the &lt;samp&gt;org.eclipse.ui.IActionFilter:testAttribute()&lt;/samp&gt; method of the class specified by the &lt;samp&gt;filterClass&lt;/samp&gt; attribute of the parent &lt;samp&gt;shortcut&lt;/samp&gt; element. If all filters return a true value, the shortcut will be visible in the contextual launch menu.
+            Holds all descriptions for adding shortcuts to the Run context menu (pop-up).
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  specifies the name of the filter property.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="value" type="string" use="required">
-            <annotation>
-               <documentation>
-                  specifies the expected value of the filter property.
-               </documentation>
-            </annotation>
-         </attribute>
+         <sequence>
+            <element ref="contextLabel" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
       </complexType>
    </element>
 
@@ -203,6 +168,14 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
             </annotation>
          </attribute>
       </complexType>
+   </element>
+
+   <element name="enablement" type="string">
+      <annotation>
+         <documentation>
+            Enablement logic using XML expression language. This should use some kind of schema reference.
+         </documentation>
+      </annotation>
    </element>
 
    <annotation>

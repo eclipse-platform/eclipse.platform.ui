@@ -15,15 +15,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.Pair;
-import org.eclipse.debug.internal.ui.StringMatcher;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
-import org.eclipse.debug.ui.ILaunchFilter;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -62,7 +60,7 @@ public class ContextualLaunchObjectActionDelegate
 			IObjectActionDelegate,
 			IMenuCreator {
 
-	private IResource fSelection;
+	private IStructuredSelection fSelection;
 	
 	/*
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
@@ -121,20 +119,15 @@ public class ContextualLaunchObjectActionDelegate
 	public void selectionChanged(IAction action, ISelection selection) {
 		// if the selection is an IResource, save it and enable our action
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) selection;
-			if (ss.size() == 1 && action instanceof Action) {
+			if (action instanceof Action) {
 				if (delegateAction != action) {
 					delegateAction = (Action) action;
 					delegateAction.setMenuCreator(this);
 				}
-				Object object = ss.getFirstElement(); // already tested size above
-				if(object instanceof IResource) {
-					fSelection = (IResource)object;
-					if (fSelection.getType() == IResource.FILE) {
-						action.setEnabled(true);
-						return;
-					}
-				}
+				// save selection and enable our menu
+				fSelection = (IStructuredSelection) selection;
+				action.setEnabled(true);
+				return;
 			}
 		}
 		action.setEnabled(false);
@@ -159,6 +152,8 @@ public class ContextualLaunchObjectActionDelegate
 		if (activePerspID == null || fSelection == null) {
 			return;
 		}
+		
+		IEvaluationContext context = createContext();
 		// gather all shortcuts and run their filters so that we only run the
 		// filters one time for each shortcut. Running filters can be expensive.
 		// Also, only *LOADED* plugins get their filters run.
@@ -167,8 +162,13 @@ public class ContextualLaunchObjectActionDelegate
 		List filteredShortCuts = new ArrayList(10);
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			if (isApplicable(ext)) {
-				filteredShortCuts.add(ext);
+			try {
+				if (isApplicable(ext, context)) {
+					filteredShortCuts.add(ext);
+				}
+			} catch (CoreException e) {
+				// bogus XML Expression Language provided.
+				DebugUIPlugin.log(e.getStatus());
 			}
 		}
 		iter = filteredShortCuts.iterator();
@@ -189,59 +189,44 @@ public class ContextualLaunchObjectActionDelegate
 			item.fill(menu, -1);
 		}
 	}
-	
-	private ILaunchFilter getFilterClassIfLoaded(LaunchShortcutExtension ext) {
-		IExtension extensionPoint = ext.getConfigurationElement().getDeclaringExtension();
-		IPluginDescriptor pluginDescriptor = extensionPoint.getDeclaringPluginDescriptor();
-		if (pluginDescriptor.isPluginActivated()) {
-			ILaunchFilter filter = ext.getFilterClass();
-			return filter;
-		} else {
-			return null;
-		}
-	}
-	/* (non-javadoc)
-	 * Apply contextFilters for this extension to decide visibility. 
-	 *
- 	 * @return true if this shortcut should appear in the contextual launch menu
+
+	/**
+	 * @return an Evaluation context with default variable = selection
 	 */
-	private boolean isApplicable(LaunchShortcutExtension ext) {
-		String nameFilterPattern = ext.getNameFilter();
-		boolean nameMatches = false;
-		if (nameFilterPattern != null) {
-			StringMatcher sm = new StringMatcher(nameFilterPattern, true, false);
-			nameMatches = sm.match(fSelection.getName());
-			if (!nameMatches) {
-				// return now to avoid loading the filterClass
-				return false;
-			}
-		}
-
-		// Only loaded plugins will be used, so the launchFilter is null if the filterClass is not loaded
-		ILaunchFilter launchFilter = getFilterClassIfLoaded(ext);
-		if (launchFilter == null) {
-			// no launch filter available, just use nameMatches (see bug# 51420)
-			return nameMatches;
-		}
-
-		List filters = ext.getFilters();
-		if (filters.isEmpty()) {
-			return false;
-		}
-		Iterator iter = filters.listIterator();
-		while (iter.hasNext()) {
-			Pair pair = (Pair) iter.next();
-			String name = pair.firstAsString();
-			String value= pair.secondAsString();
-			// any filter that returns false makes the shortcut non-visible
-			if (!launchFilter.testAttribute(fSelection,name,value)) {
-				return false;
-			}
-		}
-		return true;
+	private IEvaluationContext createContext() {
+		// create a default evaluation context with default variable of the user selection
+		List selection = getSelectedElements();
+		IEvaluationContext context = new EvaluationContext(null, selection);
+		context.addVariable("selection", selection); //$NON-NLS-1$
+		
+		return context;
 	}
-	/* Add the shortcut to the context menu's launch submenu.
-	 * 
+	
+	/**
+	 * @return current selection as a List.
+	 */
+	private List getSelectedElements() {
+		ArrayList result = new ArrayList();
+		Iterator iter = fSelection.iterator();
+		while (iter.hasNext()) {
+			result.add(iter.next());
+		}
+		return result;
+	}
+	
+	/**
+	 * Evaluate the enablement logic in the contextualLaunch
+	 * element description. A true result means that we should
+	 * include this shortcut in the context menu.
+	 * @return true iff shortcut should appear in context menu
+	 */
+	private boolean isApplicable(LaunchShortcutExtension ext, IEvaluationContext context) throws CoreException {
+		Expression expr = ext.getContextualLaunchEnablementExpression();
+		return ext.evalContextualLaunchEnablementExpression(context, expr);
+	}
+
+	/**
+	 * Add the shortcut to the context menu's launch submenu.
 	 */
 	private void populateMenu(String mode, LaunchShortcutExtension ext, Menu menu) {
 		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);
@@ -258,31 +243,31 @@ public class ContextualLaunchObjectActionDelegate
 		item.fill(menu, -1);
 	}
 
-/**
- * Return the ID of the currently active perspective.
- * 
- * @return the active perspective ID or <code>null</code> if there is none.
- */
-private String getActivePerspectiveID() {
-	IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-	if (window != null) {
-		IWorkbenchPage page = window.getActivePage();
-		if (page != null) {
-			IPerspectiveDescriptor persp = page.getPerspective();
-			if (persp != null) {
-				return persp.getId();
+	/**
+	 * Return the ID of the currently active perspective.
+	 * 
+	 * @return the active perspective ID or <code>null</code> if there is none.
+	 */
+	private String getActivePerspectiveID() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IPerspectiveDescriptor persp = page.getPerspective();
+				if (persp != null) {
+					return persp.getId();
+				}
 			}
 		}
+		return null;
 	}
-	return null;
-}
-/**
- * Returns the launch configuration manager.
-*
-* @return launch configuration manager
-*/
-private LaunchConfigurationManager getLaunchConfigurationManager() {
-	return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-}
+	/**
+	 * Returns the launch configuration manager.
+	*
+	* @return launch configuration manager
+	*/
+	private LaunchConfigurationManager getLaunchConfigurationManager() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	}
 
 }
