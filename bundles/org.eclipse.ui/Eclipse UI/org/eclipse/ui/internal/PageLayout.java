@@ -269,6 +269,10 @@ private LayoutPart createView(String partID)
 	} else {
 		IViewReference ref = viewFactory.createView(partID);
 		IViewPart view = (IViewPart)ref.getPart(true);
+		if(view == null) {
+			String message = WorkbenchMessages.format("Perspective.exceptionRestoringView",new String[]{ref.getId()}); //$NON-NLS-1$
+			throw new PartInitException(message);
+		}
 		ViewSite site = (ViewSite)view.getSite();
 		return site.getPane();
 	}
