@@ -90,5 +90,20 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 	protected String getProblemsTitle() {
 		return WorkbenchMessages.getString("MoveFilesAndFoldersOperation.moveFailedTitle"); //$NON-NLS-1$
 	}
+	/* (non-Javadoc)
+	 * Overrides method in CopyFilesAndFoldersOperation
+	 */
+	protected String validateDestination(IContainer destination, IResource[] sourceResources) {
+		for (int i = 0; i < sourceResources.length; i++) {
+			IResource sourceResource = sourceResources[i];
 
+			// is the source being copied onto itself?
+			if (sourceResource.getParent().equals(destination)) {
+				return WorkbenchMessages.format(
+					"MoveFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
+					new Object[] {sourceResource.getName()});
+			}
+		}
+		return super.validateDestination(destination, sourceResources);
+	}
 }

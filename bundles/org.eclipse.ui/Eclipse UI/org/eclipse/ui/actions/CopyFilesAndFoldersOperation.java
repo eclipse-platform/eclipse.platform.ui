@@ -654,7 +654,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @param sourceResources the source resources
 	 * @return an error message, or <code>null</code> if the path is valid
 	 */
-	String validateDestination(IContainer destination, IResource[] sourceResources) {
+	protected String validateDestination(IContainer destination, IResource[] sourceResources) {
 		if (!isAccessible(destination)) {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
@@ -672,13 +672,6 @@ public class CopyFilesAndFoldersOperation {
 			if (sourcePath.isPrefixOf(destinationPath)) {
 				return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationDescendentError"); //$NON-NLS-1$
 			}
-			// is the source being copied onto itself?
-/*			if (sourceResource.getType() == IResource.FILE && 
-				sourceResource.getParent().equals(destination)) {
-				return WorkbenchMessages.format(
-					"CopyFilesAndFoldersOperation.sameSourceAndDest", //$NON-NLS-1$
-					new Object[] {sourceResource.getName()});
-			}*/
 		}
 		return null;
 	}
