@@ -248,23 +248,36 @@ public class ProgressContentProvider
 
 				if (viewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
-				//Lock update additions while working
-				synchronized (updateLock) {
-					if (currentInfo.updateAll)
-						viewer.refresh(true);
-					else {
-						Object[] updateItems = currentInfo.refreshes.toArray();
-						for (int i = 0; i < updateItems.length; i++) {
-							viewer.refresh(updateItems[i], true);
-						}
-						viewer.add(
-							viewer.getInput(),
-							currentInfo.additions.toArray());
 
-						viewer.remove(currentInfo.deletions.toArray());
+				if (currentInfo.updateAll)
+					viewer.refresh(true);
+				else {
+					//Lock while getting local copies of the caches.
+					Object[] updateItems;
+					Object[] additionItems;
+					Object[] deletionItems;
+					synchronized (updateLock) {
+						updateItems = currentInfo.refreshes.toArray();
+						additionItems = currentInfo.additions.toArray();
+						deletionItems = currentInfo.deletions.toArray();
+				
 					}
+								  
+					for (int i = 0; i < updateItems.length; i++) {
+						viewer.refresh(updateItems[i], true);
+					}
+					viewer.add(
+						viewer.getInput(),
+						additionItems);
+
+					viewer.remove(deletionItems);
+				}
+					
+				synchronized (updateLock) {
 					currentInfo.reset();
 				}
+					
+				
 				return Status.OK_STATUS;
 
 			}
