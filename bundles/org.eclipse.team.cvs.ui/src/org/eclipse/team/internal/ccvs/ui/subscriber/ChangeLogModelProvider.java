@@ -536,7 +536,11 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 					for (int i = 0; i < updates.length; i++) {
 						calculateRoots(updates[i], monitor);
 					}
-					refreshViewer(restoreExpansionState);
+					try {
+					    refreshViewer(restoreExpansionState);
+					} finally {
+					    restoreExpansionState = false;
+					}
 				}
 				return Status.OK_STATUS;
 		
@@ -633,7 +637,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		if(fetchLogEntriesJob == null) {
 			fetchLogEntriesJob = new FetchLogEntriesJob();
 		}
-		fetchLogEntriesJob.setRestoreExpansionState(true);
+		fetchLogEntriesJob.setRestoreExpansionState(restoreExpansion);
 		fetchLogEntriesJob.add(set);
 	}
 	
@@ -714,7 +718,6 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
     		            SyncInfo info = infos[i];
     		            addLocalChange(info);
     		        }
-    		        //refreshViewer(); // TODO: Why do we do a refresh viewer here?
     	        }
             }
         });
