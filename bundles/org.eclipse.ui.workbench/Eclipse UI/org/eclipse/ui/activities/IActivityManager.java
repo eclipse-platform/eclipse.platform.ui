@@ -59,10 +59,7 @@ public interface IActivityManager {
 	ICategory getCategory(String categoryId);
 
 	/**
-	 * TODO javadoc
-	 * <p>
 	 * Returns the set of identifiers to defined activities.
-	 * </p>
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
@@ -76,10 +73,7 @@ public interface IActivityManager {
 	Set getDefinedActivityIds();
 
 	/**
-	 * TODO javadoc
-	 * <p>
 	 * Returns the set of identifiers to defined categories.
-	 * </p>
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.
@@ -93,11 +87,7 @@ public interface IActivityManager {
 	Set getDefinedCategoryIds();
 
 	/**
-	 * TODO javadoc
-	 * <p>
-	 * Returns the set of identifiers to enabled activities. This set is not
-	 * necessarily a subset of the set of identifiers to defined activities.
-	 * </p>
+	 * Returns the set of identifiers to enabled activities.
 	 * <p>
 	 * Notification is sent to all registered listeners if this property
 	 * changes.

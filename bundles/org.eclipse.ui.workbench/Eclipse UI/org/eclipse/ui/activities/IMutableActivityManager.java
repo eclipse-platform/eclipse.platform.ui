@@ -29,7 +29,7 @@ import java.util.Set;
 public interface IMutableActivityManager extends IActivityManager {
 
 	/**
-	 * TODO javadoc Sets the set of identifiers to enabled activities.
+	 * Sets the set of identifiers to enabled activities.
 	 * 
 	 * @param enabledActivityIds
 	 *            the set of identifiers to enabled activities. This set may be
