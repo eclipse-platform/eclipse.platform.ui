@@ -23,7 +23,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 	private static final String BUNDLE_B_WITH_EXTENSION = "<plugin id=\"bundleB\"><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
 	private static final String BUNDLE_A_WITH_EXTENSION_POINT = "<plugin id=\"bundleA\"><extension-point id=\"xp1\"/></plugin>";
 	private static final String BUNDLE_A_WITH_EXTENSION_AND_EXTENSION_POINT = "<plugin id=\"bundleA\"><extension-point id=\"xp1\"/><extension point=\"bundleA.xp1\"><cfg1 property=\"value\"><cfg11/></cfg1><cfg2/></extension></plugin>";
-	private ExtensionRegistry registry;
+	protected ExtensionRegistry registry;
 	public RegistryCacheTest(String name) {
 		super(name);
 	}
@@ -41,11 +41,14 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		try {
 			new RegistryCacheWriter(cacheFile).saveCache(registry);
 			assertTrue("file not created", cacheFile.isFile());
-			ExtensionRegistry cached = new RegistryCacheReader(cacheFile, new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)), false).loadCache();
+			ExtensionRegistry cached = createRegistryReader(cacheFile).loadCache();
 			assertEquals(registry, cached);
 		} finally {
 			ensureDoesNotExistInFileSystem(cacheFile);
 		}
+	}
+	protected RegistryCacheReader createRegistryReader(File cacheFile) {
+		return new RegistryCacheReader(cacheFile, new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)), false);
 	}
 	/**
 	 * Two plugins, one declaring an extension point and the other, an extension.
@@ -61,7 +64,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 		try {
 			new RegistryCacheWriter(cacheFile).saveCache(registry);
 			assertTrue("file not created", cacheFile.isFile());
-			ExtensionRegistry cached = new RegistryCacheReader(cacheFile, new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)), false).loadCache();
+			ExtensionRegistry cached = createRegistryReader(cacheFile).loadCache();
 			assertEquals(registry, cached);
 		} finally {
 			ensureDoesNotExistInFileSystem(cacheFile);

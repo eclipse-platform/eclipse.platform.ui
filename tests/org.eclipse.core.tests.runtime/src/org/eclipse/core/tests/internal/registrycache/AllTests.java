@@ -22,6 +22,7 @@ public AllTests(String name) {
 public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.addTest(RegistryCacheTest.suite());
+	suite.addTest(LazyRegistryCacheTest.suite());
 	return suite;
 }
 }
