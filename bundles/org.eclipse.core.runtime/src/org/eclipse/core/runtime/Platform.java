@@ -19,6 +19,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.model.Factory;
 import org.eclipse.core.runtime.model.PluginRegistryModel;
+import org.eclipse.core.runtime.registry.IExtensionRegistry;
 
 /**
  * The central class of the Eclipse Platform Runtime. This class cannot
@@ -360,7 +361,7 @@ public static String getProtectionSpace(URL resourceUrl) {
 /**
  * Returns whether the platform runtime is based on OSGi.
  * @return <code>true</code> if the platform runtime is based on OSGi,
- * <code>false</code> otherwise. 
+ * <code>false</code> otherwise 
  * @deprecated this API is temporary and will be removed by the end of 
  * the Eclipse 3.0 cycle.
  * @since 3.0 
@@ -429,5 +430,60 @@ public static URL resolve(URL url) throws java.io.IOException {
  */
 public static void run(ISafeRunnable runnable) {
 	InternalPlatform.run(runnable);
+}
+/** 
+ * Adds the given listener for the specified plugin lifecycle change events 
+ * to this platform.
+ * Has no effect if an identical listener is already registered for these events.
+ * <p>
+ * Once registered, a listener starts receiving notification of changes to
+ * plug-ins' lifecycle. Those events are all after-the-fact. The listener continues 
+ * to receive notifications until is removed. 
+ * </p>
+ * 
+ * @param listener the listener
+ * @see IPluginListener
+ * @see IPluginEvent
+ * @see #removePluginListener(IPluginListener)
+ * @since 3.0
+ */
+public static void addPluginListener(IPluginListener pluginListener) {
+	InternalPlatform.addPluginListener(pluginListener);
+}
+/** 
+ * Removes the given plugiin listener from the platform.
+ * Has no effect if an identical listener is not registered.
+ *
+ * @param listener the listener
+ * @see IPluginListener
+ * @see #addPluginListener(IPluginListener)
+ * @since 3.0
+ */
+public static void removePluginListener(IPluginListener pluginListener) {
+	InternalPlatform.removePluginListener(pluginListener);
+}
+/**
+ * Installs any plug-ins and fragments found in the given URLs.
+ * 
+ * @param installURLs the URL for each plug-in/fragment to be installed 
+ * @throws CoreException if the operation failed. Reasons include:
+ * <ul>
+ * <li>There are missing elements in a plug-in/fragment manifest.</li>
+ * <li>A plug-in cannot be resolved due to a missing prerequisite.</li>
+ * </ul>
+ * @since 3.0
+ */
+public static void installPlugins(URL[] installURLs) throws CoreException {
+	InternalPlatform.installPlugins(installURLs);
+}
+/**
+ * Returns the extension registry for this platform.
+ *
+ * @return the extension registry
+ * @see IExtensionRegistry
+ * @since 3.0
+ */
+public static IExtensionRegistry getExtensionRegistry() {
+	return InternalPlatform.getExtensionRegistry();
 }
 }

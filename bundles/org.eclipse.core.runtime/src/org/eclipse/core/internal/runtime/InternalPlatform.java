@@ -18,9 +18,11 @@ import org.eclipse.core.boot.*;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.plugins.*;
+import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.model.*;
+import org.eclipse.core.runtime.registry.IExtensionRegistry;
 
 /**
  * Bootstrap class for the platform. It is responsible for setting up the
@@ -30,6 +32,7 @@ public final class InternalPlatform {
 	private static IAdapterManager adapterManager;
 	private static JobManager jobManager;
 	private static PluginRegistry registry;
+	private static ExtensionRegistry extensionsRegistry;	
 	// registry index - used to store last modified times for
 	// registry caching
 	// ASSUMPTION:  Only the plugin registry in 'registry' above
@@ -55,7 +58,8 @@ public final class InternalPlatform {
 	private static String password = ""; //$NON-NLS-1$
 	private static boolean splashDown = false;
 	private static boolean cacheRegistry = true;
-	private static boolean noLazyRegistryCacheLoading = false;	
+	private static boolean noLazyRegistryCacheLoading = false;
+	private static boolean dynamic = false;
 	private static String pluginCustomizationFile = null;
 
 	private static File lockFile = null;
@@ -99,6 +103,7 @@ public final class InternalPlatform {
 	// command line options
 	private static final String LOG = "-consolelog"; //$NON-NLS-1$
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
+	private static final String DYNAMIC = "-dynamic"; //$NON-NLS-1$	
 	protected static final String PASSWORD = "-password"; //$NON-NLS-1$
 	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$
 	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$	
@@ -643,7 +648,7 @@ public static void loaderShutdown() {
 		registry.debugRegistry(DEBUG_PLUGINS_DUMP);
 	}
 	
-	if (cacheRegistry) {
+	if (cacheRegistry && !dynamic) {
 		// Write the registry in cache format
 		try {
 			registry.saveRegistry();
@@ -804,7 +809,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	// augment the plugin path with any additional platform entries
 	// (eg. user scripts)
 	URL[] augmentedPluginPath = getAugmentedPluginPath(pluginPath);
-	if (cacheFile.exists() && cacheRegistry) {
+	if (!dynamic && cacheFile.exists() && cacheRegistry) {
 		try {
 			input = new DataInputStream(new BufferedInputStream(new FileInputStream(path.toFile())));
 			try {
@@ -841,9 +846,16 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		long start = System.currentTimeMillis();
 		InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
-		IStatus resolveStatus = registry.resolve(true, true);
+		IStatus resolveStatus;		
+		if (dynamic) {
+			resolveStatus = registry.incrementalResolve();
+			extensionsRegistry = new ExtensionRegistry(new ExtensionLinker());
+			addPluginListener(new ExtensionRegistryBuilder(extensionsRegistry,registry.getPluginDescriptors()));				
+		} else {
+			resolveStatus = registry.resolve(true, true);
+			registry.markReadOnly();
+		}
 		problems.merge(resolveStatus);
-		registry.markReadOnly();
 		if (DEBUG)
 			System.out.println("Parse and resolve registry: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -909,6 +921,12 @@ private static String[] processCommandLine(String[] args) {
 	for (int i = 0; i < args.length; i++) {
 		boolean found = false;
 		// check for args without parameters (i.e., a flag arg)
+		
+		// look for the dynamic flag
+		if (args[i].equalsIgnoreCase(DYNAMIC)) {
+			dynamic = true;
+			found = true;
+		}		
 
 		// look for the log flag
 		if (args[i].equalsIgnoreCase(LOG)) {
@@ -1372,4 +1390,55 @@ public static long getRegistryCacheTimeStamp() {
 public static void setRegistryCacheTimeStamp(long timeStamp) {
 	cacheReadTimeStamp = timeStamp;
 }
+/**
+ * @since 3.0
+ */
+public static void addPluginListener(IPluginListener pluginListener) {
+	PluginEventDispatcher.getInstance().addListener(pluginListener);
+}
+/**
+ * @since 3.0
+ */
+public static void removePluginListener(IPluginListener pluginListener) {
+	PluginEventDispatcher.getInstance().removeListener(pluginListener);		
+}
+/**
+ * @since 3.0
+ */
+public static void installPlugins(URL[] installURLs) throws CoreException {
+	assertInitialized();
+	assertIncremental();
+	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null); //$NON-NLS-1$
+	Factory factory = new InternalFactory(problems);
+	PluginRegistryModel registryAdditions = parsePlugins(installURLs, factory);
+	registry.incrementalResolve(registryAdditions);
+	if (problems.isOK())
+		return;
+	getRuntimePlugin().getLog().log(problems);				
+	if (problems.getSeverity() == IStatus.ERROR)
+		throw new CoreException(problems);
+}
+/**
+ * @since 3.0
+ */
+public static IExtensionRegistry getExtensionRegistry() {
+	assertInitialized();
+	assertIncremental();
+	return extensionsRegistry; 	
+}
+/**
+ * @since 3.0
+ */
+private static void assertIncremental() {
+	// avoid the Policy.bind if assertion is true
+	if (!dynamic)
+		Assert.isTrue(false, Policy.bind("parse.notIncremental"));//$NON-NLS-1$
+}
+/**
+ * @since 3.0
+ */
+public static boolean isDynamic() {
+	return dynamic;
+}
+
 }
