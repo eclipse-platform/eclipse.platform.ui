@@ -35,9 +35,9 @@
 	<jsp:param name="image"    value="synch_toc_nav.gif"/>
 	<jsp:param name="action"   value="resynch"/>
 	
-	<jsp:param name="name"     value="bookmark"/>
+	<jsp:param name="name"     value="add_bkmrk"/>
 	<jsp:param name="tooltip"  value='BookmarkPage'/>
-	<jsp:param name="image"    value="bookmark_obj.gif"/>
+	<jsp:param name="image"    value="add_bkmrk.gif"/>
 	<jsp:param name="action"   value="bookmarkPage"/>
 
 	<jsp:param name="name"     value="print"/>

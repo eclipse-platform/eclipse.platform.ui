@@ -101,6 +101,23 @@ if (data.isMozilla()) {
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
+// Preload images
+
+<%
+ToolbarButton[] buttons = data.getButtons();
+for (int i=0; i<buttons.length; i++) {
+	if (!buttons[i].isSeparator()) {
+%>
+	var <%=buttons[i].getName()%> = new Image();
+	<%=buttons[i].getName()%>.src = "<%=buttons[i].getOnImage()%>";
+	var e_<%=buttons[i].getName()%> = new Image();
+	e_<%=buttons[i].getName()%>.src = "<%=buttons[i].getImage()%>";
+<%
+	}
+}
+%>
+
+
 function setTitle(label)
 {
 	if( label == null) label = "";
@@ -156,7 +173,6 @@ if (data.getScript() != null) {
 </head>
  
 <%
-ToolbarButton[] buttons = data.getButtons();
 if(buttons.length > 0){
 %>
 	<body>
@@ -199,23 +215,20 @@ if(buttons.length > 0){
 		if (buttons[i].isSeparator()) {
 %>
 						<td align="middle" valign="middle" width="9">
-						<!--
-							<img width="1" height=18 src="<%=prefs.getImagesDirectory()%>/tool_separator.gif" alt='' border="0">
-						-->
 						</td>
 <%
 		} else {
 %>
 						<td align="middle" class="button">
 							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>');" 
-							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
-							   onmouseout="window.status='';"
+							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';document.getElementById('<%=buttons[i].getName()%>').src=<%=buttons[i].getName()%>.src;return true;" 
+							   onmouseout="window.status='';document.getElementById('<%=buttons[i].getName()%>').src=e_<%=buttons[i].getName()%>.src;"
 							   id="b<%=i%>">
 							   <img src="<%=buttons[i].getImage()%>" 
 							        alt='<%=buttons[i].getTooltip()%>' 
 							        border="0"
 							        style="float: left;"
-							        name="<%=buttons[i].getName()%>">
+							        id="<%=buttons[i].getName()%>">
 							</a>
 						</td>
 <%

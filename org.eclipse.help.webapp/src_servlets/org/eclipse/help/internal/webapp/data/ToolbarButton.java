@@ -14,6 +14,7 @@ public class ToolbarButton{
 	private String name;
 	private String tooltip;
 	private String image;
+	private String on_image;
 	private String action;
 	private boolean isSeparator;
 	
@@ -40,7 +41,20 @@ public class ToolbarButton{
 		return tooltip;
 	}
 	
+	/**
+	 * Returns the enabled gray image
+	 * @return String
+	 */
 	public String getImage() {
+		int i = image.lastIndexOf('/');
+		return image.substring(0, i) + "/e_"+ image.substring(i+1);
+	}
+	
+	/**
+	 * Returns the image when selected
+	 * @return String
+	 */
+	public String getOnImage() {
 		return image;
 	}
 	
