@@ -533,8 +533,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected ISafeRunnable getSafeRunnable(final int trigger, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
 		return new ISafeRunnable() {
 			public void handleException(Throwable e) {
-				if (e instanceof OperationCanceledException)
+				if (e instanceof OperationCanceledException) {
+					currentBuilder.forgetLastBuiltState();
 					throw (OperationCanceledException) e;
+				}
 				//ResourceStats.buildException(e);
 				// don't log the exception....it is already being logged in Platform#run
 
