@@ -43,6 +43,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -51,6 +52,7 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceColors;
@@ -110,7 +112,10 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		
 		protected abstract void doReplace(IProgressMonitor pm) throws BadLocationException, CoreException, IOException;
 	}
-		
+	
+	private static final String SETTINGS_GROUP= "ReplaceDialog2"; //$NON-NLS-1$
+	private static final String SETTINGS_REPLACE_WITH= "replace_with"; //$NON-NLS-1$
+	
 	// various widget related constants
 	private static final int REPLACE= IDialogConstants.CLIENT_ID + 1;
 	private static final int REPLACE_ALL_IN_FILE= IDialogConstants.CLIENT_ID + 2;
@@ -120,7 +125,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private static final int SKIP_ALL= IDialogConstants.CLIENT_ID + 6;
 	
 	// Widgets
-	private Text fTextField;
+	private Combo fTextField;
 	private Button fReplaceWithRegex;
 	private Button fReplaceButton;
 	private Button fReplaceAllInFileButton;
@@ -242,12 +247,20 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		
 		label= new Label(result, SWT.NONE);
 		label.setText(SearchMessages.getString("ReplaceDialog.with_label")); //$NON-NLS-1$
-		fTextField= new Text(result, SWT.BORDER);
+		fTextField= new Combo(result, SWT.DROP_DOWN);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		fTextField.setLayoutData(gd);
 		fTextField.setFocus();
 		
+		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().getSection(SETTINGS_GROUP);
+		if (settings != null) {
+			String[] previousReplaceWith= settings.getArray(SETTINGS_REPLACE_WITH);
+			if (previousReplaceWith != null) {
+				fTextField.setItems(previousReplaceWith);
+				fTextField.select(0);
+			}
+		}
 		
 		new Label(result, SWT.NONE);
 		fReplaceWithRegex= new Button(result, SWT.CHECK);
@@ -389,10 +402,13 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private void replaceAll(IProgressMonitor pm, String replacementText) throws BadLocationException, CoreException {
 		int resourceCount= countResources();
 		pm.beginTask(SearchMessages.getString("ReplaceDialog.task.replace.replaceAll"), resourceCount); //$NON-NLS-1$
-		while (fMarkers.size() > 0) {
-			replaceInFile(new SubProgressMonitor(pm, 1, 0), replacementText);
+		try {
+			while (fMarkers.size() > 0) {
+				replaceInFile(new SubProgressMonitor(pm, 1, 0), replacementText);
+			}
+		} finally {
+			pm.done();
 		}
-		pm.done();
 	}
 	
 	private void replaceInFile(final IProgressMonitor pm, final IFile file, final String replacementText, final Match[] markers) throws BadLocationException, CoreException {
@@ -727,7 +743,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	private void setContentAssistsEnablement(boolean enable) {
 		if (enable) {
 			if (fReplaceContentAssistHandler == null) {
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForText(fTextField, createContentAssistant(RegExContentAssistProcessor.fgReplaceProposalKeys));
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fTextField, createContentAssistant(RegExContentAssistProcessor.fgReplaceProposalKeys));
 			}
 			fReplaceContentAssistHandler.setEnabled(true);
 			
@@ -748,6 +764,26 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	
 		if (error)
 			getShell().getDisplay().beep();
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 */
+	public boolean close() {
+		String[] items= fTextField.getItems();
+		ArrayList history= new ArrayList();
+		history.add(fTextField.getText());
+		int historySize= Math.min(items.length, 6);
+		for (int i= 0; i < historySize; i++) {
+			String curr= items[i];
+			if (!history.contains(curr)) {
+				history.add(curr);
+			}
+		}
+		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS_GROUP);
+		settings.put(SETTINGS_REPLACE_WITH, (String[]) history.toArray(new String[history.size()]));
+		return super.close();
 	}
 
 
