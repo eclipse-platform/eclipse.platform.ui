@@ -182,7 +182,7 @@ public boolean moveFolder(IResourceTree tree, IFolder source, IFolder destinatio
 
 /**
  * Return true if the hook did the work, false otherwise.
- * 
+ * Ensure to spec the case of content location change only.
  * <p>
  * By the end of this operation the hook must have called exactly one of the following
  * methods on the given resource tree: <code>movedProject</code>, <code>moveFailed</code>,

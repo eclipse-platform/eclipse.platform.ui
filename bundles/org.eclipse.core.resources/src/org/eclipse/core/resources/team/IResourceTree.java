@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.core.resources.team;
 
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import java.io.File;
@@ -19,18 +20,18 @@ import java.io.File;
  */
 public interface IResourceTree {
 
-	long NULL_TIMESTAMP = -1;
+	// FIXME: make this the same as java.io.File#getLastModified
+	// when the file doesn't exist.
+	long NULL_TIMESTAMP = 0;
 
 /**
  * Adds the state of the given file to the local history.
  * Does nothing if the file does not exist in the local file system
- * or if the file does not exist in the workspace tree. The given
- * path is the absolute path of the file in the local file system.
+ * or if the file does not exist in the workspace tree. 
  * 
  * @param file the file
- * @param path the local file system path for the file contents
  */
-public void addToLocalHistory(IFile file, IPath path);
+public void addToLocalHistory(IFile file);
 
 /**
  * Declares that the given source file has been successfully moved
@@ -58,37 +59,34 @@ public void movedFile(IFile source, IFile destination, long timestamp);
  * should be made to the workspace tree. This operation preserves timestamps.
  * <p>
  * If the source folder does not exist in the workspace tree then no action is taken.
- * If the destination folder already exists in the workspace then this operation
- * fails.
+ * If the destination folder already exists in the workspace tree then this operation fails. 
  * </p>
  * <p>
- * Even if the depth parameter is <code>IResource.DEPTH_ZERO</code> the
- * node and all its children are removed from the workspace tree. The depth
- * parameter will only apply to the properties and markers for the folder.
+ * This is a <code>IResource.DEPTH_INFINITE</code> operation.
  * </p>
  * 
  * @param source the source folder
  * @param destination the destination folder
- * @param depth the depth (one of <code>IResource.DEPTH_ZERO</code> or
- *   <code>DEPTH_INFINITE</code>)
  */
-public void movedFolder(IFolder source, IFolder destination, int depth);
+public void movedFolderSubtree(IFolder source, IFolder destination);
 
 /**
  * Declares that the contents for the given source project have been successfully moved
  * in the local file system to the given destination. The appropriate changes
  * should be made to the workspace tree. This operation preserves timestamps.
- * 
  * <p>
  * If the source project does not exist in the workspace tree then no action is taken.
  * If the destination project already exists in the workspace (and is different than 
  * the source) then this operation fails.
  * </p>
+ * <p>
+ * This is a <code>IResource.DEPTH_INFINITE</code> operation.
+ * </p>
  * 
  * @param source the source project
- * @param destination the destination project
+ * @param destination the description for the destination project
  */
-public void movedProject(IProject source, IProjectDescription destination);
+public void movedProjectSubtree(IProject source, IProjectDescription destination);
 
 /**
  * Declares that the given file has been successfully deleted from
@@ -115,7 +113,7 @@ public void deletedFolder(IFolder folder);
  * Declares that the given project has been successfully deleted from
  * the local file system. The appropriate changes should be made
  * to the workspace tree. This is a <code>IResource.DEPTH_INFINITE</code>
- * operation.
+ * operation. If the project does not exist in the workspace tree no action is taken.
  * 
  * @param project the project
  */
@@ -134,10 +132,55 @@ public void failed(IStatus reason);
 /**
  * Declares that the given folder has been successfully created in the file system.
  * The appropriate changes should be made to the workspace tree.
+ * <p>
+ * This method creates the destination in the workspace tree so the children of the source
+ * folder may be moved individually by the hook. (e.g. ensures the destination parent will exist)
+ * </p>
+ * <p>
+ * In the normal case, the moved is completed by calling <code>endMovedFolder</code>.
+ * Otherwise if the moved failed then <code>failed</code> should be called.
+ *</p>
  * 
- * @param folder the folder
+ * @param source the source folder
+ * @param destination the destination folder
  */
-public void createdFolder(IFolder folder);
+public void beginMoveFolder(IFolder source, IFolder destination);
+/**
+ * FIXME: clean up javadoc
+ * <p>
+ * This is a <code>IResource.DEPTH_ZERO</code> operation.
+ * Fixes the node_id from the source node in the workspace tree to ensure the
+ * node looks like a move in the resulting resource delta. 
+ * Nukes the subtree.
+ * Moves markers.
+ * Moved properties.
+ * </p>
+ */
+public void endMoveFolder(IFolder source, IFolder destination);
+
+/**
+ * Declares that the given project has been successfully created in the file system.
+ * The appropriate changes should be made to the workspace tree.
+ * <p>
+ * This method creates the destination in the workspace tree so the children of the source
+ * project may be moved individually by the hook. (e.g. ensures the destination parent will exist)
+ * </p>
+ * <p>
+ * In the normal case, the moved is completed by calling <code>endMovedProject</code>.
+ * Otherwise if the moved failed then <code>failed</code> should be called.
+ *</p>
+ * 
+ * @param project the project
+ * @param description the project description for the destination
+ */
+public void beginMoveProject(IProject project, IProjectDescription description);
+/**
+ * FIXME: detail the description usage
+ * 
+ * @param project the project
+ * @param description the project description
+ */
+public void endMoveProject(IProject project, IProjectDescription description);
 
 /**
  * Returns whether the given resource and its descendants to the given depth are 
@@ -158,7 +201,7 @@ public boolean isSynchronized(IResource resource, int depth);
  * exist in the workspace or if its location in the local file system cannot be
  * determined.
  * 
- * [ISSUE: what happens if the file is busy?]
+ * [FIXME: ISSUE: what happens if the file is busy?]
  * 
  * @param file the file
  * @return the file system timestamp for the file or <code>NULL_TIMESTAMP</code>
@@ -176,7 +219,7 @@ public long computeTimestamp(IFile file);
  * @return <code>true</code> if the delete was successful and
  *   <code>false</code> otherwise
  */
-public boolean deleteInFileSystem(File root);
+public boolean deleteInFileSystem(java.io.File root);
 
 /**
  * Delete the given file from the file system and the workspace tree.
@@ -282,4 +325,16 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
  *    reporting and cancellation are not desired
  */
 public void standardMoveProject(IProject source, IProjectDescription description, int updateFlags, IProgressMonitor monitor);
+/**
+ * FIXME: fix up javadoc
+ * Move the contents of the specified file from the source location to the destination location.
+ * If the source points to a directory then move that directory and all its contents.
+ * 
+ * <code>IResource.FORCE</code> is the only valid flag.
+ * 
+ * @param source
+ * @param destination
+ * @param updateFlags
+ */
+public void moveInFileSystem(java.io.File source, java.io.File destination, int updateFlags) throws CoreException;
 }
