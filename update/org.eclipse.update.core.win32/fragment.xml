@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+   id="org.eclipse.swt.win32"
+   name="%fragmentName"
+   version="1.9.0"
+   plugin-id="org.eclipse.update.core"
+   plugin-version="1.9.0">
+
+   <runtime>
+   </runtime>
+
+
+</fragment>
