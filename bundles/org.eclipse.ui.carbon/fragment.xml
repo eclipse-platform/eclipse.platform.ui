@@ -22,10 +22,8 @@
 
    <extension
          point="org.eclipse.ui.startup"
-         id="carbonenhancer"
-         name="%startupName">
-      <class
-            class="org.eclipse.ui.carbon.CarbonPlugin">
-      </class>
+         id="carbonenhancer">
+      <class class="org.eclipse.ui.carbon.CarbonUIEnhancer"/>
    </extension>
+   
 </fragment>

@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 
-public class CarbonPlugin implements IStartup {
+public class CarbonUIEnhancer implements IStartup {
 		
 	private static final int kHICommandPreferences= ('p'<<24) + ('r'<<16) + ('e'<<8) + 'f';
 	private static final int kHICommandAbout= ('a'<<24) + ('b'<<16) + ('o'<<8) + 'u';
@@ -37,7 +37,7 @@ public class CarbonPlugin implements IStartup {
 	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.carbon.Messages"; //$NON-NLS-1$
 	private static String fgAboutActionName;
 
-	public CarbonPlugin() {
+	public CarbonUIEnhancer() {
 		if (fgAboutActionName == null) {
 			ResourceBundle resourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 			try {
@@ -149,7 +149,6 @@ public class CarbonPlugin implements IStartup {
 					if (o instanceof ActionContributionItem) {
 						ActionContributionItem aci= (ActionContributionItem) o;
 						String id= aci.getId();
-						System.out.println(id);
 						if (id != null && id.equals(name)) {
 							IAction action= aci.getAction();
 							if (action != null && action.isEnabled()) {
