@@ -201,6 +201,12 @@
    <test id="org.eclipse.core.tests.plugintests.SavePreferencesTests">
       <run class="org.eclipse.core.tests.plugintests.SavePreferencesTests"/>
     </test>
+
+
+   <test id="jobs.IJobManagerTest">
+      <run class="org.eclipse.core.tests.runtime.jobs.IJobManagerTest"/>
+    </test>
+
  </extension>
 
 </plugin>
