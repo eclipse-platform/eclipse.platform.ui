@@ -8,32 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.tests;
 
-import org.eclipse.jface.text.tests.reconciler.ReconcilerTestSuite;
-import org.eclipse.jface.text.tests.rules.RulesTestSuite;
+package org.eclipse.jface.text.tests.reconciler;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+
 /**
- * Test Suite for org.eclipse.jface.text.
  * 
  * @since 3.0
  */
-public class JFaceTextTestSuite extends TestSuite {
+public class ReconcilerTestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.jface.text"); //$NON-NLS-1$
-		
-		suite.addTest(TextHoverPopupTest.suite());
-		suite.addTest(TextPresentationTest.suite());
-		suite.addTest(TextUtilitiesTest.suite());
-		suite.addTest(UndoManagerTest.suite());
-		
-		suite.addTest(RulesTestSuite.suite());
-		suite.addTest(ReconcilerTestSuite.suite());
-		
+		TestSuite suite = new TestSuite("Test Suite org.eclipse.jface.text.tests.reconciler");
+		//$JUnit-BEGIN$
+		suite.addTestSuite(AbstractReconcilerTest.class);
+		//$JUnit-END$
 		return suite;
 	}
 }
