@@ -411,6 +411,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			}
 		});
 				
+		// Add a drag source that lets us drag views from individual tabs
 		DragUtil.addDragSource(tabFolder, new AbstractDragSource() {
 
 			public Object getDraggedItem(Point position) {
@@ -430,6 +431,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 			
 		});
 		
+		// Add a drop target that lets us drag views directly to a particular tab
 		DragUtil.addDragTarget(tabFolder, new IDragOverListener() {
 
 			public IDropTarget drag(Control currentControl, final Object draggedObject, 
@@ -441,9 +443,17 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				
 				final ViewPane pane = (ViewPane)draggedObject;
 				
+				// Don't allow views to be dragged between windows
+				if (pane.getWorkbenchWindow() != getWorkbenchWindow()) {
+					return null;
+				}
+				
+				// Determine which tab we're currently dragging over
 				Point localPos = tabFolder.toControl(position);
 				final CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
 				
+				// This drop target only deals with tabs... if we're not dragging over
+				// a tab, exit.
 				if (tabUnderPointer == null || mapTabToPart.get(tabUnderPointer) == draggedObject) {
 					return null;
 				}
@@ -451,7 +461,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 				return new IDropTarget() {
 
 					public void drop() {
-						if (pane.getContainer() != PartTabFolder.this) { 
+						// Don't worry about reparenting the view if we're simply
+						// rearranging tabs within this folder
+						if (pane.getContainer() != PartTabFolder.this) {
 							page.removeFastView(pane.getViewReference());
 							page.getActivePerspective().getPresentation().derefPart(pane);
 							pane.reparent(getParent());
@@ -460,9 +472,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 							pane.setFocus();
 						}
 						
+						// Reorder the tabs to ensure the new tab ends up in the right
+						// location
 						reorderTab(pane, getTab(pane), tabFolder.indexOf(tabUnderPointer));
 
-						getParent().setRedraw(true);
 					}
 
 					public Cursor getCursor() {
