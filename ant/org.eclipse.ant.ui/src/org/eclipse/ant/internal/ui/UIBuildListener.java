@@ -37,7 +37,7 @@ public UIBuildListener(AntRunner runner, IProgressMonitor monitor, IFile file, A
 	super();
 	this.consoles = consoles;
 	this.runner = runner;
-	fMonitor = monitor;
+	fMonitor = Policy.monitorFor(monitor);
 	fBuildFile = file;
 	if (consoles != null)
     	for (int i=0; i < consoles.length; i++) {
