@@ -2739,7 +2739,12 @@ public void toggleFastView(IViewReference ref) {
 		persp.toggleFastView(ref);
 		// if the fast view has been deactivated
 		if (ref != persp.getActiveFastView()) {
-			setActivePart(activationList.getPreviouslyActive());
+			IWorkbenchPart previouslyActive = activationList.getPreviouslyActive();
+			IEditorPart activeEditor = getActiveEditor();
+			if(activeEditor != null && previouslyActive instanceof IEditorPart)
+				setActivePart(activeEditor);
+			else
+				setActivePart(previouslyActive);
 		}
 	}
 }
