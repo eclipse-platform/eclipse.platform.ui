@@ -88,7 +88,7 @@ import org.eclipse.ui.texteditor.ISchedulingRuleProvider;
  * of command.
  * <p>
  * Text file document providers use {@linkplain org.eclipse.core.filebuffers.ITextFileBuffer text file buffers}
- * to access he file content this allows to share it between various clients including
+ * to access the file content. This allows to share it between various clients including
  * headless ones. Text file document providers should be preferred over file document
  * providers due to this advantage.
  * </p>

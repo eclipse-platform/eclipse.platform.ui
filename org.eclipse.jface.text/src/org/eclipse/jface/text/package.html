@@ -7,37 +7,12 @@
    <title>Package-level Javadoc</title>
 </head>
 <body>
-Provides a framework for creating, manipulating, displaying
-and editing text documents.
+Provides a framework for editing text documents. 
 <h2>
 Package Specification</h2>
-The packages is divided into two parts. The first part defines and implements
-the notion of text documents, whereas the second part defines and implements
-a viewer for text documents.
-<h3>
-Text Model</h3>
-<tt>IDocument</tt> is the major text model abstraction. It provides content
-management, position management using position categories, document partition
-management, searching, and change notification.&nbsp; In order to be notified
-about document changes, an object must implements <tt>IDocumentListener</tt>
-and must be registered with the document. Position updating in responds
-to a document change is performed by implementers of <tt>IDocumentPositionUpdater</tt>.
-Partition updating in responds to a document change is performed by implements
-of <tt>IDocumentPartitioner</tt>. In order to be notified about document
-partition changes, objects must implement <tt>IDocumentParititoningListener</tt>
-and must be registered with the document.
-<p>The package contains default implementations for document position updaters
-and for documents. <tt>AbstractDocument</tt> uses <tt>ITextStorage</tt>
-for storing and managing its content and <tt>ILineTracker</tt> to maintain
-a line structure of its content. As defaults a gap text implementation
-of <tt>ITextStore</tt> is provided, together with a line tracker understanding
-the three standard line delimiters ("\r", "\n", "\r\n") and a&nbsp; line
-tracker which can be freely configured to consider any given set of strings
-as valid line delimiters.
-<h3>
-Text Viewer</h3>
-<tt>ITextViewer</tt> defines the concept of a document based, editiable
-viewer. <tt>ITextViewer</tt> offers the following functionality:
+<p>The packages defines and implements a viewer for text documents.</p>
+<p><tt>ITextViewer</tt> defines the concept of a document based, editiable viewer. 
+  <tt>ITextViewer</tt> offers the following functionality: </p>
 <ul>
 <li>
 present a document</li>
