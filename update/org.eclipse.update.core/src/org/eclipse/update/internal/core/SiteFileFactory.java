@@ -98,7 +98,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			}
 
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing site.xml in the site:" + url.toExternalForm(), e);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing site.xml in the site:" + url.toExternalForm()+"\r\n"+e.getLocalizedMessage(), e);
 			throw new CoreException(status);
 		} finally {
 			try {

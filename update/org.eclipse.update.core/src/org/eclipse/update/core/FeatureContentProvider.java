@@ -86,7 +86,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			return ref.newContentReference(ref.getIdentifier(), localFile);
 			
 		// download the referenced file into local temporary area
-		localFile = UpdateManagerUtils.createLocalFile(key, null/*name*/);
+		localFile = UpdateManagerUtils.createLocalFile(getWorkingDirectory(),key, null/*name*/);
 		InputStream is = null;
 		OutputStream os = null;
 		try {
@@ -128,13 +128,13 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		return file;
 	}
 
-	
-	
-		
-		
-	
-	
+	/**
+	 * Gets the eature.
+	 * @return Returns a IFeature
+	 */
+	public IFeature getFeature() {
+		return feature;
+	}
 
-	
-	
+
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site id="org.eclipse.update.core.tests" name="Tests" version="0.0.1">
-  <handler/>
+  <handler>
+  	<boo class ="unknonw"/>
+  </handler>
   <feature url="features/org.eclipse.test.feature_1.0.0.jar">
     <category name="category1"/>
   </feature>

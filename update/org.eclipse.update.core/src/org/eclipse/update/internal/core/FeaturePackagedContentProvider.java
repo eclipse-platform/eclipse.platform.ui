@@ -11,20 +11,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import java.util.zip.ZipException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.ContentReference;
 import org.eclipse.update.core.Feature;
 import org.eclipse.update.core.FeatureContentProvider;
-import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.INonPluginEntry;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.Site;
-import org.eclipse.update.core.*;
 
 /**
  * Parse the default feature.xml
