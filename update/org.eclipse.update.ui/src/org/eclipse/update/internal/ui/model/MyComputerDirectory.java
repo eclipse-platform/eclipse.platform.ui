@@ -46,7 +46,7 @@ public class MyComputerDirectory
 	public String getName() {
 		if (root) {
 			String nativeLabel = LocalSystemInfo.getLabel(file);
-			if (nativeLabel!=null) return nativeLabel;
+			if (nativeLabel!=null && !"".equals(nativeLabel)) return nativeLabel;
 		}
 		return root ? file.getPath() : file.getName();
 	}

@@ -121,7 +121,7 @@ public class MyComputerSearchDialog extends Dialog {
 		for (int i=0; i<drives.length; i++) {
 			// Ensure settings exists
 			String label = LocalSystemInfo.getLabel(drives[i]);
-			if (label==null)
+			if (label==null || "".equals(label))
 				label = drives[i].getPath();
 			settings.getDriveSettings(label);
 		}
