@@ -28,7 +28,7 @@ public class ThirdPage extends FormPage {
 		super(editor, "third", "Flow Page");
 	}
 	protected void createFormContent(ManagedForm managedForm) {
-		Form form = managedForm.getForm();
+		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with wrapped controls");
 		form.setBackgroundImage(ExamplesPlugin.getDefault().getImage(
@@ -115,7 +115,7 @@ public class ThirdPage extends FormPage {
 	}
 	private Composite createSection(ManagedForm mform, String title,
 			String desc, int numColumns) {
-		final Form form = mform.getForm();
+		final ScrolledForm form = mform.getForm();
 		FormToolkit toolkit = mform.getToolkit();
 		Section section = toolkit.createSection(form.getBody(), Section.TWISTIE
 				| Section.DESCRIPTION | Section.EXPANDED);

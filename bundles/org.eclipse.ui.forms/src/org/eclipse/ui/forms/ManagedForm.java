@@ -18,7 +18,7 @@ import org.eclipse.ui.forms.widgets.*;
  * @since 3.0
  */
 public class ManagedForm implements IManagedForm {
-	private Form form;
+	private ScrolledForm form;
 	private FormToolkit toolkit;
 	private boolean ownsToolkit;
 	private Vector parts = new Vector();
@@ -42,7 +42,7 @@ public class ManagedForm implements IManagedForm {
 	 * @param toolkit
 	 * @param form
 	 */
-	public ManagedForm(FormToolkit toolkit, Form form) {
+	public ManagedForm(FormToolkit toolkit, ScrolledForm form) {
 		this.form = form;
 		this.toolkit = toolkit;
 	}
@@ -86,7 +86,7 @@ public class ManagedForm implements IManagedForm {
 	 * 
 	 * @return the form widget
 	 */
-	public Form getForm() {
+	public ScrolledForm getForm() {
 		return form;
 	}
 

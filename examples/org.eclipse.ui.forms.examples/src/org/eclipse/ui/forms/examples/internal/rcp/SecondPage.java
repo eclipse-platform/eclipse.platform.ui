@@ -28,7 +28,7 @@ public class SecondPage extends FormPage {
 		super(editor, "second", "Section Page");
 	}
 	protected void createFormContent(ManagedForm managedForm) {
-		Form form = managedForm.getForm();
+		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Title for the second page");
 		form.setBackgroundImage(ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_FORM_BG));
@@ -39,7 +39,7 @@ public class SecondPage extends FormPage {
 		createTableSection(form, toolkit, "Second Table Section");		
 	}
 	
-	private void createTableSection(final Form form, FormToolkit toolkit, String title) {
+	private void createTableSection(final ScrolledForm form, FormToolkit toolkit, String title) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),

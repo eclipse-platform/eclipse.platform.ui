@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
-import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.EditorPart;
 
 /**
@@ -87,7 +87,7 @@ public class FormPage extends EditorPart implements IFormPage {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		Form form = editor.getToolkit().createForm(parent);
+		ScrolledForm form = editor.getToolkit().createForm(parent);
 		mform = new ManagedForm(editor.getToolkit(), form);
 		BusyIndicator.showWhile(parent.getDisplay(), new Runnable() {
 			public void run() {

@@ -24,7 +24,7 @@ public interface IManagedForm {
  * Returns the form widget managed by this form.
  * @return the form widget
  */
-	public Form getForm();
+	public ScrolledForm getForm();
 
 /**
  * A part can use this method to notify other parts that

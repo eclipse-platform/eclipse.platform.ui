@@ -22,7 +22,7 @@ public class ScrolledPropertiesPage extends FormPage {
 		block = new ScrolledPropertiesBlock(this);
 	}
 	protected void createFormContent(final ManagedForm managedForm) {
-		final Form form = managedForm.getForm();
+		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with scrolled sections");
 		form.setBackgroundImage(ExamplesPlugin.getDefault().getImage(

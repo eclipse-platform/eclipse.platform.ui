@@ -31,7 +31,7 @@ public class FreeFormPage extends FormPage {
 		super(editor, "first", "First Page");
 	}
 	protected void createFormContent(ManagedForm managedForm) {
-		Form form = managedForm.getForm();
+		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Free-form text with links");
 		form.setBackgroundImage(ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_FORM_BG));
@@ -56,7 +56,7 @@ public class FreeFormPage extends FormPage {
 		createExpandable(form, toolkit);
 		createRichTextSection(form, toolkit);
 	}
-	private void createExpandable(final Form form, final FormToolkit toolkit) {
+	private void createExpandable(final ScrolledForm form, final FormToolkit toolkit) {
 		final ExpandableComposite exp = toolkit.createExpandableComposite(form
 				.getBody(), ExpandableComposite.TREE_NODE
 		//	ExpandableComposite.NONE
@@ -88,7 +88,7 @@ public class FreeFormPage extends FormPage {
 		exp.setLayoutData(td);
 	}
 	
-	private void createRichTextSection(final Form form, FormToolkit toolkit) {
+	private void createRichTextSection(final ScrolledForm form, FormToolkit toolkit) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),

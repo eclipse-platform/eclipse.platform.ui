@@ -21,7 +21,7 @@ public abstract class MasterDetailsBlock {
 	protected SashForm sashForm;
 
 	public void createContent(ManagedForm managedForm) {
-		final Form form = managedForm.getForm();
+		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;

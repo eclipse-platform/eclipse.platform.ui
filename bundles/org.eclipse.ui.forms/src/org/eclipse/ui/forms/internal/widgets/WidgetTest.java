@@ -37,12 +37,12 @@ public class WidgetTest {
 			HyperlinkSettings.UNDERLINE_ROLLOVER);
 		CTabFolder folder = new CTabFolder(shell, SWT.NULL);
 		CTabItem t1 = new CTabItem(folder, SWT.NULL);
-		Form f1 = createForm1(folder, toolkit);
+		ScrolledForm f1 = createForm1(folder, toolkit);
 		t1.setControl(f1);
 		t1.setText(f1.getText());
 		
 		CTabItem t2 = new CTabItem(folder, SWT.NULL);
-		Form f2 = createForm2(folder, toolkit);
+		ScrolledForm f2 = createForm2(folder, toolkit);
 		t2.setControl(f2);
 		t2.setText(f2.getText());
 		
@@ -55,8 +55,8 @@ public class WidgetTest {
 		colors.dispose();
 	}
 
-	private static Form createForm1(Composite parent, FormToolkit toolkit) {
-		Form form = toolkit.createForm(parent);
+	private static ScrolledForm createForm1(Composite parent, FormToolkit toolkit) {
+		ScrolledForm form = toolkit.createForm(parent);
 		form.setText("Wrapped Form");
 		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
@@ -136,8 +136,8 @@ public class WidgetTest {
 		return form;
 	}
 	
-	private static Form createForm2(Composite parent, FormToolkit toolkit) {
-		Form form = toolkit.createForm(parent);
+	private static ScrolledForm createForm2(Composite parent, FormToolkit toolkit) {
+		ScrolledForm form = toolkit.createForm(parent);
 		form.setText("Jelly Form");
 		URL bdURL = WidgetTest.class.getResource("form_banner.gif");
 		ImageDescriptor bd = ImageDescriptor.createFromURL(bdURL);
@@ -151,7 +151,7 @@ public class WidgetTest {
 	}
 
 	private static void createExpandable(
-		final Form form,
+		final ScrolledForm form,
 		final FormToolkit toolkit) {
 		ExpandableComposite exp =
 			toolkit
@@ -290,7 +290,7 @@ public class WidgetTest {
 		wd.open();
 	}
 
-	private static void createRichTextSection(final Form form, FormToolkit toolkit) {
+	private static void createRichTextSection(final ScrolledForm form, FormToolkit toolkit) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
@@ -317,7 +317,7 @@ public class WidgetTest {
 		section.setLayoutData(td);
 	}
 
-	private static void createStaticSection(final Form form, FormToolkit toolkit) {
+	private static void createStaticSection(final ScrolledForm form, FormToolkit toolkit) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
@@ -352,7 +352,7 @@ public class WidgetTest {
 		section.setLayoutData(td);
 	}
 
-	private static void createTableSection(final Form form, FormToolkit toolkit, String title) {
+	private static void createTableSection(final ScrolledForm form, FormToolkit toolkit, String title) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),

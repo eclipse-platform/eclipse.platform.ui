@@ -470,8 +470,8 @@ public class FormToolkit {
 	 *            the form parent
 	 * @return the form widget
 	 */
-	public Form createForm(Composite parent) {
-		Form form = new Form(parent);
+	public ScrolledForm createForm(Composite parent) {
+		ScrolledForm form = new ScrolledForm(parent);
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		form.setBackground(colors.getBackground());
@@ -479,8 +479,8 @@ public class FormToolkit {
 		form.setFont(JFaceResources.getHeaderFont());
 		return form;
 	}
-	public FormContent createFormContent(Composite parent) {
-		FormContent formContent = new FormContent(parent, SWT.NULL);
+	public Form createFormContent(Composite parent) {
+		Form formContent = new Form(parent, SWT.NULL);
 		formContent.setBackground(colors.getBackground());
 		formContent.setForeground(colors.getColor(FormColors.TITLE));
 		formContent.setFont(JFaceResources.getHeaderFont());

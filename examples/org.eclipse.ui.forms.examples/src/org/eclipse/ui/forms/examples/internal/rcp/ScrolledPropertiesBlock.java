@@ -66,7 +66,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 
 	protected void createMasterPart(final ManagedForm managedForm,
 			Composite parent) {
-		final Form form = managedForm.getForm();
+		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		Section section = toolkit.createSection(parent, Section.DESCRIPTION);
 		section.setText("Model Objects");
@@ -103,7 +103,7 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 		viewer.setInput(page.getEditor().getEditorInput());
 	}
 	protected void createToolBarActions(ManagedForm managedForm) {
-		final Form form = managedForm.getForm();
+		final ScrolledForm form = managedForm.getForm();
 
 		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
 			public void run() {
