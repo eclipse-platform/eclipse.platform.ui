@@ -564,7 +564,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					text.addVerifyKeyListener(this);
 				}
 				
-				fKeyBindingService= getEditorSite().getKeyBindingService();
+				fKeyBindingService= getEditorSite().getKeyBindingService(); 
 				fIsInstalled= true;
 			}
 		}
@@ -1793,7 +1793,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					
 		try {
 			IRunnableContext context= (window instanceof IRunnableContext) ? (IRunnableContext) window : new ProgressMonitorDialog(window.getShell());
-			context.run(true, true, runnable);
+			context.run(false, true, runnable);
 		} catch (InvocationTargetException x) {
 		} catch (InterruptedException x) {
 		}
