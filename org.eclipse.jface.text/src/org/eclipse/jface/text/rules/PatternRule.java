@@ -157,7 +157,7 @@ public class PatternRule implements IPredicateRule {
 			}
 		}
 		scanner.unread();
-		return true;
+		return false;
 	}
 	
 	/**
