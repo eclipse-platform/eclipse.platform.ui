@@ -278,35 +278,33 @@ public class XMLStructureViewer extends StructureDiffViewer {
 				}
 				if (getSorter() instanceof XMLSorter)
 					 ((XMLSorter) getSorter()).setOrdered(ordered);
-				AbstractMatching m;
+				AbstractMatching m= null;
 				if (getXMLStructureCreator()
 					.getIdMap()
 					.equals(XMLStructureCreator.USE_ORDERED)) {
 					m= new OrderedMatching();
 					if (getSorter() instanceof XMLSorter)
 						 ((XMLSorter) getSorter()).setAlwaysOrderSort(true);
-				} else {
-					m= new GeneralMatching(ordered);
-					if (getSorter() instanceof XMLSorter)
-						 ((XMLSorter) getSorter()).setAlwaysOrderSort(false);
 				}
 				try {
-					m.match(left, right, false, monitor);
-					if (ancestor != null) {
-						m.match(
-							left,
-							ancestor,
-							true,
-							new SubProgressMonitor(monitor, 1));
-						m.match(
-							right,
-							ancestor,
-							true,
-							new SubProgressMonitor(monitor, 1));
+					if (m != null) {
+						m.match(left, right, false, monitor);
+						if (ancestor != null) {
+							m.match(
+								left,
+								ancestor,
+								true,
+								new SubProgressMonitor(monitor, 1));
+							m.match(
+								right,
+								ancestor,
+								true,
+								new SubProgressMonitor(monitor, 1));
+						}
+						//				} catch (InterruptedException e) {
+						//					System.out.println("in run");
+						//					e.printStackTrace();
 					}
-					//				} catch (InterruptedException e) {
-					//					System.out.println("in run");
-					//					e.printStackTrace();
 				} finally {
 					monitor.done();
 				}
