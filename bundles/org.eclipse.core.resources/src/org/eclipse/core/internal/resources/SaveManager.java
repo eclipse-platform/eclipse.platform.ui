@@ -66,8 +66,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_"; //$NON-NLS-1$
 
 	// Count up the time taken for all saves/snaps on markers and sync info
-	private long persistMarkers = 0l;
-	private long persistSyncInfo = 0l;
+	protected long persistMarkers = 0l;
+	protected long persistSyncInfo = 0l;
 
 	public SaveManager(Workspace workspace) {
 		this.workspace = workspace;

@@ -194,7 +194,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		// intention (this class offers a different protocol for copying state).
 		throw new UnsupportedOperationException("clone() is not supported in " + getClass().getName()); //$NON-NLS-1$ 
 	}	
-	private void synchronizeWithPreferences(String property) {
+	protected void synchronizeWithPreferences(String property) {
 		// do not use the value in the event - may be a string instead 
 		// of the expected type. Retrieve it from the preferences store 
 		// using the type-specific method 		
