@@ -349,36 +349,6 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
  * @see #move 
  */
 public IProjectDescription getDescription() throws CoreException;
-/**
- * Returns a handle to the file with the given name in this project.
- * <p> 
- * This is a resource handle operation; neither the resource nor
- * the result need exist in the workspace.
- * The validation check on the resource name/path is not done
- * when the resource handle is constructed; rather, it is done
- * automatically as the resource is created.
- * </p>
- *
- * @param name the string name of the member file
- * @return the (handle of the) member file
- * @see #getFolder
- */
-public IFile getFile(String name);
-/**
- * Returns a handle to the folder with the given name in this project.
- * <p> 
- * This is a resource handle operation; neither the container
- * nor the result need exist in the workspace.
- * The validation check on the resource name/path is not done
- * when the resource handle is constructed; rather, it is done
- * automatically as the resource is created.
- * </p>
- *
- * @param name the string name of the member file
- * @return the (handle of the) member file
- * @see #getFile
- */
-public IFolder getFolder(String name);
 /** 
  * Returns the specified project nature for this project or <code>null</code> if
  * the project nature has not been added to this project.
