@@ -1,6 +1,7 @@
 package org.eclipse.jface.wizard;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.*;
@@ -18,7 +19,7 @@ class TableOfContentsArea {
 	private ITableOfContentsNode[] nodes = new ITableOfContentsNode[0];
 	private IWizard initialWizard;
 	private ITableOfContentsNode currentNode;
-	
+
 	static final int NODE_SIZE = 20;
 
 	public TableOfContentsArea() {
@@ -54,10 +55,10 @@ class TableOfContentsArea {
 		ITableOfContentsNode[] mergeNodes =
 			new ITableOfContentsNode[oldSize + newNodes.length];
 		System.arraycopy(nodes, 0, mergeNodes, 0, oldSize);
-		System.arraycopy(newNodes,0,mergeNodes,oldSize,newNodes.length);
+		System.arraycopy(newNodes, 0, mergeNodes, oldSize, newNodes.length);
 
 		nodes = mergeNodes;
-		if(canvas != null)	
+		if (canvas != null)
 			canvas.redraw();
 	}
 
@@ -153,6 +154,31 @@ class TableOfContentsArea {
 			}
 		});
 
+		canvas.addMouseListener(new MouseListener() {
+			/**
+			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseDown(MouseEvent event) {
+
+				int index = event.x / NODE_SIZE;
+				if (index < nodes.length) {
+					ITableOfContentsNode selectedNode = nodes[index];
+					IWizardPage page = selectedNode.getPage();
+					page.getWizard().getContainer().showPage(page		);
+				}
+			}
+			/**
+			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+			/**
+			 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseUp(MouseEvent e) {
+			}
+		});
+
 		//Create the nodes if the wizard has not been set.
 		if (initialWizard != null) {
 			addNodesForWizard(initialWizard);
@@ -173,12 +199,9 @@ class TableOfContentsArea {
 		for (int i = 0; i < nodes.length; i++) {
 			Image image = nodes[i].getImage();
 			Rectangle imageSize = image.getBounds();
-			int xOffset = (NODE_SIZE - imageSize.width) /2;
-			int yOffset = (NODE_SIZE - imageSize.height) /2;
-			gc.drawImage(
-				image,
-				i * NODE_SIZE + xOffset,
-				yOffset);
+			int xOffset = (NODE_SIZE - imageSize.width) / 2;
+			int yOffset = (NODE_SIZE - imageSize.height) / 2;
+			gc.drawImage(image, i * NODE_SIZE + xOffset, yOffset);
 		}
 	}
 }
