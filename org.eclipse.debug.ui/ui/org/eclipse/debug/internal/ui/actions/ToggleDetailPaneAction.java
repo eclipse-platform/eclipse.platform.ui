@@ -20,10 +20,12 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * Action that controls the appearance of the details pane in the debug views such
+ * Action that controls the appearance of the details pane in debug views such
  * as the VariablesView and the ExpressionsView.  Instances of this class can be
  * created to show the detail pane underneath the main tree, to the right of the
  * main tree, or not shown at all.
+ * 
+ * @since 3.0
  */
 public class ToggleDetailPaneAction extends Action {
 
@@ -31,7 +33,7 @@ public class ToggleDetailPaneAction extends Action {
 	
 	private String fOrientation;
 
-	public ToggleDetailPaneAction(VariablesView view, String orientation) {
+	public ToggleDetailPaneAction(VariablesView view, String orientation, String hiddenLabel) {
 		super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 		setVariablesView(view);
 		setOrientation(orientation);
@@ -51,7 +53,7 @@ public class ToggleDetailPaneAction extends Action {
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_RIGHT));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_RIGHT));
 		} else {
-			setText(ActionMessages.getString("ToggleDetailPaneAction.7"));  //$NON-NLS-1$
+			setText(hiddenLabel);
 			setToolTipText(ActionMessages.getString("ToggleDetailPaneAction.8"));  //$NON-NLS-1$
 			setDescription(ActionMessages.getString("ToggleDetailPaneAction.9"));  //$NON-NLS-1$
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_HIDE));

@@ -767,14 +767,18 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		IMenuManager viewMenu = actionBars.getMenuManager();
 		
 		fToggleDetailPaneActions = new ToggleDetailPaneAction[3];
-		fToggleDetailPaneActions[0] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT);
-		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN);
+		fToggleDetailPaneActions[0] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH, null);
+		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT, null);
+		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, getToggleActionLabel());
 		viewMenu.add(new Separator());
 		viewMenu.add(fToggleDetailPaneActions[0]);
 		viewMenu.add(fToggleDetailPaneActions[1]);
 		viewMenu.add(fToggleDetailPaneActions[2]);
 		viewMenu.add(new Separator());		
+	}
+	
+	protected String getToggleActionLabel() {
+		return VariablesViewMessages.getString("VariablesView.41"); //$NON-NLS-1$
 	}
 	
 	/**

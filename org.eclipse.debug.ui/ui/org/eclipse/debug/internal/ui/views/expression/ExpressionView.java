@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -139,6 +140,13 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.EXPRESSIONS_DETAIL_PANE_ORIENTATION;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
+	 */
+	protected String getToggleActionLabel() {
+		return VariablesViewMessages.getString("ExpressionView.4"); //$NON-NLS-1$
 	}
 
 }
