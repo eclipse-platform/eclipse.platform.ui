@@ -42,7 +42,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * Static to prevent opening of error dialogs for
 	 * automated testing.
 	 */
-	public static boolean NO_UI = false;
+	public static boolean AUTOMATED_MODE = false;
 
 	/**
 	 * Reserve room for this many list items.
@@ -299,6 +299,10 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * least one child status matching the mask.
 	 */
 	public int open() {
+		
+		if(AUTOMATED_MODE)
+			setBlockOnOpen(false);			
+			
 		if (shouldDisplay(status, displayMask)) {
 			return super.open();
 		}
@@ -406,9 +410,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 */
 	protected static boolean shouldDisplay(IStatus status, int mask) {
 		
-		if(NO_UI)
-			return false;
-			
 		IStatus[] children = status.getChildren();
 		if (children == null || children.length == 0) {
 			return status.matches(mask);
