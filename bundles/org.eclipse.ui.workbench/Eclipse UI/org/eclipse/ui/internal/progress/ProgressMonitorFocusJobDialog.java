@@ -83,8 +83,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		Button runInWorkspace = createButton(
 				parent,
 				IDialogConstants.CLOSE_ID,
-				ProgressMessages
-						.getString("ProgressMonitorFocusJobDialog.RunInBackgroundButton"), //$NON-NLS-1$
+				ProgressMessages.ProgressMonitorFocusJobDialog_RunInBackgroundButton,
 				true);
 		runInWorkspace.addSelectionListener(new SelectionAdapter() {
 			/*
@@ -126,8 +125,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				if (getShell() == null)
 					return;
 				WorkbenchJob closeJob = new WorkbenchJob(
-						ProgressMessages
-								.getString("ProgressMonitorFocusJobDialog.CLoseDialogJob")) { //$NON-NLS-1$
+						ProgressMessages.ProgressMonitorFocusJobDialog_CLoseDialogJob) {
 					/*
 					 * (non-Javadoc)
 					 * 
@@ -389,8 +387,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					}
 				});
 
-		WorkbenchJob openJob = new WorkbenchJob(ProgressMessages
-				.getString("ProgressMonitorFocusJobDialog.UserDialogJob")) { //$NON-NLS-1$
+		WorkbenchJob openJob = new WorkbenchJob(ProgressMessages.ProgressMonitorFocusJobDialog_UserDialogJob) { 
 			/*
 			 * (non-Javadoc)
 			 * 

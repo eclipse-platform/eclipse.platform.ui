@@ -62,8 +62,7 @@ public class AnimationManager {
         listener = getProgressListener();
         ProgressManager.getInstance().addListener(listener);
 
-        animationUpdateJob = new WorkbenchJob(ProgressMessages
-                .getString("AnimationManager.AnimationStart")) {//$NON-NLS-1$
+        animationUpdateJob = new WorkbenchJob(ProgressMessages.AnimationManager_AnimationStart) {
 
             /*
              * (non-Javadoc)

@@ -103,8 +103,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             viewer = null;
             composite.layout();
             shell.setSize(shellSize.x, shellSize.y - viewerHeight);
-            detailsButton.setText(ProgressMessages
-                    .getString("ProgressMonitorJobsDialog.DetailsTitle")); //$NON-NLS-1$
+            detailsButton.setText(ProgressMessages.ProgressMonitorJobsDialog_DetailsTitle);
         } else {
             //Abort if there are no jobs visible
             if (ProgressManager.getInstance().getRootElements(Policy.DEBUG_SHOW_SYSTEM_JOBS).length == 0) {
@@ -139,8 +138,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
             viewerComposite.layout(true);
             viewer.getControl().setVisible(true);
             viewerHeight = viewerComposite.computeTrim(0, 0, 0, viewerCompositeData.heightHint).height;
-            detailsButton.setText(ProgressMessages
-                    .getString("ProgressMonitorJobsDialog.HideTitle")); //$NON-NLS-1$
+            detailsButton.setText(ProgressMessages.ProgressMonitorJobsDialog_HideTitle); 
             shell.setSize(shellSize.x, shellSize.y + viewerHeight);
         }
     }
@@ -176,8 +174,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
      */
     protected void createDetailsButton(Composite parent) {
         detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
-                ProgressMessages
-                        .getString("ProgressMonitorJobsDialog.DetailsTitle"), //$NON-NLS-1$
+                ProgressMessages.ProgressMonitorJobsDialog_DetailsTitle, 
                 false);
         detailsButton.addSelectionListener(new SelectionAdapter() {
             /*

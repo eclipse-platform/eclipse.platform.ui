@@ -25,6 +25,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
@@ -270,10 +271,8 @@ public class NewProgressViewer extends TreeViewer implements
                                 return ProgressManager.getInstance().errorManager;
                             }
                             public void run() {
-                                String title = ProgressMessages
-	                                    .getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
-	                            String msg = ProgressMessages
-	                                    .getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
+                                String title = ProgressMessages.NewProgressView_errorDialogTitle; 
+	                            String msg = ProgressMessages.NewProgressView_errorDialogMessage; 
                                 if (!getManager().showErrorFor(job, title, msg)) {
                                     // The error is missing from the error manager.
                                     // This should only occur if what the progress view is showing is
@@ -306,15 +305,11 @@ public class NewProgressViewer extends TreeViewer implements
                 if (jobTerminated && result != null) {
                     name = result.getMessage();
                     if (taskName != null && taskName.trim().length() > 0)
-                        name = ProgressMessages
-                                .format(
-                                        "JobInfo.TaskFormat", new Object[] { taskName, name }); //$NON-NLS-1$
+                        name = NLS.bind(ProgressMessages.JobInfo_TaskFormat, taskName, name); 
                 } else {
                     name = jobTreeElement.getDisplayString();
                     if (taskName != null && taskName.trim().length() > 0)
-                        name = ProgressMessages
-                                .format(
-                                        "JobInfo.TaskFormat2", new Object[] { taskName, name }); //$NON-NLS-1$
+                        name = NLS.bind(ProgressMessages.JobInfo_TaskFormat2, taskName, name); 
                 }
 
                 if (name.length() == 0) {
@@ -346,16 +341,9 @@ public class NewProgressViewer extends TreeViewer implements
                         int percent = info.getPercentDone();
                         if (percent >= 0 && percent <= 100) {
                             if (taskName != null)
-                                taskName = ProgressMessages.format(
-                                        "JobInfo.Percent", //$NON-NLS-1$
-                                        new Object[] {
-                                                Integer.toString(percent),
-                                                taskName });
+                                taskName = NLS.bind(ProgressMessages.JobInfo_Percent,Integer.toString(percent),taskName );
                             else
-                                taskName = ProgressMessages.format(
-                                        "JobInfo.Percent2", //$NON-NLS-1$
-                                        new Object[] { Integer
-                                                .toString(percent) });
+                                taskName = NLS.bind(ProgressMessages.JobInfo_Percent2, Integer.toString(percent) );
                         }
                     }
 
@@ -374,17 +362,11 @@ public class NewProgressViewer extends TreeViewer implements
                             && subTaskName.trim().length() > 0;
 
                     if (hasTask && hasSubTask) {
-                        name = ProgressMessages
-                                .format(
-                                        "JobInfo.Format", new Object[] { name, taskName, subTaskName }); //$NON-NLS-1$
+                        name = NLS.bind(ProgressMessages.JobInfo_Format, (new Object[] { name, taskName, subTaskName })); 
                     } else if (hasTask) {
-                        name = ProgressMessages
-                                .format(
-                                        "JobInfo.TaskFormat", new Object[] { name, taskName }); //$NON-NLS-1$
+                        name = NLS.bind(ProgressMessages.JobInfo_TaskFormat, name, taskName ); 
                     } else if (hasSubTask) {
-                        name = ProgressMessages
-                                .format(
-                                        "JobInfo.TaskFormat", new Object[] { name, subTaskName }); //$NON-NLS-1$
+                        name = NLS.bind(ProgressMessages.JobInfo_TaskFormat, name, subTaskName); 
                     }
                 }
 
@@ -514,8 +496,7 @@ public class NewProgressViewer extends TreeViewer implements
             actionButton = new ToolItem(actionBar, SWT.NONE);
             actionButton.setImage(cancelJobIcon);
             actionButton.setDisabledImage(cancelJobDIcon);
-            actionButton.setToolTipText(ProgressMessages
-                    .getString("NewProgressView.CancelJobToolTip")); //$NON-NLS-1$
+            actionButton.setToolTipText(ProgressMessages.NewProgressView_CancelJobToolTip); 
             actionButton.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     actionButton.setEnabled(false);
@@ -549,8 +530,7 @@ public class NewProgressViewer extends TreeViewer implements
             if (!actionButton.isDisposed()) {
                 actionButton.setImage(clearJobIcon);
                 actionButton.setDisabledImage(clearJobDIcon);
-                actionButton.setToolTipText(ProgressMessages
-                        .getString("NewProgressView.RemoveJobToolTip")); //$NON-NLS-1$
+                actionButton.setToolTipText(ProgressMessages.NewProgressView_RemoveJobToolTip); 
                 actionButton.setEnabled(true);
                 changed = true;
             }
@@ -756,9 +736,7 @@ public class NewProgressViewer extends TreeViewer implements
 
             if (highlightJob != null
                     && (highlightJob == job || highlightItem == this))
-                name = ProgressMessages
-                        .format(
-                                "JobInfo.BlocksUserOperationFormat", new Object[] { name }); //$NON-NLS-1$
+                name = NLS.bind(ProgressMessages.JobInfo_BlocksUserOperationFormat, name); 
 
             nameItem.setToolTipText(name);
             nameItem.setText(shortenText(nameItem, name));
@@ -1077,8 +1055,7 @@ public class NewProgressViewer extends TreeViewer implements
 
     static final boolean DEBUG = false;
 
-    private static String ELLIPSIS = ProgressMessages
-            .getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
+    private static String ELLIPSIS = ProgressMessages.ProgressFloatingWindow_EllipsisValue; 
 
     static final QualifiedName ICON_PROPERTY = IProgressConstants.ICON_PROPERTY;
 
@@ -1479,10 +1456,8 @@ public class NewProgressViewer extends TreeViewer implements
         if (withTime)
             time = getTimeString(jte);
         if (time != null)
-            return ProgressMessages.format(
-                    "JobInfo.FinishedAt", new Object[] { name, time }); //$NON-NLS-1$
-        return ProgressMessages.format(
-                "JobInfo.Finished", new Object[] { name }); //$NON-NLS-1$
+			return NLS.bind(ProgressMessages.JobInfo_FinishedAt, name, time ); 
+        return NLS.bind(ProgressMessages.JobInfo_Finished,  name ); 
     }
     
     /**
@@ -1522,31 +1497,26 @@ public class NewProgressViewer extends TreeViewer implements
         String name = job.getName();
 
         if (job.isSystem())
-            name = ProgressMessages.format(
-                    "JobInfo.System", new Object[] { name }); //$NON-NLS-1$
+            name = NLS.bind(ProgressMessages.JobInfo_System, name); 
 
         if (ji.isCanceled())
-            return ProgressMessages.format(
-                    "JobInfo.Cancelled", new Object[] { name }); //$NON-NLS-1$
+			return NLS.bind(ProgressMessages.JobInfo_Cancelled, name);
 
         if (terminated)
             return getFinishedString(ji, name, withTime);
 
         if (ji.isBlocked()) {
             IStatus blockedStatus = ji.getBlockedStatus();
-            return ProgressMessages.format("JobInfo.Blocked", //$NON-NLS-1$
-                    new Object[] { name, blockedStatus.getMessage() });
+            return NLS.bind(ProgressMessages.JobInfo_Blocked, name, blockedStatus.getMessage());
         }
 
         switch (job.getState()) {
         case Job.RUNNING:
             return name;
         case Job.SLEEPING:
-            return ProgressMessages.format(
-                    "JobInfo.Sleeping", new Object[] { name }); //$NON-NLS-1$
+            return NLS.bind(ProgressMessages.JobInfo_Sleeping, name); 
         default:
-            return ProgressMessages.format(
-                    "JobInfo.Waiting", new Object[] { name }); //$NON-NLS-1$
+            return NLS.bind(ProgressMessages.JobInfo_Waiting, name); 
         }
     }
 

@@ -46,7 +46,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(ProgressMessages.getString("JobsViewPreferenceDialog.Title")); //$NON-NLS-1$
+		newShell.setText(ProgressMessages.JobsViewPreferenceDialog_Title);
 	}
 
 	/* (non-Javadoc)
@@ -59,8 +59,7 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 		editArea.setLayout(new GridLayout());
 		editArea.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
 		
-		verboseEditor = new BooleanFieldEditor("verbose", ProgressMessages //$NON-NLS-1$
-		.getString("JobsViewPreferenceDialog.Note"), editArea); //$NON-NLS-1$
+		verboseEditor = new BooleanFieldEditor("verbose", ProgressMessages.JobsViewPreferenceDialog_Note, editArea);//$NON-NLS-1$ 
 		verboseEditor.setPreferenceName(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS);
 		verboseEditor.setPreferenceStore(PrefUtil.getAPIPreferenceStore());
 		verboseEditor.load();

@@ -94,8 +94,8 @@ public class JobErrorDialog extends ErrorDialog {
         if (isMultipleJobErrors()) {
             if (jobListViewer == null && !dialogArea.isDisposed()) {
 	            // The job list doesn't exist so create it.
-	            setMessage(ProgressMessages.getString("JobErrorDialog.MultipleErrorsMessage")); //$NON-NLS-1$
-	            getShell().setText(ProgressMessages.getString("JobErrorDialog.MultipleErrorsTitle")); //$NON-NLS-1$
+	            setMessage(ProgressMessages.JobErrorDialog_MultipleErrorsMessage); 
+	            getShell().setText(ProgressMessages.JobErrorDialog_MultipleErrorsTitle); 
 	            createJobListArea((Composite)dialogArea);
 	            showDetailsArea();
             }
@@ -115,7 +115,7 @@ public class JobErrorDialog extends ErrorDialog {
         }
         if (text == null) {
             // Text is set to this initiallybut will be changed for active job
-            text = ProgressMessages.getString("JobErrorDialog.CustomJobText"); //$NON-NLS-1$
+            text = ProgressMessages.JobErrorDialog_CustomJobText; 
         }
         createButton(parent, GOTO_ACTION_ID, text, false);
         super.createButtonsForButtonBar(parent);
@@ -140,7 +140,7 @@ public class JobErrorDialog extends ErrorDialog {
             }
             if (newText == null) {
                 hasValidGotoAction = false;
-                newText = ProgressMessages.getString("JobErrorDialog.CustomJobText"); //$NON-NLS-1$
+                newText = ProgressMessages.JobErrorDialog_CustomJobText; 
             }
             if (!newText.equals(text)) {
                 gotoButton.setText(newText);
@@ -174,9 +174,9 @@ public class JobErrorDialog extends ErrorDialog {
     private boolean isPromptToClose() {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
         if (!store.contains(PREF_SKIP_GOTO_ACTION_PROMPT) || !store.getString(PREF_SKIP_GOTO_ACTION_PROMPT).equals(MessageDialogWithToggle.ALWAYS)) {
-	        MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(getShell(), ProgressMessages.getString("JobErrorDialog.CloseDialogTitle"),  //$NON-NLS-1$
-	        		ProgressMessages.getString("JobErrorDialog.CloseDialogMessage"), //$NON-NLS-1$
-	        		ProgressMessages.getString("JobErrorDialog.DoNotShowAgainMessage"), false, store, PREF_SKIP_GOTO_ACTION_PROMPT); //$NON-NLS-1$
+	        MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(getShell(), ProgressMessages.JobErrorDialog_CloseDialogTitle,  
+	        		ProgressMessages.JobErrorDialog_CloseDialogMessage, 
+	        		ProgressMessages.JobErrorDialog_DoNotShowAgainMessage, false, store, PREF_SKIP_GOTO_ACTION_PROMPT); 
 	        return dialog.getReturnCode() == OK;
         }
         return true;

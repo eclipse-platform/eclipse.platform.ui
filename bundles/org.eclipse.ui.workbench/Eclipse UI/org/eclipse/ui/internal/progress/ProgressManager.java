@@ -413,8 +413,7 @@ public class ProgressManager extends ProgressProvider implements
                     if (!noDialog) {
                         final IJobChangeEvent finalEvent = event;
                         WorkbenchJob showJob = new WorkbenchJob(
-                                ProgressMessages
-                                        .getString("ProgressManager.showInDialogName")) { //$NON-NLS-1$
+                                ProgressMessages.ProgressManager_showInDialogName) { 
                             /*
                              * (non-Javadoc)
                              * 
@@ -883,8 +882,7 @@ public class ProgressManager extends ProgressProvider implements
     private void scheduleProgressMonitorJob(
             final ProgressMonitorJobsDialog dialog) {
 
-        final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages
-                .getString("ProgressManager.openJobName")) {//$NON-NLS-1$
+        final WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.ProgressManager_openJobName) {
             /*
              * (non-Javadoc)
              * 

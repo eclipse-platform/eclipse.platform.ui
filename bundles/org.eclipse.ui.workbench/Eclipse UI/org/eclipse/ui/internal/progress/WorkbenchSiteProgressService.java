@@ -79,8 +79,7 @@ public class WorkbenchSiteProgressService implements
         }
 
         private SiteUpdateJob() {
-            super(ProgressMessages
-                    .getString("WorkbenchSiteProgressService.CursorJob"));//$NON-NLS-1$
+            super(ProgressMessages.WorkbenchSiteProgressService_CursorJob);
         }
 
         /**

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -85,10 +86,8 @@ public class ProgressAnimationItem extends AnimationItem implements
                     if (status != null && status.getSeverity() == IStatus.ERROR) {
                         // The showErrorFor method will show the user all the accumulated errors
                         // and clear then when done
-                        String title = ProgressMessages
-	                            .getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
-	                    String msg = ProgressMessages
-	                            .getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
+                        String title = ProgressMessages.NewProgressView_errorDialogTitle; 
+	                    String msg = ProgressMessages.NewProgressView_errorDialogMessage; 
                         if (!getManager().showErrorFor(job, title, msg)) {
                             // The error is missing from the error manager.
                             // This should only occur if what the progress view is showing is
@@ -165,9 +164,7 @@ public class ProgressAnimationItem extends AnimationItem implements
                         // green arrow with error overlay
                         initButton(
                                 errorImage,
-                                ProgressMessages
-                                        .format(
-                                                "ProgressAnimationItem.error", new Object[] { job.getName() })); //$NON-NLS-1$
+                                NLS.bind(ProgressMessages.ProgressAnimationItem_error, job.getName())); 
                         return;
                     }
                     IAction action = getAction(job);
@@ -175,15 +172,12 @@ public class ProgressAnimationItem extends AnimationItem implements
                         // green arrow with exclamation mark
                         String tt = action.getToolTipText();
                         if (tt == null || tt.trim().length() == 0)
-                            tt = ProgressMessages
-                                    .format(
-                                            "ProgressAnimationItem.ok", new Object[] { job.getName() }); //$NON-NLS-1$
+                            tt = NLS.bind(ProgressMessages.ProgressAnimationItem_ok, job.getName()); 
                         initButton(okImage, tt);
                         return;
                     }
                     // just the green arrow
-                    initButton(noneImage, ProgressMessages
-                            .getString("ProgressAnimationItem.tasks")); //$NON-NLS-1$
+                    initButton(noneImage, ProgressMessages.ProgressAnimationItem_tasks); 
                     return;
                 }
             }
@@ -198,16 +192,13 @@ public class ProgressAnimationItem extends AnimationItem implements
                 ErrorInfo info = (ErrorInfo) iter.next();
 	            initButton(
 	                    errorImage,
-	                    ProgressMessages
-	                            .format(
-	                                    "ProgressAnimationItem.error", new Object[] { info.getJob().getName() })); //$NON-NLS-1$
+	                    NLS.bind(ProgressMessages.ProgressAnimationItem_error, info.getJob().getName())); 
 	            return;
             }
         }
 
         if (animationRunning) {
-            initButton(noneImage, ProgressMessages
-                    .getString("ProgressAnimationItem.tasks")); //$NON-NLS-1$
+            initButton(noneImage, ProgressMessages.ProgressAnimationItem_tasks);
             return;
         }
 

@@ -219,8 +219,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
      * Create the update job that handles the updatesInfo.
      */
     private void createUpdateJob() {
-        updateJob = new WorkbenchJob(ProgressMessages
-                .getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
+        updateJob = new WorkbenchJob(ProgressMessages.ProgressContentProvider_UpdateProgressJob) {
             /*
              * (non-Javadoc)
              * 

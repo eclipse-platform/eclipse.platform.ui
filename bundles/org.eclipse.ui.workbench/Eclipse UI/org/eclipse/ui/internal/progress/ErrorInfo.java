@@ -15,6 +15,7 @@ import java.util.Date;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -62,8 +63,7 @@ public class ErrorInfo extends JobTreeElement {
      * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
      */
     String getDisplayString() {
-        return ProgressMessages.format("JobInfo.Error", //$NON-NLS-1$
-                new Object[] { job.getName(), new Date(timestamp) });
+        return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] { job.getName(), new Date(timestamp) }));
     }
 
     /**

@@ -108,8 +108,7 @@ public class ErrorNotificationManager {
 
         // We must open or update the error dialog in the UI thread to ensure that
         // errors are not dropped
-        WorkbenchJob job = new WorkbenchJob(ProgressMessages
-                .getString("ErrorNotificationManager.OpenErrorDialogJob")) { //$NON-NLS-1$
+        WorkbenchJob job = new WorkbenchJob(ProgressMessages.ErrorNotificationManager_OpenErrorDialogJob) { 
             public IStatus runInUIThread(IProgressMonitor monitor) {
             	
             	//Reschedule if there is a modal dialog

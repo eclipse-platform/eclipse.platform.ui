@@ -72,7 +72,7 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
      */
     public String getLabel(Object o) {
-        return ProgressMessages.getString("PendingUpdateAdapter.PendingLabel"); //$NON-NLS-1$
+        return ProgressMessages.PendingUpdateAdapter_PendingLabel;
     }
 
     /* (non-Javadoc)

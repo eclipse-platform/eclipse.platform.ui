@@ -102,8 +102,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
          */
         String getDisplayString() {
             if (blockedTaskName == null)
-                return ProgressMessages
-                        .getString("BlockedJobsDialog.UserInterfaceTreeElement"); //$NON-NLS-1$
+                return ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement;
             return blockedTaskName;
         }
 
@@ -381,8 +380,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(ProgressMessages
-                .getString("BlockedJobsDialog.BlockedTitle")); //$NON-NLS-1$
+        shell.setText(ProgressMessages.BlockedJobsDialog_BlockedTitle); 
         if (waitCursor == null)
             waitCursor = new Cursor(shell.getDisplay(), SWT.CURSOR_WAIT);
         shell.setCursor(waitCursor);

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -237,9 +238,7 @@ class JobInfo extends JobTreeElement {
     String getDisplayString() {
         String name = getDisplayStringWithStatus();
         if (job.isSystem())
-            //Append with a system tag if system
-            return ProgressMessages.format("JobInfo.System", //$NON-NLS-1$
-                    new Object[] { getJob().getName() });
+			return NLS.bind(ProgressMessages.JobInfo_System, (new Object[] { getJob().getName() }));
         return name;
     }
 
@@ -251,23 +250,19 @@ class JobInfo extends JobTreeElement {
      */
     private String getDisplayStringWithStatus() {
         if (isCanceled())
-            return ProgressMessages.format("JobInfo.Cancelled", //$NON-NLS-1$
-                    new Object[] { getJob().getName() });
+			return NLS.bind(ProgressMessages.JobInfo_Cancelled, (new Object[] { getJob().getName() }));
         if (isBlocked())
-            return ProgressMessages.format("JobInfo.Blocked", //$NON-NLS-1$
-                    new Object[] { getJob().getName(),
-                            blockedStatus.getMessage() });
+			return NLS.bind(ProgressMessages.JobInfo_Blocked, (new Object[] { getJob().getName(),
+			blockedStatus.getMessage() }));
         if (getJob().getState() == Job.RUNNING) {
             if (taskInfo == null)
                 return getJob().getName();
             return taskInfo.getDisplayString();
         }
         if (getJob().getState() == Job.SLEEPING)
-            return ProgressMessages.format("JobInfo.Sleeping", //$NON-NLS-1$
-                    new Object[] { getJob().getName() });
+			return NLS.bind(ProgressMessages.JobInfo_Sleeping, (new Object[] { getJob().getName() }));
 
-        return ProgressMessages.format("JobInfo.Waiting", //$NON-NLS-1$
-                new Object[] { getJob().getName() });
+        return NLS.bind(ProgressMessages.JobInfo_Waiting, (new Object[] { getJob().getName() }));
 
     }
 

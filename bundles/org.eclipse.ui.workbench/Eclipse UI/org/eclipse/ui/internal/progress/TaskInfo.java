@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * The TaskInfo is the info on a task with a job. It is 
@@ -82,8 +83,7 @@ public class TaskInfo extends SubTaskInfo {
             messageValues[1] = jobInfo.getJob().getName();
             messageValues[2] = taskName;
 
-            return ProgressMessages
-                    .format("JobInfo.DoneMessage", messageValues); //$NON-NLS-1$
+            return NLS.bind(ProgressMessages.JobInfo_DoneMessage, messageValues); 
         }
 
     }
@@ -100,8 +100,7 @@ public class TaskInfo extends SubTaskInfo {
         String[] messageValues = new String[2];
         messageValues[0] = jobInfo.getJob().getName();
         messageValues[1] = String.valueOf(getPercentDone());
-        return ProgressMessages.format(
-                "JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
+        return NLS.bind(ProgressMessages.JobInfo_NoTaskNameDoneMessage, messageValues);
     }
 
     /**
@@ -129,8 +128,7 @@ public class TaskInfo extends SubTaskInfo {
             String[] messageValues = new String[2];
             messageValues[0] = jobInfo.getJob().getName();
             messageValues[1] = taskName;
-            return ProgressMessages.format(
-                    "JobInfo.UnknownProgress", messageValues); //$NON-NLS-1$
+            return NLS.bind(ProgressMessages.JobInfo_UnknownProgress, messageValues); 
         }
     }
 

@@ -163,8 +163,7 @@ public class JobView extends ViewPart implements IViewPart {
      * Create the cancel action for the receiver.
      */
     private void createCancelAction() {
-        cancelAction = new Action(ProgressMessages
-                .getString("ProgressView.CancelAction")) {//$NON-NLS-1$
+        cancelAction = new Action(ProgressMessages.ProgressView_CancelAction) {
             /*
              * (non-Javadoc)
              * 
@@ -181,8 +180,7 @@ public class JobView extends ViewPart implements IViewPart {
      * Create the clear all action for the receiver.
      */
     private void createClearAllAction() {
-        clearAllAction = new Action(ProgressMessages
-                .getString("ProgressView.ClearAllAction")) {//$NON-NLS-1$
+        clearAllAction = new Action(ProgressMessages.ProgressView_ClearAllAction) {
             /*
              * (non-Javadoc)
              * 
@@ -192,8 +190,7 @@ public class JobView extends ViewPart implements IViewPart {
                 viewer.clearAll();
             }
         };
-        clearAllAction.setToolTipText(ProgressMessages
-                .getString("NewProgressView.RemoveAllJobsToolTip")); //$NON-NLS-1$
+        clearAllAction.setToolTipText(ProgressMessages.NewProgressView_RemoveAllJobsToolTip); 
         ImageDescriptor id = ImageSupport
                 .getImageDescriptor("icons/full/elcl16/progress_remall.gif"); //$NON-NLS-1$
         if (id != null)

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * The GroupInfo is the object used to display group properties.
@@ -78,8 +79,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
         String[] messageValues = new String[2];
         messageValues[0] = taskName;
         messageValues[1] = String.valueOf(getPercentDone());
-        return ProgressMessages.format(
-                "JobInfo.NoTaskNameDoneMessage", messageValues); //$NON-NLS-1$
+        return NLS.bind(ProgressMessages.JobInfo_NoTaskNameDoneMessage, messageValues); 
 
     }
 
