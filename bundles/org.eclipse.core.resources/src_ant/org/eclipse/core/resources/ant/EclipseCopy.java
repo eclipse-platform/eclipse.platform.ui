@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000,2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -214,8 +214,8 @@ public class EclipseCopy extends Copy {
      */
     public Mapper createMapper() throws BuildException {
         if (mapperElement != null) {
-            throw new BuildException("Cannot define more than one mapper",
-                                     location);
+        	String message = Policy.bind("error.mapper"); //$NON-NLS-1$
+            throw new BuildException(message, location);
         }
         mapperElement = new Mapper(project);
         return mapperElement;
@@ -239,12 +239,11 @@ public class EclipseCopy extends Copy {
                     (file.lastModified() > destFile.lastModified())) {
                     fileCopyMap.put(file.getAbsolutePath(), destFile.getAbsolutePath());
                 } else {
-                    log(file + " omitted as " + destFile + " is up to date.",
-                        Project.MSG_VERBOSE);
+                	String message = Policy.bind("execute.skipped", file.toString(), destFile.toString()); //$NON-NLS-1$
+                    log(message, Project.MSG_VERBOSE);
                 }
             } else {
-                String message = "Could not find file " 
-                                 + file.getAbsolutePath() + " to copy.";
+            	String message = Policy.bind("failed.copy2", file.getAbsolutePath().toString()); //$NON-NLS-1$
                 log(message);
                 throw new BuildException(message);
             }
@@ -283,23 +282,23 @@ public class EclipseCopy extends Copy {
      */
     protected void validateAttributes() throws BuildException {
         if (file == null && filesets.size() == 0) {
-            throw new BuildException("Specify at least one source - a file or a fileset.");
+            throw new BuildException(Policy.bind("error.fileset")); //$NON-NLS-1$
         }
 
         if (destFile != null && destDir != null) {
-            throw new BuildException("Only one of destfile and destdir may be set.");
+            throw new BuildException(Policy.bind("error.dest")); //$NON-NLS-1$
         }
 
         if (destFile == null && destDir == null) {
-            throw new BuildException("One of destfile or destdir must be set.");
+            throw new BuildException(Policy.bind("error.dest2")); //$NON-NLS-1$
         }
 
         if (file != null && file.exists() && file.isDirectory()) {
-            throw new BuildException("Use a fileset to copy directories.");
+            throw new BuildException(Policy.bind("error.copyDir")); //$NON-NLS-1$
         }
            
         if (destFile != null && filesets.size() > 0) {
-            throw new BuildException("Cannot concatenate multple files into a single file.");
+            throw new BuildException(Policy.bind("error.concat")); //$NON-NLS-1$
         }
 
         if (destFile != null) {
@@ -360,9 +359,8 @@ public class EclipseCopy extends Copy {
      */
     protected void doFileOperations() {
         if (fileCopyMap.size() > 0) {
-            log("Copying " + fileCopyMap.size() + 
-                " file" + (fileCopyMap.size() == 1 ? "" : "s") + 
-                " to " + destDir.getAbsolutePath() );
+        	
+            log(Policy.bind("copy.files", new String[] {Integer.toString(fileCopyMap.size()), (fileCopyMap.size() == 1 ? "" : "s"), destDir.getAbsolutePath()})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
             Enumeration e = fileCopyMap.keys();
             while (e.hasMoreElements()) {
@@ -370,12 +368,12 @@ public class EclipseCopy extends Copy {
                 String toFile = (String) fileCopyMap.get(fromFile);
 
                 if( fromFile.equals( toFile ) ) {
-                    log("Skipping self-copy of " + fromFile, verbosity);
+                    log(Policy.bind("copy.skip", fromFile), verbosity); //$NON-NLS-1$
                     continue;
                 }
 
                 try {
-                    log("Copying " + fromFile + " to " + toFile, verbosity);
+                    log(Policy.bind("copy.file", fromFile, toFile), verbosity); //$NON-NLS-1$
                     
                     FilterSetCollection executionFilters = new FilterSetCollection();
                     if (filtering) {
@@ -387,8 +385,7 @@ public class EclipseCopy extends Copy {
                     fileUtils.copyFile(fromFile, toFile, executionFilters,
                                        forceOverwrite, preserveLastModified);
                 } catch (IOException ioe) {
-                    String msg = "Failed to copy " + fromFile + " to " + toFile
-                        + " due to " + ioe.getMessage();
+                	String msg = Policy.bind("failed.copy",new String[] {fromFile, toFile, ioe.getMessage()});  //$NON-NLS-1$
                     throw new BuildException(msg, ioe, location);
                 }
             }
@@ -401,7 +398,7 @@ public class EclipseCopy extends Copy {
                 File d = new File((String)e.nextElement());
                 if (!d.exists()) {
                     if (!d.mkdirs()) {
-                        log("Unable to create directory " + d.getAbsolutePath(), Project.MSG_ERR);
+                        log(Policy.bind("error.createDir", d.getAbsolutePath()), Project.MSG_ERR); //$NON-NLS-1$
                     } else {
                         count++;
                     }
@@ -409,10 +406,7 @@ public class EclipseCopy extends Copy {
             }
 
             if (count > 0) {
-                log("Copied " + count + 
-                    " empty director" + 
-                    (count==1?"y":"ies") + 
-                    " to " + destDir.getAbsolutePath());
+                log(Policy.bind("copy.result", new String[] {Integer.toString(count), (count==1?"y":"ies"), destDir.getAbsolutePath()})); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
         }
     }
