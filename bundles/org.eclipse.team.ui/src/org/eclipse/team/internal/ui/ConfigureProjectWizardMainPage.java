@@ -54,13 +54,13 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		super(pageName, title, titleImage);
 		this.wizards = wizards;
 	}
-	/**
+	/*
 	 * @see WizardPage#canFlipToNextPage
 	 */
 	public boolean canFlipToNextPage() {
 		return selectedElement != null;
 	}
-	/**
+	/*
 	 * @see WizardPage#createControl
 	 */
 	public void createControl(Composite parent) {

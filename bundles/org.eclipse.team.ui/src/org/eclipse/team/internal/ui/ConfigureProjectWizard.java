@@ -35,7 +35,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	protected final static String ATT_ICON = "icon";
 	protected final static String ATT_ID = "id";
 	
-	/**
+	/*
 	 * @see Wizard#addPages
 	 */
 	public void addPages() {
@@ -45,7 +45,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		mainPage.setWorkbench(workbench);
 		addPage(mainPage);
 	}
-	/**
+	/*
 	 * @see Wizard#performFinish
 	 */
 	public boolean performFinish() {

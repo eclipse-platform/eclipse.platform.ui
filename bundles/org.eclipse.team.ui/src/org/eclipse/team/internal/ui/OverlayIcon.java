@@ -72,7 +72,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 			}
 		}
 	}
-	/**
+	/*
 	 * @see CompositeImage#fill
 	 */
 	protected void drawCompositeImage(int width, int height) {
@@ -135,7 +135,7 @@ public class OverlayIcon extends CompositeImageDescriptor {
 			}
 		}
 	}
-	/**
+	/*
 	 * @see CompositeImage#getSize
 	 */
 	protected Point getSize() {
