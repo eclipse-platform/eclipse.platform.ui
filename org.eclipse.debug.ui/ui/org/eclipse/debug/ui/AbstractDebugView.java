@@ -137,8 +137,8 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	private String fEarlyMessage= null;
 
 	/**
-	 * Part listener that disables updating when the variables view is not
-	 * visible and reenables updating when the view appears.
+	 * Part listener that disables updating when the view is not visible and
+	 * reenables updating when the view appears.
 	 */
 	private class DebugViewPartListener implements IPartListener2 {
 		/**
