@@ -44,6 +44,8 @@ public class JarVerifier extends Verifier {
 	private IProgressMonitor monitor;
 	private File jarFile;
 
+	private static	byte[] buffer = new byte[8192];
+	
 	/*
 	 * Default Constructor
 	 */
@@ -170,7 +172,7 @@ public class JarVerifier extends Verifier {
 	private List readJarFile(JarFile jarFile, String identifier)
 		throws IOException, InterruptedException {
 		List list = new ArrayList();
-		byte[] buffer = new byte[4096];
+
 		Enumeration entries = jarFile.entries();
 		JarEntry currentEntry = null;
 		InputStream in = null;
@@ -191,6 +193,13 @@ public class JarVerifier extends Verifier {
 		} catch (IOException e) {
 			result.setVerificationCode(IVerificationResult.UNKNOWN_ERROR);
 			result.setResultException(e);
+		} finally {
+			try {
+				if (in != null)
+					in.close();
+			} catch (IOException e1) {
+				// ignore
+			}
 		}
 
 		return list;
