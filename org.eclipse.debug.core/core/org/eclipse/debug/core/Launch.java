@@ -6,7 +6,6 @@ package org.eclipse.debug.core;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -65,7 +64,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	private ILauncher fLauncher= null;
 
 	/**
-	 * The system processes asscoiated with
+	 * The system processes associated with
 	 * this launch, or empty if none.
 	 */
 	private List fProcesses= new ArrayList();
