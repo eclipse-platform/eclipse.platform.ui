@@ -29,7 +29,7 @@ build Java applications that can compete with native applications on any
 platform. This tutorial is designed to get you started building RCP applications
 quickly.</p>
 <p><b>By Ed Burnette, SAS Institute Inc.</b><br>
-<font size="-1">June 30, 2004</font></p>
+<font size="-1">July 12, 2004</font></p>
 <hr width="100%">
 <h2>Introduction</h2>
 <p>Try this experiment: Show Eclipse to some friends or co-workers who haven't
@@ -411,9 +411,9 @@ done you should have a structure that looks like this:</p>
 <p>That's all you need to run an RCP application, but it would be difficult for
 anyone to use it without some kind of launching program. Eclipse uses
 eclipse.exe, but for this example we'll just use a batch file.
-Create a Windows command file
-called rcptutorial1.cmd and place it in the top level RcpTutorial1 directory. A Unix shell
-script version would be similar.
+On Windows, create a command file
+called rcptutorial1.cmd and place it in the top level RcpTutorial1 directory.
+</p>
 <pre>
    echo on
    setlocal
@@ -425,9 +425,42 @@ script version would be similar.
 <p>The start command should be all on one line. As before, the -application
 option refers back to the id specified on the
 <code>org.eclipse.core.runtime.applications extension point.</code></p>
+
+<p>
+<img src="images/tip.gif" alt="Tip: " width="62" height="13">
+Specify the <code>-clean</code> option
+on the command line to cause the core runtime to discard its caches
+and re-read all the plug-in manifests.
+Normally, Eclipse caches manifest information to speed startup,
+but if you are adding and removing plug-ins or changing configuration
+options the cache may get out of sync.
+Remove <code>-clean</code> for best performance in production applications.
+</p>
+
+<p>
+<img src="images/note.gif" alt="Note: " width="62" height="13">
+The Linux shell version is similar, but for some reason you have to add
+a few extra options to identify the operating and window system.
+I can't verify this because I don't have a Linux system but this command
+line is reported to work:
+</p>
+<pre>
+   java -cp startup.jar org.eclipse.core.launcher.Main
+      -application org.eclipse.ui.tutorials.rcp.part1.RcpApplication
+      -os linux -ws gtk -arch x86 -nl en_US $*
+</pre>
+
+<p>
+<img src="images/note.gif" alt="Note: " width="62" height="13">
+To run it under Mac OS, you must use the java_swt executable that comes
+with the Eclipse SDK instead of the regular java executable that comes with
+the Java SDK.
+</p>
+
 <p>You can get as fancy as you want in this script file. Here's a variant that I
 like to use when debugging because it will display any error messages from the
-Eclipse loader in a separate window:</p>
+Eclipse loader in a separate window.
+This is for Windows; the Linux version would be similar.</p>
 <pre>
    echo on
    setlocal
@@ -471,7 +504,9 @@ This section will collect the errors that they've seen and
 the solutions.
 Remember to use the <code>-consoleLog</code> command line option to see
 extra diagnostics in the console window where you invoked your
-RCP application.
+RCP application,
+and <code>-clean</code> to purge the core runtime's cache of any stale
+information when changing plug-ins and configurations.
 </p>
 <dl>
 
@@ -548,6 +583,15 @@ Without it, you have to list them out manually in a configuration file
 Unfortunately this plug-in is not part of the standard
 RCP SDK, so you have to copy it from the regular Eclipse SDK.
 
+<dt>
+<b>java.lang.NoClassDefFoundError: org/eclipse/swt/widgets/Control</b>
+<br>(a number of different SWT classes may be mentioned in the error)
+<dd>
+When running an RCP application under Linux GTK you need specify command
+line options that identify your operating and windowing system, for example,
+<code>-os linux -ws gtk</code>.
+When running under Mac OS, you need to use the java_swt program that came with
+the Eclipse SDK instead of the normal java program.
 
 </dl>
 
