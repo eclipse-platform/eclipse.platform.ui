@@ -13,6 +13,9 @@ package org.eclipse.ui.preferences;
 /**
  * IWorkbenchPreferenceContainer is the class that specifies
  * the workbench specific preferences support.
+ * @since 3.1
+ * <strong>NOTE</strong> This is experimental APIand subject
+ * to change during the 3.1 development cycle.
  *
  */
 public interface IWorkbenchPreferenceContainer {
@@ -29,5 +32,13 @@ public interface IWorkbenchPreferenceContainer {
 	 * opened successfully and data was applied.
 	 */
 	public boolean openPage(String preferencePageId, Object data);
+	
+	/**
+	 * Get the working copy manager in use by this preference
+	 * page container. This IWorkingCopyManager will have 
+	 * IWorkingCopyManager#applyChanges()
+	 * @return IWorkingCopyManager
+	 */
+	public IWorkingCopyManager getWorkingCopyManager();
 
 }

@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -38,8 +41,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
+import org.eclipse.ui.internal.preferences.WorkingCopyManager;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+import org.eclipse.ui.preferences.IWorkingCopyManager;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Baseclass for preference dialogs that will show two tabs of preferences -
@@ -52,6 +59,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	protected FilteredTree filteredTree;
 
 	private Object pageData;
+	
+	IWorkingCopyManager workingCopyManager;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -275,6 +284,37 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		}
 	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#getWorkingCopyManager()
+	 */
+	public IWorkingCopyManager getWorkingCopyManager() {
+		if(workingCopyManager == null){
+			workingCopyManager = new WorkingCopyManager();
+		}
+		return workingCopyManager;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	protected void okPressed() {
+		super.okPressed();
+		if(workingCopyManager != null)
+			try {
+				workingCopyManager.applyChanges();
+			} catch (BackingStoreException e) {
+				IStatus errorStatus =
+					new Status(
+							IStatus.ERROR,
+							WorkbenchPlugin.PI_WORKBENCH,
+							IStatus.ERROR,
+							WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
+							e);
+				ErrorDialog.openError(
+						getShell(),
+						WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle,
+						WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
+						errorStatus);
+			}
+	}
 
 }

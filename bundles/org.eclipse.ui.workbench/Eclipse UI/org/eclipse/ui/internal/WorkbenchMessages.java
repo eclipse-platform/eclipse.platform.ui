@@ -402,6 +402,8 @@ public class WorkbenchMessages extends NLS {
 	public static String FileExtension_fileNameInvalidMessage;
 	public static String FilteredPreferenceDialog_SearchButton;
 	public static String FilteredPreferenceDialog_SearchToolTip;
+	public static String FilteredPreferenceDialog_PreferenceSaveFailed;
+	
 	public static String FileExtension_fileTypeMessage;
 	public static String FileExtension_fileTypeLabel;
 	public static String FileExtension_shellTitle;
