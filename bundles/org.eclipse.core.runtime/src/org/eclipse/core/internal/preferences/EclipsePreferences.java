@@ -430,7 +430,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (temp == null)
 			return null;
 		String result = temp.getProperty(key);
-		if (InternalPlatform.DEBUG_PREFERENCES_GET)
+		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Getting preference value: " + absolutePath() + '/' + key + "->" + result); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
@@ -480,7 +480,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (properties == null)
 			properties = new Properties();
 		String oldValue = properties.getProperty(key);
-		if (InternalPlatform.DEBUG_PREFERENCES_PUT)
+		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Setting preference: " + absolutePath() + '/' + key + '=' + newValue); //$NON-NLS-1$
 		properties.setProperty(key, newValue);
 		return oldValue;

@@ -85,8 +85,6 @@ public final class InternalPlatform implements IPlatform {
 	private static final String OPTION_DEBUG_REGISTRY = PI_RUNTIME + "/registry/debug"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_REGISTRY_DUMP = PI_RUNTIME + "/registry/debug/dump"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_PREFERENCES = PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCES_GET = OPTION_DEBUG_PREFERENCES + "/get"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_PREFERENCES_PUT = OPTION_DEBUG_PREFERENCES + "/put"; //$NON-NLS-1$
 
 	// command line options
 	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
@@ -116,8 +114,6 @@ public final class InternalPlatform implements IPlatform {
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static String DEBUG_REGISTRY_DUMP = null;
 	public static boolean DEBUG_PREFERENCES = false;
-	public static boolean DEBUG_PREFERENCES_GET = false;
-	public static boolean DEBUG_PREFERENCES_PUT = false;
 
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
@@ -418,8 +414,6 @@ public final class InternalPlatform implements IPlatform {
 			DEBUG_REGISTRY = getBooleanOption(OPTION_DEBUG_REGISTRY, false);
 			DEBUG_REGISTRY_DUMP = getOption(OPTION_DEBUG_REGISTRY_DUMP);
 			DEBUG_PREFERENCES = getBooleanOption(OPTION_DEBUG_PREFERENCES, false);
-			DEBUG_PREFERENCES_GET = getBooleanOption(OPTION_DEBUG_PREFERENCES_GET, false);
-			DEBUG_PREFERENCES_PUT = getBooleanOption(OPTION_DEBUG_PREFERENCES_PUT, false);
 		}
 	}
 
@@ -1177,7 +1171,7 @@ public final class InternalPlatform implements IPlatform {
 				} catch (CoreException e) {
 					if (logEntries == null)
 						logEntries = new ArrayList(3);
-					logEntries.add(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null));  //$NON-NLS-1$
+					logEntries.add(new FrameworkLogEntry(PI_RUNTIME, Policy.bind("provider.invalid", element.getParent().toString()), 0, e, null)); //$NON-NLS-1$
 				}
 			}
 		}
