@@ -131,6 +131,9 @@ public class Client {
 
 			if (buffer == null || buffer.available() == 0) {
 				fill();
+				if (atEnd) {
+					return -1;
+				}
 			}
 
 			return buffer.read();
@@ -147,6 +150,9 @@ public class Client {
 
 			if (buffer == null || buffer.available() == 0) {
 				fill();
+				if (atEnd) {
+					return -1;
+				}
 			}
 
 			return buffer.read(b, off, len);
