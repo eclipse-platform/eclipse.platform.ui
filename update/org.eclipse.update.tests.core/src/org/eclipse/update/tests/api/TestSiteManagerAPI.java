@@ -28,7 +28,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	}
 	
 	public void testFile() throws Exception {
-		ISite fileSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite fileSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		String site = fileSite.getURL().toExternalForm();		
 		assertEquals(TARGET_FILE_SITE.toExternalForm(), site);
 	}
@@ -36,7 +36,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	public void testUnknown() throws Exception {
 		URL url = new URL("ftp://255.255.255.255/");
 		try {
-		SiteManager.getSite(url);
+		SiteManager.getSite(url,null);
 		fail("Connected to ftp://255.255.255.255/, should not happen");
 		} catch (CoreException e){
 			// expected
@@ -52,7 +52,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		assertTrue(instSites.length>0);
 		System.out.println("Local Site:"+instSites[0].getSite().getURL().toExternalForm());
 		
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED,null);
 		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		remove(remoteFeature,instSites[0].getSite());		
 		instSites[0].getSite().install(remoteFeature,null,null);

@@ -25,7 +25,7 @@ public class TestCategories extends UpdateManagerTestCase {
 	public void testCategories() throws Exception {
 
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "xmls/site1/");
-		ISite remoteSite = SiteManager.getSite(remoteUrl);
+		ISite remoteSite = SiteManager.getSite(remoteUrl,null);
 
 		ISiteFeatureReference[] feature = remoteSite.getFeatureReferences();
 		//ICategory[] categories = remoteSite.getCategories();
@@ -39,7 +39,7 @@ public class TestCategories extends UpdateManagerTestCase {
 	public void testOrderedCategories() throws Exception {
 
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "xmls/site1/");
-		ISite remoteSite = SiteManager.getSite(remoteUrl);
+		ISite remoteSite = SiteManager.getSite(remoteUrl,null);
 
 		ICategory[] categories = remoteSite.getCategories();
 		for (int i = 0; i < categories.length; i++) {
@@ -52,7 +52,7 @@ public class TestCategories extends UpdateManagerTestCase {
 
 	public void testTranslatedCategories() throws Exception {
 
-		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE,null);
 
 		ICategory[] categories = remoteSite.getCategories();
 

@@ -35,9 +35,9 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
 		URL newURL = new File(dataPath + "ExecutableFeaturePackagedSite/data2/site.xml").toURL();
-		ISite remoteSite = SiteManager.getSite(newURL);
+		ISite remoteSite = SiteManager.getSite(newURL,null);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		IFeature remoteFeature = null;
 		
 		// at least one executable feature and on packaged
@@ -90,9 +90,9 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
 		URL newURL = new File(dataPath + "ExecutableFeaturePackagedSite/data/").toURL();
-		ISite remoteSite = SiteManager.getSite(newURL);
+		ISite remoteSite = SiteManager.getSite(newURL,null);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		IFeature remoteFeature = null;
 		
 		// at least one executable feature and on packaged

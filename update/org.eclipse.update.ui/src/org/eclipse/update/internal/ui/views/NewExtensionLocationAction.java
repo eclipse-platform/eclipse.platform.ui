@@ -19,8 +19,8 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.operations.*;
 
 public class NewExtensionLocationAction extends Action {
 

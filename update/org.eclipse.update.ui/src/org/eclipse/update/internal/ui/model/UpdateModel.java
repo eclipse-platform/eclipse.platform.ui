@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.operations.*;
 
 public class UpdateModel implements IAdaptable {
 	private Vector bookmarks = new Vector();

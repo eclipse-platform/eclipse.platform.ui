@@ -29,9 +29,9 @@ import org.eclipse.ui.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.operations.*;
 
 
 public class RevertConfigurationWizardPage extends WizardPage {

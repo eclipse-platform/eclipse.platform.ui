@@ -36,10 +36,10 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);		
 		InstallRegistry.cleanup();
 		
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED,null);
 		IFeatureReference[] remoteFeatureReference = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = remoteFeatureReference[0].getFeature(null);
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		assertNotNull(remoteFeature);
 		remove(remoteFeature,localSite);		
 		localSite.install(remoteFeature,null,null);

@@ -16,7 +16,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.standalone.*;
+import org.eclipse.update.standalone.*;
 
 
 public class TestFeatureInstall extends StandaloneManagerTestCase {

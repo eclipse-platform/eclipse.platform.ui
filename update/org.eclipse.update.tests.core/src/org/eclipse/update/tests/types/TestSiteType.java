@@ -35,7 +35,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 	public void testSiteType() throws Exception {
 
 		String featurePath = dataPath + "SiteTypeExamples/site1/site.xml";
-		ISite site = SiteManager.getSite(new File(featurePath).toURL());
+		ISite site = SiteManager.getSite(new File(featurePath).toURL(),null);
 		IFeatureReference ref = site.getFeatureReferences()[0];
 		IFeature feature = ref.getFeature(null);
 
@@ -50,7 +50,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 		 */
 	public void testFTPSiteType() throws Exception {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE + "FTPLikeSite/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE + "FTPLikeSite/"),null);
 
 		// should not find the mapping
 		// but then should attempt to read the XML file
@@ -68,7 +68,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 	public void testParseValid1() throws Exception {
 		try {
 			URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/siteftp.xml");
-			ISite site = SiteManager.getSite(remoteURL);
+			ISite site = SiteManager.getSite(remoteURL,null);
 			site.getArchives();
 		} catch (CoreException e) {
 			if (e.getMessage().indexOf("</feature>") == -1) {

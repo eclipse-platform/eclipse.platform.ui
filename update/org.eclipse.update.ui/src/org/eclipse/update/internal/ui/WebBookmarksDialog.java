@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.wizards.*;
 import org.eclipse.update.internal.ui.UpdateUI;
+import org.eclipse.update.operations.*;
 
 /**
  * @author Wassim Melhem

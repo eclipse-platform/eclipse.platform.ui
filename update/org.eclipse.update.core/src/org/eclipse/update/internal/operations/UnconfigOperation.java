@@ -13,7 +13,7 @@ package org.eclipse.update.internal.operations;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 /**
  * Unconfigure a feature.

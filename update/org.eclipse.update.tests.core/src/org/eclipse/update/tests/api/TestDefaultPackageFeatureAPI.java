@@ -35,7 +35,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	 */
 	private DefaultFeature getFeature() throws MalformedURLException, CoreException {
 		if (remoteFeature == null){
-		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite site = SiteManager.getSite(SOURCE_FILE_SITE, null);
 		URL id = UpdateManagerUtils.getURL(site.getURL(),"org.eclipse.update.core.feature1_1.0.0.jar",null);	
 		remoteFeature = new DefaultFeature(site);
 		remoteFeature.setURL(id);
@@ -54,7 +54,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 		VersionedIdentifier ident2 = new VersionedIdentifier("org.test1.ident2","1.0.0");		
 		
 
-			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+			ISite site = SiteManager.getSite(SOURCE_FILE_SITE, null);
 			
 			URL url1 = UpdateManagerUtils.getURL(site.getURL(),id1,null);			
 			remoteFeature = new DefaultFeature(site);
@@ -76,7 +76,7 @@ public class TestDefaultPackageFeatureAPI extends UpdateManagerTestCase {
 	public void testSite() throws MalformedURLException, CoreException {
 		String ident1 = "org.eclipse.test.feature_1.0.0.jar";		
 
-			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+			ISite site = SiteManager.getSite(SOURCE_FILE_SITE, null);
 			
 			URL id = UpdateManagerUtils.getURL(site.getURL(),ident1,null);		
 			remoteFeature = new DefaultFeature(site);

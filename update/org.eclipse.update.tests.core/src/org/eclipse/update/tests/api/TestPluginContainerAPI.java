@@ -28,7 +28,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	private Site getSite() throws CoreException, MalformedURLException {
 		if (site == null) {
 
-			site = (Site)SiteManager.getSite(new URL(SOURCE_FILE_SITE,"testAPI/"));
+			site = (Site)SiteManager.getSite(new URL(SOURCE_FILE_SITE,"testAPI/"), null);
 
 		}
 		return site;

@@ -22,7 +22,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 /**
  *  
@@ -1147,60 +1147,60 @@ public class OperationValidator implements IOperationValidator {
 			//feature is root - can be configured
 		}
 	}
-
-	/**
-	 * Checks if the configuration is locked by other instances
-	 * 
-	 * @param status
-	 */
-	private static void checkConfigurationLock(ArrayList status) {
-/*		IPlatformConfiguration config =
-			BootLoader.getCurrentPlatformConfiguration();
-		URL configURL = config.getConfigurationLocation();
-		if (!"file".equals(configURL.getProtocol())) {
-			status.add(
-				createStatus(
-					null,
-					"Configuration location is not writable:" + configURL));
-			return;
-		}
-		String locationString = configURL.getFile();
-		File configDir = new File(locationString);
-		if (!configDir.isDirectory())
-			configDir = configDir.getParentFile();
-		if (!configDir.exists()) {
-			status.add(
-				createStatus(null, "Configuration location does not exist"));
-			return;
-		}
-		File locksDir = new File(configDir, "locks");
-		// check all the possible lock files
-		File[] lockFiles = locksDir.listFiles();
-		File configLock = BootLoader.getCurrentPlatformConfiguration().getLockFile();
-		for (int i = 0; i < lockFiles.length; i++) {
-			if (lockFiles[i].equals(configLock))
-				continue;
-			try {
-				RandomAccessFile raf = new RandomAccessFile(lockFiles[i], "rw");
-				FileChannel channel = raf.getChannel();
-				System.out.println(channel.isOpen());
-				FileLock lock = channel.tryLock();
-				if (lock == null){
-					// there is another eclipse instance running
-					raf.close();
-					status.add(
-						createStatus(
-							null,
-							"Another instance is running, please close it before performing any configuration operations"));
-					return;
-				}
-
-			} catch (Exception e) {
-				status.add(createStatus(null, "Failed to create lock:"+lockFiles[i]));
-				return;
-			} 
-		}*/
-	}
+//
+//	/**
+//	 * Checks if the configuration is locked by other instances
+//	 * 
+//	 * @param status
+//	 */
+//	private static void checkConfigurationLock(ArrayList status) {
+//		IPlatformConfiguration config =
+//			BootLoader.getCurrentPlatformConfiguration();
+//		URL configURL = config.getConfigurationLocation();
+//		if (!"file".equals(configURL.getProtocol())) {
+//			status.add(
+//				createStatus(
+//					null,
+//					"Configuration location is not writable:" + configURL));
+//			return;
+//		}
+//		String locationString = configURL.getFile();
+//		File configDir = new File(locationString);
+//		if (!configDir.isDirectory())
+//			configDir = configDir.getParentFile();
+//		if (!configDir.exists()) {
+//			status.add(
+//				createStatus(null, "Configuration location does not exist"));
+//			return;
+//		}
+//		File locksDir = new File(configDir, "locks");
+//		// check all the possible lock files
+//		File[] lockFiles = locksDir.listFiles();
+//		File configLock = BootLoader.getCurrentPlatformConfiguration().getLockFile();
+//		for (int i = 0; i < lockFiles.length; i++) {
+//			if (lockFiles[i].equals(configLock))
+//				continue;
+//			try {
+//				RandomAccessFile raf = new RandomAccessFile(lockFiles[i], "rw");
+//				FileChannel channel = raf.getChannel();
+//				System.out.println(channel.isOpen());
+//				FileLock lock = channel.tryLock();
+//				if (lock == null){
+//					// there is another eclipse instance running
+//					raf.close();
+//					status.add(
+//						createStatus(
+//							null,
+//							"Another instance is running, please close it before performing any configuration operations"));
+//					return;
+//				}
+//
+//			} catch (Exception e) {
+//				status.add(createStatus(null, "Failed to create lock:"+lockFiles[i]));
+//				return;
+//			} 
+//		}
+//	}
 
 	private static boolean isParent(
 		IFeature candidate,

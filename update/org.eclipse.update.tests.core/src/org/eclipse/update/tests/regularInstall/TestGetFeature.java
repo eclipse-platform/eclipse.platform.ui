@@ -26,7 +26,7 @@ public class TestGetFeature extends UpdateManagerTestCase {
 	
 	public void testFeatureFileSite() throws Exception{
 		
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE,null);
 		IFeatureReference[] remoteFeatures = remoteSite.getFeatureReferences();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");
 		for (int i=0;i<remoteFeatures.length;i++){
@@ -37,7 +37,7 @@ public class TestGetFeature extends UpdateManagerTestCase {
 
 	public void testFeatureHTTPSite() throws Exception{ 
 		
-		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE,null);
 		IFeatureReference[] remoteFeatures = remoteSite.getFeatureReferences();
 		if (remoteFeatures==null || remoteFeatures.length==0) fail("No feature available for testing");		
 		for (int i=0;i<remoteFeatures.length;i++){

@@ -34,9 +34,9 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
 		URL newURL =new File(dataPath + "dataEntrySiteTest/site1/site.xml").toURL();
-		ISite remoteSite = SiteManager.getSite(newURL);
+		ISite remoteSite = SiteManager.getSite(newURL,null);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		IFeature remoteFeature = null;
 		
 		for (int i = 0; i < featuresRef.length; i++) {
@@ -69,9 +69,9 @@ public class TestDataEntryInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
 		URL newURL =new File(dataPath + "dataEntrySiteTest/site2/site.xml").toURL();
-		ISite remoteSite = SiteManager.getSite(newURL);
+		ISite remoteSite = SiteManager.getSite(newURL,null);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		IFeature remoteFeature = null;
 		
 		for (int i = 0; i < featuresRef.length; i++) {

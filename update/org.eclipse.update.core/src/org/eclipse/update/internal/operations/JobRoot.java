@@ -15,7 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 public class JobRoot {
 	private IInstallFeatureOperation job;

@@ -28,7 +28,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 public class TargetPage extends BannerPage implements IDynamicPage {
 	private TableViewer jobViewer;

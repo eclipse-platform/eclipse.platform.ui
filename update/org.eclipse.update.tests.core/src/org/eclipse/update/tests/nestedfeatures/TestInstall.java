@@ -36,9 +36,9 @@ public class TestInstall extends UpdateManagerTestCase {
 		
 
 		ISite remoteSite =
-			SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml"));
+			SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml"),null);
 		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature(null);
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		localSite.install(remoteFeature, null, null);
 
 		// verify root Feature
@@ -118,7 +118,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	public void testHTTPSite() throws Exception {
 
 		ISite remoteSite =
-			SiteManager.getSite(new URL(SOURCE_HTTP_SITE, "nestedFeatureSiteTest/"));
+			SiteManager.getSite(new URL(SOURCE_HTTP_SITE, "nestedFeatureSiteTest/"),null);
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
@@ -133,7 +133,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		}
 
 		assertNotNull("Cannot find rootfeature.jar on site", remoteFeature);
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		localSite.install(remoteFeature, null, null);
 
 		// rootfeature.jar should not be in the local site
@@ -237,7 +237,7 @@ public class TestInstall extends UpdateManagerTestCase {
 			e.printStackTrace();
 		}
 
-		ISite remoteSite = SiteManager.getSite(INSTALL_SITE);
+		ISite remoteSite = SiteManager.getSite(INSTALL_SITE,null);
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 

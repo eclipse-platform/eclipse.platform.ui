@@ -161,7 +161,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED,null);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;		
 		
@@ -240,7 +240,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
-		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE,null);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature(null);
 		
 		// we are not checking if this is read only

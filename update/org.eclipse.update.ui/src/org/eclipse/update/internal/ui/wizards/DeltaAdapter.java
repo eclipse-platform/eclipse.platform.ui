@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 /**
  *

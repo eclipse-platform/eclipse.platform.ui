@@ -50,10 +50,10 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
 		IFeatureFactory factory = factories.getFactory(getDefaultInstallableFeatureType());
 		
-		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite site = SiteManager.getSite(SOURCE_FILE_SITE,null);
 		URL featureURL = new URL(SOURCE_FILE_SITE,"features/features2.jar ");
 		
-		IFeature anotherFeature = factory.createFeature(featureURL,site);
+		IFeature anotherFeature = factory.createFeature(featureURL,site,null);
 		
 		assertTrue("Factory doesn't create same feature",anotherFeature.getVersionedIdentifier().equals(anotherFeature.getVersionedIdentifier()));
 	}	
@@ -65,10 +65,10 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
 		IFeatureFactory factory = factories.getFactory(getDefaultExecutableFeatureType());
 		
-		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite site = SiteManager.getSite(SOURCE_FILE_SITE,null);
 		URL featureURL = new URL(SOURCE_FILE_SITE,"testAPI/"+Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/");
 		
-		IFeature anotherFeature = factory.createFeature(featureURL,site);
+		IFeature anotherFeature = factory.createFeature(featureURL,site,null);
 		
 		assertTrue("Factory doesn't create same feature",anotherFeature.getVersionedIdentifier().equals(anotherFeature.getVersionedIdentifier()));
 	}	
@@ -80,10 +80,10 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		FeatureTypeFactory factories = FeatureTypeFactory.getInstance();
 		IFeatureFactory factory = factories.getFactory(getDefaultInstallableFeatureType());
 		
-		ISite site = SiteManager.getSite(SOURCE_HTTP_SITE);
+		ISite site = SiteManager.getSite(SOURCE_HTTP_SITE,null);
 		IFeature feature = site.getFeatureReferences()[0].getFeature(null);
 		
-		IFeature anotherFeature = factory.createFeature(feature.getURL(),site);
+		IFeature anotherFeature = factory.createFeature(feature.getURL(),site,null);
 		
 		assertTrue("Factory doesn't create same feature",feature.getVersionedIdentifier().equals(anotherFeature.getVersionedIdentifier()));
 	}
@@ -97,11 +97,11 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		IFeatureFactory factory = factories.getFactory(getDefaultExecutableFeatureType());
 		
 		String featurePath = dataPath+"FeatureTypeExamples/site1/site.xml";
-		ISite site = SiteManager.getSite(new File(featurePath).toURL());
+		ISite site = SiteManager.getSite(new File(featurePath).toURL(),null);
 		IFeatureReference ref = site.getFeatureReferences()[0];
 		IFeature feature = ref.getFeature(null);
 		
-		IFeature anotherFeature = factory.createFeature(feature.getURL(),site);
+		IFeature anotherFeature = factory.createFeature(feature.getURL(),site,null);
 
 		assertTrue(feature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider);		
 		assertTrue(((FeatureReference)ref).getType().equals("org.eclipse.update.tests.core.feature1"));		
@@ -119,11 +119,11 @@ public class TestFeatureType extends UpdateManagerTestCase {
 		IFeatureFactory factory = factories.getFactory(getDefaultInstallableFeatureType());
 		
 		String featurePath = dataPath+"FeatureTypeExamples/site2/site.xml";
-		ISite site = SiteManager.getSite(new File(featurePath).toURL());
+		ISite site = SiteManager.getSite(new File(featurePath).toURL(),null);
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		IFeature feature = ref.getFeature(null);
 		
-		IFeature anotherFeature = factory.createFeature(feature.getURL(),site);
+		IFeature anotherFeature = factory.createFeature(feature.getURL(),site,null);
 		
 		assertTrue("Factory doesn't create same feature",feature.getVersionedIdentifier().equals(anotherFeature.getVersionedIdentifier()));
 		assertTrue(feature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider);
@@ -137,7 +137,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 	 */
 	public void testFeatureUnknownType() throws Exception{ 
 		String featurePath = dataPath+"FeatureTypeExamples/site3/site.xml";
-		ISite site = SiteManager.getSite(new File(featurePath).toURL());
+		ISite site = SiteManager.getSite(new File(featurePath).toURL(),null);
 		IFeatureReference ref = site.getFeatureReferences()[0];		
 		try {
 			ref.getFeature(null);

@@ -21,8 +21,8 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.update.internal.api.operations.*;
-import org.eclipse.update.internal.api.search.*;
+import org.eclipse.update.operations.*;
+import org.eclipse.update.search.*;
 
 public class FindUpdatesAction extends Action {
 

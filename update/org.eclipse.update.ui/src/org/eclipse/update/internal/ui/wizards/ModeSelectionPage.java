@@ -14,13 +14,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.api.search.UpdateSearchRequest;
+import org.eclipse.update.search.*;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	private boolean updateMode=true;

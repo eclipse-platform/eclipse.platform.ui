@@ -15,13 +15,10 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.api.search.*;
+import org.eclipse.update.search.*;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * Searches for optional features
  */
 public class OptionalFeatureSearchCategory extends BaseSearchCategory {
 	private IUpdateSearchQuery[] queries;

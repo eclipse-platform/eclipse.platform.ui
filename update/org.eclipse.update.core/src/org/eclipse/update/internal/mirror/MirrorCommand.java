@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.standalone.*;
+import org.eclipse.update.standalone.*;
 
 /**
  * Mirrors a remote site locally.

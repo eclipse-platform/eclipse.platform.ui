@@ -6,13 +6,10 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.update.internal.api.search.*;
+import org.eclipse.update.search.*;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * A search request provider
  */
 public interface ISearchProvider {
 	UpdateSearchRequest getSearchRequest();

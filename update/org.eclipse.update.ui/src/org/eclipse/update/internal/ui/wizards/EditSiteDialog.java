@@ -10,7 +10,7 @@ import java.net.*;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 /**
  * @author Wassim Melhem

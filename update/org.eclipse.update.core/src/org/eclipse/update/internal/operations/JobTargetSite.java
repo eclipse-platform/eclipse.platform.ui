@@ -11,7 +11,7 @@
 package org.eclipse.update.internal.operations;
 
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 
 public class JobTargetSite {

@@ -27,10 +27,10 @@ public class TestSiteAPI extends UpdateManagerTestCase {
 	
 	public void testURL() throws Exception {
 
-		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite site = SiteManager.getSite(SOURCE_FILE_SITE, null);
 		assertEquals(new File(site.getURL().getFile()),new File(SOURCE_FILE_SITE.getFile()));
 		
-		ISite site2 = SiteManager.getSite(SOURCE_HTTP_SITE);
+		ISite site2 = SiteManager.getSite(SOURCE_HTTP_SITE, null);
 		assertEquals(site2.getURL(),new URL("http", getHttpHost(),getHttpPort(), bundle.getString("HTTP_PATH_1")+"site.xml"));
 
 	}

@@ -67,9 +67,9 @@ public class TestInstall extends UpdateManagerTestCase {
 
 	public void testFileSite() throws Exception {
 
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE,null);
 		IFeature remoteFeature = getFeature1(remoteSite);
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		localSite.install(remoteFeature, null, null);
 
 		// verify
@@ -104,7 +104,7 @@ public class TestInstall extends UpdateManagerTestCase {
 	 */
 	public void testHTTPSite() throws Exception {
 
-		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE,null);
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
@@ -119,7 +119,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		}
 
 		assertNotNull("Cannot find feature2.jar on site", remoteFeature);
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,null);
 		localSite.install(remoteFeature, null, null);
 
 		// feature2.jar should not be in the local site
@@ -177,7 +177,7 @@ public class TestInstall extends UpdateManagerTestCase {
 			e.printStackTrace();
 		}
 
-		ISite remoteSite = SiteManager.getSite(INSTALL_SITE);
+		ISite remoteSite = SiteManager.getSite(INSTALL_SITE,null);
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
@@ -239,7 +239,7 @@ public class TestInstall extends UpdateManagerTestCase {
 
 	public void testFileSiteWithoutSiteXML() throws Exception {
 
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE,null);
 		IFeature remoteFeature = getFeature1(remoteSite);
 		IConfiguredSite localSite =
 			SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites()[0];
@@ -277,7 +277,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 
 		try {
-			SiteManager.getSite(new URL("http://www.eclipse.org/"));
+			SiteManager.getSite(new URL("http://www.eclipse.org/"),null);
 			fail("The site contains site.xml... it should be an HTTP site without an XML file");			
 		} catch (CoreException e) {
 			// expected
@@ -285,20 +285,20 @@ public class TestInstall extends UpdateManagerTestCase {
 
 	}
 
-	/**
-	* 
-	*/
-	private Feature createPackagedFeature(URL url, ISite site)
-		throws CoreException {
-		String packagedFeatureType = ISite.DEFAULT_PACKAGED_FEATURE_TYPE;
-		Feature result = null;
-		if (packagedFeatureType != null) {
-			IFeatureFactory factory =
-				FeatureTypeFactory.getInstance().getFactory(packagedFeatureType);
-			result = (Feature) factory.createFeature(url, site);
-		}
-		return result;
-	}
+//	/**
+//	* 
+//	*/
+//	private Feature createPackagedFeature(URL url, ISite site)
+//		throws CoreException {
+//		String packagedFeatureType = ISite.DEFAULT_PACKAGED_FEATURE_TYPE;
+//		Feature result = null;
+//		if (packagedFeatureType != null) {
+//			IFeatureFactory factory =
+//				FeatureTypeFactory.getInstance().getFactory(packagedFeatureType);
+//			result = (Feature) factory.createFeature(url, site);
+//		}
+//		return result;
+//	}
 	/*
 	 * @see ISite#getDefaultInstallableFeatureType()
 	 */

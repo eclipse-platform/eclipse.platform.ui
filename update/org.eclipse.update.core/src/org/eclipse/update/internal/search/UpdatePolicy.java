@@ -19,7 +19,7 @@ import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.api.search.IUpdateSiteAdapter;
+import org.eclipse.update.search.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 

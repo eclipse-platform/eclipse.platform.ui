@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.update.tests.branding;
 
-import java.io.*;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.internal.configurator.branding.*;

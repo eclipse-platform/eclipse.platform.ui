@@ -13,7 +13,7 @@ package org.eclipse.update.internal.ui.wizards;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.api.operations.IInstallFeatureOperation;
+import org.eclipse.update.operations.*;
 
 public class FeatureSorter extends ViewerSorter {
 	

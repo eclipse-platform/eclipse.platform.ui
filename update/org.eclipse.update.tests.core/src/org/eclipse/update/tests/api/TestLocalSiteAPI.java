@@ -27,7 +27,7 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 	
 	public void testFileParsing() throws Exception {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"siteTestLocalSite/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"siteTestLocalSite/"), null);
 		IArchiveReference[] info = site.getArchives();
 		
 		if (info.length<=0){
@@ -53,7 +53,7 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 	
 	public void testBundleManifestParsing() throws Exception {
 
-		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"siteTestLocalSite/"));
+		ISite site = SiteManager.getSite(new URL(SOURCE_FILE_SITE,"siteTestLocalSite/"),null);
 		IArchiveReference[] info = site.getArchives();
 		
 		if (info.length<=0){
@@ -86,7 +86,7 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 	
 	public void testCategories() throws Exception {
 
-		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite site = SiteManager.getSite(SOURCE_FILE_SITE, null);
 		
 		ICategory category = new Category("category","Label of category");
 		

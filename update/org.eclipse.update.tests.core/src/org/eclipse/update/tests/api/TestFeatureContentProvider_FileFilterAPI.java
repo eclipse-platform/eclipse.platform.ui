@@ -17,7 +17,6 @@ import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestFeatureContentProvider_FileFilterAPI extends UpdateManagerTestCase {
 	
-	private DefaultFeature remoteFeature=null;
 	
 	/**
 	 * Test the testFeatures()

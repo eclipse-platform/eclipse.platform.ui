@@ -33,7 +33,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 	public void testParse() throws Exception {
 
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "xmls/site1/");
-		ISite remoteSite = SiteManager.getSite(remoteUrl);
+		ISite remoteSite = SiteManager.getSite(remoteUrl,null);
 
 		//IFeatureReference[] feature = remoteSite.getFeatureReferences();
 		//ICategory[] categories = remoteSite.getCategories();
@@ -47,7 +47,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 	public void testNumberOfFeatures() throws Exception {
 
 		URL remoteURL = new URL("http", getHttpHost(), getHttpPort(), bundle.getString("HTTP_PATH_2"));
-		ISite remoteSite = SiteManager.getSite(remoteURL);
+		ISite remoteSite = SiteManager.getSite(remoteURL,null);
 
 		IFeatureReference[] feature = remoteSite.getFeatureReferences();
 		assertEquals(feature.length, 2);

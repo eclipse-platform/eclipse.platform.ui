@@ -29,12 +29,11 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.api.operations.*;
-import org.eclipse.update.internal.api.operations.IUpdateModelChangedListener;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
+import org.eclipse.update.operations.*;
 
 /**
  * Insert the type's description here.

@@ -32,7 +32,7 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 	public void testParse() throws Exception {
 
 		String xmlFile = "xmls/feature_1.0.0/";
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE, null);
 		URL url = UpdateManagerUtils.getURL(remoteSite.getURL(), xmlFile, null);
 
 		SiteFeatureReference ref = new SiteFeatureReference();

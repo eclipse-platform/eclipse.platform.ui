@@ -36,7 +36,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	private DefaultFeature getFeature() throws MalformedURLException, CoreException {
 		if (remoteFeature == null){
 
-		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite site = SiteManager.getSite(SOURCE_FILE_SITE, null);
 		URL url = UpdateManagerUtils.getURL(site.getURL(),"testAPI/"+Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/",null);
 		SiteFeatureReference ref = new SiteFeatureReference();
 		ref.setSite(site);
@@ -58,7 +58,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		VersionedIdentifier ident2 = new VersionedIdentifier("org.test1.ident2","1.0.0");		
 		
 
-			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+			ISite site = SiteManager.getSite(SOURCE_FILE_SITE,null);
 			
 			URL url1 = UpdateManagerUtils.getURL(site.getURL(),id1,null);			
 			remoteFeature = new DefaultFeature(site);
@@ -82,7 +82,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	public void testSite() throws MalformedURLException, CoreException{
 		String ident1 = Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/";		
 
-			ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
+			ISite site = SiteManager.getSite(SOURCE_FILE_SITE,null);
 			
 			URL id = UpdateManagerUtils.getURL(site.getURL(),ident1,null);			
 			remoteFeature = new DefaultFeature(site);

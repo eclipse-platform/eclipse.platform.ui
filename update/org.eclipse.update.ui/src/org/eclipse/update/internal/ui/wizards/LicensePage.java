@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.api.operations.*;
+import org.eclipse.update.operations.*;
 
 public class LicensePage extends WizardPage implements IDynamicPage {
 	private static final String KEY_TITLE = "InstallWizard.LicensePage.title"; //$NON-NLS-1$

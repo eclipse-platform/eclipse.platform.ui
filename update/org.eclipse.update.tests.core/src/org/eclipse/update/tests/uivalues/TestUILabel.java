@@ -33,7 +33,7 @@ public class TestUILabel extends UpdateManagerTestCase {
 	 */
 	public void testUpdateManagerSite() throws Exception{ 
 		
-		ISite remoteSite = SiteManager.getSite(new URL("http",getHttpHost(),getHttpPort(),bundle.getString("HTTP_PATH_2")));
+		ISite remoteSite = SiteManager.getSite(new URL("http",getHttpHost(),getHttpPort(),bundle.getString("HTTP_PATH_2")),null);
 		ICategory[] categories = remoteSite.getCategories();
 		for (int i =0; i<categories.length; i++){
 			System.out.println("Category ->"+categories[i].getLabel()+":"+categories[i].getName());

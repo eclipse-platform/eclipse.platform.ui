@@ -12,7 +12,7 @@ package org.eclipse.update.internal.search;
 
 import java.net.*;
 
-import org.eclipse.update.internal.api.search.*;
+import org.eclipse.update.search.*;
 
 public class QueryUpdateSiteAdapter extends UpdateSiteAdapter implements IQueryUpdateSiteAdapter {
 	private String mappingId;

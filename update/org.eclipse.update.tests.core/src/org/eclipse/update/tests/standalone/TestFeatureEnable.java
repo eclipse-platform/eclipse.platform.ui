@@ -18,7 +18,7 @@ import java.util.*;
 import org.eclipse.core.boot.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.standalone.*;
+import org.eclipse.update.standalone.*;
 
 public class TestFeatureEnable extends StandaloneManagerTestCase {
 	public static boolean isEnabled;

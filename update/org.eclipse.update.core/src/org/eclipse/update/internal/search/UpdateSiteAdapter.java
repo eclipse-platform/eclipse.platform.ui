@@ -12,13 +12,9 @@ package org.eclipse.update.internal.search;
 
 import java.net.*;
 
-import org.eclipse.update.internal.api.search.*;
+import org.eclipse.update.search.*;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class UpdateSiteAdapter implements IUpdateSiteAdapter {
 	private String label;

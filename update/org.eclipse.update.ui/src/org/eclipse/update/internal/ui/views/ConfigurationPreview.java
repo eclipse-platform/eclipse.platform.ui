@@ -20,10 +20,10 @@ import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.operations.*;
 
 public class ConfigurationPreview implements IUpdateModelChangedListener {
 	private ScrolledForm form;
-	private Control focusControl;
 	private ConfigurationView view;
 	private FormToolkit toolkit;
 	private FormText desc;

@@ -26,17 +26,16 @@ import org.eclipse.update.configurator.*;
 
 public class SiteReconciler extends ModelObject implements IWritable {
 
-	private SiteLocal siteLocal;
 	private List newFoundFeatures;
 	private Date date;
-	private static final String DEFAULT_INSTALL_CHANGE_NAME = "delta.xml";
+//	private static final String DEFAULT_INSTALL_CHANGE_NAME = "delta.xml";
 	//$NON-NLS-1$	
 
 	/**
 	 * 
 	 */
 	public SiteReconciler(SiteLocal siteLocal) {
-		this.siteLocal = siteLocal;
+//		this.siteLocal = siteLocal;
 	}
 
 
@@ -56,95 +55,95 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	}
 
 
-	/*
-	 * Enable feature if:
-	 * This is an optimistic reconciliation OR
-	 * The feature is considered optional by ALL its parents AND at least one of them is enable
-	 * Otherwise disable the feature.
-	 * 
-	 * If all its parent consider the feature as optional but none are enable, 
-	 * do not add in the list of new found features. Just disable it.
-	 */
-	private void configureNewFoundFeature(boolean isOptimistic, ConfigurationPolicy newSitePolicy, ConfigurationPolicy oldSitePolicy, IFeatureReference foundFeature, IFeatureReference[] possibleParents) throws CoreException {
-
-		// TRACE
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			String reconciliationType = isOptimistic ? "enable (optimistic)" : "disable (pessimistic)";
-			UpdateCore.debug("This feature is new: " + foundFeature.getURL() + " reconciled as " + reconciliationType);
-		}
-
-		if (isOptimistic) {
-			newSitePolicy.configure(foundFeature, true, false);
-			return;
-		}
-
-		IFeatureReference[] allOptionalParents = UpdateManagerUtils.getParentFeatures(foundFeature, possibleParents, true);
-		IFeatureReference[] allParents = UpdateManagerUtils.getParentFeatures(foundFeature, possibleParents, false);
-
-		// none of my parents consider me as optional OR I have no parents,
-		// consider as root feature
-		if (allOptionalParents.length == 0) {
-			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-				UpdateCore.debug("There are no features who consider the feature as optional. Treat as root feature.");
-			}
-			newSitePolicy.unconfigure(foundFeature, true, false);
-			newFoundFeatures.add(foundFeature);
-			return;
-
-		}
-
-		//At least one of my parent considers me non optional
-		// consider root feature
-		if (allParents.length > allOptionalParents.length) {
-			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-				UpdateCore.debug("At least one parent considers the feature as NON optional. Treat as root feature.");
-			}
-			newSitePolicy.unconfigure(foundFeature, true, false);
-			newFoundFeatures.add(foundFeature);
-			return;
-		}
-
-		for (int i = 0; i < allOptionalParents.length; i++) {
-			// one parent that consider me optional is enable, enable feature
-			if (oldSitePolicy.isConfigured(allOptionalParents[i])) {
-				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-					UpdateCore.debug("Found parent feature:" + allOptionalParents[i] + " as enable: Enable optional child feature:" + foundFeature);
-				}
-				newSitePolicy.configure(foundFeature, true, false);
-				return;
-			}
-		}
-
-		// found parent that consider me optional but they are all disable
-		// unconfigure feature without adding it to the list fo new found features
-		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
-			UpdateCore.debug("No parents are enable. Disable feature.");
-		}
-		newSitePolicy.unconfigure(foundFeature, true, false);
-
-	}
-
-	/**
-	* Validate we have only one configured feature per site
-	* even if we found multiples
-	* 
-	* If we find 2 features, the one with a higher version is configured
-	* If they have the same version, the first feature is configured
-	* 
-	* DO NOT check across sites [17980]
-	* If Feature1 is installed natively on Site A
-	* If Feature1 is installed on Site B
-	* If Feature1 from SiteA is removed... 
-	*/
-	private void checkConfiguredFeatures(IInstallConfiguration newDefaultConfiguration) throws CoreException {
-
-		IConfiguredSite[] configuredSites = newDefaultConfiguration.getConfiguredSites();
-
-		// each configured site
-		for (int indexConfiguredSites = 0; indexConfiguredSites < configuredSites.length; indexConfiguredSites++) {
-			checkConfiguredFeatures(configuredSites[indexConfiguredSites]);
-		}
-	}
+//	/*
+//	 * Enable feature if:
+//	 * This is an optimistic reconciliation OR
+//	 * The feature is considered optional by ALL its parents AND at least one of them is enable
+//	 * Otherwise disable the feature.
+//	 * 
+//	 * If all its parent consider the feature as optional but none are enable, 
+//	 * do not add in the list of new found features. Just disable it.
+//	 */
+//	private void configureNewFoundFeature(boolean isOptimistic, ConfigurationPolicy newSitePolicy, ConfigurationPolicy oldSitePolicy, IFeatureReference foundFeature, IFeatureReference[] possibleParents) throws CoreException {
+//
+//		// TRACE
+//		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+//			String reconciliationType = isOptimistic ? "enable (optimistic)" : "disable (pessimistic)";
+//			UpdateCore.debug("This feature is new: " + foundFeature.getURL() + " reconciled as " + reconciliationType);
+//		}
+//
+//		if (isOptimistic) {
+//			newSitePolicy.configure(foundFeature, true, false);
+//			return;
+//		}
+//
+//		IFeatureReference[] allOptionalParents = UpdateManagerUtils.getParentFeatures(foundFeature, possibleParents, true);
+//		IFeatureReference[] allParents = UpdateManagerUtils.getParentFeatures(foundFeature, possibleParents, false);
+//
+//		// none of my parents consider me as optional OR I have no parents,
+//		// consider as root feature
+//		if (allOptionalParents.length == 0) {
+//			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+//				UpdateCore.debug("There are no features who consider the feature as optional. Treat as root feature.");
+//			}
+//			newSitePolicy.unconfigure(foundFeature, true, false);
+//			newFoundFeatures.add(foundFeature);
+//			return;
+//
+//		}
+//
+//		//At least one of my parent considers me non optional
+//		// consider root feature
+//		if (allParents.length > allOptionalParents.length) {
+//			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+//				UpdateCore.debug("At least one parent considers the feature as NON optional. Treat as root feature.");
+//			}
+//			newSitePolicy.unconfigure(foundFeature, true, false);
+//			newFoundFeatures.add(foundFeature);
+//			return;
+//		}
+//
+//		for (int i = 0; i < allOptionalParents.length; i++) {
+//			// one parent that consider me optional is enable, enable feature
+//			if (oldSitePolicy.isConfigured(allOptionalParents[i])) {
+//				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+//					UpdateCore.debug("Found parent feature:" + allOptionalParents[i] + " as enable: Enable optional child feature:" + foundFeature);
+//				}
+//				newSitePolicy.configure(foundFeature, true, false);
+//				return;
+//			}
+//		}
+//
+//		// found parent that consider me optional but they are all disable
+//		// unconfigure feature without adding it to the list fo new found features
+//		if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER) {
+//			UpdateCore.debug("No parents are enable. Disable feature.");
+//		}
+//		newSitePolicy.unconfigure(foundFeature, true, false);
+//
+//	}
+//
+//	/**
+//	* Validate we have only one configured feature per site
+//	* even if we found multiples
+//	* 
+//	* If we find 2 features, the one with a higher version is configured
+//	* If they have the same version, the first feature is configured
+//	* 
+//	* DO NOT check across sites [17980]
+//	* If Feature1 is installed natively on Site A
+//	* If Feature1 is installed on Site B
+//	* If Feature1 from SiteA is removed... 
+//	*/
+//	private void checkConfiguredFeatures(IInstallConfiguration newDefaultConfiguration) throws CoreException {
+//
+//		IConfiguredSite[] configuredSites = newDefaultConfiguration.getConfiguredSites();
+//
+//		// each configured site
+//		for (int indexConfiguredSites = 0; indexConfiguredSites < configuredSites.length; indexConfiguredSites++) {
+//			checkConfiguredFeatures(configuredSites[indexConfiguredSites]);
+//		}
+//	}
 
 	/**
 	 * Validate we have only one configured feature of a specific id
@@ -236,24 +235,24 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		return 0;
 	}
 
-	/*
-	 * 
-	 */
-	private ConfiguredSite createNewConfigSite(IConfiguredSite oldConfiguredSiteToReconcile) throws CoreException {
-		// create a copy of the ConfigSite based on old ConfigSite
-		// this is not a clone, do not copy any features
-		ConfiguredSite cSiteToReconcile = (ConfiguredSite) oldConfiguredSiteToReconcile;
-		SiteModel siteModel = cSiteToReconcile.getSiteModel();
-		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
-
-		// copy values of the old ConfigSite that should be preserved except Features
-		ConfiguredSite newConfigurationSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
-		newConfigurationSite.setUpdatable(cSiteToReconcile.isUpdatable());
-		newConfigurationSite.setEnabled(cSiteToReconcile.isEnabled());
-		newConfigurationSite.setPlatformURLString(cSiteToReconcile.getPlatformURLString());
-
-		return newConfigurationSite;
-	}
+//	/*
+//	 * 
+//	 */
+//	private ConfiguredSite createNewConfigSite(IConfiguredSite oldConfiguredSiteToReconcile) throws CoreException {
+//		// create a copy of the ConfigSite based on old ConfigSite
+//		// this is not a clone, do not copy any features
+//		ConfiguredSite cSiteToReconcile = (ConfiguredSite) oldConfiguredSiteToReconcile;
+//		SiteModel siteModel = cSiteToReconcile.getSiteModel();
+//		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
+//
+//		// copy values of the old ConfigSite that should be preserved except Features
+//		ConfiguredSite newConfigurationSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
+//		newConfigurationSite.setUpdatable(cSiteToReconcile.isUpdatable());
+//		newConfigurationSite.setEnabled(cSiteToReconcile.isEnabled());
+//		newConfigurationSite.setPlatformURLString(cSiteToReconcile.getPlatformURLString());
+//
+//		return newConfigurationSite;
+//	}
 
 	/*
 	 * 
@@ -265,59 +264,59 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		return (IFeatureReference[]) newFoundFeatures.toArray(arrayTypeFor(newFoundFeatures));
 	}
 
-	/*
-	 * 
-	 */
-	private boolean saveNewFeatures(IInstallConfiguration installConfig) throws CoreException {
-
-		if (getFeatureReferences().length == 0) {
-			UpdateCore.warn("No new features found");
-			return false;
-		}
-
-		// recompute list of new features to only keep root features [16496]
-		IFeatureReference[] refs = getFeatureReferences();
-		newFoundFeatures = new ArrayList();
-		for (int i = 0; i < refs.length; i++) {
-			IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(refs[i], refs, false);
-			if (parents.length == 0)
-				newFoundFeatures.add(refs[i]);
-		}
-
-
-		if (getFeatureReferences().length == 0) {
-			UpdateCore.warn("No root feature found when saving new features");
-			return false;
-		}
-
-		// remove efixes from the delta that patch disabled feature from the installConfig
-		// bug 71730
-		removeInvalidEfixes(installConfig);
-
-		if (getFeatureReferences().length == 0) {
-			UpdateCore.warn("No new features found after removing invalid efixes");
-			return false;
-		}
-
-
-		date = new Date();
-		String fileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_INSTALL_CHANGE_NAME, date);
-		IPath path = UpdateCore.getPlugin().getStateLocation();
-		IPath filePath = path.append(fileName);
-		File file = filePath.toFile();
-		// persist list of new features 
-		try {
-			UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(file, "UTF-8");
-			writer.write(this);
-			return true;
-		} catch (UnsupportedEncodingException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteReconciler.UnableToEncodeConfiguration", file.getAbsolutePath()), e);
-			//$NON-NLS-1$
-		} catch (FileNotFoundException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteReconciler.UnableToSaveStateIn", file.getAbsolutePath()), e);
-			//$NON-NLS-1$
-		}
-	}
+//	/*
+//	 * 
+//	 */
+//	private boolean saveNewFeatures(IInstallConfiguration installConfig) throws CoreException {
+//
+//		if (getFeatureReferences().length == 0) {
+//			UpdateCore.warn("No new features found");
+//			return false;
+//		}
+//
+//		// recompute list of new features to only keep root features [16496]
+//		IFeatureReference[] refs = getFeatureReferences();
+//		newFoundFeatures = new ArrayList();
+//		for (int i = 0; i < refs.length; i++) {
+//			IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(refs[i], refs, false);
+//			if (parents.length == 0)
+//				newFoundFeatures.add(refs[i]);
+//		}
+//
+//
+//		if (getFeatureReferences().length == 0) {
+//			UpdateCore.warn("No root feature found when saving new features");
+//			return false;
+//		}
+//
+//		// remove efixes from the delta that patch disabled feature from the installConfig
+//		// bug 71730
+//		removeInvalidEfixes(installConfig);
+//
+//		if (getFeatureReferences().length == 0) {
+//			UpdateCore.warn("No new features found after removing invalid efixes");
+//			return false;
+//		}
+//
+//
+//		date = new Date();
+//		String fileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_INSTALL_CHANGE_NAME, date);
+//		IPath path = UpdateCore.getPlugin().getStateLocation();
+//		IPath filePath = path.append(fileName);
+//		File file = filePath.toFile();
+//		// persist list of new features 
+//		try {
+//			UpdateManagerUtils.Writer writer = UpdateManagerUtils.getWriter(file, "UTF-8");
+//			writer.write(this);
+//			return true;
+//		} catch (UnsupportedEncodingException e) {
+//			throw Utilities.newCoreException(Policy.bind("SiteReconciler.UnableToEncodeConfiguration", file.getAbsolutePath()), e);
+//			//$NON-NLS-1$
+//		} catch (FileNotFoundException e) {
+//			throw Utilities.newCoreException(Policy.bind("SiteReconciler.UnableToSaveStateIn", file.getAbsolutePath()), e);
+//			//$NON-NLS-1$
+//		}
+//	}
 
 	/*
 	 * @see IWritable#write(int, PrintWriter)
@@ -379,65 +378,65 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		return site.getURL().toExternalForm();
 	}
 
-	/*
-	 * return true if the platformBase URL is not the same
-	 * we thought it is. In this case we should reconcile in an optimistic way 
-	 */
-	private boolean platformBaseChanged(IConfiguredSite[] oldConfiguredSites) {
-
-		if (oldConfiguredSites == null) {
-			UpdateCore.warn("No previous configured sites. Optimistic reconciliation.");
-			return true;
-		}
-
-		String platformString = "platform:/base/";
-		URL platformURL = null;
-		try {
-			platformURL = new URL(platformString);
-		} catch (MalformedURLException e) {
-			UpdateCore.warn("Unable to resolve platform:/base/. Check you are running a Platform", e);
-			return true;
-		}
-		URL resolvedCurrentBaseURL = null;
-		try {
-			resolvedCurrentBaseURL = Platform.resolve(platformURL);
-		} catch (IOException e) {
-			UpdateCore.warn("Error while resolving platform:/base/. Check you are running a Platform", e);
-			return true;
-		}
-
-		// find the 'platform:/base/' configuredSite
-		int index = 0;
-		boolean found = false;
-		ConfiguredSite cSite = null;
-		while (!found && index < oldConfiguredSites.length) {
-			if (oldConfiguredSites[index] instanceof ConfiguredSite) {
-				cSite = (ConfiguredSite) oldConfiguredSites[index];
-				if (platformString.equalsIgnoreCase(cSite.getPlatformURLString())) {
-					found = true;
-				}
-			}
-			index++;
-		}
-
-		if (!found) {
-			UpdateCore.warn("Unable to find an old configured site with platform:/base/ as a platform URL");
-			return true;
-		}
-
-		if (cSite == null) {
-			UpdateCore.warn("The configuredSite that contains the platform is null");
-			return true;
-		}
-
-		if (UpdateManagerUtils.sameURL(resolvedCurrentBaseURL, cSite.getSite().getURL())) {
-			UpdateCore.warn("Platform URL found are the same:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
-			return false;
-		}
-
-		UpdateCore.warn("Platform URL found is different than the one previously saved. Reconcile optimistically:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
-		return true;
-	}
+//	/*
+//	 * return true if the platformBase URL is not the same
+//	 * we thought it is. In this case we should reconcile in an optimistic way 
+//	 */
+//	private boolean platformBaseChanged(IConfiguredSite[] oldConfiguredSites) {
+//
+//		if (oldConfiguredSites == null) {
+//			UpdateCore.warn("No previous configured sites. Optimistic reconciliation.");
+//			return true;
+//		}
+//
+//		String platformString = "platform:/base/";
+//		URL platformURL = null;
+//		try {
+//			platformURL = new URL(platformString);
+//		} catch (MalformedURLException e) {
+//			UpdateCore.warn("Unable to resolve platform:/base/. Check you are running a Platform", e);
+//			return true;
+//		}
+//		URL resolvedCurrentBaseURL = null;
+//		try {
+//			resolvedCurrentBaseURL = Platform.resolve(platformURL);
+//		} catch (IOException e) {
+//			UpdateCore.warn("Error while resolving platform:/base/. Check you are running a Platform", e);
+//			return true;
+//		}
+//
+//		// find the 'platform:/base/' configuredSite
+//		int index = 0;
+//		boolean found = false;
+//		ConfiguredSite cSite = null;
+//		while (!found && index < oldConfiguredSites.length) {
+//			if (oldConfiguredSites[index] instanceof ConfiguredSite) {
+//				cSite = (ConfiguredSite) oldConfiguredSites[index];
+//				if (platformString.equalsIgnoreCase(cSite.getPlatformURLString())) {
+//					found = true;
+//				}
+//			}
+//			index++;
+//		}
+//
+//		if (!found) {
+//			UpdateCore.warn("Unable to find an old configured site with platform:/base/ as a platform URL");
+//			return true;
+//		}
+//
+//		if (cSite == null) {
+//			UpdateCore.warn("The configuredSite that contains the platform is null");
+//			return true;
+//		}
+//
+//		if (UpdateManagerUtils.sameURL(resolvedCurrentBaseURL, cSite.getSite().getURL())) {
+//			UpdateCore.warn("Platform URL found are the same:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
+//			return false;
+//		}
+//
+//		UpdateCore.warn("Platform URL found is different than the one previously saved. Reconcile optimistically:" + resolvedCurrentBaseURL + " : " + cSite.getSite().getURL());
+//		return true;
+//	}
 
 	/**
 	 * Validate the list of configured features eliminating extra
@@ -719,131 +718,131 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	}
 
 
-	/*
-	 * get the map of enabled patches (as feature reference)  or an empty map
-	 */
-	private Map getPatchesAsFeatureReference(List listOfFeatureReferences) {
-		// get all efixes and the associated patched features
-		Map patches = new HashMap();
-		if (listOfFeatureReferences != null) {
-			Iterator iter = listOfFeatureReferences.iterator();
-			while (iter.hasNext()) {
-				List patchedFeaturesID = new ArrayList();
-				IFeatureReference element = (IFeatureReference) iter.next();
-				// add the patched feature identifiers
-				try {
-					IFeature feature = element.getFeature(null);
-					if (feature != null) {
-						IImport[] imports = feature.getImports();
-						for (int i = 0; i < imports.length; i++) {
-							if (imports[i].isPatch()) {
-								VersionedIdentifier id = imports[i].getVersionedIdentifier();
-								if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
-								UpdateCore.debug("Found patch " + element + " for feature identifier " + id);
-								patchedFeaturesID.add(id);
-							}
-						}
-					}
+//	/*
+//	 * get the map of enabled patches (as feature reference)  or an empty map
+//	 */
+//	private Map getPatchesAsFeatureReference(List listOfFeatureReferences) {
+//		// get all efixes and the associated patched features
+//		Map patches = new HashMap();
+//		if (listOfFeatureReferences != null) {
+//			Iterator iter = listOfFeatureReferences.iterator();
+//			while (iter.hasNext()) {
+//				List patchedFeaturesID = new ArrayList();
+//				IFeatureReference element = (IFeatureReference) iter.next();
+//				// add the patched feature identifiers
+//				try {
+//					IFeature feature = element.getFeature(null);
+//					if (feature != null) {
+//						IImport[] imports = feature.getImports();
+//						for (int i = 0; i < imports.length; i++) {
+//							if (imports[i].isPatch()) {
+//								VersionedIdentifier id = imports[i].getVersionedIdentifier();
+//								if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+//								UpdateCore.debug("Found patch " + element + " for feature identifier " + id);
+//								patchedFeaturesID.add(id);
+//							}
+//						}
+//					}
+//
+//					if (!patchedFeaturesID.isEmpty()) {
+//						patches.put(element, patchedFeaturesID);
+//					}
+//				} catch (CoreException e) {
+//				}
+//			}
+//		}
+//
+//		return patches;
+//	}
 
-					if (!patchedFeaturesID.isEmpty()) {
-						patches.put(element, patchedFeaturesID);
-					}
-				} catch (CoreException e) {
-				}
-			}
-		}
 
-		return patches;
-	}
+//	/*
+//	 * Removes efixes from new found features if they do not patch an enable feature
+//	 * either from the found delta or from the file system
+//	 */
+//	private void removeInvalidEfixes(IInstallConfiguration installConfig) {
+//
+//		// disable new found efixes if the feature is not in the list nor enabled features
+//		// on the file system
+//		Map newFoundEfixesAsReference = getPatchesAsFeatureReference(newFoundFeatures);
+//
+//		if (newFoundEfixesAsReference.size() > 0) {
+//			// retrieve all enabled features on all the sites
+//			ArrayList allEnabledFeatures = new ArrayList();
+//			IConfiguredSite[] configSites = installConfig.getConfiguredSites();
+//			for (int i = 0; i < configSites.length; i++) {
+//				IFeatureReference[] references = configSites[i].getConfiguredFeatures();
+//				for (int j = 0; j < references.length; j++) {
+//					try {
+//						allEnabledFeatures.add(references[j].getFeature(null));
+//					} catch (CoreException e) {
+//					}
+//				}
+//			}
+//
+//			// create a List of eFixes Features
+//			List arrayOfNewFoundFeatures = new ArrayList();
+//			for (Iterator iter = newFoundFeatures.iterator(); iter.hasNext();) {
+//				IFeatureReference element = (IFeatureReference) iter.next();
+//				try {
+//					arrayOfNewFoundFeatures.add(element.getFeature(null));
+//				} catch (CoreException e) {
+//				}
+//			}
+//
+//			// retrieve the efixes that patch enable features in delta and enabled features on the 
+//			// file system
+//			List patchesForNewFoundFeatures = getFeatureReferencePatchesToEnable(newFoundEfixesAsReference, allEnabledFeatures);
+//			List patchesForEnabledFeatures = getFeatureReferencePatchesToEnable(newFoundEfixesAsReference, arrayOfNewFoundFeatures);
+//
+//			// IMPORTANT: add efixes first so they will be processed first
+//			newFoundFeatures.removeAll(newFoundEfixesAsReference.keySet());
+//			newFoundFeatures.addAll(0,patchesForEnabledFeatures);
+//			newFoundFeatures.addAll(0,patchesForNewFoundFeatures);
+//		}
+//	}
 
-
-	/*
-	 * Removes efixes from new found features if they do not patch an enable feature
-	 * either from the found delta or from the file system
-	 */
-	private void removeInvalidEfixes(IInstallConfiguration installConfig) {
-
-		// disable new found efixes if the feature is not in the list nor enabled features
-		// on the file system
-		Map newFoundEfixesAsReference = getPatchesAsFeatureReference(newFoundFeatures);
-
-		if (newFoundEfixesAsReference.size() > 0) {
-			// retrieve all enabled features on all the sites
-			ArrayList allEnabledFeatures = new ArrayList();
-			IConfiguredSite[] configSites = installConfig.getConfiguredSites();
-			for (int i = 0; i < configSites.length; i++) {
-				IFeatureReference[] references = configSites[i].getConfiguredFeatures();
-				for (int j = 0; j < references.length; j++) {
-					try {
-						allEnabledFeatures.add(references[j].getFeature(null));
-					} catch (CoreException e) {
-					}
-				}
-			}
-
-			// create a List of eFixes Features
-			List arrayOfNewFoundFeatures = new ArrayList();
-			for (Iterator iter = newFoundFeatures.iterator(); iter.hasNext();) {
-				IFeatureReference element = (IFeatureReference) iter.next();
-				try {
-					arrayOfNewFoundFeatures.add(element.getFeature(null));
-				} catch (CoreException e) {
-				}
-			}
-
-			// retrieve the efixes that patch enable features in delta and enabled features on the 
-			// file system
-			List patchesForNewFoundFeatures = getFeatureReferencePatchesToEnable(newFoundEfixesAsReference, allEnabledFeatures);
-			List patchesForEnabledFeatures = getFeatureReferencePatchesToEnable(newFoundEfixesAsReference, arrayOfNewFoundFeatures);
-
-			// IMPORTANT: add efixes first so they will be processed first
-			newFoundFeatures.removeAll(newFoundEfixesAsReference.keySet());
-			newFoundFeatures.addAll(0,patchesForEnabledFeatures);
-			newFoundFeatures.addAll(0,patchesForNewFoundFeatures);
-		}
-	}
-
-	/*
-	 * retruns the list of pathes-featureReference who patch enabled features
-	 */
-	private List getFeatureReferencePatchesToEnable(Map efixes, List configuredFeatures) {
-
-		ArrayList enabledVersionedIdentifier = new ArrayList();
-		Iterator iter = configuredFeatures.iterator();
-		while (iter.hasNext()) {
-			IFeature element = (IFeature) iter.next();
-			enabledVersionedIdentifier.add(element.getVersionedIdentifier());
-		}
-
-		// loop through the patches
-		List result = new ArrayList();
-		iter = efixes.keySet().iterator();
-		while (iter.hasNext()) {
-			boolean toEnable = false;
-			IFeatureReference efixFeatureReference = (IFeatureReference) iter.next();
-			List patchedFeatures = (List) efixes.get(efixFeatureReference);
-			// loop through the 'patched features identifier' the for this patch
-			// see if it the patch patches at least one enable feature
-			Iterator patchedFeaturesIter = patchedFeatures.iterator();
-			while (patchedFeaturesIter.hasNext() && !toEnable) {
-				VersionedIdentifier patchedFeatureID = (VersionedIdentifier) patchedFeaturesIter.next();
-				if (enabledVersionedIdentifier.contains(patchedFeatureID)) {
-					toEnable = true;
-				}
-			}
-
-			if (!toEnable) {
-				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
-				UpdateCore.debug("The Patch " + efixFeatureReference + " does not patch any enabled features: it will be disabled");
-			} else {
-				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
-				UpdateCore.debug("The patch " + efixFeatureReference + " will be enabled.");
-
-				result.add(efixFeatureReference);
-			}
-		}
-		return result;
-	}
+//	/*
+//	 * retruns the list of pathes-featureReference who patch enabled features
+//	 */
+//	private List getFeatureReferencePatchesToEnable(Map efixes, List configuredFeatures) {
+//
+//		ArrayList enabledVersionedIdentifier = new ArrayList();
+//		Iterator iter = configuredFeatures.iterator();
+//		while (iter.hasNext()) {
+//			IFeature element = (IFeature) iter.next();
+//			enabledVersionedIdentifier.add(element.getVersionedIdentifier());
+//		}
+//
+//		// loop through the patches
+//		List result = new ArrayList();
+//		iter = efixes.keySet().iterator();
+//		while (iter.hasNext()) {
+//			boolean toEnable = false;
+//			IFeatureReference efixFeatureReference = (IFeatureReference) iter.next();
+//			List patchedFeatures = (List) efixes.get(efixFeatureReference);
+//			// loop through the 'patched features identifier' the for this patch
+//			// see if it the patch patches at least one enable feature
+//			Iterator patchedFeaturesIter = patchedFeatures.iterator();
+//			while (patchedFeaturesIter.hasNext() && !toEnable) {
+//				VersionedIdentifier patchedFeatureID = (VersionedIdentifier) patchedFeaturesIter.next();
+//				if (enabledVersionedIdentifier.contains(patchedFeatureID)) {
+//					toEnable = true;
+//				}
+//			}
+//
+//			if (!toEnable) {
+//				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+//				UpdateCore.debug("The Patch " + efixFeatureReference + " does not patch any enabled features: it will be disabled");
+//			} else {
+//				if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_RECONCILER)
+//				UpdateCore.debug("The patch " + efixFeatureReference + " will be enabled.");
+//
+//				result.add(efixFeatureReference);
+//			}
+//		}
+//		return result;
+//	}
 
 	/*
 	 * only enable non-efix children recursively

@@ -15,9 +15,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.update.core.IFeature;
-import org.eclipse.update.internal.api.operations.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.wizards.ReplaceFeatureVersionWizard;
+import org.eclipse.update.operations.*;
 
 public class ReplaceVersionAction extends Action {
 	

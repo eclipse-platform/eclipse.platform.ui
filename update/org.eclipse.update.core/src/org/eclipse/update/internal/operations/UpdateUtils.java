@@ -24,8 +24,8 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.search.*;
-import org.eclipse.update.internal.api.operations.*;
-import org.eclipse.update.internal.api.search.*;
+import org.eclipse.update.operations.*;
+import org.eclipse.update.search.*;
 
 
 /**
