@@ -1,16 +1,15 @@
-/**********************************************************************
- * Copyright (c) 2000,2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
- * 
- * Contributors: 
- * IBM - Initial API and implementation
- * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
- * activated and used by other components.
- * *********************************************************************/
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
+Contributors:
+    IBM - Initial implementation
+    Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font 
+		should be activated and used by other components.
+************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.File;
@@ -364,7 +363,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		dialog.setFilterPath(variableValue);
 		String res = dialog.open();
 		if (res != null) {
-			variableValue = new Path(res).makeAbsolute().toString();
+			variableValue = new Path(res).makeAbsolute().toOSString();
 			variableValueField.setText(variableValue);
 		}
 	}
@@ -378,7 +377,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		dialog.setFilterPath(variableValue);
 		String res = dialog.open();
 		if (res != null) {
-			variableValue = new Path(res).makeAbsolute().toString();
+			variableValue = new Path(res).makeAbsolute().toOSString();
 			variableValueField.setText(variableValue);
 		}
 	}

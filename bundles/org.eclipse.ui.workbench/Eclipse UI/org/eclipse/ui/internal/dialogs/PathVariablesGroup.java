@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -204,7 +204,7 @@ public class PathVariablesGroup {
 				pathVariableManager, 
 				tempPathVariables.keySet());
 		dialog.setVariableName(variableName);
-		dialog.setVariableValue(variableValue.toString());
+		dialog.setVariableValue(variableValue.toOSString());
 
 		// opens the dialog - just returns if the user cancels it
 		if (dialog.open() == Window.CANCEL)
@@ -359,7 +359,7 @@ public class PathVariablesGroup {
 			IPath value = (IPath) tempPathVariables.get(varName);
 			File file = value.toFile();
 			
-			item.setText(varName + " - " + value.toString()); //$NON-NLS-1$ 
+			item.setText(varName + " - " + value.toOSString()); //$NON-NLS-1$ 
 			// the corresponding variable name is stored in each table widget item
 			item.setData(varName);
 			item.setImage(file.exists() ? (file.isFile() ? FILE_IMG : FOLDER_IMG) : imageUnkown);
