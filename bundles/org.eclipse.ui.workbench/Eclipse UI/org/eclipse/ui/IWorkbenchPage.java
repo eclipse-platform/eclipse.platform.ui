@@ -60,6 +60,14 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	public static final String CHANGE_RESET = "reset"; //$NON-NLS-1$
 
 	/**
+	 * Change event id when the perspective has completed a reset to its original state.
+	 * 
+     * @since 3.0
+	 * @see IPerspectiveListener
+	 */
+	public static final String CHANGE_RESET_COMPLETE = "resetComplete"; //$NON-NLS-1$
+
+	/**
 	 * Change event id when one or more perspective views are shown.
 	 * 
 	 * @see IPerspectiveListener

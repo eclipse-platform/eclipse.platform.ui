@@ -640,10 +640,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (item == null)
 			return;
 
+		// Notify listeners that we are doing a reset.
+		window.firePerspectiveChanged(this, desc, CHANGE_RESET);
+
 		// Create new persp from original template.
 		Perspective newPersp = createPerspective(desc);
-		if (newPersp == null)
+		if (newPersp == null) {
+			// We're not going through with the reset, so it is complete.
+			window.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
 			return;
+		}
 
 		// Update the perspective list and shortcut
 		perspList.swap(oldPersp, newPersp);
@@ -653,11 +659,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		// Install new persp.
 		setPerspective(newPersp);
 
-		// Notify listeners.
-		window.firePerspectiveChanged(this, desc, CHANGE_RESET);
-
 		// Destroy old persp.
 		disposePerspective(oldPersp);
+
+		// Notify listeners that we have completed our reset.
+		window.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
 
 		// Update the Coolbar layout.
 		resetToolBarLayout();
@@ -1229,6 +1235,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (ret) {
 			window.updateActionSets();
 			window.firePerspectiveChanged(this, getPerspective(), CHANGE_RESET);
+			window.firePerspectiveChanged(this, getPerspective(), CHANGE_RESET_COMPLETE);
 		}
 		return ret;
 	}
