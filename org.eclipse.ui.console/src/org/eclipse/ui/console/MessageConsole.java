@@ -103,7 +103,7 @@ public class MessageConsole extends AbstractConsole {
 	 * @param text message
 	 * @param stream stream the message belongs to
 	 */
-	public synchronized void appendToDocument(String text, MessageConsoleStream stream) {
+	protected synchronized void appendToDocument(String text, MessageConsoleStream stream) {
 		fPartitioner.appendToDocument(text, stream);
 	}
 
