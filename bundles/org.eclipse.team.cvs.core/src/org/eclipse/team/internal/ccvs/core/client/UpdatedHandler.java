@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-
 import java.util.Date;
 
 import org.eclipse.core.resources.IResourceStatus;
@@ -20,6 +19,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
@@ -76,8 +76,9 @@ class UpdatedHandler extends ResponseHandler {
 		// read additional data for the response
 		String repositoryFile = session.readLine();
 		String entryLine = session.readLine();
-		byte[] entryLineBytes = entryLine.getBytes(); /* TODO: could read as bytes */
 		String permissionsLine = session.readLine();
+		// temporary sync info for parsing the line received from the server
+		ResourceSyncInfo info = new ResourceSyncInfo(entryLine, permissionsLine, null);
 
 		// clear file update modifiers
 		Date modTime = session.getModTime();
@@ -88,8 +89,8 @@ class UpdatedHandler extends ResponseHandler {
 		ICVSFolder mParent = getExistingFolder(session, localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		
-		boolean binary = ResourceSyncInfo.isBinary(entryLineBytes);
-		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
+		boolean binary = info.getKeywordMode().isBinary();
+		boolean readOnly = info.getPermissions().indexOf(READ_ONLY_FLAG) == -1;
 		
 		// The file may have been set as read-only by a previous checkout/update
 		if (mFile.isReadOnly()) mFile.setReadOnly(false);
@@ -110,18 +111,17 @@ class UpdatedHandler extends ResponseHandler {
 		// in the sync info. The os may not actually set the time we provided :)
 		mFile.setTimeStamp(modTime);
 		modTime = mFile.getTimeStamp();
+		MutableResourceSyncInfo newInfoWithTimestamp = info.cloneMutable();
+		newInfoWithTimestamp.setTimeStamp(modTime);
 		int modificationState = ICVSFile.UNKNOWN;
 		if(handlerType==HANDLE_MERGED) {
-			entryLineBytes = ResourceSyncInfo.setTimeStamp(entryLineBytes, modTime, true /* merged */);
-		} else {
-			entryLineBytes = ResourceSyncInfo.setTimeStamp(entryLineBytes, modTime, false /* merged */);
-			if (!session.isIgnoringLocalChanges() && (handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED)) {
+			newInfoWithTimestamp.setMerged();
+		} else if (!session.isIgnoringLocalChanges() && (handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED)) {
 			// both these cases result in an unmodified file.
-				// reporting is handled by the FileModificationManager
-				modificationState = ICVSFile.CLEAN;
-				CVSProviderPlugin.getPlugin().getFileModificationManager().updated(mFile);
-			}
+			// reporting is handled by the FileModificationManager
+			modificationState = ICVSFile.CLEAN;
+			CVSProviderPlugin.getPlugin().getFileModificationManager().updated(mFile);
 		}
-		mFile.setSyncBytes(entryLineBytes, modificationState);
+		mFile.setSyncInfo(newInfoWithTimestamp, modificationState);
 	}
 }

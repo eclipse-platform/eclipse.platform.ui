@@ -861,19 +861,4 @@ public class ResourceSyncInfo {
 		return syncType == TYPE_MERGED || syncType == TYPE_MERGED_WITH_CONFLICTS;
 	}
 
-	/**
-	 * @param modTime
-	 * @param b
-	 * @return byte[]
-	 */
-	public static byte[] setTimeStamp(byte[] syncBytes, Date timeStamp, boolean merged) throws CVSException {
-		String timeStampString;
-		if (merged) {
-			timeStampString = TIMESTAMP_MERGED;
-		} else {
-			timeStampString = CVSDateFormatter.dateToEntryLine(timeStamp);
-		}
-		return setSlot(syncBytes, 3, timeStampString.getBytes());
-	}
-
 }

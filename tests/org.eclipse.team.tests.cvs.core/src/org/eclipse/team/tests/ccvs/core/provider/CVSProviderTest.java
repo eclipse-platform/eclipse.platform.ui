@@ -439,15 +439,63 @@ public class CVSProviderTest extends EclipseTest {
 	}
 	
 	public void testForBinaryLinefeedCorruption() throws CoreException, TeamException, IOException {
+		byte EOL = '\n';
 		IProject project = createProject("testForBinaryLinefeedCorruption", new String[] { "binaryFile" });
 		ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(project.getFile("binaryFile"));
 		assertTrue(ResourceSyncInfo.isBinary(cvsFile.getSyncBytes()));
-		project.getFile("binaryFile").setContents(new ByteArrayInputStream("line 1/nline 2/nline3".getBytes()), false, false, null);
+		setContentsAndEnsureModified(project.getFile("binaryFile"), "line 1" + EOL + "line 2");
 		commitProject(project);
 		
 		// Checkout a copy and ensure the file was not corrupted
 		IProject copy = checkoutCopy(project, "-copy");
 		assertEquals(project, copy);
+	}
+	
+	public void test33984CannotCommitAfterConflictsMergedLocally() throws CoreException, TeamException, IOException {
+			String EOL = System.getProperty("line.separator");
+			
+			IProject project = createProject("test33984", new String[] { "a.txt", "b.txt" });
+			setContentsAndEnsureModified(project.getFile("a.txt"), "line 1");
+		    setContentsAndEnsureModified(project.getFile("b.txt"), ("line 1" + EOL + "line 2" + EOL + "line3"));
+
+			Map kMode = new HashMap();
+			kMode.put(project.getFile("a.txt"), Command.KSUBST_TEXT);
+			kMode.put(project.getFile("b.txt"), Command.KSUBST_TEXT);
+			getProvider(project).setKeywordSubstitution(kMode, "", null);
+		    
+			commitProject(project);
+			
+
+		
+			// Checkout a copy and ensure the file was not corrupted
+			IProject copy = checkoutCopy(project, "-copy");
+			assertEquals(project, copy);
+			
+			// TEST 1: simulate modifying same file by different users
+			// b.txt has non-conflicting changes 
+			setContentsAndEnsureModified(copy.getFile("b.txt"), ("line 1a" + EOL + "line 2" + EOL + "line3"));
+		    
+			commitProject(copy);
+			
+			// user updates which would cause a merge with conflict, a commit should not be allowed
+			
+			setContentsAndEnsureModified(project.getFile("b.txt"), ("line 1" + EOL + "line 2" + EOL + "line3a"));
+			updateProject(project, CVSTag.DEFAULT, false /* don't ignore local changes */);
+			commitProject(project);
+
+			// TEST 2: a.txt has conflicting changes
+			setContentsAndEnsureModified(copy.getFile("a.txt"), "line 1dfgdfne3");
+  
+			commitProject(copy);
+			
+			// user updates which would cause a merge with conflict, a commit should not be allowed
+			setContentsAndEnsureModified(project.getFile("a.txt"), "some other text");
+			updateProject(project, CVSTag.DEFAULT, false /* don't ignore local changes */);
+			try {
+				commitProject(project);
+				fail("should not be allowed to commit a resource with merged conflicts");
+			} catch(TeamException e) {
+			}
 	}
 }
 
