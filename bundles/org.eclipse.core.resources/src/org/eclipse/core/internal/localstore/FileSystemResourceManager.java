@@ -792,17 +792,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				}
 			}
 			// add entry to History Store.
-			IFileState state = null; // file we just added to the history
 			if (keepHistory && localFile.exists())
 				//never move to the history store, because then the file is missing if write fails
-				state = historyStore.addState(target.getFullPath(), location.toFile(), lastModified, false);
+				historyStore.addState(target.getFullPath(), location.toFile(), lastModified, false);
 			getStore().write(localFile, content, append, monitor);
 			// get the new last modified time and stash in the info
 			lastModified = CoreFileSystemLibrary.getLastModified(locationString);
 			ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 			updateLocalSync(info, lastModified);
-			if (state != null)
-				CoreFileSystemLibrary.copyAttributes(historyStore.getFileFor(state).getAbsolutePath(), locationString, false);
 		} finally {
 			try {
 				content.close();
