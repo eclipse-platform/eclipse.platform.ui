@@ -77,6 +77,6 @@ public class ProposalPosition extends LinkedPosition {
 	 * @see org.eclipse.jdt.internal.ui.text.link.LinkedPosition#hashCode()
 	 */
 	public int hashCode() {
-		return super.hashCode() | fProposals.hashCode();
+		return super.hashCode() | (fProposals == null ? 0 : fProposals.hashCode());
 	}
 }

@@ -728,12 +728,16 @@ public class LinkedUIControl {
 	private void triggerContentAssist() {
 		if (fFramePosition instanceof ProposalPosition) {
 			ProposalPosition pp= (ProposalPosition) fFramePosition;
-			fAssistant.setCompletions(pp.getChoices());
-			fAssistant.showPossibleCompletions();
-		} else {
-			fAssistant.setCompletions(new ICompletionProposal[0]);
-			fAssistant.hidePossibleCompletions();
+			ICompletionProposal[] choices= pp.getChoices();
+			if (choices != null && choices.length > 0) {
+				fAssistant.setCompletions(choices);
+				fAssistant.showPossibleCompletions();
+				return;
+			}
 		}
+		
+		fAssistant.setCompletions(new ICompletionProposal[0]);
+		fAssistant.hidePossibleCompletions();
 	}
 
 	private void switchPosition(LinkedPosition pos, boolean select, boolean showProposals) {
