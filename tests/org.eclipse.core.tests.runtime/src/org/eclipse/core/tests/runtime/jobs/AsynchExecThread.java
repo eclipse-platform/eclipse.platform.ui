@@ -67,7 +67,6 @@ public class AsynchExecThread extends Thread {
 					//Thread.yield();
 					Thread.sleep(tickLength);
 				} catch (InterruptedException e) {
-
 				}
 				current.worked(1);
 			}

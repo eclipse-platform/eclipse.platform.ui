@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.*;
  * Test cases for the Platform API
  */
 public class PlatformTest extends RuntimeTest {
-	private static final String TESTFILE = Platform.getLocation().append("test.user").toOSString();
 
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.

@@ -49,7 +49,7 @@ public class JobTest extends TestCase {
 
 		//try creating a job with a null name
 		try {
-			Job test = new TestJob(null);
+			new TestJob(null);
 			fail("2.0");
 		} catch (RuntimeException e) {
 			//should fail
@@ -499,7 +499,7 @@ public class JobTest extends TestCase {
 		for (int i = 0; i < status.length; i++) {
 			assertEquals("7." + i, TestBarrier.STATUS_DONE, status[i]);
 			assertEquals("8." + i, Job.NONE, jobs[i].getState());
-			assertEquals("9." + i, Status.OK, jobs[i].getResult().getSeverity());
+			assertEquals("9." + i, IStatus.OK, jobs[i].getResult().getSeverity());
 			assertNull("10." + i, jobs[i].getThread());
 		}
 	}
@@ -608,7 +608,7 @@ public class JobTest extends TestCase {
 		for (int i = 0; i < status.length - 1; i++) {
 			assertEquals("10." + i, TestBarrier.STATUS_DONE, status[i]);
 			assertEquals("11." + i, Job.NONE, jobs[i].getState());
-			assertEquals("12." + i, Status.OK, jobs[i].getResult().getSeverity());
+			assertEquals("12." + i, IStatus.OK, jobs[i].getResult().getSeverity());
 			assertNull("13." + i, jobs[i].getThread());
 		}
 

@@ -629,7 +629,6 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				t.join();
 			} catch (InterruptedException e1) {
-
 			}
 			//the thread should be dead now
 			assertTrue("2." + i, !t.isAlive());
@@ -644,7 +643,6 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				t.join();
 			} catch (InterruptedException e1) {
-
 			}
 			//the thread should be dead now
 			assertTrue("3." + i, !t.isAlive());
@@ -660,7 +658,6 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				t.join();
 			} catch (InterruptedException e1) {
-
 			}
 			//the thread should be dead now
 			assertTrue("4." + i, !t.isAlive());
@@ -677,7 +674,6 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-
 			}
 			Thread.yield();
 			//sanity test to avoid hanging tests

@@ -824,12 +824,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(first, null);
 				} catch (OperationCanceledException e) {
-
 				} catch (InterruptedException e) {
-
 				}
 				status[0] = TestBarrier.STATUS_DONE;
-
 			}
 		});
 
@@ -853,7 +850,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-
 			}
 		}
 		assertTrue("2.0", i < 100);
@@ -902,11 +898,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(first, canceller);
-
 				} catch (OperationCanceledException e) {
-
 				} catch (InterruptedException e) {
-
 				}
 				status[0] = TestBarrier.STATUS_DONE;
 			}
@@ -978,11 +971,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(first, null);
-
 				} catch (OperationCanceledException e) {
-
 				} catch (InterruptedException e) {
-
 				}
 				status[0] = TestBarrier.STATUS_DONE;
 			}
@@ -1050,15 +1040,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					TestBarrier.waitForStatus(status, 0, TestBarrier.STATUS_WAIT_FOR_RUN);
 					status[0] = TestBarrier.STATUS_RUNNING;
 					manager.join(third, null);
-
 				} catch (OperationCanceledException e) {
-
 				} catch (InterruptedException e) {
-
 				}
-
 				status[0] = TestBarrier.STATUS_DONE;
-
 			}
 		});
 

@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
  */
 public class IAdapterManagerTest extends TestCase {
 	private static final String NON_EXISTING = "com.does.not.Exist";
-	private static final String TEST_ADAPTABLE = "org.eclipse.core.tests.runtime.TestAdaptable";
 	private static final String TEST_ADAPTER = "org.eclipse.core.tests.runtime.TestAdapter";
 	private IAdapterManager manager;
 

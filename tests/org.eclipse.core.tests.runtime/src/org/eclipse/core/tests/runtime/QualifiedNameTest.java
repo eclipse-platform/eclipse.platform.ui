@@ -79,12 +79,14 @@ public class QualifiedNameTest extends RuntimeTest {
 			new QualifiedName("foo", null);
 			fail("2.0");
 		} catch (Exception e) {
+			// expected
 		}
 
 		try {
 			new QualifiedName("foo", "");
 			fail("2.1");
 		} catch (Exception e) {
+			// expected
 		}
 
 		try {

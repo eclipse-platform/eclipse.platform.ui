@@ -111,7 +111,6 @@ public class OrderedLockTest extends TestCase {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-
 					}
 				}
 				lock.release();
@@ -126,7 +125,6 @@ public class OrderedLockTest extends TestCase {
 				try {
 					success = lock.acquire(100);
 				} catch (InterruptedException e) {
-
 				}
 				assertTrue("1.0", !success);
 				assertTrue("1.1", !manager.isLockOwner());
