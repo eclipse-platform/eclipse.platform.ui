@@ -119,7 +119,8 @@ public class EnableCommand extends ScriptedCommand {
 				feature);
 
 		try {
-			return configOperation.execute(monitor, this);
+			configOperation.execute(monitor, this);
+			return true;
 		} catch (CoreException e) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(e);

@@ -97,9 +97,25 @@ public class InternalSiteManager {
 
 		// use cache if set up globally (globalUseCache=true)
 		// and passed as parameter (useCache=true)
+		String siteURLString = siteURL.toExternalForm();
 		if ((useCache && globalUseCache) && isValidCachedSite(siteURL)) {
-			site = (ISite) sites.get(siteURL.toExternalForm());
+			site = (ISite) sites.get(siteURLString);
 			return site;
+		}
+		
+		// try adding "eclipse" to the site url, in case this is an extension site
+		if ("file".equals(siteURL.getProtocol()) ) {
+			File f = new File(siteURL.getFile());
+			if (f.isDirectory() && !"eclipse".equals(f.getName())) {
+				f = new File(f, "eclipse");
+				try {
+					if ((useCache && globalUseCache) && isValidCachedSite(f.toURL())) {
+						site = (ISite) sites.get(f.toURL().toExternalForm());
+						return site;
+					}
+				} catch (MalformedURLException e) {
+				}	
+			}
 		}
 
 		// consider file protocol also if the URL points to a directory

@@ -122,7 +122,8 @@ public class UninstallCommand extends ScriptedCommand {
 				feature);
 
 		try {
-			return uninstallOperation.execute(monitor, this);
+			uninstallOperation.execute(monitor, this);
+			return true;
 		} catch (CoreException e) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(e);
