@@ -130,7 +130,7 @@ public IPath locationFor(IResource target) {
 public void move(IResource target, IPath destination, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("moving", new String[] {target.getFullPath().toString()}), 1);
+		monitor.beginTask(Policy.bind("moving", new String[] {target.getFullPath().toString()}), Policy.totalWork);
 		IResource resource = null;
 		switch (target.getType()) {
 			case IResource.PROJECT :
@@ -143,10 +143,25 @@ public void move(IResource target, IPath destination, boolean keepHistory, IProg
 				break;
 		}
 		IPath sourceLocation = locationFor(target);
-		if (keepHistory)
-			addFilesToHistoryStore(target.getFullPath(), sourceLocation, false);
 		IPath destinationLocation = locationFor(resource);
-		getStore().move(sourceLocation.toFile(), destinationLocation.toFile(), false, Policy.subMonitorFor(monitor, 1));
+		if (keepHistory) {
+			if (target.getType() == IResource.FOLDER) {
+				IResource[] children = ((IFolder) target).members();
+				destinationLocation.toFile().mkdirs();
+				int work = Policy.totalWork / Math.max(children.length, 1);
+				for (int i = 0; i < children.length; i++)
+					move(children[i], destination.append(children[i].getName()), keepHistory, Policy.subMonitorFor(monitor, work));
+				if (!sourceLocation.toFile().delete()) {
+					String message = "Could not delete file";
+					throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, sourceLocation, message, null);
+				}
+			} else {
+				long lastModified = target.getLocation().toFile().lastModified();
+				getHistoryStore().addState(target.getFullPath(), sourceLocation, lastModified, false);
+				getStore().move(sourceLocation.toFile(), destinationLocation.toFile(), false, Policy.subMonitorFor(monitor, Policy.totalWork));
+			}
+		} else
+			getStore().move(sourceLocation.toFile(), destinationLocation.toFile(), false, Policy.subMonitorFor(monitor, Policy.totalWork));
 	} finally {
 		monitor.done();
 	}

@@ -110,7 +110,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					delete(destination);
 				} catch (CoreException e) {
 					String message = "Could not move file";
-					throw new ResourceException(-1, new Path(destination.getAbsolutePath()), message, e);
+					throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(destination.getAbsolutePath()), message, e);
 				}
 		}
 		if (source.renameTo(destination)) {
@@ -131,7 +131,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					return;
 				} else {
 					// neither the source nor the destination exist. this is REALLY bad
-					throw new ResourceException(new ResourceStatus(IResourceStatus.ERROR, "Failed to move: " + source + " to: " + destination));
+					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, "Failed to move: " + source + " to: " + destination));
 				}
 			}
 		} 

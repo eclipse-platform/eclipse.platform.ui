@@ -417,6 +417,8 @@ public boolean isAutoBuilding();
  *    individual resource moves fails; that is, if at least one
  *    of the resources in the list still exists at the end of this 
  *    method.</li>
+ * <li> History is kept for moved files. When projects are moved, no history
+ *    is kept</li>
  * </ul>
  * </p>
  * <p>

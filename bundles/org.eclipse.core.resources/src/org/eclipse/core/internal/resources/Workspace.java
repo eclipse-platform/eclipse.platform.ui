@@ -867,7 +867,13 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 						IStatus requirements = resource.checkMoveRequirements(destination.append(resource.getName()), resource.getType());
 						if (requirements.isOK()) {
 							try {
-								resource.move(destination.append(resource.getName()), force, Policy.subMonitorFor(monitor, 1));
+								// We cannot call move(IPath, boolean, boolean, monitor) to all
+								// kind of resources because this method has a different
+								// semantics for project and root.
+								if (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT)
+									resource.move(destination.append(resource.getName()), force, Policy.subMonitorFor(monitor, 1));
+								else
+									resource.move(destination.append(resource.getName()), force, true, Policy.subMonitorFor(monitor, 1));
 							} catch (CoreException e) {
 								status.merge(e.getStatus());
 							}
