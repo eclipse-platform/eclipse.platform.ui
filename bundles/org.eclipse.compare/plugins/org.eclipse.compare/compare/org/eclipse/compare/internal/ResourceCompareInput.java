@@ -181,7 +181,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		}
 	}
 		
-	void performSave(IProgressMonitor pm) throws CoreException {
+	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		if (fRoot instanceof DiffNode) {
 			try {
 				commit(pm, (DiffNode) fRoot);

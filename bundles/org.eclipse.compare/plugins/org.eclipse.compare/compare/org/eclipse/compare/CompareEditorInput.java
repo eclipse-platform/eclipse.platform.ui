@@ -16,9 +16,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IEditorInput;
 
@@ -679,8 +678,20 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * Subclasses must override to save any changes.
 	 *
 	 * @param progressMonitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
+	 * @deprecated Override method saveChanges instead.
 	 */
 	public void save(IProgressMonitor pm) {
+	}
+	
+	/**
+	 * Save any unsaved changes.
+	 * Subclasses must override to save any changes.
+	 * This implementation calls the deprecated method save(IProgressMonitor pm).
+	 *
+	 * @param progressMonitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
+	 */
+	public void saveChanges(IProgressMonitor pm) throws CoreException {
+		save(pm);
 	}
 }
 

@@ -143,10 +143,8 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		
 		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor pm) throws CoreException {
-				if (input instanceof ResourceCompareInput)
-					((ResourceCompareInput)input).performSave(pm);				
-				else if (input instanceof CompareEditorInput)
-					((CompareEditorInput)input).save(pm);
+				if (input instanceof CompareEditorInput)
+					((CompareEditorInput)input).saveChanges(pm);
 			}
 		};
 
