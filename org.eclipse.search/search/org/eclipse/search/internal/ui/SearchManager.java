@@ -496,13 +496,15 @@ public class SearchManager implements IResourceChangeListener {
 
 		Runnable runnable= new Runnable() {
 			public void run() {
-				handleSearchMarkersChanged(event, markerDeltas);
-				// update title and actions
-				Iterator iter= fListeners.iterator();
-				while (iter.hasNext()) {
-					SearchResultViewer viewer= (SearchResultViewer)iter.next();
-					viewer.enableActions();
-					viewer.updateTitle();
+/				if (getCurrentSearch() != null) {
+					handleSearchMarkersChanged(event, markerDeltas);
+					// update title and actions
+					Iterator iter= fListeners.iterator();
+					while (iter.hasNext()) {
+						SearchResultViewer viewer= (SearchResultViewer)iter.next();
+						viewer.enableActions();
+						viewer.updateTitle();
+					}
 				}
 			}
 		};
