@@ -11,11 +11,8 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -25,27 +22,22 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -114,23 +106,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		history = createHistory();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferenceDialog#close()
-	 */
-	public boolean close() {
-		// clear the search results do they don't appear next time we open the dialog
-		clearSearchResults();
-		return super.close();
-	}
-
-	private void clearSearchResults() {
-		if (!(getTreeViewer().getInput() instanceof WorkbenchPreferenceGroup))
-			return;
-
-		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
-		group.highlightHits(""); //$NON-NLS-1$
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -155,6 +130,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setBackground(composite.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
 
 		toolBarComposite = new Composite(composite, SWT.NONE);
 		GridLayout toolBarLayout = new GridLayout();
@@ -217,39 +194,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		getPageContainer().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
-	/**
-	 * Create the search area for the receiver.
-	 * @param composite
-	 * @return Control The control that contains the area.
-	 */
-	private Control createSearchArea(Composite composite) {
-
-		Composite searchArea = new Composite(composite, SWT.NONE);
-		searchArea.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-		GridLayout searchLayout = new GridLayout();
-		searchLayout.marginWidth = 0;
-		searchLayout.marginHeight = 0;
-		searchArea.setLayout(searchLayout);
-
-		final Text searchText = new Text(searchArea, SWT.BORDER | SWT.SINGLE);
-
-		GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
-				| GridData.FILL_VERTICAL);
-		textData.verticalIndent = IDialogConstants.VERTICAL_MARGIN / 2;
-		searchText.setLayoutData(textData);
-		searchText.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-			}
-
-			public void keyReleased(KeyEvent e) {
-				highlightHits(searchText.getText());
-			}
-		});
-
-		return searchArea;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeAreaContents(org.eclipse.swt.widgets.Composite)
 	 */
@@ -268,12 +212,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 			leftArea.setLayout(leftLayout);
 
-			Control searchArea = createSearchArea(leftArea);
-			GridData searchData = new GridData(GridData.FILL_HORIZONTAL);
-			searchData.grabExcessHorizontalSpace = true;
-			searchData.verticalAlignment = SWT.BOTTOM;
-			searchArea.setLayoutData(searchData);
-
 			//Build the tree an put it into the composite.
 			TreeViewer viewer = createTreeViewer(leftArea);
 			setTreeViewer(viewer);
@@ -281,7 +219,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			viewer.setInput(getPreferenceManager());
 			updateTreeFont(JFaceResources.getDialogFont());
 			GridData viewerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
-			viewer.getControl().setLayoutData(viewerData);
+			viewer.getControl().getParent().setLayoutData(viewerData);
 
 			layoutTreeAreaControl(leftArea);
 
@@ -494,53 +432,32 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		toolBar.setLayoutData(data);
 	}
 
-	/**
-	 * Return the label provider for the categories.
-	 * @return ILabelProvider
-	 */
-	private ILabelProvider getCategoryLabelProvider() {
-		return new LabelProvider() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-			 */
-			public Image getImage(Object element) {
-				return ((WorkbenchPreferenceGroup) element).getImage();
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-			 */
-			public String getText(Object element) {
-				return ((WorkbenchPreferenceGroup) element).getName();
-			}
-		};
-	}
-
-	/**
-	 * Return a content provider for the categories.
-	 * 
-	 * @return IContentProvider
-	 */
-	private IContentProvider getCategoryContentProvider() {
-		return new ListContentProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.internal.dialogs.ListContentProvider#getElements(java.lang.Object)
-			 */
-			public Object[] getElements(Object input) {
-				return getGroups();
-			}
-		};
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		TreeViewer tree = super.createTreeViewer(parent);
+		final GroupedPreferenceContentProvider contentProvider = new GroupedPreferenceContentProvider();
+		PatternFilter filter = new PatternFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof WorkbenchPreferenceGroup) {
+					WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) element;
+					Object[] children = contentProvider.getChildren(group);
+					return match(group.getName()) || (filter(viewer, element, children).length > 0);
+				}
+				if (element instanceof WorkbenchPreferenceNode) {
+					WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) element;
+					Object[] children = contentProvider.getChildren(node);
+					return match(node.getLabelText()) || (filter(viewer, element, children).length > 0);
+				}
+				return false;
+			}
+		};
+		int styleBits = SWT.SINGLE | SWT.H_SCROLL | SWT.BORDER;
+		FilteredTree filteredTree = new FilteredTree(parent, styleBits, filter);
+		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		TreeViewer tree = filteredTree.getViewer();
 
 		setContentAndLabelProviders(tree);
 
@@ -566,8 +483,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			});
 
 		}
-
-		return tree;
+		super.addListeners(filteredTree.getViewer());
+		return filteredTree.getViewer();
 	}
 
 	/**
