@@ -148,7 +148,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 						case 0:
 							return "[...]";
 						default:
-							return comment.substring(0, index - 1) + "[...]";
+							return comment.substring(0, index) + "[...]";
 					}
 			}
 			return "";
