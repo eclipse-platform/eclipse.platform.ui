@@ -303,6 +303,8 @@ public class PreferencesService implements IPreferencesService {
 				if (new Path(key).segmentCount() < 2)
 					properties.remove(key);
 			}
+		} else {
+			properties.remove(VERSION_KEY);
 		}
 
 		for (Enumeration e = properties.keys(); e.hasMoreElements();) {
@@ -355,6 +357,9 @@ public class PreferencesService implements IPreferencesService {
 	 * Helper method to do the recursion
 	 */
 	private static void recursiveAdd(Properties properties, Preferences settings, IPath prefix) throws BackingStoreException {
+		// don't store defaults
+		if (prefix.segmentCount() > 0 && DefaultScope.SCOPE.equals(prefix.segment(0)))
+			return;
 		// add the key/value pairs from this node
 		String[] keys = settings.keys();
 		for (int i = 0; i < keys.length; i++) {

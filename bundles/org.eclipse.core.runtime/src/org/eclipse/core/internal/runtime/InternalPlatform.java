@@ -130,7 +130,7 @@ public final class InternalPlatform implements IPlatform {
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static String DEBUG_REGISTRY_DUMP = null;
 	public static boolean DEBUG_PREFERENCES = false;
-	public static boolean USE_PREFERENCE_NODES = System.getProperty("eclipse.usePreferenceNodes") != null;
+	public static boolean USE_LEGACY_PREFS = System.getProperty("eclipse.useLegacyPrefs") != null;
 
 	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
 	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$

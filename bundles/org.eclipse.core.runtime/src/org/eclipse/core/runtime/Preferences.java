@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,8 +124,8 @@ public class Preferences {
 	 * The string representation used for <code>false</code>
 	 * (<code>"false"</code>).
 	 */
-	 protected static final String FALSE = "false"; //$NON-NLS-1$
-	 
+	protected static final String FALSE = "false"; //$NON-NLS-1$
+
 	/**
 	 * Singleton empty string array (optimization)
 	 */
@@ -302,6 +302,7 @@ public class Preferences {
 		File file = path.toFile();
 		if (file.exists())
 			file.delete();
+		file.getParentFile().mkdirs();
 		IPreferencesService service = Platform.getPreferencesService();
 		OutputStream output = null;
 		try {
@@ -327,8 +328,8 @@ public class Preferences {
 		if (compatibility != null) {
 			try {
 				Class prefExporter = compatibility.loadClass("org.eclipse.core.internal.plugins.PreferenceExporter");
-				Method exportingMethod = prefExporter.getDeclaredMethod(methodName, new Class[] { IPath.class });
-				return exportingMethod.invoke(prefExporter, new Object[] { file });
+				Method exportingMethod = prefExporter.getDeclaredMethod(methodName, new Class[]{IPath.class});
+				return exportingMethod.invoke(prefExporter, new Object[]{file});
 			} catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, "Error while " + methodName, e));
 			}
@@ -368,6 +369,7 @@ public class Preferences {
 		InputStream input = null;
 		try {
 			input = new BufferedInputStream(new FileInputStream(path.toFile()));
+			service.importPreferences(input);
 		} catch (FileNotFoundException e) {
 		} finally {
 			if (input != null)
@@ -377,7 +379,6 @@ public class Preferences {
 					// ignore
 				}
 		}
-		service.importPreferences(input);
 	}
 
 	/**
@@ -1169,7 +1170,7 @@ public class Preferences {
 	 * @return an array of property names 
 	 */
 	public String[] propertyNames() {
-		return (String[])properties.keySet().toArray(EMPTY_STRING_ARRAY);
+		return (String[]) properties.keySet().toArray(EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -1179,7 +1180,7 @@ public class Preferences {
 	 * @return an array of property names 
 	 */
 	public String[] defaultPropertyNames() {
-		return (String[])defaultProperties.keySet().toArray(EMPTY_STRING_ARRAY);
+		return (String[]) defaultProperties.keySet().toArray(EMPTY_STRING_ARRAY);
 	}
 
 	/**
