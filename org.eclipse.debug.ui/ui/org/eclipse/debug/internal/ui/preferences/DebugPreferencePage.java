@@ -84,17 +84,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	public void init(IWorkbench workbench) {
 	}
 	
-	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, true);	
-		store.setDefault(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
-		store.setDefault(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
-		store.setDefault(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT, IDebugUIConstants.PERSPECTIVE_NONE);
-		store.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
-		store.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, false);
-		
-		store.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
-	}
-	
 	private void createSaveBeforeLaunchEditors(Composite parent) {
 		fSaveRadioFieldEditor = new RadioGroupFieldEditor(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, DebugPreferencesMessages.getString("DebugPreferencePage.Save_dirty_editors_before_launching_4"), 1,  //$NON-NLS-1$
 										new String[][] {{DebugPreferencesMessages.getString("DebugPreferencePage.&Never_5"), IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH}, //$NON-NLS-1$

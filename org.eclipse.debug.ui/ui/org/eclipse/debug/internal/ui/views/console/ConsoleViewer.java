@@ -8,9 +8,11 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.ui.console.IConsoleColorProvider;
+import org.eclipse.debug.ui.console.IConsoleHyperlink;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -103,7 +105,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		getTextWidget().setDoubleClickEnabled(true);
 		
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		FontData data= ConsolePreferencePage.getConsoleFontData();
+		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
+		FontData data= PreferenceConverter.getFontData(pstore, IDebugPreferenceConstants.CONSOLE_FONT);
 		fFont= new Font(getControl().getDisplay(), data);
 		getTextWidget().setFont(fFont);
 		getTextWidget().addMouseTrackListener(this);
@@ -190,9 +193,10 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		if (!propertyName.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
 			return;
 		}
-		FontData data= ConsolePreferencePage.getConsoleFontData();
+		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
+		FontData fontData= PreferenceConverter.getFontData(pstore, IDebugPreferenceConstants.CONSOLE_FONT);
 		Font temp= fFont;
-		fFont= new Font(getControl().getDisplay(), data);
+		fFont= new Font(getControl().getDisplay(), fontData);
 		getTextWidget().setFont(fFont);
 		temp.dispose();
 	}

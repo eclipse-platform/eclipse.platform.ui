@@ -11,11 +11,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -26,7 +23,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * A page to set the preferences for the variables
  */
-public class VariableViewsPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
+public class VariableViewsPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	/**
 	 * Create the variables page.
 	 */
@@ -51,7 +48,7 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 	 */
 	public void createFieldEditors() {
 		
-		addField(new ColorFieldEditor(CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("VariableViewsPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
+		addField(new ColorFieldEditor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, DebugPreferencesMessages.getString("VariableViewsPreferencePage.&Changed_variable_value_color__3"), getFieldEditorParent())); //$NON-NLS-1$
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
@@ -75,16 +72,6 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
-	}
-	
-	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		
-		store.setDefault(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, false);
-		store.setDefault(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, false);
-		store.setDefault(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
-		
-		PreferenceConverter.setDefault(store, CHANGED_VARIABLE_RGB, new RGB(255, 0, 0));
 	}
 	
 	protected void createSpacer(Composite composite, int columnSpan) {

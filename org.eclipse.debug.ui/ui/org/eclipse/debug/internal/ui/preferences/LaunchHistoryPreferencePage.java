@@ -13,18 +13,11 @@ import java.util.List;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
@@ -158,9 +151,6 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		super.performDefaults();
 	}
 	
-	public static void initDefaults(IPreferenceStore store) {
-		store.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 10);	
-	}
 	/**
 	 * @see IDialogPage#createControl(Composite)
 	 */

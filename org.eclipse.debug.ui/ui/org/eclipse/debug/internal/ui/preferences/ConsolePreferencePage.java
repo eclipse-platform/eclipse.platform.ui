@@ -10,13 +10,10 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
@@ -93,15 +90,6 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
-	/**
-	 * Returns the font data that describes the font to use for the console
-	 */
-	public static FontData getConsoleFontData() {
-		IPreferenceStore pstore= DebugUIPlugin.getDefault().getPreferenceStore();
-		FontData fontData= PreferenceConverter.getFontData(pstore, IDebugPreferenceConstants.CONSOLE_FONT);
-		return fontData;
-	}
 		
 	/**
 	 * @see IPreferencePage#performOk()
@@ -129,7 +117,6 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		fWidthEditor.getLabelControl(getFieldEditorParent()).setEnabled(b.getSelection());				
 	}
 
-
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
@@ -137,6 +124,4 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		super.performDefaults();
 		updateWidthEditor();
 	}
-
-
 }
