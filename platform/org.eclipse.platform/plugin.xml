@@ -20,7 +20,7 @@
          point="org.eclipse.ui.intro">
       <intro
             name="%introPart.title"
-            class="org.eclipse.ui.intro.internal.presentations.CustomizableIntroPart"
+            class="org.eclipse.ui.internal.intro.impl.presentations.CustomizableIntroPart"
             id="org.eclipse.platform.intro">
       </intro>
       <introProductBinding
@@ -41,12 +41,12 @@
             <implementation
                   ws="win32"
                   style="css/shared.css"
-                  class="org.eclipse.ui.intro.internal.presentations.BrowserIntroPartImplementation"
+                  class="org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation"
                   os="win32">
             </implementation>
             <implementation
                   style="css/shared_swt.properties"
-                  class="org.eclipse.ui.intro.internal.presentations.FormIntroPartImplementation">
+                  class="org.eclipse.ui.internal.intro.impl.presentations.FormIntroPartImplementation">
             </implementation>
          </presentation>
       </config>
