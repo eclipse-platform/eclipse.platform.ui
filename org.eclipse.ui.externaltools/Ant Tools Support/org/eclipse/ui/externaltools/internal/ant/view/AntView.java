@@ -254,6 +254,11 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		menuManager.add(horizontalOrientationAction);
 		menuManager.add(verticalOrientationAction);
 		menuManager.add(showTargetViewerAction);
+		if (getProjects().length > 0) {
+			// If any projects have been added to the view during startup,
+			// begin listening for resource changes
+			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		}
 	}
 	
 	private IDialogSettings getDialogSettings() {
@@ -867,7 +872,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			projectNodes.add(project);
 		}
 		restoredRoot = new RootNode((ProjectNode[]) projectNodes.toArray(new ProjectNode[projectNodes.size()]));
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
 	/**
