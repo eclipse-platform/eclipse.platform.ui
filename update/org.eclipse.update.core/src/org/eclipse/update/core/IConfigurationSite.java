@@ -41,6 +41,7 @@ public interface IConfigurationSite {
 	/**
 	 * 
 	 * @param feature the Feature to install
+	 * @param installConfiguration the configuration to modify
 	 * @param monitor the Progress Monitor
 	 */
 	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;

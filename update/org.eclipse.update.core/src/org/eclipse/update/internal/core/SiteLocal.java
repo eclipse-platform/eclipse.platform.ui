@@ -139,7 +139,8 @@ public class SiteLocal implements ILocalSite, IWritable {
 			//FIXME: location points to a file, not a directory, 
 			// check UpdateManagerUtils.getURL()
 			// use / and File.Separator, ATTN Linux/Unix issues ?
-			createNewCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
+			IInstallConfiguration newDefaultConfiguration = cloneCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
+			addConfiguration(newDefaultConfiguration);			
 
 			// notify listeners
 			Object[] localSiteListeners = listeners.getListeners();
@@ -286,7 +287,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#createNewCurrentConfiguration(String)
 	 */
-	public IInstallConfiguration createNewCurrentConfiguration(URL newFile, String name) throws CoreException {
+	public IInstallConfiguration cloneCurrentConfiguration(URL newFile, String name) throws CoreException {
 		
 		// save previous current configuration
 		if (getCurrentConfiguration()!=null)	((InstallConfiguration)getCurrentConfiguration()).save();
@@ -302,8 +303,6 @@ public class SiteLocal implements ILocalSite, IWritable {
 			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
-			// add as current 
-			addConfiguration(result);
 			
 		} catch (MalformedURLException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -318,7 +317,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 */
 	public void revertTo(IInstallConfiguration configuration) throws CoreException {
 		// create a configuration
-		IInstallConfiguration newConfiguration = createNewCurrentConfiguration(null, configuration.getLabel());
+		IInstallConfiguration newConfiguration = cloneCurrentConfiguration(null, configuration.getLabel());
 		// process delta
 		// the Configured featuresConfigured are the same as the old configuration
 		// the unconfigured featuresConfigured are the rest...

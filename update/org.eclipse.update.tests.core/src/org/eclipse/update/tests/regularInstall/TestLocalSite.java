@@ -84,11 +84,13 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
 		
 		// we are not checking if this is read only
-		IInstallConfiguration newConfig = site.createNewCurrentConfiguration(null,"new Label");
+		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		//IInstallConfiguration newConfig = site.getCurrentConfiguration();
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
 		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
+
 				
 		// teh current one points to a real fature
 		// does not throw error.
@@ -143,9 +145,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
 		
 		// we are not checking if this is read only
-		IInstallConfiguration newConfig = site.createNewCurrentConfiguration(null,"new Label");
+		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
 		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
 		site.save();
 		
@@ -205,12 +208,11 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
 		
 		// we are not checking if this is read only
-		IInstallConfiguration newConfig = site.createNewCurrentConfiguration(null,"new Label");
+		IInstallConfiguration newConfig = site.cloneCurrentConfiguration(null,"new Label");
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
 		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		site.addConfiguration(newConfig);		
 		configSite.install(feature,null);
-		// why d I add, i didn;t create a new Site Config ?
-		//newConfig.addConfigurationSite(configSite);
 		site.save();
 
 		//do not cleanup, we want to reuse previously created local site

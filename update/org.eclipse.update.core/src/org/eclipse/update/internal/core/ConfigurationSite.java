@@ -112,7 +112,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			//FIXME: throw error
 		}
 		
-			//Start UOW ?
+		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
 		activity.setLabel(feature.getIdentifier().toString());
 		activity.setDate(new Date());
@@ -120,7 +120,6 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		IFeatureReference installedFeature = getSite().install(feature,monitor);
 		getConfigurationPolicy().configure(installedFeature);
 
-		
 		// everything done ok
 		activity.setStatus(IActivity.STATUS_OK);
 		((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);

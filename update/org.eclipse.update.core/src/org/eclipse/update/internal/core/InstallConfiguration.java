@@ -341,6 +341,15 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 			ConfigurationPolicy configurationPolicy = (ConfigurationPolicy)element.getConfigurationPolicy();
 			IPlatformConfiguration.ISitePolicy sitePolicy = runtimeConfiguration.createSitePolicy(configurationPolicy.getPolicy(),configurationPolicy.getPlugins());
 			runtimeConfiguration.createSiteEntry(element.getSite().getURL(),sitePolicy);	
+			System.out.println("---------------------------------->"+runtimeConfiguration.getConfigurationLocation().toExternalForm());
+			try {
+				runtimeConfiguration.save();
+			} catch (IOException e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save Platform Configuration ", e);
+				throw new CoreException(status);
+			}
+			
 		}
 		
 	}
