@@ -4,8 +4,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
 
 /**
@@ -22,6 +21,7 @@ public class WorkbenchEditorsAction extends Action {
 	 */
 	public WorkbenchEditorsAction(WorkbenchWindow window) {
 		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
+		setAccelerator(SWT.CTRL | SWT.SHIFT | 'W');
 		this.window = window;
 
 	}

@@ -916,6 +916,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			closeAllPerspsAction.setText(WorkbenchMessages.getString("Workbench.closeAllPerspectives")); //$NON-NLS-1$
 			buildAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
 			buildAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
+			buildAction.setAccelerator(SWT.CTRL | 'B');
 			rebuildAllAction.setText(WorkbenchMessages.getString("Workbench.rebuildAll")); //$NON-NLS-1$
 			rebuildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.rebuildAllToolTip")); //$NON-NLS-1$
 		}

@@ -1,7 +1,6 @@
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.ViewPart;
+import org.eclipse.swt.SWT;
 
 public class ShowViewMenuAction extends ShowPartPaneMenuAction {
 
@@ -19,6 +18,7 @@ public ShowViewMenuAction(WorkbenchWindow window) {
 protected void initText() {
 	setText(WorkbenchMessages.getString("ShowViewMenuAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ShowViewMenuAction.toolTip")); //$NON-NLS-1$
+	setAccelerator(SWT.CTRL | SWT.F10);
 }
 /**
  * Show the pane title menu.

@@ -13,6 +13,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -46,6 +47,7 @@ public NewWizardAction() {
 	setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
 	setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
 	setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip"));	 //$NON-NLS-1$
+	setAccelerator(SWT.CTRL | 'N'); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 }
 /* (non-Javadoc)

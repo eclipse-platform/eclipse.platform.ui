@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 
 /**
@@ -13,6 +14,7 @@ public class ActivateEditorAction extends PageEventAction {
 protected ActivateEditorAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ActivateEditorAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ActivateEditorAction.toolTip")); //$NON-NLS-1$
+	setAccelerator(SWT.F12);
 	window.getPartService().addPartListener(this);
 	updateState();
 }
