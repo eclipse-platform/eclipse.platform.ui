@@ -64,7 +64,7 @@ public class HelpApplication
 		metadata = new File(Platform.getLocation().toFile(), ".metadata/"); //$NON-NLS-1$
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			System.out.println(
-				HelpBaseResources.getString("HelpApplication.couldNotStart")); //$NON-NLS-1$
+				HelpBaseResources.getString("HelpApplication.couldNotStart", Platform.getLogFileLocation().toOSString())); //$NON-NLS-1$
 			return EXIT_OK;
 		}
 
