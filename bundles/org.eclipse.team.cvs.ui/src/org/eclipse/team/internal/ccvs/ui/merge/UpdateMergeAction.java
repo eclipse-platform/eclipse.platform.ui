@@ -18,12 +18,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
@@ -40,7 +37,11 @@ public class UpdateMergeAction extends UpdateSyncAction {
 	public UpdateMergeAction(CVSSyncCompareInput model, ISelectionProvider sp, String label, Shell shell) {
 		super(model, sp, label, shell);
 	}
-		
+		 
+	 protected void runUpdateDeletions(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+	 		 runUpdateDeep(nodes, manager, monitor);
+	 }
+		 
 	/*
 	 * @see UpdateSyncAction#runUpdateDeep(IProgressMonitor, List, RepositoryManager)
  	 * incoming-change
@@ -104,20 +105,7 @@ public class UpdateMergeAction extends UpdateSyncAction {
 		final IResource local = element.getLocal();
 		try {
 			if(remote==null) {
-				// Need a runnable so that move/delete hook is disabled
-				final CoreException[] exception = new CoreException[] { null };
-				CVSWorkspaceRoot.getCVSFolderFor(local.getParent()).run(new ICVSRunnable() {
-					public void run(IProgressMonitor monitor) throws CVSException {
-						try {
-							local.delete(false, monitor);
-						} catch(CoreException e) {
-							exception[0] = e;
-						}
-					}
-				}, monitor);
-				if (exception[0] != null) {
-					throw exception[0];
-				}
+				local.delete(false, monitor);
 			} else {
 				if(remote.isContainer()) {
 					if(!local.exists()) {

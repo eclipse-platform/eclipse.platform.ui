@@ -306,7 +306,7 @@ public class UpdateSyncAction extends MergeAction {
 			}
 			
 			if (updateDeletions.size() > 0) {
-				runUpdateShallow((ITeamNode[])updateDeletions.toArray(new ITeamNode[updateDeletions.size()]), manager, Policy.subMonitorFor(monitor, 100));
+		 		 runUpdateDeletions((ITeamNode[])updateDeletions.toArray(new ITeamNode[updateDeletions.size()]), manager, Policy.subMonitorFor(monitor, 100));
 			}			
 			if (updateShallow.size() > 0) {
 				runUpdateShallow((ITeamNode[])updateShallow.toArray(new ITeamNode[updateShallow.size()]), manager, Policy.subMonitorFor(monitor, 100));
@@ -341,6 +341,9 @@ public class UpdateSyncAction extends MergeAction {
 			resource.delete(false /* force */, monitor);
 	}
 
+	 protected void runUpdateDeletions(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
+	 		 manager.update(getIResourcesFrom(nodes), new Command.LocalOption[] { Command.DO_NOT_RECURSE }, false, monitor);
+	 }
 	
 	protected void runUpdateDeep(ITeamNode[] nodes, RepositoryManager manager, IProgressMonitor monitor) throws TeamException {
 		manager.update(getIResourcesFrom(nodes), Command.NO_LOCAL_OPTIONS, false, monitor);
