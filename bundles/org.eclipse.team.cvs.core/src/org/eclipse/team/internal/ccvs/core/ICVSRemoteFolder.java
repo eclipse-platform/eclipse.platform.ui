@@ -21,6 +21,9 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
   */
 public interface ICVSRemoteFolder extends ICVSRemoteResource, ICVSFolder {
 	
+	// This constant is the name of the folder at the root of a repository
+	public static final String REPOSITORY_ROOT_FOLDER_NAME = ""; //$NON-NLS-1$
+	
 	/**
 	 * Return the context of this handle. The returned tag can be a branch or
 	 * version tag.

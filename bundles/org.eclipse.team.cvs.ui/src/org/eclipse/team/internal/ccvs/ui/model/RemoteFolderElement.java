@@ -10,21 +10,25 @@
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui.model;
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
-public class RemoteFolderElement extends RemoteResourceElement implements IDeferredWorkbenchAdapter{
+public class RemoteFolderElement extends RemoteResourceElement implements IDeferredWorkbenchAdapter {
 
 
     /**
@@ -61,13 +65,20 @@ public class RemoteFolderElement extends RemoteResourceElement implements IDefer
     }
 
     public void fetchDeferredChildren(Object o, IElementCollector collector, IProgressMonitor monitor) {
+    	// If it's not a folder, return an empty array
+		if (!(o instanceof ICVSRemoteFolder)) {
+			collector.add(new Object[0], monitor);
+		}
         try {
             monitor = Policy.monitorFor(monitor);
             monitor.beginTask(Policy.bind("RemoteFolderElement.fetchingRemoteChildren", getLabel(o)), 100); //$NON-NLS-1$
-            collector.add(fetchChildren(o, Policy.subMonitorFor(monitor, 90)), Policy.subMonitorFor(monitor, 10));
-        } catch (TeamException e) {
-            CVSUIPlugin.log(e);
-        } finally {
+			FetchMembersOperation operation = new FetchMembersOperation(null, (ICVSRemoteFolder)o, collector);
+			operation.run(Policy.subMonitorFor(monitor, 100));
+        } catch (InvocationTargetException e) {
+			CVSUIPlugin.log(CVSException.wrapException(e));
+		} catch (InterruptedException e) {
+			// Cancelled by the user;
+		} finally {
             monitor.done();
         }
     }

@@ -10,16 +10,23 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.model;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 public class CVSTagElement extends CVSModelElement implements IDeferredWorkbenchAdapter {
@@ -90,10 +97,26 @@ public class CVSTagElement extends CVSModelElement implements IDeferredWorkbench
 	}
 	
 	public void fetchDeferredChildren(Object o, IElementCollector collector, IProgressMonitor monitor) {
-		try {
-			collector.add(fetchChildren(o, monitor), monitor);
-		} catch (TeamException e) {
-			CVSUIPlugin.log(e);
+		if (tag.getType() == CVSTag.HEAD) {
+			try {
+				monitor = Policy.monitorFor(monitor);
+				RemoteFolder folder = new RemoteFolder(null, root, ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, tag);
+				monitor.beginTask(Policy.bind("RemoteFolderElement.fetchingRemoteChildren", root.toString()), 100); //$NON-NLS-1$
+				FetchMembersOperation operation = new FetchMembersOperation(null, folder, collector);
+				operation.run(Policy.subMonitorFor(monitor, 100));
+			} catch (InvocationTargetException e) {
+				CVSUIPlugin.log(CVSException.wrapException(e));
+			} catch (InterruptedException e) {
+				// Cancelled by the user;
+			} finally {
+				monitor.done();
+			}
+		} else {
+			try {
+				collector.add(fetchChildren(o, monitor), monitor);
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e);
+			}
 		}
 	}
 
