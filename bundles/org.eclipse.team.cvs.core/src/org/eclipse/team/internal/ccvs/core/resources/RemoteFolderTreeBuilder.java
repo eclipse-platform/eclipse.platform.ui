@@ -606,6 +606,9 @@ public class RemoteFolderTreeBuilder {
 	
 	private void updateRevision(IPath path, String revision) throws CVSException {
 		RemoteFolderTree folder = (RemoteFolderTree)remoteFolderTable.get(path.removeLastSegments(1).toString());
+		if (folder == null) {
+			throw new CVSException(Policy.bind("RemoteFolderTreeBuilder.missingParent", path.toString(), revision));//$NON-NLS-1$
+		}
 		((RemoteFile)folder.getFile(path.lastSegment())).setRevision(revision);
 	}
 	
