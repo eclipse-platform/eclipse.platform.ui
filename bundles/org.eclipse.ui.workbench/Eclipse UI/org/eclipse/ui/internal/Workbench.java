@@ -1130,7 +1130,9 @@ public final class Workbench implements IWorkbench {
                     getPerspectiveRegistry().getDefaultPerspective(),
                     getDefaultPageInput());
         } catch (WorkbenchException e) {
-            ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages
+            // Don't use the window's shell as the dialog parent, 
+            // as the window is not open yet (bug 76724).
+            ErrorDialog.openError(null, WorkbenchMessages
                     .getString("Problems_Opening_Page"), //$NON-NLS-1$
                     e.getMessage(), e.getStatus());
         }
