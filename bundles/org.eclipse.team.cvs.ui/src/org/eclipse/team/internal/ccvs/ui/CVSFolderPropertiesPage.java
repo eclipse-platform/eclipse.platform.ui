@@ -80,7 +80,7 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 				
 				// Static-ness
 				if (syncInfo.getIsStatic()) {
-					createLabel(composite, Policy.bind("CVSFolderPropertiesPage.static"));
+					createLabel(composite, Policy.bind("CVSFolderPropertiesPage.static")); //$NON-NLS-1$
 					createLabel(composite, syncInfo.getIsStatic() ? Policy.bind("yes") : Policy.bind("no")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				

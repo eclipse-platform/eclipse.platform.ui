@@ -102,10 +102,10 @@ public class TagConfigurationDialog extends Dialog {
 	private final int NOREFRESH_HEIGHT = 550;
 	
 	// preference keys
-	private final String ALLOWREFRESH_WIDTH_KEY = "AllowRefreshWidth";
-	private final String ALLOWREFRESH_HEIGHT_KEY = "AllowRefreshHeight";
-	private final String NOREFRESH_WIDTH_KEY = "NoRefreshWidth";
-	private final String NOREFRESH_HEIGHT_KEY = "NoRefreshHeight";
+	private final String ALLOWREFRESH_WIDTH_KEY = "AllowRefreshWidth"; //$NON-NLS-1$
+	private final String ALLOWREFRESH_HEIGHT_KEY = "AllowRefreshHeight"; //$NON-NLS-1$
+	private final String NOREFRESH_WIDTH_KEY = "NoRefreshWidth"; //$NON-NLS-1$
+	private final String NOREFRESH_HEIGHT_KEY = "NoRefreshHeight"; //$NON-NLS-1$
 
 	// buttons
 	private Button addSelectedTagsButton;

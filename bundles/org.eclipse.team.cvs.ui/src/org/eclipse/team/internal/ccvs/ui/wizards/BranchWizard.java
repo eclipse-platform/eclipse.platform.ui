@@ -53,7 +53,7 @@ public class BranchWizard extends Wizard {
 	
 	public void addPages() {
 		boolean allResourcesSticky = areAllResourcesSticky(resources);
-		String versionName = "";		
+		String versionName = "";		 //$NON-NLS-1$
 		try {
 			if(allResourcesSticky) {
 				IResource stickyResource = resources[0];									
@@ -67,7 +67,7 @@ public class BranchWizard extends Wizard {
 			}
 		} catch(CVSException e) {
 			CVSUIPlugin.log(e.getStatus());
-			versionName = "";
+			versionName = ""; //$NON-NLS-1$
 		}
 		mainPage = new BranchWizardPage("versionPage", Policy.bind("BranchWizard.createABranch"), allResourcesSticky, versionName, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH)); //$NON-NLS-1$ //$NON-NLS-2$
 		addPage(mainPage);
