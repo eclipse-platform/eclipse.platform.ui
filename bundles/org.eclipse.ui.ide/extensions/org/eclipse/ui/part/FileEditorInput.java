@@ -60,10 +60,10 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof FileEditorInput))
+        if (!(obj instanceof IFileEditorInput))
             return false;
-        FileEditorInput other = (FileEditorInput) obj;
-        return file.equals(other.file);
+        IFileEditorInput other = (IFileEditorInput) obj;
+        return file.equals(other.getFile());
     }
 
     /* (non-Javadoc)
