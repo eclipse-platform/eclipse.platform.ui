@@ -360,12 +360,17 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	 */
 	private void detectUnpackedPlugin(File file) {
 		// unpacked plugin
+		
+		// TODO in the future, assume that the timestamps are not
+		// reliable
 		long dirTimestamp = file.lastModified();
 		File pluginFile = new File(file, META_MANIFEST_MF);
 		try {
 			// First, check if has valid bundle manifest
 			BundleManifest bundleManifest = new BundleManifest(pluginFile);
 			if (bundleManifest.exists()) {
+				// Note: this check may not always work, if it was possible for the plugin to
+				// be installed with a plugin folder with an older timestamp
 				if (dirTimestamp <= pluginsChangeStamp
 						&& pluginFile.lastModified() <= pluginsChangeStamp)
 					return;
@@ -378,13 +383,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 					pluginFile = new File(file, FRAGMENT_XML); //$NON-NLS-1$
 				}
 				if (pluginFile.exists() && !pluginFile.isDirectory()) {
-					// TODO in the future, assume that the timestamps are not
-					// reliable,
-					// or that the user manually modified an existing plugin,
-					// so
-					// the apparently modifed plugin may actually be configured
-					// already.
-					// We will need to double check for this. END to do.
+					// Note: this check may not always work, if it was possible for the plugin to
+					// be installed with a plugin folder with an older timestamp
 					if (dirTimestamp <= pluginsChangeStamp
 							&& pluginFile.lastModified() <= pluginsChangeStamp)
 						return;
@@ -466,22 +466,29 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (pluginsChangeStamp > 0)
 			return pluginsChangeStamp;
 		
-		long start = 0;
-		if (ConfigurationActivator.DEBUG)
-			start = (new Date()).getTime();
-		String[] plugins = getPlugins();
-		// compute stamp for the features directory
-		long dirStamp = 0;
+//		long start = 0;
+//		if (ConfigurationActivator.DEBUG)
+//			start = (new Date()).getTime();
+		// compute stamp for the plugins directory
+//		long dirStamp = 0;
 		if (PlatformConfiguration.supportsDetection(resolvedURL)) {
 			File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 			File pluginsDir = new File(root, PLUGINS);
-			dirStamp = pluginsDir.lastModified();
+//			dirStamp = pluginsDir.lastModified();
+			pluginsChangeStamp = pluginsDir.lastModified();
 		}
-		pluginsChangeStamp = Math.max(dirStamp, computeStamp(plugins));
-		if (ConfigurationActivator.DEBUG) {
-			long end = (new Date()).getTime();
-			Utils.debug(resolvedURL.toString() + " plugin stamp: " + pluginsChangeStamp + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		}
+		
+		// Note: we used to get the timestamp on each plugin directory, but that is not needed because
+		// the parent folder changes timestamp when plugins are added/removed. For those plugins that change
+		// in place, osgi takes care of clearing the cache, and the update configurator to install them again
+		// when the osgi.checkConfiguration is set to true.
+		
+//		String[] plugins = getPlugins();
+//		pluginsChangeStamp = Math.max(dirStamp, computeStamp(plugins));
+//		if (ConfigurationActivator.DEBUG) {
+//			long end = (new Date()).getTime();
+//			Utils.debug(resolvedURL.toString() + " plugin stamp: " + pluginsChangeStamp + " in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+//		}
 		return pluginsChangeStamp;
 	}
 
