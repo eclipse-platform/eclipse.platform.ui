@@ -1,7 +1,7 @@
 /**
  * A NotifyingJob is a job that informs a listener when it completes.
  */
-package org.eclipse.ui.internal.progress;
+package org.eclipse.jface.progress;
 
 import java.util.*;
 

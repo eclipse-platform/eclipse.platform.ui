@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal.progress;
+package org.eclipse.jface.progress;
 
 import org.eclipse.core.runtime.IStatus;
 

@@ -60,6 +60,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.progress.IJobCompletionListener;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
@@ -111,7 +112,6 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.BooleanJobCompletionListener;
-import org.eclipse.ui.internal.progress.IJobCompletionListener;
 import org.eclipse.update.core.SiteManager;
 
 /**

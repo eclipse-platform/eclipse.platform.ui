@@ -2,6 +2,7 @@ package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.progress.*;
 
 /**
  * The BooleanJobCompletionListener is a convenience class that

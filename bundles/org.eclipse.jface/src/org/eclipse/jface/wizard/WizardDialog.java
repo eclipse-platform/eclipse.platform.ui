@@ -13,10 +13,11 @@ package org.eclipse.jface.wizard;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.progress.UIJob;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
@@ -745,27 +746,36 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 	public void run(
 		boolean fork,
 		boolean cancelable,
-		IRunnableWithProgress runnable)
+		final IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException {
 		// The operation can only be canceled if it is executed in a separate thread.
 		// Otherwise the UI is blocked anyway.
-		Object state = null;
-		if (activeRunningOperations == 0)
-			state = aboutToStart(fork && cancelable);
+		UIJob job = new UIJob() {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-		activeRunningOperations++;
-		try {
-			ModalContext.run(
-				runnable,
-				fork,
-				getProgressMonitor(),
-				getShell().getDisplay());
-		} finally {
-			activeRunningOperations--;
-			//Stop if this is the last one
-			if (state != null)
-				stopped(state);
-		}
+				try {
+					runnable.run(monitor);
+					return Status.OK_STATUS;
+				} catch (InvocationTargetException e) {
+					Throwable targetExc = e.getTargetException();
+					return new Status(
+						Status.WARNING,
+						"org.eclipse.jface",
+						0,
+						"Internal Error:",
+						targetExc);
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+
+			}
+		};
+		
+
+		JobManager.getInstance().schedule(job);
+		
+		
+		
 	}
 	/**
 	 * Saves the enabled/disabled state of the given control in the
