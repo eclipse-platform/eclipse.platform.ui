@@ -158,5 +158,25 @@
          id="org.eclipse.help.ui.searchPage">
       </page>
    </extension>
+   
+   <extension id="helpsearchhit"
+      point="org.eclipse.core.resources.markers"
+      name="%helpsearchhitname">
+      <super type="org.eclipse.search.searchmarker"/>
+      <attribute name="href"/>
+      <attribute name="label"/>   
+      <attribute name="resultfof"/>
+      <attribute name="order"/>
+   </extension>
+   <extension point="org.eclipse.search.searchResultSorters"> 
+    <sorter 
+        id="org.eclipse.help.ui.helpsearchhitsorter" 
+        pageId="org.eclipse.help.ui.searchPage" 
+        label="%helpsearchhitsorter.label" 
+        tooltip="%helpsearchhitsorter.tooltip" 
+        icon="icons/search_sortmatch.gif" 
+        class="org.eclipse.help.ui.internal.search.HelpSearchSorter"> 
+    </sorter> 
+   </extension> 
 
 </plugin>
