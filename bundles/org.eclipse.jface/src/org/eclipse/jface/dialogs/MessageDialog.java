@@ -80,6 +80,10 @@ public class MessageDialog extends Dialog {
 	 * Image, or <code>null</code> if none.
 	 */
 	private Image image = null;
+	
+	/**
+	 * The custom dialog area.	 */
+	private Control customArea;
 /**
  * Create a message dialog.
  * Note that the dialog will have no visual representation (no widgets)
@@ -262,11 +266,11 @@ protected Control createDialogArea(Composite parent) {
 	composite.setFont(parent.getFont());
 
 	// allow subclasses to add custom controls
-	Control customArea = createCustomArea(composite);
+	customArea = createCustomArea(composite);
 	
 	//If it is null create a dummy label for spacing purposes
 	if(customArea == null)
-		new Label(composite,SWT.NULL);
+		customArea = new Label(composite,SWT.NULL);
 
 	return composite;
 }
@@ -434,4 +438,17 @@ public static void openWarning(Shell parent, String title, String message) {
 	dialog.open();
 	return;
 }
+/**
+ * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite, int, java.lang.String, boolean)
+ */
+protected Button createButton(Composite parent,int id,String label,boolean defaultButton) {
+	
+	Button button = super.createButton(parent, id, label, defaultButton);
+	//Be sure to set the focus if the custom area cannot so as not
+	//to lose the defaultButton.
+	if(defaultButton && !customArea.isFocusControl())
+		button.setFocus();
+	return button;
+}
+
 }
