@@ -244,7 +244,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * @return true if a new description was written, and false if it wasn't written
 	 * because it was unchanged
 	 */
-	public boolean internalWrite(IProject target, IProjectDescription description, int updateFlags) throws CoreException {
+	public boolean internalWrite(IProject target, IProjectDescription description, int updateFlags, boolean hasPublicChanges, boolean hasPrivateChanges) throws CoreException {
 		IPath location = locationFor(target);
 		if (location == null) {
 			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
@@ -252,7 +252,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 		getStore().writeFolder(location.toFile());
 		//write the project's private description to the metadata area
-		getWorkspace().getMetaArea().writePrivateDescription(target);
+		if (hasPrivateChanges)
+			getWorkspace().getMetaArea().writePrivateDescription(target);
+		if (!hasPublicChanges)
+			return false;
 		//can't do anything if there's no description
 		if (description == null)
 			return false;

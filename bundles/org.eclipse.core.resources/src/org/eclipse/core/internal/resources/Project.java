@@ -890,8 +890,7 @@ public class Project extends Container implements IProject {
 				if (hadSavedDescription && !status.isOK())
 					throw new CoreException(status);
 				//write the new description to the .project file
-				if (hasPublicChanges)
-					writeDescription(oldDescription, updateFlags);
+				writeDescription(oldDescription, updateFlags, hasPublicChanges, hasPrivateChanges);
 				//increment the content id even for private changes
 				info = getResourceInfo(false, true);
 				info.incrementContentId();
@@ -977,27 +976,28 @@ public class Project extends Container implements IProject {
 	}
 
 	/**
-	 * Writes the project description file to disk.  This is the only method
-	 * that should ever be writing the description, because it ensures that
-	 * the description isn't then immediately discovered as an incoming
-	 * change and read back from disk.
+	 * Writes the project's current description file to disk.
 	 */
 	public void writeDescription(int updateFlags) throws CoreException {
-		writeDescription(internalGetDescription(), updateFlags);
+		writeDescription(internalGetDescription(), updateFlags, true, true);
 	}
-
 	/**
 	 * Writes the project description file to disk.  This is the only method
 	 * that should ever be writing the description, because it ensures that
 	 * the description isn't then immediately discovered as an incoming
 	 * change and read back from disk.
+	 * @param description The description to write
+	 * @param updateFlags The write operation update flags
+	 * @param hasPublicChanges Whether the public sections of the description have changed
+	 * @param hasPrivateChanges Whether the private sections of the description have changed
+	 * @throws CoreException On failure to write the description
 	 */
-	public void writeDescription(IProjectDescription description, int updateFlags) throws CoreException {
+	public void writeDescription(IProjectDescription description, int updateFlags, boolean hasPublicChanges, boolean hasPrivateChanges) throws CoreException {
 		if (ProjectDescription.isReading)
 			return;
 		ProjectDescription.isWriting = true;
 		try {
-			getLocalManager().internalWrite(this, description, updateFlags);
+			getLocalManager().internalWrite(this, description, updateFlags, hasPublicChanges, hasPrivateChanges);
 		} finally {
 			ProjectDescription.isWriting = false;
 		}
