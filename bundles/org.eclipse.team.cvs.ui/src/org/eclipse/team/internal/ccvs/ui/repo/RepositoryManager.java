@@ -238,7 +238,7 @@ public class RepositoryManager {
 	 */
 	public void rootRemoved(ICVSRepositoryLocation root) {
 		RepositoryRoot repoRoot = (RepositoryRoot)repositoryRoots.remove(root.getLocation());
-		if (root != null)
+		if (repoRoot != null)
 			broadcastRepositoryChange(repoRoot);
 	}
 	
