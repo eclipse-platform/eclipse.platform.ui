@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -653,7 +654,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 			}
 		} catch (Exception e) {		
 			
-			Status status = new Status(Status.ERROR, 
+			Status status = new Status(IStatus.ERROR, 
 				DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 				0, "Exception occurred when the Memory  View is disposed", e); //$NON-NLS-1$
 		DebugUIPlugin.log(status);}
@@ -841,7 +842,7 @@ public class MemoryView extends PageBookView implements IDebugView, IMemoryBlock
 		}
 		catch(SWTException se)
 		{
-			Status status = new Status(Status.ERROR, 
+			Status status = new Status(IStatus.ERROR, 
 					DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0, "SWT Exception occurred in Memory View selection changed", se); //$NON-NLS-1$
 			DebugUIPlugin.log(status);

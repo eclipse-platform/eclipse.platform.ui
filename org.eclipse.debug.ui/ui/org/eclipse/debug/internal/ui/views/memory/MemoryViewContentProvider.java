@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -229,7 +230,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				if(memoryBuffer == null)
 				{
 					Status stat = new Status(
-							Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+							IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 							DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_RETRIEVE_CONTENT), null 
 					);
 					DebugException e = new DebugException(stat);
@@ -257,7 +258,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				if (memory == null)
 				{
 					Status stat = new Status(
-							Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+							IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 							DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_RETRIEVE_CONTENT), null 
 					);
 					DebugException e = new DebugException(stat);
@@ -525,7 +526,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				if (memory == null)
 				{
 					Status stat = new Status(
-							Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+							IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 							DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_RETRIEVE_CONTENT), null 
 					);
 					DebugException e = new DebugException(stat);
@@ -551,7 +552,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				if (memory == null)
 				{
 					Status stat = new Status(
-							Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+							IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 							DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_RETRIEVE_CONTENT), null 
 					);
 					DebugException e = new DebugException(stat);

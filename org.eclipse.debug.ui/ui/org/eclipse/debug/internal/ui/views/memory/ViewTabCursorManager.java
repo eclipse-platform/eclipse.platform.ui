@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
@@ -206,7 +207,7 @@ public class ViewTabCursorManager
 					}
 					catch (DebugException e1)
 					{
-						Status status = new Status(Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+						Status status = new Status(IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 								0, e1.getMessage(), e1);
 						DebugUIPlugin.log(status);
 						return;

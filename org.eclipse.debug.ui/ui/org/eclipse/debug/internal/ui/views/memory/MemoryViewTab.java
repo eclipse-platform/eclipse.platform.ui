@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -341,7 +342,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			if(((IExtendedMemoryBlock)fMemoryBlock).getBigBaseAddress() == null)
 			{
 				Status stat = new Status(
-						Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+						IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 						DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS), null 
 				);
 				DebugException e = new DebugException(stat);
@@ -542,7 +543,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			fTableViewer.setLabelProvider(labelProvider);
 
 			Status stat = new Status(
-					Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					DebugException.INTERNAL_ERROR, "renderer property is not defined for: " + fRenderingId, null  //$NON-NLS-1$
 			);
 			DebugUIPlugin.log(stat);
@@ -585,7 +586,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		if (!ok)
 		{
 			Status stat = new Status(
-				 Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				 IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 				 DebugException.INTERNAL_ERROR, DebugUIMessages.getString(FORMAT_IS_INVALID), null 
 				);
 			DebugException e = new DebugException(stat);
@@ -1443,7 +1444,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				if (address == null)
 				{	
 					Status stat = new Status(
-							Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+							IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 							DebugException.INTERNAL_ERROR, DebugUIMessages.getString(UNABLE_TO_GET_BASE_ADDRESS), null 
 					);
 					DebugException e = new DebugException(stat);
@@ -1999,7 +2000,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				if (!(fMemoryBlock instanceof IExtendedMemoryBlock))
 				{
 					Status stat = new Status(
-					 Status.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					 IStatus.ERROR, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					 DebugException.NOT_SUPPORTED, DebugUIMessages.getString(ADDRESS_IS_OUT_OF_RANGE), null 
 					);
 					DebugException e = new DebugException(stat);
