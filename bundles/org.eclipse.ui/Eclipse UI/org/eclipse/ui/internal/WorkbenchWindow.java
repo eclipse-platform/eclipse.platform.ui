@@ -499,8 +499,8 @@ protected MenuManager createMenuManager() {
 			else
 				return text.substring(0, index) + text.substring(index + 1);
 		}
-		public boolean getEnabledAllowed(IContributionItem item) {
-			return true;
+		public Boolean getEnabled(IContributionItem item) {
+			return null;
 		}
 	});
 	return result;

@@ -168,8 +168,8 @@ public IContributionItem[] getItems() {
 public IContributionManagerOverrides getOverrides() {
 	if (overrides == null) {
 		overrides = new IContributionManagerOverrides() {
-			public boolean getEnabledAllowed(IContributionItem item) {
-				return true;
+			public Boolean getEnabled(IContributionItem item) {
+				return null;
 			}
 			public Integer getAccelerator(IContributionItem item) {
 				return null;

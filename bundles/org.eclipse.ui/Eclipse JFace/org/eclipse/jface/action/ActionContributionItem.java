@@ -433,7 +433,8 @@ public boolean isDynamic() {
 protected boolean isEnabledAllowed() {
 	if (getParent() == null)
 		return true;
-	return getParent().getOverrides().getEnabledAllowed(this);
+	Boolean value = getParent().getOverrides().getEnabled(this);
+	return (value == null) ? true : value.booleanValue();
 }
 
 /**
@@ -457,7 +458,7 @@ public void update(String propertyName) {
 		boolean imageChanged = propertyName == null || propertyName.equals(Action.IMAGE);
 		boolean tooltipTextChanged = propertyName == null || propertyName.equals(Action.TOOL_TIP_TEXT);
 		boolean enableStateChanged = propertyName == null || propertyName.equals(Action.ENABLED) || 
-			propertyName.equals(IContributionManagerOverrides.P_ENABLE_ALLOWED);
+			propertyName.equals(IContributionManagerOverrides.P_ENABLED);
 		boolean checkChanged = (action.getStyle() == IAction.AS_CHECK_BOX) &&
 			(propertyName == null || propertyName.equals(Action.CHECKED));
 					

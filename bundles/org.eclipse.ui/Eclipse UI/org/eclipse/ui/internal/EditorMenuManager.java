@@ -30,7 +30,7 @@ public class EditorMenuManager extends SubMenuManager {
 			IContributionItem[] items = EditorMenuManager.super.getItems();
 			for (int i = 0; i < items.length; i++) {
 				IContributionItem item = items[i];
-				item.update(IContributionManagerOverrides.P_ENABLE_ALLOWED);
+				item.update(IContributionManagerOverrides.P_ENABLED);
 			}
 			// update the wrapped menus
 			if (wrappers != null) {
@@ -40,10 +40,13 @@ public class EditorMenuManager extends SubMenuManager {
 				}
 			}
 		}
-		public boolean getEnabledAllowed(IContributionItem item) {
-			return ((item instanceof ActionContributionItem) &&
+		public Boolean getEnabled(IContributionItem item) {
+			if (((item instanceof ActionContributionItem) &&
 				(((ActionContributionItem)item).getAction() instanceof RetargetAction)) ||
-				enabledAllowed;
+				enabledAllowed)
+				return null;  
+			else
+				return Boolean.FALSE;	
 		}
 		public Integer getAccelerator(IContributionItem item) {
 			return null;

@@ -18,22 +18,22 @@ package org.eclipse.jface.action;
  */
 public interface IContributionManagerOverrides {
 	/**
-	 * Id for the enable allowed property. Value is 
-	 * <code>"enableAllowed"</code>.
+	 * Id for the enabled property. Value is <code>"enabled"</code>.
 	 * 
 	 * @since 2.0
 	 */
-	public final static String P_ENABLE_ALLOWED = "enableAllowed";
+	public final static String P_ENABLED = "enabled";
 	
 	/**
-	 * Returns true if the given contribution item is 
-	 * allowed to enable.
+	 * Returns <code>Boolean.TRUE</code> if the given contribution item should 
+	 * be enabled, <code>Boolean.FALSE</code> if the item should be disabled, and
+	 * <code>null</code> if the item may determine its own enablement.
 	 * 
-	 * @param the contribution item for which enable allowed is 
+	 * @param the contribution item for which the enable override value is 
 	 * determined
 	 * @since 2.0
 	 */
-	public boolean getEnabledAllowed(IContributionItem item);
+	public Boolean getEnabled(IContributionItem item);
 	
 	public Integer getAccelerator(IContributionItem item);
 	public String getAcceleratorText(IContributionItem item);
