@@ -212,18 +212,14 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		try {
 			IStackFrame frame = thread.getTopStackFrame();
 			if (frame != null && frame.equals(fLastStackFrame)) {
-				Object[] objectsToUpdate= null;
+				Object[] objectsToUpdate= new Object[]{thread, frame};
 				if (wasTimedOut) {
 					getLaunchViewer().updateStackFrameIcons(thread);
-					objectsToUpdate= new Object[]{thread};
-				} else {
-					objectsToUpdate= new Object[]{thread, frame};
 				}
 				getLaunchViewer().update(objectsToUpdate, new String[] {IBasicPropertyConstants.P_IMAGE, IBasicPropertyConstants.P_TEXT});
 				if (!evaluationEvent) {
 					getLaunchViewer().setSelection(new StructuredSelection(frame));
 				}
-				
 				return;
 			}
 		} catch (DebugException e) {
