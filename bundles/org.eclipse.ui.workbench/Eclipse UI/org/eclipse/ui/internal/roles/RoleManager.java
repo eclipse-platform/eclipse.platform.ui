@@ -17,7 +17,7 @@ package org.eclipse.ui.internal.roles;
 public class RoleManager {
 
 	private static RoleManager singleton;
-	private boolean filterRoles = false;
+	private boolean filterRoles = true;
 
 	private Role[] roles;
 
