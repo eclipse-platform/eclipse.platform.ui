@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.internal.layout.LayoutUtil;
 
 public class PerspectiveBarManager extends ToolBarManager {
 
@@ -168,9 +169,19 @@ public class PerspectiveBarManager extends ToolBarManager {
 	public void update(boolean force) {
 		// TODO Auto-generated method stub
 		super.update(force);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.ToolBarManager#relayout(org.eclipse.swt.widgets.ToolBar, int, int)
+	 */
+	protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
+		super.relayout(toolBar, oldCount, newCount);
+		
 		updateCoolBar();
-    	if (coolBar != null)
-    		coolBar.getParent().layout(true);
+		
+    	if (coolBar != null) {
+    		LayoutUtil.resize(coolBar);
+    	}
 	}
 	
 	private void updateCoolBar() {

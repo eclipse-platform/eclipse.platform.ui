@@ -644,6 +644,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.Presentation#setBounds(org.eclipse.swt.graphics.Rectangle)
 	 */
 	public void setBounds(Rectangle bounds) {
+		tabFolder.aboutToResize();
 		tabFolder.getControl().setBounds(bounds);
 		layout(false);
 	}

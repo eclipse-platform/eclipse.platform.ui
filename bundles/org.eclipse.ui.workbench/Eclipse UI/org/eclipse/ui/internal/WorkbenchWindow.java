@@ -85,6 +85,8 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.layout.CacheWrapper;
+import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.layout.TrimLayoutData;
 import org.eclipse.ui.internal.misc.Assert;
@@ -283,6 +285,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private Map globalActionHandlersByCommandId = new HashMap();
 	List handlerSubmissions = new ArrayList();
 	private boolean dockPerspectiveBar = Workbench.getInstance().getPreferenceStore().getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR);
+	private CacheWrapper perspectiveCoolBarWrapper;
 	
 	void registerActionSets(IActionSet[] actionSets) {
 		actionSetHandlersByCommandId.clear();
@@ -407,7 +410,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
 			perspectiveBar.update(false);
 			if (perspectiveBar.getControl() != null) {
-			    perspectiveBar.getControl().getParent().layout();
+			    LayoutUtil.resize(perspectiveBar.getControl());
 			}
 	    }
 	}
@@ -682,7 +685,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	    // on the left right and bottom
 		topBar = new CBanner(shell, SWT.NONE);
 	    
-		Control coolBar = createCoolBarControl(topBar);
+		final CacheWrapper coolbarCacheWrapper = new CacheWrapper(topBar);
+		
+		Control coolBar = createCoolBarControl(coolbarCacheWrapper.getControl());
 		// need to resize the shell, not just the coolbar's immediate
 		// parent, if the coolbar wants to grow or shrink
 		
@@ -698,7 +703,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
             	Point newSize = shell.getSize();
             	
             	if (lastShellSize.equals(newSize)) {
-            		shell.layout();
+            		LayoutUtil.resize(coolbarCacheWrapper.getControl());
             	}
             	
         		lastShellSize.x = newSize.x;
@@ -707,7 +712,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
         });
 
 		if (getWindowConfigurer().getShowCoolBar()) {
-			topBar.setLeft(getCoolBarControl());
+			topBar.setLeft(coolbarCacheWrapper.getControl());
 		}
 		
 		addPerspectiveBar(perspectiveBarStyle());
@@ -751,44 +756,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
  		}
 	
 		if (perspectiveBar.getControl() == null) {
-			perspectiveCoolBar = new CoolBar(topBar, SWT.FLAT);
+			perspectiveCoolBarWrapper = new CacheWrapper(topBar);
+			perspectiveCoolBar = new CoolBar(perspectiveCoolBarWrapper.getControl(), SWT.FLAT);
 			final CoolItem coolItem = new CoolItem(perspectiveCoolBar, SWT.DROP_DOWN);
 			perspectiveBar.createControl(perspectiveCoolBar);
 			coolItem.setControl(perspectiveBar.getControl());
 			perspectiveCoolBar.setLocked(true);
 			perspectiveBar.setParent(perspectiveCoolBar);
-			perspectiveBar.update(true);
-			
-			// adjust the toolbar size to display as many items as possible
-			perspectiveCoolBar.addControlListener(new ControlAdapter() {
-				public void controlResized(ControlEvent e) {
-					ToolBar toolbar = perspectiveBar.getControl();
-
-					Rectangle area = perspectiveCoolBar.getClientArea();
-					Rectangle bounds = toolbar.getItem(0).getBounds();
-					int rows = (int)Math.floor(area.height / bounds.height);
-					if (rows == 1) {
-						Point size = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-						coolItem.setSize(coolItem.computeSize(size.x, size.y));
-						return;
-					}
-					int height = rows * bounds.height;
-					// workaround the fact that ToolBar.computeSize does not recognize the height component
-					// for wrapping
-					int w = toolbar.computeSize(SWT.DEFAULT, height).x;
-					int width = w;
-					while (w > 0) {
-						w--;
-						Point size = toolbar.computeSize(w, SWT.DEFAULT);
-						if (size.y > height) break;
-						width = size.x;
-					}
-					Point size = toolbar.computeSize(width, SWT.DEFAULT);
-					coolItem.setSize(coolItem.computeSize(size.x, size.y));
- 				}
-
-			});
-			
+			perspectiveBar.update(true);			
 			
 			coolItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -812,13 +787,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
  		
  		if (dockPerspectiveBar) {
  			topBar.setRight(null);
-			topBar.setBottom(perspectiveCoolBar);
+			topBar.setBottom(perspectiveCoolBarWrapper.getControl());
  		} else {
 			topBar.setBottom(null);
-			topBar.setRight(perspectiveCoolBar);
- 			topBar.setRightWidth(SWT.DEFAULT);
+			topBar.setRight(perspectiveCoolBarWrapper.getControl());
+ 			topBar.setRightWidth(150);
  		}
- 		perspectiveBar.getControl().getShell().layout();		
+ 		
+ 		LayoutUtil.resize(perspectiveBar.getControl());		
  	}
 
 	/**
@@ -2426,7 +2402,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						}
 					}
 					
-					getShell().layout();
+					LayoutUtil.resize(fastViewBar.getControl());
 				}
 			});
 		}

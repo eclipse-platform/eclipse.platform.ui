@@ -20,6 +20,8 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -75,6 +77,13 @@ public final class PaneFolder {
 
 	private boolean putTrimOnTop = true;
 		
+	// HACK: Sometimes the topright control isn't resized when CTabFolder.setBounds is called.
+	// We use the following data structures to detect if this has happened and force a layout when necessary.
+	private boolean topRightResized = false;
+	private boolean useTopRightOptimization = false;
+	private int lastWidth = 0;
+	// END OF HACK
+	
 	/**
 	 * List of PaneFolderButtonListener
 	 */
@@ -144,6 +153,15 @@ public final class PaneFolder {
 			// Create a proxy control to measure the title area of the tab folder
 			titleAreaProxy = new Composite(tabFolder, SWT.NONE);
 			titleAreaProxy.setVisible(false);
+			titleAreaProxy.addControlListener(new ControlListener() {
+				public void controlMoved(ControlEvent e) {
+					topRightResized = true;
+				}
+
+				public void controlResized(ControlEvent e) {
+					topRightResized = true;
+				}
+			});
 			tabFolder.setTopRight(titleAreaProxy, SWT.FILL);
 			
 			tabFolder.addCTabFolder2Listener(expandListener);
@@ -242,6 +260,16 @@ public final class PaneFolder {
 		}
 	}
 	
+	/**
+	 * Optimization: calling this method immediately before setting the control's
+	 * bounds will allow for improved caching.
+	 */
+	public void aboutToResize() {
+		useTopRightOptimization = true;
+		topRightResized = false;
+		lastWidth = getControl().getBounds().width;
+	}
+	
 	public void layout(boolean flushCache) {
 		// Flush the cached sizes if necessary
 		if (flushCache) {
@@ -252,12 +280,15 @@ public final class PaneFolder {
 				
 		// HACK: Force the tab folder to do a layout, since it doesn't always
 		// resize its title area each time setBounds is called.
-		tabFolder.setTopRight(titleAreaProxy, SWT.FILL);
+		if (!(useTopRightOptimization && (topRightResized || lastWidth == getControl().getBounds().width))) {
+			// If we can't use the optimization, then we need to force a layout of the tab folder
+			tabFolder.setTopRight(titleAreaProxy, SWT.FILL);
+		}
+		useTopRightOptimization = false;
 		// END OF HACK
 		
 		Rectangle titleArea = DragUtil.getDisplayBounds(titleAreaProxy);
 
-		
 		Point topRightSize = topRightCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		Point topCenterSize = topCenterCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		

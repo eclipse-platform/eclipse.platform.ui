@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Layout;
  *  
  * @since 3.0
  */
-public class TrimLayout extends Layout {
+public class TrimLayout extends Layout implements ICachingLayout {
 
 	private static final TrimLayoutData defaultData = new TrimLayoutData();
 	private SizeCache centerArea = new SizeCache();
@@ -61,7 +61,7 @@ public class TrimLayout extends Layout {
 	private int bottomSpacing;
 	private int leftSpacing;
 	private int rightSpacing;
-	private Map mapPartOntoPosition = new HashMap();
+	private Map mapPartOntoTrimData = new HashMap();
 	
 	// Position constants -- correspond to indices in the controls array, above.
 	private static final int TOP = 0;
@@ -69,6 +69,16 @@ public class TrimLayout extends Layout {
 	private static final int LEFT = 2;
 	private static final int RIGHT = 3;
 	private static final int NONTRIM = 4;
+	
+	private class TrimData {
+		int controlsIndex;
+		SizeCache cache;
+		
+		TrimData(int index, SizeCache cache) {
+			this.cache = cache;
+			this.controlsIndex = index;
+		}
+	}
 	
 	/**
 	 * Creates a new (initially empty) trim layout.
@@ -328,10 +338,12 @@ public class TrimLayout extends Layout {
 		
 		int index = convertSwtConstantToIndex(location);
 		List list = controls[index];
+
+		SizeCache cache = new SizeCache(control);
 		
-		insertBefore(list, control, position);
+		insertBefore(list, cache, position);
 		
-		mapPartOntoPosition.put(control, new Integer(index));
+		mapPartOntoTrimData.put(control, new TrimData(index, cache));
 	}
 	
 	/**
@@ -340,8 +352,7 @@ public class TrimLayout extends Layout {
 	 * 
 	 * @param list a list of SizeCache
 	 */
-	private static void insertBefore(List list, Control toInsert, Control position) {
-		SizeCache cache = new SizeCache(toInsert);
+	private static void insertBefore(List list, SizeCache cache, Control position) {
 		
 		if (position != null) {
 			int insertionPoint = 0;
@@ -395,7 +406,7 @@ public class TrimLayout extends Layout {
 		}
 		
 		remove(controls[idx], toRemove);
-		mapPartOntoPosition.remove(toRemove);
+		mapPartOntoTrimData.remove(toRemove);
 	}
 	
 	/**
@@ -406,13 +417,13 @@ public class TrimLayout extends Layout {
 	 * @return
 	 */
 	private int getIndex(Control toQuery) {
-		Integer position = (Integer)mapPartOntoPosition.get(toQuery);
+		TrimData data = (TrimData)mapPartOntoTrimData.get(toQuery);
 		
-		if (position == null) {
+		if (data == null) {
 			return NONTRIM;
 		}
 		
-		return position.intValue();
+		return data.controlsIndex;
 	}
 	
 	/**
@@ -473,11 +484,7 @@ public class TrimLayout extends Layout {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite, int, int, boolean)
 	 */
-	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-		if (flushCache) {
-			flushCaches();
-		}
-		
+	protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {		
 		Point result = new Point(wHint, hHint);
 		
 		int[] trimSize = getTrimSizes(wHint, hHint);
@@ -502,10 +509,6 @@ public class TrimLayout extends Layout {
 	 */
 	protected void layout(Composite composite, boolean flushCache) {
 		removeDisposed();
-
-		if (flushCache) {
-			flushCaches();
-		}
 		
 		Rectangle clientArea = composite.getClientArea();
 
@@ -631,5 +634,20 @@ public class TrimLayout extends Layout {
 	 */
 	public Control getCenterControl() {
 		return centerArea.getControl();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.layout.ICachingLayout#flush(org.eclipse.swt.widgets.Control)
+	 */
+	public void flush(Control dirtyControl) {
+		TrimData data = (TrimData)mapPartOntoTrimData.get(dirtyControl);
+		
+		if (data == null) {
+			if (dirtyControl == centerArea.getControl()) {
+				centerArea.flush();
+			}
+		} else {
+			data.cache.flush();
+		}
 	}
 }

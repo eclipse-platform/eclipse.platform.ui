@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -49,6 +48,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.layout.CellLayout;
+import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.PresentationUtil;
@@ -664,7 +664,7 @@ public class FastViewBar implements IWindowTrim {
 		}
 		
 		if (items.length != oldLength) {
-			control.getParent().layout();
+			LayoutUtil.resize(control);
 			oldLength = items.length;
 		}
 		
