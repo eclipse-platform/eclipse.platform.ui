@@ -3626,33 +3626,37 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			IRewriteTarget target= leftToRight ? fRight.getRewriteTarget() : fLeft.getRewriteTarget();
 			boolean compoundChangeStarted= false;
 			Iterator e= fChangeDiffs.iterator();
-			while (e.hasNext()) {
-				Diff diff= (Diff) e.next();
-				switch (diff.fDirection) {
-				case RangeDifference.LEFT:
-					if (leftToRight) {
-						if (!compoundChangeStarted) {
-							target.beginCompoundChange();
-							compoundChangeStarted= true;
+			try {
+				while (e.hasNext()) {
+					Diff diff= (Diff) e.next();
+					switch (diff.fDirection) {
+					case RangeDifference.LEFT:
+						if (leftToRight) {
+							if (!compoundChangeStarted) {
+								target.beginCompoundChange();
+								compoundChangeStarted= true;
+							}
+							copy(diff, leftToRight, false);
 						}
-						copy(diff, leftToRight, false);
-					}
-					break;
-				case RangeDifference.RIGHT:
-					if (!leftToRight) {
-						if (!compoundChangeStarted) {
-							target.beginCompoundChange();
-							compoundChangeStarted= true;
+						break;
+					case RangeDifference.RIGHT:
+						if (!leftToRight) {
+							if (!compoundChangeStarted) {
+								target.beginCompoundChange();
+								compoundChangeStarted= true;
+							}
+							copy(diff, leftToRight, false);
 						}
-						copy(diff, leftToRight, false);
+						break;
+					default:
+						continue;
 					}
-					break;
-				default:
-					continue;
+				}
+			} finally {
+				if (compoundChangeStarted) {
+					target.endCompoundChange();
 				}
 			}
-			if (compoundChangeStarted)
-				target.endCompoundChange();
 		}
 	}
 	
@@ -3788,6 +3792,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		
 			diff.setResolved(true);
+			updateResolveStatus();
 			
 			return true;
 		}
