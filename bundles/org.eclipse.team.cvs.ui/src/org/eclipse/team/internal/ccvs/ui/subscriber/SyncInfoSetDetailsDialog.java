@@ -46,14 +46,16 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 	
 	private SyncInfoSet syncSet;
 	private Object[] selectedResources;
+	private String detailsTitle;
 
 	/**
 	 * @param parentShell
 	 * @param dialogTitle
 	 */
-	public SyncInfoSetDetailsDialog(Shell parentShell, String dialogTitle, SyncInfoSet syncSet) {
+	public SyncInfoSetDetailsDialog(Shell parentShell, String dialogTitle, String detailsTitle, SyncInfoSet syncSet) {
 		super(parentShell, dialogTitle);
 		this.syncSet = syncSet;
+		this.detailsTitle = detailsTitle;
 	}
 
 	/* (non-Javadoc)
@@ -74,7 +76,7 @@ public abstract class SyncInfoSetDetailsDialog extends DetailsDialog {
 	 * @param composite
 	 */
 	private void addResourcesArea(Composite composite) {
-		createWrappingLabel(composite, "The following resources will be effected by the update");
+		createWrappingLabel(composite, detailsTitle);
 		// add the selectable checkbox list
 		
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);

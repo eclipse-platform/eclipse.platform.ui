@@ -20,6 +20,13 @@ class TestWorkspaceUpdateAction extends WorkspaceUpdateAction {
 	boolean allowOverwrite = false;
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#warnAboutFailedResources(org.eclipse.team.ui.sync.SyncInfoSet)
+	 */
+	protected void warnAboutFailedResources(SyncInfoSet syncSet) {
+		return;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#getOverwriteLocalChanges()
 	 */
 	protected boolean getOverwriteLocalChanges() {

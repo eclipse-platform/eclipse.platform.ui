@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -37,7 +38,10 @@ import org.eclipse.team.ui.sync.SyncInfoSet;
 
 /**
  * This update action will update all mergable resources first and then prompt the
- * user to iverwrite any resources that failed the safe update
+ * user to overwrite any resources that failed the safe update.
+ * 
+ * Subclasses should determine how the update should handle conflicts by implementing 
+ * the getOverwriteLocalChanges() method.
  */
 public abstract class SafeUpdateAction extends CVSSubscriberAction {
 
@@ -71,12 +75,19 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 					return failedSet.getNodeFor(info.getLocal()) != null;
 				}
 			});
-			
-			// Ask the user if a replace should be performed on the remaining nodes
-			if(getOverwriteLocalChanges()) {
-				if (!failedSet.isEmpty() && promptForOverwrite(failedSet)) {
-					overwriteUpdate(failedSet, Policy.subMonitorFor(monitor, willFail.length * 100));
-					syncSet.addAll(failedSet);
+						
+			// Handle conflicting files that can't be merged, ask the user what should be done.
+			if(! failedSet.isEmpty()) {
+				if(getOverwriteLocalChanges()) {				
+					// Ask the user if a replace should be performed on the remaining nodes
+					if(promptForOverwrite(failedSet)) {
+						overwriteUpdate(failedSet, Policy.subMonitorFor(monitor, willFail.length * 100));
+						syncSet.addAll(failedSet);
+					}
+				} else {
+					// Warn the user that some nodes could not be updated. This can happen if there are
+					// files with conflicts that are not auto-mergeable.					
+					warnAboutFailedResources(failedSet);		
 				}
 			}
 			
@@ -260,6 +271,22 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 			}
 		});
 		return (result[0] == UpdateDialog.YES);
+	}
+	
+	/**
+	 * Warn user that some files could not be updated.
+	 * Note: This method is designed to be overridden by test cases.
+	 */
+	protected void warnAboutFailedResources(final SyncInfoSet syncSet) {
+		final int[] result = new int[] {Dialog.CANCEL};
+		final Shell shell = getShell();
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(shell, 
+								Policy.bind("SafeUpdateAction.warnFilesWithConflictsTitle"), //$NON-NLS-1$
+								Policy.bind("SafeUpdateAction.warnFilesWithConflictsDescription")); //$NON-NLS-1$
+			}
+		});
 	}
 	
 	/**

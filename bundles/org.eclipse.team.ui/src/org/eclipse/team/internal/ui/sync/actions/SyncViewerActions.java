@@ -197,7 +197,15 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		manager.add(expandAll);
 		manager.add(new Separator());
 		manager.add(refreshSelectionAction);
-		manager.add(new Separator("SubscriberActions")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup1")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup2")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup3")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup4")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup5")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup6")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup7")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup8")); //$NON-NLS-1$
+		manager.add(new Separator("SubscriberActionsGroup9")); //$NON-NLS-1$
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator("Additions")); //$NON-NLS-1$
 	}

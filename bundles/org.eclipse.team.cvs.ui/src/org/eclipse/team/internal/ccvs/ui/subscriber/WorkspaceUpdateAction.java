@@ -98,6 +98,5 @@ public class WorkspaceUpdateAction extends SafeUpdateAction {
 	 */
 	protected void updated(IResource[] resources) throws TeamException {
 		// Do nothing
-	}
-	
+	}	
 }

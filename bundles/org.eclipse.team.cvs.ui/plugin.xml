@@ -572,7 +572,7 @@
             
 			<action
                label="%CVSWorkspaceSubscriber.confirmMerged.label"
-               menubarPath="SubscriberActions"
+               menubarPath="SubscriberActionsGroup2"
                tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
                helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
@@ -581,16 +581,25 @@
   
 			<action
 				label="%CVSWorkspaceSubscriber.overcommit.label"
-				menubarPath="SubscriberActions"
+				menubarPath="SubscriberActionsGroup2"
 				tooltip="%CVSWorkspaceSubscriber.overcommit.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndCommitAction"
 				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_overcommit_action"
 				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.overcommit">
 			</action>
+			
+			<action
+				label="%CVSWorkspaceSubscriber.overupdate.label"
+				menubarPath="SubscriberActionsGroup2"
+				tooltip="%CVSWorkspaceSubscriber.overupdate.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndUpdateAction"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_overupdate_action"
+				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.overupdate">
+			</action>
   
 			<action
 				label="%CVSWorkspaceSubscriber.commit.label"
-				menubarPath="SubscriberActions"
+				menubarPath="SubscriberActionsGroup1"
 				tooltip="%CVSWorkspaceSubscriber.commit.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberCommitAction"
 				overrideActionId="org.eclipse.team.ccvs.ui.commit"
@@ -600,7 +609,7 @@
 
 			<action
 				label="%CVSWorkspaceSubscriber.update.label"
-				menubarPath="SubscriberActions"
+				menubarPath="SubscriberActionsGroup1"
 				tooltip="%CVSWorkspaceSubscriber.update.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction"
 				overrideActionId="org.eclipse.team.ccvs.ui.update"
@@ -618,7 +627,7 @@
   
 			<action
 				label="%CVSWorkspaceSubscriber.confirmMerged.label"
-				menubarPath="SubscriberActions"
+				menubarPath="SubscriberActionsGroup1"
 				tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
 				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
@@ -627,7 +636,7 @@
 
 			<action
 				label="%CVSWorkspaceSubscriber.merge.label"
-				menubarPath="SubscriberActions"
+				menubarPath="SubscriberActionsGroup1"
 				tooltip="%CVSWorkspaceSubscriber.merge.tooltip"
 				class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction"
 				overrideActionId="org.eclipse.team.ccvs.ui.update"
