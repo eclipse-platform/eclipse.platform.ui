@@ -257,7 +257,7 @@ public class IJobManagerTest extends TestCase {
 		ArrayList longJobs = new ArrayList();
 		TestJob job = null;
 		//start enough jobs to saturate the worker pool
-		final int MAX_THREADS = 10;
+		final int MAX_THREADS = 100;
 		for (int i = 0; i < MAX_THREADS; i++) {
 			job = new TestJob("Long Job", 1000000, 10);
 			job.schedule();
