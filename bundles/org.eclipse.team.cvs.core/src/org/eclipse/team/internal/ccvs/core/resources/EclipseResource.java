@@ -125,11 +125,12 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		if (name.equals("CVS")) return true; //$NON-NLS-1$
 		
 		// check the global ignores from Team
-		if (Team.isIgnoredHint(getIResource())) return true;
+		if (Team.isIgnoredHint(resource)) return true;
 		
 		// check ignore patterns from the .cvsignore file.
-		FileNameMatcher matcher = EclipseSynchronizer.getInstance().getIgnored(resource.getParent());
-		if (matcher.match(name)) return true;
+		if(EclipseSynchronizer.getInstance().isIgnored(resource)) {
+			return true;
+		}
 		
 		// check the parent, if the parent is ignored or mapped to CVSROOT/Emptydir
 		// then this resource is ignored also

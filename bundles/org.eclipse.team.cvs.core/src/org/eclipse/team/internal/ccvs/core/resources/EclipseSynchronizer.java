@@ -314,11 +314,16 @@ public class EclipseSynchronizer {
 	 * @return the patterns, or an empty array if none
 	 * @see #addIgnored
 	 */
-	public FileNameMatcher getIgnored(IContainer folder) throws CVSException {
-		if (folder.getType() == IResource.ROOT || ! folder.exists()) return SessionPropertySyncInfoCache.NULL_IGNORES;
+	public boolean isIgnored(IResource resource) throws CVSException {
+		if (resource.getType() == IResource.ROOT || 
+		    resource.getType() == IResource.PROJECT || 
+		    ! resource.exists()) {
+			return false;
+		} 
 		try {
 			beginOperation(null);
-			return cacheFolderIgnores(folder);
+			FileNameMatcher matcher = cacheFolderIgnores(resource.getParent());
+			return matcher.match(resource.getName());
 		} finally {
 			endOperation(null);
 		}
