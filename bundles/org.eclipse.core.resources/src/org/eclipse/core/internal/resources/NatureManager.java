@@ -153,6 +153,8 @@ public void configureNatures(Project project, ProjectDescription oldDescription,
 	// may well result in recursive calls to this method.
 	HashSet oldNatures = new HashSet(Arrays.asList(oldDescription.getNatureIds(false)));
 	HashSet newNatures = new HashSet(Arrays.asList(newDescription.getNatureIds(false)));
+	if (oldNatures.equals(newNatures))
+		return;
 	HashSet deletions = (HashSet)oldNatures.clone();
 	HashSet additions = (HashSet)newNatures.clone();
 	additions.removeAll(oldNatures);
