@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -50,12 +49,12 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 		initialize();
 	}
 	
-	public CVSCompareSubscriber(IProject[] projects, CVSTag[] tags, String name) {
+	public CVSCompareSubscriber(IResource[] resources, CVSTag[] tags, String name) {
 		super(getUniqueId(), Policy.bind("CVSCompareSubscriber.2", name), Policy.bind("CVSCompareSubscriber.3")); //$NON-NLS-1$ //$NON-NLS-2$
-		this.resources = projects;
+		this.resources = resources;
 		MultiTagResourceVariantTree multiTree = new MultiTagResourceVariantTree(new SessionResourceVariantByteStore(), getCacheFileContentsHint());
 		for (int i = 0; i < tags.length; i++) {
-			multiTree.addProject(projects[i], tags[i]);
+			multiTree.addResource(resources[i], tags[i]);
 		}
 		tree = multiTree;
 		initialize();

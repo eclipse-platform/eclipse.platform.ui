@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.variants.ResourceVariantByteStore;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -24,22 +23,22 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  */
 public class MultiTagResourceVariantTree extends CVSResourceVariantTree {
 
-	Map projects = new HashMap();
+	Map resources = new HashMap();
 	
 	public MultiTagResourceVariantTree(ResourceVariantByteStore cache, boolean cacheFileContentsHint) {
 		super(cache, null, cacheFileContentsHint);
 	}
 	
-	public void addProject(IProject project, CVSTag tag) {
-		Assert.isNotNull(project);
+	public void addResource(IResource resource, CVSTag tag) {
+		Assert.isNotNull(resource);
 		Assert.isNotNull(tag);
-		projects.put(project, tag);
+		resources.put(resource, tag);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.syncinfo.CVSResourceVariantTree#getTag(org.eclipse.core.resources.IResource)
 	 */
 	public CVSTag getTag(IResource resource) {
-		return (CVSTag)projects.get(resource.getProject());
+		return (CVSTag)resources.get(resource);
 	}
 }
