@@ -49,7 +49,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		// are done directly to the preference store.
 		preferences.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				synchronizeWithPreferences(event.getProperty(), event.getNewValue());
+				synchronizeWithPreferences(event.getProperty());
 			}
 		});
 	}
@@ -195,20 +195,16 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		// intention (this class offers a different protocol for copying state).
 		throw new UnsupportedOperationException("clone() is not supported in " + getClass().getName()); //$NON-NLS-1$ 
 	}	
-	private void synchronizeWithPreferences(String property, Object newValue) {
-		if (property.equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
-			// auto build - if set to anything else than a boolean, goes to default
-			boolean value = (newValue instanceof Boolean) ? ((Boolean) newValue).booleanValue() : defaults.isAutoBuilding();
-			super.setAutoBuilding(value);
-		} else if (property.equals(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL)) {
-			// snapshot interval - if set to anything else than a number, goes to default
-			long value = (newValue instanceof Number) ? ((Number) newValue).longValue() : defaults.getSnapshotInterval();
-			super.setSnapshotInterval(value);
-		} else if (property.equals(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS)) {
-			// max build iterations - if set to anything else than a number, goes to default
-			int value = (newValue instanceof Number) ? ((Number) newValue).intValue() : defaults.getMaxBuildIterations();
-			super.setMaxBuildIterations(value);
-		}
+	private void synchronizeWithPreferences(String property) {
+		// do not use the value in the event - may be a string instead 
+		// of the expected type. Retrieve it from the preferences store 
+		// using the type-specific method 		
+		if (property.equals(ResourcesPlugin.PREF_AUTO_BUILDING))
+			super.setAutoBuilding(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
+		else if (property.equals(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL)) 
+			super.setSnapshotInterval(preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
+		else if (property.equals(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS)) 
+			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));		
 	}
 
 
