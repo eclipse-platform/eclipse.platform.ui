@@ -28,8 +28,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
@@ -170,7 +172,12 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 				public void run() {
 					try {
 						runner.run(process);
-					} catch (CoreException e) {
+					} catch (final CoreException e) {
+						ExternalToolsPlugin.getStandardDisplay().asyncExec(new Runnable() {
+							public void run() {
+								ErrorDialog.openError(null, "Failure of Background Ant Build", null, e.getStatus());
+							}
+						});
 					}
 					process.terminated();
 				}
