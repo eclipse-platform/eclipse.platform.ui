@@ -600,7 +600,8 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper, 
 						break;
 				}
 			}
-			fAutoAssistListener.verifyKey(e);
+			if (fAutoAssistListener != null)
+				fAutoAssistListener.verifyKey(e);
 		}
 				
 		/*
