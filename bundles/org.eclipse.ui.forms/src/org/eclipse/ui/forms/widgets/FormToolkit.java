@@ -111,8 +111,9 @@ public class FormToolkit {
 					gc.setForeground(c.getBackground());
 					gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 							b.height + 1);
-					gc.setForeground(getBorderStyle() == SWT.BORDER ? colors
-							.getBorderColor() : colors.getForeground());
+//					gc.setForeground(getBorderStyle() == SWT.BORDER ? colors
+//							.getBorderColor() : colors.getForeground());
+					gc.setForeground(colors.getBorderColor());					
 					if (c instanceof CCombo)
 						gc.drawRectangle(b.x - 1, b.y - 1, b.width + 1,
 								b.height + 1);
