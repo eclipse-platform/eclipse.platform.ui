@@ -116,7 +116,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 /**
  * Commits the part by committing the current page.
- * @boolean onSave <code>true</code> if commit is requested as a result
+ * @param onSave <code>true</code> if commit is requested as a result
  * of the 'save' action, <code>false</code> otherwise.
  */
 	public void commit(boolean onSave) {
@@ -158,6 +158,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 /**
  * Tests if the currently visible page is dirty.
+ * @return <code>true</code> if the page is dirty, <code>false</code> otherwise.
  */
 	public boolean isDirty() {
 		IDetailsPage page = getCurrentPage();
@@ -167,6 +168,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	}
 /**
  * Tests if the currently visible page is stale and needs refreshing.
+ * @return <code>true</code> if the page is stale, <code>false</code> otherwise.
  */	
 	public boolean isStale() {
 		IDetailsPage page = getCurrentPage();

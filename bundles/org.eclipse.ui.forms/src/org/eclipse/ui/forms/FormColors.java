@@ -36,10 +36,25 @@ public class FormColors {
 	 */
 	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR";
 
+	/**
+	 * Key for the section title bar background.
+	 */
 	public static final String TB_BG = "org.eclipse.ui.forms.TB_BG";
+	/**
+	 * Key for the section title bar foreground.
+	 */
 	public static final String TB_FG = "org.eclipse.ui.forms.TB_FG";
+	/**
+	 * Key for the section title bar gradient.
+	 */
 	public static final String TB_GBG = "org.eclipse.ui.forms.TB_GBG";
+	/**
+	 * Key for the section title bar border.
+	 */
 	public static final String TB_BORDER = "org.eclipse.ui.forms.TB_BORDER";
+	/**
+	 * Key for the section toggle color.
+	 */
 	public static final String TB_TOGGLE = "org.eclipse.ui.forms.TB_TOGGLE";
 	protected Map colorRegistry = new HashMap(10);
 	protected Color background;
@@ -127,7 +142,12 @@ public class FormColors {
 		RGB toggle = getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		createColor(FormColors.TB_TOGGLE, toggle);
 	}
-	
+	/**
+	 * Returns the RGB value of the system color represented by the code argument,
+	 * as defined in <code>SWT</code> class.
+	 * @param code the system color constant as defined in <code>SWT</code> class.
+	 * @return the RGB value of the system color
+	 */
 	public RGB getSystemColor(int code) {
 		return getDisplay().getSystemColor(code).getRGB();
 	}
@@ -278,6 +298,7 @@ public class FormColors {
 	 * @param c1 first color
 	 * @param c2 second color
 	 * @param ratio percentage of the first color in the blend
+	 * @return the RGB value of the blended color
 	 */
 	private RGB blend(RGB c1, RGB c2, int ratio) {
 		int r = blend(c1.red, c2.red, ratio);
