@@ -146,14 +146,13 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
-		addControlAccessibleListener(group, locationLabel);
 		
 		locationField = new Text(group, SWT.BORDER);
 		gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		locationField.setLayoutData(gridData);
 		locationField.addModifyListener(fListener);
-		addControlAccessibleListener(locationField, locationLabel);
+		addControlAccessibleListener(locationField, group.getText());
 		
 		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
@@ -162,19 +161,18 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
 		buttonComposite.setFont(parent.getFont());
-		addControlAccessibleListener(buttonComposite, locationLabel + ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.0")); //$NON-NLS-1$
 		
 		workspaceLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Browse_Workspace..._3"), null); //$NON-NLS-1$
 		workspaceLocationButton.addSelectionListener(fListener);
-		addControlAccessibleListener(workspaceLocationButton, workspaceLocationButton.getText());
+		addControlAccessibleListener(workspaceLocationButton, group.getText() + " " + workspaceLocationButton.getText()); //$NON-NLS-1$
 		
 		fileLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Brows&e_File_System..._4"), null); //$NON-NLS-1$
 		fileLocationButton.addSelectionListener(fListener);
-		addControlAccessibleListener(fileLocationButton, fileLocationButton.getText());
+		addControlAccessibleListener(fileLocationButton, group.getText() + " " + fileLocationButton.getText()); //$NON-NLS-1$
 		
 		variablesLocationButton = createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.31"), null); //$NON-NLS-1$
 		variablesLocationButton.addSelectionListener(fListener);	
-		addControlAccessibleListener(variablesLocationButton, variablesLocationButton.getText());	
+		addControlAccessibleListener(variablesLocationButton, group.getText() + " " + variablesLocationButton.getText());	 //$NON-NLS-1$
 	}
 	
 	/**
@@ -201,14 +199,13 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
-		addControlAccessibleListener(group, groupName);
 		
 		workDirectoryField = new Text(group, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		workDirectoryField.setLayoutData(data);
 		workDirectoryField.addModifyListener(fListener);
-		addControlAccessibleListener(workDirectoryField, groupName);
+		addControlAccessibleListener(workDirectoryField,group.getText());
 		
 		Composite buttonComposite = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
@@ -217,19 +214,18 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
 		buttonComposite.setFont(parent.getFont());
-		addControlAccessibleListener(buttonComposite, groupName + ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.0")); //$NON-NLS-1$
 		
 		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_Wor&kspace..._6"), null); //$NON-NLS-1$
 		workspaceWorkingDirectoryButton.addSelectionListener(fListener);
-		addControlAccessibleListener(workspaceWorkingDirectoryButton, workDirectoryField.getText());
+		addControlAccessibleListener(workspaceWorkingDirectoryButton, group.getText() + " " + workspaceWorkingDirectoryButton.getText()); //$NON-NLS-1$
 		
 		fileWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_F&ile_System..._7"), null); //$NON-NLS-1$
 		fileWorkingDirectoryButton.addSelectionListener(fListener);
-		addControlAccessibleListener(fileWorkingDirectoryButton, fileLocationButton.getText());
+		addControlAccessibleListener(fileWorkingDirectoryButton, group.getText() + " " + fileLocationButton.getText()); //$NON-NLS-1$
 		
 		variablesWorkingDirectoryButton = createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.32"), null); //$NON-NLS-1$
 		variablesWorkingDirectoryButton.addSelectionListener(fListener);
-		addControlAccessibleListener(variablesWorkingDirectoryButton, variablesWorkingDirectoryButton.getText());
+		addControlAccessibleListener(variablesWorkingDirectoryButton, group.getText() + " " + variablesWorkingDirectoryButton.getText()); //$NON-NLS-1$
 	}
 	
 	/**
@@ -257,7 +253,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		group.setLayout(layout);
 		group.setLayoutData(gridData);
-		addControlAccessibleListener(group, groupName);
 		
 		argumentField = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gridData = new GridData(GridData.FILL_BOTH);
@@ -265,13 +260,13 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		gridData.heightHint = 30;
 		argumentField.setLayoutData(gridData);
 		argumentField.addModifyListener(fListener);
-		addControlAccessibleListener(argumentField, groupName);
+		addControlAccessibleListener(argumentField, group.getText());
 		
 		argumentVariablesButton= createPushButton(group, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		argumentVariablesButton.setLayoutData(gridData);
 		argumentVariablesButton.addSelectionListener(fListener);
-		addControlAccessibleListener(argumentVariablesButton, argumentVariablesButton.getText());
+		addControlAccessibleListener(argumentVariablesButton, argumentVariablesButton.getText()); // need to strip the mnemonic from buttons
 
 		Label instruction = new Label(group, SWT.NONE);
 		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.3")); //$NON-NLS-1$
@@ -612,14 +607,22 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	}
 	
 	/* (non-Javadoc)
-	 * Fix for Bug 60163 Accessibility: New Builder Dialog missing object info for textInput controls
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 	
+	/*
+	 * Fix for Bug 60163 Accessibility: New Builder Dialog missing object info for textInput controls
+	 */
 	public void addControlAccessibleListener(Control control, String controlName) {
-		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(controlName));
+		//strip mnemonic (&)
+		String[] strs = controlName.split("&"); //$NON-NLS-1$
+		StringBuffer stripped = new StringBuffer();
+		for (int i = 0; i < strs.length; i++) {
+			stripped.append(strs[i]);
+		}
+		control.getAccessible().addAccessibleListener(new ControlAccessibleListener(stripped.toString()));
 	}
 	
 	private class ControlAccessibleListener extends AccessibleAdapter {
