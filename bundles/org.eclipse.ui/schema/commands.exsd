@@ -63,7 +63,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    <element name="activeKeyConfiguration">
       <annotation>
          <documentation>
-            This element allows one to set the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.
+            This element is used to define the initial active key configuration for Eclipse. If more than one of these elements exist, only the last declared element (in order of reading the plugin registry) is considered valid.
          </documentation>
       </annotation>
       <complexType>
@@ -78,6 +78,11 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    </element>
 
    <element name="category">
+      <annotation>
+         <documentation>
+            In the UI, commands are often organized by category to make them more manageable. This element is used to define these categories. Commands can add themselves to at most one category. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="description" type="string">
             <annotation>
@@ -104,11 +109,16 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    </element>
 
    <element name="command">
+      <annotation>
+         <documentation>
+            This element is used to define commands. A command represents an request from the user that can be handled by an action, and should be semantically unique among other commands. Do not define a command if there is already one defined with the same meaning. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid. See the extension points &lt;a href=&quot;org_eclipse_ui_actionSets.html&quot;&gt;org.eclipse.ui.actionSets&lt;/a&gt; and &lt;a href=&quot;org_eclipse_ui_editorActions.html&quot;&gt;org.eclipse.ui.editorActions&lt;/a&gt; to understand how actions are connected to commands.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  The unique id of the category for this command. In the UI, commands are often organized by category to make them more manageable. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
+                  The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
                </documentation>
             </annotation>
          </attribute>
@@ -136,7 +146,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The translatable name of this command for display in the UI.
+                  The translatable name of this command for display in the UI. Command are typically named in the form of an imperative verb.
                </documentation>
             </annotation>
          </attribute>
@@ -227,7 +237,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    <element name="keyBinding">
       <annotation>
          <documentation>
-            A key binding is the assignment of a key sequence to a command.
+            This element allows one to assign key sequences to commands.
          </documentation>
       </annotation>
       <complexType>
@@ -280,6 +290,11 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    </element>
 
    <element name="keyConfiguration">
+      <annotation>
+         <documentation>
+            This element is used to define key configurations. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="description" type="string">
             <annotation>
@@ -331,6 +346,11 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element-->
    <element name="scope">
+      <annotation>
+         <documentation>
+            This element is used to define scopes. If more than one of these elements exist with the same &lt;code&gt;id&lt;/code&gt; attribute, only the last declared element (in order of reading the plugin registry) is considered valid.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="description" type="string">
             <annotation>
