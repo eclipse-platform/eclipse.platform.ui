@@ -7,12 +7,16 @@ package org.eclipse.compare.internal;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.compare.CompareEditorInput;
 
-
+/**
+ * Supports cross-pane navigation through differences.
+ * XXX: Design is bogus because the feature had to be added without touching API.
+ */
 public class CompareNavigator {
 	
 	private boolean fLastDirection= true;
@@ -37,8 +41,20 @@ public class CompareNavigator {
 									
 		while (n > 0) {
 			n--;
-			if (!navigators[n].gotoDifference(next))
-				break;
+			if (navigators[n].gotoDifference(next)) {
+				// at end of this navigator
+				continue;
+			} else // not at end
+				return;
+		}
+		// beep
+		if (fPanes[0] != null) {
+			Control c= fPanes[0].getContent();
+			if (c != null) {
+				Display display= c.getDisplay();
+				if (display != null)
+					display.beep();
+			}
 		}
 	}
 
@@ -93,7 +109,7 @@ public class CompareNavigator {
 		return null;
 	}
 	
-	private boolean getLastDirection() {
+	private boolean resetDirection() {
 		boolean last= fLastDirection;
 		fLastDirection= true;
 		return last;
@@ -102,7 +118,7 @@ public class CompareNavigator {
 	public static boolean getDirection(Control c) {
 		CompareNavigator nav= findNavigator(c);
 		if (nav != null)
-			return nav.getLastDirection();
+			return nav.resetDirection();
 		return true;
 	}
 }

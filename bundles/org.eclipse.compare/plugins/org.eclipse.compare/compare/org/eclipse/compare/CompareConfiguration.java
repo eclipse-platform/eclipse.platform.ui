@@ -139,7 +139,7 @@ public class CompareConfiguration {
 		}
 		Image b= a[kind];
 		if (b == null) {
-			b= new DiffImage(base, fgImages[kind], WIDTH, fLeftIsLocal).createImage();
+			b= new DiffImage(base, fgImages[kind], WIDTH, !fLeftIsLocal).createImage();
 			CompareUI.disposeOnShutdown(b);
 			a[kind]= b;
 		}
