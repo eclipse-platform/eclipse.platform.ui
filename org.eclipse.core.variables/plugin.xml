@@ -6,7 +6,11 @@
    provider-name="%providerName"
    class="org.eclipse.core.variables.VariablesPlugin">
 
-   <runtime>
+  <runtime>
+      <library name="variables.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.core.variables,org.eclipse.core.internal.variables"/>
+      </library>
    </runtime>
 
    <extension-point id="valueVariables" name="%valueVariablesExtensionPointName" schema="schema/valueVariables.exsd"/>
