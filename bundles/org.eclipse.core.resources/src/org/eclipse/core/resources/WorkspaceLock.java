@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * A lock used to control write access to the resources in a workspace.
  * Clients may subclass.
  * 
- * @see IWorkspace#setWorkspaceLock
+ * @see IWorkspace#setWorkspaceLock(WorkspaceLock)
  * @deprecated it is no longer possible to override the workspace lock behavior.
  * This functionality is now provided in the platform API by implementing the
  * org.eclipse.core.runtime.jobs.ILockListener interface.
@@ -34,7 +34,7 @@ public WorkspaceLock(IWorkspace workspace) throws CoreException {
  * <p>
  * Clients may extend this method but should not otherwise call it.
  * </p>
- * @see #release
+ * @see #release()
  */
 public boolean acquire() throws InterruptedException {
 	//deprecated API
@@ -52,7 +52,7 @@ protected Thread getCurrentOperationThread() {
  * <p>
  * Clients may extend this method but should not otherwise call it.
  * </p>
- * @see #acquire
+ * @see #acquire()
  */
 public void release() {
 	//deprecated API

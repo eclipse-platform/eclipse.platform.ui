@@ -36,15 +36,17 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	/**
 	 * Build kind constant (value 10) indicating an incremental build request.
 	 * 
-	 * @see IProject#build
-	 * @see IWorkspace#build
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @see IProject#build(int, String, Map, IProgressMonitor)
+	 * @see IWorkspace#build(int, IProgressMonitor)
 	 */
 	public static final int INCREMENTAL_BUILD = 10;
 	/**
 	 * Build kind constant (value 6) indicating a full build request.
 	 * 
-	 * @see IProject#build
-	 * @see IWorkspace#build
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @see IProject#build(int, String, Map, IProgressMonitor)
+	 * @see IWorkspace#build(int, IProgressMonitor)
 	 */
 	public static final int FULL_BUILD = 6;
 	/**
@@ -55,8 +57,9 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	/**
 	 * Build kind constant (value 15) indicating a build clean request
 	 * 
-	 * @see IProject#build
-	 * @see IWorkspace#build
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @see IProject#build(int, String, Map, IProgressMonitor)
+	 * @see IWorkspace#build(int, IProgressMonitor)
 	 * @since 3.0
 	 */
 	public static final int CLEAN_BUILD = 15;
@@ -115,7 +118,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @return the list of projects for which this builder would like deltas the
 	 * next time it is run or <code>null</code> if none
 	 * @exception CoreException if this build fails.
-	 * @see IProject#build
+	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
 	protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
 	/**
@@ -143,7 +146,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting and cancellation are not desired
 	 * @exception CoreException if this build fails.
-	 * @see IWorkbspace#build
+	 * @see IWorkspace#build(int, IProgressMonitor)
 	 * @see #CLEAN_BUILD
 	 * @since 3.0
 	 */
@@ -216,7 +219,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @param project the project to check against in the current build order
 	 * @return <code>true</code> if the given project has been built in this
 	 * iteration, and <code>false</code> otherwise.
-	 * @see #needRebuild
+	 * @see #needRebuild()
 	 * @since 2.1
 	 */
 	public final boolean hasBeenBuilt(IProject project) {
@@ -249,7 +252,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * rebuilds.
 	 * </p>
 	 * 
-	 * @see #hasBeenBuilt
+	 * @see #hasBeenBuilt(IProject)
 	 * @since 2.1
 	 */
 	public final void needRebuild() {
@@ -289,7 +292,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * available and <code>setInitializationData</code> has been called. The
 	 * default implementation should be called by all overriding methods.
 	 * 
-	 * @see #setInitializationData
+	 * @see #setInitializationData(IConfigurationElement, String, Object)
 	 */
 	protected void startupOnInitialize() {
 		// reserved for future use

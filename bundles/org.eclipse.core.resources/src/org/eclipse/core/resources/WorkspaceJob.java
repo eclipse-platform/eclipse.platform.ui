@@ -11,6 +11,7 @@ package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.resources.InternalWorkspaceJob;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * A job that makes an atomic modification to the workspace.  Clients must
@@ -37,7 +38,7 @@ import org.eclipse.core.runtime.*;
  * scheduling rule based on a particular resource.
  * </p>
  * @see IWorkspaceRunnable
- * @see IWorkspace#run
+ * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor)
  * @since 3.0
  */
 public abstract class WorkspaceJob extends InternalWorkspaceJob {
