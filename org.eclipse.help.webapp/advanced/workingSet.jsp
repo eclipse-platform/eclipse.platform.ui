@@ -60,7 +60,7 @@ TD, TR {
 
 #booksContainer {
 	background:Window;
-	border:	2px inset <%=prefs.getViewBackground()%>;;
+	border:	2px inset ThreeDHighlight;
 	margin:10px;
 	margin-top:2px;
 	padding-left:5px;
@@ -128,6 +128,7 @@ var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
 function onloadHandler() {
 	sizeButtons();
 	document.getElementById("workingSet").focus();
+	enableOK();
 }
 
 function sizeButtons() {
@@ -311,6 +312,14 @@ function keyDownHandler(folderId, key, target)
   	return false;
 }
 
+function enableOK() {
+	var value = document.getElementById("workingSet").value;
+	if (!value || value.length == 0)
+		document.getElementById("ok").disabled = true;
+	else
+		document.getElementById("ok").disabled = false;
+}
+
 </script>
 
 </head>
@@ -320,7 +329,7 @@ function keyDownHandler(folderId, key, target)
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet"><%=ServletResources.getString("WorkingSetName", request)%>:</label>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
         </td></tr>
         <tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
 		</td></tr>

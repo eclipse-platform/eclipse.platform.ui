@@ -49,7 +49,7 @@ INPUT {
 
 #workingSetContainer {
 	background:Window;
-	border: 2px inset <%=prefs.getViewBackground()%>;
+	border: 2px inset ThreeDHighlight;
 	margin:0px 5px;
 	padding:5px;
 	overflow:auto;
