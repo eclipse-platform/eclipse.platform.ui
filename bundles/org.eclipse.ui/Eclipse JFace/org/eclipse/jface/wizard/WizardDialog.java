@@ -567,6 +567,12 @@ private MessageDialog createWizardClosingDialog() {
  * The Finish button has been pressed.
  */
 protected void finishPressed() {
+	// Wizards are added to the nested wizards list in setWizard.
+	// This means that the current wizard is always the last wizard in the list.
+	// Note that we first call the current wizard directly (to give it a chance to 
+	// abort, do work, and save state) then call the remaining n-1 wizards in the 
+	// list (to save state).
+	
 	if (wizard.performFinish()) {
 		// Call perform finish on outer wizards in the nested chain
 		// (to allow them to save state for example)
