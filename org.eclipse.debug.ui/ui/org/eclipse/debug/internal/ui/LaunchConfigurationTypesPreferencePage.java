@@ -129,6 +129,11 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		 */
 		public Image getColumnImage(Object object, int column) {
 			ImageDescriptor imageDescriptor = (ImageDescriptor) fExtensionToImageMap.get((String)object);
+			
+			// If the extension wasn't mapped, use the image associated with the default editor
+			if (imageDescriptor == null) {
+				imageDescriptor = WorkbenchPlugin.getDefault().getEditorRegistry().getDefaultEditor().getImageDescriptor();
+			}
 			return imageDescriptor.createImage(true);
 		}
 		
@@ -208,7 +213,8 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 			ILaunchConfigurationType configType = (ILaunchConfigurationType) obj;
 			StringBuffer buffer = new StringBuffer(configType.getName());
 			String selectedFileType = getFileTypeSelection();
-			if (getDefaultConfigsMap().get(selectedFileType).equals(configType)) {
+			ILaunchConfigurationType defaultConfigType = (ILaunchConfigurationType)getDefaultConfigsMap().get(selectedFileType);
+			if ((defaultConfigType != null) && (defaultConfigType.equals(configType))) {
 				buffer.append(DebugUIMessages.getString("LaunchConfigurationTypesPreferencePage._(default)_1")); //$NON-NLS-1$
 			}
 			return buffer.toString();
@@ -435,7 +441,9 @@ public class LaunchConfigurationTypesPreferencePage extends PreferencePage imple
 		while (iterator.hasNext()) {
 			String fileExtension = (String) iterator.next();
 			ILaunchConfigurationType configType = (ILaunchConfigurationType) getDefaultConfigsMap().get(fileExtension);
-			launchManager.setDefaultLaunchConfigurationType(fileExtension, configType.getIdentifier());
+			if (configType != null) {
+				launchManager.setDefaultLaunchConfigurationType(fileExtension, configType.getIdentifier());
+			}
 		}
 	}
 	
