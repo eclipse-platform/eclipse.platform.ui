@@ -12,9 +12,8 @@ import org.eclipse.core.runtime.CoreException;
  * Note: This interface is yet experimental.
  * <p>
  * Describes and creates instances of a specific type of
- * launch configuration. A launch configuration type is like
- * a Java class is to an instance of that class. Launch
- * configuration types are defined by extensions.
+ * launch configuration. Launch configuration types are
+ * defined by extensions.
  * </p>
  * <p>
  * A launch configuration type extension is defined in <code>plugin.xml</code>.
@@ -36,11 +35,11 @@ import org.eclipse.core.runtime.CoreException;
  *  type.</li>
  * <li><code>delegate</code> specifies the fully qualified name of the java class
  *   that implements <code>ILaunchConfigurationDelegate</code>. Launch configuration
- *   instances of this type will delegate to instances of this class as required
+ *   instances of this type will delegate to instances of this class
  *   to perform launching.</li>
  * <li><code>modes</code> specifies a comma separated list of the modes this
  *    type of launch configuration suports - <code>"run"</code> and/or <code>"debug</code>.</li>
- * <li><code>name</code> specifies a human readable name for this kind
+ * <li><code>name</code> specifies a human readable name for this type
  *    of launch configuration.</li>
  * </ul>
  * </p>

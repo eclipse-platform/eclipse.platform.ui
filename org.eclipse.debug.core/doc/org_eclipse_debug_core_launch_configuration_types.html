@@ -1,0 +1,69 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>README Launcher Extension Points</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Launch Configuration Types</h1>
+
+<p><b><i>Identifier: </i></b>org.eclipse.debug.core.launchConfigurationTypes </p>
+
+<p><b><i>Description: </i></b>This extension point allows tools to define
+types of launch configurations. Each launch configuration type has a name,
+supports one or more modes (run and or debug), and specifies a delegate
+responsible for launching.</p>
+
+<p><b><i>Configuration Markup:</i></b> </p>
+
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ATTLIST launchConfigurationType</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delegate CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
+</pre>
+
+<ul>
+ <li><code>id</code> specifies a unique identifier for this launch configuration
+  type.</li>
+ <li><code>delegate</code> specifies the fully qualified name of the java class
+  that implements <code>ILaunchConfigurationDelegate</code>. Launch configuration
+  instances of this type will delegate to instances of this class
+  to perform launching.</li>
+ <li><code>modes</code> specifies a comma separated list of the modes this
+  type of launch configuration suports - <code>"run"</code> and/or <code>"debug</code>.</li>
+ <li><code>name</code> specifies a human readable name for this type
+  of launch configuration.</li>
+</ul>
+
+<p><b><i>Examples:</i></b> </p>
+
+<p>The following is an example of a launch configuration type extension point: </p>
+
+<pre>
+&lt;extension point="org.eclipse.debug.core.launchConfigurationTypes"&gt;
+   &lt;launchConfigurationType 
+      id="com.example.ExampleIdentifier"
+      delegate="com.example.ExampleLaunchConfigurationDelegate"
+      modes="run, debug"
+      name="Example Application"
+   &lt;/launchConfigurationType&gt;
+&lt;/extension&gt;
+</pre>
+
+<p>In the example above, the specified type of launch configuration supports both run and debug modes.
+</p>
+
+<p><b><i>API Information: </i></b>Value of the attribute <b>delegate</b> must be a fully
+qualified name of a Java class that implements the interface <b>
+org.eclipse.debug.core.model.ILaunchConfigurationDelegate</b>.
+</p>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001. All Rights Reserved."
+border="0" width="195" height="12"></a></p>
+</body>
+</html>
