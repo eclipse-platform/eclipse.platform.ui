@@ -4,6 +4,12 @@
  */
 package org.eclipse.search.internal.workingsets;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -11,25 +17,53 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.jface.util.Assert;
 
+import org.xml.sax.SAXException;
+
 import org.eclipse.search.ui.IWorkingSet;
+import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 public class WorkingSet implements IWorkingSet {
 
 	private static SortedSet fgWorkingSets= new TreeSet(new WorkingSetComparator());
 	
+
+	// XML tags
+	static String TAG_WORKINGSETS= "workingsets"; //$NON-NLS-1$
+	static String TAG_WORKINGSET= "workingset"; //$NON-NLS-1$
+	static String TAG_NAME= "name"; //$NON-NLS-1$
+	static String TAG_CONTENTS= "contents"; //$NON-NLS-1$
+	static String TAG_FILE= "file"; //$NON-NLS-1$
+	static String TAG_FOLDER= "folder"; //$NON-NLS-1$
+	static String TAG_PATH= "path"; //$NON-NLS-1$
+	static String TAG_PROJECT= "project"; //$NON-NLS-1$
+
+	// Persistency
+	static String STORE_NAME= "workingsets.xml"; //$NON-NLS-1$
+	static {
+		restore();
+	}
+	
 	String fName;
 	Set fElements; // of IResources
 
 	WorkingSet(String name, Object[] elements) {
-		setName(name);
-		setResources(elements);
+		Assert.isNotNull(name, "name must not be null");
+		fName= name;
+		setResources(elements, true);
 	}
 
 	void setResources(Object[] elements) {
+		setResources(elements, false);
+	}
+
+	private void setResources(Object[] elements, boolean internal) {
 		Assert.isNotNull(elements, "IPath array must not be null");
 		fElements= new HashSet(elements.length);
 		for (int i= 0; i < elements.length; i++) {
@@ -37,15 +71,8 @@ public class WorkingSet implements IWorkingSet {
 			Assert.isTrue(!fElements.contains(elements[i]), "elements must only contain each element once");
 			fElements.add(elements[i]);
 		}
-	}
-
-	void setPaths(IPath[] elements) {
-		Assert.isNotNull(elements, "IPath array must not be null");
-		fElements= new HashSet(elements.length);
-		for (int i= 0; i < elements.length; i++) {
-			Assert.isTrue(!fElements.contains(elements[i]), "elements must only contain each element once");
-			fElements.add(elements[i]);
-		}
+		if (!internal)
+			saveWorkingSets();
 	}
 
 	/*
@@ -58,6 +85,7 @@ public class WorkingSet implements IWorkingSet {
 	void setName(String name) {
 		Assert.isNotNull(name, "name must not be null");
 		fName= name;
+		saveWorkingSets();
 	}
 
 	/*
@@ -132,5 +160,58 @@ public class WorkingSet implements IWorkingSet {
 	static void add(IWorkingSet workingSet) {
 		Assert.isTrue(!fgWorkingSets.contains(workingSet), "working set already registered");
 		fgWorkingSets.add(workingSet);
+		saveWorkingSets();
+	}
+
+	// Persistency
+
+	private static void restore() {
+		WorkingSetReader reader= null;
+		IWorkingSet[] workingSets= null;		
+		try {
+			File file= SearchPlugin.getDefault().getStateLocation().append(STORE_NAME).toFile();
+			if (!file.exists())
+				return;
+			reader= new WorkingSetReader(new BufferedInputStream(new FileInputStream(file)));
+			workingSets= reader.readXML();
+		} catch (IOException ex) {
+			String message= SearchMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
+			ExceptionHandler.log(ex, message);
+		} catch (SAXException ex) {
+			String message= SearchMessages.getFormattedString("WorkingSet.error.badXmlFormat", ex.getMessage()); //$NON-NLS-1$
+			ExceptionHandler.log(ex, message);
+		} finally {
+			try {
+				if (reader != null)
+					reader.close();
+			}
+			catch (IOException ex) {
+				String message= SearchMessages.getFormattedString("WorkingSet.error.close", ex.getMessage()); //$NON-NLS-1$
+				ExceptionHandler.log(ex, message);
+			}
+		}
+		if (workingSets != null)
+			for (int i= 0; i < workingSets.length; i++)
+				WorkingSet.add(workingSets[i]);
+	}
+
+	private static void saveWorkingSets() {
+		WorkingSetWriter writer= null;
+		try {
+			File file= SearchPlugin.getDefault().getStateLocation().append(STORE_NAME).toFile();
+			writer= new WorkingSetWriter(new BufferedOutputStream(new FileOutputStream(file)));
+			writer.writeXML(SearchUI.getWorkingSets());
+		} catch (IOException ex) {
+			String message= SearchMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
+			ExceptionHandler.log(ex, message);
+		} finally {
+			if (writer != null)
+				try {
+					writer.close();
+				} catch (IOException ex) {
+					String message= SearchMessages.getFormattedString("WorkingSet.error.readingFile", ex.getMessage()); //$NON-NLS-1$
+					ExceptionHandler.log(ex, message);
+				}
+		}
 	}
 }
