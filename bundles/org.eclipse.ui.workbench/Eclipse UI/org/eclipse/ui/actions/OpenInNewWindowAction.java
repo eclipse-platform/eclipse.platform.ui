@@ -27,10 +27,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * the active perspective in the window which this
  * action is running in. The default input for the 
  * new window's page is application-specific.
- * 
- * @deprecated Use {@link ActionFactory#OPEN_NEW_WINDOW 
- * 		ActionFactory.OPEN_NEW_WINDOW} instead
- * @issue document this deprecation
  */
 public class OpenInNewWindowAction
 	extends Action
