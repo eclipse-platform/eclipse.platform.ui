@@ -810,7 +810,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * Applies the status to the status line of a dialog page.
 	 */
-	public void applyToStatusLine(DialogPage page, IStatus status) {
+	private void applyToStatusLine(DialogPage page, IStatus status) {
 		String message= status.getMessage();
 		switch (status.getSeverity()) {
 			case IStatus.OK:
