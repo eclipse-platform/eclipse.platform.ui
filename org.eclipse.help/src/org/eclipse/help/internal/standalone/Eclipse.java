@@ -20,6 +20,7 @@ public class Eclipse extends Thread {
 	 */
 	public Eclipse(File eclipseHome, List eclipseOptions) {
 		super();
+		this.setName("Eclipse");
 		this.dir = eclipseHome;
 		cmdarray = new String[eclipseOptions.size() + 1];
 		cmdarray[0] = new File(eclipseHome, "eclipse").getAbsolutePath();
@@ -51,6 +52,7 @@ public class Eclipse extends Thread {
 		BufferedReader bReader;
 		public StreamConsumer(InputStream inputStream) {
 			super();
+			this.setName("Eclipse out/err consumer");
 			bReader = new BufferedReader(new InputStreamReader(inputStream));
 		}
 		public void run() {
