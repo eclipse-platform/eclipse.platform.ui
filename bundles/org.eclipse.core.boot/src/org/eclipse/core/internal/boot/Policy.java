@@ -57,4 +57,13 @@ public static String bind(String id, String[] bindings) {
 		return message;
 	return MessageFormat.format(message, bindings);
 }
+/**
+ * Print a debug message to the console. If the given boolean is <code>true</code> then
+ * pre-pend the message with the current date.
+ */
+public static void debug(boolean includeDate, String message) {
+	if (includeDate) 
+		message = new Date(System.currentTimeMillis()).toString() + " - "+ message; //$NON-NLS-1$
+	System.out.println(message);
+}
 }
