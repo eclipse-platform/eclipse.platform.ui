@@ -122,7 +122,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 		}
 		
 		if(project != null) {
-			mappingPage = new MappingSelectionPage(ConfigureTargetWizard.MAPPING_PAGE_NAME, Policy.bind("webdavMainPage.mappingTitle"), null); //$NON-NLS-1$
+			mappingPage = new MappingSelectionPage(ConfigureTargetWizard.MAPPING_PAGE_NAME, Policy.bind("MappingSelectionPage.mappingTitle"), null); //$NON-NLS-1$
 			mappingPage.setWizard(this);	
 		}	
 		
@@ -237,8 +237,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 			if(getMappingPage() != null) {
 				path = getMappingPage().getMapping();
 			}
-			setMapping(getContainer(), project, site, path);
-			return true;
+			return setMapping(getContainer(), project, site, path);
 		}
 		
 		// allow target wizard to finish
@@ -258,7 +257,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 				if(provider != null) {
 					if(! MessageDialog.openQuestion(container.getShell(),
 						Policy.bind("ConfigureTargetWizardQuestion_2"), //$NON-NLS-1$
-						Policy.bind("ConfigureTargetWizard.alreadyMapped", project.getName(), provider.getSite().getURL().toExternalForm()))) { //$NON-NLS-1$
+						Policy.bind("ConfigureTargetWizard.alreadyMapped", project.getName(), provider.getURL().toExternalForm()))) { //$NON-NLS-1$
 					return false;
 					}
 					TargetManager.unmap(project);
