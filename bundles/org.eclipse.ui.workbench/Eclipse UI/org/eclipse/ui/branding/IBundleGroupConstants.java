@@ -18,8 +18,17 @@ package org.eclipse.ui.branding;
  * @see org.eclipse.core.runtime.IBundleGroup#getProperty(String)
  */
 public interface IBundleGroupConstants {
+
 	/**
+	 * The text to show in an "about features" dialog.
+	 */
+	public static final String ABOUT_TEXT = "aboutText"; //$NON-NLS-1$
+    
+    /**
 	 * An image which can be shown in an "about features" dialog (32x32).
+	 * <p>
+	 * The value is a fully qualified valid URL.
+	 * </p> 
 	 */
 	public static final String FEATURE_IMAGE = "featureImage"; //$NON-NLS-1$
 
@@ -29,8 +38,10 @@ public interface IBundleGroupConstants {
 	public static final String TIPS_AND_TRICKS_HREF = "tipsAndTricksHref"; //$NON-NLS-1$
 
 	/**
-	 * A URL for the feature's welcome page (special XML-based format)
-     * ($nl$/ prefix to permit locale-specific translations of entire file).
+	 * The feature's welcome page (special XML-based format).
+	 * <p>
+	 * The value is a fully qualified valid URL.
+	 * </p> 
 	 * Products designed to run "headless" typically would not have such a page.
 	 */
 	public static final String WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$
@@ -43,6 +54,9 @@ public interface IBundleGroupConstants {
 	
 	/**
 	 * The URL of the license page for the feature (optional).
+	 * <p>
+	 * The value is a fully qualified valid URL.
+	 * </p> 
 	 */
 	public static final String LICENSE_HREF = "licenseHref"; //$NON-NLS-1$
 }

@@ -44,10 +44,15 @@ public interface IProductConstants {
 	 * product. Products designed to run "headless" typically would not 
 	 * have such an image.
 	 * <p>
+	 * The value is either a fully qualified valid URL or a path relative 
+	 * to the product's defining bundle.
+	 * </p> 
+	 * <p>
      * A full-sized product image (no larger than 500x330 pixels) is
      * shown without the "aboutText" blurb.  A half-sized product image
      * (no larger than 250x330 pixels) is shown with the "aboutText"
      * blurb beside it.
+     * </p>
      */
 	public static final String ABOUT_IMAGE = "aboutImage"; //$NON-NLS-1$
 
@@ -71,6 +76,10 @@ public interface IProductConstants {
 	 * An image to be used as the window icon for this product (16x16).  
 	 * Products designed to run "headless" typically would not have such an image.
 	 * <p>
+	 * The value is either a fully qualified valid URL or a path relative 
+	 * to the product's defining bundle.
+	 * </p> 
+	 * <p>
 	 * If the <code>WINDOW_IMAGES</code> property is given, then it supercedes
 	 * this one.
 	 * </p>
@@ -83,17 +92,26 @@ public interface IProductConstants {
 	 * at different sizes (16x16 and 32x32).  
 	 * Products designed to run "headless" typically would not have such images.
 	 * <p>
+	 * The value is a comma-separated list of paths, where each path is either 
+	 * a fully qualified valid URL or a path relative to the product's defining bundle.
+	 * </p> 
+	 * <p>
 	 * If this property is given, then it supercedes <code>WINDOW_IMAGE</code>.
 	 * </p>
 	 */
 	public static final String WINDOW_IMAGES = "windowImages"; //$NON-NLS-1$
 
 	/**
-     * Location of the product's welcome page (special XML-based format), either
-     * a fully qualified valid URL or a path relative to the product's defining
-     * bundle. Products designed to run "headless" typically would not have such
+     * The product's welcome page (special XML-based format).
+	 * <p>
+	 * The value is either a fully qualified valid URL or a path relative 
+	 * to the product's defining bundle.
+	 * </p> 
+     * <p>
+     * Products designed to run "headless" typically would not have such
      * a page. Use of this property is discouraged in 3.0, the new
-     * org.eclipse.ui.intro extension point should be used instead.
+     * <code>org.eclipse.ui.intro</code> extension point should be used instead.
+     * </p>
      */
 	public static final String WELCOME_PAGE = "welcomePage"; //$NON-NLS-1$
 }

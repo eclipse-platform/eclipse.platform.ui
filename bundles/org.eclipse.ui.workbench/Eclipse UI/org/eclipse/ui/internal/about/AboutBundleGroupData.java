@@ -19,7 +19,6 @@ import java.util.zip.CheckedInputStream;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.branding.IBundleGroupConstants;
-import org.eclipse.ui.branding.IProductConstants;
 
 /**
  * A small class to manage the information related to IBundleGroup's.
@@ -102,10 +101,6 @@ public class AboutBundleGroupData extends AboutData {
 	}
 
 	public String getAboutText() {
-	    return bundleGroup.getProperty(IProductConstants.ABOUT_TEXT);
-	}
-	
-	public ImageDescriptor getAboutImage() {
-        return getImage(bundleGroup.getProperty(IProductConstants.ABOUT_IMAGE));
+	    return bundleGroup.getProperty(IBundleGroupConstants.ABOUT_TEXT);
 	}
 }
