@@ -8,8 +8,10 @@ package org.eclipse.debug.internal.core;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +22,11 @@ import java.util.Vector;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.xerces.dom.DocumentImpl;
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +35,7 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -47,7 +55,10 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -290,7 +301,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Terminates/Disconnects any active debug targets/processes.
 	 * Clears launch configuration types.
 	 */
-	public void shutdown() {
+	public void shutdown() throws CoreException {
 		fListeners.removeAll();
 		ILaunch[] launches = getLaunches();
 		for (int i= 0; i < launches.length; i++) {
@@ -301,7 +312,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 				DebugCoreUtils.logError(e);
 			}
 		}
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (projects[i].isOpen()) {
+				persistIndex(projects[i]);
+			}
+		}
 		fLaunchConfigurationTypes.clear();
+		fLaunchConfigurationIndex.clear();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	
@@ -319,6 +337,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			fLaunchConfigurationTypes.add(new LaunchConfigurationType(infos[i]));
 		}		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (projects[i].isOpen()) {
+				restoreIndex(projects[i]);
+			}
+		}		
 	}
 	
 	/**
@@ -514,6 +538,37 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 	index
 	 */
 	protected void persistIndex(IProject project) throws CoreException {
+		String xml = null;
+		ILaunchConfiguration[] configs = getLaunchConfigurations(project);
+		try {
+			xml = getConfigsAsXML(configs);
+		} catch (IOException e) {
+			throw new DebugException(
+				new Status(
+				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating launch configuration index.", new String[]{e.toString()}), null
+				)
+			);					
+		}
+		
+		IPath path = project.getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor());
+		path = path.append(".launchindex");
+		try {
+			File file = path.toFile();
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileOutputStream stream = new FileOutputStream(file);
+			stream.write(xml.getBytes());
+			stream.close();
+		} catch (IOException e) {
+			throw new DebugException(
+				new Status(
+				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating launch configuration index.", new String[]{e.toString()}), null
+				)
+			);				
+		}
 	}
 	
 	/**
@@ -526,6 +581,54 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * 	index
 	 */
 	protected void restoreIndex(IProject project) throws CoreException {
+		InputStream stream = null;
+		try {
+			IPath path = project.getPluginWorkingLocation(DebugPlugin.getDefault().getDescriptor());
+			path = path.append(".launchindex");
+			File file = path.toFile();
+			if (!file.exists()) {
+				// no index to restore
+				return;
+			}
+			stream = new FileInputStream(file);
+			Element root = null;
+			DocumentBuilder parser =
+				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			root = parser.parse(new InputSource(stream)).getDocumentElement();
+			List configs = getConfigsFromXML(root);
+			fLaunchConfigurationIndex.put(project, configs);
+		} catch (FileNotFoundException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+			);					
+		} catch (SAXException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+			);
+		} catch (ParserConfigurationException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+			);		
+		} catch (IOException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+			);										
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					throw new DebugException(
+						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading launch configuration index.", new String[]{e.toString()}), e)
+					);																	
+				}
+			}
+		}			
 	}	
 	
 	/**
@@ -549,6 +652,108 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 
 	/**
+	 * Returns XML that can be used to persist the specified
+	 * launch configurations.
+	 * 
+	 * @param configs list of configurations
+	 * @return XML
+	 * @exception IOException if an exception occurrs creating the XML
+	 */
+	protected String getConfigsAsXML(ILaunchConfiguration[] configs) throws IOException {
+
+		Document doc = new DocumentImpl();
+		Element configRootElement = doc.createElement("launchConfigurations"); //$NON-NLS-1$
+		doc.appendChild(configRootElement);
+		
+		for (int i = 0; i < configs.length; i++) {
+			ILaunchConfiguration lc = configs[i];
+			String memento = lc.getMemento();
+			Element element = doc.createElement("launchConfiguration");
+			element.setAttribute("memento", memento);
+			configRootElement.appendChild(element);
+		}
+
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		serializer.asDOMSerializer().serialize(doc);
+		return writer.toString();
+			
+	}
+	
+	/**
+	 * Returns the launch configurations specified by the given
+	 * XML document.
+	 * 
+	 * @param root XML document
+	 * @return list of launch configurations
+	 * @exception IOException if an exception occurrs reading the XML
+	 */	
+	protected List getConfigsFromXML(Element root) throws CoreException {
+		DebugException invalidFormat = 
+			new DebugException(
+				new Status(
+				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, "Invalid launch configuration index.", null
+				)
+			);		
+			
+		if (!root.getNodeName().equalsIgnoreCase("launchConfigurations")) { //$NON-NLS-1$
+			throw invalidFormat;
+		}
+		
+		// read each launch configuration 
+		List configs = new ArrayList(4);	
+		NodeList list = root.getChildNodes();
+		int length = list.getLength();
+		for (int i = 0; i < length; ++i) {
+			Node node = list.item(i);
+			short type = node.getNodeType();
+			if (type == Node.ELEMENT_NODE) {
+				Element entry = (Element) node;
+				String nodeName = entry.getNodeName();
+				if (!nodeName.equals("launchConfiguration")) {
+					throw invalidFormat;
+				}
+				String memento = entry.getAttribute("memento");
+				if (memento == null) {
+					throw invalidFormat;
+				}
+				configs.add(getLaunchConfiguration(memento));
+			}
+		}
+		return configs;
+	}		
+	
+	/**
+	 * The specified project has just openned - restore its
+	 * launch configuration index.
+	 * 
+	 * @param project the project that has been openned
+	 * @exception CoreException if reading the index fails
+	 */
+	protected void projectOpenned(IProject project) throws CoreException {
+		restoreIndex(project);
+	}
+	
+	/**
+	 * The specified project has just closed - persist its
+	 * launch configuration index.
+	 * 
+	 * @param project the project that has been closed
+	 * @exception CoreException if writing the index fails
+	 */
+	protected void projectClosed(IProject project) throws CoreException {
+		persistIndex(project);
+		fLaunchConfigurationIndex.remove(project);
+	}	
+	
+	/**
 	 * Visitor for handling resource deltas.
 	 */
 	class LaunchManagerVisitor implements IResourceDeltaVisitor {
@@ -561,9 +766,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					IProject project = (IProject)delta.getResource();
 					try {
 						if (project.isOpen()) {
-							LaunchManager.this.persistIndex(project);
+							LaunchManager.this.projectOpenned(project);
 						} else { 
-						    LaunchManager.this.restoreIndex(project);
+						    LaunchManager.this.projectClosed(project);
 						}
 					} catch (CoreException e) {
 						DebugCoreUtils.logError(e);
