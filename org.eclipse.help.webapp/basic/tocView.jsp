@@ -20,26 +20,33 @@
 
 
 <body bgcolor="#FFFFFF" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0">
 <%
-	for (int toc=0; toc<data.getTocCount(); toc++) 
-	{
+	for (int toc=0; toc<data.getTocCount(); toc++) {
 %>
-		<b><nobr><img src="<%=prefs.getImagesDirectory()%>/toc_obj.gif"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></nobr></b>
+	<tr>
+		<td align='left' nowrap>
+			<b><img src="<%=prefs.getImagesDirectory()%>/toc_obj.gif"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
+		</td>
+	</tr>
 <%
 		// Only generate the selected toc
-		if (data.getSelectedToc() != -1 && data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc)))
-		{
+		if (data.getSelectedToc() != -1 && data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc))) {
 %>		
-	<ul>
+	<tr>
+		<td align='left' nowrap>
+			<ul>
 <%
 			data.generateBasicToc(toc, out);
 %>		
-	</ul>
+			</ul>
+		</td>
+	</tr>
 <%
 		}
 	}
 %>		
-
+</table>
 </body>
 </html>
 
