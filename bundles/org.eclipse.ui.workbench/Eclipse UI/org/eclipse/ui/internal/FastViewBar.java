@@ -66,7 +66,7 @@ class FastViewBar implements IWindowTrim {
 	private Cursor moveCursor;
 	private MenuItem closeItem;
 	private MenuItem orientationItem;
-	private IntModel side = new IntModel(SWT.LEFT);
+	private IntModel side = new IntModel(SWT.BOTTOM);
 	private IntModel currentOrientation = new IntModel(SWT.VERTICAL);
 	private RadioMenu radioButtons;
 	private IViewReference selectedView;
