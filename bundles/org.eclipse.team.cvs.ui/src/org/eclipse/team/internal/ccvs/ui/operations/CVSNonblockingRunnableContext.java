@@ -85,6 +85,10 @@ public class CVSNonblockingRunnableContext implements ICVSRunnableContext {
 		if (listener != null) {
 			job.addJobChangeListener(listener);
 		}
+		schedule(job);
+	}
+
+	protected void schedule(Job job) {
 		job.schedule();
 	}
 

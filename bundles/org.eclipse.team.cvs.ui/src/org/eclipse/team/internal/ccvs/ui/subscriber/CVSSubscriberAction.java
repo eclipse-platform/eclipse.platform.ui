@@ -38,7 +38,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSBlockingRunnableContext;
-import org.eclipse.team.internal.ccvs.ui.operations.CVSNonblockingRunnableContext;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSSubscriberNonblockingContext;
 import org.eclipse.team.internal.ccvs.ui.operations.ICVSRunnableContext;
 import org.eclipse.team.ui.sync.SubscriberAction;
 import org.eclipse.team.ui.sync.SyncInfoSet;
@@ -168,7 +168,7 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 */
 	private ICVSRunnableContext getCVSRunnableContext() {
 		if (canRunAsJob() && areJobsEnabled()) {
-			return new CVSNonblockingRunnableContext();
+			return new CVSSubscriberNonblockingContext();
 		} else {
 			return new CVSBlockingRunnableContext(shell);
 		}

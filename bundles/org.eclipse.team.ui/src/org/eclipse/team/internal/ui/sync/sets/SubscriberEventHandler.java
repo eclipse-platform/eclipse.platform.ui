@@ -25,6 +25,7 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.sync.SubscriberAction;
 
 /**
  * This handler collects changes and removals to resources and calculates their
@@ -117,7 +118,7 @@ public class SubscriberEventHandler {
 	 * Schedule the job or process the events now.
 	 */
 	public void schedule() {
-		eventHandlerJob.schedule();
+		SubscriberAction.getJobStatusHandler().schedule(eventHandlerJob);
 	}
 	/**
 	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
@@ -202,7 +203,6 @@ public class SubscriberEventHandler {
 			}
 		});
 		eventHandlerJob.setPriority(Job.SHORT);
-		eventHandlerJob.setSystem(true);
 	}
 	
 	/**
@@ -213,7 +213,12 @@ public class SubscriberEventHandler {
 		Event event;
 		errors.clear();
 		try {
-			monitor.beginTask(null, 100); //$NON-NLS-1$
+			// It's hard to know how much work is going to happen
+			// since the queue can grow. Use the current queue size as a hint to
+			// an infinite progress monitor
+			monitor.beginTask(null, 100);
+			IProgressMonitor subMonitor = Policy.subInfiniteMonitorFor(monitor, 90);
+			subMonitor.beginTask(null, 1024);
 
 			while ((event = nextElement()) != null) {
 				// Cancellation is dangerous because this will leave the sync info in a bad state.
@@ -229,16 +234,17 @@ public class SubscriberEventHandler {
 							collect(
 								event.getResource(),
 								event.getDepth(),
-								monitor,
+								subMonitor,
 								results);
 							resultCache.addAll(results);
 							break;
 						case Event.INITIALIZE :
+							monitor.subTask(Policy.bind("SubscriberEventHandler.2", event.getResource().getFullPath().toString())); //$NON-NLS-1$
 							Event[] events =
 								getAllOutOfSync(
 									new IResource[] { event.getResource()},
 									event.getDepth(),
-									monitor);
+									Policy.subMonitorFor(subMonitor, 64));
 							resultCache.addAll(Arrays.asList(events));
 							break;
 					}
@@ -270,7 +276,7 @@ public class SubscriberEventHandler {
 		IProgressMonitor monitor,
 		List results)
 		throws TeamException {
-
+		
 		if (resource.getType() != IResource.FILE
 			&& depth != IResource.DEPTH_ZERO) {
 			IResource[] members =
@@ -286,6 +292,7 @@ public class SubscriberEventHandler {
 			}
 		}
 
+		monitor.subTask(Policy.bind("SubscriberEventHandler.2", resource.getFullPath().toString())); //$NON-NLS-1$
 		SyncInfo info = set.getSubscriber().getSyncInfo(resource, monitor);
 		// resource is no longer under the subscriber control
 		if (info == null) {
@@ -295,6 +302,7 @@ public class SubscriberEventHandler {
 			results.add(
 				new Event(resource, Event.CHANGE, IResource.DEPTH_ZERO, info));
 		}
+		monitor.worked(1);
 	}
 	/**
 	 * Called to initialize to calculate the synchronization information using the optimized subscriber method. For
@@ -310,30 +318,38 @@ public class SubscriberEventHandler {
 		int depth,
 		IProgressMonitor monitor)
 		throws TeamException {
-		SyncInfo[] infos =
-			set.getSubscriber().getAllOutOfSync(resources, depth, monitor);
-
-		// The subscriber hasn't cached out-of-sync resources. We will have to
-		// traverse all resources and calculate their state. 
-		if (infos == null) {
-			List events = new ArrayList();
-			for (int i = 0; i < resources.length; i++) {
-				collect(
-					resources[i],
-					IResource.DEPTH_INFINITE,
-					monitor,
-					events);
+		
+		monitor.beginTask(null, 100);
+		try {
+			SyncInfo[] infos =
+				set.getSubscriber().getAllOutOfSync(resources, depth, Policy.subMonitorFor(monitor, 50));
+	
+			// The subscriber hasn't cached out-of-sync resources. We will have to
+			// traverse all resources and calculate their state. 
+			if (infos == null) {
+				List events = new ArrayList();
+				IProgressMonitor subMonitor = Policy.subInfiniteMonitorFor(monitor, 50);
+				subMonitor.beginTask(null, resources.length);
+				for (int i = 0; i < resources.length; i++) {
+					collect(
+						resources[i],
+						IResource.DEPTH_INFINITE,
+						subMonitor,
+						events);
+				}
+				return (Event[]) events.toArray(new Event[events.size()]);
+				// The subscriber has returned the list of out-of-sync resources.
+			} else {
+				Event[] events = new Event[infos.length];
+				for (int i = 0; i < infos.length; i++) {
+					SyncInfo info = infos[i];
+					events[i] =
+						new Event(info.getLocal(), Event.CHANGE, depth, info);
+				}
+				return events;
 			}
-			return (Event[]) events.toArray(new Event[events.size()]);
-			// The subscriber has returned the list of out-of-sync resources.
-		} else {
-			Event[] events = new Event[infos.length];
-			for (int i = 0; i < infos.length; i++) {
-				SyncInfo info = infos[i];
-				events[i] =
-					new Event(info.getLocal(), Event.CHANGE, depth, info);
-			}
-			return events;
+		} finally {
+			monitor.done();
 		}
 	}
 

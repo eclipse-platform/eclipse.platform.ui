@@ -17,11 +17,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -41,11 +38,12 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -66,18 +64,18 @@ import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.internal.ui.jobs.IJobListener;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
-import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.internal.ui.sync.actions.OpenInCompareAction;
 import org.eclipse.team.internal.ui.sync.actions.RefreshAction;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.internal.ui.sync.sets.ISyncSetChangedListener;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.sets.SyncSetChangedEvent;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.sync.AndSyncInfoFilter;
 import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.team.ui.sync.PseudoConflictFilter;
+import org.eclipse.team.ui.sync.SubscriberAction;
 import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
 import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
 import org.eclipse.team.ui.sync.SyncInfoFilter;
@@ -86,7 +84,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
@@ -131,10 +128,31 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	// be reset when the input changes.
 	private SyncViewerActions actions;
 	
-	// View images, registered with the plugin and disposed on shutdown.
-	private Image refreshingImg;
-	private Image initialImg; 
-	private Image viewImage;
+	// Cursor used to indicate that work that affects the view is happening
+	private Cursor waitCursor;
+	
+	/*
+	 * Listener to indicate when work is happening that affects the view.
+	 * The methods are synchronized to allow the registration of the listener
+	 * to properly set the cursor.
+	 */
+	private IJobListener jobListener = new IJobListener() {
+		public synchronized void started(QualifiedName jobType) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					showBusyCursor();
+				}
+			});
+		}
+
+		public synchronized void finished(QualifiedName jobType) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					showNormalCursor();
+				}
+			});
+		}
+	};
 	
 	/**
 	 * Constructs a new SynchronizeView.
@@ -145,13 +163,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			currentViewType = TABLE_VIEW;
 		}		
 	}
-	/*(non-Javadoc)
-	 * Overriden to return a title image to show that a background refresh is being run.
-	 * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
-	 */
-	public Image getTitleImage() {
-		return viewImage;
-	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -161,7 +173,14 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		gridLayout.marginWidth= 0;
 		gridLayout.marginHeight = 0;
 		parent.setLayout(gridLayout);
-				
+		
+		// Create the cursor which indicates work is happening in the background
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}	
+		waitCursor = new Cursor(display, SWT.CURSOR_APPSTARTING);
+		
 		createViewer(parent);
 		this.composite = parent;
 				
@@ -176,17 +195,9 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			addSubscriber(subscriber);
 		}
 		
-		// initialize images
-		initialImg = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_VIEW).createImage();
-		refreshingImg = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP).createImage();
-		TeamUIPlugin.disposeOnShutdown(initialImg);
-		TeamUIPlugin.disposeOnShutdown(refreshingImg);
-		setViewImage(initialImg);
-		
 		updateStatusPanel();
 		updateTooltip();
 		
-		initializeJobListener();
 		actions.setContext(null);
 	}
 	/* (non-Javadoc)
@@ -264,28 +275,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			updateStatusPanel();
 		}
 	}
-	/**
-	 * Listen to background refresh jobs to update the title image. Although
-	 * the progres view is available, this gives the user direct feedback that the
-	 * refresh is underway.
-	 * Note: This may not be a good UI practice.
-	 */
-	protected void initializeJobListener() {
-		// add listeners
-		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
-					setViewImage(initialImg);
-				}
-			}
-
-			public void running(IJobChangeEvent event) {
-				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
-					setViewImage(refreshingImg);
-				}
-			}
-		});
-	}
+	
 	/**
 	 * Adds the listeners to the viewer.
 	 */
@@ -313,7 +303,17 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 				// do nothing
 			}
 		});
+		
+		// Register for feedback from subscriber jobs.
+		// Synchronize so the state doesn't change while setting the cursor
+		synchronized (jobListener) {
+			SubscriberAction.getJobStatusHandler().addJobListener(jobListener);
+			if (SubscriberAction.getJobStatusHandler().hasRunningJobs()) {
+				showBusyCursor();
+			}
+		}
 	}	
+
 	protected void initializeActions() {
 		actions = new SyncViewerActions(this);
 		actions.restore(memento);
@@ -336,15 +336,6 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		IActionBars bars = getViewSite().getActionBars();
 		actions.fillActionBars(bars);
 	}
-	/**
-	 * Changes the image for the view. A change event is generated such that getTitleImage
-	 * will be called to get the new image and display it.
-	 * @param image the new image
-	 */
-	protected void setViewImage(Image image) {
-		viewImage = image;
-		fireSafePropertyChange(IWorkbenchPart.PROP_TITLE);
-	}
 	
 	protected void createViewer(Composite parent) {		
 		if(input == null) {
@@ -363,7 +354,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			viewer.setInput(input);
 			viewer.getControl().setFocus();
 			hookContextMenu();
-			initializeListeners();		
+			initializeListeners();	
 		}		
 	}
 
@@ -546,6 +537,12 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		for (Iterator it = subscriberInputs.values().iterator(); it.hasNext();) {
 			SubscriberInput input = (SubscriberInput) it.next();
 			input.dispose();
+		}
+		
+		// Synchronize so we don't process an event after the cursor is disposed
+		synchronized (jobListener) {
+			SubscriberAction.getJobStatusHandler().removeJobListener(jobListener);
+			waitCursor.dispose();
 		}
 	}
 
@@ -868,5 +865,21 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		} catch (TeamException e) {
 			Utils.handleError(getSite().getShell(), e, Policy.bind("SynchronizeView.16"), e.getMessage()); //$NON-NLS-1$
 		}
+	}
+	
+	/* internal use only */ void showBusyCursor() {
+		showCursor(waitCursor);
+	}
+	
+	/* internal use only */ void showNormalCursor() {
+		showCursor(null);
+	}
+	
+	private void showCursor(Cursor cursor) {
+		Viewer viewer = getViewer();
+		if (viewer == null) return;
+		Control control = viewer.getControl();
+		if (control.isDisposed()) return;
+		control.setCursor(cursor);
 	}
 }

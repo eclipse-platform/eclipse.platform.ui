@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
+import org.eclipse.team.ui.sync.SubscriberAction;
 import org.eclipse.ui.actions.ActionContext;
 
 public class RefreshAction extends Action {
@@ -68,7 +69,7 @@ public class RefreshAction extends Action {
 		Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
 		if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {			
 			RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString(), subscriber.getName()), resources, subscriber); //$NON-NLS-1$
-			job.schedule();
+			SubscriberAction.getJobStatusHandler().schedule(job);
 		} else { 			
 			runBlocking(viewer, subscriber, resources);
 		}
