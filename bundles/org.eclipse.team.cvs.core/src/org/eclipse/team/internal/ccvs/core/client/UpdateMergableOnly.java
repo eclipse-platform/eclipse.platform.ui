@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - is/setExecutable() code
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
@@ -57,7 +58,7 @@ public class UpdateMergableOnly extends Update {
 			if (ResourceSyncInfo.isMergedWithConflicts(entryBytes)) {
 				// for merged-with-conflict, return a temp file
 				adjustedFileName = ".##" + adjustedFileName + " " + ResourceSyncInfo.getRevision(entryBytes); //$NON-NLS-1$ //$NON-NLS-2$
-				skippedFiles.add(((IContainer)mParent.getIResource()).getFile(new Path(fileName)));
+				skippedFiles.add(((IContainer)mParent.getIResource()).getFile(new Path(null, fileName)));
 			}
 			return super.getTargetFile(mParent, adjustedFileName, entryBytes);
 		}
@@ -72,6 +73,7 @@ public class UpdateMergableOnly extends Update {
 			Date modTime,
 			boolean binary,
 			boolean readOnly,
+			boolean executable,
 			IProgressMonitor monitor)
 			throws CVSException {
 			
@@ -83,7 +85,7 @@ public class UpdateMergableOnly extends Update {
 				// Now delete the file since it is not used
 				mFile.delete();
 			} else {
-				super.receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
+				super.receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, executable, monitor);
 			}
 		}
 	}

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - is/setExecutable() code
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
@@ -578,7 +579,11 @@ public class Session {
 		String filename = file.getName();
 		connection.writeLine("Modified " + filename); //$NON-NLS-1$
 		// send the default permissions for now
-		connection.writeLine(ResourceSyncInfo.getDefaultPermissions());
+		if (file.isExecutable()) {
+			connection.writeLine(ResourceSyncInfo.getDefaultExecutablePermissions());
+		} else {
+			connection.writeLine(ResourceSyncInfo.getDefaultPermissions());
+		} 
 		sendFile(file, isBinary, sendBinary, monitor);
 	}
 	

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - is/setExecutable() code
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
@@ -81,7 +82,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	public static RemoteFile create(String filePath, ICVSRepositoryLocation location) {
 		Assert.isNotNull(filePath);
 		Assert.isNotNull(location);
-		IPath path = new Path(filePath);
+		IPath path = new Path(null, filePath);
 		RemoteFolder parent = new RemoteFolder(null /* parent */, location, path.removeLastSegments(1).toString(), null /* tag */);
 		RemoteFile file = new RemoteFile(parent, Update.STATE_NONE, path.lastSegment(), null /* revision */, null /* keyword mode */, null /* tag */);
 		parent.setChildren(new ICVSRemoteResource[] {file});
@@ -620,5 +621,20 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public void setContents(IFile file, IProgressMonitor monitor) throws TeamException, CoreException {
 	    setContents(file.getContents(), monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#setExecutable(boolean)
+	 */
+	public void setExecutable(boolean executable) throws CVSException {
+		// remote files are never executable
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSFile#isExecutable()
+	 */
+	public boolean isExecutable() throws CVSException {
+		// remote files are always not executable
+		return false;
 	}
 }

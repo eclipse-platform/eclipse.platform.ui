@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - is/setExecutable() code
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
@@ -93,6 +94,19 @@ public interface ICVSFile extends ICVSResource, ICVSStorage {
 	 * should be invoked to make the file editable.
 	 */
 	boolean isReadOnly() throws CVSException;
+	
+	/**
+	 * Sets the file to be executable (<code>ture</code>) or not executable 
+	 * (<code>false</code>) if the platform supports it.
+	 */
+	public void setExecutable(boolean executable) throws CVSException;
+
+	/**
+	 * Answers whether the file is executable or not. 
+	 * 
+	 * @returns <code>false</code> if the platform doesn't support the executable flag.
+	 */
+	public boolean isExecutable() throws CVSException;
 	
 	/**
 	 * Copy the resource to another file in the same directory

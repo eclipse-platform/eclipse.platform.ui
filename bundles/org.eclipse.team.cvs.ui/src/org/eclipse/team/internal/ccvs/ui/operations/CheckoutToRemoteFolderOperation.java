@@ -49,6 +49,7 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 			Date modTime,
 			boolean binary,
 			boolean readOnly,
+			boolean executable,
 			IProgressMonitor monitor)
 			throws CVSException {
 			
@@ -62,6 +63,7 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 						modTime,
 						binary,
 						readOnly,
+						executable, 
 						monitor);
 			    } finally {
 			        ((RemoteFile)mFile).doneReceivingContents();
@@ -74,6 +76,7 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 						modTime,
 						binary,
 						readOnly,
+						executable, 
 						monitor);
 			}
 		}
@@ -143,7 +146,7 @@ public class CheckoutToRemoteFolderOperation extends CheckoutOperation {
 		IProgressMonitor monitor)
 		throws CVSException {
 		
-		IPath sandboxPath = new Path(folder.getRepositoryRelativePath()).removeLastSegments(1);
+		IPath sandboxPath = new Path(null, folder.getRepositoryRelativePath()).removeLastSegments(1);
 		String pathString;
 		if (sandboxPath.isEmpty()) {
 			pathString = ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME;

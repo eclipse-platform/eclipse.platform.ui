@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - is/setExecutable() code
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
@@ -51,6 +52,7 @@ public class UpdatedHandler extends ResponseHandler {
 	protected static final int HANDLE_CREATED = ICVSFile.CREATED;
 	
 	private static final String READ_ONLY_FLAG = "u=rw"; //$NON-NLS-1$
+	private static final String EXECUTE_FLAG = "x"; //$NON-NLS-1$
 	
 	public UpdatedHandler(int handlerType) {
 		this.handlerType = handlerType;
@@ -84,12 +86,18 @@ public class UpdatedHandler extends ResponseHandler {
 		
 		boolean binary = ResourceSyncInfo.isBinary(entryBytes);
 		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
-		
-		// The file may have been set as read-only by a previous checkout/update
-		if (mFile.isReadOnly()) mFile.setReadOnly(false);
+		boolean executable = permissionsLine.indexOf(EXECUTE_FLAG) != -1;
 		
 		try {
-            receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, monitor);
+            // The file may have been set as read-only by a previous checkout/update
+            if (mFile.isReadOnly()) mFile.setReadOnly(false);
+        } catch (CVSException e) {
+            // Just log and keep going
+            CVSProviderPlugin.log(e);
+        }
+		
+		try {
+            receiveTargetFile(session, mFile, entryLine, modTime, binary, readOnly, executable, monitor);
         } catch (CVSException e) {
             // An error occurred while recieving the file.
             // If it is due to an invalid file name,
@@ -105,7 +113,7 @@ public class UpdatedHandler extends ResponseHandler {
 		return mParent.getFile(fileName);
 	}
 	
-	protected void receiveTargetFile(Session session, ICVSFile mFile, String entryLine, Date modTime, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException {
+	protected void receiveTargetFile(Session session, ICVSFile mFile, String entryLine, Date modTime, boolean binary, boolean readOnly, boolean executable, IProgressMonitor monitor) throws CVSException {
 		
 		// receive the file contents from the server
 		session.receiveFile(mFile, binary, handlerType, monitor);
@@ -129,7 +137,13 @@ public class UpdatedHandler extends ResponseHandler {
 			CVSProviderPlugin.getPlugin().getFileModificationManager().updated(mFile);
 		}
 		mFile.setSyncInfo(newInfoWithTimestamp, modificationState);
-		if (readOnly) mFile.setReadOnly(true);
+		try {
+            if (readOnly) mFile.setReadOnly(true);
+			if (executable) mFile.setExecutable(true);
+        } catch (CVSException e) {
+            // Just log and keep going
+            CVSProviderPlugin.log(e);
+        }
 	}
 	
 }

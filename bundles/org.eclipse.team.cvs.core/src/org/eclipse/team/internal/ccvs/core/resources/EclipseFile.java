@@ -7,37 +7,20 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - is/setExecutable() code
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.syncinfo.BaserevInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
@@ -159,7 +142,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 */
 	public void copyTo(String filename) throws CVSException {
 		try {
-			IPath targetPath = new Path(filename);
+			IPath targetPath = new Path(null, filename);
 			IFile targetFile = getIFile().getParent().getFile(targetPath);
 			if (targetFile.exists()) {
 				// There is a file in the target location. 
@@ -199,13 +182,13 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 					break;
 				case MERGED: // merging contents into a file that exists locally
 					// Ensure we don't leave the file in a partially written state
-					IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
+					IFile tempFile = file.getParent().getFile(new Path(null, file.getName() + TEMP_FILE_EXTENSION));
 					monitor.beginTask(null, 100);
 					if (tempFile.exists()) 
 						tempFile.delete(true /* force */, Policy.subMonitorFor(monitor, 25));
 					tempFile.create(stream, true /*force*/, Policy.subMonitorFor(monitor, 25));
 					file.delete(false /* force */, true /* keep history */, Policy.subMonitorFor(monitor, 25));
-					tempFile.move(new Path(file.getName()), false /*force*/, true /*history*/, Policy.subMonitorFor(monitor, 25));
+					tempFile.move(new Path(null, file.getName()), false /*force*/, true /*history*/, Policy.subMonitorFor(monitor, 25));
 					monitor.done();
 					break;
 				case UPDATE_EXISTING: // creating a new file so it should exist locally
@@ -229,7 +212,15 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 * @see ICVSFile#setReadOnly()
 	 */
 	public void setReadOnly(boolean readOnly) throws CVSException {
-		getIFile().setReadOnly(readOnly);
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		if (attributes != null) {
+			attributes.setReadOnly(readOnly);
+			try {
+                resource.setResourceAttributes(attributes);
+            } catch (CoreException e) {
+                throw CVSException.wrapException(e);
+            }
+		}
 	}
 
 	/*
@@ -237,6 +228,33 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 */
 	public boolean isReadOnly() throws CVSException {
 		return getIFile().isReadOnly();
+	}
+	
+	/*
+	 * @see ICVSFile#setExecutable()
+	 */
+	public void setExecutable(boolean executable) throws CVSException {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		if (attributes != null) {
+			attributes.setExecutable(executable);
+			try {
+                resource.setResourceAttributes(attributes);
+            } catch (CoreException e) {
+                throw CVSException.wrapException(e);
+            }
+		}
+	}
+
+	/*
+	 * @see ICVSFile#isExectuable()
+	 */
+	public boolean isExecutable() throws CVSException {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		if (attributes != null) {
+			return attributes.isExecutable();
+		} else {
+			return false;
+		}
 	}
 	
 	/*
@@ -351,8 +369,13 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 					setBaserevInfo(new BaserevInfo(getName(), ResourceSyncInfo.getRevision(syncBytes)));
 				}
 				
-				// allow editing
-				setReadOnly(false);
+				try {
+                    // allow editing
+                    setReadOnly(false);
+                } catch (CVSException e) {
+                    // Just log and keep going
+                    CVSProviderPlugin.log(e);
+                }
 			}
 		}, monitor);
 		
@@ -395,8 +418,13 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 				}
 				setBaserevInfo(null);
 					
-				// prevent editing
-				setReadOnly(true);
+				try {
+                    // prevent editing
+                    setReadOnly(true);
+                } catch (CVSException e) {
+                    // Just log and keep going
+                    CVSProviderPlugin.log(e);
+                }
 			}
 		}, monitor);
 	}
@@ -471,7 +499,12 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		BaserevInfo base = getBaserevInfo();
 		if (base != null) {
 			setBaserevInfo(null);
-			setReadOnly(true);
+			try {
+                setReadOnly(true);
+            } catch (CVSException e) {
+                // Just log and keep going
+                CVSProviderPlugin.log(e);
+            }
 		}
 	}
 

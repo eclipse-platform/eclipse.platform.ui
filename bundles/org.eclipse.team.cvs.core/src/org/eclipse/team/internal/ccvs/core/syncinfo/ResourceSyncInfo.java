@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - is/setExecutable() code
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
@@ -49,6 +50,7 @@ public class ResourceSyncInfo {
 	// safe default permissions. Permissions are saved separately so that the correct permissions
 	// can be sent back to the server on systems that don't save execute bits (e.g. windows).
 	private static final String DEFAULT_PERMISSIONS = "u=rw,g=rw,o=r"; //$NON-NLS-1$
+	private static final String DEFAULT_EXECUTABLE_PERMISSIONS = "u=rwx,g=rwx,o=rx"; //$NON-NLS-1$
 	
 	// file sync information can be associated with a local resource that has been deleted. This is
 	// noted by prefixing the revision with this character.
@@ -317,6 +319,13 @@ public class ResourceSyncInfo {
 	 */
 	public static String getDefaultPermissions() {
 		return DEFAULT_PERMISSIONS;
+	}
+	
+	/**
+	 * Answers the default permissions string that is executable.
+	 */
+	public static String getDefaultExecutablePermissions() {
+		return DEFAULT_EXECUTABLE_PERMISSIONS;
 	}
 	
 	/**
