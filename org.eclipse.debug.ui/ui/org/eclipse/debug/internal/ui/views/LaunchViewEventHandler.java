@@ -98,7 +98,13 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			}
 		}		
 		clearSourceSelection(null);
-		if (event.getDetail() != DebugEvent.STEP_START) {
+		if (event.isStepStart()) {
+			IThread thread = getThread(element);
+			if (thread != null) {								
+				getLaunchViewer().updateStackFrameIcons(thread);
+				resetStackFrameCount(thread);
+			}
+		} else {
 			refresh(element);
 			if (element instanceof IThread) {
 				//select and reveal will update buttons
@@ -107,13 +113,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				resetStackFrameCount((IThread)element);
 				return;
 			}
-		} else {
-			IThread thread = getThread(element);
-			if (thread != null) {								
-				getLaunchViewer().updateStackFrameIcons(thread);
-				resetStackFrameCount(thread);
-			}
-		}
+		}			
 		labelChanged(element);
 		updateButtons();
 	}

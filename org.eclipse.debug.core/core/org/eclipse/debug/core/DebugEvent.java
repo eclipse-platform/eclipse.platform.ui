@@ -60,7 +60,9 @@ import java.util.EventObject;
  *	</li>
  *	<li><code>RESUME</code> - a thread has resumed execution. Event detail provides
  *		the reason for the resume:<ul>
- *		<li><code>STEP_START</code> - a thread is being resumed because of a request to step</li>
+ *		<li><code>STEP_INTO</code> - a thread is being resumed because of a request to step into</li>
+ * 		<li><code>STEP_OVER</code> - a thread is being resumed because of a request to step over</li>
+ * 		<li><code>STEP_RETURN</code> - a thread is being resumed because of a request to step return</li>
  *		<li><code>CLIENT_REQUEST</code> - a client request has caused the thread to be resumed
  * 			(i.e. an explicit call to <code>resume()</code>)</li>
  * 		<li><code>UNSPECIFIED</code> - The reason for the resume is not specified</li>
@@ -123,33 +125,49 @@ public final class DebugEvent extends EventObject {
 	public static final int CHANGE= 0x0010;
 
 	/**
-	 * Step start detail. Indicates a thread was resumed by a step action.
+	 * Step start detail. Indicates a thread was resumed by a step
+	 * into action.
+	 * @since 2.0
 	 */
-	public static final int STEP_START= 0x0001;
+	public static final int STEP_INTO= 0x0001;
+	
+	/**
+	 * Step start detail. Indicates a thread was resumed by a step
+	 * over action.
+	 * @since 2.0
+	 */
+	public static final int STEP_OVER= 0x0002;
+	
+	/**
+	 * Step start detail. Indicates a thread was resumed by a step
+	 * return action.
+	 * @since 2.0
+	 */
+	public static final int STEP_RETURN= 0x0004;		
 
 	/**
 	 * Step end detail. Indicates a thread was suspended due
 	 * to the completion of a step action.
 	 */
-	public static final int STEP_END= 0x0002;
+	public static final int STEP_END= 0x0008;
 	
 	/**
 	 * Breakpoint detail. Indicates a thread was suspended by
 	 * a breakpoint.
 	 */
-	public static final int BREAKPOINT= 0x0004;
+	public static final int BREAKPOINT= 0x0010;
 	
 	/**
 	 * Client request detail. Indicates a thread was suspended due
 	 * to a client request.
 	 */
-	public static final int CLIENT_REQUEST= 0x0008;
+	public static final int CLIENT_REQUEST= 0x0020;
 	
 	/**
 	 * Constant indicating that the kind or detail of a debug
 	 * event is unspecified.
 	 */
-	public static final int UNSPECIFIED = -1;
+	public static final int UNSPECIFIED = 0;
 	
 	/**
 	 * The kind of event - one of the kind constants defined by
@@ -171,7 +189,7 @@ public final class DebugEvent extends EventObject {
 	 *	kind constants defined by this class)
 	 */
 	public DebugEvent(Object eventSource, int kind) {
-		this(eventSource, kind, -1);
+		this(eventSource, kind, UNSPECIFIED);
 	}
 
 	/**
@@ -187,7 +205,7 @@ public final class DebugEvent extends EventObject {
 		super(eventSource);
 		if ((kind & (RESUME | SUSPEND | CREATE | TERMINATE | CHANGE)) == 0)
 			throw new IllegalArgumentException("kind is not one of the allowed constants, see IDebugEventConstants");
-		if (detail != -1 && (detail & (STEP_END | STEP_START | BREAKPOINT | CLIENT_REQUEST)) == 0)
+		if (detail != UNSPECIFIED && (detail & (STEP_END | STEP_INTO | STEP_OVER | STEP_RETURN | BREAKPOINT | CLIENT_REQUEST)) == 0)
 			throw new IllegalArgumentException("detail is not one of the allowed constants, see IDebugEventConstants");
 		fKind= kind;
 		fDetail= detail;
@@ -211,6 +229,20 @@ public final class DebugEvent extends EventObject {
 	 */
 	public int getKind() {
 		return fKind;
+	}
+	
+	/**
+	 * Returns whether this event's detail indicates the
+	 * beginning of a step event. This event's detail is one
+	 * of <code>STEP_INTO</code>, <code>STEP_OVER</code>, or
+	 * <code>STEP_RETURN</code>.
+	 * 
+	 * @return whether this event's detail indicates the beginning
+	 *  of a step event.
+	 * @since 2.0
+	 */
+	public boolean isStepStart() {
+		return (getDetail() & (STEP_INTO | STEP_OVER | STEP_RETURN)) > 0;
 	}
 }
 
