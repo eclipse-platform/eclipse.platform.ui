@@ -152,7 +152,7 @@ public class ProblemView extends MarkerView {
 	}
 	
 	protected DialogMarkerFilter getFiltersDialog() {
-		return new DialogProblemFilter(getSite().getShell(), problemFilter);
+		return new DialogProblemFilter(getViewer().getControl().getShell(), problemFilter);
 	}
 	
 	protected IField[] getHiddenFields() {
@@ -239,7 +239,7 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#openFiltersDialog()
 	 */
 	public void openFiltersDialog() {
-		DialogProblemFilter dialog = new DialogProblemFilter(getSite().getShell(), problemFilter);
+		DialogProblemFilter dialog = new DialogProblemFilter(getViewer().getControl().getShell(), problemFilter);
 		
 		if (dialog.open() == Window.OK) {
 			problemFilter = (ProblemFilter)dialog.getFilter();
