@@ -18,7 +18,6 @@ import java.io.InterruptedIOException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -66,7 +65,7 @@ public class PollingInputStream extends FilterInputStream {
 		} catch (IOException e) {
 			// We shouldn't get an exception when we're getting the available input.
 			// If we do, just log it so we can close.
-			TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, e.getMessage(), e));
+			TeamPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		} finally {
 			for (;;) {
 				try {

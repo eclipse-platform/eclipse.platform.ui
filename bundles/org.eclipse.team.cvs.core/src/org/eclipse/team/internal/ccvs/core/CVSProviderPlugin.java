@@ -172,7 +172,6 @@ public class CVSProviderPlugin extends Plugin {
 	 * Use<code>log(CoreException)</code> instead so the stack trace is not lost.
 	 */
 	public static void log(IStatus status) {
-		// For now, we'll log the status. However we should do more
 		getPlugin().getLog().log(status);
 	}
 

@@ -348,7 +348,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 							if (newRemoteDirectories.size() + newRemoteFiles.size() == 0) {
 								throw new CVSServerException(status);
 							} else {
-								CVSProviderPlugin.log(status);
+								CVSProviderPlugin.log(new CVSServerException(status));
 							}
 							
 						}

@@ -142,14 +142,14 @@ public class CVSTeamProvider extends RepositoryProvider {
 		IExtension extension = extensions[0];
 		IConfigurationElement[] configs = extension.getConfigurationElements();
 		if (configs.length == 0) {
-			CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null));//$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$
 			return null;
 		}
 		try {
 			IConfigurationElement config = configs[0];
 			return (IFileModificationValidator) config.createExecutableExtension("run");//$NON-NLS-1$
 		} catch (CoreException ex) {
-			CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex));//$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$
 			return null;
 		}
 	}
@@ -1404,7 +1404,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			if (exception[0] == null) {
 				throw CVSException.wrapException(e);
 			} else {
-				CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+				CVSProviderPlugin.log(CVSException.wrapException(e));
 			}
 		}
 		if (exception[0] != null) {
@@ -1560,7 +1560,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				in.close();
 			} catch (IOException e) {
 				// Since we already have the contents, just log this exception
-				CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+				CVSProviderPlugin.log(CVSException.wrapException(e));
 			}
 		}
 	}

@@ -12,11 +12,19 @@ package org.eclipse.team.internal.ccvs.ssh;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 public class SSHPlugin extends Plugin {
 	
 	public static String ID = "org.eclipse.team.cvs.ssh"; //$NON-NLS-1$
 
 	private static SSHPlugin instance;
+	
+	/**
+	 * Log the given exception along with the provided message and severity indicator
+	 */
+	public static void log(int severity, String message, Throwable e) {
+		getPlugin().getLog().log(new Status(severity, ID, 0, message, e));
+	}
 	
 	/**
 	 * Constructor for SSHPlugin

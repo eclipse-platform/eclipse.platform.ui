@@ -85,7 +85,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 			}
 			return false;
 		} catch(CVSException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 			return false;
 		}
 	}

@@ -156,7 +156,7 @@ public class CVSSyncInfo extends SyncInfo {
 				}
 				return SyncInfo.IN_SYNC;
 			} catch(CVSException e) {
-				CVSProviderPlugin.log(e.getStatus());
+				CVSProviderPlugin.log(e);
 				return SyncInfo.CONFLICTING | SyncInfo.DELETION;
 			}
 		}

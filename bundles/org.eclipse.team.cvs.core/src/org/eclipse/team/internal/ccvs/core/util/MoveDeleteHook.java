@@ -133,7 +133,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		try {
 			EclipseSynchronizer.getInstance().prepareForDeletion(project);
 		} catch (CVSException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 		// todo: Perform a "cvs release" if there are any edits on the project
 		return false;
@@ -256,7 +256,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		try {
 			EclipseSynchronizer.getInstance().prepareForDeletion(source);
 		} catch (CVSException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 		return false;
 	}

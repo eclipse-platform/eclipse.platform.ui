@@ -163,7 +163,7 @@ public class SyncFileWriter {
 			try {
 				cvsSubDir.setTeamPrivateMember(true);
 			} catch (CoreException e) {
-				CVSProviderPlugin.log(e.getStatus());
+				CVSProviderPlugin.log(e);
 			}
 		}
 				

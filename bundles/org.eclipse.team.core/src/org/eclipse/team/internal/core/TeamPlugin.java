@@ -87,24 +87,18 @@ final public class TeamPlugin extends Plugin {
 	}
 	
 	/**
-	 * Returns the plug-in's log
+	 * Log the given exception alloing with the provided message and severity indicator
 	 */
 	public static void log(int severity, String message, Throwable e) {
 		plugin.getLog().log(new Status(severity, ID, 0, message, e));
 	}
 	
 	/**
-	 * Returns the plug-in's log
-	 */
-	public static void log(IStatus status) {
-		plugin.getLog().log(status);
-	}
-	
-	/**
-	 * Returns the plug-in's log
+	 * Log the given CoreException in a manner that will include the stacktrace of
+	 * the exception in the log.
 	 */
 	public static void log(CoreException e) {
-		log(e.getStatus());
+		log(e.getStatus().getSeverity(), e.getMessage(), e);
 	}
 	
 	/*

@@ -200,7 +200,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		try {
 			whenWeWrote = (Long)resource.getSessionProperty(SyncFileWriter.MODSTAMP_KEY);
 		} catch(CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 			whenWeWrote = null;
 		}
 		return (whenWeWrote==null || whenWeWrote.longValue() != modStamp);

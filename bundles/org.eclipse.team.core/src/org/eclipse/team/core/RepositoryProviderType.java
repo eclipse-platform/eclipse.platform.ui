@@ -116,7 +116,7 @@ public abstract class RepositoryProviderType {
 								allProviderTypes.put(id, providerType);
 								return providerType;
 							} catch (CoreException e) {
-								TeamPlugin.log(e.getStatus());
+								TeamPlugin.log(e);
 							} catch (ClassCastException e) {
 								String className = configElements[j].getAttribute("typeClass"); //$NON-NLS-1$
 								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProviderType.invalidClass", id, className), e); //$NON-NLS-1$

@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Vector;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * I represent a database of known hosts usually placed in ~/.ssh/known_hosts
@@ -88,6 +92,7 @@ public class KnownHosts {
 			addHost(hostname, nbits, e, n);
 			return true;
 		} catch (IOException ex) {
+			SSHPlugin.log(IStatus.ERROR, "Error reading host key file", ex);
 			return false;
 		}
 	}
@@ -102,9 +107,9 @@ public class KnownHosts {
 			w.write(hostname + " " + key_bits.toString(10) + " " + e.toString(10) + " " + n.toString(10)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			w.close();
 			String message = Policy.bind("Client.addedHostKey", new String[] {hostname, defaultFilename()}); //$NON-NLS-1$
-			IStatus status = new Status(IStatus.INFO, SSHPlugin.ID, IStatus.OK, message, null);
-			SSHPlugin.getPlugin().getLog().log(status);
+			SSHPlugin.log(IStatus.INFO, message, null);
 		} catch (IOException ex) {
+			SSHPlugin.log(IStatus.ERROR, "Error writing host key file", ex);
 		}
 	}
 	
@@ -115,7 +120,7 @@ public class KnownHosts {
 		try {
 			new File(defaultFilename()).createNewFile();
 		} catch (IOException ee) {
-			// FIXME - Write to the log here
+			SSHPlugin.log(IStatus.ERROR, "Error creating host key file", ee);
 		}
 
 	}

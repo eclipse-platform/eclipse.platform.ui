@@ -367,7 +367,7 @@ public abstract class ResourceState {
 		try {
 			return SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, localResource) != null;
 		} catch (CoreException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 			return false;
 		}
 	}

@@ -122,7 +122,7 @@ public class TeamFile extends DiffElement implements ICompareInput, ITeamNode, I
 				localByteContents = null;
 			}
 		} catch(CoreException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 		}
 	}
 		

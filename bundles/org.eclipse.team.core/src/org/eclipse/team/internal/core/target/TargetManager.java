@@ -185,7 +185,7 @@ public class TargetManager {
 					new DataInputStream(new FileInputStream(f));
 				readLocations(dis);
 			} catch (IOException e) {
-				TeamPlugin.log(new Status(Status.ERROR, TeamPlugin.ID, 0, Policy.bind("Config.error"), e)); //$NON-NLS-1$
+				TeamPlugin.log(Status.ERROR, Policy.bind("Config.error"), e); //$NON-NLS-1$
 			}
 		}
 	}
@@ -208,7 +208,7 @@ public class TargetManager {
 				//todo: log the error
 			}
 		} catch (IOException e) {
-			TeamPlugin.log(new Status(Status.ERROR, TeamPlugin.ID, 0, Policy.bind("Config.error"), e)); //$NON-NLS-1$
+			TeamPlugin.log(Status.ERROR, Policy.bind("Config.error"), e); //$NON-NLS-1$
 		}
 	}
 
@@ -261,7 +261,7 @@ public class TargetManager {
 							try {
 								return (ISiteFactory) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
-								TeamPlugin.log(e.getStatus());
+								TeamPlugin.log(e);
 								return null;
 							}
 						}

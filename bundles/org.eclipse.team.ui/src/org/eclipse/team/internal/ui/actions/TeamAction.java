@@ -249,7 +249,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			} else {
 				action.setEnabled(false);
 				// We should not open a dialog when determining menu enablements so log it instead
-				TeamPlugin.log(e.getStatus());
+				TeamPlugin.log(e);
 			}
 		}
 	}

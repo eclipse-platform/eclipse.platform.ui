@@ -394,7 +394,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				}
 				return IRemoteSyncElement.IN_SYNC;
 			} catch(CVSException e) {
-				CVSProviderPlugin.log(e.getStatus());
+				CVSProviderPlugin.log(e);
 				return IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION;
 			}
 		}
@@ -437,7 +437,7 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			}
 			return false;
 		} catch(CVSException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 			return false;
 		}
 	}

@@ -112,8 +112,8 @@ public class LogListener extends CommandOutputListener {
 				if (isBranch) {
 					int lastDot = tagRevision.lastIndexOf('.');
 					if (lastDot == -1) {
-						CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 
-							Policy.bind("LogListener.invalidRevisionFormat", tagName, tagRevision))); //$NON-NLS-1$
+						CVSProviderPlugin.log(IStatus.ERROR, 
+							Policy.bind("LogListener.invalidRevisionFormat", tagName, tagRevision), null); //$NON-NLS-1$
 					} else {
 						if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
 							lastDot = lastDot - 2;

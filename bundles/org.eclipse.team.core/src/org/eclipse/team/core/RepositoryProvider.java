@@ -199,8 +199,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 				// There is a persistant property but the provider cannot be obtained.
 				// The reason could be that the provider's plugin is no longer available.
 				// Better log it just in case this is unexpected.
-				TeamPlugin.log(new Status(IStatus.ERROR, TeamPlugin.ID, 0, 
-					Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null));  //$NON-NLS-1$
+				TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.couldNotInstantiateProvider", project.getName(), id), null);  //$NON-NLS-1$
 			}
 
 			if (provider != null) provider.deconfigure();
@@ -434,7 +433,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 			}
 		} catch(CoreException e) {
 			// would happen if provider nature id is not registered with the resources plugin
-			TeamPlugin.log(new Status(IStatus.WARNING, TeamPlugin.ID, 0, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3", id), e)); //$NON-NLS-1$
+			TeamPlugin.log(IStatus.WARNING, Policy.bind("RepositoryProviderTypeRepositoryProvider_not_registered_as_a_nature_id___3", id), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -460,7 +459,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 			if (lookupProviderProp(project) != null) return true;
 			return project.getPersistentProperty(PROVIDER_PROP_KEY) != null;
 		} catch (CoreException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 			return false;
 		}
 	}
@@ -531,7 +530,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 							try {
 								return (RepositoryProvider) configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
-								TeamPlugin.log(e.getStatus());
+								TeamPlugin.log(e);
 							} catch (ClassCastException e) {
 								String className = configElements[j].getAttribute("class"); //$NON-NLS-1$
 								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProvider.invalidClass", id, className), e); //$NON-NLS-1$

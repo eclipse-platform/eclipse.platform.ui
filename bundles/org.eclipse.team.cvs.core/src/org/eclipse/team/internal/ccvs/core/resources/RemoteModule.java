@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -118,7 +117,7 @@ public class RemoteModule extends RemoteFolder {
 				}
 			} catch (NoSuchElementException e) {
 				// There is an invalid entry in the modules file. Log it and continue
-				CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, Policy.bind("RemoteModule.invalidDefinition", moduleDefinitionStrings[i], repository.getLocation()), null)); //$NON-NLS-1$
+				CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("RemoteModule.invalidDefinition", moduleDefinitionStrings[i], repository.getLocation()), null); //$NON-NLS-1$
 				continue;
 			}
 			LocalOption[] localOptions = (LocalOption[]) localOptionsList.toArray(new LocalOption[localOptionsList.size()]);

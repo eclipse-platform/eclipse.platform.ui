@@ -179,7 +179,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			Platform.flushAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
 		} catch (CoreException e) {
 			// We should probably wrap the CoreException here!
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.errorFlushing", getLocation()), e);//$NON-NLS-1$ 
 		}
 	}
@@ -459,7 +459,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			Platform.addAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME, map);
 		} catch (CoreException e) {
 			// We should probably wrap the CoreException here!
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 			throw new CVSException(IStatus.ERROR, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.errorCaching", getLocation()), e);//$NON-NLS-1$ 
 		}
 	}
@@ -478,21 +478,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					IStatus status = Command.VERSION.execute(null, CVSRepositoryLocation.this, monitor);
 					// Log any non-ok status
 					if (! status.isOK()) {
-						if (status.isMultiStatus()) {
-							IStatus[] children = status.getChildren();
-							for (int i = 0; i < children.length; i++) {
-								CVSProviderPlugin.log(children[i]);
-							}
-						} else {
-							CVSProviderPlugin.log(status);
-						}
+						CVSProviderPlugin.log(status);
 					}
 					if (getServerPlatform() == CVSNT_SERVER) {
 						// check for the use of a repository prefix
 						if (getRootDirectory().startsWith(Session.SERVER_SEPARATOR)) {
 							// A prefix is in use. Log a warning
-							CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
-								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
+							CVSProviderPlugin.log(IStatus.WARNING, Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null); //$NON-NLS-1$
 							throw new CVSAuthenticationException(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0,
 								Policy.bind("CVSRepositoryLocation.cvsntPrefix", getLocation()), null)); //$NON-NLS-1$
 						}
@@ -789,14 +781,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					IExtension extension = extensions[i];
 					IConfigurationElement[] configs = extension.getConfigurationElements();
 					if (configs.length == 0) {
-						CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSProviderPlugin.execProblem"), null));//$NON-NLS-1$ 
+						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), null);//$NON-NLS-1$ 
 						continue;
 					}
 					try {
 						IConfigurationElement config = configs[0];
 						connectionMethods.add(config.createExecutableExtension("run"));//$NON-NLS-1$ 
 					} catch (CoreException ex) {
-						CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSProviderPlugin.execProblem"), ex));//$NON-NLS-1$ 
+						CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSProviderPlugin.execProblem"), ex);//$NON-NLS-1$ 
 					}
 				}
 			}
@@ -812,14 +804,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		IExtension extension = extensions[0];
 		IConfigurationElement[] configs = extension.getConfigurationElements();
 		if (configs.length == 0) {
-			CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null));//$NON-NLS-1$ 
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.noConfigurationElement", new Object[] {extension.getUniqueIdentifier()}), null);//$NON-NLS-1$ 
 			return null;
 		}
 		try {
 			IConfigurationElement config = configs[0];
 			return (IUserAuthenticator) config.createExecutableExtension("run");//$NON-NLS-1$ 
 		} catch (CoreException ex) {
-			CVSProviderPlugin.log(new Status(IStatus.ERROR, CVSProviderPlugin.ID, 0, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex));//$NON-NLS-1$ 
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("CVSAdapter.unableToInstantiate", new Object[] {extension.getUniqueIdentifier()}), ex);//$NON-NLS-1$ 
 			return null;
 		}
 	}

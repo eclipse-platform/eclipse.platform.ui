@@ -302,7 +302,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 					clearCachedContents();
 				} catch (IOException e2) {
 				}
-				CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+				CVSProviderPlugin.log(CVSException.wrapException(e));
 			}
 		}
 		return contents == null ? 0 : contents.length;
@@ -527,7 +527,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				ioFile.delete();
 			}
 		} catch (IOException e) {
-			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+			CVSProviderPlugin.log(CVSException.wrapException(e));
 		}
 	}
 	
@@ -562,7 +562,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 			out = new BufferedOutputStream(new FileOutputStream(ioFile));
 		} catch (FileNotFoundException e) {
 			// Could not find the file. Perhaps the name is too long. (bug 20696)
-			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 0, Policy.bind("RemoteFile.Could_not_cache_remote_contents_to_disk._Caching_remote_file_in_memory_instead._1"), e)); //$NON-NLS-1$
+			CVSProviderPlugin.log(IStatus.ERROR, Policy.bind("RemoteFile.Could_not_cache_remote_contents_to_disk._Caching_remote_file_in_memory_instead._1"), e); //$NON-NLS-1$
 			// Resort to in-memory storage of the remote file
 			out = new ByteArrayOutputStream();
 		}

@@ -169,7 +169,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 						IMarker marker = getDeletionMarker(resource);
 						if (marker != null) marker.delete();
 					} catch (CoreException e) {
-						CVSProviderPlugin.log(e.getStatus());
+						CVSProviderPlugin.log(e);
 					}
 				} else if (ResourceSyncInfo.isFolder(syncBytes)) {
 					// This is a gender change against the server! 
@@ -226,7 +226,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 							provider = null;
 						}
 					} catch (TeamException e) {
-						CVSProviderPlugin.log(e.getStatus());
+						CVSProviderPlugin.log(e);
 					}
 				}
 				
@@ -285,7 +285,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				}
 			});
 		} catch (CVSException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 	}
 
@@ -296,7 +296,7 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 		try {
 			clearCVSMarkers(project);
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 	}
 	

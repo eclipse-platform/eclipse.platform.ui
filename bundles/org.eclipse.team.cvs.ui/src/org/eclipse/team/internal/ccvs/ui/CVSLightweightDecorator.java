@@ -449,7 +449,7 @@ public class CVSLightweightDecorator
 			});
 			postLabelEvent(new LabelProviderChangedEvent(this, resources.toArray()));
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 	}
 	

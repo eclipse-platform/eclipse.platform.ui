@@ -135,7 +135,7 @@ public class TeamProvider implements ISaveParticipant {
 						String localName = context.getAttribute(SAVECTX_LOCALNAME);
 						TeamSubscriberFactory factory = create(qualifier);
 						if(factory == null) {
-							TeamPlugin.log(new TeamException("Error restoring subscribers. Cannot find factory with id: " + qualifier.toString()).getStatus());
+							TeamPlugin.log(new TeamException("Error restoring subscribers. Cannot find factory with id: " + qualifier.toString()));
 						}
 						SaveContext[] children = context.getChildren();
 						if(children.length == 1) {			
@@ -149,7 +149,7 @@ public class TeamProvider implements ISaveParticipant {
 			
 			}
 		} catch (TeamException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class TeamProvider implements ISaveParticipant {
 				String qualifier = subscriber.getId().getQualifier();
 				TeamSubscriberFactory factory = create(qualifier);
 				if(factory == null) {
-					TeamPlugin.log(new TeamException("Error saving subscribers. Cannot find factory with id: " + qualifier).getStatus());
+					TeamPlugin.log(new TeamException("Error saving subscribers. Cannot find factory with id: " + qualifier));
 				}
 				SaveContext child = factory.saveSubscriber(subscriber);
 				if(child != null) { 
@@ -180,7 +180,7 @@ public class TeamProvider implements ISaveParticipant {
 			root.setChildren((SaveContext[])children.toArray(new SaveContext[children.size()]));
 			SaveContextXMLWriter.writeXMLPluginMetaFile(TeamPlugin.getPlugin(), "subscribers", root);
 		} catch (TeamException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 		}
 	}
 	
@@ -206,7 +206,7 @@ public class TeamProvider implements ISaveParticipant {
 							factories.put(sFactory.getID(), sFactory);
 							return sFactory;
 							} catch (CoreException e) {
-								TeamPlugin.log(e.getStatus());
+								TeamPlugin.log(e);
 							} catch (ClassCastException e) {
 								String className = configElements[j].getAttribute("class"); //$NON-NLS-1$
 								TeamPlugin.log(IStatus.ERROR, Policy.bind("RepositoryProviderType.invalidClass", id.toString(), className), e); //$NON-NLS-1$

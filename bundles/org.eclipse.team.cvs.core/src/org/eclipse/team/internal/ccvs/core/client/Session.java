@@ -181,7 +181,7 @@ public class Session {
 						try {
 							((Session)currentOpenSessions.get(key)).close();
 						} catch (CVSException e) {
-							CVSProviderPlugin.log(e.getStatus());
+							CVSProviderPlugin.log(e);
 						} finally {
 							currentOpenSessions.remove(key);
 						}
@@ -216,7 +216,7 @@ public class Session {
 						try {
 							session.close();
 						} catch (CVSException e) {
-							CVSProviderPlugin.log(e.getStatus());
+							CVSProviderPlugin.log(e);
 						}
 					}
 				} finally {
@@ -578,7 +578,7 @@ public class Session {
 				// Unmanage the old location in order to remove the entry from the parent
 				actualFolder.unmanage(null);
 			} catch (CoreException e) {
-				CVSProviderPlugin.log(e.getStatus());
+				CVSProviderPlugin.log(e);
 				unhandledMappings.add(desiredPath);
 			}
 		}

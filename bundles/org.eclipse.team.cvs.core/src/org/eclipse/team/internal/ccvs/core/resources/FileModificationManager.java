@@ -103,7 +103,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 				modifiedResources.clear();
 			}
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 
 	}
@@ -160,7 +160,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(CVSException.wrapException(e).getStatus());
+			CVSProviderPlugin.log(CVSException.wrapException(e));
 		}
 	}
 	
@@ -194,7 +194,7 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 			whenWeWrote = (Long)resource.getSessionProperty(UPDATE_TIMESTAMP);
 			resource.setSessionProperty(UPDATE_TIMESTAMP, null);
 		} catch(CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 			whenWeWrote = null;
 		}
 		return (whenWeWrote!=null && whenWeWrote.longValue() == modStamp);

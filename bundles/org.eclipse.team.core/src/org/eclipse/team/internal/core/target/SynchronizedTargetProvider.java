@@ -171,7 +171,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		try {
 			return getState(resource).isDirty();
 		} catch (TeamException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 			return true;
 		}
 	}
@@ -198,7 +198,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		try {
 			newState(project).removeState();
 		} catch (TeamException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 		}
 	}
 	
@@ -219,7 +219,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		try {
 			return getState(resource).hasPhantom();
 		} catch (TeamException e) {
-			TeamPlugin.log(e.getStatus());
+			TeamPlugin.log(e);
 			return true;
 		}
 	}

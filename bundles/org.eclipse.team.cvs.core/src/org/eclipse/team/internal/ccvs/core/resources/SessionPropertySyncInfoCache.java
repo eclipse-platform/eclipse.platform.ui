@@ -62,7 +62,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 			final ISynchronizer synchronizer = ResourcesPlugin.getWorkspace().getSynchronizer();
 			synchronizer.add(FOLDER_DIRTY_STATE_KEY);
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 	}
 	
@@ -432,7 +432,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 							}
 						});
 					} catch (CoreException e) {
-						CVSProviderPlugin.log(e.getStatus());
+						CVSProviderPlugin.log(e);
 					}
 				}
 			}		
@@ -448,7 +448,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 		try {
 			synchronizer.flushSyncInfo(FOLDER_DIRTY_STATE_KEY, container, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
-			CVSProviderPlugin.log(e.getStatus());
+			CVSProviderPlugin.log(e);
 		}
 	}
 }

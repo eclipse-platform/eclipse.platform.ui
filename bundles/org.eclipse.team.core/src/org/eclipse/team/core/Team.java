@@ -624,7 +624,7 @@ public final class Team {
 							try {
 								return (IProjectSetSerializer)configElements[j].createExecutableExtension("class"); //$NON-NLS-1$
 							} catch (CoreException e) {
-								TeamPlugin.log(e.getStatus());
+								TeamPlugin.log(e);
 								return null;
 							}
 						}

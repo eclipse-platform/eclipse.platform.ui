@@ -191,7 +191,7 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 			try{
 				return provider.isOutOfDate(local, monitor);
 			} catch(TeamException e) {
-				TeamPlugin.log(e.getStatus());
+				TeamPlugin.log(e);
 				return true;
 			}
 		}
