@@ -64,6 +64,10 @@ one extra "server-side" file added). It contains the following:
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 install.xml</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+install.properties</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+install_en.properties</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 orq.eclipse.update.examples.component_1.0.0.jar</tt>
 <p>The above directory structure is required to exist on the server. There
 is a common <tt>install</tt> root. There is also a common <tt>components</tt>
@@ -78,7 +82,7 @@ directories actually exist on the server.
 <tt>install.xml</tt>
 file that describes the component is also exposed to allow the update support
 to find out about the component without the need to actually download the
-jar.
+jar. The <tt>install[_locale].properties</tt> files contain separated strings.
 <p>Please refer to PDE documentation for additional details of creating
 component jars. Select <b>Help</b>, then <b>Help Contents</b> and <b>PDE
 ISV Guide</b> (from the drop box). Please refer to the Eclipse platform
@@ -86,7 +90,8 @@ documentation for additional details of the installation conventions. Select
 <b>Help</b>,
 then <b>Help Contents</b> and <b>Platform Plug-In Developer Guide</b> (from
 the drop box). The installation information is contained in section <b>Reference</b>,
-<b>Other Reference Articles, Platform Installation and Update</b>.
+<b>Other
+Reference Articles, Platform Installation and Update</b>.
 <br>&nbsp;
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
 </body>
