@@ -320,7 +320,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// Get the user name and password (if provided)
 			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
 			
-			end = location.lastIndexOf(HOST_SEPARATOR, start);
+			end = location.lastIndexOf(HOST_SEPARATOR);
 			String user = null;
 			String password = null;
 			// if end is -1 then there is no host separator meaning that the username is not present
