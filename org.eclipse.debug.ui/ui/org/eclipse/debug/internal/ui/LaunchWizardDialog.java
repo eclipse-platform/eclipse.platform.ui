@@ -26,29 +26,10 @@ public class LaunchWizardDialog extends WizardDialog {
 		fWizard= w;
 	}
 
-	/**
-	 * Only needed for VAJ support as cannot use <code>LaunchWizard.super.nextPressed()</code>
-	 * in the runnable
-	 */
-	private void nextPressed0() {
-		super.nextPressed();
-	}
-
 	protected void cancelPressed() {
 		fWizard.performCancel();
 		super.cancelPressed();
 	}
 
-	protected void nextPressed() {
-		try {
-			run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor pm) {
-					nextPressed0();
-				}
-			});
-		} catch (InterruptedException ie) {
-		} catch (InvocationTargetException ite) {
-		}
-	}
 }
 
