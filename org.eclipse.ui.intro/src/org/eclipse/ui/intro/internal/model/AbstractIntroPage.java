@@ -237,7 +237,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             IntroDiv aDiv = (IntroDiv) vectorDivs.elementAt(i);
             if (aDiv.getId().equals("navigation-links")
                     || aDiv.getId().equals("background-image")
-                    || aDiv.getId().equals("background")) {
+                    || aDiv.getId().equals("root-background")) {
                 vectorDivs.remove(aDiv);
                 i--;
             }
@@ -250,15 +250,38 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     }
 
     /**
-     * Returns the first child with the given id.
+     * Returns the first child with the given class-id.
+     * 
      * @return
-     * @todo Generated comment
      */
     public String getText() {
-        IntroText text = (IntroText) findChild("page-description");
-        if (text == null)
-            return null;
-        return text.getText();
+        String text = doGetText(this);
+        if (text != null)
+            return text;
+
+        AbstractIntroContainer[] containers = (AbstractIntroContainer[]) getChildrenOfType(AbstractIntroElement.ABSTRACT_CONTAINER);
+        for (int i = 0; i < containers.length; i++) {
+            text = doGetText(containers[i]);
+            if (text != null)
+                return text;
+        }
+        return null;
     }
+
+    /**
+     * Returns the first child with the given class-id.
+     * 
+     * @return
+     */
+    private String doGetText(AbstractIntroContainer container) {
+        IntroText[] allText = (IntroText[]) container
+                .getChildrenOfType(AbstractIntroElement.TEXT);
+        for (int i = 0; i < allText.length; i++) {
+            if (allText[i].getClassId().equals("page-description"))
+                return allText[i].getText();
+        }
+        return null;
+    }
+
 
 }

@@ -110,9 +110,11 @@ public class CategoryForm implements IIntroConstants, IPropertyListener {
         }
         // DONOW: revisit.for now, just make code work.
         AbstractIntroElement[] children = currentPage.getChildren();
-        boolean hasDivs = currentPage.getChildrenOfType(AbstractIntroElement.DIV).length != 0 ? true
+        boolean hasDivs = currentPage
+                .getChildrenOfType(AbstractIntroElement.DIV).length != 0 ? true
                 : false;
-        boolean hasLinks = currentPage.getChildrenOfType(AbstractIntroElement.LINK).length != 0 ? true
+        boolean hasLinks = currentPage
+                .getChildrenOfType(AbstractIntroElement.LINK).length != 0 ? true
                 : false;
         if (hasDivs) {
             String layoutStyle = getLayoutStyle(currentPage);
@@ -234,16 +236,36 @@ public class CategoryForm implements IIntroConstants, IPropertyListener {
         client.setLayoutData(td);
         for (int i = 0; i < divs.length; i++) {
             IntroDiv div = divs[i];
-            Control ccontrol = createCategory(client, div.getLabel(), div
-                    .getText(), div.getLinks(), getNumberOfColumns(page, div),
-                    showLinkDescription, vspacing);
-            td = new TableWrapData(TableWrapData.FILL, TableWrapData.TOP);
-            td.grabHorizontal = true;
-            ccontrol.setLayoutData(td);
+            createCategory(parent, page, div, showLinkDescription, vspacing);
         }
     }
 
-    private Control createCategory(Composite parent, String label,
+    private void createCategory(Composite parent, AbstractIntroPage page,
+            IntroDiv div, boolean showLinkDescription, int vspacing) {
+
+        // show all links first.
+        Composite ccontrol = createCategory(parent, div.getLabel(), div
+                .getText(), div.getLinks(), getNumberOfColumns(page, div),
+                showLinkDescription, vspacing);
+        if (ccontrol != null) {
+            TableWrapData td = new TableWrapData(TableWrapData.FILL,
+                    TableWrapData.TOP);
+            td.grabHorizontal = true;
+            ccontrol.setLayoutData(td);
+        }
+
+        // now show all child divs.
+        IntroDiv[] childDivs = (IntroDiv[]) div
+                .getChildrenOfType(AbstractIntroElement.DIV);
+
+        for (int i = 0; i < childDivs.length; i++) {
+            IntroDiv aDiv = childDivs[i];
+            createCategory(ccontrol, page, aDiv, showLinkDescription, vspacing);
+        }
+
+    }
+
+    private Composite createCategory(Composite parent, String label,
             String description, IntroLink[] links, int ncolumns,
             boolean showLinkDescription, int vspacing) {
 

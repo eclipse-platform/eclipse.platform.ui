@@ -113,12 +113,16 @@ public class IntroHomePage extends AbstractIntroPage {
         if (links.length != 0)
             return links;
 
-        // root page does not have any links, try first non-filtered div.
+        // root page does not have any links, append all links off non-filtered
+        // divs.
         IntroDiv[] rootPageDivs = getDivs();
-        if (rootPageDivs.length > 0)
-            return rootPageDivs[0].getLinks();
+        Vector linkVector = new Vector();
+        for (int i = 0; i < rootPageDivs.length; i++)
+            linkVector.addAll(Arrays.asList(rootPageDivs[i].getLinks()));
+        links = new IntroLink[linkVector.size()];
+        linkVector.copyInto(links);
 
-        return null;
+        return links;
     }
 
     /**
@@ -134,7 +138,7 @@ public class IntroHomePage extends AbstractIntroPage {
         for (int i = 0; i < vectorDivs.size(); i++) {
             IntroDiv aDiv = (IntroDiv) vectorDivs.elementAt(i);
             if (aDiv.getId().equals("background-image")
-                    || aDiv.getId().equals("background")) {
+                    || aDiv.getId().equals("root-background")) {
                 vectorDivs.remove(aDiv);
                 i--;
             }

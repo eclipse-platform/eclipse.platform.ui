@@ -150,6 +150,9 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         case AbstractIntroElement.ABSTRACT_PAGE:
             src = new AbstractIntroPage[size];
             break;
+        case AbstractIntroElement.ABSTRACT_CONTAINER:
+            src = new AbstractIntroContainer[size];
+            break;
         case AbstractIntroElement.HEAD:
             src = new IntroHead[size];
             break;
@@ -329,6 +332,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
         }
         return target;
     }
+
 
     /*
      * searches direct children for a given child with an id.
