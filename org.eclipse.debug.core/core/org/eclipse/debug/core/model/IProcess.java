@@ -51,10 +51,12 @@ public interface IProcess extends IAdaptable, ITerminate {
 
 	/**
 	 * Attribute key for a common, optional, process property. The value of this
-	 * attribute can be used to set the label on the console.
+	 * attribute specifies an alternate dynamic label for a process, displayed by
+	 * the console.
+	 * 
+	 * @since 3.0
 	 */
 	public final static String ATTR_PROCESS_LABEL = DebugPlugin.getUniqueIdentifier() + ".ATTR_PROCESS_LABEL"; //$NON-NLS-1$
-	
 	
 	/**
 	 * Returns a human-readable label for this process.
