@@ -46,8 +46,8 @@ public class StringMatcher {
 	}
 	/**
 	 * StringMatcher constructor takes in a String object that is a simple 
-	 * pattern which may contain ‘*’ for 0 and many characters and
-	 * ‘?’ for exactly one character.  
+	 * pattern which may contain '*' for 0 and many characters and
+	 * '?' for exactly one character.  
 	 *
 	 * Literal '*' and '?' characters must be escaped in the pattern 
 	 * e.g., "\*" means literal "*", etc.
@@ -227,7 +227,7 @@ public class StringMatcher {
 	}
 	/**
 	 * Parses the given pattern into segments seperated by wildcard '*' characters.
-	 * @param p, a String object that is a simple regular expression with ‘*’ and/or ‘?’
+	 * @param p, a String object that is a simple regular expression with '*' and/or '?'
 	 */
 	private void parseWildCards() {
 		if(fPattern.startsWith("*"))//$NON-NLS-1$
