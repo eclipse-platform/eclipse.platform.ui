@@ -107,7 +107,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			}
 		};
 		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = createFilteredTree(parent, filter, styleBits);
+		filteredTree = new FilteredComboTree(parent, styleBits, filter);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -135,16 +135,6 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		return filteredTree.getViewer();
 	}
 
-	/**
-	 * Create the filtered tree
-	 * @param parent
-	 * @param filter
-	 * @param styleBits
-	 * @return FilteredTree
-	 */
-	protected FilteredTree createFilteredTree(Composite parent, PatternFilter filter, int styleBits) {
-		return new FilteredTree(parent, styleBits, filter);
-	}
 
 	/**
 	 * Set the content and label providers for the treeViewer
@@ -228,5 +218,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	public IPreferencePage getCurrentPage() {
 		return super.getCurrentPage();
 	}
+	
+	
 
 }
