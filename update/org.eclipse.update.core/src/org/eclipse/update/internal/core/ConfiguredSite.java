@@ -427,7 +427,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			for (int i = 0; i < childrenRef.length; i++) {
 				try {
 					IFeature child = childrenRef[i].getFeature(true, null); // disable the exact feature
-					unconfigure(child, includePatches, true);
+					unconfigure(child, includePatches, true); // check for parent as we should be the only parent.
 				} catch (CoreException e) {
 					// skip any bad children
 					UpdateCore.warn("Unable to unconfigure child feature: " + childrenRef[i] + " " + e);

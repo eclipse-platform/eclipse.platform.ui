@@ -429,7 +429,7 @@ public class UpdateManagerUtils {
 			return new IFeatureReference[0];
 
 		List parentList = new ArrayList();
-		IFeatureReference[] children = null;
+		IIncludedFeatureReference[] children = null;
 		IFeature compareFeature = null;
 		for (int i = 0; i < possiblesParent.length; i++) {
 			try {
@@ -438,7 +438,7 @@ public class UpdateManagerUtils {
 					children = possibleParentFeature.getIncludedFeatureReferences();
 					for (int j = 0; j < children.length; j++) {
 						try {
-							compareFeature = children[j].getFeature();
+							compareFeature = children[j].getFeature(true,null); // compare with the 'real' feature, not the best match
 						} catch (CoreException e) {
 							UpdateCore.warn("", e);
 						};
