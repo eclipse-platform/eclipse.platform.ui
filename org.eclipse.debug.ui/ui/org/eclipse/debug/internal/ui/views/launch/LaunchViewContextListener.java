@@ -31,7 +31,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.actions.DebugContextManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -129,6 +128,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * Value: List <EnabledSubmission>
 	 */
 	private Map fContextSubmissions= new HashMap();
+	public static final String DEBUG_CONTEXT= "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
 	/**
 	 * String preference specifying which views should not be
 	 * automatically opened by the launch view.
@@ -432,7 +432,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		// bindings to inherit. If we don't ignore it, we'll
 		// end up opening those views whenever a debug session
 		// starts, which is not the desired behavior.
-		contextIds.remove(DebugContextManager.DEBUG_CONTEXT);
+		contextIds.remove(DEBUG_CONTEXT);
 		if (page == null || contextIds.size() == 0) {
 			return;
 		}
@@ -532,7 +532,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 */
 	public void contextsDisabled(Set contexts) {
 		IWorkbenchPage page= getPage();
-		if (page == null || contexts.size() == 0) {
+		if (page == null || contexts.size() == 0 || !isAutoManageViews()) {
 			return;
 		}
 		Set viewsToClose= getViewIdsToClose(contexts);
@@ -597,7 +597,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		Iterator enabledContexts = PlatformUI.getWorkbench().getContextSupport().getContextManager().getEnabledContextIds().iterator();
 		while (enabledContexts.hasNext()) {
 			String contextId = (String) enabledContexts.next();
-			if (contextId.equals(DebugContextManager.DEBUG_CONTEXT)) {
+			if (contextId.equals(DEBUG_CONTEXT)) {
 				// Ignore the "Debugging" context. See comment in contextEnabled(...)
 				continue;
 			}
@@ -632,9 +632,6 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * to automatically open/close/activate views as appropriate.
 	 */
 	public void updateForSelection(Object selection) {
-		if (!isAutoManageViews()) {
-			return;
-		}
 		ILaunch launch= getLaunch(selection);
 		if (launch == null) {
 			return;
@@ -717,7 +714,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 			if (ids == null) {
 				// seed with base debug context
 				ids = new ArrayList();
-				ids.add(DebugContextManager.DEBUG_CONTEXT);
+				ids.add(DEBUG_CONTEXT);
 				modelsToContexts.put(modelIds[i], ids);
 			}
 			contextIds.addAll(ids);
@@ -768,7 +765,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 				// generate a callback from the workbench. So we inform
 				// our context listener ourselves.
 				// This covers the case where the user is selecting
-				// among elements from several active contexts.
+				// among elements from several enabled contexts.
 				contextsAlreadyEnabled.add(contextId);
 			}
 		}
@@ -825,9 +822,6 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * @param launches the terminated launches
 	 */
 	protected void launchesTerminated(ILaunch[] launches) {
-		if (!isAutoManageViews()) {
-			return;
-		}
 		List allSubmissions= new ArrayList();
 		for (int i = 0; i < launches.length; i++) {
 			List submissions= (List) fContextSubmissions.remove(launches[i]);
