@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,10 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	}
 
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
-		String[] fileNames = ContentType.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
+		String[] fileNames = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		for (int i = 0; i < fileNames.length; i++)
 			target.internalAddFileSpec(fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
-		String[] fileExtensions = ContentType.parseItems(fileAssociationElement.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
+		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		for (int i = 0; i < fileExtensions.length; i++)
 			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
 	}
@@ -62,8 +62,8 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		byte priority = parsePriority(contentTypeCE.getAttributeAsIs("priority")); //$NON-NLS-1$);
 		String namespace = contentTypeCE.getDeclaringExtension().getNamespace();
 		String name = contentTypeCE.getAttribute("name"); //$NON-NLS-1$
-		String[] fileNames = ContentType.parseItems(contentTypeCE.getAttributeAsIs("file-names")); //$NON-NLS-1$
-		String[] fileExtensions = ContentType.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
+		String[] fileNames = Util.parseItems(contentTypeCE.getAttributeAsIs("file-names")); //$NON-NLS-1$
+		String[] fileExtensions = Util.parseItems(contentTypeCE.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		String baseTypeId = getUniqueId(namespace, contentTypeCE.getAttributeAsIs("base-type")); //$NON-NLS-1$
 		String defaultCharset = contentTypeCE.getAttributeAsIs("default-charset"); //$NON-NLS-1$
 		return ContentType.createContentType(catalog, namespace, simpleId, name, priority, fileExtensions, fileNames, baseTypeId, defaultCharset, contentTypeCE);

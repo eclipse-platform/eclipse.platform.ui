@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,9 @@ import org.eclipse.core.runtime.content.*;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
+/**
+ * @see IContentType
+ */
 public final class ContentType implements IContentType {
 
 	/* A placeholder for missing/invalid binary/text describers. */
@@ -94,12 +97,12 @@ public final class ContentType implements IContentType {
 		this.userCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, null);
 		// user set file names 
 		String userSetFileNames = contentTypeNode.get(PREF_FILE_NAMES, null);
-		String[] fileNames = parseItems(userSetFileNames);
+		String[] fileNames = Util.parseItems(userSetFileNames);
 		for (int i = 0; i < fileNames.length; i++)
 			internalAddFileSpec(fileNames[i], FILE_NAME_SPEC | SPEC_USER_DEFINED);
 		// user set file extensions
 		String userSetFileExtensions = contentTypeNode.get(PREF_FILE_EXTENSIONS, null);
-		String[] fileExtensions = parseItems(userSetFileExtensions);
+		String[] fileExtensions = Util.parseItems(userSetFileExtensions);
 		for (int i = 0; i < fileExtensions.length; i++)
 			internalAddFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_USER_DEFINED);
 	}
@@ -116,65 +119,25 @@ public final class ContentType implements IContentType {
 		throw new IllegalArgumentException("Unknown type: " + flags); //$NON-NLS-1$
 	}
 
-	static String[] parseItems(String string) {
-		if (string == null)
-			return new String[0];
-		StringTokenizer tokenizer = new StringTokenizer(string, ","); //$NON-NLS-1$
-		if (!tokenizer.hasMoreTokens())
-			return new String[0];
-		String first = tokenizer.nextToken().trim();
-		if (!tokenizer.hasMoreTokens())
-			return new String[] {first};
-		ArrayList items = new ArrayList();
-		items.add(first);
-		do {
-			items.add(tokenizer.nextToken().trim());
-		} while (tokenizer.hasMoreTokens());
-		return (String[]) items.toArray(new String[items.size()]);
-	}
-
-	static String toListString(List list) {
-		if (list.isEmpty())
-			return ""; //$NON-NLS-1$
-		StringBuffer result = new StringBuffer();
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			result.append(i.next());
-			result.append(',');
-		}
-		// ignore last comma
-		return result.substring(0, result.length() - 1);
-	}
-
-	static String toListString(Object[] list) {
-		if (list.length == 0)
-			return ""; //$NON-NLS-1$
-		StringBuffer result = new StringBuffer();
-		for (int i = 0; i < list.length; i++) {
-			result.append(list[i]);
-			result.append(',');
-		}
-		// ignore last comma
-		return result.substring(0, result.length() - 1);
-	}
-
 	public ContentType(ContentTypeManager manager) {
 		this.manager = manager;
 	}
 
-	public synchronized void addFileSpec(String fileSpec, int type) throws CoreException {
-		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$		
+	public void addFileSpec(String fileSpec, int type) throws CoreException {
+		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
 		if (aliasTarget != null) {
 			getTarget().addFileSpec(fileSpec, type);
 			return;
 		}
-		if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
-			return;
-		manager.fireContentTypeChangeEvent(this);
-		// persist using preferences
-		String key = getPreferenceKey(type);
+		String[] userSet;
+		synchronized (this) {
+			if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
+				return;
+			userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
+		}
+		// persist using preferences		
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
-		final String[] userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
-		contentTypeNode.put(key, toListString(userSet));
+		contentTypeNode.put(getPreferenceKey(type), Util.toListString(userSet));
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
@@ -182,6 +145,8 @@ public final class ContentType implements IContentType {
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
+		// notify listeners
+		manager.fireContentTypeChangeEvent(this);
 	}
 
 	int describe(IContentDescriber selectedDescriber, InputStream contents, ContentDescription description) throws IOException {
@@ -530,23 +495,23 @@ public final class ContentType implements IContentType {
 		InternalPlatform.getDefault().log(status);
 	}
 
-	public synchronized void removeFileSpec(String fileSpec, int type) throws CoreException {
+	public void removeFileSpec(String fileSpec, int type) throws CoreException {
 		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$		
 		if (aliasTarget != null) {
 			getTarget().removeFileSpec(fileSpec, type);
 			return;
 		}
-		if (!internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED))
-			return;
-		manager.fireContentTypeChangeEvent(this);
-		// persist using preferences
-		String key = getPreferenceKey(type);
+		synchronized (this) {
+			if (!internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED))
+				return;
+		}
+		// persist the change
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		final String[] userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
 		if (userSet.length == 0)
-			contentTypeNode.remove(key);
+			contentTypeNode.remove(getPreferenceKey(type));
 		else
-			contentTypeNode.put(key, toListString(userSet));
+			contentTypeNode.put(getPreferenceKey(type), Util.toListString(userSet));
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
@@ -554,6 +519,8 @@ public final class ContentType implements IContentType {
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
+		// notify listeners		
+		manager.fireContentTypeChangeEvent(this);
 	}
 
 	void setAliasTarget(ContentType newTarget) {
@@ -573,19 +540,19 @@ public final class ContentType implements IContentType {
 	 * @see org.eclipse.core.runtime.content.IContentType#setDefaultCharset(java.lang.String)
 	 */
 	public void setDefaultCharset(String newCharset) throws CoreException {
-		if (userCharset == null) {
-			if (newCharset == null)
+		synchronized (this) {
+			// don't do anything if there is no actual change
+			if (userCharset == null) {
+				if (newCharset == null)
+					return;
+			} else if (userCharset.equals(newCharset))
 				return;
-		} else if (userCharset.equals(newCharset))
-			return;
-		userCharset = newCharset;
-		// notify listeners
-		manager.fireContentTypeChangeEvent(this);
+			// apply change in memory
+			userCharset = newCharset;
+		}
+		// persist the change
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
-		if (userCharset == null)
-			contentTypeNode.remove(PREF_DEFAULT_CHARSET);
-		else
-			contentTypeNode.put(PREF_DEFAULT_CHARSET, userCharset);
+		setPreference(contentTypeNode, PREF_DEFAULT_CHARSET, userCharset);
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
@@ -593,6 +560,15 @@ public final class ContentType implements IContentType {
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, bse);
 			throw new CoreException(status);
 		}
+		// notify listeners
+		manager.fireContentTypeChangeEvent(this);
+	}
+
+	private void setPreference(Preferences node, String key, String value) {
+		if (value == null)
+			node.remove(key);
+		else
+			node.put(key, value);
 	}
 
 	void setValidation(byte validation) {
