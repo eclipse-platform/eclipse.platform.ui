@@ -88,7 +88,7 @@ public HistoryStoreTest(String name) {
 }
 public static Test suite() {
 //	TestSuite suite = new TestSuite();
-//	suite.addTest(new HistoryStoreTest("testCopyHistoryFile"));
+//	suite.addTest(new HistoryStoreTest("testBug28238"));
 //	return suite;
 	return new TestSuite(HistoryStoreTest.class);
 }
@@ -1928,5 +1928,34 @@ public void testCopyHistoryProject() {
 	} catch (CoreException e) {
 		fail("2.8");
 	}
+}
+public void testBug28238() {
+	// paths to mimic files in the workspace
+	IPath project = new Path("myproject");
+	IPath folder = project.append("myfolder");
+	IPath destinationFolder = project.append("myfolder2");
+	IPath file = folder.append("myfile.txt");
+	IPath destinationFile = destinationFolder.append(file.lastSegment());
+	
+	HistoryStore store = ((Resource) getWorkspace().getRoot()).getLocalManager().getHistoryStore();
+
+	// location of the data on disk
+	IPath path = getRandomLocation();
+	try {
+		createFileInFileSystem(path, getRandomContents());
+	} catch (IOException e) {
+		fail("1.0", e);
+	}
+	
+	// add the data to the history store
+	store.addState(file, path, System.currentTimeMillis(), true);
+	IFileState[] states = store.getStates(file);
+	assertEquals("2.0", 1, states.length);
+	
+	// copy the data
+	store.copyHistory(folder, destinationFolder);
+	
+	states = store.getStates(destinationFile);
+	assertEquals("3.0", 1, states.length);
 }
 }

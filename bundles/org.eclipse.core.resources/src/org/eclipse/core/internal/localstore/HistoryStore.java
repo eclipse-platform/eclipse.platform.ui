@@ -206,6 +206,7 @@ public void copyHistory(final IPath source, final IPath destination) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		return;
 	}
+	final List matches = new LinkedList();
 	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor () {
 		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
 			IPath path = entry.getPath();
@@ -218,15 +219,24 @@ public void copyHistory(final IPath source, final IPath destination) {
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return false;
 			}
-			// Otherwise create the appropriate destination path and add the state.
-			path = destination.append(path.removeFirstSegments(prefixSegments));
-			addState(path, entry.getUUID(), entry.getLastModified());
+			// add this entry to the set of matches
+			matches.add(entry);
 			return true;
 		}
 	};
 	// Visit all the entries. Visit partial matches too since this is a depth infinity operation
 	// and we want to copy history for children.
 	accept(source, visitor, true);
+
+	// for each match add a new state at the destination path
+	for (Iterator i=matches.iterator(); i.hasNext();) {
+		HistoryStoreEntry entry = (HistoryStoreEntry) i.next();
+		IPath path = entry.getPath();
+		int prefixSegments = source.matchingFirstSegments(path);
+		path = destination.append(path.removeFirstSegments(prefixSegments));
+		addState(path, entry.getUUID(), entry.getLastModified());
+	}
+	
 	// We need to do a commit here.  The addState method we are
 	// using won't commit store.  The public ones will.
 	try {
