@@ -262,9 +262,15 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		argumentField.addModifyListener(fListener);
 		addControlAccessibleListener(argumentField, group.getText());
 		
-		argumentVariablesButton= createPushButton(group, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
+		Composite composite = new Composite(group, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns= 1;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		argumentVariablesButton.setLayoutData(gridData);
+		composite.setLayout(layout);
+		composite.setLayoutData(gridData);
+		composite.setFont(parent.getFont());
+		
+		argumentVariablesButton= createPushButton(composite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
 		argumentVariablesButton.addSelectionListener(fListener);
 		addControlAccessibleListener(argumentVariablesButton, argumentVariablesButton.getText()); // need to strip the mnemonic from buttons
 
