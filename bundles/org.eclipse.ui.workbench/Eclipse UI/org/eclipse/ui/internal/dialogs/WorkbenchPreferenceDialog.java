@@ -47,13 +47,11 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IWorkbench;
@@ -140,8 +138,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 	private ToolBar toolBar;
 
-	private FilteredTree filteredTree;
-
 	/**
 	 * The preference page history.
 	 * 
@@ -149,7 +145,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 */
 	private PreferencePageHistory history;
 
-	private WorkbenchPreferenceGroup currentGroup;
+	WorkbenchPreferenceGroup currentGroup;
 
 	private CTabItem tab;
 
@@ -571,7 +567,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * 
 	 * @param parent
 	 */
-	private void createDialogContents(Composite parent) {
+	void createDialogContents(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
@@ -800,16 +796,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 	}
 
-	/**
-	 * Set the content and label providers for the treeViewer
-	 * 
-	 * @param treeViewer
-	 */
-	private void setContentAndLabelProviders(TreeViewer treeViewer) {
-		treeViewer.setContentProvider(new GroupedPreferenceContentProvider(showingGroups()));
-		treeViewer.setLabelProvider(new GroupedPreferenceLabelProvider());
-	}
-
 	/*
 	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
 	 * @since 3.1
@@ -842,70 +828,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		// No longer required as the pages do this.
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
-	 */
-	protected TreeViewer createTreeViewer(Composite parent) {
-		PatternFilter filter = new PatternFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				ITreeContentProvider contentProvider = (ITreeContentProvider) getTreeViewer()
-						.getContentProvider();
-				boolean match = false;
-				if (element instanceof WorkbenchPreferenceGroup) {
-
-					WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) element;
-					Object[] children = contentProvider.getChildren(group);
-					match = match(group.getName())
-							|| (filter(viewer, element, children).length > 0);
-				}
-				if (element instanceof WorkbenchPreferenceNode) {
-					WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) element;
-					Object[] children = contentProvider.getChildren(node);
-					match = match(node.getLabelText())
-							|| (filter(viewer, element, children).length > 0);
-				}
-
-				return match;
-			}
-		};
-		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
-		filteredTree = new FilteredTree(parent, styleBits, filter);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
-		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-		TreeViewer tree = filteredTree.getViewer();
-		filteredTree.setInitialText(WorkbenchMessages
-				.getString("WorkbenchPreferenceDialog.FilterMessage")); //$NON-NLS-1$
-
-		setContentAndLabelProviders(tree);
-
-		tree.addSelectionChangedListener(new ISelectionChangedListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-			 */
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (!showingGroups())
-					return;
-
-				if (event.getSelection() instanceof IStructuredSelection) {
-					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-					if (selection.isEmpty())
-						return;
-					Object item = selection.getFirstElement();
-					currentGroup.setLastSelection(item);
-				}
-			}
-		});
-
-		super.addListeners(filteredTree.getViewer());
-		return filteredTree.getViewer();
-	}
-
 	/**
 	 * Return whether groups are being shown
 	 * 
@@ -932,36 +854,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	protected static WorkbenchPreferenceGroup[] getGroups() {
 		return ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager())
 				.getGroups();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeAreaContents(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Control createTreeAreaContents(Composite parent) {
-		Composite leftArea = new Composite(parent, SWT.NONE);
-		leftArea.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-		GridLayout leftLayout = new GridLayout();
-		leftLayout.numColumns = 1;
-		//leftLayout.marginWidth = 0;
-		leftLayout.marginHeight = 0;
-		leftLayout.horizontalSpacing = 0;
-		leftLayout.verticalSpacing = 0;
-		leftArea.setLayout(leftLayout);
-
-		// Build the tree an put it into the composite.
-		TreeViewer viewer = createTreeViewer(leftArea);
-		setTreeViewer(viewer);
-
-		updateTreeFont(JFaceResources.getDialogFont());
-		GridData viewerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
-		viewer.getControl().getParent().setLayoutData(viewerData);
-
-		layoutTreeAreaControl(leftArea);
-
-		return leftArea;
 	}
 
 	/*
@@ -1078,5 +970,44 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		getShell().layout(true);
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#setContentAndLabelProviders(org.eclipse.jface.viewers.TreeViewer)
+	 */
+	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
+		treeViewer.setContentProvider(new GroupedPreferenceContentProvider(showingGroups()));
+		treeViewer.setLabelProvider(new GroupedPreferenceLabelProvider());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#handleTreeSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	protected void handleTreeSelectionChanged(SelectionChangedEvent event) {
+		if (!showingGroups())
+			return;
+		if (event.getSelection() instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection) event
+					.getSelection();
+			if (selection.isEmpty())
+				return;
+			Object item = selection.getFirstElement();
+			currentGroup.setLastSelection(item);
+		}
+	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#checkMatch(org.eclipse.ui.internal.dialogs.PatternFilter, java.lang.Object, org.eclipse.jface.viewers.ITreeContentProvider)
+	 */
+	protected boolean checkMatch(PatternFilter filter, Object element,
+			ITreeContentProvider contentProvider) {
+		if (element instanceof WorkbenchPreferenceGroup) {
+			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) element;
+			Object[] children = contentProvider.getChildren(group);
+			return filter.match(group.getName())
+					|| (filter.filter(getTreeViewer(), element, children).length > 0);
+		}
+		return super.checkMatch(filter, element, contentProvider);
 	}
 }
