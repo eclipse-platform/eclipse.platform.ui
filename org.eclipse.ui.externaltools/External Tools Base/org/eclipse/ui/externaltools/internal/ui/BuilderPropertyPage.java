@@ -1057,7 +1057,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	}
 
 	/* (non-Javadoc)
-	 * Method declared on IPreferencePage.
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		if (!userHasMadeChanges) {
@@ -1346,7 +1346,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		return builderName;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
 	public boolean performCancel() {
@@ -1366,6 +1366,18 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 		} catch (CoreException e) {
 			handleException(e);
+		}
+		
+		//remove the local marking of the enabled state of the commands
+		int numCommands = builderTable.getItemCount();
+		for (int i = 0; i < numCommands; i++) {
+			Object data = builderTable.getItem(i).getData();
+			if (data instanceof ICommand) {
+				ICommand command= (ICommand)data;
+				Map args= command.getArguments();
+				args.remove(COMMAND_ENABLED);
+				command.setArguments(args);
+			}
 		}
 		return super.performCancel();
 	}
