@@ -1,44 +1,8 @@
-<%@ page import="org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.net.URLEncoder,org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
 	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
-%>
-
-<%
-	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
-	if (tocs == null)
-		return;
-		
-	// table of contents to show
-	String tocHref = request.getParameter("toc");
-	// topic to show
-	String topic = request.getParameter("topic");
-	
-	Element selectedTOC = null;
-	String label = "";
-	
-	if ( tocHref == null || tocHref.equals(""))
-	{
-		if (topic != null && !topic.equals(""))
-		{
-			// allow for both http://...  or just /pluginid/topic.html
-			if (topic.startsWith("/"))
-				topic = "help:" + topic;
-				
-			selectedTOC = tocs.findTocContainingTopic(topic, request);
-		}
-	}
-	else
-	{
-		selectedTOC = tocs.getToc(tocHref, request);
-	}
-		
-	if (selectedTOC != null)
-	{
-		label = selectedTOC.getAttribute("label");
-		session.setAttribute("org.eclipse.help.selectedTOC", selectedTOC);
-	}
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -156,27 +120,104 @@ A.book {
  document.write(extraStyle);
 </script>
 
-
 </head>
 
-<body onload="onloadHandler('<%=tocHref%>', '<%=label%>')">
+<%		
+	// table of contents to show
+	String tocHref = request.getParameter("toc");
+	// topic to show
+	String topicHref = request.getParameter("topic");
 
-
-<%
-	// Generate the tree
-	if (selectedTOC != null)
-		tocs.loadTOC(selectedTOC, out, request);	
-		
-	// Highlight topic
-	if (topic != null && !topic.equals(""))
-	{
-%>
-		<script language="JavaScript">
-	 		selectTopic('<%=topic%>');
-		</script>
-<%
+	// Load the toc
+	ContentUtil content = new ContentUtil(application, request);
+	Element tocElement = null;
+	if (tocHref == null || tocHref.length() == 0)
+		tocElement = content.loadTOCcontainingTopic(topicHref);
+	else
+		tocElement = content.loadTOC(tocHref);
+	if (tocElement == null){
+		out.write(WebappResources.getString("Nothing_found", null));
+		return;
 	}
 %>
+<body onloadHandler('<%=tocHref%>', '<%=tocElement.getAttribute("label")%>');>
+	<ul class='expanded' id='root'>
+		<a class='book' href='javascript: void 0;'><nobr class='book'><%=tocElement.getAttribute("label")%></nobr></a>
+<%
+	// JSP does not have good support for recursive calls using scriplets
+	// or at least I could not find a simple way...
+	// This code looks a bit complex, but it is really an unwrapping
+	// of a simple recursive call:
+	//
+	// genToc(toc) {
+	// 	for each child topic
+	//		genTopic(topic)
+	// }
+	// genTopic(topic) {
+	//	output topic
+	//	for each child topic
+	//		genTopic(topic)
+	// }
+	
+	TopicsStack childrenStack = new TopicsStack();
+	childrenStack.pushChildren(tocElement);
+	TopicsStack parentStack = new TopicsStack();
+	parentStack.push(tocElement);
+
+	while(!childrenStack.isEmpty())
+	{
+		Element topic = childrenStack.pop();
+				
+		// See if we need to close previous <ul>
+		while (!parentStack.isEmpty() && parentStack.peek() != topic.getParentNode())
+		{
+			Element parent = parentStack.pop();
+%>
+			</ul>
+		</li>
+<%
+		}
+		
+		boolean hasNodes = topic.hasChildNodes();	
+		String href = topic.getAttribute("href");
+		if (href == null || href.length() == 0)
+			href = "about:blank";
+		else if (href != null && href.length() > 0 && href.charAt(0) == '/')
+			href = "content/help:" + href;
+	
+		String a_className = hasNodes ? "node" : "leaf";
+		String li_className = hasNodes ? "collapsed" : "leaf";
+		// use <nobr> for IE5.0 only. Mozilla and IE5.5 work fine with nowrap css
+%>
+		<li class='<%=li_className%>'>
+			<a class='<%=a_className%>' href="<%=href%>"><nobr><%=topic.getAttribute("label")%></nobr></a>
+<%
+		if (hasNodes) {
+			childrenStack.pushChildren(topic);
+			parentStack.push(topic);
+%>	
+			<ul class='collapsed'>
+<%
+		}else{
+%>
+		</li>
+<%		
+		}		
+	} 
+%>
+	</ul>
+
+	<script language="JavaScript">
+	// Highlight topic
+	var topic = '<%=topicHref != null ? topicHref : ""%>';
+	if (topic != "")
+	{
+		if (topic.indexOf(window.location.protocol) != 0)
+			topic = window.location.protocol + "//" +window.location.host +"<%=request.getContextPath()%>" + "/content/help:"+ topic;
+		selectTopic(topic);
+	}
+	
+	</script>
 
 </body>
 </html>

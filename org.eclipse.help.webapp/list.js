@@ -5,8 +5,7 @@ var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
 
 
 /**
- * Returns the anchor of this click
- * NOTE: MOZILLA BUG WITH A:focus and A:active styles
+ * Returns the row of this click
  */
 function getTRNode(node) {
   if (node.nodeType == 3)  //"Node.TEXT_NODE") 
@@ -21,6 +20,15 @@ function getTRNode(node) {
   	return null;
 }
 
+/**
+ * Returns the anchor node in this row
+ */
+function getAnchorNode(tr)
+{
+	var a = tr.getElementsByTagName("A");
+	if (a != null) 
+		return a.item(0);
+}
 
 // NOTE: MOZILLA BUG WITH A:focus and A:active styles
 var oldActive;
@@ -30,22 +38,24 @@ var oldActive;
  * display topic label in the status line on mouse over topic
  */
 function mouseMoveHandler(e) {
-  var overNode;
-  if (isMozilla)
-  	overNode = e.target;
-  else if (isIE)
-   	overNode = window.event.srcElement;
-  else 
-  	return;
-  	
-  overNode = getTRNode(overNode);
-  if (overNode == null)
-   return;
- 
-  if (isMozilla)
-     e.cancelBubble = false;
-     
-  window.status = overNode.lastChild.firstChild.innerHTML;
+	try{
+	  var overNode;
+	  if (isMozilla)
+	  	overNode = e.target;
+	  else if (isIE)
+	   	overNode = window.event.srcElement;
+	  else 
+	  	return;
+	  	
+	  overNode = getTRNode(overNode);
+	  if (overNode == null)
+	   return;
+	 
+	  if (isMozilla)
+	     e.cancelBubble = false;
+	     
+	  window.status = getAnchorNode(overNode).innerHTML;
+	}catch(e){}
 }
 
 /**
@@ -75,19 +85,20 @@ function mouseClickHandler(e) {
  */
 function highlightTopic(topic)
 {
-  var a = getTRNode(topic); 
-  if (a != null)
+  var tr = getTRNode(topic); 
+  if (tr != null)
   {
-  	   	if (oldActive && oldActive != a) 
+  	   	if (oldActive && oldActive != tr) 
     		oldActive.className="list";
     
-		oldActive = a;		
-  		a.className = "active";
-  		if (a.lastChild.firstChild && a.lastChild.firstChild.tagName == "A")
+		oldActive = tr;		
+  		tr.className = "active";
+  		var a = getAnchorNode(tr);
+  		if (a)
   		{
-  			a.lastChild.firstChild.blur();
+  			a.blur();
   			// set toolbar title
-  			a.lastChild.firstChild.onclick();
+  			a.onclick();
    		}
   }
 }

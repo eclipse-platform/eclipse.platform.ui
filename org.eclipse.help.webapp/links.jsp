@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
+<%@ page import="java.net.URLEncoder,org.eclipse.help.servlet.*,org.w3c.dom.*" errorPage="err.jsp" contentType="text/html; charset=UTF-8"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -80,38 +80,74 @@ TABLE {
 <body>
  
 <%
-	if(request.getParameter("contextId")!=null){
-		// Generate the links
-		Links links = (Links)application.getAttribute("org.eclipse.help.links");
-		if (links != null){
-			links.generateResults(request.getQueryString(), out, request);
-		}
-		
-		// Highlight topic
-		String topic = request.getParameter("topic");
-		if (topic != null && !topic.equals(""))
-		{
-			if (topic.startsWith("/"))
-			{
-				topic = request.getContextPath() + "/content/help:" + topic;
-			}
-			/*
-			// remove the port if the port is 80
-			int i = topic.indexOf(":80/");
-			if (i != -1)
-				topic = topic.substring(0,i) + topic.substring(i+3);
-			*/
-%>
-			<script language="JavaScript">
-			var topic = window.location.protocol + "//" +window.location.host + '<%=topic%>';
-		 	selectTopic(topic);
-			</script>
-<%
-		}
-	}else{
-		out.write(WebappResources.getString("pressF1", request));
+if(request.getParameter("contextId")!=null)
+{
+	// Load the links
+	ContentUtil content = new ContentUtil(application, request);
+	Element linksElement = content.loadLinks(request.getQueryString());
+	if (linksElement == null){
+		out.write(WebappResources.getString("Nothing_found", null));
+		return;
+	}
+	
+	// Generate list
+	NodeList topics = linksElement.getElementsByTagName("topic");
+	if (topics == null || topics.getLength() == 0){
+		out.write(WebappResources.getString("Nothing_found", null));
+		return;
 	}
 %>
+
+<table id='list'  cellspacing='0' >
+
+<%
+	for (int i = 0; i < topics.getLength(); i++) 
+	{
+		Element topic = (Element)topics.item(i);
+		String tocLabel = topic.getAttribute("toclabel");
+		String label = topic.getAttribute("label");
+		String href = topic.getAttribute("href");
+		if (href != null && href.length() > 0) {
+			// external href
+			if (href.charAt(0) == '/')
+				href = "content/help:" + href;
+			if (href.indexOf('?') == -1)
+				href +="?toc="+URLEncoder.encode(topic.getAttribute("toc"));
+			else
+				href += "&toc="+URLEncoder.encode(topic.getAttribute("toc"));			
+
+		} else
+			href = "javascript:void 0";
+%>
+
+<tr class='list'>
+	<td class='icon'>&nbsp;</td>
+	<td align='left' class='label' nowrap>
+		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=tocLabel%>")'><%=label%></a>
+	</td>
+</tr>
+
+<%
+	}
+%>
+
+</table>
+
+<%
+}else{
+	out.write(WebappResources.getString("pressF1", request));
+}
+
+// Highlight topic
+String topic = request.getParameter("topic");
+if (topic != null && topic.startsWith("/"))
+	topic = request.getContextPath() + "/content/help:" + topic;
+%>
+
+<script language="JavaScript">
+var topic = window.location.protocol + "//" +window.location.host + '<%=topic%>';
+selectTopic(topic);
+</script>
 
 </body>
 </html>

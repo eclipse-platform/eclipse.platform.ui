@@ -35,7 +35,7 @@ public class WebappResources {
 	 */
 	public static String getString(String name, HttpServletRequest request) {
 
-		String locale = request.getLocale().toString();
+		String locale = request == null? Locale.getDefault().toString() : request.getLocale().toString();
 
 		// check cache
 		Properties properties = (Properties) propertiesTable.get(locale);

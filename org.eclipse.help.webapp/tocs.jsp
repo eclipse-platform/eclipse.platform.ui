@@ -72,11 +72,11 @@ DIV.active {
 </style>
   
 <script language="JavaScript">
- var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
- var extraStyle = "";
-  if (isMozilla)
-  	 extraStyle = "<style type='text/css'>DIV { padding-top:2px; padding-bottom:2px; }</style>";	
- document.write(extraStyle);
+var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
+var extraStyle = "";
+if (isMozilla)
+	extraStyle = "<style type='text/css'>DIV { padding-top:2px; padding-bottom:2px; }</style>";	
+document.write(extraStyle);
 </script>
 
 </head>
@@ -84,46 +84,24 @@ DIV.active {
 <body >
 
 <% 
-	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
-	if (tocs == null)
-		return;
-	
-	// Populate the combo box and select the appropriate infoset.
-	// If this is the first time, pick the first one, else the one from request
-	Element selectedTOC = (Element)session.getAttribute("org.eclipse.help.selectedTOC");
-	Element[] tocNodes = tocs.getTocs(request);
-	
-	String bookshelf = WebappResources.getString("Bookshelf", request);
-	if (selectedTOC == null)
-	{
+ContentUtil content = new ContentUtil(application, request);
+String bookshelf = WebappResources.getString("Bookshelf", request);
 %>
-		<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
+	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
 <%
-	} else {
-%>
-		<div id='bookshelf' class='list'><a  href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=bookshelf%>"'> <nobr> <%=bookshelf%> </nobr> </a></div>
-<%
-	}
-	
-	for (int i=0; i<tocNodes.length; i++)
-	{
-		String label = tocNodes[i].getAttribute("label");
-		String id = tocNodes[i].getAttribute("href");
-		
-		if (tocNodes[i] == selectedTOC)
-		{
-%>
-		<div class='active'><a  href='javascript:parent.parent.loadTOC("<%=id%>")' onmouseover='window.status="<%=label%>"'> <nobr> <%=label%> </nobr> </a></div>
-<%
-		}else{
+Element tocsElement = content.loadTocs();
+if (tocsElement == null) return;
+NodeList tocs = tocsElement.getElementsByTagName("toc");
+for (int i=0; i<tocs.getLength(); i++)
+{
+	Element toc = (Element)tocs.item(i);
+	String label = toc.getAttribute("label");
+	String id = toc.getAttribute("href");
 %>
 		<div class='list'><a  href='javascript:parent.parent.loadTOC("<%=id%>");' onmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></div>
-<%
-		}		
-	}
-
+<%		
+}
 %>
-</ul>
 
 </body>
 </html>

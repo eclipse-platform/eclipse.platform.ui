@@ -115,7 +115,7 @@ function displayTocFor(topic)
 	var i = topic.indexOf('?');
 	if (i != -1)
 		topic = topic.substring(0, i);
-	
+
 	var selected = false;
 	if (NavFrame.toc.selectTopic)
 		selected = NavFrame.toc.selectTopic(topic);

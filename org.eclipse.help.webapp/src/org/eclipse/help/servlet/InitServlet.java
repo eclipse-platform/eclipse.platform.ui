@@ -19,9 +19,6 @@ public class InitServlet extends HttpServlet {
 	private WebappResources resBundle;
 	private boolean initialized = false;
 	private Eclipse eclipse;
-	private Tocs tocs;
-	private Search search;
-	private Links links;
 
 	/**
 	 * Initializes eclipse
@@ -40,20 +37,7 @@ public class InitServlet extends HttpServlet {
 			if (isInfocentre()) {
 				eclipse = new Eclipse(context);
 				context.setAttribute("org.eclipse.help.servlet.eclipse", eclipse);
-			}
-
-			// initialize and save the tocs
-			tocs = new Tocs(context);
-			context.setAttribute("org.eclipse.help.tocs", tocs);
-			
-			// initialize and save the search
-			search = new Search(context);
-			context.setAttribute("org.eclipse.help.search", search);
-	
-			// initialize and save the links
-			links = new Links(context);
-			context.setAttribute("org.eclipse.help.links", links);
-			
+			}		
 		} catch (Throwable e) {
 			if (resBundle != null)
 				log(resBundle.getString("problemInit", null), e);
