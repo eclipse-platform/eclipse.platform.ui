@@ -76,7 +76,7 @@ public class Cache {
 		}
 
 		/* Inserts into the head of the list  */
-		private void makeHead() {
+		void makeHead() {
 			Entry oldHead = head;
 			head = this;
 			next = oldHead;
@@ -100,7 +100,7 @@ public class Cache {
 		}
 
 		/* Removes from the linked list, but not from the entries collection */
-		private void unchain() {
+		void unchain() {
 			// it may be in the tail
 			if (tail == this)
 				tail = previous;
@@ -114,10 +114,10 @@ public class Cache {
 		}
 	}
 
-	private KeyedHashSet entries;
-	private Entry head;
+	KeyedHashSet entries;
+	Entry head;
 	private int maximumCapacity;
-	private Entry tail;
+	Entry tail;
 	private double threshold;
 
 	public Cache(int maximumCapacity) {

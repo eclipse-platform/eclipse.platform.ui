@@ -138,9 +138,9 @@ public class CharsetManager implements IManager {
 
 	public static final String ENCODING_PREF_NODE = "encoding"; //$NON-NLS-1$		
 	private static final String PROJECT_KEY = "<project>"; //$NON-NLS-1$
-	private CharsetManagerJob job;
+	CharsetManagerJob job;
 	private IResourceChangeListener listener;
-	private Workspace workspace;
+	Workspace workspace;
 
 	public CharsetManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -153,11 +153,11 @@ public class CharsetManager implements IManager {
 		return encodingSettings.get(getKeyFor(resourcePath), null);
 	}
 
-	private String getKeyFor(IPath resourcePath) {
+	String getKeyFor(IPath resourcePath) {
 		return resourcePath.segmentCount() > 1 ? resourcePath.removeFirstSegments(1).toString() : PROJECT_KEY;
 	}
 
-	private Preferences getPreferences(IProject project) {
+	Preferences getPreferences(IProject project) {
 		return new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES).node(ENCODING_PREF_NODE);
 	}
 

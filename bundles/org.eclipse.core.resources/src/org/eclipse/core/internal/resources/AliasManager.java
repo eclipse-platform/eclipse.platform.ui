@@ -550,6 +550,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 	 * @see IManager#shutdown(IProgressMonitor)
 	 */
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
+		// do nothing
 	}
 
 	/* (non-Javadoc)
