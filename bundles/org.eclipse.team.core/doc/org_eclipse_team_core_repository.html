@@ -12,7 +12,7 @@
 <p><b><i>Description: </i></b>This extension point is used to register
 a repository provider. A repository provider provides sychronization
 of the contents of projects in the local workspace to a corresponding
-entity in a remote repository of a particular type (e.g. CVS).
+entity in a remote repository of a particular type (e.g. CVS, Clearcase, PVCS, etc.).
 <p>Providers may provide an extension for this extension point.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT repository EMPTY></tt>
@@ -32,7 +32,7 @@ CDATA #REQUIRED</tt>
 <p>Following is an example of a repository extension:
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.team.core.repository"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;repository</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.team.cvs.core.cvsnature"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.team.cvs.core.cvsprovider"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/repository></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
