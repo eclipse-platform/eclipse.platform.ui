@@ -844,7 +844,6 @@ public final class Workbench implements IWorkbench {
 		display.addFilter(SWT.Traverse, keyFilter);
 		display.addFilter(SWT.KeyDown, keyFilter);
 		display.addFilter(SWT.FocusOut, keyFilter);
-		display.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 		addWindowListener(workbenchCommandsAndContexts.windowListener);
 		workbenchCommandsAndContexts.updateActiveIds();		
 

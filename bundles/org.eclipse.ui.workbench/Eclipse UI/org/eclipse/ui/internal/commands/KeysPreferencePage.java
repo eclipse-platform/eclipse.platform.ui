@@ -172,7 +172,6 @@ public class KeysPreferencePage
 	private Map categoryIdsByUniqueName;
 	private Map categoryUniqueNamesById;
 	private Button checkBoxMultiKeyAssist;
-	private Button checkBoxMultiKeyRocker;
 	private Combo comboContext;
 	private Combo comboCategory;
 	private Combo comboCommand;
@@ -446,17 +445,6 @@ public class KeysPreferencePage
 					setValid(textMultiKeyAssistTime.isValid());
 			}
 		});
-
-		// The multi-key rocker button.
-		checkBoxMultiKeyRocker = new Button(composite, SWT.CHECK);
-		checkBoxMultiKeyRocker.setText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyRocker.Text")); //$NON-NLS-1$
-		checkBoxMultiKeyRocker.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "checkBoxMultiKeyRocker.ToolTipText")); //$NON-NLS-1$
-		checkBoxMultiKeyRocker.setFont(composite.getFont());
-		checkBoxMultiKeyRocker.setSelection(
-			getPreferenceStore().getBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		checkBoxMultiKeyRocker.setLayoutData(gridData);
 
 		// Conigure the layout of the composite.
 		final GridLayout gridLayout = new GridLayout();
@@ -893,8 +881,6 @@ public class KeysPreferencePage
 			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ASSIST));
 		textMultiKeyAssistTime.setStringValue(
 			Integer.toString(store.getDefaultInt(IPreferenceConstants.MULTI_KEY_ASSIST_TIME)));
-		checkBoxMultiKeyRocker.setSelection(
-			store.getDefaultBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
 
 		update();
 	}
@@ -930,9 +916,6 @@ public class KeysPreferencePage
 		store.setValue(
 			IPreferenceConstants.MULTI_KEY_ASSIST_TIME,
 			textMultiKeyAssistTime.getIntValue());
-		store.setValue(
-			IPreferenceConstants.MULTI_KEY_ROCKER,
-			checkBoxMultiKeyRocker.getSelection());
 
 		// TODO remove the dependancy on Workbench. have Workbench rely on
 		// events from CommandManager.

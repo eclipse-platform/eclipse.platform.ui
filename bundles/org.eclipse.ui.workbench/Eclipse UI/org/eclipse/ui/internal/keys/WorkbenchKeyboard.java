@@ -206,15 +206,6 @@ public class WorkbenchKeyboard {
 		}
 	};
 	/**
-	 * The listener that checks to see whether all of the modifier keys have
-	 * been released.
-	 */
-	final Listener keyUpFilter = new Listener() {
-		public void handleEvent(Event event) {
-			checkModifierKeys(event);
-		}
-	};
-	/**
 	 * The <code>Shell</code> displayed to the user to assist them in
 	 * completing a multi-stroke keyboard shortcut.
 	 */
@@ -315,26 +306,8 @@ public class WorkbenchKeyboard {
 	 */
 	private void checkActiveWindow(IWorkbenchWindow window) {
 		if (!window.equals(state.getAssociatedWindow())) {
-			state.setCollapseFully(true);
 			resetState();
 			state.setAssociatedWindow(window);
-		}
-	}
-
-	/**
-	 * Checks to see if the modifier keys are all released now. If they are all
-	 * released, then the state will be allowed to collapse fully, and the
-	 * state will reset itself.
-	 * 
-	 * @param event
-	 *            The event to check for modifier keys; must not be <code>null</code>.
-	 */
-	private void checkModifierKeys(Event event) {
-		if ((event.type == SWT.KeyUp) && (event.stateMask == event.keyCode)) {
-			state.setCollapseFully(true);
-			if (state.isSafeToReset()) {
-				resetState();
-			}
 		}
 	}
 
@@ -446,15 +419,6 @@ public class WorkbenchKeyboard {
 	 */
 	public Listener getKeyDownFilter() {
 		return keyDownFilter;
-	}
-
-	/**
-	 * An accessor for the filter that processes key up events on the display.
-	 * 
-	 * @return The global key up filter; never <code>null</code>.
-	 */
-	public Listener getKeyUpFilter() {
-		return keyUpFilter;
 	}
 
 	/**
@@ -701,8 +665,6 @@ public class WorkbenchKeyboard {
 				KeySequence.getInstance(sequenceBeforeKeyStroke, (KeyStroke) iterator.next());
 
 			if (isPartialMatch(sequenceAfterKeyStroke)) {
-				final IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-				state.setCollapseFully(!store.getBoolean(IPreferenceConstants.MULTI_KEY_ROCKER));
 				incrementState(sequenceAfterKeyStroke);
 				return true;
 
