@@ -26,7 +26,6 @@ import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
@@ -51,6 +50,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
+	private WorkingSetFilter workingSetFilter= new WorkingSetFilter();
 
 	private Clipboard clipboard;
 
@@ -161,6 +161,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 		viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(new DecoratingLabelProvider(new WorkbenchLabelProvider(), getViewSite().getDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
+		viewer.addFilter(workingSetFilter);
 		if (memento != null)
 			restoreFilters();
 		viewer.setInput(getInitialInput());
@@ -638,7 +639,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 			IMemento expandedMem = memento.createChild(TAG_EXPANDED);
 			for (int i = 0; i < expandedElements.length; i++) {
 				IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
-				elementMem.putString(TAG_PATH, ((IResource) expandedElements[i]).getFullPath().toString());
+				elementMem.putString(TAG_PATH, ((IResource) ((IAdaptable) expandedElements[i]).getAdapter(IResource.class)).getFullPath().toString());
 			}
 		}
 
