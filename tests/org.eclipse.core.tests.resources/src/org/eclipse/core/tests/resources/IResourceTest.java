@@ -397,7 +397,6 @@ protected void setupBeforeState(IResource receiver, IResource target, int state,
 
 	/* the target's parents must exist */
 	ensureExistsInWorkspace(target.getParent(), true);
-	FileSystemResourceManager fsrm;
 	switch (state) {
 		case S_WORKSPACE_ONLY :
 			ensureExistsInWorkspace(target, true);
@@ -542,7 +541,7 @@ public void testAccept2() {
 		public boolean wasSuccess(Object[] args, Object result, Object[] oldState) {
 			IResource resource = (IResource) args[0];
 			LoggingResourceVisitor visitor = (LoggingResourceVisitor) args[1];
-			Boolean includePhantoms = (Boolean) args[2];
+			//Boolean includePhantoms = (Boolean) args[2];
 			Vector visitedResources = visitor.visitedResources;
 			if (visitor == shallowVisitor) {
 				return visitedResources.size() == 1 && visitedResources.elementAt(0) == resource;
@@ -597,7 +596,7 @@ public void testCopy() {
 		public boolean shouldFail(Object[] args, int count) {
 			IResource resource = (IResource) args[0];
 			IPath destination = (IPath) args[1];
-			Boolean force = (Boolean) args[2];
+			//Boolean force = (Boolean) args[2];
 			if (!resource.isAccessible())
 				return true;
 			if (isProject(resource) && destination.segmentCount() > 1 && !getWorkspace().validatePath(destination.toString(), IResource.FOLDER).isOK())
@@ -632,7 +631,6 @@ public void testCopy() {
  *     void delete(boolean, IProgressMonitor)
  */
 public void testDelete() {
-	final IWorkspace workspace = getWorkspace();
 	Object[][] inputs = new Object[][] {FALSE_AND_TRUE, PROGRESS_MONITORS, interestingResources};
 	new TestPerformer("IResourceTest.testDelete") {
 		public boolean shouldFail(Object[] args, int count) {
@@ -1104,7 +1102,7 @@ public void testMove() {
 		public boolean shouldFail(Object[] args, int count) {
 			IResource resource = (IResource) args[0];
 			IPath destination = (IPath) args[1];
-			Boolean force = (Boolean) args[2];
+//			Boolean force = (Boolean) args[2];
 			if (!resource.isAccessible())
 				return true;
 			if (isProject(resource)) {

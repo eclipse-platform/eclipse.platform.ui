@@ -68,7 +68,6 @@ public void testCopy() throws CoreException {
 	IFolder folderCopy = folder2.getFolder("Folder");
 	IFile fileCopy = folder2.getFile("File");
 	IFile file2Copy = folder2.getFile("File2");
-	IFile file3Copy = folder2.getFile("File3");
 
 	/********** FAILURE CASES ***********/
 

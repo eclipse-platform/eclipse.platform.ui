@@ -149,7 +149,7 @@ public class BasicObjectStoreTest extends TestCase {
 			store.open(env.getFileName());
 			try {
 				int n = addresses.size();
-				for (int i = 0; i < addresses.size(); i++) {
+				for (int i = 0; i < n; i++) {
 					ObjectAddress address = (ObjectAddress) addresses.elementAt(i);
 					TestObject o = (TestObject) store.acquireObject(address);
 					String t = new String(o.getValue());

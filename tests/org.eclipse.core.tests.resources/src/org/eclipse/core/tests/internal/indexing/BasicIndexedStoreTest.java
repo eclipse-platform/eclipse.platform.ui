@@ -67,7 +67,7 @@ public class BasicIndexedStoreTest extends TestCase {
 		store.open(env.getFileName());
 		store.createIndex("Index");
 		Index index = store.getIndex("Index");
-		String key, value;
+		String key;
 		for (int i = 0; i < skipValue; i++) {
 			int j = i;
 			while (j < numberOfEntries) {
@@ -322,7 +322,7 @@ public class BasicIndexedStoreTest extends TestCase {
 				}
 				store.commit();
 				assertEquals("test after insert", i, index.getNumberOfEntries());
-				int numberOfNodes = index.getNumberOfNodes();
+				index.getNumberOfNodes();
 				IndexCursor c = index.open();
 				for (int j = 0; j < i; j++) {
 					String key = generateString(keySize, j);
@@ -346,7 +346,7 @@ public class BasicIndexedStoreTest extends TestCase {
 		IndexedStore.delete(env.getFileName());
 		IndexedStore store = new IndexedStore();
 		int n = 5000;
-		int i, j;
+		int i;
 		store.open(env.getFileName());
 		try {
 			Index index = store.createIndex("Index");
@@ -375,7 +375,6 @@ public class BasicIndexedStoreTest extends TestCase {
 			c = index.open();
 			c.findFirstEntry();
 			i = 0;
-			j = 0;
 			while (!c.isAtEnd()) {
 				assertEquals(value, c.getValueAsString());
 				c.next();
@@ -818,7 +817,7 @@ public class BasicIndexedStoreTest extends TestCase {
 			Iterator idStream = ids.iterator();
 			long t0 = System.currentTimeMillis();
 			while (idStream.hasNext()) {
-				byte[] b = store.getObject((ObjectID) idStream.next());
+				store.getObject((ObjectID) idStream.next());
 			}
 			long t1 = System.currentTimeMillis();
 			env.println("Time to retrieve = " + ((t1 - t0) / 1000));
@@ -872,7 +871,6 @@ public class BasicIndexedStoreTest extends TestCase {
 			ObjectID id = null;
 			String name = null;
 			String value = null;
-			Set names = new HashSet();
 			Random r = new Random(100); // same seed should generate the same test on the same VM
 			for (int i = 0; i < n; i++) {
 				env.print(i, 8);
@@ -961,18 +959,18 @@ public class BasicIndexedStoreTest extends TestCase {
 		store.open(env.getFileName());
 		try {
 			store.createIndex("Index");
-			Index index = store.getIndex("Index");
+			store.getIndex("Index");
 			store.rollback();
 			try {
-				index = store.getIndex("Index");
+				store.getIndex("Index");
 			} catch (IndexedStoreException e) {
 				if (e.id != IndexedStoreException.IndexNotFound)
 					fail("expected exception was not thrown");
 			}
 			store.createIndex("Index");
-			index = store.getIndex("Index");
+			store.getIndex("Index");
 			store.commit();
-			index = store.getIndex("Index");
+			store.getIndex("Index");
 		} finally {
 			store.close();
 		}

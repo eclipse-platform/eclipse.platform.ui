@@ -450,7 +450,6 @@ public void testProjectMoveVariations() {
 	IResource[] resources;
 	IResource destination, source, sourceChild, destChild;
 	String[] children;
-	IMarker marker = null;
 	IMarker[] markers = null;
 	String actual = null;
 	QualifiedName qname = new QualifiedName("com.example", "myProperty");
@@ -474,7 +473,7 @@ public void testProjectMoveVariations() {
 	}
 	// create a marker to be moved
 	try {
-		marker = sourceChild.createMarker(IMarker.PROBLEM);
+		sourceChild.createMarker(IMarker.PROBLEM);
 	} catch (CoreException e) {
 		fail("1.2", e);
 	}
@@ -527,7 +526,7 @@ public void testProjectMoveVariations() {
 	}
 	// create a marker to be moved
 	try {
-		marker = sourceChild.createMarker(IMarker.PROBLEM);
+		sourceChild.createMarker(IMarker.PROBLEM);
 	} catch (CoreException e) {
 		fail("2.2", e);
 	}
@@ -587,7 +586,7 @@ public void testProjectMoveVariations() {
 	}
 	// create a marker to be moved
 	try {
-		marker = sourceChild.createMarker(IMarker.PROBLEM);
+		sourceChild.createMarker(IMarker.PROBLEM);
 	} catch (CoreException e) {
 		fail("3.2", e);
 	}
@@ -642,7 +641,7 @@ public void testProjectMoveVariations() {
 	}
 	// create a marker to be moved
 	try {
-		marker = sourceChild.createMarker(IMarker.PROBLEM);
+		sourceChild.createMarker(IMarker.PROBLEM);
 	} catch (CoreException e) {
 		fail("4.2", e);
 	}

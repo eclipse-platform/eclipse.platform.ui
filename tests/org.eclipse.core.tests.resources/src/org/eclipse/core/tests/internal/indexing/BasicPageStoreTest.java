@@ -75,7 +75,7 @@ public class BasicPageStoreTest extends TestCase {
 	 */
 	public void testCacheHitsCircular() throws Exception {
 		env.printHeading("testCacheHitsCircular");
-		int n = initializeStore();
+		initializeStore();
 		PageStore store = new PageStore(new TestPagePolicy());
 		env.println("Testing 41 of 40");
 		store.open(env.getFileName());
