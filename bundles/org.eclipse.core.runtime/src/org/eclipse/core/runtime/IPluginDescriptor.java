@@ -191,7 +191,7 @@ public ResourceBundle getResourceBundle() throws MissingResourceException;
  * Note, that the "%" character is stripped off prior to lookup
  * in the resource bundle.
  * <p>
- * Equivalent to <code>getResourceString(value, getBundle())</code>
+ * Equivalent to <code>getResourceString(value, getResourceBundle())</code>
  * </p>
  *
  * @param value the value
