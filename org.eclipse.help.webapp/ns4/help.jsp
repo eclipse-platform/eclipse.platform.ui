@@ -94,45 +94,32 @@
 	
 </head>
 
+
+<frameset onload="onloadFrameset()" rows="<%=banner!=null?banner_height+",":""%>35,27,*"  frameborder="0" framespacing="0" border="0" spacing="0">
 <%
-	if (banner != null)
-	{
+	if (banner != null){
 %>
-<frameset onload="onloadFrameset()" rows="<%=banner_height%>,35,*"  frameborder="0" framespacing="0" border="0" spacing="0">
 	<frame name="BannerFrame" src='<%=banner%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
-	<frame name="SearchFrame" src='<%="search.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
-	<frameset id="helpFrameset" cols="28%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
-		<frameset name="navFrameset" rows="27,*,26" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
-			<frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-			<frame name="NavFrame" src='blank.html' marginwidth="0" marginheight="0" scrolling="yes" frameborder="0" resize=yes>
-			<frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-		</frameset>
-		<frameset id="contentFrameset" rows="27,*", frameborder=0 framespacing=0 border=0>
-			<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0"  frameborder="0" resize=yes scrolling=no>
-			<frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
-		</frameset>
-	</frameset>
-</frameset>
-<%
-	} else {
-%>
-<frameset onload="onloadFrameset()" rows="35,*"  frameborder="0" framespacing="0" border="0" spacing="0">
-	<frame name="SearchFrame" src='<%="search.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=no>
-	<frameset id="helpFrameset" cols="28%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
-		<frameset name="navFrameset" rows="27,*,26" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
-			<frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-			<frame name="NavFrame" src='blank.html' marginwidth="0" marginheight="0" scrolling="yes" frameborder="0" resize=yes>
-			<frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-		</frameset>
-		<frameset id="contentFrameset" rows="27,*", frameborder=0 framespacing=0 border=0>
-			<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0"  frameborder="0" resize=yes scrolling=no>
-			<frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
-		</frameset>
-	</frameset>
-</frameset>
 <%
 	}
 %>
+	<frame name="SearchFrame" src='<%="search.jsp"+query%>' scrolling="no">
+
+	<frameset id="titleFrameset" cols="28%,*">
+			<frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' scrolling="no">
+			<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' scrolling="no">
+
+	</frameset>
+	
+	<frameset id="helpFrameset" cols="28%,*">
+
+		<frameset name="navFrameset" rows="*,26">
+			<frame name="NavFrame" src='blank.html' scrolling="yes">
+			<frame name="TabsFrame" src='<%="tabs.jsp"+query%>' scrolling="no">
+		</frameset>
+		<frame name="MainFrame" src="<%=srcMainFrame%>" scrolling="auto">
+	</frameset>
+</frameset>
 
 </html>
 
