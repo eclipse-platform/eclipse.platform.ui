@@ -67,6 +67,7 @@ point and specify TOC file(s).&lt;/li&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT toc (topic | anchor | link)* &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc link_to CDATA #IMPLIED &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc label CDATA #REQUIRED &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc topic CDATA #IMPLIED &gt;&lt;/tt&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT topic (topic | anchor | link )*
 &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic label CDATA #REQUIRED &gt;&lt;/tt&gt;
@@ -131,11 +132,12 @@ an anchor as follows:
 &lt;p&gt;&lt;b&gt;The toc element&lt;/b&gt;
 &lt;p&gt;The toc element is a Table of Contents that groups topics and other
 elements defined in this file.&amp;nbsp; The label identifies the table of
-contents to the user, when it is displayed to the user.&amp;nbsp; The optional
+contents to the user, when it is displayed to the user.&amp;nbsp; The optional topic
+attribute is the path to a topic file describing the TOC.&amp;nbsp; The optional
 link_to attribute allows for linking toc from this file into another toc
 file being higher in the navigation hierarchy.&amp;nbsp; The value of the link_to
 attribute must specify an anchor in another toc file. To link toc from
-myapi.xml to a api.xml file, specified in another plugin you would use
+myapi.xml to api.xml file, specified in another plugin you would use
 the syntax
 &lt;p&gt;&lt;tt&gt;&amp;lt;toc link_to=&quot;../anotherPlugin/api.xml#moreapi&quot; label=&quot;My Tool
 API&quot;/&gt;&lt;/tt&gt;
