@@ -217,20 +217,6 @@ class WorkbenchMonitorProvider {
 		synchronized void clearStatusLine() {
 			clear = true;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-		 */
-		public boolean shouldRun() {
-			return super.shouldRun() && PlatformUI.isWorkbenchRunning();
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldSchedule()
-		 */
-		public boolean shouldSchedule() {
-			return super.shouldSchedule() && PlatformUI.isWorkbenchRunning();
-		}
 
 	}
 
