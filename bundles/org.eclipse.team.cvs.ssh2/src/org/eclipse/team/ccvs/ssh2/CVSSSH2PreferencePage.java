@@ -1103,7 +1103,7 @@ class ExportDialog extends Dialog {
     }
 
     createTargetFields(main);
-    Dialog.applyDialogFont(main);
+    Dialog.applyDialogFont(main); 
     return main;
   }
 
