@@ -6,22 +6,29 @@ package org.eclipse.core.internal.resources;
  */
 
 import java.io.*;
+import java.io.InputStream;
 
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 public class File extends Resource implements IFile {
 
 protected File(IPath path, Workspace container) {
 	super(path, container);
 }
-/**
+
+/*
  * @see IFile
  */
-public void appendContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+public void appendContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.settingContents", getFullPath().toString());
@@ -49,6 +56,16 @@ public void appendContents(InputStream content, boolean force, boolean keepHisto
 		monitor.done();
 	}
 }
+
+/**
+ * @see IFile
+ */
+public void appendContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	// funnel all operations to central method
+	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : 0) | (force ? IResource.FORCE : 0);
+	appendContents(content, updateFlags, monitor);
+}
+
 /**
  * Changes this file to be a folder in the resource tree and returns
  * the newly created folder.  All related
@@ -67,10 +84,12 @@ public IFolder changeToFolder() throws CoreException {
 	workspace.createResource(result, false);
 	return result;
 }
+
 /**
  * @see IFile
  */
-public void create(InputStream content, boolean force, IProgressMonitor monitor) throws CoreException {
+public void create(InputStream content, int updateFlags, IProgressMonitor monitor)	throws CoreException {
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.creating", getFullPath().toString());
@@ -141,6 +160,15 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 		ensureClosed(content);
 	}
 }
+
+/**
+ * @see IFile
+ */
+public void create(InputStream content, boolean force, IProgressMonitor monitor) throws CoreException {
+	// funnel all operations to central method
+	create(content, (force ? IResource.FORCE : 0), monitor);
+}
+
 /**
  * IFile API methods require that the stream be closed regardless
  * of the success of the method.  This method makes a best effort
@@ -188,10 +216,21 @@ protected void internalSetContents(InputStream content, IPath location, boolean 
 	info.incrementContentId();
 	workspace.updateModificationStamp(info);
 }
-/**
+
+/*
  * @see IFile
  */
-public void setContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+public void setContents(IFileState content, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
+}
+
+/*
+ * @see IFile
+ */
+public void setContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.settingContents", getFullPath().toString());
@@ -219,12 +258,23 @@ public void setContents(InputStream content, boolean force, boolean keepHistory,
 		ensureClosed(content);
 	}
 }
+
+/**
+ * @see IFile
+ */
+public void setContents(InputStream content, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
+	// funnel all operations to central method
+	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : 0) | (force ? IResource.FORCE : 0);
+	setContents(content, updateFlags, monitor);
+}
+
 /**
  * @see IFile#setContents
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
-	setContents(source.getContents(), force, keepHistory, monitor);
+	// funnel all operations to central method
+	final int updateFlags = (keepHistory ? IResource.KEEP_HISTORY : 0) | (force ? IResource.FORCE : 0);
+	setContents(source.getContents(), updateFlags, monitor);
 }
-
 
 }

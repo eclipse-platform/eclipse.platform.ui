@@ -1,7 +1,7 @@
 package org.eclipse.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 
@@ -29,13 +29,20 @@ import org.eclipse.core.runtime.*;
  * @see Platform#getAdapterManager
  */
 public interface IWorkspaceRoot extends IContainer, IAdaptable {
+
 /**
- * Deletes the workspace root and all projects under it.  This method is equivalent
- * to invoking <code>IProject.delete (deleteContent, force, monitor)</code>
- * for all of the projects in the workspace and then deleting the root resource
- * using <code>IResource.delete(force, monitor)</code>.  The net effect
- * is for all projects to be removed as well as all markers, properties, sync info
- * and other data related to the workspace root.  The root resource itself is not deleted.
+ * Deletes everything in the workspace except the workspace root resource
+ * itself.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   delete((deleteContent ? DELETE_PROJECT_CONTENT : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event.
+ * </p>
  * <p>
  * This method is long-running; progress and cancellation are provided
  * by the given progress monitor.
@@ -54,8 +61,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
- * @see IResource#delete
- * @see IProject#delete
+ * @see IResource#delete(int,IProgressMonitor)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 /**

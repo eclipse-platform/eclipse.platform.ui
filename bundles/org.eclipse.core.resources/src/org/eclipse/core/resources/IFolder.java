@@ -1,7 +1,7 @@
 package org.eclipse.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 
@@ -26,19 +26,14 @@ import org.eclipse.core.runtime.*;
  * @see Platform#getAdapterManager
  */
 public interface IFolder extends IContainer, IAdaptable {
+	
 /**
  * Creates a new folder resource as a member of this handle's parent resource.
  * <p>
- * The <code>force</code> parameter controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>false</code> is specified, this method will only attempt
- * to create a directory in the local file system if there isn't one already. 
- * This option ensures there is no unintended data loss; it is the recommended setting.
- * However, if <code>true</code> is specified, this method will 
- * be deemed a success if if there already is a corresponding directory.
- * </p>
- * <p>
- * This method synchronizes this resource with the local file system.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   create((force ? FORCE : 0), local, monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -74,14 +69,72 @@ public interface IFolder extends IContainer, IAdaptable {
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification.  See IResourceChangeEvent for more details.</li>
  * </ul>
+ * @see IFolder#create(int,boolean,IProgressMonitor)
  */
 public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException;
+
+/**
+ * Creates a new folder resource as a member of this handle's parent resource.
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with
+ * cases where the workspace is not completely in sync with the local file 
+ * system. If <code>FORCE</code> is not specified, the method will only attempt
+ * to create a directory in the local file system if there isn't one already. 
+ * This option ensures there is no unintended data loss; it is the recommended
+ * setting. However, if <code>FORCE</code> is specified, this method will 
+ * be deemed a success even if there already is a corresponding directory.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> are ignored.
+ * </p>
+ * <p>
+ * This method synchronizes this resource with the local file system.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that the folder has been added to its parent.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ * 
+ * @param updateFlags bit-wise or of update flag constants
+ *   (only <code>FORCE</code> is relevant here)
+ * @param local a flag controlling whether or not the folder will be local
+ *    after the creation
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource already exists in the workspace.</li>
+ * <li> The workspace contains a resource of a different type 
+ *      at the same path as this resource.</li>
+ * <li> The parent of this resource does not exist.</li>
+ * <li> The parent of this resource is a project that is not open.</li>
+ * <li> The parent contains a resource of a different type 
+ *      at the same path as this resource.</li>
+ * <li> The name of this resource is not valid (according to 
+ *    <code>IWorkspace.validateName</code>).</li>
+ * <li> The corresponding location in the local file system is occupied
+ *    by a file (as opposed to a directory).</li>
+ * <li> The corresponding location in the local file system is occupied
+ *    by a folder and <code>FORCE</code> is not specified.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification.  See IResourceChangeEvent for more details.</li>
+ * </ul>
+ * @since 2.0
+ */
+public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Deletes this resource from the workspace.
- * This method has the same behavior of <code>IResource.delete</code>
- * plus the <code>keepHistory</code> parameter indicating whether or not 
- * files under this folder should have their current contents stored 
- * in the workspace's local history.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   delete((keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -108,9 +161,10 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
- * @see IResource#delete
+ * @see IResource#delete(int,IProgressMonitor)
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Returns a handle to the file with the given name in this folder.
  * <p> 
@@ -141,12 +195,14 @@ public IFile getFile(String name);
  * @see #getFile
  */
 public IFolder getFolder(String name);
+
 /**
  * Moves this resource so that it is located at the given path.  
- * This method has the same behavior as <code>IResource.move</code>
- * plus the <code>keepHistory</code> parameter indicating whether or not 
- * the to-be-moved files under this folder should have their current contents
- * stored in the workspace's local history.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   move(destination, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -183,7 +239,7 @@ public IFolder getFolder(String name);
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
- * @see IResource#move
+ * @see IResource#move(IPath,int,IProgressMonitor)
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
 }

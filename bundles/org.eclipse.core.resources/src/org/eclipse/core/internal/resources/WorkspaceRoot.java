@@ -34,12 +34,17 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException {
  * @see IResource#delete
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - should funnel through IResource.delete(int,IProgressMonitor) i.e.,
+	//    delete(DELETE_PROJECT_CONTENT | (force ? FORCE : 0), monitor);
 	delete(true, force, monitor);
 }
 /**
  * @see IWorkspaceRoot#delete
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - the logic here for deleting roots needs to be moved to Resource.delete
+	//   so that IResource.delete(int,IProgressMonitor) works properly for
+	//   roots and honours the DELETE_PROJECT_HISTORY update flag
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String title = Policy.bind("resources.deleting", getFullPath().toString());

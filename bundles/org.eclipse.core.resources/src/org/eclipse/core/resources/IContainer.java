@@ -1,7 +1,7 @@
 package org.eclipse.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 
@@ -26,6 +26,30 @@ import org.eclipse.core.runtime.*;
  * @see IWorkspaceRoot
  */
 public interface IContainer extends IResource, IAdaptable {
+	
+	/*====================================================================
+	 * Constants defining which members are wanted:
+	 *====================================================================*/
+	
+	/**
+	 * Member constant (bit mask value 1) indicating that phantom member resources are
+	 * to be included.
+	 * 
+	 * @see IResource#isPhantom
+	 * @since 2.0
+	 */
+	public static final int INCLUDE_PHANTOMS = 1;
+
+	/**
+	 * Member constant (bit mask value 2) indicating that team private members are
+	 * to be included.
+	 * 
+	 * @see IResource#isTeamPrivateMember
+	 * @since 2.0
+	 */
+	public static final int INCLUDE_TEAM_PRIVATE_MEMBERS = 2;
+
+	
 /**
  * Returns whether a resource of some type with the given path 
  * exists relative to this resource.
@@ -39,12 +63,16 @@ public interface IContainer extends IResource, IAdaptable {
  * @see IResource#exists
  */
 public boolean exists(IPath path);
+
 /**
  * Finds and returns the member resource (project, folder, or file)
  * with the given name in this container, or <code>null</code> if no such
  * resource exists.
- * 
- * <p> N.B. Unlike the methods which traffic strictly in resource
+ * <p>
+ * This is a convenience method, fully equivalent to <code>findMember(name,0)</code>.
+ * </p>
+ * <p> 
+ * N.B. Unlike the methods which traffic strictly in resource
  * handles, this method infers the resulting resource's type from the
  * resource existing at the calculated path in the workspace.
  * </p>
@@ -54,21 +82,16 @@ public boolean exists(IPath path);
  * 		resource exists
  */
 public IResource findMember(String name);
+
 /**
  * Finds and returns the member resource (project, folder, or file)
  * with the given name in this container, or <code>null</code> if 
  * there is no such resource.
  * <p>
- * If the <code>includePhantoms</code> argument is <code>false</code>, 
- * only a member resource with the given name that exists will be returned.
- * If the <code>includePhantoms</code> argument is <code>true</code>,
- * the method also returns a phantom member resource with 
- * the given name that the workspace is keeping track of.
- * </p>
- * <p>
- * N.B. Unlike the methods which traffic strictly in resource
- * handles, this method infers the resulting resource's type from the
- * existing resource (or phantom) in the workspace.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   findMember(name, includePhantoms ? INCLUDE_PHANTOMS : 0);
+ * </pre>
  * </p>
  *
  * @param name the string name of the member resource
@@ -77,10 +100,46 @@ public IResource findMember(String name);
  *   interest
  * @return the member resource, or <code>null</code> if no such
  * 		resource exists
- * @see #members(boolean)
  * @see IResource#isPhantom
  */
 public IResource findMember(String name, boolean includePhantoms);
+
+/**
+ * Finds and returns the member resource (project, folder, or file)
+ * with the given name in this container, or <code>null</code> if 
+ * there is no such resource.
+ * <p>
+ * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
+ * flags (recommended), only a member resource with given name will
+ * be returned. If the <code>INCLUDE_PHANTOMS</code> flag is specified,
+ * the result also returns any phantom member resource with the given name
+ * that the workspace is keeping track of.
+ * </p>
+ * <p>
+ * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
+ * (recommended), the result will not consider team private members of this
+ * resource. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is 
+ * specified in the member flags, team private member resources are 
+ * taken into account.
+ * </p>
+ * <p>
+ * N.B. Unlike the methods which traffic strictly in resource
+ * handles, this method infers the resulting resource's type from the
+ * existing resource (or phantom) in the workspace.
+ * </p>
+ *
+ * @param name the string name of the member resource
+ * @param memberFlags bit-wise or of member flag constants
+ *   (<code>INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
+ *   indicating which members are of interest
+ * @return the member resource, or <code>null</code> if no such
+ * 		resource exists
+ * @see IResource#isPhantom
+ * @see IResource#isTeamPrivateMember
+ * @since 2.0
+ */
+public IResource findMember(String name, int memberFlags);
+
 /**
  * Finds and returns the member resource identified by the given path in
  * this container, or <code>null</code> if no such resource exists.
@@ -91,12 +150,16 @@ public IResource findMember(String name, boolean includePhantoms);
  * handles, this method infers the resulting resource's type from the
  * resource existing at the calculated path in the workspace.
  * </p>
+ * <p>
+ * This is a convenience method, fully equivalent to <code>findMember(path,0)</code>.
+ * </p>
  *
  * @param path the path of the desired resource
  * @return the member resource, or <code>null</code> if no such
  * 		resource exists
  */
 public IResource findMember(IPath path);
+
 /**
  * Finds and returns the member resource identified by the given path in
  * this container, or <code>null</code> if there is no such resource.
@@ -104,16 +167,10 @@ public IResource findMember(IPath path);
  * interpreted as relative to this resource.  Trailing separators are ignored.
  * If the path is empty this container is returned.
  * <p>
- * If the <code>includePhantoms</code> argument is <code>false</code>, 
- * only a resource that exists at the given path will be returned.
- * If the <code>includePhantoms</code> argument is <code>true</code>,
- * the method also returns a phantom member resource at the given path
- * that the workspace is keeping track of.
- * </p>
- * <p>
- * N.B. Unlike the methods which traffic strictly in resource
- * handles, this method infers the resulting resource's type from the
- * existing resource (or phantom) at the calculated path in the workspace.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   findMember(path, includePhantoms ? INCLUDE_PHANTOMS : 0);
+ * </pre>
  * </p>
  *
  * @param path the path of the desired resource
@@ -126,6 +183,45 @@ public IResource findMember(IPath path);
  * @see IResource#isPhantom
  */
 public IResource findMember(IPath path, boolean includePhantoms);
+
+/**
+ * Finds and returns the member resource identified by the given path in
+ * this container, or <code>null</code> if there is no such resource.
+ * The supplied path may be absolute or relative; in either case, it is
+ * interpreted as relative to this resource.  Trailing separators are ignored.
+ * If the path is empty this container is returned.
+ * <p>
+ * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
+ * flags (recommended), only a resource that exists at the given path will
+ * be returned. If the <code>INCLUDE_PHANTOMS</code> flag is specified,
+ * the result also returns any phantom member resource at the given path
+ * that the workspace is keeping track of.
+ * </p>
+ * <p>
+ * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
+ * (recommended), the result will not consider team private members of this
+ * resource, or their team private members, and so on. If the 
+ * <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified in the member
+ * flags, team private member resources are taken into account.
+ * </p>
+ * <p>
+ * N.B. Unlike the methods which traffic strictly in resource
+ * handles, this method infers the resulting resource's type from the
+ * existing resource (or phantom) at the calculated path in the workspace.
+ * </p>
+ *
+ * @param path the path of the desired resource
+ * @param memberFlags bit-wise or of member flag constants
+ *   (<code>INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
+ *   indicating which members are of interest
+ * @return the member resource, or <code>null</code> if no such
+ * 		resource exists
+ * @see IResource#isPhantom
+ * @see IResource#isTeamPrivateMember
+ * @since 2.0
+ */
+public IResource findMember(IPath path, int memberFlags);
+
 /**
  * Returns a handle to the file identified by the given path in this
  * container.
@@ -170,9 +266,13 @@ public IFile getFile(IPath path);
  * @see #getFile
  */
 public IFolder getFolder(IPath path);
+
 /**
  * Returns a list of existing member resources (projects, folders and files)
  * in this resource, in no particular order.
+ * <p>
+ * This is a convenience method, fully equivalent to <code>members(0)</code>.
+ * </p>
  * <p>
  * Note that the members of a project or folder are the files and folders
  * immediately contained within it.  The members of the workspace root
@@ -189,15 +289,15 @@ public IFolder getFolder(IPath path);
  * @see IResource#isAccessible
  */
 public IResource[] members() throws CoreException;
+
 /**
  * Returns a list of all member resources (projects, folders and files)
  * in this resource, in no particular order.
  * <p>
- * If the <code>includePhantoms</code> argument is <code>false</code>, 
- * only member resources that exist will be returned.
- * If the <code>includePhantoms</code> argument is <code>true</code>,
- * the result will also includes any phantom member resources the
- * workspace is keeping track of.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   members(includePhantoms ? INCLUDE_PHANTOMS : 0);
+ * </pre>
  * </p>
  *
  * @return an array of members of this resource
@@ -211,9 +311,81 @@ public IResource[] members() throws CoreException;
  * <li> <code>includePhantoms</code> is <code>false</code> and
  *     this resource is a project that is not open.</li>
  * </ul>
- * @see #members(boolean)
+ * @see #members(int)
  * @see IResource#exists
  * @see IResource#isPhantom
  */
 public IResource[] members(boolean includePhantoms) throws CoreException;
+
+/**
+ * Returns a list of all member resources (projects, folders and files)
+ * in this resource, in no particular order.
+ * <p>
+ * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
+ * flags (recommended), only member resources that exist will be returned.
+ * If the <code>INCLUDE_PHANTOMS</code> flag is specified,
+ * the result will also include any phantom member resources the
+ * workspace is keeping track of.
+ * </p>
+ * <p>
+ * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified 
+ * in the member flags, team private members will be included along with
+ * the others. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag
+ * is not specified (recommended), the result will omit any team private
+ * member resources.
+ * </p>
+ *
+ * @return an array of members of this resource
+ * @param memberFlags bit-wise or of member flag constants
+ *   (<code>INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
+ *   indicating which members are of interest
+ * @exception CoreException if this request fails. Reasons include:
+ * <ul>
+ * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+ *     this resource does not exist.</li>
+ * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+ *     this resource is a project that is not open.</li>
+ * </ul>
+ * @see IResource#exists
+ * @since 2.0
+ */
+public IResource[] members(int memberFlags) throws CoreException;
+
+/**
+ * Returns a list of recently deleted files inside this container that are 
+ * have one or more saved states in the local history. The depth parameter
+ * determines how deep inside the container to look. This resource may or
+ * may not exist in the workspace.
+ * <p>
+ * When applied to an existing project resource, this method returns recently 
+ * deleted files with saved states in that project. Note that local history is
+ * maintained with each individual project, and gets discarded when a project
+ * is deleted from the workspace. If applied to a deleted project, this method
+ * returns the empty list.
+ * </p>
+ * <p>
+ * When applied to the workspace root resource (depth infinity), this method
+ * returns all recently deleted files with saved states in all existing projects.
+ * </p>
+ * <p>
+ * When applied to a folder (or project) resource (depth one),
+ * this method returns all recently deleted member files with saved states.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ * 
+ * @param depth valid values are <code>DEPTH_ONE</code> and 
+ *    <code>DEPTH_INFINITE</code> (<code>DEPTH_ZERO</code> is not 
+ *    useful and would always return the empty list)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @return an array of recently deleted files
+ * @exception CoreException if this method fails
+ * @see IFile#getHistory
+ * @since 2.0
+ */
+public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException;
+
 }

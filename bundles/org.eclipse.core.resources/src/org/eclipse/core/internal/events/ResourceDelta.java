@@ -11,7 +11,9 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 /**
  * Concrete implementation of the IResourceDelta interface.  Each ResourceDelta
@@ -36,16 +38,29 @@ protected ResourceDelta(IPath path, ResourceDeltaInfo deltaInfo) {
 	this.path = path;
 	this.deltaInfo = deltaInfo;
 }
-/**
+
+/*
  * @see IResourceDelta#accept(IResourceDeltaVisitor)
  */
 public void accept(IResourceDeltaVisitor visitor) throws CoreException {
-	accept(visitor, false);
+	// forward to central method
+	accept(visitor, 0);
 }
-/**
+
+/*
  * @see IResourceDelta#accept(IResourceDeltaVisitor, boolean)
  */
 public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException {
+	// forward to central method
+	accept(visitor, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
+}
+
+/*
+ * @see IResourceDelta#accept(IResourceDeltaVisitor, int)
+ */
+public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
+	// FIXME - handle team private members
+	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 	int mask = includePhantoms ? ALL_WITH_PHANTOMS : REMOVED | ADDED | CHANGED;
 	if ((getKind() | mask) == 0)
 		return;
@@ -53,9 +68,10 @@ public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throw
 		return;
 	//recurse over children
 	for (int i = 0; i < children.length; i++) {
-		children[i].accept(visitor, includePhantoms);
+		children[i].accept(visitor, memberFlags);
 	}
 }
+
 /**
  * Check for marker deltas, and set the appropriate change flag if there are any.
  */
@@ -443,4 +459,5 @@ public void writeMarkerDebugString(StringBuffer buffer) {
 	}
 	buffer.append("]");
 }
+
 }

@@ -7,6 +7,8 @@ package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Policy;
 
@@ -31,10 +33,12 @@ public IFile changeToFile() throws CoreException {
 	workspace.createResource(result, false);
 	return result;
 }
-/**
+
+/*
  * @see IFolder
  */
-public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
+public void create(int updateFlags, boolean local, IProgressMonitor monitor) throws CoreException {
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.creating", getFullPath().toString());
@@ -90,6 +94,15 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
 		monitor.done();
 	}
 }
+
+/**
+ * @see IFolder
+ */
+public void create(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
+	// funnel all operations to central method
+	create((force ? IResource.FORCE : 0), local, monitor);
+}
+
 /** 
  * Ensures that this folder exists in the workspace. This is similar in
  * concept to mkdirs but it does not work on projects.
@@ -140,4 +153,5 @@ public void internalCreate(boolean force, boolean local, IProgressMonitor monito
 		monitor.done();
 	}
 }
+
 }

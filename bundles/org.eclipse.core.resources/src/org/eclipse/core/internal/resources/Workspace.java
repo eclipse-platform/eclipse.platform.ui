@@ -14,7 +14,12 @@ import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	protected WorkspaceDescription description;
@@ -348,6 +353,14 @@ public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 	return result;
 }
 
+/*
+ * @see IWorkspace#copy
+ */
+public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	return copy(resources, destination, (updateFlags & IResource.FORCE) != 0, monitor);
+}
+
 /**
  * @see IWorkspace#copy
  */
@@ -416,6 +429,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.done();
 	}
 }
+
 protected void copyTree(IResource source, IPath destination, int depth, boolean phantom) throws CoreException {
 
 	// retrieve the resource at the destination if there is one (phantoms included).
@@ -547,6 +561,18 @@ public ResourceInfo createResource(IResource resource, boolean phantom) throws C
 public static WorkspaceDescription defaultWorkspaceDescription() {
 	return new WorkspaceDescription("Workspace");
 }
+
+/*
+ * @see IWorkspace#delete
+ */
+public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	return delete(resources, (updateFlags & IResource.FORCE) != 0, monitor);
+}
+
+/*
+ * @see IWorkspace#delete
+ */
 public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -600,6 +626,7 @@ public IStatus delete(IResource[] resources, boolean force, IProgressMonitor mon
 		monitor.done();
 	}
 }
+
 /**
  * @see IWorkspace
  */
@@ -972,6 +999,15 @@ public boolean isTreeLocked() {
 protected void linkTrees(IPath path, ElementTree[] newTrees) throws CoreException {
 	tree = tree.mergeDeltaChain(path, newTrees);
 }
+
+/*
+ * @see IWorkspace#move
+ */
+public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	return move(resources, destination, (updateFlags & IResource.FORCE) != 0, monitor);
+}
+
 /**
  * @see IWorkspace#move
  */
@@ -1045,6 +1081,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
 		monitor.done();
 	}
 }
+
 /**
  * Moves this resource's subtree to the destination. This operation should only be
  * used by move methods. Destination must be a valid destination for this resource.
@@ -1622,4 +1659,5 @@ protected void validateSave(final IFile file) throws CoreException {
 	if (!status[0].isOK())
 		throw new ResourceException(status[0]);
 }
+
 }

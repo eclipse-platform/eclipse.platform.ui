@@ -1,7 +1,7 @@
 package org.eclipse.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 
@@ -142,69 +142,19 @@ public void build(int kind, IProgressMonitor monitor) throws CoreException;
  * @see #isOpen
  */
 public void close(IProgressMonitor monitor) throws CoreException;
+
 /**
- * Makes a copy of this project using the given description.  The description 
- * specifies the name, location and attributes of the new project.  The description
- * of this project is ignored.  The project's descendents are copied as well. 
- * After successful completion, corresponding new resources will exist 
- * at the destination project path; their contents and properties will be copies of 
- * the originals. The original resources are not affected.
+ * Creates a new project resource in the workspace using the given project
+ * description. Upon successful completion, the project will exist but be closed.
  * <p>
- * When a resource is copied, its persistent properties are 
- * copied with it. Session properties and markers are not copied.
+ * Newly created projects have no session or persistent properties. 
  * </p>
  * <p>
- * The <code>force</code> parameter controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>false</code> is specified, the method will only attempt
- * to copy resources that are in sync with the corresponding files and
- * directories in the local file system; it will fail if it
- * encounters a resource that is out of sync with the file system.
- * However, if <code>true</code> is specified, the method
- * copies all corresponding files and directories from the local
- * file system, including ones that have been recently updated or created.
- * Note that in both settings of the <code>force</code> parameter,
- * the operation fails if the newly created resources in the 
- * workspace would be out of sync with the local file system; 
- * this ensures files in the file system cannot be accidentally
- * overwritten.
- * </p>
- * <p> 
- * This operation changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource copy has been added to its new parent.
- * </p>
- * <p>
- * This operation is long-running; progress and cancellation are provided
- * by the given progress monitor. 
- * </p>
- *
- * @param description the project description for the destination
- * @param force a flag controlling whether resources that are not
- *    in sync with the local file system will be tolerated
- * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
- * @exception CoreException if this resource could not be copied. Reasons include:
- * <ul>
- * <li> This resource is not accessible.</li>
- * <li> This resource or one of its descendents is not local.</li>
- * <li> This resource or one of its descendents is out of sync with the local file
- *      system and <code>force</code> is <code>false</code>.</li>
- * <li> The workspace and the local file system are out of sync
- *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
- * </ul>
- */
-public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
-/**
- * Creates a new project resource in the workspace
- * using the given project description.
- * Upon successful completion, the project will exist but be closed.
- * <p>
- * The given project description is used to initialize the new project's
- * location, natures, build spec, comment, and referenced projects.
- * The project has no session or persistent properties.
+ * If the project content area given in the project description does not 
+ * contain a project description file, a project description file is written
+ * in the project content area with the natures, build spec, comment, and 
+ * referenced projects as specified in the given project description.
+ * If there is an existing project description file, it is not overwritten.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -226,6 +176,8 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  *    <code>IWorkspace.validateName</code>).</li>
  * <li> The project location is not valid (according to
  *      <code>IWorkspace.validateProjectLocation</code>).</li>
+ * <li> The project description file could not be created in the project 
+ *      content area.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
@@ -233,20 +185,25 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * @see IWorkspace#validateProjectLocation
  */
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
+
 /**
- * Creates a new project resource in the workspace.
- * Upon successful completion, the project will exist but be closed.
+ * Creates a new project resource in the workspace with files are the default
+ * location in the local file system. Upon successful completion, the project
+ * will exist but be closed.
  * <p>
- * The project is initialized as follows:
+ * Newly created projects have no session or persistent properties. 
+ * </p>
+ * <p>
+ * If the project content area does not contain a project description file,
+ * an initial project description file is written in the project content area
+ * with the following information:
  * <ul>
- * <li> has no resources</li>
- * <li> has no references to other projects</li>
- * <li> has no natures</li>
- * <li> has no session or persistent properties</li>
- * <li> has an empty build spec</li>
- * <li> has an empty comment</li>
- * <li> has the default location</li>
+ * <li>no references to other projects</li>
+ * <li>no natures</li>
+ * <li>an empty build spec</li>
+ * <li>an empty comment</li>
  * </ul>
+ * If there is an existing project description file, it is not overwritten.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -267,6 +224,8 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  *    <code>IWorkspace.validateName</code>).</li>
  * <li> The project location is not valid (according to
  *      <code>IWorkspace.validateProjectLocation</code>).</li>
+ * <li> The project description file could not be created in the project 
+ *      content area.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
@@ -274,41 +233,15 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  * @see IWorkspace#validateProjectLocation
  */
 public void create(IProgressMonitor monitor) throws CoreException;
+
 /**
  * Deletes this project from the workspace.
  * No action is taken if this project does not exist.
  * <p>
- * This method can be expressed as a combination of calls to 
- * <code>IResource.delete</code>, <code>IProject.open</code>,
- * and <code>IProject.close</code>.  Deleting projects does not 
- * keep a local history of the deleted resources.
- * </p>
- * <p>
- * If <code>deleteContent</code> is <code>true</code>
- * the project will be opened if necessary and then deleted
- * using <code>IResource.delete(force, monitor)</code>.
- * This has the effect of deleting the project's resources
- * from the project's local content area.
- * If <code>force</code> is <code>true</code>, 
- * a "best effort" will be made to delete the project's content from
- * the local file system; even if this is not entirely successful, 
- * the project itself will be deleted.
- * If <code>force</code> is <code>false</code>, 
- * the project's content will be deleted in the normal careful
- * fashion; only if this is entirely successful will the project
- * itself be deleted.
- * </p>
- * <p>
- * If <code>deleteContent</code> is <code>false</code>
- * the project will be closed and then deleted.
- * This has the effect of retaining the project's resources
- * in the project's local content area.
- * </p>
- * <p>
- * Deleting a project which has sync information does not
- * convert the project to a phantom resource. The project and
- * any sync information that it may have are removed from
- * the workspace tree.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   delete((deleteContent ? DELETE_PROJECT_CONTENT : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method is long-running; progress and cancellation are provided
@@ -331,8 +264,10 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * @see IResource#delete
  * @see #open
  * @see #close
+ * @see IResource#delete(int,IProgressMonitor)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Returns the description for this project.
  * The returned value is a copy and cannot be used to modify 
@@ -487,28 +422,15 @@ public boolean isNatureEnabled(String natureId) throws CoreException;
  * @see #close
  */
 public boolean isOpen();
+
 /**
  * Renames this project so that it is located at the name in 
- * the given description.  After successful completion, the 
- * project and any direct or indirect members will 
- * no longer exist; but corresponding new resources 
- * will now exist at the location specified by the given description.
+ * the given description.  
  * <p>
- * When a resource moves, its session and persistent properties move
- * with it. Likewise for all the other attributes of the resource including
- * markers.
- * </p>
- * <p>
- * If this project's location is the default location, the directories and files 
- * on disk are moved to be in the location specified by the given description.
- * If the given description specifies the default location for the project,
- * the directories and files are moved to the default location.  In all other
- * cases the directories and files on disk are left untouched.
- * </p>
- * <p>
- * If the name in the given description is the same as this project's name and
- * the location is different, then the project contents will be moved to the new
- * location. All other parts of the given description are ignored.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   move(description, (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -517,25 +439,6 @@ public boolean isOpen();
  * and that a corresponding resource has been added to its new parent.
  * Additional information provided with resource delta shows that these
  * additions and removals are related.
- * </p>
- * <p>
- * The <code>force</code> parameter controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>false</code> is specified, the method will only attempt
- * to move resources that are in sync with the corresponding files and
- * directories in the local file system; it will fail if it
- * encounters a resource that is out of sync with the file system.
- * However, if <code>true</code> is specified, the method
- * moves all corresponding files and directories from the local
- * file system, including ones that have been recently updated or created.
- * Note that in both settings of the <code>force</code> parameter,
- * the operation fails if the newly created resources in the 
- * workspace would be out of sync with the local file system; 
- * this ensures files in the file system cannot be accidentally
- * overwritten.
- * </p>
- * <p>
- * Moving projects does not keep a local history of moved resources.
  * </p>
  * <p>
  * This method is long-running; progress and cancellation are provided
@@ -559,8 +462,10 @@ public boolean isOpen();
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
+ * @see IResource#move(IProjectDescription,int,IProgressMonitor)
  */
 public void move(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Opens this project.  No action is taken if the project is already open.
  * <p>
@@ -588,25 +493,15 @@ public void move(IProjectDescription description, boolean force, IProgressMonito
  * @see #close
  */
 public void open(IProgressMonitor monitor) throws CoreException;
+
 /**
  * Changes this project resource to match the given project
  * description. This project should exist and be open.
  * <p>
- * The given project description is used to change the project's
- * natures, build spec, comment, and referenced projects.
- * The name and location of a project cannot be changed; these settings
- * in the project description are ignored.
- * The project's session and persistent properties are not affected.
- * </p>
- * <p>
- * If the new description includes nature ids of natures that the project
- * did not have before, these natures will be configured in automatically, which involves
- * instantiating the project nature and calling <code>IProjectNature.configure</code>
- * on it. An internal reference to the nature object is retained, and will be
- * returned on subsequent calls to <code>getNature</code> for the specified
- * nature id. Similarly, any natures the project had which are no longer required 
- * will be automatically deconfigured by calling <code>IProjectNature.deconfigure</code>
- * on the nature object and letting go of the internal reference to it.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   setDescription(description, KEEP_HISTORY, monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -625,14 +520,110 @@ public void open(IProgressMonitor monitor) throws CoreException;
  * <ul>
  * <li> This project does not exist in the workspace.</li>
  * <li> This project is not open.</li>
- * <li> The project nature extension could not be found.</li>
+ * <li> The location in the local file system corresponding to the project
+ *   description file is occupied by a directory.</li>
+ * <li> The workspace is out of sync with the project description file 
+ *   in the local file system .</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
  * </ul>
  *
  * @see #getDescription
  * @see IProjectNature#configure
  * @see IProjectNature#deconfigure
+ * @see #setDescription(IProjectDescription,int,IProgressMonitor)
  */
 public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
+
+/**
+ * Changes this project resource to match the given project
+ * description. This project should exist and be open.
+ * <p>
+ * The given project description is used to change the project's
+ * natures, build spec, comment, and referenced projects.
+ * The name and location of a project cannot be changed; these settings
+ * in the project description are ignored.
+ * The project's session and persistent properties are not affected.
+ * </p>
+ * <p>
+ * If the new description includes nature ids of natures that the project
+ * did not have before, these natures will be configured in automatically, 
+ * which involves instantiating the project nature and calling 
+ * <code>IProjectNature.configure</code> on it. An internal reference to the
+ * nature object is retained, and will be returned on subsequent calls to
+ * <code>getNature</code> for the specified nature id. Similarly, any natures
+ * the project had which are no longer required will be automatically 
+ * deconfigured by calling <code>IProjectNature.deconfigure</code>
+ * on the nature object and letting go of the internal reference to it.
+ * </p>
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with
+ * cases where the workspace is not completely in sync with the local file 
+ * system. If <code>FORCE</code> is not specified, the method will only attempt
+ * to overwrite the project's description file in the local file system 
+ * provided it is in sync with the workspace. This option ensures there is no 
+ * unintended data loss; it is the recommended setting.
+ * However, if <code>FORCE</code> is specified, an attempt will be made
+ * to write the project description file in the local file system, overwriting
+ * any existing one if need be.
+ * </p>
+ * <p>
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not a copy of
+ * current contents of the project description file should be captured in the
+ * workspace's local history. The local history mechanism serves as a safety net
+ * to help the user recover from mistakes that might otherwise result in data
+ * loss. Specifying <code>KEEP_HISTORY</code> is recommended. Note that local
+ * history is maintained with each individual project, and gets discarded when
+ * a project is deleted from the workspace.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
+ * are ignored.
+ * </p>
+ * <p>
+ * Prior to modifying the the project description file, the file modification
+ * validator (if provided by the Team plug-in), will be given a chance to 
+ * perform any last minute preparations.  Validation is performed by calling
+ * <code>IFileModificationValidator.validateSave</code> on the project 
+ * description file. If the validation fails, then this operation will fail.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that the project's content has changed.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param description the project description
+ * @param updateFlags bit-wise or of update flag constants
+ *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This project does not exist in the workspace.</li>
+ * <li> This project is not open.</li>
+ * <li> The location in the local file system corresponding to the project
+ *   description file is occupied by a directory.</li>
+ * <li> The workspace is not in sync with the project
+ *   description file in the local file system and <code>FORCE</code> is not
+ *   specified.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *   event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
+ * </ul>
+ *
+ * @see #getDescription
+ * @see IProjectNature#configure
+ * @see IProjectNature#deconfigure
+ * @see IResource#FORCE
+ * @see IResource#KEEP_HISTORY
+ * @since 2.0
+ */
+public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 }

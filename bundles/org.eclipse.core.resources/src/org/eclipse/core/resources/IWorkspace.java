@@ -1,7 +1,7 @@
 package org.eclipse.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 
@@ -202,18 +202,55 @@ public void checkpoint(boolean build);
  *		not be ordered
  */
 public IProject[][] computePrerequisiteOrder(IProject[] projects);
+
+/**
+ * Copies the given sibling resources so that they are located 
+ * as members of the resource at the given path; the names of
+ * the copies are the same as the corresponding originals.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   copy(resources, destination, (force ? IResource.FORCE : 0), monitor);
+ * </pre>
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event that will include 
+ * an indication that the resources have been added to the new parent.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param resources the resources to copy
+ * @param destination the destination container path
+ * @param force a flag controlling whether resources that are not
+ *    in sync with the local file system will be tolerated
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @return a status object with code <code>OK</code> if there were no problems;
+ *     otherwise a description (possibly a multi-status) consisting of
+ *     low-severity warnings or informational messages
+ * @exception CoreException if the method fails to copy some resources.
+ * The status contained in the exception may be a multi-status indicating 
+ * where the individual failures occurred.
+ * @see #copy(IResource[],IPath,int,IProgressMonitor)
+ */
+public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Copies the given sibling resources so that they are located 
  * as members of the resource at the given path; the names of
  * the copies are the same as the corresponding originals.
  * <p>
  * This method can be expressed as a series of calls to 
- * <code>IResource.copy</code>, with "best effort" semantics:
+ * <code>IResource.copy(IPath,int,IProgressMonitor</code>, with "best effort"
+ * semantics:
  * <ul>
- * <li> Resources are copied in the order specified.</li>
+ * <li> Resources are copied in the order specified, using the given update
+ *    flags.</li>
  * <li> Duplicate resources are only copied once.</li>
- * <li> The <code>force</code> flag has the same meaning as it does
- *      on the corresponding single-resource method.</li>
  * <li> The method fails if the resources are not all siblings.</li>
  * <li> The failure of an individual copy does not necessarily prevent
  *    the method from attempting to copy other resources.</li>
@@ -246,8 +283,7 @@ public IProject[][] computePrerequisiteOrder(IProject[] projects);
  *
  * @param resources the resources to copy
  * @param destination the destination container path
- * @param force a flag controlling whether resources that are not
- *    in sync with the local file system will be tolerated
+ * @param updateFlags bit-wise or of update flag constants
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @return a status object with code <code>OK</code> if there were no problems;
@@ -267,36 +303,22 @@ public IProject[][] computePrerequisiteOrder(IProject[] projects);
  * <li> One of the resources is a project.</li>
  * <li> The path of one of the resources is a prefix of the destination path.</li>
  * <li> One of the resources, or one of its descendents, is out of sync with the
- *      local file system and <code>force</code> is <code>false</code>.</li>
+ *      local file system and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
- * @see IResource#copy
+ * @see IResource#copy(IPath,int,IProgressMonitor)
+ * @since 2.0
  */
-public IStatus copy(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Deletes the given resources.  
  * <p>
- * This method can be expressed as a series of calls to 
- * <code>IResource.delete</code>.
- * </p>
- * <p>
- * The semantics of multiple deletion are:
- * <ul>
- * <li> Resources are deleted in the order presented.</li>
- * <li> The <code>force</code> flag has the same meaning as it does
- *      on the corresponding single-resource method.</li>
- * <li> Resources that do not exist are ignored.</li>
- * <li> An individual deletion fails if the resource still exists afterwards.</li>
- * <li> The failure of an individual deletion does not prevent
- *    the method from attempting to delete other resources.</li>
- * <li> This method fails if one or more of the
- *    individual resource deletions fails; that is, if at least one
- *    of the resources in the list still exists at the end of this 
- *    method.</li>
- * <li> History is kept for deleted files. When projects are deleted, no history
- *    is kept</li>
- * </ul>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   delete(resources, IResource.KEEP_HISTORY | (force ? IResource.FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -318,9 +340,55 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
  * @exception CoreException if the method fails to delete some resource.
  *    The status contained in the exception is a multi-status indicating 
  *    where the individual failures occurred.
- * @see IResource#delete
+ * @see #delete(IResource[],int,IProgressMonitor)
  */
 public IStatus delete(IResource[] resources, boolean force, IProgressMonitor monitor) throws CoreException;
+
+/**
+ * Deletes the given resources.  
+ * <p>
+ * This method can be expressed as a series of calls to 
+ * <code>IResource.delete(int,IProgressMonitor)</code>.
+ * </p>
+ * <p>
+ * The semantics of multiple deletion are:
+ * <ul>
+ * <li> Resources are deleted in the order presented, using the given update
+ *    flags.</li>
+ * <li> Resources that do not exist are ignored.</li>
+ * <li> An individual deletion fails if the resource still exists afterwards.</li>
+ * <li> The failure of an individual deletion does not prevent
+ *    the method from attempting to delete other resources.</li>
+ * <li> This method fails if one or more of the
+ *    individual resource deletions fails; that is, if at least one
+ *    of the resources in the list still exists at the end of this 
+ *    method.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param resources the resources to delete
+ * @param updateFlags bit-wise or of update flag constants
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @return status with code <code>OK</code> if there were no problems;
+ *     otherwise a description (possibly a multi-status) consisting of
+ *     low-severity warnings or informational messages
+ * @exception CoreException if the method fails to delete some resource.
+ *    The status contained in the exception is a multi-status indicating 
+ *    where the individual failures occurred.
+ * @see IResource#delete(int,IProgressMonitor)
+ * @since 2.0
+ */
+public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Removes the given markers from the resources with which they are associated.
  * Markers that do not exist are ignored.
@@ -417,6 +485,46 @@ public ISynchronizer getSynchronizer();
  * @return <code>true</code> if auto-building is on, <code>false</code> otherwise
  */
 public boolean isAutoBuilding();
+
+/**
+ * Moves the given sibling resources so that they are located 
+ * as members of the resource at the given path; the names of
+ * the new members are the same.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   move(resources, destination, IResource.KEEP_HISTORY | (force ? IResource.FORCE : 0), monitor);
+ * </pre>
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event that will include 
+ * an indication that the resources have been removed from their parent
+ * and that corresponding resources have been added to the new parent.
+ * Additional information provided with resource delta shows that these
+ * additions and removals are pairwise related.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param resources the resources to move
+ * @param destination the destination container path
+ * @param force a flag controlling whether resources that are not
+ *    in sync with the local file system will be tolerated
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @return status with code <code>OK</code> if there were no problems;
+ *     otherwise a description (possibly a multi-status) consisting of
+ *     low-severity warnings or informational messages.
+ * @exception CoreException if the method fails to move some resources.
+ * The status contained in the exception may be a multi-status indicating 
+ * where the individual failures occurred.
+ * @see #move(IResource[],IPath,int,IProgressMonitor)
+ */
+public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Moves the given sibling resources so that they are located 
  * as members of the resource at the given path; the names of
@@ -468,8 +576,7 @@ public boolean isAutoBuilding();
  *
  * @param resources the resources to move
  * @param destination the destination container path
- * @param force a flag controlling whether resources that are not
- *    in sync with the local file system will be tolerated
+ * @param updateFlags bit-wise or of update flag constants
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @return status with code <code>OK</code> if there were no problems;
@@ -489,13 +596,15 @@ public boolean isAutoBuilding();
  * <li> A resource of a different type exists at the target path.</li>
  * <li> The path of one of the resources is a prefix of the destination path.</li>
  * <li> One of the resources, or one of its descendents, is out of sync with the
- *      local file system and <code>force</code> is <code>false</code>.</li>
+ *      local file system and <code>FORCE</code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
- * @see IResource#move
+ * @see IResource#move(IPath,int,IProgressMonitor)
+ * @since 2.0
  */
-public IStatus move(IResource[] resources, IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Creates and returns a new project description for a project
  * with the given name.   This object is useful when creating,

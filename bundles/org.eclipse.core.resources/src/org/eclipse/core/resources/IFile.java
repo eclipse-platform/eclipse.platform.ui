@@ -1,7 +1,7 @@
 package org.eclipse.core.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 
@@ -29,34 +29,14 @@ import java.io.InputStream;
  * @see Platform#getAdapterManager
  */
 public interface IFile extends IResource, IStorage, IAdaptable {
+
 /**
  * Appends the entire contents of the given stream to this file.
- * The stream must not be <code>null</code> and will get closed 
- * whether this method succeeds or fails.
  * <p>
- * The <code>force</code> parameter controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>false</code> is specified, this method will only attempt
- * to overwrite a corresponding file in the local file system provided
- * it is in sync with the workspace. This option ensures there is no 
- * unintended data loss; it is the recommended setting.
- * However, if <code>true</code> is specified, an attempt will be made
- * to write a corresponding file in the local file system, 
- * modifying any existing one if need be.
- * In either case, if this method succeeds, the resource will be marked 
- * as being local (even if it wasn't before).
- * </p>
- * <p>
- * The <code>keepHistory</code> parameter indicates whether or not a copy of
- * this resource should be stored in the workspace's local history. Only
- * the contents of the file is maintained. Properties are not recorded in
- * the local history.
- * </p>
- * <p>
- * Prior to modifying the contents of this file, the file modification validator (if provided 
- * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
- * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
- * If the validation fails, then this operation will fail.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   appendContents(source, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -86,24 +66,84 @@ public interface IFile extends IResource, IStorage, IAdaptable {
  *       event notification. See IResourceChangeEvent for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @see #appendContents(java.io.InputStream,int,IProgressMonitor)
  */
 public void appendContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+
+/**
+ * Appends the entire contents of the given stream to this file.
+ * The stream, which must not be <code>null</code>, will get closed 
+ * whether this method succeeds or fails.
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with
+ * cases where the workspace is not completely in sync with the local file 
+ * system. If <code>FORCE</code> is not specified, the method will only attempt
+ * to overwrite a corresponding file in the local file system provided
+ * it is in sync with the workspace. This option ensures there is no 
+ * unintended data loss; it is the recommended setting.
+ * However, if <code>FORCE</code> is specified, an attempt will be made
+ * to write a corresponding file in the local file system, overwriting any
+ * existing one if need be. In either case, if this method succeeds, the 
+ * resource will be marked as being local (even if it wasn't before).
+ * </p>
+ * <p>
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not a copy of
+ * current contents of this file should be captured in the workspace's local
+ * history (properties are not recorded in the local history). The local history
+ * mechanism serves as a safety net to help the user recover from mistakes that
+ * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
+ * is recommended except in circumstances where past states of the files are of
+ * no conceivable interested to the user. Note that local history is maintained
+ * with each individual project, and gets discarded when a project is deleted
+ * from the workspace.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
+ * are ignored.
+ * </p>
+ * <p>
+ * Prior to modifying the contents of this file, the file modification validator (if provided 
+ * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
+ * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
+ * If the validation fails, then this operation will fail.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this file's content have been changed.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancelation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param source an input stream containing the new contents of the file
+ * @param updateFlags bit-wise or of update flag constants
+ *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancelation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> The corresponding location in the local file system
+ *       is occupied by a directory.</li>
+ * <li> The workspace is not in sync with the corresponding location
+ *       in the local file system and <code>FORCE</code> is not specified.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
+ * </ul>
+ * @since 2.0
+ */
+public void appendContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Creates a new file resource as a member of this handle's parent resource.
- * The resource's contents are supplied by the data in the given stream.
- * This method closes the stream whether it succeeds or fails.
- * If the stream is <code>null</code> then a file is not created in the local
- * file system and the created file is marked as being non-local.
  * <p>
- * The <code>force</code> parameter controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>false</code> is specified, this method will only attempt
- * to write a file in the local file system if it does not already exist
- * in the local file system. This option ensures there is no unintended data 
- * loss; it is the recommended setting.
- * However, if <code>true</code> is specified, this method will 
- * attempt to write a corresponding file in the local file system, 
- * overwriting any existing one if need be.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   create(source, (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -139,12 +179,69 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * </ul>
  */
 public void create(InputStream source, boolean force, IProgressMonitor monitor) throws CoreException;
+
 /**
- * Deletes this file from the workspace. This method has the same 
- * behaviour of <code>IResource.delete</code>
- * plus the <code>keepHistory</code> parameter indicating whether or not 
- * this file should have its current contents stored in the workspace's
- * local history.
+ * Creates a new file resource as a member of this handle's parent resource.
+ * The resource's contents are supplied by the data in the given stream.
+ * This method closes the stream whether it succeeds or fails.
+ * If the stream is <code>null</code> then a file is not created in the local
+ * file system and the created file is marked as being non-local.
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with
+ * cases where the workspace is not completely in sync with the local file 
+ * system. If <code>FORCE</code> is not specified, the method will only attempt
+ * to write a file in the local file system if it does not already exist. 
+ * This option ensures there is no unintended data loss; it is the recommended
+ * setting. However, if <code>FORCE</code> is specified, this method will 
+ * attempt to write a corresponding file in the local file system, 
+ * overwriting any existing one if need be.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> are ignored.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that the file has been added to its parent.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param source an input stream containing the initial contents of the file,
+ *    or <code>null</code> if the file should be marked as not local
+ * @param updateFlags bit-wise or of update flag constants
+ *   (only <code>FORCE</code> is relevant here)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource already exists in the workspace.</li>
+ * <li> The parent of this resource does not exist.</li>
+ * <li> The project of this resource is not accessible.</li>
+ * <li> The parent contains a resource of a different type 
+ *      at the same path as this resource.</li>
+ * <li> The name of this resource is not valid (according to 
+ *    <code>IWorkspace.validateName</code>).</li>
+ * <li> The corresponding location in the local file system is occupied
+ *    by a directory.</li>
+ * <li> The corresponding location in the local file system is occupied
+ *    by a file and <code>FORCE</code> is not specified.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * </ul>
+ * @since 2.0
+ */
+public void create(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
+/**
+ * Deletes this file from the workspace.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   delete((keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -170,9 +267,10 @@ public void create(InputStream source, boolean force, IProgressMonitor monitor) 
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
- * @see IResource#delete
+ * @see IResource#delete(int,IProgressMonitor)
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Returns an open input stream on the contents of this file.
  * This refinement of the corresponding <code>IStorage</code> method 
@@ -224,7 +322,13 @@ public IPath getFullPath();
 /**
  * Returns a list of past states of this file known to this workspace.
  * Recently added states first.
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
  * 
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
  * @return an array of states of this file
  * @exception CoreException if this method fails.
  */
@@ -249,11 +353,14 @@ public String getName();
  * @see IStorage#isReadOnly
  */
 public boolean isReadOnly();
+
 /**
  * Moves this resource to be at the given location.
- * This method has the same behavior as <code>IResource.move</code>
- * plus the <code>keepHistory</code> parameter indicating whether or not 
- * this file should have its current contents stored in the workspace's local history.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   move(destination, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -290,38 +397,17 @@ public boolean isReadOnly();
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  *
- * @see IResource#move
+ * @see IResource#move(IPath,int,IProgressMonitor)
  */
 public void move(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+
 /**
- * Sets the contents of this file to the bytes
- * in the given input stream.
- * The stream will get closed whether this method succeeds or fails.
- * If the stream is <code>null</code> then the content is set to be the
- * empty sequence of bytes.
+ * Sets the contents of this file to the bytes in the given input stream.
  * <p>
- * The <code>force</code> parameter controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>false</code> is specified, this method will only attempt
- * to overwrite a corresponding file in the local file system provided
- * it is in sync with the workspace. This option ensures there is no 
- * unintended data loss; it is the recommended setting.
- * However, if <code>true</code> is specified, an attempt will be made
- * to write a corresponding file in the local file system, 
- * overwriting any existing one if need be.
- * In either case, if this method succeeds, the resource will be marked 
- * as being local (even if it wasn't before).
- * </p>
- * <p>
- * The <code>keepHistory</code> parameter indicates whether or not a copy of
- * this resource should be stored in the workspace's local history. 
- * Properties are not recorded in the local history.
- * </p>
- * <p>
- * Prior to modifying the contents of this file, the file modification validator (if provided 
- * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
- * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
- * If the validation fails, then this operation will fail.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   setContents(source, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -351,33 +437,17 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  *       event notification. See IResourceChangeEvent for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @see #setContents(java.io.InputStream,int,IProgressMonitor)
  */
 public void setContents(InputStream source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+
 /**
  * Sets the contents of this file to the bytes in the given file state.
  * <p>
- * The <code>force</code> parameter controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>false</code> is specified, this method will only attempt
- * to overwrite a corresponding file in the local file system provided
- * it is in sync with the workspace. This option ensures there is no 
- * unintended data loss; it is the recommended setting.
- * However, if <code>true</code> is specified, an attempt will be made
- * to write a corresponding file in the local file system, 
- * overwriting any existing one if need be.
- * In either case, if this method succeeds, the resource will be marked 
- * as being local (even if it wasn't before).
- * </p>
- * <p>
- * The <code>keepHistory</code> parameter indicates whether or not a copy of
- * this resource should be stored in the workspace's local history. 
- * Properties are not recorded in the local history.
- * </p>
- * <p>
- * Prior to modifying the contents of this file, the file modification validator (if provided 
- * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
- * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
- * If the validation fails, then this operation will fail.
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   setContents(source, (keepHistory ? KEEP_HISTORY : 0) | (force ? FORCE : 0), monitor);
+ * </pre>
  * </p>
  * <p>
  * This method changes resources; these changes will be reported
@@ -408,6 +478,141 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
+ * @see #setContents(IFileState,int,IProgressMonitor)
  */
 public void setContents(IFileState source, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+
+/**
+ * Sets the contents of this file to the bytes in the given input stream.
+ * The stream will get closed whether this method succeeds or fails.
+ * If the stream is <code>null</code> then the content is set to be the
+ * empty sequence of bytes.
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with
+ * cases where the workspace is not completely in sync with the local file 
+ * system. If <code>FORCE</code> is not specified, the method will only attempt
+ * to overwrite a corresponding file in the local file system provided
+ * it is in sync with the workspace. This option ensures there is no 
+ * unintended data loss; it is the recommended setting.
+ * However, if <code>FORCE</code> is specified, an attempt will be made
+ * to write a corresponding file in the local file system, overwriting any
+ * existing one if need be. In either case, if this method succeeds, the 
+ * resource will be marked as being local (even if it wasn't before).
+ * </p>
+ * <p>
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not a copy of
+ * current contents of this file should be captured in the workspace's local
+ * history (properties are not recorded in the local history). The local history
+ * mechanism serves as a safety net to help the user recover from mistakes that
+ * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
+ * is recommended except in circumstances where past states of the files are of
+ * no conceivable interested to the user. Note that local history is maintained
+ * with each individual project, and gets discarded when a project is deleted
+ * from the workspace.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
+ * are ignored.
+ * </p>
+ * <p>
+ * Prior to modifying the contents of this file, the file modification validator (if provided 
+ * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
+ * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
+ * If the validation fails, then this operation will fail.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this file's content have been changed.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param source an input stream containing the new contents of the file
+ * @param updateFlags bit-wise or of update flag constants
+ *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> The corresponding location in the local file system
+ *       is occupied by a directory.</li>
+ * <li> The workspace is not in sync with the corresponding location
+ *       in the local file system and <code>FORCE</code> is not specified.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
+ * </ul>
+ * @since 2.0
+ */
+public void setContents(InputStream source, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
+/**
+ * Sets the contents of this file to the bytes in the given file state.
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with
+ * cases where the workspace is not completely in sync with the local file 
+ * system. If <code>FORCE</code> is not specified, the method will only attempt
+ * to overwrite a corresponding file in the local file system provided
+ * it is in sync with the workspace. This option ensures there is no 
+ * unintended data loss; it is the recommended setting.
+ * However, if <code>FORCE</code> is specified, an attempt will be made
+ * to write a corresponding file in the local file system, overwriting any
+ * existing one if need be. In either case, if this method succeeds, the 
+ * resource will be marked as being local (even if it wasn't before).
+ * </p>
+ * <p>
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not a copy of
+ * current contents of this file should be captured in the workspace's local
+ * history (properties are not recorded in the local history). The local history
+ * mechanism serves as a safety net to help the user recover from mistakes that
+ * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
+ * is recommended except in circumstances where past states of the files are of
+ * no conceivable interested to the user. Note that local history is maintained
+ * with each individual project, and gets discarded when a project is deleted
+ * from the workspace.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
+ * are ignored.
+ * </p>
+ * <p>
+ * Prior to modifying the contents of this file, the file modification validator (if provided 
+ * by the VCM plug-in), will be given a chance to perform any last minute preparations.  Validation
+ * is performed by calling <code>IFileModificationValidator.validateSave</code> on this file.
+ * If the validation fails, then this operation will fail.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event, including an indication 
+ * that this file's content have been changed.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param source a previous state of this resource
+ * @param updateFlags bit-wise or of update flag constants
+ *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> The state does not exist.</li>
+ * <li> The corresponding location in the local file system
+ *       is occupied by a directory.</li>
+ * <li> The workspace is not in sync with the corresponding location
+ *       in the local file system and <code>FORCE</code> is not specified.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The file modification validator disallowed the change.</li>
+ * </ul>
+ * @since 2.0
+ */
+public void setContents(IFileState source, int updateFlags, IProgressMonitor monitor) throws CoreException;
 }

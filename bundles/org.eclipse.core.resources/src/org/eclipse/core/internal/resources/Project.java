@@ -6,7 +6,10 @@ package org.eclipse.core.internal.resources;
  */
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.*;
@@ -203,6 +206,9 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
  * @see IProject#copy
  */
 public void copy(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - the logic here for copying projects needs to be moved to Resource.copy
+	//   so that IResource.copy(IProjectDescription,int,IProgressMonitor) works properly for
+	//   projects and honours all update flags
 	Assert.isNotNull(destination);
 	internalCopy(destination, force, monitor);
 }
@@ -210,6 +216,10 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
  * @see IResource#copy
  */
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - the logic here for copying projects needs to be moved to Resource.copy
+	//   so that IResource.copy(IPath,int,IProgressMonitor) works properly for
+	//   projects and honours all update flags
+	monitor = Policy.monitorFor(monitor);
 	if (destination.segmentCount() == 1) {
 		// copy project to project
 		String projectName = destination.segment(0);
@@ -237,6 +247,7 @@ protected void renameMetaArea(IProject source, IProject destination, IProgressMo
  * @see IProject#create
  */
 public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
+	// FIXME - spec change - must not overwrite an existing .project file
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork);
@@ -294,12 +305,18 @@ public void create(IProgressMonitor monitor) throws CoreException {
  * @see IResource#delete(boolean, IProgressMonitor)
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - should funnel through IResource.delete(int,IProgressMonitor) i.e.,
+	//    delete((isOpen() ? DELETE_PROJECT_CONTENT : 0) | (force ? FORCE : 0), monitor);
 	delete(isOpen(), force, monitor);
 }
+
 /**
  * @see IProject#delete(boolean, boolean, IProgressMonitor)
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - the logic here for deleting projects needs to be moved to Resource.delete
+	//   so that IResource.delete(int,IProgressMonitor) works properly for
+	//   projects and honours the DELETE_PROJECT_HISTORY update flag
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.deleting", getFullPath().toString());
@@ -363,6 +380,8 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 		monitor.done();
 	}
 }
+
+
 protected void deleteMetaArea(IProject project) throws CoreException {
 	// close project's propertyStore
 	getPropertyManager().closePropertyStore(project);
@@ -857,6 +876,9 @@ public boolean isOpen(int flags) {
  * @see IProject#move
  */
 public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - the logic here for moving projects needs to be moved to Resource.copy
+	//   so that IResource.move(IProjectDescription,int,IProgressMonitor) works properly for
+	//   projects and honours all update flags
 	Assert.isNotNull(destination);
 	// if we have the same name but a different location, then move
 	// the project content
@@ -883,6 +905,9 @@ protected boolean locationsEqual(IProjectDescription desc1, IProjectDescription 
  * @see IResource#move
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+	// FIXME - the logic here for moving projects needs to be moved to Resource.copy
+	//   so that IResource.move(IPath,int,IProgressMonitor) works properly for
+	//   projects and honours all update flags
 	if (destination.segmentCount() == 1) {
 		// move project to project
 		String projectName = destination.segment(0);
@@ -954,11 +979,13 @@ private void pseudoOpen() throws CoreException {
 	workspace.getSaveManager().restore(this, null);
 }
 
-
-/**
+/*
  * @see IProject
  */
-public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
+public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME - update flags should be honored:
+	//    KEEP_HISTORY means capture .project file in local history
+	//    FORCE means overwrite any existing .project file 
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork);
@@ -982,6 +1009,15 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
 		monitor.done();
 	}
 }
+
+/**
+ * @see IProject
+ */
+public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
+	// funnel all operations to central method
+	setDescription(description, IResource.KEEP_HISTORY, monitor);
+}
+
 /**
  * Restore the non-persisted state for the project.  For example, read and set 
  * the description from the local meta area.  Also, open the property store etc.
@@ -1017,6 +1053,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
+
 protected void internalChangeCase(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {

@@ -1,12 +1,14 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.*;
@@ -23,16 +25,29 @@ protected Resource(IPath path, Workspace workspace) {
 	this.path = path.removeTrailingSeparator();
 	this.workspace = workspace;
 }
+
 /**
  * @see IResource#accept(IResourceVisitor)
  */
 public void accept(IResourceVisitor visitor) throws CoreException {
-	accept(visitor, IResource.DEPTH_INFINITE, false);
+	// forward to central method
+	accept(visitor, IResource.DEPTH_INFINITE, 0);
 }
+
 /**
  * @see IResource#accept(IResourceVisitor, int, boolean)
  */
 public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms) throws CoreException {
+	// forward to central method
+	accept(visitor, depth, includePhantoms ? IContainer.INCLUDE_PHANTOMS : 0);
+}
+
+/*
+ * @see IResource#accept
+ */
+public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws CoreException {
+	// FIXME - handle team private members
+	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 	ResourceInfo info = getResourceInfo(includePhantoms, false);
 	checkExists(getFlags(info), true);
 	if (!visitor.visit(this) || depth == DEPTH_ZERO)
@@ -49,10 +64,11 @@ public void accept(IResourceVisitor visitor, int depth, boolean includePhantoms)
 		depth = DEPTH_ZERO;
 	// if we had a gender change we need to fix up the resource before asking for its members
 	IContainer resource = getType() != type ? (IContainer) workspace.newResource(getFullPath(), type) : (IContainer) this;
-	IResource[] members = resource.members(includePhantoms);
+	IResource[] members = resource.members(memberFlags);
 	for (int i = 0; i < members.length; i++)
-		members[i].accept(visitor, depth, includePhantoms);
+		members[i].accept(visitor, depth, memberFlags);
 }
+
 protected void assertCopyRequirements(IPath destination, int destinationType) throws CoreException {
 	IStatus status = checkCopyRequirements(destination, destinationType);
 	if (!status.isOK()) {
@@ -257,8 +273,17 @@ public void convertToPhantom() throws CoreException {
 	// just to be safe and for code clarity.
 	info.setMarkers(null);
 }
+
 /*
  * Used when a folder is to be copied to a project.
+ * @see IResource#copy
+ */
+public void copy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	copy(destDesc, (updateFlags & IResource.FORCE) != 0, monitor);
+}
+
+/*
  * @see IResource#copy
  */
 public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
@@ -301,6 +326,15 @@ public void copy(IProjectDescription destDesc, boolean force, IProgressMonitor m
 		monitor.done();
 	}
 }
+
+/**
+ * @see IResource#copy
+ */
+public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	copy(destination, (updateFlags & IResource.FORCE) != 0, monitor);
+}
+
 /**
  * @see IResource#copy
  */
@@ -332,6 +366,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 		monitor.done();
 	}
 }
+
 /**
  * Count the number of resources in the tree from this container to the
  * specified depth. Include this resource. Include phantoms if
@@ -359,14 +394,26 @@ public IMarker createMarker(String type) throws CoreException {
 		workspace.endOperation(false, null);
 	}
 }
+
 /**
  * @see IResource
  */
 public void delete(boolean force, IProgressMonitor monitor) throws CoreException {
 	delete(force, false, monitor);
 }
+
 /**
  * @see IResource
+ */
+public void delete(int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
+	delete(force, keepHistory, monitor);
+}
+
+/**
+ * @see IProject and IWorkspaceRoot -- N.B. This is not an IResource method!
  */
 public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -705,8 +752,8 @@ protected IPath makePathAbsolute(IPath target) {
 		return target;
 	return getParent().getFullPath().append(target);
 }
+
 /*
- * Used when a folder is to be moved to a project.
  * @see IResource#move
  */
 public void move(IProjectDescription destDesc, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
@@ -762,12 +809,25 @@ public void move(IProjectDescription destDesc, boolean force, boolean keepHistor
 		monitor.done();
 	}
 }
+
+/*
+ * Used when a folder is to be moved to a project.
+ * @see IResource#move
+ */
+public void move(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
+	move(destDesc, force, keepHistory, monitor);
+}
+
 /**
  * @see IResource#move
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	move(destination, force, false, monitor);
 }
+
 /**
  * @see IResource#move
  */
@@ -824,6 +884,17 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
 		monitor.done();
 	}
 }
+
+/**
+ * @see IResource#move
+ */
+public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	// FIXME
+	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
+	move(destination, force, keepHistory, monitor);
+}
+
 protected void moveInFileSystem(IPath destination, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -1004,4 +1075,35 @@ private String findVariant(String target, String[] list) {
 	}
 	return null;
 }
+
+/*
+ * @see IResource
+ */
+public boolean isDerived() {
+	// FIXME - missing implementation
+	return false;
+}
+
+/*
+ * @see IResource
+ */
+public void setDerived(boolean isDerived) throws CoreException {
+	// FIXME - missing implementation
+}
+
+/*
+ * @see IResource
+ */
+public boolean isTeamPrivateMember() {
+	// FIXME - missing implementation
+	return false;
+}
+
+/*
+ * @see IResource
+ */
+public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
+	// FIXME - missing implementation
+}
+
 }

@@ -145,6 +145,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#getFlags
 	 */
 	public static final int DESCRIPTION = 0x80000;
+
 /**
  * Accepts the given visitor.
  * The only kinds of resource deltas visited 
@@ -153,25 +154,27 @@ public interface IResourceDelta extends IAdaptable {
  * The visitor's <code>visit</code> method is called with this
  * resource delta if applicable. If the visitor returns <code>true</code>,
  * the resource delta's children are also visited.
+ * <p>
+ * This is a convenience method, fully equivalent to 
+ * <code>accept(visitor,0)</code>.
+ * </p>
  *
  * @param visitor the visitor
  * @exception CoreException if the visitor failed with this exception.
  * @see IResourceDeltaVisitor#visit
  */
 public void accept(IResourceDeltaVisitor visitor) throws CoreException;
+
 /** 
  * Accepts the given visitor.
  * The visitor's <code>visit</code> method is called with this
  * resource delta. If the visitor returns <code>true</code>,
  * the resource delta's children are also visited.
  * <p>
- * If the <code>includePhantoms</code> argument is <code>false</code>, 
- * only resource deltas involving existing resources will be visited
- * (kinds <code>ADDED</code>, <code>REMOVED</code>, 
- * and <code>CHANGED</code>).
- * If the <code>includePhantoms</code> argument is <code>true</code>,
- * the result will also include additions and removes of phantom resources
- * (kinds <code>ADDED_PHANTOM</code> and <code>REMOVED_PHANTOM</code>).
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   accept(visitor, includePhantoms ? INCLUDE_PHANTOMS : 0);
+ * </pre>
  * </p>
  *
  * @param visitor the visitor
@@ -184,6 +187,43 @@ public void accept(IResourceDeltaVisitor visitor) throws CoreException;
  * @see IResourceDeltaVisitor#visit
  */
 public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException;
+
+/** 
+ * Accepts the given visitor.
+ * The visitor's <code>visit</code> method is called with this
+ * resource delta. If the visitor returns <code>true</code>,
+ * the resource delta's children are also visited.
+ * <p>
+ * If the <code>INCLUDE_PHANTOMS</code> member flag is not specified
+ * (recommended), only resource deltas involving existing resources will be visited
+ * (kinds <code>ADDED</code>, <code>REMOVED</code>, 
+ * and <code>CHANGED</code>).
+ * If the <code>INCLUDE_PHANTOMS</code> member flag is specified,
+ * the result will also include additions and removes of phantom resources
+ * (kinds <code>ADDED_PHANTOM</code> and <code>REMOVED_PHANTOM</code>).
+ * </p>
+ * <p>
+ * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member flag is not specified
+ * (recommended), resource deltas involving team private member resources will be 
+ * excluded from the visit. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> member
+ * flag is specified, the visit will also include additions and removes of
+ * team private member resources.
+ * </p>
+ *
+ * @param visitor the visitor
+ * @param memberFlags bit-wise or of member flag constants
+ *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
+ *   indicating which members are of interest
+ * @exception CoreException if the visitor failed with this exception.
+ * @see IResource#isPhantom
+ * @see IResource#isTeamPrivateMember
+ * @see IContainer#INCLUDE_PHANTOMS
+ * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+ * @see IResourceDeltaVisitor#visit
+ * @since 2.0
+ */
+public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException;
+
 /**
  * Finds and returns the descendent delta identified by the given path in
  * this delta, or <code>null</code> if no such descendent exists.

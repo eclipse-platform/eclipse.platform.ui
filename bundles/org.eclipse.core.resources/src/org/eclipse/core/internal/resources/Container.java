@@ -1,12 +1,15 @@
 package org.eclipse.core.internal.resources;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
  
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.internal.utils.*;
 import java.util.Enumeration;
 
@@ -32,34 +35,62 @@ public void convertToPhantom() throws CoreException {
 public boolean exists(IPath path) {
 	return workspace.getResourceInfo(getFullPath().append(path), false, false) != null;
 }
+
 /**
  * @see IContainer#findMember(String)
  */
 public IResource findMember(String name) {
-	return findMember(name, false);
+	// forward to central method
+	return findMember(name, 0);
 }
+
 /**
  * @see IContainer#findMember(String, boolean)
  */
 public IResource findMember(String name, boolean phantom) {
+	// forward to central method
+	return findMember(name, phantom ? INCLUDE_PHANTOMS : 0);
+}
+
+/*
+ * @see IContainer
+ */
+public IResource findMember(String name, int memberFlags) {
+	// FIXME - handle team private member flag
+	final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 	IPath childPath = getFullPath().append(name);
 	ResourceInfo info = workspace.getResourceInfo(childPath, phantom, false);
 	return info == null ? null : workspace.newResource(childPath, info.getType());
 }
+
 /**
  * @see IContainer#findMember(IPath)
  */
 public IResource findMember(IPath path) {
-	return findMember(path, false);
+	// forward to central method
+	return findMember(path, 0);
 }
+
 /**
  * @see IContainer#findMember(IPath)
  */
 public IResource findMember(IPath path, boolean phantom) {
+	// forward to central method
+	return findMember(path, phantom ? INCLUDE_PHANTOMS : 0);
+}
+
+/*
+ * @see IContainer
+ */
+public IResource findMember(IPath path, int memberFlags) {
+	// FIXME - handle team private member flag
+	final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 	path = getFullPath().append(path);
 	ResourceInfo info = workspace.getResourceInfo(path, phantom, false);
 	return (info == null) ? null : workspace.newResource(path, info.getType());
 }
+
+
 /**
  */
 protected void fixupAfterMoveSource() throws CoreException {
@@ -139,18 +170,40 @@ public boolean isLocal(int flags, int depth) {
 			return false;
 	return true;
 }
+
 /**
  * @see IContainer#members
  */
 public IResource[] members() throws CoreException {
-	return members(false);
+	// forward to central method
+	return members(0);
 }
+
 /**
  * @see IContainer#members(boolean)
  */
 public IResource[] members(boolean phantom) throws CoreException {
+	// forward to central method
+	return members(phantom ? INCLUDE_PHANTOMS : 0);
+}
+
+/*
+ * @see IContainer
+ */
+public IResource[] members(int memberFlags) throws CoreException {
+	// FIXME - handle team private member flag
+	final boolean phantom = (memberFlags & INCLUDE_PHANTOMS) != 0;
 	ResourceInfo info = getResourceInfo(phantom, false);
 	checkExists(getFlags(info), true);
 	return getChildren(this, phantom);
 }
+
+/**
+ * @see IContainer#findDeletedMembersWithHistory
+ */
+public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException {
+	// FIXME - missing implementation
+	return new File[0];
+}
+
 }
