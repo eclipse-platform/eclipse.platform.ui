@@ -426,7 +426,7 @@ public class Utils {
 	 * @param elements
 	 * @return the list of resources contained in the given elements.
 	 */
-	public static IResource[] getResources(Object[] elements) {
+	private static IResource[] getResources(Object[] elements, List nonResources) {
 		List resources = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
@@ -441,9 +441,22 @@ public class Utils {
 			}
 			if (resource != null) {
 				resources.add(resource);
+			} else {
+				if(nonResources != null)
+					nonResources.add(element);
 			}
 		}
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+	}
+	
+	public static Object[] getNonResources(Object[] elements) {
+		List nonResources = new ArrayList();
+		getResources(elements, nonResources);
+		return nonResources.toArray();
+	}
+	
+	public static IResource[] getResources(Object[] element) {
+		return getResources(element, null);
 	}
 	
 	public static Object getAdapter(Object element, Class adapter) {
