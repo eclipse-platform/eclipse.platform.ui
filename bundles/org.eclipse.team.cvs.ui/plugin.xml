@@ -13,6 +13,7 @@
 		<import plugin="org.eclipse.team.core"/>
 		<import plugin="org.eclipse.team.ui"/>
 		<import plugin="org.eclipse.team.cvs.core"/>
+		<import plugin="org.eclipse.compare"/>
 	</requires>
 
 	<runtime>
