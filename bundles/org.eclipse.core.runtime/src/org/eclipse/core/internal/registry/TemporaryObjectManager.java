@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.registry;
 
 import java.util.Map;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 
 /**
  * @since 3.1
@@ -88,13 +89,13 @@ public class TemporaryObjectManager implements IObjectManager {
 		Object result = null;
 		try {
 			result = parent.getObject(id, type);
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			if (actualObjects != null) {
 				result = actualObjects.get(new Integer(id));
 			}
 		}
 		if (result == null)
-			throw new InvalidHandleException(id); //$NON-NLS-1$
+			throw new InvalidRegistryObjectException(id); //$NON-NLS-1$
 		return result;
 	}
 

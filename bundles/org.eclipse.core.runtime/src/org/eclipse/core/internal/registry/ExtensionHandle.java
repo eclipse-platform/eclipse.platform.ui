@@ -64,7 +64,7 @@ public class ExtensionHandle extends Handle implements IExtension {
 	public boolean isValid() {
 		try {
 			getExtension();
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			return false;
 		}
 		return true;

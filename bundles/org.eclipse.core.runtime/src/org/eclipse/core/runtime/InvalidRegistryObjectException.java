@@ -8,11 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.registry;
+package org.eclipse.core.runtime;
 
 import org.eclipse.core.internal.runtime.Policy;
 
-public class InvalidHandleException extends IllegalStateException {
+/** 
+ * An unchecked exception representing a failure while using an registry object  
+ * @since 3.1
+ */
+public class InvalidRegistryObjectException extends RuntimeException {
 	/**
 	 * Comment for <code>serialVersionUID</code>
 	 */
@@ -20,7 +24,7 @@ public class InvalidHandleException extends IllegalStateException {
 
 	private int staleId;
 	
-	public InvalidHandleException(int objectId) {
+	public InvalidRegistryObjectException(int objectId) {
 		staleId = objectId;
 	}
 	

@@ -19,11 +19,13 @@ package org.eclipse.core.runtime;
  * These registry objects are intended for relatively short-term use. Clients that 
  * need to retain an object must be aware that it may become invalid if the 
  * declaring plug-in is updated or uninstalled. If this happens, all methods except 
- * {@link #isValid()} will throw a runtime exception. Clients may check for invalid 
- * objects by calling {@link #isValid()}.
+ * {@link #isValid()} will throw an {@link org.eclipse.core.runtime.InvalidRegistryObjectException}.
+ *  Clients may check for invalid objects by calling {@link #isValid()}.
  * More generally, clients may registry a listener with the extension registry to receive
  * notification of changes.
- *  
+ * 
+ * A plug-in declaring that it is not dynamic aware can ignore the InvalidRegistryObjectExceptions.
+ * 
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -39,7 +41,7 @@ public interface IExtensionPoint {
 	 * @return the configuration elements for all extension configured 
 	 *   into this extension point
 	 */
-	public IConfigurationElement[] getConfigurationElements();
+	public IConfigurationElement[] getConfigurationElements() throws InvalidRegistryObjectException;
 
 	/** 
 	 * Returns the descriptor of the plug-in that declares this extension point.
@@ -51,7 +53,7 @@ public interface IExtensionPoint {
 	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
 	 * update your usecases.
 	 */
-	public IPluginDescriptor getDeclaringPluginDescriptor();
+	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the namespace for this extension point. This value can be used
@@ -69,7 +71,7 @@ public interface IExtensionPoint {
 	 * @see IExtensionRegistry
 	 * @since 3.0
 	 */
-	public String getNamespace();
+	public String getNamespace() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the extension with the given unique identifier configured into
@@ -81,7 +83,7 @@ public interface IExtensionPoint {
 	 *		(e.g. <code>"com.example.acme.main"</code>).
 	 * @return an extension, or <code>null</code>
 	 */
-	public IExtension getExtension(String extensionId);
+	public IExtension getExtension(String extensionId) throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns all extensions configured into this extension point.
@@ -89,7 +91,7 @@ public interface IExtensionPoint {
 	 *
 	 * @return the extensions configured into this extension point
 	 */
-	public IExtension[] getExtensions();
+	public IExtension[] getExtensions() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns a displayable label for this extension point.
@@ -102,7 +104,7 @@ public interface IExtensionPoint {
 	 * @return a displayable string label for this extension point,
 	 *    possibly the empty string
 	 */
-	public String getLabel();
+	public String getLabel() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns reference to the extension point schema. The schema 
@@ -113,7 +115,7 @@ public interface IExtensionPoint {
 	 *
 	 * @return a relative URL path, or an empty string
 	 */
-	public String getSchemaReference();
+	public String getSchemaReference() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the simple identifier of this extension point.
@@ -123,7 +125,7 @@ public interface IExtensionPoint {
 	 *
 	 * @return the simple identifier of the extension point (e.g. <code>"builders"</code>)
 	 */
-	public String getSimpleIdentifier();
+	public String getSimpleIdentifier() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the unique identifier of this extension point.
@@ -135,7 +137,7 @@ public interface IExtensionPoint {
 	 * @return the unique identifier of the extension point
 	 *    (e.g. <code>"org.eclipse.core.resources.builders"</code>)
 	 */
-	public String getUniqueIdentifier();
+	public String getUniqueIdentifier() throws InvalidRegistryObjectException;
 
 	/** 
 	 * @see Object#equals(java.lang.Object)

@@ -2,7 +2,6 @@ package org.eclipse.core.tests.internal.registry;
 
 import java.io.IOException;
 import junit.framework.TestCase;
-import org.eclipse.core.internal.registry.InvalidHandleException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
@@ -22,7 +21,7 @@ public class StaleObjects extends TestCase {
 			try {
 				extensionFromTheListener = event.getExtensionDeltas()[0].getExtension();
 				extensionFromTheListener.getSimpleIdentifier();
-			} catch (InvalidHandleException e) {
+			} catch (InvalidRegistryObjectException e) {
 				gotException = true;
 			}
 			assertEquals(false, gotException);
@@ -54,7 +53,7 @@ public class StaleObjects extends TestCase {
 				}
 			}
 			result.getSimpleIdentifier();
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			gotException = true;
 		}
 		assertEquals(false, gotException);
@@ -81,7 +80,7 @@ public class StaleObjects extends TestCase {
 				}
 			}
 			listener2.getAcquiredHandle().getSimpleIdentifier();
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			gotException = true;
 		}
 		assertEquals(true, gotException);
@@ -90,7 +89,7 @@ public class StaleObjects extends TestCase {
 		gotException = false;
 		try {
 			willBeStale.getSimpleIdentifier();
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			gotException = true;
 		}
 		assertEquals(true, gotException);

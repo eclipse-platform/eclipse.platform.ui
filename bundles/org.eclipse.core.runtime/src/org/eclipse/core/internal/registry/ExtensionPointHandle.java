@@ -91,7 +91,7 @@ public class ExtensionPointHandle extends Handle implements IExtensionPoint {
 	public boolean isValid() {
 		try {
 			getExtensionPoint();
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			return false;
 		}
 		return true;

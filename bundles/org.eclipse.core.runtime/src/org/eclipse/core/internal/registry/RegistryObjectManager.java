@@ -13,6 +13,7 @@ package org.eclipse.core.internal.registry;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 
 /**
  * This class manage all the object from the registry but does not deal with their dependencies.
@@ -180,7 +181,7 @@ public class RegistryObjectManager implements IObjectManager {
 			result = load(id, type);
 		}
 		if (result == null)
-			throw new InvalidHandleException(id); //$NON-NLS-1$
+			throw new InvalidRegistryObjectException(id); //$NON-NLS-1$
 		cache.put(new Integer(id), result);
 		return result;
 	}

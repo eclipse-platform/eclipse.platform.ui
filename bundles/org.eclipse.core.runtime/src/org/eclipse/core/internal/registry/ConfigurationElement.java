@@ -140,7 +140,7 @@ public class ConfigurationElement extends RegistryObject {
 
 	private Object createExecutableExtension(String pluginName, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
 		if(contributingBundle==null) {
-			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidHandleException(getObjectId()));  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException(getObjectId()));  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		}
 		String id = contributingBundle.getSymbolicName(); // this plugin id check if we need to delegate to some other plugin
 		if (pluginName != null && !pluginName.equals("") && !pluginName.equals(id)) { //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class ConfigurationElement extends RegistryObject {
 
 	private Object createExecutableExtension(Bundle bundle, String className, Object initData, ConfigurationElement cfig, String propertyName) throws CoreException {
 		if(contributingBundle==null) {
-			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidHandleException(getObjectId()));  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			throwException(Policy.bind("plugin.loadClassError", "UNKNOWN BUNDLE", className), new InvalidRegistryObjectException(getObjectId()));  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		}
 		// load the requested class from this plugin
 		Class classInstance = null;

@@ -46,7 +46,7 @@ public class ConfigurationElementHandle extends Handle implements IConfiguration
 	public Object createExecutableExtension(String propertyName) throws CoreException {
 		try {
 			return getConfigurationElement().createExecutableExtension(propertyName);
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			Status status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, ConfigurationElement.PLUGIN_ERROR, e.getMessage(), e);
 			InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 			throw new CoreException(status);
@@ -118,7 +118,7 @@ public class ConfigurationElementHandle extends Handle implements IConfiguration
 	public boolean isValid() {
 		try {
 			getConfigurationElement();
-		} catch (InvalidHandleException e) {
+		} catch (InvalidRegistryObjectException e) {
 			return false;
 		}
 		return true;

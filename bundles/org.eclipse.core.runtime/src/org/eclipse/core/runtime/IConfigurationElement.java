@@ -19,9 +19,15 @@ package org.eclipse.core.runtime;
  * objects.
  * </p>
  * <p>
- * An configuration element can become stale if the contributing bundle object has 
- * been uninstalled (not in RESOLVED state).
- * Any call to a stale configuration element will result in a runtime exception.
+ * These registry objects are intended for relatively short-term use. Clients that 
+ * need to retain an object must be aware that it may become invalid if the 
+ * declaring plug-in is updated or uninstalled. If this happens, all methods except 
+ * {@link #isValid()} will throw an {@link org.eclipse.core.runtime.InvalidRegistryObjectException}.
+ *  Clients may check for invalid objects by calling {@link #isValid()}.
+ * More generally, clients may registry a listener with the extension registry to receive
+ * notification of changes.
+ * 
+ * A plug-in declaring that it is not dynamic aware can ignore the InvalidRegistryObjectExceptions.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -74,7 +80,7 @@ public interface IConfigurationElement {
 	 * @param name the name of the attribute
 	 * @return attribute value, or <code>null</code> if none
 	 */
-	public String getAttribute(String name);
+	public String getAttribute(String name) throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the named attribute of this configuration element, or
@@ -98,7 +104,7 @@ public interface IConfigurationElement {
 	 * @param name the name of the attribute
 	 * @return attribute value, or <code>null</code> if none
 	 */
-	public String getAttributeAsIs(String name);
+	public String getAttributeAsIs(String name) throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the names of the attributes of this configuration element.
@@ -117,7 +123,7 @@ public interface IConfigurationElement {
 	 *
 	 * @return the names of the attributes 
 	 */
-	public String[] getAttributeNames();
+	public String[] getAttributeNames() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns all configuration elements that are children of this
@@ -140,7 +146,7 @@ public interface IConfigurationElement {
 	 * @return the child configuration elements
 	 * @see #getChildren(String)
 	 */
-	public IConfigurationElement[] getChildren();
+	public IConfigurationElement[] getChildren() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns all child configuration elements with the given name. 
@@ -151,14 +157,14 @@ public interface IConfigurationElement {
 	 * @return the child configuration elements with that name
 	 * @see #getChildren()
 	 */
-	public IConfigurationElement[] getChildren(String name);
+	public IConfigurationElement[] getChildren(String name) throws InvalidRegistryObjectException;
 
 	/** 
 	 * Returns the extension that declares this configuration element.
 	 *
 	 * @return the extension
 	 */
-	public IExtension getDeclaringExtension();
+	public IExtension getDeclaringExtension() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the name of this configuration element. 
@@ -172,7 +178,7 @@ public interface IConfigurationElement {
 	 *
 	 * @return the name of this configuration element
 	 */
-	public String getName();
+	public String getName() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the element which contains this element.  If this element
@@ -185,7 +191,7 @@ public interface IConfigurationElement {
 	 *  or <code>null</code>
 	 * @since 3.0
 	 */
-	public Object getParent();
+	public Object getParent() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the text value of this configuration element.
@@ -203,7 +209,7 @@ public interface IConfigurationElement {
 	 *
 	 * @return the text value of this configuration element or <code>null</code>
 	 */
-	public String getValue();
+	public String getValue() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the untranslated text value of this configuration element.
@@ -228,7 +234,7 @@ public interface IConfigurationElement {
 	 *
 	 * @return the untranslated text value of this configuration element or <code>null</code>
 	 */
-	public String getValueAsIs();
+	public String getValueAsIs() throws InvalidRegistryObjectException;
 	
 	/**
 	 * Returns the namespace for this configuration element. This value can be used
@@ -240,7 +246,7 @@ public interface IConfigurationElement {
 	 * @see IExtensionRegistry
 	 * @since 3.1
 	 */
-	public String getNamespace();
+	public String getNamespace() throws InvalidRegistryObjectException;
 	
 	/** 
 	 * @see Object#equals(java.lang.Object)

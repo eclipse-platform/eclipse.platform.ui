@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
+
 /**
  * A handle is the super class to all registry objects that are now served to users.
  * The handles never hold on to any "real" content of the object being represented.
@@ -32,7 +34,7 @@ public abstract class Handle {
 
 	/**
 	 * Return the actual object corresponding to this handle.
-	 * @throws InvalidHandleException when the handle is stale.
+	 * @throws InvalidRegistryObjectException when the handle is stale.
 	 */
 	abstract RegistryObject getObject();
 	

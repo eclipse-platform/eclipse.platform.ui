@@ -15,9 +15,15 @@ package org.eclipse.core.runtime;
  * All information is obtained from the declaring plug-in's 
  * manifest (<code>plugin.xml</code>) file.
  * <p>
- * An extension can become stale if the contributing bundle object has 
- * been uninstalled (not in RESOLVED state).
- * Any call to a stale extension will result in a runtime exception.
+ * These registry objects are intended for relatively short-term use. Clients that 
+ * need to retain an object must be aware that it may become invalid if the 
+ * declaring plug-in is updated or uninstalled. If this happens, all methods except 
+ * {@link #isValid()} will throw an {@link org.eclipse.core.runtime.InvalidRegistryObjectException}.
+ *  Clients may check for invalid objects by calling {@link #isValid()}.
+ * More generally, clients may registry a listener with the extension registry to receive
+ * notification of changes.
+ * 
+ * A plug-in declaring that it is not dynamic aware can ignore the InvalidRegistryObjectExceptions.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -34,7 +40,7 @@ public interface IExtension {
 	 *
 	 * @return the configuration elements declared by this extension 
 	 */
-	public IConfigurationElement[] getConfigurationElements();
+	public IConfigurationElement[] getConfigurationElements() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the descriptor of the plug-in that declares this extension.
@@ -46,7 +52,7 @@ public interface IExtension {
 	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
 	 * update your usecases.
 	 */
-	public IPluginDescriptor getDeclaringPluginDescriptor();
+	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the namespace for this extension. This value can be used
@@ -64,7 +70,7 @@ public interface IExtension {
 	 * @see IExtensionRegistry
 	 * @since 3.0
 	 */
-	public String getNamespace();
+	public String getNamespace() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the unique identifier of the extension point
@@ -72,7 +78,7 @@ public interface IExtension {
 	 *
 	 * @return the unique identifier of the relevant extension point
 	 */
-	public String getExtensionPointUniqueIdentifier();
+	public String getExtensionPointUniqueIdentifier() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns a displayable label for this extension.
@@ -85,7 +91,7 @@ public interface IExtension {
 	 * @return a displayable string label for this extension,
 	 *    possibly the empty string
 	 */
-	public String getLabel();
+	public String getLabel() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the simple identifier of this extension, or <code>null</code>
@@ -97,7 +103,7 @@ public interface IExtension {
 	 * @return the simple identifier of the extension (e.g. <code>"main"</code>)
 	 *  or <code>null</code>
 	 */
-	public String getSimpleIdentifier();
+	public String getSimpleIdentifier() throws InvalidRegistryObjectException;
 
 	/**
 	 * Returns the unique identifier of this extension, or <code>null</code>
@@ -109,7 +115,7 @@ public interface IExtension {
 	 * @return the unique identifier of the extension
 	 *    (e.g. <code>"com.example.acme.main"</code>), or <code>null</code>
 	 */
-	public String getUniqueIdentifier();
+	public String getUniqueIdentifier() throws InvalidRegistryObjectException;
 	
 	/** 
 	 * @see Object#equals(java.lang.Object)
