@@ -103,11 +103,19 @@ public interface ICVSResource {
 	public String getRelativePath(ICVSFolder ancestor) throws CVSException;
 
 	/**
-	 * Get the remote location of a resource.
+	 * Get the absolute remote location of a resource. This method is used by
+	 * the CVS command infrastructure during command execution. The root is used
+	 * in situations where the resource is not under CVS control. The remote
+	 * path that the resource would have if it was is determined by recursively
+	 * searching the resource's parent until a managed folder is found. The
+	 * provided root is used to stop the recursive search if no managed parent
+	 * is found.
+	 * 
+	 * @param root the root folder of the command.
 	 * 
 	 * @return the remote location.
 	 */
-	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException;
+	public String getRemoteLocation(ICVSFolder root) throws CVSException;
 	
 	/**
 	 * Answers the workspace synchronization information for this resource. This would 
