@@ -35,6 +35,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -48,6 +49,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.Workbench;
@@ -285,6 +287,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator.next();				
 				String parentId = keyConfigurationDefinition.getParentId();
 				
+				// TODO this does not prevent circular graphs higher up the hierarchy
 				while (parentId != null) {
 					keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(parentId);
 				
@@ -329,6 +332,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
 				String parentId = contextDefinition.getParentId();
 					
+				// TODO this does not prevent circular graphs higher up the hierarchy
 				while (parentId != null) {
 					contextDefinition = (IContextDefinition) contextDefinitionsById.get(parentId);
 					
@@ -622,7 +626,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableAssignmentsForKeySequence = new Table(groupKeySequence, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableAssignmentsForKeySequence.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 50;
+		gridData.heightHint = 60;
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
 		tableAssignmentsForKeySequence.setLayoutData(gridData);		
@@ -634,7 +638,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumnContext.setResizable(true);
 		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumnContext.pack();
-		tableColumnContext.setWidth(100);
+		tableColumnContext.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
 		TableColumn tableColumnCommand = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
 		tableColumnCommand.setResizable(true);
 		tableColumnCommand.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
@@ -643,13 +647,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		tableAssignmentsForKeySequence.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
-				doubleClickedTableCommandsForKeySequence();	
+				doubleClickedTableAssignmentsForKeySequence();	
 			}			
 		});		
 
 		tableAssignmentsForKeySequence.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
-				selectedTableCommandsForKeySequence();
+				selectedTableAssignmentsForKeySequence();
 			}	
 		});
 						
@@ -699,7 +703,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableAssignmentsForCommand = new Table(groupCommand, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableAssignmentsForCommand.setHeaderVisible(true);
 		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 50;
+		gridData.heightHint = 60;
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
 		tableAssignmentsForCommand.setLayoutData(gridData);		
@@ -711,7 +715,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumnContext.setResizable(true);
 		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumnContext.pack();
-		tableColumnContext.setWidth(100);
+		tableColumnContext.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
 		TableColumn tableColumnKeySequence = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 2);
 		tableColumnKeySequence.setResizable(true);
 		tableColumnKeySequence.setText(Util.translateString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
@@ -720,13 +724,13 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		tableAssignmentsForCommand.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent mouseEvent) {
-				doubleClickedTableKeySequencesForCommand();	
+				doubleClickedAssignmentsForCommand();	
 			}			
 		});		
 
 		tableAssignmentsForCommand.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
-				selectedTableKeySequencesForCommand();
+				selectedTableAssignmentsForCommand();
 			}	
 		});
 
@@ -835,11 +839,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		update();
 	}
 
-	private void doubleClickedTableCommandsForKeySequence() {	
+	private void doubleClickedTableAssignmentsForKeySequence() {	
 		update();
 	}
 	
-	private void doubleClickedTableKeySequencesForCommand() {
+	private void doubleClickedAssignmentsForCommand() {
 		update();
 	}
 
@@ -867,11 +871,32 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		update();
 	}
 
+	private void selectAssignmentForKeySequence(String contextId) {	
+		int selection = -1;
+
+		if (tableAssignmentsForKeySequence.getSelectionCount() > 1)
+			tableAssignmentsForKeySequence.deselectAll();
+
+		for (int i = 0; i < contextIdAssignments.size(); i++)
+			if (Util.equals(contextId, contextIdAssignments.get(i))) {
+				selection = i;
+				break;
+			}
+
+		if (selection != tableAssignmentsForKeySequence.getSelectionIndex()) {
+			if (selection == -1 || selection >= tableAssignmentsForKeySequence.getItemCount())
+				tableAssignmentsForKeySequence.deselectAll();
+			else
+				tableAssignmentsForKeySequence.select(selection);
+		}
+	}
+
 	private void selectedButtonAdd() {
 		String commandId = getCommandId();
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
+		KeyBindingNode.remove(tree, keySequence, contextId, keyConfigurationId, 0, null, null);
 		KeyBindingNode.add(tree, keySequence, contextId, keyConfigurationId, 0, null, null, commandId);			
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
@@ -882,7 +907,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();		
-		KeyBindingNode.add(tree, keySequence, null, null, 0, null, null, null);
+		KeyBindingNode.remove(tree, keySequence, contextId, keyConfigurationId, 0, null, null);
+		KeyBindingNode.add(tree, keySequence, contextId, keyConfigurationId, 0, null, null, null);
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
 		update();		
@@ -892,7 +918,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();
-		KeyBindingNode.remove(tree, keySequence, null, null, 0, null, null);
+		KeyBindingNode.remove(tree, keySequence, contextId, keyConfigurationId, 0, null, null);
 		List preferenceKeyBindingDefinitions = new ArrayList();
 		KeyBindingNode.getKeyBindingDefinitions(tree, KeySequence.getInstance(), 0, preferenceKeyBindingDefinitions);		
 		update();		
@@ -914,12 +940,220 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		update();		
 	}	
 
-	private void selectedTableCommandsForKeySequence() {
+	private void selectedTableAssignmentsForCommand() {
+		update();		
+	}
+	
+	private void selectedTableAssignmentsForKeySequence() {
+		int selection = tableAssignmentsForKeySequence.getSelectionIndex();
+			
+		if (selection >= 0 && selection < contextIdAssignments.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1)
+			setContextId((String) contextIdAssignments.get(selection));
+			
 		update();		
 	}
 
-	private void selectedTableKeySequencesForCommand() {
-		update();		
+	// TODO move these.
+	private Map assignmentsByContextId;
+	private List contextIdAssignments = new ArrayList();
+
+	private void setAssignmentsForKeySequence() {		
+		String keyConfigurationId = getKeyConfigurationId();
+		KeySequence keySequence = getKeySequence();
+		String[] activeKeyConfigurationIds = CommandManager.extend(CommandManager.getKeyConfigurationIds(keyConfigurationId, keyConfigurationDefinitionsById));
+		String[] activeLocales = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActiveLocale(), CommandManager.SEPARATOR));
+		String[] activePlatforms = CommandManager.extend(CommandManager.getPath(CommandManager.getInstance().getActivePlatform(), CommandManager.SEPARATOR));
+		Map assignmentsByContextId = KeyBindingNode.solve(tree, keySequence, activeKeyConfigurationIds, activePlatforms, activeLocales);
+
+		if (!Util.equals(this.assignmentsByContextId, assignmentsByContextId)) {
+			this.assignmentsByContextId = assignmentsByContextId;
+			contextIdAssignments.clear();
+			tableAssignmentsForKeySequence.removeAll();	
+			String contextName = Util.translateString(resourceBundle, "general"); //$NON-NLS-1$
+			String contextId = null;
+			int difference = DIFFERENCE_NONE;
+			String commandString = null;
+			KeyBindingNode.Assignment assignment = (KeyBindingNode.Assignment) assignmentsByContextId.get(null);
+
+			if (assignment != null) {
+				if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration || assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
+					String preferenceCommandId;
+					
+					if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration)
+						preferenceCommandId = assignment.preferenceCommandIdInFirstKeyConfiguration;
+					else
+						preferenceCommandId = assignment.preferenceCommandIdInInheritedKeyConfiguration;
+					
+					if (assignment.hasPluginCommandIdInFirstKeyConfiguration || assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
+						String pluginCommandId;
+						
+						if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+							pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+						else
+							pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
+
+						if (preferenceCommandId != null) {
+							difference = DIFFERENCE_CHANGE;						
+							commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+						} else {
+							difference = DIFFERENCE_MINUS;						
+							commandString = "Unassigned";							
+						}							
+
+						if (pluginCommandId != null)
+							commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
+						else
+							commandString += " (was: " + "Unassigned" + ");";						
+					} else {
+						if (preferenceCommandId != null) {
+							difference = DIFFERENCE_ADD;						
+							commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+						} else {
+							difference = DIFFERENCE_MINUS;						
+							commandString = "Unassigned";							
+						}							
+					}
+				} else {
+					String pluginCommandId;
+				
+					if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+						pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+					else
+						pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;					
+
+					if (pluginCommandId != null) {
+						difference = DIFFERENCE_NONE;						
+						commandString = commandUniqueNamesById.get(pluginCommandId) + "";
+					} else {
+						difference = DIFFERENCE_MINUS;						
+						commandString = "Unassigned";							
+					}		
+				}
+
+				TableItem tableItem = new TableItem(tableAssignmentsForKeySequence, SWT.NULL);
+				contextIdAssignments.add(contextId);
+				
+				switch (difference) {
+					case DIFFERENCE_ADD:
+						tableItem.setImage(0, IMAGE_PLUS);
+						break;
+		
+					case DIFFERENCE_CHANGE:
+						tableItem.setImage(0, IMAGE_CHANGE);
+						break;
+		
+					case DIFFERENCE_MINUS:
+						tableItem.setImage(0, IMAGE_MINUS);
+						break;
+		
+					case DIFFERENCE_NONE:
+						tableItem.setImage(0, IMAGE_BLANK);
+						break;				
+				}
+	
+				tableItem.setText(1, contextName);
+				tableItem.setText(2, commandString);
+				
+				if (difference == DIFFERENCE_MINUS)
+					tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));					
+			}			
+	
+			// TODO this keySet should be sorted through Collator first
+			for (Iterator iterator = contextIdsByUniqueName.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry) iterator.next();		
+				contextName = (String) entry.getKey();
+				contextId = (String) entry.getValue();
+				difference = DIFFERENCE_NONE;
+				commandString = null;
+				assignment = (KeyBindingNode.Assignment) assignmentsByContextId.get(contextId);
+
+				if (assignment != null) {
+					if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration || assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
+						String preferenceCommandId;
+					
+						if (assignment.hasPreferenceCommandIdInFirstKeyConfiguration)
+							preferenceCommandId = assignment.preferenceCommandIdInFirstKeyConfiguration;
+						else
+							preferenceCommandId = assignment.preferenceCommandIdInInheritedKeyConfiguration;
+					
+						if (assignment.hasPluginCommandIdInFirstKeyConfiguration || assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
+							String pluginCommandId;
+						
+							if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+								pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+							else
+								pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
+
+							if (preferenceCommandId != null) {
+								difference = DIFFERENCE_CHANGE;						
+								commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+							} else {
+								difference = DIFFERENCE_MINUS;						
+								commandString = "Unassigned";							
+							}							
+
+							if (pluginCommandId != null)
+								commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
+							else
+								commandString += " (was: " + "Unassigned" + ");";						
+						} else {
+							if (preferenceCommandId != null) {
+								difference = DIFFERENCE_ADD;						
+								commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+							} else {
+								difference = DIFFERENCE_MINUS;						
+								commandString = "Unassigned";							
+							}							
+						}
+					} else {
+						String pluginCommandId;
+				
+						if (assignment.hasPluginCommandIdInFirstKeyConfiguration)
+							pluginCommandId = assignment.pluginCommandIdInFirstKeyConfiguration;
+						else
+							pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;					
+
+						if (pluginCommandId != null) {
+							difference = DIFFERENCE_NONE;						
+							commandString = commandUniqueNamesById.get(pluginCommandId) + "";
+						} else {
+							difference = DIFFERENCE_MINUS;						
+							commandString = "Unassigned";							
+						}		
+					}
+
+					TableItem tableItem = new TableItem(tableAssignmentsForKeySequence, SWT.NULL);
+					contextIdAssignments.add(contextId);
+				
+					switch (difference) {
+						case DIFFERENCE_ADD:
+							tableItem.setImage(0, IMAGE_PLUS);
+							break;
+		
+						case DIFFERENCE_CHANGE:
+							tableItem.setImage(0, IMAGE_CHANGE);
+							break;
+		
+						case DIFFERENCE_MINUS:
+							tableItem.setImage(0, IMAGE_MINUS);
+							break;
+		
+						case DIFFERENCE_NONE:
+							tableItem.setImage(0, IMAGE_BLANK);
+							break;				
+					}
+	
+					tableItem.setText(1, contextName);
+					tableItem.setText(2, commandString);
+					
+					if (difference == DIFFERENCE_MINUS)
+						tableItem.setForeground(new Color(getShell().getDisplay(), RGB_MINUS));					
+				}		
+			}					
+		}			
+	}
+	
+	private void setAssignmentsForCommand() {	
 	}
 
 	private void setCategoryId(String categoryId) {				
@@ -1033,12 +1267,18 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	private void update() {
 		setCommandsForCategory();
-		setContextsForCommand();		
+		setContextsForCommand();
+		setAssignmentsForKeySequence();
+		setAssignmentsForCommand();	
+		
 		String categoryId = getCategoryId();
 		String commandId = getCommandId();
 		String contextId = getContextId();
 		String keyConfigurationId = getKeyConfigurationId();
 		KeySequence keySequence = getKeySequence();		
+
+		selectAssignmentForKeySequence(contextId);
+
 		updateLabelKeyConfigurationExtends();		
 		updateLabelContextExtends();
 		labelAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
@@ -1079,14 +1319,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 	}
 
 	/*
-	private String bracket(String string) {
-		StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append('[');
-		stringBuffer.append(string);
-		stringBuffer.append(']');
-		return stringBuffer.toString();
-	}
-
 	private void update() {
 		ICommandDefinition command = null;
 		ISelection selection = treeViewerCommands.getSelection();

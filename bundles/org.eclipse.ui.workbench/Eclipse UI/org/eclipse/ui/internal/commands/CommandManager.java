@@ -56,7 +56,8 @@ import org.eclipse.ui.keys.KeyStroke;
 
 public final class CommandManager implements ICommandManager {
 
-	private final static String SEPARATOR = "_"; //$NON-NLS-1$
+	// TODO private?
+	final static String SEPARATOR = "_"; //$NON-NLS-1$
 
 	private static CommandManager instance;
 
@@ -503,7 +504,8 @@ public final class CommandManager implements ICommandManager {
 		*/
 	}
 
-	private String[] extend(String[] strings) {
+	// TODO private?
+	static String[] extend(String[] strings) {
 		String[] strings2 = new String[strings.length + 1];
 		System.arraycopy(strings, 0, strings2, 0, strings.length);		
 		return strings2;
@@ -520,7 +522,8 @@ public final class CommandManager implements ICommandManager {
 		}		
 	}
 	
-	private static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
+	// TODO private?
+	static String[] getKeyConfigurationIds(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionsById) {
 		List strings = new ArrayList();
 
 		while (keyConfigurationDefinitionId != null) {	
@@ -539,7 +542,8 @@ public final class CommandManager implements ICommandManager {
 		return (String[]) strings.toArray(new String[strings.size()]);
 	}
 
-	private static String[] getPath(String string, String separator) {
+	// TODO private?
+	static String[] getPath(String string, String separator) {
 		if (string == null || separator == null)
 			return new String[0];
 

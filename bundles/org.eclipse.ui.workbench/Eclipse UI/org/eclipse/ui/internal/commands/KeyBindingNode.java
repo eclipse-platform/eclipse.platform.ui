@@ -348,6 +348,116 @@ final class KeyBindingNode {
 		}		
 	}
 
+	static class Assignment {
+		
+		boolean hasPreferenceCommandIdInFirstKeyConfiguration;
+		boolean hasPreferenceCommandIdInInheritedKeyConfiguration;
+		boolean hasPluginCommandIdInFirstKeyConfiguration;
+		boolean hasPluginCommandIdInInheritedKeyConfiguration;
+		String preferenceCommandIdInFirstKeyConfiguration;
+		String preferenceCommandIdInInheritedKeyConfiguration;
+		String pluginCommandIdInFirstKeyConfiguration;
+		String pluginCommandIdInInheritedKeyConfiguration;
+		
+		public boolean equals(Object object) {
+			if (!(object instanceof Assignment))
+				return false;
+
+			Assignment assignment = (Assignment) object;	
+			boolean equals = true;
+			equals &= hasPreferenceCommandIdInFirstKeyConfiguration == assignment.hasPreferenceCommandIdInFirstKeyConfiguration;
+			equals &= hasPreferenceCommandIdInInheritedKeyConfiguration == assignment.hasPreferenceCommandIdInInheritedKeyConfiguration;
+			equals &= hasPluginCommandIdInFirstKeyConfiguration == assignment.hasPluginCommandIdInFirstKeyConfiguration;
+			equals &= hasPluginCommandIdInInheritedKeyConfiguration == assignment.hasPluginCommandIdInInheritedKeyConfiguration;
+			equals &= preferenceCommandIdInFirstKeyConfiguration == assignment.preferenceCommandIdInFirstKeyConfiguration;
+			equals &= preferenceCommandIdInInheritedKeyConfiguration == assignment.preferenceCommandIdInInheritedKeyConfiguration;
+			equals &= pluginCommandIdInFirstKeyConfiguration == assignment.pluginCommandIdInFirstKeyConfiguration;
+			equals &= pluginCommandIdInInheritedKeyConfiguration == assignment.pluginCommandIdInInheritedKeyConfiguration;
+			return equals;
+		}
+	}
+
+	static Map solve(Map tree, KeySequence keySequence, String[] keyConfigurationIds, String[] platforms, String[] locales) {
+		Map assignmentsByContextId = new HashMap();
+		
+		if (keySequence != null) {
+			List keyStrokes = keySequence.getKeyStrokes();		
+			Map root = tree;
+			KeyBindingNode keyBindingNode = null;
+		
+			for (int i = 0; i < keyStrokes.size(); i++) {
+				KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
+				keyBindingNode = (KeyBindingNode) root.get(keyStroke);
+				
+				if (keyBindingNode == null)
+					break;
+				
+				root = keyBindingNode.childMap;
+			}
+	
+			if (keyBindingNode != null) {
+				for (Iterator iterator = keyBindingNode.contextMap.entrySet().iterator(); iterator.hasNext();) {
+					Map.Entry entry = (Map.Entry) iterator.next();
+					String contextId = (String) entry.getKey();
+					Map keyConfigurationMap = (Map) entry.getValue();
+					KeyBindingNode.Assignment assignment = null;
+				
+					if (keyConfigurationMap != null)
+						for (int j = 0; j < keyConfigurationIds.length && j < 0xFF && keyBindingNode.match == null; j++) {
+							Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[j]);
+				
+							if (rankMap != null)
+								for (int r = 0; r <= 1; r++) {
+									Map platformMap = (Map) rankMap.get(new Integer(r));
+
+									if (platformMap != null)
+										for (int k = 0; k < platforms.length && k < 0xFF && keyBindingNode.match == null; k++) {
+											Map localeMap = (Map) platformMap.get(platforms[k]);
+					
+											if (localeMap != null)
+												for (int l = 0; l < locales.length && l < 0xFF && keyBindingNode.match == null; l++) {
+													Set commandIds = (Set) localeMap.get(locales[l]);
+					
+													if (commandIds != null) {
+														String commandId = commandIds.size() == 1 ? (String) commandIds.iterator().next() : null;
+																												
+														if (assignment == null)
+															assignment = new Assignment();
+														
+														if (r == 0) {
+															if (j == 0) {															
+																assignment.hasPreferenceCommandIdInFirstKeyConfiguration = true;
+																assignment.preferenceCommandIdInFirstKeyConfiguration = commandId;
+															} else {
+																assignment.hasPreferenceCommandIdInInheritedKeyConfiguration = true;
+																assignment.preferenceCommandIdInInheritedKeyConfiguration = commandId;
+															}
+														} else {
+															if (j == 0) {															
+																assignment.hasPluginCommandIdInFirstKeyConfiguration = true;
+																assignment.pluginCommandIdInFirstKeyConfiguration = commandId;
+															} else {
+																assignment.hasPluginCommandIdInInheritedKeyConfiguration = true;
+																assignment.pluginCommandIdInInheritedKeyConfiguration = commandId;
+															}
+														}
+													}
+												}
+										}								
+									
+								}
+							
+						}
+	
+					if (assignment != null)
+						assignmentsByContextId.put(contextId, assignment);
+				}
+			}
+		}
+		
+		return assignmentsByContextId;
+	}
+
 	private Map childMap = new HashMap();	
 	private Map contextMap = new HashMap();
 	private Match match = null;
