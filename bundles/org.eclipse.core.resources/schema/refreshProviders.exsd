@@ -49,6 +49,9 @@
                <documentation>
                   A human-readable name for the monitor factory
                </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
