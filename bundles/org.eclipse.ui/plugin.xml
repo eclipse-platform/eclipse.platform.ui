@@ -46,8 +46,6 @@
    <extension-point id="markerHelp" name="%ExtPoint.markerHelp"/>
    <extension-point id="markerResolution" name="%ExtPoint.markerResolution"/>
    <extension-point id="capabilities" name="%ExtPoint.capabilities"/>
-<!-- Workbench *DEPRECATED* extension point definitions -->
-<!-- See extension point documentation for further information -->
    <extension-point id="projectNatureImages" name="%ExtPoint.projectNatureImages"/>
    <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters"/>
    <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
@@ -822,6 +820,16 @@
    </extension>
    <extension
          point="org.eclipse.ui.exportWizards">
+	<wizard 
+	   id="org.eclipse.ui.wizards.new.project"
+	   name="%NewWizards.project"
+	   class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
+	   category="org.eclipse.ui.Basic"
+	   project="true"
+	   finalPerspective="org.eclipse.ui.resourcePerspective"
+	   icon="icons/full/ctool16/newprj_wiz.gif">
+       <description>%NewWizards.project.description</description>
+    </wizard>
       <wizard
             name="%ExportWizards.FileSystem"
             icon="icons/full/ctool16/exportdir_wiz.gif"
