@@ -74,7 +74,9 @@ public class DecoratorTableTreeView extends DecoratorTestPart {
 					Object object = elements[i];
 					if (object.equals(TestTreeContentProvider.root))
 						updateHappened = DecoratorViewerTest.treeHit;
+					viewer.refresh(object,true);
 				}
+				
 
 			}
 		};

@@ -135,7 +135,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 		long startTime = System.currentTimeMillis();
 		while (!view.updateHappened) {
 			Display.getCurrent().readAndDispatch();
-			if (System.currentTimeMillis() - startTime < 10000) {
+			if (System.currentTimeMillis() - startTime > 10000) {
 				if (Platform.inDebugMode()) {
 					// After 10 seconds time out
 					Assert.isTrue(false,
