@@ -192,6 +192,12 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 		initializePreferences();
 	}
 	
+	/*
+	 * This method is only for use by the Target Management feature (see bug
+	 * 16509).
+	 * 
+	 * @param t
+	 */
 	public static void handle(Throwable t) {
 		IStatus error = null;
 		if (t instanceof InvocationTargetException) {
