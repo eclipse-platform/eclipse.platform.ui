@@ -579,6 +579,16 @@
             description="%command.deleteNext.description"
             id="org.eclipse.ui.edit.text.deleteNext">
       </command>
+      <command 
+            name="%command.deletePreviousWord.name"
+            description="%command.deletePreviousWord.description"
+            id="org.eclipse.ui.edit.text.deletePreviousWord">
+      </command> 
+      <command
+            name="%command.deleteNextWord.name"
+            description="%command.deleteNextWord.description"
+            id="org.eclipse.ui.edit.text.deleteNextWord">
+      </command> 
       <command
             name="%command.shiftRight.name"
             description="%command.shiftRight.description"
@@ -1862,6 +1872,18 @@
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            string="Alt+BACKSPACE"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.edit.text.deletePreviousWord"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Alt+D"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.edit.text.deletePreviousWord"
+            configuration="org.eclipse.ui.edit.text.deleteNextWord">
+      </keyBinding>
+       <keyBinding
             string="INSERT"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.edit.text.toggleOverwrite"
