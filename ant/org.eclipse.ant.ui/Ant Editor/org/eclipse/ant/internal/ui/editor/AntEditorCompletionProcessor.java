@@ -10,6 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -57,13 +59,20 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.jface.text.templates.DocumentTemplateContext;
+import org.eclipse.jface.text.templates.Template;
+import org.eclipse.jface.text.templates.TemplateContext;
+import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
@@ -78,10 +87,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
  
  	private Comparator proposalComparator= new Comparator() {
 		public int compare(Object o1, Object o2) {
-			AntCompletionProposal p1= (AntCompletionProposal) o1;
-			AntCompletionProposal p2= (AntCompletionProposal) o2;
-			int type1= p1.getType();
-			int type2= p2.getType();
+		    
+			int type1= getProposalType(o1);
+			int type2= getProposalType(o2);
 			if (type1 != type2) {
 				if (type1 > type2) {
 					return 1;
@@ -89,9 +97,16 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 					return -1;
 				}
 			}
-			String string1 = p1.getDisplayString();
-			String string2 = p2.getDisplayString();
+			String string1 = ((ICompletionProposal)o1).getDisplayString();
+			String string2 = ((ICompletionProposal)o2).getDisplayString();
 			return string1.compareToIgnoreCase(string2);
+		}
+		private int getProposalType(Object o){
+		    if(o instanceof AntCompletionProposal){
+		        return ((AntCompletionProposal) o).getType();
+		    } else {
+		    	return AntCompletionProposal.TASK_PROPOSAL;    
+		    }
 		}
  	};
 	
@@ -621,7 +636,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 							proposal = newCompletionProposal(document, prefix, nestedElement);
 							proposals.add(proposal);
 						}
-					}
+			        }
 	        	}
 			}
         }
@@ -631,7 +646,14 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         	proposals.add(proposal);
         }
         
-       return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+        // TODO Templates may define something other than tasks / types
+        // Here we assume that all templates are for tasks / types. I can't 
+        // think of a usecase for templates other than tasks at the moment, but
+        // since users can add templates via the preferences we may need to 
+        // rethink this.
+        proposals.addAll(getTemplateProposals(document, prefix));
+        
+        return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
    }
 
     private void createProposals(IDocument document, String prefix, List proposals, Map tasks) {
@@ -645,8 +667,35 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 			}
 		}
 	}
+    
+    /*
+     * @return a collection of
+     *         {@link org.eclipse.jface.text.templates.TemplateProposal}s
+     */
+    private Collection getTemplateProposals(IDocument document, String prefix) {
 
-	private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
+        List proposals = new ArrayList();
+
+        Point selection = viewer.getSelectedRange();
+        IRegion selectedRegion = new Region(selection.x - (prefix.length() + 1), selection.y + prefix.length() + 1);		
+        
+        TemplateContext templateContext = new DocumentTemplateContext(
+                AntTemplates.CONTEXT, document, selectedRegion.getOffset(), selectedRegion.getLength()); //$NON-NLS-1$
+
+       Template[] templates= AntTemplates.getAntTemplates();
+       TemplateProposal templateProposal;
+       for (int i = 0; i < templates.length; i++) {
+			Template template = templates[i];
+			if (prefix.length() == 0 || template.getName().toLowerCase().startsWith(prefix)) {
+				 templateProposal = new TemplateProposal(template, templateContext, selectedRegion, AntUIImages.getImage(IAntUIConstants.IMG_TEMPLATE_PROPOSAL));
+				 proposals.add(templateProposal);
+			}
+		}
+       
+        return proposals;
+    }
+
+    private ICompletionProposal newCompletionProposal(IDocument document, String aPrefix, String elementName) {
 		additionalProposalOffset= 0;
 		Image proposalImage = AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
 		String proposalInfo = descriptionProvider.getDescriptionForTask(elementName);
@@ -779,7 +828,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
         		Enumeration nested= helper.getNestedElements();
         		return nested.hasMoreElements();
-        	}
+    		}
         }
         return false;
     }

@@ -35,7 +35,8 @@
       <import plugin="org.eclipse.jdt.core"/>
    </requires>
 
-
+   <extension-point id="antTemplates" name="%templatesName" schema="schema/antTemplates.exsd"/>
+   
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -448,4 +449,16 @@
             <description>%commentsColor.description</description>             
 		</colorDefinition>
    </extension>
+   
+    <extension
+      	 point="org.eclipse.ant.ui.antTemplates">
+      <antTemplate
+            name="fileset"
+            description="%filesetTemplate.description"
+            pattern="&lt;fileset dir=&quot;${dir}&quot;&gt;
+		&lt;include name=&quot;${pattern}&quot; /&gt;
+	&lt;/fileset&gt;
+">
+      </antTemplate>
+    </extension>
 </plugin>

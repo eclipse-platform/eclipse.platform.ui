@@ -63,6 +63,7 @@ public interface IAntUIConstants {
 	 * Icon for task proposal.
 	 */
 	public static final String IMG_TASK_PROPOSAL = PLUGIN_ID + ".html_tab_obj"; //$NON-NLS-1$
+	public static final String IMG_TEMPLATE_PROPOSAL= PLUGIN_ID + ".template_obj"; //$NON-NLS-1$
 	
 	// Action images
 	public static final String IMG_REMOVE= PLUGIN_ID + ".remove"; //$NON-NLS-1$
