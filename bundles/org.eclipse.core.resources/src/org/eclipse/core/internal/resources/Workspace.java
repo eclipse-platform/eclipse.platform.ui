@@ -503,20 +503,26 @@ protected void copyTree(IResource source, IPath destination, int depth, boolean 
  * @param depth The depth of the subtree to count
  * @param phantom If true, phantoms are included, otherwise they are ignored.
  */
-public int countResources(IPath root, int depth, boolean phantom) {
-	ResourceInfo info = getResourceInfo(root, phantom, false);
-	if (info == null)
+public int countResources(IPath root, int depth, final boolean phantom) {
+	if (!tree.includes(root))
 		return 0;
-	int total = 1;
-	if (info.getType() == IResource.FILE || depth == IResource.DEPTH_ZERO)
-		return total;
-	if (depth == IResource.DEPTH_ONE)
-		depth = IResource.DEPTH_ZERO;
-	IPath[] children = tree.getChildren(root);
-	for (int i = 0; i < children.length; i++) {
-		total += countResources(children[i], depth, phantom);
+	switch (depth) {
+		case IResource.DEPTH_ZERO:
+			return 1;
+		case IResource.DEPTH_ONE:
+			return 1 + tree.getChildCount(root);
+		case IResource.DEPTH_INFINITE:
+			final int[] count = new int[1];
+			IElementContentVisitor visitor = new IElementContentVisitor() {
+				public void visitElement(ElementTree tree, IPath elementPath, Object elementContents) {
+					if (phantom || !((ResourceInfo)elementContents).isSet(M_PHANTOM))
+						count[0]++;
+				}
+			};
+			new ElementTreeIterator().iterate(tree, visitor, root);
+			return count[0];
 	}
-	return total;
+	return 0;
 }
 /*
  * Creates the given resource in the tree and returns the new resource info object.  
@@ -863,7 +869,7 @@ public PropertyManager getPropertyManager() {
 public ResourceInfo getResourceInfo(IPath path, boolean phantom, boolean mutable) {
 	try {
 		// XXX: sort out how to get the root info in the tree
-		if (path.equals(Path.ROOT))
+		if (path.isRoot())
 			return rootInfo;
 		ResourceInfo result = null;
 		if (!tree.includes(path))
