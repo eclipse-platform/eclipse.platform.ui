@@ -383,7 +383,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	private void setProjectName(File projectFile) {
 
 		//If there is no file or the user has already specified forget it
-		if (projectFile == null || projectNameField.getText().length() > 0)
+		if (projectFile == null)
 			return;
 
 		IPath path = new Path(projectFile.getPath());
