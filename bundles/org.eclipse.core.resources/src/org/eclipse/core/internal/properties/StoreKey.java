@@ -7,6 +7,7 @@ package org.eclipse.core.internal.properties;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.ResourceException;
+import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;
 import java.io.*;
 /**
@@ -53,18 +54,6 @@ public StoreKey(ResourceName resourceName, boolean matchPrefix) throws CoreExcep
 	this.resourceName = resourceName;
 	this.matchPrefix = matchPrefix;
 	initializeBytes();
-}
-/**
- * Convert the string argument to a byte array.
- */
-static String fromUTF8(byte[] b) {
-	String result;
-	try {
-		result = new String(b, "UTF8");
-	} catch (UnsupportedEncodingException e) {
-		result = new String(b);
-	}
-	return result;
 }
 public String getLocalName() {
 	return localName;
@@ -145,7 +134,7 @@ private String readNullTerminated(ByteArrayInputStream stream) throws IOExceptio
 		buffer.write(b);
 		b = stream.read();
 	}
-	return fromUTF8(buffer.toByteArray());
+	return Convert.fromUTF8(buffer.toByteArray());
 }
 public byte[] toBytes() {
 	return value;
@@ -154,20 +143,8 @@ public byte[] toBytes() {
 public String toString() {
 	return new String(toBytes());
 }
-/**
- * Convert the string argument to a byte array.
- */
-static byte[] toUTF8(String s) {
-	byte[] result;
-	try {
-		result = s.getBytes("UTF8");
-	} catch (UnsupportedEncodingException e) {
-		result = s.getBytes();
-	}
-	return result;
-}
 private void writeBytes(ByteArrayOutputStream stream, String value) throws IOException {
-	byte[] bytes = toUTF8(value);
+	byte[] bytes = Convert.toUTF8(value);
 	stream.write(bytes);
 }
 private void writeNullTerminated(ByteArrayOutputStream stream, String value) throws IOException {

@@ -14,9 +14,10 @@ public class XMLWriter extends PrintWriter {
 	protected int tab;
 
 	/* constants */
-	protected static final String XML_VERSION = "<?xml version=\"1.0\"?>";
-public XMLWriter(OutputStream output) {
-	super(output);
+	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+
+public XMLWriter(OutputStream output) throws UnsupportedEncodingException {
+	super(new OutputStreamWriter(output, "UTF8"));
 	tab = 0;
 	println(XML_VERSION);
 }
@@ -73,13 +74,7 @@ private static void appendEscapedChar(StringBuffer buffer, char c) {
 		buffer.append(replacement);
 		buffer.append(';');
 	} else {
-		if ((c >= ' ' && c <= 0x7E) || c == '\n' || c == '\r' || c == '\t') {
-			buffer.append(c);
-		} else {
-			buffer.append("&#");
-			buffer.append(Integer.toString(c));
-			buffer.append(';');
-		}
+		buffer.append(c);
 	}
 }
 public static String getEscaped(String s) {

@@ -9,8 +9,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.indexing.*;
 
 /**
@@ -83,7 +82,7 @@ public long getLastModified() {
 	byte[] lastModifiedBytes = new byte[SIZE_LASTMODIFIED];
 	int position = (key.length - SIZE_KEY_SUFFIX);
 	System.arraycopy(key, position, lastModifiedBytes, 0, SIZE_LASTMODIFIED);
-	return HistoryStore.convertBytesToLong(lastModifiedBytes);
+	return Convert.bytesToLong(lastModifiedBytes);
 }
 public IPath getPath() {
 	byte[] pathBytes = new byte[key.length - SIZE_KEY_SUFFIX];
@@ -102,8 +101,8 @@ public UniversalUniqueIdentifier getUUID() {
  */
 public static byte[] keyPrefixToBytes(IPath path, long lastModified) {
 	// Retrieve byte array representations of values.
-	byte[] pathBytes = path.toString().getBytes();
-	byte[] lastModifiedBytes = HistoryStore.convertLongToBytes(lastModified);
+	byte[] pathBytes = Convert.toUTF8(path.toString());
+	byte[] lastModifiedBytes = Convert.longToBytes(lastModified);
 	// Byte array to hold key prefix.
 	byte[] keyPrefixBytes = new byte[pathBytes.length + lastModifiedBytes.length];
 	// Copy values.

@@ -59,7 +59,7 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 	}
 }
 protected void accept(IPath path, IHistoryStoreVisitor visitor, boolean visitOnPartialMatch) {
-	accept(path.toString().getBytes(), visitor, visitOnPartialMatch);
+	accept(Convert.toUTF8(path.toString()), visitor, visitOnPartialMatch);
 }
 /**
  * Adds state into history log.
@@ -156,52 +156,6 @@ public void clean() {
 	}
 }
 /**
- * Performs conversion of a byte array to a long representation.
- *
- * @param value byte[]
- * @return long
- * @see convertLongToBytes(long).
- */
-public static long convertBytesToLong(byte[] value) {
-
-	long longValue = 0L;
-
-	// See method convertLongToBytes(long) for algorithm details.	
-	for (int i = 0; i < value.length; i++) {
-		// Left shift has no effect thru first iteration of loop.
-		longValue <<= 8;
-		longValue ^= value[i] & 0xFF;
-	}
-
-	return longValue;
-}
-/**
- * Performs conversion of a long value to a byte array representation.
- *
- * @param value long
- * @return byte[]
- * @see convertBytesToLong(byte[]).
- */
-public static byte[] convertLongToBytes(long value) {
-	
-	// A long value is 8 bytes in length.
-	byte[] bytes = new byte[8];
-
-	// Convert and copy value to byte array:
-	//   -- Cast long to a byte to retrieve least significant byte;
-	//   -- Left shift long value by 8 bits to isolate next byte to be converted;
-	//   -- Repeat until all 8 bytes are converted (long = 64 bits).
-	// Note: In the byte array, the least significant byte of the long is held in
-	// the highest indexed array bucket.
-	
-	for (int i = 0; i < bytes.length; i++) {
-		bytes[(bytes.length - 1) - i] = (byte) value;
-		value >>>= 8;
-	}
-
-	return bytes;
-}
-/**
  * Verifies existence of specified resource in the history store.
  *
  * @param target File state to be verified.
@@ -269,7 +223,7 @@ public void removeAll() {
 public void removeAll(IResource resource) {
 	try {
 		IndexCursor cursor = store.getCursor();
-		byte[] key = resource.getFullPath().toString().getBytes();
+		byte[] key = Convert.toUTF8(resource.getFullPath().toString());
 		cursor.find(key);
 		while (cursor.keyMatches(key)) {
 			HistoryStoreEntry entry = HistoryStoreEntry.create(store, cursor);
