@@ -12,8 +12,6 @@ package org.eclipse.update.internal.ui;
 
 import java.net.URLEncoder;
 
-import org.eclipse.update.internal.ui.preferences.AppServerPreferencePage;
-
 
 /**
  * This is a utility class used find information about the update
