@@ -12,6 +12,9 @@ package org.eclipse.ui;
 
 /**
  * Represents the layout info for a view or placeholder in an {@link IPageLayout}.
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @since 3.0
  */
