@@ -30,7 +30,6 @@ public class CVSDecoratorConfiguration {
 	public static final String READ_ONLY_FLAG = "read_only_flag"; //$NON-NLS-1$
 	public static final String DEFAULT_DIRTY_FLAG = ">"; //$NON-NLS-1$
 	public static final String DEFAULT_ADDED_FLAG = "*"; //$NON-NLS-1$
-	public static final String DEFAULT_READ_ONLY_FLAG = "^"; //$NON-NLS-1$
 	
 	// default text decoration formats
 	public static final String DEFAULT_FILETEXTFORMAT = "{dirty_flag}{name}  {revision} {tag} ({keyword})"; //$NON-NLS-1$

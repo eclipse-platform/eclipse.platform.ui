@@ -54,10 +54,11 @@ public class CVSLightweightDecorator
 	// Images cached for better performance
 	private static ImageDescriptor dirty;
 	private static ImageDescriptor checkedIn;
-	private static ImageDescriptor checkedOut;
+	private static ImageDescriptor noRemoteDir;
+	private static ImageDescriptor added;
 	private static ImageDescriptor merged;
 	private static ImageDescriptor newResource;
-	private static ImageDescriptor readOnlyFile;
+	private static ImageDescriptor edited;
 
 	/*
 	 * Define a cached image descriptor which only creates the image data once
@@ -79,11 +80,11 @@ public class CVSLightweightDecorator
 	static {
 		dirty = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
 		checkedIn = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
-		//checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR));
-		checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
+		added = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
 		merged = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGED));
 		newResource = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE));
-		readOnlyFile = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_READ_ONLY));
+		edited = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_EDITED));
+		noRemoteDir = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NO_REMOTEDIR));
 	}
 
 	public CVSLightweightDecorator() {
@@ -251,8 +252,6 @@ public class CVSLightweightDecorator
 					} else {
 						if(showRevisions)
 							bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
-						if (resource.isReadOnly())
-							bindings.put(CVSDecoratorConfiguration.READ_ONLY_FLAG, store.getString(ICVSUIConstants.PREF_READ_ONLY_FLAG));
 					}
 					KSubstOption option = fileInfo.getKeywordMode() != null ?
 						fileInfo.getKeywordMode() :
@@ -370,7 +369,8 @@ public class CVSLightweightDecorator
 						return merged;
 					// show added icon if file has been added locally.
 					} else if (info != null && info.isAdded()) {
-						return checkedOut;
+						// todo
+						return added;
 					}
 				}
 			} catch (CVSException e) {
@@ -379,16 +379,29 @@ public class CVSLightweightDecorator
 			}
 		}
 
-		boolean showReadOnly = store.getBoolean(ICVSUIConstants.PREF_SHOW_READ_ONLY_DECORATION);
+		// if watch/edit is enabled, show non-read-only files as being edited
+		boolean decorateEdited = store.getBoolean(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY);
 		
-		if (showReadOnly && resource.getType() == IResource.FILE && resource.isReadOnly() && CVSWorkspaceRoot.hasRemote(resource)) {
-			return readOnlyFile;
+		if (decorateEdited && resource.getType() == IResource.FILE && !resource.isReadOnly() && CVSWorkspaceRoot.hasRemote(resource)) {
+			return edited;
 		}
 		
 		boolean showHasRemote = store.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION);
 		
 		// Simplest is that is has remote.
 		if (showHasRemote && CVSWorkspaceRoot.hasRemote(resource)) {
+			if (resource.getType() != IResource.FILE) {
+				// check if the folder is local diectory with no remote
+				ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
+				try {
+					if (cvsFolder.getFolderSyncInfo().getRepository().equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
+						return noRemoteDir;
+					}
+				} catch (CVSException e) {
+					// log the exception and show the shared overlay
+					CVSUIPlugin.log(e);
+				}
+			}
 			return checkedIn;
 		}
 
