@@ -46,7 +46,7 @@
 	</target>
 
 	<target name="clean" depends="init">
-		<delete file="${build.result.folder}/lib/antrunner.jar"/>
+		<delete file="${build.result.folder}/lib/antbuilder.jar"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
