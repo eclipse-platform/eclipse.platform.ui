@@ -10,8 +10,6 @@ Contributors:
 **********************************************************************/
 
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 
 /**
  * Represents the API for a group of visual components
@@ -22,14 +20,6 @@ import org.eclipse.swt.widgets.Button;
  * </p>
  */
 public interface IGroupDialogPage extends IMessageProvider {
-	/**
-	 * Sets the <code>GridData</code> on the specified button to
-	 * be one that is spaced for the current dialog page units.
-	 * 
-	 * @param button the button to set the <code>GridData</code>
-	 * @return the <code>GridData</code> set on the specified button
-	 */
-	public GridData setButtonGridData(Button button);
 
 	/**
 	 * Sets the message for this page with an indication of what type
@@ -51,12 +41,4 @@ public interface IGroupDialogPage extends IMessageProvider {
 	 * update to reflect the new state.
 	 */
 	public void updateValidState();
-	
-	/**
-	 * Converts a height in characters to a height in pixels.
-	 * 
-	 * @param chars the height in characters to be converted
-	 * @return the corresponding height in pixels
-	 */
-	public int convertHeightHint(int chars);
 }

@@ -5,8 +5,6 @@ Copyright (c) 2002 IBM Corp. and others. All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
- 
-Contributors:
 **********************************************************************/
 
 import org.eclipse.core.resources.IResource;
@@ -84,7 +82,7 @@ public class ResourceComponent implements IVariableComponent {
 	/**
 	 * Creates the list of resources.
 	 */
-	protected void createResourceList() {
+	private void createResourceList() {
 		Tree tree = new Tree(mainGroup, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = tree.getItemHeight() * getInitialVisibleItemCount();
@@ -96,6 +94,7 @@ public class ResourceComponent implements IVariableComponent {
 			public void selectionChanged(SelectionChangedEvent event) {
 				validateResourceListSelection();
 				selectedResource= (IResource) ((IStructuredSelection)event.getSelection()).getFirstElement();
+				page.updateValidState();
 			}
 		});
 		resourceList.setContentProvider(new WorkbenchContentProvider());
@@ -107,7 +106,7 @@ public class ResourceComponent implements IVariableComponent {
 	 * Creates the option button for using the selected
 	 * resource.
 	 */
-	protected void createSelectedResourceOption() {
+	private void createSelectedResourceOption() {
 		selectedResourceButton = new Button(mainGroup, SWT.RADIO);
 		selectedResourceButton.setText(ExternalToolsVariableMessages.getString("ResourceComponent.selectedResLabel")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -120,7 +119,7 @@ public class ResourceComponent implements IVariableComponent {
 	 * Creates the option button for using a specific
 	 * resource.
 	 */
-	protected void createSpecificResourceOption() {
+	private void createSpecificResourceOption() {
 		specificResourceButton = new Button(mainGroup, SWT.RADIO);
 		specificResourceButton.setText(ExternalToolsVariableMessages.getString("ResourceComponent.specificResLabel")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -131,6 +130,7 @@ public class ResourceComponent implements IVariableComponent {
 		specificResourceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateResourceListEnablement();
+				page.updateValidState();
 			}
 		});
 	}
@@ -145,7 +145,7 @@ public class ResourceComponent implements IVariableComponent {
 	/**
 	 * Returns the dialog page this component is part of
 	 */
-	protected final IGroupDialogPage getPage() {
+	private final IGroupDialogPage getPage() {
 		return page;
 	}
 	
@@ -170,7 +170,7 @@ public class ResourceComponent implements IVariableComponent {
 	 * Returns the number of items to be visible in the
 	 * resource list. This will determine the initial height.
 	 */
-	protected int getInitialVisibleItemCount() {
+	private int getInitialVisibleItemCount() {
 		return 10;
 	}
 	
@@ -189,7 +189,7 @@ public class ResourceComponent implements IVariableComponent {
 	 * @param isValid <code>true</code> if all values valid,
 	 * 		<code>false</code> otherwise
 	 */
-	protected final void setIsValid(boolean isValid) {
+	private final void setIsValid(boolean isValid) {
 		if (this.isValid != isValid) {
 			this.isValid = isValid;
 			this.page.updateValidState();
@@ -199,7 +199,7 @@ public class ResourceComponent implements IVariableComponent {
 	/**
 	 * Updates the enablement of the resource list if needed
 	 */
-	protected void updateResourceListEnablement() {
+	private void updateResourceListEnablement() {
 		if (specificResourceButton != null && resourceList != null) {
 			resourceList.getTree().setEnabled(specificResourceButton.getSelection());
 		}
@@ -257,9 +257,10 @@ public class ResourceComponent implements IVariableComponent {
 	 * @return <code>true</code> to continue validating other
 	 * 	fields, <code>false</code> to stop.
 	 */
-	protected boolean validateResourceListSelection() {
-		if (resourceList == null)
+	private boolean validateResourceListSelection() {
+		if (resourceList == null) {
 			return true;
+		}
 
 		if (resourceList.getSelection().isEmpty()) {
 			getPage().setMessage(ExternalToolsVariableMessages.getString("ResourceComponent.selectionRequired"), IMessageProvider.WARNING); //$NON-NLS-1$

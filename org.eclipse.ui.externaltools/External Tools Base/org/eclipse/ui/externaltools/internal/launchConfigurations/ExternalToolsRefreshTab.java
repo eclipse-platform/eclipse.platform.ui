@@ -60,7 +60,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * 
 	 * @param parent the composite to create the controls in
 	 */
-	protected void createRecursiveComponent(Composite parent) {
+	private void createRecursiveComponent(Composite parent) {
 		recursiveField = new Button(parent, SWT.CHECK);
 		recursiveField.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Recursively_&include_sub-folders_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -79,7 +79,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * 
 	 * @param parent the composite to create the controls in
 	 */
-	protected void createRefreshComponent(Composite parent) {
+	private void createRefreshComponent(Composite parent) {
 		refreshField = new Button(parent, SWT.CHECK);
 		refreshField.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.&Refresh_resources_after_running_tool_1")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -99,7 +99,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * 
 	 * @param parent the composite to create the controls in
 	 */
-	protected void createScopeComponent(Composite parent) {
+	private void createScopeComponent(Composite parent) {
 		String label = ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Choose_scope_v&ariable___2"); //$NON-NLS-1$
 		ExternalToolVariable[] vars = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry().getVariables();
 		variableForm = new ExternalToolVariableForm(label, vars);
@@ -193,7 +193,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	/**
 	 * Updates the enablement state of the fields.
 	 */
-	protected void updateEnabledState() {
+	private void updateEnabledState() {
 		if (refreshField != null) {
 			if (recursiveField != null) {
 				recursiveField.setEnabled(refreshField.getSelection());
@@ -202,19 +202,6 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 				variableForm.setEnabled(refreshField.getSelection());
 			}
 		}
-	}
-	/**
-	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#convertHeightHint(int)
-	 */
-	public int convertHeightHint(int chars) {
-		return 0;
-	}
-
-	/**
-	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#setButtonGridData(org.eclipse.swt.widgets.Button)
-	 */
-	public GridData setButtonGridData(Button button) {
-		return null;
 	}
 
 	/**

@@ -579,24 +579,11 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 			ExternalToolVariable[] variables= ExternalToolsPlugin.getDefault().getToolVariableRegistry().getVariables();
 			form= new ExternalToolVariableForm(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Choose_a_variable__11"), variables); //$NON-NLS-1$
 			form.createContents(composite, new IGroupDialogPage() {
-				public GridData setButtonGridData(Button button) {
-					GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-					data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-					int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-					data.widthHint = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-					button.setLayoutData(data);
-					return data;
-				}
-
 				public void setMessage(String newMessage, int newType) {
 					VariableSelectionDialog.this.setMessage(newMessage);
 				}
 
 				public void updateValidState() {
-				}
-
-				public int convertHeightHint(int chars) {
-					return convertHeightInCharsToPixels(chars);
 				}
 
 				public String getMessage() {
