@@ -303,7 +303,7 @@ public interface IEclipsePreferences extends Preferences {
 	 * @return the node
 	 * @see org.osgi.service.prefs.Preferences#node(String)
 	 */
-	public Preferences node(String name);
+	public Preferences node(String path);
 
 	/**
 	 * Accepts the given visitor. The visitor's <code>visit</code> method 
@@ -311,7 +311,7 @@ public interface IEclipsePreferences extends Preferences {
 	 * this method visits this node's children.
 	 *
 	 * @param visitor the visitor
-	 * @see IPreferenceNodeVisitor#visit
+	 * @see IPreferenceNodeVisitor#visit(IEclipsePreferences)
 	 * @throws BackingStoreException
 	 */
 	public void accept(IPreferenceNodeVisitor visitor) throws BackingStoreException;

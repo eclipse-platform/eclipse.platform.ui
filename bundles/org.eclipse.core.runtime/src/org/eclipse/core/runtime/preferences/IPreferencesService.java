@@ -290,7 +290,7 @@ public interface IPreferencesService {
 	 * @return a status object describing success or detailing failure reasons
 	 * @throws CoreException if there was a problem exporting the preferences
 	 * @throws IllegalArgumentException if the node or stream is <code>null</code>
-	 * @see #importPreferences(java.io.OutputStream)
+	 * @see #importPreferences(java.io.InputStream)
 	 * @see #readPreferences(InputStream)
 	 */
 	public IStatus exportPreferences(IEclipsePreferences node, OutputStream output, String[] excludesList) throws CoreException;
@@ -310,7 +310,7 @@ public interface IPreferencesService {
 	 * @return a status object describing success or detailing failure reasons
 	 * @throws CoreException if there are problems importing the preferences
 	 * @throws IllegalArgumentException if the stream is <code>null</code>
-	 * @see exportPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.io.OutputStream, java.lang.String[])
+	 * @see #exportPreferences(IEclipsePreferences, OutputStream, String[])
 	 */
 	public IStatus importPreferences(InputStream input) throws CoreException;
 

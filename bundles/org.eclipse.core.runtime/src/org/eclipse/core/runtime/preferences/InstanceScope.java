@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
  * The path for preferences defined in the instance scope hierarchy
  * is as follows: <code>/instance/&lt;qualifier&gt;</code>
  * </p>
- * @see IPlatform#getInstanceLocation()
+ * @see org.eclipse.core.runtime.IPlatform#getInstanceLocation()
  * @since 3.0
  */
 public class InstanceScope extends AbstractScope {
