@@ -125,16 +125,6 @@ public class NewWizardAction
 		IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
 		if (selection instanceof IStructuredSelection) {
 			selectionToPass = (IStructuredSelection) selection;
-		} else {
-// @issue this code needs to be pushed down to particular new wizards
-//			// Build the selection from the IFile of the editor
-//			IWorkbenchPart part = workbenchWindow.getPartService().getActivePart();
-//			if (part instanceof IEditorPart) {
-//				IEditorInput input = ((IEditorPart) part).getEditorInput();
-//				if (input instanceof IFileEditorInput) {
-//					selectionToPass = new StructuredSelection(((IFileEditorInput) input).getFile());
-//				}
-//			}
 		}
 
 		wizard.init(workbenchWindow.getWorkbench(), selectionToPass);
