@@ -50,7 +50,7 @@ BODY {
 
 TABLE {
 	font: icon;
-	background:Window;
+	background:ButtonFace;
 	margin:0;
 	border-right:1px solid black;
 	padding:0;
@@ -58,7 +58,7 @@ TABLE {
 }
 
 FORM {
-	background:Window;
+	background:ButtonFace;
 	margin:0;
 }
 

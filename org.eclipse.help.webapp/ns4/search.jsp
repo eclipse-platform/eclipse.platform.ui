@@ -22,7 +22,7 @@
 
 
 BODY {
-	background-color:#ffffff; /*#D4D0C8;*/
+	background-color:#D4D0C8;
 	text:white;
 	height:100%;
 	width:100%;
@@ -30,7 +30,7 @@ BODY {
 
 TABLE {
 	font: 8pt Tahoma;
-	background:#ffffff;
+	background:#D4D0C8;
 	margin:0;
 	border:1px solid black;
 	padding:0;
