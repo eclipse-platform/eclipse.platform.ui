@@ -53,6 +53,7 @@ public class LeakTests extends UITestCase {
             System.gc();
             System.runFinalization();
             Thread.yield();
+            processEvents();
             Reference checkRef = queue.remove(1000);
             if (checkRef != null && checkRef.equals(ref)) {
                 flag = true;
