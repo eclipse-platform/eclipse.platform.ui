@@ -8,61 +8,31 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.tests.performance;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.test.performance.PerformanceTestCase;
-import org.eclipse.ui.tests.util.UITestCase;
+
+import junit.framework.TestCase;
 
 /**
- * Baseclass for simple performance tests.
- * 
  * @since 3.1
  */
-public abstract class BasicPerformanceTest extends UITestCase {
+public final class PerformanceTester {
 
-	private PerformanceTester tester;
-    private IProject testProject;
+	protected PerformanceMeter performanceMeter;
 
-    /**
-     * @param testName
-     */
-    public BasicPerformanceTest(String testName) {
-        super(testName);
-    }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
+	/**
+	 *  
 	 */
-	protected void doSetUp() throws Exception {
-	    super.doSetUp();
-	    
-	    fWorkbench.getActiveWorkbenchWindow().getActivePage().setPerspective(
-                fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(
-                        UIPerformanceTestSetup.PERSPECTIVE));
-	    
-	    tester = new PerformanceTester(this);
+	public PerformanceTester(TestCase testCase) {
+		Performance performance = Performance.getDefault();
+		performanceMeter = performance.createPerformanceMeter(performance
+				.getDefaultScenarioId(testCase));
+
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
-	 */
-	protected void doTearDown() throws Exception {
-	    super.doTearDown();
-	    tester.dispose();
-	}
-	
-	protected IProject getProject() {
-	    if (testProject == null) {
-	        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	        testProject = workspace.getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
-	    }
-	    return testProject;
-	}	
 
 	/**
 	 * Asserts default properties of the measurements captured for this test
@@ -72,7 +42,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *             if the properties do not hold
 	 */
 	public void assertPerformance() {
-		tester.assertPerformance();
+		Performance.getDefault().assertPerformance(performanceMeter);
 	}
 
 	/**
@@ -93,11 +63,16 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	public void assertPerformanceInRelativeBand(Dimension dim,
 			int lowerPercentage, int upperPercentage) {
-		tester.assertPerformanceInRelativeBand(dim, lowerPercentage, upperPercentage);
+		Performance.getDefault().assertPerformanceInRelativeBand(
+				performanceMeter, dim, lowerPercentage, upperPercentage);
 	}
 
 	public void commitMeasurements() {
-		tester.commitMeasurements();
+		performanceMeter.commit();
+	}
+
+	public void dispose() {
+		performanceMeter.dispose();
 	}
 
 	/**
@@ -107,11 +82,11 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * this method or {@link PerformanceTestCase#commitMeasurements()}.
 	 */
 	public void startMeasuring() {
-		tester.startMeasuring();
+		performanceMeter.start();
 	}
 
 	public void stopMeasuring() {
-		tester.stopMeasuring();
+		performanceMeter.stop();
 	}
 
 	/**
@@ -126,7 +101,9 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            the dimension to show in the summary
 	 */
 	public void tagAsGlobalSummary(String shortName, Dimension dimension) {
-		tester.tagAsGlobalSummary(shortName, dimension);
+		Performance performance = Performance.getDefault();
+		performance.tagAsGlobalSummary(performanceMeter, shortName,
+				new Dimension[] { dimension });
 	}
 
 	/**
@@ -141,7 +118,9 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            an array of dimensions to show in the summary
 	 */
 	public void tagAsGlobalSummary(String shortName, Dimension[] dimensions) {
-		tester.tagAsGlobalSummary(shortName, dimensions);
+		Performance performance = Performance.getDefault();
+		performance
+				.tagAsGlobalSummary(performanceMeter, shortName, dimensions);
 	}
-	
+
 }
