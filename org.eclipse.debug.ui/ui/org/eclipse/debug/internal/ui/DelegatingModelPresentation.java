@@ -418,7 +418,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 			StringBuffer buff= new StringBuffer(config.getName());
 			buff.append(" ["); //$NON-NLS-1$
 			try {
-				buff.append(getText(config.getType().getName()));
+				buff.append(config.getType().getName());
 			} catch (CoreException e) {
 				//XXX: unknown configuration type
 			}
