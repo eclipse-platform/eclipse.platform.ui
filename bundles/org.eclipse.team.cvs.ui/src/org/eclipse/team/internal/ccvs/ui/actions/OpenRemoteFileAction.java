@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -22,6 +22,9 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
@@ -67,11 +70,22 @@ public class OpenRemoteFileAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				IWorkbenchPage page = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				IWorkbench workbench = CVSUIPlugin.getPlugin().getWorkbench();
+				IEditorRegistry registry = workbench.getEditorRegistry();
+				IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				for (int i = 0; i < files.length; i++) {
+					ICVSRemoteFile file = files[i];
+					String filename = file.getName();
+					IEditorDescriptor descriptor = registry.getDefaultEditor(filename);
+					String id;
+					if (descriptor == null) {
+						id = "org.eclipse.ui.DefaultTextEditor";
+					} else {
+						id = descriptor.getId();
+					}
 					try {
-						page.openEditor(new RemoteFileEditorInput(files[i]), "org.eclipse.ui.DefaultTextEditor");
+						page.openEditor(new RemoteFileEditorInput(files[i]), id);
 					} catch (PartInitException e) {
 						throw new InvocationTargetException(e);
 					}
