@@ -310,7 +310,10 @@ public class AntEditor extends TextEditor {
 	 * @return the source viewer
 	 */
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		return new StatusLineSourceViewer(parent, ruler, styles);
+		ISourceViewer viewer= new StatusLineSourceViewer(parent, ruler, styles);
+		//ensure decoration support has been created and configured.
+		getSourceViewerDecorationSupport(viewer);
+		return viewer;
 	}
 	
 	/**
