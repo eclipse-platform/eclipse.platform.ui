@@ -244,6 +244,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		try {
 			randomAccessFile = new RandomAccessFile(applicationLockFile, "rw");
 			applicationLock = randomAccessFile.getChannel().tryLock();
+		} catch (IOException ioe) {
 		} finally {
 			if (applicationLock != null) {
 				try {
@@ -261,8 +262,8 @@ public class EclipseController implements EclipseLifeCycleListener {
 				System.out.println(
 					"isApplicationRunning? " + (applicationLock == null));
 			}
-			return applicationLock == null;
 		}
+		return applicationLock == null;
 	}
 	public class EclipseCleaner extends Thread {
 		public void run() {

@@ -15,9 +15,8 @@ import java.net.*;
 import java.nio.channels.*;
 
 /**
- * This program is used to start or stop Eclipse
- * Infocenter application.
- * It should be launched from command line.
+ * This program is used to start or stop Eclipse Infocenter application. It
+ * should be launched from command line.
  */
 public class EclipseController implements EclipseLifeCycleListener {
 
@@ -37,13 +36,15 @@ public class EclipseController implements EclipseLifeCycleListener {
 	private boolean eclipseEnded = false;
 	/**
 	 * Constructs help system
-	 * @param applicationID ID of Eclipse help application
-	 * @param args array of String options and their values
-	 * 	Option <code>-eclipseHome dir</code> specifies Eclipse
-	 *  installation directory.
-	 *  It must be provided, when current directory is not the same
-	 *  as Eclipse installation directory.
-	 *  Additionally, most options accepted by Eclipse execuable are supported.
+	 * 
+	 * @param applicationID
+	 *           ID of Eclipse help application
+	 * @param args
+	 *           array of String options and their values Option <code>-eclipseHome dir</code>
+	 *           specifies Eclipse installation directory. It must be provided,
+	 *           when current directory is not the same as Eclipse installation
+	 *           directory. Additionally, most options accepted by Eclipse
+	 *           execuable are supported.
 	 */
 	public EclipseController(String applicationId, String[] args) {
 
@@ -81,10 +82,9 @@ public class EclipseController implements EclipseLifeCycleListener {
 	}
 
 	/**
-	 * Ensures the application is running, and sends command
-	 * to the control servlet.
-	 * If connection fails, retries several times,
-	 * in case webapp is starting up.
+	 * Ensures the application is running, and sends command to the control
+	 * servlet. If connection fails, retries several times, in case webapp is
+	 * starting up.
 	 */
 	protected final synchronized void sendHelpCommand(
 		String command,
@@ -178,10 +178,14 @@ public class EclipseController implements EclipseLifeCycleListener {
 	}
 
 	/**
-	 * Builds a URL that communicates the specified command
-	 * to help control servlet.
-	 * @param command standalone help system command e.g. "displayHelp"
-	 * @param parameters array of parameters of the command e.g. {"http://www.eclipse.org"}
+	 * Builds a URL that communicates the specified command to help control
+	 * servlet.
+	 * 
+	 * @param command
+	 *           standalone help system command e.g. "displayHelp"
+	 * @param parameters
+	 *           array of parameters of the command e.g.
+	 *           {"http://www.eclipse.org"}
 	 */
 	private URL createCommandURL(String command, String[] parameters)
 		throws MalformedURLException {
@@ -233,8 +237,9 @@ public class EclipseController implements EclipseLifeCycleListener {
 			}
 		}
 	}
-	/** Tests whether HelpApplication is running
-	 * by testing if .applicationlock is locked
+	/**
+	 * Tests whether HelpApplication is running by testing if .applicationlock
+	 * is locked
 	 */
 	private boolean isApplicationRunning() {
 		File applicationLockFile =
@@ -244,6 +249,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		try {
 			randomAccessFile = new RandomAccessFile(applicationLockFile, "rw");
 			applicationLock = randomAccessFile.getChannel().tryLock();
+		} catch (IOException ioe) {
 		} finally {
 			if (applicationLock != null) {
 				try {
@@ -261,8 +267,8 @@ public class EclipseController implements EclipseLifeCycleListener {
 				System.out.println(
 					"isApplicationRunning? " + (applicationLock == null));
 			}
-			return applicationLock == null;
 		}
+		return applicationLock == null;
 	}
 	public class EclipseCleaner extends Thread {
 		public void run() {
