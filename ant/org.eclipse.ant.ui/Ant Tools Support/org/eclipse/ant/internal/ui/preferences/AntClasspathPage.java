@@ -87,7 +87,14 @@ public class AntClasspathPage implements IAntBlockContainer {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		model= new ClasspathModel();
 		model.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
-		model.setGlobalEntries(new IAntClasspathEntry[] {prefs.getToolsJarEntry()});
+		IAntClasspathEntry toolsEntry= prefs.getToolsJarEntry();
+		IAntClasspathEntry[] additionalEntries;
+		if (toolsEntry == null) {
+			additionalEntries= new IAntClasspathEntry[0];
+		} else {
+			additionalEntries= new IAntClasspathEntry[] {toolsEntry};
+		}
+		model.setGlobalEntries(additionalEntries);
 		antClasspathBlock.setInput(model);
 		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome(), false);
 		update();

@@ -203,7 +203,14 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected void restorePreferenceDefaults() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		prefs.setAdditionalClasspathEntries(new IAntClasspathEntry[] {prefs.getToolsJarEntry()});
+		IAntClasspathEntry toolsEntry= prefs.getToolsJarEntry();
+		IAntClasspathEntry[] additionalEntries;
+		if (toolsEntry == null) {
+			additionalEntries= new IAntClasspathEntry[]{};
+		} else {
+			additionalEntries= new IAntClasspathEntry[] {toolsEntry};
+		}
+		prefs.setAdditionalClasspathEntries(additionalEntries);
 		prefs.setAntHomeClasspathEntries(prefs.getDefaultAntHomeEntries());
 		prefs.setCustomTasks(new Task[]{});
 		prefs.setCustomTypes(new Type[]{});
