@@ -29,9 +29,12 @@ public class JobView extends ViewPart {
 	
 	static final String PROPERTY_PREFIX= "org.eclipse.ui.workbench.progress"; //$NON-NLS-1$
 
-	static final String PROPERTY_KEEP= "keep"; //$NON-NLS-1$
-	static final String PROPERTY_GOTO= "goto"; //$NON-NLS-1$
+	/* an property of type URL that specifies the icon to use for this job. */
 	static final String PROPERTY_ICON= "icon"; //$NON-NLS-1$
+	/* this Boolean property controls whether a finished job is kept in the list. */
+	static final String PROPERTY_KEEP= "keep"; //$NON-NLS-1$
+	/* an property of type IAction that is run when link is activated. */
+	static final String PROPERTY_GOTO= "goto"; //$NON-NLS-1$
 
 	/*
 	 * JobsModel change types.
