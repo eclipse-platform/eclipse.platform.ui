@@ -573,10 +573,11 @@ public class AntModel implements IAntModel {
 		fProjectNode.addChildNode(targetNode);
 		fCurrentTargetNode= targetNode;
 		fStillOpenElements.push(targetNode);
-		computeOffset(targetNode, line, column);
 		if (fNodeBeingResolved instanceof AntImportNode) {
 			targetNode.setImportNode(fNodeBeingResolved);
+			targetNode.setExternal(true);
 		}
+		computeOffset(targetNode, line, column);
 	}
 	
 	/* (non-Javadoc)
@@ -615,7 +616,14 @@ public class AntModel implements IAntModel {
 	 */
 	public void addTask(Task newTask, Task parentTask, Attributes attributes, int line, int column) {
 	    if (!canGetTaskInfo()) {
-	        return;
+		    //need to add top level tasks so imports are executed even when 
+	        //the model is not interested in task level resolution
+	        Target owningTarget= newTask.getOwningTarget();
+	        String name= owningTarget.getName();
+	        if (name == null || name.length() != 0 ) {
+	            //not the top level implicit target            
+	            return;
+	        }
 	    }
 		AntTaskNode taskNode= null;
 		if (parentTask == null) {
@@ -775,7 +783,6 @@ public class AntModel implements IAntModel {
 
 	private void computeLength(AntElementNode element, int line, int column) {
 		if (element.isExternal()) {
-			element.setExternalInfo(line, column);
 			return;
 		}
 		try {
@@ -811,7 +818,11 @@ public class AntModel implements IAntModel {
 	}
 	
 	private void computeOffset(AntElementNode element, int line, int column) {
-		if (element.isExternal() || !canGetPositionInfo()) {
+	    if (!canGetPositionInfo()) {
+	        return;
+	    }
+		if (element.isExternal()) {
+		    element.setExternalInfo(line - 1, column);
 			return;
 		}
 		try {
