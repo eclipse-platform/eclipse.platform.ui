@@ -28,49 +28,65 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+
 /**
  * A preference dialog is a hierarchical presentation of preference
  * pages.  Each page is represented by a node in the tree shown
  * on the left hand side of the dialog; when a node is selected, the
  * corresponding page is shown on the right hand side.
  */
-public class PreferenceDialog
-	extends Dialog
-	implements IPreferencePageContainer {
+public class PreferenceDialog extends Dialog implements IPreferencePageContainer {
+
+	/**
+	 * Layout for the page container.
+	 *
+	 */
+	private class PageLayout extends Layout {
+		public Point computeSize(Composite composite, int wHint, int hHint, boolean force) {
+			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
+				return new Point(wHint, hHint);
+			int x = minimumPageSize.x;
+			int y = minimumPageSize.y;
+
+			Control[] children = composite.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				Point size = children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
+				x = Math.max(x, size.x);
+				y = Math.max(y, size.y);
+			}
+			if (wHint != SWT.DEFAULT)
+				x = wHint;
+			if (hHint != SWT.DEFAULT)
+				y = hHint;
+			return new Point(x, y);
+		}
+		public void layout(Composite composite, boolean force) {
+			Rectangle rect = composite.getClientArea();
+			Control[] children = composite.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				children[i].setSize(rect.width, rect.height);
+			}
+		}
+	}
+
+	//The id of the last page that was selected
+	private static String lastPreferenceId = null;
+	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR; //$NON-NLS-1$
+
 	/**
 	 * Title area fields
 	 */
 	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image"; //$NON-NLS-1$
-	public static final String PREF_DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR; //$NON-NLS-1$
-
-	//The id of the last page that was selected
-	private static String lastPreferenceId = null;
 
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif")); //$NON-NLS-1$
 	}
-
-	private Composite titleArea;
-	private CLabel messageLabel;
-	private Label titleImage;
-	private Color titleAreaColor;
-
-	private String message = ""; //$NON-NLS-1$
-	private String errorMessage;
-	private Color normalMsgAreaBackground;
-	private Color errorMsgAreaBackground;
-	private Image messageImage;
-	private Image errorMsgImage;
-	private boolean showingError = false;
-	private Point lastShellSize;
-
+	
 	/**
-	 * Preference store, initially <code>null</code> meaning none.
-	 *
-	 * @see #setPreferenceStore
+	 * The Cancel button.
 	 */
-	private IPreferenceStore preferenceStore;
+	private Button cancelButton;
 
 	/**
 	 * The current preference page, or <code>null</code> if
@@ -79,31 +95,12 @@ public class PreferenceDialog
 	private IPreferencePage currentPage;
 
 	/**
-	 * The preference manager.
+	 * The current tree item.
 	 */
-	private PreferenceManager preferenceManager;
-
-	/**
-	 * The Composite in which a page is shown.
-	 */
-	private Composite pageContainer;
-
-	/**
-	 * The minimum page size; 400 by 400 by default.
-	 *
-	 * @see #setMinimumPageSize
-	 */
-	private Point minimumPageSize = new Point(400, 400);
-
-	/**
-	 * The OK button.
-	 */
-	private Button okButton;
-
-	/**
-	 * The Cancel button.
-	 */
-	private Button cancelButton;
+	private TreeItem currentTreeItem;
+	private String errorMessage;
+	private Color errorMsgAreaBackground;
+	private Image errorMsgImage;
 
 	/**
 	 * The Help button; <code>null</code> if none.
@@ -116,53 +113,51 @@ public class PreferenceDialog
 	 * @see #setHelpAvailable
 	 */
 	private boolean isHelpAvailable = false;
+	private Point lastShellSize;
+
+	private String message = ""; //$NON-NLS-1$
+	private Image messageImage;
+	private CLabel messageLabel;
+
+	/**
+	 * The minimum page size; 400 by 400 by default.
+	 *
+	 * @see #setMinimumPageSize
+	 */
+	private Point minimumPageSize = new Point(400, 400);
+	private Color normalMsgAreaBackground;
+
+	/**
+	 * The OK button.
+	 */
+	private Button okButton;
+
+	/**
+	 * The Composite in which a page is shown.
+	 */
+	private Composite pageContainer;
+
+	/**
+	 * The preference manager.
+	 */
+	private PreferenceManager preferenceManager;
+
+	/**
+	 * Preference store, initially <code>null</code> meaning none.
+	 *
+	 * @see #setPreferenceStore
+	 */
+	private IPreferenceStore preferenceStore;
+	private boolean showingError = false;
+
+	private Composite titleArea;
+	private Color titleAreaColor;
+	private Label titleImage;
 
 	/**
 	 * The tree control.
 	 */
 	private Tree tree;
-
-	/**
-	 * The current tree item.
-	 */
-	private TreeItem currentTreeItem;
-
-	/**
-	 * Layout for the page container.
-	 *
-	 */
-	private class PageLayout extends Layout {
-		public void layout(Composite composite, boolean force) {
-			Rectangle rect = composite.getClientArea();
-			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				children[i].setSize(rect.width, rect.height);
-			}
-		}
-		public Point computeSize(
-			Composite composite,
-			int wHint,
-			int hHint,
-			boolean force) {
-			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-				return new Point(wHint, hHint);
-			int x = minimumPageSize.x;
-			int y = minimumPageSize.y;
-
-			Control[] children = composite.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				Point size =
-					children[i].computeSize(SWT.DEFAULT, SWT.DEFAULT, force);
-				x = Math.max(x, size.x);
-				y = Math.max(y, size.y);
-			}
-			if (wHint != SWT.DEFAULT)
-				x = wHint;
-			if (hHint != SWT.DEFAULT)
-				y = hHint;
-			return new Point(x, y);
-		}
-	}
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference 
@@ -176,6 +171,7 @@ public class PreferenceDialog
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		preferenceManager = manager;
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
@@ -198,15 +194,13 @@ public class PreferenceDialog
 				}
 		}
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
 	protected void cancelPressed() {
 		// Inform all pages that we are cancelling
-		Iterator nodes =
-			preferenceManager
-				.getElements(PreferenceManager.PRE_ORDER)
-				.iterator();
+		Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		while (nodes.hasNext()) {
 			final IPreferenceNode node = (IPreferenceNode) nodes.next();
 			if (node.getPage() != null) {
@@ -222,6 +216,15 @@ public class PreferenceDialog
 		setReturnCode(CANCEL);
 		close();
 	}
+
+	/**
+	 * Clear the last selected node. This is so that we not chache
+	 * the last selection in case of an error.
+	 */
+	void clearSelectedNode() {
+		setSelectedNodePreference(null);
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Window.
 	 */
@@ -234,6 +237,7 @@ public class PreferenceDialog
 		}
 		return super.close();
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Window.
 	 */
@@ -248,6 +252,7 @@ public class PreferenceDialog
 			}
 		});
 	}
+	
 	/*(non-Javadoc)
 	 * Method declared on Window.
 	 */
@@ -257,33 +262,22 @@ public class PreferenceDialog
 		if (lastShellSize == null)
 			lastShellSize = getShell().getSize();
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
-		okButton =
-			createButton(
-				parent,
-				IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL,
-				true);
+		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		getShell().setDefaultButton(okButton);
 		cancelButton =
-			createButton(
-				parent,
-				IDialogConstants.CANCEL_ID,
-				IDialogConstants.CANCEL_LABEL,
-				false);
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		if (isHelpAvailable) {
 			helpButton =
-				createButton(
-					parent,
-					IDialogConstants.HELP_ID,
-					IDialogConstants.HELP_LABEL,
-					false);
+				createButton(parent, IDialogConstants.HELP_ID, IDialogConstants.HELP_LABEL, false);
 		}
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
@@ -299,6 +293,7 @@ public class PreferenceDialog
 		});
 		return control[0];
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
@@ -339,6 +334,7 @@ public class PreferenceDialog
 
 		return composite;
 	}
+	
 	/**
 	 * Creates the inner page container.
 	 */
@@ -347,6 +343,7 @@ public class PreferenceDialog
 		result.setLayout(new PageLayout());
 		return result;
 	}
+	
 	/**
 	 * Creates the wizard's title area.
 	 *
@@ -374,8 +371,7 @@ public class PreferenceDialog
 		titleArea.setLayoutData(layoutData);
 		titleArea.setBackground(background);
 
-		final Color borderColor =
-			new Color(titleArea.getDisplay(), ViewForm.borderOutsideRGB);
+		final Color borderColor = new Color(titleArea.getDisplay(), ViewForm.borderOutsideRGB);
 
 		titleArea.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
@@ -404,8 +400,7 @@ public class PreferenceDialog
 		messageLabel.setText(" "); //$NON-NLS-1$
 		messageLabel.setFont(JFaceResources.getBannerFont());
 
-		final IPropertyChangeListener fontListener =
-			new IPropertyChangeListener() {
+		final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (JFaceResources.BANNER_FONT.equals(event.getProperty()))
 					updateMessage();
@@ -454,6 +449,12 @@ public class PreferenceDialog
 		eventAdapter.addPostSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent event) {
 				BusyIndicator.showWhile(tree.getDisplay(), new Runnable() {
+
+					private void handleError() {
+						showPageFlippingAbortDialog();
+						selectCurrentPageAgain();
+						clearSelectedNode();
+					}
 					public void run() {
 						Object data = event.item.getData();
 						if (data instanceof IPreferenceNode) {
@@ -470,12 +471,6 @@ public class PreferenceDialog
 							// Keep focus in tree.  See bugs 2692, 2621, and 6775.
 							tree.setFocus();
 						}
-					}
-
-					private void handleError() {
-						showPageFlippingAbortDialog();
-						selectCurrentPageAgain();
-						clearSelectedNode();
 					}
 				});
 			}
@@ -506,6 +501,7 @@ public class PreferenceDialog
 			createTreeItemFor(tree, subnodes[i]);
 		}
 	}
+	
 	/**
 	 * Creates a TreeItem structure that reflects to the page hierarchy.
 	 */
@@ -528,6 +524,46 @@ public class PreferenceDialog
 			createTreeItemFor(item, subnodes[i]);
 		}
 	}
+
+	/**
+	 * Find the TreeItem that has data the same id as the nodeId.
+	 * Search the children recursively.
+	 * @return TreeItem or null if not found.
+	 */
+	private TreeItem findNodeMatching(TreeItem[] items, String nodeId) {
+
+		for (int i = 0; i < items.length; i++) {
+			Object data = items[i].getData();
+			if (data instanceof IPreferenceNode) {
+				if (((IPreferenceNode) data).getId().equals(nodeId))
+					return items[i];
+				else {
+					TreeItem selectedChild = findNodeMatching(items[i].getItems(), nodeId);
+					if (selectedChild != null)
+						return selectedChild;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the node that was last selected in the dialog store.
+	 * If there is no match then return the first one,
+	 */
+	private TreeItem getLastSelectedNode(TreeItem[] items) {
+		String lastSelectedNode = getSelectedNodePreference();
+
+		if (lastSelectedNode == null)
+			return items[0];
+
+		TreeItem selectedItem = findNodeMatching(items, lastSelectedNode);
+		if (selectedItem == null)
+			return items[0];
+		else
+			return selectedItem;
+	}
+	
 	/**
 	 * Returns the preference mananger used by this preference dialog.
 	 *
@@ -536,12 +572,21 @@ public class PreferenceDialog
 	public PreferenceManager getPreferenceManager() {
 		return preferenceManager;
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IPreferencePageDialog.
 	 */
 	public IPreferenceStore getPreferenceStore() {
 		return preferenceStore;
 	}
+
+	/**
+	 * Get the name of the selected item preference
+	 */
+	protected String getSelectedNodePreference() {
+		return lastPreferenceId;
+	}
+	
 	/**
 	 * Save the values specified in the pages.
 	 * <p>
@@ -554,17 +599,13 @@ public class PreferenceDialog
 	 * </p>
 	 */
 	protected void handleSave() {
-		Iterator nodes =
-			preferenceManager
-				.getElements(PreferenceManager.PRE_ORDER)
-				.iterator();
+		Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		while (nodes.hasNext()) {
 			IPreferenceNode node = (IPreferenceNode) nodes.next();
 			IPreferencePage page = node.getPage();
 			if (page instanceof PreferencePage) {
 				// Save now in case tbe workbench does not shutdown cleanly
-				IPreferenceStore store =
-					((PreferencePage) page).getPreferenceStore();
+				IPreferenceStore store = ((PreferencePage) page).getPreferenceStore();
 				if (store != null
 					&& store.needsSaving()
 					&& store instanceof IPersistentPreferenceStore) {
@@ -578,6 +619,7 @@ public class PreferenceDialog
 			}
 		}
 	}
+	
 	/**
 	 * Notifies that the window's close button was pressed, 
 	 * the close menu was selected, or the ESCAPE key pressed.
@@ -592,6 +634,7 @@ public class PreferenceDialog
 		// handle the same as pressing cancel
 		cancelPressed();
 	}
+	
 	/**
 	 * Notifies of the pressing of the Help button.
 	 * <p>
@@ -604,6 +647,7 @@ public class PreferenceDialog
 			currentPage.performHelp();
 		}
 	}
+	
 	/**
 	 * Returns whether the current page is valid.
 	 *
@@ -617,6 +661,7 @@ public class PreferenceDialog
 		else
 			return currentPage.isValid();
 	}
+	
 	/**
 	 * The preference dialog implementation of this <code>Dialog</code>
 	 * framework method sends <code>performOk</code> to all pages of the 
@@ -627,10 +672,7 @@ public class PreferenceDialog
 	protected void okPressed() {
 
 		// Notify all the pages and give them a chance to abort
-		Iterator nodes =
-			preferenceManager
-				.getElements(PreferenceManager.PRE_ORDER)
-				.iterator();
+		Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		while (nodes.hasNext()) {
 			IPreferenceNode node = (IPreferenceNode) nodes.next();
 			IPreferencePage page = node.getPage();
@@ -646,6 +688,7 @@ public class PreferenceDialog
 
 		close();
 	}
+	
 	/**
 	 * Selects the page determined by <code>currentTreeItem</code> in
 	 * the page hierarchy.
@@ -654,6 +697,7 @@ public class PreferenceDialog
 		tree.setSelection(new TreeItem[] { currentTreeItem });
 		currentPage.setVisible(true);
 	}
+	
 	/**
 	 * Selects the saved item in the tree of preference pages.
 	 * If it cannot do this it saves the first one.
@@ -677,85 +721,6 @@ public class PreferenceDialog
 	}
 
 	/**
-	 * Get the name of the selected item preference
-	 */
-	protected String getSelectedNodePreference() {
-		return lastPreferenceId;
-	}
-
-	/**
-	 * Get the name of the selected item preference
-	 */
-	protected void setSelectedNodePreference(String pageId) {
-		lastPreferenceId = pageId;
-	}
-
-	/**
-	 * Get the node that was last selected in the dialog store.
-	 * If there is no match then return the first one,
-	 */
-	private TreeItem getLastSelectedNode(TreeItem[] items) {
-		String lastSelectedNode = getSelectedNodePreference();
-
-		if (lastSelectedNode == null)
-			return items[0];
-
-		TreeItem selectedItem = findNodeMatching(items, lastSelectedNode);
-		if (selectedItem == null)
-			return items[0];
-		else
-			return selectedItem;
-	}
-
-	/**
-	 * Find the TreeItem that has data the same id as the nodeId.
-	 * Search the children recursively.
-	 * @return TreeItem or null if not found.
-	 */
-	private TreeItem findNodeMatching(TreeItem[] items, String nodeId) {
-
-		for (int i = 0; i < items.length; i++) {
-			Object data = items[i].getData();
-			if (data instanceof IPreferenceNode) {
-				if (((IPreferenceNode) data).getId().equals(nodeId))
-					return items[i];
-				else {
-					TreeItem selectedChild =
-						findNodeMatching(items[i].getItems(), nodeId);
-					if (selectedChild != null)
-						return selectedChild;
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Clear the last selected node. This is so that we not chache
-	 * the last selection in case of an error.
-	 */
-	void clearSelectedNode() {
-		setSelectedNodePreference(null);
-	}
-
-	/**
-	 * Save the currently selected node. 
-	 */
-	private void setSelectedNode() {
-
-		String storeValue = null;
-
-		if (tree.getSelectionCount() == 1) {
-			TreeItem currentSelection = tree.getSelection()[0];
-			Object data = currentSelection.getData();
-			if (currentSelection.getData() instanceof IPreferenceNode)
-				storeValue = ((IPreferenceNode) data).getId();
-		}
-
-		setSelectedNodePreference(storeValue);
-	}
-
-	/**
 	 * Display the given error message. The currently displayed message
 	 * is saved and will be redisplayed when the error message is set
 	 * to <code>null</code>.
@@ -764,9 +729,7 @@ public class PreferenceDialog
 	 */
 	public void setErrorMessage(String newErrorMessage) {
 		// Any change?
-		if (errorMessage == null
-			? newErrorMessage == null
-			: errorMessage.equals(newErrorMessage))
+		if (errorMessage == null ? newErrorMessage == null : errorMessage.equals(newErrorMessage))
 			return;
 
 		errorMessage = newErrorMessage;
@@ -776,8 +739,7 @@ public class PreferenceDialog
 				showingError = false;
 				messageLabel.setBackground(normalMsgAreaBackground);
 				messageLabel.setImage(null);
-				titleImage.setImage(
-					JFaceResources.getImage(PREF_DLG_TITLE_IMG));
+				titleImage.setImage(JFaceResources.getImage(PREF_DLG_TITLE_IMG));
 			}
 
 			// avoid calling setMessage in case it is overridden to call setErrorMessage, 
@@ -798,10 +760,8 @@ public class PreferenceDialog
 				// lazy initialize the error background color and image
 				if (errorMsgAreaBackground == null) {
 					errorMsgAreaBackground =
-						JFaceColors.getErrorBackground(
-							messageLabel.getDisplay());
-					errorMsgImage =
-						JFaceResources.getImage(PREF_DLG_IMG_TITLE_ERROR);
+						JFaceColors.getErrorBackground(messageLabel.getDisplay());
+					errorMsgImage = JFaceResources.getImage(PREF_DLG_IMG_TITLE_ERROR);
 				}
 
 				// show the error	
@@ -813,6 +773,7 @@ public class PreferenceDialog
 		}
 		titleArea.layout(true);
 	}
+	
 	/**
 	 * Sets whether a Help button is available for this dialog.
 	 * <p>
@@ -826,6 +787,7 @@ public class PreferenceDialog
 	public void setHelpAvailable(boolean b) {
 		isHelpAvailable = b;
 	}
+	
 	/**
 	 * Set the message text. If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage
@@ -839,6 +801,7 @@ public class PreferenceDialog
 	public void setMessage(String newMessage) {
 		setMessage(newMessage, IMessageProvider.NONE);
 	}
+	
 	/**
 	 * Sets the message for this dialog with an indication of what type
 	 * of message it is.
@@ -880,6 +843,7 @@ public class PreferenceDialog
 
 		showMessage(newMessage, newImage);
 	}
+	
 	/**
 	 * Sets the minimum page size.
 	 *
@@ -891,6 +855,7 @@ public class PreferenceDialog
 		minimumPageSize.x = minWidth;
 		minimumPageSize.y = minHeight;
 	}
+	
 	/**
 	 * Sets the minimum page size.
 	 *
@@ -902,6 +867,7 @@ public class PreferenceDialog
 		minimumPageSize.x = size.x;
 		minimumPageSize.y = size.y;
 	}
+	
 	/**
 	 * Sets the preference store for this preference dialog.
 	 *
@@ -912,6 +878,31 @@ public class PreferenceDialog
 		Assert.isNotNull(store);
 		preferenceStore = store;
 	}
+
+	/**
+	 * Save the currently selected node. 
+	 */
+	private void setSelectedNode() {
+
+		String storeValue = null;
+
+		if (tree.getSelectionCount() == 1) {
+			TreeItem currentSelection = tree.getSelection()[0];
+			Object data = currentSelection.getData();
+			if (currentSelection.getData() instanceof IPreferenceNode)
+				storeValue = ((IPreferenceNode) data).getId();
+		}
+
+		setSelectedNodePreference(storeValue);
+	}
+
+	/**
+	 * Get the name of the selected item preference
+	 */
+	protected void setSelectedNodePreference(String pageId) {
+		lastPreferenceId = pageId;
+	}
+	
 	/**
 	 * Changes the shell size to the given size, ensuring that
 	 * it is no larger than the display bounds.
@@ -923,6 +914,7 @@ public class PreferenceDialog
 		getShell().setSize(width, height);
 		constrainShellSize();
 	}
+	
 	/**
 	 * Show the new message
 	 */
@@ -943,6 +935,7 @@ public class PreferenceDialog
 			messageLabel.setToolTipText(message);
 		}
 	}
+	
 	/**
 	 * Shows the preference page corresponding to the given preference node.
 	 * Does nothing if that page is already current.
@@ -982,11 +975,11 @@ public class PreferenceDialog
 		if (currentPage.getControl() == null) {
 			final boolean[] failed = { false };
 			Platform.run(new ISafeRunnable() {
-				public void run() {
-					currentPage.createControl(pageContainer);
-				}
 				public void handleException(Throwable e) {
 					failed[0] = true;
+				}
+				public void run() {
+					currentPage.createControl(pageContainer);
 				}
 			});
 			if (failed[0])
@@ -1003,11 +996,11 @@ public class PreferenceDialog
 		final Point failed = new Point(-1, -1);
 
 		Platform.run(new ISafeRunnable() {
-			public void run() {
-				size[0] = currentPage.computeSize();
-			}
 			public void handleException(Throwable e) {
 				size[0] = failed;
+			}
+			public void run() {
+				size[0] = currentPage.computeSize();
 			}
 		});
 		if (size[0].equals(failed))
@@ -1061,6 +1054,7 @@ public class PreferenceDialog
 
 		return true;
 	}
+	
 	/**
 	 * Shows the "Page Flipping abort" dialog.
 	 */
@@ -1068,6 +1062,7 @@ public class PreferenceDialog
 		MessageDialog.openError(getShell(), JFaceResources.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
 		JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
 	}
+	
 	/**
 	 * Updates this dialog's controls to reflect the current page.
 	 */
@@ -1084,12 +1079,14 @@ public class PreferenceDialog
 		//Saved the selected node in the preferences
 		setSelectedNode();
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IPreferenceContainer
 	 */
 	public void updateButtons() {
 		okButton.setEnabled(isCurrentPageValid());
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IPreferencePageContainer.
 	 */
@@ -1115,6 +1112,7 @@ public class PreferenceDialog
 		}
 		setErrorMessage(pageErrorMessage);
 	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IPreferencePageContainer.
 	 */
