@@ -105,6 +105,10 @@
 <test name="drag Navigator to right of Navigator" result="layout (((*Navigator)|layout ((Mock Editor 1, *Mock Editor 2)|active (*Mock Editor 2)))-(*Outline, Problems, Properties))"/>
 <test name="drag editor 0 folder to bottom of window" result="layout (((*Navigator)|layout ((*Mock Editor 2)-active (Mock Editor 1, *Mock Editor 2)))-(*Outline, Problems, Properties))"/>
 <test name="drag maximized Problems folder to right of editor area" result="layout ((*Navigator)|(layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2))|active (Outline, *Problems, Properties)))"/>
+<test name="drag Navigator to out of the window" result="detachedWindows (dWindow (Navigator)), layout (layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2))-(*Outline, Problems, Properties))"/>
+<test name="drag Navigator folder to out of the window" result="detachedWindows (dWindow (Navigator)), layout (layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2))-(*Outline, Problems, Properties))"/>
+<test name="drag Problems to out of the window" result="detachedWindows (dWindow (Problems)), layout (((*Navigator)|layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2)))-(*Outline, Properties))"/>
+<test name="drag Problems folder to out of the window" result="detachedWindows (dWindow (Outline, Problems, Properties)), layout ((*Navigator)|layout ((Mock Editor 1, *Mock Editor 2)|active_nofocus (*Mock Editor 2)))"/>
 <test name="drag editor 0 folder to top of window" result="layout (((*Navigator)|layout (active (Mock Editor 1, *Mock Editor 2)-(*Mock Editor 2)))-(*Outline, Problems, Properties))"/>
 <test name="drag editor 0 folder to right of editor 2" result="layout (((*Navigator)|layout ((*Mock Editor 2)|active (Mock Editor 1, *Mock Editor 2)))-(*Outline, Problems, Properties))"/>
 <test name="drag editor 2 to center of Navigator" result="layout (((*Navigator)|layout (active (*Mock Editor 2)|(Mock Editor 1, *Mock Editor 2)))-(*Outline, Problems, Properties))"/>

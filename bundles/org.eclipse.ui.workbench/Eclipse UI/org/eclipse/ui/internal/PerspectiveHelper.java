@@ -492,6 +492,46 @@ public class PerspectiveHelper {
 
         active = false;
     }
+    
+    /**
+     * Writes a description of the layout to the given string buffer.
+     * This is used for drag-drop test suites to determine if two layouts are the
+     * same. Like a hash code, the description should compare as equal iff the
+     * layouts are the same. However, it should be user-readable in order to
+     * help debug failed tests. Although these are english readable strings,
+     * they should not be translated or equality tests will fail.
+     * <p>
+     * This is only intended for use by test suites.
+     * </p>
+     * 
+     * @param buf
+     */
+    public void describeLayout(StringBuffer buf) {
+
+        if (detachable) {
+            if(detachedWindowList.size() != 0){
+                buf.append("detachedWindows ("); //$NON-NLS-1$
+          
+	            for (int i = 0, length = detachedWindowList.size(); i < length; i++) {
+	                DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
+	                LayoutPart[] children = window.getChildren();
+	                if(children.length != 0){
+	                    buf.append("dWindow ("); //$NON-NLS-1$
+	                    for(int j = 0; j < children.length; j++){
+	                        buf.append(((ViewPane)children[j]).getViewReference().getPartName()); //$NON-NLS-1$
+	                        if(j < (children.length - 1))
+	                            buf.append(", "); //$NON-NLS-1$
+	                    }
+	                    buf.append(")"); //$NON-NLS-1$
+	                }
+	                
+	            }
+	            buf.append("), "); //$NON-NLS-1$
+            }
+        }
+            
+        getLayout().describeLayout(buf);
+    }
 
     /**
      * Deref a given part. Deconstruct its container as required. Do not remove

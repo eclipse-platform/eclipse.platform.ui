@@ -91,7 +91,10 @@ public class DragTestSuite extends TestSuite {
                 new FastViewBarDropTarget(),
 
                 // View tabs
-                new ViewTabDropTarget(resNav), new ViewTabDropTarget(probView) };
+                new ViewTabDropTarget(resNav), new ViewTabDropTarget(probView), 
+                
+        		// Detached windows 
+                new DetachedDropTarget()};
 
         // Drop targets that will only be tested for editors
         AbstractTestDropTarget[] editorDropTargets = new AbstractTestDropTarget[] {

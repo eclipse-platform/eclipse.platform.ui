@@ -200,7 +200,7 @@ public class DragTest extends UITestCase {
         page.closeAllEditors(false);
         //ensure that contentoutline is the focus part (and at the top of its stack)
         page.showView("org.eclipse.ui.views.ContentOutline");
-
+        page.hideView(page.findView("org.eclipse.ui.internal.introview"));
         editor1 = page.openEditor(new FileEditorInput(file1),
                 MockEditorPart.ID1);
         editor2 = page.openEditor(new FileEditorInput(file2),
@@ -208,6 +208,7 @@ public class DragTest extends UITestCase {
         editor3 = page.openEditor(new FileEditorInput(file3),
                 MockEditorPart.ID2);
 
+        window.getShell().setActive();
         DragOperations
                 .drag(editor2, new EditorDropTarget(0, SWT.CENTER), false);
         DragOperations

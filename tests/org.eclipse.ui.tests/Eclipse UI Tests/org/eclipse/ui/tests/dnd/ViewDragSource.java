@@ -45,7 +45,7 @@ public class ViewDragSource extends TestDragSource {
         wholeFolder = dragWholeFolder;
     }
 
-    IViewPart getPart() {
+    public IViewPart getPart() {
         return getPage().findView(targetPart);
     }
 

@@ -1897,7 +1897,7 @@ public class Perspective {
             buf.append("), "); //$NON-NLS-1$
         }
 
-        getPresentation().getLayout().describeLayout(buf);
+        getPresentation().describeLayout(buf);
     }
 
     /**
