@@ -33,25 +33,25 @@ public class XMLCore {
 	
 	private XMLCore() { }
 
-	public void addDocumentModelListener(IDocumentModelListener listener) {
+	public void addAntModelListener(IAntModelListener listener) {
 		synchronized (fModelChangeListeners) {
 			fModelChangeListeners.add(listener);
 		}
 	}
 	
-	public void removeDocumentModelListener(IDocumentModelListener listener) {
+	public void removeAntModelListener(IAntModelListener listener) {
 		synchronized (fModelChangeListeners) {
 			fModelChangeListeners.remove(listener);
 		}
 	}
 	
-	public void notifyDocumentModelListeners(DocumentModelChangeEvent event) {
+	public void notifyAntModelListeners(AntModelChangeEvent event) {
 		Iterator i;
 		synchronized (fModelChangeListeners) {
 			i= new ArrayList(fModelChangeListeners).iterator();
 		}
 		while (i.hasNext()) {
-			((IDocumentModelListener)i.next()).documentModelChanged(event);
+			((IAntModelListener)i.next()).antModelChanged(event);
 		}
 	}
 }

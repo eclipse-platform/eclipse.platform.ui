@@ -21,8 +21,8 @@ import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.outline.DocumentModelChangeEvent;
-import org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener;
+import org.eclipse.ant.internal.ui.editor.outline.AntModelChangeEvent;
+import org.eclipse.ant.internal.ui.editor.outline.IAntModelListener;
 import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
 import org.eclipse.ant.internal.ui.editor.text.AnnotationAccess;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
@@ -304,11 +304,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
         }
     };
     
-    private IDocumentModelListener fDocumentModelListener= new IDocumentModelListener() {
+    private IAntModelListener fAntModelListener= new IAntModelListener() {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener#documentModelChanged(org.eclipse.ant.internal.ui.editor.outline.DocumentModelChangeEvent)
 		 */
-		public void documentModelChanged(DocumentModelChangeEvent event) {
+		public void antModelChanged(AntModelChangeEvent event) {
 			if (event.getModel() == getAntModel()) {
 				if (event.isPreferenceChange()) {
 					updateEditorImage();
@@ -347,7 +347,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
         super();
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(new AntEditorDocumentProvider(XMLCore.getDefault()));
-		XMLCore.getDefault().addDocumentModelListener(fDocumentModelListener);
+		XMLCore.getDefault().addAntModelListener(fAntModelListener);
 		
 		if (isFoldingEnabled()) {
 			fFoldingStructureProvider= new AntFoldingStructureProvider(this);
@@ -692,7 +692,12 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		ProjectionViewer projectionViewer= (ProjectionViewer) getSourceViewer(); 
 
         if (isFoldingEnabled()) {
-        	fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors()); 
+        	fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+//        	fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+//    			public IInformationControl createInformationControl(Shell shell) {
+//    				return new CustomSourceInformationControl(shell, IDocument.DEFAULT_CONTENT_TYPE);
+//    			}
+//    		});
             fProjectionSupport.install();
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
         }
@@ -729,7 +734,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 			fProjectionSupport= null;
 		}
 		
-		XMLCore.getDefault().removeDocumentModelListener(fDocumentModelListener);
+		XMLCore.getDefault().removeAntModelListener(fAntModelListener);
 	}
 	
 	/* (non-Javadoc)

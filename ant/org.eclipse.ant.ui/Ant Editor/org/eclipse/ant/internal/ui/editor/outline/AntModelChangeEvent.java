@@ -11,19 +11,16 @@
 
 package org.eclipse.ant.internal.ui.editor.outline;
 
-/**
- * DocumentModelChangeEvent.java
- */
-public class DocumentModelChangeEvent {
+public class AntModelChangeEvent {
 	
 	private AntModel fModel;
 	private boolean fPreferenceChange= false;
 	
-	DocumentModelChangeEvent(AntModel model) {
+	AntModelChangeEvent(AntModel model) {
 		fModel= model;
 	}
 	
-	DocumentModelChangeEvent(AntModel model, boolean preferenceChange) {
+	AntModelChangeEvent(AntModel model, boolean preferenceChange) {
 		fModel= model;
 		fPreferenceChange= preferenceChange;
 	}
@@ -33,7 +30,7 @@ public class DocumentModelChangeEvent {
 	}
 	
 	/**
-	 * Returns whether the document model has changed as a result of a preference change.
+	 * Returns whether the Ant model has changed as a result of a preference change.
 	 * @return whether the model has changed from a preference change.
 	 */
 	public boolean isPreferenceChange() {

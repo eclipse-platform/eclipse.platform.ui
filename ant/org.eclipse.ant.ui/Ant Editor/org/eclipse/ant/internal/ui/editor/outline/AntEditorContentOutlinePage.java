@@ -71,7 +71,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private Menu menu;
 	private AntOpenWithMenu openWithMenu;
 	
-	private IDocumentModelListener fListener;
+	private IAntModelListener fListener;
 	private AntModel fModel;
 	private XMLCore fCore;
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
@@ -450,7 +450,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			openWithMenu.dispose();
 		}
 		if (fListener != null) {
-			fCore.removeDocumentModelListener(fListener);
+			fCore.removeAntModelListener(fListener);
 			fListener= null;
 		}
 	}
@@ -529,9 +529,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			if (fListener == null) {
 				fListener= createAntModelChangeListener();
 			}
-			fCore.addDocumentModelListener(fListener);
+			fCore.addAntModelListener(fListener);
 		} else if (!isAntModel && wasAntModel && fListener != null) {
-			fCore.removeDocumentModelListener(fListener);
+			fCore.removeAntModelListener(fListener);
 			fListener= null;
 		}
 
@@ -550,9 +550,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 	}
 		
-	private IDocumentModelListener createAntModelChangeListener() {
-		return new IDocumentModelListener() {
-			public void documentModelChanged(final DocumentModelChangeEvent event) {
+	private IAntModelListener createAntModelChangeListener() {
+		return new IAntModelListener() {
+			public void antModelChanged(final AntModelChangeEvent event) {
 				if (event.getModel() == fModel && !getControl().isDisposed()) {
 					getControl().getDisplay().asyncExec(new Runnable() {
 						public void run() {

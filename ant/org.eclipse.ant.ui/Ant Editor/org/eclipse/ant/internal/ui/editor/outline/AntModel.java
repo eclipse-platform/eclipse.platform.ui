@@ -157,7 +157,7 @@ public class AntModel {
 		}
 		fIsDirty= true;
 		reconcile(null);
-		fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this, true));
+		fCore.notifyAntModelListeners(new AntModelChangeEvent(this, true));
 		fMarkerUpdater.updateMarkers();
 	}
 
@@ -231,7 +231,7 @@ public class AntModel {
 				reconcileTaskAndTypes();
 			} 
 	
-			fCore.notifyDocumentModelListeners(new DocumentModelChangeEvent(this));
+			fCore.notifyAntModelListeners(new AntModelChangeEvent(this));
 		}
 	}
 
