@@ -1692,7 +1692,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void setNewPreferenceStore(IPreferenceStore store, IPreferenceStore pre_3_0_Store) {
 		Assert.isTrue(store != null);
 		Assert.isTrue(pre_3_0_Store != null);
+		
+		if (fPreferenceStore != null)
+			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 		fPreferenceStore= pre_3_0_Store;
+		
 		setNewPreferenceStore(store);
 	}
 	
@@ -2676,6 +2680,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (fEditorStatusLine != null)
 			fEditorStatusLine= null;
+		
+		if (fConfiguration != null)
+			fConfiguration= null;
 		
 		super.setInput(null);		
 		
