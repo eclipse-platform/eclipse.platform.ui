@@ -127,6 +127,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	private PerspectiveBarManager perspectiveBar;
 	private Menu perspectiveBarMenu;
 	
+	private PerspectiveBarManager newBar;
+	
 	private static final int MAX_PERSPECTIVES = 4;
 	private LinkedList mostRecentDescriptors = new LinkedList();
 
@@ -248,6 +250,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		addStatusLine();
 		addFastViewBar(fastViewBarStyle());
 		addPerspectiveBar(perspectiveBarStyle());
+		addNewBar(perspectiveBarStyle());
 
 		actionPresentation = new ActionPresentation(this);
 
@@ -377,6 +380,18 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if ((getShell() == null) && (fastViewBar == null)) {
 			fastViewBar = new ToolBarManager(style);
 			fastViewBar.add(new ShowFastViewContribution(this));
+		}
+	}	
+	
+	/**
+	 * Configures this window to have a new perspective bar.
+	 * Does nothing if it already has one.
+	 * This method must be called before this window's shell is created.
+	 */
+	protected void addNewBar(int style) {
+		if ((getShell() == null) && (newBar == null)) {
+			newBar = new PerspectiveBarManager(style);
+			newBar.add(new PerspectiveContributionItem(this));
 		}
 	}	
 	
@@ -620,13 +635,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		createCoolBarControl(topBar);
 		createPerspectiveBar(topBar);
+		createNewBar(topBar);
 
 		topBar.setLeft(getCoolBarControl());		
 		topBar.setRight(perspectiveBar.getControl());
+		topBar.setMiddle(newBar.getControl());
 
 		//ColorSchemeService.setCBannerColors(topBar);
 		ColorSchemeService.setCoolBarColors(getCoolBarControl());
 		ColorSchemeService.setPerspectiveToolBarColors(perspectiveBar.getControl());
+		ColorSchemeService.setPerspectiveToolBarColors(newBar.getControl());
 		
 		FormData perspectiveData = new FormData();
 
@@ -636,9 +654,14 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		perspectiveBar.getControl().setLayoutData(perspectiveData);
 		
-		FormLayout perspectiveLayout = new FormLayout();
-		perspectiveLayout.marginWidth = 10;
+		FormData newData = new FormData();
+		
+		newData.top = new FormAttachment(0);
+		newData.left = new FormAttachment(0);
+		newData.right = new FormAttachment(100, 0);
 
+		newBar.getControl().setLayoutData(newData);
+		
 		FormData toolBarData = new FormData();
 		toolBarData.top = new FormAttachment(0);
 		toolBarData.right = new FormAttachment(100, 0);
@@ -694,6 +717,15 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		createShortcutBar(parent, perspectiveBar, listener);
 
 	}
+	
+	/**
+	 * Create the new toolbar control
+	 */
+	private void createNewBar(Composite parent) {
+
+		newBar.createControl(parent);
+
+	}
 
 	/**
 	 * Create the shortcut toolbar control
@@ -716,14 +748,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return shortcutBarPart;
 	}
 	
-
-	/* (non-Javadoc)
-	 * Method declared on ApplicationWindow.
-	 */
-	protected MenuManager createMenuManager() {
-		final MenuManager result = super.createMenuManager();
-		return result;
-	}
 	/**
 	 * Enables fast view icons to be dragged and dropped using the given IPartDropListener.
 	 */
