@@ -423,6 +423,36 @@ public void testFindInteresting () {
 		if (testDirs != null)
 			deleteDirectory(testDirs);
 	}
+	
+	// try a find when you've given an override but the value
+	// is an empty string
+	try {
+		Map override = new HashMap();
+		override.put("$nl$", "");
+		String subDirectory = buildNLTestFile("interestingPluginFindTest", null, 0, "ja_XX");
+		if (subDirectory != null)
+			findFailsHelper("interestingPluginFindTest", null, "5", "$nl$/", override);
+		else
+			// We don't expect this one to fail
+			fail ("0.1 Could not build nl test data for interestingPluginFindTest");
+	} finally {
+		cleanupTestDirectory("interestingPluginFindTest", null, "nl");
+	}
+	
+	// try a find with an override but don't put anything in the
+	// override
+	try {
+		String fullNL = InternalBootLoader.getNL();
+		Map override = new HashMap();
+		String subDirectory = buildNLTestFile("interestingPluginFindTest", null, 0, fullNL);
+		if (subDirectory != null)
+			findHelper("interestingPluginFindTest", null, "6", "$nl$", "nl/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.2 Could not build nl test data for interestingPluginFindTest");
+	} finally {
+		cleanupTestDirectory("interestingPluginFindTest", null, "nl");
+	}
 
 	// Check for /namelessDirectory
 //	findHelper("interestingPluginFindTest", "1", "/namelessDirectory/namelessPluginFind.txt", "Test string from interestingPluginFind plugin namelessDirectory directory.", "interestingPluginFind/namelessDirectory");
