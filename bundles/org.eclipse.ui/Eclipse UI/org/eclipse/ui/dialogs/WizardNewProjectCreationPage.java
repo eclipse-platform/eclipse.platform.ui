@@ -256,6 +256,16 @@ private void handleLocationBrowseButtonPressed() {
 		locationPathField.setText(selectedDirectory);
 }
 /**
+ * Sets the initial project name that this page will use when
+ * created. The name is ignored if the createControl(Composite)
+ * method has already been called.
+ * 
+ * @param name initial project name for this page
+ */
+public void setInitialProjectName(String name) {
+	this.initialProjectFieldValue = name;
+}
+/**
  * Set the location to the default location if we are set to useDefaults.
  */
 private void setLocationForSelection() {
