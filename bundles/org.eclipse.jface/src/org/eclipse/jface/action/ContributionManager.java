@@ -141,6 +141,7 @@ public void appendToGroup(String groupName, IContributionItem item) {
  * @param itemToAdd The contribution item to be added; may be <code>null</code>.
  * @return <code>true</code> if the addition should be disallowed; 
  * <code>false</code> otherwise
+ * @since 3.0
  */
 protected boolean checkDuplication(IContributionItem itemToAdd) {
     return false;
