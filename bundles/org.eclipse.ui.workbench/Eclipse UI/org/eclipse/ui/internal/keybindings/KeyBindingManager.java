@@ -127,7 +127,7 @@ public final class KeyBindingManager {
 							String element = ((String) st.nextElement()).trim();
 							
 							if (element.length() > 0) {							
-								localeElements.add(element);
+								localeElements.add(Element.create(element));
 							}							
 						}					
 					}
