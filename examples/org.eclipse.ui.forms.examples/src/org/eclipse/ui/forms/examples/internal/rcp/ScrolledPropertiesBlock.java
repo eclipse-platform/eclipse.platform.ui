@@ -78,8 +78,8 @@ public class ScrolledPropertiesBlock extends MasterDetailsBlock {
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
+		layout.marginWidth = 2;
+		layout.marginHeight = 2;
 		client.setLayout(layout);
 		Table t = toolkit.createTable(client, SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_BOTH);

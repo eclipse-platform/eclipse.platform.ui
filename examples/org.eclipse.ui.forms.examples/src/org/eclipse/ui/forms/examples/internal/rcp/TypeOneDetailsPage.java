@@ -50,8 +50,8 @@ public class TypeOneDetailsPage implements IDetailsPage {
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.topMargin = 5;
 		layout.leftMargin = 5;
-		layout.rightMargin = 0;
-		layout.bottomMargin = 0;
+		layout.rightMargin = 2;
+		layout.bottomMargin = 2;
 		parent.setLayout(layout);
 
 		FormToolkit toolkit = mform.getToolkit();
