@@ -40,7 +40,7 @@ public class SetKeywordSubstitutionAction extends TeamAction {
 			dialog.open();
 			previousOption = wizard.getKSubstOption();
 		} catch (TeamException e) {
-			handle(e, "stuff", "");
+			handle(e, null, null);
 		}
 	}
 	
