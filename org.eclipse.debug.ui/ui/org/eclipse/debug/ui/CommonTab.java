@@ -674,7 +674,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 		if (fFileOutput.getSelection()) {
 		    captureOutput = true;
-		    String file = fFileText.getText().replace('\\', '/');
+		    String file = fFileText.getText();
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, file);
 		    if(fAppend.getSelection()) {
 		        configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, true);
