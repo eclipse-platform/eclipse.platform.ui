@@ -19,9 +19,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -47,13 +44,6 @@ public final class WorkbenchActionBuilder {
 
 	private IWorkbenchWindowConfigurer windowConfigurer;
 
-	private final IPropertyChangeListener propertyChangeListener =
-		new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			handlePropertyChange(event);
-		}
-	};
-
 	// generic actions
 	private IWorkbenchAction closeAction;
 	private IWorkbenchAction closeAllAction;
@@ -70,7 +60,6 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction closePerspAction;
 	private IWorkbenchAction lockToolBarAction;
 	private IWorkbenchAction closeAllPerspsAction;
-	private IWorkbenchAction pinEditorAction;
 	private IWorkbenchAction showViewMenuAction;
 	private IWorkbenchAction showPartPaneMenuAction;
 	private IWorkbenchAction nextPartAction;
@@ -161,12 +150,6 @@ public final class WorkbenchActionBuilder {
 	 */
 	private void hookListeners() {
 
-		// Listen for preference property changes to
-		// update the menubar and toolbar
-		IPreferenceStore store =
-			IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		store.addPropertyChangeListener(propertyChangeListener);
-
 		// Listen to workbench page lifecycle methods to enable
 		// and disable the perspective menu items as needed.
 		getWindow().addPageListener(new IPageListener() {
@@ -237,12 +220,6 @@ public final class WorkbenchActionBuilder {
 			// Only update the coolbar at this point.
 			addManualIncrementalBuildToolAction(configurer);
 		}
-
-		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		// @issue ref to internal generic workbench constant
-		if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-			addPinEditorAction(configurer);
-		}
 	}
 	/**
 	 * Fills the coolbar with the workbench actions.
@@ -270,6 +247,7 @@ public final class WorkbenchActionBuilder {
 		tBarMgr.add(backwardHistoryAction);
 		tBarMgr.add(forwardHistoryAction);
 		configurer.addToolbarGroup(tBarMgr, IWorkbenchActionConstants.PIN_GROUP, true);
+		tBarMgr.add(ContributionItemFactory.PIN_EDITOR.create(getWindow()));
 	}
 	/**
 	 * Fills the menu bar with the workbench actions.
@@ -540,11 +518,6 @@ public final class WorkbenchActionBuilder {
 	 * Called when the window is closed.
 	 */
 	public void dispose() {
-		// Listen for preference property changes to
-		// update the menubar and toolbar
-		IPreferenceStore store =
-			IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		store.removePropertyChangeListener(propertyChangeListener);
 	}
 
 	/**
@@ -635,8 +608,6 @@ public final class WorkbenchActionBuilder {
 
 		closeAllSavedAction = ActionFactory.CLOSE_ALL_SAVED.create(getWindow());
 		registerGlobalAction(closeAllSavedAction);
-
-		pinEditorAction = ActionFactory.PIN_EDITOR.create(getWindow());
 
 		try {
 			aboutAction = IDEActionFactory.ABOUT.create(getWindow());
@@ -794,60 +765,6 @@ public final class WorkbenchActionBuilder {
 		
 		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
 		registerGlobalAction(projectPropertyDialogAction);
-	}
-
-	/**
-	 * Updates the menubar and toolbar when changes are made to the preferences.
-	 */
-	private void handlePropertyChange(PropertyChangeEvent event) {
-		IPreferenceStore store =
-			IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		// @issue ref to internal generic workbench constant
-		if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
-			if (store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))
-				addPinEditorAction(windowConfigurer);
-			else
-				removePinEditorAction(windowConfigurer);
-		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS)) {
-			// @issue ref to internal generic workbench constant
-			// @issue idiosyncratic semantics of pinEditor
-//			pinEditorAction.updateState();
-		}
-	}
-	/**
-	 * Adds the pin action to the toolbar.  Add it to the navigate toolbar.
-	 */
-	private void addPinEditorAction(IWorkbenchWindowConfigurer configurer) {
-		IToolBarManager tBarMgr = configurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
-		if (tBarMgr == null) {
-			// This tool bar should exist. Bail out!
-			IDEWorkbenchPlugin.log("Navigate toolbar is missing"); //$NON-NLS-1$
-		} else {
-			tBarMgr.appendToGroup(IWorkbenchActionConstants.PIN_GROUP, pinEditorAction);
-			tBarMgr.update(true);
-		}
-	}
-	
-	/**
-	 * Removes the pin action from the toolbar.
-	 */
-	private void removePinEditorAction(IWorkbenchWindowConfigurer configurer) {
-		// Flag the action so it is hidden in the editor menu.
-		// @issue idiosyncratic semantics of pinEditor
-//		pinEditorAction.setVisible(false);
-		
-		IToolBarManager tBarMgr = configurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
-		if (tBarMgr == null) {
-			// This tool bar should exist. Bail out!
-			IDEWorkbenchPlugin.log("Navigate toolbar is missing"); //$NON-NLS-1$
-		} else {
-			try {
-				tBarMgr.remove(pinEditorAction.getId());
-				tBarMgr.update(true);
-			} catch (IllegalArgumentException e) {
-				// Action was not in tool bar
-			}
-		}
 	}
 
 	/**

@@ -30,11 +30,9 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	private static final ImageDescriptor LINK_WARNING;	
 
 	static {
-		// @issue direct access to IDE workbench image files
 		LINK = AbstractUIPlugin.imageDescriptorFromPlugin(
 			IDEWorkbenchPlugin.IDE_WORKBENCH,
 			"icons/full/ovr16/link_ovr.gif");  //$NON-NLS-1$
-		// @issue direct access to IDE workbench image files
 		LINK_WARNING = AbstractUIPlugin.imageDescriptorFromPlugin(
 			IDEWorkbenchPlugin.IDE_WORKBENCH,
 			"icons/full/ovr16/linkwarn_ovr.gif");  //$NON-NLS-1$
