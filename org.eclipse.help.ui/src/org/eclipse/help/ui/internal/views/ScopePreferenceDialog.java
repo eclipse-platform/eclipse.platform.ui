@@ -2,6 +2,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 
+import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
@@ -41,8 +42,8 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		createButton(parent, NEW_ID, "New...", false);
-		Button rbutton = createButton(parent, DELETE_ID, "Delete", false);
+		createButton(parent, NEW_ID, HelpUIResources.getString("ScopePreferenceDialog.new"), false); //$NON-NLS-1$
+		Button rbutton = createButton(parent, DELETE_ID, HelpUIResources.getString("ScopePreferenceDialog.delete"), false); //$NON-NLS-1$
 		rbutton.setEnabled(false);
 
 		Label l = new Label(parent, SWT.NONE);
@@ -113,7 +114,7 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 	}
 	
 	private String computeNewId(EngineTypeDescriptor etdesc) {
-		return etdesc.getId() +"." + 1;
+		return etdesc.getId() +"." + 1; //$NON-NLS-1$
 	}
 
 	private void doDelete() {

@@ -51,6 +51,12 @@ public class WebSearchPage extends RootScopePage {
 			}
 		});
 		urlText.setEditable(getEngineDescriptor().isUserDefined());
+		new Label(parent, SWT.NULL);
+		label = new Label(parent, SWT.WRAP);
+		label.setText("You can capture the URL template by copying the web query from the browser address field and replacing the search word with {expression}.");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 100;
+		label.setLayoutData(gd);
 		updateControls();
 		return 2;
 	}

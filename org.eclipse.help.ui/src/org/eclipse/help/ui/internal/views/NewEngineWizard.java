@@ -1,5 +1,6 @@
 package org.eclipse.help.ui.internal.views;
 
+import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.wizard.Wizard;
 
 public class NewEngineWizard extends Wizard {
@@ -7,7 +8,7 @@ public class NewEngineWizard extends Wizard {
 	private EngineTypeWizardPage selectionPage;
 
 	public NewEngineWizard(EngineTypeDescriptor [] engineTypes) {
-		setWindowTitle("New Search Engine");
+		setWindowTitle(HelpUIResources.getString("NewEngineWizard.wtitle")); //$NON-NLS-1$
 		this.engineTypes = engineTypes;
 	}
 

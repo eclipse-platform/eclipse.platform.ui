@@ -25,8 +25,8 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 
 	private EngineTypeDescriptor[] engineTypes;
 
-	private static final String USER_FILE = "userSearches.xml";
-	private static final String ATT_ENGINE_TYPE_ID = "engineTypeId";
+	private static final String USER_FILE = "userSearches.xml"; //$NON-NLS-1$
+	private static final String ATT_ENGINE_TYPE_ID = "engineTypeId"; //$NON-NLS-1$
 	
 	public static class DescriptorEvent {
 		private EngineDescriptor desc;
@@ -83,19 +83,19 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			fos = new FileOutputStream(fileName);
 			osw = new OutputStreamWriter(fos, "UTF8"); //$NON-NLS-1$
 			PrintWriter writer = new PrintWriter(osw);
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<engines>");
+			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+			writer.println("<engines>"); //$NON-NLS-1$
 			for (int i = 0; i < descriptors.size(); i++) {
 				EngineDescriptor desc = (EngineDescriptor) descriptors.get(i);
 				if (desc.isUserDefined()) {
 					save(writer, desc);
 				}
 			}
-			writer.println("</engines>");
+			writer.println("</engines>"); //$NON-NLS-1$
 			writer.flush();
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError("Error while saving user searches", e);
+			HelpUIPlugin.logError(HelpUIResources.getString("EngineDescriptorManager.errorSaving"), e); //$NON-NLS-1$
 		}
 		finally {
 			if (osw!=null) {
@@ -123,7 +123,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			load(fileName);
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError("Errors while loading user searches", e);
+			HelpUIPlugin.logError(HelpUIResources.getString("EngineDescriptorManager.errorLoading"), e); //$NON-NLS-1$
 		}
 	}
 
@@ -239,17 +239,17 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 	}
 	
 	private void save(PrintWriter writer, EngineDescriptor desc) {
-		String indent = "   ";
+		String indent = "   "; //$NON-NLS-1$
 		String attIndent = indent + indent;
 		writer.print(indent);
-		writer.println("<engine ");
-		saveAttribute(writer, attIndent, "id", desc.getId());
+		writer.println("<engine "); //$NON-NLS-1$
+		saveAttribute(writer, attIndent, "id", desc.getId()); //$NON-NLS-1$
 		saveAttribute(writer, attIndent, ATT_ENGINE_TYPE_ID, desc.getEngineTypeId());
 		saveAttribute(writer, attIndent, ATT_LABEL, desc.getLabel());
-		writer.println(">");
+		writer.println(">"); //$NON-NLS-1$
 		saveDescription(writer, indent+indent, desc.getDescription());
 		writer.print(indent);
-		writer.println("</engine>");
+		writer.println("</engine>"); //$NON-NLS-1$
 	}
 	
 	private String getAttribute(Node node, String name) {
@@ -264,18 +264,18 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			return;
 		writer.print(indent);
 		writer.print(name);
-		writer.print("=\"");
+		writer.print("=\""); //$NON-NLS-1$
 		writer.print(value);
-		writer.println("\"");
+		writer.println("\""); //$NON-NLS-1$
 	}
 	private void saveDescription(PrintWriter writer, String indent, String desc) {
 		if (desc==null)
 			return;
 		writer.print(indent);
-		writer.println("<description>");
+		writer.println("<description>"); //$NON-NLS-1$
 		writer.println(desc);
 		writer.print(indent);
-		writer.println("</description>");
+		writer.println("</description>"); //$NON-NLS-1$
 	}
 
 	private EngineTypeDescriptor findEngineType(String id) {

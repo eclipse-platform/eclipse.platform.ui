@@ -249,7 +249,7 @@ public class ScopeSetDialog extends ListDialog {
 			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager);
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.create();
-			dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName()));
+			dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName())); //$NON-NLS-1$
 			dialog.open();
 		}
 	}

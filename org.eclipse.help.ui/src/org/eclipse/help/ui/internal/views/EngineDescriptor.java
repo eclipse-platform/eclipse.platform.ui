@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
  * Descriptor for a federated search engine participant.
  */
 public class EngineDescriptor implements IEngineDescriptor {
-	public static final String P_MASTER = "__enabled__";
+	public static final String P_MASTER = "__enabled__"; //$NON-NLS-1$
 
 	private ISearchEngine engine;
 
@@ -145,7 +145,7 @@ public class EngineDescriptor implements IEngineDescriptor {
 		parameters = new Hashtable();
 		parameters.put(P_MASTER, isEnabled() ? Boolean.TRUE : Boolean.FALSE);
 		if (config != null) {
-			IConfigurationElement[] params = config.getChildren("param");
+			IConfigurationElement[] params = config.getChildren("param"); //$NON-NLS-1$
 			for (int i = 0; i < params.length; i++) {
 				IConfigurationElement param = params[i];
 				String name = param.getAttribute(IHelpUIConstants.ATT_NAME);

@@ -162,9 +162,9 @@ public class ScopeSet {
 		return id + ".master"; //$NON-NLS-1$
 	}
 	public static String getLabelKey(String id) {
-		return id+".label";
+		return id+".label"; //$NON-NLS-1$
 	}
 	public static String getDescKey(String id) {
-		return id+".desc";
+		return id+".desc"; //$NON-NLS-1$
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -53,7 +54,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	private ArrayList results;
 
 	private String phrase;
-	
+
 	private FormToolkit innerToolkit;
 
 	/**
@@ -103,7 +104,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showCategoriesAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(false);
-		showCategoriesAction.setToolTipText(HelpUIResources.getString("SearchResultsPart.showCategoriesAction.tooltip")); //$NON-NLS-1$
+		showCategoriesAction.setToolTipText(HelpUIResources
+				.getString("SearchResultsPart.showCategoriesAction.tooltip")); //$NON-NLS-1$
 		showCategoriesAction.setId("categories"); //$NON-NLS-1$
 		tbm.insertBefore("back", showCategoriesAction); //$NON-NLS-1$
 
@@ -115,23 +117,29 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showDescriptionAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
 		showDescriptionAction.setChecked(true);
-		showDescriptionAction.setToolTipText(HelpUIResources.getString("SearchResultsPart.showDescriptionAction.tooltip")); //$NON-NLS-1$
+		showDescriptionAction.setToolTipText(HelpUIResources
+				.getString("SearchResultsPart.showDescriptionAction.tooltip")); //$NON-NLS-1$
 		showDescriptionAction.setId("description"); //$NON-NLS-1$
 		tbm.insertAfter("categories", showDescriptionAction); //$NON-NLS-1$
 		tbm.insertAfter("description", new Separator()); //$NON-NLS-1$
 	}
-	
+
 	public void dispose() {
 		innerToolkit.dispose();
 		super.dispose();
 	}
 
 	private void updateResultSections() {
-		for (int i = 0; i < results.size(); i++) {
-			EngineResultSection section = (EngineResultSection) results.get(i);
-			section.updateResults(false);
-		}
-		reflow();
+		BusyIndicator.showWhile(container.getDisplay(), new Runnable() {
+			public void run() {
+				for (int i = 0; i < results.size(); i++) {
+					EngineResultSection section = (EngineResultSection) results
+							.get(i);
+					section.updateResults(false);
+				}
+				reflow();
+			}
+		});
 	}
 
 	boolean getShowCategories() {
@@ -290,6 +298,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	public boolean setFormInput(Object input) {
 		return false;
 	}
+
 	void scrollToBeginning() {
 		innerForm.setOrigin(0, 0);
 	}
@@ -299,6 +308,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			return parent.getCopyAction();
 		return null;
 	}
+
 	FormToolkit getToolkit() {
 		return innerToolkit;
 	}

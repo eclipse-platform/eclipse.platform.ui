@@ -91,11 +91,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				});
 			}
 		};
-		showExternalAction.setToolTipText("Show in external window");
+		showExternalAction.setToolTipText(HelpUIResources.getString("BrowserPart.showExternalTooltip")); //$NON-NLS-1$
 		showExternalAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_NW));
-		tbm.insertBefore("back", showExternalAction);
-		tbm.insertBefore("back", new Separator());
+		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
+		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 		printAction = new Action(ActionFactory.PRINT.getId()) {
 			public void run() {
 				doPrint();
@@ -153,12 +153,12 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 	
 	private void doPrint() {
-		browser.execute("window.print();");
+		browser.execute("window.print();"); //$NON-NLS-1$
 	}
 
 	private boolean redirectLink(final String url) {
-		if (url.indexOf("/help/topic/") != -1) { //$NON-NLS-1$
-			if (url.endsWith("noframes=true") == false) { //$NON-NLS-1$
+		if (url.indexOf("/topic/") != -1) { //$NON-NLS-1$
+			if (url.indexOf("noframes") == -1) { //$NON-NLS-1$
 				char sep = url.lastIndexOf('?') != -1 ? '&' : '?';
 				parent.showURL(url + sep + "noframes=true"); //$NON-NLS-1$
 				return true;

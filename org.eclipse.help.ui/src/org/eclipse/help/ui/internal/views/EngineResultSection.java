@@ -321,7 +321,7 @@ public class EngineResultSection {
 				sep.setLayoutData(gd);
 				prevLink = toolkit.createImageHyperlink(navContainer, SWT.NULL);
 
-				prevLink.setText(HelpUIResources.getString("EngineResultSection.previous", ""+HITS_PER_PAGE)); //$NON-NLS-1$
+				prevLink.setText(HelpUIResources.getString("EngineResultSection.previous", ""+HITS_PER_PAGE)); //$NON-NLS-1$ //$NON-NLS-2$
 				prevLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_BACK));
 				prevLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -334,7 +334,7 @@ public class EngineResultSection {
 						.createImageHyperlink(navContainer, SWT.RIGHT);
 				int remainder = Math.min(hits.size() - resultOffset
 						- HITS_PER_PAGE - HITS_PER_PAGE, HITS_PER_PAGE);
-				nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$
+				nextLink.setText(HelpUIResources.getString("EngineResultSection.next", ""+remainder)); //$NON-NLS-1$ //$NON-NLS-2$
 				nextLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_FORWARD));
 				gd = new GridData(GridData.HORIZONTAL_ALIGN_END);

@@ -438,7 +438,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				.getShell(), manager, descManager);
 		dialog.setPreferenceStore(set.getPreferenceStore());
 		dialog.create();
-		dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName()));
+		dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName())); //$NON-NLS-1$
 		dialog.open();
 		updateMasters(set);
 	}
@@ -448,7 +448,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart,
 				scopeSetManager, descManager);
 		dialog.setInput(scopeSetManager);
 		dialog.create();
-		dialog.getShell().setText(HelpUIResources.getString("ScopeSetDialog.wtitle"));
+		dialog.getShell().setText(HelpUIResources.getString("ScopeSetDialog.wtitle")); //$NON-NLS-1$
 		if (dialog.open() == ScopeSetDialog.OK) {
 			ScopeSet set = dialog.getActiveSet();
 			if (set != null)

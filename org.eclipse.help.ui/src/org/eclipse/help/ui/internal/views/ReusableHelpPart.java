@@ -474,12 +474,13 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		copyAction = new CopyAction();
 		copyAction.setText(HelpUIResources.getString("ReusableHelpPart.copyAction.label")); //$NON-NLS-1$
 	}
-	
+
 	private void doBack() {
 		HistoryEntry entry = history.prev();
 		if (entry!=null)
 			executeHistoryEntry(entry);
 	}
+	
 	private void doNext() {
 		HistoryEntry entry = history.next();
 		if (entry!=null)
@@ -734,7 +735,10 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(url);
 		else {
 			try {
-				BaseHelpSystem.getHelpBrowser(true).displayURL(toAbsoluteURL(url));
+				String aurl = toAbsoluteURL(url);
+				if (aurl.endsWith("&noframes=true")||aurl.endsWith("?noframes=true")) //$NON-NLS-1$ //$NON-NLS-2$
+					aurl = aurl.substring(0, aurl.length()-14);
+				BaseHelpSystem.getHelpBrowser(true).displayURL(aurl);
 			}
 			catch (Exception e) {
 				HelpUIPlugin.logError("Error opening browser", e); //$NON-NLS-1$
@@ -768,14 +772,14 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		//char sep = url.lastIndexOf('?')!= -1 ? '&':'?';
 		//return base + url+sep+"noframes=true"; //$NON-NLS-1$
 	}
-	
+
 	String toRelativeURL(String url) {
 		String base = getBase();
 		if (url.startsWith(base))
 			return url.substring(base.length());
 		return url;
 	}
-	
+
 	private String getBase() {
 		return "http://" //$NON-NLS-1$
 			+ WebappManager.getHost() + ":" //$NON-NLS-1$
@@ -897,7 +901,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		IStatusLineManager mng = getStatusLineManager();
 		if (mng!=null) {
 			String href = (String)e.getHref();
-			href = href.replaceAll("&", "&&");
+			href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			mng.setMessage(href);
 		}
 	}
