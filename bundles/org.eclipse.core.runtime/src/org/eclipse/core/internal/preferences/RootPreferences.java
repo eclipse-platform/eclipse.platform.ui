@@ -12,6 +12,7 @@ package org.eclipse.core.internal.preferences;
 
 import java.util.HashMap;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -47,6 +48,12 @@ public class RootPreferences extends EclipsePreferences {
 		children.put(child.name(), child);
 	}
 
+	public void addChild(String scope) {
+		if (children == null)
+			children = new HashMap();
+		children.put(scope, scope);
+	}
+
 	/*
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences#node(org.eclipse.core.runtime.IPath)
 	 */
@@ -54,10 +61,21 @@ public class RootPreferences extends EclipsePreferences {
 		if (path.isEmpty())
 			return this;
 		IEclipsePreferences child = null;
+		Object value = null;
+		String scope = path.segment(0);
 		if (children != null)
-			child = (IEclipsePreferences) children.get(path.segment(0));
-		if (child == null)
-			child = new EclipsePreferences(this, path.segment(0));
+			value = children.get(scope);
+		if (value == null) {
+			child = new EclipsePreferences(this, scope);
+			addChild(child);
+		} else {
+			if (value instanceof IEclipsePreferences)
+				child = (IEclipsePreferences) value;
+			else {
+				child = ((PreferencesService) Platform.getPreferencesService()).createNode(scope);
+				addChild(child);
+			}
+		}
 		return child.node(path.removeFirstSegments(1));
 	}
 }

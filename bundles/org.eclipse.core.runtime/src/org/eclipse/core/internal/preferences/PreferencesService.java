@@ -63,17 +63,28 @@ public class PreferencesService implements IPreferencesService {
 			log(createStatusWarning(message, null));
 			return;
 		}
-		try {
-			IScope scopeInstance = (IScope) element.createExecutableExtension("class"); //$NON-NLS-1$
-			scopeRegistry.put(key, scopeInstance);
-			IEclipsePreferences child = scopeInstance.create(root, key);
-			root.addChild(child);
-		} catch (ClassCastException e) {
-			String message = Policy.bind("preferences.classCast"); //$NON-NLS-1$
-			log(createStatusError(message, e));
-		} catch (CoreException e) {
-			log(e.getStatus());
-		}
+		scopeRegistry.put(key, element);
+		root.addChild(key);
+	}
+
+	protected IEclipsePreferences createNode(String name) {
+		IScope scope = null;
+		Object value = scopeRegistry.get(name);
+		if (value instanceof IConfigurationElement) {
+			try {
+				scope = (IScope) ((IConfigurationElement) value).createExecutableExtension("class"); //$NON-NLS-1$
+				scopeRegistry.put(name, scope);
+			} catch (ClassCastException e) {
+				String message = Policy.bind("preferences.classCast"); //$NON-NLS-1$
+				log(createStatusError(message, e));
+				return new EclipsePreferences(root, name);
+			} catch (CoreException e) {
+				log(e.getStatus());
+				return new EclipsePreferences(root, name);
+			}
+		} else
+			scope = (IScope) value;
+		return scope.create(root, name);
 	}
 
 	/*
@@ -90,7 +101,6 @@ public class PreferencesService implements IPreferencesService {
 	 * See who is plugged into the extension point.
 	 */
 	private static void initializeScopes() {
-		// TODO: make the cache dynamic aware
 		IExtensionPoint point = Platform.getPluginRegistry().getExtensionPoint(Platform.PI_RUNTIME, PT_PREFERENCES);
 		if (point == null)
 			return;
