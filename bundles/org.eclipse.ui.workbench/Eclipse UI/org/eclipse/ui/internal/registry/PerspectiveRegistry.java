@@ -398,7 +398,6 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 
 		// Save it to the preference store.
 		Writer writer = new StringWriter();
-		;
 
 		memento.save(writer);
 		writer.close();
@@ -480,5 +479,36 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 
 		// Step 3. Use application-specific default
 		defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPerspectiveRegistry#clonePerspective(java.lang.String, java.lang.String, org.eclipse.ui.IPerspectiveDescriptor)
+	 */
+	public IPerspectiveDescriptor clonePerspective(
+		String id,
+		String label,
+		IPerspectiveDescriptor originalDescriptor) {
+		
+		// Check for invalid labels
+		if (label == null || !(label.trim().length()>0))
+			throw new IllegalArgumentException();
+
+		// Check for duplicates
+		IPerspectiveDescriptor desc = findPerspectiveWithId(id);
+		if (desc != null)
+			throw new IllegalArgumentException();
+
+		// Create descriptor.
+		desc = new PerspectiveDescriptor(id, label, 
+				(PerspectiveDescriptor)originalDescriptor);
+		children.add(desc);
+		return desc;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPerspectiveRegistry#revertPerspective(org.eclipse.ui.IPerspectiveDescriptor)
+	 */
+	public void revertPerspective(IPerspectiveDescriptor perspToRevert) {
+		PerspectiveDescriptor desc = (PerspectiveDescriptor)perspToRevert;
+		perspToRemove.add(desc.getId());
+		desc.revertToPredefined();
 	}
 }

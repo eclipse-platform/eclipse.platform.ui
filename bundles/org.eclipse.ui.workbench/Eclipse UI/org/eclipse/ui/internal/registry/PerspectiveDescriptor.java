@@ -120,9 +120,18 @@ public PerspectiveDescriptor(IConfigurationElement configElement, String desc)
  * @throws a CoreException if the object could not be instantiated.
  */
 public IPerspectiveFactory createFactory() throws CoreException {
-	if (className == null || configElement == null)
+	IConfigurationElement element = configElement;
+	if (originalId != null) {
+		IPerspectiveDescriptor desc = ((PerspectiveRegistry)WorkbenchPlugin.getDefault().
+				getPerspectiveRegistry()).findPerspectiveWithId(originalId);
+		if (desc != null)
+			element = ((PerspectiveDescriptor)desc).configElement;
+		if (element == null)
+			return null;
+	}
+	else if (className == null || element == null)
 		return null;
-	Object obj = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
+	Object obj = WorkbenchPlugin.createExtension(element, ATT_CLASS);
 	return (IPerspectiveFactory) obj;
 }
 /**

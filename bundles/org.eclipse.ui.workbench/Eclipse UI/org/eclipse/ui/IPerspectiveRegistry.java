@@ -25,6 +25,19 @@ package org.eclipse.ui;
  */
 public interface IPerspectiveRegistry {
 /**
+ * Clones an existing perspective.
+ * 
+ * @param id the id for the cloned perspective, which must not already be used by 
+ *   any registered perspective
+ * @param label the label assigned to the cloned perspective
+ * @param desc the perspective to clone
+ * @return the cloned perspective descriptor
+ * 
+ * @since 3.0
+ */
+public IPerspectiveDescriptor clonePerspective(String id, String label, 
+		IPerspectiveDescriptor desc) throws IllegalArgumentException;
+/**
  * Finds and returns the registered perspective with the given perspective id.
  *
  * @param perspectiveId the perspective id 
@@ -77,4 +90,13 @@ public IPerspectiveDescriptor[] getPerspectives();
  * @param id a perspective id; must not be <code>null</code>
  */
 public void setDefaultPerspective(String id);
+/**
+ * Reverts a perspective back to its original definition
+ * as specified in the plug-in manifest.
+ * 
+ * @param perspToRevert the perspective to revert  
+ * 
+ * @since 3.0
+ */
+public void revertPerspective(IPerspectiveDescriptor perspToRevert);
 }
