@@ -394,6 +394,5 @@ public void setTitleAreaColor(RGB color) {
 public void setTitleImage(Image newTitleImage) {
 	titleImage.setImage(newTitleImage);
 	titleImage.setVisible(newTitleImage != null);
-	getTitleArea().layout();
 }
 }
