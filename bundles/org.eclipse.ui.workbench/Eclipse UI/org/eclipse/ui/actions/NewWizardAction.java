@@ -53,7 +53,6 @@ public NewWizardAction() {
 	setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_HOVER));
 	setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_WIZ_DISABLED));
 	setToolTipText(WorkbenchMessages.getString("NewWizardAction.toolTip"));	 //$NON-NLS-1$
-	setAccelerator(SWT.CTRL | 'N'); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.NEW_ACTION);
 }
 /**

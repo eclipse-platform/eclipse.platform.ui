@@ -29,7 +29,6 @@ public ShowViewMenuAction(WorkbenchWindow window) {
 protected void initText() {
 	setText(WorkbenchMessages.getString("ShowViewMenuAction.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ShowViewMenuAction.toolTip")); //$NON-NLS-1$
-	setAccelerator(SWT.CTRL | SWT.F10);
 }
 /**
  * Show the pane title menu.

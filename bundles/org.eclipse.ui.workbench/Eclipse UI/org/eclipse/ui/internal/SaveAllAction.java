@@ -32,7 +32,6 @@ public SaveAllAction(WorkbenchWindow window) {
 	super(WorkbenchMessages.getString("SaveAll.text"));//$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_ALL);
-	setAccelerator(SWT.CTRL | SWT.SHIFT |'s');
 	setEnabled(false);
 	this.window = window;
 	window.addPageListener(this);

@@ -30,7 +30,6 @@ public class WorkbenchEditorsAction extends Action {
 	 */
 	public WorkbenchEditorsAction(WorkbenchWindow window) {
 		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
-		setAccelerator(SWT.CTRL | SWT.SHIFT | 'W');
 		this.window = window;
 		WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);
 	}

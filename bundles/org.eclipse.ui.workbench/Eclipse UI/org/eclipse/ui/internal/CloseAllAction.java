@@ -26,7 +26,6 @@ public CloseAllAction(IWorkbenchWindow aWorkbench) {
 	updateState();
 	aWorkbench.addPageListener(this);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_ACTION);
-	setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F4);
 }
 /**
  * Notifies this listener that the given page has been activated.

@@ -19,7 +19,6 @@ public SaveAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
-	setAccelerator(SWT.CTRL |'s');
 }
 /**
  * Performs the save.

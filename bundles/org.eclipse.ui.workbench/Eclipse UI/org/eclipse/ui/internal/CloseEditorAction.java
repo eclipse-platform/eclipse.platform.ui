@@ -20,7 +20,6 @@ public CloseEditorAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.getString("CloseEditorAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.CLOSE);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_PART_ACTION);
-	setAccelerator(SWT.CTRL | SWT.F4);
 }
 /* (non-Javadoc)
  * Method declared on IAction.

@@ -103,7 +103,6 @@ private void setBuildType(int type) {
 			setToolTipText(WorkbenchMessages.getString("GlobalBuildAction.toolTip")); //$NON-NLS-1$
 			setId(IWorkbenchActionConstants.BUILD);
 			WorkbenchHelp.setHelp(this, IHelpContextIds.GLOBAL_INCREMENTAL_BUILD_ACTION);
-			setAccelerator(SWT.CTRL | 'b');
 			break;
 		case IncrementalProjectBuilder.FULL_BUILD:
 			setText(WorkbenchMessages.getString("GlobalBuildAction.rebuildText")); //$NON-NLS-1$
