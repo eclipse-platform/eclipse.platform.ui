@@ -226,6 +226,8 @@ public class LaunchHistoryPreferenceTab {
 			}
 		});
 		gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 100;
+		gd.heightHint = 100;
 		getRecentTable().getTable().setLayoutData(gd);
 		getRecentTable().getTable().setFont(font);
 		getRecentTable().setInput(DebugUIPlugin.getDefault());
