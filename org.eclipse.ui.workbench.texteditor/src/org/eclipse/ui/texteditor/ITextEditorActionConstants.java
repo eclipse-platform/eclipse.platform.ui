@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -517,4 +518,11 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.1
 	 */
 	static final String QUICKDIFF_TOGGLE= "QuickDiff.Toggle"; //$NON-NLS-1$
+
+	/** 
+	 * Name of the action for emacs style hippie completion. 
+	 * Value: <code>"HIPPIE_COMPLETION"</code>
+	 * @since 3.1
+	 */
+	static final String HIPPIE_COMPLETION= "HIPPIE_COMPLETION"; //$NON-NLS-1$
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
+ *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -485,4 +486,11 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.1
 	 */
 	static final String LINENUMBER_TOGGLE= "org.eclipse.ui.editors.lineNumberToggle"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the edit -> text complete action
+	 * Value: <code>"org.eclipse.ui.edit.text.hippieCompletion"</code>).
+	 * @since 3.1
+	 */
+	public static final String HIPPIE_COMPLETION= "org.eclipse.ui.edit.text.hippieCompletion"; //$NON-NLS-1$
 }

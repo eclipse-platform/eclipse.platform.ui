@@ -27,6 +27,7 @@ public class WorkbenchTextEditorTestSuite extends TestSuite {
 		//$JUnit-BEGIN$
 		suite.addTest(DiffTestSuite.suite());
 		suite.addTest(FindReplaceDialogTest.suite());
+        suite.addTest(HippieCompletionTest.suite());
 		//$JUnit-END$
 		return suite;
 	}

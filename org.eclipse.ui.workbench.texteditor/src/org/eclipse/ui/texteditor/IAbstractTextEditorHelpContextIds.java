@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -302,4 +303,11 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 3.0
 	 */
 	public static final String TOGGLE_INSERT_MODE_ACTION= PREFIX + "toggle_insert_mode" + ACTION_POSTFIX; //$NON-NLS-1$;;
+    
+    /**
+     * Help context id for the hippie completion action.
+     * Value: <code>"org.eclipse.ui.hippie_completion_action_context"</code>
+     * @since 3.1
+     */
+    public static final String HIPPIE_COMPLETION_ACTION=PREFIX + "hippie_completion" + ACTION_POSTFIX; //$NON-NLS-1$
 }

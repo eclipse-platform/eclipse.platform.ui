@@ -426,6 +426,12 @@
             categoryId="org.eclipse.ui.category.edit"
             id="org.eclipse.ui.edit.text.toggleInsertMode">
       </command>
+      <command
+            name="%command.hippieCompletion.name"
+            description="%command.hippieCompletion.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.hippieCompletion">
+      </command>
 	
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.text.delete.line"
@@ -634,6 +640,12 @@
             commandId="org.eclipse.ui.edit.text.toggleInsertMode"
             contextId="org.eclipse.ui.textEditorScope"
             keySequence="M1+M2+INSERT"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            keySequence="M3+/"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
  *     Michel Ishizuka (cqw10305@nifty.com) - http://bugs.eclipse.org/bugs/show_bug.cgi?id=68963
+ *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -4291,6 +4292,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_INSERT_MODE);
 		setAction(ITextEditorActionConstants.TOGGLE_INSERT_MODE, action);
 
+		action = new HippieCompleteAction(EditorMessages.getResourceBundle(), "Editor.HippieCompletion.", this); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.HIPPIE_COMPLETION_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
+		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);
+		
 		PropertyDialogAction openProperties= new PropertyDialogAction(
 				getSite().getShell(),
 				new ISelectionProvider() {
