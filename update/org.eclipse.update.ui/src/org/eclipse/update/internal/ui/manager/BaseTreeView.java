@@ -10,6 +10,8 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+import org.eclipse.ui.*;
 
 /**
  * Insert the type's description here.
@@ -17,6 +19,7 @@ import org.eclipse.swt.events.*;
  */
 public abstract class BaseTreeView extends ViewPart {
 protected TreeViewer viewer;
+private Action showDetailsAction;
 /**
  * The constructor.
  */
@@ -84,15 +87,30 @@ public void setFocus()  {
 }
 
 protected void fillContextMenu(IMenuManager manager) {
+	manager.add(showDetailsAction);
 }
 
 protected void makeActions() {
+	showDetailsAction = new Action() {
+		public void run() {
+			IWorkbenchPage page = UpdateUIPlugin.getActivePage();
+			try {
+				IViewPart part = page.showView(UpdatePerspective.ID_DETAILS);
+				((DetailsView)part).selectionChanged(BaseTreeView.this, viewer.getSelection());
+			}
+			catch (PartInitException e) {
+				UpdateUIPlugin.logException(e);
+			}
+		}
+	};
+	showDetailsAction.setText("Show Details");
 }
 
 protected void handleSelectionChanged(SelectionChangedEvent e) {
 }
 
 protected void handleDoubleClick(DoubleClickEvent e) {
+	showDetailsAction.run();
 }
 
 protected void handleKeyPressed(KeyEvent e) {

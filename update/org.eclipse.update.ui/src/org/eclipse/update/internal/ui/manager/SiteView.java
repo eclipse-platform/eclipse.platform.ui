@@ -200,6 +200,7 @@ public void fillContextMenu(IMenuManager manager) {
 	}
 	manager.add(new Separator());
 	manager.add(propertiesAction);
+	super.fillContextMenu(manager);
 }
 
 private void performNew() {

@@ -18,11 +18,13 @@ import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
-
+import org.eclipse.jface.action.Action;
 import org.eclipse.update.core.IInstallConfiguration;
 import java.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.action.*;
 
 /**
  * Insert the type's description here.
@@ -33,6 +35,7 @@ private Image configImage;
 private Image featureImage;
 private Image siteImage;
 private Image currentConfigImage;
+private Action revertAction;
 
 class HistoryProvider extends DefaultContentProvider 
 						implements ITreeContentProvider {
@@ -163,6 +166,42 @@ public void dispose() {
 	}
 	
 	super.dispose();
+}
+
+private IInstallConfiguration getSelectedConfiguration() {
+	ISelection selection = viewer.getSelection();
+
+	if (selection instanceof IStructuredSelection &&
+			!selection.isEmpty()) {
+		IStructuredSelection ssel = (IStructuredSelection)selection;
+		if (ssel.size()==1) {
+			Object obj = ssel.getFirstElement();
+			if (obj instanceof IInstallConfiguration)
+			   return (IInstallConfiguration)obj;
+		}
+	}
+	return null;
+}
+
+protected void makeActions() {
+	super.makeActions();
+	revertAction = new Action() {
+		public void run() {
+			IInstallConfiguration target = getSelectedConfiguration();
+			if (target!=null)
+			   RevertSection.performRevert(target);
+		}
+	};
+	revertAction.setText("Restore");
+}
+
+protected void fillContextMenu(IMenuManager manager) {
+	IInstallConfiguration config = getSelectedConfiguration();
+	if (config!=null && !config.isCurrent()) {
+		manager.add(revertAction);
+		manager.add(new Separator());
+	}
+	super.fillContextMenu(manager);
 }
 
 public void currentInstallConfigurationChanged(IInstallConfiguration configuration) {

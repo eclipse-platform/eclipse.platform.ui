@@ -90,39 +90,43 @@ public class RevertSection extends UpdateSection {
 		}
 	}
 	
-	public void performRevert() {
+	private void performRevert() {
 		try {
-			final ILocalSite localSite = SiteManager.getLocalSite();
+			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration target = config;
 			if (config.isCurrent()) {
 				// take the previous one
 				IInstallConfiguration [] history = localSite.getConfigurationHistory();
 				target = history[history.length - 2];
 			}
-			final IInstallConfiguration ftarget = target;
-			IRunnableWithProgress operation = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					try {
-						localSite.revertTo(ftarget, monitor);
-					} catch (CoreException e) {
-						UpdateUIPlugin.logException(e);
-					} finally {
-						monitor.done();
-					}
-				}
-			};
-			try {
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(container.getShell());
-				dialog.run(false, true, operation);
-			}
-			catch (InvocationTargetException e) {
-				UpdateUIPlugin.logException(e);
-			}
-			catch (InterruptedException e) {
-			}
+			performRevert(target);
 		}
 		catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
+		}
+	}
+	
+	public static void performRevert(final IInstallConfiguration target) {
+		IRunnableWithProgress operation = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				try {
+					ILocalSite localSite = SiteManager.getLocalSite();
+					localSite.revertTo(target, monitor);
+				} catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+		try {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(UpdateUIPlugin.getActiveWorkbenchShell().getShell());
+			dialog.run(false, true, operation);
+		}
+		catch (InvocationTargetException e) {
+			UpdateUIPlugin.logException(e);
+		}
+		catch (InterruptedException e) {
 		}
 	}
 }

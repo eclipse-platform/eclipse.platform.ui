@@ -239,6 +239,8 @@ protected void makeActions() {
 
 protected void fillContextMenu(IMenuManager manager) {
 	manager.add(deleteAction);
+	manager.add(new Separator());
+	super.fillContextMenu(manager);
 }
 
 private void performDelete() {
