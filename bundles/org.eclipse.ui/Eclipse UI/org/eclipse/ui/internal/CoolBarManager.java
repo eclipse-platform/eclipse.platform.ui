@@ -231,8 +231,8 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 						row = currentAfterRow;
 						newWraps = currentLayout.wrapsForNewItem(row, createIndex);
 					} else {
-						// current layout is different than when the item was deleted,
-						// just add the item to the beforeRow
+						// current layout rows are different than when the item 
+						// was deleted, just add the item to the currentBeforeRow
 						createIndex = data.beforeIndex + 1;
 						row = currentBeforeRow;
 					}
@@ -266,12 +266,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			createIndex = data.afterIndex;
 			if (savedItemRow == savedAfterRow) {
 				// in the saved layout, the item was on the same row as the afterItem, 
-				// put the item on the afterRow in the current layout
+				// put the item on the currentAfterRow 
 				row = currentAfterRow;
 				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
 			} else {
-				// in the saved layout, the item was not on the same row as the afterItem, 
-				// create a new row before currentAfterRow
+				// in the saved layout, the item was not on the same row as the
+				//  afterItem, create a new row before currentAfterRow
 				row = currentAfterRow;
 				createIndex = currentLayout.getStartIndexOfRow(row);
  				newWraps = currentLayout.wrapsForNewRow(row, createIndex);
@@ -282,11 +282,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			createIndex = data.beforeIndex + 1;
 			if (savedItemRow == savedBeforeRow) {
 				// in the saved layout, the item was on the same row as the beforeItem, 
-				// put the item on the beforeRow in the current layout
+				// put the item on currentBeforeRow
 				row = currentBeforeRow;
 				newWraps = currentLayout.wrapsForNewItem(row, createIndex);
 			} else {
-				// create a new row with the item after beforeRow
+				// in the saved layout, the item was not on the same row as the 
+				// beforeItem, create a new row with the item after currentBeforeRow
 				row = currentBeforeRow + 1;
  				createIndex = currentLayout.getStartIndexOfRow(row);
  				if (createIndex == -1) {
@@ -302,8 +303,11 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 
 		// create the item
-// workaround for SWT 22055 bug
-if (newWraps != null) coolBar.setRedraw(false);
+		if (newWraps != null) {
+			// item will be added and then the wraps will set, so use 
+			// since the position of the item will change
+			coolBar.setRedraw(false);
+		}
 		CoolItem coolItem = new CoolItem(coolBar, SWT.DROP_DOWN, createIndex);
 		coolItem.setControl(toolBar);
 		coolItem.setData(cbItem);
@@ -311,7 +315,7 @@ if (newWraps != null) coolBar.setRedraw(false);
 		setSizeFor(coolItem);
 		if (newWraps != null)	{
 			coolBar.setWrapIndices(newWraps);
-coolBar.setRedraw(true);
+			coolBar.setRedraw(true);
 		}
 		
 		positionAdded(position);
@@ -539,13 +543,6 @@ coolBar.setRedraw(true);
 					break;
 				}
 			}
-			// NOT HANDLING THE FOLLOWING CORRECTLY
-			// 		ABC
-			//		DEF
-			// 	delete D, switch C & E
-			//  	ABE
-			//		CF
-			//	when add D back, beforeIndex will be > afterIndex
 			if (beforeIndex != -1 && afterIndex != -1) {
 				// test whether or not we've found an exact position, 
 				// if we have use this savedPosition
