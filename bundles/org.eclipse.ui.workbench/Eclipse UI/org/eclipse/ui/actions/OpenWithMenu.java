@@ -132,7 +132,7 @@ private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
  */
 private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, final IEditorDescriptor preferredEditor) {
 	// XXX: Would be better to use bold here, but SWT does not support it.
-	MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
+	final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
 	boolean isPreferred = preferredEditor != null && descriptor.getId().equals(preferredEditor.getId());
 	menuItem.setSelection(isPreferred);
 	menuItem.setText(descriptor.getLabel());
@@ -144,7 +144,8 @@ private void createMenuItem(Menu menu, final IEditorDescriptor descriptor, final
 		public void handleEvent(Event event) {
 			switch (event.type) {
 				case SWT.Selection:
-					openEditor(descriptor);
+					if(menuItem.getSelection())
+						openEditor(descriptor);
 					break;
 			}
 		}
@@ -238,9 +239,9 @@ private void openEditor(IEditorDescriptor editor) {
  * @param registry the editor registry
  */
 private void createDefaultMenuItem(Menu menu, final IFile file) {
-	MenuItem menuItem;
+	final MenuItem menuItem;
 	if (registry.getDefaultEditor(file) == null) {
-		menuItem = new MenuItem(menu, SWT.CHECK);
+		menuItem = new MenuItem(menu, SWT.RADIO);
 		menuItem.setSelection(true);
 	}
 	else {
@@ -252,17 +253,18 @@ private void createDefaultMenuItem(Menu menu, final IFile file) {
 		public void handleEvent(Event event) {
 			switch (event.type) {
 				case SWT.Selection:
-					registry.setDefaultEditor(file,null);
-					try{
-						page.openEditor(file);
+					if(menuItem.getSelection()) {
+						registry.setDefaultEditor(file,null);
+						try{
+							page.openEditor(file);
+						} catch (PartInitException e) {
+							DialogUtil.openError(
+								page.getWorkbenchWindow().getShell(),
+								WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
+								e.getMessage(),
+								e);
+						}
 					}
-					catch (PartInitException e) {
-						DialogUtil.openError(
-							page.getWorkbenchWindow().getShell(),
-							WorkbenchMessages.getString("OpenWithMenu.dialogTitle"), //$NON-NLS-1$
-							e.getMessage(),
-							e);
-					}	
 					break;
 			}
 		}
