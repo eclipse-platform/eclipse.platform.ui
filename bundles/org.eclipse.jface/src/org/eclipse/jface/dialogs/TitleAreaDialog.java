@@ -70,6 +70,7 @@ public class TitleAreaDialog extends Dialog {
 	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
 	private Text messageLabel;
+	private Composite workArea;
 
 	private Label messageImageLabel;
 	private Image messageImage;
@@ -105,30 +106,25 @@ protected Control createContents(Composite parent) {
 	parent.setLayoutData(data);
 	
 	//Now create a work area for the rest of the dialog
-	Composite composite = new Composite(parent, SWT.NULL);
+	workArea = new Composite(parent, SWT.NULL);
 	GridLayout childLayout = new GridLayout();
 	childLayout.marginHeight = 0;
 	childLayout.marginWidth = 0;
 	childLayout.verticalSpacing = 0;
-	composite.setLayout(childLayout);
+	workArea.setLayout(childLayout);
 	
 	Control top = createTitleArea(parent);
 	
-	FormData childData = new FormData();
-	childData.top = new FormAttachment(top);
-	childData.right = new FormAttachment(100,0);
-	childData.left = new FormAttachment(0,0);
-	childData.bottom = new FormAttachment(100,0);
-	composite.setLayoutData(childData);
+	resetWorkAreaAttachments(top);
 	
-	composite.setFont(JFaceResources.getDialogFont());
+	workArea.setFont(JFaceResources.getDialogFont());
 
 	// initialize the dialog units
-	initializeDialogUnits(composite);
+	initializeDialogUnits(workArea);
 	
 	// create the dialog area and button bar
-	dialogArea = createDialogArea(composite);
-	buttonBar = createButtonBar(composite);
+	dialogArea = createDialogArea(workArea);
+	buttonBar = createButtonBar(workArea);
 	
 	return parent;
 }
@@ -582,6 +578,15 @@ public void setTitleAreaColor(RGB color) {
 public void setTitleImage(Image newTitleImage) {
 	titleImage.setImage(newTitleImage);
 	titleImage.setVisible(newTitleImage != null);
+	if(newTitleImage != null){
+		determineTitleImageLargest();
+		Control top;
+		if(titleImageLargest)
+			top = titleImage;
+		else
+			top = messageLabel;
+		resetWorkAreaAttachments(top);
+	}
 }
 
 /**
@@ -611,6 +616,20 @@ private void setMessageBackgrounds(boolean showingError){
 	messageImageLabel.setBackground(color);
 	bottomFillerLabel.setBackground(color);
 	leftFillerLabel.setBackground(color); 
+}
+
+/**
+ * Reset the attachment of the workArea to now attach
+ * to top as the top control.
+ * @param top
+ */
+private void resetWorkAreaAttachments(Control top) {
+	FormData childData = new FormData();
+	childData.top = new FormAttachment(top);
+	childData.right = new FormAttachment(100, 0);
+	childData.left = new FormAttachment(0, 0);
+	childData.bottom = new FormAttachment(100, 0);
+	workArea.setLayoutData(childData);
 }
 		
 }
