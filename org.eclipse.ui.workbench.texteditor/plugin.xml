@@ -25,7 +25,7 @@
 
 <extension point="org.eclipse.ui.actionDefinitions">
 	<actionDefinition
-		id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition"
+		id="org.eclipse.ui.edit.text.gotoLastEditPosition"
 		name= "%goToLastEditPosition.label"
 		description="%goToLastEditPosition.description"
 	/>
@@ -33,11 +33,11 @@
 
 <extension point="org.eclipse.ui.acceleratorSets">
 	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-		<accelerator key="Ctrl+Q" id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition" />
+		<accelerator key="Ctrl+Q" id="org.eclipse.ui.edit.text.gotoLastEditPosition" />
 	</acceleratorSet>
 	
 	<acceleratorSet	scopeId="org.eclipse.ui.globalScope" configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-		<accelerator key="Ctrl+Q" id="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition" />
+		<accelerator key="Ctrl+Q" id="org.eclipse.ui.edit.text.gotoLastEditPosition" />
 	</acceleratorSet>
 </extension>
 
@@ -45,12 +45,12 @@
 
 <extension point="org.eclipse.ui.actionSets">
 	<actionSet
-		id="org.eclipse.ui.workbench.texteditor.actionSet.navigation"
+		id="org.eclipse.ui.edit.text.actionSet.navigation"
         label="%textEditorNavigationActionSet.label"
 		visible="true">
 
-		<action id="org.eclipse.ui.texteditor.gotoLastEditPosition"
-			definitionId="org.eclipse.ui.workbench.texteditor.gotoLastEditPosition"
+		<action id="gotoLastEditPosition"
+			definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
 			toolbarPath="org.eclipse.ui.workbench.navigate/history.group/Navigate"	
 			menubarPath="navigate/"
 			label="%goToLastEditPosition.label"

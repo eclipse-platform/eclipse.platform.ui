@@ -233,7 +233,7 @@ public interface IAbstractTextEditorHelpContextIds {
 
 	/**
 	 * Help context id for the action.
-	 * Value: <code>"org.eclipse.ui.workbench.texteditor.GotoLastEditPositionAction"</code>
+	 * Value: <code>"org.eclipse.ui.goto_last_edit_position_action_context"</code>
 	 */
-	public static final String GOTO_LAST_EDIT_POSITION_ACTION= PREFIX + "goto_last_edit_position_action_context"; //$NON-NLS-1$
+	public static final String GOTO_LAST_EDIT_POSITION_ACTION= PREFIX + "goto_last_edit_position" + ACTION_POSTFIX; //$NON-NLS-1$
 }

@@ -310,10 +310,10 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 
 	/**
 	 * Action definition id of got to last edit position action.
-	 * Value: <code>"org.eclipse.ui.workbench.texteditor.GotoLastEditPositionAction"</code>
+	 * Value: <code>"org.eclipse.ui.edit.text.gotoLastEditPosition"</code>
 	 * @since 2.1
 	 */
-	public static final String GOTO_LAST_EDIT_POSITION= "org.eclipse.ui.workbench.texteditor.GotoLastEditPositionAction"; //$NON-NLS-1$
+	public static final String GOTO_LAST_EDIT_POSITION= "org.eclipse.ui.edit.text.gotoLastEditPosition"; //$NON-NLS-1$
 	
 	/**
 	 * Action definition ID of the edit -> content assist proposal action
