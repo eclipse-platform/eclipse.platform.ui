@@ -113,8 +113,7 @@ public class EditorList extends AbstractTableInformationControl {
         if (selection != null) {
             EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
                     .getInput();
-            editorPresentation.getTabFolder()
-                    .setSelection((CTabItem) selection);
+            editorPresentation.setSelection((CTabItem) selection);
         }
         
         dispose();

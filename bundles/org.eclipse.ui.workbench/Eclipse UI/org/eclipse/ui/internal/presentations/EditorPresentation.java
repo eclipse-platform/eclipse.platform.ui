@@ -275,4 +275,8 @@ public class EditorPresentation extends BasicStackPresentation {
 
         drawGradient(fgColor, gradient);
     }
+    
+    void setSelection(CTabItem tabItem) {
+        selectPart(getPartForTab(tabItem));
+    }
 }
