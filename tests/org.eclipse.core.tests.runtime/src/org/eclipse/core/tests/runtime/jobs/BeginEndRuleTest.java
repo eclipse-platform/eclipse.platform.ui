@@ -37,7 +37,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			//should fail
 		}
 		//simple mismatched begin/end
-		manager.beginRule(rule1);
+		manager.beginRule(rule1, null);
 		try {
 			manager.endRule(rule2);
 			fail("1.0");

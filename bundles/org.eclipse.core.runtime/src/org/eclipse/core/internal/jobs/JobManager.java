@@ -109,8 +109,14 @@ public class JobManager implements IJobManager {
 	public void addJobChangeListener(IJobChangeListener listener) {
 		jobListeners.add(listener);
 	}
+	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor) {
+		implicitJobs.begin(rule, Policy.monitorFor(monitor));
+	}
+	/**
+	 * @deprecated
+	 */
 	public void beginRule(ISchedulingRule rule) {
-		implicitJobs.begin(rule);
+		implicitJobs.begin(rule, Policy.monitorFor(null));
 	}
 	/**
 	 * Cancels a job

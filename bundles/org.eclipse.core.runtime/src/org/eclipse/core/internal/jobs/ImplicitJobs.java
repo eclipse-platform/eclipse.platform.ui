@@ -12,8 +12,7 @@ package org.eclipse.core.internal.jobs;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.internal.runtime.Assert;
-import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -41,31 +40,53 @@ class ImplicitJobs {
 			top = -1;
 		}
 		/**
-		 * Schedule the job and block the calling thread until the job starts
-		 * running
+		 * Schedule the job and block the calling thread until the job starts running
 		 */
-		synchronized void joinRun() {
+		synchronized void joinRun(IProgressMonitor monitor) {
+			if (monitor.isCanceled())
+				throw new OperationCanceledException();
 			running = false;
 			//check if there is a blocking thread before trying to schedule
 			InternalJob blockingJob = manager.findBlockingJob(this);
 			Thread blocker = blockingJob == null ? null : blockingJob.getThread();
 			//lock listener decided to grant immediate access
 			if (!manager.getLockManager().aboutToWait(blocker)) {
-				queued = true;
-				schedule();
-				while (!running) {
-					blocker = manager.getBlockingThread(this);
-					if (manager.getLockManager().aboutToWait(blocker))
-						break;
-					try {
-						wait(200);
-					} catch (InterruptedException e) {
+				try {
+					reportBlocked(monitor, blockingJob);
+					queued = true;
+					schedule();
+					while (!running) {
+						if (monitor.isCanceled())
+							throw new OperationCanceledException();
+						blocker = manager.getBlockingThread(this);
+						if (manager.getLockManager().aboutToWait(blocker))
+							break;
+						try {
+							wait(250);
+						} catch (InterruptedException e) {
+						}
 					}
+				} finally {
+					reportUnblocked(monitor);
 				}
 			}
 			manager.getLockManager().aboutToRelease();
 			running = true;
 			setThread(Thread.currentThread());
+		}
+		private void reportUnblocked(IProgressMonitor monitor) {
+			if (!(monitor instanceof IProgressMonitorWithBlocking))
+				return;
+			((IProgressMonitorWithBlocking)monitor).clearBlocked();
+		}
+		private void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
+			if (!(monitor instanceof IProgressMonitorWithBlocking))
+				return;
+			String msg = blockingJob == null  
+				? Policy.bind("jobs.blocked0")  //$NON-NLS-1$
+				: Policy.bind("jobs.blocked1", blockingJob.getName());  //$NON-NLS-1$
+			IStatus reason = new Status(IStatus.INFO, Platform.PI_RUNTIME, 1, msg, null);
+			((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
 		}
 		/**
 		 * Pops a rule. Returns true if it was the last rule for this thread
@@ -139,13 +160,10 @@ class ImplicitJobs {
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
 	}
-	/**
-	 * The lock to wait on when joining a run. One lock is sufficient because
-	 * it is used within the synchronized block of begin
-	 * @param rule
+	/* (Non-javadoc) 
+	 * @see IJobManager#beginRule 
 	 */
-	/* (Non-javadoc) @see IJobManager#beginRule */
-	void begin(ISchedulingRule rule) {
+	void begin(ISchedulingRule rule, IProgressMonitor monitor) {
 		boolean join = false;
 		ThreadJob threadJob;
 		synchronized (this) {
@@ -155,16 +173,14 @@ class ImplicitJobs {
 				//no need to schedule a thread job for a null rule
 				if (rule == null)
 					return;
-				//create a thread job for this thread
-				//use the rule from the real job if it has one
+				//create a thread job for this thread, use the rule from the real job if it has one
 				Job realJob = manager.currentJob();
 				if (realJob != null && realJob.getRule() != null)
 					threadJob = newThreadJob(realJob.getRule());
 				else {
 					threadJob = newThreadJob(rule);
 					join = true;
-					//if this job has a rule, then we are essentially
-					// acquiring a lock
+					//if this job has a rule, then we are essentially acquiring a lock
 					if (rule != null)
 						manager.getLockManager().addLockThread(currentThread);
 				}
@@ -176,10 +192,12 @@ class ImplicitJobs {
 		//join the thread job outside sync block
 		if (join)
 			if (!manager.runNow(threadJob))
-				threadJob.joinRun();
+				threadJob.joinRun(monitor);
 	}
 
-	/* (Non-javadoc) @see IJobManager#endRule */
+	/* (Non-javadoc) 
+	 * @see IJobManager#endRule 
+	 */
 	synchronized void end(ISchedulingRule rule) {
 		Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
@@ -190,8 +208,7 @@ class ImplicitJobs {
 			threadJobs.remove(currentThread);
 			if (threadJob.running) {
 				manager.endJob(threadJob, Status.OK_STATUS, threadJob.queued);
-				//if this job had a rule, then we are essentially releasing a
-				// lock
+				//if this job had a rule, then we are essentially releasing a lock
 				if (threadJob.getRule() != null)
 					manager.getLockManager().removeLockThread(Thread.currentThread());
 			}
