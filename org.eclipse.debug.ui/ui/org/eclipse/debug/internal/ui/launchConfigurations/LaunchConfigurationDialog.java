@@ -499,7 +499,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_processing_launch_configuration._See_log_for_more_information_7"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		setInitialSelection(new StructuredSelection(lastLaunchedConfig));
+		if (lastLaunchedConfig != null) {
+			setInitialSelection(new StructuredSelection(lastLaunchedConfig));
+		}			
 		return super.open();
 	}
 	
