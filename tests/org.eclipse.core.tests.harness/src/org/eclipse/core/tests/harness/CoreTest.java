@@ -24,6 +24,11 @@ public class CoreTest extends TestCase {
 
 	// plug-in identified for the core.tests.harness plug-in.
 	public static final String PI_HARNESS = "org.eclipse.core.tests.harness";
+	private static final Runnable NO_OP = new Runnable() {
+		public void run() {
+			// no-op
+		}
+	};
 
 	/** counter for generating unique random filesystem locations */
 	protected static int nextLocationCounter = 0;
@@ -36,21 +41,33 @@ public class CoreTest extends TestCase {
 		super(name);
 	}
 
-	public static void runPerformanceTest(TestCase testCase, Runnable operation, int inner, final int outer) {
+	public static void runPerformanceTest(TestCase testCase, Runnable setup, Runnable operation, Runnable teardown, int inner, final int outer) {
 		Performance perf = Performance.getDefault();
 		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(testCase));
+		if (setup == null)
+			setup = NO_OP;
+		if (teardown == null)
+			teardown = NO_OP;
+		if (operation == null)
+			operation = NO_OP;
 		try {
 			for (int i = 0; i < outer; i++) {
+				setup.run();
 				meter.start();
 				for (int j = 0; j < inner; j++)
 					operation.run();
 				meter.stop();
+				teardown.run();
 			}
 			meter.commit();
 			perf.assertPerformance(meter);
 		} finally {
 			meter.dispose();
 		}
+	}
+
+	public static void runPerformanceTest(TestCase testCase, Runnable operation, int inner, final int outer) {
+		runPerformanceTest(testCase, NO_OP, operation, NO_OP, inner, outer);
 	}
 
 	public static void log(String pluginID, IStatus status) {
