@@ -163,7 +163,7 @@ public class IWorkbenchTest extends UITestCase {
 
 			// Set platform pref for openPage.
 			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+			store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, 
 				true);
 			
 			// Call openPage twice with the same input.
@@ -175,7 +175,7 @@ public class IWorkbenchTest extends UITestCase {
 			assertEquals("Pages should be equal", page1, page2);
 
 			// Reset platform pref for openPage.
-			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+			store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, 
 				false);
 			
 			// Call openPage twice with the same input.
@@ -203,30 +203,30 @@ public class IWorkbenchTest extends UITestCase {
 
 			// Set platform pref for openPage.
 			IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+			store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, 
 				true);
 			
 			// Call openPage twice with the same input.
 			// Verify that we get the same page back both times.
 			page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
-				ResourcesPlugin.getWorkspace());
+				ResourcesPlugin.getWorkspace(), 0);
 			assertNotNull(page1);
 			page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
-				ResourcesPlugin.getWorkspace());
+				ResourcesPlugin.getWorkspace(), 0);
 			assertNotNull(page2);
 			assertEquals("Pages should be equal", page1, page2);
 
 			// Reset platform pref for openPage.
-			store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES, 
+			store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES, 
 				false);
 			
 			// Call openPage twice with the same input.
 			// Verify that we get two different pages back.
 			page1 = fWorkbench.openPage(EmptyPerspective.PERSP_ID,
-				ResourcesPlugin.getWorkspace());
+				ResourcesPlugin.getWorkspace(), 0);
 			assertNotNull(page1);
 			page2 = fWorkbench.openPage(IWorkbenchConstants.DEFAULT_LAYOUT_ID,
-				ResourcesPlugin.getWorkspace());
+				ResourcesPlugin.getWorkspace(), 0);
 			assertTrue("Pages should be not equal", page1 != page2);
 			
 		} finally {
