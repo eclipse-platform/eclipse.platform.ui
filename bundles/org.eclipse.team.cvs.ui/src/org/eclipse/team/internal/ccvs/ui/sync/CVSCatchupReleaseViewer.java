@@ -405,27 +405,31 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 		}
 		
 		IResource local = syncTree.getLocal();
-		if(local != null) {
-			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)local);
-			ResourceSyncInfo info = null;
-			try {
-				info = cvsFile.getSyncInfo();
-				name = local.getName();
-				String revision = null;
-				if(info != null) {
-					revision = info.getRevision();
-					if(info.isAdded() || info.isDeleted()) {
-						revision = null;
+		if (local != null) {
+			if (!local.exists()) {
+				config.setLeftLabel("No workspace file");
+			} else {
+				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)local);
+				ResourceSyncInfo info = null;
+				try {
+					info = cvsFile.getSyncInfo();
+					name = local.getName();
+					String revision = null;
+					if (info != null) {
+						revision = info.getRevision();
+						if (info.isAdded() || info.isDeleted()) {
+							revision = null;
+						}
 					}
+					if (revision != null) {
+						config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", name, revision)); //$NON-NLS-1$
+					} else {
+						config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$
+					}
+				} catch (CVSException e) {
+					ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
+					config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$				
 				}
-				if(revision != null) {
-					config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFileRevision", name, revision)); //$NON-NLS-1$
-				} else {
-					config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$
-				}
-			} catch(CVSException e) {
-				ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
-				config.setLeftLabel(Policy.bind("CVSCatchupReleaseViewer.commonFile", name)); //$NON-NLS-1$				
 			}
 		}
 	}
