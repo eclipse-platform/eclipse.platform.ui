@@ -199,8 +199,8 @@ public class SynchronizeManager implements ISynchronizeManager {
 		 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference#createParticipant()
 		 */
 		public ISynchronizeParticipant getParticipant() throws TeamException {
+			String key = getKey(descriptor.getId(), getSecondaryId());
 			try {
-				String key = getKey(descriptor.getId(), getSecondaryId());
 				ISynchronizeParticipant participant = (ISynchronizeParticipant) counter.get(key);
 				int refCount = 1;
 				if (participant == null) {
@@ -213,6 +213,8 @@ public class SynchronizeManager implements ISynchronizeManager {
 				return participant;
 			} catch (TeamException e) {
 				TeamUIPlugin.log(e);
+				// TODO: Temporary handling of bad participant
+				participantReferences.remove(key);
 				throw new TeamException(Policy.bind("SynchronizeManager.8"), e); //$NON-NLS-1$
 			}
 		}

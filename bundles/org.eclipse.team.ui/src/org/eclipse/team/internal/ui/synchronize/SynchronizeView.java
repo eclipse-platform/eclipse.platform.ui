@@ -319,13 +319,18 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		ISynchronizeManager manager = TeamUI.getSynchronizeManager();
 		// create pages for consoles
 		ISynchronizeParticipantReference[] participants = manager.getSynchronizeParticipants();
+		boolean errorOccurred = false;
 		for (int i = 0; i < participants.length; i++) {
 			try {
 				participantsAdded(new ISynchronizeParticipant[] {participants[i].getParticipant()});
 			} catch (TeamException e) {
+				errorOccurred = true;
 				continue;
 			}
 			
+		}
+		if (errorOccurred) {
+			participants = manager.getSynchronizeParticipants();
 		}
 		try {
 			// decide which participant to show	on startup
