@@ -388,7 +388,7 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
 /**
  * @see IResource
  */
-public synchronized void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
+public void deleteMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 	try {
 		workspace.prepareOperation();
 		ResourceInfo info = getResourceInfo(false, false);
@@ -453,11 +453,12 @@ public IMarker findMarker(long id) throws CoreException {
 /**
  * @see IResource#findMarkers
  */
-public synchronized IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
-	// FIXME: since this method is not an operation, this pre-condition check might change 
-	// while the visitor inside getMarkerManager().findMarkers() runs. Should change it.
+public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException {
 	ResourceInfo info = getResourceInfo(false, false);
 	checkAccessible(getFlags(info));
+	// It might happen that from this point the resource is not accessible anymore.
+	// But markers have the #exists method that callers can use to check if it is
+	// still valid.
 	return workspace.getMarkerManager().findMarkers(this, type, includeSubtypes, depth);
 }
 protected void fixupAfterMoveSource() throws CoreException {
