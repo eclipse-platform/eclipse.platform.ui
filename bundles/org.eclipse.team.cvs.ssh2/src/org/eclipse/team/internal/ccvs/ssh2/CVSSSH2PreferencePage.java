@@ -260,18 +260,18 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd.horizontalSpan=2;
     proxyTypeCombo.setLayoutData(gd);
     proxyTypeCombo.addModifyListener(new ModifyListener () {
-	public void modifyText(ModifyEvent e){
-	  if(proxyPortText==null) return;
-	  Combo combo=(Combo)(e.getSource());
-	  String foo=combo.getText();
-	  if(foo.equals(HTTP)){ 
-	    proxyPortText.setText(HTTP_DEFAULT_PORT); 
-	  }
-	  else if(foo.equals(SOCKS5)){
-	    proxyPortText.setText(SOCKS5_DEFAULT_PORT);
-	  }
-	} 
-      });
+		public void modifyText(ModifyEvent e){
+		  if(proxyPortText==null) return;
+		  Combo combo=(Combo)(e.getSource());
+		  String foo=combo.getText();
+		  if(foo.equals(HTTP)){ 
+		    proxyPortText.setText(HTTP_DEFAULT_PORT); 
+		  }
+		  else if(foo.equals(SOCKS5)){
+		    proxyPortText.setText(SOCKS5_DEFAULT_PORT);
+		  }
+		} 
+     });
     proxyTypeCombo.add(HTTP);
     proxyTypeCombo.add(SOCKS5);
     proxyTypeCombo.select(0);
@@ -901,8 +901,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
     useProxy=store.getString(KEY_PROXY).equals("true"); //$NON-NLS-1$
     enableProxy.setSelection(useProxy);
     proxyHostText.setText(store.getString(KEY_PROXY_HOST));
-    proxyPortText.setText(store.getString(KEY_PROXY_PORT));
     proxyTypeCombo.select(store.getString(KEY_PROXY_TYPE).equals(HTTP)?0:1);
+    proxyPortText.setText(store.getString(KEY_PROXY_PORT));
     useAuth=store.getString(KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
     enableAuth.setSelection(useAuth);
     
