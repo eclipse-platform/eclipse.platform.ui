@@ -63,7 +63,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	private Text locationPathField;
 	private Label locationLabel;
 	private Button browseButton;
-
+	private IProjectDescription description;
 
 	private Listener locationModifyListener = new Listener() {
 		public void handleEvent(Event e) {
@@ -152,8 +152,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup, SWT.NONE);
-		projectLabel.setText(
-			DataTransferMessages.getString("WizardExternalProjectImportPage.nameLabel")); //$NON-NLS-1$
+		projectLabel.setText(DataTransferMessages.getString("WizardExternalProjectImportPage.nameLabel")); //$NON-NLS-1$
 
 		// new project name entry field
 		projectNameField = new Text(projectGroup, SWT.BORDER);
@@ -278,7 +277,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	 *   <code>false</code> if at least one is invalid
 	 */
 	private boolean validatePage() {
-		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		IWorkspace workspace = getWorkspace();
 
 		//If it is empty try to give something meaningful
 		if (getProjectNameFieldValue().equals("")) //$NON-NLS-1$
@@ -351,6 +350,10 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		setMessage(null);
 		return true;
 	}
+	private IWorkspace getWorkspace() {
+		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+		return workspace;
+	}
 
 	/**
 	 * Check that the name of the project equals the last segment
@@ -387,11 +390,25 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		if (projectFile == null || projectNameField.getText().length() > 0)
 			return;
 
-		File parent = projectFile.getParentFile();
-		if (parent == null)
-			return;
-		String defaultName = parent.getName();
-		projectNameField.setText(defaultName);
+		IPath path = new Path(projectFile.getPath());
+
+		IProjectDescription newDescription = null;
+
+		try {
+			newDescription = getWorkspace().loadProjectDescription(path);
+		} catch (CoreException exception) {
+			//no good couldn't get the name
+		}
+
+		if (newDescription == null) {
+			File parent = projectFile.getParentFile();
+			if (parent != null)
+				this.projectNameField.setText(parent.getName());
+		}
+		else{
+			this.description = newDescription;
+			this.projectNameField.setText(this.description.getName());
+		}
 	}
 
 	/**
@@ -426,15 +443,17 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		String projectName = projectNameField.getText();
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project = workspace.getRoot().getProject(projectName);
-		// get a project descriptor
-		final IProjectDescription description =
-			workspace.newProjectDescription(projectName);
-		IPath locationPath = getLocationPath();
-		//If it is under the root use the default location
-		if(isPrefixOfRoot(locationPath))
-			description.setLocation(null);
+		if(this.description == null){
+			this.description =	workspace.newProjectDescription(projectName);
+			IPath locationPath = getLocationPath();
+			//If it is under the root use the default location
+			if (isPrefixOfRoot(locationPath))
+				this.description.setLocation(null);
+			else
+				this.description.setLocation(locationPath);
+		}
 		else
-			description.setLocation(locationPath);
+			this.description.setName(projectName);
 
 		// create the new project operation
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -459,19 +478,12 @@ public class WizardExternalProjectImportPage extends WizardPage {
 			if (t instanceof CoreException) {
 				if (((CoreException) t).getStatus().getCode()
 					== IResourceStatus.CASE_VARIANT_EXISTS) {
-					MessageDialog
-						.openError(
-							getShell(),
-							DataTransferMessages.getString("WizardExternalProjectImportPage.errorMessage"), //$NON-NLS-1$
-							DataTransferMessages.getString(
-								"WizardExternalProjectImportPage.caseVariantExistsError") //$NON-NLS-1$,
+					MessageDialog.openError(getShell(), DataTransferMessages.getString("WizardExternalProjectImportPage.errorMessage"), //$NON-NLS-1$
+					DataTransferMessages.getString("WizardExternalProjectImportPage.caseVariantExistsError") //$NON-NLS-1$,
 					);
 				} else {
-					ErrorDialog.openError(
-						getShell(),
-						DataTransferMessages.getString("WizardExternalProjectImportPage.errorMessage"), //$NON-NLS-1$
-						null,
-						((CoreException) t).getStatus());
+					ErrorDialog.openError(getShell(), DataTransferMessages.getString("WizardExternalProjectImportPage.errorMessage"), //$NON-NLS-1$
+					null, ((CoreException) t).getStatus());
 				}
 			}
 			return null;
