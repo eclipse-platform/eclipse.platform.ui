@@ -196,6 +196,7 @@ public class RepositoriesView extends RemoteViewPart {
 	 */
 	public void dispose() {
 		CVSUIPlugin.getPlugin().getRepositoryManager().removeRepositoryListener(listener);
+		super.dispose();
 	}
 	
 	/**
