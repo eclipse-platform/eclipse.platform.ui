@@ -169,14 +169,21 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @since 3.1
 	 */
 	public IContentType getContentType() throws CoreException {
-		InputStream stream= null;
 		try {
 			if (isDirty()) {
-				stream= new DocumentInputStream(getDocument());
-				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
-				stream.close();
-				if (desc != null && desc.getContentType() != null)
-					return desc.getContentType();
+				InputStream stream= null;
+				try {
+					stream= new DocumentInputStream(getDocument());
+					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
+					if (desc != null && desc.getContentType() != null)
+						return desc.getContentType();
+				} finally {
+					try {
+						if (stream != null)
+							stream.close();
+					} catch (IOException x) {
+					}
+				}
 			}
 			IContentDescription desc= fFile.getContentDescription();
 			if (desc != null && desc.getContentType() != null)
@@ -184,12 +191,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return null;
 		} catch (IOException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("FileBuffer.error.queryContentDescription", fFile.getFullPath().toOSString()), x)); //$NON-NLS-1$
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException x) {
-			}
 		}
 	}
 	
@@ -368,7 +369,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			// try next strategy
 		} finally {
 			try {
-				stream.close();
+				if (stream != null)
+					stream.close();
 			} catch (IOException x) {
 			}
 		}

@@ -278,10 +278,17 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			if (isDirty()) {
 				stream= new DocumentInputStream(getDocument());
-				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
-				stream.close();
-				if (desc != null && desc.getContentType() != null)
-					return desc.getContentType();
+				try {
+					IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
+					if (desc != null && desc.getContentType() != null)
+						return desc.getContentType();
+				} finally {
+					try {
+						if (stream != null)
+							stream.close();
+					} catch (IOException ex) {
+					}
+				}
 			}
 			stream= new FileInputStream(fFile);
 			IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
@@ -473,7 +480,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				// try next strategy
 			} finally {
 				try {
-					stream.close();
+					if (stream != null)
+						stream.close();
 				} catch (IOException x) {
 				}
 			}
