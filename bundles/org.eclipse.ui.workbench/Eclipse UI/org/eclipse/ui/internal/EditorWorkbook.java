@@ -50,7 +50,7 @@ public abstract class EditorWorkbook
 	private EditorArea editorArea;
 	private List editors = new ArrayList();
 	private EditorPane visibleEditor;
-	private Composite parent;
+	protected Composite parent;
 	private int activeState = INACTIVE;
 	private boolean isZoomed = false;
 	private Map mapPartToDragMonitor = new HashMap();

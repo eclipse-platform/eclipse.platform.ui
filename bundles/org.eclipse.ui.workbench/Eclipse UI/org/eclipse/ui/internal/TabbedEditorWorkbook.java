@@ -27,6 +27,7 @@ import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabFolderListListener;
+import org.eclipse.swt.custom.CTabFolderMinMaxAdapter;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlAdapter;
@@ -64,6 +65,46 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 
+	CTabFolderMinMaxAdapter expandListener = new CTabFolderMinMaxAdapter() {
+		
+		public void minimize(CTabFolderEvent event) {
+			/*
+			Rectangle bounds = tabFolder.getBounds();
+			int minimumHeight = getMinimumHeight();
+			
+			if (bounds.height != minimumHeight) {
+				tabFolder.setSize(getMinimumWidth(), minimumHeight);	
+				forceLayout();
+			}
+			*/
+		}
+		
+		public void restore(CTabFolderEvent event) {
+			EditorPane visibleEditor = getVisibleEditor();
+			WorkbenchPage page = visibleEditor.getPage(); 
+	  	
+			if (page.isZoomed()) doZoom();
+			
+			//forceLayout();
+		}
+		
+		public void maximize(CTabFolderEvent event) {
+			EditorPane visibleEditor = getVisibleEditor();
+			WorkbenchPage page = visibleEditor.getPage(); 
+			
+			if (!page.isZoomed()) doZoom();
+		}
+	};
+	
+	/*
+	private void forceLayout() {
+		PartSashContainer cont = (PartSashContainer) getContainer();
+		
+		if (cont != null)
+			cont.getLayoutTree().setBounds(parent.getClientArea());
+	}
+	*/	
+	
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 	private int tabLocation = -1; // Initialized in constructor.
 	private CTabFolder2 tabFolder = null;
@@ -159,6 +200,10 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			}
 		});
 
+		tabFolder.addCTabFolderMinMaxListener(expandListener);				
+		tabFolder.setMaximizeVisible(true);
+		tabFolder.setMinimizeVisible(true);
+		
 		int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
 		int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;
 		final EditorsInformationControl info =
@@ -303,6 +348,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		// listen for mouse down on tab area to set focus.
 		tabFolder.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent event) {
+				/* chris: i think this is no longer necessary now that we are using CTabFolder2 and listening to it for 'maximize' events..				 
 				Rectangle clientArea = tabFolder.getClientArea();
 				if ((tabFolder.getStyle() & SWT.TOP) != 0) {
 					if (event.y > clientArea.y)
@@ -312,6 +358,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 						return;
 				}
 				doZoom();
+				*/
 			}
 
 			public void mouseDown(MouseEvent event) {
