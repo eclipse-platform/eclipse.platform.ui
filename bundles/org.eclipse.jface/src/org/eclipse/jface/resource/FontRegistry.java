@@ -55,6 +55,14 @@ public class FontRegistry {
 	 *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
 	 */
 	private Map stringToFontData = new HashMap(7);
+
+	/**
+	 * Collection of Fonts that are now stale to be disposed
+	 * when it is safe to do so (i.e. on shutdown).
+	 * @see List
+	 */
+	private List staleFonts;
+
 	/**
 	 * Creates an empty font registry.
 	 * <p>
@@ -409,15 +417,24 @@ public class FontRegistry {
 	 */
 	private void handleDisplayDispose() {
 
-		for (Iterator e = stringToFont.values().iterator(); e.hasNext();) {
-			Object next = e.next();
-			if (next instanceof Font) {
-				((Font) next).dispose();
-			}
-		}
+		disposeFonts(stringToFont.values().iterator());
+		disposeFonts(staleFonts.iterator());
 		stringToFont.clear();
+		staleFonts.clear();
 		listeners.clear();
 	}
+	
+	/**
+	 * Dispose of all of the fonts in this iterator.
+	 * @param Iterator over Collection of Font
+	 */
+	private void disposeFonts(Iterator iterator) {
+		while (iterator.hasNext()) {
+			Object next = iterator.next();
+			((Font) next).dispose();
+		}
+	}
+	
 	/**
 	 * Hook a dispose listener on the SWT display.
 	 */
@@ -510,7 +527,7 @@ public class FontRegistry {
 			return;
 
 		if (oldFont != null)
-			oldFont.dispose();
+			staleFonts.add(oldFont);
 	}
 	/**
 	 * Reads the resource bundle.  This puts FontData[] objects
