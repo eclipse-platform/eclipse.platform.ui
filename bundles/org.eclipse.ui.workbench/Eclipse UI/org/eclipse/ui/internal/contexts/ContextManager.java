@@ -196,7 +196,8 @@ public final class ContextManager implements IContextManager {
 
 	private void fireContextManagerChanged() {
 		if (contextManagerListeners != null) {
-			Iterator iterator = contextManagerListeners.iterator();
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(contextManagerListeners).iterator();	
 			
 			if (iterator.hasNext()) {
 				if (contextManagerEvent == null)

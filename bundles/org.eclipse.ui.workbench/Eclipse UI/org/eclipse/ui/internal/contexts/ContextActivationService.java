@@ -89,7 +89,8 @@ public final class ContextActivationService implements IContextActivationService
 	
 	private void fireContextActivationServiceChanged() {
 		if (contextActivationServiceListeners != null) {
-			Iterator iterator = contextActivationServiceListeners.iterator();
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(contextActivationServiceListeners).iterator();					
 			
 			if (iterator.hasNext()) {
 				if (contextActivationServiceEvent == null)

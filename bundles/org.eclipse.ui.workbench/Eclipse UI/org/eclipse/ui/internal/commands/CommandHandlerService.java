@@ -94,7 +94,8 @@ public final class CommandHandlerService implements ICommandHandlerService {
 	
 	private void fireCommandHandlerServiceChanged() {
 		if (commandHandlerServiceListeners != null) {
-			Iterator iterator = commandHandlerServiceListeners.iterator();
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(commandHandlerServiceListeners).iterator();
 			
 			if (iterator.hasNext()) {
 				if (commandHandlerServiceEvent == null)

@@ -205,7 +205,8 @@ public final class CommandManager implements ICommandManager {
 
 	private void fireCommandManagerChanged() {
 		if (commandManagerListeners != null) {
-			Iterator iterator = commandManagerListeners.iterator();
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(commandManagerListeners).iterator();
 			
 			if (iterator.hasNext()) {
 				if (commandManagerEvent == null)

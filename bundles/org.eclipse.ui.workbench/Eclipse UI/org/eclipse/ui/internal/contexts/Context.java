@@ -112,7 +112,8 @@ final class Context implements IContext {
 	
 	void fireContextChanged() {
 		if (contextListeners != null) {
-			Iterator iterator = contextListeners.iterator();
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(contextListeners).iterator();			
 			
 			if (iterator.hasNext()) {
 				if (contextEvent == null)

@@ -144,7 +144,8 @@ final class Command implements ICommand {
 	
 	void fireCommandChanged() {
 		if (commandListeners != null) {
-			Iterator iterator = commandListeners.iterator();
+			// TODO copying to avoid ConcurrentModificationException
+			Iterator iterator = new ArrayList(commandListeners).iterator();
 			
 			if (iterator.hasNext()) {
 				if (commandEvent == null)
