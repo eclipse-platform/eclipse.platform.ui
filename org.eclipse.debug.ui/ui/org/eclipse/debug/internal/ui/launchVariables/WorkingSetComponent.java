@@ -15,7 +15,6 @@ import java.io.StringWriter;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander;
@@ -140,7 +139,7 @@ public class WorkingSetComponent extends AbstractVariableComponent {
 		if (isValid) {
 			getContainer().setErrorMessage(null);
 		} else {
-			getContainer().setErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetComponent.A_specific_working_set_must_be_selected_from_the_list._1")); //$NON-NLS-1$
+			getContainer().setErrorMessage(LaunchVariableMessages.getString("WorkingSetComponent.4")); //$NON-NLS-1$
 		}
 		setIsValid(isValid);
 	}

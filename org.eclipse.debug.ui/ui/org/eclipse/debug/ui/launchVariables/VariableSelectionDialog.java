@@ -13,7 +13,6 @@ package org.eclipse.debug.ui.launchVariables;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ILaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,7 +38,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 	public VariableSelectionDialog(Shell parent) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		setTitle(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Select_variable_1")); //$NON-NLS-1$
+		setTitle(LaunchVariableMessages.getString("VariableSelectionDialog.0")); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * Method declared in Window.
@@ -52,7 +51,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		// Create the dialog area
 		Composite composite= (Composite)super.createDialogArea(parent);
 		
-		final Button contextVariables= createRadioButton(composite, LaunchConfigurationsMessages.getString("VariableSelectionDialog.3")); //$NON-NLS-1$
+		final Button contextVariables= createRadioButton(composite, LaunchVariableMessages.getString("VariableSelectionDialog.1")); //$NON-NLS-1$
 		contextVariables.setSelection(true);
 		contextVariables.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -61,7 +60,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 				}
 			}
 		});
-		final Button simpleVariables= createRadioButton(composite, LaunchConfigurationsMessages.getString("VariableSelectionDialog.4")); //$NON-NLS-1$
+		final Button simpleVariables= createRadioButton(composite, LaunchVariableMessages.getString("VariableSelectionDialog.2")); //$NON-NLS-1$
 		simpleVariables.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (simpleVariables.getSelection()) {
@@ -95,7 +94,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 	protected void createVariableFormComposite(Composite parent, ILaunchVariable[] variables) {
 		formComposite= new Composite(parent, SWT.NONE);
 		formComposite.setLayout(new GridLayout());
-		form= new LaunchConfigurationVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
+		form= new LaunchConfigurationVariableForm(LaunchVariableMessages.getString("VariableSelectionDialog.3"), variables); //$NON-NLS-1$
 		form.createContents(formComposite, new IVariableComponentContainer() {
 			
 			public void setErrorMessage(String errorMessage) {
@@ -107,7 +106,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 
 			public String getMessage() {
 				if (!form.isValid()) {
-					return LaunchConfigurationsMessages.getString("VariableSelectionDialog.Invalid_selection_3"); //$NON-NLS-1$
+					return LaunchVariableMessages.getString("VariableSelectionDialog.4"); //$NON-NLS-1$
 				}
 				return null;
 			}

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.launchVariables.expanders;
 
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.InputDialog;
 
 /**
@@ -28,7 +27,7 @@ public class StringPromptExpander extends PromptExpanderBase {
 	 * @see PromptExpanderBase#prompt()
 	 */
 	public void prompt() {
-		InputDialog dialog = new InputDialog(null, LaunchConfigurationsMessages.getString("StringPromptExpander.Variable_input_1"), dialogMessage, lastValue == null ? defaultValue : lastValue, null); //$NON-NLS-1$
+		InputDialog dialog = new InputDialog(null, LaunchVariableMessages.getString("StringPromptExpander.0"), dialogMessage, lastValue == null ? defaultValue : lastValue, null); //$NON-NLS-1$
 		int dialogResult = dialog.open();
 		if (dialogResult == InputDialog.OK) {
 			dialogResultString = dialog.getValue();

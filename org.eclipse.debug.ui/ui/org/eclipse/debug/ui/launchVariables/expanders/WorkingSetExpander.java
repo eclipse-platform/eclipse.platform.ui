@@ -16,10 +16,9 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.variables.*;
+import org.eclipse.debug.core.variables.DefaultVariableExpander;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IWorkingSet;
@@ -56,20 +55,20 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 		String factoryID = memento.getString(IVariableConstants.TAG_FACTORY_ID);
 
 		if (factoryID == null) {
-			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.2")); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.2")); //$NON-NLS-1$
 			return null;
 		}
 		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 		if (factory == null) {
-			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.3") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.3") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 		IAdaptable adaptable = factory.createElement(memento);
 		if (adaptable == null) {
-			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.4") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.4") + factoryID); //$NON-NLS-1$
 		}
 		if ((adaptable instanceof IWorkingSet) == false) {
-			DebugUIPlugin.logErrorMessage(LaunchConfigurationsMessages.getString("WorkingSetExpander.5") + factoryID); //$NON-NLS-1$
+			DebugUIPlugin.logErrorMessage(LaunchVariableMessages.getString("WorkingSetExpander.5") + factoryID); //$NON-NLS-1$
 			return null;
 		}
 			
@@ -87,13 +86,13 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 	 */
 	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		if (varValue == null || varValue.length() == 0) {
-			throwExpansionException(varTag, LaunchConfigurationsMessages.getString("WorkingSetExpander.No_working_set_specified._1")); //$NON-NLS-1$
+			throwExpansionException(varTag, LaunchVariableMessages.getString("WorkingSetExpander.6")); //$NON-NLS-1$
 			return null;
 		}
 
 		IWorkingSet set = restoreWorkingSet(varValue);
 		if (set == null) {
-			throwExpansionException(varTag, MessageFormat.format(LaunchConfigurationsMessages.getString("WorkingSetExpander.No_working_set"), new String[] {varValue})); //$NON-NLS-1$
+			throwExpansionException(varTag, MessageFormat.format(LaunchVariableMessages.getString("WorkingSetExpander.7"), new String[] {varValue})); //$NON-NLS-1$
 			return null;
 		}
 			
