@@ -99,7 +99,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * The selected targets of the target viewer as restored during
 	 * initialization
 	 */
-	private List restoredTargets = new ArrayList();
+	private List restoredTargets =null;
 	/**
 	 * Key used to store the ant view's orientation
 	 */
@@ -171,9 +171,14 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 
 	/**
 	 * Collection of <code>IUpdate</code> actions that need to update on
-	 * selection changed.
+	 * selection changed in the project viewer.
 	 */
-	private List updateActions = new ArrayList();
+	private List updateProjectActions;
+	/**
+	 * Collection of <code>IUpdate</code> actions that need to update on
+	 * selection changed in the target viewer.
+	 */
+	private List updateTargetActions;
 	// Ant View Actions
 	private AddBuildFileAction addBuildFileAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
@@ -292,7 +297,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * @param viewer the viewer who's menu we're configuring
 	 * @param menu The menu to contribute to
 	 */
-	protected void fillContextMenu(Viewer viewer, IMenuManager menu) {
+	private void fillContextMenu(Viewer viewer, IMenuManager menu) {
 		if (viewer == projectViewer) {
 			menu.add(addBuildFileAction);
 			menu.add(new Separator());
@@ -341,36 +346,53 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		targetManager.add(moveUpAction);
 		targetManager.update(true);
 
-		updateActions();
+		updateProjectActions();
+		updateTargetActions();
 	}
 
 	/**
 	 * Initialize the actions for this view
 	 */
 	private void initializeActions() {
+		updateProjectActions= new ArrayList(5);
+		updateTargetActions= new ArrayList(4);
+		
 		addBuildFileAction = new AddBuildFileAction(this);
+		
 		removeProjectAction = new RemoveProjectAction(this);
-		updateActions.add(removeProjectAction);
+		updateProjectActions.add(removeProjectAction);
+		
 		removeAllAction = new RemoveAllAction(this);
+		updateProjectActions.add(removeAllAction);
+		
 		runTargetAction = new RunTargetAction(this);
-		updateActions.add(runTargetAction);
+		updateProjectActions.add(runTargetAction);
+		
 		runActiveTargetsAction = new RunActiveTargetsAction(this);
-		updateActions.add(runActiveTargetsAction);
+		updateTargetActions.add(runActiveTargetsAction);
+		
 		searchForBuildFilesAction = new SearchForBuildFilesAction(this);
+		
 		activateTargetAction = new ActivateTargetAction(this);
-		updateActions.add(activateTargetAction);
+		updateProjectActions.add(activateTargetAction);
+		
 		deactivateTargetAction = new DeactivateTargetAction(this);
-		updateActions.add(deactivateTargetAction);
+		updateTargetActions.add(deactivateTargetAction);
+		
 		moveUpAction = new TargetMoveUpAction(this);
-		updateActions.add(moveUpAction);
+		updateTargetActions.add(moveUpAction);
+		
 		moveDownAction = new TargetMoveDownAction(this);
-		updateActions.add(moveDownAction);
+		updateTargetActions.add(moveDownAction);
+		
 		openWithMenu= new AntViewOpenWithMenu(this.getViewSite().getPage());
+		
 		horizontalOrientationAction= new ToggleAntViewOrientation(this, HORIZONTAL_ORIENTATION);
 		verticalOrientationAction= new ToggleAntViewOrientation(this, VERTICAL_ORIENTATION);
 		showTargetViewerAction= new ToggleAntViewOrientation(this, SINGLE_ORIENTATION);
+		
 		editConfigAction= new EditLaunchConfigurationAction(this);
-		updateActions.add(editConfigAction);
+		updateProjectActions.add(editConfigAction);
 	}
 	
 	/**
@@ -389,16 +411,18 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		targetForm.setContent(targetViewer.getTable());
 		targetContentProvider = new AntTargetContentProvider();
 		targetViewer.setContentProvider(targetContentProvider);
-		Iterator targets = restoredTargets.iterator();
-		while (targets.hasNext()) {
-			targetContentProvider.addTarget((TargetNode) targets.next());
+		if (restoredTargets != null) {
+			Iterator targets = restoredTargets.iterator();
+			while (targets.hasNext()) {
+				targetContentProvider.addTarget((TargetNode) targets.next());
+			}
 		}
 		targetViewer.setLabelProvider(new AntTargetsLabelProvider());
 		// The content provider doesn't use the input, but it input has to be set to something.
 		targetViewer.setInput(ResourcesPlugin.getWorkspace());
 		targetViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleViewerSelectionChanged(event);
+				handleViewerSelectionChanged(event, targetViewer);
 			}
 		});
 		
@@ -437,10 +461,22 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	}
 
 	/**
-	 * Updates the enabled state of all IUpdate actions
+	 * Updates the enabled state of all IUpdate actions associated 
+	 * with the project viewer.
 	 */
-	private void updateActions() {
-		Iterator iter = updateActions.iterator();
+	private void updateProjectActions() {
+		Iterator iter = updateProjectActions.iterator();
+		while (iter.hasNext()) {
+			((IUpdate) iter.next()).update();
+		}
+	}
+	
+	/**
+	 * Updates the enabled state of all IUpdate actions associated 
+	 * with the target viewer.
+	 */
+	private void updateTargetActions() {
+		Iterator iter = updateTargetActions.iterator();
 		while (iter.hasNext()) {
 			((IUpdate) iter.next()).update();
 		}
@@ -469,7 +505,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				handleViewerSelectionChanged(event);
+				handleViewerSelectionChanged(event, projectViewer);
 			}
 		});
 		
@@ -528,8 +564,12 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * Updates the actions and status line for selection change in one of the
 	 * viewers.
 	 */
-	private void handleViewerSelectionChanged(SelectionChangedEvent event) {
-		updateActions();
+	private void handleViewerSelectionChanged(SelectionChangedEvent event, Viewer source) {
+		if (source == getTargetViewer()) {
+			updateTargetActions();
+		} else {
+			updateProjectActions();
+		}
 		Iterator selectionIter = ((IStructuredSelection) event.getSelection()).iterator();
 		Object selection = null;
 		if (selectionIter.hasNext()) {
@@ -627,6 +667,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		projectContentProvider.addProject(project);
 		projectViewer.refresh();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		updateProjectActions();
 	}
 
 	/**
@@ -645,7 +686,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			}
 		}
 		targetViewer.refresh();
-		updateActions();
+		updateTargetActions();
 	}
 	
 	/**
@@ -655,7 +696,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * and populate it with active targets.  If hiding, save the current
 	 * relative weights, unless the target viewer hasn't yet been shown.
 	 */
-	public void toggleTargetViewer(boolean on) {
+	private void toggleTargetViewer(boolean on) {
 		if (on) {
 			if (sashForm.getMaximizedControl() != null) {
 				sashForm.setMaximizedControl(null);
@@ -728,7 +769,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * 
 	 * @param project the project to remove
 	 */
-	public void removeProject(ProjectNode project) {
+	private void removeProject(ProjectNode project) {
 		removeProjectFromContentProviders(project);
 		projectViewer.refresh();
 		targetViewer.refresh();
@@ -789,6 +830,8 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		projectViewer.refresh();
 		targetViewer.refresh();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		updateTargetActions();
+		updateProjectActions();
 	}
 
 	/**
@@ -819,6 +862,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			return;
 		}
 		IMemento[] targets = memento.getChildren(TAG_TARGET);
+		restoredTargets= new ArrayList(targets.length);
 		for (int i = 0; i < targets.length; i++) {
 			IMemento target = targets[i];
 			String buildFileName = target.getString(KEY_PATH);
@@ -928,7 +972,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
 		targetViewer.getTable().deselectAll();
 		targetViewer.getTable().select(newIndices);
-		updateActions();
+		updateTargetActions();
 	}
 
 	/**
@@ -953,7 +997,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
 		targetViewer.getTable().deselectAll();
 		targetViewer.getTable().select(newIndices);
-		updateActions();
+		updateTargetActions();
 	}
 
 	/**
