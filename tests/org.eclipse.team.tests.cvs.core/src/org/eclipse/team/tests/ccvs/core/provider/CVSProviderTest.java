@@ -163,7 +163,7 @@ public class CVSProviderTest extends EclipseTest {
 	public void testVersionTag() throws TeamException, CoreException, IOException {
 		
 		// Create a test project, import it into cvs and check it out
-		IProject project = createProject("testTag", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		IProject project = createProject("testVersionTag", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 		
 		// Perform some operations on the copy and commit
 		IProject copy = checkoutCopy(project, "-copy");
@@ -193,7 +193,7 @@ public class CVSProviderTest extends EclipseTest {
 	
 	public void testMakeBranch() throws TeamException, CoreException, IOException {
 		// Create a test project
-		IProject project = createProject("testSyncOnBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		IProject project = createProject("testMakeBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 
 		// Make some local modifications including "cvs adds" and "cvs removes"
 		addResources(project, new String[] {"folder1/c.txt"}, false);
