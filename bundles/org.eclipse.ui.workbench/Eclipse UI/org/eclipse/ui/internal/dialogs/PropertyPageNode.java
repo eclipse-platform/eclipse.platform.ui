@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 
 /**
- * Property page node allows us to achive presence in the property page dialog
+ * Property page node allows us to achieve presence in the property page dialog
  * without loading the page itself, thus loading the contributing plugin.
  * Only when the user selects the page will it be loaded.
  */
@@ -38,7 +38,6 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
      * Create a new instance of the receiver.
      * @param contributor
      * @param element
-     * supports.
      */
     public PropertyPageNode(RegistryPageContributor contributor,
             IAdaptable element) {
