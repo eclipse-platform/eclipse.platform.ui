@@ -21,7 +21,7 @@ import java.util.Set;
 import org.eclipse.ui.internal.util.Util;
 
 public final class KeyConfigurationDefinition
-	implements IKeyConfigurationDefinition {
+	implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
@@ -38,9 +38,9 @@ public final class KeyConfigurationDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IKeyConfigurationDefinition.class);
-			IKeyConfigurationDefinition keyConfigurationDefinition =
-				(IKeyConfigurationDefinition) object;
+			Util.assertInstance(object, KeyConfigurationDefinition.class);
+			KeyConfigurationDefinition keyConfigurationDefinition =
+				(KeyConfigurationDefinition) object;
 			String id = keyConfigurationDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -61,9 +61,9 @@ public final class KeyConfigurationDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IKeyConfigurationDefinition.class);
-			IKeyConfigurationDefinition keyConfigurationDefinition =
-				(IKeyConfigurationDefinition) object;
+			Util.assertInstance(object, KeyConfigurationDefinition.class);
+			KeyConfigurationDefinition keyConfigurationDefinition =
+				(KeyConfigurationDefinition) object;
 			String name = keyConfigurationDefinition.getName();
 
 			if (allowNullNames || name != null) {

@@ -88,9 +88,9 @@ public final class CommandManager implements ICommandManager {
 		Collection visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
-			IKeyConfigurationDefinition keyConfigurationDefinition =
+			KeyConfigurationDefinition keyConfigurationDefinition =
 				(
-					IKeyConfigurationDefinition) keyConfigurationDefinitionsById
+					KeyConfigurationDefinition) keyConfigurationDefinitionsById
 						.get(
 					id);
 			visited.add(id);
@@ -109,8 +109,8 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			IContextBindingDefinition activityBindingDefinition =
-				(IContextBindingDefinition) iterator.next();
+			ContextBindingDefinition activityBindingDefinition =
+				(ContextBindingDefinition) iterator.next();
 
 			if (activityBindingDefinition.getCommandId() == null)
 				iterator.remove();
@@ -121,8 +121,8 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = imageBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			IImageBindingDefinition imageBindingDefinition =
-				(IImageBindingDefinition) iterator.next();
+			ImageBindingDefinition imageBindingDefinition =
+				(ImageBindingDefinition) iterator.next();
 
 			if (imageBindingDefinition.getCommandId() == null
 				|| imageBindingDefinition.getImageUri() == null)
@@ -147,8 +147,8 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = keySequenceBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			IKeySequenceBindingDefinition keySequenceBindingDefinition =
-				(IKeySequenceBindingDefinition) iterator.next();
+			KeySequenceBindingDefinition keySequenceBindingDefinition =
+				(KeySequenceBindingDefinition) iterator.next();
 			String keyConfigurationId = keySequenceBindingDefinition.getKeyConfigurationId();
 			KeySequence keySequence =
 				keySequenceBindingDefinition.getKeySequence();
@@ -505,8 +505,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = categoryDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			ICategoryDefinition categoryDefinition =
-				(ICategoryDefinition) iterator.next();
+			CategoryDefinition categoryDefinition =
+				(CategoryDefinition) iterator.next();
 			String name = categoryDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -526,8 +526,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = commandDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			ICommandDefinition commandDefinition =
-				(ICommandDefinition) iterator.next();
+			CommandDefinition commandDefinition =
+				(CommandDefinition) iterator.next();
 			String name = commandDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -549,8 +549,8 @@ public final class CommandManager implements ICommandManager {
 			keyConfigurationDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			IKeyConfigurationDefinition keyConfigurationDefinition =
-				(IKeyConfigurationDefinition) iterator.next();
+			KeyConfigurationDefinition keyConfigurationDefinition =
+				(KeyConfigurationDefinition) iterator.next();
 			String name = keyConfigurationDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -561,8 +561,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = commandDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			ICommandDefinition commandDefinition =
-				(ICommandDefinition) iterator.next();
+			CommandDefinition commandDefinition =
+				(CommandDefinition) iterator.next();
 			String categoryId = commandDefinition.getCategoryId();
 
 			if (categoryId != null
@@ -589,9 +589,9 @@ public final class CommandManager implements ICommandManager {
 		String activeKeyConfigurationId = null;
 
 		if (!activeKeyConfigurationDefinitions.isEmpty()) {
-			IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
+			ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
 				(
-					IActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions
+					ActiveKeyConfigurationDefinition) activeKeyConfigurationDefinitions
 						.get(
 					activeKeyConfigurationDefinitions.size() - 1);
 			activeKeyConfigurationId =
@@ -657,8 +657,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = activityBindingDefinitions.iterator();
 			iterator.hasNext();
 			) {
-			IContextBindingDefinition activityBindingDefinition =
-				(IContextBindingDefinition) iterator.next();
+			ContextBindingDefinition activityBindingDefinition =
+				(ContextBindingDefinition) iterator.next();
 			String activityId = activityBindingDefinition.getActivityId();
 			String commandId = activityBindingDefinition.getCommandId();
 			SortedSet sortedSet =
@@ -906,8 +906,8 @@ public final class CommandManager implements ICommandManager {
 	}
 
 	private CategoryEvent updateCategory(Category category) {
-		ICategoryDefinition categoryDefinition =
-			(ICategoryDefinition) categoryDefinitionsById.get(category.getId());
+		CategoryDefinition categoryDefinition =
+			(CategoryDefinition) categoryDefinitionsById.get(category.getId());
 		boolean definedChanged =
 			category.setDefined(categoryDefinition != null);
 		boolean descriptionChanged =
@@ -943,8 +943,8 @@ public final class CommandManager implements ICommandManager {
 				activityBindings != null
 					? new ArrayList(activityBindings)
 					: Collections.EMPTY_LIST);
-		ICommandDefinition commandDefinition =
-			(ICommandDefinition) commandDefinitionsById.get(command.getId());
+		CommandDefinition commandDefinition =
+			(CommandDefinition) commandDefinitionsById.get(command.getId());
 		boolean categoryIdChanged =
 			command.setCategoryId(
 				commandDefinition != null
@@ -1022,8 +1022,8 @@ public final class CommandManager implements ICommandManager {
 				Util.equals(
 					activeKeyConfigurationId,
 					keyConfiguration.getId()));
-		IKeyConfigurationDefinition keyConfigurationDefinition =
-			(IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(
+		KeyConfigurationDefinition keyConfigurationDefinition =
+			(KeyConfigurationDefinition) keyConfigurationDefinitionsById.get(
 				keyConfiguration.getId());
 		boolean definedChanged =
 			keyConfiguration.setDefined(keyConfigurationDefinition != null);

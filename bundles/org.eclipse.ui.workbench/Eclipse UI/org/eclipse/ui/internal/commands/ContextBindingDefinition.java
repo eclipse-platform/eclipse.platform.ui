@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ContextBindingDefinition
-	implements IContextBindingDefinition {
+	implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
@@ -35,9 +35,9 @@ public final class ContextBindingDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IContextBindingDefinition.class);
-			IContextBindingDefinition activityBindingDefinition =
-				(IContextBindingDefinition) object;
+			Util.assertInstance(object, ContextBindingDefinition.class);
+			ContextBindingDefinition activityBindingDefinition =
+				(ContextBindingDefinition) object;
 			String commandId = activityBindingDefinition.getCommandId();
 
 			if (commandId != null) {

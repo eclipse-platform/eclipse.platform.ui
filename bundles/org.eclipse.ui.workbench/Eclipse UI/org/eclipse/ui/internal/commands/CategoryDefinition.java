@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class CategoryDefinition implements ICategoryDefinition {
+public final class CategoryDefinition implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
@@ -37,9 +37,9 @@ public final class CategoryDefinition implements ICategoryDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition categoryDefinition =
-				(ICategoryDefinition) object;
+			Util.assertInstance(object, CategoryDefinition.class);
+			CategoryDefinition categoryDefinition =
+				(CategoryDefinition) object;
 			String id = categoryDefinition.getId();
 
 			if (allowNullIds || id != null)
@@ -60,9 +60,9 @@ public final class CategoryDefinition implements ICategoryDefinition {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition categoryDefinition =
-				(ICategoryDefinition) object;
+			Util.assertInstance(object, CategoryDefinition.class);
+			CategoryDefinition categoryDefinition =
+				(CategoryDefinition) object;
 			String name = categoryDefinition.getName();
 
 			if (allowNullNames || name != null) {

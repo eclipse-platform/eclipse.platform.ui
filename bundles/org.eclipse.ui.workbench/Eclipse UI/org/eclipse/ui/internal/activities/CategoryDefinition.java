@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.ui.internal.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class CategoryDefinition implements Comparable {
@@ -58,9 +57,9 @@ final class CategoryDefinition implements Comparable {
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, ICategoryDefinition.class);
-			ICategoryDefinition categoryDefinition =
-				(ICategoryDefinition) object;
+			Util.assertInstance(object, CategoryDefinition.class);
+			CategoryDefinition categoryDefinition =
+				(CategoryDefinition) object;
 			String name = categoryDefinition.getName();
 
 			if (allowNullNames || name != null) {

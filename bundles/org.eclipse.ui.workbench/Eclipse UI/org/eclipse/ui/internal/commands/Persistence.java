@@ -184,7 +184,7 @@ final class Persistence {
 		return value;
 	}
 
-	static IActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition(
+	static ActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -235,7 +235,7 @@ final class Persistence {
 		return list;
 	}
 
-	static IContextBindingDefinition readActivityBindingDefinition(
+	static ContextBindingDefinition readActivityBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -280,7 +280,7 @@ final class Persistence {
 		return list;
 	}
 
-	static ICategoryDefinition readCategoryDefinition(
+	static CategoryDefinition readCategoryDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -322,7 +322,7 @@ final class Persistence {
 		return list;
 	}
 
-	static ICommandDefinition readCommandDefinition(
+	static CommandDefinition readCommandDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -401,7 +401,7 @@ final class Persistence {
 		return value != null ? value.intValue() : 0;
 	}
 
-	static IImageBindingDefinition readImageBindingDefinition(
+	static ImageBindingDefinition readImageBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -445,7 +445,7 @@ final class Persistence {
 		return list;
 	}
 
-	static IKeyConfigurationDefinition readKeyConfigurationDefinition(
+	static KeyConfigurationDefinition readKeyConfigurationDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -500,7 +500,7 @@ final class Persistence {
 		return list;
 	}
 
-	static IKeySequenceBindingDefinition readKeySequenceBindingDefinition(
+	static KeySequenceBindingDefinition readKeySequenceBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -607,7 +607,7 @@ final class Persistence {
 
 	static void writeActiveKeyConfigurationDefinition(
 		IMemento memento,
-		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
+		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
 		if (memento == null || activeKeyConfigurationDefinition == null)
 			throw new NullPointerException();
 
@@ -635,19 +635,19 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				IActiveKeyConfigurationDefinition.class);
+				ActiveKeyConfigurationDefinition.class);
 
 		iterator = activeKeyConfigurationDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeActiveKeyConfigurationDefinition(
 				memento.createChild(name),
-				(IActiveKeyConfigurationDefinition) iterator.next());
+				(ActiveKeyConfigurationDefinition) iterator.next());
 	}
 
 	static void writeActivityBindingDefinition(
 		IMemento memento,
-		IContextBindingDefinition activityBindingDefinition) {
+		ContextBindingDefinition activityBindingDefinition) {
 		if (memento == null || activityBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -677,19 +677,19 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				IContextBindingDefinition.class);
+				ContextBindingDefinition.class);
 
 		iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeActivityBindingDefinition(
 				memento.createChild(name),
-				(IContextBindingDefinition) iterator.next());
+				(ContextBindingDefinition) iterator.next());
 	}
 
 	static void writeCategoryDefinition(
 		IMemento memento,
-		ICategoryDefinition categoryDefinition) {
+		CategoryDefinition categoryDefinition) {
 		if (memento == null || categoryDefinition == null)
 			throw new NullPointerException();
 
@@ -710,19 +710,19 @@ final class Persistence {
 		Iterator iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), ICategoryDefinition.class);
+			Util.assertInstance(iterator.next(), CategoryDefinition.class);
 
 		iterator = categoryDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeCategoryDefinition(
 				memento.createChild(name),
-				(ICategoryDefinition) iterator.next());
+				(CategoryDefinition) iterator.next());
 	}
 
 	static void writeCommandDefinition(
 		IMemento memento,
-		ICommandDefinition commandDefinition) {
+		CommandDefinition commandDefinition) {
 		if (memento == null || commandDefinition == null)
 			throw new NullPointerException();
 
@@ -744,19 +744,19 @@ final class Persistence {
 		Iterator iterator = commandDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), ICommandDefinition.class);
+			Util.assertInstance(iterator.next(), CommandDefinition.class);
 
 		iterator = commandDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeCommandDefinition(
 				memento.createChild(name),
-				(ICommandDefinition) iterator.next());
+				(CommandDefinition) iterator.next());
 	}
 
 	static void writeImageBindingDefinition(
 		IMemento memento,
-		IImageBindingDefinition imageBindingDefinition) {
+		ImageBindingDefinition imageBindingDefinition) {
 		if (memento == null || imageBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -783,19 +783,19 @@ final class Persistence {
 		Iterator iterator = imageBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IImageBindingDefinition.class);
+			Util.assertInstance(iterator.next(), ImageBindingDefinition.class);
 
 		iterator = imageBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeImageBindingDefinition(
 				memento.createChild(name),
-				(IImageBindingDefinition) iterator.next());
+				(ImageBindingDefinition) iterator.next());
 	}
 
 	static void writeKeyConfigurationDefinition(
 		IMemento memento,
-		IKeyConfigurationDefinition keyConfigurationDefinition) {
+		KeyConfigurationDefinition keyConfigurationDefinition) {
 		if (memento == null || keyConfigurationDefinition == null)
 			throw new NullPointerException();
 
@@ -828,19 +828,19 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				IKeyConfigurationDefinition.class);
+				KeyConfigurationDefinition.class);
 
 		iterator = keyConfigurationDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeKeyConfigurationDefinition(
 				memento.createChild(name),
-				(IKeyConfigurationDefinition) iterator.next());
+				(KeyConfigurationDefinition) iterator.next());
 	}
 
 	static void writeKeySequenceBindingDefinition(
 		IMemento memento,
-		IKeySequenceBindingDefinition keySequenceBindingDefinition) {
+		KeySequenceBindingDefinition keySequenceBindingDefinition) {
 		if (memento == null || keySequenceBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -883,14 +883,14 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				IKeySequenceBindingDefinition.class);
+				KeySequenceBindingDefinition.class);
 
 		iterator = keySequenceBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeKeySequenceBindingDefinition(
 				memento.createChild(name),
-				(IKeySequenceBindingDefinition) iterator.next());
+				(KeySequenceBindingDefinition) iterator.next());
 	}
 
 	private Persistence() {

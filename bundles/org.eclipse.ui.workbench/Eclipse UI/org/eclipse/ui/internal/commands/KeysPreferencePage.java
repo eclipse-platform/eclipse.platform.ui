@@ -872,8 +872,8 @@ public class KeysPreferencePage
 				Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator();
 
 				while (iterator.hasNext()) {
-					IKeySequenceBindingDefinition keySequenceBindingDefinition =
-						(IKeySequenceBindingDefinition) iterator.next();
+					KeySequenceBindingDefinition keySequenceBindingDefinition =
+						(KeySequenceBindingDefinition) iterator.next();
 					KeySequenceBindingNode.remove(
 						tree,
 						keySequenceBindingDefinition.getKeySequence(),
@@ -1508,8 +1508,8 @@ public class KeysPreferencePage
 			for (Iterator iterator = pluginKeySequenceBindingDefinitions.iterator();
 				iterator.hasNext();
 				) {
-				IKeySequenceBindingDefinition keySequenceBindingDefinition =
-					(IKeySequenceBindingDefinition) iterator.next();
+				KeySequenceBindingDefinition keySequenceBindingDefinition =
+					(KeySequenceBindingDefinition) iterator.next();
 				KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
 				String commandId = keySequenceBindingDefinition.getCommandId();
 				String contextId = keySequenceBindingDefinition.getContextId();
@@ -1542,8 +1542,8 @@ public class KeysPreferencePage
 			for (Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator();
 				iterator.hasNext();
 				) {
-				IKeySequenceBindingDefinition keySequenceBindingDefinition =
-					(IKeySequenceBindingDefinition) iterator.next();
+				KeySequenceBindingDefinition keySequenceBindingDefinition =
+					(KeySequenceBindingDefinition) iterator.next();
 				KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
 				String commandId = keySequenceBindingDefinition.getCommandId();
 				String contextId = keySequenceBindingDefinition.getContextId();
@@ -1575,8 +1575,8 @@ public class KeysPreferencePage
 			for (Iterator iterator = pluginKeySequenceBindingDefinitions.iterator();
 				iterator.hasNext();
 				) {
-				IKeySequenceBindingDefinition keySequenceBindingDefinition =
-					(IKeySequenceBindingDefinition) iterator.next();
+				KeySequenceBindingDefinition keySequenceBindingDefinition =
+					(KeySequenceBindingDefinition) iterator.next();
 				KeySequenceBindingNode.add(
 					tree,
 					keySequenceBindingDefinition.getKeySequence(),
@@ -1591,8 +1591,8 @@ public class KeysPreferencePage
 			for (Iterator iterator = preferenceKeySequenceBindingDefinitions.iterator();
 				iterator.hasNext();
 				) {
-				IKeySequenceBindingDefinition keySequenceBindingDefinition =
-					(IKeySequenceBindingDefinition) iterator.next();
+				KeySequenceBindingDefinition keySequenceBindingDefinition =
+					(KeySequenceBindingDefinition) iterator.next();
 				KeySequenceBindingNode.add(
 					tree,
 					keySequenceBindingDefinition.getKeySequence(),

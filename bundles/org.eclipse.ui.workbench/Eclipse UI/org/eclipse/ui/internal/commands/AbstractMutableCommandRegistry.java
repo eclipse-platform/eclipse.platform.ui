@@ -26,7 +26,7 @@ public abstract class AbstractMutableCommandRegistry
 		activeKeyConfigurationDefinitions =
 			Util.safeCopy(
 				activeKeyConfigurationDefinitions,
-				IActiveKeyConfigurationDefinition.class);
+				ActiveKeyConfigurationDefinition.class);
 
 		if (!activeKeyConfigurationDefinitions
 			.equals(this.activeKeyConfigurationDefinitions)) {
@@ -40,7 +40,7 @@ public abstract class AbstractMutableCommandRegistry
 		activityBindingDefinitions =
 			Util.safeCopy(
 				activityBindingDefinitions,
-				IContextBindingDefinition.class);
+				ContextBindingDefinition.class);
 
 		if (!activityBindingDefinitions
 			.equals(this.activityBindingDefinitions)) {
@@ -51,7 +51,7 @@ public abstract class AbstractMutableCommandRegistry
 
 	public void setCategoryDefinitions(List categoryDefinitions) {
 		categoryDefinitions =
-			Util.safeCopy(categoryDefinitions, ICategoryDefinition.class);
+			Util.safeCopy(categoryDefinitions, CategoryDefinition.class);
 
 		if (!categoryDefinitions.equals(this.categoryDefinitions)) {
 			this.categoryDefinitions = categoryDefinitions;
@@ -61,7 +61,7 @@ public abstract class AbstractMutableCommandRegistry
 
 	public void setCommandDefinitions(List commandDefinitions) {
 		commandDefinitions =
-			Util.safeCopy(commandDefinitions, ICommandDefinition.class);
+			Util.safeCopy(commandDefinitions, CommandDefinition.class);
 
 		if (!commandDefinitions.equals(this.commandDefinitions)) {
 			this.commandDefinitions = commandDefinitions;
@@ -73,7 +73,7 @@ public abstract class AbstractMutableCommandRegistry
 		imageBindingDefinitions =
 			Util.safeCopy(
 				imageBindingDefinitions,
-				IImageBindingDefinition.class);
+				ImageBindingDefinition.class);
 
 		if (!imageBindingDefinitions.equals(this.imageBindingDefinitions)) {
 			this.imageBindingDefinitions = imageBindingDefinitions;
@@ -85,7 +85,7 @@ public abstract class AbstractMutableCommandRegistry
 		commandDefinitions =
 			Util.safeCopy(
 				keyConfigurationDefinitions,
-				IKeyConfigurationDefinition.class);
+				KeyConfigurationDefinition.class);
 
 		if (!keyConfigurationDefinitions
 			.equals(this.keyConfigurationDefinitions)) {
@@ -98,7 +98,7 @@ public abstract class AbstractMutableCommandRegistry
 		keySequenceBindingDefinitions =
 			Util.safeCopy(
 				keySequenceBindingDefinitions,
-				IKeySequenceBindingDefinition.class);
+				KeySequenceBindingDefinition.class);
 
 		if (!keySequenceBindingDefinitions
 			.equals(this.keySequenceBindingDefinitions)) {

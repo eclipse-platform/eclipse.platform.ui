@@ -14,7 +14,7 @@ package org.eclipse.ui.internal.commands;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActiveKeyConfigurationDefinition
-	implements IActiveKeyConfigurationDefinition {
+	implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
