@@ -12,6 +12,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
 import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.Policy;
 
 public class SiteFileFactory extends BaseSiteFactory {
 
@@ -91,19 +92,24 @@ public class SiteFileFactory extends BaseSiteFactory {
 					site = (Site) factory.parseSite(siteStream);
 				} catch (IOException e) {
 
-						// attempt to parse parent directory
-						File file = new File(url.getFile());
-						File parentDirectory = file.getParentFile();
+					// attempt to parse parent directory
+					File file = new File(url.getFile());
+					File parentDirectory = file.getParentFile();
 
-						// create directory if it doesn't exist						
-						if (parentDirectory != null && !parentDirectory.exists()) {
-							parentDirectory.mkdirs();
-						}
+					// create directory if it doesn't exist						
+					if (parentDirectory != null && !parentDirectory.exists()) {
+						parentDirectory.mkdirs();
+					}
 
-						if (parentDirectory == null || !parentDirectory.isDirectory())
-							throw Utilities.newCoreException(Policy.bind("SiteFileFactory.UnableToObtainParentDirectory", file.getAbsolutePath()),null); //$NON-NLS-1$
+					if (parentDirectory == null || !parentDirectory.isDirectory())
+						throw Utilities.newCoreException(
+							Policy.bind(
+								"SiteFileFactory.UnableToObtainParentDirectory",
+								file.getAbsolutePath()),
+							null);
+					//$NON-NLS-1$
 
-						site = parseSite(parentDirectory);
+					site = parseSite(parentDirectory);
 
 				}
 			}
@@ -115,10 +121,16 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 			// Do not set read only as may install in it
 			//site.markReadOnly();
-		} catch (MalformedURLException e){
-			throw Utilities.newCoreException("Unable to create URL",e);
-		} catch (IOException e){
-			throw Utilities.newCoreException("Unable to access Site",e);
+		} catch (MalformedURLException e) {
+			throw Utilities.newCoreException(
+				Policy.bind("SiteFileFactory.UnableToCreateURL",url==null?"":url.toExternalForm()),
+				e);
+			//$NON-NLS-1$
+		} catch (IOException e) {
+			throw Utilities.newCoreException(
+				Policy.bind("SiteFileFactory.UnableToAccessSite"),
+				e);
+			//$NON-NLS-1$
 		} finally {
 			try {
 				if (siteStream != null)
@@ -136,20 +148,22 @@ public class SiteFileFactory extends BaseSiteFactory {
 		this.site = (SiteFile) createSiteMapModel();
 
 		if (!directory.exists())
-			throw Utilities.newCoreException(Policy.bind("SiteFileFactory.FileDoesNotExist", directory.getAbsolutePath()),null);		//$NON-NLS-1$
+			throw Utilities.newCoreException(
+				Policy.bind("SiteFileFactory.FileDoesNotExist", directory.getAbsolutePath()),
+				null);
+		//$NON-NLS-1$
 
 		File pluginPath = new File(directory, Site.DEFAULT_PLUGIN_PATH);
 
-			//PACKAGED
-			parsePackagedFeature(directory); // in case it contains JAR files
+		//PACKAGED
+		parsePackagedFeature(directory); // in case it contains JAR files
 
-			parsePackagedPlugins(pluginPath);
+		parsePackagedPlugins(pluginPath);
 
-			// INSTALLED	
-			parseInstalledFeature(directory);
+		// INSTALLED	
+		parseInstalledFeature(directory);
 
-			parseInstalledPlugin(pluginPath);
-
+		parseInstalledPlugin(pluginPath);
 
 		return (Site) site;
 

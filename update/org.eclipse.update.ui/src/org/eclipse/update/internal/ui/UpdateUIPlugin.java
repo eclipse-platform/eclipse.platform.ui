@@ -146,10 +146,17 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		if (e instanceof InvocationTargetException) {
 			e = ((InvocationTargetException)e).getTargetException();
 		}
-		String message = e.getMessage();
-		if (message==null)
-	 		message = e.toString();
-		Status status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+		
+		IStatus status = null;
+		if (e instanceof CoreException){
+			status = ((CoreException)e).getStatus();
+		} else {
+			String message = e.getMessage();
+			if (message==null)
+	 			message = e.toString();
+			 status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, message, e);
+		}
+		
 		if (showErrorDialog) 
 		   ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
 		//ResourcesPlugin.getPlugin().getLog().log(status);

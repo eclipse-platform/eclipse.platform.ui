@@ -17,6 +17,7 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.*;
 import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * This class manages the configurations.
@@ -55,7 +56,7 @@ public class SiteLocal
 				location = getUpdateStateLocation(currentPlatformConfiguration);
 			} catch (IOException exception) {
 				throw Utilities.newCoreException(
-					Policy.bind("Unable to retrieve update state location"),
+					Policy.bind(Policy.bind("SiteLocal.UnableToRetrieveRWArea")), //$NON-NLS-1$
 					exception);
 			}
 
@@ -1041,7 +1042,7 @@ public class SiteLocal
 
 		if (url == null)
 			throw Utilities.newCoreException(
-				"Internal Error: URL of local site is null",
+				Policy.bind("SiteLocal.SiteUrlIsNull"), //$NON-NLS-1$
 				null);
 
 		// parse site information

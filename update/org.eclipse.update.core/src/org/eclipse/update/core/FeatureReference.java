@@ -79,7 +79,18 @@ public class FeatureReference
 			categories = new ArrayList();
 			String[] categoriesAsString = getCategoryNames();
 			for (int i = 0; i < categoriesAsString.length; i++) {
-				categories.add(getSite().getCategory(categoriesAsString[i]));
+				ICategory siteCat = getSite().getCategory(categoriesAsString[i]);
+				if (siteCat != null)
+					categories.add(siteCat);
+				else {
+					//DEBUG
+					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+						String siteURL =
+							getSite().getURL() != null ? getSite().getURL().toExternalForm() : null;
+						UpdateManagerPlugin.getPlugin().debug(
+							"Category " + categoriesAsString[i] + " not found in Site:" + siteURL);
+					}
+				}
 			}
 		}
 
@@ -116,17 +127,10 @@ public class FeatureReference
 			try {
 				resolve(url, null);
 			} catch (MalformedURLException e) {
-				String id =
-					UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status =
-					new Status(
-						IStatus.WARNING,
-						id,
-						IStatus.OK,
-						Policy.bind("FeatureReference.UnableToResolveURL", url.toExternalForm()),
-						e);
+				throw Utilities.newCoreException(
+					Policy.bind("FeatureReference.UnableToResolveURL", url.toExternalForm()),
+					e);
 				//$NON-NLS-1$
-				throw new CoreException(status);
 			}
 		}
 	}

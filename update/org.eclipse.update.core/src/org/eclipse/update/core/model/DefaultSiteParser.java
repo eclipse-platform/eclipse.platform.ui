@@ -5,19 +5,15 @@ package org.eclipse.update.core.model;
  */
 
 import java.io.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Stack;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.URLEntry;
+import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * Default site parser.
@@ -352,7 +348,7 @@ public class DefaultSiteParser extends DefaultHandler {
 					getState(currentState)));
 			//$NON-NLS-1$
 			// what we received was not a site.xml, no need to continue
-			throw new SAXException("The XML stream is not a valid default site.xml file. The root tag is not site");
+			throw new SAXException(Policy.bind("DefaultSiteParser.InvalidXMLStream")); //$NON-NLS-1$
 		}
 
 	}
@@ -640,10 +636,16 @@ public class DefaultSiteParser extends DefaultHandler {
 		objectStack.push(inf);
 	}
 
+	/*
+	 * 
+	 */
 	private void debug(String s) {
 		UpdateManagerPlugin.getPlugin().debug("DefaultSiteParser"+s);
 	}
 
+	/*
+	 * 
+	 */
 	private void logStatus(SAXParseException ex) {
 		String name = ex.getSystemId();
 		if (name == null)
@@ -691,11 +693,17 @@ public class DefaultSiteParser extends DefaultHandler {
 			UpdateManagerPlugin.getPlugin().debug(error.toString());
 	}
 
+	/*
+	 * 
+	 */
 	private void internalErrorUnknownTag(String msg) {
 		stateStack.push(new Integer(STATE_IGNORED_ELEMENT));
 		internalError(msg);
 	}
 
+	/*
+	 * 
+	 */
 	private void internalError(String message) {
 		error(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, null));
 	}

@@ -21,7 +21,7 @@ public class Writer {
 		super();
 
 		OutputStream out = new FileOutputStream(file);
-		OutputStreamWriter outWriter = new OutputStreamWriter(out, "UTF8");
+		OutputStreamWriter outWriter = new OutputStreamWriter(out, "UTF8"); //$NON-NLS-1$
 		BufferedWriter buffWriter = new BufferedWriter(outWriter);
 		w = new PrintWriter(buffWriter);
 	}

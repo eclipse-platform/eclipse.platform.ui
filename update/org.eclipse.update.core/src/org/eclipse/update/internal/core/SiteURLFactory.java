@@ -13,9 +13,9 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.SiteModelFactory;
 import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.Policy;
 
 public class SiteURLFactory extends BaseSiteFactory {
-
 
 	/*
 	 * @see ISiteFactory#createSite(URL, boolean)
@@ -36,27 +36,36 @@ public class SiteURLFactory extends BaseSiteFactory {
 	 * 
 	 * 3 open the stream	 
 	 */
-	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
+	public ISite createSite(URL url)
+		throws CoreException, InvalidSiteTypeException {
 		Site site = null;
 		InputStream siteStream = null;
-		
-		try {		
+
+		try {
 			SiteURLContentProvider contentProvider = new SiteURLContentProvider(url);
-		
+
 			URL resolvedURL = URLEncoder.encode(url);
 			siteStream = resolvedURL.openStream();
-			
+
 			SiteModelFactory factory = (SiteModelFactory) this;
-			site = (Site)factory.parseSite(siteStream);
-			
+			site = (Site) factory.parseSite(siteStream);
+
 			site.setSiteContentProvider(contentProvider);
-			contentProvider.setSite(site);			
+			contentProvider.setSite(site);
 			site.resolve(url, getResourceBundle(url));
-			site.markReadOnly();			
-		} catch (MalformedURLException e){
-			throw Utilities.newCoreException("Unable to create URL",e);
-		} catch (IOException e){
-			throw Utilities.newCoreException("Unable to access URL",e);
+			site.markReadOnly();
+		} catch (MalformedURLException e) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"SiteURLFactory.UnableToCreateURL",
+					url == null ? "" : url.toExternalForm()),
+				e);
+			//$NON-NLS-1$
+		} catch (IOException e) {
+			throw Utilities.newCoreException(
+				Policy.bind("SiteURLFactoryUnable.ToAccessSiteStream"),
+				e);
+			//$NON-NLS-1$
 		} finally {
 			try {
 				siteStream.close();
@@ -65,12 +74,14 @@ public class SiteURLFactory extends BaseSiteFactory {
 		}
 		return site;
 	}
-		
+
 	/*
 	 * @see SiteModelFactory#canParseSiteType(String)
 	 */
 	public boolean canParseSiteType(String type) {
-		return (super.canParseSiteType(type) || SiteURLContentProvider.SITE_TYPE.equalsIgnoreCase(type));
+		return (
+			super.canParseSiteType(type)
+				|| SiteURLContentProvider.SITE_TYPE.equalsIgnoreCase(type));
 	}
-	
+
 }

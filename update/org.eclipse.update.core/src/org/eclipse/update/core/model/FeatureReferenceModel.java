@@ -62,8 +62,8 @@ public class FeatureReferenceModel extends ModelObject {
 		// have 2 URL pointing to the same featureReference
 		// but with different representation
 		// (i.e. file:/C;/ and file:C:/)
-		if (!"file".equalsIgnoreCase(getURL().getProtocol())) return false;
-		if (!"file".equalsIgnoreCase(f.getURL().getProtocol())) return false;		
+		if (!"file".equalsIgnoreCase(getURL().getProtocol())) return false; //$NON-NLS-1$
+		if (!"file".equalsIgnoreCase(f.getURL().getProtocol())) return false;		 //$NON-NLS-1$
 		
 		File file1 = new File(getURL().getFile());
 		File file2 = new File(f.getURL().getFile());

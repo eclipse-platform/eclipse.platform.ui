@@ -120,11 +120,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", feature.getLabel()),
 					originalException);
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", feature.getLabel()),
 					newException);
 		}
@@ -200,11 +200,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				newException = t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", feature.getLabel()),
 					originalException);
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", feature.getLabel()),
 					newException);
 		}

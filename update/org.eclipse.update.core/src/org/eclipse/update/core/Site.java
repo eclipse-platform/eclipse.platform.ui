@@ -250,17 +250,10 @@ public class Site extends SiteModel implements ISite {
 	 */
 	public ISiteContentProvider getSiteContentProvider() throws CoreException {
 		if (siteContentProvider == null) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
+			throw Utilities.newCoreException(
 					Policy.bind("Site.NoContentProvider"),
 					null);
 			//$NON-NLS-1$
-			throw new CoreException(status);
 		}
 		return siteContentProvider;
 	}

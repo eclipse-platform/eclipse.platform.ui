@@ -11,12 +11,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.update.internal.core.Policy;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
+
 
 /**
  * User authentication dialog
@@ -44,7 +41,7 @@ public class UserValidationDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Policy.bind("UserVerificationDialog.PasswordRequired")); //$NON-NLS-1$
+		newShell.setText(UpdateUIPlugin.getResourceString("UserVerificationDialog.PasswordRequired")); //$NON-NLS-1$
 	}
 	/**
 	 */
@@ -73,8 +70,8 @@ public class UserValidationDialog extends Dialog {
 		main.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(main, SWT.WRAP);
-		String text = Policy.bind("UserVerificationDialog.EnterNameAndPassword", realm); //$NON-NLS-1$
-		text += "\n" + Policy.bind("UserVerificationDialog.Domain",domain); //$NON-NLS-1$ //$NON-NLS-2$
+		String text = UpdateUIPlugin.getResourceString("UserVerificationDialog.EnterNameAndPassword")+ realm; //$NON-NLS-1$
+		text += "\n" + UpdateUIPlugin.getResourceString("UserVerificationDialog.Domain")+domain; //$NON-NLS-1$ //$NON-NLS-2$
 		label.setText(text);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 3;
@@ -90,7 +87,7 @@ public class UserValidationDialog extends Dialog {
 	 * area.
 	 */
 	protected void createPasswordFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(Policy.bind("UserVerificationDialog.Password")); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUIPlugin.getResourceString("UserVerificationDialog.Password")); //$NON-NLS-1$
 
 		passwordField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -105,7 +102,7 @@ public class UserValidationDialog extends Dialog {
 	 * area.
 	 */
 	protected void createUsernameFields(Composite parent) {
-		new Label(parent, SWT.NONE).setText(Policy.bind("UserVerificationDialog.UserName")); //$NON-NLS-1$
+		new Label(parent, SWT.NONE).setText(UpdateUIPlugin.getResourceString("UserVerificationDialog.UserName")); //$NON-NLS-1$
 
 		usernameField = new Text(parent, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);

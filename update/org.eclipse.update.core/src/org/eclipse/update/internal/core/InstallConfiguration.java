@@ -209,7 +209,7 @@ public class InstallConfiguration
 	 */
 	public void export(File exportFile) throws CoreException {
 		try {
-			Writer writer = new Writer(exportFile,"UTF8");
+			Writer writer = new Writer(exportFile,"UTF8"); //$NON-NLS-1$
 			writer.write(this);
 		} catch (FileNotFoundException e) {
 			throw Utilities.newCoreException(

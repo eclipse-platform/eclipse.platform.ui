@@ -4,45 +4,35 @@ package org.eclipse.update.internal.ui.security;
  * All Rights Reserved.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.Policy;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
-import org.eclipse.update.internal.security.*;
+import org.eclipse.update.core.IVerificationListener;
+import org.eclipse.update.core.IVerificationResult;
+import org.eclipse.update.internal.security.JarVerifier;
 /**
  *
- * Call example:
- * JarVerificationService verifier = new JarVerificationService();
- * JarVerificationResult result = verifier.verify(IFeature,ContentReferences[], InstallMonitor monitor);
- * throws an exception if user canceled or error occured
  */
 public class JarVerificationService implements IVerificationListener {
 
-	/**
+	/*
 	 * The JarVerifier is a instance variable
 	 * bacause we want to reuse it upon multiple calls
 	 */
 	private JarVerifier jarVerifier;
 
-	/**
+	/*
 	 * the Shell
 	 */
 	private Shell shell;
 
-	/**
+	/*
 	 * If no shell, create a new shell 
 	 */
 	public JarVerificationService() {
 		this(null);
 	}
-	/**
+	
+	/*
 	 * 
 	 */
 	public JarVerificationService(Shell aShell) {
@@ -61,17 +51,14 @@ public class JarVerificationService implements IVerificationListener {
 					}
 				});
 			}
-
 		}
 	}
 
-	/**
+	/*
 	 * 
 	 */
 	private int openWizard(IVerificationResult result) {
-
 		int code;
-
 		JarVerificationDialog dialog = new JarVerificationDialog(shell, result);
 		dialog.open();
 
@@ -85,7 +72,7 @@ public class JarVerificationService implements IVerificationListener {
 	}
 
 	/*
-	 * @see IVerificationListener#prompt(IVerificationResult)
+	 * 
 	 */
 	public int prompt(final IVerificationResult verificationResult){
 
@@ -112,12 +99,6 @@ public class JarVerificationService implements IVerificationListener {
 					});
 					return wizardResult[0];
 				}
-				
 		}
 	}
-
-	
-
-
-
 }

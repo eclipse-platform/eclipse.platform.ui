@@ -110,7 +110,8 @@ public class LocalSystemInfo {
 	public static long getFreeSpace(File path) {
 		if (hasNatives) {
 			try {
-				return nativeGetFreeSpace(path);
+				long bytes = nativeGetFreeSpace(path);
+				return (bytes!=0)?bytes/1024:0;
 			} catch (UnsatisfiedLinkError e) {
 			}
 		}

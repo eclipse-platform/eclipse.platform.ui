@@ -9,11 +9,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.model.ModelObject;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.SAXException;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * An InstallConfigurationModel is 
@@ -36,13 +36,9 @@ public class InstallConfigurationModel extends ModelObject {
 			}
 			this.setLabel(Policy.bind("InstallConfiguration.DeletedConfiguration")); //$NON-NLS-1$
 		} catch (SAXException exception) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", getLocationURLString(),"\r\n"+exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
-			throw new CoreException(status);
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", getLocationURLString(),"\r\n"+exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (IOException exception) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.ErrorDuringFileAccess",getLocationURLString()), exception); //$NON-NLS-1$
-			throw new CoreException(status);
+			throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess",getLocationURLString()), exception); //$NON-NLS-1$
 		}
 	}
 

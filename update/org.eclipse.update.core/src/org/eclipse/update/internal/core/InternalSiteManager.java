@@ -18,6 +18,7 @@ import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * 
@@ -57,13 +58,15 @@ public class InternalSiteManager {
 		try {
 			site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL);
 		} catch (CoreException preservedException) {
+			// attempt a retry is the protocol is file
+			if (!"file".equalsIgnoreCase(siteURL.getProtocol())) throw preservedException;
 			try {
 				site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
 			} catch (CoreException retryException) {
 
 				IStatus firstStatus = preservedException.getStatus();
 
-				MultiStatus multi = new MultiStatus(firstStatus.getPlugin(),IStatus.WARNING,"Failed retry accessing site using default installed format instead of default packaged format.",retryException);
+				MultiStatus multi = new MultiStatus(firstStatus.getPlugin(),IStatus.WARNING,Policy.bind("InternalSiteManager.FailedRetryAccessingSite"),retryException); //$NON-NLS-1$
 				multi.add(firstStatus);
 
 				UpdateManagerPlugin.getPlugin().getLog().log(multi);

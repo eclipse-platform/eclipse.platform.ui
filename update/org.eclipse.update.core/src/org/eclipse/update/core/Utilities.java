@@ -164,7 +164,16 @@ public class Utilities {
 	public static CoreException newCoreException(String s, Throwable e) {
 		String id =
 			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e)); //$NON-NLS-1$
+			
+		// check the case of a multistatus
+		IStatus status;
+		if (e instanceof CoreException){
+			status = new MultiStatus( id, IStatus.ERROR, s, e);
+			((MultiStatus)status).addAll(((CoreException)e).getStatus());		
+		} else {
+			status = new Status(IStatus.ERROR, id, 0, s, e);	
+		}
+		return new CoreException(status); //$NON-NLS-1$
 	}
 
 	/**
@@ -187,8 +196,20 @@ public class Utilities {
 		String id =
 			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 		MultiStatus multi = new MultiStatus(id, IStatus.ERROR, s, null);
-		multi.add(new Status(IStatus.ERROR, id, 0, s1, e1));
-		multi.add(new Status(IStatus.ERROR, id, 0, s2, e2));
+		
+		// check if core exception
+		if (e1 instanceof CoreException){
+			multi.addAll(((CoreException)e1).getStatus());
+		} else {
+			multi.add(new Status(IStatus.ERROR, id, 0, s1, e1));			
+		}
+		
+		// check if core exception
+		if (e2 instanceof CoreException){
+			multi.addAll(((CoreException)e2).getStatus());
+		} else {
+			multi.add(new Status(IStatus.ERROR, id, 0, s2, e2));			
+		}
 		return new CoreException(multi); //$NON-NLS-1$
 	}
 

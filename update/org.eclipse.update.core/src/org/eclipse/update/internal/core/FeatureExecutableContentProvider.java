@@ -116,19 +116,12 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			result = new ContentReference(null, new URL(getURL(), Feature.FEATURE_XML));
 
 		} catch (MalformedURLException e) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
-					Policy.bind(
-						"FeatureExecutableContentProvider.UnableToCreateURLFor",
-						getURL().toExternalForm() + " " + Feature.FEATURE_XML),
-					e);
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"FeatureExecutableContentProvider.UnableToCreateURLFor",
+					getURL().toExternalForm() + " " + Feature.FEATURE_XML),
+				e);
 			//$NON-NLS-1$ //$NON-NLS-2$
-			throw new CoreException(status);
 		}
 		return result;
 	}
@@ -154,19 +147,12 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 			result[0] =
 				new ContentReference(getPathID(pluginEntry), new File(getPath(pluginEntry)));
 		} catch (IOException e) {
-			String id =
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status =
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
+			throw Utilities.newCoreException(
 					Policy.bind(
 						"FeatureExecutableContentProvider.UnableToRetrievePluginEntry",
 						pluginEntry.getVersionedIdentifier().toString()),
 					e);
 			//$NON-NLS-1$
-			throw new CoreException(status);
 		}
 		return result;
 	}

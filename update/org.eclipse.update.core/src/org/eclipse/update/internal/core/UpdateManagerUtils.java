@@ -319,15 +319,4 @@ public class UpdateManagerUtils {
 		return url;
 	}
 
-	/**
-	 * 
-	 */
-	public static CoreException newCoreException(String s, Throwable e)
-		throws CoreException {
-		if (e != null && e instanceof CoreException)
-			return (CoreException) e;
-		String id =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e));
 	}
-}

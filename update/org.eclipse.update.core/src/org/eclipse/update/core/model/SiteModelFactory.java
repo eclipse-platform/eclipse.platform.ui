@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * Default site model factory.
@@ -79,9 +80,9 @@ public class SiteModelFactory {
 				}
 			}
 
-			throw Utilities.newCoreException("Parsing Error",e);
+			throw Utilities.newCoreException(Policy.bind("SiteModelObject.ErrorParsingSiteStream"),e); //$NON-NLS-1$
 		} catch (IOException e){
-			throw Utilities.newCoreException("Access Error",e);
+			throw Utilities.newCoreException(Policy.bind("SiteModelObject.ErrorAccessingSiteStream"),e); //$NON-NLS-1$
 		}
 		return result;
 	}

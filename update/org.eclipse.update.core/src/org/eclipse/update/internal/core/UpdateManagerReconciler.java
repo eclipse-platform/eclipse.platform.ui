@@ -108,7 +108,7 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 			boolean found = false;
 			// check for args with parameters. If we are at the last argument or if the next one
 			// has a '-' as the first character, then we can't have an arg with a parm so continue.
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) {
+			if (i == args.length - 1 || args[i + 1].startsWith("-")) { //$NON-NLS-1$
 				continue;
 			}
 			String arg = args[++i];
@@ -149,6 +149,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 	}
 	
 	private void debug(String s) {
-		UpdateManagerPlugin.getPlugin().debug(this.getClass().getName()+": "+s);
+		UpdateManagerPlugin.getPlugin().debug(this.getClass().getName()+": "+s); //$NON-NLS-1$
 	}
 }

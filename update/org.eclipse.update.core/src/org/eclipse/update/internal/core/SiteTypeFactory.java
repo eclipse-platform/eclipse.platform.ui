@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.IFeatureFactory;
 import org.eclipse.update.core.ISiteFactory;
+import org.eclipse.update.core.Utilities;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -63,8 +63,7 @@ public final class SiteTypeFactory {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,SIMPLE_EXTENSION_ID,type);
 		if (elements==null || elements.length==0){
-			IStatus status = new Status(IStatus.ERROR,pluginID,IStatus.OK,Policy.bind("SiteTypeFactory.UnableToFindSiteFactory",type),null); //$NON-NLS-1$
-			throw new CoreException(status);
+			throw Utilities.newCoreException(Policy.bind("SiteTypeFactory.UnableToFindSiteFactory",type),null); //$NON-NLS-1$
 		} else {
 			IConfigurationElement element = elements[0];
 			result = (ISiteFactory)element.createExecutableExtension("class"); //$NON-NLS-1$

@@ -3,9 +3,8 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.Feature;
-import org.eclipse.update.core.IFeatureContentConsumer;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.core.*;
 
 /**
  * 
@@ -39,9 +38,7 @@ public class TargetFeature extends Feature {
 	 */
 	public IFeatureContentConsumer getFeatureContentConsumer() throws CoreException {
 		if (this.contentConsumer == null) {
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("Feature.NoFeatureContentConsumer", getURL().toExternalForm()), null); //$NON-NLS-1$
-			throw new CoreException(status);
+			throw Utilities.newCoreException( Policy.bind("Feature.NoFeatureContentConsumer", getURL().toExternalForm()), null); //$NON-NLS-1$
 		}
 		return contentConsumer;
 	}

@@ -147,7 +147,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 	}
 
-public void testParseValid5() throws Exception {
+	public void testParseValid5() throws Exception {
 
 		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/site2.xml");
 		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
@@ -167,4 +167,16 @@ public void testParseValid5() throws Exception {
 		
 	}
 	
+	public void testParseUnknownCategory() throws Exception {
+
+		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/site3.xml");
+		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+		URL resolvedURL = URLEncoder.encode(remoteURL);		
+		SiteModel remoteSite = parser.parse(resolvedURL.openStream());
+		remoteSite.resolve(remoteURL, null);
+
+		FeatureReferenceModel[] featureRef = remoteSite.getFeatureReferenceModels();
+		ICategory[] categories = ((FeatureReference)featureRef[0]).getCategories();
+		assertTrue(categories.length==0);
+	}	
 }

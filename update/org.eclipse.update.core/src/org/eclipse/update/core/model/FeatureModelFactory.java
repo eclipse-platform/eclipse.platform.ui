@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.update.core.Utilities;
 import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * Default feature model factory.
@@ -58,7 +59,7 @@ public class FeatureModelFactory {
 				throw new CoreException(status);
 			}
 		} catch (IOException e) {
-			throw Utilities.newCoreException("Access Error", e);
+			throw Utilities.newCoreException(Policy.bind("FeatureModelFactory.ErrorAccesingFeatureStream"), e); //$NON-NLS-1$
 		}
 		return featureModel;
 	}

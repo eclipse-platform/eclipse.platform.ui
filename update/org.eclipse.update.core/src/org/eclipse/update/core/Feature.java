@@ -9,6 +9,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  * Convenience implementation of a feature.
@@ -372,11 +373,11 @@ public class Feature extends FeatureModel implements IFeature {
 				newException= t;
 			}
 			if (originalException != null) // original exception wins
-				throw UpdateManagerUtils.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", this.getLabel()),
 					originalException);
 			if (newException != null)
-				throw UpdateManagerUtils.newCoreException(
+				throw Utilities.newCoreException(
 					Policy.bind("InstallHandler.error", this.getLabel()),
 					newException);
 		}
@@ -476,17 +477,10 @@ public class Feature extends FeatureModel implements IFeature {
 	public IFeatureContentProvider getFeatureContentProvider()
 		throws CoreException {
 		if (featureContentProvider == null) {
-			String id=
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status=
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
+			throw Utilities.newCoreException(
 					Policy.bind("Feature.NoContentProvider", getVersionedIdentifier().toString()),
 					null);
 			//$NON-NLS-1$
-			throw new CoreException(status);
 		}
 		return this.featureContentProvider;
 	}
@@ -510,18 +504,11 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public void setSite(ISite site) throws CoreException {
 		if (this.site != null) {
-			String id=
-				UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			String featureURLString= (getURL() != null) ? getURL().toExternalForm() : "";
-			IStatus status=
-				new Status(
-					IStatus.ERROR,
-					id,
-					IStatus.OK,
+			throw Utilities.newCoreException(
 					Policy.bind("Feature.SiteAlreadySet", featureURLString),
 					null);
 			//$NON-NLS-1$
-			throw new CoreException(status);
 		}
 		this.site= site;
 	}
@@ -589,6 +576,6 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	 private void abort() throws CoreException{
 		// FIXME	 	
-		throw Utilities.newCoreException("Installation has been cacelled",null);
+		throw Utilities.newCoreException(Policy.bind("Feature.InstallationCancelled"),null); //$NON-NLS-1$
 	 }
 }

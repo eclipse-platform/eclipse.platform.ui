@@ -379,7 +379,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		if (e instanceof CoreException)
 			ce = (CoreException) e;
 		else
-			ce = UpdateManagerUtils.newCoreException(s, e);
+			ce = Utilities.newCoreException(s, e);
 
 		if (isUndoAction()) {
 			// for "undo" operations, deactivate handler and log error
@@ -407,7 +407,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 			ce = (CoreException) e;
 		else
 			ce =
-				UpdateManagerUtils.newCoreException(
+				Utilities.newCoreException(
 					Policy.bind("InstallHandler.callException", feature.getLabel()),
 					e);
 		//$NON-NLS-1$
@@ -458,7 +458,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		if (baseRef != null)
 			base = baseRef.asURL();
 		if (base == null)
-			throw UpdateManagerUtils.newCoreException(
+			throw Utilities.newCoreException(
 				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()),
 				null);
 		//$NON-NLS-1$
@@ -508,7 +508,7 @@ public class InstallHandlerProxy implements IInstallHandler {
 		IConfigurationElement[] handlerExtension =
 			reg.getConfigurationElementsFor(EXT_PLUGIN, EXT_POINT, name);
 		if (handlerExtension == null || handlerExtension.length <= 0)
-			throw UpdateManagerUtils.newCoreException(
+			throw Utilities.newCoreException(
 				Policy.bind("InstallHandler.unableToCreateHandler", this.feature.getLabel()),
 				null);
 		//$NON-NLS-1$	
