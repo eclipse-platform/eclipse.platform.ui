@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Policy;
@@ -34,7 +34,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				return Status.CANCEL_STATUS;
 			notificationRequested = true;
 			try {
-				workspace.run(noop, null, null);
+				workspace.run(noop, null, IResource.NONE, null);
 			} catch (CoreException e) {
 				return e.getStatus();
 			}
@@ -42,6 +42,10 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		}
 	}
 	private static final long NOTIFICATION_DELAY = 1500;
+	/**
+	 * The Threads that are currently avoiding notification.
+	 */
+	private Set avoidNotify = new HashSet();
 	/**
 	 * The marker change stamp that was last used to update the build marker
 	 * deltas.
@@ -53,6 +57,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 * autobuild notifications.
 	 */
 	private Map buildMarkerDeltas;
+	protected boolean isNotifying;
 
 	// if there are no changes between the current tree and the last delta state then we
 	// can reuse the lastDelta (if any). If the lastMarkerChangeId is different then the current
@@ -62,39 +67,38 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	 */
 	private ResourceDelta lastDelta;
 	/**
-	 * tree the last time we computed a delta
-	 */
-	private ElementTree lastDeltaState;
-	/**
 	 * the marker change Id the last time we computed a delta
 	 */
 	private long lastDeltaId;
+	/**
+	 * tree the last time we computed a delta
+	 */
+	private ElementTree lastDeltaState;
+	protected long lastNotifyDuration = 0L;
+	/**
+	 * the marker change id at the end of the last POST_AUTO_BUILD
+	 */
+	private long lastPostBuildId = 0;
 	/**
 	 * The state of the workspace at the end of the last POST_BUILD
 	 * notification
 	 */
 	private ElementTree lastPostBuildTree;
 	/**
-	 * the marker change id at the end of the last POST_AUTO_BUILD
+	 * the marker change id at the end of the last POST_CHANGE
 	 */
-	private long lastPostBuildId = 0;
+	private long lastPostChangeId = 0;
 	/**
 	 * The state of the workspace at the end of the last POST_CHANGE
 	 * notification
 	 */
 	private ElementTree lastPostChangeTree;
-	/**
-	 * the marker change id at the end of the last POST_CHANGE
-	 */
-	private long lastPostChangeId = 0;
 
 	private ResourceChangeListenerList listeners;
-	Workspace workspace;
 
 	protected boolean notificationRequested = false;
 	private Job notifyJob;
-	protected long lastNotifyDuration = 0L;
-	protected boolean isNotifying;
+	Workspace workspace;
 
 	public NotificationManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -106,6 +110,9 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			listeners.add(listener, eventMask);
 		}
 		EventStats.listenerAdded(listener);
+	}
+	public void beginAvoidNotify() {
+		avoidNotify.add(Thread.currentThread());
 	}
 	/**
 	 * Indicates that a notification phase is beginning. */
@@ -157,6 +164,19 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		ResourceChangeListenerList.ListenerEntry[] entries;
 		entries = new ResourceChangeListenerList.ListenerEntry[] { new ResourceChangeListenerList.ListenerEntry(listener, type)};
 		notify(entries, new ResourceChangeEvent(workspace, type, delta), false);
+	}
+	
+	public void endAvoidNotify() {
+		avoidNotify.remove(Thread.currentThread());
+	}
+	public void endOperation() {
+		//don't do intermediate notifications if the current thread doesn't want them
+		if (avoidNotify.contains(Thread.currentThread()))
+			return;
+		//notifications must never take more than one tenth of operation time
+		long delay = Math.max(NOTIFICATION_DELAY, lastNotifyDuration * 10);
+		if (notifyJob.getState() == Job.NONE)
+			notifyJob.schedule(delay);
 	}
 	protected ResourceDelta getDelta(ElementTree tree, int type) {
 		long id = workspace.getMarkerManager().getChangeId();
@@ -240,16 +260,6 @@ public class NotificationManager implements IManager, ILifecycleListener {
 					EventStats.endNotify();
 			}
 		}
-	}
-	public void endOperation() {
-		//don't do intermediate notifications if the entire workspace is locked
-		Job current = Platform.getJobManager().currentJob();
-		if (current != null && current.getRule() == workspace.getRoot())
-			return;
-		//notifications must never take more than one tenth of operation time
-		long delay = Math.max(NOTIFICATION_DELAY, lastNotifyDuration * 10);
-		if (notifyJob.getState() == Job.NONE)
-			notifyJob.schedule(delay);
 	}
 	public void removeListener(IResourceChangeListener listener) {
 		synchronized (listeners) {

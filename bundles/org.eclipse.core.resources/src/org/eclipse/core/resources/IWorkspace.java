@@ -55,6 +55,16 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * </p>
  */
 public interface IWorkspace extends IAdaptable {
+	/**
+	 * flag constant (bit mask value 1) indicating that resource change notifications
+	 * should be avoided during the invocation of a compound resource changing
+	 * operation.
+	 * 
+	 * @see IWorkspace#run
+	 * @since 3.0
+	 */
+	public static final int AVOID_UPDATE = 1;
+	
 /** 
  * Adds the given listener for resource change events to this workspace.
  * Has no effect if an identical listener is already registered.
@@ -807,27 +817,41 @@ public void removeSaveParticipant(Plugin plugin);
  * </p>
  * <p>
  * The supplied scheduling rule is used to determine whether this operation can be
- * run simultaneously with workspace changes in other threads.  Use the
- * method <code>newSchedulingRule</code> to create a rule that specifies
- * modification of a particular resource.  If the scheduling rule conflicts with another 
- * workspace change that is currently running, the calling thread will be blocked until 
- * that change completes.
+ * run simultaneously with workspace changes in other threads.  If the scheduling rule 
+ * conflicts with another workspace change that is currently running, the calling 
+ * thread will be blocked until that change completes. If the action attempts to make 
+ * changes to the workspace that were not specified in the scheduling rule, it will fail.  
+ * If no scheduling rule is supplied, then any attempt to change resources will fail.
  * </p>
  * <p>
- * If the action attempts to make changes to the workspace that were not specified
- * in the scheduling rule, it will fail.  If no scheduling rule is supplied, then any attempt
- * to change the workspace will fail.
+ * The AVOID_UPDATE flag controls whether periodic resource change notifications
+ * should occur during the scope of this call.  If this flag is specified, and no other
+ * threads modify the workspace concurrently, then all resource change notifications 
+ * will be deferred until the end of this call.  If this flag is not specified, the platform 
+ * may decide to broadcast periodic resource change notifications during the scope 
+ * of this call.
+ * </p>
+ * <p> 
+ * Flags other than <code>AVOID_UPDATE</code> are ignored.
  * </p>
  * 
  * @param action the action to perform
  * @param rule the scheduling rule to use when running this operation, or
  * <code>null</code> if there are no scheduling restrictions for this operation.
+ * @param flags bit-wise or of flag constants
+ *   (only AVOID_UPDATE is relevant here) 
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if the operation failed.
  * 
- * @see #newSchedulingRule
+ * @see #AVOID_UPDATE
  * @since 3.0
+ */
+public void run(IWorkspaceRunnable action, ISchedulingRule rule, int flags, IProgressMonitor monitor) throws CoreException;
+/**
+ * @deprecated
+ * Use run(IWorkspaceRunnable, ISchedulingRule, int, IProgressMonitor).
+ * This method will be removed before the 3.0 release.
  */
 public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException;
 /**
@@ -835,7 +859,7 @@ public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonito
  * <p>
  * This is a convenience method, fully equivalent to:
  * <pre>
- *   workspace.run(action, workspace.newSchedulingRule(workspace.getRoot()), monitor);
+ *   workspace.run(action, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
  * </pre>
  * </p>
  *
