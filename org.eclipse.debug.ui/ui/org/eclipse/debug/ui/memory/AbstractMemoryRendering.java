@@ -46,6 +46,11 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	private MenuManager fPopupMenuMgr;
 	private String fRenderingId;
 	
+	/**
+	 * Constructs a new rendering of the given type.
+	 * 
+	 * @param renderingId memory rendering type identifier
+	 */
 	public AbstractMemoryRendering(String renderingId)
 	{
 		fRenderingId = renderingId;
@@ -209,17 +214,17 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	}
 	
 	/**
-	 * 
 	 * Helper method for creating a pop up menu in the rendering for a control.
 	 * Call this method when a context menu is required for a control
 	 * in a rendering.
 	 * 
+	 * TODO: document the menu identifier scheme for action contributions
+	 * 
+	 * <p>
 	 * Clients are expected to become a menu listener for their pop  up 
 	 * menu if they require to fill the context menu for the rendering.
+	 * </p>
 	 * @param control - control to create the pop up menu for
-	 * @param listener - listener to be notified when the pop up menu
-	 * is about to be shown.  Enter null if clients do not wish to listen
-	 * for such event.
 	 */
 	protected void createPopupMenu(Control control)
 	{
@@ -229,6 +234,10 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 			fPopupMenuMgr.setRemoveAllWhenShown(true);
 			IMemoryRenderingSite site = fContainer.getMemoryRenderingSite();
 			String menuId = fContainer.getId();
+			
+			//TODO: using container id for the menu seems like a bad idea - how
+			// will clients now the container id? which can change in different
+			// hosts for memory renderings. 
 			
 			ISelectionProvider selProvider = site.getViewSite().getSelectionProvider();
 			
@@ -247,7 +256,10 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	}
 	
 	/**
-	 * @return the pop up menu manager for this rendering.
+	 * Returns the pop up menu manager for this rendering, or <code>null</code>
+	 * if none.
+	 * 
+	 * @return the pop up menu manager for this rendering, or <code>null</code>
 	 */
 	protected MenuManager getPopupMenuManager()
 	{
@@ -255,7 +267,9 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	}
 	
 	/**
-	 * @param event - notify all listeners for the given event
+	 * Fires the given event to all registered listeners.
+	 * 
+	 * @param event the event to fire
 	 */
 	protected void firePropertyChangedEvent(PropertyChangeEvent event)
 	{
@@ -272,7 +286,9 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	}
 	
 	/**
-	 * @return the containter hosting this memory rendering.
+	 * Returns the container hosting this memory rendering.
+	 * 
+	 * @return the container hosting this memory rendering
 	 */
 	public IMemoryRenderingContainer getMemoryRenderingContainer()
 	{
@@ -280,7 +296,9 @@ public abstract class AbstractMemoryRendering implements IMemoryRendering{
 	}
 
 	/**
-	 * @return if this memory rendering is visible.
+	 * Returns whether this rendering is currently visible.
+	 * 
+	 * @return whether this rendering is currently visible
 	 */
 	public boolean isVisible() {
 		return fVisible;
