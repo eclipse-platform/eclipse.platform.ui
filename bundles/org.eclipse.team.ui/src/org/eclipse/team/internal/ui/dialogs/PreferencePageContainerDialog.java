@@ -11,9 +11,10 @@
 package org.eclipse.team.internal.ui.dialogs;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
@@ -22,19 +23,15 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 
 public class PreferencePageContainerDialog extends Dialog implements IPreferencePageContainer {
 
-	PreferencePage page;
-			
 	private class PageLayout extends Layout {
 		public void layout(Composite composite, boolean force) {
 			Rectangle rect = composite.getClientArea();
@@ -61,6 +58,9 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		}	
 	}
 
+	private PreferencePage[] pages;
+	private PreferencePage currentPage;
+	
 	private Composite fTitleArea;
 	private Label fTitleImage;
 	private CLabel fMessageLabel;
@@ -70,18 +70,6 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	private Image fErrorMsgImage;
 
 	private Button fOkButton;
-	
-	/**
-	 * Must declare our own images as the JFaceResource images will not be created unless
-	 * a property/preference dialog has been shown
-	 */
-	protected static final String PREF_DLG_TITLE_IMG = "preference_page_container_image";//$NON-NLS-1$
-	protected static final String PREF_DLG_IMG_TITLE_ERROR = "preference_page_container_title_error_image";//$NON-NLS-1$
-	static {
-		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
-		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
-		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/message_error.gif"));//$NON-NLS-1$
-	}
 	
 	/**
 	 * The Composite in which a page is shown.
@@ -94,24 +82,34 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 * @see #setMinimumPageSize(Point)
 	 */
 	private Point fMinimumPageSize = new Point(200,200);
+    private TabFolder tabFolder;
+    private Map pageMap = new HashMap();
+    
+	/**
+	 * Must declare our own images as the JFaceResource images will not be created unless
+	 * a property/preference dialog has been shown
+	 */
+	protected static final String PREF_DLG_TITLE_IMG = "preference_page_container_image";//$NON-NLS-1$
+	protected static final String PREF_DLG_IMG_TITLE_ERROR = "preference_page_container_title_error_image";//$NON-NLS-1$
+	static {
+		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
+		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
+		reg.put(PREF_DLG_IMG_TITLE_ERROR, ImageDescriptor.createFromFile(Dialog.class, "images/message_error.gif"));//$NON-NLS-1$
+	}
 		
-	public PreferencePageContainerDialog(Shell shell, PreferencePage page) {
+	public PreferencePageContainerDialog(Shell shell, PreferencePage[] pages) {
 		super(shell);
-		this.page = page;
+		this.pages = pages;
 	}
 	
 	/**
 	 * @see Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		final List changedProperties = new ArrayList(5);
-		getPreferenceStore().addPropertyChangeListener( new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				changedProperties.add(event.getProperty());
-			}
-		});
-			
-		page.performOk();
+		for (int i = 0; i < pages.length; i++) {
+            PreferencePage page = pages[i];
+			page.performOk();
+        }
 		
 		handleSave();
 		
@@ -136,7 +134,81 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		Composite composite = (Composite)super.createDialogArea(parent);
 		((GridLayout) composite.getLayout()).numColumns = 1;
 		
-		// Build the title area and separator line
+		createDescriptionArea(composite);
+		
+		if (isSinglePage()) {
+		    createSinglePageArea(composite, pages[0]);
+		} else {
+		    createMultiplePageArea(composite);
+		}
+			
+		// Build the separator line
+		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		separator.setLayoutData(gd);
+	
+		setTitle(Policy.bind("PreferencePageContainerDialog.6")); //$NON-NLS-1$
+		applyDialogFont(parent);
+		return composite;
+	}
+	
+    private void createMultiplePageArea(Composite composite) {
+		// create a tab folder for the page
+		tabFolder = new TabFolder(composite, SWT.NONE);
+		tabFolder.setLayout(new TabFolderLayout());
+		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));		
+		
+		for (int i = 0; i < pages.length; i++) {
+            PreferencePage page = pages[i];
+			// text decoration options
+			TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+			tabItem.setText(page.getTitle());//$NON-NLS-1$		
+			tabItem.setControl(createPageArea(tabFolder, page));
+			pageMap.put(tabItem, page);
+        }
+		
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                updatePageSelection();
+            }
+        });
+		updatePageSelection();
+    }
+
+    protected void updatePageSelection() {
+        TabItem[] items = tabFolder.getSelection();
+        if (items.length == 1) {
+            currentPage = (PreferencePage)pageMap.get(items[0]);
+            updateMessage();
+        }
+    }
+
+    private boolean isSinglePage() {
+        return pages.length == 1;
+    }
+
+    /*
+     * Create the page contents for a single preferences page
+     */
+    private void createSinglePageArea(Composite composite, PreferencePage page) {
+		createPageArea(composite, page);
+		currentPage = page;
+		updateMessage();
+    }
+
+    private Control createPageArea(Composite composite, PreferencePage page) {
+        // Build the Page container
+		fPageContainer = createPageContainer(composite);
+		fPageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		page.setContainer(this);
+		page.createControl(fPageContainer);
+		return fPageContainer;
+    }
+
+    private void createDescriptionArea(Composite composite) {
+        // Build the title area and separator line
 		Composite titleComposite = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -146,37 +218,20 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		titleComposite.setLayout(layout);
 		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		createTitleArea(titleComposite);
+		createMessageArea(titleComposite);
 	
 		Label titleBarSeparator = new Label(titleComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		titleBarSeparator.setLayoutData(gd);
-	
-		// Build the Page container
-		fPageContainer = createPageContainer(composite);
-		fPageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+    }
 
-		page.setContainer(this);
-		page.createControl(fPageContainer);
-		setTitle(page.getTitle());
-			
-		// Build the separator line
-		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		separator.setLayoutData(gd);
-	
-		applyDialogFont(parent);
-		return composite;
-	}
-	
-	/**
+    /**
 	 * Creates the dialog's title area.
 	 *
 	 * @param parent the SWT parent for the title area composite
 	 * @return the created title area composite
 	 */
-	private Composite createTitleArea(Composite parent) {
+	private Composite createMessageArea(Composite parent) {
 		
 		// Create the title area which will contain
 		// a title, message, and image.
@@ -315,29 +370,35 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 * @see IPreferencePageContainer#updateMessage()
 	 */
 	public void updateMessage() {
-		String pageMessage = page.getMessage();
-		String pageErrorMessage = page.getErrorMessage();
-
-		// Adjust the font
-		if (pageMessage == null && pageErrorMessage == null)
-			fMessageLabel.setFont(JFaceResources.getBannerFont());
-		else
-			fMessageLabel.setFont(JFaceResources.getDialogFont());
-
-		// Set the message and error message	
-		if (pageMessage == null) {
-			setMessage(page.getTitle());
-		} else {
-			setMessage(pageMessage);
-		}
-		setErrorMessage(pageErrorMessage);
+	    if (currentPage != null) {
+			String pageMessage = currentPage.getMessage();
+			String pageErrorMessage = currentPage.getErrorMessage();
+	
+			// Adjust the font
+			if (pageMessage == null && pageErrorMessage == null)
+				fMessageLabel.setFont(JFaceResources.getBannerFont());
+			else
+				fMessageLabel.setFont(JFaceResources.getDialogFont());
+	
+			// Set the message and error message	
+			if (pageMessage == null) {
+			    if (isSinglePage()) {
+			        setMessage(Policy.bind("PreferencePageContainerDialog.6")); //$NON-NLS-1$
+			    } else {
+			        setMessage(currentPage.getTitle());
+			    }
+			} else {
+				setMessage(pageMessage);
+			}
+			setErrorMessage(pageErrorMessage);
+	    }
 	}
 	
 	/**
 	 * @see IPreferencePageContainer#getPreferenceStore()
 	 */
 	public IPreferenceStore getPreferenceStore() {
-		return page.getPreferenceStore();
+		return null;
 	}
 
 	/**
@@ -345,7 +406,15 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 */
 	public void updateButtons() {
 		if (fOkButton != null) {
-			fOkButton.setEnabled(page.isValid());
+		    boolean isValid = true;
+		    for (int i = 0; i < pages.length; i++) {
+	            PreferencePage page = pages[i];
+	            if (!page.isValid()) {
+	                isValid = false;
+	                break;
+	            }
+		    }
+			fOkButton.setEnabled(isValid);
 		}
 	}
 
@@ -353,7 +422,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 * @see IPreferencePageContainer#updateTitle()
 	 */
 	public void updateTitle() {
-		setTitle(page.getTitle());
+		updateMessage();
 	}
 	
 	/**
@@ -377,15 +446,18 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 	 */
 	protected void handleSave() {
 		// Save now in case tbe workbench does not shutdown cleanly
-		IPreferenceStore store = page.getPreferenceStore();
-		if (store != null
-			&& store.needsSaving()
-			&& store instanceof IPersistentPreferenceStore) {
-			try {
-				((IPersistentPreferenceStore) store).save();
-			} catch (IOException e) {
-				Utils.handle(e); 
+	    for (int i = 0; i < pages.length; i++) {
+            PreferencePage page = pages[i];
+			IPreferenceStore store = page.getPreferenceStore();
+			if (store != null
+				&& store.needsSaving()
+				&& store instanceof IPersistentPreferenceStore) {
+				try {
+					((IPersistentPreferenceStore) store).save();
+				} catch (IOException e) {
+					Utils.handle(e); 
+				}
 			}
-		}
+        }
 	}
 }

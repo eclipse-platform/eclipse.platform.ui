@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -128,5 +129,22 @@ public class CVSParticipant extends SubscriberParticipant {
             }
             throw CVSException.wrapException(e);
         }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getPreferencePages()
+     */
+    public PreferencePage[] getPreferencePages() {
+        return addCVSPreferencePages(super.getPreferencePages());
+    }
+
+    public static PreferencePage[] addCVSPreferencePages(PreferencePage[] inheritedPages) {
+        PreferencePage[] pages = new PreferencePage[inheritedPages.length + 1];
+        for (int i = 0; i < inheritedPages.length; i++) {
+            pages[i] = inheritedPages[i];
+        }
+        pages[pages.length - 1] = new ComparePreferencePage();
+        pages[pages.length - 1].setTitle(Policy.bind("CVSParticipant.2")); //$NON-NLS-1$
+        return pages;
     }
 }

@@ -13,22 +13,22 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.dialogs.PreferencePageContainerDialog;
-import org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class SyncViewerShowPreferencesAction extends Action {
-	private final Shell shell;
+    private final ISynchronizePageConfiguration configuration;
 	
-	public SyncViewerShowPreferencesAction(Shell shell) {
-		this.shell = shell;
+	public SyncViewerShowPreferencesAction(ISynchronizePageConfiguration configuration) {
+		this.configuration = configuration;
 		Utils.initAction(this, "action.syncViewPreferences."); //$NON-NLS-1$
 	}
 
 	public void run() {
-		PreferencePage page = new SyncViewerPreferencePage();
-		Dialog dialog = new PreferencePageContainerDialog(shell, page);
+	    PreferencePage[] pages = configuration.getParticipant().getPreferencePages();
+		//PreferencePage page = new SyncViewerPreferencePage();
+		Dialog dialog = new PreferencePageContainerDialog(configuration.getSite().getShell(), pages);
 		dialog.setBlockOnOpen(true);
 		dialog.open();
 	}

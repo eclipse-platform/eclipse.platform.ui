@@ -68,7 +68,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 			Utils.initAction(configureSchedule, "action.configureSchedulel."); //$NON-NLS-1$
 		}
 		
-		showPreferences = new SyncViewerShowPreferencesAction(site.getShell());
+		showPreferences = new SyncViewerShowPreferencesAction(configuration);
 		removeFromViewAction = new RemoveFromViewAction(configuration);
 	}
 

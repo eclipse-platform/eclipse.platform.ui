@@ -13,6 +13,7 @@ package org.eclipse.team.ui.synchronize;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.core.TeamException;
@@ -238,4 +239,11 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	        CompareConfiguration configuration, 
 	        IProgressMonitor monitor) 
 				throws TeamException;
+
+    /**
+     * Return the list of prefernece pages that are associated with this participant
+     * @return the list of prefernece pages that are associated with this participant
+     * @since 3.1
+     */
+    public PreferencePage[] getPreferencePages();
 }

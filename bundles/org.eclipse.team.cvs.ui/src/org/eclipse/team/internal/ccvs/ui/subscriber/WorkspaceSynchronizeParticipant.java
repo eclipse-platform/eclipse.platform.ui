@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -180,5 +181,12 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
         super.prepareCompareInput(element, config, Policy.subMonitorFor(monitor, 80));
         CVSParticipant.updateLabelsForCVS(element, config, Policy.subMonitorFor(monitor, 10));
         monitor.done();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getPreferencePages()
+     */
+    public PreferencePage[] getPreferencePages() {
+        return CVSParticipant.addCVSPreferencePages(super.getPreferencePages());
     }
 }
