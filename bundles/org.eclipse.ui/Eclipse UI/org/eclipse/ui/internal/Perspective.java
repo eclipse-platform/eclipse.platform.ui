@@ -43,11 +43,9 @@ public class Perspective
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 	
-	final static private float DEFAULT_FASTVIEW_RATIO = 0.30f;
-	
 	// fields used by fast view resizing via a sash
 	private static final int SASH_SIZE = 3;
-	private static final int FAST_VIEW_HIDE_STEPS = 3;
+	private static final int FASTVIEW_HIDE_STEPS = 3;
 	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
 	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
 	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
@@ -322,15 +320,17 @@ public PerspectivePresentation getPresentation() {
 }
 /**
  * Retrieves the ratio for the fast view with the given ID. If
- * the ratio is not known, the default ratio is returned.
+ * the ratio is not known, the default ratio for the view is returned.
  */
 private float getFastViewWidthRatio(String id) {
 	Float f = (Float)mapFastViewToWidthRatio.get(id);
 	if (f != null) {
 		return f.floatValue();
 	} else {
-		mapFastViewToWidthRatio.put(id, new Float(DEFAULT_FASTVIEW_RATIO));
-		return DEFAULT_FASTVIEW_RATIO;
+		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();	
+		float ratio = reg.find(id).getFastViewWidthRatio();
+		mapFastViewToWidthRatio.put(id, new Float(ratio));
+		return ratio;
 	}
 }
 /**
@@ -524,6 +524,9 @@ private void loadPredefinedPersp(
 	PerspectiveExtensionReader extender = new PerspectiveExtensionReader();
 	extender.extendLayout(descriptor.getId(), layout);
 
+	// Retrieve fast view width ratios stored in the page layout.
+	mapFastViewToWidthRatio.putAll(layout.getFastViewToWidthRatioMap());
+
 	// Create action sets.
 	createInitialActionSets(layout.getActionSets());
 	alwaysOnActionSets.addAll(visibleActionSets);
@@ -692,7 +695,7 @@ public void restoreState(IMemento memento) {
 			if (ratio == null) {
 				Integer viewWidth = childMem.getInteger(IWorkbenchConstants.TAG_WIDTH);
 				if (viewWidth == null)
-					ratio = new Float(DEFAULT_FASTVIEW_RATIO);
+					ratio = new Float(IPageLayout.DEFAULT_FASTVIEW_RATIO);
 				else
 					ratio = new Float((float)viewWidth.intValue() / (float)getClientComposite().getSize().x);
 			}
@@ -1046,7 +1049,7 @@ public IViewPart getActiveFastView() {
  * Sets the active fast view.
  */
 /*package*/ void setActiveFastView(IViewPart view) {
-	setActiveFastView(view, FAST_VIEW_HIDE_STEPS);
+	setActiveFastView(view, FASTVIEW_HIDE_STEPS);
 }
 /**
  * Sets the visibility of all fast view pins.

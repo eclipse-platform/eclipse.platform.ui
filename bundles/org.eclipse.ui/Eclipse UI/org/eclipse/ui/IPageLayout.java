@@ -117,6 +117,30 @@ public interface IPageLayout {
 	 */
 	public static final float RATIO_MAX = 0.95f;
 	
+	/**
+	 * The default fast view ratio width.
+	 * @since 2.0
+	 */
+	public static final float DEFAULT_FASTVIEW_RATIO = 0.3f;
+	
+	/**
+	 * The default view ratio width for regular (non-fast) views.
+	 * @since 2.0
+	 */
+	public static final float DEFAULT_VIEW_RATIO = 0.5f;
+	
+	/**
+	 * A variable used to represent invalid  ratios.
+	 * @since 2.0
+	 */
+	public static final float INVALID_RATIO = -1f;
+	
+	/**
+	 * A variable used to represent a ratio which has not been specified.
+	 * @sicne 2.0
+	 */
+	public static final float NULL_RATIO = -2f;
+	
 /**
  * Adds an action set with the given id to this page layout.
  * The id must name an action set contributed to the workbench's extension 
@@ -131,8 +155,19 @@ public void addActionSet(String actionSetId);
  * point (named <code>"org.eclipse.ui.views"</code>).
  * 
  * @param id the id of the view to be added
+ * @since 2.0
  */
 public void addFastView(String id);
+/**
+ * Adds the view with the given id to the page layout as a fast view
+ * with the given width ratio. The id must name a view contributed to
+ * the workbench's view extension point (named <code>"org.eclipse.ui.views"</code>).
+ * 
+ * @param id the id of the view to be added
+ * @param ratio the percentage of the workbench the fast view will cover
+ * @since 2.0
+ */
+public void addFastView(String id, float ratio);
 /**
  * Adds a creation wizard to the File New menu.
  * The id must name a new wizard extension contributed to the 

@@ -58,5 +58,11 @@ public String getLabel() ;
  */
 public String getAccelerator();
 
+/**
+ * Returns the default fast view width ratio for this view.
+ * 
+ * @since 2.0
+ */
+public float getFastViewWidthRatio(); 
 
 }

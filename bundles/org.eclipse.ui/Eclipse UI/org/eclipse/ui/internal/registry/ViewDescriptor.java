@@ -4,14 +4,12 @@ package org.eclipse.ui.internal.registry;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.*;
+import java.util.StringTokenizer;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
-import java.util.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * Capture the attributes of a view extension.
@@ -25,11 +23,13 @@ public class ViewDescriptor implements IViewDescriptor {
 	private static final String ATT_ICON="icon";//$NON-NLS-1$
 	private static final String ATT_CATEGORY="category";//$NON-NLS-1$
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
+	private static final String ATT_RATIO="fastViewWidthRatio";//$NON-NLS-1$
 	private String label;
 	private String accelerator;
 	private String className;
 	private IConfigurationElement configElement;
 	private String [] categoryPath;
+	private float fastViewWidthRatio;
 /**
  * Create a new ViewDescriptor for an extension.
  */
@@ -78,6 +78,10 @@ public String getAccelerator() {
 	return accelerator;
 }
 
+public float getFastViewWidthRatio() {
+	return fastViewWidthRatio;	
+}
+
 /**
  * load a view descriptor from the registry.
  */
@@ -87,6 +91,7 @@ private void loadFromExtension() throws CoreException {
 	accelerator = configElement.getAttribute(ATT_ACCELERATOR);
 	className = configElement.getAttribute(ATT_CLASS);
 	String category = configElement.getAttribute(ATT_CATEGORY);
+	String ratio = configElement.getAttribute(ATT_RATIO);
 
 	// Sanity check.
 	if ((label == null) || (className == null)) {
@@ -105,6 +110,20 @@ private void loadFromExtension() throws CoreException {
 		for (int i = 0; stok.hasMoreTokens(); i++) {
 			categoryPath[i] = stok.nextToken();
 		}
+	}
+	
+	if(ratio != null) {
+		try {
+			fastViewWidthRatio = new Float(ratio).floatValue();
+			if(fastViewWidthRatio > IPageLayout.RATIO_MAX)
+				fastViewWidthRatio = IPageLayout.RATIO_MAX;
+			if(fastViewWidthRatio < IPageLayout.RATIO_MIN)
+				fastViewWidthRatio = IPageLayout.RATIO_MIN;
+		} catch(NumberFormatException e) {
+			fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
+		}
+	} else {
+		fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
 	}
 }
 /**
