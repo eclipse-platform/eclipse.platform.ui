@@ -23,14 +23,8 @@ import java.util.*;
  * A marker manager stores and retrieves markers on resources in the workspace.
  */
 public class MarkerManager implements IManager {
-/**
- * Returns true if the given marker is persistent, and false
- * otherwise.
- */
-public boolean isPersistent(MarkerInfo info) {
-	return cache.isPersistent(info.getType());
-}
-protected Workspace workspace;
+
+	protected Workspace workspace;
 	protected MarkerTypeDefinitionCache cache = new MarkerTypeDefinitionCache();
 	protected Hashtable markerDeltas = null;
 	protected MarkerWriter writer = new MarkerWriter(this);
@@ -248,30 +242,31 @@ boolean hasDelta(IPath path, long id) {
 	return set.get(id) != null;
 }
 /**
- * Returns true if the given marker is persistent, and false
- * otherwise.
- */
-public boolean isPersistent(IMarker marker) {
-	try {
-		return cache.isPersistent(marker.getType());
-	} catch (CoreException e) {
-		//exception here means the marker doesn't exist, hence it's not persistent
-	}
-	return false;
-}
-/**
  * Returns true if any of the given markers are persistent,
  * and false if all are transient.
  */
 public boolean isPersistent(MarkerInfo[] infos) {
-	for (int i = 0; i < infos.length; i++) {
-		if (cache.isPersistent(infos[i].getType()))
+	for (int i = 0; i < infos.length; i++) {		
+		if (isPersistent(infos[i]))
 			return true;
 	}
 	return false;
 }
-public MarkerTypeDefinitionCache getCache() {
-	return cache;
+/**
+ * Returns true if the given marker is persistent, and false
+ * otherwise.
+ */
+public boolean isPersistent(MarkerInfo info) {
+	if (!cache.isPersistent(info.getType()))
+		return false;
+	Boolean isTransient = (Boolean) info.getAttribute(IMarker.TRANSIENT); 
+	return isTransient == null || !isTransient.booleanValue();
+}
+/**
+ * Returns true if <code>type</code> is a sub type of <code>superType</code>.
+ */
+public boolean isSubtype(String type, String superType) {
+	return cache.isSubtype(type, superType);
 }
 
 public long getChangeId() {

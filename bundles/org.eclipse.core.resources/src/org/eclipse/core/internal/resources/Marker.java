@@ -191,7 +191,7 @@ public int hashCode() {
  * @see IMarker#isSubtypeOf
  */
 public boolean isSubtypeOf(String type) throws CoreException {
-	return getWorkspace().getMarkerManager().getCache().isSubtype(getType(), type);
+	return getWorkspace().getMarkerManager().isSubtype(getType(), type);
 }
 /**
  * @see IMarker#setAttribute

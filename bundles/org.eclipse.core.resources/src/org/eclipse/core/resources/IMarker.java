@@ -60,11 +60,12 @@ import java.util.Map;
  * <li><i>persistent</i> - whether markers of this type should be persisted by the platform</li>
  * </li>
  * </p>
- * <p>All markers declared as <code>persistent</code> are saved when the 
- * workspace is saved.  A plug-in which defines a persistent marker is not 
- * directly involved in saving and restoring the marker.
- * Markers are not under version and configuration management, and 
- * cannot be shared via VCM repositories.
+ * <p>All markers declared as <code>persistent</code> are saved when the
+ * workspace is saved, except those explicitly set as transient (the
+ * <code>TRANSIENT</code> attribute is set as <code>true</code>). A plug- in
+ * which defines a persistent marker is not directly involved in saving and
+ * restoring the marker. Markers are not under version and configuration
+ * management, and cannot be shared via VCM repositories.
  * </p>
  * <p>
  * This interface is not intended to be implemented by developers.
@@ -191,6 +192,16 @@ public interface IMarker extends IAdaptable {
 	 * @see #getAttribute
 	 */
 	public static final String LINE_NUMBER = "lineNumber"; //$NON-NLS-1$
+	
+	/** 
+	 * Transient marker attribute.  A boolean value indicating whether the
+	 * marker (e. g., a task) is considered transient even if its type is
+	 * declared as persistent. 
+	 *
+	 * @see #getAttribute
+	 */
+	public static final String TRANSIENT = "transient"; //$NON-NLS-1$
+	
 	
 	/** 
 	 * User editable marker attribute.  A boolean value indicating whether a

@@ -119,7 +119,7 @@ public String getType() {
  * @see IMarkerDelta#isSubtypeOf
  */
 public boolean isSubtypeOf(String superType) {
-	return ((Workspace) getResource().getWorkspace()).getMarkerManager().getCache().isSubtype(getType(), superType);
+	return ((Workspace) getResource().getWorkspace()).getMarkerManager().isSubtype(getType(), superType);
 }
 
 /**

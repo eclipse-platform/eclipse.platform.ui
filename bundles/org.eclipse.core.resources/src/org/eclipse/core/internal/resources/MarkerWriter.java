@@ -46,10 +46,9 @@ private Object[] filterMarkers(IMarkerSetElement[] markers) {
 	Object[] result = new Object[2];
 	boolean[] isPersistent = new boolean[markers.length];
 	int count = 0;
-	MarkerTypeDefinitionCache cache = manager.getCache();
 	for (int i = 0; i < markers.length; i++) {
 		MarkerInfo info = (MarkerInfo) markers[i];
-		if (cache.isPersistent(info.getType())) {
+		if (manager.isPersistent(info)) {
 			isPersistent[i] = true;
 			count++;
 		}

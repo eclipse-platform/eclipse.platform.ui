@@ -1427,6 +1427,16 @@ public void testMarkerSaveTransient() {
 			marker = resource.createMarker(IMarker.BOOKMARK);
 			persistentMarkers.add(marker);
 			marker = resource.createMarker(TRANSIENT_MARKER);
+			// create a transient marker of a persistent type
+			marker = resource.createMarker(IMarker.BOOKMARK);
+			marker.setAttribute(IMarker.TRANSIENT, Boolean.TRUE);
+			// create a marker of a persistent type and set TRANSIENT as false (should be persisted)
+			marker = resource.createMarker(IMarker.BOOKMARK);
+			marker.setAttribute(IMarker.TRANSIENT, Boolean.FALSE);
+			persistentMarkers.add(marker);			
+			// create a marker of a transient type and set TRANSIENT to false (should NOT be persisted)
+			marker  = resource.createMarker(TRANSIENT_MARKER);
+			marker.setAttribute(IMarker.TRANSIENT, Boolean.FALSE);			
 			return true;
 		}
 	};
