@@ -13,7 +13,7 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
  * @since 2.0
  */
 public abstract class WebInstallHandler {
-	
+
 	/**
 	 * Returns the host identifier for the web application server
 	 * listener for install requests
@@ -25,7 +25,7 @@ public abstract class WebInstallHandler {
 	public static String getWebAppServerHost() {
 		return UpdateManagerPlugin.getWebAppServerHost();
 	}
-		
+
 	/**
 	 * Returns the port identifier for the web application server
 	 * listener for install requests
@@ -37,7 +37,7 @@ public abstract class WebInstallHandler {
 	public static int getWebAppServerPort() {
 		return UpdateManagerPlugin.getWebAppServerPort();
 	}
-		
+
 	/**
 	 * Returns the callback string to be passed to the web page
 	 * containing install triggers.
@@ -50,9 +50,9 @@ public abstract class WebInstallHandler {
 		if (url == null)
 			return null;
 		else
-			return "?eclipse="+url; //$NON-NLS-1$
+			return "?eclipse=" + url; //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * Returns the callback URL (as string) to be passed to the web page
 	 * containing install triggers.
@@ -63,12 +63,11 @@ public abstract class WebInstallHandler {
 	public static String getCallbackURLAsString() {
 		String host = getWebAppServerHost();
 		int port = getWebAppServerPort();
-		if (host==null || port==0)
+		if (host == null || port == 0)
 			return null;
 		else
-			return "http://" + host + ":" + port + "/install"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return "http://" + host + ":" + port + "/install";
+		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
-		
-			
-			
-	}
+
+}
