@@ -57,11 +57,15 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 	private IDebugModelPresentation modelPresentation;
 	private StyledText valueDisplay;
 	private SashForm sashForm;
+	private String actionDefinitionId;
+	private String label;
 	
 
-	public ExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp) {
+	public ExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp, String label, String actionDefinitionId) {
 		this.page = page;
 		this.exp = exp;
+		this.label = label;
+		this.actionDefinitionId = actionDefinitionId;
 	}
 	
 	public boolean isFocusControl() {
@@ -220,6 +224,20 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 	 */
 	public IDialogSettings getDialogSettings() {
 		return DebugUIPlugin.getDefault().getDialogSettings();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getLabel()
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getActionDefinitionId()
+	 */
+	public String getActionDefinitionId() {
+		return actionDefinitionId;
 	}
 
 }

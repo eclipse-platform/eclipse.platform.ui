@@ -719,6 +719,8 @@ public class DebugUITools {
 	 * @see org.eclipse.debug.ui.actions.PopupInformationControl
 	 * @param page workbench page in which the popup is to be displayed
 	 * @param exp the expression to be displayed in the popup
+	 * @param label the label text to display on the popup
+	 * @param actionDefinitionId the actionDefinitionId of the command that created the popup.
 	 * @return a new popup information control adapater that displays
 	 * an <code>IExpression</code>
 	 * <p>
@@ -726,8 +728,8 @@ public class DebugUITools {
 	 * </p>
 	 * @since 3.0
 	 */
-	public static IPopupInformationControlAdapter newExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp) {
-		return new ExpressionInformationControlAdapter(page, exp);
+	public static IPopupInformationControlAdapter newExpressionInformationControlAdapter(IWorkbenchPage page, IExpression exp, String label, String actionDefinitionId) {
+		return new ExpressionInformationControlAdapter(page, exp, label, actionDefinitionId);
 	}
 	
 	/**

@@ -16,33 +16,29 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ActionHandler;
+import org.eclipse.ui.commands.AbstractHandler;
+import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
@@ -100,8 +96,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	/**
 	 * Default action used to close popup
 	 */
-	private IAction closeAction = null;
-	
+	private IHandler closeHandler = null;
 	
 	/**
 	 * Creates a popup to display information provided by adapter
@@ -131,8 +126,8 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * @param adapter Provides information  to display
 	 * @param action Provide an action to execute. The action MUST have a KeyBinding associated with it.
 	 */
-	public PopupInformationControl(Shell parent, IPopupInformationControlAdapter adapter, IAction action) {
-		this(parent, SWT.NONE, adapter, action);
+	public PopupInformationControl(Shell parent, IPopupInformationControlAdapter adapter, IHandler handler) {
+		this(parent, SWT.NONE, adapter, handler);
 	}
 	/**
 	 * Creates a popup to display information provided by adapter, Popup will have a button
@@ -142,12 +137,9 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * @param adapter Provides information  to display
 	 * @param action Provide an action to execute. The action MUST have a KeyBinding associated with it.
 	 */	
-	public PopupInformationControl(Shell parent, int shellStyle, IPopupInformationControlAdapter adapter, final	 IAction action) {
+	public PopupInformationControl(Shell parent, int shellStyle, IPopupInformationControlAdapter adapter, IHandler handler) {
+		this.closeHandler = new WrappedHandler(handler);
 		this.adapter = adapter;
-		
-		if (action != null) {
-			closeAction = new WrappedAction(action);
-		}
 		
 		shell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | SWT.RESIZE | shellStyle);
 		Display display = shell.getDisplay();
@@ -174,25 +166,30 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		register();
 		
 		ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-		ICommand command = commandManager.getCommand(closeAction.getActionDefinitionId());
+		String actionDefinitionId = adapter.getActionDefinitionId();
+		ICommand command = null;
+		if (actionDefinitionId != null) {
+			command = commandManager.getCommand(adapter.getActionDefinitionId());
+		}
 		
-		if (action != null) {
+		if (handler != null) {
 			Label separator= new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
 			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
 			Label label = new Label(shell, SWT.SHADOW_NONE | SWT.RIGHT);
-			label.setText(closeAction.getText());
-			label.setToolTipText(action.getDescription());
+			label.setText(adapter.getLabel());
 			label.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			label.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			label.setEnabled(false);
 			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
-			List keyBindings = command.getKeySequenceBindings();
-			if (keyBindings != null && keyBindings.size() > 0) {
-				IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
-				label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {lastBinding.getKeySequence().format(), closeAction.getText()})); //$NON-NLS-1$
-				label.getParent().layout();
-			}			
+			if (command != null) {
+				List keyBindings = command.getKeySequenceBindings();
+				if (keyBindings != null && keyBindings.size() > 0) {
+					IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
+					label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {lastBinding.getKeySequence().format(), adapter.getLabel()})); //$NON-NLS-1$
+					label.getParent().layout();
+				}			
+			}
 		}
 	}
 	
@@ -263,15 +260,17 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * debug popup scope.
 	 */
 	private void register() {
+		if (closeHandler != null) {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		
 		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		
-		submissions = Collections.singletonList(new HandlerSubmission(null, null, closeAction.getActionDefinitionId(), new ActionHandler(closeAction), 4));
+		submissions = Collections.singletonList(new HandlerSubmission(null, adapter.getActionDefinitionId(), closeHandler, 4, null));
 		commandSupport.addHandlerSubmissions(submissions);
 		
 		contextSupport.registerShell(shell, IWorkbenchContextSupport.TYPE_WINDOW);
+		}
 	}	
 	
 	/**
@@ -423,120 +422,23 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 			settings.put(key+WIDTH_STRING, size.x); 
 			settings.put(key+HEIGHT_STRING, size.y); 
 		}
-	}
-	
+	}	
+
 	/**
-	 * Wraps the supplied action in order to call dispose after any time the action has been completed. 
-	 */
-	private class WrappedAction implements IAction {
-		IAction realAction;
-		
-		
-		WrappedAction(IAction action) {
-			realAction = action;			
+	 * Wraps the supplied handler so that dispose may be called after execution
+	 */	
+	private class WrappedHandler extends AbstractHandler {
+		private IHandler realHandler;
+		WrappedHandler(IHandler realHandler) {
+			this.realHandler = realHandler;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
+		 */
+		public void execute(Object parameter) throws ExecutionException {
+			realHandler.execute(parameter);
+			shell.dispose();
 		}
 		
-		public void addPropertyChangeListener(IPropertyChangeListener listener) {
-			realAction.addPropertyChangeListener(listener);
-		}
-		public int getAccelerator() {
-			return realAction.getAccelerator();
-		}
-		public String getActionDefinitionId() {
-			return realAction.getActionDefinitionId();
-		}
-		public String getDescription() {
-			return realAction.getDescription();
-		}
-		public ImageDescriptor getDisabledImageDescriptor() {
-			return realAction.getDisabledImageDescriptor();
-		}
-		public HelpListener getHelpListener() {
-			return realAction.getHelpListener();
-		}
-		public ImageDescriptor getHoverImageDescriptor() {
-			return realAction.getHoverImageDescriptor();
-		}
-		public String getId() {
-			return realAction.getId();
-		}
-		public ImageDescriptor getImageDescriptor() {
-			return realAction.getImageDescriptor();
-		}
-		public IMenuCreator getMenuCreator() {
-			return realAction.getMenuCreator();
-		}
-		public int getStyle() {
-			return realAction.getStyle();
-		}
-		public String getText() {
-			return realAction.getText();
-		}
-		public String getToolTipText() {
-			return realAction.getToolTipText();
-		}
-		public boolean isChecked() {
-			return realAction.isChecked();
-		}
-		public boolean isEnabled() {
-			return realAction.isEnabled();	
-		}
-		public void removePropertyChangeListener(IPropertyChangeListener listener) {
-			realAction.removePropertyChangeListener(listener);
-		}
-		public void run() {
-			try {
-				realAction.run();
-			} finally {
-				shell.dispose();
-			}
-		}
-		public void runWithEvent(Event event) {
-			try {
-				realAction.runWithEvent(event);
-			} finally {
-				shell.dispose();
-			}
-		}
-		public void setActionDefinitionId(String id) {
-			realAction.setActionDefinitionId(id);
-		}
-		public void setChecked(boolean checked) {
-			realAction.setChecked(checked);
-		}
-		public void setDescription(String text) {
-			realAction.setDescription(text);
-		}
-		public void setDisabledImageDescriptor(ImageDescriptor newImage) {
-			realAction.setDisabledImageDescriptor(newImage);
-		}
-		public void setEnabled(boolean enabled) {
-			realAction.setEnabled(enabled);
-		}
-		public void setHelpListener(HelpListener listener) {
-			realAction.setHelpListener(listener);
-		}
-		public void setHoverImageDescriptor(ImageDescriptor newImage) {
-			realAction.setHoverImageDescriptor(newImage);
-		}
-		public void setId(String id) {
-			realAction.setId(id);
-		}
-		public void setImageDescriptor(ImageDescriptor newImage) {
-			realAction.setImageDescriptor(newImage);
-		}
-		public void setMenuCreator(IMenuCreator creator) {
-			realAction.setMenuCreator(creator);
-		}
-		public void setText(String text) {
-			realAction.setText(text);
-		}
-		public void setToolTipText(String text) {
-			realAction.setToolTipText(text);
-		}
-		public void setAccelerator(int keycode) {
-			realAction.setAccelerator(keycode);
-		}
-	}
-	
+	};
 }

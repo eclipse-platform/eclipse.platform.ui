@@ -70,4 +70,17 @@ public interface IPopupInformationControlAdapter {
 	 *  or <code>null</code> if persistance is not desired
 	 */
 	public IDialogSettings getDialogSettings();
+	
+	/**
+	 * Returns the text to be used on the popup's label.
+	 * @return the text to be used on the popup's label.
+	 */
+	public String getLabel();
+	
+	/**
+	 * Returns the ActionDefinitionId of the command that created the pop-up. Used to 
+	 * override the KeyBinding for disposal of the popup.
+	 * @return The actionDefinitionId of the command that created the pop-up.
+	 */
+	public String getActionDefinitionId();
 }
