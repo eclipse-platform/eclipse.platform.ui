@@ -233,7 +233,12 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 			try {
 				if (breakpoint.isEnabled()) {
 					try {
-						sendRequest(DebugMessageIds.ADD_BREAKPOINT + (((ILineBreakpoint)breakpoint).getLineNumber()));
+						StringBuffer message= new StringBuffer(DebugMessageIds.ADD_BREAKPOINT);
+						message.append(DebugMessageIds.MESSAGE_DELIMITER);
+						message.append(breakpoint.getMarker().getResource().getLocation().toOSString());
+						message.append(DebugMessageIds.MESSAGE_DELIMITER);
+						message.append(((ILineBreakpoint)breakpoint).getLineNumber());
+						sendRequest(message.toString());
 					} catch (CoreException e) {
 					}
 				}
@@ -375,23 +380,22 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 */
 	protected void breakpointHit(String event) {
 		// determine which breakpoint was hit, and set the thread's breakpoint
-		int lastSpace = event.lastIndexOf(' ');
-		if (lastSpace > 0) {
-			String line = event.substring(lastSpace + 1);
-			int lineNumber = Integer.parseInt(line);
-			IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
-			for (int i = 0; i < breakpoints.length; i++) {
-				IBreakpoint breakpoint = breakpoints[i];
-				if (supportsBreakpoint(breakpoint)) {
-					if (breakpoint instanceof ILineBreakpoint) {
-						ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;
-						try {
-							if (lineBreakpoint.getLineNumber() == lineNumber) {
-								fThread.setBreakpoints(new IBreakpoint[]{breakpoint});
-								break;
-							}
-						} catch (CoreException e) {
+		String[] datum= event.split(DebugMessageIds.MESSAGE_DELIMITER);
+		String fileName= datum[1];
+		int lineNumber = Integer.parseInt(datum[2]);
+		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
+		for (int i = 0; i < breakpoints.length; i++) {
+			IBreakpoint breakpoint = breakpoints[i];
+			if (supportsBreakpoint(breakpoint)) {
+				if (breakpoint instanceof ILineBreakpoint) {
+					ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;
+					try {
+						if (lineBreakpoint.getLineNumber() == lineNumber && 
+								fileName.equals(breakpoint.getMarker().getResource().getLocation().toOSString())) {
+							fThread.setBreakpoints(new IBreakpoint[]{breakpoint});
+							break;
 						}
+					} catch (CoreException e) {
 					}
 				}
 			}

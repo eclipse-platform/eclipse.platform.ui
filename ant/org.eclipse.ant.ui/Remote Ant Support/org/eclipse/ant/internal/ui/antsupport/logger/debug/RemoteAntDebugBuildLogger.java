@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.antsupport.logger;
-
+package org.eclipse.ant.internal.ui.antsupport.logger.debug;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,19 +16,21 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.runner.RemoteTestRunner
  * A build logger that reports via a socket connection.
- * See MessageIds for more information about the protocol.
+ * See DebugMessageIds and MessageIds for more information about the protocol.
  */
 public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
@@ -53,7 +54,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	private Task fStepOverTask;
 	private Task fLastTaskFinished;
 	
-	private int[] fBreakpoints= null;
+	private List fBreakpoints= null;
 	
 	private Map fProperties= null;
 	
@@ -266,8 +267,9 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 			if (fCurrentTask != null) {
 				String detail= null;
 				boolean shouldSuspend= true;
-				if (breakpointAtLineNumber(fCurrentTask.getLocation().getLineNumber())) {
-					detail= DebugMessageIds.BREAKPOINT + ' ' + Integer.toString(fCurrentTask.getLocation().getLineNumber());
+				RemoteAntBreakpoint breakpoint= breakpointAtLineNumber(fCurrentTask.getLocation());
+				if (breakpoint != null) {
+					detail= breakpoint.toMarshallString();
 				} else if (fStepIntoSuspend) {
 					detail= DebugMessageIds.STEP;
 					fStepIntoSuspend= false;
@@ -304,18 +306,17 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		}
 	}
 
-	private boolean breakpointAtLineNumber(int lineNumber) {
+	private RemoteAntBreakpoint breakpointAtLineNumber(Location location) {
 		if (fBreakpoints == null) {
-			return false;
+			return null;
 		}
-		for (int i = 0; i < fBreakpoints.length; i++) {
-			int breakpointLineNumber = fBreakpoints[i];
-			if (lineNumber == breakpointLineNumber) {
-				return true;
+		for (int i = 0; i < fBreakpoints.size(); i++) {
+			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) fBreakpoints.get(i);
+			if (breakpoint.isAt(location)) {
+				return breakpoint;
 			}
-	
 		}
-		return false;
+		return null;
 	}
 
 	private void sendRequestResponse(String message) {
@@ -330,8 +331,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	    StringBuffer stackRepresentation= new StringBuffer();
 	    stackRepresentation.append(DebugMessageIds.STACK);
 	    stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-	   // stackRepresentation.append(fTasks.size());
-	   // stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 	    
 	    for (int i = fTasks.size() - 1; i >= 0 ; i--) {
 	        Task task = (Task) fTasks.get(i);
@@ -389,39 +388,24 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	    sendRequestResponse(propertiesRepresentation.toString());
 	}
 	
-	protected void addBreakpoint(String message) {
-		int index= message.indexOf(' ');
-		String lineNumber= message.substring(index + 1);
+	protected void addBreakpoint(String breakpointRepresentation) {
 		if (fBreakpoints == null) {
-			fBreakpoints= new int[]{Integer.parseInt(lineNumber)};
-		} else {
-			int[] temp= new int[fBreakpoints.length + 1];
-			System.arraycopy(fBreakpoints, 0, temp, 0, fBreakpoints.length);
-			temp[fBreakpoints.length]= Integer.parseInt(lineNumber);
-			fBreakpoints= temp;
+			fBreakpoints= new ArrayList();
 		}
+		fBreakpoints.add(new RemoteAntBreakpoint(breakpointRepresentation));
 	}
 	
-	protected void removeBreakpoint(String message) {
+	protected void removeBreakpoint(String breakpointRepresentation) {
 		if (fBreakpoints == null) {
 			return;
 		} 
-		int index= message.indexOf(' ');
-		String lineNumberString= message.substring(index + 1);
-		int lineNumber= Integer.parseInt(lineNumberString);
-		int i;
-		for (i=0; i < fBreakpoints.length; i++) {
-			if (fBreakpoints[i] == lineNumber) {
-				break;
+		RemoteAntBreakpoint equivalentBreakpoint= new RemoteAntBreakpoint(breakpointRepresentation);
+		for (Iterator iter = fBreakpoints.iterator(); iter.hasNext(); ) {
+			RemoteAntBreakpoint breakpoint = (RemoteAntBreakpoint) iter.next();
+			if (breakpoint.equals(equivalentBreakpoint)) {
+				fBreakpoints.remove(breakpoint);
+				return;
 			}
 		}
-		if (fBreakpoints.length - 1 == 0) {
-		   fBreakpoints= null;
-		   return;
-		}
-		int[] temp= new int[fBreakpoints.length - 1];
-		System.arraycopy(fBreakpoints, 0, temp, 0, i);
-		System.arraycopy(fBreakpoints, i + 1, temp, i, fBreakpoints.length - 1);
-		fBreakpoints= temp;
 	}
 }

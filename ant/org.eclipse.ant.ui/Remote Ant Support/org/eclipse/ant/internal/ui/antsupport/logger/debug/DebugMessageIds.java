@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.antsupport.logger;
+package org.eclipse.ant.internal.ui.antsupport.logger.debug;
+
+import org.eclipse.ant.internal.ui.antsupport.logger.MessageIds;
 
 public class DebugMessageIds extends MessageIds {
 	
@@ -34,8 +36,8 @@ public class DebugMessageIds extends MessageIds {
 	
 	public final static String STACK= "stack"; //$NON-NLS-1$
 	
-	public final static String ADD_BREAKPOINT= "add "; //$NON-NLS-1$
-	public final static String REMOVE_BREAKPOINT= "remove "; //$NON-NLS-1$
+	public final static String ADD_BREAKPOINT= "add"; //$NON-NLS-1$
+	public final static String REMOVE_BREAKPOINT= "remove"; //$NON-NLS-1$
 	
 	public final static String CLIENT_REQUEST= "client"; //$NON-NLS-1$
 	public final static String BREAKPOINT= "breakpoint"; //$NON-NLS-1$
