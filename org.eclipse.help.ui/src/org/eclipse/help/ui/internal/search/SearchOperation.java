@@ -94,6 +94,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				results,
 				monitor);
 			displayResults(results.getSearchHits());
+		} catch(QueryTooComplexException qe){
+			displayResults(new SearchHit[0]);
 		} catch (OperationCanceledException oce) {
 			// allowed, no logging
 			monitor.done();

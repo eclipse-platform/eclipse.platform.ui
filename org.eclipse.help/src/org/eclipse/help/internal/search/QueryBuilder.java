@@ -20,7 +20,14 @@ import org.eclipse.help.internal.*;
  * Build query acceptable by the search engine.
  */
 public class QueryBuilder {
-
+	// Maximum allowed number of terms
+	private static final int MAX_TERMS = 10;
+	// Maximum allowed number of ORs
+	private static final int MAX_UNIONS = 4;
+	// Maximum allowed number terms with wild cards
+	private static final int MAX_WILD_TERMS = 2;
+	// Query from user
+	private String searchWords;
 	// Descriptor of Analyzer to process the query words
 	private AnalyzerDescriptor analyzerDesc;
 	// Analyzer to process the query words
@@ -39,6 +46,7 @@ public class QueryBuilder {
 	 * by a lexical analyzer.
 	 */
 	public QueryBuilder(String searchWords, AnalyzerDescriptor analyzerDesc) {
+		this.searchWords = searchWords;
 		String language = analyzerDesc.getLang();
 		if (language.length() >= 5) {
 			this.locale =
@@ -48,9 +56,6 @@ public class QueryBuilder {
 		}
 		this.analyzerDesc = analyzerDesc;
 		this.analyzer = analyzerDesc.getAnalyzer();
-		// split search query into tokens
-		List userTokens = tokenizeUserQuery(searchWords);
-		analyzedTokens = analyzeTokens(userTokens);
 	}
 	/**
 	 * Splits user query into tokens and returns a list of QueryWordsToken's.
@@ -62,10 +67,19 @@ public class QueryBuilder {
 			new StringTokenizer(searchWords.trim(), "\"", true);
 		boolean withinQuotation = false;
 		String quotedString = "";
+		int termCount = 0;
+		// keep track of number of terms to disallow too many
+		int orCount = 0; // keep track of number of ORs to disallow too many
 		while (qTokenizer.hasMoreTokens()) {
 			String curToken = qTokenizer.nextToken();
 			if (curToken.equals("\"")) {
 				if (withinQuotation) {
+					// check for too many terms
+					if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER
+						&& ++termCount > MAX_TERMS) {
+						throw new QueryTooComplexException();
+					}
+
 					tokenList.add(QueryWordsToken.exactPhrase(quotedString));
 				} else {
 					quotedString = "";
@@ -80,16 +94,29 @@ public class QueryBuilder {
 				StringTokenizer parser = new StringTokenizer(curToken.trim());
 				while (parser.hasMoreTokens()) {
 					String token = parser.nextToken();
-					if (token.equalsIgnoreCase(QueryWordsToken.AND().value))
+					if (token.equalsIgnoreCase(QueryWordsToken.AND().value)) {
 						tokenList.add(QueryWordsToken.AND());
-					else if (
-						token.equalsIgnoreCase(QueryWordsToken.OR().value))
+					} else if (
+						token.equalsIgnoreCase(QueryWordsToken.OR().value)) {
+						// Check for too many OR terms
+						if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER
+						&& ++orCount > MAX_UNIONS) {
+							throw new QueryTooComplexException();
+						}
+
 						tokenList.add(QueryWordsToken.OR());
-					else if (
-						token.equalsIgnoreCase(QueryWordsToken.NOT().value))
+					} else if (
+						token.equalsIgnoreCase(QueryWordsToken.NOT().value)) {
 						tokenList.add(QueryWordsToken.NOT());
-					else
+					} else {
+						// check for too many terms
+						if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER
+						&& ++termCount > MAX_TERMS) {
+							throw new QueryTooComplexException();
+						}
+
 						tokenList.add(QueryWordsToken.word(token));
+					}
 				}
 			}
 		}
@@ -100,12 +127,18 @@ public class QueryBuilder {
 	 */
 	private List analyzeTokens(List tokens) {
 		List newTokens = new ArrayList();
+		int wildCardTermCount = 0;
 		for (int i = 0; i < tokens.size(); i++) {
 			QueryWordsToken token = (QueryWordsToken) tokens.get(i);
 			if (token.type == QueryWordsToken.WORD) {
 				int questionMIndex = token.value.indexOf('?');
 				int starIndex = token.value.indexOf('*');
 				if (starIndex >= 0 || questionMIndex >= 0) {
+					if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER
+					&& ++wildCardTermCount > MAX_WILD_TERMS) {
+						throw new QueryTooComplexException();
+					}
+
 					if (questionMIndex != 0 && starIndex != 0) {
 						newTokens.add(
 							QueryWordsToken.word(
@@ -329,7 +362,21 @@ public class QueryBuilder {
 	 *  should be performed; if set to false, default field "contents"
 	 *  and all other fields will be searched
 	 */
-	public Query getLuceneQuery(
+	public Query getLuceneQuery(Collection fieldNames, boolean fieldSearchOnly)
+		throws QueryTooComplexException {
+		// split search query into tokens
+		List userTokens = tokenizeUserQuery(searchWords);
+		analyzedTokens = analyzeTokens(userTokens);
+		return buildLuceneQuery(fieldNames, fieldSearchOnly);
+	}
+	/**
+	 * @param fieldNames - Collection of field names of type String (e.g. "h1");
+	 *  the search will be performed on the given fields
+	 * @param fieldSearch - boolean indicating if field only search
+	 *  should be performed; if set to false, default field "contents"
+	 *  and all other fields will be searched
+	 */
+	private Query buildLuceneQuery(
 		Collection fieldNames,
 		boolean fieldSearchOnly) {
 		String[] fields;

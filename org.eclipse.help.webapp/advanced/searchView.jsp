@@ -51,6 +51,8 @@ function refresh()
 <%
 if (!data.isSearchRequest()) {
 	out.write(ServletResources.getString("doSearch", request));
+} else if (data.getQueryExceptionMessage()!=null) {
+	out.write(data.getQueryExceptionMessage());
 } else if (data.isProgressRequest()) {
 %>
 

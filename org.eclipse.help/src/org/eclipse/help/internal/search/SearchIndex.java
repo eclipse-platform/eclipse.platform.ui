@@ -273,9 +273,8 @@ public class SearchIndex {
 	 * @return - an array of document ids. 
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
 	 */
-	public void search(
-		ISearchQuery searchQuery,
-		ISearchHitCollector collector) {
+	public void search(ISearchQuery searchQuery, ISearchHitCollector collector)
+		throws QueryTooComplexException {
 		try {
 			QueryBuilder queryBuilder =
 				new QueryBuilder(
@@ -293,6 +292,8 @@ public class SearchIndex {
 				Hits hits = searcher.search(luceneQuery);
 				collector.addHits(hits, highlightTerms);
 			}
+		} catch (QueryTooComplexException qe) {
+			throw qe;
 		} catch (Exception e) {
 			HelpPlugin.logError(
 				Resources.getString("ES21", searchQuery.getSearchWord()),

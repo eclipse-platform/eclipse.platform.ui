@@ -40,6 +40,8 @@ public class SearchData extends RequestData {
 
 	// percentage of indexing completion
 	private int indexCompletion = 100;
+	// QueryException if any
+	private QueryTooComplexException queryException=null;
 
 	/**
 	 * Constructs the xml data for the search resuls page.
@@ -62,7 +64,9 @@ public class SearchData extends RequestData {
 		// try loading search results or get the indexing progress info.
 		if (isSearchRequest() && !isScopeRequest()) {
 			loadSearchResults();
-
+			if(queryException!=null){
+				return;
+			}
 			if (!isProgressRequest()) {
 				for (int i = 0; i < hits.length; i++) {
 					// the following assume topic numbering as in searchView.jsp
@@ -263,6 +267,8 @@ public class SearchData extends RequestData {
 				}
 				return;
 			}
+		}catch (QueryTooComplexException qe){
+			queryException=qe;
 		} catch (Exception e) {
 			this.indexCompletion = 0;
 		}
@@ -353,6 +359,12 @@ public class SearchData extends RequestData {
 		WorkingSet[] workingSets = new WorkingSet[1];
 		workingSets[0] = wsmgr.createWorkingSet("temp", adaptableTocs);
 		return workingSets;
+	}
+	public String getQueryExceptionMessage(){
+		if (queryException==null){
+			return null;
+		}
+		return ServletResources.getString("searchTooComplex",request);
 	}
 
 }
