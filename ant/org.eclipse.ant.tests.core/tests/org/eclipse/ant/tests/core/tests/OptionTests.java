@@ -65,10 +65,12 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-listener" option with a listener that is not an instance of BuildListener
 	 */
-	public void testBadListener() throws CoreException {
+	public void testListenerBad() throws CoreException {
 		try {
 			run("TestForEcho.xml", new String[]{"-listener", "java.lang.String"});
 		} catch (CoreException ce) {
+			String msg= ce.getMessage();
+			assertTrue("Message incorrect!: " + msg, msg.equals("java.lang.String which was specified to be a build listener is not an instance of org.apache.tools.ant.BuildListener."));
 			return;
 		}
 		assertTrue("A core exception should have occurred wrappering a class cast exception", false);
@@ -138,7 +140,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests the "-logger" option with a logger that is not an instance of BuildLogger
 	 */
-	public void testBadLogger() throws CoreException {
+	public void testLoggerBad() throws CoreException {
 		try {
 			run("TestForEcho.xml", new String[]{"-logger", "java.lang.String"});
 		} catch (CoreException ce) {
@@ -197,7 +199,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -listener option multiple times...which is allowed
 	 */
-	public void testMultipleListener() throws CoreException {
+	public void testListenerMultiple() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-listener", ANT_TEST_BUILD_LISTENER, "-listener", ANT_TEST_BUILD_LISTENER});
 		assertSuccessful();
 		assertTrue("A listener should have been added named: " + ANT_TEST_BUILD_LISTENER, ANT_TEST_BUILD_LISTENER.equals(AntTestChecker.getDefault().getLastListener()));
@@ -207,7 +209,7 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -listener option multiple times, with one missing the arg
 	 */
-	public void testMultipleListenerSecondBad() throws CoreException {
+	public void testListenerMultipleWithBad() throws CoreException {
 		try {
 			run("TestForEcho.xml", new String[]{"-listener", ANT_TEST_BUILD_LISTENER, "-q", "-listener", "-verbose"});
 		} catch(CoreException e) {
@@ -341,4 +343,58 @@ public class OptionTests extends AbstractAntTest {
 		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
 	}
+	
+	public void testInputHandlerWithNoArg() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-inputhandler"});
+		} catch (CoreException ce) {
+			String msg= ce.getMessage();
+			assertTrue("Message incorrect!: " + msg, msg.equals("You must specify a classname when using the -inputhandler argument"));
+			return;
+		}
+		assertTrue("You must specify a classname when using the -inputhandler argument", false);
+	}
+	
+	/**
+	 * Tests the "-inputhandler" option with two handlers specified...only one is allowed
+	 */
+	public void testInputHandlerMultiple() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-inputhandler", "org.apache.tools.ant.input.DefaultInputHandler", "-q", "-inputhandler", "org.apache.tools.ant.input.DefaultInputHandler"});
+		} catch (CoreException ce) {
+			String msg= ce.getMessage();
+			assertTrue("Message incorrect!: " + msg, msg.equals("Only one input handler class may be specified."));
+			return;
+		}
+		assertTrue("As only one input handler can be specified", false);
+	}
+	
+	/**
+	 * Tests the "-inputhandler" option with a input handler that is not an instance of InputHandler
+	 */
+	public void testInputHandlerBad() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-inputhandler", "java.lang.StringBuffer"});
+		} catch (CoreException ce) {
+			String msg= ce.getMessage();
+			assertTrue("Message incorrect!: " + msg, msg.equals("The specified input handler class java.lang.StringBuffer does not implement the org.apache.tools.ant.input.InputHandler interface"));
+			return;
+		}
+		assertTrue("Incorrect inputhandler", false);
+	}
+	
+	/**
+	 * Tests the "-inputhandler" option with a input handler that is not a defined class
+	 */
+	public void testInputHandlerBad2() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-inputhandler", "ja.lang.StringBuffer"});
+		} catch (CoreException ce) {
+			String msg= ce.getMessage();
+			assertTrue("Message incorrect!: " + msg, msg.startsWith("Unable to instantiate specified input handler class ja.lang.StringBuffer"));
+			return;
+		}
+		assertTrue("Incorrect inputhandler", false);
+	}
+	
 }

@@ -7,6 +7,21 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import org.apache.tools.ant.types.DataType;
 
-public class AntTestType extends DataType {}
+
+public class AntTestType {
+	
+	String message;
+	
+	public AntTestType() {
+	}
+	
+	public void setMessage(String message) {
+		this.message= message;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+	
+}
