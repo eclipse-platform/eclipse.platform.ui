@@ -26,7 +26,7 @@ public class Editors extends AbstractMessageCommand {
 	 * @see org.eclipse.team.internal.ccvs.core.client.Request#getRequestId()
 	 */
 	protected String getRequestId() {
-		return "editors";
+		return "editors"; //$NON-NLS-1$
 	}
 
 }

@@ -1166,8 +1166,8 @@ public class Session {
 		int count = oldPath.segmentCount();
 		for (int i = 0; i < count; i++) {
 			String segment = oldPath.segment(i);
-			if (segment.endsWith(".")) {
-				segment =  segment + "dot";
+			if (segment.endsWith(".")) { //$NON-NLS-1$
+				segment =  segment + Policy.bind("Session.dot_2"); //$NON-NLS-1$
 				oldPath = oldPath.removeLastSegments(count - i).append(segment).append(oldPath.removeFirstSegments(i + 1));
 			}
 		}

@@ -26,7 +26,6 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
@@ -41,15 +40,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
  * these to properly mark files and folders as modified.
  */
 public class FileModificationManager implements IResourceChangeListener, ISaveParticipant {
-	
-	private static final String IS_DIRTY_INDICATOR = "d";
-	private static final String NOT_DIRTY_INDICATOR = "c";
-	private static final String UPDATED_INDICATOR = "u";
-	private static final QualifiedName IS_DIRTY = new QualifiedName(CVSProviderPlugin.ID, "is-dirty");
-	private static final QualifiedName DIRTY_COUNT = new QualifiedName(CVSProviderPlugin.ID, "dirty-count");
-	private static final QualifiedName CLEAN_UPDATE = new QualifiedName(CVSProviderPlugin.ID, "clean-update");
-	private static final QualifiedName DELETED_CHILDREN = new QualifiedName(CVSProviderPlugin.ID, "deleted");
-	
+		
 	private Set modifiedResources = new HashSet();
 
 	/**

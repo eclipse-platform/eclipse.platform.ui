@@ -39,7 +39,7 @@ public class CommandOutputListener implements ICommandOutputListener {
 	 * @return String the potocol error or null
 	 */
 	protected String getProtocolError(String line, ICVSRepositoryLocation location) {
-		if (line.startsWith("Protocol error:")) {
+		if (line.startsWith("Protocol error:")) { //$NON-NLS-1$
 			return line;
 		}
 		return null;

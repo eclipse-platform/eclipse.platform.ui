@@ -40,13 +40,13 @@ public class KnownHosts {
 	
 	static String defaultFilename() {
 		if (!BootLoader.getOS().equals(BootLoader.OS_LINUX)) return internalFilename();
-		String HOME = System.getProperty("user.home");
+		String HOME = System.getProperty("user.home"); //$NON-NLS-1$
 		if (HOME==null) return internalFilename();
-		return HOME+"/.ssh/known_hosts";
+		return HOME+"/.ssh/known_hosts"; //$NON-NLS-1$
 	}
 
 	private static String internalFilename() {
-		return SSHPlugin.getPlugin().getStateLocation().append("known_hosts").toOSString();
+		return SSHPlugin.getPlugin().getStateLocation().append("known_hosts").toOSString(); //$NON-NLS-1$
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class KnownHosts {
 			String line;
 			while ((line = r.readLine()) != null) {
 				if (line.length()==0) continue;
-				if (line.startsWith("#")) continue;
+				if (line.startsWith("#")) continue; //$NON-NLS-1$
 				String[] tokens=subStrings(line);
 				if (tokens.length==4 && Character.isDigit(tokens[1].charAt(0)) && tokens[0].equalsIgnoreCase(hostname)) {
 					if (nbits.equals(new BigInteger(tokens[1])) && e.equals(new BigInteger(tokens[2])) && n.equals(new BigInteger(tokens[3]))) {
@@ -101,9 +101,9 @@ public class KnownHosts {
 		try {
 			FileWriter w = new FileWriter(defaultFilename(), true);
 			w.write(Character.LINE_SEPARATOR);
-			w.write(hostname + " " + key_bits.toString(10) + " " + e.toString(10) + " " + n.toString(10));
+			w.write(hostname + " " + key_bits.toString(10) + " " + e.toString(10) + " " + n.toString(10)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			w.close();
-			String message = Policy.bind("Client.addedHostKey", hostname);
+			String message = Policy.bind("Client.addedHostKey", hostname); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.INFO, SSHPlugin.ID, IStatus.OK, message, null);
 			SSHPlugin.getPlugin().getLog().log(status);
 		} catch (IOException ex) {

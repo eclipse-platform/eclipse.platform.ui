@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -536,7 +537,7 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			} catch (CVSException ex) {
 				// This is bad because now we have no clue as to whether the properties are up to date
 				// XXX Need a multi-status with original exception as well.
-				throw new CVSException("Big trouble!", ex);
+				CVSProviderPlugin.log(ex);
 			}
 			throw e;
 		}

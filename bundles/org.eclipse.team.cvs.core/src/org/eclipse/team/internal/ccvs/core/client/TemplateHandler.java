@@ -31,7 +31,7 @@ public class TemplateHandler extends ResponseHandler {
 	 * @see org.eclipse.team.internal.ccvs.core.client.ResponseHandler#getResponseID()
 	 */
 	public String getResponseID() {
-		return "Template";
+		return "Template"; //$NON-NLS-1$
 	}
 
 	/**

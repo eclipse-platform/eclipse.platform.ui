@@ -642,7 +642,7 @@ public class SyncFileWriter {
 	 */
 	public static IFile getTemplateFile(IContainer folder) throws CVSException {
 		IFolder cvsFolder = createCVSSubdirectory(folder);
-		return cvsFolder.getFile("Template");
+		return cvsFolder.getFile("Template"); //$NON-NLS-1$
 	}
 	
 	/**

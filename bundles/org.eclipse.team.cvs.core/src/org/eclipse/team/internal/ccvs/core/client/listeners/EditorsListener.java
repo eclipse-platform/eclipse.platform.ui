@@ -63,11 +63,11 @@ public class EditorsListener extends CommandOutputListener {
 		// then cvs will write the filename only 
 		// in the first line and the following
 		// line will start with a Tab
-		if (line.startsWith("\t")) {
+		if (line.startsWith("\t")) { //$NON-NLS-1$
 			line = fileName + line;
 		}
 		EditorsInfo info = new EditorsInfo();
-		StringTokenizer tokenizer = new StringTokenizer(line,"\t");
+		StringTokenizer tokenizer = new StringTokenizer(line,"\t"); //$NON-NLS-1$
 		int i = 0;
 		while(tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();

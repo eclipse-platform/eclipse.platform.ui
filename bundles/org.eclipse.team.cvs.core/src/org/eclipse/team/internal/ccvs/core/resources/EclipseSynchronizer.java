@@ -1188,10 +1188,10 @@ public class EclipseSynchronizer {
 	
 	protected void setDirtyIndicator(IResource resource, String indicator) throws CVSException {
 		if (Policy.DEBUG_DIRTY_CACHING) {
-			System.out.println("Dirty indicator for "
+			System.out.println("Dirty indicator for " //$NON-NLS-1$
 				+ resource.getFullPath()
-				+ " set to " 
-				+ (indicator.equals(IS_DIRTY_INDICATOR) ? "DIRTY" : "NOT_DIRTY"));
+				+ " set to "  //$NON-NLS-1$
+				+ (indicator.equals(IS_DIRTY_INDICATOR) ? "DIRTY" : "NOT_DIRTY")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		getSyncInfoCacheFor(resource).setDirtyIndicator(resource, indicator);
 	}
@@ -1218,9 +1218,9 @@ public class EclipseSynchronizer {
 		try {
 			beginOperation(null);
 			if (Policy.DEBUG_DIRTY_CACHING) {
-				System.out.println("Dirty count for "
+				System.out.println("Dirty count for " //$NON-NLS-1$
 					+ container.getFullPath()
-					+ " set to " 
+					+ " set to "  //$NON-NLS-1$
 					+ count);
 			}
 			getSyncInfoCacheFor(container).setCachedDirtyCount(container, count);
@@ -1328,7 +1328,7 @@ public class EclipseSynchronizer {
 				public boolean visit(IResource resource) throws CoreException {
 					try {
 						if (Policy.DEBUG_DIRTY_CACHING) {
-							System.out.println("Dirty cache flushed for "
+							System.out.println("Dirty cache flushed for " //$NON-NLS-1$
 								+ resource.getFullPath());
 						}
 						getSyncInfoCacheFor(resource).flushDirtyCache(resource);
@@ -1357,7 +1357,7 @@ public class EclipseSynchronizer {
 			beginOperation(null);
 			try {
 				if (Policy.DEBUG_DIRTY_CACHING) {
-					System.out.println("Dirty cache flushed for "
+					System.out.println("Dirty cache flushed for " //$NON-NLS-1$
 						+ resource.getFullPath());
 				}
 				getSyncInfoCacheFor(resource).flushDirtyCache(resource);

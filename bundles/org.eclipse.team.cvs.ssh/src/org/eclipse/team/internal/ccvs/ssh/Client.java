@@ -431,7 +431,7 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
  */
 public void disconnect() throws IOException {
 	if (Policy.DEBUG_SSH_PROTOCOL) {
-		System.out.println("Disconnecting.");
+		System.out.println("Disconnecting."); //$NON-NLS-1$
 	}	
 	if (connected) {
 		connected = false;
@@ -663,7 +663,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_
 	BigInteger host_e = new BigInteger(1, host_key_public_exponent);
 	BigInteger host_n = new BigInteger(1, host_key_public_modulus);
 	if (!new KnownHosts().verifyKey(host, host_key_bits, host_e, host_n)) {
-		throw new CVSAuthenticationException(Policy.bind("Client.hostIdChanged"));
+		throw new CVSAuthenticationException(Policy.bind("Client.hostIdChanged")); //$NON-NLS-1$
 	};
 	byte[] result;
 	if (new BigInteger(1,server_key_public_modulus).compareTo(host_n) == -1) {

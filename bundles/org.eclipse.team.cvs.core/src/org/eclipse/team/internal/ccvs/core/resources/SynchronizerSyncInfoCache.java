@@ -284,10 +284,10 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 				// Log the error and leave the sync info as is
 				// (see bug 29521)
 				CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, 
-					Policy.bind("SynchrnoizerSyncInfoCache.failedToSetSyncBytes", new Object[] {
+					Policy.bind("SynchrnoizerSyncInfoCache.failedToSetSyncBytes", new Object[] { //$NON-NLS-1$
 						resource.getFullPath().toString(),
-						oldBytes == null ? Policy.bind("null") : new String(oldBytes),
-						syncBytes == null ? Policy.bind("null") : new String(syncBytes)}), 
+						oldBytes == null ? Policy.bind("null") : new String(oldBytes), //$NON-NLS-1$
+						syncBytes == null ? Policy.bind("null") : new String(syncBytes)}),  //$NON-NLS-1$
 					e));
 			} else {
 				throw CVSException.wrapException(e);

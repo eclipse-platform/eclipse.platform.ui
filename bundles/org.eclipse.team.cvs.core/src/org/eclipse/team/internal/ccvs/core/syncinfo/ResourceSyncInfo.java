@@ -545,7 +545,7 @@ public class ResourceSyncInfo {
 	public static String getName(byte[] syncBytes) throws CVSException {
 		String name = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 1, false);
 		if (name == null) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		return name;
 	}
@@ -558,7 +558,7 @@ public class ResourceSyncInfo {
 	public static KSubstOption getKeywordMode(byte[] syncBytes) throws CVSException {
 		String mode = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 4, false);
 		if (mode == null) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		return KSubstOption.fromMode(mode);
 	}
@@ -610,7 +610,7 @@ public class ResourceSyncInfo {
 	public static boolean isAddition(byte[] syncBytes) throws CVSException {
 		int start = startOfSlot(syncBytes, 2);
 		if (start == -1 || start >= syncBytes.length) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		return syncBytes[start + 1] == '0';
 	}
@@ -623,7 +623,7 @@ public class ResourceSyncInfo {
 	public static boolean isDeletion(byte[] syncBytes) throws CVSException {
 		int start = startOfSlot(syncBytes, 2);
 		if (start == -1 || start >= syncBytes.length) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		return syncBytes[start + 1] == DELETED_PREFIX_BYTE;
 	}
@@ -636,7 +636,7 @@ public class ResourceSyncInfo {
 	public static byte[] convertToDeletion(byte[] syncBytes) throws CVSException {
 		int index = startOfSlot(syncBytes, 2);
 		if (index == -1) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		if (syncBytes.length > index && syncBytes[index+1] != DELETED_PREFIX_BYTE) {
 			byte[] newSyncBytes = new byte[syncBytes.length + 1];
@@ -656,7 +656,7 @@ public class ResourceSyncInfo {
 	public static byte[] convertFromDeletion(byte[] syncBytes) throws CVSException {
 		int index = startOfSlot(syncBytes, 2);
 		if (index == -1) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		if (syncBytes.length > index && syncBytes[index+1] == DELETED_PREFIX_BYTE) {
 			byte[] newSyncBytes = new byte[syncBytes.length - 1];
@@ -697,7 +697,7 @@ public class ResourceSyncInfo {
 	private static byte[] setSlot(byte[] syncBytes, int slot, byte[] newBytes) throws CVSException {
 		int start = startOfSlot(syncBytes, slot);
 		if (start == -1) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		int end = startOfSlot(syncBytes, slot + 1);
 		int totalLength = start + 1 + newBytes.length;
@@ -791,7 +791,7 @@ public class ResourceSyncInfo {
 	public static byte[] getTagBytes(byte[] syncBytes) throws CVSException {
 		byte[] tag = Util.getBytesForSlot(syncBytes, SEPARATOR_BYTE, 5, true);
 		if (tag == null) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		return tag;
 	}
@@ -829,7 +829,7 @@ public class ResourceSyncInfo {
 	public static String getRevision(byte[] syncBytes) throws CVSException {
 		String revision = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 2, false);
 		if (revision == null) {
-			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes)));
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
 		}
 		return revision;
 	}

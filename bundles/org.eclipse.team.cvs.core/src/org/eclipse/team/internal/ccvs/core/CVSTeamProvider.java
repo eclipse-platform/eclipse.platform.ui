@@ -1305,12 +1305,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 		try {
 			if (cvsFolder.isCVSFolder()) {
 				// There is a remote folder that overlaps with the link so disallow
-				return new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.overlappingRemoteFolder", resource.getFullPath().toString()));
+				return new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.overlappingRemoteFolder", resource.getFullPath().toString())); //$NON-NLS-1$
 			} else {
 				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(resource.getParent().getFile(new Path(resource.getName())));
 				if (cvsFile.isManaged()) {
 					// there is an outgoing file deletion that overlaps the link so disallow
-					return new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.overlappingFileDeletion", resource.getFullPath().toString()));
+					return new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.overlappingFileDeletion", resource.getFullPath().toString())); //$NON-NLS-1$
 				}
 			}
 		} catch (CVSException e) {
