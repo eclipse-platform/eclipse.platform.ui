@@ -190,12 +190,10 @@ public class DefaultHelp implements IHelp {
 			return;
 
 		String url =
-			"tab=search&"
-				+ searchQuery
-				+ "&topic="
-				+ URLEncoder.encode(getTopicURL(topic))
-				+ "&lang="
-				+ defaultLocale;
+			"tab=search&" + searchQuery + "&topic=" + URLEncoder.encode(getTopicURL(topic))
+		/*//search query contains locale
+		+ "&lang="
+		+ defaultLocale*/;
 
 		displayHelpURL(url);
 	}
