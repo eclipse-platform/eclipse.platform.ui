@@ -43,6 +43,15 @@
 
   </target>
   
+  <!-- This target defines the perfomance tests for CVS. -->
+  <target name="benchmark" depends="init,cleanup" if="performance">
+      <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+        <property name="data-dir" value="performance"/>
+        <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
+        <property name="classname" value="org.eclipse.team.tests.ccvs.ui.benchmark.ShareAndCheckoutTest"/>
+      </ant>
+  </target>
+  
   <!-- This target holds code to cleanup the testing environment after the tests -->
   <!-- have been run. You can use this to delete temporary files that are created. -->
   <target name="cleanup">
@@ -55,14 +64,6 @@
       <property name="includes" value="org*.xml"/>
       <property name="output-file" value="org.eclipse.team.tests.cvs.xml"/>
     </ant>
-  </target>
-  
-  <target name="benchmark" depends="init,cleanup" if="performance">
-      <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-        <property name="data-dir" value="performance"/>
-        <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
-        <property name="classname" value="org.eclipse.team.tests.ccvs.ui.benchmark.ShareAndCheckoutTest"/>
-      </ant>
   </target>
 
 </project>
