@@ -35,7 +35,7 @@ public interface IContributionManagerOverrides {
 	 * be enabled, <code>Boolean.FALSE</code> if the item should be disabled, and
 	 * <code>null</code> if the item may determine its own enablement.
 	 * 
-	 * @param the contribution item for which the enable override value is 
+	 * @param item the contribution item for which the enable override value is 
 	 * determined
 	 * @since 2.0
 	 */

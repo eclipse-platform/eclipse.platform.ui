@@ -14,11 +14,11 @@ package org.eclipse.jface.action;
  * The <code>ICoolBarManager</code> interface provides protocol for managing
  * contributions to a cool bar. A cool bar manager delegates responsibility for
  * creating child controls to its contribution items by calling
- * {@link IContributionItem#fillCoolBar IContributionItem.fillCoolBar}}.
+ * {@link IContributionItem#fill(CoolBar, int)}.
  * <p>
  * This interface is internal to the framework; it should not be implemented
  * outside the framework. This package provides a concrete cool bar manager
- * implementation, {@link CoolBarManager <code>CoolBarManager</code>}, which
+ * implementation, {@link CoolBarManager}, which
  * clients may instantiate or subclass.
  * </p>
  * 

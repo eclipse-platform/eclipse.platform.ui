@@ -112,7 +112,7 @@ public void insertAfter(String id, IAction action);
  * @exception IllegalArgumentException if there is no item with
  *   the given id
  */
-public void insertAfter(String ID, IContributionItem item);
+public void insertAfter(String id, IContributionItem item);
 /**
  * Inserts a contribution item for the given action before the item 
  * with the given id.
@@ -133,7 +133,7 @@ public void insertBefore(String id, IAction action);
  * @exception IllegalArgumentException if there is no item with
  *   the given id
  */
-public void insertBefore(String ID, IContributionItem item);
+public void insertBefore(String id, IContributionItem item);
 /**
  * Returns whether the list of contributions has recently changed and
  * has yet to be reflected in the corresponding widgets.

@@ -443,11 +443,11 @@ public boolean replaceItem(final String identifier, final IContributionItem repl
  * Sets whether this manager is dirty. When dirty, the list of contributions 
  * is not accurately reflected in the corresponding widgets.
  *
- * @param <code>true</code> if this manager is dirty, and <code>false</code>
+ * @param dirty <code>true</code> if this manager is dirty, and <code>false</code>
  *   if it is up-to-date
  */
-protected void setDirty(boolean d) {
-	isDirty = d;
+protected void setDirty(boolean dirty) {
+	isDirty = dirty;
 }
 /**
  * Sets the overrides for this contribution manager

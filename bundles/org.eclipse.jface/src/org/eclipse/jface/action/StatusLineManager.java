@@ -47,9 +47,6 @@ public class StatusLineManager extends ContributionManager implements IStatusLin
 	 */
 	private Composite statusLine = null;
 	
-	private String lastMessage;
-	private Image lastImage;
-	
 /**
  * Creates a new status line manager.
  * Use the <code>createControl</code> method to create the 
@@ -62,11 +59,13 @@ public StatusLineManager() {
 /**
  * Creates and returns this manager's status line control. 
  * Does not create a new control if one already exists.
+ * <p>
+ * Note: Since 3.0 the return type is <code>Control</code>.  Before 3.0, the return type was 
+ *   the package-private class <code>StatusLine</code>.
+ * </p>
  *
  * @param parent the parent control
- * @param style the style for the control
  * @return the status line control
- * @since 3.0 before 3.0, the return type was the package-private class <code>StatusLine</code>
  */
 public Control createControl(Composite parent) {
     return createControl(parent, SWT.NONE);
@@ -232,7 +231,6 @@ public void setErrorMessage(Image image, String message) {
 public void setMessage(String message) {
 	if (statusLineExist())
 		((StatusLine) statusLine).setMessage(message);
-	lastMessage = message;
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
@@ -240,8 +238,6 @@ public void setMessage(String message) {
 public void setMessage(Image image, String message) {
 	if (statusLineExist())
 		((StatusLine) statusLine).setMessage(image, message);
-	lastMessage = message;
-	lastImage = image;
 }
 
 /**
