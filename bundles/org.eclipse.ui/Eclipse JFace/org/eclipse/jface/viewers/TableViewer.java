@@ -303,6 +303,12 @@ protected void hookControl(Control control) {
 			handleDoubleSelect(e);
 		}
 	});
+	OpenStrategy handler = new OpenStrategy(control);
+	handler.addOpenListener(new IOpenEventListener() {
+		public void handleOpen(SelectionEvent e) {
+			TableViewer.this.handleOpen(e);
+		}
+	});
 	tableControl.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
 			tableViewerImpl.handleMouseDown(e);

@@ -283,7 +283,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 * @param label  the label for the new button
 	 * @return the newly-created button
 	 */
-	private Button createRadioButton(Composite parent, String label) {
+	protected Button createRadioButton(Composite parent, String label) {
 		Button button = new Button(parent, SWT.RADIO | SWT.LEFT);
 		button.setText(label);
 		GridData data = new GridData();

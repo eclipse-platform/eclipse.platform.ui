@@ -627,6 +627,12 @@ protected void hookControl(Control control) {
 			handleDoubleSelect(e);
 		}
 	});
+	OpenStrategy handler = new OpenStrategy(control);
+	handler.addOpenListener(new IOpenEventListener() {
+		public void handleOpen(SelectionEvent e) {
+			AbstractTreeViewer.this.handleOpen(e);
+		}
+	});
 	addTreeListener(control,new TreeListener() {
 		public void treeExpanded(TreeEvent event) {
 			handleTreeExpand(event);

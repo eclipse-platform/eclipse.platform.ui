@@ -27,6 +27,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ICombinedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.window.Window;
@@ -430,6 +431,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		WorkbenchColors.startup();
 		initializeFonts();
 		initializeAcceleratorConfiguration();
+		initializeSingleClickOption();
 
 		// deadlock code
 		boolean avoidDeadlock = true;
@@ -453,6 +455,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		isStarting = false;
 		return true;
+	}
+	private void initializeSingleClickOption() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		int singleClickMethod = store.getInt("SINGLE_CLICK_METHOD");
+		OpenStrategy.setOpenMethod(singleClickMethod);
 	}
 	/**
 	 * Initialize the workbench AcceleratorConfiguration with the stored values.

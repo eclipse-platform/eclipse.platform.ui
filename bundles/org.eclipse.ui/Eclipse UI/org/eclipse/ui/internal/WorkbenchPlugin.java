@@ -17,6 +17,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.util.OpenStrategy;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
@@ -395,10 +397,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_FAST);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 
+		// Temporary option to enable wizard for project capability
+		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$
 		// Temporary option to enable working sets
-		store.setDefault("ENABLE_WORKING_SETS", false); //$NON-NLS-1$		
-		// Temporary option to enable new menu organization
-		store.setDefault("ENABLE_NEW_MENUS", true); //$NON-NLS-1$		
+		store.setDefault("ENABLE_WORKING_SETS", false); //$NON-NLS-1$				
+		// Temporary option to enable single click
+		store.setDefault("SINGLE_CLICK_METHOD", OpenStrategy.DOUBLE_CLICK);
 
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);

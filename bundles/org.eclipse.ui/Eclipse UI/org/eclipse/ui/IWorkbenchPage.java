@@ -310,6 +310,29 @@ public IEditorPart openEditor(IFile input) throws PartInitException;
  * Opens an editor on the given file resource.  
  * <p>
  * If this page already has an editor open on the target object that editor is 
+ * brought to front; otherwise, a new editor is opened. If 
+ * <code>activate == true</code> the editor will be activated. 
+ * <p><p>
+ * The editor type is determined by mapping <code>editorId</code> to an editor
+ * extension registered with the workbench.  An editor id is passed rather than
+ * an editor object to prevent the accidental creation of more than one editor
+ * for the same input. It also guarantees a consistent lifecycle for editors,
+ * regardless of whether they are created by the user or restored from saved 
+ * data.
+ * </p>
+ *
+ * @param input the file to edit
+ * @param editorId the id of the editor extension to use or null
+ * @param activate if <code>true</code> the editor will be activated
+ * @return an open and active editor
+ * @exception PartInitException if the editor could not be initialized
+ */
+public IEditorPart openEditor(IFile input, String editorID, boolean activate)
+	throws PartInitException;
+/**
+ * Opens an editor on the given file resource.  
+ * <p>
+ * If this page already has an editor open on the target object that editor is 
  * activated; otherwise, a new editor is opened. 
  * <p><p>
  * The editor type is determined by mapping <code>editorId</code> to an editor

@@ -240,6 +240,11 @@ public class ResourceNavigator
 				handleDoubleClick(event);
 			}
 		});
+		viewer.addOpenListener(new IOpenListener() {
+			public void open(OpenEvent event) {
+				handleOpen(event);
+			}
+		});
 		viewer.getControl().addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent event) {
 				handleKeyPressed(event);
@@ -429,11 +434,20 @@ public class ResourceNavigator
 	 * Opens the editor if file double-clicked.
 	 * @since 2.0
 	 */
-	protected void handleDoubleClick(DoubleClickEvent event) {
+	protected void handleOpen(OpenEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Object element = selection.getFirstElement();
 		
 		actionGroup.runDefaultAction(selection);
+	}	
+	/**
+	 * Handles double clicks in the viewer.
+	 * Opens the editor if file double-clicked.
+	 * @since 2.0
+	 */
+	protected void handleDoubleClick(DoubleClickEvent event) {
+		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+		Object element = selection.getFirstElement();
 
 		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
 		if (viewer.isExpandable(element)) {

@@ -1469,6 +1469,14 @@ public IEditorPart openEditor(IFile file, String editorID)
 /**
  * See IWorkbenchPage.
  */
+public IEditorPart openEditor(IFile file, String editorID,boolean activate)
+	throws PartInitException 
+{
+	return openEditor(new FileEditorInput(file),editorID,activate,editorID != null,file);
+}
+/**
+ * See IWorkbenchPage.
+ */
 public IEditorPart openEditor(IMarker marker)
 	throws PartInitException
 {

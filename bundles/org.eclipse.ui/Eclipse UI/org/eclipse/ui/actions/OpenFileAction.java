@@ -8,6 +8,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -85,11 +86,12 @@ void openFile(IFile file) {
 		return;
 	}
 	try {
+		boolean activate = OpenStrategy.getOpenMethod() == OpenStrategy.DOUBLE_CLICK;
 		if (editorDescriptor == null)
-			getWorkbenchPage().openEditor(file);
+			getWorkbenchPage().openEditor(file,null,activate);
 		else {
 			if (ensureFileLocal(file))
-				getWorkbenchPage().openEditor(file, editorDescriptor.getId());
+				getWorkbenchPage().openEditor(file, editorDescriptor.getId(),activate);
 		}
 	} catch (PartInitException e) {
 		DialogUtil.openError(

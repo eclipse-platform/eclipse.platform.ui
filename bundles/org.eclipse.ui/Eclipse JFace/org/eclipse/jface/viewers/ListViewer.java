@@ -203,6 +203,12 @@ protected void hookControl(Control control) {
 			handleDoubleSelect(e);
 		}
 	});
+	OpenStrategy handler = new OpenStrategy(control);
+	handler.addOpenListener(new IOpenEventListener() {
+		public void handleOpen(SelectionEvent e) {
+			ListViewer.this.handleOpen(e);
+		}
+	});	
 }
 /*
  * Returns the index where the item should be inserted.

@@ -67,6 +67,11 @@ public abstract class StructuredViewer extends ContentViewer {
 	 * @see #fireDoubleClick
 	 */
 	private ListenerList doubleClickListeners = new ListenerList(1);
+	/**
+	 * List of selection-activated listeners (element type: <code>ISelectionActivateListener</code>).
+	 * @see #fireDoubleClick
+	 */
+	private ListenerList openListeners = new ListenerList(1);
 /**
  * Creates a structured element viewer. The viewer has no input, 
  * no content provider, a default label provider, no sorter, and no filters.
@@ -81,6 +86,15 @@ protected StructuredViewer() {
  */
 public void addDoubleClickListener(IDoubleClickListener listener) {
 	doubleClickListeners.add(listener);
+}
+/**
+ * Adds a listener for selection-activate in this viewer.
+ * Has no effect if an identical listener is already registered.
+ *
+ * @param listener a double-click listener
+ */
+public void addOpenListener(IOpenListener listener) {
+	openListeners.add(listener);
 }
 /**
  * Adds support for dragging items out of this viewer via
@@ -273,6 +287,20 @@ protected void fireDoubleClick(DoubleClickEvent event) {
 	}
 }
 /**
+ * Notifies any open event listeners that a open event has been received.
+ * Only listeners registered at the time this method is called are notified.
+ *
+ * @param event a double-click event
+ *
+ * @see IOpenListener#doubleClick
+ */
+protected void fireOpen(OpenEvent event) {
+	Object[] listeners = openListeners.getListeners();
+	for (int i = 0; i < listeners.length; ++i) {
+		((IOpenListener)listeners[i]).open(event);
+	}
+}
+/**
  * Returns the filtered array of children of the given element.
  * The resulting array must not be modified,
  * as it may come directly from the model's internal state.
@@ -414,6 +442,22 @@ protected void handleDoubleSelect(SelectionEvent event) {
 		ISelection selection = getSelection();
 		updateSelection(selection);
 		fireDoubleClick(new DoubleClickEvent(this, selection));
+	}
+}
+/**
+ * Handles an open event from the OpenStrategy.
+ * <p>
+ * This method is internal to the framework; subclassers should not call
+ * this method.
+ * </p>
+ *
+ * @param event the SWT selection event
+ */
+protected void handleOpen(SelectionEvent event) {
+	Control control = getControl();
+	if (control != null && !control.isDisposed()) {
+		ISelection selection = getSelection();
+		fireOpen(new OpenEvent(this, selection));
 	}
 }
 /**
