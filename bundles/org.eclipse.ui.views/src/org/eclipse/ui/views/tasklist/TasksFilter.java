@@ -105,7 +105,7 @@ class TasksFilter extends ViewerFilter implements Cloneable {
 	
 	boolean checkDescription(String desc) {
 		if (desc == null) {  // be paranoid
-			desc = ""; // $NON-NLS-1$
+			desc = ""; //$NON-NLS-1$
 		}
 		boolean contains = containsSubstring(desc, descriptionFilter);
 		return descriptionFilterKind == FILTER_CONTAINS ? contains : !contains;
