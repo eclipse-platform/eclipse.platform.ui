@@ -11,9 +11,7 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * The action to add a new source container.
@@ -31,7 +29,7 @@ public class AddContainerAction extends SourceContainerAction {
 	/**
 	 * Prompts for a project to add.
 	 * 
-	 * @see IAction#run()
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */	
 	public void run() {
 		AddSourceContainerDialog dialog = new AddSourceContainerDialog(getShell(), getViewer(), fDirector);
@@ -42,15 +40,14 @@ public class AddContainerAction extends SourceContainerAction {
 		fDirector = director;
 	}
 	
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
-		if(selection == null || selection.isEmpty())
+		if(selection == null || selection.isEmpty()) {
 			return true;
-		else
+		} else {
 			return getViewer().getTree().getSelection()[0].getParentItem()==null;
+		}
 	}
-	
-	
 }
