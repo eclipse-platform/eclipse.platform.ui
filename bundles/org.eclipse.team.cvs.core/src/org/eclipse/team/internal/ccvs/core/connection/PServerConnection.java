@@ -11,21 +11,13 @@
 package org.eclipse.team.internal.ccvs.core.connection;
 
  
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InterruptedIOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IServerConnection;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
-import org.eclipse.team.internal.core.streams.PollingInputStream;
-import org.eclipse.team.internal.core.streams.PollingOutputStream;
-import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
+import org.eclipse.team.internal.core.streams.*;
 
 /**
  * A connection used to talk to an cvs pserver.
@@ -167,23 +159,37 @@ public class PServerConnection implements IServerConnection {
 		// Return if we succeeded
 		if (LOGIN_OK.equals(line))
 			return;
-			
+		
 		// Otherwise, determine the type of error
-		if (line.length() == 0)
+		if (line.length() == 0) {
 			throw new IOException(Policy.bind("PServerConnection.noResponse"));//$NON-NLS-1$
-		if (LOGIN_FAILED.equals(line))
-			throw new CVSAuthenticationException(Policy.bind("PServerConnection.loginRefused"), CVSAuthenticationException.RETRY);//$NON-NLS-1$
-		String message = "";//$NON-NLS-1$
-		// Skip any E messages for now
-		while (line.charAt(0) == ERROR_CHAR) {
-			// message += line.substring(1) + " ";
-			line = Connection.readLine(cvsroot, getInputStream());
 		}
+		
+		// Accumulate a message from the error (E) stream
+		String message = "";//$NON-NLS-1$
+		String separator = ""; //$NON-NLS-1$
+		while (line.length() > 0 && line.charAt(0) == ERROR_CHAR) {
+		    if (line.length() > 2) {
+		        message += separator + line.substring(2);
+			    separator = " "; //$NON-NLS-1$
+		    }
+		    line = Connection.readLine(cvsroot, getInputStream());
+		}
+		
+		// If the last line is the login failed (I HATE YOU) message, return authentication failure
+		if (LOGIN_FAILED.equals(line)) {
+		    if (message.length() == 0) {
+		        throw new CVSAuthenticationException(Policy.bind("PServerConnection.loginRefused"), CVSAuthenticationException.RETRY);//$NON-NLS-1$
+		    } else {
+		        throw new CVSAuthenticationException(message, CVSAuthenticationException.RETRY);
+		    }
+		}
+		
 		// Remove leading "error 0"
 		if (line.startsWith(ERROR_MESSAGE))
-			message += line.substring(ERROR_MESSAGE.length() + 1);
+			message += separator + line.substring(ERROR_MESSAGE.length() + 1);
 		else
-			message += line;
+			message += separator + line;
 		if (message.indexOf(NO_SUCH_USER) != -1)
 			throw new CVSAuthenticationException(Policy.bind("PServerConnection.invalidUser", new Object[] {message}), CVSAuthenticationException.RETRY);//$NON-NLS-1$
 		throw new IOException(Policy.bind("PServerConnection.connectionRefused", new Object[] { message }));//$NON-NLS-1$
