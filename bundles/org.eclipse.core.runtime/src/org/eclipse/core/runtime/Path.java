@@ -748,6 +748,10 @@ public IPath setDevice(String value) {
 	if (value != null) {
 		Assert.isTrue(value.indexOf(IPath.DEVICE_SEPARATOR) == (value.length() - 1), "Last character should be the device separator"); //$NON-NLS-1$
 	}
+	//return the reciever if the device is the same
+	if (value == device || (value != null && value.equals(device)))
+		return this;
+
 	return new Path(value, segments, separators);
 }
 /* (Intentionally not included in javadoc)
