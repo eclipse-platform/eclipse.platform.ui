@@ -61,11 +61,11 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 						MessageDialog.openInformation(shell, Policy.bind("OpenComparedDialog.noChangeTitle"), Policy.bind("OpenComparedDialog.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 						return;
 					}
-					if (isSingleFileCompare(event.getResources())) {
-						compareAndOpenEditors(event, participant);
-					} else {
+					//if (isSingleFileCompare(event.getResources())) {
+					//	compareAndOpenEditors(event, participant);
+					//} else {
 						compareAndOpenDialog(event, participant);
-					}
+					//}
 				} finally {
 					if (TeamUI.getSynchronizeManager().get(participant.getId(), participant.getSecondaryId()) == null) {
 						participant.dispose();
