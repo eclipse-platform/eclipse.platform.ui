@@ -585,10 +585,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				s.close();
 			}
 			
-			// Set the tag of the local resources to the branch tag (The uodate command will not
+			// Set the tag of the local resources to the branch tag (The update command will not
 			// properly update "cvs added" and "cvs removed" resources so a custom visitor is used
 			if (moveToBranch) {
-				setTag(resources, branchTag, Policy.infiniteSubMonitorFor(monitor, 20));
+				setTag(resources, branchTag, Policy.subMonitorFor(monitor, 20));
 			}
 		} finally {
 			monitor.done();
@@ -666,39 +666,45 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * This method sets the tag for a project.
 	 * It expects to be passed an InfiniteSubProgressMonitor
 	 */
-	private void setTag(IResource[] resources, final CVSTag tag, final IProgressMonitor monitor) throws TeamException {
-				
-		try {
-			// 512 ticks gives us a maximum of 2048 which seems reasonable for folders and files in a project
-			monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 512);  //$NON-NLS-1$
-			
-			// Visit all the children folders in order to set the root in the folder sync info
-			for (int i = 0; i < resources.length; i++) {
-				CVSWorkspaceRoot.getCVSResourceFor(resources[i]).accept(new ICVSResourceVisitor() {
-					public void visitFile(ICVSFile file) throws CVSException {
-						monitor.worked(1);
-						ResourceSyncInfo info = file.getSyncInfo();
-						if (info != null) {
-							monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", info.getName())); //$NON-NLS-1$
-							file.setSyncInfo(new ResourceSyncInfo(info.getName(), 
-							(info.isDeleted() ? info.DELETED_PREFIX : "") + info.getRevision(), //$NON-NLS-1$
-							info.getTimeStamp(), info.getKeywordMode(), tag, info.getPermissions()));
-						}
-					};
-					public void visitFolder(ICVSFolder folder) throws CVSException {
-						monitor.worked(1);
-						FolderSyncInfo info = folder.getFolderSyncInfo();
-						if (info != null) {
-							monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
-							folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic()));
-							folder.acceptChildren(this);
-						}
-					};
-				});
+	private void setTag(final IResource[] resources, final CVSTag tag, IProgressMonitor monitor) throws TeamException {
+	
+		workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
+			public void run(IProgressMonitor progress) throws CVSException {
+				try {
+					// 512 ticks gives us a maximum of 2048 which seems reasonable for folders and files in a project
+					progress.beginTask(null, 100);
+					final IProgressMonitor monitor = Policy.infiniteSubMonitorFor(progress, 100);
+					monitor.beginTask(Policy.bind("CVSTeamProvider.folderInfo", project.getName()), 512);  //$NON-NLS-1$
+					
+					// Visit all the children folders in order to set the root in the folder sync info
+					for (int i = 0; i < resources.length; i++) {
+						CVSWorkspaceRoot.getCVSResourceFor(resources[i]).accept(new ICVSResourceVisitor() {
+							public void visitFile(ICVSFile file) throws CVSException {
+								monitor.worked(1);
+								ResourceSyncInfo info = file.getSyncInfo();
+								if (info != null) {
+									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFile", info.getName())); //$NON-NLS-1$
+									file.setSyncInfo(new ResourceSyncInfo(info.getName(), 
+									(info.isDeleted() ? info.DELETED_PREFIX : "") + info.getRevision(), //$NON-NLS-1$
+									info.getTimeStamp(), info.getKeywordMode(), tag, info.getPermissions()));
+								}
+							};
+							public void visitFolder(ICVSFolder folder) throws CVSException {
+								monitor.worked(1);
+								FolderSyncInfo info = folder.getFolderSyncInfo();
+								if (info != null) {
+									monitor.subTask(Policy.bind("CVSTeamProvider.updatingFolder", info.getRepository())); //$NON-NLS-1$
+									folder.setFolderSyncInfo(new FolderSyncInfo(info.getRepository(), info.getRoot(), tag, info.getIsStatic()));
+									folder.acceptChildren(this);
+								}
+							};
+						});
+					}
+				} finally {
+					progress.done();
+				}
 			}
-		} finally {
-			monitor.done();
-		}
+		}, monitor);
 	}
 	
 	/** 
