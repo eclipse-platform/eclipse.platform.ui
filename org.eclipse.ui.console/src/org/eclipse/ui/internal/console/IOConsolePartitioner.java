@@ -313,7 +313,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			        if (pp == consoleClosedPartition) {
 			            continue;
 			        }
-			        IOConsolePartition partition = new IOConsolePartition(pp.stream, pp.text);
+			        IOConsolePartition partition = new IOConsolePartition(pp.stream, pp.text.length());
 			        partition.setOffset(firstOffset);
 			        firstOffset += partition.getLength();
 			        lastPartition = partition;
@@ -329,40 +329,6 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 				if(partition == lastPartition) {
 					partition.delete(event.fOffset-partition.getOffset(), amountDeleted);
 				} 
-				//else {
-				//make new partition on end with content of inputPartititions. Delete from that
-				
-				// deletion can be improved to be more console like. ie Should be able to delete until 'Enter' is pressed even if other output has been appending to
-				// the console. ie we should behave like a console :-)
-				// requires changes to IOConsoleViewer.handleVerifyEvent(...)
-				//                        lastPartition = new IOConsolePartition(inputStream, ""); //$NON-NLS-1$
-				//                        lastPartition.setOffset(document.getLength());
-				//                        int index = inputPartitions.indexOf(partition);
-				//                        for(int i = 0; i< index; i++) {
-				//                            IOConsolePartition p = (IOConsolePartition) inputPartitions.get(i);
-				//                            p.setReadOnly(true);
-				//                            lastPartition.append(p.getString());
-				//                        }
-				//                        offset = event.fOffset - partition.getOffset() + document.getLength() + lastPartition.getLength();
-				//                        for (int i = 0; i<inputPartitions.size(); i++) {
-				//                            IOConsolePartition p = (IOConsolePartition) inputPartitions.get(i);
-				//                            lastPartition.append(p.getString());
-				//                        }
-				//                        inputPartitions.clear();
-				//                        inputPartitions.add(lastPartition);
-				//                        
-				//                        lastPartition.delete(offset, amountDeleted);
-				//                        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-				//                            public void run() {
-				//                                try {
-				//                                    setUpdateInProgress(true);
-				//                                    document.replace(document.getLength(), 0, lastPartition.getString());
-				//                                    setUpdateInProgress(false);
-				//                                } catch (BadLocationException e) {
-				//                                }
-				//                            }
-				//                        });
-				//}
 			}
 			
 			synchronized(partitions) {
@@ -382,6 +348,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 						for (Iterator it = inputPartitions.iterator(); it.hasNext(); ) {
 							IOConsolePartition partition = (IOConsolePartition) it.next();
 							input.append(partition.getString());
+							partition.clearBuffer();
 							partition.setReadOnly();
 						}
 						inputStream.appendData(input.toString());

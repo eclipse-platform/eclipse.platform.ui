@@ -33,13 +33,14 @@ public class IOConsolePartition implements ITypedRegion {
      */
     private IOConsoleOutputStream outputStream;
     private IOConsoleInputStream inputStream;
+    private int length;
     
     /**
      * Creates a new partition to contain output to console.
      */
-    public IOConsolePartition(IOConsoleOutputStream outputStream, String text) {
+    public IOConsolePartition(IOConsoleOutputStream outputStream, int length) {
         this.outputStream = outputStream;
-        buffer = new StringBuffer(text);
+        this.length = length;
         this.type = OUTPUT_PARTITION_TYPE;
         this.readOnly = true;
     }
@@ -50,6 +51,7 @@ public class IOConsolePartition implements ITypedRegion {
     public IOConsolePartition(IOConsoleInputStream inputStream, String text) {
         this.inputStream = inputStream;
         buffer = new StringBuffer(text);
+        length = text.length();
         this.type = INPUT_PARTITION_TYPE;
         this.readOnly = false;
     }
@@ -60,6 +62,7 @@ public class IOConsolePartition implements ITypedRegion {
      */
     public void append(String s) {
         buffer.append(s);
+        length += s.length();
     }
       
     /**
@@ -69,6 +72,7 @@ public class IOConsolePartition implements ITypedRegion {
      */
     public void delete(int offset, int length) {
         buffer.delete(offset, offset+length);
+        length -= length;
     }
     
     /*
@@ -84,7 +88,7 @@ public class IOConsolePartition implements ITypedRegion {
      * @see org.eclipse.jface.text.IRegion#getLength()
      */
     public int getLength() {
-        return buffer.length();
+        return length;
     }
 
     /*
@@ -108,7 +112,7 @@ public class IOConsolePartition implements ITypedRegion {
      * @return The data contained in this partition.
      */
     public String getString() {
-        return buffer.toString();
+        return buffer != null ? buffer.toString() : ""; //$NON-NLS-1$
     }
     
     /**
@@ -139,5 +143,9 @@ public class IOConsolePartition implements ITypedRegion {
     
     public void setReadOnly() {
         readOnly = true;
+    }
+
+    public void clearBuffer() {
+        buffer = null;
     }
 }
