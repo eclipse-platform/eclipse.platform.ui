@@ -63,7 +63,7 @@ public final class KeyStroke implements Comparable {
 	public final static String FF = "FF"; //$NON-NLS-1$
 	public final static String HOME = "HOME"; //$NON-NLS-1$
 	public final static String INSERT = "INSERT"; //$NON-NLS-1$
-	public final static char KEY_DELIMITER = '+'; //$NON-NLS-1$
+	public final static String KEY_DELIMITER = "+"; //$NON-NLS-1$
 	public final static String KEY_DELIMITERS = KEY_DELIMITER + ""; //$NON-NLS-1$
 	public final static String LF = "LF"; //$NON-NLS-1$
 	public final static String PAGE_DOWN = "PAGE_DOWN"; //$NON-NLS-1$
@@ -76,7 +76,7 @@ public final class KeyStroke implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
 	private final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$	
-	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeySequence.class.getName());	
+	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeyStroke.class.getName());	
 	
 	private static SortedMap escapeKeyLookup = new TreeMap();
 	private static SortedMap modifierKeyLookup = new TreeMap();
@@ -294,44 +294,41 @@ public final class KeyStroke implements Comparable {
 		return string;
 	}
 
-	private String format(boolean localize) {
+	String format(boolean localize) {
 		Iterator iterator = modifierKeys.iterator();
 		StringBuffer stringBuffer = new StringBuffer();
+		String string;
 	
 		while (iterator.hasNext()) {
-			stringBuffer.append(iterator.next().toString());
-			
-			if (localize)
-				stringBuffer.append(Util.getString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY));
-			else
-				stringBuffer.append(KEY_DELIMITER);
+			string = iterator.next().toString();
+			stringBuffer.append(KeySupport.translateString(RESOURCE_BUNDLE, localize ? string : null, string));
+			stringBuffer.append(KeySupport.translateString(RESOURCE_BUNDLE, localize ? KEY_DELIMITER_KEY : null, KEY_DELIMITER));
 		}
 
 		String name = naturalKey.toString();
-		String value;
 
 		if ("\b".equals(name)) //$NON-NLS-1$
-			value = BS;
+			string = BS;
 		else if ("\t".equals(name)) //$NON-NLS-1$
-			value = TAB;
+			string = TAB;
 		else if ("\n".equals(name)) //$NON-NLS-1$
-			value = LF;
+			string = LF;
 		else if ("\f".equals(name)) //$NON-NLS-1$
-			value = FF;
+			string = FF;
 		else if ("\r".equals(name)) //$NON-NLS-1$	
-			value = CR;
+			string = CR;
 		else if ("\u001b".equals(name)) //$NON-NLS-1$	
-			value = ESC;
+			string = ESC;
 		else if (" ".equals(name)) //$NON-NLS-1$	
-			value = SPACE;
+			string = SPACE;
 		else if ("+".equals(name)) //$NON-NLS-1$	
-			value = PLUS;
+			string = PLUS;
 		else if ("\u007F".equals(name)) //$NON-NLS-1$	
-			value = DEL;
+			string = DEL;
 		else
-			value = name;
+			string = name;
 		
-		stringBuffer.append(localize ? Util.getString(RESOURCE_BUNDLE, value) : value);		
+		stringBuffer.append(KeySupport.translateString(RESOURCE_BUNDLE, localize ? string : null, string));		
 		return stringBuffer.toString();
 	}
 }

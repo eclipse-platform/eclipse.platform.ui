@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -93,6 +94,9 @@ public final class CommandManager implements ICommandManager {
 	private SortedSet preferenceKeyBindingDefinitions = Util.EMPTY_SORTED_SET;	
 
 	private CommandManager() {
+		// TODO remove
+		activeContextIds = Collections.singletonList("org.eclipse.ui.globalScope");
+		
 		String systemLocale = Locale.getDefault().toString();
 		activeLocale = systemLocale != null ? systemLocale : Util.ZERO_LENGTH_STRING;
 		String systemPlatform = SWT.getPlatform();
@@ -327,18 +331,20 @@ public final class CommandManager implements ICommandManager {
 		keyBindingMachine.setActiveKeyConfigurationIds(activeKeyConfigurationIds != null ? activeKeyConfigurationIds : new String[0]);
 		keyBindingMachine.setActiveLocales(activeLocales);
 		keyBindingMachine.setActivePlatforms(activePlatforms);
-		
-		/*
+		keyBindingMachine.setKeyBindings0(preferenceKeyBindingDefinitions);
+		keyBindingMachine.setKeyBindings1(pluginKeyBindingDefinitions);		
+				
 		System.out.println("activeContextIds: " + activeContextIds);
-		System.out.println("activeKeyConfigurationId: " + activeKeyConfigurationId);
 		System.out.println("activeKeyConfigurationIds: " + Arrays.asList(activeKeyConfigurationIds));
 		System.out.println("activeLocales: " + Arrays.asList(activeLocales));
 		System.out.println("activePlatforms: " + Arrays.asList(activePlatforms));
-		*/
+		System.out.println("keyBindings0: " + preferenceKeyBindingDefinitions);
+		System.out.println("keyBindings1: " + pluginKeyBindingDefinitions);
 		
-		keyBindingMachine.setKeyBindings0(preferenceKeyBindingDefinitions);
-		keyBindingMachine.setKeyBindings1(pluginKeyBindingDefinitions);		
 		keyBindingsByCommandId = keyBindingMachine.getKeyBindingsByCommandId();		
+
+		System.out.println(keyBindingMachine.getMatchesByKeySequence());		
+		System.out.println(keyBindingsByCommandId);
 	}
 
 	private void fireCommandManagerChanged() {
