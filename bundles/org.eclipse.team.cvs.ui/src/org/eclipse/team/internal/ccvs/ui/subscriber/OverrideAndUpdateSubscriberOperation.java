@@ -29,13 +29,11 @@ public class OverrideAndUpdateSubscriberOperation extends CVSSubscriberOperation
 		super(part, elements);
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.team.ui.TeamOperation#shouldRun()
 	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	public boolean shouldRun() {
 		SyncInfoSet syncSet = getSyncInfoSet();
-		if(promptForOverwrite(syncSet)) {
-			super.run(monitor);
-		}
+		return(promptForOverwrite(syncSet));
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)

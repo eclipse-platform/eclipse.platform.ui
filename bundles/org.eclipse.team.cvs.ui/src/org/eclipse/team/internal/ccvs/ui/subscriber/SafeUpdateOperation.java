@@ -11,18 +11,26 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter.*;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.AndSyncInfoFilter;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.OrSyncInfoFilter;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -51,10 +59,16 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.TeamOperation#shouldRun()
+	 */
+	public boolean shouldRun() {
+		return promptIfNeeded();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		if(! promptIfNeeded()) return;
 		skipped.clear();
 		super.run(monitor);
 		try {
@@ -317,28 +331,11 @@ public abstract class SafeUpdateOperation extends CVSSubscriberOperation {
 		});
 	}
 	
-	/*
-	 * Return the complete set of selected resources that failed to update safely
-	 */
-	private SyncInfoSet createFailedSet(SyncInfoSet syncSet, SyncInfo[] willFail, IFile[] files) {
-		List result = new ArrayList();
-		for (int i = 0; i < files.length; i++) {
-			IFile file = files[i];
-			SyncInfo resource = syncSet.getSyncInfo(file);
-			if (resource != null) result.add(resource);
-		}
-		for (int i = 0; i < willFail.length; i++) {
-			result.add(willFail[i]);
-		}
-		return new SyncInfoSet((SyncInfo[]) result.toArray(new SyncInfo[result.size()]));
-	}
-	
 	/**
 	 * Warn user that some files could not be updated.
 	 * Note: This method is designed to be overridden by test cases.
 	 */
 	protected void warnAboutFailedResources(final SyncInfoSet syncSet) {
-		final int[] result = new int[] {Dialog.CANCEL};
 		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog.openInformation(getShell(), 

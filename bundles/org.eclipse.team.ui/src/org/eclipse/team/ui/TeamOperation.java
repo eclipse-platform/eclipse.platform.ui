@@ -68,9 +68,22 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
 	 * Otherwise it will run in the foreground and block the caller.
 	 */
 	public final void run() throws InvocationTargetException, InterruptedException {
-		getRunnableContext().run(this);
+		if (shouldRun()) {
+			getRunnableContext().run(this);
+		}
 	}
-	
+
+	/**
+	 * This method is invoked from the <code>run()</code> method before
+	 * the operation is run in the operation's context. Subclasses may
+	 * override in order to perform prechecks to determine if the operation
+	 * should run. This may include prompting the user for information, etc.
+	 * @return whether the operation should be run.
+	 */
+	public boolean shouldRun() {
+		return true;
+	}
+
 	/**
 	 * Returns the scheduling rule that is to be obtained before this
 	 * operation is executed by it's context or <code>null</code> if
