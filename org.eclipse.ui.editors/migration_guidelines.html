@@ -31,7 +31,7 @@ can call the method when updating their enablement state.<br>
         which interfaces the editor implements. The method will call <code>ITextEditorExtension2.validateEditorInputState()</code> if it is available. Modifing actions
         can call the method before running modifing the editor's content.<br>
 </li>
-        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.ui.texteditor.ExtendedTextEditor</span>:
+        <li><span style="font-weight: bold; font-style: italic;">org.eclipse.ui.texteditor.AbstractDecoratedTextEditor</span>:
         A new intermediate class layer has been added between <code>StatusTextEditor</code> and other editors, namely <code>TextEditor</code> and <code>JavaEditor</code>. The additional layer 
         includes features found commonly in advanced editors (and especially source editors) such as:
         <ul>

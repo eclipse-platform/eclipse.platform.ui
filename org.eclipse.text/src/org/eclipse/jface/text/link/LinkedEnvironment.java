@@ -33,9 +33,29 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.IDocumentExtension.IReplace;
 
 /**
- * A <code> LinkedEnvironment</code> umbrellas several <code>LinkedPositionGroup</code>s.
- * Responsible for updating the siblings of a linked position when a change
- * occurs.
+ * A <code>LinkedEnvironment</code> umbrellas several
+ * <code>LinkedPositionGroup</code>s. Once installed, the environment
+ * propagates any changes to a position to all its siblings in the same position
+ * group.
+ * <p>
+ * Setting up a linked environment consists of first adding
+ * <code>LinkedPositionGroup</code> s to it, and then installing the
+ * environment by either calling {@link #forceInstall()} or
+ * {@link #tryInstall()}. After installing the environment, it becomes
+ * <em>sealed</em> and no more groups may be added.
+ * </p>
+ * <p>
+ * If the document is changed outside any linked position, the environment is
+ * teared down and all positions are deleted. The same happens upon calling
+ * {@link #exit(int)}.
+ * </p>
+ * <h4>Nesting</h4>
+ * <p>
+ * A <code>LinkedEnvironment</code> may be nested into another environment. This 
+ * happens when installing an environment the positions of which all fit into a 
+ * single position in a parent environment that has previously been installed on
+ * the same document(s).
+ * </p>
  * 
  * @since 3.0
  */
@@ -286,7 +306,10 @@ public class LinkedEnvironment {
 	 * Causes this environment to exit. Called either if a document change
 	 * outside this enviroment is detected, or by the UI.
 	 * 
-	 * <p>This method part of the private protocol between <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.</p>
+	 * <p>
+	 * This method part of the private protocol between
+	 * <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.
+	 * </p>
 	 * 
 	 * @param flags the exit flags.
 	 */
@@ -349,14 +372,13 @@ public class LinkedEnvironment {
 
 	/**
 	 * Adds a position group to this <code>LinkedEnvironment</code>. This
-	 * method may not be called if the environment is already sealed, i.e. a
-	 * nested environment has been added to it. It is also not wise to add
-	 * groups once a UI has been established on top of this environment.
-	 * 
+	 * method may not be called if the environment has been installed. Also, if
+	 * a UI has been set up for this environment, it may not pick up groups
+	 * added afterwards.
 	 * <p>
-	 * If the positions in <code>group</code> conflict with any other groups
-	 * in this environment, a <code>BadLocationException</code> is thrown.
-	 * Also, if this environment is nested in another one, all positions in all
+	 * If the positions in <code>group</code> conflict with any other group in
+	 * this environment, a <code>BadLocationException</code> is thrown. Also,
+	 * if this environment is nested inside another one, all positions in all
 	 * groups of the child environment have to lie in a single position in the
 	 * parent environment, otherwise a <code>BadLocationException</code> is
 	 * thrown.
@@ -367,8 +389,8 @@ public class LinkedEnvironment {
 	 * </p>
 	 * 
 	 * @param group the group to be added to this environment
-	 * @throws BadLocationException if the group conflicts with the other
-	 *         groups in this environment or violates the nesting requirements.
+	 * @throws BadLocationException if the group conflicts with the other groups
+	 *         in this environment or violates the nesting requirements.
 	 * @throws IllegalStateException if the method is called when the
 	 *         environment is already sealed
 	 */
@@ -388,11 +410,17 @@ public class LinkedEnvironment {
 	
 	
 	/**
-	 * Installs this environment, which includes registering as document listener
-	 * on all involved documents and storing global information about this environment. If
-	 * an exception is thrown, the installation failed and the environment is unusable.
+	 * Installs this environment, which includes registering as document
+	 * listener on all involved documents and storing global information about
+	 * this environment. Any conflicting environment already present will be
+	 * closed.
+	 * <p>
+	 * If an exception is thrown, the installation failed and
+	 * the environment is unusable.
+	 * </p>
 	 * 
-	 * @throws BadLocationException if some of the positions of this environment were not valid positions on their respective documents
+	 * @throws BadLocationException if some of the positions of this environment
+	 *         were not valid positions on their respective documents
 	 */
 	public void forceInstall() throws BadLocationException {
 		if (!install(true))
@@ -400,30 +428,40 @@ public class LinkedEnvironment {
 	}
 	
 	/**
-	 * Installs this environment, which includes registering as document listener
-	 * on all involved documents and storing global information about this environment. The return
-	 * value states whether installation was successful; if not, the environment is not installed
-	 * and will not work.
+	 * Installs this environment, which includes registering as document
+	 * listener on all involved documents and storing global information about
+	 * this environment. If there is another environment installed on the
+	 * document(s) targeted by the receiver that conflicts with it, installation
+	 * may fail.  
+	 * <p>
+	 * The return value states whether installation was
+	 * successful; if not, the environment is not installed and will not work.
+	 * </p>
 	 * 
-	 * @return <code>true</code> if installation was successful, <code>false</code> otherwise
-	 * @throws BadLocationException if some of the positions of this environment were not valid positions on their respective documents
+	 * @return <code>true</code> if installation was successful,
+	 *         <code>false</code> otherwise
+	 * @throws BadLocationException if some of the positions of this environment
+	 *         were not valid positions on their respective documents
 	 */
 	public boolean tryInstall() throws BadLocationException {
 		return install(false);
 	}
 	
 	/**
-	 * Installs this environment, which includes registering as document listener
-	 * on all involved documents and storing global information about this environment. The return
-	 * value states whether installation was successful; if not, the environment is not installed
-	 * and will not work. The return value can only then become <code>false</code> if <code>force</code>
-	 * was set to <code>false</code> as well.
+	 * Installs this environment, which includes registering as document
+	 * listener on all involved documents and storing global information about
+	 * this environment. The return value states whether installation was
+	 * successful; if not, the environment is not installed and will not work.
+	 * The return value can only then become <code>false</code> if
+	 * <code>force</code> was set to <code>false</code> as well.
 	 * 
-	 * @param force if <code>true</code>, any other environment that cannot coexist
-	 * with this one is canceled; if <code>false</code>, install will fail when conflicts
-	 * occur and return false
-	 * @return <code>true</code> if installation was successful, <code>false</code> otherwise
-	 * @throws BadLocationException if some of the positions of this environment were not valid positions on their respective documents
+	 * @param force if <code>true</code>, any other environment that cannot
+	 *        coexist with this one is canceled; if <code>false</code>,
+	 *        install will fail when conflicts occur and return false
+	 * @return <code>true</code> if installation was successful,
+	 *         <code>false</code> otherwise
+	 * @throws BadLocationException if some of the positions of this environment
+	 *         were not valid positions on their respective documents
 	 */
 	private boolean install(boolean force) throws BadLocationException {
 		if (fIsSealed)
@@ -548,10 +586,13 @@ public class LinkedEnvironment {
 	/**
 	 * Returns whether this environment is nested.
 	 * 
-	 * <p>This method part of the private protocol between <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.</p>
+	 * <p>
+	 * This method part of the private protocol between
+	 * <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.
+	 * </p>
 	 * 
-	 * @return <code>true</code> if this environment is nested, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if this environment is nested,
+	 *         <code>false</code> otherwise
 	 */
 	public boolean isNested() {
 		return fParentEnvironment != null;
@@ -561,7 +602,10 @@ public class LinkedEnvironment {
 	 * Returns the positions in this environment that have a tab stop, in the
 	 * order they were added.
 	 * 
-	 * <p>This method part of the private protocol between <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.</p>
+	 * <p>
+	 * This method part of the private protocol between
+	 * <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.
+	 * </p>
 	 * 
 	 * @return the positions in this environment that have a tab stop, in the
 	 *         order they were added
@@ -593,11 +637,14 @@ public class LinkedEnvironment {
 	}
 
 	/**
-	 * Finds the position in this environment that is closest after <code>toFind</code>.
-	 * <code>toFind</code> needs not be a position in this environment and
-	 * serves merely as an offset.
+	 * Finds the position in this environment that is closest after
+	 * <code>toFind</code>.<code>toFind</code> needs not be a position in
+	 * this environment and serves merely as an offset.
 	 * 
-	 * <p>This method part of the private protocol between <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.</p>
+	 * <p>
+	 * This method part of the private protocol between
+	 * <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.
+	 * </p>
 	 * 
 	 * @param toFind the position to search from
 	 * @return the closest position in the same document as <code>toFind</code>
@@ -686,20 +733,20 @@ public class LinkedEnvironment {
 	
 	/**
 	 * Returns the linked position group that contains <code>position</code>,
-	 * or <code>null</code> if <code>position</code> is not contained in
-	 * any group within this environment. Group containment is tested by
-	 * calling <code>group.contains(position)</code> for every <code>group</code>
-	 * in this environment.
+	 * or <code>null</code> if <code>position</code> is not contained in any
+	 * group within this environment. Group containment is tested by calling
+	 * <code>group.contains(position)</code> for every <code>group</code> in
+	 * this environment.
 	 * 
 	 * <p>
-	 * This method part of the private protocol between <code>LinkedUIControl</code>
-	 * and <code>LinkedEnvironment</code>.
+	 * This method part of the private protocol between
+	 * <code>LinkedUIControl</code> and <code>LinkedEnvironment</code>.
 	 * </p>
 	 * 
 	 * @param position the position the group of which is requested
-	 * @return the first group in this environment for which <code>group.contains(position)</code>
-	 *         returns <code>true</code>, or <code>null</code> if no group
-	 *         contains <code>position</code>
+	 * @return the first group in this environment for which
+	 *         <code>group.contains(position)</code> returns <code>true</code>,
+	 *         or <code>null</code> if no group contains <code>position</code>
 	 */
 	public LinkedPositionGroup getGroupForPosition(Position position) {
 		for (Iterator it= fGroups.iterator(); it.hasNext(); ) {

@@ -56,14 +56,16 @@ import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
 
-
 /**
- * Renamed to AbstractDecoratedTextEditor - will be removed for M9
+ * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
+ * but used in many heavy weight (and especially source editing) editors, such as line numbers, 
+ * change ruler, overview ruler, print margins, current line highlighting, etc.
+ * 
+ * <p>Note that this is work in progress and API is still subject to change for <code>3.0</code>.</p>
  * 
  * @since 3.0
- * @deprecated will be removed for M9, use AbstractDecoratedTextEditor instead
  */
-public abstract class ExtendedTextEditor extends StatusTextEditor {
+public abstract class AbstractDecoratedTextEditor extends ExtendedTextEditor {
 	/**
 	 * Preference key for showing the line number ruler.
 	 */
@@ -102,7 +104,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	private class GotoMarkerAdapter implements IGotoMarker {
 		public void gotoMarker(IMarker marker) {
-			ExtendedTextEditor.this.gotoMarker(marker);
+			AbstractDecoratedTextEditor.this.gotoMarker(marker);
 		}
 	}
 	
@@ -170,7 +172,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	/**
 	 * Creates a new text editor.
 	 */
-	public ExtendedTextEditor() {
+	public AbstractDecoratedTextEditor() {
 		super();
 		fAnnotationPreferences= new MarkerAnnotationPreferences();
 		setRangeIndicator(new DefaultRangeIndicator());

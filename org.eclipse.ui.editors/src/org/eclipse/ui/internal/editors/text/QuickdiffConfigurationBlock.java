@@ -34,7 +34,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.texteditor.AnnotationPreference;
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
@@ -174,10 +174,10 @@ class QuickdiffConfigurationBlock {
 		composite.setLayout(layout);
 
 		String label= fMessages.getString(fPrefix + ".quickdiff.showForNewEditors"); //$NON-NLS-1$
-		addCheckBox(composite, label, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, 0);
+		addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, 0);
 
 		label= fMessages.getString(fPrefix + ".quickdiff.characterMode"); //$NON-NLS-1$
-		addCheckBox(composite, label, ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, 0);
+		addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, 0);
 
 		label= fMessages.getString(fPrefix + ".quickdiff.showInOverviewRuler"); //$NON-NLS-1$
 		fQuickDiffOverviewRulerCheckBox= new Button(composite, SWT.CHECK);
@@ -300,7 +300,7 @@ class QuickdiffConfigurationBlock {
 			public void widgetSelected(SelectionEvent e) {
 				int i= fQuickDiffProviderList.getSelectionIndex();
 				for (int j= 0; j < fQuickDiffProviderListModel.length; j++) {
-					if (fStore.getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[j][0])) {
+					if (fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[j][0])) {
 						fQuickDiffProviderList.remove(j);
 						fQuickDiffProviderList.add(fQuickDiffProviderListModel[j][1], j);
 					}
@@ -313,7 +313,7 @@ class QuickdiffConfigurationBlock {
 				fQuickDiffProviderList.setSelection(i);
 				fQuickDiffProviderList.redraw();
 				
-				fStore.setValue(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, fQuickDiffProviderListModel[i][0]);
+				fStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, fQuickDiffProviderListModel[i][0]);
 			}
 		});
 		
@@ -324,7 +324,7 @@ class QuickdiffConfigurationBlock {
 		
 		for (int i= 0; i < fQuickDiffProviderListModel.length; i++) {
 			String label= fQuickDiffProviderListModel[i][1];
-			if (fStore.getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[i][0]))
+			if (fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[i][0]))
 				label += " " + fMessages.getString(fPrefix + ".quickdiff.defaultlabel"); //$NON-NLS-1$ //$NON-NLS-2$
 			fQuickDiffProviderList.add(label);
 		}
@@ -361,7 +361,7 @@ class QuickdiffConfigurationBlock {
 	private void handleProviderListSelection() {
 		int i= fQuickDiffProviderList.getSelectionIndex();
 		
-		boolean b= fStore.getString(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[i][0]);
+		boolean b= fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER).equals(fQuickDiffProviderListModel[i][0]);
 		fSetDefaultButton.setEnabled(!b);
 	}
 	

@@ -54,6 +54,11 @@ public class LinkedPositionGroup {
 	private final List fPositions= new LinkedList();
 	/** Whether we are sealed or not. */
 	private boolean fIsSealed= false;
+	/**
+	 * <code>true</code> if there are custom iteration weights. For backward
+	 * compatibility.
+	 */
+	private boolean fHasCustomIteration= false;
 
 	/*
 	 * iteration variables, set to communicate state between isLegalEvent and
@@ -63,11 +68,6 @@ public class LinkedPositionGroup {
 	private LinkedPosition fLastPosition;
 	/** The offset of <code>fLastPosition</code>. */
 	private int fLastPositionOffset;
-	/**
-	 * <code>true</code> if there are custom iteration weights. For backward
-	 * compatibility.
-	 */
-	private boolean fHasCustomIteration= false;
 	
 	/**
 	 * Adds a position to this group. If the position overlaps with another in
@@ -140,23 +140,26 @@ public class LinkedPositionGroup {
 	}
 	
 	/**
-	 * Implementation of all the <code>createPosition</code> methods. Enforces
-	 * constraints and sets the custom iteration flag. If the position is
-	 * already in this group, nothing happens.
+	 * Adds a position to this group. If the position overlaps with another in
+	 * this group, or if the group is already part of an environment, an
+	 * exception is thrown.
 	 * <p>
-	 * Positions added using this method are owned by this group afterwards any may
-	 * not be updated or modified thereafter.
+	 * Positions added using this method are owned by this group afterwards and
+	 * may not be updated or modified thereafter.
 	 * </p>
 	 * 
 	 * @param position the position to add
-	 * @throws BadLocationException if the position is invalid or conflicts
-	 *         with other positions in the group
+	 * @throws BadLocationException if the position is invalid or conflicts with
+	 *         other positions in the group
 	 * @throws IllegalStateException if the group has already been added to an
 	 *         environment
 	 */
 	public void addPosition(LinkedPosition position) throws BadLocationException {
+		/*
+		 * Enforces constraints and sets the custom iteration flag. If the
+		 * position is already in this group, nothing happens.
+		 */
 		Assert.isNotNull(position);
-		// don't add positions after it is installed.
 		if (fIsSealed)
 			throw new IllegalStateException("cannot add positions after the group is added to an environment"); //$NON-NLS-1$
 

@@ -115,6 +115,20 @@ public class LinkedPosition extends Position {
 		return this.offset <= pOffset && pOffset <= this.offset + this.length;
 	}
 	
+	/**
+	 * Returns whether this position includes the range given by
+	 * <code>offset</code> and <code>length</code>. A range is included by
+	 * a <code>LinkedPosition</code> if {@link #includes(int) includes(offset)} 
+	 * returns true for every offset in the range, including the borders of the
+	 * range.
+	 * 
+	 * @param doc the document that the given range refers to, may be <code>null</code>
+	 * @param off the offset of the range, referring to <code>document</code>
+	 * @param len the length of the range
+	 * @return <code>true</code> if <code>doc</code> is the same document as
+	 * 		   this position refers to, and if the entire range is included in
+	 * 		   this position
+	 */
 	protected boolean includes(IDocument doc, int off, int len) {
 		return doc == fDocument && off >= offset && len + off <= offset + length;
 		

@@ -34,7 +34,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ConvertLineDelimitersAction;
-import org.eclipse.ui.texteditor.ExtendedTextEditor;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -57,7 +57,7 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  * editor is needed for a workbench window.
  * </p>
  */
-public class TextEditor extends ExtendedTextEditor {
+public class TextEditor extends AbstractDecoratedTextEditor {
 		
 	/** 
 	 * The encoding support for the editor.

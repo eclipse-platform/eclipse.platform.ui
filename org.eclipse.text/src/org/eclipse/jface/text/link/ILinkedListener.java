@@ -20,15 +20,15 @@ package org.eclipse.jface.text.link;
  */
 public interface ILinkedListener {
 	/** Flag to <code>leave</code> specifying no special action. */
-	static final int NONE= 0;
+	int NONE= 0;
 	/** Flag to <code>leave</code> specifying that all nested environments should exit. */
-	static final int EXIT_ALL= 1 << 0;
+	int EXIT_ALL= 1 << 0;
 	/** Flag to <code>leave</code> specifying that the caret should be moved to the exit position. */
-	static final int UPDATE_CARET= 1 << 1;
+	int UPDATE_CARET= 1 << 1;
 	/** Flag to <code>leave</code> specifying that a UI of a parent environment should select the current position. */
-	static final int SELECT= 1 << 2;
+	int SELECT= 1 << 2;
 	/** Flag to <code>leave</code> specifying that document content outside of a linked position was modified. */
-	static final int EXTERNAL_MODIFICATION= 1 << 3;
+	int EXTERNAL_MODIFICATION= 1 << 3;
 	/**
 	 * The leave event occurs when a linked environment exits.
 	 * 

@@ -13,7 +13,7 @@ package org.eclipse.ui.editors.text;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 
 /**
@@ -34,7 +34,7 @@ public class TextEditorPreferenceConstants {
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_CURRENT_LINE= "currentLine"; //$NON-NLS-1$
 
@@ -47,7 +47,7 @@ public class TextEditorPreferenceConstants {
 	 * </p>
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_CURRENT_LINE_COLOR= "currentLineColor"; //$NON-NLS-1$
 
@@ -57,7 +57,7 @@ public class TextEditorPreferenceConstants {
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_PRINT_MARGIN= "printMargin"; //$NON-NLS-1$
 	
@@ -70,7 +70,7 @@ public class TextEditorPreferenceConstants {
 	 * </p>
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_PRINT_MARGIN_COLOR= "printMarginColor"; //$NON-NLS-1$
 
@@ -80,7 +80,7 @@ public class TextEditorPreferenceConstants {
 	 * <p>
 	 * The preference value is of type <code>int</code>.
 	 * </p>
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_PRINT_MARGIN_COLUMN= "printMarginColumn"; //$NON-NLS-1$
 
@@ -92,7 +92,7 @@ public class TextEditorPreferenceConstants {
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
 	 * @since 2.1
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION= "othersIndication"; //$NON-NLS-1$
 
@@ -107,7 +107,7 @@ public class TextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @since 2.1
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION_COLOR= "othersIndicationColor"; //$NON-NLS-1$
 
@@ -118,7 +118,7 @@ public class TextEditorPreferenceConstants {
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
 	 * @since 2.1
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER= "othersIndicationInOverviewRuler"; //$NON-NLS-1$
 
@@ -128,7 +128,7 @@ public class TextEditorPreferenceConstants {
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_OVERVIEW_RULER= "overviewRuler"; //$NON-NLS-1$
 
@@ -138,7 +138,7 @@ public class TextEditorPreferenceConstants {
 	 * <p>
 	 * The preference value is of type <code>Boolean</code>.
 	 * </p>
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER= "lineNumberRuler"; //$NON-NLS-1$
 
@@ -152,7 +152,7 @@ public class TextEditorPreferenceConstants {
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
 	 * @see #EDITOR_LINE_NUMBER_RULER
-	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants}
+	 * @deprecated as of 3.0 replaced by {@link org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants}
 	 */
 	public final static String EDITOR_LINE_NUMBER_RULER_COLOR= "lineNumberColor"; //$NON-NLS-1$
 	
@@ -253,9 +253,9 @@ public class TextEditorPreferenceConstants {
   	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		
-		// set defaults from ExtendedTextEditor
-		ExtendedTextEditorPreferenceConstants.initializeDefaultValues(store);
+		// set defaults from AbstractDecoratedTextEditor
+		AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(store);
 
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, true);
 	}
 }

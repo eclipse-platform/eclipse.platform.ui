@@ -22,14 +22,13 @@ import org.eclipse.jface.preference.PreferenceConverter;
  * Preference constants used in the extended text editor preference store.
  * 
  * @since 3.0
- * @deprecated renamed to AbstractDecoratedTextEditorPreferenceConstants - will be removed for M9
  */
-public class ExtendedTextEditorPreferenceConstants {
+public class AbstractDecoratedTextEditorPreferenceConstants {
 	
 	/**
 	 * Prevent initialization.
 	 */
-	private ExtendedTextEditorPreferenceConstants() {
+	private AbstractDecoratedTextEditorPreferenceConstants() {
 	}
 	
 	/**
@@ -267,32 +266,32 @@ public class ExtendedTextEditorPreferenceConstants {
   	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
 
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
-		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
+		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(225, 235, 224));
 
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 4);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 4);
 
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
-		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, new RGB(176, 180 , 185));
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
+		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, new RGB(176, 180 , 185));
 
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
-		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
-		store.setDefault(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
-		store.setDefault(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, false);
-		store.setDefault(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.ui.internal.texteditor.quickdiff.LastSaveReferenceProvider"); //$NON-NLS-1$
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
+		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, new RGB(0, 0, 0));
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, false);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER, "org.eclipse.ui.internal.texteditor.quickdiff.LastSaveReferenceProvider"); //$NON-NLS-1$
 
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 		
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, false);
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, false);
-		PreferenceConverter.setDefault(store, ExtendedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, new RGB(0, 0, 0));
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION, false);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_IN_OVERVIEW_RULER, false);
+		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNKNOWN_INDICATION_COLOR, new RGB(0, 0, 0));
 		
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, false);
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_USE_CUSTOM_CARETS, false);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WIDE_CARET, true);
 		
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR, true);
-		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR, true);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);
 
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
