@@ -1,7 +1,7 @@
 Generated-from: 1077062999827
 Bundle-Name: Ui Plug-in
 Bundle-Version: 2.0.0
-Bundle-GlobalName: com.example.bundle.plugin.ui
+Bundle-SymbolicName: com.example.bundle.plugin.ui
 Bundle-Vendor: Eclipse.org
 Bundle-ClassPath: ui.jar
 Legacy: true
