@@ -1218,7 +1218,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IProp
 		current = part;
 		if (current != null) {
 			setControlSize();
-			current.setVisible(!isMinimized());
+			current.setVisible(true);
 		}
 
 		// set the title of the detached window to reflect the active tab
