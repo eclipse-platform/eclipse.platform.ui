@@ -73,7 +73,7 @@ public class TargetPage extends BannerPage {
 		* @see ITableLabelProvider#getColumnImage(Object, int)
 		*/
 		public Image getColumnImage(Object obj, int col) {
-			return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_SITE_OBJ);
+			return UpdateUIPlugin.getDefault().getLabelProvider().get(UpdateUIPluginImages.DESC_LSITE_OBJ);
 		}
 
 		/**
