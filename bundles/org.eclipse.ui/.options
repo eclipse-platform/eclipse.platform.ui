@@ -35,3 +35,7 @@ org.eclipse.ui/trace/keyBindings=false
 
 # Report every event received by the key binding architecture
 org.eclipse.ui/trace/keyBindings.verbose=false
+
+# Report when a tool bar contribution item is asked its visibility after being
+# disposed.  TODO Remove this option?  Bug 51000
+org.eclipse.jface/trace/toolbarDisposal=false
