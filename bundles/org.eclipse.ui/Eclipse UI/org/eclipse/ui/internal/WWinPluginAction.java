@@ -11,6 +11,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.LabelRetargetAction;
@@ -27,6 +29,11 @@ import org.eclipse.ui.actions.RetargetAction;
 public class WWinPluginAction extends PluginAction
 	implements IActionSetContributionItem 
 {
+	/**
+	 * The help listener assigned to this action, or <code>null</code> if none.
+	 */
+	private HelpListener localHelpListener;
+	
 	private IWorkbenchWindow window;
 	private String actionSetId;
 	private RetargetAction retargetAction;
@@ -88,6 +95,20 @@ public class WWinPluginAction extends PluginAction
 			refreshSelection();
 		}
 		addToActionList(this);
+		
+		super.setHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent e) {
+				HelpListener listener = null;
+				if (retargetAction != null) 
+					listener = retargetAction.getHelpListener();
+				if (listener == null)
+					// use our own help listener
+					listener = localHelpListener;
+				if (listener != null)
+					// pass on the event
+					listener.helpRequested(e);
+			}
+		});
 	}
 
 	/**
@@ -187,6 +208,16 @@ public class WWinPluginAction extends PluginAction
 	 */
 	public void setActionSetId(String newActionSetId) {
 		actionSetId = newActionSetId;
+	}
+	
+	/** 
+	 * The <code>WWinPluginAction</code> implementation of this method
+	 * declared on <code>IAction</code> stores the help listener in
+	 * a local field. The supplied listener is only used if there is
+	 * no retarget action.
+	 */
+	public void setHelpListener(HelpListener listener) {
+		localHelpListener = listener;
 	}
 	
 	/**
