@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -29,8 +30,12 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class RemoveTerminatedAction extends Action implements IUpdate {
 
+	/**
+	 * The part this action is installed in
+	 */
+	private IViewPart fPart;
 	
-	public RemoveTerminatedAction() {
+	public RemoveTerminatedAction(IViewPart part) {
 		super(DebugUIMessages.getString("RemoveTerminatedAction.Remove_&All_Terminated_1")); //$NON-NLS-1$
 		setToolTipText(DebugUIMessages.getString("RemoveTerminatedAction.Remove_All_Terminated_Launches_2")); //$NON-NLS-1$
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_TERMINATED));
@@ -40,6 +45,7 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 		WorkbenchHelp.setHelp(
 			this,
 			new Object[] { IDebugHelpContextIds.REMOVE_ACTION });
+		setPart(part);
 	}
 
 	/**
@@ -88,25 +94,34 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 	 * @return array of object
 	 */
 	protected Object[] getElements() {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				IWorkbenchPart part = page.getActivePart();
-				if (part != null) {
-					IDebugViewAdapter view = (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
-					if (view != null) {
-						StructuredViewer viewer = view.getViewer();
-						if (viewer != null) {
-							IStructuredContentProvider cp = (IStructuredContentProvider)viewer.getContentProvider();
-							Object input = viewer.getInput();
-							return cp.getElements(input);
-						}
-					}
-				}
+		IDebugViewAdapter view = (IDebugViewAdapter)getPart().getAdapter(IDebugViewAdapter.class);
+		if (view != null) {
+			StructuredViewer viewer = view.getViewer();
+			if (viewer != null) {
+				IStructuredContentProvider cp = (IStructuredContentProvider)viewer.getContentProvider();
+				Object input = viewer.getInput();
+				return cp.getElements(input);
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Sets the part this action is installed in
+	 * 
+	 * @param part view part
+	 */
+	private void setPart(IViewPart part) {
+		fPart = part;
+	}
+	
+	/**
+	 * Returns the part this action is installed in
+	 * 
+	 * @return view part
+	 */
+	protected IViewPart getPart() {
+		return fPart;
 	}
 }
 

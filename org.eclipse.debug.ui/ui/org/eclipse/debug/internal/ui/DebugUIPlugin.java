@@ -57,6 +57,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.views.LaunchView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -372,6 +373,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	public void handleDebugEvent(final DebugEvent event) {
 		// open the debugger if this is a suspend event and the debug view is not yet open
 		// and the preferences are set to switch
+		if (true) {
+			return;
+		}
 		if (event.getKind() == DebugEvent.SUSPEND) {
 			getDisplay().asyncExec(new Runnable() {
 				public void run() {
@@ -718,6 +722,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
+		
+		// shutdown the perspective manager
+		PerspectiveManager.getDefault().shutdown();		
+		
 		IWorkbenchWindow window= getActiveWorkbenchWindow();
 		if (window != null) {
 			window.getSelectionService().removeSelectionListener(this);
@@ -762,6 +770,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		for (int i = 0; i < launches.length; i++) {
 			launchRegistered(launches[i]);
 		}
+		
+		// startup the perspective manager
+		PerspectiveManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		// Create & register the adapter factory that will dispense objects that 
@@ -1108,7 +1119,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 		} else {		
 			// old launcher processing
 			updateHistories(launch);
-			switchToDebugPerspectiveIfPreferred(launch);
+			//switchToDebugPerspectiveIfPreferred(launch);
 		}
 		
 		getDisplay().syncExec(new Runnable () {

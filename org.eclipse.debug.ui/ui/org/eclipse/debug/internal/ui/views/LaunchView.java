@@ -58,7 +58,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -67,7 +71,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPartListener {
+public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPartListener, IPerspectiveListener, IPageListener {
 
 	/**
 	 * Event handler for this view
@@ -122,7 +126,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		action.setEnabled(false);
 		setAction("Disconnect", action);
 
-		action = new RemoveTerminatedAction();
+		action = new RemoveTerminatedAction(this);
 		action.setEnabled(false);
 		setAction("RemoveAll", action);
 
@@ -184,6 +188,16 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	}
 	
 	/**
+	 * @see IViewPart#init(IViewSite)
+	 */
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		site.getPage().addPartListener(this);
+		site.getWorkbenchWindow().addPageListener(this);
+		site.getWorkbenchWindow().addPerspectiveListener(this);
+	}
+	
+	/**
 	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
@@ -208,6 +222,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			getViewer().removeSelectionChangedListener(this);
 		}
 		getSite().getPage().removePartListener(this);
+		getSite().getWorkbenchWindow().removePerspectiveListener(this);
+		getSite().getWorkbenchWindow().removePageListener(this);
 		getEventHandler().dispose();
 		super.dispose();
 	}
@@ -269,7 +285,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	/**
 	 * @see IPartListener#partOpened(IWorkbenchPart)
 	 */
-	public void partOpened(IWorkbenchPart part) {
+	public void partOpened(IWorkbenchPart part) {			
 	}
 
 	/**
@@ -285,14 +301,59 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	}
 
 	/**
+	 * When the perspective is changed back to a page containing
+	 * a debug view, we must update the actions and source.
+	 * 
 	 * @see IPartListener#partActivated(IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		if (part == this) {
+			updateActions();
 			showMarkerForCurrentSelection();
 		}		
 	}	
-	
+		
+	/**
+	 * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
+	 */
+	public void perspectiveActivated(
+		IWorkbenchPage page,
+		IPerspectiveDescriptor perspective) {
+			if (page.equals(getSite().getPage())) {
+				updateActions();
+			}
+	}
+
+	/**
+	 * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
+	 */
+	public void perspectiveChanged(
+		IWorkbenchPage page,
+		IPerspectiveDescriptor perspective,
+		String changeId) {
+	}
+
+	/**
+	 * @see IPageListener#pageActivated(IWorkbenchPage)
+	 */
+	public void pageActivated(IWorkbenchPage page) {
+		if (page.equals(getSite().getPage())) {
+			updateActions();
+		}
+	}
+
+	/**
+	 * @see IPageListener#pageClosed(IWorkbenchPage)
+	 */
+	public void pageClosed(IWorkbenchPage page) {
+	}
+
+	/**
+	 * @see IPageListener#pageOpened(IWorkbenchPage)
+	 */
+	public void pageOpened(IWorkbenchPage page) {
+	}
+		
 	/**
 	 * Returns the configured instruction pointer.
 	 * Selection is based on the line number OR char start and char end.
@@ -597,5 +658,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	protected void syncExec(Runnable r) {
 		super.syncExec(r);
-	}		
+	}
+
 }
