@@ -11,7 +11,7 @@ import java.util.EventObject;
  * A debug event describes an event in a program being debugged.
  * Debug model implementations are required to generate debug events as
  * specified by this class. Debug events also describe the creation and
- * termiation of system processes.
+ * termination of system processes.
  * <p>
  * The following list defines the events that are required to 
  * be generated for each element type, and when the event should be created.
@@ -52,13 +52,13 @@ import java.util.EventObject;
  *		the reason for the suspension, or -1 if unknown:<ul>
  *		<li>STEP_END - a request to step has completed</li>
  *		<li>BREAKPOINT - a breakpoint has been hit</li>
- *		<li>CLIENT_REQUEST - a user request has caused the thread to suspend</li>
+ *		<li>CLIENT_REQUEST - a client request has caused the thread to suspend</li>
  *		</ul>
  *	</li>
  *	<li><code>RESUME</code> - a thread has resumed. Event detail provides
  *		the reason for the resume, or -1 if unknown:<ul>
  *		<li>STEP_START - a thread is being resumed because of a request to step</li>
- *		<li>CLIENT_REQUEST - a thread is being resumed</li>
+ *		<li>CLIENT_REQUEST - a client request has caused the thread to be resumed</li>
  *		</ul>
  *	</li>
  *    </ul>
@@ -167,7 +167,7 @@ public final class DebugEvent extends EventObject {
 	 *
 	 * @param eventSource the object that generated the event
 	 * @param kind the kind of debug envent (one of the
-	 *	kine constants defined by this class)
+	 *	kind constants defined by this class)
 	 * @param detail extra information about the event (one of the
 	 *	detail constants defined by this class), or -1 if
 	 *    unspecified

@@ -72,20 +72,20 @@ public interface IBreakpoint extends IAdaptable {
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
 	 */
-	public final static String ENABLED= "enabled";
+	public static final String ENABLED= "enabled";
 	
 	/**
 	 * Breakpoint marker attribute (value <code>"id"</code>).
 	 * The attribute is a <code>String</code> corresponding to the
 	 * id of a breakpoint type
 	 */
-	public final static String ID= "id";
+	public static final String ID= "id";
 	
 	/**
 	 * Attribute name for the <code>"markerType"</code> attribute of
 	 * a breakpoint extension.
 	 */
-	public final static String MARKER_TYPE= "markerType";	
+	public static final String MARKER_TYPE= "markerType";	
 
 	/**
 	 * Deletes this breakpoint's underlying marker, and removes

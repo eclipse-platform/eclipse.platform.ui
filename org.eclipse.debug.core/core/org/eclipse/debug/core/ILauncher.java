@@ -29,15 +29,16 @@ import org.eclipse.debug.core.model.ILauncherDelegate;
  */
 public interface ILauncher {
 	/**
-	 * Returns the result of invoking this underlying launcher extension's launch
-	 * method. This causes the extension to be instantiated (if not already). 
+	 * Returns the result of invoking this launcher's underlying
+	 * delegate's launch method. This causes the delegate to be instantiated
+	 * (if not already instantiated). 
 	 *
 	 * @param elements the elements providing context for the launch
 	 * @param mode the mode in which to launch - run or debug
 	 * @return whether the launch was successful
 	 * @see ILauncherDelegate
 	 */
-	boolean launch(Object[] elements, String mode);
+	public boolean launch(Object[] elements, String mode);
 	
 	/**
 	 * Returns the modes that the underlying launcher extension
@@ -48,7 +49,7 @@ public interface ILauncher {
 	 *	<code>ILaunchManager.RUN_MODE</code>, <code>ILaunchManager.DEBUG_MODE</code>
 	 * @see ILaunchManager
 	 */
-	Set getModes();
+	public Set getModes();
 	
 	/**
 	 * Returns the identifier of the perspective associated with the 
@@ -59,7 +60,7 @@ public interface ILauncher {
 	 * @return a perspective identifier, as defined by the
 	 *    <code>"org.eclipse.ui.perspective"</code> extension point
 	 */
-	String getPerspectiveIdentifier();
+	public String getPerspectiveIdentifier();
 	
 	/**
 	 * Returns the label defined by the underlying launcher extension.
@@ -67,7 +68,7 @@ public interface ILauncher {
 	 *
 	 * @return a human readable label
 	 */
-	String getLabel();
+	public String getLabel();
 	
 	/**
 	 * Returns the configuration element associated with the underlying
@@ -75,7 +76,7 @@ public interface ILauncher {
 	 *
 	 * @return the extension's configuration element
 	 */
-	IConfigurationElement getConfigurationElement();
+	public IConfigurationElement getConfigurationElement();
 	
 	/**
 	 * Returns the unique identifier of the underlying launcher extension.
@@ -83,16 +84,16 @@ public interface ILauncher {
 	 *
 	 * @return the extension's identifier attribute
 	 */
-	String getIdentifier();
+	public String getIdentifier();
 	
 	/**
 	 * Returns the underlying launcher delegate associated with this
 	 * launcher. This causes the launcher delegate to be instantiated (if
-	 * not already).
+	 * not already instantiated).
 	 *
 	 * @return the underlying launcher delegate
 	 */
-	ILauncherDelegate getDelegate();
+	public ILauncherDelegate getDelegate();
 	
 	/**
 	 * Returns the icon path defined by the underlying launcher extension.
@@ -102,5 +103,5 @@ public interface ILauncher {
 	 *
 	 * @return a relative path to an icon or <code>null</code>
 	 */
-	String getIconPath();	
+	public String getIconPath();	
 }

@@ -47,37 +47,37 @@ public interface ILaunchManager extends IAdaptable {
 	 *
 	 * @param listener the listener to register
 	 */
-	void addLaunchListener(ILaunchListener listener);
+	public void addLaunchListener(ILaunchListener listener);
 	/**
 	 * Deregisters the specified launch and notifies listeners. Has no effect
 	 * if an identical launch is not already registered.
 	 *
 	 * @param launch the launch to deregister
 	 */
-	void deregisterLaunch(ILaunch launch);
+	public void deregisterLaunch(ILaunch launch);
 	/**
 	 * Returns the launch the given process is contained in, or <code>null</code>
-	 * no registered launches contains the process.
+	 * if no registered launches contains the process.
 	 *
 	 * @param process the process for which to find a launch
 	 * @return the launch containing the process, or <code>null</code> if none
 	 */
-	ILaunch findLaunch(IProcess process);
+	public ILaunch findLaunch(IProcess process);
 	/**
 	 * Returns the launch the given debug target is contained
-	 * in, or <code>null</code> no registered launches contain the debug target.
+	 * in, or <code>null</code> if no registered launches contain the debug target.
 	 *
 	 * @param target the debug target for which to find a launch
 	 * @return the launch containing the debug target, or <code>null</code> if none	 
 	 */
-	ILaunch findLaunch(IDebugTarget target);
+	public ILaunch findLaunch(IDebugTarget target);
 	/**
 	 * Returns the collection of debug targets currently registered with this
 	 * launch manager.
 	 *
 	 * @return an array of debug targets
 	 */
-	IDebugTarget[] getDebugTargets();
+	public IDebugTarget[] getDebugTargets();
 	/**
 	 * Returns the default launcher for the given project,
 	 * or <code>null</code> if no default launcher has been set.
@@ -85,11 +85,12 @@ public interface ILaunchManager extends IAdaptable {
 	 * with a project.
 	 *
 	 * @param project the project for which to retrieve a default launcher
-	 * @return the defualt launcher, or <code>null</code> if none 
+	 * @return the default launcher, or <code>null</code> if none has
+	 *   been set for the project
 	 * @exception CoreException if an error occurs accessing the
 	 *   persistent property
 	 */
-	ILauncher getDefaultLauncher(IProject project) throws CoreException;
+	public ILauncher getDefaultLauncher(IProject project) throws CoreException;
 	
 	/**
 	 * Returns the collection of registered launchers that can operate in the
@@ -97,42 +98,42 @@ public interface ILaunchManager extends IAdaptable {
 	 *
 	 * @return an array of launchers
 	 */
-	ILauncher[] getLaunchers(String mode);
+	public ILauncher[] getLaunchers(String mode);
 	
 	/**
 	 * Returns the collection of registered launchers.
 	 *
 	 * @return an array of launchers
 	 */
-	ILauncher[] getLaunchers();
+	public ILauncher[] getLaunchers();
 	/**
 	 * Returns the collection of launches currently registered
 	 * with this launch manager.
 	 * 
 	 * @return an array of launches
 	 */
-	ILaunch[] getLaunches();
+	public ILaunch[] getLaunches();
 	/**
 	 * Returns the collection of processes currently registered with this
 	 * launch manager.
 	 *
 	 * @return an array of processes
 	 */
-	IProcess[] getProcesses();
+	public IProcess[] getProcesses();
 	/**
 	 * Registers the specified launch with this launch manager.
 	 * Has no effect if an identical launch is already registered.
 	 * 
 	 * @param launch the launch to register
 	 */
-	void registerLaunch(ILaunch launch);
+	public void registerLaunch(ILaunch launch);
 	/**
 	 * Removes the given listener from the collection of registered launch listeners.
 	 * Has no effect if an identical listener is not already registerd.
 	 *
 	 * @param listener the listener to deregister
 	 */
-	void removeLaunchListener(ILaunchListener listener);
+	public void removeLaunchListener(ILaunchListener listener);
 	/**
 	 * Sets the default launcher for the given project as a persistent property.
 	 *
@@ -140,7 +141,7 @@ public interface ILaunchManager extends IAdaptable {
 	 * @param launcher the launcher preference
 	 * @exception CoreException if an error occurs setting the persistent property
 	 */
-	void setDefaultLauncher(IProject project, ILauncher launcher) throws CoreException;
+	public void setDefaultLauncher(IProject project, ILauncher launcher) throws CoreException;
 }
 
 

@@ -8,7 +8,7 @@ package org.eclipse.debug.core;
 import org.eclipse.debug.core.model.IStreamMonitor;
 
 /**
- * An stream listener is notified of changes
+ * A stream listener is notified of changes
  * to a stream monitor.
  * <p>
  * Clients may implement this interface.
@@ -27,7 +27,7 @@ public interface IStreamListener {
 	 * the given stream monitor.
 	 *
 	 * @param text the appended text
-	 * @paran monitor the stream monitor to which text was appended
+	 * @param monitor the stream monitor to which text was appended
 	 */
 	public void streamAppended(String text, IStreamMonitor monitor);
 }

@@ -31,33 +31,33 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 *
 	 * @return an array (element type:<code>IDebugTarget</code> or <code>IProcess</code>)
 	 */
-	Object[] getChildren();
+	public Object[] getChildren();
 	/**
 	 * Returns the debug target associated with this launch, or <code>null</code>
 	 * if no debug target is associated with this launch.
 	 *
 	 * @return the debug target associated with this launch, or <code>null</code>
 	 */
-	IDebugTarget getDebugTarget();
+	public IDebugTarget getDebugTarget();
 	/**
 	 * Returns the object that was launched. Cannot return <code>null</code>.
 	 * 
 	 * @return the launched object
 	 */
-	Object getElement();
+	public Object getElement();
 	/**
 	 * Returns the launcher that was used to launch. Cannot return <code>null</code>.
 	 *
 	 * @return the launcher
 	 */
-	ILauncher getLauncher();
+	public ILauncher getLauncher();
 	/**
 	 * Returns the processes that were launched,
 	 * or an empty collection if no processes were launched.
 	 *
 	 * @return array of processes
 	 */
-	IProcess[] getProcesses();
+	public IProcess[] getProcesses();
 	/**
 	 * Returns the source locator to use for locating source elements for
 	 * the debug target associated with this launch, or <code>null</code>
@@ -65,7 +65,7 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 *
 	 * @return the source locator
 	 */
-	ISourceLocator getSourceLocator();
+	public ISourceLocator getSourceLocator();
 	/**
 	 * Returns the mode of this launch - one of the mode constants defined by
 	 * the launch manager.

@@ -25,11 +25,11 @@ public interface ILaunchListener {
 	 *
 	 * @param launch the deregistered launch
 	 */
-	void launchDeregistered(ILaunch launch);
+	public void launchDeregistered(ILaunch launch);
 	/**
 	 * Notifies this listener that the specified launch has been registered.
 	 * 
 	 * @param launch the registered launch
 	 */
-	void launchRegistered(ILaunch launch);
+	public void launchRegistered(ILaunch launch);
 }

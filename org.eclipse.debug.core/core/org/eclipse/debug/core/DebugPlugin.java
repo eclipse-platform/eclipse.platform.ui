@@ -158,9 +158,10 @@ public class DebugPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns a collection of launcher extensions. Launchers represent
-	 * and provide access to launcher extensions, delaying instantiation of
-	 * the underlying launcher delegates until required.
+	 * Returns a collection of launchers. Launchers represent
+	 * and provide access to launcher extensions, delaying
+	 * instantiation of the underlying launcher delegates until
+	 * required.
 	 *
 	 * @return an array of launchers
 	 * @see org.eclipse.debug.core.model.ILauncherDelegate

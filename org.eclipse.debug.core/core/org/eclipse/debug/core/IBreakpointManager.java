@@ -46,7 +46,7 @@ public interface IBreakpointManager {
 	 *	attribute.</li>
 	 * </ul>
 	 */
-	void addBreakpoint(IBreakpoint breakpoint) throws DebugException;
+	public void addBreakpoint(IBreakpoint breakpoint) throws DebugException;
 	
 	/**
 	 * Returns the breakpoint associated with the given marker or
@@ -56,7 +56,7 @@ public interface IBreakpointManager {
 	 * @return the breakpoint associated with the marker
 	 * 	or <code>null</code> if none exists
 	 */
-	IBreakpoint getBreakpoint(IMarker marker);	
+	public IBreakpoint getBreakpoint(IMarker marker);	
 	
 	/**
 	 * Returns a collection of all existing breakpoints.
@@ -64,7 +64,7 @@ public interface IBreakpointManager {
 	 *
 	 * @return an array of breakpoints
 	 */
-	IBreakpoint[] getBreakpoints();
+	public IBreakpoint[] getBreakpoints();
 	
 	/**
 	 * Returns a collection of all breakpoints registered for the
@@ -74,7 +74,7 @@ public interface IBreakpointManager {
 	 * @param modelIdentifier identifier of a debug model plug-in
 	 * @return an array of breakpoints
 	 */
-	IBreakpoint[] getBreakpoints(String modelIdentifier);
+	public IBreakpoint[] getBreakpoints(String modelIdentifier);
 		
 	/**
 	 * Returns whether the given breakpoint is currently
@@ -82,21 +82,22 @@ public interface IBreakpointManager {
 	 *
 	 * @return whether the breakpoint is registered
 	 */
-	boolean isRegistered(IBreakpoint breakpoint);	
+	public boolean isRegistered(IBreakpoint breakpoint);	
 
 	/**
-	 * Removes the given breakpoint from the breakpoint manager, invokes
-	 * <code>delete()</code> on the breakpoint if the <code>delete</code> flag
+	 * Removes the given breakpoint from the breakpoint manager, deletes
+	 * the marker assocaited with the breakpoint if the <code>delete</code> flag
 	 * is <code>true</code>, and notifies all registered
 	 * listeners. Has no effect if the given breakpoint is not currently
 	 * registered.
 	 *
 	 * @param breakpoint the breakpoint to remove
-	 * @param delete whether to delete the given breakpoint
+	 * @param delete whether to delete the marker associated with the
+	 *  breakpoint
 	 * @exception CoreException if an exception occurs while deleting the
 	 * 	underlying marker.
 	 */
-	void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException;
+	public void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException;
 
 	/**
 	 * Adds the given listener to the collection of registered breakpoint listeners.
@@ -104,7 +105,7 @@ public interface IBreakpointManager {
 	 *
 	 * @param listener the listener to add
 	 */
-	void addBreakpointListener(IBreakpointListener listener);
+	public void addBreakpointListener(IBreakpointListener listener);
 
 	/**
 	 * Removes the given listener from the collection of registered breakpoint listeners.
@@ -112,7 +113,7 @@ public interface IBreakpointManager {
 	 *
 	 * @param listener the listener to remove	
 	 */
-	void removeBreakpointListener(IBreakpointListener listener);
+	public void removeBreakpointListener(IBreakpointListener listener);
 	
 }
 
