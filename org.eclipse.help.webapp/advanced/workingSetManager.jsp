@@ -187,7 +187,7 @@ function newWorkingSet() {
 	%>
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
-		
+	window.location="javascript://needModal";
 	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+encodeURIComponent(getWorkingSet()), "workingSetDialog", "resizeable=no,height="+h+",width="+w +",left="+l+",top="+t);
 	workingSetDialog.focus(); 
 }
@@ -210,6 +210,7 @@ function editWorkingSet() {
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 		
+	window.location="javascript://needModal";
 	workingSetDialog = window.open("workingSet.jsp?operation=edit&workingSet="+encodeURIComponent(getWorkingSet()), "workingSetDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	workingSetDialog.focus(); 
 }

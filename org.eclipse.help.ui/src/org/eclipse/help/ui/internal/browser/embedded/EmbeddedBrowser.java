@@ -34,6 +34,7 @@ public class EmbeddedBrowser {
 	private Shell shell;
 	private Browser browser;
 	private int x, y, w, h;
+	private long modalRequestTime = 0;
 	/**
 	 * Constructor for main help window intance
 	 */
@@ -92,6 +93,18 @@ public class EmbeddedBrowser {
 		//
 		shell.open();
 		browser.setUrl("about:blank");
+		
+		browser.addLocationListener(new LocationListener() {
+			public void changing(LocationEvent e) {
+				// hack to know when help webapp needs modal window
+				modalRequestTime=0;
+				if(e.location!=null && e.location.startsWith("javascript://needModal")){
+					modalRequestTime=System.currentTimeMillis();
+				}
+			}
+			public void changed(LocationEvent e) {
+			}
+		});
 	}
 	/**
 	 * Constructor for derived help window It is either secondary browser or a
@@ -101,12 +114,28 @@ public class EmbeddedBrowser {
 	 * @param parent
 	 *            Shell or null
 	 */
-	public EmbeddedBrowser(WindowEvent event) {
-		Shell shell = new Shell();
+	public EmbeddedBrowser(WindowEvent event, Shell parent) {
+		if(parent==null)
+			shell = new Shell();
+		else
+			shell = new Shell(parent, SWT.PRIMARY_MODAL | SWT.DIALOG_TRIM);
 		initializeShell(shell);
 		Browser browser = new Browser(shell, SWT.NONE);
+
 		initialize(shell.getDisplay(), browser);
 		event.browser = browser;
+
+		browser.addLocationListener(new LocationListener() {
+			public void changing(LocationEvent e) {
+				// hack to know when help webapp needs modal window
+				modalRequestTime=0;
+				if(e.location!=null && e.location.startsWith("javascript://needModal")){
+					modalRequestTime=System.currentTimeMillis();
+				}
+			}
+			public void changed(LocationEvent e) {
+			}
+		});
 	}
 	private static void initializeShell(Shell s) {
 		s.setText(initialTitle);
@@ -118,7 +147,11 @@ public class EmbeddedBrowser {
 	private void initialize(final Display display, Browser browser) {
 		browser.addOpenWindowListener(new OpenWindowListener() {
 			public void open(WindowEvent event) {
-				new EmbeddedBrowser(event);
+				if(System.currentTimeMillis()-modalRequestTime <= 1000){
+					new EmbeddedBrowser(event, shell);
+				}else{
+					new EmbeddedBrowser(event, null);
+				}
 			}
 		});
 		browser.addVisibilityWindowListener(new VisibilityWindowListener() {

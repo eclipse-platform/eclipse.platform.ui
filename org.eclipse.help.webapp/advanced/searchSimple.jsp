@@ -130,6 +130,7 @@ function saveSelectedBooks(books)
 
 function openAdvanced()
 {
+	window.location="javascript://needModal";
 	advancedDialog = window.open("advanced.jsp?searchWord="+encodeURIComponent(document.getElementById("searchWord").value), "advancedDialog", "resizeable=no,height="+h+",width="+w );
 	advancedDialog.focus(); 
 }

@@ -165,6 +165,7 @@ if (data.isIE()){
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 	
+	window.location="javascript://needModal";
 	confirmShowAllDialog = window.open("confirmShowAll.jsp", "confirmShowAllDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	confirmShowAllDialog.focus(); 
 }
