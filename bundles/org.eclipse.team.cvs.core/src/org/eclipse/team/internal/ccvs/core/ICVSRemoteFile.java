@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.core;
  * All Rights Reserved.
  */
  
-import java.io.InputStream;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 

@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 
 public interface ICVSListener {
 	public void repositoryAdded(ICVSRepositoryLocation root);

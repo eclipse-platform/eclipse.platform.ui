@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 	
 public class CVSStatus extends Status {

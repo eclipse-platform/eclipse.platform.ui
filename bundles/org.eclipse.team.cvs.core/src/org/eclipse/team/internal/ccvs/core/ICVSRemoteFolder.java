@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.core;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 
  /**
