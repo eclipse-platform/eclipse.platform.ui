@@ -408,6 +408,15 @@
                   name="emptyBreakpointGroup">
             </groupMarker>
          </menu>
+         <action
+               disabledIcon="icons/full/dlcl16/rem_all_co.gif"
+               label="%RemoveAllBreakpointsAction.label"
+               class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction"
+               icon="icons/full/elcl16/rem_all_co.gif"
+               definitionId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
+               style="push"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"/>
           <action
                definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
                label="%SkipAllBreakpointsAction.label"
@@ -1847,6 +1856,15 @@ M4 = Platform-specific fourth key
       		description="%command.openDebugPerspective.description"
       		categoryId="org.eclipse.ui.category.perspectives"
       		id="org.eclipse.debug.ui.DebugPerspective" />
+ <command
+       description="%ActionDefinition.removeAllBreakpoints.description"
+       categoryId="org.eclipse.debug.ui.category.run"
+       name="%ActionDefinition.removeAllBreakpoints.name"
+       id="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"/>
+ <keyBinding
+       contextId="org.eclipse.ui.globalScope"
+       commandId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
+       keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
