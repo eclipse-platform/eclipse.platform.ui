@@ -472,7 +472,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
 		store.setDefault(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE, IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE); // Current Window
 		store.setDefault(IPreferenceConstants.EDITORLIST_SORT_CRITERIA, IPreferenceConstants.EDITORLIST_NAME_SORT); // Name Sort
-		store.setDefault(IPreferenceConstants.COLOR_ICONS, false);
+		store.setDefault(IPreferenceConstants.COLOR_ICONS, true);
 		store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
 		store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
