@@ -13,9 +13,7 @@ import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
@@ -140,6 +138,28 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			if (PEDANTIC)
 				assertTrue("1.3: duration: " + duration + " sleep: " + sleepTimes[i], duration < sleepTimes[i] + 1000);
 		}
+	}
+	public void testBug48073() {
+		ISchedulingRule ruleA = new PathRule("/A");
+		ISchedulingRule ruleB = new PathRule("/A/B");
+		ISchedulingRule ruleC = new PathRule("/A/C");
+		TestJob jobA = new TestJob("Job1", 1000, 1000);
+		TestJob jobB = new TestJob("Job2", 1000, 1000);
+		TestJob jobC = new TestJob("Job3", 1000, 1000);
+		jobA.setRule(ruleA);
+		jobB.setRule(ruleB);
+		jobC.setRule(ruleC);
+		
+		//B should be running, A blocked by B and C blocked by A
+		jobB.schedule();
+		sleep(100);
+		jobA.schedule();
+		sleep(100);
+		jobC.schedule();
+		
+		//cancel and restart A
+		jobA.cancel();
+		jobA.schedule();
 	}
 	public void testMutexRule() {
 		final int JOB_COUNT = 10;
