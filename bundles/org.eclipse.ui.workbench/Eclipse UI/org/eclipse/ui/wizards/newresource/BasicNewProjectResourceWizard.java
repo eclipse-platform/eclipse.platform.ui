@@ -11,6 +11,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -353,10 +354,8 @@ public static void updatePerspective(IConfigurationElement configElement) {
 		return;
 		
 	// Retrieve the new project open perspective preference setting
-	AbstractUIPlugin plugin = 
-		(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 	String perspSetting =
-		plugin.getPreferenceStore().getString(
+		WorkbenchPlugin.getDefault().getPreferenceStore().getString(
 			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 
 	// Return if do not switch perspective setting
