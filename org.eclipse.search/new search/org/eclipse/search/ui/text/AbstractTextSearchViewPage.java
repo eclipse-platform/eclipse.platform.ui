@@ -660,7 +660,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			if (viewState instanceof ISelection)
 				fViewer.setSelection((ISelection) viewState, true);
 			else
-				gotoNextMatch();
+				navigateNext(true);
 		}
 		updateBusyLabel();
 		turnOffDecoration();
