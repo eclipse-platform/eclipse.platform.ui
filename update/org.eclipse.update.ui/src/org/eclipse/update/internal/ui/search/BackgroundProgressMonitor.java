@@ -55,6 +55,12 @@ public class BackgroundProgressMonitor implements IProgressMonitor, Serializable
 		}
 	}
 	
+	public IProgressMonitor [] getProgressMonitors() {
+		synchronized (monitors) {
+			return (IProgressMonitor [])monitors.toArray(new IProgressMonitor[monitors.size()]);
+		}
+	}
+	
 	public void removeProgressMonitor(IProgressMonitor monitor) {
 		if (monitors.contains(monitor))
 		   monitors.remove(monitor);

@@ -15,6 +15,7 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.search.SearchObject;
 
 /**
  * @author dejan
@@ -86,6 +87,10 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 				: model.getBookmarks();
 
 		boolean mustRename = false;
+		
+		if (object instanceof SearchObject) {
+			((SearchObject)object).reconnect();
+		}
 
 		for (int i = 0; i < siblings.length; i++) {
 			NamedModelObject sibling = (NamedModelObject) siblings[i];
@@ -138,6 +143,7 @@ public class UpdatesDropAdapter extends ViewerDropAdapter {
 
 	private boolean validateTarget() {
 		Object target = getCurrentTarget();
+		if (target instanceof DiscoveryFolder) return false;
 		if (target == null || target instanceof NamedModelObject)
 			return true;
 		else

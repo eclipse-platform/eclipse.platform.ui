@@ -206,6 +206,7 @@ public class DetailsForm extends PropertyWebForm {
 	private boolean newerVersion;
 	private boolean addBlock;
 	private boolean inputBlock;
+	private static boolean inProgress;
 
 	class ModelListener implements IUpdateModelChangedListener {
 		/**
@@ -1230,11 +1231,20 @@ public class DetailsForm extends PropertyWebForm {
 			monitor.worked(1);
 		}
 	}
+	
+	public static boolean isInProgress() {
+		return inProgress;
+	}
 
-	public static void executeJob(
+	public static boolean executeJob(
 		Shell shell,
 		final PendingChange job,
 		final boolean needLicensePage) {
+		if (inProgress) {
+			return true;
+		}
+		inProgress = true;
+		
 		IStatus validationStatus =
 			ActivityConstraints.validatePendingChange(job);
 		if (validationStatus != null) {
@@ -1243,15 +1253,15 @@ public class DetailsForm extends PropertyWebForm {
 				null,
 				null,
 				validationStatus);
-			return;
+			return false;
 		}
 		if (!checkEnabledDuplicates(job))
-			return;
+			return false;
 
 		if (job.getJobType() == PendingChange.UNCONFIGURE
 			&& job.getFeature().isPatch()) {
 			unconfigurePatch(shell, job.getFeature());
-			return;
+			return false;
 		}
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
@@ -1263,10 +1273,12 @@ public class DetailsForm extends PropertyWebForm {
 				dialog.create();
 				dialog.getShell().setSize(600, 500);
 				dialog.open();
+				inProgress = false;
 				if (wizard.isSuccessfulInstall())
 					UpdateUI.informRestartNeeded();
 			}
 		});
+		return false;
 	}
 
 	private static void unconfigurePatch(Shell shell, IFeature feature) {

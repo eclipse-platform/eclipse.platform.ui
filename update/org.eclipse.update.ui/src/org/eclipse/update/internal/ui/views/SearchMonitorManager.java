@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Hashtable;
 
@@ -17,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.search.SearchObject;
 
 /**
@@ -30,19 +32,28 @@ import org.eclipse.update.internal.ui.search.SearchObject;
 public class SearchMonitorManager {
 	Hashtable monitors;
 
-	class SearchMonitor implements IProgressMonitor {
-		private SearchObject sobj;
+	static class SearchMonitor implements IProgressMonitor, ISearchObjectAdapter, Serializable {
+		transient private SearchObject sobj;
 		private int totalWork;
 		private double worked;
 		private boolean active;
 
 		public SearchMonitor(SearchObject sobj) {
+			setSearchObject(sobj);
+			if (sobj!=null) sobj.attachProgressMonitor(this);
+		}
+		
+		public void setSearchObject(SearchObject sobj) {
 			this.sobj = sobj;
-			sobj.attachProgressMonitor(this);
+		}
+		
+		public SearchObject getSearchObject() {
+			return sobj;
 		}
 
 		public void dispose() {
-			sobj.detachProgressMonitor(this);
+			if (sobj!=null) sobj.detachProgressMonitor(this);
+			sobj = null;
 		}
 		/**
 		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)

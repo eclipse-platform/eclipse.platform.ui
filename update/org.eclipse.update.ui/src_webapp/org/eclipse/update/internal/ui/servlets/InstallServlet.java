@@ -88,6 +88,10 @@ public class InstallServlet extends HttpServlet {
 			createPageError(writer, UpdateUI.getString("InstallServlet.noFeatures")); //$NON-NLS-1$
 			return;
 		}
+		if (DetailsForm.isInProgress()) {
+			ServletsUtil.createError(writer, UpdateUI.getString("InstallServlet.inProgress"), null);
+			return;
+		}
 		try {
 			URL url = new URL(serverURL);
 			VersionedIdentifier[] vids =
@@ -195,10 +199,12 @@ public class InstallServlet extends HttpServlet {
 		}
 		final PendingChange job;
 
+
 		if (latestOldFeature != null)
 			job = new PendingChange(latestOldFeature, feature);
 		else
 			job = new PendingChange(feature, PendingChange.INSTALL);
+
 		shell.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				DetailsForm.executeJob(shell, job, needLicensePage);

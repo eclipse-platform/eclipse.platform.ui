@@ -169,6 +169,16 @@ public class SearchObject extends NamedModelObject {
 		return result.size() > 0;
 	}
 
+	public void reconnect() {
+		IProgressMonitor [] monitors = backgroundProgress.getProgressMonitors();
+		for (int i=0; i<monitors.length; i++) {
+			IProgressMonitor monitor = monitors[i];
+			if (monitor instanceof ISearchObjectAdapter) {
+				((ISearchObjectAdapter)monitor).setSearchObject(this);
+			}
+		}
+	}
+
 	public void attachProgressMonitor(IProgressMonitor monitor) {
 		backgroundProgress.addProgressMonitor(monitor);
 	}
