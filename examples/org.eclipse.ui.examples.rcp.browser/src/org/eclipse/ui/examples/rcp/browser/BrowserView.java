@@ -238,6 +238,7 @@ public class BrowserView extends ViewPart {
                 BrowserView.this.openWindow(event);
             }
         });
+        // TODO: should handle VisibilityWindowListener.show and .hide events
         browser.addCloseWindowListener(new CloseWindowListener() {
             public void close(WindowEvent event) {
                 BrowserView.this.close();
@@ -289,10 +290,19 @@ public class BrowserView extends ViewPart {
     }
     
     /**
-     * Closes this browser view.
+     * Closes this browser view.  Closes the window too if there
+     * are no non-secondary parts open.
      */
     private void close() {
-        getSite().getPage().hideView(this);
+        IWorkbenchPage page = getSite().getPage();
+        IWorkbenchWindow window = page.getWorkbenchWindow();
+        page.hideView(this);
+        if (BrowserPlugin.getNonSecondaryParts(page).size() == 0) {
+            page.closePerspective(page.getPerspective(), true, true);
+        }
+        if (window.getActivePage() == null) {
+            window.close();
+        }
     }
 
 }
