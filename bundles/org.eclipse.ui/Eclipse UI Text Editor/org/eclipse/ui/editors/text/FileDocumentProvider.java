@@ -420,13 +420,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFileEditorInput input= (IFileEditorInput) element;
 			
 			try {
-				String encoding = getEncoding(element);
-   				if ( encoding == null || encoding.length() == 0) 
-					encoding = ResourcesPlugin.getEncoding();
-   			
-   				InputStream stream= new ByteArrayInputStream(document.get().getBytes(encoding));
-
-				IFile file= input.getFile();
+			
+			InputStream stream= new ByteArrayInputStream(document.get().getBytes(ResourcesPlugin.getEncoding()));
+			IFile file= input.getFile();
 									
 				if (file.exists()) {
 					
