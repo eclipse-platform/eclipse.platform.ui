@@ -224,9 +224,8 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
 		 */
 		public void clearBlocked() {
-			setMessage(task);
 			locked = false;
-			imageLabel.setImage(getImage());
+			updateForClearBlocked();
 
 		}
 		
@@ -234,12 +233,33 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements IRunn
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 		 */
 		public void setBlocked(IStatus reason) {
-			setMessage(reason.getMessage());
 			locked = true;
-			imageLabel.setImage(getImage());
+			updateForSetBlocked(reason);
 
 		}
 	}
+	
+	
+	/**
+	 * Clear blocked state from the receiver.
+	 */
+	protected void updateForClearBlocked() {
+		setMessage(task);
+		imageLabel.setImage(getImage());
+
+	}
+	
+	/**
+	 * Set blocked state from the receiver. 
+	 *
+	 * @param reason IStatus that gives the details
+	 */
+	protected void updateForSetBlocked(IStatus reason) {
+		setMessage(reason.getMessage());
+		imageLabel.setImage(getImage());
+
+	}
+	
 /**
  * Creates a progress monitor dialog under the given shell.
  * The dialog has a standard title and no image. 

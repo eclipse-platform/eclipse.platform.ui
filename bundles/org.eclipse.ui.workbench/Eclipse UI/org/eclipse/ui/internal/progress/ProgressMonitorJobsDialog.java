@@ -8,6 +8,7 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.ui.internal.progress;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -201,5 +202,14 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			detailsButton.setCursor(null);
 		}
 		super.clearCursors();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#updateForSetBlocked(org.eclipse.core.runtime.IStatus)
+	 */
+	protected void updateForSetBlocked(IStatus reason) {
+		super.updateForSetBlocked(reason);
+		if (viewer == null) //Open the viewer if there is a block
+			handleDetailsButtonSelect();
 	}
 }
