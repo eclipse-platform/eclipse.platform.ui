@@ -35,7 +35,7 @@ public class DebugModePromptStatusHandler implements IStatusHandler {
 			ILaunchConfiguration config = (ILaunchConfiguration)source;
 			boolean privateConfig = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
 			if (privateConfig) {
-				return new Boolean(false);
+				return new Boolean(true);
 			}	
 		}
 		
