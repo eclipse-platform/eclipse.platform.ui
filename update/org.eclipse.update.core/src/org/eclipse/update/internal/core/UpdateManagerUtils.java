@@ -832,6 +832,12 @@ public static class Writer {
 						return offset;
 					}
 				}
+				if (expectedLength > 0 && offset == expectedLength) {
+					// everything read do not return offset, otherwise trying
+					// to read again from this offset will result in HTTP 416
+					break;
+				}
+				
 				len = is.read(buf);
 			}
 			if (nextIncrement > 0 && monitor != null)
