@@ -356,7 +356,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer(org.eclipse.swt.dnd.Transfer)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer
 	 */
 	public void addEditorAreaTransfer(Transfer tranfer) {
 		if (tranfer != null && !transferTypes.contains(tranfer)) {
@@ -374,9 +374,9 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#configureEditorAreaTransfer(org.eclipse.swt.dnd.DropTargetListener)
+	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
 	 */
-	public void configureEditorAreaTransfer(DropTargetListener dropTargetListener) {
+	public void configureEditorAreaDropListener(DropTargetListener dropTargetListener) {
 		if (dropTargetListener != null) {
 			this.dropTargetListener = dropTargetListener;
 			WorkbenchPage[] pages = (WorkbenchPage[]) window.getPages();

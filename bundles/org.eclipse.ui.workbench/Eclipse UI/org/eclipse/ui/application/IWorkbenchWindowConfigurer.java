@@ -304,7 +304,7 @@ public interface IWorkbenchWindowConfigurer {
 	 * Adds the given drag and drop <code>Transfer</code> type to the ones
 	 * supported for drag and drop on the editor area of this workbench window.
 	 * <p>
-	 * The workbench adviser ordinarily calls this method from the
+	 * The workbench adviser would ordinarily call this method from the
 	 * <code>preWindowOpen</code> callback.
 	 * A newly-created workbench window supports no drag and drop transfer
 	 * types. Adding <code>EditorInputTransfer.getInstance()</code>
@@ -313,13 +313,13 @@ public interface IWorkbenchWindowConfigurer {
 	 * <p>
 	 * Note that drag and drop to the editor area requires adding one or more
 	 * transfer types (using <code>addEditorAreaTransfer</code>) and 
-	 * configuring a drop target listener (with <code>configureEditorAreaTransfer</code>)
-	 * capable of handling all of those transfer types.
+	 * configuring a drop target listener
+	 * (with <code>configureEditorAreaDropListener</code>)
+	 * capable of handling any of those transfer types.
 	 * </p>
 	 * 
 	 * @param transfer a drag and drop transfer object
-	 * @see #configureEditorAreaTransfer(DropTarget)
-	 * @see org.eclipse.ui.IEditorInput
+	 * @see #configureEditorAreaDropListener
 	 * @see org.eclipse.ui.part.EditorInputTransfer
 	 */
 	public void addEditorAreaTransfer(Transfer tranfer);
@@ -335,17 +335,16 @@ public interface IWorkbenchWindowConfigurer {
 	 * <p>
 	 * Note that drag and drop to the editor area requires adding one or more
 	 * transfer types (using <code>addEditorAreaTransfer</code>) and 
-	 * configuring a drop target listener (with <code>configureEditorAreaTransfer</code>)
-	 * capable of handling all of those transfer types.
+	 * configuring a drop target listener
+	 * (with <code>configureEditorAreaDropListener</code>)
+	 * capable of handling any of those transfer types.
 	 * </p>
 	 * 
-	 * @param dropTarget the drop target listener that will handle requests to drop an
-	 * object on to the editor area of this window
+	 * @param dropTargetListener the drop target listener that will handle
+	 * requests to drop an object on to the editor area of this window
 	 * 
-	 * @see #addEditorAreaTransfer(Transfer)
-	 * @see org.eclipse.ui.IEditorInput
-	 * @see org.eclipse.ui.part.EditorInputTransfer
+	 * @see #addEditorAreaTransfer
 	 */
-	public void configureEditorAreaTransfer(DropTargetListener dropTargetListener);
+	public void configureEditorAreaDropListener(DropTargetListener dropTargetListener);
 }
 
