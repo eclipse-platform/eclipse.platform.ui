@@ -31,7 +31,7 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
     }
 
     protected void runTest() throws Throwable {
-        IWorkbenchWindow window = openTestWindow();
+    	IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE2);
         IWorkbenchPage page = window.getActivePage();
         
         // prime it
