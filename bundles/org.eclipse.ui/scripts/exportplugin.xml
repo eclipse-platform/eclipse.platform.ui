@@ -4,11 +4,12 @@
 		<tstamp/>
 		<property name="destdir" value="../../plugin-export" />
 		<property name="plugin"  value="org.eclipse.ui" />
-		<property name="dest"  value="${destdir}/${plugin}" />
+		<property name="version"  value="_2.0.0" />
+		<property name="dest"  value="${destdir}/${plugin}${version}" />
 	</target>
 
 	<target name="build" depends="init">
-    	<incremental project="${plugin}" kind="incr"/>
+    	<eclipse.incrementalBuild project="${plugin}" kind="incr"/>
 	</target>
 
 	<target name="export" depends="build">
