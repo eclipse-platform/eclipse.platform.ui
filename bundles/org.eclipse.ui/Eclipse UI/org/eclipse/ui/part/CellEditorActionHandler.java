@@ -143,7 +143,6 @@ public class CellEditorActionHandler {
 	
 	private class CutActionHandler extends Action {
 		protected CutActionHandler() {
-			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
 			setId("CellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
@@ -172,7 +171,6 @@ public class CellEditorActionHandler {
 	
 	private class CopyActionHandler extends Action {
 		protected CopyActionHandler() {
-			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
 			setId("CellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
@@ -201,7 +199,6 @@ public class CellEditorActionHandler {
 	
 	private class PasteActionHandler extends Action {
 		protected PasteActionHandler() {
-			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
 			setId("CellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
@@ -230,7 +227,6 @@ public class CellEditorActionHandler {
 	
 	private class DeleteActionHandler extends Action {
 		protected DeleteActionHandler() {
-			super(WorkbenchMessages.getString("Delete")); //$NON-NLS-1$
 			setId("CellEditorDeleteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
@@ -259,7 +255,6 @@ public class CellEditorActionHandler {
 	
 	private class SelectAllActionHandler extends Action {
 		protected SelectAllActionHandler() {
-			super(WorkbenchMessages.getString("TextAction.selectAll")); //$NON-NLS-1$
 			setId("CellEditorSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
@@ -288,7 +283,6 @@ public class CellEditorActionHandler {
 
 	private class FindActionHandler extends Action {
 		protected FindActionHandler() {
-			super(WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
 			setId("CellEditorFindActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
@@ -317,7 +311,6 @@ public class CellEditorActionHandler {
 
 	private class UndoActionHandler extends Action {
 		protected UndoActionHandler() {
-			super(WorkbenchMessages.getString("Workbench.undo")); //$NON-NLS-1$
 			setId("CellEditorUndoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
@@ -346,7 +339,6 @@ public class CellEditorActionHandler {
 	
 	private class RedoActionHandler extends Action {
 		protected RedoActionHandler() {
-			super(WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$
 			setId("CellEditorRedoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
