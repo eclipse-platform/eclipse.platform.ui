@@ -56,6 +56,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IProcess;
@@ -124,6 +125,11 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Collection of listeners
 	 */
 	private ListenerList fListeners= new ListenerList(5);
+	
+	/**
+	 * Collection of "plural" listeners.
+	 * @since 2.1	 */
+	private ListenerList fLaunchesListeners = new ListenerList(5);
 	
 	/**
 	 * Visitor used to process resource deltas,
@@ -248,13 +254,22 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#removeLaunch(ILaunch)
 	 */
 	public void removeLaunch(ILaunch launch) {
-		if (launch == null) {
-			return;
-		}
-		if (fLaunches.remove(launch)) {
+		if (internalRemoveLaunch(launch)) {
 			fireUpdate(launch, REMOVED);
+			fireUpdate(new ILaunch[] {launch}, REMOVED);
 		}
 	}	
+	
+	/**
+	 * Removes the given launch object from the collection of registered
+	 * launches. Returns whether the launch was removed.
+	 * 	 * @param launch the launch to remove	 * @return whether the launch was removed	 */
+	protected boolean internalRemoveLaunch(ILaunch launch) {
+		if (launch == null) {
+			return false;
+		}
+		return fLaunches.remove(launch);
+	}
 
 	/**
 	 * Fires notification to the listeners that a launch has been (de)registered.
@@ -278,6 +293,29 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}
 	}
+	
+	/**
+	 * Fires notification to the listeners that a launch has been (de)registered.
+	 */
+	public void fireUpdate(ILaunch[] launches, int update) {
+		Object[] copiedListeners= fLaunchesListeners.getListeners();
+		for (int i= 0; i < copiedListeners.length; i++) {
+			ILaunchesListener listener = (ILaunchesListener)copiedListeners[i];
+			switch (update) {
+				case ADDED:
+					listener.launchesAdded(launches);
+					break;
+				case REMOVED:
+					listener.launchesRemoved(launches);
+					break;
+				case CHANGED:
+					//if (isRegistered(launch)) {
+						listener.launchesChanged(launches);
+					//}
+					break;
+			}
+		}
+	}	
 	
 	/**
 	 * Returns whether the given launch is currently registered.
@@ -332,13 +370,23 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @see ILaunchManager#addLaunch(ILaunch)
 	 */
 	public void addLaunch(ILaunch launch) {
-		if (fLaunches.contains(launch)) {
-			return;
+		if (internalAddLaunch(launch)) {
+			fireUpdate(launch, ADDED);
+			fireUpdate(new ILaunch[] {launch}, ADDED);
 		}
-		
-		fLaunches.add(launch);
-		fireUpdate(launch, ADDED);
 	}	
+	
+	/**
+	 * Adds the given launch object to the list of registered launches,
+	 * and returns whether the launch was added.
+	 * 	 * @param launch launch to register	 * @return whether the launch was added	 */
+	protected boolean internalAddLaunch(ILaunch launch) {
+		if (fLaunches.contains(launch)) {
+			return false;
+		}
+		fLaunches.add(launch);
+		return true;
+	}
 	
 	/**
 	 * @see ILaunchManager#removeLaunchListener(ILaunchListener)
@@ -1108,4 +1156,56 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		return getWorkspace().getRoot();
 	}
 	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#addLaunches(org.eclipse.debug.core.ILaunch)
+	 */
+	public void addLaunches(ILaunch[] launches) {
+		List added = new ArrayList(launches.length);
+		for (int i = 0; i < launches.length; i++) {
+			if (internalAddLaunch(launches[i])) {
+				added.add(launches[i]);
+			}
+		}
+		if (!added.isEmpty()) {
+			ILaunch[] addedLaunches = (ILaunch[])added.toArray(new ILaunch[added.size()]);
+			fireUpdate(addedLaunches, ADDED);
+			for (int i = 0; i < addedLaunches.length; i++) {
+				fireUpdate(launches[i], ADDED);
+			}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#addLaunchListener(org.eclipse.debug.core.ILaunchesListener)
+	 */
+	public void addLaunchListener(ILaunchesListener listener) {
+		fLaunchesListeners.add(listener);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunches(org.eclipse.debug.core.ILaunch)
+	 */
+	public void removeLaunches(ILaunch[] launches) {
+		List removed = new ArrayList(launches.length);
+		for (int i = 0; i < launches.length; i++) {
+			if (internalRemoveLaunch(launches[i])) {
+				removed.add(launches[i]);
+			}
+		}
+		if (!removed.isEmpty()) {
+			ILaunch[] removedLaunches = (ILaunch[])removed.toArray(new ILaunch[removed.size()]);
+			fireUpdate(removedLaunches, REMOVED);
+			for (int i = 0; i < removedLaunches.length; i++) {
+				fireUpdate(removedLaunches[i], REMOVED);
+			}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunchListener(org.eclipse.debug.core.ILaunchesListener)
+	 */
+	public void removeLaunchListener(ILaunchesListener listener) {
+		fLaunchesListeners.remove(listener);
+	}
+
 }

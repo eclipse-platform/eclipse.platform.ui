@@ -14,8 +14,8 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 /**
  * Handles debug events, updating the launch view and viewer.
  */
-public class LaunchViewEventHandler extends AbstractDebugEventHandler implements ILaunchListener{
+public class LaunchViewEventHandler extends AbstractDebugEventHandler implements ILaunchesListener {
 		
 	/**
 	 * Stack frame counts keyed by thread.  Used to optimize thread refreshing.
@@ -267,75 +267,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 	
 	/**
-	 * @see ILaunchListener#launchRemoved(ILaunch)
-	 */
-	public void launchRemoved(final ILaunch launch) {
-		Runnable r= new Runnable() {
-			public void run() {
-				if (isAvailable()) {
-					remove(launch);
-					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-					IDebugTarget[] targets= lm.getDebugTargets();
-					if (targets.length > 0) {
-						IDebugTarget target= targets[targets.length - 1];
-						try {
-							IThread[] threads= target.getThreads();
-							for (int i=0; i < threads.length; i++) {
-								if (threads[i].isSuspended()) {
-									getLaunchView().autoExpand(threads[i], false, true);
-									return;
-								}
-							}						
-						} catch (DebugException de) {
-							DebugUIPlugin.log(de);
-						}
-						
-						getLaunchView().autoExpand(target.getLaunch(), false, true);
-					}
-				}
-			}
-		};
-
-		getView().asyncExec(r);
-	}
-	
-	/**
-	 * @see ILaunchListener#launchChanged(ILaunch)
-	 */
-	public void launchChanged(final ILaunch launch) {
-		Runnable r= new Runnable() {
-			public void run() {
-				if (isAvailable()) {		
-					refresh(launch);
-					if (launch.hasChildren()) {
-						getLaunchView().autoExpand(launch, false, true);
-					}
-				}
-			}
-		};
-
-		getView().syncExec(r);		
-	}
-
-	/**
-	 * @see ILaunchListener#launchAdded(ILaunch)
-	 */
-	public void launchAdded(final ILaunch launch) {
-		Runnable r= new Runnable() {
-			public void run() {
-				if (isAvailable()) {		
-					insert(launch);
-					if (launch.hasChildren()) {
-						getLaunchView().autoExpand(launch, false, true);
-					}					
-				}
-			}
-		};
-
-		getView().syncExec(r);
-	}
-	
-	/**
 	 * De-registers this event handler from the debug model.
 	 */
 	public void dispose() {
@@ -529,5 +460,91 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		}
 	}
 	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchesAdded(final ILaunch[] launches) {
+		Runnable r= new Runnable() {
+			public void run() {
+				if (isAvailable()) {
+					if (launches.length > 1) {
+						refresh();
+					} else {
+						insert(launches[0]);
+					}
+					for (int i = 0; i < launches.length; i++) {
+						if (launches[i].hasChildren()) {
+							getLaunchView().autoExpand(launches[i], false, i == (launches.length - 1));
+						}
+					}					
+
+				}
+			}
+		};
+
+		getView().syncExec(r);		
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchesChanged(final ILaunch[] launches) {
+		Runnable r= new Runnable() {
+			public void run() {
+				if (isAvailable()) {	
+					if (launches.length > 1) {
+						refresh();
+					} else {
+						refresh(launches[0]);
+					}
+					for (int i = 0; i < launches.length; i++) {
+						if (launches[i].hasChildren()) {
+							getLaunchView().autoExpand(launches[i], false, i == (launches.length - 1));
+						}						
+					}
+				}
+			}
+		};
+
+		getView().syncExec(r);				
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchesRemoved(final ILaunch[] launches) {
+		Runnable r= new Runnable() {
+			public void run() {
+				if (isAvailable()) {
+					if (launches.length > 1) {
+						refresh();
+					} else {
+						remove(launches[0]);
+					}
+					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
+					IDebugTarget[] targets= lm.getDebugTargets();
+					if (targets.length > 0) {
+						IDebugTarget target= targets[targets.length - 1];
+						try {
+							IThread[] threads= target.getThreads();
+							for (int i=0; i < threads.length; i++) {
+								if (threads[i].isSuspended()) {
+									getLaunchView().autoExpand(threads[i], false, true);
+									return;
+								}
+							}						
+						} catch (DebugException de) {
+							DebugUIPlugin.log(de);
+						}
+						
+						getLaunchView().autoExpand(target.getLaunch(), false, true);
+					}
+				}
+			}
+		};
+
+		getView().asyncExec(r);		
+	}
+
 }
 

@@ -39,6 +39,14 @@ public interface ILaunchManager {
 	 */
 	public void addLaunchListener(ILaunchListener listener);
 	/**
+	 * Adds the given listener to the collection of registered launch listeners.
+	 * Has no effect if an identical listener is already registerd.
+	 *
+	 * @param listener the listener to register
+	 * @since 2.1
+	 */
+	public void addLaunchListener(ILaunchesListener listener);	
+	/**
 	 * Removes the specified launch and notifies listeners.
 	 * Has no effect if an identical launch is not already
 	 * registered.
@@ -47,6 +55,15 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public void removeLaunch(ILaunch launch);	
+	/**
+	 * Removes the specified launch objects and notifies listeners.
+	 * Has no effect on identical launch objects that are not already
+	 * registered.
+	 *
+	 * @param launches the launch objects to remove
+	 * @since 2.1
+	 */
+	public void removeLaunches(ILaunch[] launches);		
 	/**
 	 * Returns the collection of debug targets currently registered with this
 	 * launch manager.
@@ -77,12 +94,28 @@ public interface ILaunchManager {
 	 */
 	public void addLaunch(ILaunch launch);	
 	/**
+	 * Adds the specified launch objects and notifies listeners. Has no
+	 * effect on identical launch objects already registered.
+	 * 
+	 * @param launches the launch objects to add
+	 * @since 2.1
+	 */
+	public void addLaunches(ILaunch[] launches);		
+	/**
 	 * Removes the given listener from the collection of registered launch listeners.
 	 * Has no effect if an identical listener is not already registerd.
 	 *
 	 * @param listener the listener to deregister
 	 */
 	public void removeLaunchListener(ILaunchListener listener);
+	/**
+	 * Removes the given listener from the collection of registered launch listeners.
+	 * Has no effect if an identical listener is not already registerd.
+	 *
+	 * @param listener the listener to deregister
+	 * @since 2.1
+	 */
+	public void removeLaunchListener(ILaunchesListener listener);	
 	/**
 	 * Returns all launch configurations defined in the workspace.
 	 * 

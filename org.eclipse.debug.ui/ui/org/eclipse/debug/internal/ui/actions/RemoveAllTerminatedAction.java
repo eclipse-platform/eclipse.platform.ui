@@ -5,6 +5,9 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -97,14 +100,18 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	protected void doAction() {
 		Object[] elements = getElements();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		List removed = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] instanceof ILaunch) {
 				ILaunch launch = (ILaunch)elements[i];
 				if (launch.isTerminated()) {
-					manager.removeLaunch(launch);
+					removed.add(launch);
 				}
 			}
 		}
+		if (!removed.isEmpty()) {
+			manager.removeLaunches((ILaunch[])removed.toArray(new ILaunch[removed.size()]));
+		}		
 	}
 
 	/**

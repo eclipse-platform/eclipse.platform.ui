@@ -376,6 +376,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	protected void fireChanged() {
 		if (!fSuppressChange) {
 			((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).fireUpdate(this, LaunchManager.CHANGED);
+			((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).fireUpdate(new ILaunch[] {this}, LaunchManager.CHANGED);
 		}
 	}
 
