@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.ShowBreakpointsByAction;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -68,24 +70,46 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 	 * Fill pull down menu with the "group by" options
 	 */
 	private void fillMenu(Menu menu) {
+		// Add actions for each contributed factory
 	    Iterator actionIter = getActions().iterator();
 	    while (actionIter.hasNext()) {
 			ActionContributionItem item= new ActionContributionItem((IAction) actionIter.next());
 			item.fill(menu, -1);
 	    }
+	    
+	    Separator separator = new Separator();
+	    separator.fill(menu, -1);
+        
+	    // Add hard-coded actions
+        IAction action = new GroupBreakpointsAction(null, fView);
+        action.setText(ActionMessages.getString("GroupBreakpointsByAction.0")); //$NON-NLS-1$
+		ActionContributionItem item= new ActionContributionItem(action);
+		item.fill(menu, -1);
+        
+        ShowBreakpointsByAction advancedAction = new ShowBreakpointsByAction();
+        advancedAction.setText(ActionMessages.getString("GroupBreakpointsByAction.1")); //$NON-NLS-1$
+        advancedAction.init(fView);
+		item= new ActionContributionItem(advancedAction);
+		item.fill(menu, -1);
 	}
     
     public List getActions() {
         List actions= new ArrayList();
         IBreakpointContainerFactory[] factories = BreakpointContainerFactoryManager.getDefault().getFactories();
         for (int i = 0; i < factories.length; i++) {
-            IAction action = new GroupBreakpointsAction(factories[i], fView);
+        	IBreakpointContainerFactory factory= factories[i];
+            IAction action = new GroupBreakpointsAction(factory, fView);
+            StringBuffer actionLabel= new StringBuffer();
+    		if (i >= 0 && i < 10) {
+    			//add the numerical accelerator
+    			actionLabel.append('&');
+    			actionLabel.append(i);
+    			actionLabel.append(' ');
+    		}
+			actionLabel.append(factory.getLabel());
+			action.setText(actionLabel.toString());
             actions.add(action);
-        }
-        ShowBreakpointsByAction advancedAction = new ShowBreakpointsByAction();
-        advancedAction.setText("Advanced...");
-        advancedAction.init(fView);
-        actions.add(advancedAction);
+        }        
         return actions;
     }
     

@@ -28,7 +28,6 @@ public class GroupBreakpointsAction extends Action {
     public GroupBreakpointsAction(IBreakpointContainerFactory factory, BreakpointsView view) {
         fFactory= factory;
         fView= view;
-        setText(fFactory.getLabel());
     }
 
     /* (non-Javadoc)
@@ -36,7 +35,9 @@ public class GroupBreakpointsAction extends Action {
      */
     public void run() {
         List list= new ArrayList();
-        list.add(fFactory);
+        if (fFactory != null) {
+            list.add(fFactory);
+        }
         fView.setBreakpointContainerFactories(list);
     }
 }
