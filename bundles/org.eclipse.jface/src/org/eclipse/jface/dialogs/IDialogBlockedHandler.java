@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
  * @see IProgressMonitor.clearBlocked()
  * @see IProgressMonitor.setBlocked();
  * @see WizardDialog
+ * @since 3.0
  */
 public interface IDialogBlockedHandler {
 	/**
