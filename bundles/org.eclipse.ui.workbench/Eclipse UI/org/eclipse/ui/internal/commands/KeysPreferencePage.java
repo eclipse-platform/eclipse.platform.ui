@@ -598,69 +598,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData();
 		gridData.heightHint = 10;
 		gridData.widthHint = 10;
-		spacer.setLayoutData(gridData);
-		groupKeySequence = new Group(composite, SWT.SHADOW_NONE);
-		gridLayout = new GridLayout();
-		gridLayout.numColumns = 3;
-		groupKeySequence.setLayout(gridLayout);	
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		groupKeySequence.setLayoutData(gridData);
-		groupKeySequence.setText(Util.translateString(resourceBundle, "groupKeySequence")); //$NON-NLS-1$	
-		labelKeySequence = new Label(groupKeySequence, SWT.LEFT);
-		gridData = new GridData();
-		labelKeySequence.setLayoutData(gridData);
-		labelKeySequence.setText(Util.translateString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
-		textKeySequence = new KeySequenceText(groupKeySequence);
-		gridData = new GridData();
-		gridData.horizontalSpan = 2;		
-		gridData.widthHint = 300;
-		textKeySequence.setLayoutData(gridData);
-        textKeySequence.setMaxStrokes(4);
-		
-		textKeySequence.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				modifiedTextKeySequence();
-			}
-		});
-
-		labelAssignmentsForKeySequence = new Label(groupKeySequence, SWT.LEFT);
-		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		labelAssignmentsForKeySequence.setLayoutData(gridData);
-		labelAssignmentsForKeySequence.setText(Util.translateString(resourceBundle, "labelAssignmentsForKeySequence")); //$NON-NLS-1$
-		tableAssignmentsForKeySequence = new Table(groupKeySequence, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		tableAssignmentsForKeySequence.setHeaderVisible(true);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 60;
-		gridData.horizontalSpan = 2;
-		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
-		tableAssignmentsForKeySequence.setLayoutData(gridData);		
-		TableColumn tableColumnDelta = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
-		tableColumnDelta.setResizable(false);
-		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
-		tableColumnDelta.setWidth(20);		
-		TableColumn tableColumnContext = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 1);		
-		tableColumnContext.setResizable(true);
-		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
-		tableColumnContext.pack();
-		tableColumnContext.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
-		TableColumn tableColumnCommand = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
-		tableColumnCommand.setResizable(true);
-		tableColumnCommand.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
-		tableColumnCommand.pack();
-		tableColumnCommand.setWidth(300);				
-
-		tableAssignmentsForKeySequence.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent mouseEvent) {
-				doubleClickedTableAssignmentsForKeySequence();	
-			}			
-		});		
-
-		tableAssignmentsForKeySequence.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent selectionEvent) {			
-				selectedTableAssignmentsForKeySequence();
-			}	
-		});
-						
+		spacer.setLayoutData(gridData);					
 		groupCommand = new Group(composite, SWT.SHADOW_NONE);
 		gridLayout = new GridLayout();
 		gridLayout.numColumns = 3;
@@ -711,11 +649,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
 		tableAssignmentsForCommand.setLayoutData(gridData);		
-		tableColumnDelta = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 0);
+		TableColumn tableColumnDelta = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 0);
 		tableColumnDelta.setResizable(false);
 		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
 		tableColumnDelta.setWidth(20);				
-		tableColumnContext = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 1);		
+		TableColumn tableColumnContext = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 1);		
 		tableColumnContext.setResizable(true);
 		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumnContext.pack();
@@ -735,6 +673,68 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableAssignmentsForCommand.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {			
 				selectedTableAssignmentsForCommand();
+			}	
+		});
+
+		groupKeySequence = new Group(composite, SWT.SHADOW_NONE);
+		gridLayout = new GridLayout();
+		gridLayout.numColumns = 3;
+		groupKeySequence.setLayout(gridLayout);	
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		groupKeySequence.setLayoutData(gridData);
+		groupKeySequence.setText(Util.translateString(resourceBundle, "groupKeySequence")); //$NON-NLS-1$	
+		labelKeySequence = new Label(groupKeySequence, SWT.LEFT);
+		gridData = new GridData();
+		labelKeySequence.setLayoutData(gridData);
+		labelKeySequence.setText(Util.translateString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
+		textKeySequence = new KeySequenceText(groupKeySequence);
+		gridData = new GridData();
+		gridData.horizontalSpan = 2;		
+		gridData.widthHint = 300;
+		textKeySequence.setLayoutData(gridData);
+		textKeySequence.setMaxStrokes(4);
+		
+		textKeySequence.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				modifiedTextKeySequence();
+			}
+		});
+
+		labelAssignmentsForKeySequence = new Label(groupKeySequence, SWT.LEFT);
+		gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		labelAssignmentsForKeySequence.setLayoutData(gridData);
+		labelAssignmentsForKeySequence.setText(Util.translateString(resourceBundle, "labelAssignmentsForKeySequence")); //$NON-NLS-1$
+		tableAssignmentsForKeySequence = new Table(groupKeySequence, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		tableAssignmentsForKeySequence.setHeaderVisible(true);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.heightHint = 60;
+		gridData.horizontalSpan = 2;
+		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
+		tableAssignmentsForKeySequence.setLayoutData(gridData);		
+		tableColumnDelta = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
+		tableColumnDelta.setResizable(false);
+		tableColumnDelta.setText(Util.ZERO_LENGTH_STRING);
+		tableColumnDelta.setWidth(20);		
+		tableColumnContext = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 1);		
+		tableColumnContext.setResizable(true);
+		tableColumnContext.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
+		tableColumnContext.pack();
+		tableColumnContext.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
+		TableColumn tableColumnCommand = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
+		tableColumnCommand.setResizable(true);
+		tableColumnCommand.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
+		tableColumnCommand.pack();
+		tableColumnCommand.setWidth(300);				
+
+		tableAssignmentsForKeySequence.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent mouseEvent) {
+				doubleClickedTableAssignmentsForKeySequence();	
+			}			
+		});		
+
+		tableAssignmentsForKeySequence.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent selectionEvent) {			
+				selectedTableAssignmentsForKeySequence();
 			}	
 		});
 
