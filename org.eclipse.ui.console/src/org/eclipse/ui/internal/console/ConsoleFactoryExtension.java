@@ -58,9 +58,14 @@ public class ConsoleFactoryExtension implements IPluginContribution {
 
     public boolean isEnabled() {
         try {
-	        EvaluationContext context = new EvaluationContext(null, this);
-	        EvaluationResult evaluationResult = getEnablementExpression().evaluate(context);
-	        return evaluationResult == EvaluationResult.TRUE;
+            Expression enablementExpression = getEnablementExpression();
+            if (enablementExpression == null) {
+                return true;
+            } else {
+		        EvaluationContext context = new EvaluationContext(null, this);
+	            EvaluationResult evaluationResult = enablementExpression.evaluate(context);
+		        return evaluationResult != EvaluationResult.FALSE;
+            }
         } catch (CoreException e) {
             ConsolePlugin.log(e);
             return false;
@@ -92,7 +97,7 @@ public class ConsoleFactoryExtension implements IPluginContribution {
     public ImageDescriptor getImageDescriptor() {
         if (fImageDescriptor == null) {
             try {
-                String path = fConfig.getAttributeAsIs("image"); //$NON-NLS-1$
+                String path = fConfig.getAttributeAsIs("icon"); //$NON-NLS-1$
                 if (path != null) {
                     Bundle bundle = Platform.getBundle(getPluginId());
                     URL url = bundle.getEntry("/"); //$NON-NLS-1$

@@ -32,7 +32,10 @@ package org.eclipse.ui.console;
  * is invoked, the specified <code>class</code> is instantiated and called to
  * open a console, via the method <code>openConsole()</code>. 
  * </p>
- * 
+ * <p>
+ * Clients providing console factory extensions are intended to implement
+ * this interface.
+ * </p>
  * @since 3.1
  */
 public interface IConsoleFactory {
