@@ -778,20 +778,33 @@ public final URL find(IPath path) {
  * @see IPluginDescriptor
  */
 public final URL find(IPath path, Map override) {
-	if (path == null || path.isEmpty() || path.isRoot())
+	if (path == null)
 		return null;
 	
 	URL install = getInstallURLInternal();
-	String first = path.segment(0);
-	// first will be null if the path contains only a
-	// separator.  We have already checked for a null and
-	// an empty path
-	if (first.charAt(0) != '$') {		
-		URL result = findInPlugin(install, path.toString());
-		if (result != null)
-			return result;	
-		return findInFragments(path.toString());
+	URL result = null;	
+	
+	// Check for the empty or root case first
+	if (path.isEmpty() || path.isRoot()) {
+		// Watch for the root case.  It will produce a new
+		// URL which is only the root directory (and not the
+		// root of this plugin).	
+		result = findInPlugin(install, "");
+		if (result == null)
+			result = findInFragments("");
+		return result;
 	}
+	
+	// Now check for paths without variable substitution
+	String first = path.segment(0);
+	if (first.charAt(0) != '$') {
+		result = findInPlugin(install, path.toString());
+		if (result == null)
+			result = findInFragments(path.toString());
+		return result;	
+	}
+		
+	// Worry about variable substitution
 	IPath rest = path.removeFirstSegments(1);
 	if (first.equalsIgnoreCase("$nl$"))
 		return findNL(install, rest, override);
@@ -801,6 +814,7 @@ public final URL find(IPath path, Map override) {
 		return findWS(install, rest, override);
 	if (first.equalsIgnoreCase("$files$"))
 		return null;
+
 	return null;
 }
 
