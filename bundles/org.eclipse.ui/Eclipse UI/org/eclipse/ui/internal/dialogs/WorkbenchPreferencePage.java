@@ -27,12 +27,10 @@ public class WorkbenchPreferencePage
 	//Widgets for menu based perspective operation
 	private Button openInNewWindowButton;
 	private Button openInNewPageButton;
-	private Button replaceButton;
 	private Button switchOnNewProjectButton;
 	private Button version2PerspectivesButton;
 	private Text openInNewWindowText;
 	private Text openInNewPageText;
-	private Text replaceText;
 
 	//Widgets for perspective switching when creating new projects
 	private Button openProjectInNewWindowButton;
@@ -61,12 +59,7 @@ public class WorkbenchPreferencePage
  * Get the values for the alt perspective setting. It will be replace unless replace is selected.
  */
 private String altPerspectiveSetting() {
-
-	if (this.currentPerspectiveSetting
-		== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)
-		return IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
-	else
-		return IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
+	return shiftPerspectiveSetting();
 }
 /**
  * Creates composite control and sets the default layout data.
@@ -170,23 +163,6 @@ private void createPerspectiveGroup(Composite composite) {
 		new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
 	composite.setData(data);
 
-	//Open New Page button
-	this.openInNewPageButton =
-		createRadioButton(buttonComposite, OPEN_NEW_PAGE_LABEL);
-	this.openInNewPageButton.setSelection(
-		this.currentPerspectiveSetting.equals(
-			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
-
-	this.openInNewPageButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			currentPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
-			setTextValuesForPerspective();
-		}
-	});
-
-	this.openInNewPageText = new Text(buttonComposite, SWT.NONE);
-	this.openInNewPageText.setEditable(false);
-
 	//Open New Window button
 	this.openInNewWindowButton =
 		createRadioButton(buttonComposite, OPEN_NEW_WINDOW_LABEL);
@@ -205,29 +181,28 @@ private void createPerspectiveGroup(Composite composite) {
 	this.openInNewWindowText = new Text(buttonComposite, SWT.NONE);
 	this.openInNewWindowText.setEditable(false);
 
-
-	//Replace button
-	this.replaceButton = createRadioButton(buttonComposite, OPEN_REPLACE_LABEL);
-	this.replaceButton.setSelection(
+	//Open New Page button
+	this.openInNewPageButton =
+		createRadioButton(buttonComposite, OPEN_NEW_PAGE_LABEL);
+	this.openInNewPageButton.setSelection(
 		this.currentPerspectiveSetting.equals(
-			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
+			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
 
-	this.replaceButton.addSelectionListener(new SelectionAdapter() {
+	this.openInNewPageButton.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			currentPerspectiveSetting =
-				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
+			currentPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
 			setTextValuesForPerspective();
 		}
 	});
 
-	this.replaceText = new Text(buttonComposite, SWT.NONE);
-	this.replaceText.setEditable(false);
+	this.openInNewPageText = new Text(buttonComposite, SWT.NONE);
+	this.openInNewPageText.setEditable(false);
 
 	version2PerspectivesButton = new Button(composite, SWT.CHECK);
-	version2PerspectivesButton.setText(WorkbenchMessages.getString("WorkbenchPreference.version2Perspectives")); //$NON-NLS-1$
+	version2PerspectivesButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reusePerspectives")); //$NON-NLS-1$
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	version2PerspectivesButton.setSelection(
-		store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES));
+		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES));
 
 	setTextValuesForPerspective();
 }
@@ -402,12 +377,9 @@ protected void performDefaults() {
 			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
 	openInNewPageButton.setSelection(
 		defaultPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE));
-	replaceButton.setSelection(
-		defaultPreference.equals(
-			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
 	version2PerspectivesButton.setSelection(
 		store.getDefaultBoolean(
-			IPreferenceConstants.VERSION_2_PERSPECTIVES));
+			IPreferenceConstants.REUSE_PERSPECTIVES));
 
 	//Project perspective preferences
 	String projectPreference =
@@ -477,7 +449,7 @@ public boolean performOk() {
 	reuseEditors.store();
 		
 	// store reuse perspctives setting
-	store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES,
+	store.setValue(IPreferenceConstants.REUSE_PERSPECTIVES,
 		version2PerspectivesButton.getSelection());
 		
 	// store the open in new window settings
@@ -506,29 +478,17 @@ public boolean performOk() {
  * Set the values for the text based on the current setting.
  */
 private void setTextValuesForPerspective() {
-
 	if (this
 		.currentPerspectiveSetting
 		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
 		this.openInNewWindowText.setText(SHIFT_LABEL);
-		this.replaceText.setText(ALT_LABEL);
 		this.openInNewPageText.setText(""); //$NON-NLS-1$
 	} else {
-
 		if (this
 			.currentPerspectiveSetting
 			.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
 			this.openInNewPageText.setText(SHIFT_LABEL);
-			this.replaceText.setText(ALT_LABEL);
 			this.openInNewWindowText.setText(""); //$NON-NLS-1$
-		} else {
-			if (this
-				.currentPerspectiveSetting
-				.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
-				this.openInNewWindowText.setText(SHIFT_LABEL);
-				this.openInNewPageText.setText(ALT_LABEL);
-				this.replaceText.setText(""); //$NON-NLS-1$
-			}
 		}
 
 	}
@@ -537,7 +497,6 @@ private void setTextValuesForPerspective() {
  * Get the values for the shift perspective setting. It will be window unless window is selected.
  */
 private String shiftPerspectiveSetting() {
-
 	if (this.currentPerspectiveSetting
 		== IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)
 		return IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE;
