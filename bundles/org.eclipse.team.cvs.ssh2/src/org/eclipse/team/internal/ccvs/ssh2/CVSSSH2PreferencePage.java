@@ -11,41 +11,26 @@ Contributors:
 **********************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ssh2.Policy;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.KeyPair;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.*;
 
 public class CVSSSH2PreferencePage extends PreferencePage
   implements IWorkbenchPreferencePage {
@@ -60,9 +45,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
   public static String KEY_SSH2HOME="CVSSSH2PreferencePage.SSH2HOME"; //$NON-NLS-1$
   public static String KEY_KEYFILE="CVSSSH2PreferencePage.KEYFILE"; //$NON-NLS-1$
   public static String KEY_PRIVATEKEY="CVSSSH2PreferencePage.PRIVATEKEY"; //$NON-NLS-1$
-  
-  // Temporary preference for using ssh2 instead of ssh1
-  public static String KEY_USE_SSH2="CVSSSH2PreferencePage.SSH2_USE_SSH2"; //$NON-NLS-1$
 
   static String SOCKS5="SOCKS5"; //$NON-NLS-1$
   static String HTTP="HTTP"; //$NON-NLS-1$
@@ -685,9 +667,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
 	  catch(IOException ee){
 	  }
 	  catch(JSchException ee){
-	  	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.111"));
+	  	setErrorMessage(Policy.bind("CVSSSH2PreferencePage.111")); //$NON-NLS-1$
 	  }
-
 	}});
 
     saveKeyPair.addSelectionListener(new SelectionAdapter(){
@@ -913,7 +894,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     setDefault(store, KEY_PROXY_AUTH, "false"); //$NON-NLS-1$
     setDefault(store, KEY_PROXY_USER, ""); //$NON-NLS-1$
     setDefault(store, KEY_PROXY_PASS, ""); //$NON-NLS-1$
-    store.setDefault(KEY_USE_SSH2, true);
   }
 
   private static void setDefault(IPreferenceStore store, String key, String value){
@@ -926,7 +906,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     IPreferenceStore store=CVSSSH2Plugin.getDefault().getPreferenceStore();
     ssh2HomeText.setText(store.getString(KEY_SSH2HOME));
     privateKeyText.setText(store.getString(KEY_PRIVATEKEY));
-    enableSSH2.setSelection(store.getBoolean(KEY_USE_SSH2));
     useProxy=store.getString(KEY_PROXY).equals("true"); //$NON-NLS-1$
     enableProxy.setSelection(useProxy);
     proxyHostText.setText(store.getString(KEY_PROXY_HOST));
@@ -986,8 +965,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
       map.put(KEY_PROXY_PASS, proxyPassText.getText());
       try{ Platform.addAuthorizationInfo(FAKE_URL, "proxy", AUTH_SCHEME, map);} //$NON-NLS-1$
       catch(CoreException e){}
-
-      store.setValue(KEY_USE_SSH2, enableSSH2.getSelection());
     }
     CVSSSH2Plugin.getDefault().savePluginPreferences();
     return result;

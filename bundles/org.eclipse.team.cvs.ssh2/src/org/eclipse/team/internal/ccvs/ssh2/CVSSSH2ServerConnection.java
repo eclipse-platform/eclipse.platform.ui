@@ -19,6 +19,11 @@ import org.eclipse.team.internal.ccvs.ssh.SSHServerConnection;
 import org.eclipse.team.internal.core.streams.*;
 
 import com.jcraft.jsch.*;
+
+/**
+ * SSH2 connection method. Has the property of defaulting to SSH1 if the server
+ * doesn't support SSH2. 
+ */
 public class CVSSSH2ServerConnection implements IServerConnection {
 	private static final String COMMAND = "cvs server"; //$NON-NLS-1$
 	private ICVSRepositoryLocation location;
@@ -28,6 +33,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 	private Session session;
 	private Channel channel;
 	private IServerConnection ssh1;
+	
 	protected CVSSSH2ServerConnection(ICVSRepositoryLocation location, String password) {
 		this.location = location;
 		this.password = password;
@@ -35,6 +41,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 	public void close() throws IOException {
 		if (ssh1 != null) {
 			ssh1.close();
+			ssh1 = null;
 			return;
 		}
 		try {

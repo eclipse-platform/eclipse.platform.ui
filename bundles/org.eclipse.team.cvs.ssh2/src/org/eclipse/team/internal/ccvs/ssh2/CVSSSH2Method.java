@@ -10,26 +10,23 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
-import org.eclipse.team.internal.ccvs.core.IServerConnection;
-import org.eclipse.team.internal.ccvs.ssh.SSHServerConnection;
+import org.eclipse.team.internal.ccvs.core.*;
 
+/**
+ * SSH2 will hijack the 'extssh' method and use the SSH2 protocol instead
+ * of SSH1. If the server doesn't support SSH2, the server connection method
+ * will try connecting with SSH1.
+ * 
+ * @since 3.0
+ */
 public class CVSSSH2Method implements IConnectionMethod {
+	
 	public String getName() {
 		return "extssh"; //$NON-NLS-1$
 	}
 	
 	public IServerConnection createConnection(ICVSRepositoryLocation root, String password) {
-		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();		
-		// Support for user defined switching between SSH1 and SSH2 for now. Will
-		// improve this to provide automatic server version detection.
-		if(store.getBoolean(CVSSSH2PreferencePage.KEY_USE_SSH2)) {
-			return new CVSSSH2ServerConnection(root, password);
-		} else {
-			return new SSHServerConnection(root, password);
-		}
+		return new CVSSSH2ServerConnection(root, password);
 	}
 	
 	public void disconnect(ICVSRepositoryLocation location) {
