@@ -32,6 +32,15 @@
       <property name="output-file" value="org.eclipse.core.tests.xml"/>
     </ant>
   </target>
+  
+  <!-- This target runs the performance test suites. Any actions that need to happen after all -->
+  <!-- the tests have been run should go here. -->
+  <target name="performance" depends="init,performance-suite,cleanup">
+    <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="includes" value="org*.xml"/>
+      <property name="output-file" value="org.eclipse.core.tests.xml"/>
+    </ant>  
+  </target>  
 
   <target name="RuntimeTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
@@ -49,7 +58,7 @@
     </ant>
   </target>
   
-  <target name="OSGiPerformanceTests" depends="init,cleanup" if="performance">
+  <target name="OSGiPerformanceTests" depends="init,cleanup">
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${osgi_location}"/>
       <property name="plugin-name" value="org.eclipse.osgi.tests"/>
@@ -144,11 +153,10 @@
 
 
   <!-- This target defines the tests that need to be run. -->
-  <target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests,OSGiPerformanceTests"/>
+  <target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests"/>  
   <!--target name="suite" depends="ResourcesTests,RuntimeTests,OSGiTests,PR_1G1N9GZ_SessionTests,PR_1GALH44_SessionTests,Snapshot_SessionTests,SaveManager_SessionTests"/-->
-	
-  <!-- This target runs the performance test suites. -->
-  <target name="performance">
-  </target>
+  
+  <!-- This target defines the performance tests that need to be run. -->
+  <target name="performance-suite" depends="OSGiPerformanceTests"/>  
 	
  </project>
