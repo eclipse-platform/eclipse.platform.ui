@@ -379,7 +379,7 @@ public IResource[] createHierarchy() throws CoreException {
  * resource hierarchy for this test.  In the string forms, folders are
  * represented as having trailing separators ('/').  All other resources
  * are files.  It is generally assumed that this hierarchy will be 
- * inserted under some solution and project structure.
+ * inserted under some project structure.
  * For example, 	
  * <pre>
  *    return new String[] {"/", "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"};
