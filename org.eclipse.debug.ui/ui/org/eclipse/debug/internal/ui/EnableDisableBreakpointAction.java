@@ -36,7 +36,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 	}
 
 	/**
-	 * @see Action
+	 * @see Action#run()
 	 */
 	public void run() {
 		IStructuredSelection selection= (IStructuredSelection) getStructuredSelection();
