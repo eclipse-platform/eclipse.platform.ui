@@ -517,7 +517,7 @@
          point="org.eclipse.ui.systemSummarySections">
       <configurationLogEntry
       		id="15.UpdateSection"
-            sectionTitle="Update Manager Log"
+            sectionTitle="%About.updateSummaryTitle"
             class="org.eclipse.ui.internal.ide.dialogs.ConfigurationLogUpdateSection">
       </configurationLogEntry>
    </extension>
