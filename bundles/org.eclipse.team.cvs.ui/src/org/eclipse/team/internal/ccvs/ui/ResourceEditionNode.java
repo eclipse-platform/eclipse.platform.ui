@@ -1,4 +1,5 @@
 package org.eclipse.team.internal.ccvs.ui;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -130,13 +131,6 @@ public class ResourceEditionNode extends BufferedContent implements IStructureCo
 		return resource == null ? "" : resource.getName();
 	}
 	
-	/**
-	 * Returns the path of the given resource node.
-	 */
-	IPath getPath() {
-		return new Path(resource.getRelativePath());
-	}
-
 	public ICVSRemoteResource getRemoteResource() {
 		return resource;
 	}
