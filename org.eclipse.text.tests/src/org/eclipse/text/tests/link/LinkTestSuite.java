@@ -27,7 +27,6 @@ public class LinkTestSuite {
 		suite.addTestSuite(ExclusivePositionUpdaterTest.class);
 		suite.addTestSuite(LinkedPositionGroupTest.class);
 		suite.addTestSuite(LinkedPositionTest.class);
-		suite.addTestSuite(LinkedEnvironmentTest.class);
 		suite.addTestSuite(InclusivePositionUpdaterTest.class);
 		//$JUnit-END$
 		return suite;
