@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Exports resources to a .tar.gz file.
@@ -68,11 +69,30 @@ public class TarFileExporter implements IFileExporter {
      *	@param entry
      *	@param contents byte[]
      *	@exception java.io.IOException
+     * @throws CoreException 
      */
-    private void write(TarEntry entry, byte[] contents) throws IOException {
-    	entry.setSize(contents.length);
+    private void write(TarEntry entry, IFile contents) throws IOException, CoreException {
+		IPath location = contents.getLocation();
+		if (location == null) {
+			throw new FileNotFoundException(contents.getFullPath().toOSString());
+		}
+		java.io.File localFile = location.toFile();
+    	
+    	entry.setSize(localFile.length());
+    	
     	outputStream.putNextEntry(entry);
-    	outputStream.write(contents);
+    	InputStream contentStream = contents.getContents(false);
+        try {
+            int n;
+            byte[] readBuffer = new byte[4096];
+            while ((n = contentStream.read(readBuffer)) > 0) {
+                outputStream.write(readBuffer, 0, n);
+            }
+        } finally {
+            if (contentStream != null)
+                contentStream.close();
+        }
+
     	outputStream.closeEntry();    	
     }
 
@@ -86,26 +106,6 @@ public class TarFileExporter implements IFileExporter {
      */
     public void write(IFile resource, String destinationPath)
             throws IOException, CoreException {
-        ByteArrayOutputStream output = null;
-        InputStream contentStream = null;
-
-        try {
-            output = new ByteArrayOutputStream();
-            contentStream = resource.getContents(false);
-            int chunkSize = contentStream.available();
-            byte[] readBuffer = new byte[chunkSize];
-            int n = contentStream.read(readBuffer);
-
-            while (n > 0) {
-                output.write(readBuffer);
-                n = contentStream.read(readBuffer);
-            }
-        } finally {
-            if (output != null)
-                output.close();
-            if (contentStream != null)
-                contentStream.close();
-        }
 
         TarEntry newEntry = new TarEntry(destinationPath);
         if(resource.getLocalTimeStamp() != IResource.NULL_STAMP) {
@@ -118,6 +118,6 @@ public class TarFileExporter implements IFileExporter {
         if (attributes.isReadOnly()) {
         	newEntry.setMode(newEntry.getMode() & ~0222);
         }
-        write(newEntry,output.toByteArray());
+        write(newEntry, resource);
     }
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -159,6 +158,54 @@ public class ZipFileExporter implements IFileExporter {
     }
 
     /**
+     *	Create a new ZipEntry with the passed pathname and contents, and write it
+     *	to the current archive
+     *
+     *	@param pathname java.lang.String
+     *	@param contents IFile
+     *	@exception java.io.IOException
+     * @throws CoreException 
+     */
+    protected void write(String pathname, IFile contents) throws IOException, CoreException {
+        ZipEntry newEntry = new ZipEntry(pathname);
+        byte[] readBuffer = new byte[4096];
+        
+        // if the contents are being compressed then we get the below for free.
+        if (!useCompression) {
+            newEntry.setMethod(ZipEntry.STORED);
+        	InputStream contentStream = contents.getContents(false);
+        	int length = 0;
+            CRC32 checksumCalculator = new CRC32();
+            try {
+                int n;
+                while ((n = contentStream.read(readBuffer)) > 0) {
+                    checksumCalculator.update(readBuffer, 0, n);
+                    length += n;
+                }
+            } finally {
+                if (contentStream != null)
+                    contentStream.close();
+            }
+
+            newEntry.setSize(length);
+            newEntry.setCrc(checksumCalculator.getValue());
+        }
+
+        outputStream.putNextEntry(newEntry);
+    	InputStream contentStream = contents.getContents(false);
+        try {
+            int n;
+            while ((n = contentStream.read(readBuffer)) > 0) {
+                outputStream.write(readBuffer, 0, n);
+            }
+        } finally {
+            if (contentStream != null)
+                contentStream.close();
+        }
+        outputStream.closeEntry();
+    }
+
+    /**
      *  Write the passed resource to the current archive
      *
      *  @param resource org.eclipse.core.resources.IFile
@@ -168,28 +215,8 @@ public class ZipFileExporter implements IFileExporter {
      */
     public void write(IFile resource, String destinationPath)
             throws IOException, CoreException {
-        ByteArrayOutputStream output = null;
-        InputStream contentStream = null;
 
-        try {
-            output = new ByteArrayOutputStream();
-            contentStream = resource.getContents(false);
-            int chunkSize = contentStream.available();
-            byte[] readBuffer = new byte[chunkSize];
-            int n = contentStream.read(readBuffer);
-
-            while (n > 0) {
-                output.write(readBuffer);
-                n = contentStream.read(readBuffer);
-            }
-        } finally {
-            if (output != null)
-                output.close();
-            if (contentStream != null)
-                contentStream.close();
-        }
-
-        write(destinationPath, output.toByteArray());
+        write(destinationPath, resource);
         if (generateManifestFile)
             appendToManifest(destinationPath, resource);
     }
