@@ -76,7 +76,7 @@ public PartTabFolder() {
 
 	// Get the location of the tabs from the preferences
 	if (tabLocation == -1)
-		tabLocation = getPreferenceStore().getInt(
+		tabLocation = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(
 			IPreferenceConstants.VIEW_TAB_POSITION);
 		
 }

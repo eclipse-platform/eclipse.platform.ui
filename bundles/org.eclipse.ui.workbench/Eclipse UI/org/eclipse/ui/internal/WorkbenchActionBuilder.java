@@ -156,7 +156,8 @@ public class WorkbenchActionBuilder {
 	private NavigationHistoryAction backwardHistoryAction;
 	private NavigationHistoryAction forwardHistoryAction;
     private ActivityEnablementAction roleManagerAction;
-
+    private EditorsDropDownAction editorsDropDownAction;
+    
 	/**
 	 * Constructs a new action builder which contributes actions
 	 * to the given window.
@@ -589,6 +590,9 @@ public class WorkbenchActionBuilder {
 		subMenu.add(maximizePartAction);
 		subMenu.add(new Separator());
 		subMenu.add(activateEditorAction);
+		if (editorsDropDownAction != null) {
+			subMenu.add(editorsDropDownAction);
+		}
 		subMenu.add(nextEditorAction);
 		subMenu.add(prevEditorAction);
 		subMenu.add(new Separator());
@@ -1073,6 +1077,11 @@ public class WorkbenchActionBuilder {
         	roleManagerAction = new ActivityEnablementAction();
         	getWindow().registerGlobalAction(roleManagerAction);
         //}
+        	
+        if (EditorWorkbook.usingNewDropDown()) {
+        	editorsDropDownAction = new EditorsDropDownAction(window);
+        	getWindow().registerGlobalAction(editorsDropDownAction);
+        }
 	}
 
 	/**

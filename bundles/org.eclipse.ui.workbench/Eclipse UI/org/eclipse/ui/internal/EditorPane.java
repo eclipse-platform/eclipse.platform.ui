@@ -112,7 +112,7 @@ public EditorWorkbook getWorkbook() {
 public boolean isDragAllowed(Point p) {
 	// See also similar restrictions in addMoveItems method
 	
-	if (workbook.overImage(this, p.x))
+	if (workbook.isDragAllowed(this, p))
 		return false;
 		
 	int wbCount = workbook.getEditorArea().getEditorWorkbookCount();

@@ -103,10 +103,9 @@ public String getID() {
 	return id;
 }
 /**
- * Return the place the preferences used by layout parts reside.
- * @return IPreferenceStore
+ * Return the preference store for layout parts.
  */
-/*package*/ IPreferenceStore getPreferenceStore() {
+private IPreferenceStore getPreferenceStore() {
 	return WorkbenchPlugin.getDefault().getPreferenceStore();		
 }
 /**
