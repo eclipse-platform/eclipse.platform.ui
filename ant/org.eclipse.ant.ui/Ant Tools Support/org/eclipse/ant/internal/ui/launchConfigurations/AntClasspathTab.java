@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+
+import java.io.File;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
@@ -34,6 +36,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntClasspathTab extends AbstractLaunchConfigurationTab implements IAntBlockContainer {
 
+	private static final String DEFAULT_CLASSPATH= AntUtil.ANT_HOME_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER;
 	private ClasspathModel model;
 	private AntClasspathBlock antClasspathBlock= new AntClasspathBlock(true);
 	
@@ -76,7 +79,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		
 		createClasspathModel(configuration, !antHomeString.equals(defaultAntHome));
 		antClasspathBlock.setInput(model);
-		
 		antClasspathBlock.initializeAntHome(antHomeString, model.getAntHomeEntry() != null);
 	}
 
@@ -86,7 +88,9 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		
 		String dfltAntHome= AntCorePlugin.getPlugin().getPreferences().getDefaultAntHome();
-		boolean defaultAntHome= antClasspathBlock.getAntHome().equals(dfltAntHome);
+		File prefsDfltAntHome= new File(dfltAntHome);
+		File blockDfltAntHome= new File(antClasspathBlock.getAntHome());
+		boolean defaultAntHome= prefsDfltAntHome.equals(blockDfltAntHome);
 		if (defaultAntHome) {
 			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
 		} else {
@@ -94,15 +98,11 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		}
 		
 		String classpath= model.serializeClasspath(defaultAntHome);
-		if (classpath.equals(AntUtil.ANT_HOME_CLASSPATH_PLACEHOLDER + AntUtil.ATTRIBUTE_SEPARATOR + AntUtil.ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER)) {
+		if (classpath.equals(DEFAULT_CLASSPATH)) {
 			classpath= null;
 		}
 		
-		if (classpath != null) {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, classpath);
-		} else {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-		}
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, classpath);
 	}
 
 	/* (non-Javadoc)
