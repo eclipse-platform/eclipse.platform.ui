@@ -242,7 +242,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 			
 		} catch (IOException x) {
-			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getMessage(), x);
+			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		}	
 	}
@@ -317,8 +318,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			document.set(buffer.toString());
 		
 		} catch (IOException x) {
-			String msg= x.getMessage() == null ? "" : x.getMessage(); //$NON-NLS-1$
-			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, msg, x);
+			String message= (x.getMessage() != null ? x.getMessage() : ""); //$NON-NLS-1$
+			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, x);
 			throw new CoreException(s);
 		} finally {
 			if (in != null) {
