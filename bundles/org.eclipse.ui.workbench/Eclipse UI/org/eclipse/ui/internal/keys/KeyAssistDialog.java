@@ -209,6 +209,22 @@ final class KeyAssistDialog extends Dialog {
 	 * @return Whether the shell was already closed.
 	 */
 	public final boolean close(final boolean rememberState) {
+		return close(rememberState, true);
+	}
+
+	/**
+	 * Closes this shell, but first remembers some state of the dialog. This way
+	 * it will have a response if asked to open the dialog again or if asked to
+	 * open the keys preference page.
+	 * 
+	 * @param rememberState
+	 *            Whether the internal state should be remembered.
+	 * @param resetState
+	 *            Whether the state should be reset.
+	 * @return Whether the shell was already closed.
+	 */
+	private final boolean close(final boolean rememberState,
+			final boolean resetState) {
 		final Shell shell = getShell();
 		if (rememberState) {
 			// Remember the previous width.
@@ -239,7 +255,9 @@ final class KeyAssistDialog extends Dialog {
 			completionsTable = null;
 		}
 
-		keyBindingState.reset();
+		if (resetState) {
+			keyBindingState.reset();
+		}
 		return super.close();
 	}
 
@@ -721,7 +739,7 @@ final class KeyAssistDialog extends Dialog {
 		// If the dialog is already open, dispose the shell and recreate it.
 		final Shell shell = getShell();
 		if (shell != null) {
-			close();
+			close(false, false);
 		}
 		create();
 
