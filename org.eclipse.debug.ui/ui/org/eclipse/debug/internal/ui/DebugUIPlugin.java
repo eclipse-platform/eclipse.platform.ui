@@ -386,6 +386,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
+		
+		Display.getDefault().asyncExec(
+			new Runnable() {
+				public void run() {
+					createImageRegistry();
+				}
+			});
 	}
 
 	/**
