@@ -45,7 +45,7 @@ public class Worker extends Thread {
 			id = Platform.PI_RUNTIME;
 		}
 		String message = Policy.bind("meta.pluginProblems", id); //$NON-NLS-1$
-		return new Status(Status.ERROR, id, Platform.PLUGIN_ERROR, message, t);
+		return new Status(IStatus.ERROR, id, Platform.PLUGIN_ERROR, message, t);
 	}
 	private void log(IStatus result) {
 		try {

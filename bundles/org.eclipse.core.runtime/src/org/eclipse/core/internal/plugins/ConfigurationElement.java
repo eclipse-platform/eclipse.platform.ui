@@ -53,13 +53,13 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 		exec = getChildren(attributeName);
 		if (exec.length != 0) {
 			element = exec[0]; // assumes single definition
-			pluginName = (String) element.getAttribute("plugin"); //$NON-NLS-1$
-			className = (String) element.getAttribute("class"); //$NON-NLS-1$
+			pluginName = element.getAttribute("plugin"); //$NON-NLS-1$
+			className = element.getAttribute("class"); //$NON-NLS-1$
 			parms = element.getChildren("parameter"); //$NON-NLS-1$
 			if (parms != null) {
 				initParms = new Hashtable(parms.length + 1);
 				for (i = 0; i < parms.length; i++) {
-					pname = (String) parms[i].getAttribute("name"); //$NON-NLS-1$
+					pname = parms[i].getAttribute("name"); //$NON-NLS-1$
 					if (pname != null)
 						initParms.put(pname, parms[i].getAttribute("value")); //$NON-NLS-1$
 				}
@@ -103,7 +103,7 @@ public Object createExecutableExtension(String attributeName) throws CoreExcepti
 	return ((PluginDescriptor) plugin).createExecutableExtension(pluginName, className, initData, this, attributeName);
 }
 public String getAttribute(String name) {
-	ConfigurationPropertyModel[] list = (ConfigurationPropertyModel[]) getProperties();
+	ConfigurationPropertyModel[] list = getProperties();
 	if (list == null)
 		return null;
 		
@@ -123,7 +123,7 @@ public String getAttribute(String name) {
 	return localized;
 }
 public String getAttributeAsIs(String name) {
-	ConfigurationPropertyModel[] list = (ConfigurationPropertyModel[]) getProperties();
+	ConfigurationPropertyModel[] list = getProperties();
 	if (list == null)
 		return null;
 	for (int i = 0; i < list.length; i++)

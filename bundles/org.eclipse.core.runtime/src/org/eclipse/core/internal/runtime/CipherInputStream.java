@@ -50,7 +50,7 @@ public int read() throws IOException {
 	if (b == -1)
 		return -1;
 	try {
-		return ((int) cipher.cipher((byte) b)) & 0x00ff;
+		return ( cipher.cipher((byte) b)) & 0x00ff;
 	} catch (Exception e) {
 		throw new IOException(e.getMessage());
 	}

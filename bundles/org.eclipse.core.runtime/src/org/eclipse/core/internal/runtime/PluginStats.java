@@ -113,7 +113,7 @@ public class PluginStats {
 			result = new PluginStats(id);
 			plugins.put(id, result);
 		}
-		return (PluginStats)result;
+		return result;
 	}
 
 	public static PluginStats[] getPlugins() {
@@ -211,9 +211,6 @@ public class PluginStats {
 		traceEnd = position;
 	}
 
-	private void setStartupMethodTime(long time) {
-		startupMethodTime = time;
-	}
 
 	private void setActivatedBy(PluginStats value) {
 		activatedBy = value;

@@ -124,7 +124,7 @@ public void done() {
 	if (nestedBeginTasks == 0 || --nestedBeginTasks > 0)
 		return;
 	// Send any remaining ticks and clear out the subtask text
-	double remaining = (double) parentTicks - sentToParent;
+	double remaining = parentTicks - sentToParent;
 	if (remaining > 0) 
 		super.internalWorked(remaining);
 	subTask(""); //$NON-NLS-1$

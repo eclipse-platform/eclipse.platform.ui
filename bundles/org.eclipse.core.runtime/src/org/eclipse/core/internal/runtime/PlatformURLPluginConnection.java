@@ -30,7 +30,6 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 	// plugin/ protocol
 	private PluginDescriptorModel pd = null;
 	private static boolean isRegistered = false;
-	private URL[] fragmentURLs = null;
 	public static final String PLUGIN = "plugin"; //$NON-NLS-1$
 public PlatformURLPluginConnection(URL url) {
 	super(url);

@@ -196,7 +196,7 @@ public class JobManager implements IJobManager {
 	 * Indicates that a job was running, and has now finished.
 	 */
 	protected void endJob(Job job, IStatus result) {
-		InternalJob internalJob = (InternalJob)job;
+		InternalJob internalJob = job;
 		InternalJob blocked = null;
 		synchronized (lock) {
 			//if the job is finishing asynchronously, there is nothing more to do for now
@@ -269,13 +269,13 @@ public class JobManager implements IJobManager {
 		synchronized (lock) {
 			//tickle the sleep queue to see if anyone wakes up
 			long now = System.currentTimeMillis();
-			InternalJob job = (InternalJob)sleeping.peek();
+			InternalJob job = sleeping.peek();
 			while (job != null && job.getStartTime() < now) {
 				sleeping.dequeue();
 				job.setState(Job.WAITING);
 				job.setStartTime(now + delayFor(job.getPriority()));
 				waiting.enqueue(job);
-				job = (InternalJob)sleeping.peek();
+				job = sleeping.peek();
 			}
 			//process the wait queue until we find a job whose rules are satisfied.
 			while ((job = waiting.dequeue()) != null) {
@@ -362,9 +362,9 @@ public class JobManager implements IJobManager {
 				}
 			}
 			if ((stateMask & Job.WAITING) != 0)
-				select(members, family, (InternalJob) waiting.peek(), stateMask);
+				select(members, family, waiting.peek(), stateMask);
 			if ((stateMask & Job.SLEEPING) != 0)
-				select(members, family, (InternalJob) sleeping.peek(), stateMask);
+				select(members, family, sleeping.peek(), stateMask);
 		}
 		return members;
 	}
@@ -442,7 +442,7 @@ public class JobManager implements IJobManager {
 		synchronized (lock) {
 			if (!waiting.isEmpty())
 				return 0L;
-			InternalJob next = (InternalJob)sleeping.peek();
+			InternalJob next = sleeping.peek();
 			return next == null ? NEVER : next.getStartTime() - System.currentTimeMillis();
 		}
 	}
