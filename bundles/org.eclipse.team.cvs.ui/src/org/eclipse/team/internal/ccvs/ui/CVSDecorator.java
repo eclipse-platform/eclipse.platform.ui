@@ -71,8 +71,16 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		List changedResources = new ArrayList();
 		protected void handleAdded(IResource[] resources) {
 		}
+		// remove the cached decoration for any removed resource
 		protected void handleRemoved(IResource[] resources) {
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId())!=null) {
+					cache.remove(resources[i]);
+				}
+			}
 		}
+		// for changed resources we have to update the decoration
 		protected void handleChanged(IResource[] resources) {
 			changedResources.addAll(Arrays.asList(resources));
 		}
