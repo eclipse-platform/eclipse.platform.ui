@@ -28,7 +28,7 @@
       <property name="data-dir" value="${jdt-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
-                value="org.eclipse.ant.ui.internal.editor.test.AntEditorTests"/>
+                value="org.eclipse.ant.tests.ui.testplugin.AntUITests"/>
     </ant>
   </target>
 
