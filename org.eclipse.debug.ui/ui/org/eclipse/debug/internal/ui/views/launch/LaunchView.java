@@ -54,12 +54,10 @@ import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -72,7 +70,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -96,7 +93,6 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -212,15 +208,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		contextListener= new LaunchViewContextListener(this);
 	}
 	
-	/**
-	 * @see AbstractDebugView#getHelpContextId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.DEBUG_VIEW;
 	}
 	
-	/**
-	 * @see AbstractDebugView#createActions()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
@@ -242,8 +238,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		
 	}
 
-	/**
-	 * @see AbstractDebugView#createViewer(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
 		LaunchViewer lv = new LaunchViewer(parent);
@@ -407,8 +403,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return null;
 	}
 	
-	/**
-	 * @see IViewPart#init(IViewSite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite)
 	 */
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
@@ -417,8 +413,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		site.getWorkbenchWindow().addPerspectiveListener(this);
 	}
 
-	/**
-	 * @see IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
@@ -445,8 +441,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		contextListener.init(memento);
 	}
 		
-	/**
-	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
@@ -458,8 +454,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}	
 
-	/**
-	 * @see IWorkbenchPart#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
 		if (getViewer() != null) {
@@ -498,7 +494,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * The selection has changed in the viewer. Show the
 	 * associated source code if it is a stack frame.
 	 * 
-	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		clearStatusLine();
@@ -514,10 +510,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setStackFrame(null);
 		selectionChanged(null);
 	}
-	
-	/**
-	 * 
-	 */
+
 	private void updateContextListener() {
 		if (isActive() && fAutoManage) {
 			contextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
@@ -574,8 +567,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return launch;
 	}
 
-	/**
-	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
 	 */
 	public void doubleClick(DoubleClickEvent event) {
 		ISelection selection= event.getSelection();
@@ -592,8 +585,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		tViewer.setExpandedState(o, !expanded);
 	}
 		
-	/**
-	 * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		setActive(page.findView(getSite().getId()) != null);
@@ -602,15 +595,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		updateContextListener();
 	}
 
-	/**
-	 * @see IPerspectiveListener#perspectiveChanged(IWorkbenchPage, IPerspectiveDescriptor, String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
 	 */
 	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 		setActive(page.findView(getSite().getId()) != null);
 	}
 
-	/**
-	 * @see IPageListener#pageActivated(IWorkbenchPage)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageListener#pageActivated(org.eclipse.ui.IWorkbenchPage)
 	 */
 	public void pageActivated(IWorkbenchPage page) {
 		if (getSite().getPage().equals(page)) {
@@ -620,7 +613,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
@@ -629,7 +622,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
@@ -638,14 +631,14 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 
-	/**
-	 * @see IPageListener#pageClosed(IWorkbenchPage)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
 	 */
 	public void pageClosed(IWorkbenchPage page) {
 	}
 
-	/**
-	 * @see IPageListener#pageOpened(IWorkbenchPage)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPageListener#pageOpened(org.eclipse.ui.IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
 	}
@@ -757,8 +750,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 	
-	/**
-	 * @see IDebugView#getPresentation(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
 		return ((DelegatingModelPresentation)fEditorPresentation).getPresentation(id);
@@ -1041,8 +1034,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 	
-	/**
-	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
 		
@@ -1289,8 +1282,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return fIsActive && getViewer() != null;
 	}
 	
-	/**
-	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IDebugUIConstants.PREF_REUSE_EDITOR)) {
@@ -1298,8 +1291,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 
-	/**
-	 * @see IViewPart#saveState(IMemento)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
@@ -1333,8 +1326,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * the cache of editor input/stack frame, etc., as the elements can become invalid.
 	 */
 	class LaunchViewVisitor implements IResourceDeltaVisitor {
-		/**
-		 * @see IResourceDeltaVisitor#visit(IResourceDelta)
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
 			if (delta == null) {
@@ -1355,8 +1348,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}		
 	}
 	
-	/**
-	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
@@ -1368,7 +1361,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		}		
 	}
-
 
 	/**
 	 * Returns the resource delta visitor for this view,
@@ -1397,8 +1389,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 	
-	/**
-	 * @see IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	public boolean show(ShowInContext context) {
 		ISelection selection = context.getSelection();
@@ -1417,8 +1409,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return false;
 	}
 
-	/**
-	 * @see IShowInSource#getShowInContext()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 */
 	public ShowInContext getShowInContext() {
 		if (isActive()) { 
@@ -1435,11 +1427,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		return null;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IShowInTargetList#getShowInTargetIds()
 	 */
 	public String[] getShowInTargetIds() {
 		return new String[] { IPageLayout.ID_RES_NAV };
 	}
-
 }
