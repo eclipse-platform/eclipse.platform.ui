@@ -235,7 +235,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				if (element instanceof IndexedVariablePartition) {
 					return true;
 				}
-				return hasModelSpecificVariableChildren((IVariable)element);
+				element = ((IVariable)element).getValue();
 			}
 			if (element instanceof IValue) {
 				return ((IValue)element).hasVariables();
@@ -249,12 +249,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		}
 		return false;
 	}
-	
-	protected boolean hasModelSpecificVariableChildren(IVariable parent) throws DebugException {
-		IValue logicalValue = getLogicalValue(parent.getValue());
-		return logicalValue.hasVariables();
-	}
-	
+		
 	/**
 	 * @see IContentProvider#inputChanged(Viewer, Object, Object)
 	 */
