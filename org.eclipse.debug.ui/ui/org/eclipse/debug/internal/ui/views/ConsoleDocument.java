@@ -505,7 +505,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 	}
 	
 	/**
-	 * @see IDebugEventListener#handleDebugEvents(DebugEvent[])
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		if (fProcess == null) {

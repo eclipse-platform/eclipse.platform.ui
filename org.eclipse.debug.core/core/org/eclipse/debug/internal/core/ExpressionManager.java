@@ -124,7 +124,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	}
 	
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvent(DebugEvent)
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (int i = 0; i < events.length; i++) {
