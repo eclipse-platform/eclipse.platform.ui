@@ -19,7 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
-import org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor;
+import org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
@@ -72,21 +72,27 @@ public class AntJRETab extends JavaJRETab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#getDefaultJREDescriptor()
 	 */
-	protected DefaultJREDescriptor getDefaultJREDescriptor() {
-		return new DefaultJREDescriptor() {
+	protected JREDescriptor getDefaultJREDescriptor() {
+		return new JREDescriptor() {
 			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDefaultJRE()
-			 */
-			public IVMInstall getDefaultJRE() {
-				return null;
-			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor#getDescription()
+			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
 			 */
 			public String getDescription() {
-				
 				return AntLaunchConfigurationMessages.getString("AntJRETab.2"); //$NON-NLS-1$
+			}
+		};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#getSpecificJREDescriptor()
+	 */
+	protected JREDescriptor getSpecificJREDescriptor() {
+		return new JREDescriptor() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
+			 */
+			public String getDescription() {
+				return AntLaunchConfigurationMessages.getString("AntJRETab.3"); //$NON-NLS-1$
 			}
 		};
 	}
