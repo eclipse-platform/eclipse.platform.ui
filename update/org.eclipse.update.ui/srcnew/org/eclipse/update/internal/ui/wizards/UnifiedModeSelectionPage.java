@@ -6,19 +6,15 @@
  */
 package org.eclipse.update.internal.ui.wizards;
 
-import java.net.*;
-
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.search.*;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.operations.UpdateManager;
+import org.eclipse.update.internal.search.UnifiedUpdatesSearchCategory;
+import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.search.*;
 
 /**
