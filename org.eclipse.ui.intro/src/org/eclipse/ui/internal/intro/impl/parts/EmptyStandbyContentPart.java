@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro.impl.parts;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.intro.impl.*;
 import org.eclipse.ui.internal.intro.impl.swt.*;
@@ -54,7 +55,7 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
      * 
      * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
      */
-    public void init(IIntroPart introPart) {
+    public void init(IIntroPart introPart, IMemento memento) {
 
     }
 
@@ -84,6 +85,9 @@ public class EmptyStandbyContentPart implements IStandbyContentPart {
     public void dispose() {
 
 
+    }
+
+    public void saveState(IMemento memento) {
     }
 
 }

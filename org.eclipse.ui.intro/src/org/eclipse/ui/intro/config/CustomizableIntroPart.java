@@ -78,10 +78,6 @@ public final class CustomizableIntroPart extends IntroPart {
         // is still not loaded here.
     }
 
-    public void init(IIntroSite site) throws PartInitException {
-        // no memento, so pass null. We can remove this method.
-        init(site, null);
-    }
 
     /*
      * (non-Javadoc)

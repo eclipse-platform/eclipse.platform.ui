@@ -118,7 +118,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
      * 
      * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
      */
-    public void init(IIntroPart introPart) {
+    public void init(IIntroPart introPart, IMemento memento) {
         partListener = new PartListener();
         defaultText = IntroPlugin
                 .getString("ContextHelpStandbyPart.defaultText"); //$NON-NLS-1$
@@ -165,7 +165,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
             public void keyReleased(KeyEvent e) {
                 if (e.character == '\r') {
                     if (button.isEnabled())
-                            doSearch(phraseText.getText());
+                        doSearch(phraseText.getText());
                 }
             }
         });
@@ -211,12 +211,12 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
     private void handlePartActivation(IWorkbenchPartReference ref,
             boolean activated) {
         if (text.isDisposed())
-                return;
+            return;
         IWorkbenchPart part = ref.getPart(false);
         String partId = part.getSite().getId();
         // Ignore ourselves
         if (partId.equals("org.eclipse.ui.internal.introview")) //$NON-NLS-1$
-                return;
+            return;
         if (activated) {
             title.setText(IntroPlugin
                     .getString("ContextHelpStandbyPart.whatIsArea.Title") //$NON-NLS-1$
@@ -254,7 +254,7 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
         do {
             contextId = (String) node.getData(HELP_KEY);
             if (contextId != null)
-                    break;
+                break;
             node = node.getParent();
         } while (node != null);
         if (contextId != null) { return HelpSystem.getContext(contextId); }
@@ -309,17 +309,17 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
     private void openLink(Object href) {
         String url = (String) href;
         if (url != null)
-                WorkbenchHelp.displayHelpResource(url);
+            WorkbenchHelp.displayHelpResource(url);
     }
 
     public void dispose() {
         IWorkbenchWindow window = PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
         if (window == null)
-                return;
+            return;
         IPartService service = window.getPartService();
         if (service == null)
-                return;
+            return;
         service.removePartListener(partListener);
     }
 
@@ -339,5 +339,8 @@ public class ContextHelpStandbyPart implements IStandbyContentPart {
      */
     public void setInput(Object input) {
         // does nothing.
+    }
+
+    public void saveState(IMemento memento) {
     }
 }

@@ -11,6 +11,7 @@
 package org.eclipse.ui.intro.config;
 
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.intro.*;
 
@@ -58,17 +59,23 @@ public interface IStandbyContentPart {
     public Control getControl();
 
     /**
-     * Initializes this standby part with the introPart.
-     * <p>
-     * This method is automatically called by the intro framework shortly after
-     * part construction. It marks the start of the standby part's lifecycle.
-     * Clients must not call this method.
-     * </p>
-     * 
-     * @param introPart
-     *            the intro part
-     */
-    public void init(IIntroPart introPart);
+	 * Initializes this intro standby content part with the given intro site. A memento is
+	 * passed to the part which contains a snapshot of the part state from a
+	 * previous session. Where possible, the part should try to recreate that
+	 * state.
+	 * <p>
+	 * This method is automatically called by the workbench shortly after
+	 * part construction.  It marks the start of this parts' lifecycle. Clients
+	 * must not call this method.
+	 * </p>
+	 *
+	 * @param part the intro part hosting this stanndby content part.
+     * @param memento this part state or <code>null</code> if there is no previous
+     * saved state
+	 * @exception PartInitException if this part was not initialized
+	 * successfully.
+	 */
+    public void init(IIntroPart introPart,  IMemento memento);
 
     /**
      * Sets the input to show in this standby part.
@@ -95,4 +102,17 @@ public interface IStandbyContentPart {
      * </p>
      */
     public void dispose();
+    
+    /**
+	 * Saves the object state within a memento.
+	 * <p>
+	 * This method is automatically called by the workbench at appropriate
+	 * times. Clients must not call this method directly.
+	 * </p>
+	 *
+	 * @param memento a memento to receive the object state
+	 */
+	public void saveState(IMemento memento);
+    
+    
 }

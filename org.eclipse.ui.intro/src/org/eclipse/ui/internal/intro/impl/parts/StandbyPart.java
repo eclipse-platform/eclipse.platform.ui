@@ -194,7 +194,11 @@ public class StandbyPart {
      *            the memento in which to store state information
      */
     public void saveState(IMemento memento) {
-        //DONOW: memento is not supported for now.
+        // pass memento to correct standby part.
+        IStandbyContentPart standbypart = cachedControlKey.getPart();
+        if (standbypart != null)
+            standbypart.saveState(memento);
+
     }
 
 
@@ -224,7 +228,7 @@ public class StandbyPart {
 
         ControlKey controlKey = getCachedContent(partId);
         if (controlKey == null) {
-            standbyContent.init(introPart);
+            standbyContent.init(introPart, memento);
             //DONOW: No memento support exposed right now for Standby Content.
             //standbyContent.init(introPart, memento);
             try {
