@@ -58,13 +58,6 @@ public class IOConsoleInputStream extends InputStream {
     private boolean closed = false;
     
     /**
-     * Flag to indicate that the console has been disconnected from this
-     * inputStream. EOF will sent once data remaining in buffer has
-     * been read.
-     */
-    private boolean disconnected;
-    
-    /**
      * The console that this stream is connected to.
      */
     private IOConsole console;
@@ -141,7 +134,7 @@ public class IOConsoleInputStream extends InputStream {
      * calling this method.
      */
     private void waitForData() {
-        while (size == 0 && !disconnected && !closed) {
+        while (size == 0 && !closed) {
             try {
                 wait();
             } catch (InterruptedException e) {
@@ -244,7 +237,7 @@ public class IOConsoleInputStream extends InputStream {
     public int available() throws IOException {
         if (closed && eofSent) {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
-        } else if (size == 0 && disconnected) {
+        } else if (size == 0) {
             if (!eofSent) {
                 eofSent = true;
                 return -1;
@@ -263,20 +256,6 @@ public class IOConsoleInputStream extends InputStream {
             throw new IOException("Input Stream Closed"); //$NON-NLS-1$
         }
         closed = true;
-        notifyAll();
-        if (console != null) {
-	        console.streamClosed(this);
-	        console = null;
-        }
-    }
-
-    /**
-     * Disconnects the console from this stream. 
-     * 
-     * TODO: do we need to distinguish between disconnect and close?
-     */
-    public synchronized void disconnect() {
-        disconnected = true;
         notifyAll();
         if (console != null) {
 	        console.streamClosed(this);

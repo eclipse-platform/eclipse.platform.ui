@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -176,7 +177,10 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 		document = null;
 		partitions.clear();
 		connected = false;
-		inputStream.disconnect();
+		try {
+            inputStream.close();
+        } catch (IOException e) {
+        }
 	}
 	
 	/*
