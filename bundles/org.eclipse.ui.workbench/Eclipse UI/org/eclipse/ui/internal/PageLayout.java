@@ -280,8 +280,12 @@ public class PageLayout implements IPageLayout {
 			if (newPart == null) {
 				addPlaceholder(viewId, relationship, ratio, refId);
 				LayoutHelper.addViewActivator(this, viewId);
-			} else
-				addPart(newPart, viewId, relationship, ratio, refId);
+			} else {
+				PartTabFolder newFolder = new PartTabFolder(rootLayoutContainer.page);
+				newFolder.add(newPart);
+				setFolderPart(viewId, newFolder);
+				addPart(newFolder, viewId, relationship, ratio, refId);
+			}
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
