@@ -169,19 +169,32 @@ public class LaunchConfigurationHistoryElement {
 	 * @see Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
-		if (isConfigurationBased()) {
-			return super.equals(o);
-		}
-		else if (o instanceof LaunchConfigurationHistoryElement) {
+		if (o instanceof LaunchConfigurationHistoryElement) {
 			LaunchConfigurationHistoryElement e= (LaunchConfigurationHistoryElement)o;
-			return
-				getLauncherIdentifier().equals(e.getLauncherIdentifier()) &&
-				getElementMemento().equals(e.getElementMemento()) &&
-				getMode().equals(getMode());
+			if (isConfigurationBased()) {
+				return getLaunchConfiguration().equals(e.getLaunchConfiguration());
+			}
+			else {	
+				return
+					getLauncherIdentifier().equals(e.getLauncherIdentifier()) &&
+					getElementMemento().equals(e.getElementMemento()) &&
+					getMode().equals(getMode());
+			}
 		}
 		return false;
 	}
 	
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		if (isConfigurationBased()) {
+			return getLaunchConfiguration().hashCode();
+		} else {
+			return getElementMemento().hashCode();
+		}
+	}
+		
 	/**
 	 * Returns the launcher that this history element represents.
 	 * Returns null if no launcher is currently registered with the launch 
@@ -217,4 +230,5 @@ public class LaunchConfigurationHistoryElement {
 		return fConfigurationBased;
 	}
 	// End of TXN
+
 }
