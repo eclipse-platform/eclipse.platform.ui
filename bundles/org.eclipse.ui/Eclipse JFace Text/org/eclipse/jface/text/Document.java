@@ -45,10 +45,8 @@ public class Document extends AbstractDocument {
 	 * @see IDocumentExtension#startSequentialRewrite(boolean)
 	 */
 	public void startSequentialRewrite(boolean normalized) {
-		if (normalized) {
-			ITextStore store= new SequentialRewriteTextStore(getStore());
-			setTextStore(store);
-		}
+		ITextStore store= new SequentialRewriteTextStore(getStore());
+		setTextStore(store);
 	}
 	
 	/*

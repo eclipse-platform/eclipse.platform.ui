@@ -131,9 +131,31 @@ public class TextEditor extends StatusTextEditor {
 			
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
+			
+			Throwable targetException= x.getTargetException();
+			
 			String title= TextEditorMessages.getString("Editor.error.save.title"); //$NON-NLS-1$
-			String msg= MessageFormat.format(TextEditorMessages.getString("Editor.error.save.message"), new Object[] { x.getTargetException().getMessage() }); //$NON-NLS-1$
-			MessageDialog.openError(shell, title, msg);
+			String msg= MessageFormat.format(TextEditorMessages.getString("Editor.error.save.message"), new Object[] { targetException.getMessage() }); //$NON-NLS-1$
+			
+			if (targetException instanceof CoreException) {
+				CoreException coreException= (CoreException) targetException;
+				IStatus status= coreException.getStatus();
+				if (status != null) {
+					switch (status.getSeverity()) {
+						case IStatus.INFO:
+							MessageDialog.openInformation(shell, title, msg);
+							break;
+						case IStatus.WARNING:
+							MessageDialog.openWarning(shell, title, msg);
+							break;
+						default:
+							MessageDialog.openError(shell, title, msg);
+					}
+				} else {
+				  	 MessageDialog.openError(shell, title, msg);
+				}
+			}
+						
 		} finally {
 			getDocumentProvider().changed(newInput);
 			if (success)

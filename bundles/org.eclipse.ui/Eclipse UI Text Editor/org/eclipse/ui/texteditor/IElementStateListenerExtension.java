@@ -19,4 +19,15 @@ public interface IElementStateListenerExtension {
 	 * @param isStateValidated the flag indicating whether state validation is done
 	 */
 	void elementStateValidationChanged(Object element, boolean isStateValidated);
+	
+	/**
+	 * Notifies that the given element is currently being changed. This method may
+	 * be sent from a non-ui thread.
+	 */
+	void elementStateChanging(Object element);
+	
+	/**
+	 * Notifies that changing the given element has failed.
+	 */
+	void elementStateChangeFailed(Object element);
 }

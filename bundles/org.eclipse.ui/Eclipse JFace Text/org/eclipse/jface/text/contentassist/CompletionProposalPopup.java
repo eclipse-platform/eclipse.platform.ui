@@ -345,6 +345,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 					break;
 					
 				default:
+				
+					if ('\t' == key) {
+						e.doit= false;
+						fProposalShell.setFocus();
+						return false;
+					}
+				
 					ICompletionProposal p= getSelectedProposal();
 					if (p instanceof ICompletionProposalExtension) {
 						ICompletionProposalExtension t= (ICompletionProposalExtension) p;

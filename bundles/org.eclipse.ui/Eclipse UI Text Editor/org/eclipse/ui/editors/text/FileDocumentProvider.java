@@ -9,6 +9,10 @@ package org.eclipse.ui.editors.text;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -37,11 +41,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 
 
@@ -50,6 +51,39 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * This class may be instantiated or be subclassed.
  */
 public class FileDocumentProvider extends StorageDocumentProvider {
+	
+	
+	/**
+	 * Runnable that makes sure that a change failed message is sent out.
+	 */
+	protected class SafeChange implements Runnable {
+		
+		private IFileEditorInput fInput;
+		
+		public SafeChange(IFileEditorInput input) {
+			fInput= input;
+		}
+		
+		protected void execute(IFileEditorInput input) throws Exception {
+		}
+		
+		/*
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			
+			if (getElementInfo(fInput) == null) {
+				fireElementStateChangeFailed(fInput);
+				return;
+			}
+			
+			try {
+				execute(fInput);
+			} catch (Exception e) {
+				fireElementStateChangeFailed(fInput);
+			}
+		}
+	};
 	
 	
 	/**
@@ -123,10 +157,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 						if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
 							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
 							if (!info.fCanBeSaved && computeModificationStamp(getFile()) != info.fModificationStamp) {
-								runnable= new Runnable() {
-									public void run() {
-										if (getElementInfo(fFileEditorInput) != null)
-											handleElementContentChanged(fFileEditorInput);
+								runnable= new SafeChange(fFileEditorInput) {
+									protected void execute(IFileEditorInput input) throws Exception {
+										handleElementContentChanged(input);
 									}
 								};
 							}
@@ -135,19 +168,17 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					case IResourceDelta.REMOVED:
 						if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
 							final IPath path= delta.getMovedToPath();
-							runnable= new Runnable() {
-								public void run() {
-									if (getElementInfo(fFileEditorInput) != null)
-										handleElementMoved(fFileEditorInput, path);
+							runnable= new SafeChange(fFileEditorInput) {
+								protected void execute(IFileEditorInput input) throws Exception {
+									handleElementMoved(input, path);
 								}
 							};
 						} else {
 							FileInfo info= (FileInfo) getElementInfo(fFileEditorInput);
 							if (!info.fCanBeSaved) {
-								runnable= new Runnable() {
-									public void run() {
-										if (getElementInfo(fFileEditorInput) != null)
-											handleElementDeleted(fFileEditorInput);
+								runnable= new SafeChange(fFileEditorInput) {
+									protected void execute(IFileEditorInput input) throws Exception {
+										handleElementDeleted(input);
 									}
 								};
 							}
@@ -168,13 +199,18 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		 * @param runnable the update code
 		 */
 		protected void update(Runnable runnable) {
+			
+			if (runnable instanceof SafeChange)
+				fireElementStateChanging(fFileEditorInput);
+			
 			IWorkbench workbench= PlatformUI.getWorkbench();
 			IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 			if (windows != null && windows.length > 0) {
 				Display display= windows[0].getShell().getDisplay();
 				display.asyncExec(runnable);
-			} else
+			} else {
 				runnable.run();
+			}
 		}
 	};
 	

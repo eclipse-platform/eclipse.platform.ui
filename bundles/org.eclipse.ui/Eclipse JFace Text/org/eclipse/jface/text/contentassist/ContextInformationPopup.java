@@ -404,8 +404,13 @@ class ContextInformationPopup implements IContentAssistListener {
 			e.doit= false;
 			return false;
 
+		} else if ('\t' == key) {
+			// switch focus to selector shell
+			e.doit= false;
+			fContextSelectorShell.setFocus();
+			return false;
 		} else if (key == 0x1B) {
-			// Terminate on Esc
+			// terminate on Esc
 			hideContextSelector();
 		}
 		
@@ -432,7 +437,7 @@ class ContextInformationPopup implements IContentAssistListener {
 			}
 			
 		} else if (key == 0x1B) {
-			// Terminate on Esc
+			// terminate on Esc
  			hideContextInfoPopup();
 		} else {
 			validateContextInformation();

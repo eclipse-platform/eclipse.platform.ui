@@ -23,6 +23,7 @@ import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.PlatformUI;
 
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -418,7 +419,12 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
 		if (info != null) {
-			Assert.isTrue(info.fDocument == document);
+			
+			if (info.fDocument != document) {
+				Status status= new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, IResourceStatus.ERROR, EditorMessages.getString("AbstractDocumentProvider.error.save.inuse"), null); //$NON-NLS-1$
+				throw new CoreException(status);				
+			}
+			
 			doSaveDocument(monitor, element, document, overwrite);
 			info.fCanBeSaved= false;
 			addUnchangedElementListeners(element, info);
@@ -679,6 +685,42 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			if (o instanceof IElementStateListenerExtension) {
 				IElementStateListenerExtension l= (IElementStateListenerExtension) o;
 				l.elementStateValidationChanged(element, isStateValidated);
+			}
+		}
+	}
+	
+	/**
+	 * Informs all registered element state listeners about the current
+	 * change of the element
+	 *
+	 * @param element the element
+	 * @see IElementStateListenerExtension#elementStateChanging
+	 */
+	protected void fireElementStateChanging(Object element) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			Object o= e.next();
+			if (o instanceof IElementStateListenerExtension) {
+				IElementStateListenerExtension l= (IElementStateListenerExtension) o;
+				l.elementStateChanging(element);
+			}
+		}
+	}
+	
+	/**
+	 * Informs all registered element state listeners about the failed
+	 * change of the element
+	 *
+	 * @param element the element
+	 * @see IElementStateListenerExtension#elementStateChanging
+	 */
+	protected void fireElementStateChangeFailed(Object element) {
+		Iterator e= new ArrayList(fElementStateListeners).iterator();
+		while (e.hasNext()) {
+			Object o= e.next();
+			if (o instanceof IElementStateListenerExtension) {
+				IElementStateListenerExtension l= (IElementStateListenerExtension) o;
+				l.elementStateChangeFailed(element);
 			}
 		}
 	}

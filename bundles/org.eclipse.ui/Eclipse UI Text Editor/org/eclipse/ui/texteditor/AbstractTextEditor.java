@@ -190,6 +190,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void elementStateValidationChanged(Object element, boolean isStateValidated) {
 
 			if (element != null && element.equals(getEditorInput())) {
+				
+				enableSanityChecking(true);
 
 				if (isStateValidated && fValidator != null) {
 					ISourceViewer viewer= getSourceViewer();
@@ -217,8 +219,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IElementStateListener#elementDirtyStateChanged
 		 */
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
-			if (element != null && element.equals(getEditorInput()))
+			if (element != null && element.equals(getEditorInput())) {
+				enableSanityChecking(true);
 				firePropertyChange(PROP_DIRTY);
+			}
 		}
 		
 		/*
@@ -226,6 +230,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementContentAboutToBeReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
+				enableSanityChecking(true);
 				rememberSelection();
 				resetHighlightRange();
 			}
@@ -236,6 +241,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
+				enableSanityChecking(true);
 				firePropertyChange(PROP_DIRTY);
 				restoreSelection();
 			}
@@ -245,35 +251,56 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IElementStateListener#elementDeleted
 		 */
 		public void elementDeleted(Object deletedElement) {
-			if (deletedElement != null && deletedElement.equals(getEditorInput()))
+			if (deletedElement != null && deletedElement.equals(getEditorInput())) {
+				enableSanityChecking(true);
 				close(false);
+			}
 		}
 		
 		/*
 		 * @see IElementStateListener#elementMoved
 		 */
 		public void elementMoved(Object originalElement, Object movedElement) {
-			if (originalElement != null && 
-					originalElement.equals(getEditorInput()) &&
-					(movedElement == null || movedElement instanceof IEditorInput)) {
 						
-				rememberSelection();
-									
-				IDocumentProvider d= getDocumentProvider();
-				IDocument changed= null;
-				if (isDirty())
-					changed= d.getDocument(getEditorInput());
-					
-				setInput((IEditorInput) movedElement);
+			if (originalElement != null && originalElement.equals(getEditorInput())) {
 				
-				if (changed != null) {
-					d.getDocument(getEditorInput()).set(changed.get());
-					validateState(getEditorInput());
-					updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
-				}					
+				enableSanityChecking(true);
+			
+				if (movedElement == null || movedElement instanceof IEditorInput) {	
+					rememberSelection();
+										
+					IDocumentProvider d= getDocumentProvider();
+					IDocument changed= null;
+					if (isDirty())
+						changed= d.getDocument(getEditorInput());
+						
+					setInput((IEditorInput) movedElement);
 					
-				restoreSelection();
+					if (changed != null) {
+						d.getDocument(getEditorInput()).set(changed.get());
+						validateState(getEditorInput());
+						updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+					}					
+						
+					restoreSelection();
+				}
 			}
+		}
+		
+		/*
+		 * @see IElementStateListenerExtension#elementStateChanging(Object)
+		 */
+		public void elementStateChanging(Object element) {
+			if (element != null && element.equals(getEditorInput()))
+				enableSanityChecking(false);
+		}
+		
+		/*
+		 * @see IElementStateListenerExtension#elementStateChangeFailed(Object)
+		 */
+		public void elementStateChangeFailed(Object element) {
+			if (element != null && element.equals(getEditorInput()))
+				enableSanityChecking(true);
 		}
 	};
 	
@@ -311,6 +338,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	};
 
+	/**
+	 * MISSING
+	 */
 	static class ConfigurationElementComparator implements Comparator {
 		
 		/*
@@ -469,7 +499,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Representation of action activation codes.
 	 */
-	class ActionActivationCode {
+	static class ActionActivationCode {
 		
 		public String fActionId;
 		public char fCharacter;
@@ -542,7 +572,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fActivePart == AbstractTextEditor.this) {
 				fIsHandlingActivation= true;
 				try {
-					sanityCheckState(getEditorInput());
+					safelySanityCheckState(getEditorInput());
 				} finally {
 					fIsHandlingActivation= false;
 				}
@@ -803,7 +833,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private long fModificationStamp= -1;
 	/** Ruler context menu listeners. */	
 	private List fRulerContextMenuListeners= new ArrayList();
-
+	/** Indicates whether sanity checking in enabled. */
+	private boolean fIsSanityCheckEnabled= true;
 	
 	
 	
@@ -1936,6 +1967,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 			performSaveOperation(createSaveOperation(false), progressMonitor);
 		}
+	}
+	
+	/**
+	 * Enables/Disabled sanity checking.
+	 */
+	protected synchronized void enableSanityChecking(boolean enable) {
+		fIsSanityCheckEnabled= enable;
+	}
+	
+	/**
+	 * Checks the state of the editor input if enabled.
+	 */
+	protected synchronized void safelySanityCheckState(IEditorInput input) {
+		if (fIsSanityCheckEnabled)
+			sanityCheckState(input);
 	}
 	
 	/**
