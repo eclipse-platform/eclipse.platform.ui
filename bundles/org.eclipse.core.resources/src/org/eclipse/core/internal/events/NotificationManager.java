@@ -92,7 +92,7 @@ protected ResourceDelta getDelta(ElementTree tree) {
 	long id = workspace.getMarkerManager().getChangeId();
 	// if we have a delta from last time and no resources have changed since then, we
 	// can reuse the delta structure
-	if (lastDelta != null && !ElementTree.hasChanges(tree, lastDeltaState, true)) {
+	if (lastDelta != null && !ElementTree.hasChanges(tree, lastDeltaState, ResourceComparator.getComparator(true), true)) {
 		// Markers may have changed since the delta was generated.  If so, get the new
 		// marker state and insert it in to the delta which is being reused.
 		if (id != lastMarkerChangeId) 

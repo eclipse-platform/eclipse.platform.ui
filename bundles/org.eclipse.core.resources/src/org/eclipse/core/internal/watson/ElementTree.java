@@ -8,6 +8,7 @@ package org.eclipse.core.internal.watson;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.internal.dtree.*;
+import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import java.util.*;
@@ -635,9 +636,12 @@ public boolean hasAncestor(ElementTree oldTree) {
  * given layers.  The two must be related and new must be newer than old.
  * That is, new must be an ancestor of old.
  */
-public static boolean hasChanges(ElementTree newLayer, ElementTree oldLayer, boolean inclusive) {
+public static boolean hasChanges(ElementTree newLayer, ElementTree oldLayer, IElementComparator comparator, boolean inclusive) {
 	// if any of the layers are null, assume that things have changed
 	if (newLayer == null || oldLayer == null)
+		return true;
+	//if the tree data has changed, then the tree has changed
+	if (comparator.compare(newLayer.getTreeData(), oldLayer.getTreeData()) != IElementComparator.K_NO_CHANGE)
 		return true;
 
 	// The tree structure has the top layer(s) (i.e., tree) parentage pointing down to a complete
