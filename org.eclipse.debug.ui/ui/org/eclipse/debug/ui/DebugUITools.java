@@ -497,23 +497,21 @@ public class DebugUITools {
 	 * @since 2.1
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
-		if (DebugUIPlugin.preLaunchSave()) {
-			boolean launchInBackground= true;
-			try {
-				launchInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-			if (launchInBackground) {
-				launchInBackground(configuration, mode);
-			} else {
-				launchInForeground(configuration, mode);
-			}
+		boolean launchInBackground= true;
+		try {
+			launchInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e);
+		}
+		if (launchInBackground) {
+			launchInBackground(configuration, mode);
+		} else {
+			launchInForeground(configuration, mode);
 		}
 	}
 	
 	/**
-	 * Builds the workspace according to current preference settings and
+	 * Saves and builds the workspace according to current preference settings and
 	 * launches the given launch configuration in the specified mode in the
 	 * foreground with a progress dialog. Reports any exceptions that occur
 	 * in an error dialog.
@@ -523,6 +521,9 @@ public class DebugUITools {
 	 * @since 3.0
 	 */
 	public static void launchInForeground(final ILaunchConfiguration configuration, final String mode) {
+		if (!DebugUIPlugin.preLaunchSave()) {
+			return;
+		}
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(DebugUIPlugin.getShell());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -559,7 +560,7 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Builds the workspace according to current preference settings and
+	 * Saves and builds the workspace according to current preference settings and
 	 * launches the given launch configuration in the specified mode in a background
 	 * Job with progress reported via the Job. Exceptions are reported in the Progress
 	 * view.
@@ -569,6 +570,9 @@ public class DebugUITools {
 	 * @since 3.0
 	 */
 	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
+		if (!DebugUIPlugin.preLaunchSave()) {
+			return;
+		}
 		Job job= new Job(MessageFormat.format(DebugUIMessages.getString("DebugUITools.3"), new String[] { configuration.getName() })) { //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				try {
