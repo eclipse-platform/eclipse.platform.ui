@@ -37,6 +37,11 @@ public abstract class AbstractPreferenceInitializer {
 	 *				node.put(key, value);
 	 *			}
 	 * </pre>
+	 * <p>
+	 * <em>Note:</em> Clients should not call this method. It will be called
+	 * automatically by the preference initializer when the appropriate default
+	 * preference node is accessed.
+	 * </p>
 	 */
 	public abstract void initializeDefaultPreferences();
 
