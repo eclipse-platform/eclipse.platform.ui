@@ -235,8 +235,8 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 		
 		if (message != null)
 			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));
-		
-		log.log(exception.getStatus());
+		else
+			log.log(exception.getStatus());
 	}
 	
 	/**
