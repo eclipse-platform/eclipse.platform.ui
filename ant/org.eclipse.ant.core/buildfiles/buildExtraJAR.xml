@@ -31,6 +31,7 @@
 			includeAntRuntime="no"
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;
+					${basedir}/../org.eclipse.core.runtime/bin;
 					${basedir}/../org.apache.ant/ant.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>
