@@ -387,7 +387,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #ASYNC_FINISH
 	 * @see #run
 	 */
-	public void setThread(Thread thread) {
+	public final void setThread(Thread thread) {
 		super.setThread(thread);
 	}
 
