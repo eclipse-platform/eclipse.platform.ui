@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Core Runtime Orphan Test 5 C"
+  id="testc"
+  version="1.0.0"
+  vendor-name="OTI">
+
+  <requires>
+     <import plugin="testh"/>
+     <import plugin="testj"/>
+     <import plugin="testi"/>
+  </requires>
+
+</plugin>

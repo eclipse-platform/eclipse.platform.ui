@@ -119,6 +119,7 @@ public static Test suite() {
 	suite.addTest(FragmentResolveTest_11.suite());
 	suite.addTest(FragmentResolveTest_12.suite());
 	suite.addTest(FragmentResolveTest_13.suite());
+	suite.addTest(OrphanTest.suite());
 	return suite;
 }
 }

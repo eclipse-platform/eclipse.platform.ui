@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Core Runtime Orphan Test 2 D"
+  id="testd"
+  version="1.0.0"
+  vendor-name="OTI">
+
+  <requires>
+     <import plugin="testk"/>
+     <import plugin="testl"/>
+     <import plugin="testm"/>
+  </requires>
+
+</plugin>

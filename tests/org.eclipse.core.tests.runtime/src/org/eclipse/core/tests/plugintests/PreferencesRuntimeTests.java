@@ -11,6 +11,8 @@
 package org.eclipse.core.tests.plugintests;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
@@ -18,9 +20,11 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.SafeFileInputStream;
 import org.eclipse.core.internal.runtime.SafeFileOutputStream;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
-public class PreferencesRuntimeTests extends WorkspaceSessionTest {
+public class PreferencesRuntimeTests extends PrimaryFeaturePreferenceHelperTests {
+	
 public PreferencesRuntimeTests() {
 	super(null);
 }
@@ -529,4 +533,520 @@ public void testFragmentPrefs() {
 		prefs.getString("commonStateAndFragmentLocalAndPrimaryFeaturePreference").equals("Common preference from the plugin state area of plugin stateAndFragmentLocalAndPrimaryFeaturePreferencesPlugin"));
 }
 	
+private boolean buildPluginTestFile(String pluginId, String pluginSubDir, String basePrefName,
+	String untransValue, String transValue, String prefixId) {
+	IPluginDescriptor plugin = InternalPlatform.getPluginRegistry().getPluginDescriptor(pluginId);
+	assertNotNull("0.1 Can't find plugin " + pluginId, plugin);
+	URL pluginRoot = plugin.find(new Path("./"));
+	File transfile = null;
+	if (pluginSubDir != null) {
+		transfile = new File(pluginRoot.getFile() + pluginSubDir);
+		transfile.mkdirs();
+	} else 
+		transfile = new File(pluginRoot.getFile());
+	File rootfile = new File(pluginRoot.getFile());
+	// Now build up the preferences file
+	File prefFile = new File(rootfile, basePrefName + ".ini");
+	try {
+		FileOutputStream fs = new FileOutputStream(prefFile);
+		PrintWriter w = new PrintWriter(fs);
+		try {
+			if (prefixId != null) {
+				w.println(prefixId + "/TranslatedPreference=%translateThis");
+				w.println(prefixId + "/UntranslatedPreference = " + untransValue);
+			} else {
+				w.println("TranslatedPreference=%translateThis");
+				w.println("UntranslatedPreference = " + untransValue);
+			}
+			w.flush();
+		} finally {
+			w.close();
+		}
+	} catch (IOException ioe) {
+		System.out.println ("Unable to write to preference file " + prefFile.getPath());
+		return false;
+	}
+	// Now build up the translation file
+	File prefTransFile = new File(transfile, basePrefName + ".properties");
+	try {
+		FileOutputStream fs = new FileOutputStream(prefTransFile);
+		PrintWriter w = new PrintWriter(fs);
+		try {
+			w.println("translateThis = " + transValue);
+			w.flush();
+		} finally {
+			w.close();
+		}
+	} catch (IOException ioe) {
+		System.out.println ("Unable to write to translation file " + prefTransFile.getPath());
+		return false;
+	}
+	return true;
+}
+
+private boolean buildFragmentTestFile(String pluginId,
+	String pluginSubDir, String basePrefName,
+	String untransValue, String transValue, String prefixId) {
+	IPluginDescriptor plugin = InternalPlatform.getPluginRegistry().getPluginDescriptor(pluginId);
+	assertNotNull("0.1 Can't find plugin " + pluginId, plugin);
+	PluginFragmentModel[] fragments = ((PluginDescriptor)plugin).getFragments();
+	PluginFragmentModel testFragment = null;
+	for (int i = 0; (i < fragments.length) && (testFragment == null); i++) {
+		if (fragments[i].getId().equals("primaryFeatureFragmentTranslations"))
+			testFragment = fragments[i];
+	}
+	// Should only be one fragment
+	assertNotNull("0.2 Can't find test fragment", testFragment);
+	URL fragmentRoot = null;
+	try {
+		fragmentRoot = new URL(testFragment.getLocation());
+	} catch (MalformedURLException badURL) {
+		return false;
+	}
+	URL rootDirectory = null;
+	try {
+		rootDirectory = new URL(((PluginDescriptor)plugin).getLocation());
+	} catch (MalformedURLException badURL) {
+		return false;
+	}
+	File file = null;
+	if (pluginSubDir != null) {
+		file = new File(fragmentRoot.getFile() + pluginSubDir);
+		file.mkdirs();
+	} else 
+		file = new File(fragmentRoot.getFile());
+	// Now build up the preference file
+	File prefFile = new File(new File(rootDirectory.getFile()), basePrefName + ".ini");
+	try {
+		FileOutputStream fs = new FileOutputStream(prefFile);
+		PrintWriter w = new PrintWriter(fs);
+		try {
+			if (prefixId != null) {
+				w.println(prefixId + "/TranslatedPreference=%translateThis");
+				w.println(prefixId + "/UntranslatedPreference = " + untransValue);
+			} else {
+				w.println("TranslatedPreference=%translateThis");
+				w.println("UntranslatedPreference = " + untransValue);
+			}
+			w.flush();
+		} finally {
+			w.close();
+		}
+	} catch (IOException ioe) {
+		System.out.println ("Unable to write to preference file " + prefFile.getPath());
+		return false;
+	}
+	// Now build up the translation file
+	File prefTransFile = new File(file, basePrefName + ".properties");
+	try {
+		FileOutputStream fs = new FileOutputStream(prefTransFile);
+		PrintWriter w = new PrintWriter(fs);
+		try {
+			w.println("translateThis = " + transValue);
+			w.flush();
+		} finally {
+			w.close();
+		}
+	} catch (IOException ioe) {
+		System.out.println ("Unable to write to translation file " + prefTransFile.getPath());
+		return false;
+	}
+	return true;
+}
+
+private String buildNLSubdirectory(int chopSegment) {
+	// Build up nl related directories and test files
+	String nl = BootLoader.getNL();
+	nl = nl.replace('_', '/');
+	// Chop off the number of segments stated
+	int i = chopSegment;
+	while (nl.length() > 0 && i > 0) {
+		i--;
+		int idx = nl.lastIndexOf('/');
+		if (idx != -1)
+			nl = nl.substring(0, idx);
+		else 
+			nl = "";
+	}
+	if ((nl.length() == 0) && (i > 0))
+		// We couldn't get rid of all the segments we wanted to
+		return null;
+	return nl;
+}
+
+private Preferences getPreferences (String pluginId, String errorPrefix) {
+	IPluginDescriptor plugin = InternalPlatform.getPluginRegistry().getPluginDescriptor(pluginId);
+	assertNotNull(errorPrefix + ".0 Can't find plugin " + pluginId);
+	Plugin runtimePlugin = null;
+	try {
+		runtimePlugin = plugin.getPlugin();
+	} catch (CoreException ce) {
+		fail(errorPrefix + ".1 Can't activate plugin " + pluginId + ce.toString());
+	}
+	assertNotNull(errorPrefix + ".1 Can't activate plugin " + pluginId);
+	Preferences prefs = runtimePlugin.getPluginPreferences();
+	return prefs;
+}
+
+private void verifyPreferences (String pluginId, Preferences prefs,
+	String errorPrefix, String untransValue, String transValue) {
+	String[] defaultNames = prefs.defaultPropertyNames();
+	String[] explicitNames = prefs.propertyNames();
+	assertEquals(errorPrefix + ".0 Two default preferences", defaultNames.length, 2);
+	assertEquals(errorPrefix + ".1 No explicit preferences", explicitNames.length, 0);
+	boolean translatedPref = false;
+	boolean untranslatedPref = false;
+	for (int i = 0; i < defaultNames.length; i++) {
+		if (defaultNames[i].equals("TranslatedPreference"))
+			translatedPref = true;
+		else if (defaultNames[i].equals("UntranslatedPreference"))
+			untranslatedPref = true;
+	}
+	assertTrue(errorPrefix + ".2 Didn't find preference \"TranslatedPreference\"",
+		translatedPref);
+	assertTrue(errorPrefix + ".3 Didn't find preference \"UntranslatedPreference\"",
+		untranslatedPref);
+	// Now check the preference values
+	String value = prefs.getString("TranslatedPreference");
+	assertEquals(errorPrefix + ".4 Value of \"TranslatedPreference\"",
+		value, transValue);
+	value = prefs.getString("UntranslatedPreference");
+	assertEquals(errorPrefix + ".5 Value of \"UntranslatedPreference\"",
+		value, untransValue);
+}
+
+private void cleanupTestFiles(String pluginId, String fragmentId, String testDirectory, String prefFileName) {
+	IPluginDescriptor plugin = InternalPlatform.getPluginRegistry().getPluginDescriptor(pluginId);
+	URL rootDir = null;
+	if (fragmentId == null) {
+		rootDir = plugin.find(new Path("./"));
+	} else {
+		PluginFragmentModel[] fragments = ((PluginDescriptor)plugin).getFragments();
+		if (fragments.length != 1)
+			return;
+		try {
+			rootDir = new URL(fragments[0].getLocation());
+		} catch (MalformedURLException badURL) {
+			return;
+		}
+	}
+	if (rootDir == null)
+		return;
+	String rootString = rootDir.getFile();
+	if (testDirectory != null)
+		deleteDirectory(new File(rootString + "/" + testDirectory));
+	new File(rootString + "/" + prefFileName).delete();
+}
+
+public void testPFTranslationPluginRoot() {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the root plugin directory.
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	IPluginDescriptor primaryFeatureDescriptor = Platform.getPluginRegistry().getPluginDescriptor(primaryFeaturePluginId);
+	assertNotNull("Can't find primary feature plugin " + primaryFeatureDescriptor);
+	String rootDirectory = null;
+	try {
+		rootDirectory = new URL(((PluginDescriptor)primaryFeatureDescriptor).getLocation()).getFile();
+	} catch (MalformedURLException badURL) {
+		fail("Bad URL created for " + ((PluginDescriptor)primaryFeatureDescriptor).getLocation());
+	}
+	try {
+		String untransValue = "Test string from " + primaryFeaturePluginId + " plugin root directory.";
+		String transValue = "Translated string from " + primaryFeaturePluginId + " plugin root directory.";
+		IPath sourcePath = new Path(rootDirectory).append("plugin_customization.ini");
+		File prefFile = sourcePath.toFile();
+		try {
+			FileOutputStream fs = new FileOutputStream(prefFile);
+			PrintWriter w = new PrintWriter(fs);
+			try {
+				w.println("primaryFeatureTranslations/TranslatedPreference=%translateThis");
+				w.println("primaryFeatureTranslations/UntranslatedPreference = " + untransValue);
+				w.flush();
+			} finally {
+				w.close();
+			}
+		} catch (IOException ioe) {
+			fail ("Unable to write to preference file " + prefFile.getPath());
+		}
+		sourcePath = new Path(rootDirectory).append("plugin_customization.properties");
+		File prefTransFile = new File(sourcePath.toString());
+		try {
+			FileOutputStream fs = new FileOutputStream(prefTransFile);
+			PrintWriter w = new PrintWriter(fs);
+			try {
+				w.println("translateThis = " + transValue);
+				w.flush();
+			} finally {
+				w.close();
+			}
+		} catch (IOException ioe) {
+			fail ("Unable to write to translation file " + prefTransFile.getPath());
+		}
+		Preferences prefs = getPreferences("primaryFeatureTranslations", "1");
+		verifyPreferences ("primaryFeatureTranslations", prefs, "1",
+			untransValue, transValue);
+	} finally {
+			cleanupTestFiles(primaryFeaturePluginId, null, null, "plugin_customization.ini");
+			cleanupTestFiles(primaryFeaturePluginId, null, null, "plugin_customization.properties");
+	}
+}
+
+public void testPFTranslationsPluginNL1 () {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the most specific nl directory
+	// below the primary feature plugin.
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	try {
+		String subDirectory = buildNLSubdirectory(0);
+		String untransValue = "Test string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+		String transValue = "Translated string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+		if (!buildPluginTestFile(primaryFeaturePluginId,
+			"nl/" + subDirectory, "plugin_customization", untransValue,
+			transValue, "primaryFeatureTranslations"))
+			// We don't expect this one to fail
+			fail ("0.2 Could not build nl preference data for testPFTranslationsPluginNL1");
+		else {
+			Preferences prefs = getPreferences("primaryFeatureTranslations", "2");
+			verifyPreferences("primaryFeatureTranslations", prefs, "2", untransValue, transValue);
+		}
+	} finally {
+			cleanupTestFiles(primaryFeaturePluginId, null, "nl", "plugin_customization.ini");
+	}
+}
+
+public void testPFTranslationsPluginNL2() {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the nl/<first_segment> directory
+	// below the primary feature plugin.  Note that if there is
+	// only one segment to the locale string, the test 
+	// testPFTranslationsPluginNL1 will have already done
+	// this.  In this case, this test will do nothing.
+	
+	String nl = BootLoader.getNL();
+	// there is at least one segment
+	int localeSegments = 1;
+	int i = nl.indexOf('_');
+	while (i != -1) {
+		localeSegments++;
+		nl = nl.substring(i+1);
+		i = nl.indexOf('_');
+	}
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	if (localeSegments > 1) {
+		try {
+			String subDirectory = buildNLSubdirectory(1);
+			String untransValue = "Test string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+			String transValue = "Translated string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+			if (!buildPluginTestFile(primaryFeaturePluginId,
+				"nl/" + subDirectory, "plugin_customization", untransValue,
+				transValue, "primaryFeatureTranslations"))
+				// We don't expect this one to fail
+				fail ("0.3 Could not build nl preference data for testPFTranslationsPluginNL2");
+			else {
+				Preferences prefs = getPreferences("primaryFeatureTranslations", "3");
+				verifyPreferences("primaryFeatureTranslations", prefs, "3", untransValue, transValue);
+			}
+		} finally {
+			cleanupTestFiles(primaryFeaturePluginId, null, "nl", "plugin_customization.ini");
+		}
+	}
+}
+
+public void testPFTranslationsPluginNL3() {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the nl/ directory
+	// below the primary feature plugin.  Note that these
+	// translations should not be found.
+	String nl = BootLoader.getNL();
+	// there is at least one segment
+	int localeSegments = 1;
+	int i = nl.indexOf('_');
+	while (i != -1) {
+		localeSegments++;
+		nl = nl.substring(i+1);
+		i = nl.indexOf('_');
+	}
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	try {
+		String subDirectory = buildNLSubdirectory(localeSegments);
+		String untransValue = "Test string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+		String transValue = "Translated string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+		if (buildPluginTestFile(primaryFeaturePluginId,
+			"nl/" + subDirectory, "plugin_customization", untransValue,
+			transValue, "primaryFeatureTranslations"))
+		if (subDirectory == null)
+			// We don't expect this one to fail
+			fail ("0.4 Could not build nl preference data for testPFTranslationsPluginNL3");
+		else {
+			Preferences prefs = getPreferences("primaryFeatureTranslations", "4");
+				verifyPreferences("primaryFeatureTranslations", prefs, "4", untransValue, "%translateThis");
+		}
+	} finally {
+		cleanupTestFiles(primaryFeaturePluginId, null, "nl", "plugin_customization.ini");
+	}
+}
+
+public void testPFTranslationFragmentRoot() {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the root fragment directory.
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	IPluginDescriptor primaryFeatureDescriptor = Platform.getPluginRegistry().getPluginDescriptor(primaryFeaturePluginId);
+	assertNotNull("Can't find primary feature plugin " + primaryFeatureDescriptor);
+	String rootDirectory = null;
+	String fragmentRootDirectory = null;
+	PluginFragmentModel[] fragments = ((PluginDescriptor)primaryFeatureDescriptor).getFragments();
+	PluginFragmentModel testFragment = null;
+	for (int i = 0; (i < fragments.length) && (testFragment == null); i++) {
+		if (fragments[i].getId().equals("primaryFeatureFragmentTranslations"))
+			testFragment = fragments[i];
+	}
+	assertNotNull("5.0 Can't find test fragment for primary feature", testFragment);
+	try {
+		fragmentRootDirectory = new URL(testFragment.getLocation()).getFile();
+	} catch (MalformedURLException badURL) {
+		fail("Bad URL created for " + testFragment.getLocation());
+	}
+	try {
+		rootDirectory = new URL(((PluginDescriptor)primaryFeatureDescriptor).getLocation()).getFile();
+	} catch (MalformedURLException badURL) {
+		fail("Bad URL created for " + ((PluginDescriptor)primaryFeatureDescriptor).getLocation());
+	}
+	try {
+		String untransValue = "Test string from " + primaryFeaturePluginId + " plugin root directory.";
+		String transValue = "Translated string from " + primaryFeaturePluginId + " fragment root directory.";
+		IPath sourcePath = new Path(rootDirectory).append("plugin_customization.ini");
+		File prefFile = sourcePath.toFile();
+		try {
+			FileOutputStream fs = new FileOutputStream(prefFile);
+			PrintWriter w = new PrintWriter(fs);
+			try {
+				w.println("primaryFeatureTranslations/TranslatedPreference=%translateThis");
+				w.println("primaryFeatureTranslations/UntranslatedPreference = " + untransValue);
+				w.flush();
+			} finally {
+				w.close();
+			}
+		} catch (IOException ioe) {
+			fail ("Unable to write to preference file " + prefFile.getPath());
+		}
+		sourcePath = new Path(fragmentRootDirectory).append("plugin_customization.properties");
+		File prefTransFile = new File(sourcePath.toString());
+		try {
+			FileOutputStream fs = new FileOutputStream(prefTransFile);
+			PrintWriter w = new PrintWriter(fs);
+			try {
+				w.println("translateThis = " + transValue);
+				w.flush();
+			} finally {
+				w.close();
+			}
+		} catch (IOException ioe) {
+			fail ("Unable to write to translation file " + prefTransFile.getPath());
+		}
+		Preferences prefs = getPreferences("primaryFeatureTranslations", "5");
+		verifyPreferences ("primaryFeatureTranslations", prefs, "5",
+			untransValue, transValue);
+	} finally {
+			cleanupTestFiles(primaryFeaturePluginId, null, null, "plugin_customization.ini");
+			cleanupTestFiles(primaryFeaturePluginId, "primaryFeatureFragmentTranslations", null, "plugin_customization.properties");
+	}
+}
+
+public void testPFTranslationsFragmentNL1 () {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the most specific nl directory
+	// below the primary feature fragment.
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	try {
+		String subDirectory = buildNLSubdirectory(0);
+		String untransValue = "Test string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+		String transValue = "Translated string from " + primaryFeaturePluginId + " fragment " + subDirectory + " directory.";
+		if (!buildFragmentTestFile(primaryFeaturePluginId,
+			"nl/" + subDirectory, "plugin_customization", untransValue,
+			transValue, "primaryFeatureTranslations"))
+			// We don't expect this one to fail
+			fail ("0.6 Could not build nl preference data for testPrimaryFeatureTranslationsNL1");
+		else {
+			Preferences prefs = getPreferences("primaryFeatureTranslations", "6");
+			verifyPreferences("primaryFeatureTranslations", prefs, "6", untransValue, transValue);
+		}
+	} finally {
+			cleanupTestFiles(primaryFeaturePluginId, "primaryFeatureFragmentTranslations", "nl", "plugin_customization.ini");
+	}
+}
+
+public void testPFTranslationsFragmentNL2() {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the nl/<first_segment> directory
+	// below the primary feature fragment.  Note that if there is
+	// only one segment to the locale string, the test 
+	// testPFTranslationsFragmentNL1 will have already done
+	// this.  In this case, this test will do nothing.
+	
+	String nl = BootLoader.getNL();
+	// there is at least one segment
+	int localeSegments = 1;
+	int i = nl.indexOf('_');
+	while (i != -1) {
+		localeSegments++;
+		nl = nl.substring(i+1);
+		i = nl.indexOf('_');
+	}
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	if (localeSegments > 1) {
+		try {
+			String subDirectory = buildNLSubdirectory(1);
+			String untransValue = "Test string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+			String transValue = "Translated string from " + primaryFeaturePluginId + " fragment " + subDirectory + " directory.";
+			if (!buildFragmentTestFile(primaryFeaturePluginId,
+				"nl/" + subDirectory, "plugin_customization", untransValue,
+				transValue, "primaryFeatureTranslations"))
+				// We don't expect this one to fail
+				fail ("0.7 Could not build nl preference data for testPFTranslationsFragmentNL2");
+			else {
+				Preferences prefs = getPreferences("primaryFeatureTranslations", "7");
+				verifyPreferences("primaryFeatureTranslations", prefs, "7", untransValue, transValue);
+			}
+		} finally {
+			cleanupTestFiles(primaryFeaturePluginId, "primaryFeatureFragmentTranslations", "nl", "plugin_customization.ini");
+		}
+	}
+}
+
+public void testPFTranslationsFragmentNL3() {
+	// Test translations in the primary feature preferences when
+	// the translation file is in the nl/ directory
+	// below the primary feature fragment.  Note that these
+	// translations should not be found.
+	String nl = BootLoader.getNL();
+	// there is at least one segment
+	int localeSegments = 1;
+	int i = nl.indexOf('_');
+	while (i != -1) {
+		localeSegments++;
+		nl = nl.substring(i+1);
+		i = nl.indexOf('_');
+	}
+	String primaryFeaturePluginId = BootLoader.getCurrentPlatformConfiguration().getPrimaryFeatureIdentifier();
+	try {
+		String subDirectory = buildNLSubdirectory(localeSegments);
+		String untransValue = "Test string from " + primaryFeaturePluginId + " plugin " + subDirectory + " directory.";
+		String transValue = "Translated string from " + primaryFeaturePluginId + " fragment " + subDirectory + " directory.";
+		if (buildFragmentTestFile(primaryFeaturePluginId,
+			"nl/" + subDirectory, "plugin_customization", untransValue,
+			transValue, "primaryFeatureTranslations"))
+		if (subDirectory == null)
+			// We don't expect this one to fail
+			fail ("0.8 Could not build nl preference data for testPFTranslationsFragmentNL3");
+		else {
+			Preferences prefs = getPreferences("primaryFeatureTranslations", "8");
+				verifyPreferences("primaryFeatureTranslations", prefs, "8", untransValue, "%translateThis");
+		}
+	} finally {
+		cleanupTestFiles(primaryFeaturePluginId, "primaryFeatureFragmentTranslations", "nl", "plugin_customization.ini");
+	}
+}
+
+public void xtestPluginLocalPreferenceTranslations() {
+}
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Core Runtime Orphan Test 3 A"
+  id="testa"
+  version="1.0.0"
+  vendor-name="OTI">
+
+  <requires>
+     <import plugin="testb"/>
+     <import plugin="testc"/>
+     <import plugin="testd"/>
+  </requires>
+
+</plugin>

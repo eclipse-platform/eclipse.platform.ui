@@ -20,7 +20,7 @@ import org.eclipse.core.internal.runtime.SafeFileOutputStream;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
-public class CmdLineAndStateAndPluginLocalAndPrimaryFeatureTest extends WorkspaceSessionTest {
+public class CmdLineAndStateAndPluginLocalAndPrimaryFeatureTest extends PrimaryFeaturePreferenceHelperTests {
 
 public CmdLineAndStateAndPluginLocalAndPrimaryFeatureTest() {
 	super(null);
