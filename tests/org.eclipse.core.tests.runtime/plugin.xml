@@ -171,17 +171,6 @@
             name="Root Element"
             id="root-element"
             describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.runtime.tests.root-element"/>
-      <!-- this content type has an invalid describer, it should never be picked on content-based content type lookup -->
-      <content-type
-            name="Invalid Describer"
-            id="invalid"
-            describer="a_non_existant_class_expected_to_cause_failure.class"/>
-      <content-type
-            id="invalid-missing-name"
-            filename="invalid.missing.name"/>                        
-      <content-type
-            name="Invalid (Missing identifier)"
-            filename="invalid.missing.identifier"/>            
       <content-type
             base-type="org.eclipse.core.runtime.xml"
             name="DTD"
@@ -193,7 +182,18 @@
       </content-type>      
       <file-association
             file-extensions="orphan2"
-            content-type="org.eclipse.bundle01.missing"/>
+            content-type="org.eclipse.bundle01.missing"/>            
+      <!-- this content type has an invalid describer, it should never be picked on content-based content type lookup -->
+      <content-type
+            name="Invalid Describer"
+            id="invalid"
+            describer="a_non_existant_class_expected_to_cause_failure.class"/>
+      <content-type
+            id="invalid-missing-name"
+            filename="invalid.missing.name"/>                        
+      <content-type
+            name="Invalid (Missing identifier)"
+            filename="invalid.missing.identifier"/>            
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

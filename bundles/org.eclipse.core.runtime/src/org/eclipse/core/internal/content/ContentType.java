@@ -167,7 +167,7 @@ public final class ContentType implements IContentType {
 		}
 	}
 
-	int describe(IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description) {
+	int describe(IContentDescriber selectedDescriber, InputStream contents, ContentDescription description) {
 		try {
 			return selectedDescriber.describe(contents, description);
 		} catch (IOException ioe) {
@@ -185,11 +185,11 @@ public final class ContentType implements IContentType {
 			invalidateDescriber(e);
 			throw e;
 		} finally {
-			contents.reset();
+			((LazyInputStream) contents).reset();
 		}
 	}
 
-	int describe(ITextContentDescriber selectedDescriber, CharArrayReader contents, ContentDescription description) {
+	int describe(ITextContentDescriber selectedDescriber, Reader contents, ContentDescription description) {
 		try {
 			return selectedDescriber.describe(contents, description);
 		} catch (IOException ioe) {
@@ -288,7 +288,7 @@ public final class ContentType implements IContentType {
 	 * @see IContentType
 	 */
 	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException {
-		ByteArrayInputStream buffer = ContentTypeManager.readBuffer(contents);
+		InputStream buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
 			return defaultDescription;
 		return internalGetDescriptionFor(buffer, options);
@@ -298,7 +298,7 @@ public final class ContentType implements IContentType {
 	 * @see IContentType
 	 */
 	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException {
-		CharArrayReader buffer = ContentTypeManager.readBuffer(contents);
+		Reader buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
 			return defaultDescription;
 		return internalGetDescriptionFor(buffer, options);
@@ -388,7 +388,7 @@ public final class ContentType implements IContentType {
 		return defaultCharset;
 	}
 
-	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) {
+	IContentDescription internalGetDescriptionFor(InputStream buffer, QualifiedName[] options) {
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
 		if (buffer == null)
@@ -410,7 +410,7 @@ public final class ContentType implements IContentType {
 		return description;
 	}
 
-	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) {
+	IContentDescription internalGetDescriptionFor(Reader buffer, QualifiedName[] options) {
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
 		if (buffer == null)

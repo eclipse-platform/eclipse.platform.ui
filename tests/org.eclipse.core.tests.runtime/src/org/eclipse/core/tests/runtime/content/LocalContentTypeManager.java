@@ -45,7 +45,7 @@ public class LocalContentTypeManager extends ContentTypeManager {
 	}
 
 	public IContentType[] findContentTypesFor(InputStream contents, IContentType[] subset) throws IOException {
-		ByteArrayInputStream buffer = readBuffer(contents);
+		InputStream buffer = readBuffer(contents);
 		if (buffer == null)
 			return subset;
 		if (subset == null)

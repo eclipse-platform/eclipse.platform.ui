@@ -19,21 +19,11 @@ import org.osgi.service.prefs.Preferences;
 
 public class ContentTypeManager implements IContentTypeManager {
 
-	private static class UncloseableCharArrayReader extends CharArrayReader {
-		public UncloseableCharArrayReader(char[] buf, int offset, int length) {
-			super(buf, offset, length);
-		}
-
-		public void close() {
-			// don't do anything on close
-		}
-	}
-
 	final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;	
 	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
 	private static ContentTypeManager instance;
-	private static final int MARK_LIMIT = 0x400;
+	public static final int MARK_LIMIT = 0x400;
 
 	private ContentTypeBuilder builder;
 	private Map catalog = new HashMap();
@@ -85,38 +75,12 @@ public class ContentTypeManager implements IContentTypeManager {
 	/*
 	 * Returns null if no bytes can be read
 	 */
-	protected static ByteArrayInputStream readBuffer(InputStream contents) throws IOException {
-		boolean failed = false;
-		try {
-			if (contents.markSupported())
-				contents.mark(MARK_LIMIT);
-			byte[] buffer = new byte[MARK_LIMIT];
-			int read = contents.read(buffer);
-			return new ByteArrayInputStream(buffer, 0, read == -1 ? 0 : read);
-		} catch (IOException ioe) {
-			failed = true;
-			throw ioe;
-		} finally {
-			if (!failed && contents.markSupported())
-				contents.reset();
-		}
+	protected static LazyInputStream readBuffer(InputStream contents) {
+		return new LazyInputStream(contents, MARK_LIMIT);
 	}
 
-	protected static CharArrayReader readBuffer(Reader contents) throws IOException {
-		boolean failed = false;
-		try {
-			if (contents.markSupported())
-				contents.mark(MARK_LIMIT);
-			char[] buffer = new char[MARK_LIMIT];
-			int read = contents.read(buffer);
-			return new UncloseableCharArrayReader(buffer, 0, read == -1 ? 0 : read);
-		} catch (IOException ioe) {
-			failed = true;
-			throw ioe;
-		} finally {
-			if (!failed && contents.markSupported())
-				contents.reset();
-		}
+	protected static LazyReader readBuffer(Reader contents) throws IOException {
+		return new LazyReader(contents, MARK_LIMIT);
 	}
 
 	/**
@@ -195,7 +159,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	 */
 	public IContentType[] findContentTypesFor(InputStream contents, String fileName) throws IOException {
 		IContentType[] subset = fileName != null ? findContentTypesFor(fileName) : getAllContentTypes();
-		ByteArrayInputStream buffer = readBuffer(contents);
+		InputStream buffer = readBuffer(contents);
 		return internalFindContentTypesFor(buffer, subset);
 	}
 
@@ -275,7 +239,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	 */
 	public IContentDescription getDescriptionFor(InputStream contents, String fileName, QualifiedName[] options) throws IOException {
 		// naive implementation for now
-		ByteArrayInputStream buffer = readBuffer(contents);
+		InputStream buffer = readBuffer(contents);
 		IContentType[] subset = fileName != null ? findContentTypesFor(fileName) : getAllContentTypes();
 		IContentType[] selected = internalFindContentTypesFor(buffer, subset);
 		if (selected.length == 0)
@@ -287,7 +251,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	 * @see IContentTypeManager
 	 */
 	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException {
-		CharArrayReader buffer = readBuffer(contents);
+		Reader buffer = readBuffer(contents);
 		IContentType[] subset = fileName != null ? findContentTypesFor(fileName) : getAllContentTypes();
 		IContentType[] selected = internalFindContentTypesFor(buffer, subset);
 		if (selected.length == 0)
@@ -299,7 +263,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		return InternalPlatform.getDefault().getPreferencesService().getRootNode().node(CONTENT_TYPE_PREF_NODE);
 	}
 
-	protected IContentType[] internalFindContentTypesFor(ByteArrayInputStream buffer, IContentType[] subset) {
+	protected IContentType[] internalFindContentTypesFor(InputStream buffer, IContentType[] subset) {
 		if (buffer == null) {
 			Arrays.sort(subset, depthComparator);
 			return subset;
@@ -328,7 +292,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		return result;
 	}
 
-	private IContentType[] internalFindContentTypesFor(CharArrayReader buffer, IContentType[] subset) {
+	private IContentType[] internalFindContentTypesFor(Reader buffer, IContentType[] subset) {
 		if (buffer == null) {
 			Arrays.sort(subset, depthComparator);
 			return subset;

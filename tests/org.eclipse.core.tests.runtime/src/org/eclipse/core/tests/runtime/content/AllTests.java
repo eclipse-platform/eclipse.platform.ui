@@ -28,6 +28,8 @@ public class AllTests extends TestCase {
 		suite.addTest(IContentTypeManagerTest.suite());
 		suite.addTest(ContentDescriptionTest.suite());		
 		suite.addTest(XMLContentDescriberTest.suite());
+		suite.addTest(LazyInputStreamTest.suite());
+		suite.addTest(LazyReaderTest.suite());
 		return suite;
 	}
 }
