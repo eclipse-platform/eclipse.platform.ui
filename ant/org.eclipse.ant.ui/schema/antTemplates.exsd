@@ -7,6 +7,7 @@
       </appInfo>
       <documentation>
          Allows plug-ins to define Ant templates for use in Ant build files via content assist.
+         This will be removed early in M9 in favor of the org.eclipse.ui.editors Templates extension point
       </documentation>
    </annotation>
 
