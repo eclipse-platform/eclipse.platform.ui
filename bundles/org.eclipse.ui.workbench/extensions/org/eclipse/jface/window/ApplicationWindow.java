@@ -64,6 +64,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	private StatusLineManager statusLineManager = null;
 	
 	/**
+	 * A flag indicating that an operation is running.
+	 */
+	private boolean operationInProgress = false;
+	
+	/**
 	 * Internal application window layout class.
 	 * This vertical layout supports a tool bar area (fixed size),
 	 * a separator line, the content area (variable size), and a 
@@ -181,8 +186,19 @@ protected void addToolBar(int style) {
 }
 /* (non-Javadoc)
  * Method declared on Window.
+ */ 
+protected void handleShellCloseEvent() {
+	if(operationInProgress)
+		return;
+	super.handleShellCloseEvent();
+}
+/* (non-Javadoc)
+ * Method declared on Window.
  */
 public boolean close() {
+	if(operationInProgress)
+		return false;
+		
 	if (super.close()) {
 		menuBarManager = null;
 		toolBarManager = null;
@@ -340,86 +356,92 @@ protected Control getToolBarControl() {
  * Method declared on IRunnableContext.
  */
 public void run(final boolean fork, boolean cancelable, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-	final StatusLineManager mgr = getStatusLineManager();
-	if (mgr == null) {
-		runnable.run(new NullProgressMonitor());
-		return;
-	}
-	boolean cancelWasEnabled = mgr.isCancelEnabled();
-
-	final Control contents = getContents();
-	final Display display = contents.getDisplay();
-	Shell shell = getShell();
-	boolean contentsWasEnabled = contents.isEnabled();
-	MenuManager manager = getMenuBarManager();
-	Menu menuBar = null;
-	if (manager != null) {
-		menuBar = manager.getMenu();
-		manager = null;
-	}
-	boolean menuBarWasEnabled = false;
-	if (menuBar != null)
-		menuBarWasEnabled = menuBar.isEnabled();
-
-	Control toolbarControl = getToolBarControl();
-	boolean toolbarWasEnabled = false;
-	if (toolbarControl != null) 
-		toolbarWasEnabled = toolbarControl.isEnabled();
-
-	// Disable the rest of the shells on the current display
-	Shell[] shells = display.getShells();
-	boolean[] enabled = new boolean[shells.length];
-	for (int i = 0; i < shells.length; i++) {
-		Shell current = shells[i];
-		if (current == shell) continue;
-		if (current != null && !current.isDisposed()) {
-			enabled[i] = current.isEnabled();
-			current.setEnabled(false);
-		}
-	}
-
-	Control currentFocus = display.getFocusControl();
 	try {
-		contents.setEnabled(false);
-		if (menuBar != null) menuBar.setEnabled(false);
-		if (toolbarControl != null) toolbarControl.setEnabled(false);
-		mgr.setCancelEnabled(cancelable);
-		final Exception[] holder = new Exception[1];
-		BusyIndicator.showWhile(display, new Runnable() {
-			public void run() {
-				try {
-					ModalContext.run(runnable, fork, mgr.getProgressMonitor(), display);
-				} catch (InvocationTargetException ite) {
-					holder[0] = ite;
-				} catch (InterruptedException ie) {
-					holder[0] = ie;
-				}
-			}});
-
-		if (holder[0] != null) {
-			if (holder[0] instanceof InvocationTargetException) {
-				throw (InvocationTargetException) holder[0];
-			} else if (holder[0] instanceof InterruptedException) {
-				throw (InterruptedException) holder[0];
-			}
+		operationInProgress = true;
+		final StatusLineManager mgr = getStatusLineManager();
+		if (mgr == null) {
+			runnable.run(new NullProgressMonitor());
+			return;
 		}
-	} finally {
-		// Enable the rest of the shells on the current display
+		boolean cancelWasEnabled = mgr.isCancelEnabled();
+	
+		final Control contents = getContents();
+		final Display display = contents.getDisplay();
+		Shell shell = getShell();
+		boolean contentsWasEnabled = contents.isEnabled();
+		MenuManager manager = getMenuBarManager();
+		Menu menuBar = null;
+		if (manager != null) {
+			menuBar = manager.getMenu();
+			manager = null;
+		}
+		boolean menuBarWasEnabled = false;
+		if (menuBar != null)
+			menuBarWasEnabled = menuBar.isEnabled();
+	
+		Control toolbarControl = getToolBarControl();
+		boolean toolbarWasEnabled = false;
+		if (toolbarControl != null) 
+			toolbarWasEnabled = toolbarControl.isEnabled();
+	
+		// Disable the rest of the shells on the current display
+		Shell[] shells = display.getShells();
+		boolean[] enabled = new boolean[shells.length];
 		for (int i = 0; i < shells.length; i++) {
 			Shell current = shells[i];
 			if (current == shell) continue;
 			if (current != null && !current.isDisposed()) {
-				current.setEnabled(enabled[i]);
+				enabled[i] = current.isEnabled();
+				current.setEnabled(false);
 			}
 		}
-		if (!contents.isDisposed())
-			contents.setEnabled(contentsWasEnabled);
-		if (menuBar != null && !menuBar.isDisposed())
-			menuBar.setEnabled(menuBarWasEnabled);
-		if (toolbarControl != null && !toolbarControl.isDisposed())
-			toolbarControl.setEnabled(toolbarWasEnabled);
-		mgr.setCancelEnabled(cancelWasEnabled);
-		if (currentFocus != null) currentFocus.setFocus();
+	
+		Control currentFocus = display.getFocusControl();
+		try {
+			contents.setEnabled(false);
+			if (menuBar != null) menuBar.setEnabled(false);
+			if (toolbarControl != null) toolbarControl.setEnabled(false);
+			mgr.setCancelEnabled(cancelable);
+			final Exception[] holder = new Exception[1];
+			BusyIndicator.showWhile(display, new Runnable() {
+				public void run() {
+					try {
+						ModalContext.run(runnable, fork, mgr.getProgressMonitor(), display);
+					} catch (InvocationTargetException ite) {
+						holder[0] = ite;
+					} catch (InterruptedException ie) {
+						holder[0] = ie;
+					}
+				}});
+	
+			if (holder[0] != null) {
+				if (holder[0] instanceof InvocationTargetException) {
+					throw (InvocationTargetException) holder[0];
+				} else if (holder[0] instanceof InterruptedException) {
+					throw (InterruptedException) holder[0];
+				}
+			}
+		} finally {
+			operationInProgress = false;
+			// Enable the rest of the shells on the current display
+			for (int i = 0; i < shells.length; i++) {
+				Shell current = shells[i];
+				if (current == shell) continue;
+				if (current != null && !current.isDisposed()) {
+					current.setEnabled(enabled[i]);
+				}
+			}
+			if (!contents.isDisposed())
+				contents.setEnabled(contentsWasEnabled);
+			if (menuBar != null && !menuBar.isDisposed())
+				menuBar.setEnabled(menuBarWasEnabled);
+			if (toolbarControl != null && !toolbarControl.isDisposed())
+				toolbarControl.setEnabled(toolbarWasEnabled);
+			mgr.setCancelEnabled(cancelWasEnabled);
+			if (currentFocus != null) currentFocus.setFocus();
+		}
+	} finally {
+		operationInProgress = false;
 	}
 }
 /**
