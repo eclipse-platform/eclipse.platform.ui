@@ -84,7 +84,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Launch configuration cache. Keys are <code>LaunchConfiguration</code>,
 	 * values are <code>LaunchConfigurationInfo</code>.
 	 */
-	private HashMap fLaunchConfigurations = new HashMap(10);
+	private Map fLaunchConfigurations = new HashMap(10);
 	
 	/**
 	 * A cache of launch configuration names currently in the workspace.
@@ -101,13 +101,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Launch configuration comparator extensions,
 	 * keyed by attribute name.
 	 */
-	private HashMap fComparators = null;
-	
-	/**
-	 * Constant for use as local name part of <code>QualifiedName</code>
-	 * for persisting the default launch configuration type.
-	 */
-	private static final String DEFAULT_CONFIG_TYPE = "defaultLaunchConfigurationType"; //$NON-NLS-1$
+	private Map fComparators = null;
 	
 	/**
 	 * Types of notifications
@@ -1136,14 +1130,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @return comparator, or <code>null</code> if none
 	 */
 	protected Comparator getComparator(String attributeName) {
-		 HashMap map = getComparators();
+		 Map map = getComparators();
 		 return (Comparator)map.get(attributeName);
 	}
 	
 	/**
 	 * Returns comparators, loading if required
 	 */
-	protected HashMap getComparators() {
+	protected Map getComparators() {
 		if (fComparators == null) {
 			initializeComparators();
 		}
