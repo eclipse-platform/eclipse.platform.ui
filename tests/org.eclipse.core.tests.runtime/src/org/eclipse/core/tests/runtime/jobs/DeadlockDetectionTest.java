@@ -31,33 +31,10 @@ public class DeadlockDetectionTest extends TestCase {
 	}
 	
 	public static Test suite() {
-//		return new TestSuite(DeadlockDetectionTest.class);
-		TestSuite suite = new TestSuite();
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
-		return suite;
+		return new TestSuite(DeadlockDetectionTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new DeadlockDetectionTest("testImplicitRules"));
+//		return suite;
 	}
 
 	/**
