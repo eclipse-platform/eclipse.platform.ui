@@ -711,13 +711,18 @@ private void restoreUIState(Map state) {
 public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 	// The operation can only be canceled if it is executed in a separate thread.
 	// Otherwise the UI is blocked anyway.
-	Object state = aboutToStart(fork && cancelable);
+	Object state = null;
+	if(activeRunningOperations == 0)
+		state = aboutToStart(fork && cancelable);
+	
 	activeRunningOperations++;
 	try {
 		ModalContext.run(runnable, fork, getProgressMonitor(), getShell().getDisplay());
 	} finally {
 		activeRunningOperations--;
-		stopped(state);
+		//Stop if this is the last one
+		if(state!= null)
+			stopped(state);
 	}
 }
 /**
