@@ -11,23 +11,18 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
  * Dialog for obtaining a date from the user
@@ -52,7 +47,7 @@ public class DateTagDialog extends Dialog {
 		public void createArea(Composite parent) {
 			Composite composite = createComposite(parent, 4);
 			initializeDialogUnits(composite);
-			createLabel(composite, "Date (M/D/Y):", 1); //$NON-NLS-1$
+			createLabel(composite, Policy.bind("DateTagDialog.0"), 1); //$NON-NLS-1$
 			fromMonthCombo = new Combo(composite, SWT.READ_ONLY);
 			fromDayCombo = new Combo(composite, SWT.READ_ONLY);
 			fromYearCombo = new Combo(composite, SWT.NONE);
@@ -126,8 +121,8 @@ public class DateTagDialog extends Dialog {
 		public void createArea(Composite parent) {
 			Composite composite = createComposite(parent, 2);
 			initializeDialogUnits(composite);
-			includeTime = createCheckbox(composite, "Include time component in tag", 2); //$NON-NLS-1$
-			createLabel(composite, "Time (HH:MM:SS):", 1); //$NON-NLS-1$
+			includeTime = createCheckbox(composite, Policy.bind("DateTagDialog.1"), 2);  //$NON-NLS-1$
+			createLabel(composite, Policy.bind("DateTagDialog.2"), 1); //$NON-NLS-1$
 			Composite dateComposite = new Composite(composite, SWT.NONE);
 			GridLayout dateLayout = new GridLayout();
 			dateLayout.numColumns = 3;
@@ -135,8 +130,8 @@ public class DateTagDialog extends Dialog {
 			hourCombo = new Combo(dateComposite, SWT.READ_ONLY);
 			minuteCombo = new Combo(dateComposite, SWT.READ_ONLY);
 			secondCombo = new Combo(dateComposite, SWT.READ_ONLY);
-			localTime = createRadioButton(composite, "Time is local", 2); //$NON-NLS-1$
-			utcTime = createRadioButton(composite, "Time is in universal time coordinates (UTC)", 2); //$NON-NLS-1$
+			localTime = createRadioButton(composite, Policy.bind("DateTagDialog.3"), 2);  //$NON-NLS-1$
+			utcTime = createRadioButton(composite, Policy.bind("DateTagDialog.4"), 2);  //$NON-NLS-1$
 			
 			String sixty[] = new String[60];
 			for (int i = 0; i < 60; i++) {
@@ -193,6 +188,15 @@ public class DateTagDialog extends Dialog {
 			this.settings = workbenchSettings.addNewSection("DateTagDialog");//$NON-NLS-1$
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * Method declared on Window.
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setText(Policy.bind("DateTagDialog.5")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.SYSTEM_SUMMARY_DIALOG);
+	} 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
