@@ -40,13 +40,12 @@ public class InstallOperation
 	 * @param verifier
 	 */
 	public InstallOperation(
-		IInstallConfiguration config,
 		IConfiguredSite site,
 		IFeature feature,
 		IFeatureReference[] optionalFeatures,
 		IFeature[] unconfiguredOptionalElements,
 		IVerificationListener verifier) {
-		super(config, site, feature);
+		super(site, feature);
 		IFeature[] installed = UpdateUtils.getInstalledFeatures(feature);
 		if (installed.length > 0)
 			this.oldFeature = installed[0];
@@ -80,8 +79,9 @@ public class InstallOperation
 			if (oldFeature != null) { //&& isOptionalDelta()) {
 				preserveOptionalState();
 
-				boolean oldSuccess = unconfigure(config, oldFeature);
+				boolean oldSuccess = unconfigure(oldFeature);
 				if (!oldSuccess) {
+					IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
 					if (!UpdateUtils.isNestedChild(config, oldFeature)) {
 						// "eat" the error if nested child
 						String message =
@@ -128,20 +128,24 @@ public class InstallOperation
 	}
 	
 	private void setOptionalFeatures() {
-		// Ensure optional features are correctly set
-		if (optionalFeatures == null && UpdateUtils.hasOptionalFeatures(feature) ) {
-			JobRoot jobRoot = new JobRoot(config, this);
-			
-			HashSet set = new HashSet();
-			boolean update = oldFeature != null;
-			boolean patch = UpdateUtils.isPatch(feature);
-			FeatureHierarchyElement[] elements = jobRoot.getElements();
-			for (int i = 0; i < elements.length; i++) {
-				elements[i].addCheckedOptionalFeatures(update, patch, config, set);
+		try {
+			// Ensure optional features are correctly set
+			if (optionalFeatures == null && UpdateUtils.hasOptionalFeatures(feature) ) {
+				JobRoot jobRoot = new JobRoot(this);
+				IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
+				HashSet set = new HashSet();
+				boolean update = oldFeature != null;
+				boolean patch = UpdateUtils.isPatch(feature);
+				FeatureHierarchyElement[] elements = jobRoot.getElements();
+				for (int i = 0; i < elements.length; i++) {
+					elements[i].addCheckedOptionalFeatures(update, patch, config, set);
+				}
+				optionalFeatures = new IFeatureReference[set.size()];
+				set.toArray(optionalFeatures);
+				unconfiguredOptionalFeatures = jobRoot.getUnconfiguredOptionalFeatures(config, targetSite);
 			}
-			optionalFeatures = new IFeatureReference[set.size()];
-			set.toArray(optionalFeatures);
-			unconfiguredOptionalFeatures = jobRoot.getUnconfiguredOptionalFeatures(config, targetSite);
+		} catch (CoreException e) {
+			UpdateUtils.logException(e);
 		}
 	}
 }

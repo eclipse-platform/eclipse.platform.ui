@@ -24,10 +24,9 @@ public class ConfigOperation
 	implements IConfigFeatureOperation {
 
 	public ConfigOperation(
-		IInstallConfiguration config,
 		IConfiguredSite site,
 		IFeature feature) {
-		super(config, site, feature);
+		super(site, feature);
 	}
 
 	public boolean execute(IProgressMonitor pm, IOperationListener listener)

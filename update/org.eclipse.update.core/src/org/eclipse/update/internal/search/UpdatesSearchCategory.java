@@ -125,7 +125,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		public IInstallFeatureOperation getJob() {
 			try {
 				IFeature feature = ref.getFeature(null);
-				return OperationsManager.getOperationFactory().createInstallOperation(null, null, feature, null, null, null);
+				return OperationsManager.getOperationFactory().createInstallOperation(null, feature, null, null, null);
 			} catch (CoreException e) {
 				return null;
 			}

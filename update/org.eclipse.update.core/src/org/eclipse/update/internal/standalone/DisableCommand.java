@@ -106,7 +106,6 @@ public class DisableCommand extends ScriptedCommand {
 
 		final IUnconfigFeatureOperation configOperation =
 			OperationsManager.getOperationFactory().createUnconfigOperation(
-				getConfiguration(),
 				targetSite,
 				feature);
 

@@ -27,7 +27,7 @@ public class ReplaceFeatureVersionOperation
 	public ReplaceFeatureVersionOperation(
 		IFeature feature,
 		IFeature anotherFeature) {
-		super(feature.getSite().getCurrentConfiguredSite().getInstallConfiguration(), feature.getSite().getCurrentConfiguredSite(), feature);
+		super(feature.getSite().getCurrentConfiguredSite(), feature);
 		this.anotherFeature = anotherFeature;
 	}
 

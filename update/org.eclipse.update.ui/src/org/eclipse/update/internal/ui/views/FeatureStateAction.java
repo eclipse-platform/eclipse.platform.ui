@@ -57,13 +57,11 @@ public class FeatureStateAction extends Action {
 					? (IOperation)OperationsManager
 						.getOperationFactory()
 						.createUnconfigOperation(
-						adapter.getInstallConfiguration(),
 						adapter.getConfiguredSite(),
 						adapter.getFeature(null))
 					: OperationsManager
 						.getOperationFactory()
 						.createConfigOperation(
-						adapter.getInstallConfiguration(),
 						adapter.getConfiguredSite(),
 						adapter.getFeature(null));
 

@@ -171,7 +171,6 @@ public class UpdateCommand extends ScriptedCommand {
 
 			IInstallFeatureOperation op =
 				OperationsManager.getOperationFactory().createInstallOperation(
-					getConfiguration(),
 					null,
 					feature,
 					null,

@@ -196,7 +196,6 @@ public class InstallCommand extends ScriptedCommand {
 					OperationsManager
 						.getOperationFactory()
 						.createInstallOperation(
-						getConfiguration(),
 						targetSite,
 						feature,
 						null,

@@ -20,10 +20,9 @@ public class OperationFactory implements IOperationFactory {
 	}
 
 	public IConfigFeatureOperation createConfigOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature) {
-		return new ConfigOperation(config, targetSite, feature);
+		return new ConfigOperation(targetSite, feature);
 	}
 
 	public IBatchOperation createBatchInstallOperation(IInstallFeatureOperation[] operations) {
@@ -31,14 +30,12 @@ public class OperationFactory implements IOperationFactory {
 	}
 
 	public IInstallFeatureOperation createInstallOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature,
 		IFeatureReference[] optionalFeatures,
 		IFeature[] unconfiguredOptionalFeatures,
 		IVerificationListener verifier) {
 		return new InstallOperation(
-			config,
 			targetSite,
 			feature,
 			optionalFeatures,
@@ -47,10 +44,9 @@ public class OperationFactory implements IOperationFactory {
 	}
 
 	public IUnconfigFeatureOperation createUnconfigOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature) {
-		return new UnconfigOperation(config, targetSite, feature);
+		return new UnconfigOperation(targetSite, feature);
 	}
 
 	public IConfigFeatureOperation createReplaceFeatureVersionOperation(
@@ -61,10 +57,9 @@ public class OperationFactory implements IOperationFactory {
 	}
 		
 	public IUninstallFeatureOperation createUninstallOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature) {
-		return new UninstallOperation(config, targetSite, feature);
+		return new UninstallOperation(targetSite, feature);
 	}
 
 	public IRevertConfigurationOperation createRevertConfigurationOperation(

@@ -13,7 +13,6 @@ package org.eclipse.update.internal.operations;
 import java.lang.reflect.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.api.operations.*;
@@ -46,9 +45,7 @@ public class BatchInstallOperation
 		
 		if (operations == null || operations.length == 0)
 			return false;
-			
-		IInstallConfiguration config = operations[0].getInstallConfiguration();
-		
+					
 //		// Check for duplication conflicts
 //		ArrayList conflicts =
 //			DuplicateConflictsValidator.computeDuplicateConflicts(

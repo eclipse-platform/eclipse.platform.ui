@@ -106,7 +106,6 @@ public class EnableCommand extends ScriptedCommand {
 
 		final IConfigFeatureOperation configOperation =
 			OperationsManager.getOperationFactory().createConfigOperation(
-				getConfiguration(),
 				targetSite,
 				feature);
 

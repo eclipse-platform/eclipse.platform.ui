@@ -12,17 +12,16 @@ package org.eclipse.update.internal.operations;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.api.operations.*;
 
 public class JobRoot {
-	private IInstallConfiguration config;
 	private IInstallFeatureOperation job;
 	private FeatureHierarchyElement[] elements;
 
-	public JobRoot(IInstallConfiguration config, IInstallFeatureOperation job) {
-		this.config = config;
+	public JobRoot(IInstallFeatureOperation job) {
 		this.job = job;
 	}
 
@@ -78,21 +77,25 @@ public class JobRoot {
 	}
 
 	private void computeElements() {
-		IFeature oldFeature = job.getOldFeature();
-		IFeature newFeature = job.getFeature();
-		ArrayList list = new ArrayList();
-		boolean patch = UpdateUtils.isPatch(newFeature);
-		FeatureHierarchyElement.computeElements(
-			oldFeature,
-			newFeature,
-			oldFeature != null,
-			patch,
-			config,
-			list);
-		elements = new FeatureHierarchyElement[list.size()];
-		list.toArray(elements);
-		for (int i = 0; i < elements.length; i++) {
-			elements[i].setRoot(this);
+		try {
+			IFeature oldFeature = job.getOldFeature();
+			IFeature newFeature = job.getFeature();
+			ArrayList list = new ArrayList();
+			boolean patch = UpdateUtils.isPatch(newFeature);
+			FeatureHierarchyElement.computeElements(
+				oldFeature,
+				newFeature,
+				oldFeature != null,
+				patch,
+				SiteManager.getLocalSite().getCurrentConfiguration(),
+				list);
+			elements = new FeatureHierarchyElement[list.size()];
+			list.toArray(elements);
+			for (int i = 0; i < elements.length; i++) {
+				elements[i].setRoot(this);
+			}
+		} catch (CoreException e) {
+			UpdateUtils.logException(e);
 		}
 	}
 }

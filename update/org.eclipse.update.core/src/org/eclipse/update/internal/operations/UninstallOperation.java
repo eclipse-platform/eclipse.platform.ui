@@ -21,12 +21,8 @@ import org.eclipse.update.internal.api.operations.*;
  */
 public class UninstallOperation extends FeatureOperation implements IUninstallFeatureOperation{
 
-	public UninstallOperation(IInstallConfiguration config, IConfiguredSite site, IFeature feature) {
-		super(config, site, feature);
-	}
-
-	public void setInstallConfiguration(IInstallConfiguration config) {
-		this.config = config;
+	public UninstallOperation(IConfiguredSite site, IFeature feature) {
+		super(site, feature);
 	}
 
 	public void setTargetSite(IConfiguredSite targetSite) {
@@ -35,7 +31,7 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 
 	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
 		if (targetSite == null)
-			targetSite = UpdateUtils.getConfigSite(feature, config);
+			targetSite = UpdateUtils.getConfigSite(feature, SiteManager.getLocalSite().getCurrentConfiguration());
 
 			if (targetSite != null) {
 				targetSite.remove(feature, pm);

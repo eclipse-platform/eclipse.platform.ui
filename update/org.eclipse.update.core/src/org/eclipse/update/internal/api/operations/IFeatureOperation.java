@@ -30,11 +30,6 @@ public interface IFeatureOperation extends IOperation {
 	 */
 	public abstract IConfiguredSite getTargetSite();
 	/**
-	 * Returns the installation configuration in which the operation takes place.
-	 * @return
-	 */
-	public abstract IInstallConfiguration getInstallConfiguration();
-	/**
 	 * Returns the previous version of the feature (if any).
 	 * @return
 	 */
@@ -44,9 +39,4 @@ public interface IFeatureOperation extends IOperation {
 	 * @param targetSite
 	 */
 	public abstract void setTargetSite(IConfiguredSite targetSite);
-	/**
-	 * Sets the installation configuration in which the operation takes place.
-	 * @param config
-	 */
-	public abstract void setInstallConfiguration(IInstallConfiguration config);
 }

@@ -20,16 +20,14 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 	
 	protected IFeature feature;
 	protected IFeature oldFeature;
-	protected IInstallConfiguration config;
 	protected IConfiguredSite targetSite;
 
 //	private boolean optionalDelta;
 	
 	
-	public FeatureOperation(IInstallConfiguration config, IConfiguredSite targetSite, IFeature feature) {
+	public FeatureOperation(IConfiguredSite targetSite, IFeature feature) {
 		super();
 		this.feature = feature;
-		this.config = config;
 		this.targetSite = targetSite;
 	}
 
@@ -47,14 +45,6 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 	
 	public IConfiguredSite getTargetSite() {
 		return targetSite;
-	}
-	
-	public IInstallConfiguration getInstallConfiguration() {
-		return config;
-	}
-	
-	public void setInstallConfiguration(IInstallConfiguration config) {
-		this.config = config;
 	}
 
 	public void setTargetSite(IConfiguredSite targetSite) {
@@ -99,8 +89,9 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 		}
 	}
 
-	static boolean unconfigure(IInstallConfiguration config, IFeature feature)
+	static boolean unconfigure(IFeature feature)
 		throws CoreException {
+		IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
 		IConfiguredSite site = UpdateUtils.getConfigSite(feature, config);
 		if (site != null) {
 			PatchCleaner cleaner = new PatchCleaner(site, feature);

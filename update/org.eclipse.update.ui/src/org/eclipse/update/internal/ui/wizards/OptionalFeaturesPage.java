@@ -117,7 +117,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	public void setJobs(IInstallFeatureOperation[] jobs) {
 		jobRoots = new JobRoot[jobs.length];
 		for (int i = 0; i < jobs.length; i++) {
-			jobRoots[i] = new JobRoot(config, jobs[i]);
+			jobRoots[i] = new JobRoot(jobs[i]);
 		}
 	}
 

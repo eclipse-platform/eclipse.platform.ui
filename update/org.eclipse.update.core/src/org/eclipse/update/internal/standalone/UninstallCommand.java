@@ -109,7 +109,6 @@ public class UninstallCommand extends ScriptedCommand {
 
 		final IUninstallFeatureOperation uninstallOperation =
 			OperationsManager.getOperationFactory().createUninstallOperation(
-				getConfiguration(),
 				targetSite,
 				feature);
 

@@ -128,7 +128,6 @@ public class InstallWizard
 							OperationsManager
 								.getOperationFactory()
 								.createInstallOperation(
-								config,
 								targetPage.getTargetSite(job),
 								job.getFeature(),
 								optionalFeatures,

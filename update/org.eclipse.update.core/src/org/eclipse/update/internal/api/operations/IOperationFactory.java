@@ -27,25 +27,21 @@ public interface IOperationFactory {
 	 * @return
 	 */
 	public IConfigFeatureOperation createConfigOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature);
 		
 	/**
 	 * Creates an "unconfigure feature" operation.
-	 * @param config
 	 * @param targetSite
 	 * @param feature
 	 * @return
 	 */
 	public IUnconfigFeatureOperation createUnconfigOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature);
 	
 	/**
 	 * Creates a "intall feature" operation.
-	 * @param config
 	 * @param targetSite
 	 * @param feature
 	 * @param optionalFeatures
@@ -54,7 +50,6 @@ public interface IOperationFactory {
 	 * @return
 	 */
 	public IInstallFeatureOperation createInstallOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature,
 		IFeatureReference[] optionalFeatures,
@@ -63,19 +58,16 @@ public interface IOperationFactory {
 		
 	/**
 	 * Creates an "uninstall feature" operation.
-	 * @param config
 	 * @param targetSite
 	 * @param feature
 	 * @return
 	 */
 	public IUninstallFeatureOperation createUninstallOperation(
-		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeature feature);
 		
 	/**
 	 * Creates a "revert feature version" operation.
-	 * @param config
 	 * @param targetSite
 	 * @param feature current feature
 	 * @param anotherFeature the new feature to be swapped in
@@ -100,6 +92,7 @@ public interface IOperationFactory {
 	public IToggleSiteOperation createToggleSiteOperation(
 		IConfiguredSite site);
 		
+
 	/**
 	 * Creates a "revert to a previous configuration" operation.
 	 * @param config
