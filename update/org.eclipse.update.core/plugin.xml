@@ -23,6 +23,14 @@
    <extension-point id="installHandlers" name="Install/Update Global Install Handlers"/>
 
    <extension
+         id="reconciler"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            run="org.eclipse.update.internal.core.UpdateManagerReconciler">
+      </application>
+   </extension>
+
+   <extension
          id="packaged"
          point="org.eclipse.update.core.featureTypes">
       <feature-factory

@@ -6,3 +6,4 @@ org.eclipse.update.core/debug/configuration=false
 org.eclipse.update.core/debug/type=false
 org.eclipse.update.core/debug/web=false
 org.eclipse.update.core/debug/installhandler=false
+org.eclipse.update.core/debug/reconciler=false
