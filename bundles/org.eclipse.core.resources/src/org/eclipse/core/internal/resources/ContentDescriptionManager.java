@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import org.eclipse.core.internal.content.ContentType;
 import org.eclipse.core.internal.utils.Cache;
 import org.eclipse.core.internal.utils.Policy;
@@ -24,6 +23,54 @@ import org.eclipse.core.runtime.content.*;
  * recently read content descriptions.
  */
 public class ContentDescriptionManager implements IManager {
+
+	/** 
+	 * An input stream that only opens the file if bytes are actually requested.
+	 * @see #readDescription(File)
+	 */
+	class LazyFileInputStream extends InputStream {
+		private InputStream actual;
+		private IPath target;
+
+		LazyFileInputStream(IPath target) {
+			this.target = target;
+		}
+
+		public int available() throws IOException {
+			if (actual == null)
+				return 0;
+			return actual.available();
+		}
+
+		public void close() throws IOException {
+			if (actual == null)
+				return;
+			actual.close();
+		}
+
+		private void ensureOpened() throws FileNotFoundException {
+			if (actual != null)
+				return;
+			if (target == null)
+				throw new FileNotFoundException();
+			actual = new FileInputStream(target.toFile());
+		}
+
+		public int read() throws IOException {
+			ensureOpened();
+			return actual.read();
+		}
+
+		public int read(byte[] b, int off, int len) throws IOException {
+			ensureOpened();
+			return actual.read(b, off, len);
+		}
+
+		public long skip(long n) throws IOException {
+			ensureOpened();
+			return actual.skip(n);
+		}
+	}
 	private Cache cache;
 
 	Cache getCache() {
@@ -86,12 +133,10 @@ public class ContentDescriptionManager implements IManager {
 	 */
 	private IContentDescription readDescription(File file) throws CoreException {
 		// tries to obtain a description for this file contents
-		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
-		InputStream contents = file.getContents(true);
+		InputStream contents = new LazyFileInputStream(file.getLocation());
 		try {
-			IContentDescription newDescription = contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
-			// update or initialize description and modification stamp
-			return newDescription;
+			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();			
+			return contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
 		} catch (IOException e) {
 			String message = Policy.bind("resources.errorContentDescription", file.getFullPath().toString()); //$NON-NLS-1$		
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
@@ -100,12 +145,12 @@ public class ContentDescriptionManager implements IManager {
 		}
 	}
 
-	public void shutdown(IProgressMonitor monitor) throws CoreException {
+	public void shutdown(IProgressMonitor monitor) {
 		cache.discardAll();
 		cache = null;
 	}
 
-	public void startup(IProgressMonitor monitor) throws CoreException {
+	public void startup(IProgressMonitor monitor) {
 		cache = new Cache(100, 1000, 0.1);
 	}
 }

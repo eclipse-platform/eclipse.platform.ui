@@ -213,6 +213,7 @@ public class File extends Resource implements IFile {
 		int flags = getFlags(info);
 		if (!exists(flags, false))
 			return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
+		checkLocal(flags, DEPTH_ZERO);
 		return internalGetCharset(checkImplicit, info);
 	}
 
@@ -378,12 +379,12 @@ public class File extends Resource implements IFile {
 		if (count == 2 && name.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 			((Project) getProject()).updateDescription();
 			return;
-		}		
+		}
 		// check to see if we are in the .settings directory
 		if (count == 3 && EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME.equals(name)) {
 			ProjectPreferences.updatePreferences(this);
 			return;
-		}		
+		}
 	}
 
 	/* (non-Javadoc)
