@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources.team;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.internal.resources.InternalTeamHook;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -29,13 +29,69 @@ import org.eclipse.core.runtime.*;
  * 
  * @since 2.1
  */
-public abstract class TeamHook {
+public abstract class TeamHook extends InternalTeamHook {
+	/**
+	 * The default resource scheduling rule factory. This factory can be used for projects
+	 * that the team hook methods do not participate in.
+	 * 
+	 * @see #getRuleFactory
+	 * @see #setRuleFactory
+	 * @since 3.0
+	 */
+	protected final IResourceRuleFactory defaultFactory = new ResourceRuleFactory();
 	/**
 	 * Creates a new team hook.  Default constructor for use by subclasses and the 
 	 * resources plugin only.
 	 */
 	protected TeamHook() {
 		super();
+	}
+	/**
+	 * Returns the resource scheduling rule factory that should be used when workspace
+	 * operations are invoked on resources in that project. The workspace will ask the
+	 * team hook this question only once per project, per session. The workspace will
+	 * assume the returned result is valid for the rest of that session, unless the rule
+	 * is changed by calling <code>setRuleFactory</code>.
+	 * <p>
+	 * This method must not return <code>null</code>. If no special rules are required
+	 * by the team hook for the given project, the value of the <code>defaultFactory</code> 
+	 * field should be returned.
+	 * <p>
+	 * This default implementation always returns the value of the <code>defaultFactory</code>
+	 * field. Subclasses may override.
+	 * 
+	 * @param project the project to return scheduling rules for.
+	 * @return The resource scheduling rules for a project.
+	 * @see #setRuleFactory
+	 * @see IResourceRuleFactory
+	 * @since 3.0
+	 */
+	public IResourceRuleFactory getRuleFactory(IProject project) {
+		return defaultFactory;
+	}
+	/**
+	 * Sets the resource scheduling rule factory to use for resource modifications
+	 * in the given project. This method only needs to be called if the factory has changed
+	 * since the initial call to <code>getRuleFactory</code> for the given project
+	 * <p>
+	 * The supplied factory must not be <code>null</code>. If no special rules are required
+	 * by the team hook for the given project, the value of the <code>defaultFactory</code> 
+	 * field should be used.
+	 * <p>
+	 * Note that the new rule factory will only take effect for resource changing
+	 * operations that begin after this method completes. Care should be taken to 
+	 * avoid calling this method during the invocation of any resource changing
+	 * operation (in any thread). The best time to change rule factories is during resource
+	 * change notification when the workspace is locked for modification.
+	 * 
+	 * @param project the project to change the resource rule factory for.
+	 * @param factory the new resource rule factory.
+	 * @see #getRuleFactory
+	 * @see IResourceRuleFactory
+	 * @since 3.0
+	 */
+	protected final void setRuleFactory(IProject project, IResourceRuleFactory factory) {
+		super.setRuleFactory(project, factory);
 	}
 	/**
 	 * Validates whether a particular attempt at link creation is allowed.  This gives
