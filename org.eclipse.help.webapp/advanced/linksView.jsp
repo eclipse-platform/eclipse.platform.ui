@@ -49,6 +49,7 @@ if(!data.isLinksRequest()) {
 		<a id='a<%=topic%>' 
 		   href='<%=data.getTopicHref(topic)%>' 
 		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)'
+		   onfocus="highlightTopic(this)"
 		   title="<%=data.getTopicTocLabel(topic)%>">
 		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif">
 		   <%=data.getTopicLabel(topic)%>
