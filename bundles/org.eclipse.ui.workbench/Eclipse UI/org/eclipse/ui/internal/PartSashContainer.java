@@ -952,6 +952,11 @@ public abstract class PartSashContainer extends LayoutPart implements
         ILayoutContainer sourceContainer = isStackType(sourcePart) ? (ILayoutContainer) sourcePart
                 : sourcePart.getContainer();
 
+        // If this container has no visible children
+        if (getVisibleChildrenCount(this) == 0) {
+            return createDropTarget(sourcePart, SWT.CENTER, SWT.CENTER, null);            
+        }
+        
         if (containerBounds.contains(position)) {
 
             if (root != null) {
@@ -1023,10 +1028,11 @@ public abstract class PartSashContainer extends LayoutPart implements
 
             boolean pointlessDrop = isZoomed();
 
-            if (isStackType(sourcePart)
+            if ((isStackType(sourcePart) && sourcePart.getContainer() == this)
                     || (sourcePart.getContainer() != null
-                            && isPaneType(sourcePart) && getVisibleChildrenCount(sourcePart
-                            .getContainer()) <= 1)) {
+                       && isPaneType(sourcePart) 
+                       && getVisibleChildrenCount(sourcePart.getContainer()) <= 1) 
+                       && ((LayoutPart)sourcePart.getContainer()).getContainer() == this) {
                 if (root == null || getVisibleChildrenCount(this) <= 1) {
                     pointlessDrop = true;
                 }
@@ -1080,6 +1086,16 @@ public abstract class PartSashContainer extends LayoutPart implements
             LayoutPart targetPart, int side) {
         getControl().setRedraw(false);
 
+        // Targetpart is null if there isn't a part under the cursor (all the parts are
+        // hidden or the container is empty). In this case, the actual side doesn't really
+        // since we'll be the only visible container and will fill the entire space. However,
+        // we can't leave it as SWT.CENTER since we can't stack if we don't have something
+        // to stack on. In this case, we pick SWT.BOTTOM -- this will insert the new pane
+        // below any currently-hidden parts.
+        if (targetPart == null && side == SWT.CENTER) {
+            side = SWT.BOTTOM;
+        }
+        
         if (side == SWT.CENTER) {
             if (isStackType(targetPart)) {
                 PartStack stack = (PartStack) targetPart;
