@@ -11,15 +11,28 @@
 package org.eclipse.ui.examples.javaeditor;
 
 
-import org.eclipse.jface.text.*;
+import org.eclipse.swt.graphics.RGB;
+
+import org.eclipse.jface.text.DefaultAutoIndentStrategy;
+import org.eclipse.jface.text.IAutoIndentStrategy;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
-import org.eclipse.jface.text.rules.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.examples.javaeditor.java.*;
+import org.eclipse.jface.text.rules.BufferedRuleBasedScanner;
+import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
+import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+
+import org.eclipse.ui.examples.javaeditor.java.JavaAutoIndentStrategy;
+import org.eclipse.ui.examples.javaeditor.java.JavaCompletionProcessor;
+import org.eclipse.ui.examples.javaeditor.java.JavaDoubleClickSelector;
 import org.eclipse.ui.examples.javaeditor.javadoc.JavaDocCompletionProcessor;
 import org.eclipse.ui.examples.javaeditor.util.JavaColorProvider;
 
@@ -59,6 +72,13 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		return (IDocument.DEFAULT_CONTENT_TYPE.equals(contentType) ? new JavaAutoIndentStrategy() : new DefaultAutoIndentStrategy());
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
+	 */
+	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
+		return JavaEditorExamplePlugin.JAVA_PARTITIONING;
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on SourceViewerConfiguration
 	 */
@@ -72,6 +92,7 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
 		ContentAssistant assistant= new ContentAssistant();
+		assistant.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		assistant.setContentAssistProcessor(new JavaCompletionProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
 		assistant.setContentAssistProcessor(new JavaDocCompletionProcessor(), JavaPartitionScanner.JAVA_DOC);
 
@@ -79,7 +100,7 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 		assistant.setAutoActivationDelay(500);
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-		assistant.setContextInformationPopupBackground(JavaEditorEnvironment.getJavaColorProvider().getColor(new RGB(150, 150, 0)));
+		assistant.setContextInformationPopupBackground(JavaEditorExamplePlugin.getDefault().getJavaColorProvider().getColor(new RGB(150, 150, 0)));
 
 		return assistant;
 	}
@@ -110,10 +131,11 @@ public class JavaSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 
-		JavaColorProvider provider= JavaEditorEnvironment.getJavaColorProvider();
+		JavaColorProvider provider= JavaEditorExamplePlugin.getDefault().getJavaColorProvider();
 		PresentationReconciler reconciler= new PresentationReconciler();
+		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
 		
-		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(JavaEditorEnvironment.getJavaCodeScanner());
+		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(JavaEditorExamplePlugin.getDefault().getJavaCodeScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		

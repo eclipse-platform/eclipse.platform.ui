@@ -12,6 +12,7 @@
     <classpathentry kind="src" path="/org.eclipse.ui.workbench"/>
     <classpathentry kind="src" path="/org.eclipse.ui.views"/>
     <classpathentry kind="src" path="/org.eclipse.ui.workbench.texteditor"/>
+    <classpathentry kind="src" path="/org.eclipse.core.filebuffers"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

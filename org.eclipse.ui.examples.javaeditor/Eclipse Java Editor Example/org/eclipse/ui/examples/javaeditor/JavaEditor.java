@@ -62,7 +62,6 @@ public class JavaEditor extends TextEditor {
 	 * disposal actions required by the java editor.
 	 */
 	public void dispose() {
-		JavaEditorEnvironment.disconnect(this);
 		if (fOutlinePage != null)
 			fOutlinePage.setInput(null);
 		super.dispose();
@@ -140,7 +139,6 @@ public class JavaEditor extends TextEditor {
 	 */
 	protected void initializeEditor() {
 		super.initializeEditor();
-		JavaEditorEnvironment.connect(this);
 		setSourceViewerConfiguration(new JavaSourceViewerConfiguration());
 		setEditorContextMenuId("#JavaEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#JavaRulerContext"); //$NON-NLS-1$

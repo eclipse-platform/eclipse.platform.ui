@@ -21,6 +21,7 @@
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.core.filebuffers"/>
    </requires>
 
 <!-- quick diff reference provider extension point -->
@@ -107,4 +108,13 @@
          id="org.eclipse.ui.preferencePages.TextEditor">
       </page>
    </extension>
+   
+   <extension point="org.eclipse.ui.documentProviders">
+      <provider
+            class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
+            inputTypes="org.eclipse.ui.IStorageEditorInput"
+            id="org.eclipse.ui.editors.text.TextFileDocumentProvider">
+      </provider>
+   </extension>
+
 </plugin>
