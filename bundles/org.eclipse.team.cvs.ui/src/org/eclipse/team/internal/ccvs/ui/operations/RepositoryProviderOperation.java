@@ -158,7 +158,18 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
      * @return a resource mappers that traverses the resources
      */
     public static ResourceMapping[] asResourceMappers(final IResource[] resources) {
-        return WorkspaceResourceMapper.asResourceMappers(resources, IResource.DEPTH_INFINITE);
+        return asResourceMappers(resources, IResource.DEPTH_INFINITE);
+    }
+    
+    /**
+     * Convert the provided resources to one or more resource mappers
+     * that traverse the elements deeply. The model element of the resource
+     * mappers will be an IStructuredSelection.
+     * @param resources the resources
+     * @return a resource mappers that traverses the resources
+     */
+    public static ResourceMapping[] asResourceMappers(final IResource[] resources, int depth) {
+        return WorkspaceResourceMapper.asResourceMappers(resources, depth);
     }
     
 	public RepositoryProviderOperation(IWorkbenchPart part, final IResource[] resources) {

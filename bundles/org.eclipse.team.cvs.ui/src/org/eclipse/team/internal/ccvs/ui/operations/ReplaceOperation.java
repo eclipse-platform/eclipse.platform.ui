@@ -31,9 +31,16 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ReplaceOperation extends UpdateOperation {
 
 	public ReplaceOperation(IWorkbenchPart part, IResource[] resources, CVSTag tag, boolean recurse) {
-		super(part, resources, new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, tag);
+		super(part, asResourceMappers(resources, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE), new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, tag);
 	}
 
+	/**
+	 * @deprecated keep until bug 84575 is fixed
+	 * @param part
+	 * @param mappings
+	 * @param tag
+	 * @param b
+	 */
 	public ReplaceOperation(IWorkbenchPart part, ResourceMapping[] mappings, CVSTag tag, boolean b) {
         super(part, mappings, new LocalOption[] { Update.IGNORE_LOCAL_CHANGES }, tag);
     }
