@@ -4,19 +4,19 @@
  xmlns:w="urn:schemas-microsoft-com:office:word"
  xmlns="http://www.w3.org/TR/REC-html40">
 <head>
-                             
+                                 
   <meta http-equiv="Content-Type"
  content="text/html; charset=iso-8859-1">
-                             
+                                 
   <meta name="ProgId" content="Word.Document">
-                             
+                                 
   <meta name="Generator" content="Microsoft Word 9">
-                             
+                                 
   <meta name="Originator" content="Microsoft Word 9">
-                             
+                                 
   <link rel="File-List" href="filelist">
   <title>Eclipse Platform Release Notes - VCM</title>
-                                                   
+                                                          
   <style>
 <!--
  /* Style Definitions */
@@ -117,7 +117,7 @@ ul
 	{margin-bottom:0in;}
 -->
   </style>
-       <!--[if gte mso 9]><xml>
+        <!--[if gte mso 9]><xml>
  <u1:DocumentProperties>
   <u1:Author>johnart</u1:Author>
   <u1:LastAuthor>johnart</u1:LastAuthor>
@@ -136,354 +136,398 @@ ul
 </xml><![endif]-->
 </head>
   <body lang="EN-US" link="blue" vlink="purple" style="">
-                
-<div class="Section1">         
+                  
+<div class="Section1">          
 <h1 style=""> </h1>
-           
+             
 <h1 style=""> </h1>
-       
+         
 <h1 style=""> </h1>
- 
+   
+<h1 style=""> </h1>
 <h1 style="">
 <h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
-    </h1>
+      </h1>
+<p class="MsoNormal">CVS build I20020409 April 9 2002</p>
+     
+<p class="MsoNormal">Build submission for Integration Build 20020409</p>
+     
+<h2>What's new in this build</h2>
+<p class="MsoNormal">GZIP compression support for CVS communication has been
+introduced in this build. It is turned on by default and can be configured
+on the CVS preference page.<br>
+</p>
+<p class="MsoNormal"><br>
+Support for communicating with CVS NT servers has been improved. Note that
+CVS NT is still not a supported platform. CVS support should now work much
+better with CVS NT versions 1.11.1.1 and higher, including 1.11.1.3.<br>
+</p>
+<p class="MsoNormal"><br>
+Support for branch and version tags in the UI has been improved. See the
+"Configure Tags" dialog, which is available nearly anywhere in the UI where
+tags are needed. (e.g. in the Compare With Tag action, Replace With Tag action,
+and in the Repositories View).<br>
+</p>
+<p class="MsoNormal"><br>
+Cancellation and progress have been greatly improved. For example, it should
+be possible to cancel connections to unresponsive servers without waiting
+for operations to time out.<br>
+</p>
+<p class="MsoNormal"><br>
+The CVS Console is much more usable. Output from different actions is easily
+distinguished, and color coding of server responses has been added.<br>
+</p>
+      <br>
+ 
+<h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
+      
 <p class="MsoNormal">CVS build I20020402 April 2 2002</p>
-   
+     
 <p class="MsoNormal">Build submission for Integration Build 20020402</p>
-   
+     
 <h2>What's new in this build</h2>
-<p class="MsoNormal">The CVS plug-ins are now turned on by default. The old
+ 
+<p class="MsoNormal">The CVS plug-ins are now turned on by default. The old 
  VCM plug-ins are still included in the build but are turned off by default.<br>
-<br>
-</p>
-<p class="MsoNormal">Additions, deletions and moved resorces are handled
-differently in this build:</p>
+ <br>
+ </p>
+ 
+<p class="MsoNormal">Additions, deletions and moved resorces are handled differently
+in this build:</p>
+ 
 <p class="MsoNormal"><br>
-</p>
-<p class="MsoNormal">1) The user will be prompted with a warning on deletion
+ </p>
+ 
+<p class="MsoNormal">1) The user will be prompted with a warning on deletion 
 of files to<br>
-indicate that the file will be marked as an outgoing deletion. An<br>
-information marker will appear in the task view which indicates this. The<br>
-user can use the Auto Fix item in the task's context menu to restore the<br>
-file (from the server or local history) or commit the deletion. The user<br>
-can also commit the deletion as before (Commit on ancestor in Team menu or<br>
-Sync view) as well.<br>
-<br>
-2) A similar warning will appear for folder deletions. However, the folders<br>
-themselves will not be deleted and files in the folders will appear as<br>
-outgoing deletions. On commit, any empty folders that contained outgoing<br>
-deletions will be pruned.<br>
-<br>
-3) When files are added to a folder shared with CVS, an information marker<br>
-will appear in the task view until the file is either added to CVS control<br>
-or ignored (Autofix items are available for this).<br>
-<br>
-Options are available in the CVS preferences page to disable both the<br>
-prompting and markers.<br>
-</p>
+ indicate that the file will be marked as an outgoing deletion. An<br>
+ information marker will appear in the task view which indicates this. The<br>
+ user can use the Auto Fix item in the task's context menu to restore the<br>
+ file (from the server or local history) or commit the deletion. The user<br>
+ can also commit the deletion as before (Commit on ancestor in Team menu
+or<br>
+ Sync view) as well.<br>
+ <br>
+ 2) A similar warning will appear for folder deletions. However, the folders<br>
+ themselves will not be deleted and files in the folders will appear as<br>
+ outgoing deletions. On commit, any empty folders that contained outgoing<br>
+ deletions will be pruned.<br>
+ <br>
+ 3) When files are added to a folder shared with CVS, an information marker<br>
+ will appear in the task view until the file is either added to CVS control<br>
+ or ignored (Autofix items are available for this).<br>
+ <br>
+ Options are available in the CVS preferences page to disable both the<br>
+ prompting and markers.<br>
+ </p>
+ 
 <p class="MsoNormal"><br>
-</p>
+ </p>
+ 
 <p class="MsoNormal"><br>
-The CVS support now takes advantage of the new Core facilities for private
-resources. As such, CVS/ folders will be marked as private and should not
-show up anywhere in the UI. Also, if you copy or move a folder structure
-in the workspace, the CVS/ folders will be removed from the destination.<br>
-</p>
+ The CVS support now takes advantage of the new Core facilities for private 
+resources. As such, CVS/ folders will be marked as private and should not 
+show up anywhere in the UI. Also, if you copy or move a folder structure in
+the workspace, the CVS/ folders will be removed from the destination.<br>
+ </p>
+ 
 <p class="MsoNormal"><br>
-In order for the CVS/ folders to be marked as private, you will need to delete
-the projects in your workspace and check them out from the repository again.
-Failure to do so will simply result in CVS/ folders showing up in the UI.<br>
-</p>
+ In order for the CVS/ folders to be marked as private, you will need to
+delete the projects in your workspace and check them out from the repository
+again. Failure to do so will simply result in CVS/ folders showing up in
+the UI.<br>
+ </p>
+ 
 <h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
-    
+      
 <p class="MsoNormal">CVS build I20020312 &#8211; March 12, 2002</p>
-   
+     
 <p class="MsoNormal">Build submission for Integration Build 20020312</p>
-   
+     
 <h2>What's new in this build</h2>
-   
-<p class="MsoNormal">The CVS plug-ins are now turned on by default. The old
+     
+<p class="MsoNormal">The CVS plug-ins are now turned on by default. The old 
  VCM plug-ins are still included in the build but are turned off by default.<br>
-  More performance improvements for the decorators.</p>
-   
+   More performance improvements for the decorators.</p>
+     
 <p class="MsoNormal">The actions in the Sync view have been changed. A summary:</p>
-   
+     
 <p class="MsoNormal"><br>
-  Incoming mode:<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Update from Repository (operates
+   Incoming mode:<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Update from Repository (operates 
  ONLY on incoming nodes that are not conflicting)<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Update (operates
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Update (operates 
  on conflicts)<br>
-  Outgoing mode:<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Commit (operates only on outgoing
+   Outgoing mode:<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Commit (operates only on outgoing 
  nodes that are not conflicting)<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Commit (operates
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Commit (operates 
  on conflicts)<br>
-  Both mode:<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Update from Repository (operates
+   Both mode:<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Update from Repository (operates 
  ONLY on incoming nodes that are not conflicting)<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Update (operates
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Update (operates 
  on conflicts *and* on outgoing <br>
-  changes)<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Commit (operates only on outgoing
+   changes)<br>
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Commit (operates only on outgoing 
  nodes that are not conflicting)<br>
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Commit (operates
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Override and Commit (operates 
  on conflicts *and* on incoming <br>
-  changes)</p>
-   
+   changes)</p>
+     
 <p class="MsoNormal"> </p>
-   
+     
 <p class="MsoNormal"><br>
-  </p>
-   
-<p class="MsoNormal">A preference was added that allows the user to more
-accurately determine how files are compared.</p>
-   
-<p class="MsoNormal">A new action was added to the merge view which allows
- the user to correctly merge conflicting files automatically (previously
-we  had a bug which prevented this).</p>
-   
+   </p>
+     
+<p class="MsoNormal">A preference was added that allows the user to more accurately
+determine how files are compared.</p>
+     
+<p class="MsoNormal">A new action was added to the merge view which allows 
+ the user to correctly merge conflicting files automatically (previously we
+ had a bug which prevented this).</p>
+     
 <p class="MsoNormal"><br>
-    Resolved 54 bugs.</p>
-   
+     Resolved 54 bugs.</p>
+     
 <p class="MsoNormal"><br>
-  <a
+   <a
  href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;resolution=FIXED&amp;resolution=INVALID&amp;resolution=WONTFIX&amp;resolution=DUPLICATE&amp;resolution=WORKSFORME&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfield=resolution&amp;chfieldfrom=2002-03-06+&amp;chfieldto=2002-03-12&amp;chfieldvalue=&amp;product=Platform&amp;component=VCM&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;namedcmd=Bugs+I%27ve+Logged&amp;newqueryname=&amp;order=Reuse+same+sort+as+last+time">
-       Click here</a> to see the bugs that were fixed.</p>
-   
+        Click here</a> to see the bugs that were fixed.</p>
+     
 <p class="MsoNormal"><br>
-  </p>
-   
+   </p>
+     
 <h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
-          
+            
 <p class="MsoNormal">CVS build I20020305 &#8211; March 5, 2002</p>
-         
+           
 <p class="MsoNormal">Build submission for Integration Build 20020305</p>
-         
+           
 <h2>What's new in this drop</h2>
-                
-<p class="MsoNormal">CVS Decorators have been greatly improved - images are 
-  now cached and disposed. </p>
-         
+                  
+<p class="MsoNormal">CVS Decorators have been greatly improved - images are
+   now cached and disposed. </p>
+           
 <p class="MsoNormal">  Resolved 74 bugs, fixing 47.</p>
-         
+           
 <p class="MsoNormal"><br>
-     <a
+      <a
  href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;resolution=FIXED&amp;resolution=INVALID&amp;resolution=WONTFIX&amp;resolution=DUPLICATE&amp;resolution=WORKSFORME&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfield=resolution&amp;chfieldfrom=2002-02-26+&amp;chfieldto=2002-03-06&amp;chfieldvalue=&amp;product=Platform&amp;component=VCM&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;namedcmd=Bugs+I%27ve+Logged&amp;newqueryname=&amp;order=Reuse+same+sort+as+last+time">
-       Click here</a> to see the bugs that were fixed.</p>
-         
+        Click here</a> to see the bugs that were fixed.</p>
+           
 <p class="MsoNormal"><br>
-       All Team plug-ins are turned off by default. If you wish to use Team 
- support,</p>
-         
+        All Team plug-ins are turned off by default. If you wish to use Team
+  support,</p>
+           
 <ol style="margin-top: 0in;" start="1" type="1">
-       <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off
+        <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off 
 to plugins/org.eclipse.team.ui/plugin.xml          </li>
-       <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off
+        <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ui/plugin.xml      </li>
-       <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off
+        <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off 
 to      plugins/org.eclipse.team.core/plugin.xml      </li>
-       <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off
+        <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.core/plugin.xml     </li>
-       <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off
+        <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ssh/plugin.xml     </li>
-         
+           
 </ol>
-         
+           
 <h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
-              
+                
 <p class="MsoNormal">CVS build I20020226 &#8211; February 26, 2002</p>
-             
+               
 <p class="MsoNormal">Build submission for Integration Build 20020226</p>
-             
+               
 <h2>What's new in this drop</h2>
-             
-<p class="MsoNormal">Added :ext: support, similar to the support that was 
-   in 1.0. See the CVS-&gt;Ext Connection Method preferences page to configure
+               
+<p class="MsoNormal">Added :ext: support, similar to the support that was
+    in 1.0. See the CVS-&gt;Ext Connection Method preferences page to configure 
    ext support.</p>
-             
+               
 <p class="MsoNormal"><br>
-       Fixed 25 bugs.</p>
-             
+        Fixed 25 bugs.</p>
+               
 <p class="MsoNormal"><br>
-       <a
+        <a
  href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;resolution=FIXED&amp;resolution=INVALID&amp;resolution=WONTFIX&amp;resolution=DUPLICATE&amp;resolution=WORKSFORME&amp;email1=&amp;emailtype1=substring&amp;email2=&amp;emailtype2=substring&amp;bugidtype=include&amp;bug_id=&amp;changedin=&amp;votes=&amp;chfield=resolution&amp;chfieldfrom=2002-02-15+&amp;chfieldto=Now&amp;chfieldvalue=&amp;product=Platform&amp;version=2.0&amp;component=VCM&amp;short_desc=&amp;short_desc_type=allwordssubstr&amp;long_desc=&amp;long_desc_type=allwordssubstr&amp;keywords=&amp;keywords_type=anywords&amp;field0-0-0=noop&amp;type0-0-0=noop&amp;value0-0-0=&amp;cmdtype=doit&amp;namedcmd=Fixed+since+last+date&amp;newqueryname=Fixed+since+last+date&amp;order=Reuse+same+sort+as+last+time">
-       Click here</a> to see the bugs that were fixed.</p>
-                        
+        Click here</a> to see the bugs that were fixed.</p>
+                          
 <p class="MsoNormal"><br>
-       All Team plug-ins are turned off by default. If you wish to use Team 
- support,</p>
-             
+        All Team plug-ins are turned off by default. If you wish to use Team
+  support,</p>
+               
 <ol style="margin-top: 0in;" start="1" type="1">
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off 
 to plugins/org.eclipse.team.ui/plugin.xml          </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ui/plugin.xml      </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off 
 to      plugins/org.eclipse.team.core/plugin.xml      </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.core/plugin.xml     </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ssh/plugin.xml     </li>
-             
+               
 </ol>
-       <!--[if !supportEmptyParas]-->       
+        <!--[if !supportEmptyParas]-->        
 <h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
-                
+                  
 <p class="MsoNormal">CVS build I20020214 &#8211; February 14, 2002</p>
-                
+                  
 <p class="MsoNormal">Build submission for Integration Build 20020214</p>
-                
+                  
 <h2>What's new in this drop</h2>
-                
+                  
 <p class="MsoNormal">Bug fixes:</p>
-                
+                  
 <p class="MsoNormal">Outgoing changes show up in Merge editor (9746)</p>
-                
-<p class="MsoNormal">Incoming additions from another branch have wrong timestamp
+                  
+<p class="MsoNormal">Incoming additions from another branch have wrong timestamp 
     (9748)</p>
-                
+                  
 <p class="MsoNormal">Bin folders show up as outgoing additions! (9788)</p>
-                
-<p class="MsoNormal">Create<span style="">&nbsp; </span>       branch dialog
-says "Name must not be null" for a project version, even   if  the version
+                  
+<p class="MsoNormal">Create<span style="">&nbsp; </span>       branch dialog 
+says "Name must not be null" for a project version, even   if  the version 
 option is disabled (9691)</p>
-                
+                  
 <p class="MsoNormal">Should not ignore managed resources (9502)</p>
-                
+                  
 <p class="MsoNormal">Directory named core ignored!!! (9486)</p>
-                
+                  
 <p class="MsoNormal">Change in semantics to validateEdit (9802)</p>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
-<p class="MsoNormal">All Team plug-ins are turned off by default. If you wish
-to use Team support,</p>
-                
+                  
+<p class="MsoNormal">All Team plug-ins are turned off by default. If you
+wish to use Team support,</p>
+                  
 <ol style="margin-top: 0in;" start="1" type="1">
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off 
 to plugins/org.eclipse.team.ui/plugin.xml          </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ui/plugin.xml      </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off 
 to      plugins/org.eclipse.team.core/plugin.xml      </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.core/plugin.xml     </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ssh/plugin.xml     </li>
-               
+                 
 </ol>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
+                  
 <h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
-                
+                  
 <p class="MsoNormal">CVS build V2_0_6 &#8211; February 12, 2002</p>
-                
+                  
 <p class="MsoNormal">Build submission for Integration Build 20020212</p>
-                
+                  
 <h2>What's new in this drop</h2>
-                
+                  
 <p class="MsoNormal">48 bugs fixed.</p>
-                
+                  
 <p class="MsoNormal">Global ignore facility added.</p>
-                
-<p class="MsoNormal">Extensive sync view rewrite. Workflow has been improved, 
-   and in incoming/outgoing mode the user can override the direction of any 
-  change. Auto-merging of conflicts is now supported as well.</p>
-                
-<p class="MsoNormal">User can add files/directories to .cvsignore automatically
+                  
+<p class="MsoNormal">Extensive sync view rewrite. Workflow has been improved,
+    and in incoming/outgoing mode the user can override the direction of
+any    change. Auto-merging of conflicts is now supported as well.</p>
+                  
+<p class="MsoNormal">User can add files/directories to .cvsignore automatically 
     from the sync view or navigator by right clicking and selecting &#8220;Ignore&#8221;.</p>
-                
+                  
 <p class="MsoNormal">Many bug fixes and improvements.</p>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
-<p class="MsoNormal">All Team plug-ins are turned off by default. If you wish
-to use Team support,</p>
-                
+                  
+<p class="MsoNormal">All Team plug-ins are turned off by default. If you
+wish to use Team support,</p>
+                  
 <ol style="margin-top: 0in;" start="6" type="1">
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off 
 to plugins/org.eclipse.team.ui/plugin.xml          </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ui/plugin.xml      </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.core/plugin.xml.off 
 to      plugins/org.eclipse.team.core/plugin.xml      </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.core/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.core/plugin.xml     </li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ssh/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ssh/plugin.xml     </li>
-               
+                 
 </ol>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
+                  
 <h1 style="">Eclipse Platform Build     Notes &#8211; CVS Support</h1>
-                
+                  
 <p class="MsoNormal">CVS build V2_0_2 &#8211; January 15, 2002</p>
-                
+                  
 <p class="MsoNormal">Build submission for Integration Build 20020115</p>
-                
+                  
 <h2>What's new in this drop</h2>
-                
+                  
 <p class="MsoNormal">This is the initial release for the CVS support plug-ins.</p>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
-<p class="MsoNormal">The plug-ins are turned off by default. If you wish to
-use CVS support,</p>
-                
+                  
+<p class="MsoNormal">The plug-ins are turned off by default. If you wish
+to use CVS support,</p>
+                  
 <ol style="margin-top: 0in;" start="11" type="1">
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.ui/plugin.xml.off 
 to plugins/org.eclipse.team.ui/plugin.xml</li>
-         <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off
+          <li class="MsoNormal" style="">       Rename      plugins/org.eclipse.team.cvs.ui/plugin.xml.off 
 to      plugins/org.eclipse.team.cvs.ui/plugin.xml</li>
-               
+                 
 </ol>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
-<p class="MsoNormal">Please report any problems to the VCM team, and use the
-VCM component for bug tracking.</p>
-                
+                  
+<p class="MsoNormal">Please report any problems to the VCM team, and use
+the VCM component for bug tracking.</p>
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
-<p class="MsoNormal">The following features are operating near their 1.0 level
-of functionality:</p>
-                
+                  
+<p class="MsoNormal">The following features are operating near their 1.0
+level of functionality:</p>
+                  
 <ul style="margin-top: 0in;" type="disc">
-         <li class="MsoNormal" style="">       The      Synchronize view</li>
-         <li class="MsoNormal" style="">       The      Resource History
+          <li class="MsoNormal" style="">       The      Synchronize view</li>
+          <li class="MsoNormal" style="">       The      Resource History 
 view</li>
-         <li class="MsoNormal" style="">       The      Repositories view</li>
-               
+          <li class="MsoNormal" style="">       The      Repositories view</li>
+                 
 </ul>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
+                  
 <p class="MsoNormal">The following features differ from the 1.0 functionality:</p>
-                
+                  
 <ul style="margin-top: 0in;" type="disc">
-         <li class="MsoNormal" style="">       Decorators.      To see version
+          <li class="MsoNormal" style="">       Decorators.      To see version 
 history in the Navigator, use Window-&gt;Decorators-&gt;CVS</li>
-         <li class="MsoNormal" style="">       CVS      metadata. The metadata
-now resides in CVS/ folders in every  shared   folder.      These folders
-are hidden by default in the Navigator.  If you   copy entire      directories
-from within the Navigator, you MUST  remove the  CVS/      directories from
+          <li class="MsoNormal" style="">       CVS      metadata. The metadata 
+now resides in CVS/ folders in every  shared   folder.      These folders 
+are hidden by default in the Navigator.  If you   copy entire      directories 
+from within the Navigator, you MUST  remove the  CVS/      directories from 
 the target after copying, otherwise  CVS operations   will      behave unexpectedly.</li>
-               
+                 
 </ul>
-                
+                  
 <p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]-->&lt;&gt;</p>
-                
+                  
 <p class="MsoNormal">Run <a
  href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;resolution=FIXED&amp;priority=P1&amp;priority=P2&amp;priority=P3&amp;priority=P4&amp;email1=&amp;emailtype1=substring&amp;emailassigned_to1=1&amp;email2=&amp;emailtype2=substring&amp;emailreporter2=1&amp;bugi%20">
-       this</a> query to determine which bugs have been fixed since January 
- 7<sup>    th</sup>. If you wish to narrow the search, edit the query and 
-change the  dates.</p>
-                
+        this</a> query to determine which bugs have been fixed since January
+  7<sup>    th</sup>. If you wish to narrow the search, edit the query and
+ change the  dates.</p>
+                  
 <h1 style=""><!--[if !supportEmptyParas]-->       &nbsp;<!--[endif]-->&lt;&gt;</h1>
-         </div>
-                
+          </div>
+                  
 </body>
 </html>
