@@ -65,17 +65,17 @@ public class LinkedUIControl {
 	 * Constant indicating that this UI should never cycle from the last
 	 * position to the first and vice versa.
 	 */
-	public static final int CYCLE_NEVER= 0;
+	public static final Object CYCLE_NEVER= new Object();
 	/**
 	 * Constant indicating that this UI should always cycle from the last
 	 * position to the first and vice versa.
 	 */
-	public static final int CYCLE_ALWAYS= 1;
+	public static final Object CYCLE_ALWAYS= new Object();
 	/**
 	 * Constant indicating that this UI should cycle from the last position to
 	 * the first and vice versa if its environment is not nested.
 	 */
-	public static final int CYCLE_WHEN_NO_PARENT= 2;
+	public static final Object CYCLE_WHEN_NO_PARENT= new Object();
 
 	/**
 	 * Listener that gets notified when the linked ui switches its focus position.
@@ -137,20 +137,13 @@ public class LinkedUIControl {
 	 * 
 	 * @since 3.0
 	 */
-	public static abstract class LinkedUITarget {
+	public static abstract class LinkedUITarget implements ILinkedFocusListener {
 		/**
 		 * Returns the viewer represented by this target, never <code>null</code>.
 		 * 
 		 * @return the viewer associated with this target.
 		 */
 		public abstract ITextViewer getViewer();
-		
-		/**
-		 * Called by the linked UI when this target is being shown. An
-		 * implementation could for example ensure that the corresponding
-		 * editor is showing.
-		 */
-		public abstract void enter();
 		
 		/**
 		 * The viewer's text widget is initialized when the UI first connects
@@ -182,18 +175,26 @@ public class LinkedUIControl {
 			Assert.isNotNull(viewer);
 			fTextViewer= viewer;
 		}
+		
 		/*
 		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedUIControl.ILinkedUITarget#getViewer()
 		 */
 		public ITextViewer getViewer() {
 			return fTextViewer;
 		}
-
-		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedUIControl.ILinkedUITarget#enter()
+		
+		/**
+		 * {@inheritDoc}
 		 */
-		public void enter() {
+		public void linkedFocusLost(LinkedPosition position, LinkedUITarget target) {
 		}
+		
+		/**
+		 * {@inheritDoc}
+		 */
+		public void linkedFocusGained(LinkedPosition position, LinkedUITarget target) {
+		}
+
 	}
 
 	/**
@@ -677,7 +678,10 @@ public class LinkedUIControl {
 	 * 
 	 * @param mode the new cycling mode.
 	 */
-	public void setCyclingMode(int mode) {
+	public void setCyclingMode(Object mode) {
+		if (mode != CYCLE_ALWAYS && mode != CYCLE_NEVER && mode != CYCLE_WHEN_NO_PARENT)
+			throw new IllegalArgumentException();
+		
 		if (mode == CYCLE_ALWAYS || mode == CYCLE_WHEN_NO_PARENT && !fEnvironment.isNested())
 			fIterator.setCycling(true);
 		else
@@ -803,9 +807,11 @@ public class LinkedUIControl {
 			if (target != fCurrentTarget) {
 				disconnect();
 				fCurrentTarget= target;
-				target.enter();
+				target.linkedFocusLost(fFramePosition, target);
 				connect();
 				ensureAnnotationModelInstalled();
+				if (fCurrentTarget != null)
+					fCurrentTarget.linkedFocusGained(pos, fCurrentTarget);
 			}
 		}
 	}

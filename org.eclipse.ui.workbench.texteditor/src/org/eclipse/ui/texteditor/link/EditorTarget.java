@@ -12,6 +12,7 @@ package org.eclipse.ui.texteditor.link;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget;
 
 import org.eclipse.ui.IWorkbenchPage;
@@ -52,15 +53,21 @@ public class EditorTarget extends LinkedUITarget {
 		return fTextViewer;
 	}
 
-	/*
-	 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedUIControl.ILinkedUITarget#enter()
+	/**
+	 * {@inheritDoc}
 	 */
-	public void enter() {
+	public void linkedFocusGained(LinkedPosition position, LinkedUITarget target) {
 		IWorkbenchPage page= fTextEditor.getEditorSite().getPage();
 		if (page != null) {
 			page.bringToTop(fTextEditor);
 		}
 		fTextEditor.setFocus();
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void linkedFocusLost(LinkedPosition position, LinkedUITarget target) {
+	}
+	
 }
