@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -26,7 +27,7 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
 
     private IIntroPart introPart;
     private CheatSheetView cheatSheet;
-    private Control control;
+    private Composite container;
 
     class ViewSiteAdapter implements IViewSite {
 
@@ -163,7 +164,11 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
         cheatSheet = new CheatSheetView();
         try {
             cheatSheet.init(new ViewSiteAdapter());
-            cheatSheet.createPartControl(parent);
+            container = toolkit.createComposite(parent);
+            FillLayout layout = new FillLayout();
+            layout.marginWidth = layout.marginHeight = 0;
+            container.setLayout(layout);
+            cheatSheet.createPartControl(container);
         } catch (PartInitException e) {
             return;
         }
@@ -175,7 +180,7 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#getControl()
      */
     public Control getControl() {
-        return cheatSheet.getControl();
+        return container;
     }
 
     /*
