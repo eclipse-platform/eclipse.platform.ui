@@ -384,7 +384,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModifcationStamp()
 	 */
 	public long getModifcationStamp() {
-		File file= fLocation.toFile();
+		File file= FileBuffers.getSystemFileAtLocation(getLocation());
 		if (file != null)
 			return file.lastModified();
 		return IResource.NULL_STAMP;
