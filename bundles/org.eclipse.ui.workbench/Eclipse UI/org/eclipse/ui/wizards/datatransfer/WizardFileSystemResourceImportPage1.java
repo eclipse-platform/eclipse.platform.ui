@@ -152,8 +152,10 @@ protected final void createButtonsGroup(Composite parent) {
 	layout.makeColumnsEqualWidth = true;
 	buttonComposite.setLayout(layout);
 	buttonComposite.setFont(parent.getFont());
-	buttonComposite.setLayoutData(
-		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+	GridData buttonData = 
+		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL);
+	buttonData.horizontalSpan = 2;
+	buttonComposite.setLayoutData(buttonData);
 
 	// types edit button
 	selectTypesButton =
@@ -170,6 +172,7 @@ protected final void createButtonsGroup(Composite parent) {
 		}
 	};
 	selectTypesButton.addSelectionListener(listener);
+	setButtonLayoutData(selectTypesButton);
 
 	selectAllButton =
 		createButton(
@@ -184,6 +187,7 @@ protected final void createButtonsGroup(Composite parent) {
 		}
 	};
 	selectAllButton.addSelectionListener(listener);
+	setButtonLayoutData(selectAllButton);
 
 	deselectAllButton =
 		createButton(
@@ -198,6 +202,7 @@ protected final void createButtonsGroup(Composite parent) {
 		}
 	};
 	deselectAllButton.addSelectionListener(listener);
+	setButtonLayoutData(deselectAllButton);
 
 }
 /** (non-Javadoc)
@@ -308,6 +313,7 @@ protected void createRootDirectoryGroup(Composite parent) {
 	sourceBrowseButton.addListener(SWT.Selection, this);
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	sourceBrowseButton.setFont(parent.getFont());
+	setButtonLayoutData(sourceBrowseButton);
 }
 
 /**

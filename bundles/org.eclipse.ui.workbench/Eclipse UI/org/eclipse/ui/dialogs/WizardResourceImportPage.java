@@ -170,6 +170,7 @@ protected final void createDestinationGroup(Composite parent) {
 	containerBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	containerBrowseButton.addListener(SWT.Selection,this);
 	containerBrowseButton.setFont(parent.getFont());
+	setButtonLayoutData(containerBrowseButton);
 
 	initialPopulateContainerField();
 }
