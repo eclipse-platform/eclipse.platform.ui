@@ -62,6 +62,7 @@ public class ContextHelpDialog {
 				"ContextHelpDialog",
 				" Constructor: Shell is:" + shell.toString());
 		WorkbenchHelp.setHelp(shell, IHelpUIConstants.F1_SHELL);
+		
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {
 				if (Logger.DEBUG)
@@ -72,17 +73,18 @@ public class ContextHelpDialog {
 			};
 		});
 		
-		shell.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				System.out.println("pressed ");
-				if (Logger.DEBUG)
-					Logger.logDebugMessage(
-						"ContextHelpDialog",
-						"handleEvent: SWT.Deactivate called. ");
-				if (e.keyCode == SWT.TRAVERSE_ESCAPE)	
-					close();
-			};
+		shell.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_ESCAPE) {
+					if (Logger.DEBUG)
+						Logger.logDebugMessage(
+							"ContextHelpDialog",
+							"handleEvent: SWT.TRAVERSE_ESCAPE called. ");
+					e.doit = true;
+				}
+			}
 		});
+
 		
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
@@ -157,8 +159,20 @@ public class ContextHelpDialog {
 		StyledText text =
 			new StyledText(
 				parent,
-				SWT.MULTI | SWT.READ_ONLY /*| SWT.NO_FOCUS  | SWT.WRAP*/
+				SWT.MULTI | SWT.READ_ONLY /* | SWT.NO_FOCUS | SWT.WRAP*/
 		);
+		text.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_ESCAPE) {
+					if (Logger.DEBUG)
+						Logger.logDebugMessage(
+							"ContextHelpDialog",
+							"handleEvent: SWT.TRAVERSE_ESCAPE called. ");
+					e.doit = true;
+				}
+			}
+		});
+		
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
