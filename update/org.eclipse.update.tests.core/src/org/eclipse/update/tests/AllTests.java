@@ -10,6 +10,7 @@ import org.eclipse.update.tests.api.AllAPITests;
 import org.eclipse.update.tests.configurations.AllConfigurationsTests;
 import org.eclipse.update.tests.core.boot.AllPlatformConfigurationTests;
 import org.eclipse.update.tests.model.AllModelTests;
+import org.eclipse.update.tests.nestedfeatures.AllNestedTests;
 import org.eclipse.update.tests.parser.AllParserTests;
 import org.eclipse.update.tests.reconciliation.AllReconciliationTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
@@ -32,7 +33,8 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllCoreUITests.suite());
 		suite.addTest(AllConfigurationsTests.suite());
 		suite.addTest(AllTypesTests.suite());
-		suite.addTest(AllRegularRemoveTests.suite());	
+		suite.addTest(AllRegularRemoveTests.suite());
+		suite.addTest(AllNestedTests.suite());	
 		//suite.addTest(AllReconciliationTests.suite());					
 		return suite;
 	}
