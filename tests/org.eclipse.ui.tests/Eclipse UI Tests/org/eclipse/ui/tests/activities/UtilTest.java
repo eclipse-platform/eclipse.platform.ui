@@ -46,7 +46,7 @@ public class UtilTest extends TestCase {
 	 * contain the same activity).
 	 */
 	public void testGetEnabledCategories1() {
-		Set ids = WorkbenchActivityHelper.getEnabledCategories(ID1);
+		Set ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID1);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID3));
 	}
@@ -56,7 +56,7 @@ public class UtilTest extends TestCase {
 	 * enabled. Cat 2 has activity 2, which depends on activity 1.
 	 */
 	public void testGetEnabledCategories2() {
-		Set ids = WorkbenchActivityHelper.getEnabledCategories(ID2);
+		Set ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID2);
 		assertEquals(2, ids.size());
 		assertTrue(ids.contains(ID1));
 		assertTrue(ids.contains(ID3));
@@ -67,7 +67,7 @@ public class UtilTest extends TestCase {
 	 * contain the same activity).
 	 */
 	public void testGetEnabledCategories3() {
-		Set ids = WorkbenchActivityHelper.getEnabledCategories(ID3);
+		Set ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID3);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID1));
 	}
@@ -76,7 +76,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 4 then no other categories would change..
 	 */
 	public void testGetEnabledCategories4() {
-		Set ids = WorkbenchActivityHelper.getEnabledCategories(ID4);
+		Set ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID4);
 		assertEquals(0, ids.size());
 	}
 	
@@ -84,7 +84,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 5 then cat 4 will become enabled
 	 */
 	public void testGetEnabledCategories5() {
-		Set ids = WorkbenchActivityHelper.getEnabledCategories(ID5);
+		Set ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID5);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID4));
 	}
@@ -97,7 +97,7 @@ public class UtilTest extends TestCase {
 		HashSet set = new HashSet();
 		set.add(ID1);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
-		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(ID1).size());
+		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID1).size());
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class UtilTest extends TestCase {
 		HashSet set = new HashSet();
 		set.add(ID2);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
-		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(ID2).size());
+		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID2).size());
 	}
 	
 	/**
@@ -119,7 +119,7 @@ public class UtilTest extends TestCase {
 		HashSet set = new HashSet();
 		set.add(ID1);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
-		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(ID3).size());
+		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID3).size());
 	}	
 	
 	/**
@@ -130,7 +130,7 @@ public class UtilTest extends TestCase {
 		HashSet set = new HashSet();
 		set.add(ID4);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
-		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(ID4).size());
+		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID4).size());
 	}
 	
 	/**
@@ -141,7 +141,7 @@ public class UtilTest extends TestCase {
 		HashSet set = new HashSet();
 		set.add(ID4);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
-		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(ID5).size());
+		assertEquals(0, WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID5).size());
 	}
 	
 	/**
@@ -152,7 +152,7 @@ public class UtilTest extends TestCase {
 		HashSet set = new HashSet();
 		set.add(ID5);
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(set);
-		Set ids = WorkbenchActivityHelper.getEnabledCategories(ID5);
+		Set ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID5);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID4));
 	}	
@@ -163,7 +163,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testGetDisabledCategories1() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getDisabledCategories(ID1);
+		Set ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID1);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID3));
 	}
@@ -173,7 +173,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testGetDisabledCategories2() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getDisabledCategories(ID2);
+		Set ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID2);
 		assertEquals(2, ids.size());
 		assertTrue(ids.contains(ID1));
 		assertTrue(ids.contains(ID3));
@@ -184,7 +184,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testGetDisabledCategories3() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getDisabledCategories(ID3);
+		Set ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID3);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID1));
 	}
@@ -194,7 +194,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testGetDisabledCategories4() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getDisabledCategories(ID4);
+		Set ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID4);
 		assertEquals(0, ids.size());
 	}
 	
@@ -203,7 +203,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testGetDisabledCategories5() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getDisabledCategories(ID5);
+		Set ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID5);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID4));
 	}
@@ -213,7 +213,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testCategoryCount1_A() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID1);
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID1);
 		assertEquals(2, ids.size());
 		assertTrue(ids.contains(ID1));
 		assertTrue(ids.contains(ID3));
@@ -224,7 +224,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testCategoryCount2_A() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID2);
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID2);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID2));
 	}
@@ -234,7 +234,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testCategoryCount4_A() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID4);
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID4);
 		assertEquals(2, ids.size());
 		assertTrue(ids.contains(ID4));
 		assertTrue(ids.contains(ID5));
@@ -245,7 +245,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testCategoryCount5_A() {
 		enableAll();
-		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(ID5);
+		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID5);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID5));
 	}
@@ -263,14 +263,22 @@ public class UtilTest extends TestCase {
 				set);
 	}
 
+    /**
+     * Return the system activity manager.
+     * 
+     * @return the system activity manager
+     */
+    private IActivityManager getActivityManager() {
+        return  PlatformUI.getWorkbench()
+        .getActivitySupport().getActivityManager();
+    }
+    
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		IActivityManager manager = PlatformUI.getWorkbench()
-				.getActivitySupport().getActivityManager();
-		rememberedSet = manager.getEnabledActivityIds();
+		rememberedSet = getActivityManager().getEnabledActivityIds();
 	}
 
 	/* (non-Javadoc)
