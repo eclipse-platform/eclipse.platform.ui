@@ -53,6 +53,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private CheckboxTableViewer fPerspectiveViewer;
 	private Button fTrackViewsButton;
 	private Button fResetViewsButton;
+	private boolean fResetPressed= false;
 	
 	public ViewManagementPreferencePage() {
 		super();
@@ -95,15 +96,11 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		((GridData) fResetViewsButton.getLayoutData()).horizontalAlignment= GridData.BEGINNING;
 		fResetViewsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				getPreferenceStore().setValue(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN, ""); //$NON-NLS-1$
-				getPreferenceStore().setValue(LaunchViewContextListener.PREF_OPENED_VIEWS, ""); //$NON-NLS-1$
+				fResetPressed= true;
 				fResetViewsButton.setEnabled(false);
 			}
 		});
-		// Enable reset if either persisted view collection is not empty.
-		boolean enableReset= !"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN)) || //$NON-NLS-1$
-			!"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_OPENED_VIEWS)); //$NON-NLS-1$
-		fResetViewsButton.setEnabled(enableReset);
+		updateResetButton();
 	}
 
 	/**
@@ -149,6 +146,10 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		
 		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, fTrackViewsButton.getSelection());
+		if (fResetPressed) {
+			getPreferenceStore().setValue(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN, ""); //$NON-NLS-1$
+			getPreferenceStore().setValue(LaunchViewContextListener.PREF_OPENED_VIEWS, ""); //$NON-NLS-1$
+		}
 		return super.performOk();
 	}
 
@@ -158,6 +159,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	protected void performDefaults() {
 		checkPerspectives(getPreferenceStore().getDefaultString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES));
 		fTrackViewsButton.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
+		fResetPressed= false;
+		updateResetButton();
 		super.performDefaults();
 	}
 
@@ -165,6 +168,16 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+	}
+	
+	/**
+	 * Updates enablement of the reset button.
+	 * Enable if either persisted view collection is not empty.
+	 */
+	private void updateResetButton() {
+		boolean enableReset= !"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN)) || //$NON-NLS-1$
+			!"".equals(getPreferenceStore().getString(LaunchViewContextListener.PREF_OPENED_VIEWS)); //$NON-NLS-1$
+		fResetViewsButton.setEnabled(enableReset);
 	}
 
 	private class PerspectiveProvider implements IStructuredContentProvider, ILabelProvider {
