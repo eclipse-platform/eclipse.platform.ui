@@ -247,7 +247,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#handleBreakpoint(IBreakpoint, boolean)
 	 */
 	public void handleBreakpoint(IBreakpoint breakpoint, boolean add) {
-		if (!fTarget.supportsBreakpoint(breakpoint)) {
+		if (fTarget == null || !fTarget.supportsBreakpoint(breakpoint)) {
 			return;
 		}
 		StringBuffer message= new StringBuffer();
@@ -272,7 +272,6 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 			sendRequest(message.toString());
 		} catch (CoreException ce) {
 			AntUIPlugin.log(ce);
-			return;
 		}
 	}
 
