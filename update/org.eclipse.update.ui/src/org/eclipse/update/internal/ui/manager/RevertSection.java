@@ -118,7 +118,7 @@ private static final String KEY_RESTORE_BUTTON = "SnapshotPage.RevertSection.res
 			public void run(IProgressMonitor monitor) {
 				try {
 					ILocalSite localSite = SiteManager.getLocalSite();
-					localSite.revertTo(target, monitor);
+					localSite.revertTo(target, monitor, new UIProblemHandler());
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				} finally {

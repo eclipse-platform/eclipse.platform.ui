@@ -43,6 +43,7 @@ private static final String KEY_CDROM_CHECK = "UpdatesPage.options.cdromCheck";
 	private SearchMonitor monitor;
 	private AvailableUpdates updates;
 	private UpdateSearchProgressMonitor statusMonitor;
+	private SearchResultSection searchResultSection;
 	
 class SearchMonitor extends ProgressMonitorPart {
 	public SearchMonitor(Composite parent) {
@@ -57,8 +58,10 @@ class SearchMonitor extends ProgressMonitorPart {
 		Date date = new Date();
 		String pattern = UpdateUIPlugin.getResourceString(KEY_LAST_SEARCH);
 		String text = UpdateUIPlugin.getFormattedMessage(pattern, date.toString());
-		infoLabel.setText(text);
-		infoLabel.getParent().layout(true);
+		//infoLabel.setText(text);
+		//infoLabel.getParent().layout(true);
+		reflow();
+		updateSize();
 		enableOptions(true);
 	}
 }
@@ -162,9 +165,19 @@ protected void createContents(Composite parent) {
 		// sync up with the search
 		catchUp();
 	}
+	searchResultSection = new SearchResultSection((UpdateFormPage)getPage());
+	Control control = searchResultSection.createControl(parent, factory);
+	td = new TableData();
+	td.align = TableData.FILL;
+	td.colspan = 2;
+	td.grabHorizontal = true;
+	control.setLayoutData(td);
+	
+	registerSection(searchResultSection);
 }
 
 private void reflow() {
+	searchResultSection.reflow();
 	descLabel.getParent().layout(true);
 	((Composite)getControl()).layout(true);
 }
