@@ -126,12 +126,12 @@ protected void createChildControl() {
 	
 	final Composite content = new Composite(control, SWT.NONE);
 	content.setLayout(new FillLayout());
+	control.setContent(content);
 	
 	String error = WorkbenchMessages.format("PartPane.unableToCreate", new Object[] {partReference.getTitle()}); //$NON-NLS-1$
 	Platform.run(new SafeRunnableAdapter(error) {
 		public void run() {
 			part.createPartControl(content);
-			control.setContent(content);
 			page.addPart(partReference);
 			page.firePartOpened(part);
 		}
