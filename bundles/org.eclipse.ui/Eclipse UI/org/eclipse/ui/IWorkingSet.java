@@ -64,6 +64,8 @@ public interface IWorkingSet {
 	/**
 	 * Sets the name of the working set. 
 	 * The working set name should be unique.
+	 * The working set name must not have leading or trailing 
+	 * whitespace.
 	 * 
 	 * @param name the name of the working set
 	 */
