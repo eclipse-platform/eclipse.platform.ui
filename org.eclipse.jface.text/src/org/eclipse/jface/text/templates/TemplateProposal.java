@@ -314,7 +314,7 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 	}
 
 	private void openErrorDialog(Shell shell, Exception e) {
-		MessageDialog.openError(shell, TemplateMessages.getString("TemplateEvaluator.error.title"), e.getMessage()); //$NON-NLS-1$
+		MessageDialog.openError(shell, TemplateMessages.getString("TemplateProposal.errorDialog.title"), e.getMessage()); //$NON-NLS-1$
 	}
 
 	/**

@@ -102,7 +102,7 @@ public class TemplateReaderWriter {
 
 				String id= getStringValue(attributes, ID_ATTRIBUTE, null);
 				if (id != null && ids.contains(id))
-					throw new SAXException(TemplateMessages.getString("TemplateReaderWriter.duplicate.id")); //$NON-NLS-1$
+					throw new SAXException(TemplatePersistenceMessages.getString("TemplateReaderWriter.duplicate.id")); //$NON-NLS-1$
 				
 				boolean deleted = getBooleanValue(attributes, DELETED_ATTRIBUTE, false);
 				
@@ -115,7 +115,7 @@ public class TemplateReaderWriter {
 				String context= getStringValue(attributes, CONTEXT_ATTRIBUTE);
 
 				if (name == null || context == null)
-					throw new SAXException(TemplateMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
+					throw new SAXException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
 
 				boolean enabled = getBooleanValue(attributes, ENABLED_ATTRIBUTE, true);
 				
@@ -236,13 +236,13 @@ public class TemplateReaderWriter {
 		else if (enabledNode.getNodeValue().equals(Boolean.toString(false)))
 			return false;
 		else
-			throw new SAXException(TemplateMessages.getString("TemplateReaderWriter.error.illegal_boolean_attribute")); //$NON-NLS-1$
+			throw new SAXException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.illegal_boolean_attribute")); //$NON-NLS-1$
 	}
 	
 	private String getStringValue(NamedNodeMap attributes, String name) throws SAXException {
 		String val= getStringValue(attributes, name, null);
 		if (val == null)
-			throw new SAXException(TemplateMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
+			throw new SAXException(TemplatePersistenceMessages.getString("TemplateReaderWriter.error.missing_attribute")); //$NON-NLS-1$
 		return val;
 	}
 
@@ -282,7 +282,7 @@ public class TemplateReaderWriter {
 				return '!' + key + '!';
 			}
 		} else
-			return TemplateMessages.getString(key); // default messages
+			return TemplatePersistenceMessages.getString(key); // default messages
 	}
 }
 

@@ -17,12 +17,12 @@ import java.util.ResourceBundle;
 /**
  * @since 3.0
  */
-class TemplateMessages {
+class TemplatePersistenceMessages {
 
-	private static final String RESOURCE_BUNDLE= TemplateMessages.class.getName();
+	private static final String RESOURCE_BUNDLE= TemplatePersistenceMessages.class.getName();
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
-	private TemplateMessages() {
+	private TemplatePersistenceMessages() {
 	}
 
 	/**
