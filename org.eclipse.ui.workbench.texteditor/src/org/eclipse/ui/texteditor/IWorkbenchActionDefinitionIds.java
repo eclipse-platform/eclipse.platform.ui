@@ -29,9 +29,9 @@ public interface IWorkbenchActionDefinitionIds {
 	
 	/**
 	 * Action definition id of the file save action.
-	 * Value: <code>"org.eclipse.file.save"</code>
+	 * Value: <code>"org.eclipse.ui.file.save"</code>
 	 */
-	public static final String SAVE= "org.eclipse.file.save"; //$NON-NLS-1$
+	public static final String SAVE= "org.eclipse.ui.file.save"; //$NON-NLS-1$
 
 	/**
 	 * Action definition id of the file revert action.
