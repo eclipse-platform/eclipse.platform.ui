@@ -12,7 +12,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -52,7 +54,7 @@ public class SyncElementTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SyncElementTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testFileConflict"));
+		//return new CVSTestSetup(new SyncElementTest("testRenameProject"));
 	}
 	
 	/*
@@ -784,4 +786,21 @@ public class SyncElementTest extends EclipseTest {
 		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, null, DEFAULT_MONITOR);
 		assertEquals(Path.EMPTY, (ICVSResource)tree.getRemote(), CVSWorkspaceRoot.getCVSResourceFor(copy), false, false);
 	 }
+	 
+ 	public void testRenameProject() throws TeamException, CoreException, IOException {
+		String[] resourceNames = new String[] { "changed.txt", "folder1/", "folder1/a.txt" };
+		int[] inSync = new int[] {IRemoteSyncElement.IN_SYNC, IRemoteSyncElement.IN_SYNC, IRemoteSyncElement.IN_SYNC};
+		IProject project = createProject("testRenameProject", new String[] { "changed.txt", "folder1/", "folder1/a.txt" });
+		
+		IRemoteSyncElement tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertSyncEquals("sync should be in sync", tree, resourceNames, inSync);
+		IProjectDescription desc = project.getDescription();
+		String newName = project.getName() + "_renamed";
+		desc.setName(newName);
+		project.move(desc, false, null);
+		project = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
+		assertTrue(project.exists());
+		tree = CVSWorkspaceRoot.getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
+		assertSyncEquals("sync should be in sync", tree, resourceNames, inSync);
+	}	
 }

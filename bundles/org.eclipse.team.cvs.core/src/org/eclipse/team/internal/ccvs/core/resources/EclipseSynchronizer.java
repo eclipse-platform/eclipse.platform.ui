@@ -334,7 +334,7 @@ public class EclipseSynchronizer {
 			HashMap children = (HashMap)parent.getSessionProperty(RESOURCE_SYNC_KEY);
 			if(children!=null) {
 				if(info==null) {
-					children.remove(resource);
+					children.remove(resource.getName());
 				} else {
 					// replace or add new resource sync
 					children.put(resource.getName(), info);
