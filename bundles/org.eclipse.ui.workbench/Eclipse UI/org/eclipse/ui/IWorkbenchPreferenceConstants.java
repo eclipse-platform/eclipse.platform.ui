@@ -300,4 +300,36 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.1
      */
     public static final String EDITOR_MINIMUM_CHARACTERS = "EDITOR_MINIMUM_CHARACTERS"; //$NON-NLS-1$
+
+    /**
+	 * <p>
+	 * Specifies whether or not the workspace selection dialog should be shown on startup.
+	 * </p>
+	 * <p>
+	 * The default value for this preference is <code>true</code>.
+	 * </p>
+	 */
+	public static final String SHOW_WORKSPACE_SELECTION_DIALOG = "SHOW_WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Stores the maximum number of workspaces that should be displayed in the
+	 * ChooseWorkspaceDialog.
+	 * </p>
+	 */
+	public static final String MAX_RECENT_WORKSPACES = "MAX_RECENT_WORKSPACES"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Stores a comma separated list of the recently used workspace paths.
+	 * </p>
+	 */
+	public static final String RECENT_WORKSPACES = "RECENT_WORKSPACES"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Stores the version of the protocol used to decode/encode the list of recent workspaces.
+	 * </p>
+	 */
+	public static final String RECENT_WORKSPACES_PROTOCOL = "RECENT_WORKSPACES_PROTOCOL"; //$NON-NLS-1$
 }

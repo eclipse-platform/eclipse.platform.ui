@@ -12,19 +12,22 @@ package org.eclipse.ui.internal.ide;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Writer;
 import java.net.URL;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * This class stores the information behind the "Launch Workspace" dialog. The
@@ -32,9 +35,7 @@ import org.eclipse.ui.XMLMemento;
  */
 public class ChooseWorkspaceData {
     /**
-     * The default max length of the recent workspace mru list.  The values
-     * stored in xml (both the max-length parameter and actual size of the
-     * list) will supersede this value. 
+     * The default max length of the recent workspace mru list.
      */
     private static final int RECENT_MAX_LENGTH = 5;
 
@@ -51,7 +52,18 @@ public class ChooseWorkspaceData {
      */
     private static final String PERS_FILENAME = "recentWorkspaces.xml"; //$NON-NLS-1$
 
+    /**
+     * In the past a file was used to store persist these values.  This file was written
+     * with this value as its protocol identifier.
+     */
     private static final int PERS_ENCODING_VERSION = 1;
+
+    /**
+     * This is the first version of the encode/decode protocol that uses the config area
+     * preference store for persistence.  The only encoding done is to convert the recent
+     * workspace list into a comma-separated list.
+     */
+    private static final int PERS_ENCODING_VERSION_CONFIG_PREFS = 2;
 
     private boolean showDialog = true;
 
@@ -166,161 +178,141 @@ public class ChooseWorkspaceData {
     }
 
     /**
-     * Update the persistent store.  Call this function after the currently selected
-     * value has been found to be ok.
-     */
-    public void writePersistedData() {
-        Location configLoc = Platform.getConfigurationLocation();
-        if (configLoc == null || configLoc.isReadOnly())
-            return;
+	 * Update the persistent store. Call this function after the currently
+	 * selected value has been found to be ok.
+	 */
+	public void writePersistedData() {
+		// 1. get config pref node
+		Preferences node = Platform.getPreferencesService().getRootNode().node(
+				ConfigurationScope.SCOPE).node(PlatformUI.PLUGIN_ID);
 
-        URL persUrl = getPersistenceUrl(configLoc.getURL(), true);
-        if (persUrl == null)
-            return;
+		// 2. get value for showDialog
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
+				showDialog);
 
-        // move the new selection to the front of the list
-        if (selection != null) {
-            String oldEntry = recentWorkspaces[0];
-            recentWorkspaces[0] = selection;
-            for (int i = 1; i < recentWorkspaces.length && oldEntry != null; ++i) {
-                if (selection.equals(oldEntry))
-                    break;
-                String tmp = recentWorkspaces[i];
-                recentWorkspaces[i] = oldEntry;
-                oldEntry = tmp;
-            }
-        }
+		// 3. use value of numRecent to create proper length array
+		node.putInt(IWorkbenchPreferenceConstants.MAX_RECENT_WORKSPACES,
+				recentWorkspaces.length);
 
-        Writer writer = null;
-        try {
-            writer = new FileWriter(persUrl.getFile());
+		// move the new selection to the front of the list
+		if (selection != null) {
+			String oldEntry = recentWorkspaces[0];
+			recentWorkspaces[0] = selection;
+			for (int i = 1; i < recentWorkspaces.length && oldEntry != null; ++i) {
+				if (selection.equals(oldEntry))
+					break;
+				String tmp = recentWorkspaces[i];
+				recentWorkspaces[i] = oldEntry;
+				oldEntry = tmp;
+			}
+		}
 
-            // E.g.,
-            //	<launchWorkspaceData>
-            //		<protocol version="1"/>
-            //      <alwaysAsk showDialog="1"/>
-            // 		<recentWorkspaces maxLength="5">
-            //			<workspace path="C:\eclipse\workspace0"/>
-            //			<workspace path="C:\eclipse\workspace1"/>
-            //		</recentWorkspaces>
-            //	</launchWorkspaceData>
+		// 4. store values of recent workspaces into array
+		String encodedRecentWorkspaces = encodeStoredWorkspacePaths(recentWorkspaces);
+		node.put(IWorkbenchPreferenceConstants.RECENT_WORKSPACES,
+				encodedRecentWorkspaces);
 
-            XMLMemento memento = XMLMemento
-                    .createWriteRoot("launchWorkspaceData"); //$NON-NLS-1$
+		// 5. store the protocol version used to encode the list
+		node.putInt(IWorkbenchPreferenceConstants.RECENT_WORKSPACES_PROTOCOL,
+				PERS_ENCODING_VERSION_CONFIG_PREFS);
 
-            memento.createChild(XML.PROTOCOL).putInteger(XML.VERSION,
-                    PERS_ENCODING_VERSION);
-
-            memento.createChild(XML.ALWAYS_ASK).putInteger(XML.SHOW_DIALOG,
-                    showDialog ? 1 : 0);
-
-            IMemento recentMemento = memento.createChild(XML.RECENT_WORKSPACES);
-            recentMemento.putInteger(XML.MAX_LENGTH, recentWorkspaces.length);
-            for (int i = 0; i < recentWorkspaces.length; ++i) {
-                if (recentWorkspaces[i] == null)
-                    break;
-                recentMemento.createChild(XML.WORKSPACE).putString(XML.PATH,
-                        recentWorkspaces[i]);
-            }
-            memento.save(writer);
-        } catch (IOException e) {
-            IDEWorkbenchPlugin.log("Unable to write recent workspace data", //$NON-NLS-1$
-                    StatusUtil.newStatus(IStatus.ERROR,
-                            e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$
-                            e));
-        } finally {
-            if (writer != null)
-                try {
-                    writer.close();
-                } catch (IOException e1) {
-                    // do nothing
-                }
-        }
-    }
+		// 6. store the node
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			// do nothing
+		}
+	}
 
     /**
-     * Look for and read data that might have been persisted from some previous
-     * run. Leave the receiver in a default state if no persistent data is
-     * found.
-     * @return true if a file was successfully read and false otherwise
-     */
-    private boolean readPersistedData() {
-        URL persUrl = null;
+	 * Look for and read data that might have been persisted from some previous
+	 * run. Leave the receiver in a default state if no persistent data is
+	 * found.
+	 * 
+	 * @return true if a file was successfully read and false otherwise
+	 */
+    private boolean readPersistedData_file() {
+	    URL persUrl = null;
 
-        Location configLoc = Platform.getConfigurationLocation();
-        if (configLoc != null)
-            persUrl = getPersistenceUrl(configLoc.getURL(), false);
+	    Location configLoc = Platform.getConfigurationLocation();
+	    if (configLoc != null)
+	        persUrl = getPersistenceUrl(configLoc.getURL(), false);
 
-        try {
-            // inside try to get the safe default creation in the finally
-            // clause
-            if (persUrl == null)
-                return false;
+	    try {
+	        // inside try to get the safe default creation in the finally
+	        // clause
+	        if (persUrl == null)
+	            return false;
 
-            // E.g.,
-            //	<launchWorkspaceData>
-            //		<protocol version="1"/>
-            //      <alwaysAsk showDialog="1"/>
-            // 		<recentWorkspaces maxLength="5">
-            //			<workspace path="C:\eclipse\workspace0"/>
-            //			<workspace path="C:\eclipse\workspace1"/>
-            //		</recentWorkspaces>
-            //	</launchWorkspaceData>
+	        // E.g.,
+	        //	<launchWorkspaceData>
+	        //		<protocol version="1"/>
+	        //      <alwaysAsk showDialog="1"/>
+	        // 		<recentWorkspaces maxLength="5">
+	        //			<workspace path="C:\eclipse\workspace0"/>
+	        //			<workspace path="C:\eclipse\workspace1"/>
+	        //		</recentWorkspaces>
+	        //	</launchWorkspaceData>
 
-            Reader reader = new FileReader(persUrl.getFile());
-            XMLMemento memento = XMLMemento.createReadRoot(reader);
-            if (memento == null || !compatibleProtocol(memento))
-                return false;
+	        Reader reader = new FileReader(persUrl.getFile());
+	        XMLMemento memento = XMLMemento.createReadRoot(reader);
+	        if (memento == null || !compatibleFileProtocol(memento))
+	            return false;
 
-            IMemento alwaysAskTag = memento.getChild(XML.ALWAYS_ASK);
-            showDialog = alwaysAskTag == null ? true : alwaysAskTag.getInteger(
-                    XML.SHOW_DIALOG).intValue() == 1;
+	        IMemento alwaysAskTag = memento.getChild(XML.ALWAYS_ASK);
+	        showDialog = alwaysAskTag == null ? true : alwaysAskTag.getInteger(
+	                XML.SHOW_DIALOG).intValue() == 1;
 
-            IMemento recent = memento.getChild(XML.RECENT_WORKSPACES);
-            if (recent == null)
-                return false;
+	        IMemento recent = memento.getChild(XML.RECENT_WORKSPACES);
+	        if (recent == null)
+	            return false;
 
-            Integer maxLength = recent.getInteger(XML.MAX_LENGTH);
-            int max = RECENT_MAX_LENGTH;
-            if (maxLength != null)
-                max = maxLength.intValue();
+	        Integer maxLength = recent.getInteger(XML.MAX_LENGTH);
+	        int max = RECENT_MAX_LENGTH;
+	        if (maxLength != null)
+	            max = maxLength.intValue();
 
-            IMemento indices[] = recent.getChildren(XML.WORKSPACE);
-            if (indices == null || indices.length <= 0)
-                return false;
+	        IMemento indices[] = recent.getChildren(XML.WORKSPACE);
+	        if (indices == null || indices.length <= 0)
+	            return false;
 
-            // if a user has edited maxLength to be shorter than the listed
-            // indices, accept the list (its tougher for them to retype a long
-            // list of paths than to update a max number)
-            max = Math.max(max, indices.length);
+	        // if a user has edited maxLength to be shorter than the listed
+	        // indices, accept the list (its tougher for them to retype a long
+	        // list of paths than to update a max number)
+	        max = Math.max(max, indices.length);
 
-            recentWorkspaces = new String[max];
-            for (int i = 0; i < indices.length; ++i) {
-                String path = indices[i].getString(XML.PATH);
-                if (path == null)
-                    break;
-                recentWorkspaces[i] = path;
-            }
-        } catch (IOException e) {
-            // cannot log because instance area has not been set
-            return false;
-        } catch (WorkbenchException e) {
-            // cannot log because instance area has not been set
-            return false;
-        } finally {
-            // create safe default if needed
-            if (recentWorkspaces == null)
-                recentWorkspaces = new String[RECENT_MAX_LENGTH];
-        }
+	        recentWorkspaces = new String[max];
+	        for (int i = 0; i < indices.length; ++i) {
+	            String path = indices[i].getString(XML.PATH);
+	            if (path == null)
+	                break;
+	            recentWorkspaces[i] = path;
+	        }
+	    } catch (IOException e) {
+	        // cannot log because instance area has not been set
+	        return false;
+	    } catch (WorkbenchException e) {
+	        // cannot log because instance area has not been set
+	        return false;
+	    } finally {
+	        // create safe default if needed
+	        if (recentWorkspaces == null)
+	            recentWorkspaces = new String[RECENT_MAX_LENGTH];
+	    }
 
-        return true;
-    }
+	    return true;
+	}
 
     /**
      * Return the current (persisted) value of the "showDialog on startup"
      * preference. Return the global default if the file cannot be accessed.
      */
     public static boolean getShowDialogValue() {
+    	// TODO See the long comment in #readPersistedData -- when the
+		//      transition time is over this method can be changed to
+    	//      read the preference directly.
+
         ChooseWorkspaceData data = new ChooseWorkspaceData(""); //$NON-NLS-1$
 
         // return either the value in the file or true, which is the global
@@ -329,26 +321,116 @@ public class ChooseWorkspaceData {
     }
 
     /**
-     * Return the current (persisted) value of the "showDialog on startup"
-     * preference. Return the global default if the file cannot be accessed.
-     */
-    public static void setShowDialogValue(boolean showDialog) {
-        ChooseWorkspaceData data = new ChooseWorkspaceData(""); //$NON-NLS-1$
+	 * Return the current (persisted) value of the "showDialog on startup"
+	 * preference. Return the global default if the file cannot be accessed.
+	 */
+	public static void setShowDialogValue(boolean showDialog) {
+		// TODO See the long comment in #readPersistedData -- when the
+		//      transition time is over this method can be changed to
+		//      read the preference directly.
 
-        // if the file didn't exist, then don't create a new one
-        if (!data.readPersistedData())
-            return;
+		ChooseWorkspaceData data = new ChooseWorkspaceData(""); //$NON-NLS-1$
 
-        // update the value and write the new settings
-        data.showDialog = showDialog;
-        data.writePersistedData();
-    }
+		// update the value and write the new settings
+		data.showDialog = showDialog;
+		data.writePersistedData();
+	}
 
     /**
-     * Return true if the protocol used to encode the argument memento is compatible
-     * with the receiver's implementation and false otherwise.
-     */
-    private static boolean compatibleProtocol(IMemento memento) {
+	 * Look in the config area preference store for the list of recently used
+	 * workspaces.
+	 * 
+	 * NOTE: During the transition phase the file will be checked if no config
+	 * preferences are found.
+	 * 
+	 * @return true if the values were successfully retrieved and false
+	 *         otherwise
+	 */
+	public boolean readPersistedData() {
+		// 1. get config pref node
+		Preferences node = Platform.getPreferencesService().getRootNode().node(
+				ConfigurationScope.SCOPE).node(PlatformUI.PLUGIN_ID);
+
+		// The old way was to store this information in a file, the new is to
+		// use the configuration area preference store. To help users with the
+		// transition, this code always looks for values in the preference
+		// store; they are used if found. If there aren't any related
+		// preferences, then the file method is used instead. This class always
+		// writes to the preference store, so the fall-back should be needed no
+		// more than once per-user, per-configuration.
+
+		// There isn't a direct way to see if a preference has a value. What
+		// this code does instead is get the value of the version of the
+		// encoding protocol, supplying a value that we know will never be set
+		// as the default. If that default value comes back, then we revert to
+		// the file method.
+
+		int protocol = node.getInt(
+				IWorkbenchPreferenceConstants.RECENT_WORKSPACES_PROTOCOL,
+				PERS_ENCODING_VERSION);
+		if (protocol == PERS_ENCODING_VERSION && readPersistedData_file())
+			return true;
+
+		// 2. get value for showDialog
+		showDialog = node.getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_WORKSPACE_SELECTION_DIALOG,
+				true);
+
+		// 3. use value of numRecent to create proper length array
+		int max = node.getInt(
+				IWorkbenchPreferenceConstants.MAX_RECENT_WORKSPACES,
+				RECENT_MAX_LENGTH);
+
+		// 4. load values of recent workspaces into array
+		String workspacePathPref = node.get(
+				IWorkbenchPreferenceConstants.RECENT_WORKSPACES, null);
+		recentWorkspaces = decodeStoredWorkspacePaths(max, workspacePathPref);
+
+		return true;
+	}
+
+	/**
+	 * The the list of recent workspaces must be stored as a string in the preference node.
+	 */
+    private static String encodeStoredWorkspacePaths(String[] recent) {
+		StringBuffer buff = new StringBuffer();
+
+		String path = null;
+		for (int i = 0; i < recent.length; ++i) {
+			if (recent[i] == null)
+				break;
+
+			if (path != null)
+				buff.append(","); //$NON-NLS-1$
+
+			path = recent[i];
+			buff.append(path);
+		}
+
+		return buff.toString();
+	}
+
+	/**
+	 * The the preference for recent workspaces must be converted from the
+	 * storage string into an array.
+	 */
+    private static String[] decodeStoredWorkspacePaths(int max, String prefValue) {
+		String[] paths = new String[max];
+		if (prefValue == null || prefValue.length() <= 0)
+			return paths;
+
+		StringTokenizer tokenizer = new StringTokenizer(prefValue, ","); //$NON-NLS-1$
+		for (int i = 0; i < paths.length && tokenizer.hasMoreTokens(); ++i)
+			paths[i] = tokenizer.nextToken();
+
+		return paths;
+	}
+
+    /**
+	 * Return true if the protocol used to encode the argument memento is
+	 * compatible with the receiver's implementation and false otherwise.
+	 */
+    private static boolean compatibleFileProtocol(IMemento memento) {
         IMemento protocolMemento = memento.getChild(XML.PROTOCOL);
         if (protocolMemento == null)
             return false;
