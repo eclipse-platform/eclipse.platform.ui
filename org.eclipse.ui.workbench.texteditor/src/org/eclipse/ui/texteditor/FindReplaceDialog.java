@@ -338,7 +338,7 @@ class FindReplaceDialog extends Dialog {
 			}
 		});
 		setGridData(fReplaceAllButton, GridData.FILL, true, GridData.FILL, false);
-		
+
 		// Make the all the buttons the same size as the Remove Selection button.
 		fReplaceAllButton.setEnabled(isEditable());
 		
@@ -724,8 +724,11 @@ class FindReplaceDialog extends Dialog {
 		if (forwardSearch) {
 			if (wrapSearch) {
 				int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
-				if (index == -1)
+				if (index == -1) {
+					if (okToUse(getShell()))
+						getShell().getDisplay().beep();
 					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
+				}
 				return index;
 			}
 			return findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
@@ -735,6 +738,8 @@ class FindReplaceDialog extends Dialog {
 		if (wrapSearch) {
 			int index= findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
+				if (okToUse(getShell()))
+					getShell().getDisplay().beep();
 				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
 			}
 			return index;

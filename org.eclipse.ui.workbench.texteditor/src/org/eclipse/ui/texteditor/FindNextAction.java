@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -221,8 +222,10 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		if (forwardSearch) {
 			if (wrapSearch) {
 				int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
-				if (index == -1)
+				if (index == -1) {
+					beep();
 					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
+				}
 				return index;
 			}
 			return findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
@@ -232,6 +235,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		if (wrapSearch) {
 			int index= findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
+				beep();
 				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
 			}
 			return index;
@@ -264,6 +268,17 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			return true;
 		
 		return false;
+	}
+	
+	private void beep() {
+		Shell shell= null;
+		if (fWorkbenchPart != null)
+			shell= fWorkbenchPart.getSite().getShell();
+		else if (fWorkbenchWindow != null)
+			shell= fWorkbenchWindow.getShell();
+
+		if (shell != null && !shell.isDisposed())
+			shell.getDisplay().beep();
 	}
 
 	/**
