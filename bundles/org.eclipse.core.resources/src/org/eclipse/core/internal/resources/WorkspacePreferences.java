@@ -24,15 +24,6 @@ import org.eclipse.core.runtime.Preferences;
 
 public class WorkspacePreferences extends WorkspaceDescription {
 
-	public final static String DESCRIPTION_PREFIX = "description."; //$NON-NLS-1$
-	public static final String MAX_FILE_STATES = DESCRIPTION_PREFIX + "maxfilestates"; //$NON-NLS-1$
-	public static final String AUTO_BUILDING = DESCRIPTION_PREFIX + "autobuilding"; //$NON-NLS-1$
-	public static final String BUILD_ORDER = DESCRIPTION_PREFIX + "buildorder"; //$NON-NLS-1$
-	public static final String DEFAULT_BUILD_ORDER = DESCRIPTION_PREFIX + "defaultbuildorder"; //$NON-NLS-1$
-	public static final String FILE_STATE_LONGEVITY = DESCRIPTION_PREFIX + "filestatelongevity"; //$NON-NLS-1$
-	public static final String MAX_FILE_STATE_SIZE = DESCRIPTION_PREFIX + "maxfilestatesize"; //$NON-NLS-1$
-	public static final String SNAPSHOT_INTERVAL = DESCRIPTION_PREFIX + "snapshotinterval"; //$NON-NLS-1$
-
 	private Preferences preferences;
 
 	public WorkspacePreferences() {
@@ -43,10 +34,10 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getBuildOrder()
 	 */
 	public String[] getBuildOrder() {
-		boolean defaultBuildOrder = preferences.getBoolean(DEFAULT_BUILD_ORDER);
+		boolean defaultBuildOrder = preferences.getBoolean(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER);
 		if (defaultBuildOrder)
 			return null;
-		return convertStringToStringArray(preferences.getString(BUILD_ORDER));
+		return convertStringToStringArray(preferences.getString(ResourcesPlugin.PREF_BUILD_ORDER));
 	}
 	/**
 	 * @see org.eclipse.core.internal.resources.
@@ -62,68 +53,68 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getFileStateLongevity()
 	 */
 	public long getFileStateLongevity() {
-		return preferences.getLong(FILE_STATE_LONGEVITY);
+		return preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getMaxFileStates()
 	 */
 	public int getMaxFileStates() {
-		return preferences.getInt(MAX_FILE_STATES);
+		return preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getMaxFileStateSize()
 	 */
 	public long getMaxFileStateSize() {
-		return preferences.getLong(MAX_FILE_STATE_SIZE);
+		return preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#getSnapshotInterval()
 	 */
 	public long getSnapshotInterval() {
-		return preferences.getInt(SNAPSHOT_INTERVAL);
+		return preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#isAutoBuilding()
 	 */
 	public boolean isAutoBuilding() {
-		return preferences.getBoolean(AUTO_BUILDING);
+		return preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setAutoBuilding(boolean)
 	 */
 	public void setAutoBuilding(boolean value) {
-		preferences.setValue(AUTO_BUILDING, value);
+		preferences.setValue(ResourcesPlugin.PREF_AUTO_BUILDING, value);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setBuildOrder(java.lang.String)
 	 */
 	public void setBuildOrder(String[] value) {
-		preferences.setValue(DEFAULT_BUILD_ORDER, value == null);
-		preferences.setValue(BUILD_ORDER, convertStringArraytoString(value));
+		preferences.setValue(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, value == null);
+		preferences.setValue(ResourcesPlugin.PREF_BUILD_ORDER, convertStringArraytoString(value));
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setFileStateLongevity(long)
 	 */
 	public void setFileStateLongevity(long time) {
-		preferences.setValue(FILE_STATE_LONGEVITY, time);
+		preferences.setValue(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, time);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setMaxFileStates(int)
 	 */
 	public void setMaxFileStates(int number) {
-		preferences.setValue(MAX_FILE_STATES, number);
+		preferences.setValue(ResourcesPlugin.PREF_MAX_FILE_STATES, number);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setMaxFileStateSize(long)
 	 */
 	public void setMaxFileStateSize(long size) {
-		preferences.setValue(MAX_FILE_STATE_SIZE, size);
+		preferences.setValue(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, size);
 	}
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setSnapshotInterval(long)
 	 */
 	public void setSnapshotInterval(long delay) {
-		preferences.setValue(SNAPSHOT_INTERVAL, delay);
+		preferences.setValue(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, delay);
 	}
 	/**
 	 * Helper method that converts a string string array {"string1","
@@ -170,13 +161,13 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		copyFromTo(this, target);
 	}
 	public void setDefaults(IWorkspaceDescription defaults) {
-		preferences.setDefault(AUTO_BUILDING, defaults.isAutoBuilding());
-		preferences.setDefault(BUILD_ORDER, convertStringArraytoString(defaults.getBuildOrder()));
-		preferences.setDefault(DEFAULT_BUILD_ORDER, defaults.getBuildOrder() == null);
-		preferences.setDefault(FILE_STATE_LONGEVITY, defaults.getFileStateLongevity());
-		preferences.setDefault(MAX_FILE_STATE_SIZE, defaults.getMaxFileStateSize());
-		preferences.setDefault(MAX_FILE_STATES, defaults.getMaxFileStates());
-		preferences.setDefault(SNAPSHOT_INTERVAL, defaults.getSnapshotInterval());
+		preferences.setDefault(ResourcesPlugin.PREF_AUTO_BUILDING, defaults.isAutoBuilding());
+		preferences.setDefault(ResourcesPlugin.PREF_BUILD_ORDER, convertStringArraytoString(defaults.getBuildOrder()));
+		preferences.setDefault(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER, defaults.getBuildOrder() == null);
+		preferences.setDefault(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, defaults.getFileStateLongevity());
+		preferences.setDefault(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, defaults.getMaxFileStateSize());
+		preferences.setDefault(ResourcesPlugin.PREF_MAX_FILE_STATES, defaults.getMaxFileStates());
+		preferences.setDefault(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, defaults.getSnapshotInterval());
 	}
 	public Object clone() {
 		// should never be called - throws an exception to avoid using a 
