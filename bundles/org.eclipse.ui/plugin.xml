@@ -167,6 +167,12 @@
             id="org.eclipse.ui.navigate.next">
       </actionDefinition>
       <actionDefinition
+            id="org.eclipse.ui.navigate.backwardHistory">
+      </actionDefinition>
+      <actionDefinition
+            id="org.eclipse.ui.navigate.forwardHistory">
+      </actionDefinition>            
+      <actionDefinition
             id="org.eclipse.ui.navigate.previous">
       </actionDefinition>
       <actionDefinition
@@ -517,6 +523,14 @@
                key="Ctrl+,"
                id="org.eclipse.ui.navigate.previous">
          </accelerator>
+         <accelerator
+               key="Alt+ARROW_LEFT"
+               id="org.eclipse.ui.navigate.backwardHistory">
+         </accelerator>
+         <accelerator
+               key="Alt+ARROW_RIGHT"
+               id="org.eclipse.ui.navigate.forwardHistory">
+         </accelerator>      
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">
@@ -893,6 +907,14 @@
                key="Ctrl+,"
                id="org.eclipse.ui.navigate.previous">
          </accelerator>
+         <accelerator
+               key="Alt+ARROW_LEFT"
+               id="org.eclipse.ui.navigate.backwardHistory">
+         </accelerator>
+         <accelerator
+               key="Alt+ARROW_RIGHT"
+               id="org.eclipse.ui.navigate.forwardHistory">
+         </accelerator>         
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">

@@ -52,8 +52,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
 	private static final String buildActionDefId = "org.eclipse.ui.project.buildProject";	 //$NON-NLS-1$
-	private static final String backwardHistoryActionDefId = "org.eclipse.ui.backwardHistory";	 //$NON-NLS-1$
-	private static final String forwardHistoryActionDefId = "org.eclipse.ui.forwardHistory";	 //$NON-NLS-1$
+	private static final String backwardHistoryActionDefId = "org.eclipse.ui.navigate.backwardHistory";	 //$NON-NLS-1$
+	private static final String forwardHistoryActionDefId = "org.eclipse.ui.navigate.forwardHistory";	 //$NON-NLS-1$
 
 	private static final String workbenchToolGroupId = "org.eclipse.ui.internal";
 	
