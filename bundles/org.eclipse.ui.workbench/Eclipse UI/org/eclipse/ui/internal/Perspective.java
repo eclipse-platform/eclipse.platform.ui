@@ -184,15 +184,13 @@ public class Perspective {
      * Returns true if a view can close.
      */
     public boolean canCloseView(IViewPart view) {
-    	if (PrefUtil.getInternalPreferenceStore().getBoolean("fix72114")) { //$NON-NLS-1$
-    		if (view instanceof ISaveablePart) {
-    			ISaveablePart saveable = (ISaveablePart)view;
-    			if (saveable.isSaveOnCloseNeeded()) {
-    				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();		
-    				return SaveableHelper.savePart(saveable, view, window, true);
-    			}
-    		}
-    	}
+		if (view instanceof ISaveablePart) {
+			ISaveablePart saveable = (ISaveablePart)view;
+			if (saveable.isSaveOnCloseNeeded()) {
+				IWorkbenchWindow window = view.getSite().getWorkbenchWindow();		
+				return SaveableHelper.savePart(saveable, view, window, true);
+			}
+		}
     	return true;
     }
 
