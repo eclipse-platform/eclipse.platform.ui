@@ -216,4 +216,12 @@ public abstract class AbstractConsole implements IConsole {
 	 */
 	protected void dispose() {
 	}
+	
+	/**
+	 * Activates the consoles
+	 * @since 3.1
+	 */
+    public void activate() {
+        ConsolePlugin.getDefault().getConsoleManager().showConsoleView(this);
+    }
 }
