@@ -311,16 +311,21 @@ public class RemoteFolderTreeBuilder {
 				//	case '?' :  = A local file that has not been added and does not exists remotely
 				//  case 'M' :  = A locally modified file that has not been modified remotely
 				switch(type) {
+					case 'C' : // We have an remote change to a modified local file
+								// The change could be a local change conflicting with a remote deletion.
+								// If so, the deltas may already have a DELETED for the file.
+								// We shouldn't override this DELETED
+								IPath filePath = new Path(filename);
+								Map deltas = deltas = (Map)fileDeltas.get(filePath.removeLastSegments(1));
+								if ((deltas != null) && (deltas.get(filePath.lastSegment()) == DELETED))
+									break;
 					case 'R' : // We have a locally removed file that still exists remotely
 					case 'U' : // We have an remote change to an unmodified local file
-					case 'C' : // We have an remote change to a modified local file
 								changedFiles.add(filename);
 								recordDelta(new Path(filename), UNKNOWN);
 								break;
 				}	
 			}
-			// NOTE: We don't have the proper handling for deleted files.
-			// Support needs to be added to the error handler
 			public void fileDoesNotExist(String filename) {
 				recordDelta(new Path(filename), DELETED);
 			}
