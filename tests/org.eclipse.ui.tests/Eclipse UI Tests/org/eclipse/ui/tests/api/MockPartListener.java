@@ -2,6 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.test.harness.util.*;
 
 public class MockPartListener implements IPartListener {
 	private CallHistory callTrace;

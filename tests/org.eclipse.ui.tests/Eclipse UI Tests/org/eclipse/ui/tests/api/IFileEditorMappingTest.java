@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.test.harness.util.*;
 import junit.framework.TestCase;
 
 public class IFileEditorMappingTest extends TestCase {
@@ -44,7 +45,7 @@ public class IFileEditorMappingTest extends TestCase {
 		
 		for( int i = 0; i < fMappings.length; i ++ ){
 			editors = fMappings[ i ].getEditors();
-			assert( Tool.check( editors ) == true );
+			assert( ArrayUtil.check( editors ) == true );
 		}
 	}
 

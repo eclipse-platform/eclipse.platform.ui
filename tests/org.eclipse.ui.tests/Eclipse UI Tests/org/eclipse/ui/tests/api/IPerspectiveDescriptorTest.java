@@ -2,6 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
 import org.eclipse.ui.*;
+import org.eclipse.ui.test.harness.util.*;
 
 public class IPerspectiveDescriptorTest extends TestCase {
 
@@ -15,7 +16,7 @@ public class IPerspectiveDescriptorTest extends TestCase {
 	
 	public void setUp()
 	{
-		fPer = ( IPerspectiveDescriptor )Tool.pick( PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives() );
+		fPer = ( IPerspectiveDescriptor )ArrayUtil.pick( PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives() );
 		//fPer.
 	}
 	

@@ -3,6 +3,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.test.harness.util.*;
 
 public class IWorkbenchWindowTest extends AbstractTestCase {
 
@@ -18,7 +19,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 
 	public void testClose() throws Throwable {		
 		assertEquals(fWin.close(), true);
-		assertEquals(Tool.arrayHas(fWorkbench.getWorkbenchWindows(), fWin), false);
+		assertEquals(ArrayUtil.has(fWorkbench.getWorkbenchWindows(), fWin), false);
 	}
 
 	public void testGetActivePage() throws Throwable {
@@ -64,7 +65,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 
 		domainPages = fWin.getPages();
 		for (int i = 0; i < pages.length; i++)
-			assertEquals(Tool.arrayHas(domainPages, pages[i]), true);
+			assertEquals(ArrayUtil.has(domainPages, pages[i]), true);
 
 		closeAllPages(fWin);
 		assertEquals(fWin.getPages().length, 0);
@@ -115,7 +116,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 		//test openPage() fails
 		try {
 			page = fWin.openPage("*************", ResourcesPlugin.getWorkspace());
-			fail(Tool.notCaught(Tool.WBE));
+			fail();
 		} catch (WorkbenchException ex) {
 		}
 

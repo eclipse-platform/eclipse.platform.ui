@@ -3,7 +3,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.*;
-import org.eclipse.ui.tests.*;
+import org.eclipse.ui.test.harness.util.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.*;
@@ -138,14 +138,15 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 
 		// Open editor.
 		IEditorPart editor = fActivePage.openEditor(file);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(
 			editor.getSite().getId(),
 			fWorkbench.getEditorRegistry().getDefaultEditor(file).getId());
 
-		// Opening the first editor second time.
+		//open another editor to take the focus away from the first editor
 		fActivePage.openEditor(FileUtil.createFile("test.mock2", proj));
+		//open the first editor second time.		
 		assertEquals(editor, fActivePage.openEditor(file));
 		assertEquals(editor, fActivePage.getActiveEditor());
 	}
@@ -160,11 +161,12 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 
 		IEditorPart editor = fActivePage.openEditor(file, id);
 		assertEquals(id, editor.getSite().getId());
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(editor, fActivePage.getActiveEditor());
 
-		// Opening the first editor second time.
+		//open another editor to take the focus away from the first editor
 		fActivePage.openEditor(FileUtil.createFile("test.mock2", proj));
+		//open the first editor second time.
 		assertEquals(editor, fActivePage.openEditor(file, id));
 		assertEquals(editor, fActivePage.getActiveEditor());
 	}
@@ -182,11 +184,12 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 
-		// Opening the first editor second time.
+		//open another editor to take the focus away from the first editor
 		fActivePage.openEditor(FileUtil.createFile("test.mock2", proj));
+		//open the first editor second time.
 		assertEquals(editor, fActivePage.openEditor(input, id));
 		assertEquals(editor, fActivePage.getActiveEditor());
 	}
@@ -207,7 +210,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IEditorPart editor = fActivePage.openEditor(input, id, true);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(callTrace.contains(listener, "partActivated"), true);
 		fActivePage.closeEditor(editor, false);
@@ -221,7 +224,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(input, id, false);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(callTrace.contains(listener, "partActivated"), false);
 		assertEquals(callTrace.contains(listener, "partBroughtToTop"), false);
 
@@ -241,6 +244,9 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(callTrace.contains(listener, "partBroughtToTop"), true);
 	}
 
+	/**
+	 * 
+	 */
 	public void testOpenEditor5() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		IMarker marker =
@@ -251,7 +257,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IEditorPart editor = fActivePage.openEditor(marker);
 		callTrace = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(callTrace.contains(editor, "gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
@@ -261,7 +267,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker);
 		callTrace = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID1);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(callTrace.contains(editor, "gotoMarker"), true);
 
@@ -273,6 +279,9 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		fActivePage.closeEditor(editor, false);
 	}
 
+	/**
+	 * 
+	 */
 	public void testOpenEditor6() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		IMarker marker =
@@ -290,7 +299,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IEditorPart editor = fActivePage.openEditor(marker, true);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
@@ -302,7 +311,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker, false);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(listenerCall.contains(listener, "partBroughtToTop"), false);
 		assertEquals(listenerCall.contains(listener, "partActivated"), false);
 		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
@@ -317,7 +326,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker, true);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
@@ -329,7 +338,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		editor = fActivePage.openEditor(marker, false);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editor), true);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editor), true);
 		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
 		assertEquals(listenerCall.contains(listener, "partActivated"), false);
 		assertEquals(listenerCall.contains(listener, "partBroughtToTop"), false);
@@ -341,6 +350,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(fActivePage.openEditor(marker, true), editor);
 		assertEquals(editorCall.contains(editor, "gotoMarker"), true);
 		assertEquals(listenerCall.contains(listener, "partActivated"), true);
+	//
 
 		fActivePage.activate(extra);
 
@@ -348,6 +358,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		listenerCall.clear();
 		assertEquals(fActivePage.openEditor(marker, false), editor);
 		assertEquals(listenerCall.contains(listener, "partBroughtToTop"), true);
+	//
 	}
 
 	public void testFindView() throws Throwable {
@@ -358,23 +369,20 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		IViewPart view = fActivePage.showView(id);
 		assertEquals(fActivePage.findView(id), view);
 
-		//invalid id		
-		assertNull(fActivePage.findView(Tool.FakeID));
-
 		//close view		
 		fActivePage.hideView(view);
-		assertNull(fActivePage.findView(Tool.FakeID));
+		assertNull(fActivePage.findView(id));
 	}
 
 	public void testGetViews() throws Throwable {
 		int totalBefore = fActivePage.getViews().length;
 
 		IViewPart view = fActivePage.showView(MockViewPart.ID2);
-		assertEquals(Tool.arrayHas(fActivePage.getViews(), view), true);
+		assertEquals(ArrayUtil.has(fActivePage.getViews(), view), true);
 		assertEquals(fActivePage.getViews().length, totalBefore + 1);
 
 		fActivePage.hideView(view);
-		assertEquals(Tool.arrayHas(fActivePage.getViews(), view), false);
+		assertEquals(ArrayUtil.has(fActivePage.getViews(), view), false);
 		assertEquals(fActivePage.getViews().length, totalBefore);
 	}
 
@@ -399,7 +407,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(
 			callTrace.verifyOrder(editor, new String[] { "isDirty", "dispose" }),
 			true);
-		assertEquals(fWin.getActivePage(), fActivePage);
+		assertEquals(fWin.getActivePage(), fActivePage);	
 	}
 
 	public void testCloseEditor() throws Throwable {
@@ -438,6 +446,8 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(callTrace.contains(editor, "isDirty"), false);
 		assertEquals(callTrace.contains(editor, "doSave"), false);
 		assertEquals(callTrace.contains(editor, "dispose"), true);
+		
+		//save the dirty edtior with confirmation can't be tested
 	}
 
 	public void testSaveEditor() throws Throwable {
@@ -500,7 +510,6 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		//save all dirty editors with confirmation can't be tested
 
 		//save all clean editors without confirmation
-
 		assertEquals(fActivePage.saveAllEditors(false), true);
 		for (int i = 0; i < total; i++) {
 			assertEquals(callTraces[i].contains(editors[i], "isDirty"), true);
@@ -508,7 +517,6 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		}
 
 		//save all dirty editors without confirmation
-
 		for (int i = 0; i < total; i++) {
 			mocks[i].setDirty(true);
 			callTraces[i].clear();
@@ -528,24 +536,21 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 
 		for (int i = 0; i < num; i++) {
 			editors[i] = fActivePage.openEditor(FileUtil.createFile(i + ".mock2", proj));
-			assertEquals(Tool.arrayHas(fActivePage.getEditors(), editors[i]), true);
+			assertEquals(ArrayUtil.has(fActivePage.getEditors(), editors[i]), true);
 		}
 		assertEquals(fActivePage.getEditors().length, totalBefore + num);
 
 		fActivePage.closeEditor(editors[0], false);
-		assertEquals(Tool.arrayHas(fActivePage.getEditors(), editors[0]), false);
+		assertEquals(ArrayUtil.has(fActivePage.getEditors(), editors[0]), false);
 		assertEquals(fActivePage.getEditors().length, totalBefore + num - 1);
 
 		fActivePage.closeAllEditors(false);
-		assertEquals(fActivePage.getEditors().length, totalBefore);
+		assertEquals(fActivePage.getEditors().length, 0);
 	}
 
 	public void testShowActionSet() {
 		String id = MockAction.SET_ID;
 		WorkbenchPage page = (WorkbenchPage) fActivePage;
-
-		//because all action sets are in the registry by default, hide it first
-		fActivePage.hideActionSet(id);
 
 		int totalBefore = page.getActionSets().length;
 		fActivePage.showActionSet(id);
@@ -558,7 +563,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(found, true);
 
 		//check that the method does not add an invalid action set to itself
-		id = Tool.FakeID;
+		id = IConstants.FakeID;
 		fActivePage.showActionSet(id);
 
 		sets = ((WorkbenchPage) fActivePage).getActionSets();
@@ -570,18 +575,22 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 		assertEquals(page.getActionSets().length, totalBefore + 1);
 	}
 
-	public void testHideShowActionSet() {
+	public void testHideActionSet() {
 		WorkbenchPage page = (WorkbenchPage) fActivePage;
 		int totalBefore = page.getActionSets().length;
 
-		fActivePage.hideActionSet(MockAction.SET_ID);
+		String id = MockAction.SET_ID;
+		fActivePage.showActionSet( id );
+		assertEquals(page.getActionSets().length, totalBefore + 1);
 
+		fActivePage.hideActionSet(id );
+		assertEquals(page.getActionSets().length, totalBefore );
+		
 		IActionSetDescriptor[] sets = page.getActionSets();
 		boolean found = false;
 		for (int i = 0; i < sets.length; i++)
-			if (MockAction.SET_ID.equals(sets[i].getId()))
+			if (id.equals(sets[i].getId()))
 				found = true;
 		assertEquals(found, false);
-		assertEquals(page.getActionSets().length, totalBefore - 1);
 	}
 }

@@ -2,12 +2,8 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.*;
+import org.eclipse.ui.test.harness.util.*;
 
 /**
  * Tests the IWorkbench interface.
@@ -69,7 +65,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 
 	public void testGetWorkbenchWindows() throws Throwable {
 		IWorkbenchWindow[] wins = fWorkbench.getWorkbenchWindows();
-		assertEquals(Tool.check(wins), true);
+		assertEquals(ArrayUtil.check(wins), true);
 		int oldTotal = wins.length;
 		int num = 3;
 
@@ -79,7 +75,7 @@ public class IWorkbenchTest extends AbstractTestCase {
 
 		wins = fWorkbench.getWorkbenchWindows();
 		for (int i = 0; i < num; i++)
-			assert(Tool.arrayHas(wins, newWins[i]));
+			assert(ArrayUtil.has(wins, newWins[i]));
 
 		assertEquals(wins.length, oldTotal + num);
 

@@ -4,6 +4,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.test.harness.util.*;
 
 public class MockAction implements IWorkbenchWindowActionDelegate {
 	public static String SET_ID = "org.eclipse.ui.tests.api.MockActionSet";

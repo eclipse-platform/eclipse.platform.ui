@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.resource.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.tests.*;
+import org.eclipse.ui.test.harness.util.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.registry.*;
 
@@ -36,7 +36,7 @@ public class IEditorRegistryTest extends TestCase {
 
 	public void testGetFileEditorMappings()
 	{
-		assert( Tool.check( fReg.getFileEditorMappings() ) );
+		assert( ArrayUtil.check( fReg.getFileEditorMappings() ) );
 	}
 	
 	/**
@@ -59,19 +59,11 @@ public class IEditorRegistryTest extends TestCase {
 			assertEquals( editors.length, 1 );
 			assertEquals( editors[ 0 ].getId(), maps[i][1] );
 			editors2 = fReg.getEditors( FileUtil.createFile( maps[i][0], proj ) );
-			assertEquals( Tool.equals( editors, editors2 ), true );
+			assertEquals( ArrayUtil.equals( editors, editors2 ), true );
 		}
-
-/*		for( int i = 0; i < mappings.length; i ++ ){		
-			editors = mappings[ i ].getEditors();
-			for( int j = 0; j < editors.length; j ++ )
-				System.out.println( editors[j].getLabel() );
-			System.out.println( mappings[ i ].getLabel() );
-		}
-		*/
 
 		//there is no matching editor
-		String fileName = Tool.UnknownFileName[0];
+		String fileName = IConstants.UnknownFileName[0];
 		editors = fReg.getEditors( fileName );
 		assertEquals( editors.length, 0 );
 		editors = fReg.getEditors( FileUtil.createFile( fileName, proj ));
@@ -85,7 +77,7 @@ public class IEditorRegistryTest extends TestCase {
 		assertEquals( editor.getId(), id );		
 		
 		//editor is not found
-		id = Tool.FakeID;
+		id = IConstants.FakeID;
 		editor = fReg.findEditor( id );		
 		assertNull( editor );
 	}
@@ -111,7 +103,7 @@ public class IEditorRegistryTest extends TestCase {
 		assertEquals( editor, editor2 );
 				
 		//editor not found		
-		assertNull( fReg.getDefaultEditor( Tool.UnknownFileName[0] ) );
+		assertNull( fReg.getDefaultEditor( IConstants.UnknownFileName[0] ) );
 	}
 
 	/**
@@ -141,7 +133,7 @@ public class IEditorRegistryTest extends TestCase {
 		assertEquals( editor, fReg.getDefaultEditor( name ) );
 		
 		//a non-registered IFile object with an unregistered extension
-		name = Tool.UnknownFileName[0];
+		name = IConstants.UnknownFileName[0];
 		file = FileUtil.createFile( name, proj);
 		assertNull( fReg.getDefaultEditor( file ) );
 	}
@@ -163,7 +155,7 @@ public class IEditorRegistryTest extends TestCase {
 		assertEquals( editor.getId(), id );
 		
 		//register the default editor with an invalid editor id
-		fReg.setDefaultEditor( file, Tool.FakeID );	
+		fReg.setDefaultEditor( file, IConstants.FakeID );	
 		assertNull( fReg.getDefaultEditor( file ) );		
 	}
 	

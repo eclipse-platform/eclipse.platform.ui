@@ -17,10 +17,10 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(IPageListenerTest.class));
 		addTest(new TestSuite(IPageServiceTest.class));
 		addTest(new TestSuite(IPerspectiveRegistryTest.class));
-		//		addTest( new TestSuite( IPerspectiveDescriptorTest.class ) );
-		//		addTest( new TestSuite( IFileEditorMappingTest.class ) );
-		//		addTest( new TestSuite( IEditorDescriptorTest.class ) );
-		//		addTest( new TestSuite( IEditorRegistryTest.class ) );
-		//		addTest( new TestSuite( IPerspectiveListenerTest.class ) );
+		addTest(new TestSuite(IPerspectiveDescriptorTest.class));
+		addTest(new TestSuite(IFileEditorMappingTest.class));
+		addTest(new TestSuite(IEditorDescriptorTest.class));
+		addTest(new TestSuite(IEditorRegistryTest.class));
+		addTest(new TestSuite(IPerspectiveListenerTest.class));
 	}
 }

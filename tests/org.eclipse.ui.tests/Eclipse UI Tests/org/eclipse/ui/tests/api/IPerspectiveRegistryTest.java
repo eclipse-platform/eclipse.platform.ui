@@ -1,8 +1,7 @@
 package org.eclipse.ui.tests.api;
 import junit.framework.TestCase;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
+import org.eclipse.ui.test.harness.util.*;
 
 public class IPerspectiveRegistryTest extends TestCase {
 
@@ -20,25 +19,25 @@ public class IPerspectiveRegistryTest extends TestCase {
 	
 	public void testFindPerspectiveWithId()
 	{		
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Tool.pick( fReg.getPerspectives() );
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pick( fReg.getPerspectives() );
 		
 		IPerspectiveDescriptor suspect = fReg.findPerspectiveWithId( pers.getId() );
 		assertNotNull( suspect );
 		assertEquals( pers, suspect );
 				
-		suspect = fReg.findPerspectiveWithId( Tool.FakeID );
+		suspect = fReg.findPerspectiveWithId( IConstants.FakeID );
 		assertNull( suspect );
 	}
 	
 	public void testFindPerspectiveWithLabel()
 	{
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Tool.pick( fReg.getPerspectives() );
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pick( fReg.getPerspectives() );
 		
 		IPerspectiveDescriptor suspect = fReg.findPerspectiveWithLabel( pers.getLabel() );
 		assertNotNull( suspect );
 		assertEquals( pers, suspect );
 				
-		suspect = fReg.findPerspectiveWithLabel( Tool.FakeLabel );
+		suspect = fReg.findPerspectiveWithLabel( IConstants.FakeLabel );
 		assertNull( suspect );
 	}
 	
@@ -53,7 +52,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 	
 	public void testSetDefaultPerspective()
 	{
-		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )Tool.pick( fReg.getPerspectives() );			
+		IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pick( fReg.getPerspectives() );			
 		fReg.setDefaultPerspective( pers.getId() );
 		
 		assertEquals( pers.getId(), fReg.getDefaultPerspective() );
