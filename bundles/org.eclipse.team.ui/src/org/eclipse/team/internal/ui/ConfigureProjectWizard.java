@@ -116,12 +116,13 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		if (wizard != null) {
 			return wizard.performFinish();
 		}
-		IConfigurationWizard wizard = mainPage.getSelectedWizard();
-		if (wizard != null) {
-			if (wizard.canFinish()) {
-				return wizard.performFinish();
-			}
-		}
+// Code added for 13722 which causes CVS share project wizard to be finished twice
+//		IConfigurationWizard wizard = mainPage.getSelectedWizard();
+//		if (wizard != null) {
+//			if (wizard.canFinish()) {
+//				return wizard.performFinish();
+//			}
+//		}
 		return true;
 	}
 	/**
