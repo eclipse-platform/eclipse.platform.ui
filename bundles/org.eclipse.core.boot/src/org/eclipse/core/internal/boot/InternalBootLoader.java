@@ -107,14 +107,14 @@ public final class InternalBootLoader {
 	private static final String OPTION_CONFIGURATION_DEBUG = PI_RUNTIME+ "/config/debug"; //$NON-NLS-1$
 
 	// option names for spy
-	private static final String OPTION_MONITOR_PLUGINS = BootLoader.PI_BOOT+"/monitor/plugins";
-	private static final String OPTION_MONITOR_CLASSES = BootLoader.PI_BOOT+"/monitor/classes";
-	private static final String OPTION_MONITOR_BUNDLES = BootLoader.PI_BOOT+"/monitor/bundles";
+	private static final String OPTION_MONITOR_PLUGINS = BootLoader.PI_BOOT+"/monitor/plugins"; //$NON-NLS-1$
+	private static final String OPTION_MONITOR_CLASSES = BootLoader.PI_BOOT+"/monitor/classes"; //$NON-NLS-1$
+	private static final String OPTION_MONITOR_BUNDLES = BootLoader.PI_BOOT+"/monitor/bundles"; //$NON-NLS-1$
 
-	private static final String OPTION_TRACE_CLASSES = BootLoader.PI_BOOT + "/trace/classLoading";
-	private static final String OPTION_TRACE_FILENAME = BootLoader.PI_BOOT+"/trace/filename";
-	private static final String OPTION_TRACE_FILTERS = BootLoader.PI_BOOT+"/trace/filters";			
-	private static final String OPTION_TRACE_PLUGINS = BootLoader.PI_BOOT+"/trace/pluginActivation";
+	private static final String OPTION_TRACE_CLASSES = BootLoader.PI_BOOT + "/trace/classLoading"; //$NON-NLS-1$
+	private static final String OPTION_TRACE_FILENAME = BootLoader.PI_BOOT+"/trace/filename"; //$NON-NLS-1$
+	private static final String OPTION_TRACE_FILTERS = BootLoader.PI_BOOT+"/trace/filters"; //$NON-NLS-1$
+	private static final String OPTION_TRACE_PLUGINS = BootLoader.PI_BOOT+"/trace/pluginActivation"; //$NON-NLS-1$
 
 	// command line arguments
 	private static final String DEBUG = "-debug"; //$NON-NLS-1$

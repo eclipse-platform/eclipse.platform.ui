@@ -21,18 +21,17 @@ import org.eclipse.core.boot.BootLoader;
  */
 public class ClassloaderStats {
 	private String id; 
-	private long loadingTime;	// time spent loading classes
-	private int failureCount = 0;	// number of classes requested but that we fail to provide
+	private long loadingTime;								// time spent loading classes
+	private int failureCount = 0;							// number of classes requested but that we fail to provide
 	private Map classes = new HashMap(20);	// classes loaded by the plugin	(key: class name, value: ClassStats) 
 	private ArrayList bundles = new ArrayList(2);	// bundles loaded
 	
-	private boolean keepTraces = false;	// indicate whether or not the traces of classes loaded are kept
-	 
+	private boolean keepTraces = false;					// indicate whether or not the traces of classes loaded are kept 
 	// filters to indicate which classes we want to keep the traces
 	private static ArrayList packageFilters = new ArrayList(4);	// filters on a package basis
-	private static Set pluginFilters = new HashSet(5);	// filters on a plugin basis
+	private static Set pluginFilters = new HashSet(5);				// filters on a plugin basis
 	
-	private static Stack classStack = new Stack();	// represents the classes that are currently being loaded 
+	private static Stack classStack = new Stack();		// represents the classes that are currently being loaded 
 	private static Map loaders = new HashMap(20);	// a dictionary of the classloaderStats (key: pluginId, value: ClassloaderStats)
 	public static File traceFile;
 
@@ -59,7 +58,7 @@ public class ClassloaderStats {
 				filterFile = new File(InternalBootLoader.getBootDir() + filename);
 			System.out.print("Runtime tracing elements defined in: " + filterFile.getAbsolutePath() + "..."); //$NON-NLS-1$ //$NON-NLS-2$
 			InputStream input = new FileInputStream(filterFile);
-			System.out.println(" Loaded."); //$NON-NLS-1$
+			System.out.println("  Loaded."); //$NON-NLS-1$
 			Properties filters = new Properties() {
 				public Object put(Object key, Object value) {
 					addFilters((String)key, (String)value);
@@ -72,7 +71,7 @@ public class ClassloaderStats {
 				input.close();
 			}
 		} catch (IOException e) {
-			System.out.println(" Failed to load."); //$NON-NLS-1$
+			System.out.println("  Failed to load."); //$NON-NLS-1$
 		}
 	}
 
@@ -198,12 +197,12 @@ public class ClassloaderStats {
 			target.setTraceStart(traceFile.length());
 			PrintWriter output = new PrintWriter(new FileOutputStream(traceFile.getAbsolutePath(),true));
 			try {
-				output.println(Policy.bind("classstat.loadingclass", name)); //$NON-NLS-1$
-				output.println(Policy.bind("classstat.loadingstack")); //$NON-NLS-1$
+				output.println("Loading class: " + name); //$NON-NLS-1$
+				output.println("Class loading stack:"); //$NON-NLS-1$
 				output.println("\t" + name); //$NON-NLS-1$
 				for (int i = classStack.size() - 1; i >= 0 ; i--) 
 					output.println("\t" + ((ClassStats)classStack.get(i)).getClassName()); //$NON-NLS-1$
-				output.println(Policy.bind("classstat.stacktrace")); //$NON-NLS-1$
+				output.println("Stack trace:"); //$NON-NLS-1$
 				new Throwable().printStackTrace(output);
 			} finally {
 				output.close();

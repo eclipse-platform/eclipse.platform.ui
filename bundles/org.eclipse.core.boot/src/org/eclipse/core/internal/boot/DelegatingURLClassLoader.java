@@ -61,8 +61,8 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	public static boolean MONITOR_PLUGINS = false;
 	public static boolean MONITOR_CLASSES = false;
 	public static boolean MONITOR_BUNDLES = false;
-	public static String TRACE_FILENAME = "runtime.traces";
-	public static String TRACE_FILTERS = "trace.properties";
+	public static String TRACE_FILENAME = "runtime.traces"; //$NON-NLS-1$
+	public static String TRACE_FILTERS = "trace.properties"; //$NON-NLS-1$
 	public static boolean TRACE_CLASSES = false;
 	public static boolean TRACE_PLUGINS = false;
 	
@@ -951,7 +951,7 @@ protected abstract String getClassloaderId();
 public InputStream getResourceAsStream(String name) {
 	InputStream result = super.getResourceAsStream(name);
 	if (MONITOR_BUNDLES) {
-		if (result != null && name.endsWith(".properties")) {
+		if (result != null && name.endsWith(".properties")) { //$NON-NLS-1$
 			ClassloaderStats.loadedBundle(getClassloaderId(), new BundleStats(getClassloaderId(), name, result));
 			result = super.getResourceAsStream(name);
 		}
