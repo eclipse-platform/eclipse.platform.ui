@@ -185,9 +185,12 @@ public class ReentrantLock {
 			} catch (RuntimeException e) {
 				handleAbortedFlush(e);
 				throw e;
+			} finally {
+				// We have to clear the resources no matter what since the next attempt
+				// to fluch may not have an appropriate scheduling rule
+				changedResources.clear();
+				changedFolders.clear();
 			}
-			changedResources.clear();
-			changedFolders.clear();
 		}
 		private boolean isFlushRequired() {
 			return rules.size() == 1 || remainingRulesAreNull();
