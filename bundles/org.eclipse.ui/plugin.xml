@@ -238,6 +238,11 @@
             id="org.eclipse.ui.navigate.up">
       </actionDefinition>
       <actionDefinition
+            name="%ActionDefinition.openResource.name"
+            description="%ActionDefinition.openResource.description"
+            id="org.eclipse.ui.navigate.openResource">
+      </actionDefinition>
+      <actionDefinition
             name="%ActionDefinition.next.name"
             icon="icons/full/ctool16/next_nav.gif"
             description="%ActionDefinition.next.description"
@@ -686,6 +691,10 @@
                id="org.eclipse.ui.edit.findReplace">
          </accelerator>
          <accelerator
+               key="Ctrl+Shift+R"
+               id="org.eclipse.ui.navigate.openResource">
+         </accelerator>         
+         <accelerator
                key="Ctrl+."
                id="org.eclipse.ui.navigate.next">
          </accelerator>
@@ -851,6 +860,11 @@
                key="Command+F"
                id="org.eclipse.ui.edit.findReplace">
          </accelerator>
+         <accelerator
+               platform="carbon"
+               key="Command+Shift+R"
+               id="org.eclipse.ui.navigate.openResource">
+         </accelerator>                  
          <accelerator
                platform="carbon"
                key="Command+."
@@ -1022,6 +1036,10 @@
                key="Alt+R || Esc R"
                id="org.eclipse.ui.edit.findReplace">
          </accelerator>
+         <accelerator
+               key="Ctrl+Shift+R"
+               id="org.eclipse.ui.navigate.openResource">
+         </accelerator>               
          <accelerator
                key="Ctrl+."
                id="org.eclipse.ui.navigate.next">
@@ -1575,6 +1593,13 @@
                class="org.eclipse.ui.views.navigator.GoToResourceAction2"
                menubarPath="navigate/goTo/"
                id="org.eclipse.ui.GoToResource">
+         </action>
+         <action
+               label="%OpenWorkspaceFileAction.label"
+               class="org.eclipse.ui.internal.actions.OpenWorkspaceFileAction"
+               menubarPath="navigate/open.ext2"
+               definitionId="org.eclipse.ui.navigate.openResource"
+               id="org.eclipse.ui.OpenWorkspaceFile">
          </action>
       </actionSet>
    </extension>
