@@ -10,7 +10,6 @@ import org.eclipse.help.internal.util.*;
  * URL for documentation coming from a plugin.
  */
 public class PluginURL extends HelpURL {
-	private final static String INI = ".ini";
 	protected IPluginDescriptor plugin;
 	protected String file;
 	/**
