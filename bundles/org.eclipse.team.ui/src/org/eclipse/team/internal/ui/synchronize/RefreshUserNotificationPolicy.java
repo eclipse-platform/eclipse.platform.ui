@@ -3,17 +3,16 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.util.*;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.team.ui.synchronize.subscribers.*;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * This class manages the notification and setup that occurs after a refresh is completed.
@@ -102,17 +101,5 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 				d.open();
 			}
 		});
-	}
-
-	private void notifyIfNeededNonModal(final IRefreshEvent event) {
-		String message = Policy.bind("RefreshUserNotificationPolicy.0", event.getSubscriber().getName()); //$NON-NLS-1$
-		PlatformUI.getWorkbench().getProgressService().requestInUI(new UIJob(message) {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				RefreshCompleteDialog d = new RefreshCompleteDialog(Utils.findShell(), event, participant);
-				d.setBlockOnOpen(false);
-				d.open();
-				return Status.OK_STATUS;
-			}
-		}, message);
 	}
 }
