@@ -82,7 +82,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A translatable description of this category, more detailed than its name, for display in the UI.
+                  A translatable short description of this category for display in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -108,14 +108,14 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id of the category for this command. In the UI, commands are often organized by category to make them more manageable. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A translatable description of this command, more detailed than its name, for display in the UI.
+                  A translatable short description of this command for display in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -225,6 +225,11 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element-->
    <element name="keyBinding">
+      <annotation>
+         <documentation>
+            A key binding is the assignment of a key sequence to a command.
+         </documentation>
+      </annotation>
       <complexType>
 <!--sequence>
             <element ref="sequence" minOccurs="0" maxOccurs="1"/>
@@ -232,7 +237,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="configuration" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The unique id of the key configuration of this key binding.
                </documentation>
             </annotation>
          </attribute>
@@ -260,14 +265,14 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="scope" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The unique id of the scope of this key binding.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="string" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
                </documentation>
             </annotation>
          </attribute>
@@ -279,7 +284,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A translatable description of this key configuration, more detailed than its name, for display in the UI.
+                  A translatable short description of this key configuration for display in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -300,7 +305,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="parent" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id of the parent key configuration. If this key configuration has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own key configuration.
                </documentation>
             </annotation>
          </attribute>
@@ -330,7 +335,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  A translatable description of this scope, more detailed than its name, for display in the UI.
+                  A translatable short description of this scope for display in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -351,7 +356,7 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="parent" type="string">
             <annotation>
                <documentation>
-                  
+                  The unique id of the parent scope. If this scope has a parent, it will borrow all key bindings from its parent, in addition to the key bindings defined in its own scope.
                </documentation>
             </annotation>
          </attribute>
