@@ -36,10 +36,9 @@ public class DirectorySourceContainerDialog {
 		}
 		//TODO not supposed to subclass DirectoryDialog, but need a checkbox added for subfolder searching
 		DirectoryDialog dialog = new DirectoryDialog(shell, SWT.MULTI);
-		//TODO why does & show up in dialog instead of underscore?
-		dialog.setText(SourceLookupUIMessages.getString("folderSelection.title")); //$NON-NLS-1$
+		dialog.setText(SourceLookupUIMessages.getString("DirectorySourceContainerDialog.0")); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
-		dialog.setMessage(SourceLookupUIMessages.getString("folderSelection.label")); //$NON-NLS-1$
+		dialog.setMessage(SourceLookupUIMessages.getString("DirectorySourceContainerDialog.1")); //$NON-NLS-1$
 		fRes = dialog.open();
 		
 		if (fRes == null) {
