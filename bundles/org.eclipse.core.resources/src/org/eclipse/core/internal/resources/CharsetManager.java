@@ -34,6 +34,7 @@ public class CharsetManager implements IManager {
 	 * to schedule operations that need to modify the workspace. 
 	 */
 	private class CharsetManagerJob extends Job {
+		private static final int CHARSET_UPDATE_DELAY = 500;
 		private List asyncChanges = new ArrayList();
 
 		public CharsetManagerJob() {
@@ -49,7 +50,7 @@ public class CharsetManager implements IManager {
 				asyncChanges.addAll(newChanges);
 				asyncChanges.notify();
 			}
-			schedule();
+			schedule(CHARSET_UPDATE_DELAY);
 		}
 
 		public IProject getNextChange() {

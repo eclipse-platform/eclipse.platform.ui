@@ -47,6 +47,8 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 
 	private Workspace workspace;
 
+	private static final int CHARSET_DELTA_DELAY = 500;
+
 	public CharsetDeltaJob(Workspace workspace) {
 		super(Policy.bind("resources.charsetBroadcasting")); //$NON-NLS-1$
 		this.workspace = workspace;
@@ -56,7 +58,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		synchronized (work) {
 			work.add(filter);
 		}
-		schedule();
+		schedule(CHARSET_DELTA_DELAY);
 	}
 
 	public void charsetPreferencesChanged(final IProject project) {
