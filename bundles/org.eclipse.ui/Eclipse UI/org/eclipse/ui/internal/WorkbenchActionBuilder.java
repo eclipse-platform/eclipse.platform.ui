@@ -160,7 +160,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			toolManager.prependToGroup(IWorkbenchActionConstants.BUILD_EXT, new Separator());
 			toolManager.update(true);
 		} catch (IllegalArgumentException e) {
-			System.out.println("build action not found");
 			// group not found
 		}
 	}
