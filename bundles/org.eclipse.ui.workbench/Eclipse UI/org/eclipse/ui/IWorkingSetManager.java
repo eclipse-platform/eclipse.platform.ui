@@ -11,8 +11,11 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.util.IPropertyChangeListener;
+
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
@@ -28,9 +31,11 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * </p>
  * 
  * @see IWorkingSet
- * @since 2.0
+ * @since 2.0 initial version
+ * @since 3.0 added createWorkingSet(IMemento)
  */
 public interface IWorkingSetManager {
+
 	/**
 	 * Change event id when a working set is added
 	 * newValue of the PropertyChangeEvent will be the added working set.
@@ -39,6 +44,7 @@ public interface IWorkingSetManager {
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd";		//$NON-NLS-1$
+	
 	/**
 	 * Change event id when a working set is removed
 	 * newValue of the PropertyChangeEvent will be null.
@@ -47,6 +53,7 @@ public interface IWorkingSetManager {
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove";	//$NON-NLS-1$
+	
 	/**
 	 * Change event id when the working set contents changed
 	 * newValue of the PropertyChangeEvent will be the changed working set.
@@ -55,6 +62,7 @@ public interface IWorkingSetManager {
 	 * @see IPropertyChangeListener
 	 */
 	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange";	//$NON-NLS-1$
+	
 	/**
 	 * Change event id when the working set name changed.
 	 * newValue of the PropertyChangeEvent will be the changed working set.
@@ -70,6 +78,7 @@ public interface IWorkingSetManager {
 	 * @param listener the property change listener to add
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
+	
 	/**
 	 * Adds a working set to the top of the list of most recently used 
 	 * working sets, making it the most recently used working set.
@@ -80,6 +89,7 @@ public interface IWorkingSetManager {
 	 * 	recently used working sets.
 	 */
 	public void addRecentWorkingSet(IWorkingSet workingSet);
+	
 	/**
 	 * Adds a working set to the receiver. The working set must 
 	 * not exist yet.
@@ -87,6 +97,7 @@ public interface IWorkingSetManager {
 	 * @param workingSet the working set to add
 	 */
 	public void addWorkingSet(IWorkingSet workingSet);
+	
 	/**
 	 * Creates a new working set.
 	 * The working set is not added to the working set manager.
@@ -97,6 +108,18 @@ public interface IWorkingSetManager {
 	 * @return a new working set with the specified name and content
 	 */
 	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
+
+	/**
+	 * Re-creates and returns a working set from the state captured within the 
+	 * given memento. 
+	 *
+	 * @param memento a memento containing the state for the working set
+	 * @return the restored working set, or <code>null</code> if it could not be created
+	 * 
+	 * @since 3.0
+	 */
+	public IWorkingSet createWorkingSet(IMemento memento);
+	
 	/**
 	 * Creates a working set edit wizard for the specified working set.
 	 * The working set will already be set in the wizard.
@@ -122,10 +145,12 @@ public interface IWorkingSetManager {
 	 * @since 2.1
 	 */
 	public IWorkingSetEditWizard createWorkingSetEditWizard(IWorkingSet workingSet);
+	
 	/**
 	 * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
 	 */
 	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent);
+	
 	/**
 	 * Creates a working set selection dialog that lists all working 
 	 * sets and allows the user to add, remove and edit working sets.
@@ -142,6 +167,7 @@ public interface IWorkingSetManager {
 	 * @return a working set selection dialog
 	 */
 	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi);
+	
 	/**
 	 * Returns the list of most recently used working sets.
 	 * The most recently used working set appears first in the list.
@@ -149,6 +175,7 @@ public interface IWorkingSetManager {
 	 * @return the list of most recently used working sets
 	 */
 	public IWorkingSet[] getRecentWorkingSets();
+	
 	/**
 	 * Returns the working set with the specified name.
 	 * Returns null if there is no working set with that name.
@@ -157,18 +184,21 @@ public interface IWorkingSetManager {
 	 * @return the working set with the specified name.
 	 */
 	public IWorkingSet getWorkingSet(String name);
+	
 	/**
 	 * Returns an array of all working sets stored in the receiver.
 	 * 
 	 * @return the working sets stored in the receiver
 	 */
 	public IWorkingSet[] getWorkingSets();
+	
 	/**
 	 * Removes the property change listener.
 	 * 
 	 * @param listener the property change listener to remove
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener);
+
 	/**
 	 * Removes the working set
 	 * 
