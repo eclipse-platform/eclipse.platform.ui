@@ -45,6 +45,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	private Button imageShowDirty;
 	private Button imageShowHasRemote;
 	private Button imageShowAdded;
+	private Button imageShowNewResource;
 	
 	private Text fileTextFormat;
 	private Text fileTextFormatExample;
@@ -201,6 +202,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowDirty = createCheckBox(imageGroup, Policy.bind("Sho&w_outgoing_25")); //$NON-NLS-1$
 		imageShowHasRemote = createCheckBox(imageGroup, Policy.bind("Show_has_&remote_26")); //$NON-NLS-1$
 		imageShowAdded = createCheckBox(imageGroup, Policy.bind("S&how_is_added_27")); //$NON-NLS-1$
+		imageShowNewResource = createCheckBox(imageGroup, Policy.bind("CVSDecoratorPreferencesPage.newResources")); //$NON-NLS-1$
 		
 		showDirty = createCheckBox(composite, Policy.bind("&Compute_deep_outgoing_state_for_folders_(disabling_this_will_improve_decorator_performance)_28")); //$NON-NLS-1$
 				
@@ -255,6 +257,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowDirty.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION));
 		imageShowAdded.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION));
 		imageShowHasRemote.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION));
+		imageShowNewResource.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
 		
 		showDirty.setSelection(store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
 	
@@ -284,6 +287,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		store.setValue(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION, imageShowDirty.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION, imageShowAdded.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION, imageShowHasRemote.getSelection());
+		store.setValue(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, imageShowNewResource.getSelection());
 		
 		store.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, showDirty.getSelection());
 		
@@ -311,6 +315,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowDirty.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION));
 		imageShowAdded.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION));
 		imageShowHasRemote.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION));
+		imageShowNewResource.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
 		
 		showDirty.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
 	}

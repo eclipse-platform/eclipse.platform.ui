@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -49,6 +50,7 @@ import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
+import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 
 public class CVSSyncCompareInput extends SyncCompareInput {
@@ -431,5 +433,9 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 			list.add(resources[i]);
 		}
 		return result;
+	}
+
+	protected SyncSet getSyncSet(IStructuredSelection selection) {
+		return new CVSSyncSet(selection);
 	}
 }

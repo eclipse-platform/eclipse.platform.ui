@@ -16,6 +16,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 
@@ -112,5 +113,70 @@ public class CVSSyncSet extends SyncSet {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns a message for the status line describing this sync set.
+	 * 
+	 * Override the method in SyncSet to add information about new resources
+	 */
+	public String getStatusLineMessage() {
+		int incoming = 0;
+		int outgoing = 0;
+		int conflicts = 0;
+		int newResources = 0;
+		ITeamNode[] nodes = getChangedNodes();
+		for (int i = 0; i < nodes.length; i++) {
+			ITeamNode next = nodes[i];
+			switch (next.getChangeDirection()) {
+				case IRemoteSyncElement.INCOMING:
+					incoming++;
+					break;
+				case IRemoteSyncElement.OUTGOING:
+					outgoing++;
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(next.getResource());
+					try {
+						if (cvsResource.exists()) {
+							if (cvsResource.isFolder()) {
+								if (!((ICVSFolder)cvsResource).isCVSFolder()) {
+									newResources++;
+								}
+							} else if (!cvsResource.isManaged()) {
+								newResources++;
+							}
+						}
+					} catch (CVSException e) {
+						CVSUIPlugin.log(e.getStatus());
+					}
+					break;
+				case IRemoteSyncElement.CONFLICTING:
+					conflicts++;
+					break;
+			}
+		}
+		StringBuffer result = new StringBuffer();
+		
+		if (conflicts == 0) {
+			result.append(Policy.bind("CVSSyncSet.noConflicts")); //$NON-NLS-1$
+		} else {
+			result.append(Policy.bind("CVSSyncSet.conflicts", new Object[] {Integer.toString(conflicts)} )); //$NON-NLS-1$
+		}
+		if (incoming == 0) {
+			result.append(Policy.bind("CVSSyncSet.noIncomings")); //$NON-NLS-1$
+		} else {
+			result.append(Policy.bind("CVSSyncSet.incomings", new Object[] {Integer.toString(incoming)} )); //$NON-NLS-1$
+		}
+		if (outgoing == 0) {
+			result.append(Policy.bind("CVSSyncSet.noOutgoings")); //$NON-NLS-1$
+		} else {
+			result.append(Policy.bind("CVSSyncSet.outgoings", new Object[] {Integer.toString(outgoing)} )); //$NON-NLS-1$
+		}
+		if (newResources == 0) {
+			result.append(Policy.bind("CVSSyncSet.noNew")); //$NON-NLS-1$
+		} else {
+			result.append(Policy.bind("CVSSyncSet.new", new Object[] {Integer.toString(newResources)} )); //$NON-NLS-1$
+		}
+
+		return result.toString();
 	}
 }

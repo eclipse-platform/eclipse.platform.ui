@@ -30,6 +30,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -415,7 +416,7 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 							statusLine.setErrorMessage(null);
 							return;
 						}
-						SyncSet set = new SyncSet(new StructuredSelection(diffRoot.getChildren()));
+						SyncSet set = getSyncSet(new StructuredSelection(diffRoot.getChildren()));
 						if (set.hasConflicts()) {
 							statusLine.setMessage(null);
 							statusLine.setErrorMessage(set.getStatusLineMessage());
@@ -436,6 +437,9 @@ public abstract class SyncCompareInput extends CompareEditorInput {
 		}
 	}
 	
+	protected SyncSet getSyncSet(IStructuredSelection selection) {
+		return new SyncSet(selection);
+	}
 	public boolean saveIfNecessary() {
 		if (! isSaveNeeded()) return true;
 		
