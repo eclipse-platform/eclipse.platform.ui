@@ -20,9 +20,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -71,7 +71,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Allows configuration of the CVS tags that are shown within the workbench.
  */
-public class TagConfigurationDialog extends Dialog {
+public class TagConfigurationDialog extends TitleAreaDialog {
 	
 	// show the resource contained within the roots
 	private TreeViewer cvsResourceTree;
@@ -159,6 +159,7 @@ public class TagConfigurationDialog extends Dialog {
 	 * @see Dialog#createDialogArea(Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		setTitle(Policy.bind("TagConfigurationDialog.4")); //$NON-NLS-1$
 		Composite shell = new Composite(parent, SWT.NONE);
 		GridData data = new GridData (GridData.FILL_BOTH);		
 		shell.setLayoutData(data);
@@ -166,13 +167,6 @@ public class TagConfigurationDialog extends Dialog {
 		gridLayout.numColumns = 2;
 		gridLayout.makeColumnsEqualWidth = true;
 		shell.setLayout (gridLayout);
-		
-		Label description = new Label(shell,SWT.WRAP);
-		description.setText(Policy.bind("TagConfigurationDialog.4")); //$NON-NLS-1$
-		data = new GridData (GridData.FILL_BOTH);
-		data.widthHint = 300;
-		data.horizontalSpan = 2;
-		description.setLayoutData(data);
 		
 		Composite comp = new Composite(shell, SWT.NULL);
 		gridLayout = new GridLayout();
