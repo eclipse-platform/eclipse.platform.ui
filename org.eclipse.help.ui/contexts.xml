@@ -128,5 +128,8 @@ Under normal circumstances, use the &lt;b&gt;Automatic&lt;/b&gt; setting.</descr
    <context  id="searchFilteringOpts" >
       <description>Choose a set of books to search.  Only results that are contained within those books will be displayed.</description>
    </context>
+   <context  id="prefPageBrowsers" >
+      <description>Allows selecting a web browser.  The selected web browser will be the default browser used to display help contents.</description>
+   </context>
 
 </contexts>
