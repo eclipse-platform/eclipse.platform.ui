@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,17 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 
 public class ResourceChangeEvent extends EventObject implements IResourceChangeEvent {
-	private static final long serialVersionUID = 1L;
-	int type;
-	IResource resource;
-	IResourceDelta delta;
 
 	private static final IMarkerDelta[] NO_MARKER_DELTAS = new IMarkerDelta[0];
+	private static final long serialVersionUID = 1L;
+	IResourceDelta delta;
+	IResource resource;
+
+	/**
+	 * The build trigger for this event, or 0 if not applicable.
+	 */
+	private int trigger = 0;
+	int type;
 
 	protected ResourceChangeEvent(Object source, int type, IResource resource) {
 		super(source);
@@ -28,16 +33,17 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 		this.type = type;
 	}
 
-	protected ResourceChangeEvent(Object source, int type, IResourceDelta delta) {
+	public ResourceChangeEvent(Object source, int type, int buildKind, IResourceDelta delta) {
 		super(source);
 		this.delta = delta;
+		this.trigger = buildKind;
 		this.type = type;
 	}
 
 	/**
 	 * @see IResourceChangeEvent#findMarkerDeltas(String, boolean)
 	 */
-	public IMarkerDelta[] findMarkerDeltas(String type, boolean includeSubtypes) {
+	public IMarkerDelta[] findMarkerDeltas(String findType, boolean includeSubtypes) {
 		if (delta == null)
 			return NO_MARKER_DELTAS;
 		ResourceDeltaInfo info = ((ResourceDelta) delta).getDeltaInfo();
@@ -53,13 +59,20 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 			MarkerSet deltas = (MarkerSet) deltaSets.next();
 			IMarkerSetElement[] elements = deltas.elements();
 			for (int i = 0; i < elements.length; i++) {
-				MarkerDelta delta = (MarkerDelta) elements[i];
+				MarkerDelta markerDelta = (MarkerDelta) elements[i];
 				//our inclusion test depends on whether we are considering subtypes
-				if (type == null || (includeSubtypes ? delta.isSubtypeOf(type) : delta.getType().equals(type)))
-					matching.add(delta);
+				if (findType == null || (includeSubtypes ? markerDelta.isSubtypeOf(findType) : markerDelta.getType().equals(findType)))
+					matching.add(markerDelta);
 			}
 		}
 		return (IMarkerDelta[]) matching.toArray(new IMarkerDelta[matching.size()]);
+	}
+
+	/**
+	 * @see IResourceChangeEvent#getBuildKind()
+	 */
+	public int getBuildKind() {
+		return trigger;
 	}
 
 	/**

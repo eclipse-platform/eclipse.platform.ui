@@ -23,6 +23,16 @@ import org.eclipse.core.runtime.*;
  * that correct deltas are received for all types of workspace changes.
  */
 public class IResourceChangeListenerTest extends ResourceTest {
+	class SimpleListener implements IResourceChangeListener {
+		Object source;
+		int trigger;
+
+		public void resourceChanged(IResourceChangeEvent event) {
+			source = event.getSource();
+			trigger = event.getBuildKind();
+		}
+	}
+
 	protected static final String VERIFIER_NAME = "TestListener";
 	IFile file1; //below folder1
 	IFile file2; //below folder1
@@ -50,6 +60,22 @@ public class IResourceChangeListenerTest extends ResourceTest {
 
 	public IResourceChangeListenerTest(String name) {
 		super(name);
+	}
+
+	/**
+	 * Sets the workspace autobuilding to the desired value.
+	 */
+	protected void setAutoBuilding(boolean value) {
+		IWorkspace workspace = getWorkspace();
+		if (workspace.isAutoBuilding() == value)
+			return;
+		IWorkspaceDescription desc = workspace.getDescription();
+		desc.setAutoBuilding(value);
+		try {
+			workspace.setDescription(desc);
+		} catch (CoreException e) {
+			fail("failed to set workspace description", e);
+		}
 	}
 
 	public void _testBenchMark_1GBYQEZ() {
@@ -452,6 +478,70 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		} finally {
 			// cleanup: ensure that the listener is removed
 			getWorkspace().removeResourceChangeListener(listener);
+		}
+	}
+
+	public void testBuildKind() {
+		SimpleListener preBuild = new SimpleListener();
+		SimpleListener postBuild = new SimpleListener();
+		SimpleListener postChange = new SimpleListener();
+		final IWorkspace workspace = getWorkspace();
+		try {
+			setAutoBuilding(false);
+			workspace.addResourceChangeListener(preBuild, IResourceChangeEvent.PRE_BUILD);
+			workspace.addResourceChangeListener(postBuild, IResourceChangeEvent.POST_BUILD);
+			workspace.addResourceChangeListener(postChange, IResourceChangeEvent.POST_CHANGE);
+
+			final int[] triggers = new int[] {IncrementalProjectBuilder.INCREMENTAL_BUILD, IncrementalProjectBuilder.FULL_BUILD, IncrementalProjectBuilder.CLEAN_BUILD,};
+			for (int i = 0; i < triggers.length; i++) {
+				final int trigger = triggers[i];
+				workspace.run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						file1.touch(null);
+						workspace.build(trigger, monitor);
+					}
+				}, getMonitor());
+				assertEquals("1.0." + i, workspace, preBuild.source);
+				assertEquals("1.1." + i, workspace, postBuild.source);
+				assertEquals("1.2." + i, workspace, postChange.source);
+				assertEquals("1.3." + i, trigger, preBuild.trigger);
+				assertEquals("1.4." + i, trigger, postBuild.trigger);
+				assertEquals("1.5." + i, 0, postChange.trigger);
+
+				workspace.run(new IWorkspaceRunnable() {
+					public void run(IProgressMonitor monitor) throws CoreException {
+						file1.touch(null);
+						project1.build(trigger, getMonitor());
+					}
+				}, getMonitor());
+				assertEquals("2.0." + i, project1, preBuild.source);
+				assertEquals("2.2." + i, project1, postBuild.source);
+				assertEquals("2.2." + i, workspace, postChange.source);
+				assertEquals("2.3." + i, trigger, preBuild.trigger);
+				assertEquals("2.4." + i, trigger, postBuild.trigger);
+				assertEquals("2.5." + i, 0, postChange.trigger);
+
+			}
+			
+			//test autobuild trigger
+			setAutoBuilding(true);
+			file1.touch(null);
+			waitForBuild();
+			int trigger = IncrementalProjectBuilder.AUTO_BUILD;
+			assertEquals("1.0", workspace, preBuild.source);
+			assertEquals("1.1", workspace, postBuild.source);
+			assertEquals("1.2", workspace, postChange.source);
+			assertEquals("1.3", trigger, preBuild.trigger);
+			assertEquals("1.4", trigger, postBuild.trigger);
+			assertEquals("1.5", 0, postChange.trigger);
+
+		} catch (CoreException e) {
+			fail("4.99", e);
+		} finally {
+			workspace.removeResourceChangeListener(preBuild);
+			workspace.removeResourceChangeListener(postBuild);
+			workspace.removeResourceChangeListener(postChange);
+			setAutoBuilding(true);
 		}
 	}
 

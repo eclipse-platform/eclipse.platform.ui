@@ -118,10 +118,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * to be automatically done at the end of the operation in which
 	 * the build occurs.
 	 */
-	protected void aboutToBuild() {
+	protected void aboutToBuild(Object source, int trigger) {
 		//fire a POST_CHANGE first to ensure everyone is up to date before firing PRE_BUILD
-		broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
-		broadcastChanges(IResourceChangeEvent.PRE_BUILD, false);
+		broadcastPostChange();
+		broadcastBuildEvent(source, IResourceChangeEvent.PRE_BUILD, trigger);
 	}
 
 	/**
@@ -171,8 +171,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			newWorkingTree();
 	}
 
-	protected void broadcastChanges(int type, boolean lockTree) {
-		notificationManager.broadcastChanges(tree, type, lockTree);
+	public void broadcastPostChange() {
+		ResourceChangeEvent event = new ResourceChangeEvent(this, IResourceChangeEvent.POST_CHANGE, 0, null);
+		notificationManager.broadcastChanges(tree,  event, true);
+	}
+
+	public void broadcastBuildEvent(Object source, int type, int buildTrigger) {
+		ResourceChangeEvent event = new ResourceChangeEvent(source, type, buildTrigger, null);
+		notificationManager.broadcastChanges(tree, event, false);
 	}
 
 	/**
@@ -197,9 +203,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				prepareOperation(rule, monitor);
 				beginOperation(true);
-				aboutToBuild();
+				aboutToBuild(this, trigger);
 				getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
-				broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
+				broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
 			} finally {
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())
@@ -230,7 +236,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			try {
 				prepareOperation(rule, null);
 				beginOperation(true);
-				broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
+				broadcastPostChange();
 			} finally {
 				endOperation(rule, build, null);
 			}
@@ -907,7 +913,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//double check if the tree has actually changed
 				if (hasTreeChanges)
 					hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getBuildComparator(), true);
-				broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
+				broadcastPostChange();
 				// Request a snapshot if we are sufficiently out of date.
 				saveManager.snapshotIfNeeded(hasTreeChanges);
 			} finally {

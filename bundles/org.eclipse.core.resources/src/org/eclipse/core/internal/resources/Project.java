@@ -68,7 +68,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
-	public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+	public void build(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 		try {
 			workspace.prepareOperation(rule, monitor);
@@ -78,9 +78,9 @@ public class Project extends Container implements IProject {
 				return;
 
 			workspace.beginOperation(true);
-			workspace.aboutToBuild();
-			workspace.getBuildManager().build(this, kind, builderName, args, monitor);
-			workspace.broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
+			workspace.aboutToBuild(this, trigger);
+			workspace.getBuildManager().build(this, trigger, builderName, args, monitor);
+			workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
 		} finally {
 			//building may close the tree, but we are still inside an operation so open it
 			if (workspace.getElementTree().isImmutable())
@@ -102,9 +102,9 @@ public class Project extends Container implements IProject {
 				return;
 
 			workspace.beginOperation(true);
-			workspace.aboutToBuild();
+			workspace.aboutToBuild(this, trigger);
 			workspace.getBuildManager().build(this, trigger, monitor);
-			workspace.broadcastChanges(IResourceChangeEvent.POST_BUILD, false);
+			workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
 		} finally {
 			//building may close the tree, but we are still inside an operation so open it
 			if (workspace.getElementTree().isImmutable())

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 /**
  * Resource change events describe changes to resources.
  * <p>
@@ -20,13 +22,15 @@ package org.eclipse.core.resources;
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
  *    <code>PRE_BUILD</code>, and <code>getDelta</code> returns
- *    the hierarchical delta. The resource delta is rooted at the 
- *    workspace root.  These events are broadcast to interested parties immediately 
- *    before the first build of any kind in a workspace modifying operation.  If
- *    autobuilding is not enabled, these events still occur at times when autobuild
- *    would have occurred. The workspace is open for change during notification of 
- *    these events. The delta reported in this event cycle is identical across
- *    all listeners registered for this type of event.
+ *    the hierarchical delta.  The resource delta is rooted at the 
+ *    workspace root.  The <code>getBuildKind</code> method returns
+ *    the kind of build that is about to occur, and the <code>getSource</code>
+ *    method returns the scope of the build (either the workspace or a single project).
+ *    These events are broadcast to interested parties immediately 
+ *    before each build operation.  If autobuilding is not enabled, these events still 
+ *    occur at times when autobuild would have occurred. The workspace is open 
+ *    for change during notification of these events. The delta reported in this event 
+ *    cycle is identical across all listeners registered for this type of event.
  *    Resource changes attempted during a <code>PRE_BUILD</code> callback
  *    <b>must</b> be done in the thread doing the notification.
  *   </li>
@@ -36,8 +40,10 @@ package org.eclipse.core.resources;
  *    as a hierarchical resource delta. Event type is
  *    <code>POST_BUILD</code>, and <code>getDelta</code> returns
  *    the hierarchical delta. The resource delta is rooted at the 
- *    workspace root.  These events are broadcast to interested parties at the
- *    end of every workspace operation in which a build of any kind occurred.
+ *    workspace root.  The <code>getBuildKind</code> method returns
+ *    the kind of build that occurred, and the <code>getSource</code>
+ *    method returns the scope of the build (either the workspace or a single project).
+ *    These events are broadcast to interested parties at the end of every build operation.
  *    If autobuilding is not enabled, these events still occur at times when autobuild
  *    would have occurred. The workspace is open for change during notification of 
  *    these events. The delta reported in this event cycle is identical across
@@ -172,6 +178,24 @@ public interface IResourceChangeEvent {
 	public IMarkerDelta[] findMarkerDeltas(String type, boolean includeSubtypes);
 
 	/**
+	 * Returns the kind of build that caused this event,
+	 * or <code>0</code> if not applicable to this type of event.
+	 * <p>
+	 * If the event is a <code>PRE_BUILD</code> or <code>POST_BUILD</code>
+	 * then this will be the kind of build that occurred to cause the event.
+	 *
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @see IWorkspace#build(int, IProgressMonitor)
+	 * @see IncrementalProjectBuilder#AUTO_BUILD
+	 * @see IncrementalProjectBuilder#FULL_BUILD
+	 * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+	 * @see IncrementalProjectBuilder#CLEAN_BUILD
+	 * @return the kind of build, or <code>0</code> if not applicable
+	 * @since 3.1
+	 */
+	public int getBuildKind();
+
+	/**
 	 * Returns a resource delta, rooted at the workspace, describing the set
 	 * of changes that happened to resources in the workspace. 
 	 * Returns <code>null</code> if not applicable to this type of event.
@@ -201,7 +225,7 @@ public interface IResourceChangeEvent {
 	 * @see java.util.EventObject
 	 */
 	public Object getSource();
-
+	
 	/**
 	 * Returns the type of event being reported.
 	 *

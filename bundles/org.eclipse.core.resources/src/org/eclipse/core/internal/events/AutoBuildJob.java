@@ -60,10 +60,6 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		return family == ResourcesPlugin.FAMILY_AUTO_BUILD;
 	}
 
-	private void broadcastChanges(int type) {
-		workspace.getNotificationManager().broadcastChanges(workspace.getElementTree(), type, false);
-	}
-
 	/**
 	 * Instructs the build job that a build is required.  Ensure the build
 	 * job is scheduled to run.
@@ -136,10 +132,11 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			try {
 				workspace.prepareOperation(rule, monitor);
 				workspace.beginOperation(true);
-				broadcastChanges(IResourceChangeEvent.PRE_BUILD);
+				final int trigger = IncrementalProjectBuilder.AUTO_BUILD;
+				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.PRE_BUILD, trigger);
 				if (shouldBuild()) 
-					workspace.getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
-				broadcastChanges(IResourceChangeEvent.POST_BUILD);
+					workspace.getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+				workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);
 				buildNeeded = false;
 			} finally {
 				//building may close the tree, but we are still inside an

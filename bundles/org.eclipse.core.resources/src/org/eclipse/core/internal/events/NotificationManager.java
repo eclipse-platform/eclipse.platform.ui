@@ -138,7 +138,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * The main broadcast point for notification deltas 
 	 */
-	public void broadcastChanges(ElementTree lastState, int type, boolean lockTree) {
+	public void broadcastChanges(ElementTree lastState, ResourceChangeEvent event, boolean lockTree) {
+		final int type = event.getType();
 		try {
 			// Do the notification if there are listeners for events of the given type.
 			if (!listeners.hasListenerFor(type))
@@ -148,8 +149,9 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			// if the delta is empty the root's change is undefined, there is nothing to do
 			if (delta == null || delta.getKind() == 0)
 				return;
+			event.setDelta(delta);
 			long start = System.currentTimeMillis();
-			notify(getListeners(), new ResourceChangeEvent(workspace, type, delta), lockTree);
+			notify(getListeners(), event, lockTree);
 			lastNotifyDuration = System.currentTimeMillis() - start;
 		} finally {
 			// Update the state regardless of whether people are listening.
@@ -186,7 +188,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	public void broadcastChanges(IResourceChangeListener listener, int type, IResourceDelta delta) {
 		ResourceChangeListenerList.ListenerEntry[] entries;
 		entries = new ResourceChangeListenerList.ListenerEntry[] {new ResourceChangeListenerList.ListenerEntry(listener, type)};
-		notify(entries, new ResourceChangeEvent(workspace, type, delta), false);
+		notify(entries, new ResourceChangeEvent(workspace, type, 0, delta), false);
 	}
 
 	/**
