@@ -615,7 +615,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (getTabType() != null && getTabType().equals(configType) && !(getTabGroup() instanceof PerspectiveTabGroup)) {
 			return;
 		}
-
+		
+		// try to keep on same tab
+		Class tabKind = null;
+		if (getActiveTab() != null) {
+			tabKind = getActiveTab().getClass();
+		}
+		
 		// Build the new tabs
 		ILaunchConfigurationTabGroup group = null;
 		try {
@@ -628,6 +634,16 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		showTabsFor(group);
 		setTabGroup(group);
 		setTabType(configType);
+		
+		// select same tab as before, if possible
+		ILaunchConfigurationTab[] tabs = getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab tab = tabs[i];
+			if (tab.getClass().equals(tabKind)) {
+				setActiveTab(tab);
+				break;
+			}
+		}
 		
 		fDescription = getDescription(configType);
 	}	
@@ -1154,7 +1170,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * the tab being entered.
 	 */
 	protected void handleTabSelected() {
-		if (isDisposingTabs()) {
+		if (isDisposingTabs() || isInitializingTabs()) {
 			return;
 		}
 		ILaunchConfigurationTab[] tabs = getTabs();
