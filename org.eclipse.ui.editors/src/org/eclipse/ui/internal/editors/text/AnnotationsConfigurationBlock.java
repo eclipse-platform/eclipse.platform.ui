@@ -344,8 +344,10 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		if (key != null) {
 			fHighlightInTextCheckBox.setSelection(fStore.getBoolean(key));
 			fHighlightInTextCheckBox.setEnabled(true);
-		} else
+		} else {
+			fHighlightInTextCheckBox.setSelection(false);
 			fHighlightInTextCheckBox.setEnabled(false);
+		}
 		
 		key= fAnnotationColorListModel[i][5];
 		if (key != null) {
