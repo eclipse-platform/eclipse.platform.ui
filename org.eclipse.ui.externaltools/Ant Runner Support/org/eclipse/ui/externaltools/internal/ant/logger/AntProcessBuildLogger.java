@@ -62,23 +62,26 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		}
 		
 		AntStreamsProxy proxy = (AntStreamsProxy)fProcess.getStreamsProxy();
+		AntStreamMonitor monitor = null;
 		switch (priority) {
 			case LogConsoleDocument.MSG_INFO:
-				((AntStreamMonitor)proxy.getOutputStreamMonitor()).append(message);
+				monitor = (AntStreamMonitor)proxy.getOutputStreamMonitor();
 				break;
 			case LogConsoleDocument.MSG_ERR:
-				((AntStreamMonitor)proxy.getErrorStreamMonitor()).append(message);
+				monitor = (AntStreamMonitor)proxy.getErrorStreamMonitor();
 				break;
 			case LogConsoleDocument.MSG_DEBUG:
-				((AntStreamMonitor)proxy.getDebugStreamMonitor()).append(message);
+				monitor = (AntStreamMonitor)proxy.getDebugStreamMonitor();
 				break;
 			case LogConsoleDocument.MSG_WARN:
-				((AntStreamMonitor)proxy.getWarningStreamMonitor()).append(message);
+				monitor = (AntStreamMonitor)proxy.getWarningStreamMonitor();
 				break;
 			case LogConsoleDocument.MSG_VERBOSE:
-				((AntStreamMonitor)proxy.getVerboseStreamMonitor()).append(message);
+				monitor = (AntStreamMonitor)proxy.getVerboseStreamMonitor();
 				break;
-		}		
+		}	
+		monitor.append(message);
+		monitor.append("\n");	
 	}
 	
 	/**

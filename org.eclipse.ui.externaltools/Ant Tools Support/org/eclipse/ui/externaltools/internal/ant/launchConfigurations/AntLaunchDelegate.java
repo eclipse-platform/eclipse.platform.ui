@@ -90,48 +90,37 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
-		
-		// resolve arguments
-		String[] arguments = ExternalToolsUtil.getArguments(configuration, resourceContext);
-		if (arguments == null) {
-			arguments = new String[0];
-		}
-		
-		String[] runnerArgs = arguments;
-		if (baseDir != null && baseDir.length() > 0) {
-			// Ant requires the working directory to be specified
-			// as one of the arguments, so it needs to be appended.
-			runnerArgs = new String[arguments.length + 1];
-			System.arraycopy(arguments, 0, runnerArgs, 0, arguments.length);
-			runnerArgs[arguments.length] = BASE_DIR_PREFIX + baseDir;			
-		}
-				
-		final AntRunner runner = new AntRunner();
-		runner.setBuildFileLocation(location.toOSString());
-		// TODO: set targets
-		runner.addBuildLogger(ANT_LOGGER_CLASS);
-		runner.setInputHandler(INPUT_HANDLER_CLASS);
-		
-		if (monitor.isCanceled()) {
-			return;
-		}
-		
-		int cmdLineLength = 2;
-		if (arguments != null) {
-			cmdLineLength += arguments.length;
-		}
-		String[] cmdLine = new String[cmdLineLength];
-		cmdLine[0] = location.toOSString();
-		if (arguments != null) {
-			System.arraycopy(arguments, 0, cmdLine, 1, arguments.length);
-		}
+
 		// link the process to its build logger via a timestamp
 		long timeStamp = System.currentTimeMillis();
 		String idStamp = new Long(timeStamp).toString();
-		cmdLine[cmdLine.length - 1] = "-D" + AntProcess.ATTR_ANT_PROCESS_ID + "=" + idStamp;		
-		runnerArgs = cmdLine;
+		String idProperty = "-D" + AntProcess.ATTR_ANT_PROCESS_ID + "=" + idStamp;
+		
+		// resolve arguments
+		String[] arguments = ExternalToolsUtil.getArguments(configuration, resourceContext);
+		int argLength = 1; // at least one user property - timestamp
+		if (arguments != null) {
+			argLength += arguments.length;
+		}		
+		if (baseDir != null && baseDir.length() > 0) {
+			argLength++;
+		}
+		String[] runnerArgs = new String[argLength];
+		if (arguments != null) {
+			System.arraycopy(arguments, 0, runnerArgs, 0, arguments.length);
+		}
+		if (baseDir != null && baseDir.length() > 0) {
+			runnerArgs[runnerArgs.length - 2] = BASE_DIR_PREFIX + baseDir;
+		}
+		runnerArgs[runnerArgs.length -1] = idProperty;
+				
+		final AntRunner runner = new AntRunner();
+		runner.setBuildFileLocation(location.toOSString());
+		runner.addBuildLogger(ANT_LOGGER_CLASS);
+		runner.setInputHandler(INPUT_HANDLER_CLASS);
 		runner.setArguments(runnerArgs);
-						
+		// TODO: set targets
+								
 		if (monitor.isCanceled()) {
 			return;
 		}
