@@ -11,7 +11,7 @@ package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.*;
@@ -174,6 +174,33 @@ private void sleep(long duration) {
 		//cancel the final job
 		jobs[JOB_COUNT-1].cancel();
 	}
+	public void testOrder() {
+		//ensure jobs are run in order from lowest to highest sleep time.
+		final List done = Collections.synchronizedList(new ArrayList());
+		IJobChangeListener listener = new JobChangeAdapter() {
+			public void done(Job job, IStatus result) {
+				done.add(job);
+			}
+		};
+		int[] sleepTimes = new int[] {50, 250, 500, 800, 1000, 1500};
+		Job[] jobs = new Job[sleepTimes.length];
+		manager.addJobChangeListener(listener);
+		try {
+			for (int i = 0; i < sleepTimes.length; i++) 
+				jobs[i] = new TestJob("testOrder(" + i + ")", 1, 1);
+			for (int i = 0; i < sleepTimes.length; i++)
+				jobs[i].schedule(sleepTimes[i]);
+			waitForCompletion();
+			//make sure listener has had a chance to process the finished job
+			waitForStart();
+			Job[] doneOrder = (Job[]) done.toArray(new Job[done.size()]);
+			assertEquals("1.0", jobs.length, doneOrder.length);
+			for (int i = 0; i < doneOrder.length; i++)
+				assertEquals("1.1." + i, jobs[i], doneOrder[i]);
+		} finally {
+			manager.removeJobChangeListener(listener);
+		}
+	}
 	/**
 	 * Tests a batch of jobs that use two mutually exclusive rules.
 	 */
@@ -234,6 +261,7 @@ private void sleep(long duration) {
 		assertState("3.3", job, Job.SLEEPING);
 		assertTrue("3.4", job.cancel());//should be possible to cancel a sleeping job
 	}
+
 	public void testSleepOnWait() {
 		//keep scheduling infinitely long jobs until we have a job waiting
 		ArrayList longJobs = new ArrayList();
