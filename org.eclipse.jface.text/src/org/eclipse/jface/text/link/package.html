@@ -22,9 +22,9 @@ of one linked position will be reflected in the others.
 <h4>Classes</h4>
 <ul>
   <li><code>LinkedPositionGroup</code>: a set of linked positions. Add
-positions to a group using the <code>addPosition</code> and <code>createPosition</code>
-methods, which
-also allow to specify an iteration order. See <span
+positions to a group using the <code>addPosition</code> method. See <span
+ style="font-family: monospace;">LinkedPosition</span><code><span
+ style="font-family: helvetica,arial,sans-serif;"> and</span></code> <span
  style="font-family: monospace;">ProposalPosition</span><code><span
  style="font-family: helvetica,arial,sans-serif;"> </span></code><span
  style="font-family: helvetica,arial,sans-serif;">for a position type
@@ -54,7 +54,8 @@ mode (e.g. using Enter, or Tab from the last position when not
 cycling). Set <code>isTabStop</code> to <code>true</code> if tabbing
 should stop over when cycling.</li>
       <li><span style="font-weight: bold;">position listener</span>:
-you can register a position listener which will get notified whenever
+extending classes may register a position listener which will get
+notified whenever
 the focus position changes. An example is <span
  style="font-family: monospace;">org.eclipse.ui.texteditor.link.EditorLinkedModeUI.EditorHistoryUpdater</span>
 which will store the edit location in the editor navigation history.<br>
@@ -64,11 +65,7 @@ which will store the edit location in the editor navigation history.<br>
 .
 </ul>
 <h4>Example</h4>
-<pre>	IDocument doc1, doc2;<br>	ITextViewer viewer1, viewer2;<br>	<br>	/* create groups - this step is independent of the linked mode */<br>	LinkedPositionGroup group1= new LinkedPositionGroup();<br>	group1.addPosition(new LinkedPosition(doc1, 3, 4));<br>	group1.addPosition(new LinkedPosition(doc1, 7, 8));<br>	<br>	LinkedPositionGroup group2= new LinkedPositionGroup();<br>	group2.addPosition(new LinkedPosition(doc1, 15, 25));<br>	group2.addPosition(new LinkedPosition(doc2, 0, 10));<br>	<br>	/* set up linked mode */<br>	LinkedModeModel model= new LinkedModeModel();<br>	model.addGroup(group1);<br>	model.addGroup(group2);<br>	model.forceInstall();<br>	<br>	/* create UI */<br>	LinkedModeUI ui= new LinkedModeUI(model, new ITextViewer[] { viewer1, viewer2 });<br>	ui.enter();<br></pre>
-<h4>Todo</h4>
-<ul>
-  <li>handle lazy computation of per-group proposals using a <code>IContentAssistProcessor</code>
-(see LinkedPositionGroup, ProposalPosition) .</li>
-</ul>
+<pre>	IDocument doc1, doc2;<br>	ITextViewer viewer1, viewer2;<br>	<br>	/* create groups - this step is independent of the linked mode */<br>	LinkedPositionGroup group1= new LinkedPositionGroup();<br>	group1.addPosition(new LinkedPosition(doc1, 3, 4));<br>	group1.addPosition(new LinkedPosition(doc1, 7, 8));<br>	<br>	LinkedPositionGroup group2= new LinkedPositionGroup();<br>	group2.addPosition(new LinkedPosition(doc1, 15, 25));<br>	group2.addPosition(new LinkedPosition(doc2, 0, 10));<br>	<br>	/* set up linked mode */<br>	LinkedModeModel model= new LinkedModeModel();<br>	model.addGroup(group1);<br>	model.addGroup(group2);<br>	model.forceInstall();<br>	<br>	/* create UI */<br>	LinkedModeUI ui= new LinkedModeUI(model, new ITextViewer[] { viewer1, viewer2 });<br>	ui.enter();<span
+ style="font-family: sans-serif;"><br><br></span></pre>
 </body>
 </html>

@@ -28,6 +28,8 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 
 /**
+ * Internal class.
+ * 
  * @since 3.0
  */
 final class LinkedPositionAnnotations extends AnnotationModel {

@@ -17,28 +17,41 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 /**
  * LinkedPosition with added completion proposals.
+ * <p>
+ * Clients may instantiate or extend this class.
+ * </p>
  * 
  * @since 3.0
  */
 public class ProposalPosition extends LinkedPosition {
 
 	/**
-	 * Da proposals
+	 * The proposals
 	 */
 	private ICompletionProposal[] fProposals;
 
 	/**
-	 * @param document
-	 * @param offset
-	 * @param length
-	 * @param sequence
-	 * @param proposals
+	 * Creates a new instance.
+	 * 
+	 * @param document the document
+	 * @param offset the offset of the position
+	 * @param length the length of the position
+	 * @param sequence the iteration sequence rank
+	 * @param proposals the proposals to be shown when entering this position
 	 */
 	public ProposalPosition(IDocument document, int offset, int length, int sequence, ICompletionProposal[] proposals) {
 		super(document, offset, length, sequence);
 		fProposals= proposals;
 	}
 	
+	/**
+	 * Creates a new instance, with no sequence number.
+	 * 
+	 * @param document the document
+	 * @param offset the offset of the position
+	 * @param length the length of the position
+	 * @param proposals the proposals to be shown when entering this position
+	 */
 	public ProposalPosition(IDocument document, int offset, int length, ICompletionProposal[] proposals) {
 		super(document, offset, length, LinkedPositionGroup.NO_STOP);
 		fProposals= proposals;
@@ -57,7 +70,10 @@ public class ProposalPosition extends LinkedPosition {
 	}
 
 	/**
-	 * @return an array of choices, including the initial one. Clients must not modify it.
+	 * Returns the proposals attached to this position.
+	 * 
+	 * @return an array of choices, including the initial one. Callers must not
+	 *         modify it.
 	 */
 	public ICompletionProposal[] getChoices() {
 		return fProposals;

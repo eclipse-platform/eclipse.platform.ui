@@ -58,13 +58,16 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * The UI for linked mode. Detects events that influence behaviour of the linked mode
+ * The UI for linked mode. Detects events that influence behavior of the linked mode
  * UI and acts upon them.
  * <p>
  * <code>LinkedModeUI</code> relies on all added
  * <code>LinkedModeUITarget</code>s to provide implementations of
  * <code>ITextViewer</code> that implement <code>ITextViewerExtension</code>,
  * and the documents being edited to implement <code>IDocumentExtension3</code>.
+ * </p>
+ * <p>
+ * Clients may instantiate and extend this class.
  * </p>
  * 
  * @since 3.0
@@ -89,7 +92,10 @@ public class LinkedModeUI {
 	public static final Object CYCLE_WHEN_NO_PARENT= new Object();
 
 	/**
-	 * Listener that gets notified when the linked mode ui switches its focus position.
+	 * Listener that gets notified when the linked mode UI switches its focus position.
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
 	 */
 	public static interface ILinkedModeUIFocusListener {
 		/**
@@ -125,7 +131,9 @@ public class LinkedModeUI {
 	/**
 	 * A link target consists of a viewer and gets notified if the linked mode UI on
 	 * it is being shown.
-	 * 
+	 * <p>
+	 * Clients may extend this class.
+	 * </p>
 	 * @since 3.0
 	 */
 	public static abstract class LinkedModeUITarget implements ILinkedModeUIFocusListener {
@@ -216,6 +224,9 @@ public class LinkedModeUI {
 
 	/**
 	 * Exit flags returned if a custom exit policy wants to exit linked mode.
+	 * <p>
+	 * Clients may instantiate this class.
+	 * </p>
 	 */
 	public static class ExitFlags {
 		/** The flags to return in the <code>leave</code> method. */
@@ -236,7 +247,10 @@ public class LinkedModeUI {
 
 	/**
 	 * An exit policy can be registered by a caller to get custom exit
-	 * behaviour.
+	 * behavior.
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
 	 */
 	public interface IExitPolicy {
 		/**
@@ -543,39 +557,37 @@ public class LinkedModeUI {
 			
 		}
 	};
-	/** Whether this ui is in simple highlighting mode or not. */
+	/** Whether this UI is in simple highlighting mode or not. */
 	private boolean fSimple;
 
 	/**
-	 * Creates a new UI on the given model and the set of
-	 * viewers. The model must provide a tab stop sequence with a
-	 * non-empty list of tab stops.
+	 * Creates a new UI on the given model and the set of viewers. The model
+	 * must provide a tab stop sequence with a non-empty list of tab stops.
 	 * 
 	 * @param model the linked mode model
-	 * @param targets the non-empty list of targets upon which the linked mode ui
-	 *        should act
+	 * @param targets the non-empty list of targets upon which the linked mode
+	 *        UI should act
 	 */
 	public LinkedModeUI(LinkedModeModel model, LinkedModeUITarget[] targets) {
 		constructor(model, targets);
 	}
 
 	/**
-	 * Conveniance ctor for just one viewer.
+	 * Convenience constructor for just one viewer.
 	 * 
 	 * @param model the linked mode model
-	 * @param viewer the viewer upon which the linked mode ui
-	 *        should act
+	 * @param viewer the viewer upon which the linked mode UI should act
 	 */
 	public LinkedModeUI(LinkedModeModel model, ITextViewer viewer) {
 		constructor(model, new LinkedModeUITarget[]{new EmptyTarget(viewer)});
 	}
 
 	/**
-	 * Conveniance ctor for multiple viewers.
+	 * Convenience constructor for multiple viewers.
 	 * 
 	 * @param model the linked mode model
-	 * @param viewers the non-empty list of viewers upon which the linked mode ui
-	 *        should act
+	 * @param viewers the non-empty list of viewers upon which the linked mode
+	 *        UI should act
 	 */
 	public LinkedModeUI(LinkedModeModel model, ITextViewer[] viewers) {
 		LinkedModeUITarget[] array= new LinkedModeUITarget[viewers.length];
@@ -586,11 +598,10 @@ public class LinkedModeUI {
 	}
 
 	/**
-	 * Conveniance ctor for one target.
+	 * Convenience constructor for one target.
 	 * 
 	 * @param model the linked mode model
-	 * @param target the target upon which the linked mode ui
-	 *        should act
+	 * @param target the target upon which the linked mode UI should act
 	 */
 	public LinkedModeUI(LinkedModeModel model, LinkedModeUITarget target) {
 		constructor(model, new LinkedModeUITarget[]{target});
@@ -634,7 +645,7 @@ public class LinkedModeUI {
 	}
 
 	/**
-	 * Sets an <code>IExitPolicy</code> to customize the exit behaviour of
+	 * Sets an <code>IExitPolicy</code> to customize the exit behavior of
 	 * this linked mode UI.
 	 * 
 	 * @param policy the exit policy to use.
@@ -644,16 +655,18 @@ public class LinkedModeUI {
 	}
 
 	/**
-	 * Sets the exit position to move the caret to when linked mode mode is exited.
+	 * Sets the exit position to move the caret to when linked mode mode is
+	 * exited.
 	 * 
 	 * @param target the target where the exit position is located
 	 * @param offset the offset of the exit position
 	 * @param length the length of the exit position (in case there should be a
 	 *        selection)
-	 * @param sequence set to the tab stop position of the exit position, or 
-	 * 		  <code>LinkedPositionGroup.NO_STOP</code> if there should be no tab stop.
-	 * @throws BadLocationException if the position is not valid in the
-	 *         viewer's document
+	 * @param sequence set to the tab stop position of the exit position, or
+	 *        <code>LinkedPositionGroup.NO_STOP</code> if there should be no
+	 *        tab stop.
+	 * @throws BadLocationException if the position is not valid in the viewer's
+	 *         document
 	 */
 	public void setExitPosition(LinkedModeUITarget target, int offset, int length, int sequence) throws BadLocationException {
 		// remove any existing exit position
@@ -1120,8 +1133,6 @@ public class LinkedModeUI {
 			return new Region(fFramePosition.getOffset(), fFramePosition.getLength());
 	}
 
-	
-
 	private String getCategory() {
 		return toString();
 	}
@@ -1131,7 +1142,8 @@ public class LinkedModeUI {
 	 * info will be invoked on the current target's viewer whenever a position
 	 * is switched.
 	 * 
-	 * @param doContextInfo The doContextInfo to set.
+	 * @param doContextInfo <code>true</code> if context information should be
+	 *        displayed
 	 */
 	public void setDoContextInfo(boolean doContextInfo) {
 		fDoContextInfo= doContextInfo;
@@ -1139,9 +1151,10 @@ public class LinkedModeUI {
 	
 	/**
 	 * Sets the focus callback which will get informed when the focus of the 
-	 * linked mode ui changes.
+	 * linked mode UI changes.
 	 * <p>
-	 * If there is a listener installed already, it will be replaced.</p> 
+	 * If there is a listener installed already, it will be replaced.
+	 * </p>
 	 *  
 	 * @param listener the new listener, never <code>null</code>.
 	 */
@@ -1151,12 +1164,12 @@ public class LinkedModeUI {
 	}
 	
 	/**
-	 * Sets the "simple" mode of the receiver. A linked mode ui in simple mode 
+	 * Sets the "simple" mode of the receiver. A linked mode UI in simple mode 
 	 * merely draws the exit position, but not the target, focus, and slave
 	 * positions. Default is <code>false</code>. This method must be called
 	 * before it is entered.
 	 * 
-	 * @param simple <code>true</code> if the ui should be in simple mode.
+	 * @param simple <code>true</code> if the UI should be in simple mode.
 	 */
 	public void setSimpleMode(boolean simple) {
 		fSimple= simple;

@@ -26,7 +26,9 @@ import org.eclipse.jface.text.link.LinkedPosition;
 /**
  * Iterator that leaps over the double occurrence of an element when switching from forward
  * to backward iteration that is shown by <code>ListIterator</code>.
- * 
+ * <p>
+ * Package private, only for use by LinkedModeUI.
+ * </p>
  * @since 3.0
  */
 class TabStopIterator {
