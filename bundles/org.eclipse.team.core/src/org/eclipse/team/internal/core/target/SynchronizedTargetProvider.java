@@ -186,8 +186,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 */
 	public boolean isDirty(IResource resource) {
 		try {
-			ResourceState state = getState(resource);
-			return state.isDirty(resource);
+			return getState(resource).isDirty();
 		} catch (TeamException e) {
 			TeamPlugin.log(e.getStatus());
 			return true;

@@ -258,17 +258,16 @@ public abstract class ResourceState {
 	 * Answer if the local resource currently has a different timestamp to the
 	 * base timestamp for this resource.
 	 * 
-	 * @param resource the resource to test.
 	 * @return <code>true</code> if the resource has a different modification
 	 * timestamp, and <code>false</code> otherwise.
 	 * @see ITeamProvider#isDirty(IResource)
 	 */
-	public boolean isDirty(IResource resource) {
+	public boolean isDirty() {
 		if (!hasLocal())
-			return false; // by API definition.
+			return hasPhantom(); // against API definition?
 		if (localBaseTimestamp == EMPTY_LOCALBASETS)
 			return false; // by API definition.
-		return localBaseTimestamp != resource.getModificationStamp();
+		return localBaseTimestamp != localResource.getModificationStamp();
 	}
 
 	/**
@@ -341,8 +340,21 @@ public abstract class ResourceState {
 	/**
 	 * Answer if the local resource exists.
 	 */
-	public boolean hasLocal() {
+	protected boolean hasLocal() {
 		return localResource.exists();
+	}
+	
+	/**
+	 * Answer if the local resource has a phantom, which indicates that the respource had both a local 
+	 * and remote version at one time.
+	 */
+	protected boolean hasPhantom() {
+		try {
+			return SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, localResource) != null;
+		} catch (CoreException e) {
+			TeamPlugin.log(e.getStatus());
+			return false;
+		}
 	}
 
 	/**
