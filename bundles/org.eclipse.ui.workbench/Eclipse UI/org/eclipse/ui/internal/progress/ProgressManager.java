@@ -434,9 +434,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	public IProgressMonitor getDefaultMonitor() {
 		//only need a default monitor for operations the UI thread
-		if (Display.getCurrent() == null)
+		if (PlatformUI.isWorkbenchRunning())
+			return new DefaultMonitor();
+		else
 			return super.getDefaultMonitor();
-		return new DefaultMonitor();
 	}
 
 	/**
@@ -807,8 +808,13 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 		invokes[0] = null;
 		interrupt[0] = null;
+		
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		
+		if(display == null)
+			return;
 
-		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+		BusyIndicator.showWhile(display, new Runnable() {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -822,10 +828,16 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 					, runnable);
 
 					//Run the event loop until the progress job wakes up
-					Display display = Display.getCurrent();
+					//Just exit if there is no display
+					Display currentDisplay;
+					if(PlatformUI.isWorkbenchRunning())
+						currentDisplay = PlatformUI.getWorkbench().getDisplay();
+					else
+						return;
+					
 					while (busy[0]) {
-						if (!display.readAndDispatch())
-							display.sleep();
+						if (!currentDisplay.readAndDispatch())
+							currentDisplay.sleep();
 					}
 
 				} catch (InvocationTargetException e) {
@@ -862,7 +874,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				
 				//If there is a modal shell open then wait
-				Shell[] shells = getDisplay().getShells();
+				Display currentDisplay = getDisplay();
+				if(currentDisplay == null || currentDisplay.isDisposed())
+					return Status.CANCEL_STATUS;
+				Shell[] shells = currentDisplay.getShells();
 				for(int i = 0; i < shells.length; i ++){
 					
 					//Do not stop for shells that will not
