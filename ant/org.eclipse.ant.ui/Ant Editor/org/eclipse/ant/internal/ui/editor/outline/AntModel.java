@@ -262,7 +262,7 @@ public class AntModel {
     	    	}
     			resolveBuildfile();
     			endReporting();
-    			project.fireBuildFinished(null); //cleanup
+    			project.fireBuildFinished(null); //cleanup (IntrospectionHelper)
     			fIncrementalTarget= null;
     		}
     	}
