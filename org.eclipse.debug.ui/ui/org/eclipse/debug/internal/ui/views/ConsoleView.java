@@ -126,6 +126,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 				getConsoleViewer().setDocument(doc);
 				updateTitle();
 				updateObjects();
+				updateSelectionDependentActions();
 			}
 		};
 		asyncExec(r);
@@ -184,10 +185,12 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		
 		getConsoleViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
 			public void verifyKey(VerifyEvent event) {
-				IAction gotoLine= (IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE);
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C && gotoLine.isEnabled()) {
-					gotoLine.run();
-					event.doit= false;
+				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C) {
+					IAction gotoLine= (IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE);
+					if (gotoLine.isEnabled()) {
+						gotoLine.run();
+						event.doit= false;
+					}
 				}
 			}
 		});
