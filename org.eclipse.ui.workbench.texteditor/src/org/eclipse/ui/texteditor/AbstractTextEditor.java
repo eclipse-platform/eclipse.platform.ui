@@ -124,6 +124,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
@@ -2813,7 +2814,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			if (actions.size() != 0) {
 				IConfigurationElement element= (IConfigurationElement) actions.get(0);
-				return new EditorPluginAction(element, "class", this); //$NON-NLS-1$
+				String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
+				return new EditorPluginAction(element, "class", this,defId); //$NON-NLS-1$			
 			}
 		}
 		
