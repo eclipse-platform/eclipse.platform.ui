@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -74,6 +74,7 @@ public class SearchResultViewer extends TableViewer {
 	private GotoMarkerAction fGotoMarkerActionProxy;
 	private SearchAgainAction fSearchAgainAction;
 	private RemoveResultAction fRemoveSelectedMatchesAction;
+	private RemoveAllResultsAction fRemoveAllResultsAction;
 	private SortDropDownAction fSortDropDownAction;
 	private SearchDropDownAction fSearchDropDownAction;
 	private CopyToClipboardAction fCopyToClipboardAction;
@@ -117,6 +118,8 @@ public class SearchResultViewer extends TableViewer {
 		fGotoMarkerActionProxy.setEnabled(false);
 		fRemoveSelectedMatchesAction= new RemoveResultAction(this, false);
 		fRemoveSelectedMatchesAction.setEnabled(false);
+		fRemoveAllResultsAction= new RemoveAllResultsAction();
+		fRemoveAllResultsAction.setEnabled(false);
 		fSearchAgainAction= new SearchAgainAction();
 		fSearchAgainAction.setEnabled(hasSearch);
 		fSortDropDownAction = new SortDropDownAction(this);
@@ -230,6 +233,8 @@ public class SearchResultViewer extends TableViewer {
 			fShowPreviousResultAction.setEnabled(state);
 		if (state != fSortDropDownAction.isEnabled())
 			fSortDropDownAction.setEnabled(state);
+		if (state != fRemoveAllResultsAction.isEnabled())
+			fRemoveAllResultsAction.setEnabled(state);
 
 		state= SearchManager.getDefault().getCurrentSearch() != null;
 		if (state != fSearchDropDownAction.isEnabled())
@@ -371,6 +376,7 @@ public class SearchResultViewer extends TableViewer {
 		tbm.add(fShowPreviousResultAction);
 //		tbm.add(fGotoMarkerAction); see bug 15275
 		tbm.add(fRemoveSelectedMatchesAction);
+		tbm.add(fRemoveAllResultsAction);
 		tbm.add(new Separator());
 		tbm.add(new OpenSearchDialogAction());
 		tbm.add(fSearchDropDownAction);
