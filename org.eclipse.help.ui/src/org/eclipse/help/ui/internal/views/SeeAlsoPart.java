@@ -102,6 +102,9 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 
 	private void addPageLink(StringBuffer buf, String text, String id,
 			String imgRef) {
+		String cid = parent.getCurrentPageId();
+		if (cid!=null && cid.equals(id))
+			return;
 		buf.append("<img href=\""); //$NON-NLS-1$
 		buf.append(imgRef);
 		buf.append("\"/>"); //$NON-NLS-1$
@@ -147,6 +150,8 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 */
 	public void setVisible(boolean visible) {
 		container.setVisible(visible);
+		if (visible)
+			markStale();
 	}
 
 	/*
@@ -174,4 +179,9 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	}
 	public void stop() {
 	}
+	public void refresh() {
+		if (text!=null && parent.getCurrentPageId()!=null)
+			loadText();
+		super.refresh();
+	}	
 }

@@ -32,6 +32,7 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_HELP_SEARCH = "etool16/search_menu.gif"; //$NON-NLS-1$
 	public static final String IMAGE_HELP = "etool16/help.gif"; //$NON-NLS-1$
 	public static final String IMAGE_CLEAR = "elcl16/clear.gif"; //$NON-NLS-1$
+	public static final String IMAGE_VIEW_MENU = "elcl16/view_menu.gif"; //$NON-NLS-1$	
 	public static final String IMAGE_NW = "elcl16/browser.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_CATEGORIES = "elcl16/show_categories.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_DESC = "elcl16/desc_obj.gif"; //$NON-NLS-1$
@@ -48,10 +49,7 @@ public interface IHelpUIConstants {
 	public static final String HV_SEE_ALSO = "see-also"; //$NON-NLS-1$
 	public static final String HV_BROWSER = "browser"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP = "context-help"; //$NON-NLS-1$
-	//Help view pages
-	public static final String HV_SEARCH_PAGE = "search-page"; //$NON-NLS-1$
 	public static final String HV_FSEARCH_PAGE = "fsearch-page"; //$NON-NLS-1$
-	public static final String HV_FSEARCH_RESULT_PAGE = "fsearch-result-page"; //$NON-NLS-1$
 	public static final String HV_ALL_TOPICS_PAGE = "all-topics-page"; //$NON-NLS-1$
 	public static final String HV_BROWSER_PAGE = "browser-page"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP_PAGE = "context-help-page"; //$NON-NLS-1$
