@@ -238,6 +238,7 @@ public class ExternalToolsUtil {
 					break;
 	
 				case ARG_DBL_QUOTE :
+					buffer.append(ch);
 					inQuotes = !inQuotes;
 					break;
 						
