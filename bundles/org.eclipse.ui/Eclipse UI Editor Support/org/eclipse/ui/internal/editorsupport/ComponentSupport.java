@@ -50,7 +50,7 @@ public final class ComponentSupport {
 	private static IEditorPart getOleEditor() {
 		try {
 			Class oleEditorClass =
-				Class.forName("org.eclipse.ui.internal.editorsupport.OleEditor");
+				Class.forName("org.eclipse.ui.internal.editorsupport.win32.OleEditor");
 			return (IEditorPart) oleEditorClass.newInstance();
 		} catch (ClassNotFoundException exception) {
 			return null;
