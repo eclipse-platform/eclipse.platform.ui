@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.action;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -27,6 +26,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * The <code>ToolBarContributionItem</code> class provides a wrapper for tool bar
@@ -57,12 +58,6 @@ public class ToolBarContributionItem extends ContributionItem {
 	 * the preffered size.
 	 */
 	private MenuManager chevronMenuManager = null;
-	
-	/**
-	 * The context menu of the cool item. If one is not defined the the parents context menu
-	 * is used.
-	 */
-	private MenuManager contextMenuManager = null;
 	
 	/**
 	 * Mininum number of tool items to show in the cool item widget.
@@ -262,7 +257,6 @@ public class ToolBarContributionItem extends ContributionItem {
 			if (wrapIndicies[row] <= coolItemIndex) {
 
 				int nextRow = row + 1;
-				int rowStartIndex = wrapIndicies[row];
 				int nextRowStartIndex;
 				if (nextRow > (wrapIndicies.length - 1) ) {
 					nextRowStartIndex = lastIndex + 1;
@@ -274,7 +268,6 @@ public class ToolBarContributionItem extends ContributionItem {
 				if (coolItemIndex == (nextRowStartIndex -1)) {
 					isLastOnRow = true;
 				}
-				boolean isAloneOnRow = ((rowStartIndex == coolItemIndex) && isLastOnRow);
 				break;
 			 }
 		 }
@@ -431,7 +424,7 @@ public class ToolBarContributionItem extends ContributionItem {
 	 */
 	public void update(String propertyName) {
 		if (coolItem != null) {	
-			boolean sizeChanged = (propertyName == null) || propertyName.equals(CoolBarManager.SIZE);
+			boolean sizeChanged = (propertyName == null) || propertyName.equals(ICoolBarManager.SIZE);
 			
 			if (sizeChanged) {
 				updateSize(true);
@@ -440,7 +433,7 @@ public class ToolBarContributionItem extends ContributionItem {
 		}
 		// Sets its own visibility depending on whether there exist any items in 
 		// tool bar manager that are visible
-		if (propertyName.equals(CoolBarManager.VISIBILITY)) {
+		if (propertyName.equals(ICoolBarManager.VISIBILITY)) {
 			// if there is no visible items in our tool bar
 			if (toolBarManager != null) {
 				IContributionItem[] items = toolBarManager.getItems();
