@@ -29,7 +29,6 @@ public class InstallDeltaWizard
 	private ISessionDelta[] deltas;
 	private InstallDeltaWizardPage page;
 	private int processed = 0;
-	private static boolean remindOnCancel = true;
 
 	/**
 	 * Constructor for InstallDeltaWizard.
@@ -78,12 +77,11 @@ public class InstallDeltaWizard
 	 * @see org.eclipse.jface.wizard.Wizard#performCancel()
 	 */
 	public boolean performCancel() {
-		if (remindOnCancel) {
+		if (UpdateUI.getRemindOnCancel()) {
 			MessageDialog.openInformation(
 				getContainer().getShell(),
 				getWindowTitle(),
 				UpdateUI.getString("InstallDeltaWizard.reminder")); //$NON-NLS-1$
-			remindOnCancel = false;
 		}
 		return super.performCancel();
 	}

@@ -54,6 +54,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	private String appServerHost;
 	private int appServerPort;
 	private UpdateLabelProvider labelProvider;
+	private static boolean remindOnCancel = true;
 
 	/**
 	 * The constructor.
@@ -478,6 +479,14 @@ public class UpdateUI extends AbstractUIPlugin {
 					+ "/install"; //$NON-NLS-1$
 			return URLEncoder.encode(value);
 		}
+	}
+	
+	public static boolean getRemindOnCancel() {
+		return remindOnCancel;
+	}
+	
+	public static void setRemindOnCancel(boolean remind) {
+		remindOnCancel = remind; 
 	}
 
 }

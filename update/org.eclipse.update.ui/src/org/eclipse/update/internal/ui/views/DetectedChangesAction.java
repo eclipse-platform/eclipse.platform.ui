@@ -18,6 +18,7 @@ public class DetectedChangesAction extends Action {
 			.showWhile(UpdateUI.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 			public void run() {
 				try {
+					UpdateUI.setRemindOnCancel(false);
 					SiteManager.handleNewChanges();
 				} catch (CoreException e) {
 					UpdateUI.logException(e);
