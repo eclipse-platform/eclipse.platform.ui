@@ -8,6 +8,7 @@ import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 
@@ -161,11 +162,12 @@ public class ShowViewMenu extends ShortcutMenu implements IPartListener {
 			try {
 				page.showView(descs[i].getID());
 			} catch (PartInitException e) {
-				MessageDialog
+				ErrorDialog
 					.openError(
 						window.getShell(),
 						WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
-						e.getMessage());
+						e.getMessage(),
+						e.getStatus());
 			}
 		}
 	}

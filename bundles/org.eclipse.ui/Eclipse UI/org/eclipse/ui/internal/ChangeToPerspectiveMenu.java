@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -69,9 +70,10 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 	 * Handles workbench exception
 	 */
 	private void handleWorkbenchException(WorkbenchException e) {
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			getWindow().getShell(),
 			WorkbenchMessages.getString("ChangeToPerspectiveMenu.errorTitle"), //$NON-NLS-1$,
-			e.getMessage());
+			e.getMessage(),
+			e.getStatus());
 	}
 }

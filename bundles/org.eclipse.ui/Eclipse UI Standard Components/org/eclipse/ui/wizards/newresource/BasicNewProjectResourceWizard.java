@@ -266,7 +266,7 @@ private static void openInNewPage(IPerspectiveDescriptor desc) {
 	try {
 		window.openPage(desc.getId(), ResourcesPlugin.getWorkspace().getRoot());
 	} catch (WorkbenchException e) {
-		MessageDialog.openError(window.getShell(), PAGE_PROBLEMS_TITLE, e.getMessage());
+		ErrorDialog.openError(window.getShell(), PAGE_PROBLEMS_TITLE, e.getMessage(), e.getStatus());
 	}
 }
 /* (non-Javadoc)
@@ -281,10 +281,11 @@ private static void openInNewWindow(IPerspectiveDescriptor desc) {
 			ResourcesPlugin.getWorkspace().getRoot());
 	} catch (WorkbenchException e) {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			window.getShell(),
 			WINDOW_PROBLEMS_TITLE,
-			e.getMessage());
+			e.getMessage(),
+			e.getStatus());
 	}
 }
 /* (non-Javadoc)

@@ -48,10 +48,11 @@ public void createPage() {
 	catch (CoreException e) {
 		// Just inform the user about the error. The details are
 		// written to the log by now.
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			(Shell)null, 
 			WorkbenchMessages.getString("PreferenceNode.errorTitle"),  //$NON-NLS-1$
-			WorkbenchMessages.getString("PreferenceNode.errorMessage"));  //$NON-NLS-1$
+			WorkbenchMessages.getString("PreferenceNode.errorMessage"),  //$NON-NLS-1$
+			e.getStatus());
 		page = new EmptyPreferencePage();
 	}
 	

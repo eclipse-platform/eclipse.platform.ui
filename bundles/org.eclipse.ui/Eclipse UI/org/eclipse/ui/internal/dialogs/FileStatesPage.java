@@ -11,6 +11,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -221,10 +222,11 @@ public boolean performOk() {
 		//As it is only a copy save it back in
 		ResourcesPlugin.getWorkspace().setDescription(description);
 	} catch (CoreException exception) {
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			getShell(),
 			SAVE_ERROR_MESSAGE,
-			exception.getMessage());
+			exception.getMessage(),
+			exception.getStatus());
 		return false;
 	}
 

@@ -8,6 +8,7 @@ package org.eclipse.ui.views.navigator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
@@ -82,10 +83,11 @@ public void run() {
 			((ISetSelectionTarget) view).selectReveal(selection);
 		}
 	} catch (PartInitException e) {
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			page.getWorkbenchWindow().getShell(),
 			ResourceNavigatorMessages.getString("ShowInNavigator.errorMessage"), //$NON-NLS-1$
-			e.getMessage());
+			e.getMessage(),
+			e.getStatus());
 	}
 }
 /*

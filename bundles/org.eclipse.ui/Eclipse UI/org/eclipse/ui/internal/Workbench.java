@@ -729,8 +729,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 			newWindow.openPage(getPerspectiveRegistry().getDefaultPerspective(), root);
 		} catch (WorkbenchException e) {
-			MessageDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
-			e.getMessage());
+			ErrorDialog.openError(newWindow.getShell(), WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
+			e.getMessage(),e.getStatus());
 		}
 		newWindow.open();
 	}
@@ -844,10 +844,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				page = (WorkbenchPage)getActiveWorkbenchWindow().openPage(
 					WorkbenchPlugin.getDefault().getPerspectiveRegistry().getDefaultPerspective(), root);
 			} catch (WorkbenchException e) {
-				MessageDialog.openError(
+				ErrorDialog.openError(
 					win.getShell(), 
 					WorkbenchMessages.getString("Problems_Opening_Page"), //$NON-NLS-1$
-					e.getMessage());
+					e.getMessage(),
+					e.getStatus());
 			}
 		}
 	

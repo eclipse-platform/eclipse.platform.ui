@@ -44,10 +44,11 @@ public void createPage() {
 	} catch (CoreException e) {
 		// Just inform the user about the error. The details are
 		// written to the log by now.
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			(Shell)null, 
 			WorkbenchMessages.getString("PropertyPageNode.errorTitle"),  //$NON-NLS-1$
-			WorkbenchMessages.getString("PropertyPageNode.errorMessage"));  //$NON-NLS-1$
+			WorkbenchMessages.getString("PropertyPageNode.errorMessage"),  //$NON-NLS-1$
+			e.getStatus());  
 		page = new EmptyPropertyPage();
 	}
 	setPage(page);

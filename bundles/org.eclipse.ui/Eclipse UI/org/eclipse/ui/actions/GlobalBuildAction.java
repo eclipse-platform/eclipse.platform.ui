@@ -247,10 +247,11 @@ public void run() {
 	}
 	catch (CoreException e) {
 		WorkbenchPlugin.log("Exception in " + getClass().getName() + ".run: " + e);//$NON-NLS-2$//$NON-NLS-1$
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			getShell(),
 			WorkbenchMessages.getString("GlobalBuildAction.buildProblems"), //$NON-NLS-1$
-			WorkbenchMessages.format("GlobalBuildAction.internalError", new Object[] {e.getMessage()})); //$NON-NLS-1$
+			WorkbenchMessages.format("GlobalBuildAction.internalError", new Object[] {e.getMessage()}), //$NON-NLS-1$
+			e.getStatus());
 		return false;
 	}
 	

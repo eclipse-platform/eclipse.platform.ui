@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -313,7 +314,11 @@ public boolean performOk() {
 			resource.setDerived(derivedBox.getSelection());
 		}
 		catch (CoreException exception){
-			MessageDialog.openError(getShell(), WorkbenchMessages.getString("InternalError"), exception.getLocalizedMessage()); //$NON-NLS-1$
+			ErrorDialog.openError(
+				getShell(), 
+				WorkbenchMessages.getString("InternalError"), //$NON-NLS-1$
+				exception.getLocalizedMessage(),
+				exception.getStatus()); 
 			return false;
 		}
 	}		

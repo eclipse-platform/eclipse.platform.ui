@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -74,10 +75,11 @@ public class OpenNewWindowAction extends Action {
 
 			workbenchWindow.getWorkbench().openWorkbenchWindow(perspId, pageInput);
 		} catch (WorkbenchException e) {
-			MessageDialog.openError(
+			ErrorDialog.openError(
 				workbenchWindow.getShell(),
 				WorkbenchMessages.getString("OpenNewWindowAction.errorTitle"), //$NON-NLS-1$,
-				e.getMessage());
+				e.getMessage(),
+				e.getStatus());
 		}
 	}
 }

@@ -6,6 +6,7 @@ package org.eclipse.ui.internal;
  */
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -210,10 +211,11 @@ public class DecoratorDefinition {
 	private void handleCoreException(CoreException exception) {
 
 		//If there is an error then reset the enabling to false
-		MessageDialog.openError(
+		ErrorDialog.openError(
 			null,
 			WorkbenchMessages.getString("Internal_error"), //$NON-NLS-1$
-			exception.getLocalizedMessage());
+			exception.getLocalizedMessage(),
+			exception.getStatus());
 		this.enabled = false;
 	}
 

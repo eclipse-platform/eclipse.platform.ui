@@ -8,6 +8,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.internal.registry.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
@@ -39,8 +40,8 @@ public void run() {
 		try {
 			page.showView(desc.getID());
 		} catch (PartInitException e) {
-			MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
-				e.getMessage());
+			ErrorDialog.openError(window.getShell(), WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
+				e.getMessage(),e.getStatus());
 		}
 	}
 }

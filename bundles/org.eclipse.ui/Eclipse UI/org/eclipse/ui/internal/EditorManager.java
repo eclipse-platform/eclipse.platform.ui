@@ -927,8 +927,11 @@ public class EditorManager {
 				} catch (CoreException e) {
 					IStatus status = new Status(Status.WARNING, PlatformUI.PLUGIN_ID, 0, WorkbenchMessages.getString("EditorManager.saveFailed"), e); //$NON-NLS-1$
 					WorkbenchPlugin.log(WorkbenchMessages.getString("EditorManager.saveFailed"), status); //$NON-NLS-1$
-					MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("Error"), //$NON-NLS-1$
-					WorkbenchMessages.format("EditorManager.saveFailedMessage", new Object[] { e.getMessage()})); //$NON-NLS-1$
+					ErrorDialog.openError(
+						window.getShell(), 
+						WorkbenchMessages.getString("Error"), //$NON-NLS-1$
+						WorkbenchMessages.format("EditorManager.saveFailedMessage", new Object[] { e.getMessage()}), //$NON-NLS-1$
+						e.getStatus());
 				}
 			}
 		};
