@@ -192,9 +192,6 @@ private Class getCommonResourceClass(List objects) {
 		if(object instanceof IAdaptable){
 			if(object instanceof IResource)
 				continue;
-			//Leave the resources out of this
-			if(object instanceof IResource)
-				break;
 				
 			IResource resource = getAdaptedResource((IAdaptable) object);
 			
