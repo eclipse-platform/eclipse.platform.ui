@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormAttachment;
 
 /**
  */
@@ -122,6 +124,21 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				}
 			});
 			coolBar.setMenu(getCoolBarMenu());
+			coolBar.getParent().addListener(SWT.Resize, new Listener() {
+				public void handleEvent(Event e) {
+					// TEMPORARY CODE
+					// workaround for wrapping coolbar
+					coolBar.getParent().layout(false);
+					FormData data = (FormData)(coolBar.getLayoutData());
+					FormAttachment attach = data.left;
+					int width = coolBar.getParent().getClientArea().width;
+					if (attach != null && attach.control != null) {
+						Rectangle rect = attach.control.getBounds();
+						width -= rect.x + rect.width;
+					}
+					data.width = width;
+				}
+			});
 		}
 		return coolBar;
 	}

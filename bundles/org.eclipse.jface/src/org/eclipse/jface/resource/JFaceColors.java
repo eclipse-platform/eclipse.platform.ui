@@ -105,6 +105,12 @@ public class JFaceColors {
 	}
 	
 	
+	
+	public static Color getSchemeBorder(Display display) {
+		
+		return getColorSetting(display,JFacePreferences.SCHEME_BORDER_COLOR);
+	}
+	
 	/**
 	 * Get the default foreground color to use for the color scheme.
 	 */

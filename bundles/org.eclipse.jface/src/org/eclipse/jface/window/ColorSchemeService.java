@@ -100,6 +100,8 @@ public class ColorSchemeService {
 			//JFaceColors.getSchemeSelectionBackground(parent.getDisplay()));
 		control.setSelectionForeground(
 			control.getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+		control.setBorderColor(
+				control.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
 //			JFaceColors.getSchemeSelectionForeground(control.getDisplay()));
 //		Control[] children = control.getChildren();
 //		for (int i = 0; i < children.length; i++) {

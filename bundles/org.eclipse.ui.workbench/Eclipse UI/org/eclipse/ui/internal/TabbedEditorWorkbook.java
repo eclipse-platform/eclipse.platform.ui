@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.window.ColorSchemeService;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
@@ -122,12 +123,9 @@ protected void setControlSize() {
 
 protected void createPresentation(Composite parent) {
 	usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
-	
+
 	tabFolder = new CTabFolder2(parent, SWT.BORDER | SWT.SINGLE | tabLocation);
-	tabFolder.setBackground(JFaceColors.getSchemeBackground(parent.getDisplay()));
-	tabFolder.setForeground(JFaceColors.getSchemeForeground(parent.getDisplay()));
-	tabFolder.setSelectionBackground(JFaceColors.getSchemeSelectionBackground(parent.getDisplay()));
-	tabFolder.setSelectionForeground(JFaceColors.getSchemeSelectionForeground(parent.getDisplay()));
+	ColorSchemeService.setTabColors(tabFolder);
 	
 	// prevent close button and scroll buttons from taking focus
 	tabFolder.setTabList(new Control[0]);

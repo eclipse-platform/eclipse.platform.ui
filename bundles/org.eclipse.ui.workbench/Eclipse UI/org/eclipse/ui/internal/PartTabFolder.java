@@ -195,9 +195,7 @@ public void createControl(Composite parent) {
 
 	// Create control.	
 	this.parent = parent;
-	RGB border =  new RGB(121, 142, 194);
 	tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
-	tabFolder.setBorderColor(new Color(parent.getDisplay(),border));
 	ColorSchemeService.setTabColors(tabFolder);
 	
 	// listener to switch between visible tabItems
