@@ -347,9 +347,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			if (amountDeleted > 0) {
 				// deletion
 				fInputBuffer.replace(bufferModifyOffset, bufferModifyOffsetEnd, text);
-				InputPartition partition = null; 
 				// replace the last partition
-				partition = new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, bufferStartOffset, fInputBuffer.length());
+				InputPartition partition = new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, bufferStartOffset, fInputBuffer.length());
 				fPartitions.set(fPartitions.size() - 1, partition);
 			} else {
 				// insert/replace - must process entire buffer in case of

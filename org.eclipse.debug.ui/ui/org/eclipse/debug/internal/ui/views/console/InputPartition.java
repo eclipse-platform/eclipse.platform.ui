@@ -16,7 +16,7 @@ public class InputPartition extends StreamPartition {
 	
 	/**
 	 * Once an input partition has been written to standard-in, it cannot
-	 * be modifed.
+	 * be modified.
 	 */
 	private boolean fReadOnly = false;
 
