@@ -112,8 +112,8 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 			if (fNextJob == null) {
 				fNextJob= new LabelJob(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.0"), fPresentation); //$NON-NLS-1$
 			}
+			fNextJob.computeText(element);
 		}
-		fNextJob.computeText(element);
 	}
 	
 	/**
