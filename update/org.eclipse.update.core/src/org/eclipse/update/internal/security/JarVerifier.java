@@ -29,22 +29,10 @@ public class JarVerifier {
 	private JarVerificationResult result;
 
 	/**
-	 * List of certificates of the KeyStores
+	 * List of initialized keystores
 	 */
-	private List /* of List of KeystoreHandle */
-	listOfKeystoreHandles;
-
-	/**
-	 * check validity of keystore
-	 * default == FALSE 
-	 */
-	private boolean shouldVerifyKeystore = false;
-
-	/**
-	 * Retrieve all keystore handles (reload keystores)
-	 * default == FALSE 
-	 */
-	private boolean shouldRetrieveKeystoreHandles = false;
+	List /* of KeyStore */
+	listOfKeystores;
 
 	/**
 	 * Number of files in the JarFile
@@ -87,44 +75,45 @@ public class JarVerifier {
 	 * list of certificate once.
 	 */
 	private List getKeyStores() throws CoreException {
-		if (listOfKeystoreHandles == null || shouldRetrieveKeystoreHandles) {
-			listOfKeystoreHandles = new ArrayList(0);
-			KeyStores listOfKeystores = new KeyStores();
+		if (listOfKeystores == null) {
+			listOfKeystores = new ArrayList(0);
+			KeyStores listOfKeystoreHandles = new KeyStores();
 			InputStream in = null;
 			KeyStore keystore = null;
-			while (listOfKeystores.hasNext()) {
+			while (listOfKeystoreHandles.hasNext()) {
 				try {
-					KeystoreHandle handle = listOfKeystores.next();
-					keystore = KeyStore.getInstance(handle.getType());
+					KeystoreHandle handle = listOfKeystoreHandles.next();
 					in = handle.getLocation().openStream();
-					keystore.load(in, null); // no password
-				} catch (NoSuchAlgorithmException e) {
-					throw newCoreException("Unable to find encrption algorithm", e);
+					try {
+						keystore = KeyStore.getInstance(handle.getType());
+						keystore.load(in, null); // no password
+					} catch (NoSuchAlgorithmException e) {
+						throw newCoreException("Unable to find encryption algorithm", e);
 
-				} catch (CertificateException e) {
-					throw newCoreException("Unable to load a certificate in the keystore", e);
+					} catch (CertificateException e) {
+						throw newCoreException("Unable to load a certificate in the keystore", e);
+					} catch (KeyStoreException e) {
+						throw newCoreException("Unable to find provider for the keystore type", e);
+					} finally {
+						if (in != null) {
+							try {
+								in.close();
+							} catch (IOException e) {
+							} // nothing
+						}
+					} // try loading a keyStore
+
+					// keystore was loaded
+					listOfKeystores.add(keystore);
 				} catch (IOException e) {
-					// open error message, the keystore is not valid
-					throw newCoreException("Unable to access keystore", e);
-				} catch (KeyStoreException e) {
-					throw newCoreException("Unable to find provider for the keystore type", e);
-				} finally {
-					if (in != null) {
-						try {
-							in.close();
-						} catch (IOException e) {
-						} // nothing
-					}
-				} // try loading a keyStore
-
-				// keystore was loaded
-				listOfKeystoreHandles.add(keystore);
+					// nothing... if the keystore doesn't exist, continue	
+				}
 
 			} // while all key stores
 
 		}
 
-		return listOfKeystoreHandles;
+		return listOfKeystores;
 	}
 
 	/**
@@ -132,7 +121,8 @@ public class JarVerifier {
 	 */
 	private void initializeVariables(File jarFile) throws IOException {
 		result = new JarVerificationResult();
-		result.setResultCode(UNKNOWN_ERROR);
+		result.setVerificationCode(UNKNOWN_ERROR);
+		result.setResultCode(JarVerificationResult.ASK_USER);
 		result.setResultException(
 			new Exception(
 				Policy.bind("JarVerifier.InvalidJarFile", jarFile.getAbsolutePath())));
@@ -149,17 +139,16 @@ public class JarVerifier {
 	/**
 	 * Returns true if one of the certificate exists in the keystore
 	 */
-	private boolean existsInKeystore(Certificate[] certs) throws CoreException {
+	private boolean existsInKeystore(Certificate cert) throws CoreException {
 		try {
-			for (int i = 0; i < certs.length; i++) {
-				List keyStores = getKeyStores();
-				if (!keyStores.isEmpty()) {
-					Iterator listOfKeystores = keyStores.iterator();
-					while (listOfKeystores.hasNext()) {
-						KeyStore keystore = (KeyStore) listOfKeystores.next();
+			List keyStores = getKeyStores();
+			if (!keyStores.isEmpty()) {
+				Iterator listOfKeystores = keyStores.iterator();
+				while (listOfKeystores.hasNext()) {
+					KeyStore keystore = (KeyStore) listOfKeystores.next();
 
-						if (keystore.getCertificateAlias(certs[i]) != null)
-							return true;
+					if (keystore.getCertificateAlias(cert) != null) {
+						return true;
 					}
 				}
 			}
@@ -191,7 +180,7 @@ public class JarVerifier {
 				}
 			}
 		} catch (IOException e) {
-			result.setResultCode(UNKNOWN_ERROR);
+			result.setVerificationCode(UNKNOWN_ERROR);
 			result.setResultException(e);
 		} finally {
 			if (monitor != null)
@@ -207,37 +196,25 @@ public class JarVerifier {
 		monitor = newMonitor;
 	}
 	/**
-	 * 
-	 */
-	public void shouldRetrieveHandles(boolean value) {
-		shouldRetrieveKeystoreHandles = value;
-	}
-	/**
-	 * 
-	 */
-	public void shouldVerifyKeystore(boolean value) {
-		shouldVerifyKeystore = value;
-	}
-	/**
-	 * Verifies integrity and the validity of a valid
-	 * URL representing a JAR file
-	 * the possible results are:
-	 *
-	 * result == NOT_SIGNED	 				if the jar file is not signed.
-	 * result == INTEGRITY_VERIFIED		 	if the Jar file has not been
-	 *										modified since it has been
-	 *										signed
-	 * result == CORRUPTED 					if the Jar file has been changed
-	 * 										since it has been signed.
-	 * result == SOURCE_VERIFIED	 		if all the files in the Jar
-	 *										have a certificate that is
-	 * 										present in the keystore
-	 * result == UNKNOWN_ERROR		 		an occured during process, do
-	 *                                      not install.
-	 * result == VERIFICATION.CANCELLED     if process was cancelled, do
-	 *										not install.
-	 * @return int
-	 */
+	* Verifies integrity and the validity of a valid
+	* URL representing a JAR file
+	* the possible results are:
+	*
+	* result == NOT_SIGNED	 				if the jar file is not signed.
+	* result == INTEGRITY_VERIFIED		 	if the Jar file has not been
+	*										modified since it has been
+	*										signed
+	* result == CORRUPTED 					if the Jar file has been changed
+	* 										since it has been signed.
+	* result == SOURCE_VERIFIED	 		if all the files in the Jar
+	*										have a certificate that is
+	* 										present in the keystore
+	* result == UNKNOWN_ERROR		 		an occured during process, do
+	*                                      not install.
+	* result == VERIFICATION.CANCELLED     if process was cancelled, do
+	*										not install.
+	* @return int
+	*/
 	public JarVerificationResult verify(File jarFile) {
 
 		try {
@@ -251,11 +228,11 @@ public class JarVerifier {
 			// as verifyIntegrity already did it
 
 			// verify source certificate
-			if (result.getResultCode() == INTEGRITY_VERIFIED)
+			if (result.getVerificationCode() == INTEGRITY_VERIFIED)
 				verifyAuthentication();
 
 		} catch (Exception e) {
-			result.setResultCode(UNKNOWN_ERROR);
+			result.setVerificationCode(UNKNOWN_ERROR);
 			result.setResultException(e);
 		}
 
@@ -270,18 +247,18 @@ public class JarVerifier {
 	 */
 	private void verifyAuthentication() throws CoreException {
 
-		Iterator entries = result.getCertificates().iterator();
+		CertificatePair[] entries = result.getRootCertificates();
 		boolean certificateFound = false;
 
 		// If all the cartificate of an entry are
 		// not found in the list of known certifcate
-		// we exit the loop.
-		while (entries.hasNext()) {
-			Certificate[] certs = (Certificate[]) entries.next();
-			certificateFound = existsInKeystore(certs);
+		// the certificate is not trusted by any keystore.
+		for (int i = 0; i < entries.length; i++) {
+			certificateFound = existsInKeystore(entries[i].getRoot());
 			if (certificateFound) {
-				result.setResultCode(SOURCE_VERIFIED);
-				break;
+				result.setVerificationCode(SOURCE_VERIFIED);
+				result.setFoundCertificate(entries[i]);
+				return;
 			}
 
 		}
@@ -294,7 +271,6 @@ public class JarVerifier {
 
 		JarInputStream jis = null;
 		Collection certificateEntries; // of Certificate[] 
-		
 
 		try {
 			// If the JAR is signed and not valid
@@ -317,18 +293,18 @@ public class JarVerifier {
 				}
 
 				if (certificateFound)
-					result.setResultCode(INTEGRITY_VERIFIED);
+					result.setVerificationCode(INTEGRITY_VERIFIED);
 				else
-					result.setResultCode(NOT_SIGNED);
+					result.setVerificationCode(NOT_SIGNED);
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed
 			// but content has changed since signed
-			result.setResultCode(CORRUPTED);
+			result.setVerificationCode(CORRUPTED);
 		} catch (InterruptedException e) {
-			result.setResultCode(VERIFICATION_CANCELLED);
+			result.setVerificationCode(VERIFICATION_CANCELLED);
 		} catch (Exception e) {
-			result.setResultCode(UNKNOWN_ERROR);
+			result.setVerificationCode(UNKNOWN_ERROR);
 			result.setResultException(e);
 		} finally {
 			if (jis != null) {
@@ -339,11 +315,6 @@ public class JarVerifier {
 			}
 		}
 
-	}
-	/**
-	 */
-	private boolean verifyIntegrityOfKeyStore() {
-		return shouldVerifyKeystore;
 	}
 
 	/**

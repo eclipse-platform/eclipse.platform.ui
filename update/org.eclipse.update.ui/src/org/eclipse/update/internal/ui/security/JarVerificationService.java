@@ -18,20 +18,11 @@ import org.eclipse.update.internal.security.JarVerificationResult;
 import org.eclipse.update.internal.security.JarVerifier;
 import org.eclipse.update.internal.core.Policy;
 /**
- * The class will verify the Component and return a JarVerifierResult object
- * to the sender. The result contains a returnCode.
- * The return code is one of the VerifyComponent static values.
- *
- * If the component is signed and trusted by one of the keystore
- * the user will not be prompted, and we'll consider the component
- * to be installed.
  *
  * Call example:
  * JarVerificationService verifier = new JarVerificationService();
- * JarVerificationResult result = verifier.okToInstall(File jarFileToVerify,String nameOfTheComponent, IProgressMonitor monitor);
- * if (result.getResultCode()==result.OK_TO_INSTALL){
- *    // install component
- * }
+ * JarVerificationResult result = verifier.verify(IFeature,ContentReferences[], InstallMonitor monitor);
+ * throws an exception if user canceled or error occured
  */
 public class JarVerificationService implements IFeatureVerification {
 
@@ -87,13 +78,7 @@ public class JarVerificationService implements IFeatureVerification {
 
 		return result;
 	}
-	/**
-	 * 
-	 */
-	private void jarVerifierError(final String errorMessage) {
-		MessageDialog.openError(shell, Policy.bind("JarVerificationService.Verification"), errorMessage + Policy.bind("JarVerificationService.InstallationAborted")); //$NON-NLS-1$ //$NON-NLS-2$
-		getResult().setResultCode(JarVerificationResult.CANCEL_INSTALL);
-	}
+
 	/**
 	 * returns an JarVerificationResult
 	 * The monitor can be null.
@@ -106,27 +91,19 @@ public class JarVerificationService implements IFeatureVerification {
 		switch (getResult().getResultCode()) {
 			case JarVerifier.UNKNOWN_ERROR :
 				{
-					jarVerifierError(Policy.bind("JarVerificationService.ErrorVerification")); //$NON-NLS-1$
+					getResult().setResultCode(JarVerificationResult.ERROR_INSTALL);					
 					break;
 				}
 			case JarVerifier.VERIFICATION_CANCELLED :
 				{
-					jarVerifierError(Policy.bind("JarVerificationService.VerificationCanceled")); //$NON-NLS-1$
+					getResult().setResultCode(JarVerificationResult.CANCEL_INSTALL);							
 					break;
 				}
-			case JarVerifier.SOURCE_VERIFIED :
-				{
-					getResult().setResultCode(JarVerificationResult.OK_TO_INSTALL);
-					getResult().setResultException(null);
-					break;
-				}
-				// if the JAR is not signed, corrupted or not validated
-				// ask the user for confirmation.
 			default :
 				{
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							openWizard(jarFile, id, featureName, providerName);
+							getResult().setResultCode(openWizard(jarFile, id, featureName, providerName));
 						}
 					});
 				}
@@ -166,10 +143,13 @@ public class JarVerificationService implements IFeatureVerification {
 		for (int i = 0; i < references.length; i++) {
 			if (references[i] instanceof JarContentReference){
 				JarContentReference jarReference = (JarContentReference)references[i];
-				JarVerificationResult result = okToInstall(jarReference.asFile(),feature.getVersionedIdentifier().toString(),feature.getLabel(),feature.getProvider(),monitor);
+				result = okToInstall(jarReference.asFile(),feature.getVersionedIdentifier().toString(),feature.getLabel(),feature.getProvider(),monitor);
 				if (result.getResultCode()==JarVerificationResult.CANCEL_INSTALL){
-					throw newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),null); //$NON-NLS-1$
+					throw newCoreException(Policy.bind("JarVerificationService.CancelInstall"),result.getResultException()); //$NON-NLS-1$
 				}
+				if (result.getResultCode()==JarVerificationResult.ERROR_INSTALL){
+					throw newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),result.getResultException()); //$NON-NLS-1$
+				}				
 			}
 		}
 		} catch (IOException e){

@@ -173,6 +173,7 @@ public class KeyStores {
 			// url.openStream, reader.read (x2)
 			// log
 			// the keystore may not exist
+			e.printStackTrace();			
 		} finally {
 			try { in.close();} catch (Exception e){}
 		}
@@ -184,7 +185,7 @@ public class KeyStores {
 	 */
 	private KeystoreHandle getKeystoreFromString(String content,URL rootURL){
 		KeystoreHandle handle = null;
-		String keyStoreType = DEFAULT_KEYSTORE_TYPE;
+		String keyStoreType = Security.getProperty(DEFAULT_KEYSTORE_TYPE);
 		
 		
 		int indexOfSpace = content.indexOf(' ');

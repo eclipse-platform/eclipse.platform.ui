@@ -5,6 +5,8 @@ package org.eclipse.update.internal.ui.security;
  */
 
 import java.io.File;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -14,10 +16,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.update.internal.security.CertificatePair;
 import org.eclipse.update.internal.security.JarVerificationResult;
 import org.eclipse.update.internal.security.JarVerifier;
 import org.eclipse.update.internal.core.Policy;
-
 
 public class JarVerificationDialog extends Dialog {
 	protected JarVerificationResult _VerificationResult = null;
@@ -28,12 +30,17 @@ public class JarVerificationDialog extends Dialog {
 	protected Button _buttonInstall;
 	protected Button _buttonCancel;
 	protected Button _buttonInstallCertificate;
-	protected Button _buttonViewCertificate;	
 	public static boolean COMPONENT_TO_INSTALL = false;
 	/**
 	 *
 	 */
-	public JarVerificationDialog(Shell shell, String strId, String strComponentName, String strProviderName, File file, JarVerificationResult VerificationResult) {
+	public JarVerificationDialog(
+		Shell shell,
+		String strId,
+		String strComponentName,
+		String strProviderName,
+		File file,
+		JarVerificationResult VerificationResult) {
 		super(shell);
 		_VerificationResult = VerificationResult;
 		_file = file;
@@ -56,7 +63,8 @@ public class JarVerificationDialog extends Dialog {
 	 * of the dialog (above the button bar).
 	 */
 	protected Control createDialogArea(Composite compositeParent) {
-		getShell().setText(Policy.bind("JarVerificationDialog.Verification")); //$NON-NLS-1$
+		getShell().setText(Policy.bind("JarVerificationDialog.Verification"));
+		//$NON-NLS-1$
 		// Composite: Client
 		//------------------
 		Composite compositeClient = new Composite(compositeParent, SWT.NULL);
@@ -65,50 +73,60 @@ public class JarVerificationDialog extends Dialog {
 		compositeClient.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// Text: Information
 		//------------------
-		Text textInformation = new Text(compositeClient, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-		textInformation.setLayoutData(new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL));
+		Text textInformation =
+			new Text(compositeClient, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+		textInformation.setLayoutData(
+			new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL));
 		StringBuffer strb = new StringBuffer();
 		switch (_VerificationResult.getVerificationCode()) {
 			case JarVerifier.NOT_SIGNED :
-				strb.append(Policy.bind("JarVerificationDialog.AboutToInstall") ); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.AboutToInstall"));
+				//$NON-NLS-1$
 				strb.append("\n\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.NotDigitallySigned")); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.NotDigitallySigned"));
+				//$NON-NLS-1$
 				strb.append("\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.CannotVerifyProvider") ); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.CannotVerifyProvider"));
+				//$NON-NLS-1$
 				strb.append("\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt") ); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt")); //$NON-NLS-1$ 
 				textInformation.setText(strb.toString());
 				break;
 			case JarVerifier.CORRUPTED :
-				strb.append(Policy.bind("JarVerificationDialog.CorruptedContent") ); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.CorruptedContent"));
+				//$NON-NLS-1$
 				strb.append("\n\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.ComponentNotInstalled") ); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.ComponentNotInstalled"));
+				//$NON-NLS-1$
 				textInformation.setText(strb.toString());
 				break;
 			case JarVerifier.INTEGRITY_VERIFIED :
+				strb.append(Policy.bind("JarVerificationDialog.SignedComponent"));
+				//$NON-NLS-1$
+				strb.append("\n\n"); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.UnknownCertificate"));
+				//$NON-NLS-1$
+				strb.append("\n"); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.UnableToVerifyProvider"));
+				//$NON-NLS-1$ //
+				strb.append("\n"); //$NON-NLS-1$
+				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt")); //$NON-NLS-1$ 
+				textInformation.setText(strb.toString());
+				break;
+			case JarVerifier.SOURCE_VERIFIED :
 				strb.append(Policy.bind("JarVerificationDialog.SignedComponent")); //$NON-NLS-1$
 				strb.append("\n\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.UnknownCertificate") ); //$NON-NLS-1$ 
+				strb.append("JarVerificationDialog.knownCertificate"); 
 				strb.append("\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.UnableToVerifyProvider") ); //$NON-NLS-1$ //
+				strb.append("JarVerificationDialog.ProviderKnown");
 				strb.append("\n"); //$NON-NLS-1$
-				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt") ); //$NON-NLS-1$ 
+				strb.append(Policy.bind("JarVerificationDialog.MayCorrupt")); //$NON-NLS-1$ 
 				textInformation.setText(strb.toString());
 				break;
 		}
-		if (_VerificationResult.getVerificationCode() == JarVerifier.INTEGRITY_VERIFIED) {
-			_buttonInstallCertificate = new Button(compositeClient, SWT.CHECK);
-			_buttonInstallCertificate.setText(Policy.bind("JarVerificationDialog.InstallCertificate")); //$NON-NLS-1$
-			_buttonInstallCertificate.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));			
-			_buttonViewCertificate = new Button(compositeClient, SWT.NONE);
-			_buttonViewCertificate.setText("View Certificate");
-			//_buttonInstallCertificate.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));	
-			_buttonViewCertificate.addSelectionListener(new SelectionAdapter(){
-				public void widgetSelected(SelectionEvent e) {
-					new CertificateDialog(getShell(),_VerificationResult).open();
-				}
-				
-			});	
+		if (_VerificationResult.getVerificationCode() == JarVerifier.INTEGRITY_VERIFIED
+			|| _VerificationResult.getVerificationCode() == JarVerifier.SOURCE_VERIFIED) {
+			addCertificateView(compositeClient);
 		}
 		// Composite: Information labels
 		//------------------------------
@@ -121,14 +139,14 @@ public class JarVerificationDialog extends Dialog {
 		// Label: File name
 		//-----------------
 		Label label = new Label(compositeInformation, SWT.NULL);
-		label.setText(Policy.bind("JarVerificationDialog.FileName") ); //$NON-NLS-1$ 
+		label.setText(Policy.bind("JarVerificationDialog.FileName")); //$NON-NLS-1$ 
 		label = new Label(compositeInformation, SWT.NULL);
 		label.setText(_file.getName());
 		// Component name
 		//---------------
 		if (_strComponentName != null && _strComponentName.length() > 0) {
 			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(Policy.bind("JarVerificationDialog.FeatureName") ); //$NON-NLS-1$ 
+			label.setText(Policy.bind("JarVerificationDialog.FeatureName")); //$NON-NLS-1$ 
 			label = new Label(compositeInformation, SWT.NULL);
 			label.setText(_strComponentName);
 		}
@@ -136,7 +154,8 @@ public class JarVerificationDialog extends Dialog {
 		//---------------------
 		if (_strId != null && _strId.length() > 0) {
 			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(Policy.bind("JarVerificationDialog.FeatureIdentifier")); //$NON-NLS-1$
+			label.setText(Policy.bind("JarVerificationDialog.FeatureIdentifier"));
+			//$NON-NLS-1$
 			label = new Label(compositeInformation, SWT.NULL);
 			label.setText(_strId);
 		}
@@ -144,7 +163,7 @@ public class JarVerificationDialog extends Dialog {
 		//--------------
 		if (_strProviderName != null && _strProviderName.length() > 0) {
 			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(Policy.bind("JarVerificationDialog.Provider") ); //$NON-NLS-1$ 
+			label.setText(Policy.bind("JarVerificationDialog.Provider")); //$NON-NLS-1$ 
 			label = new Label(compositeInformation, SWT.NULL);
 			label.setText(_strProviderName);
 		}
@@ -153,20 +172,25 @@ public class JarVerificationDialog extends Dialog {
 			//----------
 			Group group = new Group(compositeClient, SWT.NONE);
 			group.setLayout(new GridLayout());
-			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL));
+			group.setLayoutData(
+				new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_VERTICAL));
 			// Text: Instruction
 			//------------------
 			Text textInstruction = new Text(group, SWT.MULTI | SWT.READ_ONLY);
-			textInstruction.setText(Policy.bind("JarVerificationDialog.MayChooseToInstall")); //$NON-NLS-1$
+			textInstruction.setText(
+				Policy.bind("JarVerificationDialog.MayChooseToInstall"));
+			//$NON-NLS-1$
 			// Radio button: Install
 			//----------------------
 			_buttonInstall = new Button(group, SWT.RADIO);
-			_buttonInstall.setText(Policy.bind("JarVerificationDialog.Install")); //$NON-NLS-1$
+			_buttonInstall.setText(Policy.bind("JarVerificationDialog.Install"));
+			//$NON-NLS-1$
 			_buttonInstall.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			// Radio button: Cancel installation
 			//----------------------------------
 			_buttonCancel = new Button(group, SWT.RADIO);
-			_buttonCancel.setText(Policy.bind("JarVerificationDialog.Cancel")); //$NON-NLS-1$
+			_buttonCancel.setText(Policy.bind("JarVerificationDialog.Cancel"));
+			//$NON-NLS-1$
 			_buttonCancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			_buttonCancel.setSelection(true);
 		}
@@ -179,8 +203,46 @@ public class JarVerificationDialog extends Dialog {
 	public boolean okToInstall() {
 		return _buttonInstall != null ? _buttonInstall.getSelection() : false;
 	}
-	
-	private void openCertificateDialog(){
-		
+
+	private void addCertificateView(Composite compositeClient) {
+		CertificatePair pair = null;
+		X509Certificate certRoot = null;
+		X509Certificate certIssuer = null;
+		if (_VerificationResult.getFoundCertificate() == null) {
+			CertificatePair[] certs = _VerificationResult.getRootCertificates();
+			if (certs.length == 0)	return;
+			pair = (CertificatePair)certs[0];
+		} else {
+			pair = (CertificatePair) _VerificationResult.getFoundCertificate();
+		}
+			certRoot = (X509Certificate) pair.getRoot();
+			certIssuer = (X509Certificate) pair.getIssuer();			
+
+
+		// Text: Information
+		//------------------
+		Text textInformation =
+			new Text(compositeClient, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+		textInformation.setLayoutData(
+			new GridData(GridData.GRAB_VERTICAL | GridData.FILL_HORIZONTAL));
+		StringBuffer strb = new StringBuffer();
+		strb.append("JarVerificationDialog.RootCA");
+		strb.append("\n"); //$NON-NLS-1$
+		strb.append("JarVerificationDialog.CAVersion " + certRoot.getVersion());
+		strb.append("\n"); //$NON-NLS-1$
+		strb.append("JarVerificationDialog.CAIssuer " + certRoot.getIssuerDN().getName());
+		strb.append("\n"); //$NON-NLS-1$
+		strb.append("valid between: " + certRoot.getNotBefore().toLocaleString()+" and " +certRoot.getNotAfter().toLocaleString());
+		strb.append("\n\n"); //$NON-NLS-1$		
+		strb.append("JarVerificationDialog.IssuerCA");
+		strb.append("\n"); //$NON-NLS-1$
+		strb.append("JarVerificationDialog.CAVersion " + certIssuer.getVersion());
+		strb.append("\n"); //$NON-NLS-1$
+		strb.append("JarVerificationDialog.CAIssuer " + certIssuer.getIssuerDN().getName());
+		strb.append("\n"); //$NON-NLS-1$
+		strb.append("valid between: " + certIssuer.getNotBefore().toLocaleString()+" and " +certIssuer.getNotAfter().toLocaleString());
+		strb.append("\n\n"); //$NON-NLS-1$				
+		textInformation.setText(strb.toString());
+
 	}
 }

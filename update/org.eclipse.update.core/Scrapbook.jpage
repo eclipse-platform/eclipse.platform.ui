@@ -17,6 +17,7 @@ java.net.URL b =  new java.net.URL("jar",null,a.toExternalForm()+"!/hello.txt");
 b
 
 new java.net.URL("file",null,System.getProperty("java.io.tmpdir"));
+new java.net.URL("file",null,System.getProperty("user.home"));
 
 String tempDir = "c:\\TEMP\\features2.jar";
 java.net.URL TEMP_SITE = new java.net.URL("file",null,tempDir);
