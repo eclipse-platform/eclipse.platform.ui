@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles;
-
-import java.util.List;
+package org.eclipse.ui.internal.csm.activities.service;
 
 /**
  * <p>
@@ -26,26 +24,12 @@ import java.util.List;
  * 
  * @since 3.0
  */
-public interface IRoleRegistry {
-
-	/**
-	 * Registers an IRoleRegistryListener instance with this role registry.
-	 *
-	 * @param roleRegistryListener the IRoleRegistryListener instance to register.
-	 */
-	void addRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
+public interface IActivityServiceEvent {
 
 	/**
 	 * JAVADOC
-	 *
+	 * 
 	 * @return
-	 */
-	List getRoleDefinitions();
-
-	/**
-	 * Unregisters an IRoleRegistryListener instance with this role registry.
-	 *
-	 * @param roleRegistryListener the IRoleRegistryListener instance to unregister.
-	 */
-	void removeRoleRegistryListener(IRoleRegistryListener roleRegistryListener);
+	 */	
+	IActivityService getActivityActivationService();
 }

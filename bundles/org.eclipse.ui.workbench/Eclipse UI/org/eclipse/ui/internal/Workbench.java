@@ -421,7 +421,7 @@ public class Workbench
 
 	private CommandManager commandManager;
 	private ContextManager contextManager;
-	private volatile boolean keyFilterEnabled;
+	private volatile boolean keyFilterDisabled;
 	private final Object keyFilterMutex = new Object();
 	
 	private IWorkbenchWindow activeWorkbenchWindow;
@@ -471,7 +471,7 @@ public class Workbench
 			final Display display = Display.getCurrent();
 			display.removeFilter(SWT.KeyDown, keyBindingFilter);
 			display.removeFilter(SWT.Traverse, keyBindingFilter);
-			keyFilterEnabled = true;
+			keyFilterDisabled = true;
 		}
 	}
 
@@ -480,13 +480,13 @@ public class Workbench
 			final Display display = Display.getCurrent();
 			display.addFilter(SWT.KeyDown, keyBindingFilter);
 			display.addFilter(SWT.Traverse, keyBindingFilter);
-			keyFilterEnabled = false;
+			keyFilterDisabled = false;
 		}
 	}
 	
 	public final boolean isKeyFilterEnabled() {
 		synchronized (keyFilterMutex) {
-			return keyFilterEnabled;
+			return !keyFilterDisabled;
 		}
 	}
 	
@@ -1011,6 +1011,10 @@ public class Workbench
 				}
 
 				return true;
+			}
+			
+			public final boolean isKeyFilterEnabled() {
+				return Workbench.this.isKeyFilterEnabled();
 			}
 		});
 		

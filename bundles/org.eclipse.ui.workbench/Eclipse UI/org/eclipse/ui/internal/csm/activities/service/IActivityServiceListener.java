@@ -9,21 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles;
+package org.eclipse.ui.internal.csm.activities.service;
 
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface IActivityServiceListener {
 
-final class RoleRegistryEvent implements IRoleRegistryEvent {
-
-	private IRoleRegistry roleRegistry;
-
-	RoleRegistryEvent(IRoleRegistry roleRegistry) {
-		if (roleRegistry == null)
-			throw new NullPointerException();
-		
-		this.roleRegistry = roleRegistry;
-	}
-
-	public IRoleRegistry getRoleRegistry() {
-		return roleRegistry;
-	}
+	/**
+	 * JAVADOC
+	 * 
+	 * @param activityActivationServiceEvent
+	 */	
+	void activityActivationServiceChanged(IActivityServiceEvent activityActivationServiceEvent);
 }

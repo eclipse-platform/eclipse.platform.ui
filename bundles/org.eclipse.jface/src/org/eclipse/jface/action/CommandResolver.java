@@ -22,6 +22,8 @@ public final class CommandResolver {
 		String getAcceleratorText(String commandId);
 
 		boolean inContext(String commandId);
+		
+		boolean isKeyFilterEnabled();
 	}
 
 	private static CommandResolver instance;
