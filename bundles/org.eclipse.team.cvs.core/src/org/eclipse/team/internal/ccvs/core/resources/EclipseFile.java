@@ -43,6 +43,17 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 		super(file);
 	}
 
+	/*
+	 * @see ICVSResource#delete()
+	 */
+	public void delete() throws CVSException {
+		try {
+			((IFile)resource).delete(false /*force*/, true /*keepHistory*/, null);
+		} catch(CoreException e) {
+			throw new CVSException(e.getStatus());
+		}
+	}
+	
 	public long getSize() {
 		return getIOFile().length();	
 	}
