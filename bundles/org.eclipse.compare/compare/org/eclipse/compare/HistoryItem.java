@@ -12,8 +12,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.compare.*;
-
 /**
  * A combination <code>IFileState</code> and <code>ITypedElement</code> that can be used as
  * an input to a compare viewer or other places where an <code>IStreamContentAccessor</code>

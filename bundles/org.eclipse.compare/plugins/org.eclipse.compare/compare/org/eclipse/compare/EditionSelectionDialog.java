@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.compare.*;
 
 
 /**

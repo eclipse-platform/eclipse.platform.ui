@@ -20,7 +20,6 @@ import org.eclipse.jface.util.Assert;
 
 import org.eclipse.core.runtime.CoreException;
 
-import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.compare.internal.Utilities;
 
