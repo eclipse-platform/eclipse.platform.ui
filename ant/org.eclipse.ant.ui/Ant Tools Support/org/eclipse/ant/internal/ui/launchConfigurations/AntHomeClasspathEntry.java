@@ -84,13 +84,13 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 		}
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getTypeId()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
 	public String getTypeId() {
 		return TYPE_ID;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		List libs = new ArrayList(40);
@@ -99,7 +99,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 			IAntClasspathEntry[] entries = preferences.getAntHomeClasspathEntries();
 			for (int i = 0; i < entries.length; i++) {
 				IAntClasspathEntry entry = entries[i];
-				libs.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
+				libs.add(JavaRuntime.newStringVariableClasspathEntry(entry.getLabel()));
 			}
 		} else {
 			File lib= resolveAntHome();
@@ -134,7 +134,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getName()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	public String getName() {
 		if (antHomeLocation == null) {
@@ -149,12 +149,14 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	public int getType() {
 		return IRuntimeClasspathEntry.OTHER;
 	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#isComposite()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
 	public boolean isComposite() {
 		return true;
 	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

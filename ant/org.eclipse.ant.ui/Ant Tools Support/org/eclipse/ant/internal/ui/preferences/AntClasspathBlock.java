@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.ui.launchConfigurations.VariableInputDialog;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
@@ -76,7 +77,7 @@ public class AntClasspathBlock {
 	private Button addFolderButton;
 	private Button addJARButton;
 	private Button addExternalJARButton;
-	
+	private Button addVariableButton;
 	private Button antHomeButton;
 	
 	private String antHome;
@@ -93,17 +94,19 @@ public class AntClasspathBlock {
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == addJARButton) {
-				addJars(treeViewer);
+				addJars();
 			} else if (source == addExternalJARButton) {
-				addExternalJars(treeViewer);
+				addExternalJars();
 			} else if (source == addFolderButton) {
-				addFolder(treeViewer, AntPreferencesMessages.getString("AntClasspathBlock.1")); //$NON-NLS-1$
+				addFolder(); //$NON-NLS-1$
 			} else if (upButton == source) {
 					handleMoveUp();
 			} else if (downButton == source) {
 				handleMoveDown();
 			} else if (removeButton == source) {
-				remove(treeViewer);
+				remove();
+			} else if (addVariableButton == source) {
+				addVariable();
 			} else if (antHomeButton == source) {
 				browseAntHome();
 			}
@@ -116,6 +119,13 @@ public class AntClasspathBlock {
 	
 	private void addButtonsToButtonGroup(Composite parent) {
 	
+		upButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.upButtonTitle")); //$NON-NLS-1$;
+		upButton.addSelectionListener(selectionListener);
+		downButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.downButtonTitle")); //$NON-NLS-1$;
+		downButton.addSelectionListener(selectionListener);
+		removeButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.removeButtonTitle")); //$NON-NLS-1$;
+		removeButton.addSelectionListener(selectionListener);
+		
 		addJARButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addJarButtonTitle")); //$NON-NLS-1$;
 		addJARButton.addSelectionListener(selectionListener);
 	
@@ -123,12 +133,10 @@ public class AntClasspathBlock {
 		addExternalJARButton.addSelectionListener(selectionListener);
 		addFolderButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.addFolderButtonTitle")); //$NON-NLS-1$;
 		addFolderButton.addSelectionListener(selectionListener);
-		upButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.upButtonTitle")); //$NON-NLS-1$;
-		upButton.addSelectionListener(selectionListener);
-		downButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.downButtonTitle")); //$NON-NLS-1$;
-		downButton.addSelectionListener(selectionListener);
-		removeButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.removeButtonTitle")); //$NON-NLS-1$;
-		removeButton.addSelectionListener(selectionListener);
+		
+		addVariableButton = container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.2")); //$NON-NLS-1$
+		addVariableButton.addSelectionListener(selectionListener);
+		
 		antHomeButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.30")); //$NON-NLS-1$
 		antHomeButton.addSelectionListener(selectionListener);
 	}
@@ -200,9 +208,9 @@ public class AntClasspathBlock {
 		finishMove(list);
 	}
 
-	private void remove(TreeViewer viewer) {
-		AntClasspathContentProvider viewerContentProvider = (AntClasspathContentProvider) viewer.getContentProvider();
-		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
+	private void remove() {
+		AntClasspathContentProvider viewerContentProvider = (AntClasspathContentProvider) treeViewer.getContentProvider();
+		IStructuredSelection sel = (IStructuredSelection) treeViewer.getSelection();
 		viewerContentProvider.remove(sel);
 		updateContainer();
 	}
@@ -210,28 +218,28 @@ public class AntClasspathBlock {
 	/**
 	 * Allows the user to enter a folder as a classpath.
 	 */
-	private void addFolder(TreeViewer viewer, String message) {
+	private void addFolder() {
 		String lastUsedPath = dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTFOLDER);
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
 		}
 		DirectoryDialog dialog = new DirectoryDialog(treeViewer.getControl().getShell());
-		dialog.setMessage(message);
+		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.1")); //$NON-NLS-1$
 		dialog.setFilterPath(lastUsedPath);
 		String result = dialog.open();
 		if (result != null) {
 			try {
 				URL url = new URL("file:" + result + "/"); //$NON-NLS-2$;//$NON-NLS-1$;
-				((AntClasspathContentProvider)viewer.getContentProvider()).add(currentParent, url);
+				((AntClasspathContentProvider)treeViewer.getContentProvider()).add(currentParent, url);
 			} catch (MalformedURLException e) {
 			}
 		}
-		viewer.setSelection(viewer.getSelection());
+		treeViewer.setSelection(treeViewer.getSelection());
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTFOLDER, result);
 		updateContainer();
 	}
 
-	private void addExternalJars(TreeViewer viewer) {
+	private void addExternalJars() {
 		String lastUsedPath = dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTJAR);
 		if (lastUsedPath == null) {
 			lastUsedPath = ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
@@ -246,7 +254,7 @@ public class AntClasspathBlock {
 		}
 		IPath filterPath = new Path(dialog.getFilterPath());
 		String[] results = dialog.getFileNames();
-		AntClasspathContentProvider contentProvider= (AntClasspathContentProvider)viewer.getContentProvider();
+		AntClasspathContentProvider contentProvider= (AntClasspathContentProvider)treeViewer.getContentProvider();
 		contentProvider.setRefreshEnabled(false);
 		for (int i = 0; i < results.length; i++) {
 			String jarName = results[i];
@@ -259,12 +267,12 @@ public class AntClasspathBlock {
 		}
 		contentProvider.setRefreshEnabled(true);
 
-		viewer.setSelection(viewer.getSelection());
+		treeViewer.setSelection(treeViewer.getSelection());
 		dialogSettings.put(IAntUIConstants.DIALOGSTORE_LASTEXTJAR, filterPath.toOSString());
 		updateContainer();
 	}
 	
-	private void addJars(TreeViewer viewer) {
+	private void addJars() {
 		List allEntries= new ArrayList();
 		if (currentParent != null) {
 			allEntries.addAll(Arrays.asList(currentParent.getEntries()));
@@ -280,7 +288,7 @@ public class AntClasspathBlock {
 		ILabelProvider lp= new WorkbenchLabelProvider();
 		ITreeContentProvider cp= new WorkbenchContentProvider();
 
-		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(viewer.getControl().getShell(), lp, cp);
+		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(treeViewer.getControl().getShell(), lp, cp);
 		dialog.setTitle(AntPreferencesMessages.getString("AntClasspathBlock.44"));  //$NON-NLS-1$
 		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathBlock.45")); //$NON-NLS-1$
 		dialog.addFilter(filter);
@@ -304,7 +312,7 @@ public class AntClasspathBlock {
 
 		if (dialog.open() == Window.OK) {
 			Object[] elements= dialog.getResult();
-			AntClasspathContentProvider contentProvider= (AntClasspathContentProvider)viewer.getContentProvider();
+			AntClasspathContentProvider contentProvider= (AntClasspathContentProvider)treeViewer.getContentProvider();
 			contentProvider.setRefreshEnabled(false);
 			for (int i = 0; i < elements.length; i++) {
 				IFile file = (IFile)elements[i];
@@ -347,7 +355,7 @@ public class AntClasspathBlock {
 		tree.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
-					remove(treeViewer);
+					remove();
 				}
 			}
 		});	
@@ -406,6 +414,7 @@ public class AntClasspathBlock {
 		}
 		addExternalJARButton.setEnabled(canAdd);
 		addFolderButton.setEnabled(canAdd);
+		addVariableButton.setEnabled(canAdd);
 		removeButton.setEnabled(notEmpty && canRemove);
 		upButton.setEnabled((canRemove) && notEmpty && !first);
 		downButton.setEnabled((canRemove) && notEmpty && !last);
@@ -589,5 +598,16 @@ public class AntClasspathBlock {
 	
 	public void setValidated() {
 		validated= 2;
+	}
+	
+	private void addVariable() {
+		VariableInputDialog inputDialog = new VariableInputDialog(treeViewer.getControl().getShell());
+		inputDialog.open();
+		String variableString= inputDialog.getVariableString();
+		if (variableString != null && variableString.trim().length() > 0) {
+			((AntClasspathContentProvider)treeViewer.getContentProvider()).add(currentParent, variableString);
+			treeViewer.setSelection(treeViewer.getSelection());
+			updateContainer();
+		}
 	}
 }

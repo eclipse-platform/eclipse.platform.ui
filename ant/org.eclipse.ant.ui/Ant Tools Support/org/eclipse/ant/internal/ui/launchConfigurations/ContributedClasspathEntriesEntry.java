@@ -56,14 +56,14 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getTypeId()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
 	 */
 	public String getTypeId() {
 		return TYPE_ID;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		boolean separateVM= (null != configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null));
@@ -71,23 +71,25 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		IAntClasspathEntry[] antClasspathEntries = prefs.getContributedClasspathEntries();
 		IAntClasspathEntry[] userEntries = prefs.getAdditionalClasspathEntries();
 		List rtes = new ArrayList(antClasspathEntries.length + userEntries.length);
+		IAntClasspathEntry entry;
 		for (int i = 0; i < antClasspathEntries.length; i++) {
-			IAntClasspathEntry entry = antClasspathEntries[i];
+			 entry= antClasspathEntries[i];
 			if (!separateVM || (separateVM && !entry.isEclipseRuntimeRequired())) {
-				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
+				rtes.add(JavaRuntime.newStringVariableClasspathEntry(entry.getLabel()));
 			}
 		}
 		boolean haveToolsEntry= false;
+		String path;
 		for (int i = 0; i < userEntries.length; i++) {
-			IAntClasspathEntry entry = userEntries[i];
-			String path = entry.getEntryURL().getPath();
+			entry = userEntries[i];
+			path= entry.getEntryURL().getPath();
 			if (path.endsWith("tools.jar")) { //$NON-NLS-1$
 				haveToolsEntry= true;
 				// replace with dynamically resolved tools.jar based on
 				// the JRE being used
 				addToolsJar(configuration, rtes, path);
 			} else {
-				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(path)));
+				rtes.add(JavaRuntime.newStringVariableClasspathEntry(entry.getLabel()));
 			}
 		}
 		if (!haveToolsEntry) {
@@ -141,7 +143,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#getName()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
 	 */
 	public String getName() {
 		return AntLaunchConfigurationMessages.getString("ContributedClasspathEntriesEntry.1"); //$NON-NLS-1$
@@ -153,7 +155,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		return IRuntimeClasspathEntry.OTHER;
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#isComposite()
+	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
 	 */
 	public boolean isComposite() {
 		return true;
