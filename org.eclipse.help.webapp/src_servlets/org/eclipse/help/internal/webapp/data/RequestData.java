@@ -28,6 +28,7 @@ public class RequestData {
 	protected HttpServletResponse response;
 	protected String locale;
 	protected WebappPreferences preferences;
+	protected boolean advancedUI;
 	/**
 	 * Constructs the data for a request.
 	 * 
@@ -42,6 +43,9 @@ public class RequestData {
 		preferences = new WebappPreferences();
 
 		locale = UrlUtil.getLocale(request, response);
+		advancedUI = (isIE() && "5.5".compareTo(getIEVersion()) <= 0)
+				|| (isMozilla() && isGecko())
+				|| (isSafari() && "120".compareTo(getSafariVersion()) <= 0);
 	}
 
 	/**
@@ -93,6 +97,9 @@ public class RequestData {
 
 	public int getMode() {
 		return BaseHelpSystem.getMode();
+	}
+	public boolean isAdvancedUI() {
+		return advancedUI;
 	}
 
 }

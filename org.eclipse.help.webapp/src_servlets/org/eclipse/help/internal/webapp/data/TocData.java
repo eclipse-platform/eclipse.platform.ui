@@ -184,6 +184,10 @@ public class TocData extends ActivitiesData {
 	 * @return true if TOC should be visible
 	 */
 	private boolean isEnabled(ITocElement toc) {
+		if(!isAdvancedUI()){
+			// activities never filtered for basic browsers
+			return true;
+		}
 		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref());
 	}
 
