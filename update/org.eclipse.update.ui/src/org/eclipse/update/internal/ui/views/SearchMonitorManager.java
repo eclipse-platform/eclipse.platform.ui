@@ -15,6 +15,8 @@ import java.util.*;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.model.UpdateModel;
@@ -74,9 +76,11 @@ public class SearchMonitorManager {
 		}
 
 		private void update() {
-			UpdateUI.getDefault().getUpdateModel().fireObjectChanged(
-				sobj,
-				NamedModelObject.P_NAME);
+			IWorkbenchPage page = UpdateUI.getActivePage();
+			UpdatesView updatesView = (UpdatesView)page.findView(UpdatePerspective.ID_UPDATES);
+			if (updatesView!=null) {
+				updatesView.objectChanged(sobj, NamedModelObject.P_NAME);
+			}
 		}
 
 		public String getLabel() {
