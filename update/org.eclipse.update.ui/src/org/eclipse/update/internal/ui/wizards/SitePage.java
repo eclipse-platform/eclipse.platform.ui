@@ -24,7 +24,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -114,6 +116,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	private static DiscoveryFolder discoveryFolder = new DiscoveryFolder();
 	private CheckboxTreeViewer treeViewer;
+	private ScrolledFormText descLabel;
 	private Button addSiteButton;
 	private Button addLocalButton;
 	private Button addLocalZippedButton;
@@ -218,7 +221,10 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				handleAddLocalZipped();
 			}
 		});
-
+		
+		// separator
+		new Label(buttonContainer, SWT.None);
+		
 		editButton = new Button(buttonContainer, SWT.PUSH);
 		editButton.setText(UpdateUI.getString("SitePage.edit")); //$NON-NLS-1$
 		editButton.setEnabled(false);
@@ -241,7 +247,14 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				handleRemove();
 			}
 		});
-
+		
+		descLabel = new ScrolledFormText(client, true);
+		descLabel.setText("");
+		descLabel.setBackground(parent.getBackground());
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.horizontalSpan = 1;
+		descLabel.setLayoutData(gd);
+		
 		envFilterCheck = new Button(client, SWT.CHECK);
 		envFilterCheck.setText(UpdateUI.getString("SitePage.ignore")); //$NON-NLS-1$
 		envFilterCheck.setSelection(true);
@@ -484,15 +497,26 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		updateSearchRequest();
 	}
 
+
 	private void handleSelectionChanged(IStructuredSelection ssel) {
 		boolean enable = false;
 		Object item = ssel.getFirstElement();
+		IURLEntry descEntry = null;
 		if (item instanceof SiteBookmark) {
 			enable = !((SiteBookmark) item).isReadOnly();
+			//descEntry = ((SiteBookmark)item).getSite(null).getDescription();
+		} else if (item instanceof SiteCategory) {
+			descEntry = ((SiteCategory)item).getCategory().getDescription();
 		}
 		editButton.setEnabled(enable);
 		removeButton.setEnabled(enable);
-
+		
+		String desc = null;
+		if (descEntry != null)
+			desc = descEntry.getAnnotation();
+		if (desc == null)
+			desc = ""; //$NON-NLS-1$
+		descLabel.setText(desc);
 	}
 
 	private void updateSearchRequest() {

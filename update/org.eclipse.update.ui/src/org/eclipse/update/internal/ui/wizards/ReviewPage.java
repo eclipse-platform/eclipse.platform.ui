@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
@@ -49,7 +50,7 @@ public class ReviewPage
 	// 
 	private FeatureStatus lastDisplayedStatus;
 	private PropertyDialogAction propertiesAction;
-	private Text descLabel;
+	private ScrolledFormText descLabel;
 	private Button statusButton;
 	private Button moreInfoButton;
 	private Button propertiesButton;
@@ -500,8 +501,12 @@ public class ReviewPage
 		tableViewer.setInput(UpdateUI.getDefault().getUpdateModel());
 		tableViewer.setAllChecked(true);
 		
-		descLabel = new Text(sform, SWT.BORDER|SWT.WRAP|SWT.MULTI|SWT.V_SCROLL);
-		descLabel.setEditable(false);
+		descLabel = new ScrolledFormText(sform, true);
+		descLabel.setText("");
+		descLabel.setBackground(parent.getBackground());
+		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.horizontalSpan = 1;
+		descLabel.setLayoutData(gd);
 		
 		sform.setWeights(new int[] {10, 2});
 	}
