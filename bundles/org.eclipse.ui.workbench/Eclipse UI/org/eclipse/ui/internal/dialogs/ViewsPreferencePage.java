@@ -21,10 +21,6 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
@@ -55,10 +51,6 @@ public class ViewsPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
 
-	private Button editorTopButton;
-	private Button editorBottomButton;
-	private Button viewTopButton;
-	private Button viewBottomButton;
 	private Button showTextOnPerspectiveBar;
 
 	/*
@@ -140,9 +132,6 @@ public class ViewsPreferencePage
 
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
-		editorAlignment =
-			store.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
-		viewAlignment = store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -165,8 +154,6 @@ public class ViewsPreferencePage
 		colorIconsEditor.setPreferenceStore(doGetPreferenceStore());
 		colorIconsEditor.load();
 
-		createEditorTabButtonGroup(composite);
-		createViewTabButtonGroup(composite);
 		createShowTextOnPerspectiveBarPref(composite);
 
 		createNoteComposite(font, composite, NOTE_LABEL, APPLY_MESSAGE);
@@ -311,90 +298,9 @@ public class ViewsPreferencePage
 	}
 	
 	/**
-	 * Create a composite that contains buttons for selecting tab position for the edit selection. 
-	 * @param composite Composite
-	 * @param store IPreferenceStore
+	 * Create the button and text that support setting the preference for showing
+	 * text labels on the perspective switching bar
 	 */
-	private void createEditorTabButtonGroup(Composite composite) {
-
-		Font font = composite.getFont();
-
-		Group buttonComposite = createButtonGroup(composite, EDITORS_TITLE);
-
-		this.editorTopButton = new Button(buttonComposite, SWT.RADIO);
-		this.editorTopButton.setText(EDITORS_TOP_TITLE);
-		this.editorTopButton.setSelection(this.editorAlignment == SWT.TOP);
-		this.editorTopButton.setFont(font);
-
-		this.editorTopButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editorAlignment = SWT.TOP;
-			}
-		});
-
-		this
-			.editorTopButton
-			.getAccessible()
-			.addAccessibleListener(new AccessibleAdapter() {
-			public void getName(AccessibleEvent e) {
-				e.result = EDITORS_TITLE;
-			}
-		});
-
-		this.editorBottomButton = new Button(buttonComposite, SWT.RADIO);
-		this.editorBottomButton.setText(EDITORS_BOTTOM_TITLE);
-		this.editorBottomButton.setSelection(
-			this.editorAlignment == SWT.BOTTOM);
-		this.editorBottomButton.setFont(font);
-
-		this.editorBottomButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editorAlignment = SWT.BOTTOM;
-			}
-		});
-
-		attachControls(this.editorTopButton, this.editorBottomButton);
-
-	}
-
-	/**
-	 * Create a composite that contains buttons for selecting tab position for the view selection. 
-	 * @param composite Composite
-	 * @param store IPreferenceStore
-	 */
-	private void createViewTabButtonGroup(Composite composite) {
-
-		Font font = composite.getFont();
-
-		Group buttonComposite = createButtonGroup(composite, VIEWS_TITLE);
-		buttonComposite.setFont(font);
-
-		this.viewTopButton = new Button(buttonComposite, SWT.RADIO);
-		this.viewTopButton.setText(VIEWS_TOP_TITLE);
-		this.viewTopButton.setSelection(this.viewAlignment == SWT.TOP);
-		this.viewTopButton.setFont(font);
-
-		this.viewTopButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				viewAlignment = SWT.TOP;
-			}
-		});
-
-		this.viewBottomButton = new Button(buttonComposite, SWT.RADIO);
-		this.viewBottomButton.setText(VIEWS_BOTTOM_TITLE);
-		this.viewBottomButton.setSelection(this.viewAlignment == SWT.BOTTOM);
-		this.viewBottomButton.setFont(font);
-
-		this.viewBottomButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				viewAlignment = SWT.BOTTOM;
-			}
-		});
-
-		attachControls(this.viewTopButton, this.viewBottomButton);
-
-	}
-
 	protected void createShowTextOnPerspectiveBarPref(Composite composite) {
 		showTextOnPerspectiveBar = new Button(composite, SWT.CHECK);
 		showTextOnPerspectiveBar.setText(WorkbenchMessages.getString("WorkbenchPreference.showTextOnPerspectiveBar")); //$NON-NLS-1$
@@ -406,7 +312,6 @@ public class ViewsPreferencePage
 	/**
 	 * Set the two supplied controls to be beside each other.
 	 */
-
 	private void attachControls(Control leftControl, Control rightControl) {
 
 		FormData leftData = new FormData();
@@ -418,6 +323,7 @@ public class ViewsPreferencePage
 		leftControl.setLayoutData(leftData);
 		rightControl.setLayoutData(rightData);
 	}
+
 	/**
 	 * Returns preference store that belongs to the our plugin.
 	 *
@@ -443,18 +349,6 @@ public class ViewsPreferencePage
 	protected void performDefaults() {
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
-
-		int editorTopValue =
-			store.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
-		editorTopButton.setSelection(editorTopValue == SWT.TOP);
-		editorBottomButton.setSelection(editorTopValue == SWT.BOTTOM);
-		editorAlignment = editorTopValue;
-
-		int viewTopValue =
-			store.getDefaultInt(IPreferenceConstants.VIEW_TAB_POSITION);
-		viewTopButton.setSelection(viewTopValue == SWT.TOP);
-		viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
-		viewAlignment = viewTopValue;
 
 		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
 		
@@ -482,14 +376,6 @@ public class ViewsPreferencePage
 	 */
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
-
-		// store the editor tab value to setting
-		store.setValue(
-			IPreferenceConstants.EDITOR_TAB_POSITION,
-			editorAlignment);
-
-		// store the view tab value to setting
-		store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
 
 		store.setValue(IPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
 		

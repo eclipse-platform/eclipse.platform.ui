@@ -16,6 +16,7 @@ package org.eclipse.ui.internal;
  */
 public interface IPreferenceConstants {
 	//Do we show tabs up or down for views
+	// TODO remove these field once parttabfolder changes are done
 	public static final String VIEW_TAB_POSITION = "VIEW_TAB_POSITION"; //$NON-NLS-1$
 
 	//Boolean: true = single click opens editor; false = double click opens
@@ -30,6 +31,7 @@ public interface IPreferenceConstants {
 	public static final String COLOR_ICONS = "COLOR_ICONS"; //$NON-NLS-1$
 
 	//Do we show tabs up or down for editors
+		// TODO remove these field once parttabfolder changes are done
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
 
 	//mappings for type/extension to an editor
