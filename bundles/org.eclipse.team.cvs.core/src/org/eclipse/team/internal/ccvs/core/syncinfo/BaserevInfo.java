@@ -41,6 +41,7 @@ public class BaserevInfo {
 		result.append(name);
 		result.append(ResourceSyncInfo.SEPARATOR);
 		result.append(revision);
+		result.append(ResourceSyncInfo.SEPARATOR);
 		return result.toString();
 	}	
 	private void setEntryLine(String entryLine) throws CVSException {
@@ -48,7 +49,9 @@ public class BaserevInfo {
 			entryLine = entryLine.substring(1);
 		}
 		String[] strings = Util.parseIntoSubstrings(entryLine, ResourceSyncInfo.SEPARATOR);
-		if(strings.length != 2) {
+		// Accept either a length of 2 or 3. If the length is 3, we ignore the last
+		// string as per the CVS spec.
+		if(strings.length != 2 && strings.length != 3) {
 			throw new CVSException(Policy.bind("BaseRevInfo.malformedEntryLine", entryLine)); //$NON-NLS-1$
 		}
 
