@@ -19,6 +19,26 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input April 20th 2004 ==========<br>
+<pre>
+API changes:
+------------
+- package org.eclipse.jface.text.link:
+  - renamed LinkedEnvironment -> LinkedModeModel
+  	- renamed methods correspondingly
+  - renamed LinkedManager -> LinkedModeManager
+  - renamed ILinkedListener -> ILinkedModeListener
+  - renamed LinkedUIControl -> LinkedModeUI
+    - renamed inner types accordingly
+  - removed all createPosition(...) methods in LinkedPositionGroup
+    -> use addPosition() instead
+    
+- package org.eclipse.ui.texteditor:
+  - renamed ExtendedTextEditor -> AbstractDecoratedTextEditor
+  - renamed ExtendedTextEditorPreferenceConstants -> AbstractDecoratedTextEditorPreferenceConstants
+    - the old classes are still there, but deprecated, and will be removed in M9
+    - the constant values remain the same
+</pre>
 ========== Eclipse Build Input March 23rd 2004 ==========<br>
 <pre>
 - Added the <tt>org.eclipse.ui.editors.templates</tt> extension point to the templates infrastructure.
