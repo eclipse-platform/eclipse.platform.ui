@@ -74,10 +74,7 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		RemoveAllTerminatedAction.removeTerminatedLaunches(launches);
 	}
-
-	/**
-	 * 
-	 */
+	
 	public ConsoleRemoveAllTerminatedAction() {
 		super(ConsoleMessages.getString("ConsoleRemoveAllTerminatedAction.0")); //$NON-NLS-1$
 		setToolTipText(ConsoleMessages.getString("ConsoleRemoveAllTerminatedAction.1")); //$NON-NLS-1$
@@ -86,7 +83,5 @@ public class ConsoleRemoveAllTerminatedAction extends Action implements IUpdate,
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		update();
-	}
-
-	
+	}	
 }
