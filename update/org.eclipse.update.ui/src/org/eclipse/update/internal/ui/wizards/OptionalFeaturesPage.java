@@ -39,6 +39,8 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	private static final String KEY_DESELECT_ALL =
 		"InstallWizard.OptionalFeaturesPage.deselectAll"; //$NON-NLS-1$
 	private CheckboxTreeViewer treeViewer;
+	private Button selectAllButton;
+	private Button deselectAllButton;
 	private IInstallConfiguration config;
 	private JobRoot[] jobRoots;
 
@@ -136,7 +138,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 
 		createCheckboxTreeViewer(client);
 
-		Button selectAllButton = new Button(client, SWT.PUSH);
+		selectAllButton = new Button(client, SWT.PUSH);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAll(true);
@@ -149,7 +151,7 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 		selectAllButton.setLayoutData(gd);
 		SWTUtil.setButtonDimensionHint(selectAllButton);
 
-		Button deselectAllButton = new Button(client, SWT.PUSH);
+		deselectAllButton = new Button(client, SWT.PUSH);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectAll(false);
@@ -204,22 +206,26 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	private void initializeStates() {
 		ArrayList checked = new ArrayList();
 		ArrayList grayed = new ArrayList();
+		ArrayList editable = new ArrayList();
 
 		for (int i = 0; i < jobRoots.length; i++) {
 			checked.add(jobRoots[i]);
 			grayed.add(jobRoots[i]);
 			boolean update = jobRoots[i].getJob().getOldFeature() != null;
-			initializeStates(update, jobRoots[i].getElements(), checked, grayed);
+			initializeStates(update, jobRoots[i].getElements(), checked, grayed, editable);
 		}
 		treeViewer.setCheckedElements(checked.toArray());
 		treeViewer.setGrayedElements(grayed.toArray());
+		selectAllButton.setEnabled(editable.size()>0);
+		deselectAllButton.setEnabled(editable.size()>0);
 	}
 
 	private void initializeStates(
 		boolean update,
 		Object[] elements,
 		ArrayList checked,
-		ArrayList grayed) {
+		ArrayList grayed,
+		ArrayList editable) {
 
 		for (int i = 0; i < elements.length; i++) {
 			FeatureHierarchyElement2 element =
@@ -228,7 +234,9 @@ public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 				checked.add(element);
 			if (!element.isEditable())
 				grayed.add(element);
-			initializeStates(update, element.getChildren(), checked, grayed);
+			else
+				editable.add(element);
+			initializeStates(update, element.getChildren(), checked, grayed, editable);
 		}
 	}
 
