@@ -58,6 +58,8 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private static final int NODE_NOT_EQUAL = 1;
 	private static final int NODE_UNKNOWN = 2;
 	
+	String toolTipText;
+	
 	/**
 	 * Creates a new CVSCompareEditorInput.
 	 */
@@ -91,7 +93,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private String getLabel(ITypedElement element) {
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
-			ICVSResource resource = (ICVSResource)edition;
+			ICVSResource resource = edition;
 			if (edition instanceof ICVSRemoteFile) {
 				try {
 					return Policy.bind("nameAndRevision", resource.getName(), ((ICVSRemoteFile)edition).getRevision()); //$NON-NLS-1$
@@ -126,7 +128,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private String getVersionLabel(ITypedElement element) {
 		if (element instanceof ResourceEditionNode) {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
-			ICVSResource resource = (ICVSResource)edition;
+			ICVSResource resource = edition;
 			try {
 				if (edition.isContainer()) {
 					CVSTag tag = ((ICVSRemoteFolder)resource).getTag();
@@ -165,6 +167,23 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		return ""; //$NON-NLS-1$
 	}
 	
+	/*
+	 * Returns a guess of the resource path being compared, for display
+	 * in the tooltip.
+	 */
+	private Object guessResourcePath() {
+		if (left != null && left instanceof ResourceEditionNode) {
+			return ((ResourceEditionNode)left).getRemoteResource().getRepositoryRelativePath();
+		}
+		if (right != null && right instanceof ResourceEditionNode) {
+			return ((ResourceEditionNode)right).getRemoteResource().getRepositoryRelativePath();
+		}
+		if (ancestor != null && ancestor instanceof ResourceEditionNode) {
+			return ((ResourceEditionNode)ancestor).getRemoteResource().getRepositoryRelativePath();
+		}
+		return guessResourceName();
+	}
+	
 	/**
 	 * Handles a random exception and sanitizes it into a reasonable
 	 * error message.  
@@ -194,27 +213,28 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	 * Sets up the title and pane labels for the comparison view.
 	 */
 	private void initLabels() {
-		CompareConfiguration cc = (CompareConfiguration) getCompareConfiguration();
+		CompareConfiguration cc = getCompareConfiguration();
 		setLabels(cc, new StructuredSelection());
 		
 		String title;
 		if (ancestor != null) {
 			title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+			toolTipText = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourcePath(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
 		} else {
 			String leftName = null;
 			if (left != null) leftName = left.getName();
 			String rightName = null;
 			if (right != null) rightName = right.getName();
-			boolean differentNames = false;
 			if (leftName != null && !leftName.equals(rightName)) {
 				title = Policy.bind("CVSCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} );  //$NON-NLS-1$
 			} else {
 				title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+				title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourcePath(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
 			}
 		}
 		setTitle(title);
 	}
-	
+
 	private void setLabels(CompareConfiguration cc, IStructuredSelection selection) {
 		ITypedElement left = this.left;
 		ITypedElement right = this.right;
@@ -379,6 +399,16 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			}
 		});
 		return viewer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getToolTipText()
+	 */
+	public String getToolTipText() {
+		if (toolTipText != null) {
+			return toolTipText;
+		}
+		return super.getToolTipText();
 	}
 	
 }
