@@ -296,7 +296,15 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 			)
 		);
 
-		return fPreviewViewer.getControl();
+		Control c= fPreviewViewer.getControl();
+		c.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (fCompareConfiguration != null)
+					fCompareConfiguration.dispose();
+			}
+		});
+		
+		return  c;
 	}
 			
 	private void initializeFields() {

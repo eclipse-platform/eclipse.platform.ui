@@ -203,6 +203,14 @@ public class CompareConfiguration {
 	 * An implementation must dispose of all resources.
 	 */
 	public void dispose() {
+		if (fImages != null) {
+			for (int i= 0; i < fImages.length; i++){
+				Image image= fImages[i];
+				if (image != null && !image.isDisposed())
+					image.dispose();
+			}
+		}
+		fImages= null;
 	}
 
 	/**
