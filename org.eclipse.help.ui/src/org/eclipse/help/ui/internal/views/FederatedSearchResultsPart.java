@@ -107,18 +107,26 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		buff.append("<p><span color=\""); //$NON-NLS-1$
 		buff.append(FormColors.TITLE);
 		buff.append("\">"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("SearchResultsPart.4")); //$NON-NLS-1$
+		buff.append(HelpUIResources.getString("SearchResultsPart.progress")); //$NON-NLS-1$
 		buff.append("</span>"); //$NON-NLS-1$
 		buff.append("<a href=\"cancel\">"); //$NON-NLS-1$
-		buff.append(HelpUIResources.getString("SearchResultsPart.7")); //$NON-NLS-1$
+		buff.append(HelpUIResources.getString("SearchResultsPart.cancel")); //$NON-NLS-1$
 		buff.append("</a></p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
 		results.clear();
 		parent.reflow();
 	}
+	
+	private void asyncUpdateResults() {
+		searchResults.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				updateResults();
+			}
+		});
+	}
 
-	void updateResults() {
+	private void updateResults() {
 		StringBuffer buff= new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p><span color=\""); //$NON-NLS-1$
@@ -137,6 +145,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append(hit.getLabel());
 			buff.append("</a>"); //$NON-NLS-1$
+			/*
 			buff.append(" <a href=\""); //$NON-NLS-1$
 			buff.append("nw:"); //$NON-NLS-1$
 			buff.append(hit.getHref());
@@ -147,6 +156,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 			buff.append("\""); //$NON-NLS-1$
 			buff.append("/>"); //$NON-NLS-1$
 			buff.append("</a>"); //$NON-NLS-1$
+			*/
 			buff.append("</li>"); //$NON-NLS-1$
 		}
 		buff.append("</form>"); //$NON-NLS-1$
@@ -186,7 +196,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 	 */
 	public void add(ISearchEngineResult match) {
 		results.add(match);
-		updateResults();
+		asyncUpdateResults();
 	}
     
     /* (non-Javadoc)
@@ -195,6 +205,6 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
     public void add(ISearchEngineResult[] searchResults) {
     	for (int i=0; i<searchResults.length; i++) 
     		results.add(searchResults[i]);
-    	updateResults();
+    	asyncUpdateResults();
     }
 }
