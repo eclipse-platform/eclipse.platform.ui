@@ -69,7 +69,7 @@ public class ExternalToolsImages {
 	 */
 	private static void declareImages() {
 		// Ant Editor images
-		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY, OBJECT + "property.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY, OBJECT + "property_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TASK, OBJECT + "html_tag_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TARGET, OBJECT + "ant_tsk_arrow.gif"); //$NON-NLS-1$
 		// Ant View Actions
@@ -87,9 +87,9 @@ public class ExternalToolsImages {
 		// Ant View Labels
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT, OBJECT + "ant_buildfile.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR, OBJECT + "ant_project_err.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, OBJECT + "target_pub.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE, OBJECT + "target_priv.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "ant_default_target.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET, OBJECT + "targetpublic_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE, OBJECT + "targetprivate_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET, OBJECT + "defaulttarget_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR, OBJECT + "ant_target_err.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENTS, OBJECT + "elements.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ELEMENT, OBJECT + "element.gif"); //$NON-NLS-1$
@@ -107,7 +107,6 @@ public class ExternalToolsImages {
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_targets.gif"); //$NON-NLS-1$
 		
 		// Overlays
-		declareRegistryImage(IExternalToolsUIConstants.IMG_OVR_DEFAULT, OVR + "run_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMG_OVR_ERROR, OVR + "error_co.gif"); //$NON-NLS-1$
 	}
 

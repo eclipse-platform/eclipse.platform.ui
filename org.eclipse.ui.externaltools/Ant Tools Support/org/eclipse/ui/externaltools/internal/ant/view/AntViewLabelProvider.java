@@ -40,16 +40,16 @@ public class AntViewLabelProvider implements ILabelProvider {
 			TargetNode target= (TargetNode) element;
 			int flags = 0;
 			ImageDescriptor base = null;
-			if (target.getDescription() == null) {
+			if (target.equals(target.getProject().getDefaultTarget())){
+				flags = flags | AntImageDescriptor.DEFAULT_TARGET;
+				base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET);
+			} else if (target.getDescription() == null) {
 				base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
 			} else {
 				base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);
 			}			
 			if (target.isErrorNode()) {
 				flags = flags | AntImageDescriptor.HAS_ERRORS;
-			}
-			if (target.equals(target.getProject().getDefaultTarget())){
-				flags = flags | AntImageDescriptor.DEFAULT_TARGET;
 			}
 			return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));
 		}

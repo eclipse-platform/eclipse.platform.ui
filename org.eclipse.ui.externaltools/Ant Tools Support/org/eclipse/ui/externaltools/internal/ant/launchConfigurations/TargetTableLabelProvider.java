@@ -54,8 +54,8 @@ public class TargetTableLabelProvider extends LabelProvider implements ITableLab
 		int flags = 0;
 		if (target.isDefault()) {
 			flags = flags | AntImageDescriptor.DEFAULT_TARGET;
-		}
-		if (target.getDescription() == null) {
+			base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET);
+		} else if (target.getDescription() == null) {
 			base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
 		} else {
 			base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);

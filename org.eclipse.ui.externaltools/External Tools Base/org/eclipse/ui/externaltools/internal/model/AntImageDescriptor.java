@@ -1,9 +1,11 @@
 package org.eclipse.ui.externaltools.internal.model;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others. All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -17,7 +19,10 @@ import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
  */
 public class AntImageDescriptor extends CompositeImageDescriptor {
 	
-	/** Flag to render the default target adornment */
+	/**
+	 * Flag to render the default target adornment. Not used anymore,
+	 * but left in case we want to add an adornment.
+	 */
 	public final static int DEFAULT_TARGET=	 			0x0001;
 	/** Flag to render the may be out of synch adornment */
 	public final static int HAS_ERRORS= 					0x0002;
@@ -92,12 +97,6 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 			x= getSize().x;
 			y= 0;
 			data= ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_OVR_ERROR).getImageData();
-			x -= data.width;
-			drawImage(data, x, y);
-		} else if ((flags & DEFAULT_TARGET) != 0) {
-			x= getSize().x;
-			y= 0;
-			data= ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_OVR_DEFAULT).getImageData();;
 			x -= data.width;
 			drawImage(data, x, y);
 		}

@@ -175,13 +175,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				ImageDescriptor base = null;
 				int flags = 0;
 				
-				if (isDefaultTargetNode(tempElement)) {
-					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
-				}
 				if (tempElement.isErrorNode()) {
 					flags = flags | AntImageDescriptor.HAS_ERRORS;
-				}	
-				if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) {
+				}
+				if (isDefaultTargetNode(tempElement)) {
+					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
+					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET);
+				} else if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) {
 					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
 				} else {
 					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);
