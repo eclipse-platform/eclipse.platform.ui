@@ -208,10 +208,7 @@ public final class CommandManagerWrapper implements ICommandManager,
 		this.commandRegistry = commandRegistry;
 		this.mutableCommandRegistry = mutableCommandRegistry;
 		this.bindingManager = bindingManager;
-		BindingManager.DEBUG = true;
 		this.commandManager = commandManager;
-		Command.DEBUG_COMMAND_EXECUTION = true;
-		Command.DEBUG_HANDLERS = true;
 		this.contextManager = contextManager;
 
 		this.commandRegistry
