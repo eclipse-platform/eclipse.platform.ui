@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
@@ -102,7 +104,14 @@ public class CVSDecorationRunnable implements Runnable {
 				return;
 			}
 			
-			CVSDecoration decoration = decorate(resource);
+			CVSDecoration decoration;
+			try {
+				decoration = decorate(resource);
+			} catch (Exception e) {
+				// If there was a problem, log it and set the decoration to null
+				CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));
+				decoration = null;
+			}
 			
 			// notify that decoration is ready
 			if(decoration!=null) {
