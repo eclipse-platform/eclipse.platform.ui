@@ -78,7 +78,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 
 	private BundleModel parseManifest(String symbolicName, Reader input) throws IOException, SAXException {
 		ExtensionsParser parser = new ExtensionsParser(new Factory(new MultiStatus(IPlatform.PI_RUNTIME, 0, "", null)));
-		BundleModel result = parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN);
+		BundleModel result = parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml");
 		result.setUniqueIdentifier(symbolicName);
 		return result;
 	}
