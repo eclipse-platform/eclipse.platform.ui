@@ -14,14 +14,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+/**
+ * BundleStats is used to represent information about loaded bundle. A
+ * bundlestats instance represents only one bundle.
+ */
+
 public class BundleStats {
-	private String pluginId;
-	private String fileName;
-	private int keyCount = 0;
-	private int keySize = 0;
-	private int valueSize = 0;
-	private long hashSize = 0;
-	private long fileSize = 0;
+	private String pluginId;		// the plugin loading this bundle
+	private String fileName;		// the filename of the bundle 
+	private int keyCount = 0;	// number of keys in the bundle
+	private int keySize = 0;		// size of the keys in the bundle
+	private int valueSize = 0;	// size of the values in the bundle 
+	private long hashSize = 0;	// size of the hashtable
+	private long fileSize = 0;	
 
 	private static int sizeOf(String value) {
 		return 44 + (2 * value.length());
@@ -94,7 +99,7 @@ public class BundleStats {
 		return valueSize;
 	}
 
-	public long totalSize() {
+	public long getTotalSize() {
 		return keySize + valueSize + hashSize;
 	}
 

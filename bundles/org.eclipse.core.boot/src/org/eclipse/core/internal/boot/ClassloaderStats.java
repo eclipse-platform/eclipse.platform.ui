@@ -14,19 +14,25 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 
+/**
+ * Contains information about the classes and the bundles loaded by a given classloader.
+ * Typically there is one classloader per plugin so at levels above boot, this equates
+ * to information about classes and bundles in a plugin.
+ */
 public class ClassloaderStats {
-	private String id;
-	private long timeSpentLoading;
-	private int numberOfFailure = 0;
-	private Map classesLoaded = new HashMap(20);
-	private Vector bundlesLoaded = new Vector(2);
-	private boolean keepTraces = false;
-
-	private static ArrayList packageFilters = new ArrayList(4);
-	private static Set pluginFilters = new HashSet(5);
-	private static int numberOfClassesLoaded;
-	private static Stack classesBeingLoaded = new Stack();
-	private static Map infos = new HashMap();
+	private String id; 
+	private long loadingTime;								// time spent loading classes
+	private int failureCount = 0;							// number of classes requested but that we fail to provide
+	private Map classes = new HashMap(20);	// classes loaded by the plugin	(key: class name, value: ClassStats) 
+	private ArrayList bundles = new ArrayList(2);	// bundles loaded
+	
+	private boolean keepTraces = false;					// indicate whether or not the traces of classes loaded are kept 
+	// filters to indicate which classes we want to keep the traces
+	private static ArrayList packageFilters = new ArrayList(4);	// filters on a package basis
+	private static Set pluginFilters = new HashSet(5);				// filters on a plugin basis
+	
+	private static Stack classStack = new Stack();		// represents the classes that are currently being loaded 
+	private static Map loaders = new HashMap(20);	// a dictionary of the classloaderStats (key: pluginId, value: ClassloaderStats)
 	public static File traceFile;
 
 	static {
@@ -78,35 +84,39 @@ public class ClassloaderStats {
 	}
 
 	public static void startLoadingClass(String id, String className) {
-		// should be called from a synchronized location to protect against concurrent updates
-		get(id).startLoadClass(className);
+		// must be called from a synchronized location to protect against concurrent updates
+		findLoader(id).startLoadClass(className);
 	}
 
 	// get and create if does not exist
-	private static ClassloaderStats get(String id) {
-		ClassloaderStats result = (ClassloaderStats) infos.get(id);
+	private static ClassloaderStats findLoader(String id) {
+		ClassloaderStats result = (ClassloaderStats) loaders.get(id);
 		if (result == null) {
 			result = new ClassloaderStats(id);
-			infos.put(id, result);
+			loaders.put(id, result);
 		}
 		return result;
 	}
 
 	public static Stack getClassStack() {
-		return classesBeingLoaded;
+		return classStack;
 	}
-	
+
+	public static ClassloaderStats[] getLoaders() {
+		return (ClassloaderStats[])loaders.values().toArray(new ClassloaderStats[loaders.size()]);
+	}
+
 	public static void endLoadingClass(String id, String className, boolean success) {
-		// should be called from a synchronized location to protect against concurrent updates
-		get(id).endLoadClass(className, success);
+		// must be called from a synchronized location to protect against concurrent updates
+		findLoader(id).endLoadClass(className, success);
 	}
 
 	public static void loadedBundle(String id, BundleStats info) {
-		get(id).loadedBundle(info);
+		findLoader(id).loadedBundle(info);
 	}
 
-	public static ClassloaderStats lookup(String id) {
-		return (ClassloaderStats) infos.get(id);
+	public static ClassloaderStats getLoader(String id) {
+		return (ClassloaderStats) loaders.get(id);
 	}
 
 	public ClassloaderStats(String id) {
@@ -114,62 +124,60 @@ public class ClassloaderStats {
 		keepTraces = pluginFilters.contains(id);
 	}
 
-	public void addBaseClasses(String[] classes) {
+	public void addBaseClasses(String[] baseClasses) {
 		if (!id.equals(BootLoader.PI_BOOT))
 			return;
-		for (int i = 0; i < classes.length; i++) {
-			String name = classes[i];
-			if (classesLoaded.get(name) == null) {
+		for (int i = 0; i < baseClasses.length; i++) {
+			String name = baseClasses[i];
+			if (classes.get(name) == null) {
 				ClassStats value = new ClassStats(name, this);
 				value.toBaseClass();
-				classesLoaded.put (name, value);
+				classes.put (name, value);
 			}
 		}
 	}
 
-	private void loadedBundle(BundleStats info) {
-		bundlesLoaded.add(info);
+	private void loadedBundle(BundleStats bundle) {
+		bundles.add(bundle);
 	}
 
-	public Vector getBundles() {
-		return bundlesLoaded;
+	public ArrayList getBundles() {
+		return bundles;
 	}
 
 	private void startLoadClass(String name) {
-		ClassStats ci = getClassInfo(name);
-		classesBeingLoaded.push(ci);
+		classStack.push(findClass(name));
 	}
 
-	// internal method that return the existing classInfo of that create one
-	private ClassStats getClassInfo(String name) {
-		ClassStats ci = (ClassStats) classesLoaded.get(name);
-		return ci == null ? new ClassStats(name, this) : ci;
+	// internal method that return the existing classStats or creates one
+	private ClassStats findClass(String name) {
+		ClassStats result = (ClassStats) classes.get(name);
+		return result == null ? new ClassStats(name, this) : result;
 	}
 
 	private void endLoadClass(String name, boolean success) {
-		ClassStats target = (ClassStats) classesBeingLoaded.pop();
+		ClassStats current = (ClassStats) classStack.pop();
 		if (!success) {
-			numberOfFailure++;
+			failureCount++;
 			return;
 		}
-		if (target.getLoadingNumber() >= 0)
+		if (current.getLoadOrder() >= 0)
 			return;
 
-		target.setLoadingNumber(++numberOfClassesLoaded);
-		target.loadingDone();
-		classesLoaded.put (name, target);
-
-		traceLoad(name, target);
+		classes.put (name, current);
+		current.setLoadOrder(classes.size());
+		current.loadingDone();
+		traceLoad(name, current);
 
 		// is there something on the load stack.  if so, link them together...
-		if (classesBeingLoaded.size() != 0) {
-		// get the time spent loading cli and substract its load time from the class that requires cli loading
-			ClassStats previous = ((ClassStats) classesBeingLoaded.peek());
-			previous.timeSpentLoadingOthers(target.getTotalTime());
-			target.setLoadedBy(previous);
-			previous.loads(target);
+		if (classStack.size() != 0) {
+		// get the time spent loading cli and subtract its load time from the class that requires loading
+			ClassStats previous = ((ClassStats) classStack.peek());
+			previous.addTimeLoadingOthers(current.getTimeLoading());
+			current.setLoadedBy(previous);
+			previous.loaded(current);
 		} else {
-			timeSpentLoading = timeSpentLoading + target.getTotalTime();
+			loadingTime = loadingTime + current.getTimeLoading();
 		}
 	}
 
@@ -185,35 +193,35 @@ public class ClassloaderStats {
 		}
 
 		try {
-			target.setBeginningPosition(traceFile.length());
-			PrintWriter pw = new PrintWriter(new FileOutputStream(traceFile.getAbsolutePath(),true));
+			target.setTraceStart(traceFile.length());
+			PrintWriter output = new PrintWriter(new FileOutputStream(traceFile.getAbsolutePath(),true));
 			try {
-				pw.println("Loading class: " + name);
-				pw.println("Class loading stack:");
-				pw.println("\t" + name);
-				for (int i = classesBeingLoaded.size() - 1; i >= 0 ; i--) 
-					pw.println("\t" + ((ClassStats)classesBeingLoaded.get(i)).getClassName());
-				pw.println("Stack trace:");
-				new Throwable().printStackTrace(pw);
+				output.println("Loading class: " + name);
+				output.println("Class loading stack:");
+				output.println("\t" + name);
+				for (int i = classStack.size() - 1; i >= 0 ; i--) 
+					output.println("\t" + ((ClassStats)classStack.get(i)).getClassName());
+				output.println("Stack trace:");
+				new Throwable().printStackTrace(output);
 			} finally {
-				pw.close();
+				output.close();
 			}
-			target.setEndPosition(traceFile.length());
+			target.setTraceEnd(traceFile.length());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public int getNumberOfClassLoaded() {
-		return classesLoaded.size();
+	public int getClassLoadCount() {
+		return classes.size();
 	}
 
 	public long getClassLoadTime() {
-		return timeSpentLoading;
+		return loadingTime;
 	}
 
-	public ClassStats[] getClassesLoaded() {
-		return (ClassStats[])classesLoaded.values().toArray(new ClassStats[classesLoaded.size()]);
+	public ClassStats[] getClasses() {
+		return (ClassStats[])classes.values().toArray(new ClassStats[classes.size()]);
 	}
 
 	public String getId() {

@@ -184,13 +184,13 @@ synchronized void doPluginActivation() throws CoreException {
 	if (pluginActivationEnter()) {
 		try {
 			if (DelegatingURLClassLoader.MONITOR_PLUGINS)			
-				PluginStats.startPluginActivation(this.getUniqueIdentifier());			
+				PluginStats.startActivation(this.getUniqueIdentifier());			
 			internalDoPluginActivation();
 			errorExit = false;
 		} finally {
 			pluginActivationExit(errorExit);
 			if (DelegatingURLClassLoader.MONITOR_PLUGINS)			
-				PluginStats.endPluginActivation(this.getUniqueIdentifier());			
+				PluginStats.endActivation(this.getUniqueIdentifier());			
 		}
 	}
 }
