@@ -244,6 +244,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				}
 			}
 		} catch (CoreException e) {
+		} finally {
+			monitor.done();
 		}
 	}
 	

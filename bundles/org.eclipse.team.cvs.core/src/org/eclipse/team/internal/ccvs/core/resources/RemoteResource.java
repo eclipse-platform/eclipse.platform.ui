@@ -154,17 +154,4 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		// ensure that clients are not trying to set sync info on remote handles.
 		Assert.isTrue(false);
 	}
-	/*
-	 * @see ICVSResource#reloadSyncInfo(IProgressMonitor)
-	 */
-	public void reloadSyncInfo(IProgressMonitor monitor) throws CVSException {
-		// NO-OP
-	}
-
-	/*
-	 * @see ICVSResource#saveSyncInfo(IProgressMonitor)
-	 */
-	public void saveSyncInfo(IProgressMonitor monitor) throws CVSException {
-		// NO-OP
-	}
 }

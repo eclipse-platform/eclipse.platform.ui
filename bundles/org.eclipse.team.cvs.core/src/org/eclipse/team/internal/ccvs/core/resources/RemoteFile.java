@@ -152,11 +152,12 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	/**
 	 * @see ICVSRemoteFile#getContents()
 	 */
-	public InputStream getContents(final IProgressMonitor monitor) {
-		try {
-			if (contents == null) {
-				final List entries = new ArrayList();
-				monitor.beginTask(null, 100);
+	public InputStream getContents(IProgressMonitor monitor) {
+		if (contents == null) {
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(Policy.bind("RemoteFile.getContents"), 100); //$NON-NLS-1$
+			try {
+				List entries = new ArrayList();
 				IStatus status;
 				Session s = new Session(getRepository(), parent, false);
 				s.open(Policy.subMonitorFor(monitor, 10));
@@ -176,7 +177,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 					}
 				} finally {
 					s.close();
-					monitor.done();
 				}
 				if (status.getCode() == CVSStatus.SERVER_ERROR) {
 					throw new CVSServerException(status);
@@ -186,11 +186,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				if (contents == null) {
 					contents = new byte[0];
 				}
+			} catch(CVSException e) {
+				return null;
+			} finally {
+				monitor.done();
 			}
-			return new ByteArrayInputStream(contents);
-		} catch(CVSException e) {
-			return null;
 		}
+		return new ByteArrayInputStream(contents);
 	}
 	
 	/*
@@ -198,16 +200,20 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 */
 	public ILogEntry getLogEntry(IProgressMonitor monitor) throws CVSException {
 		if (entry == null) {
-			monitor.beginTask(null, 100);
-			Session s = new Session(getRepository(), parent, false);
-			s.open(Policy.subMonitorFor(monitor, 10));
+			monitor = Policy.monitorFor(monitor);
+			monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$
 			try {
-				IStatus status = getLogEntry(s, Policy.subMonitorFor(monitor, 90));
-				if (status.getCode() == CVSStatus.SERVER_ERROR) {
-					throw new CVSServerException(status);
+				Session s = new Session(getRepository(), parent, false);
+				s.open(Policy.subMonitorFor(monitor, 10));
+				try {
+					IStatus status = getLogEntry(s, Policy.subMonitorFor(monitor, 90));
+					if (status.getCode() == CVSStatus.SERVER_ERROR) {
+						throw new CVSServerException(status);
+					}
+				} finally {
+					s.close();
 				}
 			} finally {
-				s.close();
 				monitor.done();
 			}
 		}
@@ -241,29 +247,31 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @see ICVSRemoteFile#getLogEntries()
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws CVSException {
-		
-		// Perform a "cvs log..." with a custom message handler
-		final List entries = new ArrayList();
-		IStatus status;
-		Session s = new Session(getRepository(), parent, false);
-		s.open(monitor);
-		QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(Policy.bind("RemoteFile.getLogEntries"), 100); //$NON-NLS-1$
 		try {
-			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
-			status = Command.LOG.execute(s,
-			Command.NO_GLOBAL_OPTIONS,
-			Command.NO_LOCAL_OPTIONS,
-			new String[] { getName() },
-			new LogListener(this, entries),
-			monitor);
+			// Perform a "cvs log..." with a custom message handler
+			final List entries = new ArrayList();
+			IStatus status;
+			Session s = new Session(getRepository(), parent, false);
+			s.open(Policy.subMonitorFor(monitor, 10));
+			QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
+			try {
+				CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
+				status = Command.LOG.execute(s, Command.NO_GLOBAL_OPTIONS, Command.NO_LOCAL_OPTIONS,
+					new String[] { getName() }, new LogListener(this, entries),
+					Policy.subMonitorFor(monitor, 90));
+			} finally {
+				CVSProviderPlugin.getPlugin().setQuietness(quietness);
+				s.close();
+			}
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
+				throw new CVSServerException(status);
+			}
+			return (ILogEntry[])entries.toArray(new ILogEntry[entries.size()]);
 		} finally {
-			CVSProviderPlugin.getPlugin().setQuietness(quietness);
-			s.close();
+			monitor.done();
 		}
-		if (status.getCode() == CVSStatus.SERVER_ERROR) {
-			throw new CVSServerException(status);
-		}
-		return (ILogEntry[])entries.toArray(new ILogEntry[entries.size()]);
 	}
 	
 	/**

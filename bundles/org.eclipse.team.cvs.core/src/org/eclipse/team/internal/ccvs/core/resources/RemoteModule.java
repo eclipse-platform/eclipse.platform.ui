@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -29,10 +30,6 @@ import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 
-/**
- * @version 	1.0
- * @author
- */
 public class RemoteModule extends RemoteFolder {
 	
 	private String label;
@@ -41,17 +38,21 @@ public class RemoteModule extends RemoteFolder {
 	private boolean expandable;
 	
 	public static RemoteModule[] getRemoteModules(ICVSRepositoryLocation repository, CVSTag tag, IProgressMonitor monitor) throws TeamException {
-		
-		RemoteModule[] modules;
-		Session s = new Session(repository, (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(ResourcesPlugin.getWorkspace().getRoot()), false);
-		s.open(monitor);
-		try {
-			modules = Command.CHECKOUT.getRemoteModules(s, tag, monitor);
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(Policy.bind("RemoteModule.getRemoteModules"), 100); //$NON-NLS-1$
+		try {		
+			RemoteModule[] modules;
+			Session s = new Session(repository, (ICVSFolder)CVSWorkspaceRoot.getCVSResourceFor(ResourcesPlugin.getWorkspace().getRoot()), false);
+			s.open(Policy.subMonitorFor(monitor, 10));
+			try {
+				modules = Command.CHECKOUT.getRemoteModules(s, tag, Policy.subMonitorFor(monitor, 90));
+			} finally {
+				s.close();
+			}
+			return modules;
 		} finally {
-			s.close();
+			monitor.done();
 		}
-		
-		return modules;
 	}
 	
 	/**

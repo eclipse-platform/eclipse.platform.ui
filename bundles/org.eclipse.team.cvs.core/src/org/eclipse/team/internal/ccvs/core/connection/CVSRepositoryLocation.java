@@ -197,7 +197,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/*
 	 * @see ICVSRepositoryLocation#members(CVSTag, boolean, IProgressMonitor)
 	 */
-	public ICVSRemoteResource[] members(CVSTag tag, boolean modules, IProgressMonitor progress) throws CVSException {		
+	public ICVSRemoteResource[] members(CVSTag tag, boolean modules, IProgressMonitor progress) throws CVSException {
 		try {
 			if (modules) {
 				return RemoteModule.getRemoteModules(this, tag, progress);

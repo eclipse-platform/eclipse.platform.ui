@@ -63,7 +63,7 @@ abstract class EclipseResource implements ICVSResource {
 			result = Util.getRelativePath(rootFolder.getPath(), getPath()); 
 			return result;	
 		} catch (ClassCastException e) {
-			throw new CVSException(Policy.bind("LocalResource.invalidResourceClass"), e); //$NON-NLS-1$
+			throw new CVSException(Policy.bind("EclipseResource.invalidResourceClass"), e); //$NON-NLS-1$
 		}
 	}
 
