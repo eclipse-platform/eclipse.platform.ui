@@ -33,7 +33,7 @@ package org.eclipse.core.commands.operations;
  */
 public final class OperationHistoryFactory {
 
-	private static IOperationHistory fOperationHistory;
+	private static IOperationHistory operationHistory;
 
 	/**
 	 * Return the operation history to be used for managing undoable operations.
@@ -42,10 +42,10 @@ public final class OperationHistoryFactory {
 	 *         redoing operations.
 	 */
 	public static IOperationHistory getOperationHistory() {
-		if (fOperationHistory == null) {
-			fOperationHistory = new DefaultOperationHistory();
+		if (operationHistory == null) {
+			operationHistory = new DefaultOperationHistory();
 		}
-		return fOperationHistory;
+		return operationHistory;
 	}
 
 	/**
@@ -61,8 +61,8 @@ public final class OperationHistoryFactory {
 	 */
 	public static void setOperationHistory(IOperationHistory history) {
 		// If one has already been set or created, ignore this request.
-		if (fOperationHistory == null) {
-			fOperationHistory = history;
+		if (operationHistory == null) {
+			operationHistory = history;
 		}
 	}
 

@@ -192,9 +192,10 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				update();
 			break;
 		case OperationHistoryEvent.OPERATION_CHANGED:
-			if (event.getOperation() == getOperation()) {
+		case OperationHistoryEvent.OPERATION_NOT_OK:
+			if (event.getOperation() == getOperation()) 
 				update();
-			}
+			break;
 		}
 	}
 

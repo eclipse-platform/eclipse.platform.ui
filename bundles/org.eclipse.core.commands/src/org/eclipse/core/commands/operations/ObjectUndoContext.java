@@ -50,8 +50,8 @@ public class ObjectUndoContext extends UndoContext {
 	}
 
 	/**
-	 * Construct an operation context that represents the given object and has
-	 * a specialized label.
+	 * Construct an operation context that represents the given object and has a
+	 * specialized label.
 	 * 
 	 * @param object -
 	 *            the object to be represented.
@@ -117,6 +117,20 @@ public class ObjectUndoContext extends UndoContext {
 	 */
 	public void addMatch(IUndoContext context) {
 		children.add(context);
+	}
+
+	/**
+	 * Remove the specified context as a match of this context. The context will
+	 * no longer be interpreted as a match of this context when the history is
+	 * filtered for a particular context. This method has no effect if the
+	 * specified context was never previously added as a match.
+	 * 
+	 * @param context -
+	 *            the context to be removed from the list of matches for this
+	 *            context
+	 */
+	public void removeMatch(IUndoContext context) {
+		children.remove(context);
 	}
 
 	/*

@@ -34,9 +34,9 @@ import org.eclipse.core.runtime.IStatus;
  * @experimental
  */
 public abstract class AbstractOperation implements IUndoableOperation {
-	private List fContexts = new ArrayList();
+	private List contexts = new ArrayList();
 
-	private String fLabel = ""; //$NON-NLS-1$
+	private String label = ""; //$NON-NLS-1$
 
 	/**
 	 * Construct an operation that has the specified label.
@@ -45,7 +45,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 *            the label to be used for the operation.
 	 */
 	public AbstractOperation(String label) {
-		fLabel = label;
+		this.label = label;
 	}
 
 	/*
@@ -54,8 +54,8 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#addContext(org.eclipse.core.commands.operations.IUndoContext)
 	 */
 	public void addContext(IUndoContext context) {
-		if (!fContexts.contains(context)) {
-			fContexts.add(context);
+		if (!contexts.contains(context)) {
+			contexts.add(context);
 		}
 	}
 
@@ -103,7 +103,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	public abstract IStatus execute(IProgressMonitor monitor, IAdaptable info);
 
 	public IUndoContext[] getContexts() {
-		return (IUndoContext[]) fContexts.toArray(new IUndoContext[fContexts
+		return (IUndoContext[]) contexts.toArray(new IUndoContext[contexts
 				.size()]);
 	}
 
@@ -122,7 +122,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * @see org.eclipse.core.commands.operations.IUndoableOperation#getLabel()
 	 */
 	public String getLabel() {
-		return fLabel;
+		return label;
 	}
 
 	/**
@@ -132,7 +132,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 *            the string to be used for the label.
 	 */
 	public void setLabel(String name) {
-		fLabel = name;
+		label = name;
 	}
 
 	/*
@@ -142,8 +142,8 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 */
 	public boolean hasContext(IUndoContext context) {
 		Assert.isNotNull(context);
-		for (int i = 0; i< fContexts.size(); i++) {
-			IUndoContext otherContext = (IUndoContext)fContexts.get(i);
+		for (int i = 0; i< contexts.size(); i++) {
+			IUndoContext otherContext = (IUndoContext)contexts.get(i);
 			// have to check both ways because one context may be more general in
 			// its matching rules than another.
 			if (context.matches(otherContext) || otherContext.matches(context)) 
@@ -160,7 +160,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	public abstract IStatus redo(IProgressMonitor monitor, IAdaptable info);
 
 	public void removeContext(IUndoContext context) {
-		fContexts.remove(context);
+		contexts.remove(context);
 	}
 
 	/*

@@ -70,27 +70,27 @@ public class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of {@link IOperationApprover}s
 	 */
-	protected List fApprovers = new ArrayList();
+	protected List approvers = new ArrayList();
 
 	/**
 	 * a map of undo limits per context
 	 */
-	private HashMap fLimits = new HashMap();
+	private HashMap limits = new HashMap();
 
 	/**
 	 * the list of {@link IOperationHistoryListener}s
 	 */
-	protected List fListeners = new ArrayList();
+	protected List listeners = new ArrayList();
 
 	/**
 	 * the list of operations available for redo, LIFO
 	 */
-	private List fRedo = new ArrayList();
+	private List redoList = new ArrayList();
 
 	/**
 	 * the list of operations available for undo, LIFO
 	 */
-	private List fUndo = new ArrayList();
+	private List undoList = new ArrayList();
 	
 	/**
 	 * an operation that is "absorbing" all other operations while
@@ -98,7 +98,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * executed are ignored and assumed to be triggered by the batching
 	 * 
 	 */
-	private IUndoableOperation fBatchingOperation = null;
+	private IUndoableOperation batchingOperation = null;
 
 	
 	/*
@@ -116,10 +116,10 @@ public class DefaultOperationHistory implements IOperationHistory {
 		 * it to be triggered by the batching operation and assume that its undo will be triggered
 		 * by the batching operation undo.  
 		 */
-		if (fBatchingOperation != null && fBatchingOperation != operation) {
+		if (batchingOperation != null && batchingOperation != operation) {
 			IUndoContext[] contexts = operation.getContexts();
 			for (int i = 0; i < contexts.length; i++) {
-				fBatchingOperation.addContext(contexts[i]);
+				batchingOperation.addContext(contexts[i]);
 			}
 			operation.dispose();
 			return;
@@ -132,7 +132,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 
 		checkUndoLimit(operation);
-		fUndo.add(operation);
+		undoList.add(operation);
 		notifyAdd(operation);
 	}
 
@@ -142,7 +142,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#addOperationApprover(org.eclipse.core.commands.operations.IOperationApprover)
 	 */
 	public void addOperationApprover(IOperationApprover approver) {
-		fApprovers.add(approver);
+		approvers.add(approver);
 	}
 
 	/*
@@ -151,7 +151,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#addOperationHistoryListener(org.eclipse.core.commands.operations.IOperationHistoryListener)
 	 */
 	public void addOperationHistoryListener(IOperationHistoryListener listener) {
-		fListeners.add(listener);
+		listeners.add(listener);
 	}
 
 	/*
@@ -234,13 +234,20 @@ public class DefaultOperationHistory implements IOperationHistory {
 				status = operation.redo(monitor, info);
 			} catch (OperationCanceledException e) {
 				status = Status.CANCEL_STATUS;
+			} catch (ExecutionException e) {
+				notifyNotOK(operation);
+				throw e;
+			} catch (Exception e) {
+				notifyNotOK(operation);
+				throw new ExecutionException(
+						"While redoing the operation, an exception occurred", e); //$NON-NLS-1$
 			}
 		}
 
 		// if successful, the operation is removed from the redo history and
 		// placed back in the undo history.
 		if (status.isOK()) {
-			fRedo.remove(operation);
+			redoList.remove(operation);
 			// Only add the operation to the undo stack if it can indeed be undone.
 			// This conservatism is added to support the integration of existing 
 			// frameworks (such as Refactoring) that produce undo and redo behavior
@@ -249,7 +256,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 			// See bug #84444
 			if (operation.canUndo()) {
 				checkUndoLimit(operation);
-				fUndo.add(operation);
+				undoList.add(operation);
 			}
 			// notify listeners must happen after history is updated
 			notifyRedone(operation);
@@ -278,12 +285,19 @@ public class DefaultOperationHistory implements IOperationHistory {
 				status = operation.undo(monitor, info);
 			} catch (OperationCanceledException e) {
 				status = Status.CANCEL_STATUS;
+			} catch (ExecutionException e) {
+				notifyNotOK(operation);
+				throw e;
+			} catch (Exception e) {
+				notifyNotOK(operation);
+				throw new ExecutionException(
+					"While undoing the operation, an exception occurred", e); //$NON-NLS-1$
 			}
 		}
 		// if successful, the operation is removed from the undo history and
 		// placed in the redo history.
 		if (status.isOK()) {
-			fUndo.remove(operation);
+			undoList.remove(operation);
 			// Only add the operation to the redo stack if it can indeed be redone.
 			// This conservatism is added to support the integration of existing 
 			// frameworks (such as Refactoring) that produce undo and redo behavior
@@ -292,7 +306,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 			// See bug #84444
 			if (operation.canRedo()) {
 				checkRedoLimit(operation);
-				fRedo.add(operation);
+				redoList.add(operation);
 			}
 			// notification occurs after the undo and redo histories are
 			// adjusted
@@ -327,14 +341,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 		 * triggered automatically by the undo of the batching operation.
 		 */
 		boolean merging = false;
-		if (fBatchingOperation != null) {
+		if (batchingOperation != null) {
 			// the composite shouldn't be executed explicitly while it is still open
-			if (fBatchingOperation == operation) {
+			if (batchingOperation == operation) {
 				return OPERATION_INVALID_STATUS;
 			}
 			IUndoContext[] contexts = operation.getContexts();
 			for (int i = 0; i < contexts.length; i++) {
-				fBatchingOperation.addContext(contexts[i]);
+				batchingOperation.addContext(contexts[i]);
 			}
 			merging = true;
 		}
@@ -348,6 +362,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 			status = operation.execute(monitor, info);
 		} catch (OperationCanceledException e) {
 			status = Status.CANCEL_STATUS;
+		} catch (ExecutionException e) {
+			notifyNotOK(operation);
+			throw e;
+		} catch (Exception e) {
+			notifyNotOK(operation);
+			throw new ExecutionException(
+					"While executing the operation, an exception occurred", e); //$NON-NLS-1$
 		}
 
 		// if successful, the notify listeners are notified and the operation is
@@ -402,12 +423,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Flush the redo stack of all operations that have the given context.
 	 */
 	void flushRedo(IUndoContext context) {
-		Object[] filtered = filter(fRedo, context);
+		Object[] filtered = filter(redoList, context);
 		for (int i = 0; i < filtered.length; i++) {
 			IUndoableOperation operation = (IUndoableOperation) filtered[i];
 			if (context == GLOBAL_UNDO_CONTEXT || operation.getContexts().length == 1) {
 				// remove the operation if it only has the context or we are flushing all
-				fRedo.remove(operation);
+				redoList.remove(operation);
 				internalRemove(operation);
 			} else {
 				// remove the reference to the context
@@ -420,12 +441,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Flush the undo stack of all operations that have the given context.
 	 */
 	void flushUndo(IUndoContext context) {
-		Object[] filtered = filter(fUndo, context);
+		Object[] filtered = filter(undoList, context);
 		for (int i = 0; i < filtered.length; i++) {
 			IUndoableOperation operation = (IUndoableOperation) filtered[i];
 			if (context == GLOBAL_UNDO_CONTEXT || operation.getContexts().length == 1) {
 				// remove the operation if it only has the context or we are flushing all
-				fUndo.remove(operation);
+				undoList.remove(operation);
 				internalRemove(operation);
 			} else {
 				// remove the reference to the context
@@ -434,10 +455,10 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 		// there may be an open batch.  Notify listeners that it did not complete.
 		// Since we did not add it, there's no need to notify of its removal.
-		if (fBatchingOperation != null) {
-			if (fBatchingOperation.hasContext(context)) {
-				notifyNotOK(fBatchingOperation);
-				fBatchingOperation = null;
+		if (batchingOperation != null) {
+			if (batchingOperation.hasContext(context)) {
+				notifyNotOK(batchingOperation);
+				batchingOperation = null;
 			} 
 		}
 	}
@@ -446,7 +467,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Force the redo history for the given context to contain max or less items.
 	 */
 	private void forceRedoLimit(IUndoContext context, int max) {
-		Object[] filtered = filter(fRedo, context);
+		Object[] filtered = filter(redoList, context);
 		int size = filtered.length;
 		if (size > 0) {
 			int index = 0;
@@ -456,7 +477,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					/* remove the operation if we are enforcing a global limit or if
 					 * the operation only has the specified context
 					 */
-					fRedo.remove(removed);
+					redoList.remove(removed);
 					internalRemove(removed);
 				} else {
 					/* if the operation has multiple contexts and we've reached the limit 
@@ -474,7 +495,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Force the undo history for the given context to contain max or less items.
 	 */
 	private void forceUndoLimit(IUndoContext context, int max) {
-		Object[] filtered = filter(fUndo, context);
+		Object[] filtered = filter(undoList, context);
 		int size = filtered.length;
 		if (size > 0) {
 			int index = 0;
@@ -484,7 +505,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 					/* remove the operation if we are enforcing a global limit or if
 					 * the operation only has the specified context
 					 */
-					fUndo.remove(removed);
+					undoList.remove(removed);
 					internalRemove(removed);
 				} else {
 					/* if the operation has multiple contexts and we've reached the limit 
@@ -504,18 +525,18 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#getLimit()
 	 */
 	public int getLimit(IUndoContext context) {
-		if (!fLimits.containsKey(context)) {
+		if (!limits.containsKey(context)) {
 			return DEFAULT_LIMIT;
 		}
-		return ((Integer)(fLimits.get(context))).intValue();
+		return ((Integer)(limits.get(context))).intValue();
 	}
 
 	/*
 	 * Consult the IOperationApprovers to see if the proposed redo should be allowed.
 	 */
 	protected IStatus getRedoApproval(IUndoableOperation operation, IAdaptable info) {
-		for (int i = 0; i < fApprovers.size(); i++) {
-			IStatus approval = ((IOperationApprover) fApprovers.get(i))
+		for (int i = 0; i < approvers.size(); i++) {
+			IStatus approval = ((IOperationApprover) approvers.get(i))
 					.proceedRedoing(operation, this, info);
 			if (!approval.isOK())
 				return approval;
@@ -530,7 +551,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation[] getRedoHistory(IUndoContext context) {
 		Assert.isNotNull(context);
-		return filter(fRedo, context);
+		return filter(redoList, context);
 	}
 
 	/*
@@ -540,8 +561,8 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation getRedoOperation(IUndoContext context) {
 		Assert.isNotNull(context);
-		for (int i = fRedo.size() - 1; i >= 0; i--) {
-			IUndoableOperation operation = (IUndoableOperation) fRedo.get(i);
+		for (int i = redoList.size() - 1; i >= 0; i--) {
+			IUndoableOperation operation = (IUndoableOperation) redoList.get(i);
 			if (operation.hasContext(context)) {
 				return operation;
 			}
@@ -553,8 +574,8 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * Consult the IOperationApprovers to see if the proposed undo should be allowed.
 	 */
 	protected IStatus getUndoApproval(IUndoableOperation operation, IAdaptable info) {
-		for (int i = 0; i < fApprovers.size(); i++) {
-			IStatus approval = ((IOperationApprover) fApprovers.get(i))
+		for (int i = 0; i < approvers.size(); i++) {
+			IStatus approval = ((IOperationApprover) approvers.get(i))
 					.proceedUndoing(operation, this, info);
 			if (!approval.isOK())
 				return approval;
@@ -569,7 +590,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation[] getUndoHistory(IUndoContext context) {
 		Assert.isNotNull(context);
-		return filter(fUndo, context);
+		return filter(undoList, context);
 	}
 
 	/*
@@ -579,8 +600,8 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public IUndoableOperation getUndoOperation(IUndoContext context) {
 		Assert.isNotNull(context);
-		for (int i = fUndo.size() - 1; i >= 0; i--) {
-			IUndoableOperation operation = (IUndoableOperation) fUndo.get(i);
+		for (int i = undoList.size() - 1; i >= 0; i--) {
+			IUndoableOperation operation = (IUndoableOperation) undoList.get(i);
 			if (operation.hasContext(context)) {
 				return operation;
 			}
@@ -603,9 +624,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_EXECUTE, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 
 	/*
@@ -615,9 +640,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_REDO, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 	
 	/*
@@ -627,9 +656,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.ABOUT_TO_UNDO, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
+
 	}
 
 	/*
@@ -639,9 +673,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_ADDED, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 
 	/*
@@ -651,9 +689,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.DONE, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 
 	/*
@@ -664,9 +706,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_NOT_OK, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 
 	/*
@@ -676,9 +722,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.REDONE, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 
 	/*
@@ -689,9 +739,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_REMOVED, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 
 	/*
@@ -701,9 +755,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.UNDONE, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
+
 	}
 	
 	/*
@@ -713,9 +772,13 @@ public class DefaultOperationHistory implements IOperationHistory {
 		OperationHistoryEvent event = new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_CHANGED, this, operation);
 		preNotifyOperation(operation, event);
-		for (int i = 0; i < fListeners.size(); i++)
-			((IOperationHistoryListener) fListeners.get(i))
+		for (int i = 0; i < listeners.size(); i++)
+			try {
+				((IOperationHistoryListener) listeners.get(i))
 					.historyNotification(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 	}
 
 	/*
@@ -729,7 +792,11 @@ public class DefaultOperationHistory implements IOperationHistory {
 
 	private void preNotifyOperation(IUndoableOperation operation, OperationHistoryEvent event) {
 		if (operation instanceof IHistoryNotificationAwareOperation) {
-			((IHistoryNotificationAwareOperation)operation).aboutToNotify(event);
+			try {
+				((IHistoryNotificationAwareOperation)operation).aboutToNotify(event);
+			} catch (Exception e) {
+				handleNotificationException(e);
+			}
 		}
 	}
 	
@@ -779,11 +846,11 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#remove(org.eclipse.core.commands.operations.IUndoableOperation)
 	 */
 	public void remove(IUndoableOperation operation) {
-		if (fUndo.contains(operation)) {
-			fUndo.remove(operation);
+		if (undoList.contains(operation)) {
+			undoList.remove(operation);
 			internalRemove(operation);
-		} else if (fRedo.contains(operation)) {
-			fRedo.remove(operation);
+		} else if (redoList.contains(operation)) {
+			redoList.remove(operation);
 			internalRemove(operation);
 		}
 	}
@@ -794,7 +861,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#removeOperationApprover(org.eclipse.core.commands.operations.IOperationApprover)
 	 */
 	public void removeOperationApprover(IOperationApprover approver) {
-		fApprovers.remove(approver);
+		approvers.remove(approver);
 	}
 
 	/*
@@ -804,7 +871,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public void removeOperationHistoryListener(
 			IOperationHistoryListener listener) {
-		fListeners.remove(listener);
+		listeners.remove(listener);
 	}
 
 	/*
@@ -822,7 +889,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		 * is desired.
 		 */	
 		Assert.isNotNull(context);
-		fLimits.put(context, new Integer(limit));
+		limits.put(context, new Integer(limit));
 		forceUndoLimit(context, limit);
 		forceRedoLimit(context, limit);
 
@@ -873,12 +940,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#openOperation(org.eclipse.core.commands.operations.IUndoableOperation)
 	 */
 	public void openOperation(IUndoableOperation operation) {
-		if (fBatchingOperation != null) {
+		if (batchingOperation != null) {
 			// unexpected nesting of operations.  The original batching operation
 			// will be closed and will be considered unsuccessful.
 			closeOperation(false, false);	
 		} 
-		fBatchingOperation = operation;
+		batchingOperation = operation;
 		notifyAboutToExecute(operation);	
 	}
 	
@@ -896,14 +963,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#closeOperation(boolean, boolean)
 	 */
 	public void closeOperation(boolean operationOK, boolean addToHistory) {
-		if (fBatchingOperation != null) {
+		if (batchingOperation != null) {
 			if (operationOK) {
-				notifyDone(fBatchingOperation);
-				if (addToHistory) add(fBatchingOperation);
+				notifyDone(batchingOperation);
+				if (addToHistory) add(batchingOperation);
 			} else {
-				notifyNotOK(fBatchingOperation);
+				notifyNotOK(batchingOperation);
 			}
-			fBatchingOperation = null;
+			batchingOperation = null;
 		}
 	}
 	
@@ -913,9 +980,22 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * @see org.eclipse.core.commands.operations.IOperationHistory#operationChanged(org.eclipse.core.commands.operations.IUndoableOperation)
 	 */
 	public void operationChanged(IUndoableOperation operation) {
-		if (fUndo.contains(operation) || fRedo.contains(operation)) {
+		if (undoList.contains(operation) || redoList.contains(operation)) {
 			notifyChanged(operation);
 		}
+	}
+	
+	/*
+	 * Handle an exception that occurred while sending a notification about
+	 * something happening in the operation history.  When notifications fail,
+	 * execution should continue, but the exception should be logged.
+	 */
+	private void handleNotificationException(Throwable e) {
+		if (e instanceof OperationCanceledException)
+			return;
+		// This plug-in is intended to run stand-alone outside of the
+		// platform, so we do not employ standard platform exception logging.
+		e.printStackTrace();
 	}
 
 }
