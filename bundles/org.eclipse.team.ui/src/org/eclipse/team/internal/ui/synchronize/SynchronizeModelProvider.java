@@ -594,44 +594,37 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 */
 	private void propagateProblemMarkers(ISynchronizeModelElement element, boolean clear) {
 		IResource resource = element.getResource();
-		if(resource != null && resource.exists()) {
-			try {
-				String property = null;
-				if(! clear) {
+		if (resource != null) {
+			String property = null;
+			if (!clear) {
+				try {
 					IMarker[] markers = resource.findMarkers(IMarker.PROBLEM, true, getLogicalModelDepth(resource));
 					for (int i = 0; i < markers.length; i++) {
 						IMarker marker = markers[i];
-						try {
-							Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
-							if(severity != null) {
-								if(severity.intValue() == IMarker.SEVERITY_ERROR) {
-									property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
-									break;
-								} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
-									property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
-									// Keep going because there may be errors on other resources
-								}
+						Integer severity = (Integer) marker.getAttribute(IMarker.SEVERITY);
+						if (severity != null) {
+							if (severity.intValue() == IMarker.SEVERITY_ERROR) {
+								property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
+								break;
+							} else if (severity.intValue() == IMarker.SEVERITY_WARNING) {
+								property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
+								// Keep going because there may be errors on other resources
 							}
-						} catch(CoreException e) {
-							// the marker has been deleted skip this marker and keep going
-							if(! (e.getStatus().getCode() == IResourceStatus.MARKER_NOT_FOUND)) {
-								return;
-							}
-							continue;
 						}
 					}
-				}			
-				// If it doesn't have a direct change, a parent might
-				boolean recalculateParentDecorations = hadProblemProperty(element, property);
-				if(recalculateParentDecorations) {
-					ISynchronizeModelElement parent = (ISynchronizeModelElement)element.getParent();
-					if(parent != null) {
-						propagateProblemMarkers(parent, false);
-					}
+				} catch (CoreException e) {
+					// the marker has been deleted skip this marker and keep going, or if the resource
+					// does not exist anymore. In anycase this will force parents to be recalculated.
+					// continue;
 				}
-			} catch (CoreException e) {
-				// ignore problems on this item and keep going
-				return;
+			}
+			// If it doesn't have a direct change, a parent might
+			boolean recalculateParentDecorations = hadProblemProperty(element, property);
+			if (recalculateParentDecorations) {
+				ISynchronizeModelElement parent = (ISynchronizeModelElement) element.getParent();
+				if (parent != null) {
+					propagateProblemMarkers(parent, false);
+				}
 			}
 		}
 	}
@@ -645,6 +638,12 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	private boolean hadProblemProperty(ISynchronizeModelElement element, String property) {
 		boolean hadError = element.getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY);
 		boolean hadWarning = element.getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY);
+		
+		// Force recalculation of parents of phantom resources
+		IResource resource = element.getResource();
+		if(resource != null && resource.isPhantom()) {
+			return true;
+		}
 		
 		if(hadError) {
 			if(! (property == ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY)) {
