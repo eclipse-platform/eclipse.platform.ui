@@ -28,7 +28,6 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
@@ -847,15 +846,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			ITreeContentProvider cp = (ITreeContentProvider) viewer.getContentProvider();
 			collectAllMatchesBelow(result, set, cp, selection.toArray());
 		} else {
-			IStructuredContentProvider cp = (IStructuredContentProvider) viewer.getContentProvider();
-			collectAllMatches(result, set, cp, selection.toArray());
+			collectAllMatches(result, set, selection.toArray());
 		}
 		Match[] matches = new Match[set.size()];
 		set.toArray(matches);
 		result.removeMatches(matches);
 	}
 
-	private void collectAllMatches(AbstractTextSearchResult result, HashSet set, IStructuredContentProvider cp, Object[] elements) {
+	private void collectAllMatches(AbstractTextSearchResult result, HashSet set, Object[] elements) {
 		for (int j = 0; j < elements.length; j++) {
 			Match[] matches = result.getMatches(elements[j]);
 			for (int i = 0; i < matches.length; i++) {
