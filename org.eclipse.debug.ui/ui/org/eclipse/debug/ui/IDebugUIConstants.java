@@ -181,13 +181,6 @@ public interface IDebugUIConstants {
 	 * Debug view identifier (value <code>"org.eclipse.debug.ui.DebugView"</code>).
 	 */
 	public static final String ID_DEBUG_VIEW= "org.eclipse.debug.ui.DebugView"; //$NON-NLS-1$
-
-	/**
-	 * Process view identifier (value <code>"org.eclipse.debug.ui.ProcessView"</code>).
-	 * 
-	 * @deprecated this view no longer exists
-	 */
-	public static final String ID_PROCESS_VIEW= "org.eclipse.debug.ui.ProcessView"; //$NON-NLS-1$
 	
 	/**
 	 * Breakpoint view identifier (value <code>"org.eclipse.debug.ui.BreakpointView"</code>).
