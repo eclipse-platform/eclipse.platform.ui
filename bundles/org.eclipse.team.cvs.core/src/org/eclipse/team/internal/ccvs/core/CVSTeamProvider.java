@@ -867,7 +867,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	/*
 	 * This method expects to be passed an InfiniteSubProgressMonitor
 	 */
-	private void setRemoteRoot(ICVSRepositoryLocation location, IProgressMonitor monitor) throws TeamException {
+	public void setRemoteRoot(ICVSRepositoryLocation location, IProgressMonitor monitor) throws TeamException {
 
 		// Check if there is a differnece between the new and old roots	
 		final String root = location.getLocation();

@@ -70,12 +70,18 @@
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
             name="%CVS"
-            class="org.eclipse.team.internal.ccvs.ui.CVSPropertiesPage"
-            id="org.eclipse.team.ccvs.ui.propertyPages.CVSPropertiesPage">
+            class="org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage"
+            id="org.eclipse.team.ccvs.ui.propertyPages.CVSProjectPropertiesPage">
          <filter
                name="projectNature"
                value="org.eclipse.team.cvs.core.cvsnature">
          </filter>
+      </page>
+      <page
+            objectClass="org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation"
+            name="%CVS"
+            class="org.eclipse.team.internal.ccvs.ui.CVSRepositoryPropertiesPage"
+            id="org.eclipse.team.ccvs.ui.propertyPages.CVSRepositoryPropertiesPage">
       </page>
    </extension>
 <!-- ******************* Menus ******************** -->

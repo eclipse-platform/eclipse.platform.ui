@@ -24,6 +24,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -35,6 +36,7 @@ import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
@@ -61,6 +63,7 @@ public class RepositoriesView extends ViewPart {
 	private Action showModulesAction;
 	private OpenRemoteFileAction openAction;	
 	private Action refreshAction;
+	private PropertyDialogAction propertiesAction;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
@@ -100,6 +103,7 @@ public class RepositoriesView extends ViewPart {
 	 * Contribute actions to the view
 	 */
 	private void contributeActions() {
+		final Shell shell = viewer.getTree().getShell();
 		// Create actions
 		
 		// Refresh (toolbar)
@@ -114,11 +118,14 @@ public class RepositoriesView extends ViewPart {
 		final Action newAction = new Action(Policy.bind("RepositoriesView.new"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
 			public void run() {
 				NewLocationWizard wizard = new NewLocationWizard();
-				WizardDialog dialog = new WizardDialog(viewer.getTree().getShell(), wizard);
+				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.open();
 			}
 		};
 
+		// Properties (popup)
+		propertiesAction = new PropertyDialogAction(shell, viewer);
+		
 		// Create the popup menu
 		MenuManager menuMgr = new MenuManager();
 		Tree tree = viewer.getTree();
@@ -133,10 +140,15 @@ public class RepositoriesView extends ViewPart {
 				sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				manager.add(sub);
 				
-				// Misc additions go last
+				// Misc additions
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				
 				manager.add(refreshAction);
+				
+				IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+				if (selection.size() == 1 && selection.getFirstElement() instanceof ICVSRepositoryLocation) {
+					manager.add(propertiesAction);
+				}
 				sub.add(newAction);
 			}
 		});

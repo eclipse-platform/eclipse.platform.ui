@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -163,11 +164,15 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		repositoryPathCombo.addListener(SWT.Selection, listener);
 		repositoryPathCombo.addListener(SWT.Modify, listener);
 		
+		// create a composite to ensure the validate button is in its own tab group
 		if (showValidate) {
-			validateButton = new Button(composite, SWT.CHECK);
+			Composite validateButtonTabGroup = new Composite(composite, SWT.NONE);
 			GridData data = new GridData();
 			data.horizontalSpan = 2;
-			validateButton.setLayoutData(data);
+			validateButtonTabGroup.setLayoutData(data);
+			validateButtonTabGroup.setLayout(new FillLayout());
+
+			validateButton = new Button(validateButtonTabGroup, SWT.CHECK);
 			validateButton.setText(Policy.bind("ConfigurationWizardAutoconnectPage.validate")); //$NON-NLS-1$
 			validateButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event e) {

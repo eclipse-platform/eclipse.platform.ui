@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -11,8 +11,12 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -20,13 +24,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -37,19 +40,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IUserInfo;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.wizards.UpdateWizard;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-public class CVSPropertiesPage extends PropertyPage {
-	IProject project;
+public class CVSRepositoryPropertiesPage extends PropertyPage {
+	ICVSRepositoryLocation location;
 	
 	// Widgets
 	Text userText;
@@ -57,15 +55,12 @@ public class CVSPropertiesPage extends PropertyPage {
 	Combo methodType;
 	Label hostLabel;
 	Label pathLabel;
-	Label moduleLabel;
 	Label portLabel;
-	Label tagLabel;
 	
 	boolean passwordChanged;
 	boolean connectionInfoChanged;
 
 	IUserInfo info;
-	CVSTeamProvider provider;
 		
 	/*
 	 * @see PreferencesPage#createContents
@@ -98,19 +93,10 @@ public class CVSPropertiesPage extends PropertyPage {
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.path"), 1); //$NON-NLS-1$
 		pathLabel = createLabel(composite, "", 2); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.module"), 1); //$NON-NLS-1$
-		moduleLabel = createLabel(composite, "", 2); //$NON-NLS-1$
-		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.tag"), 1); //$NON-NLS-1$
-		tagLabel = createLabel(composite, "", 1); //$NON-NLS-1$
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		tagLabel.setLayoutData(data);
-		
 		initializeValues();
 		passwordText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				passwordChanged = true;
-				connectionInfoChanged = true;
 			}
 		});
 		userText.addListener(SWT.Modify, new Listener() {
@@ -176,15 +162,14 @@ public class CVSPropertiesPage extends PropertyPage {
 	 * Initializes the page
 	 */
 	private void initialize() {
-		// Get the project that is the source of this property page
-		project = null;
+		location = null;
 		IAdaptable element = getElement();
-		if (element instanceof IProject) {
-			project = (IProject)element;
+		if (element instanceof ICVSRepositoryLocation) {
+			location = (ICVSRepositoryLocation)element;
 		} else {
-			Object adapter = element.getAdapter(IProject.class);
-			if (adapter instanceof IProject) {
-				project = (IProject)adapter;
+			Object adapter = element.getAdapter(ICVSRepositoryLocation.class);
+			if (adapter instanceof ICVSRepositoryLocation) {
+				location = (ICVSRepositoryLocation)adapter;
 			}
 		}
 	}
@@ -194,66 +179,30 @@ public class CVSPropertiesPage extends PropertyPage {
 	private void initializeValues() {
 		passwordChanged = false;
 		
-		// Do some pre-checks to ensure we're in a good state
-		provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-		if (provider == null) return;
-		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
-		ICVSFolder folder = cvsRoot.getLocalRoot();
-		if (!folder.isCVSFolder()) return;
-		
 		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
 		for (int i = 0; i < methods.length; i++) {
 			methodType.add(methods[i]);
 		}
-		try {
-			ICVSRepositoryLocation location = cvsRoot.getRemoteLocation();
-			
-			String method = location.getMethod().getName();
-			methodType.select(methodType.indexOf(method));
-			info = location.getUserInfo(true);
-			userText.setText(info.getUsername());
-			passwordText.setText("*********"); //$NON-NLS-1$
-			hostLabel.setText(location.getHost());
-			int port = location.getPort();
-			if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
-				portLabel.setText(Policy.bind("CVSPropertiesPage.defaultPort")); //$NON-NLS-1$
-			} else {
-				portLabel.setText("" + port); //$NON-NLS-1$
-			}
-			pathLabel.setText(location.getRootDirectory());
-			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
-			if (syncInfo == null) return;
-			moduleLabel.setText(syncInfo.getRepository());
-		} catch (TeamException e) {
-			handle(e);
+		String method = location.getMethod().getName();
+		methodType.select(methodType.indexOf(method));
+		info = location.getUserInfo(true);
+		userText.setText(info.getUsername());
+		passwordText.setText("*********"); //$NON-NLS-1$
+		hostLabel.setText(location.getHost());
+		int port = location.getPort();
+		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT) {
+			portLabel.setText(Policy.bind("CVSPropertiesPage.defaultPort")); //$NON-NLS-1$
+		} else {
+			portLabel.setText("" + port); //$NON-NLS-1$
 		}
-		
-		initializeTag();
+		pathLabel.setText(location.getRootDirectory());
 	}
 	
-	private void initializeTag() {
-		provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-		if (provider == null) return;
-		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
-		try {
-			ICVSFolder local = cvsRoot.getCVSFolderFor(project);
-			CVSTag tag = local.getFolderSyncInfo().getTag();
-			String tagName;
-			if (tag == null) {
-				tagName = CVSTag.DEFAULT.getName();
-			} else {
-				tagName = tag.getName();
-			}
-			tagLabel.setText(tagName);
-		} catch (TeamException e) {
-			handle(e);
-		}
-	}
 	/*
 	 * @see PreferencesPage#performOk
 	 */
 	public boolean performOk() {
-		if ( ! connectionInfoChanged) {
+		if (!connectionInfoChanged && !passwordChanged) {
 			return true;
 		}
 		info.setUsername(userText.getText());
@@ -261,14 +210,65 @@ public class CVSPropertiesPage extends PropertyPage {
 			info.setPassword(passwordText.getText());
 		}
 		final String type = methodType.getText();
+		final boolean[] result = new boolean[] { false };
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						provider.setConnectionInfo(project, type, info, monitor);
+						// Check if the password was the only thing to change.
+						if (passwordChanged && !connectionInfoChanged) {
+							CVSRepositoryLocation oldLocation = (CVSRepositoryLocation)location;
+							oldLocation.setPassword(passwordText.getText());
+							oldLocation.updateCache();
+							result[0] = true;
+							return;
+						}
+						
+						// Create a new repository location with the new information
+						CVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(location.getLocation());
+						newLocation.setMethod(type);
+						newLocation.setUserInfo(info);
+						
+						// For each project shared with the old location, set connection info to the new one
+						List projects = new ArrayList();
+						IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+						for (int i = 0; i < allProjects.length; i++) {
+							RepositoryProvider teamProvider = RepositoryProvider.getProvider(allProjects[i], CVSProviderPlugin.getTypeId());
+							if (teamProvider != null) {
+								CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
+								if (cvsProvider.getCVSWorkspaceRoot().getRemoteLocation().equals(location)) {
+									projects.add(allProjects[i]);
+									break;
+								}
+							}
+						}
+						if (projects.size() > 0) {
+							// To do: warn the user
+							boolean r = MessageDialog.openConfirm(getShell(), Policy.bind("CVSRepositoryPropertiesPage.Confirm_Project_Sharing_Changes_1"), Policy.bind("CVSRepositoryPropertiesPage.There_are_projects_in_the_workspace_shared_with_this_repository._The_projects_will_be_updated_with_the_new_information_that_you_have_entered_2")); //$NON-NLS-1$ //$NON-NLS-2$
+							if (!r) {
+								result[0] = false;
+								return;
+							}
+							monitor.beginTask(null, 1000 * projects.size());
+							try {
+								Iterator it = projects.iterator();
+								while (it.hasNext()) {
+									IProject project = (IProject)it.next();
+									RepositoryProvider teamProvider = RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
+									CVSTeamProvider cvsProvider = (CVSTeamProvider)teamProvider;
+									cvsProvider.setRemoteRoot(newLocation, Policy.subMonitorFor(monitor, 1000));
+								}
+							} finally {
+								monitor.done();
+							}
+						}
+						
+						// Dispose the old repository location
+						CVSProviderPlugin.getProvider().disposeRepository(location);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
+					result[0] = true;
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -285,7 +285,7 @@ public class CVSPropertiesPage extends PropertyPage {
 		} catch (InterruptedException e) {
 		}
 					
-		return true;
+		return result[0];
 	}
 	/**
 	 * Shows the given errors to the user.
