@@ -53,31 +53,21 @@ public PluginVersionIdentifier getVersionIdentifier();
 public boolean isExported();
 /**
  * Indicates that this plug-in prerequisite can be resolved
- * against a configured plug-in with a compatible identifier.
- *
- * @return <code>true</code> if compatible match is allowed,
- *   <code>false</code> if exact match is required.
- */
-public boolean isMatchedAsGreaterOrEqual();
-/**
- * Indicates that this plug-in prerequisite can be resolved
  * against a configured plug-in with an identifier that is
  * greater than or equal to it.
  *
  * @return <code>true</code> if greater or equal match is allowed,
  *   <code>false</code> otherwise.
  */
-public boolean isMatchedAsCompatible();
+public boolean isMatchedAsGreaterOrEqual();
 /**
- * Indicates that this plug-in prerequisite can only be resolved
- * against a configured plug-in with exactly the same plug-in 
- * identifier.
+ * Indicates that this plug-in prerequisite can be resolved
+ * against a configured plug-in with a compatible identifier.
  *
- * @return <code>true</code> if only exact identifier match
- * satisfies this dependency, <code>false</code> if compatible
- * plug-in will satisfy this dependency.
+ * @return <code>true</code> if compatible match is allowed,
+ *   <code>false</code> if exact match is required.
  */
-public boolean isMatchedAsEquivalent();
+public boolean isMatchedAsCompatible();
 /**
  * Indicates that this plug-in prerequisite can only be resolved
  * against a configured plug-in with an equivalent plug-in 
@@ -86,7 +76,7 @@ public boolean isMatchedAsEquivalent();
  * @return <code>true</code> if only equivalent identifier match
  * satisfies this dependency, <code>false</code> otherwise.
  */
-public boolean isMatchedAsPerfect();
+public boolean isMatchedAsEquivalent();
 /**
  * Indicates that this plug-in prerequisite can only be resolved
  * against a configured plug-in with a plug-in identifier that
@@ -95,6 +85,16 @@ public boolean isMatchedAsPerfect();
  * @return <code>true</code> if only perfectly equal
  * identifier match satisfies this dependency,
  * <code>false</code> otherwise.
+ */
+public boolean isMatchedAsPerfect();
+/**
+ * Indicates that this plug-in prerequisite can only be resolved
+ * against a configured plug-in with exactly the same plug-in 
+ * identifier.
+ *
+ * @return <code>true</code> if only exact identifier match
+ * satisfies this dependency, <code>false</code> if compatible
+ * plug-in will satisfy this dependency.
  */
 public boolean isMatchedAsExact();
 /**
