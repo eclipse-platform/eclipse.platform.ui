@@ -610,7 +610,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
     private boolean validateRedirectFile() {
         if(fFileOutput.getSelection()) {
-            int len = fFileText.getText().length();
+            int len = fFileText.getText().trim().length();
             if (len == 0) {
                 setErrorMessage(LaunchConfigurationsMessages.getString("CommonTab.8")); //$NON-NLS-1$
                 return false;
