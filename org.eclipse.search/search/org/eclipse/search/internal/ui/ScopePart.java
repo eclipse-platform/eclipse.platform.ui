@@ -31,6 +31,8 @@ public class ScopePart {
 	public static final int SELECTION_SCOPE= 1;
 	public static final int WORKING_SET_SCOPE= 2;
 
+	private static String	fgLRUsedWorkingSetName;
+
 	// Scope radio buttons
 	private Button fUseWorkspace;
 	private Button fUseSelection;
@@ -38,7 +40,7 @@ public class ScopePart {
 
 
 	private int			fScope;
-	private Text		fWorkingSetText;
+	private Text			fWorkingSetText;
 	private IWorkingSet	fWorkingSet;
 	
 	/**
@@ -59,6 +61,9 @@ public class ScopePart {
 	public ScopePart(int initialScope) {
 		Assert.isLegal(initialScope >= 0 && initialScope <= 3);
 		fScope= initialScope;
+		fWorkingSet= SearchUI.findWorkingSet(fgLRUsedWorkingSetName);
+		if (fWorkingSet == null && WorkingSet.getWorkingSets().length > 0)
+			fWorkingSet= WorkingSet.getWorkingSets()[0];
 	}
 
 	/**
@@ -138,6 +143,7 @@ public class ScopePart {
 	public void setSelectedWorkingSet(IWorkingSet workingSet) {
 		Assert.isNotNull(workingSet);
 		setSelectedScope(WORKING_SET_SCOPE);
+		fgLRUsedWorkingSetName= workingSet.getName();
 		fWorkingSet= workingSet;
 		if (fWorkingSetText != null)
 			fWorkingSetText.setText(workingSet.getName());
@@ -172,7 +178,7 @@ public class ScopePart {
 		fUseWorkingSet= new Button(group, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(WORKING_SET_SCOPE));
 		fUseWorkingSet.setText(SearchMessages.getString("ScopePart.workingSetScope.text")); //$NON-NLS-1$
-		fUseWorkingSet.setEnabled(getSelectedWorkingSet() != null);
+		fUseWorkingSet.setEnabled(fWorkingSet != null);
 		fWorkingSetText= new Text(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		Button chooseWorkingSet= new Button(group, SWT.PUSH);
 		chooseWorkingSet.setLayoutData(new GridData());
@@ -224,7 +230,9 @@ public class ScopePart {
 		if (fWorkingSet != null)
 			dialog.setInitialSelections(new IWorkingSet[] {fWorkingSet});
 		if (dialog.open() == dialog.OK) {
-			setSelectedWorkingSet((IWorkingSet)dialog.getResult()[0]);
+			IWorkingSet workingSet= (IWorkingSet)dialog.getResult()[0];
+			setSelectedWorkingSet(workingSet);
+			fgLRUsedWorkingSetName= workingSet.getName();
 			return true;
 		} else {
 			// test if selected working set has been removed

@@ -1,6 +1,7 @@
 package org.eclipse.search.internal.workingsets;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
@@ -74,6 +75,32 @@ public class WorkingSet implements IWorkingSet {
 	 */	
 	public static IWorkingSet[] getWorkingSets() {
 		return (IWorkingSet[])fgWorkingSets.toArray(new IWorkingSet[fgWorkingSets.size()]);
+	}
+
+	/**
+	 * Finds a working set by name.
+	 *
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @param name the name the working set
+	 * @return the working set with the given name or <code>null</code> if not found
+	 */
+	public static IWorkingSet find(String name) {
+		if (name == null || fgWorkingSets == null)
+			return null;
+		
+		Iterator iter= fgWorkingSets.iterator();
+		while (iter.hasNext()) {
+			IWorkingSet workingSet= (IWorkingSet)iter.next();
+			if (name.equals(workingSet.getName()))
+				return workingSet;
+		}
+		return null;
 	}
 
 	/**

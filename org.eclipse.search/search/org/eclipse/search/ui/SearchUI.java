@@ -4,8 +4,6 @@
  */
 package org.eclipse.search.ui;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
@@ -13,6 +11,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.workingsets.WorkingSet;
 import org.eclipse.search.internal.workingsets.WorkingSetSelectionDialog;
 
 /**
@@ -116,6 +115,23 @@ public final class SearchUI {
 	 */
 	public static SelectionDialog createWorkingSetDialog(Shell parent) {
 		return new WorkingSetSelectionDialog(parent);
+	}
+
+	/**
+	 * Finds a working set by name.
+	 *
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @param name the name the working set
+	 * @return the working set with the given name or <code>null</code> if not found
+	 */
+	public static IWorkingSet findWorkingSet(String name) {
+		return WorkingSet.find(name);
 	}
 
 	/**
