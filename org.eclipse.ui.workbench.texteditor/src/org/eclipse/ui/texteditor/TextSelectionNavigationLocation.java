@@ -228,9 +228,17 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			s. fPosition= fPosition;
 			s.fSavedPosition= fSavedPosition;
 			return true;
-		}
+		} 
 		
-		return s.fDocument == fDocument && s.fPosition.equals(fPosition);
+		if (s.fDocument == fDocument)  {
+			if (s.fPosition.overlapsWith(fPosition.offset, fPosition.length) || fPosition.offset + fPosition.length == s.fPosition.offset || s.fPosition.offset + s.fPosition.length == fPosition.offset)  {
+				s.fPosition.offset= fPosition.offset;
+				s.fPosition.length= fPosition.length;
+				return true;
+			}
+		}
+
+		return false;
 	}
 	
 	/**
