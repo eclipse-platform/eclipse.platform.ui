@@ -152,28 +152,8 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		String revision = null;
 		
 		if (outgoing) {
-			// We have an outgoing change that's not a conflict.
-			// Make sure the entry is right for additions and deletions
-			if (remote == null) {
-				// We have an add. Make sure there is an entry for the add
-				if (info != null) {
-					// The sync info is alright
-					return;
-				}
-				Assert.isTrue(local.exists());
-				// XXX We need to create the proper sync info
-				info =  new ResourceSyncInfo(local.getName(), ResourceSyncInfo.ADDED_REVISION, ResourceSyncInfo.DUMMY_TIMESTAMP, CVSProvider.isText(local.getName())?"":"-kb", local.getParent().getFolderSyncInfo().getTag(), null);
-				revision = info.getRevision();
-			} else {
-				Assert.isNotNull(info);
-				if (! local.exists() && ! info.isDeleted()) {
-					// We have a delete. Update the entry if required
-					revision = ResourceSyncInfo.DELETED_PREFIX + info.getRevision();
-				} else {
-					// The sync info is alright
-					return;
-				}
-			}
+				// The sync info is alright, it's already outgoing!
+				return;
 		} else if (incoming) {
 			// We have an incoming change, addition, or deletion that we want to ignore
 			if (local.exists()) {
@@ -307,55 +287,33 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 				case Update.STATE_MERGEABLE_CONFLICT: 
 					return ILocalSyncElement.CONFLICTING | 
 							   ILocalSyncElement.CHANGE | 
-							   ILocalSyncElement.AUTOMERGE_CONFLICT;
-				
-				// Commented out until we decide on how to handle the deletions case.
-				// you can't delete a remote folder from a CVS server, so don't show folders
-				// as outgoing deletions. This will just confuse the user.
-				//case Update.STATE_DELETED:
-				//	if(remote.isContainer()) {
-				//		return ILocalSyncElement.IN_SYNC;
-				//	} else {
-				//		return ILocalSyncElement.OUTGOING | ILocalSyncElement.DELETION;
-				//	}
+							   ILocalSyncElement.AUTOMERGE_CONFLICT;				
 			}			
 		}
 		
-		// 3. Handle outgoing deletions of folders when user has deleted a folder
-		// locally. This will force children to be shown as outgoing deletions.
-		IResource local = getLocal();
-		
-		/* Commented until we decide how to handle outgoing deletions of folders
-		if(remote != null && remote.isContainer()) {
-			ICVSFolder cvsFolder = (ICVSFolder)localSync.getCVSResource();
-			// folder is managed and doesn't have its meta directory, then consider
-			// all children as deleted.
-			try {
-				if(cvsFolder.isManaged() && !cvsFolder.isCVSFolder() && !cvsFolder.exists()) {
-					markChildrenAsOutgoingDeletions((RemoteResource)remote, progress);
-					return ILocalSyncElement.IN_SYNC;
-				}			
-			} catch(CVSException e) {
-				CVSProviderPlugin.log(e);
-			}
-		}
-		*/
+		// 3. unmanage delete/delete conflicts and return that they are in sync
+		kind = handleDeletionConflicts(kind);
 				
 		return kind;
 	}
 	
-	private void markChildrenAsOutgoingDeletions(RemoteResource remote, IProgressMonitor progress) {
-		if(remote.isContainer()) {
+	/*
+	 * If the resource has a delete/delete conflict then ensure that the local is unmanaged so that the sync info
+	 * can be properly flushed.
+	 */
+	private int handleDeletionConflicts(int kind) {
+		if(kind == (IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION | IRemoteSyncElement.PSEUDO_CONFLICT)) {
 			try {
-				IRemoteResource[] children = remote.members(progress);
-				for (int i = 0; i < children.length; i++) {
-					markChildrenAsOutgoingDeletions((RemoteResource)children[i], progress);
+				ICVSResource cvsResource = localSync.getCVSResource();
+				if(!isContainer() && cvsResource.isManaged()) {
+					cvsResource.unmanage();
 				}
-			} catch(TeamException e) {
-				CVSProviderPlugin.log(e);
+				return IRemoteSyncElement.IN_SYNC;
+			} catch(CVSException e) {
+				CVSProviderPlugin.log(e.getStatus());
+				return IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.DELETION;
 			}
 		}
-		// mark as deleted locally, forcing sync state to become outgoing deletions.		
-		remote.setWorkspaceSyncState(Update.STATE_DELETED);
+		return kind;
 	}
 }
