@@ -404,10 +404,18 @@
 				id="org.eclipse.team.ccvs.ui.configureTagsOnRemoteFolder"
 				label="%ConfigureTags.label"
                 menubarPath="miscGroup"
-				tooltip="%ConfigureTags.label"
+				tooltip="%ConfigureTags.tooltip"
 				icon="icons/full/clcl16/newstream_wiz.gif"
 				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"				
-				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"/>        
+				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"/>
+		 <action
+				id="org.eclipse.team.ccvs.ui.addToBranch"
+				label="%AddToBranch.label"
+                menubarPath="miscGroup"
+				tooltip="%ddToBranch.tooltip"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				helpContextId="org.eclipse.team.cvs.ui.add_to_branch_context"				
+				class="org.eclipse.team.internal.ccvs.ui.repo.AddToBranchAction"/>       
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteFile"

@@ -236,10 +236,6 @@ public class RepositoryManager {
 			broadcastRepositoryChange(root);
 	}
 	
-	public void addBranchTags(ICVSRepositoryLocation location, CVSTag[] tags) {
-		// XXX Is this still needed
-	}
-	
 	/**
 	 * A repository root has been added. Notify any listeners.
 	 */
@@ -293,14 +289,6 @@ public class RepositoryManager {
 		RepositoryRoot root = getRepositoryRootFor(project);
 		String remotePath = RepositoryRoot.getRemotePathFor(project);
 		return root.getAutoRefreshFiles(remotePath);
-	}
-	
-	/**
-	 * Remove the given branch tag from the list of known tags for the
-	 * given remote root.
-	 */
-	public void removeBranchTag(ICVSRepositoryLocation location, CVSTag[] tags) {
-		// XXX is this still needed?
 	}
 	
 	/**
