@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.PartSite;
 
 /**
  * A <code>RetargetAction</code> tracks the active part in the workbench.  
@@ -37,7 +43,9 @@ import org.eclipse.swt.widgets.Event;
  *
  * @since 2.0 
  */
-public class RetargetAction extends PartEventAction {
+public class RetargetAction extends PartEventAction 
+	implements ActionFactory.IWorkbenchAction {
+
 	/**
 	 * The help listener assigned to this action, or <code>null</code> if none.
 	 */

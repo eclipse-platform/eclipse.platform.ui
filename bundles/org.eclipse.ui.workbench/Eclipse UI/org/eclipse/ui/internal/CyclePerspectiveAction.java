@@ -9,11 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
@@ -21,19 +24,17 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  * Implements a action to enable the user switch between perspectives
  * using keyboard.
  */
-public class CyclePerspectiveAction extends CyclePartAction {
+public class CyclePerspectiveAction extends CyclePartAction
+	implements IPerspectiveListener {
+		
 	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(false);;
+
 /**
  * Creates a CyclePerspectiveAction.
  */
-protected CyclePerspectiveAction(IWorkbenchWindow window, boolean forward) {
-	super(window,forward); //$NON-NLS-1$
-	window.addPerspectiveListener(new IPerspectiveListener() {
-		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-			updateState();
-		}
-		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}
-	});
+public CyclePerspectiveAction(IWorkbenchWindow window, boolean forward) {
+	super(window, forward); //$NON-NLS-1$
+	window.addPerspectiveListener(this);
 	updateState();
 }
 
@@ -42,19 +43,27 @@ protected void setText() {
 	if (forward) {
 		setText(WorkbenchMessages.getString("CyclePerspectiveAction.next.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CyclePerspectiveAction.next.toolTip")); //$NON-NLS-1$
+		// @issue missing action ids
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
 	}
 	else {
 		setText(WorkbenchMessages.getString("CyclePerspectiveAction.prev.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CyclePerspectiveAction.prev.toolTip")); //$NON-NLS-1$
+		// @issue missing action ids
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
 	}
 }
-/** 
- * Dispose the resources cached by this action.
- */
-protected void dispose() {
+	/* (non-Javadoc)
+	 * Method declared on IAction.
+	 */
+public void dispose() {
+	if (getWorkbenchWindow() == null) {
+		// already disposed
+		return;
+	}
+	getWorkbenchWindow().removePerspectiveListener(this);
 	labelProvider.dispose();
+	super.dispose();
 }
 /**
  * Activate the selected item.
@@ -97,4 +106,18 @@ protected void addItems(Table table,WorkbenchPage page) {
 protected String getTableHeader() {
 	return WorkbenchMessages.getString("CyclePerspectiveAction.header"); //$NON-NLS-1$
 }
+
+/* (non-Javadoc)
+ * Method declared on IPerspectiveListener
+ */
+public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+	updateState();
+}
+/* (non-Javadoc)
+ * Method declared on IPerspectiveListener
+ */
+public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+	// do nothing
+}
+
 }

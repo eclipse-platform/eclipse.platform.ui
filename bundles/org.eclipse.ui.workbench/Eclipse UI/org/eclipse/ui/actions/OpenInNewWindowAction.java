@@ -26,10 +26,22 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * for the new window will be the same type as
  * the active perspective in the window which this
  * action is running in. The default input for the 
- * new window's page is the workspace root.
+ * new window's page is application-specific.
+ * 
+ * @deprecated Use {@link ActionFactory#OPEN_NEW_WINDOW 
+ * 		ActionFactory.OPEN_NEW_WINDOW} instead
+ * @issue document this deprecation
  */
-public class OpenInNewWindowAction extends Action {
+public class OpenInNewWindowAction
+	extends Action
+	implements ActionFactory.IWorkbenchAction {
+
+	/**
+	 * The workbench window; or <code>null</code> if this
+	 * action has been <code>dispose</code>d.
+	 */
 	private IWorkbenchWindow workbenchWindow;
+	
 	private IAdaptable pageInput;
 
 	/**
@@ -51,8 +63,12 @@ public class OpenInNewWindowAction extends Action {
 	 */
 	public OpenInNewWindowAction(IWorkbenchWindow window, IAdaptable input) {
 		super(WorkbenchMessages.getString("OpenInNewWindowAction.text")); //$NON-NLS-1$
+		if (window == null) {
+			throw new IllegalArgumentException();
+		}
+		this.workbenchWindow = window;
+		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("OpenInNewWindowAction.toolTip")); //$NON-NLS-1$
-		workbenchWindow = window;
 		pageInput = input;
 		WorkbenchHelp.setHelp(this,IHelpContextIds.OPEN_NEW_WINDOW_ACTION);
 	}
@@ -72,6 +88,10 @@ public class OpenInNewWindowAction extends Action {
 	 * action is running in.
 	 */
 	public void run() {
+		if (workbenchWindow == null) {
+			// action has been disposed
+			return;
+		}
 		try {
 			String perspId;
 			
@@ -89,5 +109,13 @@ public class OpenInNewWindowAction extends Action {
 				e.getMessage(),
 				e.getStatus());
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 * @since 3.0
+	 */
+	public void dispose() {
+		workbenchWindow = null;
 	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorPart;
@@ -30,10 +29,10 @@ public class ActivateEditorAction extends PageEventAction {
 /**
  * Creates an ActivateEditorAction.
  */
-protected ActivateEditorAction(IWorkbenchWindow window) {
+public ActivateEditorAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ActivateEditorAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("ActivateEditorAction.toolTip")); //$NON-NLS-1$
-	window.getPartService().addPartListener(this);
+	// @issue missing action id
 	updateState();
 	WorkbenchHelp.setHelp(this, IHelpContextIds.ACTIVATE_EDITOR_ACTION);
 }
@@ -49,12 +48,16 @@ public void pageClosed(IWorkbenchPage page) {
 }
 
 
-/**
- * @see Action#run()
+/* (non-Javadoc)
+ * Method declared on Action.
  */
 public void runWithEvent(Event e) {
+	if (getWorkbenchWindow() == null) {
+		// action has been disposed
+		return;
+	}
 	accelerator = e.detail;
-	WorkbenchPage page = (WorkbenchPage)getActivePage();
+	IWorkbenchPage page = getActivePage();
 	if (page != null) {
 		IEditorPart part = page.getActiveEditor(); // may not actually be active
 		if (part != null) {
@@ -62,8 +65,8 @@ public void runWithEvent(Event e) {
 		} else {
 			IWorkbenchPartReference ref = page.getActivePartReference();
 			if(ref instanceof IViewReference) {
-				if(page.isFastView((IViewReference)ref))
-					page.toggleFastView((IViewReference)ref);
+				if(((WorkbenchPage) page).isFastView((IViewReference)ref))
+					((WorkbenchPage) page).toggleFastView((IViewReference)ref);
 			}
 		}
 	}

@@ -10,22 +10,21 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public class PinEditorAction extends ActiveEditorAction {
 
-	private IWorkbenchWindow window;
 	private boolean visible = false;
 
 /**
  * Creates a PinEditorAction.
  */
-protected PinEditorAction(IWorkbenchWindow window) {
+public PinEditorAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("PinEditorAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("PinEditorAction.toolTip")); //$NON-NLS-1$
 	setId("org.eclipse.ui.internal.PinEditorAction"); //$NON-NLS-1$
-	this.window = window;
 //	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
 }
 /**
@@ -40,34 +39,38 @@ public boolean getVisible() {
 public void setVisible(boolean visible) {
 	this.visible = visible;
 }
-/**
- * @see Action#run()
+/* (non-Javadoc)
+ * Method declared on IAction.
  */
 public void run() {
+	if (getWorkbenchWindow() == null) {
+		// action has been dispose
+		return;
+	}
 	IEditorPart editor = getActiveEditor();
 	((EditorSite)editor.getEditorSite()).setReuseEditor(!isChecked());
 }
-/**
- * @see ActiveEdirorAction#updateState()
+/* (non-Javadoc)
+ * Method declared on ActiveEditorAction.
  */
 protected void updateState() {
-	if(window == null) {
+	if(getWorkbenchWindow() == null) {
 		setChecked(false);
 		setEnabled(false);
 		return;
 	}
-	IWorkbenchPage page = window.getActivePage();
-	if(page == null) {
+	IWorkbenchPage page = getActivePage();
+	if (page == null) {
 		setChecked(false);
 		setEnabled(false);
 		return;
 	}
 	IEditorPart editor = getActiveEditor();
-	boolean enabled = editor != null;
+	boolean enabled = (editor != null);
 	setEnabled(enabled);
-	if(enabled) {
-		EditorSite site = (EditorSite)editor.getEditorSite();
-		EditorPane pane = (EditorPane)site.getPane();
+	if (enabled) {
+		EditorSite site = (EditorSite) editor.getEditorSite();
+		EditorPane pane = (EditorPane) site.getPane();
 		pane.setPinEditorAction(this);
 		setChecked(!(site).getReuseEditor());
 	} else {

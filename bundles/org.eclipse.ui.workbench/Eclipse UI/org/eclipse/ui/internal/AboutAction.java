@@ -10,29 +10,36 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 
 /**
  * Creates an About dialog and opens it.
  */
-public class AboutAction extends Action {
-	private IWorkbenchWindow workbenchWindow;
+public class AboutAction
+		extends Action 
+		implements ActionFactory.IWorkbenchAction {
+			
+/**
+ * The workbench window; or <code>null</code> if this
+ * action has been <code>dispose</code>d.
+ */
+private IWorkbenchWindow workbenchWindow;
 	
 /**
  * Creates a new <code>AboutAction</code> with the given label
  */
-public AboutAction(IWorkbenchWindow window, AboutInfo aboutInfo) {
-	this.workbenchWindow = window;
-	String productName = aboutInfo.getProductName();
-	if (productName == null) {
-		productName = ""; //$NON-NLS-1$
+public AboutAction(IWorkbenchWindow window) {
+	if (window == null) {
+		throw new IllegalArgumentException();
 	}
+	this.workbenchWindow = window;
+	// use message with no fill-in
+	String productName = ""; //$NON-NLS-1$
 	setText(WorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.ABOUT);
@@ -40,10 +47,26 @@ public AboutAction(IWorkbenchWindow window, AboutInfo aboutInfo) {
 	WorkbenchHelp.setHelp(this, IHelpContextIds.ABOUT_ACTION);
 }
 
-/**
- * Perform the action: show about dialog.
+/* (non-Javadoc)
+ * Method declared on IAction.
  */
 public void run() {
+	if (workbenchWindow == null) {
+		// action has been disposed
+		return;
+	}
 	new AboutDialog(workbenchWindow).open();
 }
+
+/* (non-Javadoc)
+ * Method declared on ActionFactory.IWorkbenchAction.
+ */
+public void dispose() {
+	if (workbenchWindow == null) {
+		// action has already been disposed
+		return;
+	}
+	workbenchWindow = null;
+}
+
 }

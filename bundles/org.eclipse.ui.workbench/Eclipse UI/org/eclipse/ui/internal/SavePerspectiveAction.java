@@ -13,7 +13,10 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
@@ -22,31 +25,49 @@ import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 /**
  * Reset the layout within the active perspective.
  */
-public class SavePerspectiveAction extends Action {
-	private IWorkbenchWindow window;	
+public class SavePerspectiveAction	
+		extends Action 
+		implements ActionFactory.IWorkbenchAction {
+			
+/**
+ * The workbench window; or <code>null</code> if this
+ * action has been <code>dispose</code>d.
+ */
+private IWorkbenchWindow workbenchWindow;
+
 /**
  *	Create an instance of this class
  */
 public SavePerspectiveAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("SavePerspective.text")); //$NON-NLS-1$
+	if (window == null) {
+		throw new IllegalArgumentException();
+	}
+	this.workbenchWindow = window;
+	// @issue missing action id
 	setToolTipText(WorkbenchMessages.getString("SavePerspective.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
-	this.window = window;
 	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_PERSPECTIVE_ACTION);
 }
-/**
- *	The user has invoked this action
+/* (non-Javadoc)
+ * Method declared on IAction.
  */
 public void run() {
-	IWorkbenchPage page = window.getActivePage();
-	if (page == null)
+	if (workbenchWindow == null) {
+		// action has been disposed
 		return;
+	}
+	IWorkbenchPage page = workbenchWindow.getActivePage();
+	if (page == null) {
+		return;
+	}
 	PerspectiveDescriptor desc = (PerspectiveDescriptor)page.getPerspective();
 	if (desc != null) {
-		if (desc.isSingleton())
+		if (desc.isSingleton()) {
 			saveSingleton();
-		else
+		} else {
 			saveNonSingleton();
+		}
 	}
 }
 /** 
@@ -58,7 +79,7 @@ public void saveSingleton() {
 		IDialogConstants.CANCEL_LABEL
 	};
 	MessageDialog d= new MessageDialog(
-		window.getShell(),
+		workbenchWindow.getShell(),
 		WorkbenchMessages.getString("SavePerspective.overwriteTitle"), //$NON-NLS-1$
 		null,
 		WorkbenchMessages.getString("SavePerspective.singletonQuestion"),  //$NON-NLS-1$
@@ -67,7 +88,7 @@ public void saveSingleton() {
 		0
 	);
 	if (d.open() == 0) {
-		IWorkbenchPage page = window.getActivePage();
+		IWorkbenchPage page = workbenchWindow.getActivePage();
 		if (page != null) {
 			page.savePerspective();
 		}
@@ -83,14 +104,15 @@ public void saveNonSingleton() {
 		.getPerspectiveRegistry();
 
 	// Get persp name.
-	SavePerspectiveDialog dlg = new SavePerspectiveDialog(window.getShell(), reg);
+	SavePerspectiveDialog dlg = new SavePerspectiveDialog(workbenchWindow.getShell(), reg);
 	IPerspectiveDescriptor description = null;
-	IWorkbenchPage page = window.getActivePage();
+	IWorkbenchPage page = workbenchWindow.getActivePage();
 	if (page != null)
 		description = reg.findPerspectiveWithId(page.getPerspective().getId());
 	dlg.setInitialSelection(description);
-	if (dlg.open() != IDialogConstants.OK_ID)
+	if (dlg.open() != IDialogConstants.OK_ID) {
 		return;
+	}
 
 	// Create descriptor.
 	PerspectiveDescriptor desc = (PerspectiveDescriptor)dlg.getPersp();
@@ -109,4 +131,16 @@ public void saveNonSingleton() {
 		page.savePerspectiveAs(desc);
 	}
 }
+
+/* (non-Javadoc)
+ * Method declared on ActionFactory.IWorkbenchAction.
+ */
+public void dispose() {
+	if (workbenchWindow == null) {
+		// already disposed
+		return;
+	}
+	workbenchWindow = null;
+}
+
 }

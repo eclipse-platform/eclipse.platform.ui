@@ -23,10 +23,10 @@ public class MaximizePartAction extends PageEventAction {
 	/**
 	 * Creates a MaximizePartAction.
 	 */
-	protected MaximizePartAction(IWorkbenchWindow window) {
+	public MaximizePartAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.getString("MaximizePartAction.text"), window); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("MaximizePartAction.toolTip")); //$NON-NLS-1$
-		window.getPartService().addPartListener(this);
+		// @issue missing action id
 		updateState();
 		WorkbenchHelp.setHelp(this, IHelpContextIds.MAXIMIZE_PART_ACTION);
 	}
@@ -51,11 +51,15 @@ public class MaximizePartAction extends PageEventAction {
 	 * Method declared on IAction.
 	 */
 	public void run() {
-		WorkbenchPage page = (WorkbenchPage) getActivePage();
+		if (getWorkbenchWindow() == null) {
+			// action has been dispose
+			return;
+		}
+		IWorkbenchPage page = getActivePage();
 		if (page != null) {
 			IWorkbenchPartReference partRef = page.getActivePartReference();
 			if (partRef != null) {
-				page.toggleZoom(partRef);
+				((WorkbenchPage) page).toggleZoom(partRef);
 			}
 		}
 	}

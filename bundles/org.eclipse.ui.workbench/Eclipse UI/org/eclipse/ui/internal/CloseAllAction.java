@@ -10,80 +10,77 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.PartEventAction;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  *	Closes all active editors
  */
-public class CloseAllAction extends PartEventAction implements IPageListener {
-	private IWorkbenchWindow workbench;	
+public class CloseAllAction extends PageEventAction {
+
 /**
  *	Create an instance of this class
  */
-public CloseAllAction(IWorkbenchWindow aWorkbench) {
-	super(WorkbenchMessages.getString("CloseAllAction.text")); //$NON-NLS-1$
-	this.workbench = aWorkbench;
+public CloseAllAction(IWorkbenchWindow window) {
+	super(WorkbenchMessages.getString("CloseAllAction.text"), window); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("CloseAllAction.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
 	setId(IWorkbenchActionConstants.CLOSE_ALL);
 	updateState();
-	aWorkbench.addPageListener(this);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_ACTION);
 }
-/**
- * Notifies this listener that the given page has been activated.
- *
- * @param page the page that was activated
- * @see IWorkbenchWindow#setActivePage
+
+/* (non-Javadoc)
+ * Method declared on PageEventAction.
  */
-public void pageActivated(org.eclipse.ui.IWorkbenchPage page) {
+public void pageActivated(IWorkbenchPage page) {
+	super.pageActivated(page);
 	updateState();
 }
-/**
- * Notifies this listener that the given page has been closed.
- *
- * @param page the page that was closed
- * @see IWorkbenchPage#close
+/* (non-Javadoc)
+ * Method declared on PageEventAction.
  */
-public void pageClosed(org.eclipse.ui.IWorkbenchPage page) {
+public void pageClosed(IWorkbenchPage page) {
+	super.pageClosed(page);
 	updateState();
 }
-/**
- * Notifies this listener that the given page has been opened.
- *
- * @param page the page that was opened
- * @see IWorkbenchWindow#openPage
- */
-public void pageOpened(org.eclipse.ui.IWorkbenchPage page) {}
-/**
- * A part has been closed.
+/* (non-Javadoc)
+ * Method declared on PartEventAction.
  */
 public void partClosed(IWorkbenchPart part) {
+	super.partClosed(part);
 	updateState();
 }
-/**
- * A part has been opened.
+/* (non-Javadoc)
+ * Method declared on PartEventAction.
  */
 public void partOpened(IWorkbenchPart part) {	
+	super.partOpened(part);
 	updateState();
 }
-/**
- *	The user has invoked this action
+/* (non-Javadoc)
+ * Method declared on Action.
  */
 public void run() {
-	IWorkbenchPage page = workbench.getActivePage();
-	if (page != null)
+	if (getWorkbenchWindow() == null) {
+		// action has been disposed
+		return;
+	}
+	IWorkbenchPage page = getActivePage();
+	if (page != null) {
 		page.closeAllEditors(true);
+	}
 }
 /**
  * Enable the action if there at least one editor open.
  */
 private void updateState() {
-	WorkbenchPage page = (WorkbenchPage)workbench.getActivePage();
+	IWorkbenchPage page = getActivePage();
 	if (page != null) {
-		setEnabled(page.getSortedEditors().length >= 1);
+		setEnabled(page.getEditorReferences().length >= 1);
 	} else {
 		setEnabled(false);
 	}

@@ -10,37 +10,59 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Reset the layout within the active perspective.
  */
-public class ResetPerspectiveAction extends Action {
-	private IWorkbenchWindow window;	
+public class ResetPerspectiveAction
+		extends Action 
+		implements ActionFactory.IWorkbenchAction {
+			
+/**
+ * The workbench window; or <code>null</code> if this
+ * action has been <code>dispose</code>d.
+ */
+private IWorkbenchWindow workbenchWindow;
+
 /**
  * This default constructor allows the the action to be called from the welcome page.
  */
 public ResetPerspectiveAction() {
 	this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 }
+
 /**
  *	Create an instance of this class
  */
 public ResetPerspectiveAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("ResetPerspective.text")); //$NON-NLS-1$
+	if (window == null) {
+		throw new IllegalArgumentException();
+	}
+	this.workbenchWindow = window;
+	// @issue missing action id
 	setToolTipText(WorkbenchMessages.getString("ResetPerspective.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.RESET_PERSPECTIVE_ACTION);
-	this.window = window;
 }
-/**
- *	The user has invoked this action
+
+/* (non-Javadoc)
+ * Method declared on IAction.
  */
 public void run() {
-	IWorkbenchPage page = this.window.getActivePage();
+	if (workbenchWindow == null) {
+		// action has been disposed
+		return;
+	}
+	IWorkbenchPage page = workbenchWindow.getActivePage();
 	if (page != null && page.getPerspective() != null) {
 		String message = WorkbenchMessages.format("ResetPerspective.message", new Object[] { page.getPerspective().getLabel() }); //$NON-NLS-1$
 		String [] buttons= new String[] { 
@@ -48,7 +70,7 @@ public void run() {
 			IDialogConstants.CANCEL_LABEL
 		};
 		MessageDialog d= new MessageDialog(
-			this.window.getShell(),
+			workbenchWindow.getShell(),
 			WorkbenchMessages.getString("ResetPerspective.title"), //$NON-NLS-1$
 			null,
 			message,
@@ -60,4 +82,16 @@ public void run() {
 			page.resetPerspective();
 	}
 }
+
+/* (non-Javadoc)
+ * Method declared on ActionFactory.IWorkbenchAction.
+ */
+public void dispose() {
+	if (workbenchWindow == null) {
+		// already disposed
+		return;
+	}
+	workbenchWindow = null;
+}
+
 }

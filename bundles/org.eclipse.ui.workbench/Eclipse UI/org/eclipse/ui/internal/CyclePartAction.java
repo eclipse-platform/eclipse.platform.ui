@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.util.Iterator;
@@ -38,10 +37,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.util.Sequence;
 import org.eclipse.ui.internal.commands.util.Stroke;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Implements a action to enable the user switch between parts
@@ -49,19 +48,20 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class CyclePartAction extends PageEventAction {
 	
-	String commandForward = null;
-	String commandBackward = null;
-	boolean forward;
+	private String commandForward = null;
+	private String commandBackward = null;
+	
+	private boolean forward;
+	
 	private Object selection;
 	
 	/**
 	 * Creates a CyclePartAction.
 	 */
-	protected CyclePartAction(IWorkbenchWindow window, boolean forward) {
+	public CyclePartAction(IWorkbenchWindow window, boolean forward) {
 		super("", window); //$NON-NLS-1$
 		this.forward = forward;
 		setText();
-		window.getPartService().addPartListener(this);
 		updateState();
 	}
 	
@@ -73,10 +73,12 @@ public class CyclePartAction extends PageEventAction {
 		if (forward) {
 			setText(WorkbenchMessages.getString("CyclePartAction.next.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("CyclePartAction.next.toolTip")); //$NON-NLS-1$
+			// @issue missing action ids
 			WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PART_FORWARD_ACTION);
 		} else {
 			setText(WorkbenchMessages.getString("CyclePartAction.prev.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("CyclePartAction.prev.toolTip")); //$NON-NLS-1$
+			// @issue missing action ids
 			WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PART_BACKWARD_ACTION);
 		}
 	}
@@ -113,17 +115,11 @@ public class CyclePartAction extends PageEventAction {
 		updateState();
 	}
 	
-	/** 
-	 * Dispose the resources cached by this action.
-	 */
-	protected void dispose() {
-	}
-	
 	/**
 	 * Updates the enabled state.
 	 */
 	protected void updateState() {
-		WorkbenchPage page = (WorkbenchPage)getActivePage();
+		IWorkbenchPage page = getActivePage();
 		if (page == null) {
 			setEnabled(false);
 			return;
@@ -131,7 +127,7 @@ public class CyclePartAction extends PageEventAction {
 		// enable iff there is at least one other part to switch to
 		// (the editor area counts as one entry)
 		int count = page.getViewReferences().length;
-		if (page.getSortedEditors().length > 0) {
+		if (page.getEditorReferences().length > 0) {
 			++count;
 		}
 		setEnabled(count >= 1);
@@ -141,6 +137,10 @@ public class CyclePartAction extends PageEventAction {
 	 * @see Action#run()
 	 */
 	public void runWithEvent(Event e) {
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
 		IWorkbenchPage page = getActivePage();
 		openDialog((WorkbenchPage) page); 
 		activate(page, selection);	
@@ -150,7 +150,7 @@ public class CyclePartAction extends PageEventAction {
 	 * Activate the selected item.
 	 */
 	public void activate(IWorkbenchPage page,Object selection) {
-		if(selection != null) {
+		if (selection != null) {
 			if (selection instanceof IEditorReference)
 				page.setEditorAreaVisible(true);
 			
@@ -427,4 +427,33 @@ public class CyclePartAction extends PageEventAction {
 			}
 		});
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public String getBackwardActionDefinitionId() {
+		return commandBackward;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public String getForwardActionDefinitionId() {
+		return commandForward;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public void setBackwardActionDefinitionId(String actionDefinitionId) {
+		commandBackward = actionDefinitionId;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ICycleAction
+	 */
+	public void setForwardActionDefinitionId(String actionDefinitionId) {
+		commandForward = actionDefinitionId;
+	}
+
 }

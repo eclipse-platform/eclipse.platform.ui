@@ -10,30 +10,57 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Try to quit the application.
  */
-public class QuitAction extends Action {
-	private IWorkbench workbench;
+public class QuitAction
+		extends Action 
+		implements ActionFactory.IWorkbenchAction {
+			
+/**
+ * The workbench window; or <code>null</code> if this
+ * action has been <code>dispose</code>d.
+ */
+private IWorkbenchWindow workbenchWindow;
+
 /**
  * Creates a new <code>QuitAction</code>. The action is
  * initialized from the <code>JFaceResources</code> bundle.
  */
-public QuitAction(IWorkbench workbench) {
+public QuitAction(IWorkbenchWindow window) {
+	if (window == null) {
+		throw new IllegalArgumentException();
+	}
+	this.workbenchWindow = window;
 	setText(WorkbenchMessages.getString("Exit.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("Exit.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.QUIT);
 	WorkbenchHelp.setHelp(this, IHelpContextIds.QUIT_ACTION);
-	this.workbench = workbench;
 }
-/**
- * Perform the action: quit the application.
+
+/* (non-Javadoc)
+ * Method declared on IAction.
  */
 public void run() {
-	workbench.close();
+	if (workbenchWindow == null) {
+		// action has been disposed
+		return;
+	}
+	PlatformUI.getWorkbench().close();
 }
+
+/* (non-Javadoc)
+ * Method declared on ActionFactory.IWorkbenchAction.
+ */
+public void dispose() {
+	workbenchWindow = null;
+}
+
 }

@@ -10,25 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * This is the abstract superclass for NextEditorAction and PrevEditorAction.
+ * This is the implementation for both NextEditorAction and PrevEditorAction.
  */
 public class CycleEditorAction extends CyclePartAction {
 	
 /**
  * Creates a CycleEditorAction.
  */
-protected CycleEditorAction(IWorkbenchWindow window, boolean forward) {
-	super(window,forward); //$NON-NLS-1$
-	window.getPartService().addPartListener(this);
+public CycleEditorAction(IWorkbenchWindow window, boolean forward) {
+	super(window, forward); //$NON-NLS-1$
 	updateState();
 }
 
@@ -37,11 +35,13 @@ protected void setText() {
 	if (forward) {
 		setText(WorkbenchMessages.getString("CycleEditorAction.next.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.next.toolTip")); //$NON-NLS-1$
+		// @issue missing action ids
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
 	}
 	else {
 		setText(WorkbenchMessages.getString("CycleEditorAction.prev.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.prev.toolTip")); //$NON-NLS-1$
+		// @issue missing action ids
 		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
 	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -33,11 +32,14 @@ public class SaveAsAction extends BaseSaveAction {
 		WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_AS_ACTION);
 	}
 	
-	/**
-	 * Performs the <code>Save As</code> action by calling the
-	 * <code>IEditorPart.doSaveAs</code> method on the active editor.
+	/* (non-Javadoc)
+	 * Method declared on Action.
 	 */
 	public void run() {
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
 		/* **********************************************************************************
 		 * The code below was added to track the view with focus
 		 * in order to support save actions from a view. Remove this
@@ -51,7 +53,10 @@ public class SaveAsAction extends BaseSaveAction {
 		}
 		/* **********************************************************************************/
 
-		getActiveEditor().doSaveAs();
+		IEditorPart editor = getActiveEditor();
+		if (editor != null) {
+			editor.doSaveAs();
+		}
 	}
 	
 	/* (non-Javadoc)

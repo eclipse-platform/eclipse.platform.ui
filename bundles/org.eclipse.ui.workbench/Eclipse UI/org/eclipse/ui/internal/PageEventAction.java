@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.PartEventAction;
 
 /**
  * The abstract superclass for actions that listen to page activation and
@@ -45,12 +47,19 @@ import org.eclipse.ui.actions.*;
  *   <li><code>pageOpened</code></li>
  * </ul>
  * </p>
- * @issue need to document the lifecycle - who (de)registers this action as a listener
- * @issue could we remove the public methods of IPageListener on this class
- * @issue could this be made API
+ * <p>
+ * This method implements the <code>IPartListener</code> and
+ * <code>IPageListener</code>interfaces, and automatically registers listeners
+ * so that it can keep its enablement state up to date. Ordinarily, the
+ * window's references to these listeners will be dropped automatically when
+ * the window closes. However, if the client needs to get rid of an action
+ * while the window is still open, the client must call 
+ * {@link IWorkbenchAction#dispose dispose} to give the action an
+ * opportunity to deregister its listeners and to perform any other cleanup.
+ * </p>
  */
 public abstract class PageEventAction extends PartEventAction
-	implements IPageListener
+	implements IPageListener, ActionFactory.IWorkbenchAction
 {
 	/**
 	 * The active page, or <code>null</code> if none.
@@ -61,6 +70,7 @@ public abstract class PageEventAction extends PartEventAction
 	 * The workbench window this action is registered with.
 	 */
 	 private IWorkbenchWindow workbenchWindow;
+
 /**
  * Creates a new action with the given text. Register this
  * action with the workbench window for page lifecycle
@@ -69,29 +79,34 @@ public abstract class PageEventAction extends PartEventAction
  * @param text the string used as the text for the action, 
  *   or <code>null</code> if there is no text
  * @param window the workbench window this action is
- *   registered with.
+ *   registered with
  */
 protected PageEventAction(String text, IWorkbenchWindow window) {
 	super(text);
-	Assert.isNotNull(window);
+	if (window == null) {
+		throw new IllegalArgumentException();
+	}
 	this.workbenchWindow = window;
 	this.activePage = window.getActivePage();
 	this.workbenchWindow.addPageListener(this);
+	this.workbenchWindow.getPartService().addPartListener(this);
 }
 /**
  * Returns the currently active page in the workbench window.
  *
- * @return currently active page in the workbench window, or <code>null</code> if none
+ * @return currently active page in the workbench window,
+ * or <code>null</code> in none
  */
-public IWorkbenchPage getActivePage() {
+public final IWorkbenchPage getActivePage() {
 	return activePage;
 }
 /**
  * Returns the workbench window this action applies to.
  *
- * @return the workbench window
+ * @return the workbench window, or <code>null</code> if this action has been
+ * disposed
  */
-public IWorkbenchWindow getWorkbenchWindow() {
+public final IWorkbenchWindow getWorkbenchWindow() {
 	return workbenchWindow;
 }
 /**
@@ -110,8 +125,9 @@ public void pageActivated(IWorkbenchPage page) {
  * recalculated.
  */
 public void pageClosed(IWorkbenchPage page) {
-	if (page == activePage)
+	if (page == activePage) {
 		activePage = null;
+	}
 }
 /**
  * The <code>PageEventAction</code> implementation of this 
@@ -119,5 +135,22 @@ public void pageClosed(IWorkbenchPage page) {
  * this method if action availability has to be recalculated.
  */
 public void pageOpened(IWorkbenchPage page) {
+}
+
+/**
+ * The <code>PageEventAction</code> implementation of this 
+ * <code>ActionFactory.IWorkbenchAction</code> method
+ * deregisters the part and page listener adding by the constructor.
+ * Subclasses should extend this method to do additional
+ * cleanup.
+ */
+public void dispose() {
+	if (workbenchWindow == null) {
+		// action has already been disposed
+		return;
+	}
+	workbenchWindow.removePageListener(this);
+	workbenchWindow.getPartService().removePartListener(this);
+	workbenchWindow = null;
 }
 }

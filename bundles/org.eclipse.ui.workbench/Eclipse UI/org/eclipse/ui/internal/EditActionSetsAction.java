@@ -11,15 +11,25 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Edit the action sets.
  */
-public class EditActionSetsAction  extends Action {
-	private IWorkbenchWindow window;
+public class EditActionSetsAction
+		extends Action 
+		implements ActionFactory.IWorkbenchAction {
+			
+/**
+ * The workbench window; or <code>null</code> if this
+ * action has been <code>dispose</code>d.
+ */
+private IWorkbenchWindow workbenchWindow;
+	
 /**
  * This default constructor allows the the action to be called from the welcome page.
  */
@@ -31,18 +41,36 @@ public EditActionSetsAction() {
  */
 public EditActionSetsAction(IWorkbenchWindow window) {
 	super(WorkbenchMessages.getString("EditActionSetsAction.text")); //$NON-NLS-1$
+	if (window == null) {
+		throw new IllegalArgumentException();
+	}
+	this.workbenchWindow = window;
+	// @issue missing action id
 	setToolTipText(WorkbenchMessages.getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
-	this.window = window;
 	WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_ACTION_SETS_ACTION);
 }
-/**
- * Open the selected resource in the default page.
+
+/* (non-Javadoc)
+ * Method declared on IAction.
  */
 public void run() {
-	WorkbenchPage page = (WorkbenchPage)window.getActivePage();
-	if (page == null)
+	if (workbenchWindow == null) {
+		// action has been disposed
 		return;
-	page.editActionSets();
+	}
+	IWorkbenchPage page = workbenchWindow.getActivePage();
+	if (page == null) {
+		return;
+	}
+	((WorkbenchPage) page).editActionSets();
 }
+
+/* (non-Javadoc)
+ * Method declared on ActionFactory.IWorkbenchAction.
+ */
+public void dispose() {
+	workbenchWindow = null;
+}
+
 }
