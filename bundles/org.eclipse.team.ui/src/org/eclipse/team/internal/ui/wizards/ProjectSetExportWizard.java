@@ -10,20 +10,35 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.wizards;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.core.ProjectSetCapability;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.ITeamUIImages;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.UIProjectSetSerializationContext;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -94,8 +109,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 						}
 					}
 					
-					Shell shell = getShell();
-					UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(getShell());
+					UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(getShell(), filename);
 					
 					BufferedWriter writer = null;
 					try {

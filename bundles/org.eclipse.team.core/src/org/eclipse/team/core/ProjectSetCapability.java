@@ -176,7 +176,7 @@ public abstract class ProjectSetCapability {
 		throws TeamException {
 		
 		if (serializer != null) {
-			return serializer.addToWorkspace(referenceStrings, null, context.getShell(), monitor);
+			return serializer.addToWorkspace(referenceStrings, context.getFilename(), context.getShell(), monitor);
 		}
 		throw new TeamException(Policy.bind("ProjectSetCapability.1")); //$NON-NLS-1$
 	}

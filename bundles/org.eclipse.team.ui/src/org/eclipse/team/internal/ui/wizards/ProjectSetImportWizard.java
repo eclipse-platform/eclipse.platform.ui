@@ -80,7 +80,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 									newProjects.addAll(Arrays.asList(projects));
 							}
 						} else {
-							UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(getShell());
+							UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(getShell(), filename);
 							Iterator it = map.keySet().iterator();
 							while (it.hasNext()) {
 								String id = (String)it.next();

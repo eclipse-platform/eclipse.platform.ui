@@ -45,7 +45,8 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 	 * 
 	 * @param shell The parent shell for this UI context
 	 */
-	public UIProjectSetSerializationContext(Shell shell) {
+	public UIProjectSetSerializationContext(Shell shell, String filename) {
+		super(filename);
 		Assert.isNotNull(shell);
 		this.shell = shell;
 	}

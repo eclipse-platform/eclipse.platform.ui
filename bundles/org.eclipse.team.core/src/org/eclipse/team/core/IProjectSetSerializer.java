@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @deprecated 
  *       Use {@link org.eclipse.team.core.RepositoryProviderType#getProjectSetCapability()}
- *       to obtain an instance of {@link org.eclipse.team.core.ProjectSetSerializer} instead.
+ *       to obtain an instance of {@link org.eclipse.team.core.ProjectSetCapability} instead.
  */
 
 public interface IProjectSetSerializer {

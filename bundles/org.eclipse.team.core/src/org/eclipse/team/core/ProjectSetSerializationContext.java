@@ -23,6 +23,25 @@ import org.eclipse.core.resources.IProject;
  */
 public class ProjectSetSerializationContext {
 	
+	private final String filename;
+
+	/**
+	 * Create a serialization context with no filename
+	 */
+	public ProjectSetSerializationContext() {
+		this(null);
+	}
+	
+	/**
+	 * Create a serialization context and set the filename of the file 
+	 * that does or is to contain the project
+	 * set.
+	 * @param filename a filename or <code>null</code>
+	 */
+	public ProjectSetSerializationContext(String filename) {
+		this.filename = filename;
+	}
+	
 	/**
 	 * Given an array of projects that currently exist in the workspace
 	 * determine which of those projects should be overwritten.
@@ -53,4 +72,12 @@ public class ProjectSetSerializationContext {
 		return null;
 	}
 	
+	/**
+	 * Return the name of the file to or from which teh project set is being loaded or saved. 
+	 * This may be <code>null</code>.
+	 * @return the filename or <code>null</code>
+	 */
+	public String getFilename() {
+		return filename;
+	}
 }
