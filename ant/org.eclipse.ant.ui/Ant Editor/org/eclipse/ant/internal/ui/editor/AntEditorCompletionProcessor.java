@@ -891,6 +891,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     		return null;
     	}
     	AntProjectNode project= getProjectNode();
+    	if (project == null) {
+    		return null;
+    	}
     	int offset= getOffset(document, aLineNumber, aColumnNumber);
     	if(offset == -1) {
     		return null;
@@ -1023,6 +1026,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 
 	private AntProjectNode getProjectNode() {
 		AntElementNode[] nodes= antModel.getRootElements();
+		if (nodes.length == 0) {
+			return null;
+		}
 		AntProjectNode projectNode= (AntProjectNode)nodes[0];
 		return projectNode;
 	}
