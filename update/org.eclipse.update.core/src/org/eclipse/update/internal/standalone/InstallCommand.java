@@ -51,6 +51,8 @@ public class InstallCommand extends ScriptedCommand {
 			IConfiguredSite[] sites = getConfiguration().getConfiguredSites();
 			if (toSite != null) {
 				File sitePath = new File(toSite);
+				if (!sitePath.exists())
+					sitePath.mkdirs();
 				URL toSiteURL = sitePath.toURL();
 				ISite site = SiteManager.getSite(toSiteURL, null);
 				if (site == null) {
