@@ -105,8 +105,7 @@ public class ShowViewDialog
 	 * Subclasses may override.
 	 * </p>
 	 * 
-	 * @param parent
-	 *            the button bar composite
+	 * @param parent the button bar composite
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton =
@@ -126,8 +125,7 @@ public class ShowViewDialog
 	 * Creates and returns the contents of the upper part of this dialog (above
 	 * the button bar).
 	 * 
-	 * @param the
-	 *            parent composite to contain the dialog area
+	 * @param the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
@@ -158,25 +156,11 @@ public class ShowViewDialog
 	}
 
 	/**
-	 * Layout the top control.
-	 * 
-	 * @param control
-	 *            the control.
-	 */
-	private void layoutTopControl(Control control) {
-		GridData spec = new GridData(GridData.FILL_BOTH);
-		spec.widthHint = LIST_WIDTH;
-		spec.heightHint = LIST_HEIGHT;
-		control.setLayoutData(spec);
-	}
-
-	/**
 	 * Create a new viewer in the parent.
 	 * 
-	 * @param parent
-	 *            the parent <code>Composite</code>.
-	 * @param filtering
-	 *            whether the viewer should be filtering based on activities.
+	 * @param parent the parent <code>Composite</code>.
+	 * @param filtering whether the viewer should be filtering based on
+	 *            activities.
 	 * @return <code>TreeViewer</code>
 	 */
 	private TreeViewer createViewer(Composite parent, boolean filtering) {
@@ -229,10 +213,8 @@ public class ShowViewDialog
 	/**
 	 * Expand categories for a given <code>TreeViewer</code>
 	 * 
-	 * @param expandedCategoryIds
-	 *            the categories to expand
-	 * @param tree
-	 *            the <code>TreeViewer</code> to expand
+	 * @param expandedCategoryIds the categories to expand
+	 * @param tree the <code>TreeViewer</code> to expand
 	 */
 	private void expandTree(String[] expandedCategoryIds, TreeViewer tree) {
 		if (expandedCategoryIds == null)
@@ -273,6 +255,18 @@ public class ShowViewDialog
 	}
 
 	/**
+	 * Layout the top control.
+	 * 
+	 * @param control the control.
+	 */
+	private void layoutTopControl(Control control) {
+		GridData spec = new GridData(GridData.FILL_BOTH);
+		spec.widthHint = LIST_WIDTH;
+		spec.heightHint = LIST_HEIGHT;
+		control.setLayoutData(spec);
+	}
+
+	/**
 	 * Use the dialog store to restore widget values to the values that they
 	 * held last time this dialog was used to completion.
 	 */
@@ -298,12 +292,9 @@ public class ShowViewDialog
 	 * Save the expanded settings for the given <code>TreeViewer</code> into
 	 * the given <code>String</code> key.
 	 * 
-	 * @param settings
-	 *            the <code>IDialogSettings</code> to set against
-	 * @param tree
-	 *            the <code>TreeViewer</code> to preserve
-	 * @param key
-	 *            the key to use in the <code>IDialogSettings</code>
+	 * @param settings the <code>IDialogSettings</code> to set against
+	 * @param tree the <code>TreeViewer</code> to preserve
+	 * @param key the key to use in the <code>IDialogSettings</code>
 	 */
 	private void saveExpanded(
 		IDialogSettings settings,
@@ -346,8 +337,7 @@ public class ShowViewDialog
 	/**
 	 * Notifies that the selection has changed.
 	 * 
-	 * @param event
-	 *            event object describing the change
+	 * @param event event object describing the change
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateSelection(event);

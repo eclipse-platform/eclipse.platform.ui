@@ -28,8 +28,7 @@ public class WizardContentProvider
 	implements ITreeContentProvider {
 
 	/**
-	 * @param filtering
-     *            the initial filtering state.
+	 * @param filtering the initial filtering state.
 	 */
 	public WizardContentProvider(boolean filtering) {
 		super(filtering);
@@ -101,15 +100,13 @@ public class WizardContentProvider
 	 * filtering and the element is an <code>IPluginContribution</code> that
 	 * is currently being filtered.
 	 * 
-	 * @param element
-	 *            the element to test and add
-	 * @param list
-	 *            the <code>Collection</code> to add to.
+	 * @param element the element to test and add
+	 * @param list the <code>Collection</code> to add to.
 	 * @since 3.0
 	 */
 	private void handleChild(Object element, ArrayList list) {
 		if (getFiltering() && WorkbenchActivityHelper.filterItem(element)) {
-                return;			
+			return;
 		}
 		list.add(element);
 	}
@@ -120,7 +117,7 @@ public class WizardContentProvider
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
-        // do we need to check for unfiltered children?
+		// do we need to check for unfiltered children?
 		return (element instanceof WizardCollectionElement)
 			&& !((WizardCollectionElement) element).isEmpty();
 	}

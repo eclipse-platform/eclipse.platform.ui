@@ -93,8 +93,7 @@ public class SelectPerspectiveDialog
 	 * Subclasses may override.
 	 * </p>
 	 * 
-	 * @param parent
-	 *            the button bar composite
+	 * @param parent the button bar composite
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		okButton =
@@ -114,8 +113,7 @@ public class SelectPerspectiveDialog
 	 * Creates and returns the contents of the upper part of this dialog (above
 	 * the button bar).
 	 * 
-	 * @param the
-	 *            parent composite to contain the dialog area
+	 * @param the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
@@ -141,25 +139,11 @@ public class SelectPerspectiveDialog
 	}
 
 	/**
-	 * Layout the top control.
-	 * 
-	 * @param control
-	 *            the control.
-	 */
-	private void layoutTopControl(Control control) {
-		GridData spec = new GridData(GridData.FILL_BOTH);
-		spec.widthHint = LIST_WIDTH;
-		spec.heightHint = LIST_HEIGHT;
-		control.setLayoutData(spec);
-	}
-
-	/**
 	 * Create a new viewer in the parent.
 	 * 
-	 * @param parent
-	 *            the parent <code>Composite</code>.
-	 * @param filtering
-	 *            whether the viewer should be filtering based on activities.
+	 * @param parent the parent <code>Composite</code>.
+	 * @param filtering whether the viewer should be filtering based on
+	 *            activities.
 	 * @return <code>TableViewer</code>
 	 */
 	private TableViewer createViewer(Composite parent, boolean filtering) {
@@ -202,10 +186,21 @@ public class SelectPerspectiveDialog
 	}
 
 	/**
+	 * Layout the top control.
+	 * 
+	 * @param control the control.
+	 */
+	private void layoutTopControl(Control control) {
+		GridData spec = new GridData(GridData.FILL_BOTH);
+		spec.widthHint = LIST_WIDTH;
+		spec.heightHint = LIST_HEIGHT;
+		control.setLayoutData(spec);
+	}
+
+	/**
 	 * Notifies that the selection has changed.
 	 * 
-	 * @param event
-	 *            event object describing the change
+	 * @param event event object describing the change
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateSelection(event);
