@@ -152,6 +152,8 @@ public void startup() throws CoreException {
 	// make it easier to debug cases where open() is failing.
 	workspace = new Workspace();
 	PlatformURLResourceConnection.startup(Platform.getLocation());
-	workspace.open(null);
+	IStatus result = workspace.open(null);
+	if (!result.isOK())
+		getLog().log(result);
 }
 }
