@@ -102,8 +102,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private Button fAltEncodingButton;
     private Combo fEncodingCombo;
 	
-	/**
-	 * @see ILaunchConfigurationTab#createControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {		
 		Composite comp = new Composite(parent, SWT.NONE);
@@ -119,6 +119,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(gd);
 		group.setText(LaunchConfigurationsMessages.getString("CommonTab.0")); //$NON-NLS-1$
+		group.setFont(parent.getFont());
 				
 		setLocalRadioButton(new Button(group, SWT.RADIO));
 		getLocalRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.L&ocal_3")); //$NON-NLS-1$
@@ -178,7 +179,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
 		fFavoritesTable.addCheckStateListener(
 			new ICheckStateListener() {
-				/**
+				/* (non-Javadoc)
 				 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
 				 */
 				public void checkStateChanged(CheckStateChangedEvent event) {
@@ -323,8 +324,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return (IContainer) getWorkspaceRoot().findMember(containerPath);
 	}
 	
-	/**
-	 * @see ILaunchConfigurationTab#initializeFrom(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {	
 		updateLocalSharedFromConfig(configuration);
@@ -432,7 +433,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Update the favorite settings.
 	 * 
-	 * NOTE: set to NULL instead of false for backwards compatibility
+	 * NOTE: set to <code>null</code> instead of <code>false</code> for backwards compatibility
 	 *  when comparing if content is equal, since 'false' is default
 	 * 	and will be missing for older configs.
 	 */
@@ -492,8 +493,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
-	/**
-	 * @see ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
 		setMessage(null);
@@ -518,16 +519,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return true;		
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#setDefaults(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		config.setContainer(null);
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#performApply(ILaunchConfigurationWorkingCopy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		updateConfigFromLocalShared(configuration);
@@ -541,29 +542,29 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#getName()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
 		return LaunchConfigurationsMessages.getString("CommonTab.&Common_15"); //$NON-NLS-1$
 	}
 	
-	/**
-	 * @see ILaunchConfigurationTab#canSave()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */
 	public boolean canSave() {
 		return validateLocalShared();
 	}
 
-	/**
-	 * @see ILaunchConfigurationTab#getImage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
 		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_OBJS_COMMON_TAB);
 	}
 
 	class FavoritesContentProvider implements IStructuredContentProvider {
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
@@ -580,19 +581,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			return possibleGroups.toArray();
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
-		public void inputChanged(
-			Viewer viewer,
-			Object oldInput,
-			Object newInput) {
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 	}
@@ -601,7 +599,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		private Map fImages = new HashMap();
 		
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -616,7 +614,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			return image;
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
@@ -624,13 +622,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			return DebugUIPlugin.removeAccelerators(label);
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
 		public void addListener(ILabelProviderListener listener) {
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
 		public void dispose() {
@@ -641,14 +639,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
 		 */
 		public boolean isLabelProperty(Object element, String property) {
 			return false;
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
 		 */
 		public void removeListener(ILabelProviderListener listener) {
@@ -675,6 +673,4 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when deactivated
 	}
-
 }
-
