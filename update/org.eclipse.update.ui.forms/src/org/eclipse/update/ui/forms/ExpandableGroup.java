@@ -11,6 +11,7 @@ public abstract class ExpandableGroup {
 	private Composite expansion;
 	private Label textLabel;
 	private Composite control;
+	private int style;
 	
 class ExpandableLayout extends Layout {
 	protected void layout(Composite parent, boolean changed) {
@@ -40,12 +41,16 @@ class ExpandableLayout extends Layout {
 	public ExpandableGroup() {
 	}
 	
+	public ExpandableGroup(int style) {
+		this.style = style;
+	}
+	
 	public Control getControl() {
 		return control;
 	}
 	
 	public void createControl(Composite parent, FormWidgetFactory factory) {
-		Composite container = factory.createComposite(parent);
+		Composite container = factory.createComposite(parent, style);
 		container.setLayout(new ExpandableLayout());
 		textLabel = factory.createHyperlinkLabel(container, null, new HyperlinkAdapter () {
 			public void linkActivated(Control link) {

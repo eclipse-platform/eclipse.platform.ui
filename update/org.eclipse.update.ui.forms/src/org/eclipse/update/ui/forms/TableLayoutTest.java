@@ -15,6 +15,7 @@ public static void main (String [] args) {
     // sc.setAlwaysShowScrollBars(true);
      sc.setBackground(sc.getDisplay().getSystemColor(SWT.COLOR_WHITE));
      final Composite c = new Composite(sc, SWT.NONE);
+     c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_RED));
      sc.setContent(c);
      sc.addListener (SWT.Resize,  new Listener () {
 		public void handleEvent (Event e) {
@@ -88,7 +89,7 @@ public static void main (String [] args) {
      td.align = TableData.FILL;
      label.setLayoutData(td);
      
-     ExpandableGroup exp = new ExpandableGroup () {
+     ExpandableGroup exp = new ExpandableGroup (SWT.WRAP) {
      	public void fillExpansion(Composite container, FormWidgetFactory factory) {
      		HTMLTableLayout layout = new HTMLTableLayout();
      		container.setLayout(layout);
@@ -97,11 +98,11 @@ public static void main (String [] args) {
      	}
      	public void expanded() {
      		c.layout(true);
-     		sc.layout();
+     		updateSize(sc, c);
      	}
      	public void collapsed() {
      		c.layout(true);
-     		sc.layout();
+     		updateSize(sc, c);
      	}
      };
      exp.setText("Expandable Section");
@@ -120,5 +121,14 @@ public static void main (String [] args) {
      display.dispose ();
 }
 
+private static void updateSize(ScrolledComposite sc, Composite c) {
+	Rectangle ssize = sc.getClientArea();
+	int swidth = ssize.width;
+	HTMLTableLayout layout = (HTMLTableLayout)c.getLayout();
+	Point size = layout.computeSize(c, swidth, SWT.DEFAULT, true);
+	Rectangle trim = c.computeTrim(0, 0, size.x, size.y);
+	size = new Point(trim.width, trim.height);
+	c.setSize(size);
 }
 
+}
