@@ -90,7 +90,6 @@ public void dispose() {
 		wb.dispose();
 	}
 	editorWorkbooks.clear();
-	editorWorkbooks = null;
 
 	// Free rest.
 	super.dispose();

@@ -93,7 +93,6 @@ private void derefPart(LayoutPart part) {
 public void dispose() {
 	if (editorArea != null) {
 		editorArea.dispose();
-		editorArea = null;
 	}
 }
 /**
