@@ -22,7 +22,6 @@ if (data.isMozilla()) {
 HTML {
 	padding:0px 3px 3px 3px;
 	background:<%=prefs.getToolbarBackground()%>;
-	margin-right:-1px;
 }
 
 <% 
