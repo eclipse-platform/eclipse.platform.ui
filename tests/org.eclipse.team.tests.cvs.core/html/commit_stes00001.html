@@ -3,8 +3,67 @@
 <meta NAME="keywords" content="">
 <meta NAME="since" content="">
 </head><body><h2>Commit Sets Layout</h2>
-<p>Since: 3.0 M9<br>
-Last Modified: $Date: 2004/06/01 15:23:56 $</p>
+<p>Since: 3.1 M2<br>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
+<h3>Commit Sets for incoming changes</h3>
+
+To perform these scenarios you will need to get one or more projects 
+in your workspace that have many incoming changes. Perferably
+all the changes will have commit comments and some files will share
+a comment. Once you have this setup, you can perform the following sub-scenarios.
+
+<h4>Enabling/disabling Commit Sets</h4>
+<ol>
+<li>Synchronize the projects with HEAD, enable commit set mode and
+ensure that the files appear in the proper commit sets. Also ensure that 
+the proper sub-layout is used by expanding some of the nodes in the tree.
+<p>
+<li>With some nodes expanded and additionally one or more selected, 
+disable Commit Sets. The same nodes should remain expanded and selected.
+<p>
+<li>With the same nodes selected and expanded, re-enable commit sets.
+The expansion should remain. There may be more expanded if the same
+expanded project or folder appears in multiple commit sets. The selection
+will remain unless there are two entries for the same resource (i.e. if a project
+was selected and it apears in multiple sets, it will no longer be expanded).
+</ol>
+You should also confirm that markers and conflicts are properly propogated to
+parent nodes.
+<h4>Commit Set Layouts</h4>
+Now try the various sub-layouts (Flat, Tree and Compressed) and ensure that switching
+is performant and that the resulting tree nodes are correct.
+
+<h4>Commit Set Modes</h4>
+<ol>
+<li>Switch between the various modes and ensure that the displayed nodes are correct.
+Also ensure that expansion and seleciton is maintained.
+<li>Add a conflict and repeat the above, ensuring the results are correct.
+Note that a conflict will appear twice in each mode, once within an incoming
+commit set and once within the outgoing commit set (more on this below).
+</ol>
+
+<h4>Updating</h4>
+With several nodes expanded, perform an update on one or more files
+that are incoming changes.
+Ensure that the updated files are removed from the view and that 
+other expanded nodes remain expanded.
+
+<h3>Outgoing Commit Sets</h3>
+
+The following aspects of outgoing commit sets should be tested.
+<ol>
+<li>Modified files can be added to a new or existing commit set
+<li>Files in a commit set can be transfered to another commit set
+<li>If there is a default commit set, any modified file that is not already
+part of a commit set is placed in the default set. Files that are already
+in a set should stay in that set if more changes are made to the files.
+<li>The title and comment of a commit set can be changed.
+<li>Layout and modes changes work properly for outgoing commit sets in the
+Synchronize view.
+<li>Commiting one or more files in a commit set will result in a commit 
+dialog that is primed with the comment from the set.
+<li>Commit sets (including which is the default), are preserved accross restarts.
+</ol>
 
 </body></html>
