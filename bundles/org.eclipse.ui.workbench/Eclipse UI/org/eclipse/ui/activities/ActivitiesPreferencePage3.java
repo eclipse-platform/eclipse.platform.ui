@@ -20,6 +20,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -403,8 +404,14 @@ public class ActivitiesPreferencePage3 extends PreferencePage implements
                     dialog.open(); // logic for updating the working copy is in the dialog class.                    
                 }
             });
-            advancedButton.setText("Ad&vanced"); //$NON-NLS-1$
-            setButtonLayoutData(advancedButton);
+            advancedButton.setText(ActivityMessages.ActivitiesPreferencePage_advancedButton); //$NON-NLS-1$
+            int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+            Point minSize = advancedButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+            data.widthHint = Math.max(widthHint, minSize.x);
+            data = new GridData(GridData.GRAB_HORIZONTAL
+                    | GridData.HORIZONTAL_ALIGN_END
+                    | GridData.VERTICAL_ALIGN_CENTER);
+            advancedButton.setLayoutData(data);
         }
     }
 
