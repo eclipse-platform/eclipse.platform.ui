@@ -78,7 +78,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	 * @param buildTypes the string of built types to convert
 	 * @return the array of build kinds.
 	 */
-	protected static int[] buildTypesToArray(String buildTypes) {
+	public static int[] buildTypesToArray(String buildTypes) {
 		int count = 0;
 		boolean incremental = false;
 		boolean full = false;

@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsBuilderTab;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsRefreshTab;
 
 public class ProgramBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
@@ -21,6 +22,7 @@ public class ProgramBuilderTabGroup extends AbstractLaunchConfigurationTabGroup 
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new ProgramMainTab(),
 			new ExternalToolsRefreshTab(),
+			new ExternalToolsBuilderTab(),
 		};
 		setTabs(tabs);
 	}
