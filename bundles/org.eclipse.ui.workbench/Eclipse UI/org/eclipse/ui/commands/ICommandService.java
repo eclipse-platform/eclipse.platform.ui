@@ -15,7 +15,6 @@ import java.util.Collection;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IExecutionListener;
-import org.eclipse.ui.IService;
 
 /**
  * <p>
@@ -31,7 +30,7 @@ import org.eclipse.ui.IService;
  * 
  * @since 3.1
  */
-public interface ICommandService extends IService {
+public interface ICommandService {
 
 	/**
 	 * Adds an execution listener to the command service. This listener will be

@@ -13,7 +13,6 @@ package org.eclipse.ui.contexts;
 import java.util.Collection;
 
 import org.eclipse.core.commands.contexts.Context;
-import org.eclipse.ui.IService;
 
 /**
  * <p>
@@ -28,7 +27,7 @@ import org.eclipse.ui.IService;
  * 
  * @since 3.1
  */
-public interface IContextService extends IService {
+public interface IContextService {
 
 	/**
 	 * Retrieves the context with the given identifier. If no such context
