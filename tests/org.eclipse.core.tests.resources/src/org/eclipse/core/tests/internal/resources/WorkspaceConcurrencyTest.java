@@ -13,6 +13,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.tests.harness.*;
 
 /**
@@ -104,6 +105,29 @@ public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
 				fail("3.0", error[0]);
 		} finally {
 			getWorkspace().removeResourceChangeListener(listener);
+		}
+	}
+	/**
+	 * Tests calling IWorkspace.run with a non-workspace rule.  This should be
+	 * allowed. This is a regression test for bug 60114.
+	 */
+	public void testRunnableWithOtherRule() {
+		ISchedulingRule rule = new ISchedulingRule() {
+			public boolean contains(ISchedulingRule rule) {
+				return rule == this;
+			}
+			public boolean isConflicting(ISchedulingRule rule) {
+				return rule == this;
+			}
+		};
+		try {
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) {
+					//noop
+				}
+			}, rule, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
 		}
 	}
 }
