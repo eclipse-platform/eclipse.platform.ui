@@ -81,6 +81,7 @@
 		<ignore pattern = "*.Z" selected = "true"/>
 		<ignore pattern = "*.elc" selected = "true"/>
 		<ignore pattern = "*.ln" selected = "true"/>
+		<ignore pattern = ".DS_Store" selected = "true"/>
 		<ignore pattern = "core" selected = "false"/>
 	</extension>
  
