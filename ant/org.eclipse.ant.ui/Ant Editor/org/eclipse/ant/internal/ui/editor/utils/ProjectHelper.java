@@ -172,7 +172,7 @@ public class ProjectHelper extends ProjectHelper2 {
             for (int i = 0; i < attrs.getLength(); i++) {
                 String attrUri = attrs.getURI(i);
                 if (attrUri != null
-                    && !attrUri.equals("") //$NON-NLS-1$
+                    && attrUri.length() != 0 
                     && !attrUri.equals(uri)) {
                     continue; // Ignore attributes from unknown uris
                 }
@@ -230,7 +230,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		 */
 		public AntHandler onStartChild(String uri, String name, String qname, Attributes attrs, AntXMLContext context) throws SAXParseException {
 			if (name.equals("project") //$NON-NLS-1$
-					&& (uri.equals("") || uri.equals(ANT_CORE_URI))) { //$NON-NLS-1$
+					&& (uri.length() == 0 || uri.equals(ANT_CORE_URI))) {
 				return ProjectHelper.projectHandler;
 			} 
 			try {
@@ -249,7 +249,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		 */
 		public AntHandler onStartChild(String uri, String name, String qname, Attributes attrs, AntXMLContext context) {
 			if (name.equals("target") //$NON-NLS-1$
-					&& (uri.equals("") || uri.equals(ANT_CORE_URI))) { //$NON-NLS-1$
+					&& (uri.length() == 0 || uri.equals(ANT_CORE_URI))) {
 				return ProjectHelper.targetHandler;
 			} 
 			return ProjectHelper.elementHandler;
