@@ -12,9 +12,8 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 public interface ICVSUIConstants {
-	// image paths
-	public final String ICON_PATH_FULL = "icons/full/"; //$NON-NLS-1$
-	public final String ICON_PATH_BASIC = "icons/basic/"; //$NON-NLS-1$
+	// image path
+	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
 	
 	// images
 	

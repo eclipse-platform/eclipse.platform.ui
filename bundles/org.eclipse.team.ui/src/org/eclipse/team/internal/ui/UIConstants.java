@@ -18,8 +18,7 @@ public interface UIConstants {
 	public final String PT_DECORATORS = "decorators"; //$NON-NLS-1$
 
 	// image paths
-	public final String ICON_PATH_FULL = "icons/full/"; //$NON-NLS-1$
-	public final String ICON_PATH_BASIC = "icons/basic/"; //$NON-NLS-1$
+	public final String ICON_PATH = "icons/full/"; //$NON-NLS-1$
 
 	// local toolbars (colour)
 	public final String IMG_DLG_SYNC_INCOMING = "clcl16/incom_synch.gif"; //$NON-NLS-1$

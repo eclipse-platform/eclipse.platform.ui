@@ -28,21 +28,7 @@ import org.eclipse.team.internal.ui.UIConstants;
 public class TeamImages {
 	private static Hashtable imageDescriptors = new Hashtable(20);
 	
-	final static String ICON_PATH;
 	static {
-		final String iconPath[] = new String[1];
-		final Display display = Display.getDefault();
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (display.getIconDepth() > 4) {
-					iconPath[0] = UIConstants.ICON_PATH_FULL;
-				} else {
-					iconPath[0] = UIConstants.ICON_PATH_BASIC;
-				}
-			}
-		});
-		ICON_PATH = iconPath[0];
-		
 		initializeImages();
 	}
 	/**
@@ -54,7 +40,7 @@ public class TeamImages {
 	protected static void createImageDescriptor(String id, URL baseURL) {
 		URL url = null;
 		try {
-			url = new URL(baseURL, UIConstants.ICON_PATH_FULL + id);
+			url = new URL(baseURL, UIConstants.ICON_PATH + id);
 		} catch (MalformedURLException e) {
 		}
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);

@@ -62,22 +62,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
 
-	public final static String ICON_PATH;
-	static {
-		final String iconPath[] = new String[1];
-		final Display display = Display.getDefault();
-		display.syncExec(new Runnable() {
-			public void run() {
-				if (display.getIconDepth() > 4) {
-					iconPath[0] = ICVSUIConstants.ICON_PATH_FULL;
-				} else {
-					iconPath[0] = ICVSUIConstants.ICON_PATH_BASIC;
-				}
-			}
-		});
-		ICON_PATH = iconPath[0];
-	}
-
 	// timeout in milliseconds before displaying a progress monitor dialog
 	// (used for normally short-running interactive operations)
 	private static final int TIMEOUT = 2000;
@@ -118,7 +102,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	protected void createImageDescriptor(String id, URL baseURL) {
 		URL url = null;
 		try {
-			url = new URL(baseURL, ICON_PATH + id);
+			url = new URL(baseURL, ICVSUIConstants.ICON_PATH + id);
 		} catch (MalformedURLException e) {
 		}
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
