@@ -16,12 +16,14 @@ package org.eclipse.core.runtime.jobs;
  * without releasing.  Locks are only released when the number of successful acquires 
  * equals the number of successful releases.
  * </p><p>
- * Locks avoid circular waiting deadlocks by employing a release and wait strategy.
- * If a group of threads are involved in a deadlock, one thread will lose control
- * of the locks it owns, thus breaking the deadlock and allowing other threads to 
- * proceed.  Once that thread's locks are all available, it will be given exclusive access
- * to all its locks and allowed to proceed.  A thread can only lose locks while it is
- * waiting on an acquire() call.
+ * Locks are capable of detecting and recovering from circular waiting deadlocks.
+ * When a deadlock between two or more <tt>ILock</tt> instances is detected,
+ * detailed debugging information is printed to the log file.  The locks will then 
+ * automatically recover from the deadlock by employing a release and wait strategy.
+ * One thread will lose control of the locks it owns, thus breaking the deadlock and 
+ * allowing other threads to proceed.  Once that thread's locks are all available, it 
+ * will be given exclusive access to all its locks and allowed to proceed.  A thread 
+ * can only lose locks while it is waiting on an <tt>acquire()</tt> call.
  * </p><p>
  * Successive acquire attempts by different threads are queued and serviced on
  * a first come, first served basis.
