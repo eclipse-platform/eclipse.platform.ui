@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.editors.text;
 
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -60,8 +61,9 @@ public class LanguageEditorPreferencePage extends PreferencePage implements IWor
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		Composite composite= new Composite(parent, SWT.NONE);
 		
-		return parent;
+		return composite;
 	}
 	
 	/*
