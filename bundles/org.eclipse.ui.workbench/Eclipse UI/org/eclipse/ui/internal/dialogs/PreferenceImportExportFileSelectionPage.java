@@ -274,19 +274,19 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 * values.
 	 */
 	private void init() {
-		if(export) {
-			String lastFileName = WorkbenchPlugin.getDefault().getDialogSettings().get(WorkbenchPreferenceDialog.FILE_PATH_SETTING);
-			if (lastFileName == null) {
-			    if (export) {
-			        fileText.setText(System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + PREFERENCE_EXT);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			    }
-			} else if ((export) || (new File(lastFileName).exists())) {
-				fileText.setText(lastFileName);
-			}
-		}
-		
-		allItemsRadioButton.setSelection(true);
-	}
+        String lastFileName = WorkbenchPlugin.getDefault().getDialogSettings()
+                .get(WorkbenchPreferenceDialog.FILE_PATH_SETTING);
+        if (lastFileName == null) {
+            if (export) {
+                fileText
+                        .setText(System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + PREFERENCE_EXT); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+            }
+        } else if ((export) || (new File(lastFileName).exists())) {
+            fileText.setText(lastFileName);
+        }
+
+        allItemsRadioButton.setSelection(true);
+    }
 	
 	/**
 	 * Validates all of the data on the page to make sure that it is all valid.
