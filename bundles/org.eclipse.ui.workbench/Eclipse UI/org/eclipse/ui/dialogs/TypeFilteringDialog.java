@@ -42,7 +42,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	Collection initialSelections;
 
 	// the visual selection widget group
-	private CheckboxTableViewer listViewer;
+	CheckboxTableViewer listViewer;
 
 	// sizing constants
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
@@ -91,7 +91,6 @@ private void addSelectionButtons(Composite composite) {
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	buttonComposite.setLayout(layout);
-	buttonComposite.setFont(composite.getFont());
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 	data.grabExcessHorizontalSpace = true;
