@@ -96,6 +96,7 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	public void selectionChanged(IAction action, ISelection s) {
 		LaunchesView view= getLaunchesView(fMode);
 		if (view == null) {
+			action.setEnabled(false);
 			return;
 		}
 		IStructuredSelection selection= (IStructuredSelection)view.getSite().getSelectionProvider().getSelection();

@@ -231,6 +231,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	/**
 	 * Activates (may include creates) a debugger part based on the mode
 	 * in the specified page.
+	 * Must be called in the UI thread.
 	 */
 	protected void activateDebuggerPart(final Object source, IWorkbenchPage page, String mode) {
 		LaunchesView debugPart= null;
@@ -245,15 +246,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			DebugUIUtils.errorDialog(page.getWorkbenchWindow().getShell(), "debug_ui_plugin.switch_perspective.error.", status);
 		}
 		if (debugPart != null) {
-			final LaunchesView dp= debugPart;
-			Display display= getDisplay();
-			if (display != null) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						dp.autoExpand(source);
-					}
-				});
-			}
+			debugPart.autoExpand(source);
 		}
 	}
 	
@@ -261,7 +254,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 * Checks all active pages for a debugger view.  
 	 * If no debugger view is found, looks for a page in any window
 	 * that has the specified debugger layout id.
-	 *
+	 * Must be called in UI thread.
 	 * @return an Object array that 
 	 * 		is null if a debugger part has been found
 	 * 		is empty if no page could be found with the debugger layout id
@@ -269,33 +262,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 *			 first element is a window, the second is a page
 	 */
 	protected Object[] findDebugPresentation(final Object source, String mode, String layoutId, boolean suspendTriggered) {
-		Display display= getDisplay();
-		if (display == null) {
-			return null;
-		}
+		
 		IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
 		IWorkbenchWindow activeWindow= getActiveWorkbenchWindow();
 		int i;
 		if (suspendTriggered) {
-			final LaunchesView part= findDebugPart(activeWindow, mode);
+			LaunchesView part= findDebugPart(activeWindow, mode);
 			if (part != null) {
-				display.asyncExec(new Runnable() {
-					public void run() {
-						part.autoExpand(source);
-					}
-				});
+				part.autoExpand(source);
 				return null;
 			}
 			//check active pages for debugger view
 			for (i= 0; i < windows.length; i++) {
 				IWorkbenchWindow window= windows[i];
-				final LaunchesView lPart= findDebugPart(window, mode);
+				LaunchesView lPart= findDebugPart(window, mode);
 				if (lPart != null) {
-					display.asyncExec(new Runnable() {
-						public void run() {
-							lPart.autoExpand(source);
-						}
-					});
+					lPart.autoExpand(source);
 					return null;
 				}
 			}
