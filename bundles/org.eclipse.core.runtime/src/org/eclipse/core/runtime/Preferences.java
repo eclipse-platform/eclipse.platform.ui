@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,6 +120,11 @@ public class Preferences {
 	 * (<code>"false"</code>).
 	 */
 	private static final String FALSE = "false"; //$NON-NLS-1$
+	
+	/**
+	 * Singleton empty string array (optimization)
+	 */
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	/**
 	 * An event object describing a change to a named property.
@@ -1275,9 +1280,7 @@ public class Preferences {
 	 * @return an array of property names 
 	 */
 	public String[] propertyNames() {
-		String[] result = new String[properties.size()];
-		properties.keySet().toArray(result);
-		return result;
+		return (String[])properties.keySet().toArray(EMPTY_STRING_ARRAY);
 	}
 
 	/**
@@ -1287,9 +1290,7 @@ public class Preferences {
 	 * @return an array of property names 
 	 */
 	public String[] defaultPropertyNames() {
-		String[] result = new String[defaultProperties.size()];
-		defaultProperties.keySet().toArray(result);
-		return result;
+		return (String[])defaultProperties.keySet().toArray(EMPTY_STRING_ARRAY);
 	}
 
 	/**
