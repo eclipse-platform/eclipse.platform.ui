@@ -287,7 +287,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		editorReuseThresholdGroup = new Composite(editorReuseIndentGroup, SWT.LEFT);
 		editorReuseThresholdGroup.setLayout(new GridLayout());
-		editorReuseThresholdGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
+		editorReuseThresholdGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		editorReuseThresholdGroup.setFont(font);	
 		
 		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseThresholdGroup); //$NON-NLS-1$
 		
