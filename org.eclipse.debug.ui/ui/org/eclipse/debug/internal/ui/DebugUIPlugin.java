@@ -285,9 +285,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
-		
-		// register scheduler
-		DebugPlugin.getDefault().registerScheduler(new DisplayScheduler(), getStandardDisplay().getThread());
 	}
 
 	/**
