@@ -16,9 +16,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
+import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.tests.api.PerspectiveWithFastView;
+import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -36,7 +40,33 @@ public class IntroTest extends UITestCase {
     public IntroTest(String testName) {
         super(testName);
     }
+    
+    public void testCloseInFastViewPerspective() {
+    	testClose(PerspectiveWithFastView.PERSP_ID);
+	}
 
+    public void testCloseInEmptyPerspective() {
+    	testClose(EmptyPerspective.PERSP_ID);
+	}
+
+    public void testCloseInNonEmptyPerspective() {
+    	testClose("org.eclipse.ui.resourcePerspective");
+    }
+
+    private void testClose(String perspectiveId) {
+		IPerspectiveDescriptor descriptor = window.getWorkbench()
+				.getPerspectiveRegistry().findPerspectiveWithId(
+						perspectiveId);
+		window.getActivePage().setPerspective(descriptor);
+
+		IIntroManager introManager = window.getWorkbench().getIntroManager();
+		IIntroPart part = introManager.showIntro(window, false);
+		introManager.closeIntro(part);
+
+		assertTrue(((WorkbenchWindow) window).getCoolBarVisible());
+		assertTrue(((WorkbenchWindow) window).getPerspectiveBarVisible());
+	}
+    
     public void testShow() {
         IIntroManager introManager = window.getWorkbench().getIntroManager();
         IIntroPart part = introManager.showIntro(window, false);

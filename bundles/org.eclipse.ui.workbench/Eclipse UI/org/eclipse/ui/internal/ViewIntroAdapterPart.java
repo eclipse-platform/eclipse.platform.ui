@@ -76,16 +76,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
                     control.setRedraw(true);
                 }
 
-                WorkbenchWindow window = ((WorkbenchWindow) ((PartSite) getSite())
-                        .getPane().getWorkbenchWindow());
-                if (standby) {
-                    window.setCoolBarVisible(true);
-                    window.setPerspectiveBarVisible(true);
-                } else {
-                    window.setCoolBarVisible(false);
-                    window.setPerspectiveBarVisible(false);
-                }
-                window.getShell().layout();
+                setBarVisibility(standby);
             }
         });
     }
@@ -111,6 +102,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
      * @see org.eclipse.ui.IWorkbenchPart#dispose()
      */
     public void dispose() {
+    	setBarVisibility(true);
         super.dispose();
         getSite().getWorkbenchWindow().getWorkbench().getIntroManager()
                 .closeIntro(introPart);
@@ -170,4 +162,28 @@ public final class ViewIntroAdapterPart extends ViewPart {
     public void saveState(IMemento memento) {
         introPart.saveState(memento);
     }
+
+	/**
+	 * Sets whether the CoolBar/PerspectiveBar should be visible.
+	 * 
+	 * @param visible whether the CoolBar/PerspectiveBar should be visible
+	 * @since 3.1
+	 */
+	private void setBarVisibility(final boolean visible) {
+		WorkbenchWindow window = (WorkbenchWindow) getSite()
+				.getWorkbenchWindow();
+
+		final boolean layout = (visible != window.getCoolBarVisible())
+				|| (visible != window.getPerspectiveBarVisible()); // don't layout unless things have actually changed
+		if (visible) {
+			window.setCoolBarVisible(true);
+			window.setPerspectiveBarVisible(true);
+		} else {
+			window.setCoolBarVisible(false);
+			window.setPerspectiveBarVisible(false);
+		}
+
+		if (layout)
+			window.getShell().layout();
+	}
 }
