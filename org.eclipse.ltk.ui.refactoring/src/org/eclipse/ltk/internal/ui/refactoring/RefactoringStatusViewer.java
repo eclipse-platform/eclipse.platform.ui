@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.compare.CompareUI;
-
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
@@ -24,6 +20,19 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
+import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
+
+import org.eclipse.compare.CompareUI;
+
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
@@ -36,15 +45,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.PageBook;
-
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
-import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 import org.eclipse.ltk.ui.refactoring.IStatusContextViewer;
 
 public class RefactoringStatusViewer extends SashForm {
@@ -285,12 +285,13 @@ public class RefactoringStatusViewer extends SashForm {
 	}
 		
 	private void revealElement(boolean next) {
-		RefactoringStatusEntry[] entries= fStatus.getEntries();
-		if (entries.length == 0) {
+		Table table= fTableViewer.getTable();
+		int numberOfItems= table.getItemCount();
+		if (numberOfItems == 0) {
 			return;
 		}
-		int index= fTableViewer.getTable().getSelectionIndex();
-		int last= entries.length - 1;
+		int index= table.getSelectionIndex();
+		int last= numberOfItems - 1;
 		boolean doIt= true;
 		if (index == -1) {
 			index= 0;
@@ -301,8 +302,14 @@ public class RefactoringStatusViewer extends SashForm {
 		} else {
 			doIt= false;
 		}
-		if (doIt)	
-			fTableViewer.setSelection(new StructuredSelection(entries[index]));
+		if (doIt) {
+			// we have to set the selection via the viewer to trigger a 
+			// selection change event
+			Object data= table.getItem(index).getData();
+			if (data != null) {
+				fTableViewer.setSelection(new StructuredSelection(data));
+			}
+		}
 	}
 
 }
