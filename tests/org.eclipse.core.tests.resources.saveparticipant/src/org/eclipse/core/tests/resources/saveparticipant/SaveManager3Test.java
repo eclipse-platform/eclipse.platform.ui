@@ -143,7 +143,7 @@ public void testSaveParticipant() {
 	}
 }
 public void cleanUp() throws CoreException {
-	IProject[] projects = getWorkspace().getRoot().getProjects();
-	getWorkspace().delete(projects, true, null);
+	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
+	getWorkspace().save(true, null);
 }
 }

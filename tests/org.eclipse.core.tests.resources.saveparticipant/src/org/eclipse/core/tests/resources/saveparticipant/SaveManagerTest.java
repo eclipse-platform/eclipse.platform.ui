@@ -2,9 +2,9 @@ package org.eclipse.core.tests.resources.saveparticipant;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
-public abstract class SaveManagerTest extends EclipseWorkspaceTest {
+public abstract class SaveManagerTest extends WorkspaceSessionTest {
 
 	/** project names */
 	static final String PROJECT_1 = "MyProject";
