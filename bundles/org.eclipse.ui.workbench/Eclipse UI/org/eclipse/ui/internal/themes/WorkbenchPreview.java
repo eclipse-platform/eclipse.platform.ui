@@ -102,7 +102,7 @@ public class WorkbenchPreview implements IThemePreview {
         item.setText("Lorem"); //$NON-NLS-1$
         Text text = new Text(viewForm, SWT.NONE);
         viewForm.setContent(text);
-        text.setText("Lorem ipsum dolor sit amet\n"); //$NON-NLS-1$                
+        text.setText("Lorem ipsum dolor sit amet"); //$NON-NLS-1$                
         item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Ipsum"); //$NON-NLS-1$
         item.setControl(viewForm);        
