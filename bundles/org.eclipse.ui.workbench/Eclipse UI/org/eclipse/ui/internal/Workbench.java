@@ -270,8 +270,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Assumes that busy cursor is active.
 	 */
 	private boolean busyClose(final boolean force) {
-		isClosing = true;
-
 		isClosing = saveAllEditors(!force);
 		if (!isClosing && !force)
 			return false;
@@ -281,9 +279,12 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (closeEditors) {
 			Platform.run(new SafeRunnable() {
 				public void run() {
-					IWorkbenchPage page = getActiveWorkbenchWindow().getActivePage();
-					if (page != null) {
-						isClosing = page.closeAllEditors(false);
+					IWorkbenchWindow windows[] = getWorkbenchWindows();
+					for (int i = 0; i < windows.length; i++) {
+						IWorkbenchPage pages[] = windows[i].getPages();
+						for (int j = 0; j < pages.length; j++) {
+							isClosing = isClosing && pages[j].closeAllEditors(false);
+						}
 					}
 				}
 			});
@@ -666,7 +667,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	public IWorkingSetManager getWorkingSetManager() {
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
-
+		
 	public void updateActiveKeyBindingService() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		
