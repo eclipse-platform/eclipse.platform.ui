@@ -89,7 +89,7 @@ public class InstallWizard extends Wizard {
 			if (hasLicense()) {
 				addPage(new LicensePage(job));
 			}
-			targetPage = new TargetPage(job.getFeature(), config);
+			targetPage = new TargetPage(job, config);
 			addPage(targetPage);
 		}
 	}
@@ -135,7 +135,7 @@ public class InstallWizard extends Wizard {
 		IFeature feature = job.getFeature();
 		if (job.getJobType() == PendingChange.UNINSTALL) {
 			//find the  config site of this feature
-			IConfiguredSite site = findConfigSite(feature);
+			IConfiguredSite site = findConfigSite(feature, config);
 			if (site != null) {
 				site.remove(feature, monitor);
 			} else {
@@ -176,12 +176,10 @@ public class InstallWizard extends Wizard {
 		throw new CoreException(status);
 	}
 
-	private IConfiguredSite findConfigSite(IFeature feature) throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		IConfiguredSite[] configSite =
-			localSite.getCurrentConfiguration().getConfiguredSites();
-		for (int i = 0; i < configSite.length; i++) {
-			IConfiguredSite site = configSite[i];
+	static IConfiguredSite findConfigSite(IFeature feature, IInstallConfiguration config) throws CoreException {
+		IConfiguredSite[] configSites = config.getConfiguredSites();
+		for (int i = 0; i < configSites.length; i++) {
+			IConfiguredSite site = configSites[i];
 			if (site.getSite().equals(feature.getSite())) {
 				return site;
 			}
@@ -190,14 +188,14 @@ public class InstallWizard extends Wizard {
 	}
 
 	private boolean unconfigure(IFeature feature) throws CoreException {
-		IConfiguredSite site = findConfigSite(feature);
+		IConfiguredSite site = findConfigSite(feature, config);
 		if (site != null) {
 			return site.unconfigure(feature);
 		}
 		return false;
 	}
 	private void configure(IFeature feature) throws CoreException {
-		IConfiguredSite site = findConfigSite(feature);
+		IConfiguredSite site = findConfigSite(feature, config);
 		if (site != null) {
 			site.configure(feature);
 		}
