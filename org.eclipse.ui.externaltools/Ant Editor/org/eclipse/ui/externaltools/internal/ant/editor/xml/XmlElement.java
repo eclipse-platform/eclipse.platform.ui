@@ -12,15 +12,17 @@ http://www.eclipse.org/legal/cpl-v10.html
 //
 package org.eclipse.ui.externaltools.internal.ant.editor.xml;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.xerces.util.URI;
+import org.apache.xerces.util.URI.MalformedURIException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 
@@ -295,14 +297,14 @@ public class XmlElement implements IAdaptable {
 	 * within.
 	 */
 	public void setFilePath(String path) {
-		URL url= null;
+		URI uri= null;
 		try {
-			url= new URL(path);
-		} catch (MalformedURLException e) {
+			uri= new URI(path);
+		} catch (MalformedURIException e) {
 			filePath= path;
 			return;
 		}
-		this.filePath = url.getPath();
+		filePath = new Path(new File(uri.getPath()).getAbsolutePath()).toString();
 	}
 	
 	/**
