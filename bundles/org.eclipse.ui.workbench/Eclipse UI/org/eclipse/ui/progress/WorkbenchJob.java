@@ -80,7 +80,14 @@ public abstract class WorkbenchJob extends UIJob {
 	 * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
 	 */
 	public boolean shouldSchedule() {
-		return PlatformUI.isWorkbenchRunning();
+		return super.shouldSchedule() && PlatformUI.isWorkbenchRunning();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+	 */
+	public boolean shouldRun() {
+		return super.shouldRun() && PlatformUI.isWorkbenchRunning();
 	}
 
 }
