@@ -7,6 +7,7 @@ package org.eclipse.debug.core;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 
 /**
  * Note: This interface is yet experimental.
@@ -102,5 +103,16 @@ public interface ILaunchConfigurationType {
 	 *  reason
 	 */
 	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException;
+	
+	/**
+	 * Returns the launch configuration delegate for launch
+	 * configurations of this type. The first time this method
+	 * is called, the delegate is instantiated.
+	 * 
+	 * @return launch configuration delegate
+	 * @exception CoreException if unable to instantiate the
+	 *  delegate
+	 */	
+	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
 		
 }

@@ -128,7 +128,7 @@ public class LaunchConfigurationType implements ILaunchConfigurationType {
 	 * @exception CoreException if unable to instantiate the
 	 *  delegate
 	 */
-	protected ILaunchConfigurationDelegate getDelegate() throws CoreException {
+	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		if (fDelegate == null) {
 			fDelegate = (ILaunchConfigurationDelegate)getConfigurationElement().createExecutableExtension("delegate"); //$NON-NLS-1$
 		}
