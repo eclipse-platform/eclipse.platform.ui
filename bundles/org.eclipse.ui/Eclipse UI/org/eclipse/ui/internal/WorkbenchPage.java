@@ -2060,12 +2060,14 @@ private void setActivePart(IWorkbenchPart newPart) {
 	activatePart(activePart);
 	
 
-	// Update actions
-	actionSwitcher.updateActivePart(newPart);	
-
 	// Fire notifications
 	if (oldPart != null)
 		firePartDeactivated(oldPart);
+
+	// Update actions now so old actions have heard part deactivated and 
+	// new actions can hear part activated.
+	actionSwitcher.updateActivePart(newPart);	
+
 	if (newPart != null)
 		firePartActivated(newPart);
 
