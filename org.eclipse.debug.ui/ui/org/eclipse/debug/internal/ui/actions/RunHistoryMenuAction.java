@@ -9,12 +9,14 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 
 public class RunHistoryMenuAction extends RunDropDownAction implements IMenuCreator {
 
-	IAction fAction;
+	private MenuListener fMenuListener= null;
+	private Menu fTopMenu= null;
 	
 	public RunHistoryMenuAction() {
 		super(null);
@@ -25,9 +27,9 @@ public class RunHistoryMenuAction extends RunDropDownAction implements IMenuCrea
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (action instanceof Action) {
-			if (fAction == null) {
+			if (getActionProxy() == null) {
 				((Action)action).setMenuCreator(this);
-				fAction= action;
+				setActionProxy(action);
 			}
 		} else {
 			action.setEnabled(false);
@@ -49,9 +51,33 @@ public class RunHistoryMenuAction extends RunDropDownAction implements IMenuCrea
 	}
 	
 	public Menu getMenu(Menu parent) {
+		cleanup();
 		Menu menu= new Menu(parent);
-		parent.addMenuListener(getDebugActionSetMenuListener(fAction));
-		Menu newMenu= createMenu(menu);
-		return newMenu;
+		parent.addMenuListener(getDebugActionSetMenuListener());
+		fTopMenu= parent;	
+		setCreatedMenu(menu);
+		Menu submenu= createMenu(menu);
+		return submenu;
+	}
+	
+	/**
+	 * @see LaunchDropDownAction#getDebugActionSetMenuListener()
+	 */
+	protected MenuListener getDebugActionSetMenuListener() {
+		if (fMenuListener == null) {
+			fMenuListener= super.getDebugActionSetMenuListener();
+		} 
+		return fMenuListener;
+	}
+	
+	public void dispose() {
+		cleanup();
+		super.dispose();
+	}
+	
+	protected void cleanup() {
+		if (fTopMenu != null && !fTopMenu.isDisposed()) {
+			fTopMenu.removeMenuListener(getDebugActionSetMenuListener());
+		}
 	}
 }

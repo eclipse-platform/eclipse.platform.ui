@@ -5,16 +5,11 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
@@ -38,11 +33,10 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  */
 public abstract class LaunchWithConfigurationAction extends Action implements IMenuCreator, 
 																				   IWorkbenchWindowActionDelegate {
-	
+	private Menu fCreatedMenu;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private List fActionItems;
 	private IAction fAction;
-	private ILaunchManager fLaunchManager;
 	
 	/**
 	 * Comparator used to sort ILaunchConfigurationType objects into alphabetical order of their names.
@@ -55,20 +49,20 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		}
 	}
 	
+	public LaunchWithConfigurationAction() {
+		super();
+		setText(getLabelText());
+		setMenuCreator(this);
+	}
+
 	/**
 	 * @see IAction#run()
 	 */
 	public void run() {
 		//do nothing, this action just creates a cascading menu.
 	}
-	
-	public LaunchWithConfigurationAction() {
-		super();
-		setText(getLabelText());
-		setMenuCreator(this);
-	}
-	
-	private void createMenuForAction(Menu parent, Action action, int count) {
+		
+	private void createMenuForAction(Menu parent, IAction action, int count) {
 		StringBuffer label= new StringBuffer();
 		//add the numerical accelerator
 		if (count < 10) {
@@ -80,17 +74,15 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		action.setText(label.toString());
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
-		if (getActionItems() != null) {
-			//have to do our own menu updating
-			getActionItems().add(item);
-		}
 	}
 	
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
 	public void dispose() {
-		setActionItems(null);
+		if (getCreatedMenu() != null) {
+			getCreatedMenu().dispose();
+		}
 	}
 	
 	/**
@@ -118,19 +110,23 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts();
 		}
 		
+		if (getCreatedMenu() != null) {
+			getCreatedMenu().dispose();
+		}
 		// Sort the applicable config types alphabetically and add them to the menu
-		Menu menu= new Menu(parent);
+		setCreatedMenu(new Menu(parent));
+		
 		int menuCount = 1;
 		Iterator iter = shortcuts.iterator();
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			if (ext.getModes().contains(getMode())) {
-				populateMenu(ext, menu, menuCount);
+				populateMenu(ext, getCreatedMenu(), menuCount);
 				menuCount++;
 			}
 		}
 				
-		return menu;
+		return getCreatedMenu();
 	}
 	
 	/**
@@ -192,14 +188,13 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	 */
 	public void init(IWorkbenchWindow window) {
 		setWorkbenchWindow(window);
-		setActionItems(new ArrayList(5));
 	}
 
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		run();
+		//do nothing as this action only creates a menu
 	}
 	
 	/**
@@ -216,31 +211,12 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		}
 	}
 	
-	protected List getActionItems() {
-		return fActionItems;
-	}
-
-	protected void setActionItems(List actionItems) {
-		fActionItems = actionItems;
-	}
-	
 	protected void setWorkbenchWindow(IWorkbenchWindow window) {
 		fWorkbenchWindow = window;
 	}
 	
 	protected IWorkbenchWindow getWorkbenchWindow() {
 		return fWorkbenchWindow;
-	}
-	
-	/**
-	 * Lazily populate & return the current launch manager.  Lazy population is useful because this
-	 * can be called many times.
-	 */
-	protected ILaunchManager getLaunchManager() {
-		if (fLaunchManager == null) {
-			fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
-		}
-		return fLaunchManager;
 	}
 	
 	/**
@@ -253,4 +229,12 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	 * Return a String label for this action.
 	 */
 	public abstract String getLabelText();
+	
+	protected Menu getCreatedMenu() {
+		return fCreatedMenu;
+	}
+	
+	protected void setCreatedMenu(Menu createdMenu) {
+		fCreatedMenu = createdMenu;
+	}
 }
