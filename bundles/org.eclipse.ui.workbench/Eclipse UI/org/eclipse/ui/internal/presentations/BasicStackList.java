@@ -218,7 +218,7 @@ public class BasicStackList extends AbstractTableInformationControl {
         dispose();
     }
     
-    protected void deleteSelectedElements() {
+    protected boolean deleteSelectedElements() {
     	
         IStructuredSelection structuredSelection = getSelectedElements();
         
@@ -231,5 +231,12 @@ public class BasicStackList extends AbstractTableInformationControl {
     			basicStackPresentation.close(presentablePart);                
             }
         }
+        
+		if (((BasicStackPresentation)getTableViewer().getInput()).isDisposed()) {
+			fComposite.dispose();
+			return true;
+		}
+		return false;
+        
     }
 }

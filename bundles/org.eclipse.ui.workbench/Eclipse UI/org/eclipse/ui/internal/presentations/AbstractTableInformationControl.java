@@ -26,6 +26,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -41,10 +42,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
@@ -59,6 +63,7 @@ public abstract class AbstractTableInformationControl {
 	protected class NamePatternFilter extends ViewerFilter {
 
 		public NamePatternFilter() {
+		    //no-op
 		}
 
 		/*
@@ -208,8 +213,9 @@ public abstract class AbstractTableInformationControl {
 				if (e.character == SWT.ESC)
 					dispose();
 				else if (e.character == SWT.DEL) {
-				    deleteSelectedElements();
-				    fTableViewer.refresh();
+					removeSelectedItems();
+				    e.character = SWT.NONE;
+				    e.doit = false;
 				}
 			}
 			public void keyReleased(KeyEvent e) {
@@ -267,14 +273,26 @@ public abstract class AbstractTableInformationControl {
 				if (table.getSelectionCount() < 1)
 					return;
 
-				if (e.button != 1)
-					return;
-
-				if (table.equals(e.getSource())) {
-					Object o = table.getItem(new Point(e.x, e.y));
-					TableItem selection = table.getSelection()[0];
-					if (selection.equals(o))
-						gotoSelectedElement();
+				if (e.button == 1)
+					if (table.equals(e.getSource())) {
+						Object o = table.getItem(new Point(e.x, e.y));
+						TableItem selection = table.getSelection()[0];
+						if (selection.equals(o))
+							gotoSelectedElement();
+					}
+				if (e.button == 3) {
+					TableItem tItem = fTableViewer.getTable().getItem(new Point(e.x, e.y));
+					if (tItem != null) {
+						Menu menu = new Menu(fTableViewer.getTable());
+						MenuItem mItem = new MenuItem(menu, SWT.DEFAULT);
+						mItem.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
+						mItem.addSelectionListener(new SelectionAdapter() {
+							public void widgetSelected(SelectionEvent selectionEvent) {
+								removeSelectedItems();
+							}
+						});
+						menu.setVisible(true);
+					}
 				}
 			}
 		});
@@ -284,6 +302,22 @@ public abstract class AbstractTableInformationControl {
 
 		setInfoSystemColor();
 		installFilter();
+	}
+	
+	/**
+	 * Removes the selected items from the list and closes their corresponding tabs
+	 * Selects the next item in the list or disposes it if its presentation is disposed
+	 */
+	protected void removeSelectedItems() {
+		int selInd = fTableViewer.getTable().getSelectionIndex();
+		if (deleteSelectedElements()) {
+		    return;
+		}
+		fTableViewer.refresh();
+		if (selInd >= fTableViewer.getTable().getItemCount())
+			selInd = fTableViewer.getTable().getItemCount() - 1;
+		if (selInd >= 0)
+			fTableViewer.getTable().setSelection(selInd);
 	}
 
 	protected abstract TableViewer createTableViewer(
@@ -315,10 +349,14 @@ public abstract class AbstractTableInformationControl {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == 0x0D) // return
 					gotoSelectedElement();
-				if (e.keyCode == SWT.ARROW_DOWN)
+				if (e.keyCode == SWT.ARROW_DOWN) {
 					fTableViewer.getTable().setFocus();
-				if (e.keyCode == SWT.ARROW_UP)
+					fTableViewer.getTable().setSelection(0);
+				}
+				if (e.keyCode == SWT.ARROW_UP) {
 					fTableViewer.getTable().setFocus();
+					fTableViewer.getTable().setSelection(fTableViewer.getTable().getItemCount()-1);
+				}
 				if (e.character == 0x1B) // ESC
 					dispose();
 			}
@@ -406,7 +444,12 @@ public abstract class AbstractTableInformationControl {
 
 	protected abstract void gotoSelectedElement();
 
-	protected abstract void deleteSelectedElements();
+	/**
+	 * Delete all selected elements.
+	 *  
+	 * @return <code>true</code> if there are no elements left after deletion.
+	 */
+	protected abstract boolean deleteSelectedElements();
 	
 	/**
 	 * Selects the first element in the table which matches the current filter
@@ -443,9 +486,7 @@ public abstract class AbstractTableInformationControl {
 	protected void inputChanged(Object newInput, Object newSelection) {
 		fFilterText.setText(""); //$NON-NLS-1$
 		fTableViewer.setInput(newInput);
-		if (newSelection != null) {
-			fTableViewer.setSelection(new StructuredSelection(newSelection));
-		}
+		
 		// Resize the table's height accordingly to the new input
 		Table viewerTable = fTableViewer.getTable();
 		Point tableSize = viewerTable.computeSize(SWT.DEFAULT, SWT.DEFAULT);
