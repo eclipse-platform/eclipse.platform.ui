@@ -326,7 +326,9 @@ public void setErrorMessage(String errorMessage) {
 		}
 
 		// show the message
-		setMessage(message);
+		// avoid calling setMessage in case it is overridden to call setErrorMessage, 
+		// which would result in a recursive infinite loop
+		messageLabel.setText(message == null ? "" : message);
 
 	} else {
 		messageLabel.setText(errorMessage);
@@ -352,7 +354,8 @@ public void setErrorMessage(String errorMessage) {
 }
 /**
  * Set the message text. If the message line currently displays an error,
- * the message is stored and will be shown after a call to clearErrorMessage
+ * the message is saved and will be redisplayed when the error message is set
+ * to <code>null</code>.
  */
 public void setMessage(String newMessage) {
 	message = newMessage;
