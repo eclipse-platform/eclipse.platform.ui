@@ -120,12 +120,8 @@ public final class ContextManager implements IContextManager {
 		if (contextManagerListener == null)
 			throw new NullPointerException();
 			
-		if (contextManagerListeners != null) {
+		if (contextManagerListeners != null)
 			contextManagerListeners.remove(contextManagerListener);
-			
-			if (contextManagerListeners.isEmpty())
-				contextManagerListeners = null;
-		}
 	}
 
 	public void setActiveContextIds(List activeContextIds) {

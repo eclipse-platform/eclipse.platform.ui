@@ -74,12 +74,8 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 		if (commandRegistryListener == null)
 			throw new NullPointerException();
 			
-		if (commandRegistryListeners != null) {
+		if (commandRegistryListeners != null)
 			commandRegistryListeners.remove(commandRegistryListener);
-			
-			if (commandRegistryListeners.isEmpty())
-				commandRegistryListeners = null;
-		}
 	}
 
 	protected void fireCommandRegistryChanged() {

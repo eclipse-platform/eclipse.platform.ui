@@ -152,12 +152,8 @@ final class KeyConfiguration implements IKeyConfiguration {
 		if (keyConfigurationListener == null)
 			throw new NullPointerException();
 
-		if (keyConfigurationListeners != null) {
+		if (keyConfigurationListeners != null)
 			keyConfigurationListeners.remove(keyConfigurationListener);
-			
-			if (keyConfigurationListeners.isEmpty())
-				keyConfigurationListeners = null;
-		}
 	}
 
 	public String toString() {

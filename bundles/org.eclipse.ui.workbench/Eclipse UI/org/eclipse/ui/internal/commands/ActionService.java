@@ -78,12 +78,8 @@ public final class ActionService implements IActionService {
 		if (actionServiceListener == null)
 			throw new NullPointerException();
 			
-		if (actionServiceListeners != null) {
+		if (actionServiceListeners != null)
 			actionServiceListeners.remove(actionServiceListener);
-			
-			if (actionServiceListeners.isEmpty())
-				actionServiceListeners = null;
-		}
 	}
 	
 	private void fireActionServiceChanged() {

@@ -11,224 +11,40 @@
 
 package org.eclipse.ui.internal.commands;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.commands.registry.IKeyBindingDefinition;
-import org.eclipse.ui.internal.commands.registry.IKeyConfigurationDefinition;
-import org.eclipse.ui.internal.contexts.registry.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
 final class KeyBindingMachine {
-
-	private final static String SEPARATOR = "_"; //$NON-NLS-1$
-
-	private static SortedMap build(SortedSet[] keyBindings, SortedMap contextDefinitionMap, SortedMap keyConfigurationDefinitionMap) {
-		SortedMap tree = new TreeMap();
 		
-		for (int i = 0; i < keyBindings.length; i++) {		
-			Iterator iterator = keyBindings[i].iterator();
-			
-			while (iterator.hasNext()) {
-				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
-				Path context = (Path) contextDefinitionMap.get(keyBindingDefinition.getContextId());
-			
-				if (context == null)
-					continue;
-	
-				Path keyConfiguration = (Path) keyConfigurationDefinitionMap.get(keyBindingDefinition.getKeyConfigurationId());
-					
-				if (keyConfiguration == null)
-					continue;
-	
-				List paths = new ArrayList();
-				paths.add(context);
-				paths.add(keyConfiguration);
-				State contextKeyConfiguration = new State(paths);						
-				paths = new ArrayList();
-				paths.add(getPath(keyBindingDefinition.getPlatform(), SEPARATOR));
-				paths.add(getPath(keyBindingDefinition.getLocale(), SEPARATOR));
-				State platformLocale = new State(paths);		
-				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), contextKeyConfiguration, i, platformLocale, keyBindingDefinition.getCommandId());
-			}
-		}
-		
-		return tree;
-	}
-
-	private static SortedMap buildPathMapForKeyConfigurationDefinitionMap(SortedMap keyConfigurationDefinitionMap) {
-		SortedMap pathMap = new TreeMap();
-		Iterator iterator = keyConfigurationDefinitionMap.keySet().iterator();
-
-		while (iterator.hasNext()) {
-			String keyConfigurationDefinitionId = (String) iterator.next();
-			
-			if (keyConfigurationDefinitionId != null) {			
-				Path path = getPathForKeyConfigurationDefinition(keyConfigurationDefinitionId, keyConfigurationDefinitionMap);
-			
-				if (path != null)
-					pathMap.put(keyConfigurationDefinitionId, path);
-			}			
-		}
-
-		return pathMap;		
-	}
-
-	private static SortedMap buildPathMapForContextDefinitionMap(SortedMap contextDefinitionMap) {
-		SortedMap pathMap = new TreeMap();
-		Iterator iterator = contextDefinitionMap.keySet().iterator();
-
-		while (iterator.hasNext()) {
-			String contextDefinitionId = (String) iterator.next();
-			
-			if (contextDefinitionId != null) {			
-				Path path = getPathForContextDefinition(contextDefinitionId, contextDefinitionMap);
-			
-				if (path != null)
-					pathMap.put(contextDefinitionId, path);
-			}			
-		}
-
-		return pathMap;		
-	}
-
-	private static Path getPathForKeyConfigurationDefinition(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionMap) {
-		Path path = null;
-
-		if (keyConfigurationDefinitionId != null) {
-			List strings = new ArrayList();
-
-			while (keyConfigurationDefinitionId != null) {	
-				if (strings.contains(keyConfigurationDefinitionId))
-					return null;
-					
-				IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionMap.get(keyConfigurationDefinitionId);
-				
-				if (keyConfigurationDefinition == null)
-					return null;
-							
-				strings.add(0, keyConfigurationDefinitionId);
-				keyConfigurationDefinitionId = keyConfigurationDefinition.getParentId();
-			}
-		
-			path = new Path(strings);
-		}
-		
-		return path;			
-	}
-
-	private static Path getPathForContextDefinition(String contextDefinitionId, Map contextDefinitionMap) {
-		Path path = null;
-
-		if (contextDefinitionId != null) {
-			List strings = new ArrayList();
-
-			while (contextDefinitionId != null) {	
-				if (strings.contains(contextDefinitionId))
-					return null;
-							
-				IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionMap.get(contextDefinitionId);
-				
-				if (contextDefinition == null)
-					return null;
-							
-				strings.add(0, contextDefinitionId);
-				contextDefinitionId = contextDefinition.getParentId();
-			}
-		
-			path = new Path(strings);
-		}
-		
-		return path;			
-	}	
-
-	private static Path getPath(String locale, String separator) {
-		Path path = null;
-
-		if (locale != null && separator != null) {
-			List strings = new ArrayList();				
-			locale = locale.trim();
-			
-			if (locale.length() > 0) {
-				StringTokenizer st = new StringTokenizer(locale, separator);
-						
-				while (st.hasMoreElements()) {
-					String string = ((String) st.nextElement()).trim();
-					
-					if (string != null)
-						strings.add(string);
-				}
-			}
-
-			path = new Path(strings);
-		}
-			
-		return path;		
-	}
-
-	private static void solve(String[] activeContextIds, String activeKeyConfigurationId, String activeLocale, String activePlatform, SortedMap contextDefinitionMap, SortedMap keyConfigurationDefinitionMap, SortedMap tree) {
-		State[] contextKeyConfigurations = new State[activeContextIds.length];
-		Path keyConfiguration = (Path) keyConfigurationDefinitionMap.get(activeKeyConfigurationId);
-			
-		if (keyConfiguration == null)
-			keyConfiguration = new Path();
-							
-		for (int i = 0; i < activeContextIds.length; i++) {
-			Path context = (Path) contextDefinitionMap.get(activeContextIds[i]);
-			
-			if (context == null)
-				context = new Path();
-
-			List paths = new ArrayList();
-			paths.add(context);
-			paths.add(keyConfiguration);		
-			contextKeyConfigurations[i] = new State(paths);
-		}
-
-		List paths = new ArrayList();
-		paths.add(getPath(activePlatform, SEPARATOR));
-		paths.add(getPath(activeLocale, SEPARATOR));
-		State platformLocale = new State(paths);	
-		KeyBindingNode.solve(tree, contextKeyConfigurations, new State[] { platformLocale } );
-	}
-
 	private String[] activeContextIds;
-	private String activeKeyConfigurationId;
-	private String activeLocale;
-	private String activePlatform;
-	private Map commandMap;
-	private Map commandMapForMode;	
+	private String[] activeKeyConfigurationIds;
+	private String[] activeLocales;
+	private String[] activePlatforms;
 	private SortedSet[] keyBindings;
-	private SortedMap keyConfigurationDefinitionMap;	
-	private SortedMap keySequenceMap;
-	private SortedMap keySequenceMapForMode;
+	private Map keyBindingsByCommandId;
+	private Map keyBindingsByCommandIdForMode;	
+	private SortedMap matchesByKeySequence;
+	private SortedMap matchesByKeySequenceForMode;
 	private KeySequence mode;	
-	private SortedMap contextDefinitionMap;
 	private boolean solved;
 	private SortedMap tree;
 
 	KeyBindingMachine() {
-		activeContextIds = new String[] { Util.ZERO_LENGTH_STRING };
-		activeKeyConfigurationId = Util.ZERO_LENGTH_STRING;
-		String systemLocale = Locale.getDefault().toString();
-		activeLocale = systemLocale != null ? systemLocale : Util.ZERO_LENGTH_STRING;
-		String systemPlatform = SWT.getPlatform();
-		activePlatform = systemPlatform != null ? systemPlatform : Util.ZERO_LENGTH_STRING;
-		contextDefinitionMap = new TreeMap();	
+		activeContextIds = new String[0];
+		activeKeyConfigurationIds = new String[0];
+		activeLocales = new String[0];
+		activePlatforms = new String[0];
 		keyBindings = new SortedSet[] { new TreeSet(), new TreeSet() };
-		keyConfigurationDefinitionMap = new TreeMap();		
 		mode = KeySequence.getInstance();	
 	}
 
@@ -236,56 +52,39 @@ final class KeyBindingMachine {
 		return (String[]) activeContextIds.clone();
 	}		
 
-	String getActiveKeyConfigurationId() {
-		return activeKeyConfigurationId;
+	String[] getActiveKeyConfigurationIds() {
+		return (String[]) activeKeyConfigurationIds.clone();
 	}		
 	
-	String getActiveLocale() {
-		return activeLocale;
+	String[] getActiveLocales() {
+		return (String[]) activeLocales.clone();
 	}
 
-	String getActivePlatform() {
-		return activePlatform;
+	String[] getActivePlatforms() {
+		return (String[]) activePlatforms.clone();
 	}
 
-	Map getCommandMap() {
-		if (commandMap == null) {
+	Map getKeyBindingsByCommandId() {
+		if (keyBindingsByCommandId == null) {
 			solve();
-			commandMap = Collections.unmodifiableMap(KeyBindingNode.toCommandMap(getKeySequenceMap()));				
+			keyBindingsByCommandId = Collections.unmodifiableMap(KeyBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequence()));				
 		}
 		
-		return commandMap;
+		return keyBindingsByCommandId;
 	}
 	
-	Map getCommandMapForMode() {
-		if (commandMapForMode == null) {
+	Map getKeyBindingsByCommandIdForMode() {
+		if (keyBindingsByCommandIdForMode == null) {
 			solve();
 			SortedMap tree = KeyBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 
-			commandMapForMode = Collections.unmodifiableMap(KeyBindingNode.toCommandMap(getKeySequenceMapForMode()));				
+			keyBindingsByCommandIdForMode = Collections.unmodifiableMap(KeyBindingNode.getKeyBindingsByCommandId(getMatchesByKeySequenceForMode()));				
 		}
 		
-		return commandMapForMode;
-	}
-
-	SortedMap getContextDefinitionMap() {
-		return contextDefinitionMap;	
-	}
-
-	KeySequence getFirstKeySequenceForCommand(String commandId)
-		throws IllegalArgumentException {
-		if (commandId == null)
-			throw new IllegalArgumentException();					
-
-		SortedSet keySequenceSet = (SortedSet) getCommandMap().get(commandId);
-		
-		if (keySequenceSet != null && !keySequenceSet.isEmpty())
-			return (KeySequence) keySequenceSet.first();
-		
-		return null;
+		return keyBindingsByCommandIdForMode;
 	}
 
 	SortedSet getKeyBindings0() {
@@ -296,31 +95,27 @@ final class KeyBindingMachine {
 		return keyBindings[1];	
 	}
 
-	SortedMap getKeyConfigurationDefinitionMap() {
-		return keyConfigurationDefinitionMap;	
-	}
-
-	SortedMap getKeySequenceMap() {
-		if (keySequenceMap == null) {
+	SortedMap getMatchesByKeySequence() {
+		if (matchesByKeySequence == null) {
 			solve();
-			keySequenceMap = Collections.unmodifiableSortedMap(KeyBindingNode.toKeySequenceMap(tree, KeySequence.getInstance()));				
+			matchesByKeySequence = Collections.unmodifiableSortedMap(KeyBindingNode.getMatchesByKeySequence(tree, KeySequence.getInstance()));				
 		}
 		
-		return keySequenceMap;
+		return matchesByKeySequence;
 	}
 
-	SortedMap getKeySequenceMapForMode() {
-		if (keySequenceMapForMode == null) {
+	SortedMap getMatchesByKeySequenceForMode() {
+		if (matchesByKeySequenceForMode == null) {
 			solve();
 			SortedMap tree = KeyBindingNode.find(this.tree, mode);
 	
 			if (tree == null)
 				tree = new TreeMap();
 							
-			keySequenceMapForMode = Collections.unmodifiableSortedMap(KeyBindingNode.toKeySequenceMap(tree, mode));				
+			matchesByKeySequenceForMode = Collections.unmodifiableSortedMap(KeyBindingNode.getMatchesByKeySequence(tree, mode));				
 		}
 		
-		return keySequenceMapForMode;
+		return matchesByKeySequenceForMode;
 	}
 
 	KeySequence getMode() {
@@ -346,56 +141,62 @@ final class KeyBindingMachine {
 		return false;		
 	}
 
-	boolean setActiveKeyConfigurationId(String activeKeyConfigurationId) {
-		if (activeKeyConfigurationId == null)
+	boolean setActiveKeyConfigurationIds(String[] activeKeyConfigurationIds) {
+		if (activeKeyConfigurationIds == null || activeKeyConfigurationIds.length == 0)
 			throw new NullPointerException();
-			
-		if (!this.activeKeyConfigurationId.equals(activeKeyConfigurationId)) {
-			this.activeKeyConfigurationId = activeKeyConfigurationId;
-			invalidateSolution();
-			return true;
-		}
+
+		activeKeyConfigurationIds = (String[]) activeKeyConfigurationIds.clone();
 		
+		for (int i = 0; i < activeKeyConfigurationIds.length; i++)
+			if (activeKeyConfigurationIds[i] == null)
+				throw new IllegalArgumentException();	
+		
+		if (!Arrays.equals(this.activeKeyConfigurationIds, activeKeyConfigurationIds)) {
+			this.activeKeyConfigurationIds = activeKeyConfigurationIds;
+			invalidateSolution();
+			return true;		
+		}
+			
 		return false;		
 	}
 	
-	boolean setActiveLocale(String activeLocale) {
-		if (activeLocale == null)
+	boolean setActiveLocales(String[] activeLocales) {
+		if (activeLocales == null || activeLocales.length == 0)
 			throw new NullPointerException();
-			
-		if (!this.activeLocale.equals(activeLocale)) {
-			this.activeLocale = activeLocale;
-			invalidateSolution();
-			return true;
-		}
-		
-		return false;		
-	}
 
-	boolean setActivePlatform(String activePlatform) {
-		if (activePlatform == null)
-			throw new NullPointerException();
-			
-		if (!this.activePlatform.equals(activePlatform)) {
-			this.activePlatform = activePlatform;
-			invalidateSolution();
-			return true;
-		}
+		activeLocales = (String[]) activeLocales.clone();
 		
-		return false;	
+		for (int i = 0; i < activeLocales.length; i++)
+			if (activeLocales[i] == null)
+				throw new IllegalArgumentException();	
+		
+		if (!Arrays.equals(this.activeLocales, activeLocales)) {
+			this.activeLocales = activeLocales;
+			invalidateSolution();
+			return true;		
+		}
+			
+		return false;		
 	}	
 
-	boolean setContextDefinitionMap(SortedMap contextDefinitionMap) {
-		contextDefinitionMap = Util.safeCopy(contextDefinitionMap, String.class, Path.class);
-			
-		if (!this.contextDefinitionMap.equals(contextDefinitionMap)) {
-			this.contextDefinitionMap = contextDefinitionMap;
-			invalidateTree();
-			return true;
+	boolean setActivePlatforms(String[] activePlatforms) {
+		if (activePlatforms == null || activePlatforms.length == 0)
+			throw new NullPointerException();
+
+		activePlatforms = (String[]) activePlatforms.clone();
+		
+		for (int i = 0; i < activePlatforms.length; i++)
+			if (activePlatforms[i] == null)
+				throw new IllegalArgumentException();	
+		
+		if (!Arrays.equals(this.activePlatforms, activePlatforms)) {
+			this.activePlatforms = activePlatforms;
+			invalidateSolution();
+			return true;		
 		}
 			
-		return false;
-	}
+		return false;		
+	}	
 
 	boolean setKeyBindings0(SortedSet keyBindings0) {
 		keyBindings0 = Util.safeCopy(keyBindings0, IKeyBindingDefinition.class);
@@ -421,18 +222,6 @@ final class KeyBindingMachine {
 		return false;		
 	}
 
-	boolean setKeyConfigurationDefinitionMap(SortedMap keyConfigurationDefinitionMap) {
-		keyConfigurationDefinitionMap = Util.safeCopy(keyConfigurationDefinitionMap, String.class, Path.class);
-
-		if (!this.keyConfigurationDefinitionMap.equals(keyConfigurationDefinitionMap)) {
-			this.keyConfigurationDefinitionMap = keyConfigurationDefinitionMap;
-			invalidateTree();
-			return true;
-		}
-
-		return false;
-	}
-
 	boolean setMode(KeySequence mode) {
 		if (mode == null)
 			throw new NullPointerException();
@@ -447,19 +236,29 @@ final class KeyBindingMachine {
 	}
 	
 	private void build() {
-		if (tree == null)
-			tree = build(keyBindings, contextDefinitionMap, keyConfigurationDefinitionMap);
+		if (tree == null) {
+			tree = new TreeMap();
+		
+			for (int i = 0; i < keyBindings.length; i++) {		
+				Iterator iterator = keyBindings[i].iterator();
+			
+				while (iterator.hasNext()) {
+					IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
+					KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getContextId(), keyBindingDefinition.getKeyConfigurationId(), i, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
+				}
+			}
+		}
 	}
 
 	private void invalidateMode() {
-		commandMapForMode = null;
-		keySequenceMapForMode = null;
+		keyBindingsByCommandIdForMode = null;
+		matchesByKeySequenceForMode = null;
 	}
 
 	private void invalidateSolution() {
 		solved = false;
-		commandMap = null;	
-		keySequenceMap = null;
+		keyBindingsByCommandId = null;	
+		matchesByKeySequence = null;
 		invalidateMode();
 	}
 	
@@ -470,8 +269,8 @@ final class KeyBindingMachine {
 
 	private void solve() {
 		if (!solved) {
-			build();			
-			solve(activeContextIds, activeKeyConfigurationId, activeLocale, activePlatform, contextDefinitionMap, keyConfigurationDefinitionMap, tree);
+			build();		
+			KeyBindingNode.solve(tree, activeContextIds, activeKeyConfigurationIds, activePlatforms, activeLocales);
 			solved = true;
 		}
 	}

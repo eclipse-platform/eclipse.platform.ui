@@ -44,12 +44,8 @@ abstract class AbstractContextRegistry implements IContextRegistry {
 		if (contextRegistryListener == null)
 			throw new NullPointerException();
 			
-		if (contextRegistryListeners != null) {
+		if (contextRegistryListeners != null)
 			contextRegistryListeners.remove(contextRegistryListener);
-			
-			if (contextRegistryListeners.isEmpty())
-				contextRegistryListeners = null;
-		}
 	}
 
 	protected void fireContextRegistryChanged() {

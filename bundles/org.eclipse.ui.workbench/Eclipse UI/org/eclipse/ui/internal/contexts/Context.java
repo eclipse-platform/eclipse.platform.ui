@@ -152,12 +152,8 @@ final class Context implements IContext {
 		if (contextListener == null)
 			throw new NullPointerException();
 
-		if (contextListeners != null) {
+		if (contextListeners != null)
 			contextListeners.remove(contextListener);
-			
-			if (contextListeners.isEmpty())
-				contextListeners = null;
-		}
 	}
 
 	public String toString() {

@@ -58,12 +58,8 @@ public class Handle implements IHandle {
 		if (handleListener == null)
 			throw new NullPointerException();
 
-		if (handleListeners != null) {
+		if (handleListeners != null)
 			handleListeners.remove(handleListener);
-			
-			if (handleListeners.isEmpty())
-				handleListeners = null;
-		}
 	}
 	
 	public void undefine() {

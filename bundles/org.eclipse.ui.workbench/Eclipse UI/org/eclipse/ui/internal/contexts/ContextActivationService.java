@@ -73,12 +73,8 @@ public final class ContextActivationService implements IContextActivationService
 		if (contextActivationServiceListener == null)
 			throw new NullPointerException();
 			
-		if (contextActivationServiceListeners != null) {
+		if (contextActivationServiceListeners != null)
 			contextActivationServiceListeners.remove(contextActivationServiceListener);
-			
-			if (contextActivationServiceListeners.isEmpty())
-				contextActivationServiceListeners = null;
-		}
 	}
 	
 	private void fireContextActivationServiceChanged() {

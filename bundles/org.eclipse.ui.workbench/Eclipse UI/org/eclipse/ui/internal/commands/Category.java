@@ -126,12 +126,8 @@ final class Category implements ICategory {
 		if (categoryListener == null)
 			throw new NullPointerException();
 
-		if (categoryListeners != null) {
+		if (categoryListeners != null)
 			categoryListeners.remove(categoryListener);
-			
-			if (categoryListeners.isEmpty())
-				categoryListeners = null;
-		}
 	}
 
 	public String toString() {

@@ -74,6 +74,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedSet definedKeyConfigurationIds = new TreeSet();	
 	private SortedMap imageBindingsByCommandId = new TreeMap();
 	private SortedMap keyBindingsByCommandId = new TreeMap();
+	private KeyBindingMachine keyBindingMachine = new KeyBindingMachine();
 	private SortedMap keyConfigurationDefinitionsById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
 	private PluginCommandRegistry pluginCommandRegistry;
@@ -203,12 +204,8 @@ public final class CommandManager implements ICommandManager {
 		if (commandManagerListener == null)
 			throw new NullPointerException();
 			
-		if (commandManagerListeners != null) {
+		if (commandManagerListeners != null)
 			commandManagerListeners.remove(commandManagerListener);
-			
-			if (commandManagerListeners.isEmpty())
-				commandManagerListeners = null;
-		}
 	}
 
 	public void setActionsById(SortedMap actionsById)
@@ -312,7 +309,90 @@ public final class CommandManager implements ICommandManager {
 	}
 	
 	private void calculateKeyBindings() {
-		// TODO
+		/*
+		private final static String SEPARATOR = "_"; //$NON-NLS-1$
+
+		private static Path getPathForKeyConfigurationDefinition(String keyConfigurationDefinitionId, Map keyConfigurationDefinitionMap) {
+			Path path = null;
+
+			if (keyConfigurationDefinitionId != null) {
+				List strings = new ArrayList();
+
+				while (keyConfigurationDefinitionId != null) {	
+					if (strings.contains(keyConfigurationDefinitionId))
+						return null;
+					
+					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionMap.get(keyConfigurationDefinitionId);
+				
+					if (keyConfigurationDefinition == null)
+						return null;
+							
+					strings.add(0, keyConfigurationDefinitionId);
+					keyConfigurationDefinitionId = keyConfigurationDefinition.getParentId();
+				}
+		
+				path = new Path(strings);
+			}
+		
+			return path;			
+		}
+
+		private static Path getPathForContextDefinition(String contextDefinitionId, Map contextDefinitionMap) {
+			Path path = null;
+
+			if (contextDefinitionId != null) {
+				List strings = new ArrayList();
+
+				while (contextDefinitionId != null) {	
+					if (strings.contains(contextDefinitionId))
+						return null;
+							
+					IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionMap.get(contextDefinitionId);
+				
+					if (contextDefinition == null)
+						return null;
+							
+					strings.add(0, contextDefinitionId);
+					contextDefinitionId = contextDefinition.getParentId();
+				}
+		
+				path = new Path(strings);
+			}
+		
+			return path;			
+		}	
+
+		private static Path getPath(String locale, String separator) {
+			Path path = null;
+
+			if (locale != null && separator != null) {
+				List strings = new ArrayList();				
+				locale = locale.trim();
+			
+				if (locale.length() > 0) {
+					StringTokenizer st = new StringTokenizer(locale, separator);
+						
+					while (st.hasMoreElements()) {
+						String string = ((String) st.nextElement()).trim();
+					
+						if (string != null)
+							strings.add(string);
+					}
+				}
+
+				path = new Path(strings);
+			}
+			
+			return path;		
+		}
+		*/
+
+		/*
+		String systemLocale = Locale.getDefault().toString();
+		activeLocales = systemLocale != null ? systemLocale : Util.ZERO_LENGTH_STRING;
+		String systemPlatform = SWT.getPlatform();
+		activePlatform = systemPlatform != null ? systemPlatform : Util.ZERO_LENGTH_STRING;
+		*/
 	}
 
 	private void fireCommandManagerChanged() {

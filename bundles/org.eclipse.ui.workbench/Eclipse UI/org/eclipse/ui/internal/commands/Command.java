@@ -218,12 +218,8 @@ final class Command implements ICommand {
 		if (commandListener == null)
 			throw new NullPointerException();
 
-		if (commandListeners != null) {
+		if (commandListeners != null)
 			commandListeners.remove(commandListener);
-			
-			if (commandListeners.isEmpty())
-				commandListeners = null;
-		}
 	}
 
 	public String toString() {
