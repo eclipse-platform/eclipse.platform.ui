@@ -110,6 +110,11 @@ public interface IActivityManager {
 	IIdentifier getIdentifier(String identifierId);
 
 	/**
+	 * @deprecated
+	 */
+	boolean isMatch(String string, Set activityIds);
+	
+	/**
 	 * Unregisters an instance of <code>IActivityManagerListener</code>
 	 * listening for changes to properties of this instance.
 	 * 
