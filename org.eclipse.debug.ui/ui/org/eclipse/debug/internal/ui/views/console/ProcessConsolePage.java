@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -35,6 +36,9 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -64,6 +68,7 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -108,7 +113,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	
 	// menus
 	private Menu fMenu;
-
+	
 	/**
 	 * Constructs a new process page 
 	 */
@@ -130,6 +135,21 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	public void init(IPageSite site) {
 		fSite = site;
 		
+		final IWorkbenchSiteProgressService progressService = (IWorkbenchSiteProgressService) fView.getSite().getAdapter(IWorkbenchSiteProgressService.class);
+		
+		if (progressService != null) {
+			IProcess process = fConsole.getProcess();
+			IDocument doc = DebugUIPlugin.getDefault().getConsoleDocumentManager().getConsoleDocument(process);
+			
+			doc.addDocumentListener(new IDocumentListener() {
+				public void documentAboutToBeChanged(DocumentEvent event) {
+				}
+				
+				public void documentChanged(DocumentEvent event) {
+					progressService.warnOfContentChange();
+				}
+			});
+		}
 	}
 
 	/* (non-Javadoc)
