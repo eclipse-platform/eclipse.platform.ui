@@ -217,10 +217,6 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementDirtyStateChanged(java.lang.Object, boolean)
 	 */
 	public void elementDirtyStateChanged(Object element, boolean isDirty) {
-		if (!isDirty && element == fEditorInput) {
-			// document has been saved or reverted - recreate reference
-			readDocument();
-		}
 	}
 
 	/*
@@ -233,6 +229,10 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementContentReplaced(java.lang.Object)
 	 */
 	public void elementContentReplaced(Object element) {
+		if (element == fEditorInput) {
+			// document has been reverted or replaced
+			readDocument();
+		}
 	}
 
 	/*
