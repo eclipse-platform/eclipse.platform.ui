@@ -96,7 +96,6 @@ protected void createButtonsForButtonBar(Composite parent) {
 protected Control createDialogArea(Composite parent) {
 	// Run super.
 	Composite composite = (Composite)super.createDialogArea(parent);
-	GridLayout layout = (GridLayout)composite.getLayout();
 
 	// Add perspective list.
 	tree = new TreeViewer(composite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);

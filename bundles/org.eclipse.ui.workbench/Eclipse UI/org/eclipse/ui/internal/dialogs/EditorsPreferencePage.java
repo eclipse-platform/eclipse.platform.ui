@@ -274,7 +274,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		groupComposite.setLayoutData(gd);
 		groupComposite.setFont(font);
 		
-		Label configLabel = WorkbenchPreferencePage.createLabel(groupComposite, label);
+		WorkbenchPreferencePage.createLabel(groupComposite, label);
 		accelConfigCombo = WorkbenchPreferencePage.createCombo(groupComposite);
 
 		if(namesToConfiguration.size() > 0) { 

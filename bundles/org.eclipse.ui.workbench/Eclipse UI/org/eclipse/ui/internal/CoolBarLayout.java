@@ -258,7 +258,6 @@ public class CoolBarLayout {
 		}
 		for (int i = 0; i < itemWrapIndices.length; i++) {
 			IMemento child = memento.createChild(IWorkbenchConstants.TAG_ITEM_WRAP_INDEX);
-			Point pt = itemSizes[i];
 			child.putInteger(IWorkbenchConstants.TAG_INDEX, itemWrapIndices[i]);
 		}
 		Iterator iter = items.iterator();

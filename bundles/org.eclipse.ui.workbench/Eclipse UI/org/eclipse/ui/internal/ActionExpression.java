@@ -221,7 +221,6 @@ public class ActionExpression {
 		}
 		public boolean isEnabledFor(Object element) {
 			Class eclass = element.getClass();
-			String eclassName = eclass.getName();
 			Class clazz = eclass;
 			boolean match = false;
 			while (clazz != null) {

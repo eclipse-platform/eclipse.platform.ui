@@ -35,21 +35,14 @@ private void populateElement(
 	Object fileSystemObject = element.getFileSystemObject();
 	ModalContext.checkCanceled(monitor);
 
-	String elementLabel =
-		(element.getParent() == null)
-			? provider.getFullPath(fileSystemObject)
-			: provider.getLabel(fileSystemObject);
-
-	boolean haveChildOrFile = false;
-
+	
 	List children = provider.getChildren(fileSystemObject);
 	if (children == null)
 		children = new ArrayList(1);
 	Iterator childrenEnum = children.iterator();
 	while (childrenEnum.hasNext()) {
 		//Create one level below
-		if (createElement(element, childrenEnum.next(), 1) != null)
-			haveChildOrFile = true;
+		createElement(element, childrenEnum.next(), 1);
 	}
 	element.setPopulated();
 }

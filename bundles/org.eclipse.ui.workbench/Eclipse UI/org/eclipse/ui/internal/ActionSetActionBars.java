@@ -58,7 +58,7 @@ public IToolBarManager getToolBarManager() {
 			toolBarMgr = createSubToolBarManager(coolItemToolBarMgr);
 			// Just create the CoolBarContributionItem, PluginActionSetBuilder will add the item to
 			// the CoolBarManager.
-			CoolBarContributionItem coolBarItem = new CoolBarContributionItem(cBarMgr, coolItemToolBarMgr, actionSetId);
+			new CoolBarContributionItem(cBarMgr, coolItemToolBarMgr, actionSetId);
 			coolItemToolBarMgr.setVisible(active);
 		}
 		return coolItemToolBarMgr;

@@ -93,7 +93,6 @@ protected Control createContents(Composite parent) {
 public void createControl(Composite parent) {
 	initialize();
 	
-	GridData gd;
 	Composite content= new Composite(parent, SWT.NULL);
 	GridLayout layout= new GridLayout();
 	layout.marginHeight = layout.marginWidth = 0;
@@ -102,7 +101,7 @@ public void createControl(Composite parent) {
 
 	createDescriptionLabel(content);
 		
-	Control body = createContents(content);
+	createContents(content);
 
 	setControl(content);
 }

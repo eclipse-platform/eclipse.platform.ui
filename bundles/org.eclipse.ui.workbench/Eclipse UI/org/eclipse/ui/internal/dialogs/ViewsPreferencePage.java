@@ -142,7 +142,7 @@ protected Control createContents(Composite parent) {
 	messageLabel.setText(APPLY_MESSAGE);
 	messageLabel.setFont(font);
 
-	Label spacer = new Label(composite, SWT.NONE);
+	new Label(composite, SWT.NONE);
 	
 	Group colorComposite = new Group(composite,SWT.NONE);
 	colorComposite.setLayout(new GridLayout());

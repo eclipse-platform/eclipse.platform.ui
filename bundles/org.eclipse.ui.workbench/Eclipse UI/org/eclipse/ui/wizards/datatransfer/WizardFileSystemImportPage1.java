@@ -132,7 +132,7 @@ protected void createSourceGroup(Composite parent) {
 	sourceBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 
 	createSpacer(parent);
-	Label label = createBoldLabel(parent,DataTransferMessages.getString("FileImport.whichTypesImport")); //$NON-NLS-1$
+	createBoldLabel(parent,DataTransferMessages.getString("FileImport.whichTypesImport")); //$NON-NLS-1$
 
 	// source types group
 	Composite sourceTypesGroup = new Composite(parent,SWT.NONE);

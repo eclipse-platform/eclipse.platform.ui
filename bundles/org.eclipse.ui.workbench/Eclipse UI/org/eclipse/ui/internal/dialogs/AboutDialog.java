@@ -234,7 +234,6 @@ protected Control createDialogArea(Composite parent) {
 	data.horizontalAlignment = GridData.FILL;
 	featureContainer.setLayoutData(data);
 	
-	Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 	final AboutInfo[] infoArray = getFeaturesInfo();
 	for (int i = 0; i < infoArray.length; i++) {
 		ImageDescriptor desc = infoArray[i].getFeatureImage();

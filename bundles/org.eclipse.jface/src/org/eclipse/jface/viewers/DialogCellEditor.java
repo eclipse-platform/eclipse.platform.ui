@@ -168,7 +168,6 @@ protected Control createControl(Composite parent) {
 		public void widgetSelected(SelectionEvent event) {
 			Object newValue = openDialogBox(editor);
 			if (newValue != null) {
-				boolean oldValidState = isValueValid();
 				boolean newValidState = isCorrect(newValue);
 				if (newValidState) {
 					doSetValue(newValue);

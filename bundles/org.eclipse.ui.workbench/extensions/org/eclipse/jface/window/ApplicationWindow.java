@@ -218,7 +218,7 @@ protected void configureShell(Shell shell) {
 	createToolBarControl(shell);
 
 	if (statusLineManager != null) {
-		Control control = statusLineManager.createControl(shell);
+		statusLineManager.createControl(shell);
 	}
 }
 /**

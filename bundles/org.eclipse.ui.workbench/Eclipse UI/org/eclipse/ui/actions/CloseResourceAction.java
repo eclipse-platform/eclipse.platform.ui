@@ -102,7 +102,6 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 				saveEditors.add(editor);
 			} 
 		}
-		WorkbenchPage page = (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		AdaptableList input = new AdaptableList();
 		input.add(saveEditors.iterator());
 		ListSelectionDialog dlg =

@@ -79,7 +79,6 @@ public class MarkerQuery {
 		// Check attributes
 		String[] values = new String[attributes.length];
 		for (int i = 0; i < attributes.length; i++) {
-			String attribute = attributes[i];
 			try {
 				Object value = marker.getAttribute(attributes[i]);
 				if (value == null)

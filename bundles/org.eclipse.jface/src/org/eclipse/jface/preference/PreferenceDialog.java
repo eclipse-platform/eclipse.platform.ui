@@ -901,7 +901,6 @@ protected boolean showPage(IPreferenceNode node) {
 	if (newPage == currentPage)
 		return true;
 		
-	Control currentWindow = null;
 	if (currentPage != null) {
 		if (!currentPage.okToLeave())
 			return false;

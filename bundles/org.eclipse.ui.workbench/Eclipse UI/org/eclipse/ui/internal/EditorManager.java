@@ -576,7 +576,6 @@ public class EditorManager {
 				return result;	
 			}
 			EditorSite site = (EditorSite) reusableEditor.getEditorSite();
-			IEditorInput editorInput = reusableEditor.getEditorInput();
 			EditorDescriptor oldDesc = site.getEditorDescriptor();
 			if (oldDesc == null)
 				oldDesc = (EditorDescriptor) getEditorRegistry().getDefaultEditor();
@@ -680,7 +679,7 @@ public class EditorManager {
 		}
 
 		// Loop through the editors.
-		final int errors[] = new int[1];
+
 		IMemento[] editorMems = memento.getChildren(IWorkbenchConstants.TAG_EDITOR);
 		for (int x = 0; x < editorMems.length; x++) {
 			final IMemento editorMem = editorMems[x];
@@ -750,7 +749,7 @@ public class EditorManager {
 				for (int i = 0; i < visibleEditors.size(); i++)
 					setVisibleEditor((IEditorReference) visibleEditors.get(i), false);
 				for (Iterator iter = errorWorkbooks.iterator(); iter.hasNext();) {
-					String workbook = (String)iter.next();
+					iter.next();
 					editorPresentation.setActiveEditorWorkbookFromID(activeWorkbookID[0]);
 					editorPresentation.fixVisibleEditor();
 				}
@@ -1175,7 +1174,7 @@ public class EditorManager {
 				return part;
 			if(!restore || editorMemento == null)
 				return null;
-			int errors[] = new int[1];
+			
 			IStatus status = restoreEditor(this,editorMemento);
 			Workbench workbench = (Workbench)window.getWorkbench();
 			if(status.getSeverity() == IStatus.ERROR) {

@@ -67,8 +67,6 @@ private void populate(IImportStructureProvider provider) {
 
 	Object fileSystemObject = getFileSystemObject();
 
-	boolean haveChildOrFile = false;
-
 	List children = provider.getChildren(fileSystemObject);
 	if (children == null)
 		children = new ArrayList(1);

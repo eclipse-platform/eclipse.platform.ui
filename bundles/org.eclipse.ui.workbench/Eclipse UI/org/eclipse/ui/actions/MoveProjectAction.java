@@ -72,8 +72,6 @@ boolean performMove(
 			try {
 				if (monitor.isCanceled())
 					throw new OperationCanceledException();
-				IWorkspace workspace = project.getWorkspace();
-
 				//Get a copy of the current description and modify it
 				IProjectDescription newDescription =
 					createDescription(project, projectName, newLocation);

@@ -217,7 +217,6 @@ private void parseClasses(IConfigurationElement config) {
  */
 private boolean verifyClass(Object element, String className) {
 	Class eclass = element.getClass();
-	String eclassName = eclass.getName();
 	Class clazz = eclass;
 	boolean match = false;
 	while (clazz != null) {

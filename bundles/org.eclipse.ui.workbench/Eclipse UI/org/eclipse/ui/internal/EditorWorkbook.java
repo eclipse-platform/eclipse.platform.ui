@@ -251,7 +251,6 @@ private CTabItem createTab(EditorPane editorPane) {
  * Create a new tab for an item at a particular index.
  */
 private CTabItem createTab(EditorPane editorPane, int index) {
-	IEditorReference editorRef = editorPane.getEditorReference();
 	CTabItem tab = new CTabItem(tabFolder, SWT.NONE, index);
 	mapTabToEditor.put(tab, editorPane);
 	enableTabDrag(editorPane, tab);

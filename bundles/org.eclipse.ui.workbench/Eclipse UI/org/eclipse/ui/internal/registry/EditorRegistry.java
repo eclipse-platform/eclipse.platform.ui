@@ -361,7 +361,6 @@ public IEditorDescriptor[] getSortedEditorsFromOS() {
 	List externalEditors = new ArrayList();
 	Program [] programs = Program.getPrograms();
 
-	List localNames = new ArrayList();
 	for (int i = 0; i < programs.length; i++){
 		//1FPLRL2: ITPUI:WINNT - NOTEPAD editor cannot be launched
 		//Some entries start with %SystemRoot%
@@ -493,7 +492,6 @@ private boolean loadAssociations() {
 
 	//Get the workbench plugin's working directory
 	WorkbenchPlugin workbenchPlugin = WorkbenchPlugin.getDefault();
-	IPluginDescriptor workbenchPluginDescriptor = workbenchPlugin.getDescriptor();
 	IPath workbenchStatePath = workbenchPlugin.getStateLocation();
 
 	//Get the editors and validate each one

@@ -290,7 +290,7 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 		if(part != null)
 			return part;
 		if(restore) {
-			IStatus status = restoreView(this);
+			restoreView(this);
 		/*
 		 * Views are not lazy created so this code will not run for now.
 		 */

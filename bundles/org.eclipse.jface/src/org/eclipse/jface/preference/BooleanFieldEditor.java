@@ -89,7 +89,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 	String text = getLabelText();
 	switch (style) {
 		case SEPARATE_LABEL :
-			Control label = getLabelControl(parent);
+			getLabelControl(parent);
 			numColumns--;
 			text = null;
 		default :

@@ -118,8 +118,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 			 * @see HelpListener#helpRequested(HelpEvent)
 			 */
 			public void helpRequested(HelpEvent e) {
-				String contextId = null;
-
 				// Get the context for the selected item
 				IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
 				if (!selection.isEmpty()) {

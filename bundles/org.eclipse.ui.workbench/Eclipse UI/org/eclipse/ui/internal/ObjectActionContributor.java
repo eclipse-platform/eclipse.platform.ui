@@ -85,7 +85,6 @@ public boolean contributeObjectMenus(IMenuManager menu, ISelectionProvider selPr
 	ISelection sel = selProv.getSelection();
 	if ((sel == null) || !(sel instanceof IStructuredSelection))
 		return false;
-	IStructuredSelection selection = (IStructuredSelection) sel;
 	
 	// Generate menu.
 	boolean actualContributions = false;

@@ -81,16 +81,12 @@ protected abstract void drawCompositeImage(int width, int height);
  */
 final protected void drawImage(ImageData src, int ox, int oy) {
 
-	int w = src.width;
-	int h = src.height;
-
 	RGB[] out = imageData.getRGBs();
 
 	PaletteData palette = src.palette;
 	if (palette.isDirect) {
 
 		ImageData mask = src.getTransparencyMask();
-		int depth = src.depth;
 
 		for (int y = 0; y < src.height; y++) {
 			for (int x = 0; x < src.width; x++) {

@@ -318,7 +318,6 @@ private String getTypeString(IResource resource) {
  */
 protected void performDefaults() {
 
-	IResource resource = (IResource) getElement();
 	this.readOnlyValue = false;
 	this.editableBox.setSelection(this.readOnlyValue);
 	

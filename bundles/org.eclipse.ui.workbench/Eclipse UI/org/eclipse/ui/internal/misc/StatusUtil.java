@@ -93,7 +93,6 @@ public static IStatus newStatus(
 			flatStatusCollection.add(childrenIter.next());
 	}
 
-	int flatStatusCollectionSize = flatStatusCollection.size();
 	IStatus[] stati = new IStatus[flatStatusCollection.size()];
 	flatStatusCollection.toArray(stati);
 	return newStatus(stati, message, exception);

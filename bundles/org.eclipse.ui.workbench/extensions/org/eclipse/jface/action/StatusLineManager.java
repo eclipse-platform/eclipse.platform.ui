@@ -132,7 +132,7 @@ private boolean statusLineExist() {
  */
 public void update(boolean force) {
 	
-	boolean DEBUG= false;
+	//boolean DEBUG= false;
 	
 	if (isDirty() || force) {
 		

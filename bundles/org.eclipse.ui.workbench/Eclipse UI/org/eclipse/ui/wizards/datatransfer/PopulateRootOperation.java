@@ -67,15 +67,13 @@ protected FileSystemElement createElement(
 	result.setFileSystemObject(fileSystemObject);
 
 	if (isContainer) {
-		boolean haveChildOrFile = false;
 		if (depth > 0) {
 			List children = provider.getChildren(fileSystemObject);
 			if (children == null)
 				children = new ArrayList(1);
 			Iterator childrenEnum = children.iterator();
 			while (childrenEnum.hasNext()) {
-				if (createElement(result, childrenEnum.next(), depth - 1) != null)
-					haveChildOrFile = true;
+				createElement(result, childrenEnum.next(), depth - 1);
 			}
 			result.setPopulated();
 		}

@@ -868,7 +868,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 			for (int i = 0; i < welcomeFeatures.size(); i++) {
 				AboutInfo newInfo = (AboutInfo)welcomeFeatures.get(i);
-				URL url = newInfo.getWelcomePageURL();
 	
 				String perspectiveId = null;
 				// Switch perspectives if the last page specified a perspective

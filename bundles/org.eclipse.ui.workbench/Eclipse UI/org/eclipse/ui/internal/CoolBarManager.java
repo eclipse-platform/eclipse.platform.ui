@@ -609,7 +609,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		if ((control instanceof ToolBar) == false) {
 			return;
 		}
-		Rectangle itemBounds = item.getBounds();
+		
 		Point chevronPosition = coolBar.toDisplay(new Point(event.x, event.y));
 		ToolBar toolBar = (ToolBar) control;
 		ToolItem[] tools = toolBar.getItems();

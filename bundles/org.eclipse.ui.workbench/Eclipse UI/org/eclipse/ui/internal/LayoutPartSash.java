@@ -61,7 +61,6 @@ private void checkDragLimit(SelectionEvent event) {
 	LayoutTree root = rootContainer.getLayoutTree();
 	LayoutTreeNode node = root.findSash(this);
 	Rectangle nodeBounds = node.getBounds();
-	Rectangle sashBounds = getBounds();
 	
 	// optimization: compute ratios only once per drag
 	if (minRatio < 0)

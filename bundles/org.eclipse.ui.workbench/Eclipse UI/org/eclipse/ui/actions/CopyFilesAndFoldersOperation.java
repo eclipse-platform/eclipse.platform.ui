@@ -714,7 +714,6 @@ public class CopyFilesAndFoldersOperation {
 			return WorkbenchMessages.getString("CopyFilesAndFoldersOperation.destinationAccessError"); //$NON-NLS-1$
 		}
 		// work around bug 16202. revert when fixed.
-		IWorkspaceRoot workspaceRoot = destination.getWorkspace().getRoot();
 		File destinationFile = destination.getLocation().toFile();
 		IPath destinationPath = destination.getLocation();
 		for (int i = 0; i < sourceNames.length; i++) {

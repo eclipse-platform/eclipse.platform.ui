@@ -301,7 +301,6 @@ Font defaultFont() {
 	if(current == null){
 		Shell shell = new Shell();
 		Font font = shell.getFont();
-		FontData [] data = font.getFontData();
 		shell.dispose();
 		return font;
 	}

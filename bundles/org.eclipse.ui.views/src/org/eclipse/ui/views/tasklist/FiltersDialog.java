@@ -609,7 +609,6 @@ String getTypeId(int typeIndex) {
  */
 int getTypeIndex(String markerType) {
 	MarkerType[] types = getMarkerTypes();
-	String[] labels = new String[types.length];
 	for (int i = 0; i < types.length; ++i) {
 		String id = types[i].getId();
 		if (id == null ? markerType == null : id.equals(markerType))

@@ -129,7 +129,6 @@ private void checkState() {
 protected Control createContents(Composite parent) {
 
 	WorkbenchHelp.setHelp(parent, IHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
-	Font font = parent.getFont();
 
 	// button group
 	Composite composite = new Composite(parent, SWT.NONE);

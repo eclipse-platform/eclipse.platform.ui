@@ -362,7 +362,6 @@ public final class XMLMemento implements IMemento {
 	 * Method declared in IMemento.
 	 */
 	public void putMemento(IMemento memento) {
-		XMLMemento xmlMemento = (XMLMemento) memento;
 		putElement(((XMLMemento) memento).element);
 	}
 	

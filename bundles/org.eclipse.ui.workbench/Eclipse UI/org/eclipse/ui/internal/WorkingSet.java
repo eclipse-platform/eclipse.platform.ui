@@ -150,7 +150,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @see org.eclipse.ui.IWorkingSet#setElements(IAdaptable[])
 	 */
 	public void setElements(IAdaptable[] newElements) {
-		IAdaptable[] oldElements = getElements();
 		
 		internalSetElements(newElements);
 		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
@@ -186,7 +185,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	 * @see org.eclipse.ui.IWorkingSet#setName(String)
 	 */
 	public void setName(String newName) {
-		String oldName = name;
 
 		Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
 		name = newName;

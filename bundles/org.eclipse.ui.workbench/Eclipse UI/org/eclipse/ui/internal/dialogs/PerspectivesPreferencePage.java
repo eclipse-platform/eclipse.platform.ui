@@ -392,7 +392,6 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 */
 
 	private boolean deletePerspectives() {
-		HashSet openPersp = new HashSet();
 		IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchPage pages[] = windows[i].getPages();

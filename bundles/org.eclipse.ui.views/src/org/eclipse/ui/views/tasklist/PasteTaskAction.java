@@ -50,7 +50,6 @@ public void run() {
 	try {
 		getTaskList().getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				TaskList taskList = getTaskList();
 				for (int i = 0; i < markerData.length; i++) {
 					// Only paste tasks (not problems)
 					if (!markerData[i].getType().equals(IMarker.TASK))

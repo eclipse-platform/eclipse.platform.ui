@@ -824,7 +824,7 @@ public IStatus restoreState() {
 
 	// Add the visible views.
 	IMemento [] views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
-	List errors = new ArrayList();
+
 	for (int x = 0; x < views.length; x ++) {
 		// Get the view details.
 		IMemento childMem = views[x];
@@ -1088,7 +1088,6 @@ private IStatus saveState(IMemento memento, PerspectiveDescriptor p,
 	presentation.collectViewPanes(viewPanes);
 
 	// Save the views.
-	boolean active = page.getPerspective().getId().equals(descriptor.getId());
 	enum = viewPanes.iterator();
 	int errors = 0;
 	while (enum.hasNext()) {

@@ -617,8 +617,7 @@ private void setupSelectionsBasedOnSelectedTypes(
 		//Just return if we can't get any info
 		return;
 	}
-	boolean hasSelectedSubFolder = false;
-
+	
 	for (int i = 0; i < resources.length; i++) {
 		IResource resource = resources[i];
 		if (resource.getType() == IResource.FILE) {

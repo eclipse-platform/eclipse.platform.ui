@@ -117,7 +117,6 @@ void findSashes(LayoutTree child,PartPane.Sashes sashes) {
 	Sash sash = (Sash)getSash().getControl();
 	boolean leftOrTop = children[0] == child;
 	if(sash != null) {
-		int index;
 		LayoutPartSash partSash = getSash();
 		//If the child is in the left, the sash 
 		//is in the rigth and so on.
@@ -279,7 +278,6 @@ public void setBounds(Rectangle bounds) {
 		adjustWidths(bounds, leftBounds, rightBounds, sashBounds);
 	} else {
 		//Work on y and height
-		int h = bounds.height - SASH_WIDTH;
 		leftBounds.height = (int)(getSash().getRatio() * bounds.height);
 		sashBounds.y = leftBounds.y + leftBounds.height;
 		sashBounds.height = SASH_WIDTH;

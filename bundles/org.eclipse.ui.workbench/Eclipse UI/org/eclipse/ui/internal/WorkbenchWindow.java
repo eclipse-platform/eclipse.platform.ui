@@ -215,7 +215,7 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	// Setup window.
 	addMenuBar();
 	
-	IPreferenceStore store = workbench.getPreferenceStore();
+	//IPreferenceStore store = workbench.getPreferenceStore();
 //	if(store.getBoolean("ENABLE_COOL_BARS")) //$NON-NLS-1$
 		addCoolBar(SWT.FLAT);
 //	else
