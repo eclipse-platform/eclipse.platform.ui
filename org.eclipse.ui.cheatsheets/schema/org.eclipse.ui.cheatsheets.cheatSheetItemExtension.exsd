@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.cheatsheets.org.eclipse.ui.cheatsheets">
+<schema targetNamespace="org.eclipse.ui.cheatsheets">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.cheatsheets.org.eclipse.ui.cheatsheets" id="cheatSheetItemExtension" name="cheatSheetItemExtension"/>
+         <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetItemExtension" name="cheatSheetItemExtension"/>
       </appInfo>
       <documentation>
          This extension point should be used when extra buttons or graphics need to be added to a step in the cheat sheet beside the help button.
@@ -11,9 +11,9 @@ You can put a new attribute into the &quot;item&quot; tag in the cheat sheet con
 it will check to see if there is a class registered through this extension point that will handle this attribute.  The attribute name found in the
 cheat sheet content file is matched against all of the values found in the &quot;itemAttribute&quot; attribute of all of the registered cheatsheetItemExtension point implementations.  If there is a match, the class specified to handle this item attribute is loaded by the cheat sheet framework and is called to handle the parsing of the attribute found in the cheat sheet content file.
 
-After having parsed the value of the item attribute, the class remains available to the cheat sheets framework.  When the item is rendered for the cheat sheets view, the class is once again called to handle the addition of components to a Composite.  The items that are added to this composite are displayed in the cheat sheet step beside the help icon.  It is displayed only for the step that is described by the &quot;item&quot; tag that the attribute appeared in the cheat sheet content file.
+After having parsed the value of the item attribute, the class remains available to the cheat sheets framework.  When the item is rendered for the cheat sheets view, the class is once again called to handle the addition of components to a Composite.  The items that are added to this composite are displayed in the cheat sheet step (currently, beside the help icon).  It is displayed only for the step that is described by the &quot;item&quot; tag that the attribute appeared in the cheat sheet content file.
 
-Suggested uses of this extension point including adding a button with a graphic that spawns a dialog box when pressed.
+Suggested uses of this extension point including adding a button with a graphic that opens a dialog box when pressed.
       </documentation>
    </annotation>
 
@@ -52,23 +52,24 @@ Suggested uses of this extension point including adding a button with a graphic 
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            Use this item extension to add elements to cheat sheet steps.  You can use this extension point to add icons and buttons beside the
-help icon for a step in the cheat sheet.
-You specify the name of an attribute that you will put into the cheat sheet item tag.  You also specify a class that will handle the parsing of that attribute from the cheat sheet content file when the cheat sheet is loaded.  Anything can be put into the attribute value, as this value will be parsed by the class specified.  The specified class must implement ICheatSheetItemExtensionElement.  After the cheat sheet content file is parsed and loaded, the class specified in the extension point is called again through the interface to add graphics or buttons to the step in the cheat sheet next to the help button.
+            Use this item extension to add elements to cheat sheet steps.  You can use this extension point to add icons and buttons (currently, beside the
+help icon) for a step in the cheat sheet.
+You specify the name of an attribute that you will put into the cheat sheet item tag.  You also specify a class that will handle the parsing of that attribute from the cheat sheet content file when the cheat sheet is loaded.  Anything can be put into the attribute value, as this value will be parsed by the class specified.  The specified class must subclass &lt;code&gt;org.eclipse.ui.cheatsheets.ItemExtensionElement&lt;/code&gt;.  After the cheat sheet content file is parsed and loaded, the class specified in the extension point is called again through the interface to add graphics or buttons to the step in the cheat sheet (currently, next to the help button).
          </documentation>
       </annotation>
       <complexType>
          <attribute name="itemAttribute" type="string" use="required">
             <annotation>
                <documentation>
-                  This attribute value must be the string value of an attribute name that is put into an item tag in the cheat sheet content file.  If this attribute string matches an attribute parsed from the item tag in the cheat sheet content file, the class specified will be loaded and will be called to parse the full value of the attribute using the w3 DOM specification.  It will later be called to add components to a Composite, and the added components (usually graphics or buttons) will appear in the step of the cheat sheet for the item specified beside the help icon for that step.
+                  This attribute value must be the string value of an attribute name that is put into an item tag in the cheat sheet content file.  If this attribute string matches an attribute parsed from the item tag in the cheat sheet content file, the class specified will be loaded and will be called to parse the full value of the attribute using the w3 DOM specification.  It will later be called to add controls to a Composite, and the added components (usually graphics or buttons) will appear in the step of the cheat sheet for the item specified (currently, beside the help icon for that step).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified class name of the class that subclasses org.eclipse.ui.cheatsheet.AbstractItemExtensionElement to handle unknown attributes in the cheat sheet content file and extend the steps in the cheat sheet.
+                  The fully qualified class name of the class that subclasses &lt;code&gt;org.eclipse.ui.cheatsheet.AbstractItemExtensionElement&lt;/code&gt; to handle unknown attributes in the cheat sheet content file and extend the steps in the cheat sheet. The class must be public, and have a public 1-argument constructor that accepts the attribute name
+(a &lt;code&gt;String&lt;/code&gt;).
                </documentation>
             </annotation>
          </attribute>
@@ -80,7 +81,7 @@ You specify the name of an attribute that you will put into the cheat sheet item
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.0
       </documentation>
    </annotation>
 
@@ -124,7 +125,7 @@ for the button that the class adds beside the help icon for the step in the chea
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         See the javadoc information for ICheatSheetItemExtension for api details.
+         See the Javadoc information for org.eclipse.ui.cheatsheets.AbstractItemExtensionElement for API details.
       </documentation>
    </annotation>
 
@@ -143,14 +144,14 @@ for the button that the class adds beside the help icon for the step in the chea
       </appInfo>
       <documentation>
          /************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *  IBM Corporation - Initial implementation
+ *  IBM Corporation - Initial API and implementation
  *************************************************************************/
       </documentation>
    </annotation>

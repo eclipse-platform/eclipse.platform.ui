@@ -144,7 +144,7 @@ A cheat sheet content file is assebled in XML that is parsed at run time by the 
    <element name="description" type="string">
       <annotation>
          <documentation>
-            a short description of this cheat sheet
+            a short description of the cheat sheet
          </documentation>
       </annotation>
    </element>
@@ -154,7 +154,7 @@ A cheat sheet content file is assebled in XML that is parsed at run time by the 
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         version 2.0
+         3.0
       </documentation>
    </annotation>
 
@@ -200,12 +200,12 @@ A cheat sheet content file is assebled in XML that is parsed at run time by the 
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         See the cheat sheet javadocs for full api information.
+         See the cheat sheet Javadoc specs for full API information.
 
-The main api&apos;s available are:
+The main API&apos;s available are:
 
-  - Action to launch a cheat sheet with an id.
-  - Action to launch a cheat sheet with an id from a live help link in the help.
+  - Action to open a cheat sheet with an id, or a content file URL.
+  - Live help action to launch a cheat sheet with an id from a live help link in a help book.
   
   - Interfaces for:
     -Actions:  ICheatsheetAction
@@ -215,11 +215,9 @@ The main api&apos;s available are:
     -ICheatsheetManager: 
       Implementation passed to actions implementing ICheatsheetAction and also passed in events 
       fired to cheat sheet listeners.  Allows for data to be stored and retrieved for a particular cheat sheet.
-      Provides access to cheat sheet items, that represent steps in a cheat sheet.  Steps data may be changed
-      dynamically at run time using these api&apos;s.
       
     - Other interfaces:
-      All other interfaces relate to cheat sheet Listeners and cheat sheet items (steps in the cheat sheet.)
+      All other interfaces relate to cheat sheet listeners and events.
       </documentation>
    </annotation>
 
@@ -237,15 +235,15 @@ The main api&apos;s available are:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         /************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+/************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- *  IBM Corporation - Initial implementation
+ *  IBM Corporation - Initial API and implementation
  *************************************************************************/
       </documentation>
    </annotation>
