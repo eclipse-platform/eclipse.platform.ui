@@ -214,7 +214,7 @@ protected static byte[] getIPAddress() {
 	try {
 		return InetAddress.getLocalHost().getAddress();
 	} catch (UnknownHostException e) {
-		Assert.isTrue(false, Policy.bind("utils.address"));
+//		Assert.isTrue(false, Policy.bind("utils.address"));
 		return null;
 	}
 }
