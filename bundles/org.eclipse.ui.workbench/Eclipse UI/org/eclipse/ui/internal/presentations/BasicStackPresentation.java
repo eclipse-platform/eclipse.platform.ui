@@ -150,10 +150,13 @@ public class BasicStackPresentation extends StackPresentation {
 			}
 		}	
 	};
+	private StateContribution stateContribution;
 	
 	public BasicStackPresentation(CTabFolder control, IStackPresentationSite stackSite) {
 		tabFolder = control;
 		site = stackSite;
+		stateContribution = new StateContribution(stackSite);
+		systemMenuManager.add(stateContribution);
 		
 		// listener to switch between visible tabItems
 		tabFolder.addListener(SWT.Selection, selectionListener);
@@ -313,7 +316,7 @@ public class BasicStackPresentation extends StackPresentation {
 			return;
 		}
 		
-		//systemMenuManager.dispose();
+		systemMenuManager.dispose();
 		
 		tabFolder.dispose();
 		tabFolder = null;
