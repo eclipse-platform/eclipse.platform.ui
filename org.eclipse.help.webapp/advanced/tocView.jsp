@@ -76,7 +76,7 @@ function onloadHandler()
 		
 	var topicSelected=false;
 	// select specified topic, or else the book
-	var topic = '<%=data.getSelectedTopic()%>';
+	var topic = "<%=data.getSelectedTopic()%>";
 	if (topic != "about:blank" && topic != tocTopic) {
 		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 2) {
 			// remove the .. from topic
