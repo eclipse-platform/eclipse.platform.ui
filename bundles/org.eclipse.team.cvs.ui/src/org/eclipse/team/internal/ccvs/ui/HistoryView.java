@@ -638,7 +638,7 @@ public class HistoryView extends ViewPart {
 						// has been populated until the job that queries for the history
 						// has completed.
 						tableViewer.setInput(remoteFile);
-						setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+						setContentDescription(remoteFile.getName()); 
 						setTitleToolTip(resource.getFullPath().toString());
 					}
 				} catch (TeamException e) {
@@ -648,7 +648,7 @@ public class HistoryView extends ViewPart {
 		} else {
 			this.file = null;
 			tableViewer.setInput(null);
-			setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+			setContentDescription(""); //$NON-NLS-1$
 			setTitleToolTip(""); //$NON-NLS-1$
 		}
 	}
@@ -703,7 +703,7 @@ public class HistoryView extends ViewPart {
 		try {
 			if (remoteFile == null) {
 				tableViewer.setInput(null);
-				setContentDescription(Policy.bind("HistoryView.title")); //$NON-NLS-1$
+				setContentDescription(""); //$NON-NLS-1$
 				setTitleToolTip(""); //$NON-NLS-1$
 				return;
 			}
@@ -712,7 +712,7 @@ public class HistoryView extends ViewPart {
 			this.file = null;
 			historyTableProvider.setFile(remoteFile);
 			tableViewer.setInput(remoteFile);
-			setContentDescription(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
+			setContentDescription(remoteFile.getName());
 			setTitleToolTip(remoteFile.getRepositoryRelativePath());
 		} catch (TeamException e) {
 			CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
