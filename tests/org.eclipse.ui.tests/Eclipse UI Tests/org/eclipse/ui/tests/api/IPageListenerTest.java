@@ -38,6 +38,8 @@ public class IPageListenerTest extends TestCase
 	 * Tests the pageOpened method.
 	 */	
 	public void testPageOpened() throws Throwable {
+		// From Javadoc: "Notifies this listener that the given page has been opened."
+		
 		// Test open page.
 		eventsReceived = 0;
 		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
@@ -52,6 +54,8 @@ public class IPageListenerTest extends TestCase
 	 * Tests the pageClosed method.
 	 */	
 	public void testPageClosed() throws Throwable {
+		// From Javadoc: "Notifies this listener that the given page has been closed."
+		
 		// Open page.
 		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
@@ -67,6 +71,8 @@ public class IPageListenerTest extends TestCase
 	 * Tests the pageActivated method.
 	 */	
 	public void testPageActivate() throws Throwable {
+		// From Javadoc: "Notifies this listener that the given page has been activated."
+		
 		// Add pages.
 		IWorkbenchPage page1 = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);

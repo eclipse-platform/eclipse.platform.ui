@@ -33,6 +33,9 @@ public class IPageServiceTest extends TestCase
 	 * Tests the addPageListener method.
 	 */	
 	public void testAddPageListener() throws Throwable {
+		// From Javadoc: "Adds the given listener for page lifecycle events.
+		// Has no effect if an identical listener is already registered."
+		
 		// Add listener.
 		fWindow.addPageListener(this);
 		
@@ -52,6 +55,9 @@ public class IPageServiceTest extends TestCase
 	 * Tests the removePageListener method.
 	 */
 	public void testRemovePageListener() throws Throwable {
+		// From Javadoc: "Removes the given page listener.
+		// Has no affect if an identical listener is not registered."
+		
 		// Add and remove listener.
 		fWindow.addPageListener(this);
 		fWindow.removePageListener(this);		
@@ -69,6 +75,9 @@ public class IPageServiceTest extends TestCase
 	 * Tests getActivePage.
 	 */
 	public void testGetActivePage() throws Throwable {
+		// From Javadoc: "return the active page, or null if no page 
+		// is currently active"
+		
 		// Add page.
 		IWorkbenchPage page1 = fWindow.openPage(EmptyPerspective.PERSP_ID,
 			fWorkspace);
@@ -94,6 +103,9 @@ public class IPageServiceTest extends TestCase
 	 * Tests the addPerspectiveListener method.
 	 */	
 	public void testAddPerspectiveListener() throws Throwable {
+		// From Javadoc: "Adds the given listener for a page's perspective lifecycle events.
+		// Has no effect if an identical listener is already registered."
+		
 		// Add listener.
 		fWindow.addPerspectiveListener(this);
 		
@@ -115,6 +127,9 @@ public class IPageServiceTest extends TestCase
 	 * Tests the removePerspectiveListener method.
 	 */	
 	public void testRemovePerspectiveListener() throws Throwable {
+		// From Javadoc: "Removes the given page's perspective listener.
+		// Has no affect if an identical listener is not registered."
+		
 		// Add and remove listener.
 		fWindow.addPerspectiveListener(this);
 		fWindow.removePerspectiveListener(this);		
