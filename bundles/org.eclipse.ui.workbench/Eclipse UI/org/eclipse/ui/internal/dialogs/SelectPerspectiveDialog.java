@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
  */
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.*;
@@ -80,6 +81,7 @@ protected Control createDialogArea(Composite parent) {
 	
 	// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	list.getTable().setFont(parent.getFont());
 	list.setLabelProvider(new PerspLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
 	list.setSorter(new ViewerSorter() {});

@@ -1,16 +1,17 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
  */
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
 import java.util.*;
-import java.util.List;
+
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  *	Workbench-level composite that combines two CheckboxListViewers.
@@ -130,6 +131,7 @@ protected void createContents(Composite parent,int width,int height) {
 	Composite composite = new Composite(parent,SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
+	composite.setFont(parent.getFont());
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(
 		GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -150,6 +152,7 @@ protected void createList1Viewer(Composite parent) {
 	list1Viewer.setLabelProvider(list1LabelProvider);
 	list1Viewer.addCheckStateListener(this);
 	list1Viewer.addSelectionChangedListener(this);
+	list1Viewer.getTable().setFont(parent.getFont());
 }
 /**
  *	Create the right viewer for this group.
@@ -161,6 +164,7 @@ protected void createList2Viewer(Composite parent) {
 	list2Viewer.setContentProvider(list2ContentProvider);
 	list2Viewer.setLabelProvider(list2LabelProvider);
 	list2Viewer.addCheckStateListener(this);
+	list2Viewer.getTable().setFont(parent.getFont());
 }
 /**
  *	Create a viewer pane in this group for the passed viewer.
@@ -176,6 +180,7 @@ protected Composite createViewPane(Composite parent, int width, int height) {
 	spec.heightHint = height;
 	pane.setLayoutData(spec);
 	pane.setLayout(new FillLayout());
+	pane.setFont(parent.getFont());
 	return pane;
 }
 /**

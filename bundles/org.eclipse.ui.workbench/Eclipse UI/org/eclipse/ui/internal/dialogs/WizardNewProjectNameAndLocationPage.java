@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.io.File;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -24,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -111,6 +114,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
 
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
@@ -131,16 +135,18 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 	 * @param parent the parent composite
 	 */
 	private final void createProjectLocationGroup(Composite parent) {
-
+		Font font = parent.getFont();
 		// project specification group
 		Composite projectGroup = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		projectGroup.setLayout(layout);
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
+		projectGroup.setFont(font);
+		
 		// new project label
 		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
+		projectContentsLabel.setFont(font);
 		projectContentsLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
 
 		GridData labelData = new GridData();
@@ -150,6 +156,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 		final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
 		useDefaultsButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
 		useDefaultsButton.setSelection(useDefaults);
+		useDefaultsButton.setFont(font);
 
 		GridData buttonData = new GridData();
 		buttonData.horizontalSpan = 3;
@@ -180,6 +187,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 	 * @param parent the parent composite
 	 */
 	private final void createProjectNameGroup(Composite parent) {
+		Font font = parent.getFont();
 		// project specification group
 		Composite projectGroup = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -189,6 +197,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup, SWT.NONE);
+		projectLabel.setFont(font);
 		projectLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.nameLabel")); //$NON-NLS-1$
 
 		// new project name entry field
@@ -196,6 +205,7 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
+		projectNameField.setFont(font);
 
 		// Set the initial value first before listener
 		// to avoid handling an event during the creation.
@@ -211,9 +221,10 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 	 * @param boolean - the initial enabled state of the widgets created
 	 */
 	private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boolean enabled) {
-
+		Font font = projectGroup.getFont();
 		// location label
 		locationLabel = new Label(projectGroup, SWT.NONE);
+		locationLabel.setFont(font);
 		locationLabel.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.locationLabel")); //$NON-NLS-1$
 		locationLabel.setEnabled(enabled);
 
@@ -222,10 +233,12 @@ public class WizardNewProjectNameAndLocationPage extends WizardPage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		locationPathField.setLayoutData(data);
+		locationPathField.setFont(font);
 		locationPathField.setEnabled(enabled);
 
 		// browse button
 		browseButton = new Button(projectGroup, SWT.PUSH);
+		browseButton.setFont(font);
 		browseButton.setText(WorkbenchMessages.getString("WizardNewProjectCreationPage.browseLabel")); //$NON-NLS-1$
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {

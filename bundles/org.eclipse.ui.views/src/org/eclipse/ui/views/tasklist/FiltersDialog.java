@@ -9,7 +9,9 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
   Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
-**********************************************************************/
+  Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+  activated and used by other components.
+  *********************************************************************/
 
 import java.text.Collator;
 import java.util.*;
@@ -21,6 +23,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -78,6 +81,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 		private Button[] valueButtons;
 
 		CheckboxEnumGroup(Composite parent, String text, EnumType type) {
+			Font font = parent.getFont();
 			this.type = type;
 			// although not needed for layout, this composite is needed to get the tab order right
 			Composite enableComposite = new Composite(parent, SWT.NONE);
@@ -86,6 +90,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 			enableButton = new Button(enableComposite, SWT.CHECK);
 			enableButton.addSelectionListener(selectionListener);
 			enableButton.setText(text);
+			enableButton.setFont(font);
 			Composite valueComposite = new Composite(parent, SWT.NONE);
 			valueComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			valueComposite.setLayout(new FillLayout());
@@ -95,6 +100,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 				Button valueButton = new Button(valueComposite, SWT.CHECK);
 				valueButton.setText(values[i].getText());
 //				valueButton.setImage(values[i].getImage());
+				valueButton.setFont(font);
 				valueButtons[i] = valueButton;
 			}
 		}
@@ -150,19 +156,23 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 		Text text;
 
 		LabelComboTextGroup(Composite parent, String labelText, String[] comboStrings, String initialText, int widthHint) {
+			Font font = parent.getFont();
 			Composite group = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 3;
 			//Set the margin width to 0 in order to line up with other items
 			layout.marginWidth = 0;
 			group.setLayout(layout);
+			group.setFont(font);
 			label = new Label(group, SWT.NONE);
 			label.setText(labelText);
+			label.setFont(font);
 			combo = createCombo(group, comboStrings, 0);
 			text = new Text(parent, SWT.SINGLE | SWT.BORDER);
 			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 			gridData.widthHint = widthHint;
 			text.setLayoutData(gridData);
+			text.setFont(font);
 			text.setText(initialText);
 		}
 	}
@@ -186,6 +196,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 			button.setLayoutData(data);
 
 			Composite composite = new Composite(parent, SWT.NONE);
+			composite.setFont(parent.getFont());
 			GridLayout layout = new GridLayout();
 			Button radio = new Button(parent, SWT.RADIO);
 			layout.marginWidth = radio.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
@@ -349,6 +360,7 @@ void createAttributesArea(Composite parent) {
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	composite.setLayout(layout);
+	composite.setFont(parent.getFont());
 
 	String[] filters = {TaskListMessages.getString("TaskList.contains"), TaskListMessages.getString("TaskList.doesNotContain")}; //$NON-NLS-2$ //$NON-NLS-1$
 	descriptionGroup = new LabelComboTextGroup(composite, TaskListMessages.getString("TaskList.whereDescription"), filters, "", 200);//$NON-NLS-2$ //$NON-NLS-1$
@@ -379,6 +391,7 @@ Button createCheckbox(Composite parent, String text, boolean grabRow) {
 	}
 	button.setText(text);
 	button.addSelectionListener(selectionListener);
+	button.setFont(parent.getFont());
 	return button;
 }
 /**
@@ -392,6 +405,7 @@ Button createCheckbox(Composite parent, String text, boolean grabRow) {
 Combo createCombo(Composite parent, String[] items, int selectionIndex) {
 	Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
 	combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	combo.setFont(parent.getFont());
 	combo.setItems(items);
 	combo.select(selectionIndex);
 	combo.addSelectionListener(selectionListener);
@@ -421,6 +435,7 @@ protected Control createDialogArea(Composite parent) {
 Button createRadioButton(Composite parent, String text) {
 	Button button = new Button(parent, SWT.RADIO);
 	button.setText(text);
+	button.setFont(parent.getFont());
 	button.addSelectionListener(selectionListener);
 	return button;
 }
@@ -433,6 +448,7 @@ void createResourceArea(Composite parent) {
 	Composite group = new Composite(parent, SWT.NONE);
 	group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	group.setLayout(new GridLayout());
+	group.setFont(parent.getFont());
 	anyResourceButton = createRadioButton(group, TaskListMessages.getString("TaskList.anyResource")); //$NON-NLS-1$
 	anyResourceInSameProjectButton = createRadioButton(group, TaskListMessages.getString("TaskList.anyResourceInSameProject")); //$NON-NLS-1$ // added by cagatayk@acm.org
 	selectedResourceButton = createRadioButton(group, TaskListMessages.getString("TaskList.selectedResource")); //$NON-NLS-1$
@@ -445,6 +461,7 @@ void createResourceArea(Composite parent) {
  * @param parent the parent composite
  */
 void createTypesArea(Composite parent) {
+	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	GridLayout layout = new GridLayout();
@@ -452,10 +469,12 @@ void createTypesArea(Composite parent) {
 
 	Label label = new Label(composite, SWT.NONE);
 	label.setText(TaskListMessages.getString("TaskList.showItemsOfType")); //$NON-NLS-1$
-
+	label.setFont(font);
+	
 	typesViewer = new CheckboxTreeViewer(composite);
 	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 	gridData.heightHint = 100;
+	typesViewer.getTree().setFont(font);
 	typesViewer.getControl().setLayoutData(gridData);
 	typesViewer.setContentProvider(getContentProvider());
 	typesViewer.setLabelProvider(getLabelProvider());
@@ -488,8 +507,10 @@ ITreeContentProvider getContentProvider() {
 }
 
 void createMarkerLimitArea(Composite parent) {
+	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	composite.setFont(font);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	composite.setLayout(layout);
@@ -501,6 +522,7 @@ void createMarkerLimitArea(Composite parent) {
 	GridData gridData = new GridData();
 	gridData.widthHint = convertWidthInCharsToPixels(10);
 	markerLimit.setLayoutData(gridData);
+	markerLimit.setFont(font);
 }	
 
 /**

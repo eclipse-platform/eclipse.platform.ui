@@ -1,8 +1,9 @@
 package org.eclipse.ui.internal.misc;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
  */
 import java.util.*;
 import java.util.List;
@@ -179,6 +180,7 @@ protected void createContents(Composite parent, int width, int height, int style
 	layout.marginWidth = 0;
 	composite.setLayout(layout);
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+	composite.setFont(parent.getFont());
 			
 	createTreeViewer(composite, width/2, height);
 	createListViewer(composite, width/2, height);
@@ -194,6 +196,7 @@ protected void createListViewer(Composite parent, int width, int height) {
 	data.widthHint = width;
 	data.heightHint = height;
 	listViewer.getTable().setLayoutData(data);
+	listViewer.getTable().setFont(parent.getFont());
 	listViewer.setContentProvider(listContentProvider);
 	listViewer.setLabelProvider(listLabelProvider);
 	listViewer.addCheckStateListener(this);
@@ -207,6 +210,7 @@ protected void createTreeViewer(Composite parent, int width, int height) {
 	data.widthHint = width;
 	data.heightHint = height;
 	tree.setLayoutData(data);
+	tree.setFont(parent.getFont());
 	
 	treeViewer = new CheckboxTreeViewer(tree);
 	treeViewer.setContentProvider(treeContentProvider);

@@ -3,6 +3,9 @@ package org.eclipse.ui.views.tasklist;
 /*
  * (c) Copyright IBM Corp. 2002.
  * All Rights Reserved.
+ * Contributors:
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 
 import java.util.*;
@@ -14,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -193,6 +197,7 @@ protected Control createDialogArea(Composite parent) {
  * @param composite
  */
 private void createCreationTimeArea(Composite parent) {
+	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
@@ -200,8 +205,10 @@ private void createCreationTimeArea(Composite parent) {
 	
 	Label label = new Label(composite, SWT.NONE);
 	label.setText(TaskListMessages.getString("TaskProp.creationTime")); //$NON-NLS-1$
+	label.setFont(font);
 	
-	creationTime = new Label(composite, SWT.NONE);	
+	creationTime = new Label(composite, SWT.NONE);
+	creationTime.setFont(font);	
 }
 
 /**
@@ -219,12 +226,14 @@ protected void createButtonsForButtonBar(Composite parent) {
  * Creates the area for the Description field.
  */
 private void createDescriptionArea(Composite parent) {
+	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	composite.setLayout(layout);
 	Label label = new Label(composite, SWT.NONE);
 	label.setText(TaskListMessages.getString("TaskProp.description")); //$NON-NLS-1$
+	label.setFont(font);
 	int style = SWT.SINGLE | SWT.BORDER;
 	if (!isTask()) {
 		style |= SWT.READ_ONLY;
@@ -233,12 +242,14 @@ private void createDescriptionArea(Composite parent) {
 	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 	gridData.widthHint = convertHorizontalDLUsToPixels(400);
 	descriptionText.setLayoutData(gridData);
+	descriptionText.setFont(font);
 }
 
 /**
  * Creates the area for the Priority and Status fields.
  */
 private void createPriorityAndStatusArea(Composite parent) {
+	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 3;
@@ -246,6 +257,7 @@ private void createPriorityAndStatusArea(Composite parent) {
 	
 	Label label = new Label(composite, SWT.NONE);
 	label.setText(TaskListMessages.getString("TaskProp.priority")); //$NON-NLS-1$
+	label.setFont(font);
 	priorityCombo = new Combo(composite, SWT.READ_ONLY);
 	priorityCombo.setItems(new String[] {
 		TaskListMessages.getString("TaskList.high"), //$NON-NLS-1$
@@ -260,18 +272,21 @@ private void createPriorityAndStatusArea(Composite parent) {
 			}
 		}
 	});
+	priorityCombo.setFont(font);
 	
 	completedCheckbox = new Button(composite, SWT.CHECK);
 	completedCheckbox.setText(TaskListMessages.getString("TaskProp.completed")); //$NON-NLS-1$
 	GridData gridData = new GridData();
 	gridData.horizontalIndent = convertHorizontalDLUsToPixels(20);
 	completedCheckbox.setLayoutData(gridData);
+	completedCheckbox.setFont(font);
 }
 
 /**
  * Creates the area for the Severity field.
  */
 private void createSeverityArea(Composite parent) {
+	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
@@ -279,9 +294,10 @@ private void createSeverityArea(Composite parent) {
 	
 	Label label = new Label(composite, SWT.NONE);
 	label.setText(TaskListMessages.getString("TaskProp.severity")); //$NON-NLS-1$
-	
+	label.setFont(font);
 	// workaround for bug 11078: Can't get a read-only combo box
-	severityLabel = new Label(composite, SWT.NONE);	
+	severityLabel = new Label(composite, SWT.NONE);
+	severityLabel.setFont(font);
 /*
 	severityCombo = new Combo(composite, SWT.READ_ONLY);
 	severityCombo.setItems(new String[] {
@@ -296,6 +312,7 @@ private void createSeverityArea(Composite parent) {
  * Creates the area for the Resource field.
  */
 private void createResourceArea(Composite parent) {
+	Font font = parent.getFont();
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 	composite.setLayoutData(gridData);
@@ -305,21 +322,27 @@ private void createResourceArea(Composite parent) {
 	
 	Label resourceLabel = new Label(composite, SWT.NONE);
 	resourceLabel.setText(TaskListMessages.getString("TaskProp.onResource")); //$NON-NLS-1$
+	resourceLabel.setFont(font);
 	resourceText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 	gridData = new GridData(GridData.FILL_HORIZONTAL);
 	resourceText.setLayoutData(gridData);
+	resourceText.setFont(font);
 	
 	Label folderLabel = new Label(composite, SWT.NONE);
 	folderLabel.setText(TaskListMessages.getString("TaskProp.inFolder")); //$NON-NLS-1$
+	folderLabel.setFont(font);
 	folderText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 	gridData = new GridData(GridData.FILL_HORIZONTAL);
 	folderText.setLayoutData(gridData);
+	folderText.setFont(font);
 	
 	Label locationLabel = new Label(composite, SWT.NONE);
 	locationLabel.setText(TaskListMessages.getString("TaskProp.location")); //$NON-NLS-1$
+	locationLabel.setFont(font);
 	locationText = new Text(composite, SWT.SINGLE | SWT.WRAP | SWT.READ_ONLY | SWT.BORDER);
 	gridData = new GridData(GridData.FILL_HORIZONTAL);
 	locationText.setLayoutData(gridData);
+	locationText.setFont(font);
 }
 
 /**

@@ -1,14 +1,16 @@
 package org.eclipse.ui.internal.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2002. All Rights Reserved.
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
  */
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -73,6 +75,7 @@ protected void createButtonsForButtonBar(Composite parent) {
  * @return the dialog area control
  */
 protected Control createDialogArea(Composite parent) {
+	Font font = parent.getFont();
 	// Run super.
 	Composite composite = (Composite)super.createDialogArea(parent);
 
@@ -98,7 +101,7 @@ protected Control createDialogArea(Composite parent) {
 	// Create name label.
 	label = new Label(nameGroup, SWT.NONE);
 	label.setText(WorkbenchMessages.getString("SavePerspective.name")); //$NON-NLS-1$
-	label.setFont(parent.getFont());
+	label.setFont(font);
 
 	// Add text field.
 	text = new Text(nameGroup, SWT.BORDER);
@@ -106,6 +109,7 @@ protected Control createDialogArea(Composite parent) {
 	data = new GridData(GridData.FILL_HORIZONTAL);
 	data.widthHint = convertWidthInCharsToPixels(TEXT_WIDTH);
 	text.setLayoutData(data);
+	text.setFont(font);
 	text.addModifyListener(this);
 
 	// Spacer.
@@ -117,7 +121,7 @@ protected Control createDialogArea(Composite parent) {
 	// Another label.
 	label = new Label(composite, SWT.NONE);
 	label.setText(WorkbenchMessages.getString("SavePerspective.existing")); //$NON-NLS-1$
-	label.setFont(parent.getFont());
+	label.setFont(font);
 
 	// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -126,7 +130,7 @@ protected Control createDialogArea(Composite parent) {
 	list.setSorter(new ViewerSorter() {});
 	list.setInput(perspReg);
 	list.addSelectionChangedListener(this);
-	list.getTable().setFont(parent.getFont());
+	list.getTable().setFont(font);
 
 	// Set perspective list size.
 	Control ctrl = list.getControl();

@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -17,6 +19,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -52,12 +55,14 @@ public class WizardStepGroup {
 	 * with a label above it.
 	 */
 	public Control createContents(Composite parent) {
+		Font font = parent.getFont();
 		parentComposite = parent;
 		
 		// Create a composite to hold everything together
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		composite.setFont(font);
 		composite.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				if (doneImage != null) {
@@ -77,11 +82,13 @@ public class WizardStepGroup {
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		label.setLayoutData(data);
+		label.setFont(font);
 		
 		// Table viewer of all the steps
 		stepViewer = new TableViewer(composite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		data = new GridData(GridData.FILL_BOTH);
 		stepViewer.getTable().setLayoutData(data);
+		stepViewer.getTable().setFont(font);
 		stepViewer.setContentProvider(getStepProvider());
 		stepViewer.setLabelProvider(new StepLabelProvider());
 		

@@ -2,6 +2,8 @@ package org.eclipse.ui.internal.dialogs;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
  */
 
 
@@ -127,6 +129,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
+		buttonComposite.setFont(composite.getFont());
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
@@ -188,6 +191,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		listViewer.getTable().setLayoutData(data);
+		listViewer.getTable().setFont(parent.getFont());
 		
 		listViewer.setLabelProvider(labelProvider);
 		listViewer.setContentProvider(contentProvider);

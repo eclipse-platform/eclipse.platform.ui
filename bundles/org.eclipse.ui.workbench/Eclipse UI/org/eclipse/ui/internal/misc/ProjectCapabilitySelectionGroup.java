@@ -8,7 +8,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
-**********************************************************************/
+Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+activated and used by other components.
+*********************************************************************/
 import java.text.Collator;
 import java.util.*;
 
@@ -16,6 +18,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -109,6 +112,7 @@ public class ProjectCapabilitySelectionGroup {
 	 * description.
 	 */
 	public Control createContents(Composite parent) {
+		Font font = parent.getFont();
 		// Create the main composite for the other controls
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -128,10 +132,12 @@ public class ProjectCapabilitySelectionGroup {
 		GridData data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		categoryLabel.setLayoutData(data);
+		categoryLabel.setFont(font);
 		
 		// List viewer of all available categories
 		ListViewer listViewer = new ListViewer(catComposite);
 		listViewer.getList().setLayoutData(new GridData(GridData.FILL_BOTH));
+		listViewer.getList().setFont(font);
 		listViewer.setLabelProvider(new WorkbenchLabelProvider());
 		listViewer.setContentProvider(getContentProvider());
 		listViewer.setInput(getAvailableCategories());
@@ -147,10 +153,12 @@ public class ProjectCapabilitySelectionGroup {
 		data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		capabilityLabel.setLayoutData(data);
+		capabilityLabel.setFont(font);
 		
 		// Checkbox tree viewer of capabilities in selected categories
 		checkboxViewer = CheckboxTableViewer.newCheckList(capComposite, SWT.SINGLE | SWT.TOP | SWT.BORDER);
 		checkboxViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		checkboxViewer.getTable().setFont(font);
 		checkboxViewer.setLabelProvider(new CapabilityLabelProvider());
 		checkboxViewer.setContentProvider(getContentProvider());
 		checkboxViewer.setInput(visibleCapabilities);
@@ -162,6 +170,7 @@ public class ProjectCapabilitySelectionGroup {
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
 		descLabel.setLayoutData(data);
+		descLabel.setFont(font);
 		
 		// Text field to display the capability's description
 		descriptionText = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
@@ -172,6 +181,7 @@ public class ProjectCapabilitySelectionGroup {
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 2;
 		descriptionText.setLayoutData(data);
+		descriptionText.setFont(font);
 		
 		// Add a text field to explain grayed out items
 		Label grayLabel = new Label(composite, SWT.LEFT);
@@ -180,6 +190,7 @@ public class ProjectCapabilitySelectionGroup {
 		data.verticalAlignment = SWT.TOP;
 		data.horizontalSpan = 2;
 		grayLabel.setLayoutData(data);
+		grayLabel.setFont(font);
 
 		// Setup initial context		
 		populateDependents();

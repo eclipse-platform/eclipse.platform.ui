@@ -3,6 +3,8 @@ package org.eclipse.jface.dialogs;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
+ * Contributors: Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
+ * font should be activated and used by other components.
  */
 import java.util.Arrays;
 import java.util.Iterator;
@@ -213,6 +215,7 @@ protected List createDropDownList(Composite parent) {
 	data.heightHint = list.getItemHeight() * LIST_ITEM_COUNT;
 	data.horizontalSpan = 2;
 	list.setLayoutData(data);
+	list.setFont(parent.getFont());
 	listCreated = true;
 	return list;
 }

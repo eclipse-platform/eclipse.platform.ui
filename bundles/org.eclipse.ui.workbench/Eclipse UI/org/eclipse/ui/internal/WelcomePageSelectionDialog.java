@@ -80,6 +80,7 @@ public class WelcomePageSelectionDialog extends SelectionDialog {
 		data.heightHint = convertHeightInCharsToPixels(LIST_HEIGHT);
 		data.widthHint = convertWidthInCharsToPixels(LIST_WIDTH);
 		listViewer.getList().setLayoutData(data);
+		listViewer.getList().setFont(parent.getFont());
 		// Set the label provider		
 		listViewer.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {

@@ -7,7 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- ******************************************************************************/
+ * Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
+ * activated and used by other components.
+ * *****************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.*;
@@ -18,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -87,6 +90,7 @@ public class WorkingSetTypePage extends WizardPage {
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
@@ -97,12 +101,14 @@ public class WorkingSetTypePage extends WizardPage {
 		typesLabel.setText(WorkbenchMessages.getString("WorkingSetTypePage.typesLabel")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		typesLabel.setLayoutData(data);
+		typesLabel.setFont(font);
 
 		typesListViewer = new TableViewer(composite, SWT.BORDER | SWT.MULTI);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		typesListViewer.getTable().setLayoutData(data);
+		typesListViewer.getTable().setFont(font);
 		typesListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged();
