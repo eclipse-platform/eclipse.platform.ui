@@ -1205,6 +1205,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fCurrentDiff= null;
 	 	fChangeDiffs= null;
 		fAllDiffs= null;
+		fEndOfDocReached= false;
 		
 		fLeftContentsChanged= false;
 		fRightContentsChanged= false;
@@ -2884,6 +2885,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	//---- Navigating and resolving Diffs
 	
+	/**
+	 * Returns true if end (or beginning) of document reached.
+	 */
 	private boolean navigate(boolean down, boolean wrap, boolean deep) {
 
 		Diff diff= null;
@@ -2918,8 +2922,10 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						else
 							diff= (Diff) fChangeDiffs.get(fChangeDiffs.size()-1);
 					}
-				} else
+				} else {
+					fEndOfDocReached= false;	
 					return true;
+				}
 			}
 			
 			setCurrentDiff(diff, true);
@@ -3023,6 +3029,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 //		if (d == fCurrentDiff)
 //			return;
 						
+		fEndOfDocReached= false;	
+
 		Diff oldDiff= fCurrentDiff;
 					
 		if (d != null && revealAndSelect) {
