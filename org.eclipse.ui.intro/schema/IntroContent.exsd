@@ -483,14 +483,14 @@ This markup is only to be used with an SWT Based intro part implementation. It i
          <attribute name="style" type="string">
             <annotation>
                <documentation>
-                  
+                  A relative path to a CSS file which is applied to the page only when using the Web based presentation.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="alt-style" type="string">
             <annotation>
                <documentation>
-                  
+                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation.
                </documentation>
             </annotation>
          </attribute>
