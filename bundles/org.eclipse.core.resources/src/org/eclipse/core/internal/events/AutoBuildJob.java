@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -102,7 +102,8 @@ class AutoBuildJob extends Job {
 	public synchronized void endTopLevel(boolean needsBuild) {
 		buildNeeded |= needsBuild;
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
-		schedule(delay);
+		if (getState() == Job.NONE)
+			schedule(delay);
 	}
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
