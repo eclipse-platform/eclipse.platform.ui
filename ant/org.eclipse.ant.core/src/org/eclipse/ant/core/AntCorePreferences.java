@@ -156,11 +156,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		String entries = prefs.getString("ant_urls"); //old constant //$NON-NLS-1$
 		if (entries.equals("")) {//$NON-NLS-1$
 			entries= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES);
+		} else {
+			prefs.setToDefault("ant_urls"); //$NON-NLS-1$
+			antHomeEntries= migrateURLEntries(getArrayFromString(entries));
+			return;
 		}
 		if (entries.equals("")) {//$NON-NLS-1$
-			antHomeEntries = getDefaultAntHomeEntries();
+			antHomeEntries= getDefaultAntHomeEntries();
 		} else {
-			antHomeEntries = extractEntries(getArrayFromString(entries));
+			antHomeEntries= extractEntries(getArrayFromString(entries));
 		}
 	}
 	
@@ -168,19 +172,40 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		String entries = prefs.getString("urls"); //old constant //$NON-NLS-1$
 		if (entries.equals("")) {//$NON-NLS-1$
 			entries = prefs.getString(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES);
+		} else {
+			prefs.setToDefault("urls"); //$NON-NLS-1$
+			additionalEntries= migrateURLEntries(getArrayFromString(entries));
+			return;
 		}
 		if (entries.equals("")) {//$NON-NLS-1$
 			IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
 			if (toolsJarEntry == null) {
-				additionalEntries = new IAntClasspathEntry[0];
+				additionalEntries= new IAntClasspathEntry[0];
 			} else {
-				additionalEntries = new IAntClasspathEntry[] { toolsJarEntry };
+				additionalEntries= new IAntClasspathEntry[] { toolsJarEntry };
 			}
 		} else {
-			additionalEntries = extractEntries(getArrayFromString(entries));
+			additionalEntries= extractEntries(getArrayFromString(entries));
 		}
 	}
 	
+	/*
+	 * Migrates the persisted url entries restored from a workspace older than 3.0
+	 */
+	private IAntClasspathEntry[] migrateURLEntries(String[] urlEntries) {
+		List result = new ArrayList(urlEntries.length);
+		for (int i = 0; i < urlEntries.length; i++) {
+			URL url;
+			try {
+				url = new URL (urlEntries[i]);
+			} catch (MalformedURLException e) {
+				continue;
+			}
+			result.add(new AntClasspathEntry(url.getFile()));
+		}
+		return (IAntClasspathEntry[])result.toArray(new IAntClasspathEntry[result.size()]);
+	}
+
 	private void restoreAntHome(Preferences prefs) {
 		antHome= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME);
 		if (antHome == null || antHome.length() == 0) {
@@ -236,7 +261,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			Task task = new Task();
 			task.setTaskName(taskName);
 			task.setClassName(values[0]);
-			task.setLibraryEntry(new AntClasspathEntry(values[1]));
+			String library= values[1];
+			if (library.startsWith("file:")) { //$NON-NLS-1$
+				//old format where URLs were persisted
+				library= library.substring(5);
+			}
+			task.setLibraryEntry(new AntClasspathEntry(library));
 			result.add(task);
 		}
 		return (Task[]) result.toArray(new Task[result.size()]);
@@ -253,7 +283,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			Type type = new Type();
 			type.setTypeName(typeName);
 			type.setClassName(values[0]);
-			type.setLibraryEntry(new AntClasspathEntry(values[1]));
+			String library= values[1];
+			if (library.startsWith("file:")) { //$NON-NLS-1$
+				//old format where URLs were persisted
+				library= library.substring(5);
+			}
+			type.setLibraryEntry(new AntClasspathEntry(library));
 			result.add(type);
 		}
 		return (Type[]) result.toArray(new Type[result.size()]);
@@ -275,12 +310,12 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return result;
 	}
 
-	protected IAntClasspathEntry[] extractEntries(String[] entries) {
-		List result = new ArrayList(entries.length);
+	private IAntClasspathEntry[] extractEntries(String[] entries) {
+		IAntClasspathEntry[] result = new IAntClasspathEntry[entries.length];
 		for (int i = 0; i < entries.length; i++) {
-			result.add(new AntClasspathEntry(entries[i]));
+			result[i]= new AntClasspathEntry(entries[i]);
 		}
-		return (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
+		return result;
 	}
 
 	/**
