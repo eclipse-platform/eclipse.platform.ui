@@ -39,6 +39,8 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 	  		  IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
 			  fChainedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { YourPlugin.getPreferenceStore(), generalTextStore });
 	 - additional hyperlink targets can be configured by extending SourceViewerConfiguration.getHyperlinkDetectors(...)
+	   NOTE: In the feature it might (i.e. not sure yet) be possible to provide hyperlinking via
+	   		 extension-point(s) and user-configurable it via preferences.
 - bug fixing
 </pre>
 ========== Eclipse Build Input November 23th 2004 ==========<br>
