@@ -44,6 +44,8 @@ class WizardFileSystemResourceImportPage1
 	protected Button selectTypesButton;
 	protected Button selectAllButton;
 	protected Button deselectAllButton;
+	//A boolean to indicate if the user has typed anything
+	private boolean entryChanged = false;
 
 	// dialog store id constants
 	private final static String STORE_SOURCE_NAMES_ID =
@@ -221,7 +223,7 @@ protected void createRootDirectoryGroup(Composite parent) {
 	new Label(sourceContainerGroup, SWT.NONE).setText(getSourceLabel());
 
 	// source name entry field
-	sourceNameField = new Combo(sourceContainerGroup, SWT.BORDER | SWT.READ_ONLY);
+	sourceNameField = new Combo(sourceContainerGroup, SWT.BORDER);
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
@@ -229,11 +231,45 @@ protected void createRootDirectoryGroup(Composite parent) {
 
 	sourceNameField.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			setSourceName(sourceNameField.getText());
-			//Update enablements when this is selected
-			updateWidgetEnablements();
-			selectionGroup.setFocus();
+			updateFromSourceField();
 		}
+	});
+	
+	
+	sourceNameField.addKeyListener(new KeyListener(){
+		/*
+		 * @see KeyListener.keyPressed
+		 */
+		public void keyPressed(KeyEvent e){
+			//If there has been a key pressed then mark as dirty
+			entryChanged = true;
+		}
+
+		/*
+		 * @see KeyListener.keyReleased
+		 */
+		public void keyReleased(KeyEvent e){}
+	});
+	
+	sourceNameField.addFocusListener(new FocusListener(){
+		/*
+		 * @see FocusListener.focusGained(FocusEvent)
+		 */
+		public void focusGained(FocusEvent e){
+			//Do nothing when getting focus
+		}
+		
+		/*
+		 * @see FocusListener.focusLost(FocusEvent)
+		 */
+		public void focusLost(FocusEvent e){
+			//Clear the flag to prevent constant update
+			if(entryChanged){
+				entryChanged = false;
+				updateFromSourceField();
+			}
+			
+		}	
 	});
 
 	// source browse button
@@ -244,6 +280,19 @@ protected void createRootDirectoryGroup(Composite parent) {
 
 	sourceNameField.setFocus();
 }
+
+/**
+ * Update the receiver from the source name field.
+ */
+
+private void updateFromSourceField(){
+	
+	setSourceName(sourceNameField.getText());
+	//Update enablements when this is selected
+	updateWidgetEnablements();
+	selectionGroup.setFocus();
+}		
+	
 /**
  * Creates and returns a <code>FileSystemElement</code> if the specified
  * file system object merits one.  The criteria for this are:
