@@ -47,7 +47,8 @@ public class HTMLElement {
 	 * @param attributeValue
 	 */
 	public void addAttribute(String attributeName, String attributeValue) {
-		getElementAttributes().put(attributeName, attributeValue);
+		if(attributeName != null && attributeValue != null)
+			getElementAttributes().put(attributeName, attributeValue);
 	}
 
 	/**

@@ -51,6 +51,7 @@ public interface IIntroHTMLConstants {
 	String ATTRIBUTE_SRC = "src"; //$NON-NLS-1$
 	String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
 	String ATTRIBUTE_DATA = "data"; //$NON-NLS-1$
+	String ATTRIBUTE_ALT = "alt"; //$NON-NLS-1$
 
 	/* HTML attribute values */
 	String LINK_REL = "stylesheet"; //$NON-NLS-1$
@@ -58,8 +59,7 @@ public interface IIntroHTMLConstants {
 	String OBJECT_TYPE = "text/html"; //$NON-NLS-1$
 
 	String DIV_ID_PRESENTATION_HEADER = "presentation-header"; //$NON-NLS-1$
-	String DIV_ID_PAGE_HEADER = "page-header"; //$NON-NLS-1$
-	String DIV_CLASS_PAGE_CONTENT = "page-content"; //$NON-NLS-1$
+	String DIV_ID_PAGE = "page"; //$NON-NLS-1$
 	String DIV_CLASS_INLINE_HTML = "inline-html"; //$NON-NLS-1$
 	
 	String ANCHOR_CLASS_LINK = "link"; //$NON-NLS-1$

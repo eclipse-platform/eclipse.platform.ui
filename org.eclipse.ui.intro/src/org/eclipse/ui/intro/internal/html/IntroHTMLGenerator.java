@@ -17,7 +17,7 @@ import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.ui.intro.internal.util.*;
 public class IntroHTMLGenerator {
 	private AbstractIntroPage introPage;
-	private String introTitle; 
+	private String introTitle;
 	/**
 	 * Generates the HTML code that will be presented in the browser widget for
 	 * the provided intro page.
@@ -48,14 +48,16 @@ public class IntroHTMLGenerator {
 	 * Generates the HTML element and its content:
 	 * 
 	 * <pre>
-	 *  &lt;HTML&gt;
-	 *  &lt;HEAD&gt;
-	 *  head content
-	 *  &lt;/HEAD&gt;
-	 *  &lt;BODY&gt;
-	 *  body content
-	 *  &lt;/BODY&gt;
-	 *  &lt;/HTML&gt;
+	 * 
+	 *   &lt;HTML&gt;
+	 *   &lt;HEAD&gt;
+	 *   head content
+	 *   &lt;/HEAD&gt;
+	 *   &lt;BODY&gt;
+	 *   body content
+	 *   &lt;/BODY&gt;
+	 *   &lt;/HTML&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @return the html HTMLElement
@@ -75,12 +77,14 @@ public class IntroHTMLGenerator {
 	 * Generates the HEAD element and its content:
 	 * 
 	 * <pre>
-	 *  &lt;HEAD&gt;
-	 *  &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
-	 *  &lt;TITLE&gt;page title &lt;/TITLE&gt;
-	 *  &lt;LINK href=&quot;style sheet&quot;&gt;
-	 *  additional head content, if specified
-	 *  &lt;/HEAD&gt;
+	 * 
+	 *   &lt;HEAD&gt;
+	 *   &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+	 *   &lt;TITLE&gt;page title &lt;/TITLE&gt;
+	 *   &lt;LINK href=&quot;style sheet&quot;&gt;
+	 *   additional head content, if specified
+	 *   &lt;/HEAD&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param indentLevel
@@ -94,9 +98,7 @@ public class IntroHTMLGenerator {
 		// create the HTML style block
 		head.addContent(generateStyleElement(indentLevel + 1));
 		// add the title
-		if (introPage.getTitle() != null)
-			head.addContent(generateTitleElement(introPage.getTitle(),
-					indentLevel + 1));
+		head.addContent(generateTitleElement(null, indentLevel + 1));
 		// add the presentation style
 		String style = IntroPlugin.getDefault().getIntroModelRoot()
 				.getPresentation().getStyle();
@@ -145,17 +147,19 @@ public class IntroHTMLGenerator {
 	 * Generates the BODY element and its content:
 	 * 
 	 * <pre>
-	 *  &lt;BODY&gt;
-	 *  &lt;DIV id=&quot;presentation-header&quot;&gt;
-	 *  presentation title
-	 *  &lt;/DIV&gt;
-	 *  &lt;DIV id=&quot;pageId&quot; class=&quot;page-content&quot;&gt;
-	 *  &lt;DIV id=&quot;page-header&quot;&gt;
-	 *  page title
-	 *  &lt;/DIV&gt;
-	 *  page content
-	 *  &lt;/DIV&gt;
-	 *  &lt;/BODY&gt;
+	 * 
+	 *   &lt;BODY&gt;
+	 *   &lt;DIV id=&quot;presentation-header&quot;&gt;
+	 *   presentation title
+	 *   &lt;/DIV&gt;
+	 *   &lt;DIV id=&quot;pageId&quot; class=&quot;page-content&quot;&gt;
+	 *   &lt;DIV id=&quot;page-header&quot;&gt;
+	 *   page title
+	 *   &lt;/DIV&gt;
+	 *   page content
+	 *   &lt;/DIV&gt;
+	 *   &lt;/BODY&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param indentLevel
@@ -166,33 +170,19 @@ public class IntroHTMLGenerator {
 	private HTMLElement generateBodyElement(int indentLevel) {
 		HTMLElement body = new FormattedHTMLElement(
 				IIntroHTMLConstants.ELEMENT_BODY, indentLevel, true);
-		// Create the div that contains the intro presentation title
-		if (introTitle != null) {
-			HTMLElement presentationHeader = generateHeaderDiv(
-					IIntroHTMLConstants.DIV_ID_PRESENTATION_HEADER,
-					IIntroHTMLConstants.ELEMENT_H1,
-					IIntroHTMLConstants.SPAN_ID_PRESENTATION_TITLE, null,
-					introTitle, indentLevel + 1);
-			body.addContent(presentationHeader);
-		}
+
 		// Create the div that contains the page content
-		HTMLElement pageContentDiv = generateDivElement(introPage.getId(),
-				IIntroHTMLConstants.DIV_CLASS_PAGE_CONTENT, indentLevel + 1);
-		// Create the div that contains the page title, if necessary
-		if (introPage.getTitle() != null) {
-			// use indentLevel + 2 here, since this div is contained within the
-			// pageContentDiv
-			HTMLElement pageHeader = generateHeaderDiv(
-					IIntroHTMLConstants.DIV_ID_PAGE_HEADER,
-					IIntroHTMLConstants.ELEMENT_H2,
-					IIntroHTMLConstants.SPAN_ID_PAGE_TITLE, null, introPage
-							.getTitle(), indentLevel + 2);
-			pageContentDiv.addContent(pageHeader);
-		}
+		String pageId = (introPage.getId() != null) ? introPage
+				.getId() : IIntroHTMLConstants.DIV_ID_PAGE;
+		HTMLElement pageContentDiv = generateDivElement(pageId,
+				indentLevel + 1);
+		if(introPage.getClassId() != null)
+			pageContentDiv.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, introPage.getClassId());
+
 		// Add any children of the page, in the order they are defined
 		AbstractIntroElement[] children = introPage.getChildren();
 		for (int i = 0; i < children.length; i++) {
-		    AbstractIntroElement child = children[i];
+			AbstractIntroElement child = children[i];
 			// use indentLevel + 2 here, since this element is contained within
 			// the pageContentDiv
 			HTMLElement childElement = generateIntroElement(child,
@@ -228,6 +218,8 @@ public class IntroHTMLGenerator {
 				return generateIntroImage((IntroImage) element, indentLevel);
 			case AbstractIntroElement.TEXT :
 				return generateIntroText((IntroText) element, indentLevel);
+			case AbstractIntroElement.PAGE_TITLE :
+				return generateIntroTitle((IntroPageTitle) element, indentLevel);
 			default :
 				return null;
 		}
@@ -236,10 +228,12 @@ public class IntroHTMLGenerator {
 	 * Create a div element and its content from an IntroDiv:
 	 * 
 	 * <pre>
-	 *  &lt;div id=&quot;attrvalue&quot;&gt;
-	 *  &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
-	 *  any defined divs, links, html, images, text, includes
-	 *  &lt;/div&gt;
+	 * 
+	 *   &lt;div id=&quot;attrvalue&quot;&gt;
+	 *   &lt;h4&gt;&lt;span class=&quot;div-label&quot;&gt;attrvalue&lt;/span&gt;&lt;h4&gt;
+	 *   any defined divs, links, html, images, text, includes
+	 *   &lt;/div&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param element
@@ -253,6 +247,10 @@ public class IntroHTMLGenerator {
 		// Create the outer div element
 		HTMLElement divElement = generateDivElement(element.getId(),
 				indentLevel);
+		// if a div class was specified, add it
+		if (element.getClassId() != null)
+			divElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
+					element.getClassId());
 		// Create the div label, if specified
 		if (element.getLabel() != null) {
 			HTMLElement divLabel = generateTextElement(
@@ -264,7 +262,7 @@ public class IntroHTMLGenerator {
 		// Add any children of the div, in the order they are defined
 		AbstractIntroElement[] children = element.getChildren();
 		for (int i = 0; i < children.length; i++) {
-		    AbstractIntroElement child = children[i];
+			AbstractIntroElement child = children[i];
 			HTMLElement childElement = generateIntroElement(child,
 					indentLevel + 1);
 			if (childElement != null)
@@ -276,11 +274,13 @@ public class IntroHTMLGenerator {
 	 * Generates an anchor (link) element and its content from an IntroLink:
 	 * 
 	 * <pre>
-	 *  &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
-	 *  &lt;IMG src=&quot;blank.gif&quot;&gt;
-	 *  &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
-	 *  &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
-	 *  &lt;/A&gt;
+	 * 
+	 *   &lt;A id=linkId class=&quot;link&quot; href=linkHref&gt;
+	 *   &lt;IMG src=&quot;blank.gif&quot;&gt;
+	 *   &lt;SPAN class=&quot;link-label&quot;&gt;linkLabel &lt;/SPAN&gt;
+	 *   &lt;P&gt;&lt;SPAN&gt;text&lt;/SPAN&gt;&lt;/P&gt;
+	 *   &lt;/A&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param element
@@ -296,7 +296,7 @@ public class IntroHTMLGenerator {
 		String blankImageURL = IntroModelRoot.getPluginLocation(
 				IIntroHTMLConstants.IMAGE_SRC_BLANK, IIntroConstants.PLUGIN_ID);
 		if (blankImageURL != null) {
-			anchor.addContent(generateImageElement(blankImageURL,
+			anchor.addContent(generateImageElement(blankImageURL, null,
 					indentLevel + 1));
 		}
 		// add <SPAN class="link-label">linkLabel</SPAN>
@@ -306,20 +306,22 @@ public class IntroHTMLGenerator {
 			label.addContent(element.getLabel());
 			anchor.addContent(label);
 		}
-		if (element.getText() != null) {
+		IntroText linkText = element.getIntroText();
+		if (linkText != null && linkText.getText() != null) {
+			String classId = (linkText.getClassId() != null) ? linkText
+					.getClassId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
 			HTMLElement text = generateTextElement(
-					IIntroHTMLConstants.ELEMENT_PARAGRAPH, null,
-					IIntroHTMLConstants.SPAN_CLASS_TEXT, element.getText(),
-					indentLevel + 1);
+					IIntroHTMLConstants.ELEMENT_PARAGRAPH, linkText.getId(),
+					classId, element.getText(), indentLevel + 1);
 			anchor.addContent(text);
 		}
 		return anchor;
 	}
 	/**
-	 * Generate the appropriate HTML from an IntroHTML. If the IntroHTML type
-	 * is "inline", then the content from the referenced file is emitted as-is
-	 * into a div element. If the type is "embed", an OBJECT html element is
-	 * created whose <code>data</code> attribute is equal to the IntroHTML's
+	 * Generate the appropriate HTML from an IntroHTML. If the IntroHTML type is
+	 * "inline", then the content from the referenced file is emitted as-is into
+	 * a div element. If the type is "embed", an OBJECT html element is created
+	 * whose <code>data</code> attribute is equal to the IntroHTML's
 	 * <code>src</code> value
 	 * 
 	 * @param element
@@ -339,7 +341,9 @@ public class IntroHTMLGenerator {
 	 * Generate an image element from an IntroImage:
 	 * 
 	 * <pre>
-	 *  &lt;IMG src=imageSrc id=imageId&gt;
+	 * 
+	 *   &lt;IMG src=imageSrc id=imageId&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param element
@@ -351,20 +355,25 @@ public class IntroHTMLGenerator {
 	 */
 	private HTMLElement generateIntroImage(IntroImage element, int indentLevel) {
 		HTMLElement imageElement = generateImageElement(element.getSrc(),
-				indentLevel);
+				element.getAlt(), indentLevel);
 		if (element.getId() != null)
 			imageElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, element
 					.getId());
+		if (element.getClassId() != null)
+			imageElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
+					element.getClassId());
 		return imageElement;
 	}
 	/**
-	 * Generate a paragraph (&lt;P&gt;) element from an IntroText. The
-	 * paragraph element will contain a span element that will contain the
-	 * actual text. Providing the span element provides additional flexibility
-	 * for CSS designers.
+	 * Generate a paragraph (&lt;P&gt;) element from an IntroText. The paragraph
+	 * element will contain a span element that will contain the actual text.
+	 * Providing the span element provides additional flexibility for CSS
+	 * designers.
 	 * 
 	 * <pre>
-	 *  &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+	 * 
+	 *   &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param element
@@ -375,11 +384,24 @@ public class IntroHTMLGenerator {
 	 * @return a paragraph HTMLElement
 	 */
 	private HTMLElement generateIntroText(IntroText element, int indentLevel) {
+		String spanClass = (element.getClassId() != null) ? element
+				.getClassId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
 		HTMLElement textElement = generateTextElement(
 				IIntroHTMLConstants.ELEMENT_PARAGRAPH, element.getId(),
-				IIntroHTMLConstants.SPAN_CLASS_TEXT, element.getText(),
-				indentLevel);
+				spanClass, element.getText(), indentLevel);
 		return textElement;
+	}
+	/**
+	 * @param element
+	 * @param indentLevel
+	 * @return
+	 */
+	private HTMLElement generateIntroTitle(IntroPageTitle element,
+			int indentLevel) {
+		HTMLElement titleElement = generateHeaderDiv(element.getId(), element
+				.getClassId(), IIntroHTMLConstants.ELEMENT_H1, element
+				.getTitle(), indentLevel);
+		return titleElement;
 	}
 	/**
 	 * Generate "inline" content from an IntroHTML. The content from the file
@@ -387,9 +409,11 @@ public class IntroHTMLGenerator {
 	 * as-is into a div element:
 	 * 
 	 * <pre>
-	 *  &lt;div id=&quot;attrvalue&quot; class=&quot;inline-html&quot;&gt;
-	 *  content from file specified in src attribute
-	 *  &lt;/div&gt;
+	 * 
+	 *   &lt;div id=&quot;attrvalue&quot; class=&quot;attrvalue2&quot;&gt;
+	 *   content from file specified in src attribute
+	 *   &lt;/div&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param element
@@ -405,8 +429,10 @@ public class IntroHTMLGenerator {
 		StringBuffer content = readFromFile(element.getSrc());
 		if (content != null && content.length() > 0) {
 			// Create the outer div element
+			String divClass = (element.getClassId() != null) ? element
+					.getClassId() : IIntroHTMLConstants.DIV_CLASS_INLINE_HTML;
 			HTMLElement divElement = generateDivElement(element.getId(),
-					IIntroHTMLConstants.DIV_CLASS_INLINE_HTML, indentLevel);
+					divClass, indentLevel);
 			// add the content of the specified file into the div element
 			divElement.addContent(content);
 			return divElement;
@@ -462,9 +488,11 @@ public class IntroHTMLGenerator {
 	 * <code>src</code> value.
 	 * 
 	 * <pre>
-	 *  &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
-	 *  alternative text in case the object can not be rendered
-	 *  &lt;/OBJECT&gt; 
+	 * 
+	 *   &lt;OBJECT type=&quot;text/html&quot; data=&quot;attrvalue&quot;&gt;
+	 *   alternative text in case the object can not be rendered
+	 *   &lt;/OBJECT&gt; 
+	 *  
 	 * </pre>
 	 * 
 	 * @param element
@@ -486,13 +514,18 @@ public class IntroHTMLGenerator {
 		if (element.getSrc() != null)
 			objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_DATA,
 					element.getSrc());
+		if (element.getClassId() != null)
+			objectElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
+					element.getClassId());
 		// The alternative content is added in case the browser can not render
 		// the specified content
-		if (element.getText() != null) {
+		IntroText htmlText = element.getIntroText();
+		if (htmlText != null && htmlText.getText() != null) {
+			String textClass = (htmlText.getClassId() != null) ? htmlText
+					.getClassId() : IIntroHTMLConstants.SPAN_CLASS_TEXT;
 			HTMLElement text = generateTextElement(
-					IIntroHTMLConstants.ELEMENT_PARAGRAPH, null,
-					IIntroHTMLConstants.SPAN_CLASS_TEXT, element.getText(),
-					indentLevel);
+					IIntroHTMLConstants.ELEMENT_PARAGRAPH, htmlText.getId(),
+					textClass, element.getText(), indentLevel);
 			if (text != null)
 				objectElement.addContent(text);
 		}
@@ -508,7 +541,9 @@ public class IntroHTMLGenerator {
 	 * Generates the style element that goes into HEAD:
 	 * 
 	 * <pre>
-	 *  &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+	 * 
+	 *   &lt;style type=&quot;text/css&quot;&gt;HTML, IMG { border: 0px; } &lt;/style&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param indentLevel
@@ -528,7 +563,9 @@ public class IntroHTMLGenerator {
 	 * Generates the title element and its content:
 	 * 
 	 * <pre>
-	 *  &lt;TITLE&gt;intro title&lt;/TITLE&gt;
+	 * 
+	 *   &lt;TITLE&gt;intro title&lt;/TITLE&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param title
@@ -541,14 +578,17 @@ public class IntroHTMLGenerator {
 	private HTMLElement generateTitleElement(String title, int indentLevel) {
 		HTMLElement titleElement = new FormattedHTMLElement(
 				IIntroHTMLConstants.ELEMENT_TITLE, indentLevel, false);
-		titleElement.addContent(title);
+		if (title != null)
+			titleElement.addContent(title);
 		return titleElement;
 	}
 	/**
 	 * Generates a link element that refers to a cascading style sheet (CSS):
 	 * 
 	 * <pre>
-	 *  &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
+	 * 
+	 *   &lt;LINK rel=&quot;stylesheet&quot; style=&quot;text/css&quot; href=&quot;style sheet&quot;&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param href
@@ -573,7 +613,9 @@ public class IntroHTMLGenerator {
 	 * Generate an anchor element:
 	 * 
 	 * <pre>
-	 *  &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
+	 * 
+	 *   &lt;A id=linkId class=linkClass href=linkHref&gt; &lt;/A&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param link
@@ -589,30 +631,34 @@ public class IntroHTMLGenerator {
 				IIntroHTMLConstants.ELEMENT_ANCHOR, indentLevel, true);
 		if (link.getId() != null)
 			anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, link.getId());
-		anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
-				IIntroHTMLConstants.ANCHOR_CLASS_LINK);
 		if (link.getUrl() != null)
 			anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, link
 					.getUrl());
+		if (link.getClassId() != null)
+			anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, link
+					.getClassId());
+		else
+			anchor.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS,
+					IIntroHTMLConstants.ANCHOR_CLASS_LINK);
 		return anchor;
 	}
 	/**
 	 * Generates a div block that contains a header and span element:
 	 * 
 	 * <pre>
-	 *  &lt;DIV id=divId&gt;
-	 *  &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
-	 *  &lt;/DIV&gt;
+	 * 
+	 *   &lt;DIV id=divId&gt;
+	 *   &lt;H&gt;&lt;SPAN&gt;spanContent &lt;/SPAN&gt; &lt;/H&gt;
+	 *   &lt;/DIV&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param divId
 	 *            the id of the div to create
+	 * @param divClass
+	 *            the class of the div
 	 * @param headerType
 	 *            what type of header to create (e.g., H1, H2, etc)
-	 * @param spanID
-	 *            the id of the span element, or null
-	 * @param spanClass
-	 *            the class of the span element, or null
 	 * @param spanContent
 	 *            the span content
 	 * @param indentLevel
@@ -620,13 +666,13 @@ public class IntroHTMLGenerator {
 	 *            printed
 	 * @return a div HTMLElement that contains a header
 	 */
-	private HTMLElement generateHeaderDiv(String divId, String headerType,
-			String spanID, String spanClass, String spanContent, int indentLevel) {
+	private HTMLElement generateHeaderDiv(String divId, String divClass,
+			String headerType, String spanContent, int indentLevel) {
 		// create the text element: <P><SPAN>spanContent</SPAN></P>
-		HTMLElement text = generateTextElement(headerType, spanID, spanClass,
+		HTMLElement text = generateTextElement(headerType, null, null,
 				spanContent, indentLevel + 1);
 		// create the containing div element
-		HTMLElement div = generateDivElement(divId, indentLevel);
+		HTMLElement div = generateDivElement(divId, divClass, indentLevel);
 		div.addContent(text);
 		return div;
 	}
@@ -636,7 +682,9 @@ public class IntroHTMLGenerator {
 	 * span element provides additional flexibility for CSS designers.
 	 * 
 	 * <pre>
-	 *  &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+	 * 
+	 *   &lt;P&gt;&lt;SPAN&gt;spanContent&lt;/SPAN&gt;&lt;/P&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param type
@@ -706,7 +754,9 @@ public class IntroHTMLGenerator {
 	 * Generates an IMG element:
 	 * 
 	 * <pre>
-	 *  &lt;IMG src=imageSrc&gt;
+	 * 
+	 *   &lt;IMG src=imageSrc alt=altText&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param imageSrc
@@ -716,17 +766,23 @@ public class IntroHTMLGenerator {
 	 *            printed
 	 * @return an img HTMLElement
 	 */
-	private HTMLElement generateImageElement(String imageSrc, int indentLevel) {
+	private HTMLElement generateImageElement(String imageSrc, String altText,
+			int indentLevel) {
 		HTMLElement image = new FormattedHTMLElement(
 				IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true, false);
 		image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, imageSrc);
+		if (altText == null)
+			altText = "";
+		image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ALT, altText);
 		return image;
 	}
 	/**
 	 * Generate a span element
 	 * 
 	 * <pre>
-	 *  &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
+	 * 
+	 *   &lt;SPAN class=spanClass&gt; &lt;/SPAN&gt;
+	 *  
 	 * </pre>
 	 * 
 	 * @param spanClass
