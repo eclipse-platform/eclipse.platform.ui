@@ -288,10 +288,10 @@ protected final String getToolTipText(int widgetId) {
  *
  * @param control a control from which to obtain the current font
  */
-protected void initializeDialogUnits(Control control) {
+protected void initializeDialogUnits(Control testControl) {
 	// Compute and store a font metric
-	GC gc = new GC(control);
-	gc.setFont(control.getFont());
+	GC gc = new GC(testControl);
+	gc.setFont(JFaceResources.getDialogFont());
 	fontMetrics = gc.getFontMetrics();
 	gc.dispose();
 }

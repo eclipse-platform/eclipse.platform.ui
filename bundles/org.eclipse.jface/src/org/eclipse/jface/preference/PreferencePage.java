@@ -198,12 +198,12 @@ public abstract class PreferencePage
 		GridData gd;
 		Composite content = new Composite(parent, SWT.NULL);
 		setControl(content);
-		Font font = parent.getFont();
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		content.setLayout(layout);
-		content.setFont(font);
+		//Apply the font on creation for backward compatibility
+		applyDialogFont(content);
 
 		// initialize the dialog units
 		initializeDialogUnits(content);
@@ -239,8 +239,8 @@ public abstract class PreferencePage
 			int widthHint =
 				convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			defaultsButton = new Button(buttonBar, SWT.PUSH);
-			defaultsButton.setFont(font);
 			defaultsButton.setText(labels[0]);
+			Dialog.applyDialogFont(defaultsButton);
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			data.heightHint = heightHint;
 			data.widthHint =
@@ -258,8 +258,8 @@ public abstract class PreferencePage
 			});
 
 			applyButton = new Button(buttonBar, SWT.PUSH);
-			applyButton.setFont(font);
 			applyButton.setText(labels[1]);
+			Dialog.applyDialogFont(applyButton);
 			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			data.heightHint = heightHint;
 			data.widthHint =
@@ -281,8 +281,19 @@ public abstract class PreferencePage
 			if (buttonBar.getChildren().length < 1)
 				buttonBar.dispose();
 		}
-		Dialog.applyDialogFont(content);
+		applyDialogFont(content);
 	}
+	
+	/**
+	 * Apply the dialog font to the composite and it's children
+	 * if it is set. Subclasses may override if they wish to
+	 * set the font themselves.
+	 * @param composite
+	 */
+	protected void applyDialogFont(Composite composite){
+		Dialog.applyDialogFont(composite);
+	}
+	
 	/**
 	 * Creates and returns an SWT label under the given composite.
 	 *

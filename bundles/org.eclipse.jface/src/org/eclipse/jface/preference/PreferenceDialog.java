@@ -330,7 +330,6 @@ public class PreferenceDialog
 		// Build the Page container
 		pageContainer = createPageContainer(composite);
 		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		pageContainer.setFont(parent.getFont());
 
 		// Build the separator line
 		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
