@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -73,7 +74,7 @@ public class PreferenceErrorDialog extends ErrorDialog {
 	 * Method declared on ErrorDialog.
 	 */
 	protected Image getImage() {
-		return JFaceResources.getImageRegistry().get(DLG_IMG_WARNING);
+		return getShell().getDisplay().getSystemImage(SWT.ICON_WARNING);
 	}
 }
 

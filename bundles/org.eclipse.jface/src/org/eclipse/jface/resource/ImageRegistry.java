@@ -15,7 +15,9 @@ package org.eclipse.jface.resource;
 
 import java.util.*;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -75,6 +77,29 @@ public class ImageRegistry {
 	 * @return the image, or <code>null</code> if none
 	 */
 	public Image get(String key) {
+		
+		/**
+		 * NOTE, for backwards compatibility the following images are supported
+		 * here, they should never be disposed, hence we explicitly return them 
+		 * rather then registering images that SWT will dispose.  
+		 * 
+		 * Applications should go direclty to SWT for these icons.
+		 * 
+		 * @see Display.getSystemIcon(int ID)
+		 */
+		if (key.equals(Dialog.DLG_IMG_INFO)) {
+			return Display.getCurrent().getSystemImage(SWT.ICON_INFORMATION);
+		}
+		if (key.equals(Dialog.DLG_IMG_QUESTION)) {
+			return Display.getCurrent().getSystemImage(SWT.ICON_QUESTION);
+		}
+		if (key.equals(Dialog.DLG_IMG_WARNING)) {
+			return Display.getCurrent().getSystemImage(SWT.ICON_WARNING);
+		}
+		if (key.equals(Dialog.DLG_IMG_ERROR)) {
+				return Display.getCurrent().getSystemImage(SWT.ICON_ERROR);
+		}
+		
 		Entry entry = getEntry(key);
 		if (entry == null) {
 			return null;

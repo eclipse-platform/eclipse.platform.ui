@@ -505,7 +505,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
 	 */
 	protected Image getImage() {
-		return JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
+		return getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION);
 	}
 	/**
 	 * Set the message in the message label.

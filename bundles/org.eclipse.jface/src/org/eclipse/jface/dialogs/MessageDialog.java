@@ -119,19 +119,19 @@ public class MessageDialog extends IconAndMessageDialog {
 		this.message = dialogMessage;
 		switch (dialogImageType) {
 			case ERROR : {
-				this.image = getImage(DLG_IMG_ERROR);
+				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_ERROR);
 				break;
 			}
 			case INFORMATION : {
-				this.image = getImage(DLG_IMG_INFO);
+				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_INFORMATION);
 				break;
 			}
 			case QUESTION : {
-				this.image = getImage(DLG_IMG_QUESTION);
+				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_QUESTION);
 				break;
 			}
 			case WARNING : {
-				this.image = getImage(DLG_IMG_WARNING);
+				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_WARNING);
 				break;
 			}
 		}

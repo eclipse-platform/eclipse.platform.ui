@@ -194,12 +194,12 @@ public class ErrorDialog extends IconAndMessageDialog {
 	protected Image getImage() {
 		if (status != null) {
 			if (status.getSeverity() == IStatus.WARNING)
-				return JFaceResources.getImageRegistry().get(DLG_IMG_WARNING);
+				return getShell().getDisplay().getSystemImage(SWT.ICON_WARNING);
 			if (status.getSeverity() == IStatus.INFO)
-				return JFaceResources.getImageRegistry().get(DLG_IMG_INFO);
+				return getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION);
 		}
 		//If it was not a warning or an error then return the error image
-		return JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
+		return getShell().getDisplay().getSystemImage(SWT.ICON_ERROR);
 	}
 	/**
 	 * Create this dialog's drop-down list component.
