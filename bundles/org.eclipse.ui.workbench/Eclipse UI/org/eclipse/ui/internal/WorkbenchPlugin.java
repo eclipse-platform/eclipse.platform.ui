@@ -611,15 +611,5 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			} catch (IOException e) {}
 		}
 	}
-	
-	/*
- 	 * @see Plugin#shutdown() 
- 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
-		if (this.decoratorManager != null) {
-			this.decoratorManager.shutdown();
-		}
-	}
 
 }

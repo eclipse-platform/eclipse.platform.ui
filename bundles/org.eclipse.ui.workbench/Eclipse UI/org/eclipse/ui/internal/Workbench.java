@@ -96,6 +96,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.commands.Manager;
+import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.Assert;
@@ -1519,6 +1520,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private void shutdown() {
 		WorkbenchColors.shutdown();
 		JFaceColors.disposeColors();
+		if(getDecoratorManager() != null)
+			((DecoratorManager) getDecoratorManager()).shutdown();
 	}
 
 	/**
