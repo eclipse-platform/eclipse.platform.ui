@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ant.core;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 /**
  * Represents information about a target within an Ant build file.
@@ -59,7 +63,8 @@ public class TargetInfo {
 	
 	/**
 	 * Returns the ProjectInfo of the enclosing project.
-	 * 	 * @return the project info for the enclosing project
+	 * 
+	 * @return the project info for the enclosing project
 	 */
 	public ProjectInfo getProject() {
 		return project;
@@ -67,7 +72,9 @@ public class TargetInfo {
 	
 	/**
 	 * Return the names of the targets that this target depends on.
-	 * 	 * @return the dependent names	 */
+	 * 
+	 * @return the dependent names
+	 */
 	public String[] getDependencies() {
 		return dependencies;
 	}

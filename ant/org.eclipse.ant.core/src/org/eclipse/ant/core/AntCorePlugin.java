@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ant.core;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.net.URL;
 import java.util.Arrays;
@@ -31,7 +35,8 @@ public class AntCorePlugin extends Plugin {
 	private static AntCorePlugin plugin;
 
 	/**
-	 * The preferences class for this plugin.	 */
+	 * The preferences class for this plugin.
+	 */
 	private AntCorePreferences preferences;
 
 	/**
@@ -93,7 +98,8 @@ public class AntCorePlugin extends Plugin {
 	
 	/**
 	 * Status code indicating an error occurred running a build.
-	 * @since 2.1	 */
+	 * @since 2.1
+	 */
 	public static final int ERROR_RUNNING_BUILD = 1;
 	
 	/**

@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ant.internal.core.ant;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.util.*;
 
@@ -26,11 +30,13 @@ public class ProgressBuildListener implements BuildListener {
 	private Thread currentTaskThread;
 
 	/**
-	 *  Contains the progress monitor instances for the various	 *	projects in a chain.
+	 *  Contains the progress monitor instances for the various
+	 *	projects in a chain.
 	 */
 	protected class ProjectMonitors {
 		/**
-		 *  This field is null for the main project		 */
+		 *  This field is null for the main project
+		 */
 		private Target mainTarget;
 		private IProgressMonitor mainMonitor;
 		private IProgressMonitor targetMonitor;

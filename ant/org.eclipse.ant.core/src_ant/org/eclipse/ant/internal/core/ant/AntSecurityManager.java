@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ant.internal.core.ant;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.FileDescriptor;
 import java.net.InetAddress;
@@ -19,7 +23,8 @@ import org.eclipse.ant.core.AntSecurityException;
  * if the calling thread attempts to cause the Java Virtual Machine to 
  * exit/halt.
  * Otherwise this manager just delegates to the pre-existing manager
- * passed in the constructor. */
+ * passed in the constructor.
+ */
 public class AntSecurityManager extends SecurityManager {
 
 	protected SecurityManager securityManager= null;

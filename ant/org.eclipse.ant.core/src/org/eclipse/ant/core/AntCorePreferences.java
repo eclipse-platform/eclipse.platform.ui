@@ -1,11 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ant.core;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
-This file is made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -180,7 +184,9 @@ public class AntCorePreferences {
 	 * 
 	 * Ant running through the command line tries to find tools.jar to help the
 	 * user. Try emulating the same behaviour here.
-	 *	 * @return the default set of URLs defining the Ant classpath	 */
+	 *
+	 * @return the default set of URLs defining the Ant classpath
+	 */
 	public URL[] getDefaultAntURLs() {
 		if (defaultAntURLs == null) {
 			List result = new ArrayList(3);
@@ -762,7 +768,8 @@ public class AntCorePreferences {
 	}
 
 	/**
-	 * Updates the underlying plugin preferences to the current state.	 */
+	 * Updates the underlying plugin preferences to the current state.
+	 */
 	public void updatePluginPreferences() {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
 		updateTasks(prefs);
