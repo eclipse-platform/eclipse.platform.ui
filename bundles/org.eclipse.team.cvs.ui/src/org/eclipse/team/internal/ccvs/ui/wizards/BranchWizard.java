@@ -41,6 +41,7 @@ public class BranchWizard extends Wizard {
 	
 	public BranchWizard() {
 		setNeedsProgressMonitor(true);
+		setWindowTitle(Policy.bind("BranchWizard.title"));
 	}
 	
 	public void addPages() {

@@ -67,7 +67,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	
 	public SharingWizard() {
 		setNeedsProgressMonitor(true);
-	}		
+		setWindowTitle(Policy.bind("SharingWizard.title"));
+	}	
+		
 	public void addPages() {
 		ImageDescriptor sharingImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE);
 		if (doesCVSDirectoryExist()) {
@@ -107,7 +109,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		return Policy.bind("SharingWizard.description");
 	}
 	protected String getMainPageTitle() {
-		return Policy.bind("SharingWizard.title");
+		return Policy.bind("SharingWizard.heading");
 	}
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page == autoconnectPage) return null;

@@ -40,6 +40,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	
 	public ConfigureProjectWizard() {
 		setNeedsProgressMonitor(true);
+		setWindowTitle(Policy.bind("ConfigureProjectWizard.title"));
 	}
 	
 	/*

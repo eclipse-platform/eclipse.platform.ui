@@ -37,13 +37,14 @@ public class NewLocationWizard extends Wizard {
 			section = workbenchSettings.addNewSection("NewLocationWizard");//$NON-NLS-1$
 		}
 		setDialogSettings(section);
+		setWindowTitle(Policy.bind("NewLocationWizard.title"));
 	}
 
 	/**
 	 * Creates the wizard pages
 	 */
 	public void addPages() {
-		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.title"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE));
+		mainPage = new ConfigurationWizardMainPage("repositoryPage1", Policy.bind("NewLocationWizard.heading"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE));
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}
