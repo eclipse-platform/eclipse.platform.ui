@@ -13,6 +13,19 @@ public class PluginURL extends HelpURL {
 	protected IPluginDescriptor plugin;
 	protected String file;
 	/**
+	 * document caching - dissabled if running in dev mode
+	 */
+	private static boolean cachingEnabled = true;
+	static {
+		String[] args = Platform.getCommandLineArgs();
+		for (int i = 0; i < args.length; i++) {
+			if ("-dev".equals(args[i])) {
+				cachingEnabled = false;
+				break;
+			}
+		}
+	}
+	/**
 	 * FileURL constructor comment.
 	 * @param url pluginid/file
 	 */
@@ -48,7 +61,7 @@ public class PluginURL extends HelpURL {
 		if (getValue("resultof") != null)
 			return false;
 		else
-			return true;
+			return cachingEnabled;
 	}
 	/**
 	 * Opens a stream for reading.
