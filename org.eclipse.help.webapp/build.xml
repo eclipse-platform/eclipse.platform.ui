@@ -36,9 +36,9 @@
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}"/>
 		<!-- custom addition begin -->
-		<copy file="${build.result.folder}/infocenter/eclipseurl.jar" todir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/infocenter/eclipseurl.jar" todir="${destination.temp.folder}/${full.name}/infocenter"/>
 		<!-- custom end -->
-		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
 			<fileset dir="${basedir}" includes="images/,ns4/,infocenter/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,webapp.properties,plugin.xml" excludes="src/,WEB-INF/lib/*.bin.log,WEB-INF/lib/*src.zip,WEB-INF/classes/"/>
 		</copy>
