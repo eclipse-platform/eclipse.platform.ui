@@ -82,6 +82,9 @@ if &lt;b&gt;&lt;i&gt; lightweight&lt;/i&gt;&lt;/b&gt; is false or  &lt;samp&gt;o
                <documentation>
                   a fully qualified name of a class which this decorator will be applied to. Deprecated in 2.1. Make this value part of the enablement.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="java.lang.Object"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="adaptable" type="boolean">
