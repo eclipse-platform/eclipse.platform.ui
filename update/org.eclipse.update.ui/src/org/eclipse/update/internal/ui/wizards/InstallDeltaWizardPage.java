@@ -56,8 +56,6 @@ public class InstallDeltaWizardPage extends WizardPage {
 		}
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof ISessionDelta) {
-				if (features == null)
-					initializeFeatures();
 				return (Object[]) features.get(parent);
 			}
 			return new Object[0];
@@ -152,6 +150,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		});
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		deltaViewer.getControl().setLayoutData(gd);
+		initializeFeatures();
 		deltaViewer.setInput(this);
 		setFeaturesGray();
 		dialogChanged();
@@ -177,6 +176,10 @@ public class InstallDeltaWizardPage extends WizardPage {
 			deltaViewer.setChecked(obj, !checked);
 		}
 		if (obj instanceof ISessionDelta) {
+			Object [] dfeatures = (Object[])features.get(obj);
+			for (int i=0; i<dfeatures.length; i++) {
+				deltaViewer.setChecked(dfeatures[i], checked);
+			}
 			dialogChanged();
 		}
 	}
