@@ -860,6 +860,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		//        algorithm
 		VersionedIdentifier savedVid = new VersionedIdentifier(null);
 		String savedEntry = null;
+		URL savedURL = null;
 		for (int j=0; j<sites.length; j++) {							
 			String[] plugins = sites[j].getPlugins();
 			for (int i=0; plugins!=null && i<plugins.length; i++) {
@@ -881,6 +882,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					if (vid.compareVersion(savedVid) >= 0) {
 						savedVid = vid;
 						savedEntry = plugins[i];
+						savedURL = ((SiteEntry)sites[j]).getResolvedURL();
 					}
 				}			
 			}				
@@ -898,7 +900,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 			
 		try {
-			return new URL(BootLoader.getInstallURL(),savedEntry);
+			return new URL(savedURL,savedEntry);
 		} catch(MalformedURLException e) {
 			return null;
 		}
