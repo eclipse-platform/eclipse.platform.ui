@@ -141,6 +141,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData());
 

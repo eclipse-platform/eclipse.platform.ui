@@ -115,6 +115,8 @@ public class CVSPreferencesPage
 		//GridLayout
 		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
 
 		//GridData

@@ -44,6 +44,8 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 
 		//GridLayout
 		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginHeight = 0;
 		layout.numColumns = numColumns;
 		composite.setLayout(layout);
 

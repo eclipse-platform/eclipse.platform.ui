@@ -34,7 +34,9 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		layout.numColumns = 3;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData());
