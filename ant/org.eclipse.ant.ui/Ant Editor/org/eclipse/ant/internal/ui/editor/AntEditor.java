@@ -724,7 +724,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 	}
 	
-	private int getTabSize() {
+	protected int getTabSize() {
 		IPreferenceStore preferences= getPreferenceStore();
 		return preferences.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);	
 	}
@@ -761,7 +761,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
-	private boolean isTabConversionEnabled() {
+	protected boolean isTabConversionEnabled() {
 		IPreferenceStore store= getPreferenceStore();
 		return store.getBoolean(AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
 	}

@@ -16,6 +16,9 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.ColorManager;
@@ -262,5 +265,43 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 				return new DefaultInformationControl(parent, shellStyle, style, new HTMLTextPresenter(false));
 			}
 		};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getIndentPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
+		List list= new ArrayList();
+
+		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
+				
+		int tabWidth= fEditor.getTabSize();
+		boolean useSpaces= fEditor.isTabConversionEnabled();
+		
+		for (int i= 0; i <= tabWidth; i++) {
+		    StringBuffer prefix= new StringBuffer();
+			if (useSpaces) {
+			    for (int j= 0; j + i < tabWidth; j++) {
+			    	prefix.append(' ');
+			    }
+		    	
+				if (i != 0) {
+		    		prefix.append('\t');
+				}
+			} else {    
+			    for (int j= 0; j < i; j++) {
+			    	prefix.append(' ');
+			    }
+				if (i != tabWidth) {
+		    		prefix.append('\t');
+				}
+			}
+			
+			list.add(prefix.toString());
+		}
+
+		list.add(""); //$NON-NLS-1$
+		
+		return (String[]) list.toArray(new String[list.size()]);	
 	}
 }
