@@ -86,8 +86,6 @@ public Workspace() {
 	tree.immutable();
 	treeLocked = true;
 	tree.setTreeData(newElement(IResource.ROOT));
-	
-	initializeMoveDeleteHook();
 }
 /**
  * @see IWorkspace
@@ -844,6 +842,8 @@ protected static void initializeMoveDeleteHook() {
 	}
 }
 protected IMoveDeleteHook getMoveDeleteHook() {
+	if (moveDeleteHook == null)
+		initializeMoveDeleteHook();
 	return moveDeleteHook;
 }
 /**
