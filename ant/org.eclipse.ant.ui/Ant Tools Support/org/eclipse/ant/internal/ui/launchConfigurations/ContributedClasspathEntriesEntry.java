@@ -75,26 +75,37 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(entry.getEntryURL().getPath())));
 			}
 		}
+		boolean haveToolsEntry= false;
 		for (int i = 0; i < userEntries.length; i++) {
 			IAntClasspathEntry entry = userEntries[i];
 			String path = entry.getEntryURL().getPath();
 			if (path.endsWith("tools.jar")) { //$NON-NLS-1$
-				// replace with dynamically resolved tools.jar based on
+				haveToolsEntry= true;
+				//replace with dynamically resolved tools.jar based on
 				// the JRE being used
-				IRuntimeClasspathEntry tools = getToolsJar(configuration);
-				if (tools == null) {
-					// user the global entry
-					rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(path)));
-				} else {
-					rtes.add(tools);
-				}
+				addToolsJar(configuration, rtes, path);
 			} else {
 				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(path)));
 			}
 		}
+		if (!haveToolsEntry) {
+			addToolsJar(configuration, rtes, null);
+		}
 		return (IRuntimeClasspathEntry[]) rtes.toArray(new IRuntimeClasspathEntry[rtes.size()]);
 	}
 	
+	private void addToolsJar(ILaunchConfiguration configuration, List rtes, String path) throws CoreException {
+		IRuntimeClasspathEntry tools = getToolsJar(configuration);
+		if (tools == null) {
+			if (path != null) {
+				// use the global entry
+				rtes.add(JavaRuntime.newArchiveRuntimeClasspathEntry(new Path(path)));
+			}
+		} else {
+			rtes.add(tools);
+		}
+	}
+
 	/**
 	 * Returns the tools.jar to use for this launch configuration, or <code>null</code>
 	 * if none.
