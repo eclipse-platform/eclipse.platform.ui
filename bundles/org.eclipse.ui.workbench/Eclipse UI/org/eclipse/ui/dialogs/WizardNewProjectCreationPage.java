@@ -356,8 +356,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	 * @return <code>true</code> if all controls are valid, and
 	 *   <code>false</code> if at least one is invalid
 	 */
-	protected boolean validatePage() {
-		IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
+	protected boolean validatePage() {IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 
 		String projectFieldContents = getProjectNameFieldValue();
 		if (projectFieldContents.equals("")) { //$NON-NLS-1$
@@ -386,15 +385,23 @@ public class WizardNewProjectCreationPage extends WizardPage {
 			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.locationError")); //$NON-NLS-1$
 			return false;
 		}
-		if (!useDefaults
-			&& Platform.getLocation().isPrefixOf(
-				new Path(locationFieldContents))) {
+
+		IPath projectPath = new Path(locationFieldContents);
+		if (!useDefaults && Platform.getLocation().isPrefixOf(projectPath)) {
 			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.defaultLocationError")); //$NON-NLS-1$
 			return false;
 		}
 
-		if (getProjectHandle().exists()) {
+		IProject handle = getProjectHandle();
+		if (handle.exists()) {
 			setErrorMessage(WorkbenchMessages.getString("WizardNewProjectCreationPage.projectExistsMessage")); //$NON-NLS-1$
+			return false;
+		}
+
+		IStatus locationStatus =
+			workspace.validateProjectLocation(handle, projectPath);
+		if (!locationStatus.isOK()) {
+			setErrorMessage(locationStatus.getMessage()); //$NON-NLS-1$
 			return false;
 		}
 
