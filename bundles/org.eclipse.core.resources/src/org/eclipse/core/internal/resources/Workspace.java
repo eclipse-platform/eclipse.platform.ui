@@ -850,20 +850,26 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
             if (hasTreeChanges)
                hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
 
+			OperationCanceledException cancel = null;
+			CoreException signal = null;
             if (!Policy.BACKGROUND_BUILD) {
                autoBuildJob.endTopLevel(hasTreeChanges);
                IStatus result = autoBuildJob.run(Policy.subMonitorFor(monitor, Policy.opWork));
                switch (result.getSeverity()) {
                   case IStatus.CANCEL :
-                     throw new OperationCanceledException();
+                     cancel = new OperationCanceledException();
                   case IStatus.ERROR :
                   case IStatus.WARNING :
-                     throw new CoreException(result);
+                     signal = new CoreException(result);
                }
             }
             broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
             // Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
             saveManager.snapshotIfNeeded(hasTreeChanges);
+			if (cancel != null)
+				throw cancel;
+			if (signal != null)
+				throw signal;
          } finally {
             workManager.endNotify();
             // make sure the tree is immutable because we are ending a top-level operation.
