@@ -437,6 +437,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		}
 	};
 	
+	
 	/**
 	 * MISSING
 	 */
@@ -551,8 +552,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			else if (offset < fPosition.getOffset() + fPosition.getLength())
 				fPosition.setLength(fPosition.getLength() + delta);
 		}
-
-	}
+	};
 	
 	/**
 	 * This viewer's find/replace target.
@@ -722,16 +722,56 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		 * @see IFindReplaceTargetExtension#setReplaceAllMode(boolean)
 		 */
 		public void setReplaceAllMode(boolean replaceAll) {
-			TextViewer.this.setRedraw(!replaceAll);
-//			TextViewer.this.setSequentialRewriteMode(replaceAll);
-			if (fUndoManager != null) {
-				if (replaceAll)
+			if (replaceAll) {
+				TextViewer.this.setRedraw(true);
+				TextViewer.this.startSequentialRewriteMode(false);
+				if (fUndoManager != null)
 					fUndoManager.beginCompoundChange();
-				else
+			} else {
+				TextViewer.this.setRedraw(false);
+				TextViewer.this.stopSequentialRewriteMode();
+				if (fUndoManager != null)
 					fUndoManager.endCompoundChange();
 			}
 		}
-	}
+	};
+	
+	
+	/**
+	 * The viewer's rewrite target.
+	 */
+	class RewriteTarget implements IRewriteTarget {
+		
+		/*
+		 * @see org.eclipse.jface.text.IRewriteTarget#beginCompoundChange()
+		 */
+		public void beginCompoundChange() {
+			if (fUndoManager != null)
+				fUndoManager.beginCompoundChange();
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.IRewriteTarget#endCompoundChange()
+		 */
+		public void endCompoundChange() {
+			if (fUndoManager != null)
+				fUndoManager.endCompoundChange();
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.IRewriteTarget#getDocument()
+		 */
+		public IDocument getDocument() {
+			return TextViewer.this.getDocument();
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.IRewriteTarget#setRedraw(boolean)
+		 */
+		public void setRedraw(boolean redraw) {
+			TextViewer.this.setRedraw(redraw);
+		}
+	};
 	
 		
 	/** ID for originators of view port changes */
@@ -789,6 +829,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	private int fRedrawCounter= 0;
 	/** The selection when working in non-redraw state */
 	private Point fDocumentSelection;
+	/** The viewer's rewrite target */
+	private IRewriteTarget fRewriteTarget;
+	
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -2520,7 +2563,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			fUndoManager.beginCompoundChange();
 			
 		setRedraw(false);
-		setSequentialRewriteMode(true);
+		startSequentialRewriteMode(true);
 		
 		try {
 			
@@ -2577,7 +2620,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		
 		} finally {
 			
-			setSequentialRewriteMode(false);
+			stopSequentialRewriteMode();
 			setRedraw(true);
 			
 			if (fUndoManager != null)
@@ -3035,22 +3078,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			newDocument.addPositionUpdater(fMarkPositionUpdater);			
 		}
 	}
-
-	/*
-	 * @see ITextViewerExtension#beginCompoundChange()
-	 */
-	public void beginCompoundChange() {
-		if (fUndoManager != null)
-			fUndoManager.beginCompoundChange();
-	}
-
-	/*
-	 * @see ITextViewerExtension#endCompoundChange()
-	 */
-	public void endCompoundChange() {
-		if (fUndoManager != null)
-			fUndoManager.endCompoundChange();
-	}
 	
 	/**
 	 * Informs all text listeners about the change of the viewer's redraw state.
@@ -3127,16 +3154,33 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	}
 	
 	/**
-	 * Sets the sequential rewrite mode of the viewer's document.
+	 * Starts  the sequential rewrite mode of the viewer's document.
 	 */
-	protected final void setSequentialRewriteMode(boolean rewriteMode) {
+	protected final void startSequentialRewriteMode(boolean normalized) {
 		IDocument document= getDocument();
 		if (document instanceof IDocumentExtension) {
 			IDocumentExtension extension= (IDocumentExtension) document;
-			if (rewriteMode)
-				extension.startSequentialRewrite();
-			else
-				extension.stopSequentialRewrite();
+			extension.startSequentialRewrite(normalized);
 		}
+	}
+	
+	/**
+	 * Sets the sequential rewrite mode of the viewer's document.
+	 */
+	protected final void stopSequentialRewriteMode() {
+		IDocument document= getDocument();
+		if (document instanceof IDocumentExtension) {
+			IDocumentExtension extension= (IDocumentExtension) document;
+			extension.stopSequentialRewrite();
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension#getRewriteTarget()
+	 */
+	public IRewriteTarget getRewriteTarget() {
+		if (fRewriteTarget == null)
+			fRewriteTarget= new RewriteTarget();
+		return fRewriteTarget;
 	}
 }

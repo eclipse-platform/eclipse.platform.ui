@@ -16,6 +16,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IRewriteTarget;
 
 /**
  * An action to convert line delimiters of a text editor document to a particular line delimiter.
@@ -58,17 +59,26 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 
 		try {
 
-			IDocument document= getDocument();
-			if (document != null) {
-				Shell shell= getTextEditor().getSite().getShell();
-				ConvertRunnable runnable= new ConvertRunnable(getTextEditor(), document, fLineDelimiter);
-
-				if (document.getNumberOfLines() < 40) {
-					BusyIndicator.showWhile(shell.getDisplay(), runnable);
-					
-				} else {				
-					ProgressMonitorDialog dialog= new ProgressMonitorDialog(shell);
-					dialog.run(false, true, runnable);
+			ITextEditor editor= getTextEditor();
+			if (editor == null)
+				return;
+				
+			Object adapter= editor.getAdapter(IRewriteTarget.class);
+			if (adapter instanceof IRewriteTarget) {
+				
+				IRewriteTarget target= (IRewriteTarget) adapter;
+				IDocument document= target.getDocument();
+				if (document != null) {
+					Shell shell= getTextEditor().getSite().getShell();
+					ConvertRunnable runnable= new ConvertRunnable(target, fLineDelimiter);
+	
+					if (document.getNumberOfLines() < 40) {
+						BusyIndicator.showWhile(shell.getDisplay(), runnable);
+						
+					} else {				
+						ProgressMonitorDialog dialog= new ProgressMonitorDialog(shell);
+						dialog.run(false, true, runnable);
+					}
 				}
 			}
 
@@ -85,13 +95,11 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 */
 	private static class ConvertRunnable implements IRunnableWithProgress, Runnable {
 
-		private final ITextEditor fEditor;		
-		private final IDocument fDocument;
+		private final IRewriteTarget fRewriteTarget;		
 		private final String fLineDelimiter;
 		
-		public ConvertRunnable(ITextEditor editor, IDocument document, String lineDelimiter) {
-			fEditor= editor;
-			fDocument= document;
+		public ConvertRunnable(IRewriteTarget rewriteTarget, String lineDelimiter) {
+			fRewriteTarget= rewriteTarget;
 			fLineDelimiter= lineDelimiter;	
 		}
 		
@@ -111,24 +119,24 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
-			final int lineCount= fDocument.getNumberOfLines();
+			IDocument document= fRewriteTarget.getDocument();
+			final int lineCount= document.getNumberOfLines();
 			monitor.beginTask(EditorMessages.getString("Editor.ConvertLineDelimiter.title"), lineCount); //$NON-NLS-1$
 			
-			if (fEditor instanceof ITextEditorExtension)
-				((ITextEditorExtension) fEditor).beginCompoundChange();
-				
-			if (fDocument instanceof IDocumentExtension)
-				((IDocumentExtension) fDocument).startSequentialRewrite();
+			fRewriteTarget.setRedraw(false);
+			fRewriteTarget.beginCompoundChange();
+			if (document instanceof IDocumentExtension)
+				((IDocumentExtension) document).startSequentialRewrite(true);
 			
 			try {
 				for (int i= 0; i < lineCount; i++) {
 					if (monitor.isCanceled())
 						throw new InterruptedException();
 					
-					final String delimiter= fDocument.getLineDelimiter(i);
+					final String delimiter= document.getLineDelimiter(i);
 					if (delimiter != null && delimiter.length() > 0 && !delimiter.equals(fLineDelimiter)) {
-						IRegion region= fDocument.getLineInformation(i);
-						fDocument.replace(region.getOffset() + region.getLength(), delimiter.length(), fLineDelimiter);
+						IRegion region= document.getLineInformation(i);
+						document.replace(region.getOffset() + region.getLength(), delimiter.length(), fLineDelimiter);
 					}
 
 					monitor.worked(1);
@@ -138,11 +146,11 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				throw new InvocationTargetException(e);
 
 			} finally {
-				if (fDocument instanceof IDocumentExtension)
-					((IDocumentExtension) fDocument).stopSequentialRewrite();	
 				
-				if (fEditor instanceof ITextEditorExtension)
-					((ITextEditorExtension) fEditor).endCompoundChange();
+				if (document instanceof IDocumentExtension)
+					((IDocumentExtension) document).stopSequentialRewrite();	
+				fRewriteTarget.endCompoundChange();
+				fRewriteTarget.setRedraw(true);
 				
 				monitor.done();
 			}
@@ -162,19 +170,6 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				// should not happen				
 			}
 		}
-	}
-
-	private IDocument getDocument() {
-
-		ITextEditor editor= getTextEditor();
-		if (editor == null)
-			return null;
-
-		IDocumentProvider documentProvider= editor.getDocumentProvider();
-		if (documentProvider == null)
-			return null;
-		
-		return documentProvider.getDocument(editor.getEditorInput());				
 	}
 
 	private static boolean usesLineDelimiterExclusively(IDocument document, String lineDelimiter) {

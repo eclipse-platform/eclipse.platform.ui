@@ -79,6 +79,7 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IMarkRegionTarget;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -602,7 +603,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Internal action to show the editor's ruler context menu (accessibility).
 	 */		
-	private class ShowRulerContextMenuAction extends Action {
+	class ShowRulerContextMenuAction extends Action {
 
 		/*
 		 * @see IAction#run()
@@ -2734,6 +2735,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (ITextOperationTarget.class.equals(required))
 			return (fSourceViewer == null ? null : fSourceViewer.getTextOperationTarget());
+			
+		if (IRewriteTarget.class.equals(required)) {
+			if (fSourceViewer instanceof ITextViewerExtension) {
+				ITextViewerExtension extension= (ITextViewerExtension) fSourceViewer;
+				return extension.getRewriteTarget();
+			}
+			return null;
+		}
 		
 		return super.getAdapter(required);
 	}
@@ -3063,21 +3072,4 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void removeRulerContextMenuListener(IMenuListener listener) {
 		fRulerContextMenuListeners.remove(listener);
 	}
-
-	/*
-	 * @see ITextEditorExtension#beginCompoundChange()
-	 */
-	public void beginCompoundChange() {
-		if (fSourceViewer instanceof ITextViewerExtension)
-			((ITextViewerExtension) fSourceViewer).beginCompoundChange();
-	}
-
-	/*
-	 * @see ITextEditorExtension#endCompoundChange()
-	 */
-	public void endCompoundChange() {
-		if (fSourceViewer instanceof ITextViewerExtension)
-			((ITextViewerExtension) fSourceViewer).endCompoundChange();
-	}
-
 }

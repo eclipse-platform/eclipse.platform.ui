@@ -42,11 +42,13 @@ public class Document extends AbstractDocument {
 	}
 	
 	/*
-	 * @see IDocumentExtension#startSequentialRewrite()
+	 * @see IDocumentExtension#startSequentialRewrite(boolean)
 	 */
-	public void startSequentialRewrite() {
-		ITextStore store= new SequentialRewriteTextStore(getStore());
-		setTextStore(store);
+	public void startSequentialRewrite(boolean normalized) {
+		if (normalized) {
+			ITextStore store= new SequentialRewriteTextStore(getStore());
+			setTextStore(store);
+		}
 	}
 	
 	/*

@@ -1107,9 +1107,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	}
 	
 	/*
-	 * @see IDocumentExtension#startSequentialRewrite()
+	 * @see IDocumentExtension#startSequentialRewrite(boolean)
 	 */
-	public void startSequentialRewrite() {
+	public void startSequentialRewrite(boolean normalized) {
 	}
 
 	/*

@@ -1,11 +1,11 @@
 package org.eclipse.ui.texteditor;
 
-import org.eclipse.jface.action.IMenuListener;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
+import org.eclipse.jface.action.IMenuListener;
 
 
 /**
@@ -37,19 +37,5 @@ public interface ITextEditorExtension {
 	 * Removes a ruler context menu listener from the editor.
 	 */
 	void removeRulerContextMenuListener(IMenuListener listener);
-
-	/**
-	 * Signals the undo manager that all subsequent changes until
-	 * <code>endCompoundChange</code> is called are to be undone in one piece.
-	 */
-	void beginCompoundChange();
-	
-	/**
-	 * Signals the undo manager that the sequence of changes which started with 
-	 * <code>beginCompoundChange</code> has been finished. All subsequent changes
-	 * are considered to be individually undoable.
-	 */
-	void endCompoundChange();
-
 }
 
