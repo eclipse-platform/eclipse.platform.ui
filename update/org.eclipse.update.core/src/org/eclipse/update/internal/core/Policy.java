@@ -1,93 +1,91 @@
 package org.eclipse.update.internal.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
-import java.util.*;
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-	public class Policy {
-	private static ResourceBundle bundle;
-	private static String bundleName = "org.eclipse.update.internal.core.messages"; //$NON-NLS-1$
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
-	static {
-		relocalize();
+public class Policy {
+	protected static ResourceBundle bundle = null;
+
+	/**
+	 * Creates a NLS catalog for the given locale.
+	 */
+	public static void localize(String bundleName) {
+		bundle = ResourceBundle.getBundle(bundleName);
 	}
-
-/**
- * Lookup the message with the given ID in this catalog 
- */
-public static String bind(String id) {
-	return bind(id, (String[])null);
-}
-/**
- * Lookup the message with the given ID in this catalog and bind its
- * substitution locations with the given string.
- */
-public static String bind(String id, String binding) {
-	return bind(id, new String[] {binding});
-}
-/**
- * Lookup the message with the given ID in this catalog and bind its
- * substitution locations with the given strings.
- */
-public static String bind(String id, String binding1, String binding2) {
-	return bind(id, new String[] {binding1, binding2});
-}
-
-/**
- * Lookup the message with the given ID in this catalog and bind its
- * substitution locations with the given string values.
- */
-public static String bind(String id, String[] bindings) {
-	if (id == null)
-		return Policy.bind("Policy.NoMessageAvailable"); //$NON-NLS-1$
-	String message = null;
-	try {
-		message = bundle.getString(id);
-	} catch (MissingResourceException e) {
-		// If we got an exception looking for the message, fail gracefully by just returning
-		// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-		return Policy.bind("Policy.MissingMessage", id , bundleName); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	/**
+	 * Lookup the message with the given ID in this catalog and bind its
+	 * substitution locations with the given string.
+	 */
+	public static String bind(String id, String binding) {
+		return bind(id, new String[] { binding });
 	}
-	if (bindings == null)
-		return message;
-	int length = message.length();
-	int start = -1;
-	int end = length;
-	StringBuffer output = new StringBuffer(80);
-	while (true) {
-		if ((end = message.indexOf('{', start)) > -1) {
-			output.append(message.substring(start + 1, end));
-			if ((start = message.indexOf('}', end)) > -1) {
-				int index = -1;
-				try {
-					index = Integer.parseInt(message.substring(end + 1, start));
-					output.append(bindings[index]);
-				} catch (NumberFormatException nfe) {
-					output.append(message.substring(end + 1, start + 1));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					output.append("{"+Policy.bind("Policy.Missing", Integer.toString(index) )+"}"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-				}
-			} else {
-				output.append(message.substring(end, length));
-				break;
-			}
-		} else {
-			output.append(message.substring(start + 1, length));
-			break;
+	
+	/**
+	 * Lookup the message with the given ID in this catalog and bind its
+	 * substitution locations with the given strings.
+	 */
+	public static String bind(String id, String binding1, String binding2) {
+		return bind(id, new String[] { binding1, binding2 });
+	}
+	
+	/**
+	 * Gets a string from the resource bundle. We don't want to crash because of a missing String.
+	 * Returns the key if not found.
+	 */
+	public static String bind(String key) {
+		try {
+			return bundle.getString(key);
+		} catch (MissingResourceException e) {
+			return key;
+		} catch (NullPointerException e) {
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-	return output.toString();
+	
+	/**
+	 * Gets a string from the resource bundle and binds it with the given arguments. If the key is 
+	 * not found, return the key.
+	 */
+	public static String bind(String key, Object[] args) {
+		try {
+			return MessageFormat.format(bind(key), args);
+		} catch (MissingResourceException e) {
+			return key;
+		} catch (NullPointerException e) {
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
+	/**
+	 * Progress monitor helpers
+	 */
+	public static void checkCanceled(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			throw new OperationCanceledException();
+	}
+	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		return monitor;
+	}
+	
+	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
+		if (monitor == null)
+			return new NullProgressMonitor();
+		if (monitor instanceof NullProgressMonitor)
+			return monitor;
+		return new SubProgressMonitor(monitor, ticks);
+	}
 }
-
-/**
- * Creates a NLS catalog for the given locale.
- */
-public static void relocalize() {
-	bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
-}
-}
-
-
