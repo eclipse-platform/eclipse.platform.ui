@@ -70,6 +70,11 @@ public abstract class TitleAreaDialogHeader {
 
 	// Space between an image and a label
 	protected static final int H_GAP_IMAGE = 5;
+	
+	static {
+		ImageRegistry reg = JFaceResources.getImageRegistry();
+		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_banner.gif")); //$NON-NLS-1$
+	}
 
 	/**
 	* Create a new instance of the receiver.
@@ -375,7 +380,7 @@ public abstract class TitleAreaDialogHeader {
 		parent.setBackground(background);
 
 		// Dialog image @ right
-		titleImage = new Label(parent, SWT.CENTER);
+		titleImage = new Label(parent, SWT.RIGHT);
 		titleImage.setBackground(background);
 		titleImage.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
 

@@ -25,10 +25,6 @@ import sun.security.action.GetBooleanAction;
  */
 public class TitleAndImageHeader extends TitleAreaDialogHeader {
 
-	static {
-		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_banner.gif")); //$NON-NLS-1$
-	}
 
 	private Label titleLabel;
 
