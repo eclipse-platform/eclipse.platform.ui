@@ -11,6 +11,7 @@ import java.util.Date;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -588,9 +589,9 @@ public class ResourceSyncInfo {
 	 * @throws CVSException
 	 */
 	public static boolean isBinary(byte[] syncBytes)  throws CVSException {
-		// todo: can be optimized
 		if (syncBytes == null) return false;
-		return getKeywordMode(syncBytes).isBinary();
+		String mode = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 4, false);
+		return Command.KSUBST_BINARY.equals(mode);
 	}
 	
 	/**
@@ -853,6 +854,21 @@ public class ResourceSyncInfo {
 		String timestamp = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 3, false);
 		int syncType = getSyncType(timestamp);
 		return syncType == TYPE_MERGED || syncType == TYPE_MERGED_WITH_CONFLICTS;
+	}
+
+	/**
+	 * @param modTime
+	 * @param b
+	 * @return byte[]
+	 */
+	public static byte[] setTimeStamp(byte[] syncBytes, Date timeStamp, boolean merged) throws CVSException {
+		String timeStampString;
+		if (merged) {
+			timeStampString = TIMESTAMP_MERGED;
+		} else {
+			timeStampString = CVSDateFormatter.dateToEntryLine(timeStamp);
+		}
+		return setSlot(syncBytes, 3, timeStampString.getBytes());
 	}
 
 }
