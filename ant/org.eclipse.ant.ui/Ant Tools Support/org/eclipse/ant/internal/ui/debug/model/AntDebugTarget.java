@@ -15,8 +15,6 @@ import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -124,8 +122,9 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 				if (buildFilePath != null) {
 					IMarker marker = breakpoint.getMarker();
 					if (marker != null) {
-						IPath p = new Path(buildFilePath);
-						return marker.getResource().getLocation().equals(p);
+						//need to consider all breakpoints as no way to tell which set
+					    //or buildfiles will be executed (ant task)
+					    return true;
 					}
 				}
 			} catch (CoreException e) {
