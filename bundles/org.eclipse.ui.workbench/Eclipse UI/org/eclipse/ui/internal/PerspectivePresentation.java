@@ -67,6 +67,10 @@ public class PerspectivePresentation {
 			}
 			final LayoutPart part = (LayoutPart)draggedObject;
 
+			if (part.getWorkbenchWindow() != page.getWorkbenchWindow()) {
+				return null;
+			}
+			
 			return new AbstractDropTarget() {
 				public void drop() {
 				
