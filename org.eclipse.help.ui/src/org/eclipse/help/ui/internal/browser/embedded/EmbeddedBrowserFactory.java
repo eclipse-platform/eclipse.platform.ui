@@ -28,7 +28,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	 */
 	public boolean isAvailable() {
 		if (!System.getProperty("os.name").startsWith("Win")
-			/*&& !System.getProperty("os.name").startsWith("Linux")*/) {
+			&& !System.getProperty("os.name").startsWith("Linux")) {
 			return false;
 		}
 		if (!tested) {

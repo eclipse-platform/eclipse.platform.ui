@@ -126,7 +126,7 @@ public class CurrentBrowser implements IBrowser {
 	private void checkDefaultAdapter() {
 		if (browserAdapterId
 			!= BrowserManager.getInstance().getCurrentBrowserID()) {
-			newBrowserAdapter = BrowserManager.getInstance().createBrowser();
+			newBrowserAdapter = BrowserManager.getInstance().createBrowser(true);
 			newBrowserAdapterId =
 				BrowserManager.getInstance().getCurrentBrowserID();
 		}

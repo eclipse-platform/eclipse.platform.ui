@@ -35,4 +35,7 @@ public class BrowserDescriptor {
 	public IBrowserFactory getFactory() {
 		return factory;
 	}
+	public boolean isExternal(){
+		return !"org.eclipse.help.ui.embeddedbrowser".equals(getID());
+	}
 }

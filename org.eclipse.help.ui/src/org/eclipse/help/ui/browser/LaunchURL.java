@@ -72,7 +72,7 @@ public class LaunchURL
 		if (SWT.getPlatform().equals("win32")) {
 			Program.launch(url);
 		} else {
-			IBrowser browser = BrowserManager.getInstance().createBrowser();
+			IBrowser browser = BrowserManager.getInstance().createBrowser(false);
 			try {
 				browser.displayURL(url);
 			} catch (Exception e) {

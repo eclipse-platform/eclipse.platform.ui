@@ -25,6 +25,7 @@ public class BrowserManager {
 	private BrowserDescriptor currentBrowserDesc;
 	private BrowserDescriptor defaultBrowserDesc;
 	private BrowserDescriptor[] browsersDescriptors;
+	private BrowserDescriptor internalBrowserDesc;
 	private Collection browsers = new ArrayList();
 	/**
 	 * Private Constructor
@@ -176,11 +177,16 @@ public class BrowserManager {
 				if (!(adapter instanceof IBrowserFactory))
 					continue;
 				if (((IBrowserFactory) adapter).isAvailable()) {
-					bDescriptors.add(
-						new BrowserDescriptor(
+					BrowserDescriptor descriptor = new BrowserDescriptor(
 							id,
 							label,
-							(IBrowserFactory) adapter));
+							(IBrowserFactory) adapter);
+					if(descriptor.isExternal()){
+					bDescriptors.add(
+						descriptor);
+					}else{
+						internalBrowserDesc = descriptor;
+					}
 				}
 			} catch (CoreException ce) {
 			}
@@ -264,19 +270,33 @@ public class BrowserManager {
 	/**
 	 * Creates web browser
 	 */
-	public IBrowser createBrowser() {
+	public IBrowser createBrowser(boolean forceExternal) {
 		if (!initialized) {
 			init();
 		}
-		return new CurrentBrowser(
-			createBrowserAdapter(),
-			getCurrentBrowserID());
+		if (forceExternal)
+			return createBrowserAdapter(forceExternal);
+		else
+			return new CurrentBrowser(createBrowserAdapter(forceExternal),
+					getCurrentBrowserID());
 	}
 	/**
 	 * Creates web browser
 	 */
-	private IBrowser createBrowserAdapter() {
-		IBrowser browser = currentBrowserDesc.getFactory().createBrowser();
+	// TODO deprecate createBrowser(void)
+	public IBrowser createBrowser() {
+		return createBrowser(true);
+	}
+	/**
+	 * Creates web browser
+	 */
+	private IBrowser createBrowserAdapter(boolean forceExternal) {
+		IBrowser browser = null;
+		if(! forceExternal && internalBrowserDesc != null){
+			browser = internalBrowserDesc.getFactory().createBrowser();
+		}else{
+			browser = currentBrowserDesc.getFactory().createBrowser();
+		}
 		browsers.add(browser);
 		return browser;
 	}

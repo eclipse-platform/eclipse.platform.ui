@@ -33,6 +33,7 @@ public class ContextHelpDialog {
 	private Color foregroundColour = null;
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
+	protected Shell parentShell;
 	protected Shell shell;
 	protected String infopopText;
 
@@ -59,10 +60,26 @@ public class ContextHelpDialog {
 	ContextHelpDialog(IContext context, int x, int y) {
 		this.context = context;
 		Display display = Display.getCurrent();
+		if(display == null){
+			return;
+		}
 		backgroundColour = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		foregroundColour = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		linkColour = display.getSystemColor(SWT.COLOR_BLUE);
-		shell = new Shell(display.getActiveShell(), SWT.NONE);
+		parentShell = display.getActiveShell();
+
+		if(parentShell != null){
+			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
+			if (HelpUIPlugin.DEBUG_INFOPOP) {
+				System.out
+						.println("ContextHelpDialog.ContextHelpDialog(): ParentShell: "
+								+ shell.toString()
+								+ " is "
+								+ (isModal ? "modal" : "modeless"));
+			}
+		}
+
+		shell = new Shell(parentShell, SWT.NONE);
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println(
 				"ContextHelpDialog.ContextHelpDialog(): Shell is:"
@@ -259,7 +276,7 @@ public class ContextHelpDialog {
 		if (HelpUIPlugin.DEBUG_INFOPOP) {
 			System.out.println("ContextHelpDialog.launchLinks(): closed shell");
 		}
-		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic);
+		BaseHelpSystem.getHelpDisplay().displayHelp(context, selectedTopic, isParentModal());
 	}
 	public synchronized void open() {
 		try {
@@ -350,5 +367,11 @@ public class ContextHelpDialog {
 			return false;
 		}
 	}
-
+	private boolean isParentModal(){
+		if(parentShell != null){
+			boolean isModal = 0 < (parentShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
+			return isModal;
+		}
+		return false;
+	}
 }

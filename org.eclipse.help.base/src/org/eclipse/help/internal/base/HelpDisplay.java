@@ -34,7 +34,7 @@ public class HelpDisplay {
 	/**
 	 * Displays help.
 	 */
-	public void displayHelp() {
+	public void displayHelp(boolean forceExternal) {
 		// Do not start help view if documentaton is not available, display error
 		if (HelpSystem.getTocs().length == 0) {
 			// There is no documentation
@@ -44,7 +44,7 @@ public class HelpDisplay {
 			return;
 		}
 
-		displayHelpURL(null);
+		displayHelpURL(null, forceExternal);
 	}
 
 	/**
@@ -58,13 +58,13 @@ public class HelpDisplay {
 	 *  is valid.
 	 * </ul>
 	 */
-	public void displayHelpResource(String href) {
+	public void displayHelpResource(String href, boolean forceExternal) {
 		// check if this is a toc
 		IToc toc = HelpPlugin.getTocManager().getToc(href, Platform.getNL());
 		if (toc != null)
 			try {
 				displayHelpURL(
-					"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"));
+					"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"), forceExternal);
 			} catch (UnsupportedEncodingException uee) {
 			} else if (
 				href != null
@@ -73,19 +73,19 @@ public class HelpDisplay {
 						|| href.startsWith("topic=")
 						|| href.startsWith(
 							"contextId="))) { // assume it is a query string
-			displayHelpURL(href);
+			displayHelpURL(href, forceExternal);
 		} else { // assume this is a topic
 			if (getNoframesURL(href) == null) {
 				try {
-					displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"));
+					displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"), forceExternal);
 				} catch (UnsupportedEncodingException uee) {
 				}
 			} else if (href.startsWith("jar:file:")) {
 				// topic from a jar to display without frames
 				displayHelpURL(
-					getBaseURL() + "nftopic/" + getNoframesURL(href));
+					getBaseURL() + "nftopic/" + getNoframesURL(href), forceExternal);
 			} else {
-				displayHelpURL(getNoframesURL(href));
+				displayHelpURL(getNoframesURL(href), forceExternal);
 			}
 		}
 	}
@@ -95,7 +95,7 @@ public class HelpDisplay {
 	 * @param topic topic to be displayed by the help browse
 	 * @param relatedTopics topics that will populate related topics view
 	 */
-	public void displayHelp(IContext context, IHelpResource topic) {
+	public void displayHelp(IContext context, IHelpResource topic, boolean forceExternal) {
 		if (context == null || topic == null || topic.getHref() == null)
 			return;
 		String topicURL = getTopicURL(topic.getHref());
@@ -107,16 +107,16 @@ public class HelpDisplay {
 						+ URLEncoder.encode(getContextID(context), "UTF-8")
 						+ "&topic="
 						+ URLEncoder.encode(topicURL, "UTF-8");
-				displayHelpURL(url);
+				displayHelpURL(url, forceExternal);
 			} catch (UnsupportedEncodingException uee) {
 			}
 
 		} else if (topicURL.startsWith("jar:file:")) {
 			// topic from a jar to display without frames
 			displayHelpURL(
-				getBaseURL() + "nftopic/" + getNoframesURL(topicURL));
+				getBaseURL() + "nftopic/" + getNoframesURL(topicURL), forceExternal);
 		} else {
-			displayHelpURL(getNoframesURL(topicURL));
+			displayHelpURL(getNoframesURL(topicURL), forceExternal);
 		}
 	}
 	/**
@@ -125,7 +125,7 @@ public class HelpDisplay {
 	 * @param query search query in URL format key=value&key=value
 	 * @param topic selected from the search results
 	 */
-	public void displaySearch(String searchQuery, String topic) {
+	public void displaySearch(String searchQuery, String topic, boolean forceExternal) {
 		if (searchQuery == null || topic == null)
 			return;
 		if (getNoframesURL(topic) == null) {
@@ -135,35 +135,35 @@ public class HelpDisplay {
 						+ searchQuery
 						+ "&topic="
 						+ URLEncoder.encode(getTopicURL(topic), "UTF-8");
-				displayHelpURL(url);
+				displayHelpURL(url, forceExternal);
 			} catch (UnsupportedEncodingException uee) {
 			}
 
 		} else {
-			displayHelpURL(getNoframesURL(topic));
+			displayHelpURL(getNoframesURL(topic), forceExternal);
 		}
 	}
 	/**
 	 * Displays the specified url.
 	 * The url can contain query parameters to identify how help displays the document
 	 */
-	private void displayHelpURL(String helpURL) {
+	private void displayHelpURL(String helpURL, boolean forceExternal) {
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			return;
 		}
 
 		try {
 			if (helpURL == null || helpURL.length() == 0) {
-				BaseHelpSystem.getHelpBrowser().displayURL(getFramesetURL());
+				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(getFramesetURL());
 			} else if (
 				helpURL.startsWith("tab=")
 					|| helpURL.startsWith("toc=")
 					|| helpURL.startsWith("topic=")
 					|| helpURL.startsWith("contextId=")) {
-				BaseHelpSystem.getHelpBrowser().displayURL(
+				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(
 					getFramesetURL() + "?" + helpURL);
 			} else {
-				BaseHelpSystem.getHelpBrowser().displayURL(helpURL);
+				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(helpURL);
 			}
 		} catch (Exception e) {
 			BaseHelpSystem.getDefaultErrorUtil().displayError(

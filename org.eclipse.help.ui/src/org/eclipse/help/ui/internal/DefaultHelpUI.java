@@ -12,6 +12,8 @@ package org.eclipse.help.ui.internal;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.swt.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.*;
 
 /**
@@ -37,7 +39,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 * Displays help.
 	 */
 	public void displayHelp() {
-		BaseHelpSystem.getHelpDisplay().displayHelp();
+		BaseHelpSystem.getHelpDisplay().displayHelp(useExternalBrowser());
 	}
 	/**
 	 * Displays a help resource specified as a url. 
@@ -51,7 +53,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	 * </ul>
 	 */
 	public void displayHelpResource(String href) {
-		BaseHelpSystem.getHelpDisplay().displayHelpResource(href);
+		BaseHelpSystem.getHelpDisplay().displayHelpResource(href, useExternalBrowser());
 	}
 	/**
 	 * Displays context-sensitive help for specified context
@@ -79,5 +81,15 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return false;
 		}
 		return f1Dialog.isShowing();
+	}
+	private boolean useExternalBrowser(){
+		Display display = Display.getCurrent();
+		if(display != null){
+			Shell activeShell = display.getActiveShell();
+			if(activeShell != null){
+				return 0 < (activeShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL));
+			}
+		}
+		return false;
 	}
 }

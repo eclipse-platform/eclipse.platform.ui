@@ -37,8 +37,6 @@ public class EmbeddedBrowser {
 	private static String productImageURL;
 	private Image shellImage;
 	Shell shell;
-	// TODO browser / button switch
-	// Button webBrowser;
 	Browser webBrowser;
 	private Preferences store;
 	int x, y, w, h;
@@ -59,10 +57,12 @@ public class EmbeddedBrowser {
 		Image shellImg = null;
 		try {
 			productImageURL = getProductImageURL();
+			if(productImageURL !=null){
 			shellImg =
 				ImageDescriptor
 					.createFromURL(new URL(productImageURL))
 					.createImage();
+			}
 		} catch (MalformedURLException mue) {
 			if (!"".equals(productImageURL)) {
 				System.out.println("Invalid URL of product image.");
@@ -112,16 +112,13 @@ public class EmbeddedBrowser {
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		shell.setLayout(layout);
-		// TODO browser / button switch
 		webBrowser = new Browser(shell, SWT.NONE);
-		//webBrowser = new Button(shell, SWT.PUSH);
 		
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
 		data.grabExcessVerticalSpace = true;
 		webBrowser.setLayoutData(data);
-		// TODO browser / button switch
-		//webBrowser.setUrl("about:blank");
+		webBrowser.setUrl("about:blank");
 		
 		// use saved location and size
 		x = store.getInt(BROWSER_X);
@@ -139,7 +136,6 @@ public class EmbeddedBrowser {
 		shell.setSize(w, h);
 		if (store.getBoolean(BROWSER_MAXIMIZED))
 			shell.setMaximized(true);
-		// TODO browser / button switch
 		webBrowser.addOpenWindowListener(new OpenWindowListener() {
 			/*
 			 * (non-Javadoc)
@@ -172,9 +168,7 @@ public class EmbeddedBrowser {
 			shell.dispose();
 	}
 	public void displayUrl(String url) {
-		// TODO browser / button switch
 		 webBrowser.setUrl(url);
-		// webBrowser.setText(url);
 			makeVisible();
 	}
 		private void makeVisible() {

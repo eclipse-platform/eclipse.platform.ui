@@ -42,6 +42,7 @@ public final class BaseHelpSystem {
 	private boolean webappStarted = false;
 	private IErrorUtil defaultErrorMessenger;
 	private IBrowser browser;
+	private IBrowser internalBrowser;
 	private HelpDisplay helpDisplay = null;
 	private boolean webappRunning = false;
 
@@ -89,11 +90,18 @@ public final class BaseHelpSystem {
 		return wsmgr;
 	}
 
-	public static synchronized IBrowser getHelpBrowser() {
-		if (getInstance().browser == null)
-			getInstance().browser =
-				BrowserManager.getInstance().createBrowser();
-		return getInstance().browser;
+	public static synchronized IBrowser getHelpBrowser(boolean forceExternal) {
+		if (!forceExternal) {
+			if (getInstance().internalBrowser == null)
+				getInstance().internalBrowser = BrowserManager.getInstance()
+						.createBrowser(forceExternal);
+			return getInstance().internalBrowser;
+		} else {
+			if (getInstance().browser == null)
+				getInstance().browser = BrowserManager.getInstance()
+						.createBrowser(forceExternal);
+			return getInstance().browser;
+		}
 	}
 
 	public static synchronized HelpDisplay getHelpDisplay() {

@@ -114,9 +114,9 @@ public class ControlServlet extends HttpServlet {
 	private void displayHelp(HttpServletRequest req) {
 		String href = req.getParameter("href");
 		if (href != null) {
-			helpDisplay.displayHelpResource(href);
+			helpDisplay.displayHelpResource(href, false);
 		} else {
-			helpDisplay.displayHelp();
+			helpDisplay.displayHelp(false);
 		}
 	}
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.ui.internal.util.*;
@@ -101,9 +100,5 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 				HelpBasePlugin.setActivitySupport(new HelpActivitySupport(workbench));
 			}
 		}
-	}
-
-	public IBrowser getHelpBrowser() {
-		return BaseHelpSystem.getHelpBrowser();
 	}
 }
