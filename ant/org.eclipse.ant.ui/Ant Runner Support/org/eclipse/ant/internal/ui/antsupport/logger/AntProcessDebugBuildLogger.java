@@ -193,13 +193,17 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
 	 */
 	public void getProperties() {
+		if (!fAntDebugTarget.isSuspended()) {
+			return;
+		}
 	    StringBuffer propertiesRepresentation= new StringBuffer();
 	    if (!fTasks.isEmpty()) {
 	        AntDebugUtil.marshallProperties(propertiesRepresentation, ((Task)fTasks.peek()).getProject(), fInitialProperties, fProperties, true);
 	        fProperties= ((Task)fTasks.peek()).getProject().getProperties();
 	    }
-	    
-	    ((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
+		if (fAntDebugTarget.getThreads().length > 0) {
+			((AntThread) fAntDebugTarget.getThreads()[0]).newProperties(propertiesRepresentation.toString());
+		}
 	}
 
 	/* (non-Javadoc)
