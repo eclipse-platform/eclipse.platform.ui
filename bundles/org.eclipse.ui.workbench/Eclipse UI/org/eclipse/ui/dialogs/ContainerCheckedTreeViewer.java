@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.dialogs;
+package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
 
@@ -27,10 +27,8 @@ import org.eclipse.swt.widgets.Widget;
  * CheckboxTreeViewer with special behaviour of the checked / gray state on 
  * container (non-leaf) nodes:
  * The grayed state is used to visualize the checked state of its children.
- * Containers are checked and non-gary if all contained leafs are checked. The
+ * Containers are checked and non-gray if all contained leafs are checked. The
  * container is grayed if some but not all leafs are checked.
- * @deprecated This class has been promoted to API. Use ContainerCheckedTreeViewer
- * in org.eclipse.ui.dialogs.
  */
 public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
@@ -96,7 +94,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
      */
     private void initializeItem(TreeItem item) {
         if (item.getChecked() && !item.getGrayed()) {
-            updateChildrenItems((TreeItem) item);
+            updateChildrenItems(item);
         }
     }
 
@@ -136,8 +134,9 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         }
     }
 
-    /*
-     * @see ICheckable#setChecked(Object, boolean)
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ICheckable#setChecked(java.lang.Object, boolean)
      */
     public boolean setChecked(Object element, boolean state) {
         if (super.setChecked(element, state)) {
@@ -147,8 +146,9 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         return false;
     }
 
-    /*
-     * @see CheckboxTreeViewer#setCheckedElements(Object[])
+ 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setCheckedElements(java.lang.Object[])
      */
     public void setCheckedElements(Object[] elements) {
         super.setCheckedElements(elements);
@@ -157,8 +157,9 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         }
     }
 
-    /*
-     * @see AbstractTreeViewer#setExpanded(Item, boolean)
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.AbstractTreeViewer#setExpanded(org.eclipse.swt.widgets.Item, boolean)
      */
     protected void setExpanded(Item item, boolean expand) {
         super.setExpanded(item, expand);
@@ -167,8 +168,9 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         }
     }
 
-    /*
-     * @see CheckboxTreeViewer#getCheckedElements()
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.CheckboxTreeViewer#getCheckedElements()
      */
     public Object[] getCheckedElements() {
         Object[] checked = super.getCheckedElements();
@@ -190,6 +192,11 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
         return result.toArray();
     }
 
+	/**
+	 * Recursively add the filtered children of element to the result.
+	 * @param element
+	 * @param result
+	 */
     private void collectChildren(Object element, ArrayList result) {
         Object[] filteredChildren = getFilteredChildren(element);
         for (int i = 0; i < filteredChildren.length; i++) {
