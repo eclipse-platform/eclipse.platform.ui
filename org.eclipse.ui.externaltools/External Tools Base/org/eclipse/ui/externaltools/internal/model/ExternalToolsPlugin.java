@@ -133,6 +133,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_MIGRATION, true);
+		prefs.setDefault(IPreferenceConstants.SHOW_CONSOLE_FOR_BUILDERS, true);
 		
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_ERROR_RGB, new RGB(255, 0, 0)); // red - exactly the same as debug Consol
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_WARNING_RGB, new RGB(255, 100, 0)); // orange
