@@ -130,7 +130,7 @@ public class GapTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#get
+	 * @see ITextStore#get(int)
 	 */
 	public char get(int offset) {
 		
@@ -142,7 +142,7 @@ public class GapTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#get
+	 * @see ITextStore#get(int, int)
 	 */
 	public String get(int offset, int length) {
 
@@ -166,7 +166,7 @@ public class GapTextStore implements ITextStore {
 	}
 	
 	/*
-	 * @see ITextStore#getLength
+	 * @see ITextStore#getLength()
 	 */
 	public int getLength() {
 		int length= fGapEnd - fGapStart;
@@ -175,7 +175,7 @@ public class GapTextStore implements ITextStore {
 	
 	
 	/*
-	 * @see ITextStore#replace
+	 * @see ITextStore#replace(int, int, String)
 	 */
 	public void replace(int offset, int length, String text) {
 		
@@ -214,7 +214,7 @@ public class GapTextStore implements ITextStore {
 	 * Sets the content to <code>text</code> and removes the gap
 	 * since there are no sensible predictions about 
 	 * where the next change will occur.
-	 * @see ITextStore#set
+	 * @see ITextStore#set(String)
 	 */
 	public void set(String text) {
 		

@@ -39,7 +39,10 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	
 	/** Caches the currently investigated position */
 	protected Position fPosition;
-	/** Remembers the original state of the investigated position */
+	/** 
+	 * Remembers the original state of the investigated position
+	 * @since 2.1
+	 */
 	protected Position fOriginalPosition= new Position(0, 0);
 	/** Caches the offset of the replaced text */
 	protected int fOffset;

@@ -13,12 +13,14 @@ package org.eclipse.jface.text;
 
 
 /**
- * Default document implementation. Uses a gap text store as text store and
- * installs a line tracker considering the following strings as line delimiters
+ * Default document implementation. Uses a <code>GapTextStore</code> as default
+ * text store and a <code>SequentialRewriteTextStore</code> when in sequential
+ * rewrite mode. The used line tracker considers the following strings as line delimiters
  * "\n", "\r", "\r\n". The document is ready to use. It has a default position
  * category for which a default position updater is installed.
  *
- * @see GapTextStore
+ * @see org.eclipse.jface.text.GapTextStore
+ * @see org.eclipse.jface.text.SequentialRewriteTextStore
  */
 public class Document extends AbstractDocument {
 	

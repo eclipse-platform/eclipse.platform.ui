@@ -14,9 +14,14 @@ package org.eclipse.jface.text;
 
 
 /**
- * A child document represent a range of its parent document. 
- * The child document is always in sync with its parent document
- * by utilizing the parent document as its <code>ITextStore</code>.
+ * A child document is one particular example of a slave document. Child documents
+ * are created by the <code>ChildDocumentManager</code>, an implementation of
+ * <code>ISlaveDocumentManager</code>.<p>
+ * 
+ * A child document represents one consequetive range of its master document.
+ * The master document is called parent document. The child document is always in sync 
+ * with its parent document by utilizing the parent document as its <code>ITextStore</code>.<p>
+ * 
  * This class is for internal use only.
  *
  * @see ITextStore
@@ -25,12 +30,12 @@ public final class ChildDocument extends AbstractDocument {
 	
 	
 	/**
-	 * Implements ITextStore based on IDocument.
+	 * Implements <code>ITextStore</code> based on <code>IDocument</code>.
 	 */
 	class TextStore implements ITextStore {
 		
 		/*
-		 * @see ITextStore#set
+		 * @see ITextStore#set(String)
 		 */
 		public void set(String txt) {
 			try {
@@ -41,7 +46,7 @@ public final class ChildDocument extends AbstractDocument {
 		}
 		
 		/*
-		 * @see ITextStore#replace
+		 * @see ITextStore#replace(int, int, String)
 		 */
 		public void replace(int offset, int length, String txt) {
 			try {
@@ -52,14 +57,14 @@ public final class ChildDocument extends AbstractDocument {
 		}
 		
 		/*
-		 * @see ITextStore#getLength
+		 * @see ITextStore#getLength()
 		 */
 		public int getLength() {
 			return fRange.getLength();
 		}
 		
 		/*
-		 * @see ITextStore#get
+		 * @see ITextStore#get(int, int)
 		 */
 		public String get(int offset, int length) {
 			try {
@@ -71,7 +76,7 @@ public final class ChildDocument extends AbstractDocument {
 		}
 		
 		/*
-		 * @see ITextStore#get
+		 * @see ITextStore#get(int)
 		 */
 		public char get(int offset) {
 			try {
@@ -88,16 +93,15 @@ public final class ChildDocument extends AbstractDocument {
 	/** The parent document */
 	private IDocument fParentDocument;
 	/** 
-	 * The parent document as document extension
+	 * The parent document as <code>IDocumentExtension</code>
 	 * @since 2.0
 	 */
 	private IDocumentExtension fExtension;
 	/**
-	 * The parent document as document extension 2
+	 * The parent document as <code>IDocumentExtension2</code>
 	 * @since 2.1
 	 */
 	private IDocumentExtension2 fExtension2;
-	
 	/** The section inside the parent document */
 	private Position fRange;
 	/** The document event issued by the parent document */
@@ -106,12 +110,22 @@ public final class ChildDocument extends AbstractDocument {
 	private DocumentEvent fEvent;
 	/** Indicates whether the child document initiated a parent document update or not */
 	private boolean fIsUpdating= false;
-	/** The expected document content after the parent document changed. */
+	/** 
+	 * The expected document content after the parent document changed.
+	 * @since 2.1
+	 */
 	private String fExpectedContent;
-	/** The length of this child document prior to the change of the parent document */
+	/** 
+	 * The length of this child document prior to the change of the parent document
+	 * @since 2.1
+	 */
 	private int fRememberedLength;
-	/** Indicates whether this document is in autpo expand mode */
+	/** 
+	 * Indicates whether this document is in auto expand mode.
+	 * @since 2.1
+	 */
 	private boolean fIsAutoExpanding= false;
+	
 	
 	/**
 	 * Creates a child document for the given range of the given parent document.
@@ -177,7 +191,8 @@ public final class ChildDocument extends AbstractDocument {
 		
 	/**
 	 * <p>Transforms a document event of the parent document into a child document
-	 * based document event. </p>
+	 * based document event. This method considers whether the document is in 
+	 * auto expand mode.</p>
 	 * This method is public for test purposes only.
 	 *
 	 * @param e the parent document event
@@ -255,7 +270,7 @@ public final class ChildDocument extends AbstractDocument {
 	/**
 	 * When called this child document is informed about a forthcoming change
 	 * of its parent document. This child document checks whether the parent
-	 * document changed affects it and if so informs all document listeners.
+	 * document change affects it and if so informs all document listeners.
 	 *
 	 * @param event the parent document event
 	 */
@@ -305,7 +320,7 @@ public final class ChildDocument extends AbstractDocument {
 	}
 	
 	/*
-	 * @see AbstractDocument#fireDocumentAboutToBeChanged
+	 * @see AbstractDocument#fireDocumentAboutToBeChanged(DocumentEvent)
 	 */
 	protected void fireDocumentAboutToBeChanged(DocumentEvent event) {
 		// delay it until there is a notification from the parent document
@@ -417,15 +432,20 @@ public final class ChildDocument extends AbstractDocument {
 	
 	/**
 	 * Sets the auto expand mode of this document.
+	 * 
 	 * @param autoExpand <code>true</code> if auto expanding, <code>false</code> otherwise
+	 * @since 2.1
 	 */
 	public void setAutoExpandMode(boolean autoExpand) {
 		fIsAutoExpanding= autoExpand;
 	}
 	
 	/**
-	 * Returns this document's auto expand mode.
-	 * @return this document's auto expand mode
+	 * Returns whether the given document might cause this document to auto expand.
+	 * This default implementation always answers with its auto expand state.
+	 * 
+	 * @param event the document event
+	 * @return <code>true</code> if the given event might cause this document to auto expand
 	 */	
 	public boolean isAutoExpandEvent(DocumentEvent event) {
 		return fIsAutoExpanding;

@@ -11,20 +11,30 @@
 package org.eclipse.jface.text;
 
 /**
- * ParentChildMapping.java
+ * Implementation of <code>IDocumentInformationMapping</code> matching <code>ChildDocument</code> and
+ * <code>ChildDocumentManager</code>. The parent document is considered the original document, the child
+ * document is considered the image document.
  */
 public class ParentChildMapping  implements IDocumentInformationMapping {
 	
+	/** The parent document */
 	private IDocument fParentDocument;
+	/** The child document */
 	private ChildDocument fChildDocument;
 	
 	
+	/**
+	 * Creates a new document mapping between the parent document of the given
+	 * child document and the child document.
+	 * 
+	 * @param childDocument
+	 */
 	public ParentChildMapping(ChildDocument childDocument) {
 		fParentDocument= childDocument.getParentDocument();
 		fChildDocument= childDocument;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#getCoverage()
 	 */
 	public IRegion getCoverage() {
@@ -32,7 +42,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return new Region(p.getOffset(), p.getLength());
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginOffset(int)
 	 */
 	public int toOriginOffset(int imageOffset) throws BadLocationException {
@@ -40,7 +50,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return anchorOffset + imageOffset;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginRegion(org.eclipse.jface.text.IRegion)
 	 */
 	public IRegion toOriginRegion(IRegion imageRegion) throws BadLocationException {
@@ -48,7 +58,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return new Region(anchorOffset + imageRegion.getOffset(), imageRegion.getLength());
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginLines(int)
 	 */
 	public IRegion toOriginLines(int imageLine) throws BadLocationException {
@@ -63,7 +73,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return new Region(startLine, endLine - startLine);
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toOriginLine(int)
 	 */
 	public int toOriginLine(int imageLine) throws BadLocationException {
@@ -71,7 +81,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return fParentDocument.getLineOfOffset(anchorOffset) + imageLine;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toImageOffset(int)
 	 */
 	public int toImageOffset(int originOffset) throws BadLocationException {
@@ -81,7 +91,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return -1;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toImageRegion(org.eclipse.jface.text.IRegion)
 	 */
 	public IRegion toImageRegion(IRegion originRegion) throws BadLocationException {
@@ -116,7 +126,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toImageLine(int)
 	 */
 	public int toImageLine(int originLine) throws BadLocationException {
@@ -129,7 +139,7 @@ public class ParentChildMapping  implements IDocumentInformationMapping {
 		return imageLine;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.IDocumentInformationMapping#toClosestImageLine(int)
 	 */
 	public int toClosestImageLine(int originLine) throws BadLocationException {

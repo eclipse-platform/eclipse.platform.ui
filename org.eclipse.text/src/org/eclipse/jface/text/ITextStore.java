@@ -14,7 +14,7 @@ package org.eclipse.jface.text;
 /**
  * Interface for storing and managing text.
  * Provides access to the stored text and allows to manipulate it.
- * Clients may implement this interface.
+ * Clients may implement this interface or use <code>GapTextStore</code>.
  */
 public interface ITextStore {
 	

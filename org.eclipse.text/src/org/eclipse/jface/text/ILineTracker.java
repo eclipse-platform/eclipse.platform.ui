@@ -14,7 +14,7 @@ package org.eclipse.jface.text;
 
 /**
  * A line tracker maps character positions to line numbers and vice versa.
- * Initially the line tracker is informed about its underlying text which
+ * Initially the line tracker is informed about its underlying text
  * in order to initialize the mapping information. After that, the line 
  * tracker is informed about all changes of the underlying text allowing 
  * for incremental updates of the mapping information. It is the client's

@@ -15,7 +15,10 @@ package org.eclipse.jface.text;
 /**
  * Extension interface for <code>IDocumentPartitioner</code>. Extends the original
  * concept of a document partitioner by returning the minimal region that includes all
- * partition changes causes by the invocation of the document partitioner.
+ * partition changes caused by the invocation of the document partitioner.
+ * 
+ * The method <code>documentChanged2</code> is considered the replacement of
+ * <code>IDocumentPartitioner.documentChanged</code>.
  * 
  * @since 2.0
 
@@ -24,11 +27,12 @@ public interface IDocumentPartitionerExtension {
 		
 	/**
 	 * The document has been changed. The partitioner updates 
-	 * the document's partitioning and returns in which region the
-	 * partition types have changed. This method always returns
-	 * the surrounding region. Will be called by the connected document
-	 * and is not intended to be used by clients other than the connected
-	 * document.
+	 * the document's partitioning and returns the minimal region that comprises
+	 * all partition changes caused by the given document event. This method returns
+	 * <code>null</code> if the partitioning did not change.<p>
+	 * 
+	 * Will be called by the connected document and is not intended to be used by
+	 * clients other than the connected document.
 	 *
 	 * @param event the event describing the document change
 	 * @return the region of the document in which the partition type changed

@@ -42,7 +42,7 @@ public class TypedRegion extends Region implements ITypedRegion {
 	/**
 	 * Two typed positions are equal if they have the same offset, length, and type.
 	 *
-	 * @see Object#equals
+	 * @see Object#equals()
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof TypedRegion) {
@@ -53,7 +53,7 @@ public class TypedRegion extends Region implements ITypedRegion {
 	}
 	
 	/*
-	 * @see Object#hashCode
+	 * @see Object#hashCode()
 	 */
 	 public int hashCode() {
 	 	int type= fType == null ? 0 : fType.hashCode();

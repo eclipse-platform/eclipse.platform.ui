@@ -34,7 +34,7 @@ public class DefaultLineTracker extends AbstractLineTracker {
 	}
 	
 	/*
-	 * @see ILineDelimiter@getLegalLineDelimiters
+	 * @see ILineDelimiter@getLegalLineDelimiters()
 	 */
 	public String[] getLegalLineDelimiters() {
 		return DELIMITERS;

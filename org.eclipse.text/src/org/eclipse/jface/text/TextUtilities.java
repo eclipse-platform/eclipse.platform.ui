@@ -21,13 +21,18 @@ import java.util.ListIterator;
  */
 public class TextUtilities {
 	
-	
+	/**
+	 * Default line delimiters used by these text functions.
+	 */
 	public final static String[] fgDelimiters= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 	
 	
 	/**
-	 * Determines which one of fgDelimiters appears first in the list. If none of them the
+	 * Determines which one of default line delimiters appears first in the list. If none of them the
 	 * hint is returned.
+	 * 
+	 * @param text the text to be checked
+	 * @param hint the line delimiter hint
 	 */
 	public static String determineLineDelimiter(String text, String hint) {
 		try {
@@ -39,8 +44,15 @@ public class TextUtilities {
 	}
 	
 	/**
-	 * Returns the position in the string greater than offset
-	 * of the longest matching search string.
+	 * Returns the starting position and the index of the longest matching search string
+	 * in the given text that is greater than the given offset. Returns <code>[-1, -1]</code>
+	 * if no match can be found.
+	 * 
+	 * @param searchStrings the strings to search for
+	 * @param text the text to be searched
+	 * @param offset the offset at which to start the search
+	 * @return an <code>int[]</code> with two elements" the first is the starting offset, the second the index of the found
+	 * 		search string in the given <code>searchStrings</code> array, returns <code>[-1, -1]</code> if no match exists
 	 */
 	public static int[] indexOf(String[] searchStrings, String text, int offset) {
 		
@@ -81,7 +93,12 @@ public class TextUtilities {
 	}
 	
 	/**
-	 * Returns the longest search string with which the given text ends.
+	 * Returns the index of the longest search string with which the given text ends or
+	 * <code>-1</code> if none matches.
+	 * 
+	 * @param searchStrings the strings to search for
+	 * @param text the text to search
+	 * @return the index in <code>searchStrings</code> of the longest string with which <code>text</code> ends or <code>-1</code>
 	 */
 	public static int endsWith(String[] searchStrings, String text) {
 		
@@ -98,7 +115,12 @@ public class TextUtilities {
 	}
 	
 	/**
-	 * Returns the longest search string with which the given text starts.
+	 * Returns the index of the longest search string with which the given text starts or <code>-1</code>
+	 * if none matches.
+	 * 
+	 * @param searchStrings the strings to search for
+	 * @param text the text to search
+	 * @return the index in <code>searchStrings</code> of the longest string with which <code>text</code> starts or <code>-1</code>
 	 */
 	public static int startsWith(String[] searchStrings, String text) {
 		
@@ -115,7 +137,12 @@ public class TextUtilities {
 	}
 	
 	/**
-	 * Returns whether the text equals one of the given compare strings.
+	 * Returns the index of the first compare string that equals the given text or <code>-1</code> 
+	 * if none is equal.
+	 * 
+	 * @param compareStrings the strings to compare with
+	 * @param text the text to check
+	 * @return the index of the first equal compare string or <code>-1</code>
 	 */
 	public static int equals(String[] compareStrings, String text) {
 		for (int i= 0; i < compareStrings.length; i++) {

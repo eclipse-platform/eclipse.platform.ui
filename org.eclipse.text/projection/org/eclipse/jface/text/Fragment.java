@@ -8,13 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 import org.eclipse.jface.text.Position;
 
 /**
- * Fragment.java
+ * 
+ * This class is for internal use only.
+ * @since 2.1
  */
 public class Fragment extends Position {
 		
@@ -24,10 +25,6 @@ public class Fragment extends Position {
 		super(offset, length);
 		fOrigin= origin;
 	}
-	
-//	public Fragment(int offset, int length) {
-//		super(offset, length);
-//	}
 	
 	/**
 	 * Returns the fOrigin.

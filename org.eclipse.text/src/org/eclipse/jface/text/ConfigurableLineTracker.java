@@ -42,7 +42,7 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 	}
 	
 	/*
-	 * @see ILineDelimiter@getLegalLineDelimiters
+	 * @see ILineDelimiter@getLegalLineDelimiters()
 	 */
 	public String[] getLegalLineDelimiters() {
 		return fDelimiters;

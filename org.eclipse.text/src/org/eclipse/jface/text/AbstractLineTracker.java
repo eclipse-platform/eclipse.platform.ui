@@ -132,7 +132,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineLength
+	 * @see ILineTracker#getLineLength(int)
 	 */
 	public int getLineLength(int line) throws BadLocationException {
 		
@@ -149,7 +149,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 		
 	/*
-	 * @see ILineTracker#getLineNumberOfOffset
+	 * @see ILineTracker#getLineNumberOfOffset(int)
 	 */
 	public int getLineNumberOfOffset(int position) throws BadLocationException {
 				
@@ -170,7 +170,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineInformationOfOffset
+	 * @see ILineTracker#getLineInformationOfOffset(int)
 	 */
 	public IRegion getLineInformationOfOffset(int position) throws BadLocationException {		
 		if (position > fTextLength)
@@ -188,7 +188,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineInformation
+	 * @see ILineTracker#getLineInformation(int)
 	 */
 	public IRegion getLineInformation(int line) throws BadLocationException {
 		
@@ -210,7 +210,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 		
 	/*
-	 * @see ILineTracker#getLineOffset
+	 * @see ILineTracker#getLineOffset(int)
 	 */
 	public int getLineOffset(int line) throws BadLocationException {
 		
@@ -232,7 +232,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 		
 	/*
-	 * @see ILineTracker#getNumberOfLines
+	 * @see ILineTracker#getNumberOfLines()
 	 */
 	public int getNumberOfLines() {
 		
@@ -455,7 +455,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#replace
+	 * @see ILineTracker#replace(int, int, String)
 	 */
 	public void replace(int position, int length, String text) throws BadLocationException {
 		
@@ -525,7 +525,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#set
+	 * @see ILineTracker#set(String)
 	 */
 	public void set(String text) {
 		fLines.clear();
@@ -536,7 +536,7 @@ public abstract class AbstractLineTracker implements ILineTracker {
 	}
 	
 	/*
-	 * @see ILineTracker#getLineDelimiter
+	 * @see ILineTracker#getLineDelimiter(int)
 	 */
 	public String getLineDelimiter(int line) throws BadLocationException {
 		

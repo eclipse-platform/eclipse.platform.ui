@@ -13,7 +13,10 @@ package org.eclipse.jface.text;
 
 
 /**
- * Manages a set of child documents for given parent documents. 
+ * <code>ChildDocumentManager</code> is one particular implementation of 
+ * <code>ISlaveDocumentManager</code>. This manager creates so called child
+ * documents as slave documents for given master documents.<p>
+ * 
  * A child document represents a particular range of the parent 
  * document and is accordingly adapted to changes of the parent document. 
  * Vice versa, the parent document is accordingly adapted to changes of
@@ -27,7 +30,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 	
 	
 	/** 
-	 * Name of the position categories used to keep track of the child
+	 * Name of the position category used to keep track of the child
 	 * documents offset ranges into the parent document.
 	 */
 	public final static String CHILDDOCUMENTS= "__childdocuments"; //$NON-NLS-1$
@@ -40,9 +43,17 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 	 */
 	static class ChildPosition extends Position {
 		
+		/** The parent document. */
 		public IDocument fParentDocument;
+		/* The child document */
 		public ChildDocument fChildDocument;
 		
+		/**
+		 * Creates a new child position for the given parent document.
+		 * @param parentDocument the parent document
+		 * @param offset the offset into the parent document
+		 * @param length the length in the parent document
+		 */
 		public ChildPosition(IDocument parentDocument, int offset, int length) {
 			super(offset, length);
 			fParentDocument= parentDocument;
@@ -136,7 +147,14 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 				}
 			}
 		}
-	
+		
+		/**
+		 * Returns whether the child documents should automatically expand to include
+		 * any parent document change.
+		 * 
+		 * @return <code>true</code> if auto expanding, <code>false</code> otherwise
+		 * @since 2.1
+		 */
 		private boolean isAutoExpanding() {
 			if (fPosition instanceof ChildPosition) {
 				ChildPosition position= (ChildPosition) fPosition;
@@ -151,9 +169,14 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 	 */
 	static class ChildPartitioner implements IDocumentPartitioner {
 		
+		/** The child document. */
 		protected ChildDocument fChildDocument;
+		/** The parent document */
 		protected IDocument fParentDocument;
 		
+		/** 
+		 * Creates a new child document partitioner.
+		 */
 		protected ChildPartitioner() {
 		}
 		
@@ -253,7 +276,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		return fChildPositionUpdater;
 	}
 	
-	 /* (non-Javadoc)
+	 /*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public IDocument createSlaveDocument(IDocument master)  {
@@ -283,7 +306,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		return child;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#freeSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void freeSlaveDocument(IDocument slave) {
@@ -311,7 +334,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		}
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createMasterSlaveMapping(org.eclipse.jface.text.IDocument)
 	 */
 	public IDocumentInformationMapping createMasterSlaveMapping(IDocument slave) {
@@ -320,7 +343,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#getMasterDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public IDocument getMasterDocument(IDocument slave) {
@@ -329,7 +352,7 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#isSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public boolean isSlaveDocument(IDocument document) {

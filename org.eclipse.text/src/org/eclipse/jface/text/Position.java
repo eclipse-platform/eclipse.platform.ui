@@ -13,7 +13,7 @@ package org.eclipse.jface.text;
 
  
 /**
- * Positions describe text ranges of a document and are
+ * Positions describe text ranges of a document. Positions are
  * adapted to changes applied to that document. The text range 
  * is specified by an offset and a length. Positions can be marked as
  * deleted. Deleted positions are considered to no longer represent 
@@ -87,7 +87,7 @@ public class Position {
 	}
 	
 	/*
-	 * @see Object#equals
+	 * @see Object#equals(Object)
 	 */
 	public boolean equals(Object other) {
 		if (other instanceof Position) {
