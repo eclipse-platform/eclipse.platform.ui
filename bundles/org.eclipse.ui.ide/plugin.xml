@@ -677,5 +677,9 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.ui.internal.ide.IDEPreferenceInitializer"/>
+   </extension>
 <!-- End Update -->
 </plugin>

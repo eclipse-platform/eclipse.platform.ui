@@ -24,10 +24,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
@@ -239,24 +236,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
         // do nothing
     }
 
-    /** 
-     * Set default preference values.
-     * This method must be called whenever the preference store is initially loaded
-     * because the default values are not stored in the preference store.
-     */
-    protected void initializeDefaultPreferences(IPreferenceStore store) {
-        store.setDefault(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD, false);
-        store.setDefault(IDEInternalPreferences.SAVE_INTERVAL, 5); //5 minutes
-        store.setDefault(IDEInternalPreferences.WELCOME_DIALOG, true);
-        store.setDefault(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP,
-                false);
-        store.setDefault(
-                IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
-        store.setDefault(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE,
-                IDEInternalPreferences.PSPM_PROMPT);
-        store.setDefault(IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
-                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-    }
 
     /**
      * Return the manager that maps project nature ids to images.
