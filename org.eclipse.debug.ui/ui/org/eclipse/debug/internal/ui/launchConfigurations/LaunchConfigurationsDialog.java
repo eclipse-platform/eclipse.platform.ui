@@ -210,13 +210,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
 	 */
-	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.70f;
+	protected static final float MAX_DIALOG_WIDTH_PERCENT = 0.90f;
 	
 	/**
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.60f;	
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.90f;	
 
 	/**
 	 * Empty array
@@ -950,9 +950,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		// Force recalculation of sizes
 		getEditArea().layout(true);
 	
-		// Calculate difference between required space for tab folder and current size,
-		// then increase size of this dialog's Shell by that amount
-		Rectangle rect = getEditArea().getClientArea();
+		// Calculate difference between required space for the tab folder's client area 
+		// and it's current size, then increase size of this dialog's Shell by that amount
+		Rectangle rect = getTabViewer().getTabFolder().getClientArea();
 		Point containerSize= new Point(rect.width, rect.height);
 		int hdiff= contentSize.x - containerSize.x;
 		int vdiff= contentSize.y - containerSize.y;

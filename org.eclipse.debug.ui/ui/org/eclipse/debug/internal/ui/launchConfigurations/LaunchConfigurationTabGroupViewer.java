@@ -306,7 +306,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Sets the tab folder
 	 */
-	private TabFolder getTabFolder() {
+	protected TabFolder getTabFolder() {
 		return fTabFolder;
 	}
 		
