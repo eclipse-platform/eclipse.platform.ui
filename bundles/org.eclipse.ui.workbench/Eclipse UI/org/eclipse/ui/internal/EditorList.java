@@ -49,7 +49,7 @@ public class EditorList {
 	// options same among all instances of editorList
 	private static int sortOrder; // initialized in constructor
 	private static int listScope; // initialized in constructor
-	private static boolean displayFullPath = false;
+	private static boolean displayFullPath; // initialized in constructor
 	
 	private static Collator collator = Collator.getInstance();
 	
@@ -141,6 +141,7 @@ public EditorList(IWorkbenchWindow window, EditorWorkbook workbook) {
 	
 	listScope = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITOR_LIST_SELECTION_SCOPE);
 	sortOrder = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITOR_LIST_SORT_CRITERIA);
+	displayFullPath = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_LIST_DISPLAY_FULL_NAME);
 
 	// Special handling for scope selection. The concept of tab groups does
 	// not make sense in this situation, so over-ride to page scope
@@ -320,7 +321,6 @@ private void updateItem(TableItem item, Adapter editor) {
 	}
 
 	if (!dropDown) {
-		editor.editorRef.removePropertyListener(propertyListener);
 		editor.editorRef.addPropertyListener(propertyListener);
 	}
 }
@@ -621,6 +621,7 @@ private class FullNameAction extends Action {
 	 */
 	public void run() {
 		displayFullPath = !displayFullPath;
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITOR_LIST_DISPLAY_FULL_NAME, displayFullPath);
 		setChecked(displayFullPath);
 		int[] indices = editorsTable.getSelectionIndices();
 		updateItems();
