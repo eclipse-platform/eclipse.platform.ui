@@ -23,10 +23,14 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <%
 	for (int toc=0; toc<data.getTocCount(); toc++) {
+		String icon = (data.getSelectedToc() != -1 &&
+					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc))) ?
+						prefs.getImagesDirectory()+"/toc_open.gif" :
+						prefs.getImagesDirectory()+"/toc_closed.gif";
 %>
 	<tr>
 		<td align='left' nowrap>
-			<b><img src="<%=prefs.getImagesDirectory()%>/toc_obj.gif"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
+			<b><img src="<%=icon%>"><a href="<%="tocView.jsp?toc="+data.getTocHref(toc)%>" target='_self'>&nbsp;<%=data.getTocLabel(toc)%></a></b>
 		</td>
 	</tr>
 <%

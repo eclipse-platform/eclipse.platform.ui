@@ -27,7 +27,10 @@ minus = new Image();
 minus.src = "<%=prefs.getImagesDirectory()%>"+"/minus.gif";
 plus = new Image();
 plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
-
+toc_open_img = new Image();
+toc_open_img.src = "<%=prefs.getImagesDirectory()%>"+"/toc_open.gif";
+toc_closed_img = new Image();
+toc_closed_img.src = "<%=prefs.getImagesDirectory()%>"+"/toc_closed.gif";
 toc_img = new Image();
 toc_img.src = "<%=prefs.getImagesDirectory()%>"+"/toc_obj.gif";
 folder_img = new Image();
