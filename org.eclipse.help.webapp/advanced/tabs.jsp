@@ -33,7 +33,7 @@ BODY {
 <% 
 if (data.isMozilla()){
 %>
-	height:21px;
+	height:22px;
 <%
 }
 %>
