@@ -410,9 +410,11 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	if (save && !getEditorManager().saveEditor(editor, true))
 		return false;
 
-	// Deactivate part.
+	boolean partWasVisible = (editor == getActiveEditor());
 	activationList.remove(editor);
 	boolean partWasActive = (editor == activePart);
+
+	// Deactivate part.
 	if (partWasActive)
 		setActivePart(null);
 	if (lastActiveEditor == editor) {
@@ -438,6 +440,10 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 			activate(top);
 		else
 			setActivePart(null);
+	} else if(partWasVisible) {
+		IWorkbenchPart top = activationList.getTopEditor();
+		if (top != null)
+			bringToTop(top);
 	}
 	
 	// Return true on success.
