@@ -174,7 +174,10 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	private void displayContextAsHelpPane(Shell activeShell, IContext context) {
 		Control c = activeShell.getDisplay().getFocusControl();		
 		if (f1Window!=null) {
-			if (f1Window.getShell().getParent().equals(activeShell)) {
+			Shell parentShell = activeShell;
+			if (activeShell.getData() instanceof ContextHelpWindow)
+				parentShell = (Shell)activeShell.getParent();
+			if (f1Window.getShell().getParent().equals(parentShell)) {
 				f1Window.update(context, c);
 				return;
 			}

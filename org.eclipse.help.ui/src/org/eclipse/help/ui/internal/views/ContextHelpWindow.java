@@ -29,13 +29,14 @@ public class ContextHelpWindow extends Window {
 	private FormToolkit toolkit;
 
 	private Listener listener;
+	private ControlListener parentListener;
 	private Rectangle savedPbounds;
 	private Rectangle savedBounds;
 
 	public ContextHelpWindow(Shell parent) {
 		super(parent);
 		setShellStyle(SWT.CLOSE | SWT.RESIZE);
-		parent.addControlListener(new ControlListener() {
+		parentListener = new ControlListener() {
 			public void controlMoved(ControlEvent e) {
 				maintainRelativePosition();
 			}
@@ -43,7 +44,7 @@ public class ContextHelpWindow extends Window {
 			public void controlResized(ControlEvent e) {
 				onParentWindowResize();
 			}
-		});
+		};
 		listener = new Listener() {
 			public void handleEvent(Event e) {
 				switch (e.type) {
@@ -126,22 +127,26 @@ public class ContextHelpWindow extends Window {
 		helpPart.init(null, tbm, null);
 		helpPart.createControl(container, toolkit);
 		helpPart.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		hookListeners(getShell().getParent());
+		hookListeners();
 		helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		return container;
 	}
 
-	private void hookListeners(Control c) {
-		getShell().addListener(SWT.Move, listener);
-		getShell().addListener(SWT.Resize, listener);	
-		c.addListener(SWT.Activate, listener);
+	private void hookListeners() {
+		Shell shell = getShell();
+		shell.addListener(SWT.Move, listener);
+		shell.addListener(SWT.Resize, listener);	
+		shell.getParent().addListener(SWT.Activate, listener);
+		shell.getParent().addControlListener(parentListener);
 	}
 
-	private void unhookListeners(Control c) {
-		c.removeListener(SWT.Activate, listener);
-		getShell().removeListener(SWT.Move, listener);
-		getShell().removeListener(SWT.Resize, listener);
+	private void unhookListeners() {
+		Shell shell = getShell();
+		shell.getParent().removeListener(SWT.Activate, listener);
+		shell.getParent().removeControlListener(parentListener);
+		shell.removeListener(SWT.Move, listener);
+		shell.removeListener(SWT.Resize, listener);
 	}
 	
 	public void dock(boolean changeSides) {
@@ -210,31 +215,25 @@ public class ContextHelpWindow extends Window {
 		if (bounds.x<pbounds.x) {
 			// left
 			int deltaX = bounds.x-savedBounds.x;
-			if (deltaX<0) {
-				// moving away - ignore
-			}
-			else {
+			if (deltaX >=0 || bounds.x+bounds.width>pbounds.x) {
 				// moving closer - check for dock snap
 				int distance = pbounds.x - bounds.x-bounds.width;
-				if (distance <=DOCK_MARGIN)
+				if (Math.abs(distance) <=DOCK_MARGIN)
 					doDock=true;
 			}
 		}
 		else {
 			// right
 			int deltaX = bounds.x-savedBounds.x;
-			if (deltaX>0) {
-				// moving away - ignore
-			}
-			else {
+			if (deltaX<=0 || bounds.x<pbounds.x+pbounds.width) {
 				//moving closer - check for dock snap
 				int distance = bounds.x-pbounds.x-pbounds.width;
-				if (distance <=DOCK_MARGIN)
+				if (Math.abs(distance) <=DOCK_MARGIN)
 					doDock=true;
 			}
 		}
 		if (doDock)
-			dock(true);
+			dock(false);
 		savedBounds = getShell().getBounds();
 		savedPbounds = getShell().getParent().getBounds();
 		return doDock;
@@ -261,7 +260,7 @@ public class ContextHelpWindow extends Window {
 	}
 
 	public boolean close() {
-		unhookListeners(getShell().getParent());
+		unhookListeners();
 		if (super.close()) {
 			if (toolkit != null) {
 				toolkit.dispose();
