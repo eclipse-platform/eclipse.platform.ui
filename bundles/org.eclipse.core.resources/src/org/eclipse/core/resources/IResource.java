@@ -218,7 +218,7 @@ public interface IResource extends IAdaptable {
  * visits this resource's members.
  * <p>
  * This is a convenience method, fully equivalent to 
- * <code>accept(visitor,IResource.NONE,DEPTH_INFINITE)</code>.
+ * <code>accept(visitor,IResource.DEPTH_INFINITE, IResource.NONE)</code>.
  * </p>
  *
  * @param visitor the visitor
@@ -228,7 +228,7 @@ public interface IResource extends IAdaptable {
  * <li> The visitor failed with this exception.</li>
  * </ul>
  * @see IResourceVisitor#visit
- * @see IResource#accept(IResourceVisitor,int,int)
+ * @see #accept(IResourceVisitor,int,int)
  */
 public void accept(IResourceVisitor visitor) throws CoreException;
 
