@@ -1,0 +1,95 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title>README Launcher Extension Points</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Launcher</h1>
+
+<p><b><i>Identifier: </i></b>org.eclipse.debug.core.launchers </p>
+
+<p><b><i>Description: </i></b>This extension point allows tools to contribute launchers. A
+launcher is responsible for initiating a debug session or running a program and
+registering the result with the launch manager.</p>
+
+<p><b><i>Configuration Markup:</i></b> </p>
+
+<pre><tt>&nbsp;&nbsp; &lt;!ATTLIST launcher</tt> 
+      id		CDATA #REQUIRED<tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class		CDATA #REQUIRED</tt>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes		CDATA #REQUIRED
+</tt>      label		CDATA #REQUIRED
+      wizard		CDATA #IMPLIED
+      public		CDATA #IMPLIED
+      description	CDATA #IMPLIED
+      <tt>perspective	CDATA #IMPLIED
+   &gt;</tt> </pre>
+
+<ul>
+  <li><strong>id </strong>&#150; a unique identifier that can be used to reference this
+    launcher.</li>
+  <li><b>class</b> &#150; fully qualified name of the class that implements <font
+    face="Courier New">org.eclipse.debug.core.ILauncherDelegate</font>.</li>
+  <li><b>modes</b> &#150; A comma separated list of modes this launcher supports. The two
+    supported modes are &quot;run&quot; and &quot;debug&quot; - as defined in <font
+    face="Courier New">org.eclipse.debug.core.ILaunchManager.</font>A launcher may be capable
+    of launching in one or both modes.</li>
+  <li><strong>label </strong>&#150; a label to use for the launcher. This attribute is used by
+    the debug UI.</li>
+  <li><strong>wizard </strong>&#150; fully qualified name of the class that implements <font
+    face="Courier New">org.eclipse.debug.ui.ILaunchWizard</font>. This attribute is used by
+    the debug UI. A launcher may contribute a wizard that allows users to configure and launch
+    specific attributes.</li>
+  <li><strong>public</strong> &#150; whether a launcher is publically visible in the debug UI.
+    &nbsp; If &quot;true&quot;,&nbsp; the launcher will be available from the debug UI - the
+    launcher will appear as a choice for a default launcher, launches created by this launcher
+    will appear in the launch history, and the launcher will be available from the drop-down
+    run/debug toolbar actions.</li>
+  <li><strong>description</strong> &#150; a description of the launcher.&nbsp; Currently only
+    used if the <em>wizard</em> attribute is specified.</li>
+  <li><strong>perspective</strong> &#150; the identifier of the perspective that will be
+    switched to on a successful launch.&nbsp; Default value is the identifier for the debug
+    perspective. This attribute is used by the debug UI.</li>
+</ul>
+
+<p><b><i>Examples:</i></b> </p>
+
+<p>The following is an example of a launcher extension point: </p>
+
+<pre><tt>&nbsp;&nbsp; &lt;extension</tt> 
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point = &quot;org.eclipse.debug.core.launchers&quot;&gt;</tt> 
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;launcher</tt> 
+             id = &quot;com.example.ExampleLauncher&quot;
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; class = &quot;com.example.launchers.ExampleLauncher&quot;</tt> 
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes = &quot;run, debug&quot;
+  	     label = &quot;Example Launcher&quot;
+	     wizard = &quot;com.example.launchers.ui.ExampleLaunchWizard&quot;     
+	     public = &quot;true&quot;
+	     description = &quot;Launches example programs&quot;
+	     perspective= &quot;com.example.JavaPerspective&quot;&gt;</tt>  
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/launcher&gt;</tt> 
+<tt>&nbsp;&nbsp; &lt;/extension&gt;</tt> </pre>
+
+<p>In the example above, the specified launcher supports both run and debug modes.
+Following a successful launch, the debug UI will change to the Java perspective. When the
+debug UI presents the user with a list of launchers to choose from, &quot;Example
+Launcher&quot; will appear as one of the choices with the &quot;Launches example
+programs&quot; as the description, and the wizard specified by <font face="Courier New">com.example.launchers.ui.ExampleLaunchWizard</font>
+will be used to configure any launch specific details.</p>
+
+<p><b><i>API Information: </i></b>Value of the attribute <b>class</b> must be a fully
+qualified class name of a Java class that implements the interface <font size="2"
+face="Courier New">org.eclipse.debug.core.ILauncher</font>Delegate. Value of the attribute
+<strong>wizard</strong> must be a fully qualified class name of a Java class that
+implements <font size="2" face="Courier New">org.eclipse.debug.ui.ILaunchWizard</font>.<br>
+<br>
+</p>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corporation 2000"
+border="0" width="195" height="12"></a></p>
+</body>
+</html>

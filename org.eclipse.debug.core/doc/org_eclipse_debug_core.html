@@ -1,0 +1,36 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title>README Debug User Interface Extension Points</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Eclipse Debug Tools Infrastructure</h1>
+
+<p>The debug tools infrastructure plug-in, <font face="Courier">org.eclipse.debug.core</font>,
+defines a model for language independent debugging. A set of common debug artifacts and
+actions are defined by interfaces, for which specific debug architectures may provide
+implementations. For example, some common artifacts are threads, stack frames, and
+variables; some common actions are terminate, suspend, step, and resume. A debug
+architecture, such as JDI (Java Debug Interface), can provide an implementation of the
+artifacts and actions. The debug plug-in also defines and provides an implementation of
+managers to support breakpoints and launching.<br>
+</p>
+
+<hr>
+
+<h1>Extension Points</h1>
+
+<p>The following extension points are used to support and extend the debug infrastructure:
+
+<ul>
+  <li><a href="org_eclipse_debug_core_launchers.html">org.eclipse.debug.core.launchers</a></li>
+</ul>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corporation 2000"
+border="0" width="195" height="12"></a></p>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title>Eclipse Debug Tools</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p>Provides support for launching programs and defines interfaces for a debug model to
+support an extensible set debug architectures.</p>
+
+<h2>Package Specification</h2>
+
+<p><strong>Note</strong>: this package is part of an interim API that is still under
+development and expected to change significantly before reaching stability. It is being
+made available at this early stage to soloicit feedback from pioneering adopters on the
+understanding that any code that uses this API will almost certainly be broken
+(repeatedly) as the API evolves.</p>
+
+<p>Eclipse Debug Tools provides classes and interfaces to support the launching,
+registration, and manipulation of debuggable and non-debuggable programs. An extensible
+set of debug architectures and languages are supported by the definition of a &quot;debug
+model&quot; - a set of interfaces representing common artifacts in debuggable programs.
+The debug plug-in itself does not provide any implementations of a debug model. It is
+intended that third parties providing an integrated set of development tools for a
+specific language will also implement a debug model for that language, using an underlying
+debug architecture of their choice. For example, Java Tooling provides an implementation
+of a debug model based on the standard Java Debug Interface (JDI).</p>
+
+<h4>The Debug Model</h4>
+
+<p>The &quot;debug model&quot; is represented by the set of interfaces defined in <font
+face="Courier">org.eclipse.debug.core.model</font>. A client implements a debug model by
+providing an implementation of these interfaces in a plug-in. (There is no explicit
+extension point that represents a debug model). Each debug architecture will have its own
+way of initiating a debug session. Generally, each debug model will provide one or more
+launchers capable of initiating a debug session. A &quot;launcher&quot; is an extension
+point defined by the debug plug-in. A launcher is responsible for starting a debug
+session, and registering the result with the debug plug-in. Launching is a client
+responsibility.</p>
+
+<p>The common elements defined by the debug plug-in are: 
+
+<ul>
+  <li>Debug Target - a debug target represents a debuggable program - for example, a virtual
+    machine or a process.</li>
+  <li>Thread - a debug target may contain one or more threads</li>
+  <li>Stack Frame - a thread that is suspended may contain one or more stack frames</li>
+  <li>Variable - a stack frame may contain variables</li>
+  <li>Value - each variable has a value, and a value may contain more variables (to represent
+    complex data structures and objects)</li>
+</ul>
+
+<h5>Rendering &amp; Presentation</h5>
+
+<p>Debug model elements and breakpoints are displayed in the workbench. To support
+configurable and extensible presentation, the<font face="Courier"> debugModelPresentations</font>
+extension point is used. Extensions may be registered for a specific debug model. It is
+intended that an implementation of a debug model will also provide an implementation of a
+debug model presentation. The presentation provides: 
+
+<ul>
+  <li>an image for a debug element or breakpoint</li>
+  <li>a label for a debug element or breakpoint</li>
+  <li>an editor input that should be used to display the debug element or breakpoint</li>
+</ul>
+
+<h4>Breakpoints</h4>
+
+<p>Breakpoints are used to suspend the execution of a program being debugged. There are
+many kinds of breakpoints - line breakpoints, conditional line breakpoints, hit count
+breakpoints, exception breakpoints, etc. The kinds of breakpoints supported by each debug
+architecture (for example, JDI), and the information required to create those breakpoints
+is dictated by each debug architecture. Thus, Eclipse Debug Tools supports an extensible
+set of breakpoint types.</p>
+
+<p>Eclipse Debug Tools provides a breakpoint manager that maintains the collection of all
+known breakpoints. Clients add and remove breakpoints via this manager. Breakpoints are
+represented by markers in the workspace, providing persistence and an extensible set of
+breakpoint attributes. Eclipse Debug Tools defines the root breakpoint marker and the
+common line breakpoint marker, as well as the attributes for these markers. Breakpoint
+creation is a client responsibility - that is, choosing which resource to associate a
+breakpoint with.</p>
+
+<p>The breakpoint definitions in plug-in <font face="Courier New">org.eclipse.debug.core</font>
+are as follows: </p>
+<font SIZE="2">
+
+<p><font face="Courier">&lt;extension id=&quot;breakpoint&quot;
+point=&quot;org.eclipse.core.resources.markers&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;super type=&quot;org.eclipse.core.resources.marker&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;persisted value=&quot;true&quot;/&gt;</font></font><br>
+<font face="Courier" SIZE="2">&nbsp;&nbsp;&nbsp; &lt;attribute
+name=&quot;modelIdentifier&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;attribute name=&quot;enabled&quot;/&gt;<br>
+&lt;/extension&gt;</font></p>
+
+<p><font face="Courier" SIZE="2">&lt;extension id=&quot;lineBreakpoint&quot;
+point=&quot;org.eclipse.core.resources.markers&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;super type=&quot;org.eclipse.debug.core.breakpoint&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;super type=&quot;org.eclipse.core.resources.textmarker&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;persisted value=&quot;true&quot;/&gt;<br>
+&lt;/extension&gt;</font></p>
+
+<h5>Breakpoint Creation</h5>
+
+<p>The breakpoint lifecycle begins with breakpoint creation. The location in which a
+breakpoint may be placed, and the attributes that its debug target requires to install the
+breakpoint is specific to each debug model. For this reason, breakpoint creation is a
+client responsibility. Generically, the breakpoint creation scenario involves the
+following steps: 
+
+<ol>
+  <li>Creation of a (subtype of the) breakpoint marker. This requires that a marker be created
+    with all appropriate attributes. For convenience, the breakpoint manager has API for
+    configuring default values for required attributes on markers.</li>
+  <li>Registration of the breakpoint marker with the breakpoint manager. A breakpoint is not
+    considered active until it is registered with the breakpoint manager.</li>
+</ol>
+
+<p>Note that verifying the location of the breakpoint is valid is also a client
+responsibility.</p>
+
+<h5>Persistence</h5>
+
+<p>Breakpoints are persisted via the standard marker mechanism. Breakpoints defined with
+the <font face="Courier New">persisted</font> attribute as <font face="Courier New">false</font>
+will not be persisted. Breakpoints are restored at workspace startup time by the
+breakpoint manager - that is, all persisted markers which are a subtype of the root
+breakpoint marker are added to the breakpoint manager. To allow for selective persistence
+of breakpoints, the root breakpoint marker defines a &quot;persisted&quot; attribute. If
+this value is set to false, the breakpoint will not be persisted.</p>
+
+<h5>Change Notification</h5>
+
+<p>As breakpoint markers are modified (created, removed, and attribute values are
+changed), resource deltas are created by the platform. The breakpoint manager translates
+pertinent resource deltas into breakpoint change notifications (breakpoint
+added/removed/changed messages). Interested listeners may register with the breakpoint
+manager. The breakpoint manager only fires change notifications for registered
+breakpoints. This simplifies breakpoint processing for clients, as resource delta
+traversal and analysis is not required. Thus clients have two options - listening to
+resource deltas from the platform, or listening to change notification from the breakpoint
+manager. However, clients should be careful to note that breakpoints marker deltas should
+only be considered as breakpoint changes if a breakpoint is currently active (registered
+with the breakpoint manager).</p>
+
+<h5>Deletion</h5>
+
+<p>Removing a breakpoint from the breakpoint manager signals the end of the breakpoint
+lifecycle. A breakpoint may be removed with the method <font face="Courier">org.eclipse.debug.core.IBreakpointManager.removeBreakpoint(IMarker)</font>,
+or by deleting the underlying marker (in the later case, the breakpoint manager notices a
+breakpoint has been deleted, and automatically removes it).</p>
+
+<h5>Extensibility</h5>
+
+<p>Clients can define new kinds of breakpoints with the appropriate plug-in XML and
+subtyping any of the defined breakpoint markers. For example, a client may define an
+exception breakpoint as a subtype of the root breakpoint, or a client might define a
+conditional breakpoint as a subtype of the line breakpoint. The breakpoint manager does
+not define generic breakpoints of these types since the attributes required are debug
+model dependent.</p>
+
+<h5>Target Notification</h5>
+
+<p>Debug targets are notified of breakpoints via the <font face="Courier New">IBreakpointListener</font>
+mechanism. The breakpoint manager only notifies debug targets of breakpoints
+added/changed/removed, after a target has been created. Since breakpoints are often in
+existence before a debug target is launched, a debug target is responsible for querying
+the breakpoint manager for breakpoints in existence when it is created - see <font
+face="Courier">org.eclipse.debug.core.IBreakpointManager.getBreakpoints(String)</font>,
+which provides a list of active breakpoints for a specific debug model.</p>
+</body>
+</html>

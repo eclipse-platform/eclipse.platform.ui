@@ -1,0 +1,87 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title>Eclipse Debug Tools</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p>Provides a generic debugger user interface that clients may customize via standard
+workbench extension points.</p>
+
+<h2>Package Specification</h2>
+
+<p><strong>Note</strong>: this package is part of an interim API that is still under
+development and expected to change significantly before reaching stability. It is being
+made available at this early stage to soloicit feedback from pioneering adopters on the
+understanding that any code that uses this API will almost certainly be broken
+(repeatedly) as the API evolves.</p>
+
+<p>Eclipse Debug Tools UI (debug UI plug-in) provides a set of classes and interfaces to
+support a debugger user interface. A generic debug perspective is provided with a common
+set of views. Clients are allowed to contribute actions to the debug views via the
+standard workbench <font face="Courier New">viewAction</font> extension point, and can
+contribute to popup menus in the debug views via the standard <font face="Courier New">popupMenu</font>
+extension point.</p>
+
+<h4>The Debug View</h4>
+
+<p>The debug view presents a tree of launched debug sessions. The view provides support
+for standard debug interactions such as terminating, stepping, suspending, and resuming
+threads and debug targets. The debug view is linked to an editor view, variable view, and
+console. The editor view is used to display source code for stack frames. A selection in
+the debug view causes the line of code being executed to be highlighted in the editor
+view. The variable view shows the visible variables in the selected stack frame, and the
+console view handles I/O for the debuggable process.</p>
+
+<h4>The Process View</h4>
+
+<p>The process view presents a tree of launched programs in normal (non-debug) mode. The
+view provides support for terminating processes, and is linked to the console view to
+support I/O.</p>
+
+<h4>The Variable View</h4>
+
+<p>The variable view presents a tree of variables for the currently selected stack frame.</p>
+
+<h4>The Breakpoint View</h4>
+
+<p>The breakpoint view presents a list of all breakpoints currently defined in the
+workspace. It supports enabling/disabling and breakpoint removal.</p>
+
+<h4>The Inspector View</h4>
+
+<p>The inspector view presents a tree of expressions that have been evaluated.</p>
+
+<h4>Debug Model Presentation</h4>
+
+<p>The debug UI plug-in defines an extension (<font face="Courier New">org.eclipse.debug.ui.debugModelPresentations</font>)
+point to allow implementations of debug models to provide custom rendering and
+presentation of its debug elements. Extensions are be registered for a specific debug
+model. It is intended that an implementation of a debug model will also provide an
+implementation of a debug model presentation. The presentation provides: 
+
+<ul>
+  <li>an image for a debug element or breakpoint</li>
+  <li>a label for a debug element or breakpoint</li>
+  <li>an editor input and editor id used to display the debug element or breakpoint</li>
+</ul>
+
+<h4>Launch Wizard</h4>
+
+<p>The debug UI plug-in defines an interface that launch wizards must implement - <font
+face="Courier New">org.eclipse.debug.ui.ILaunchWizard</font>. Launch wizards are defined
+in <font face="Courier New">launcher</font> extensions (defined by <font
+face="Courier New">org.eclipse.debug.core</font>), and are instantiated by the debug UI
+plug-in.</p>
+
+<h4>Debug Perspective</h4>
+
+<p>By default, when a program is run or debug, the debug UI automatically switches to the
+default debug perspective. To circumvent automatic perspective switching, a user
+preference is available. Launcher extensions may also define an alternate perspective to
+use.</p>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title>Eclipse Debug Tools</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<h3>The Debug Model</h3>
+
+<p><strong>Note:</strong> this package is part of an interim API that is still under
+development and expected to change significantly before reaching stability. It is being
+made available at this early stage to soloicit feedback from pioneering adopters on the
+understanding that any code that uses this API will almost certainly be broken
+(repeatedly) as the API evolves.</p>
+
+<p>A language independent &quot;debug model&quot; is represented by the set of interfaces
+defined in <font face="Courier">org.eclipse.debug.core.model</font>. A client implements a debug
+model by providing an implementation of these interfaces in a plug-in. (There is no
+explicit extension point that represents a debug model). Each debug architecture will have
+its own way of initiating a debug session. Generally, each debug model will provide one or
+more launchers capable of initiating a debug session. A &quot;launcher&quot; is an
+extension point defined by the debug plug-in. A launcher is responsible for starting a
+debug session, and registering the result with the debug plug-in. Launching is a client
+responsibility.</p>
+
+<p>The common elements defined by the debug plug-in are: 
+
+<ul>
+  <li>Debug Target - a debug target represents a debuggable program - for example, a virtual
+    machine or a process.</li>
+  <li>Thread - a debug target may contain one or more threads</li>
+  <li>Stack Frame - a thread that is suspended may contain one or more stack frames</li>
+  <li>Variable - a stack frame may contain variables</li>
+  <li>Value - each variable has a value, and a value may contain more variables (to represent
+    complex data structures and objects)</li>
+  <li>Process - a program running in normal (non-debug) mode</li>
+</ul>
+
+<h4>Rendering &amp; Presentation</h4>
+
+<p>Debug model elements and breakpoints are displayed in the workbench. To support
+configurable and extensible presentation, the debug UI plug-in defines the <font
+face="Courier">debugModelPresentations</font> extension point. Extensions of this kind
+register for a specific debug model. It is intended that an implementation of a debug
+model will also provide an implementation of a debug model presentation. The presentation
+provides: 
+
+<ul>
+  <li>an image for a debug element or breakpoint</li>
+  <li>a label for a debug element or breakpoint</li>
+  <li>an editor input that should be used to display the debug element or breakpoint</li>
+</ul>
+</body>
+</html>

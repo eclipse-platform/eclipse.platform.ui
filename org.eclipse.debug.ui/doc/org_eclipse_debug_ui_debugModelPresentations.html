@@ -1,0 +1,56 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+<title>README Viewer Label Provider Extension Points</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Debug Model Presentation</h1>
+
+<p><b><i>Identifier: </i></b>org.eclipse.debug.ui.debugModelPresentations</p>
+
+<p><b><i>Description: </i></b>This extension point allows tools to handle the presentation
+aspects of a debug model. A debug model presentation is responsible for providing labels,
+images, and editors for elements in a specific debug model.</p>
+
+<p><b><i>Configuration Markup:</i></b> </p>
+
+<p><tt>&nbsp;&nbsp; &lt;!ATTLIST sectionParser</tt> <br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp; &nbsp;&nbsp;CDATA #REQUIRED</tt> <tt><font
+face="Courier New"><br>
+</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id &nbsp; &nbsp; &nbsp;&nbsp; CDATA #REQUIRED</tt> 
+
+<ul>
+  <li><b>class</b> &#150; fully qualifed name of a Java class that implements the <font
+    face="Courier New">org.eclipse.debug.ui.IDebugModelPresentation</font></li>
+  <li><strong>id</strong> &#150; the identifier of the debug model this presentation is
+    responsible for</li>
+</ul>
+
+<p><b><i>Examples:</i></b> </p>
+
+<p>The following is an example of a view filter extension point: </p>
+
+<pre><font face="Courier"><tt>&nbsp;&nbsp; &lt;extension</tt> 
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point = &quot;org.eclipse.debug.ui.debugModelPresentations&quot;&gt;</tt> 
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;debugModelPresentation</tt> 
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class = &quot;com.example.JavaModelPresentation&quot;&gt;</tt> 
+<tt>	     id = &quot;com.example.JavaDebugModel&quot;
+	&lt;/debugLabelProvider</tt> 
+<tt>&nbsp;&nbsp; &lt;/extension&gt;</tt></font> </pre>
+
+<p>In the example above, the class <tt>com.example.JavaModelPresentation</tt> will be used
+to render and present debug elements originating from the debug model identified by <font
+face="Courier">com.example.JavaDebugModel</font>.</p>
+
+<p><b><i>API Information: </i></b>Value of the action attribute <b>class</b> must be a
+fully qualified class name of a Java class that implements <font size="2"
+face="Courier New">org.eclipse.debug.ui.IDebugModelPresentation.</font></p>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corporation 2000"
+border="0" width="195" height="12"></a></p>
+</body>
+</html>

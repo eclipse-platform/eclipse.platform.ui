@@ -1,0 +1,159 @@
+package org.eclipse.debug.internal.ui;
+
+/*
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2001
+ */
+
+import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.TreeViewer;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.DrillDownAdapter;
+
+/**
+ * A view that shows items that have been added to a inspector
+ */
+public class InspectorView extends AbstractDebugView {
+	
+	protected final static String PREFIX= "inspector_view.";
+
+	protected InspectorContentProvider fContentProvider= null;
+	protected ShowQualifiedAction fShowQualifiedAction;
+	protected ShowTypesAction fShowTypesAction;
+	protected InspectorViewAddToInspectorAction fAddToInspectorAction;
+	protected RemoveFromInspectorAction fRemoveFromInspectorAction;
+	protected RemoveAllFromInspectorAction fRemoveAllFromInspectorAction;
+	protected ChangeVariableValueAction fChangeVariableAction;
+
+	protected DrillDownAdapter fDrillPart;
+	
+	/**
+	 * @see IWorkbenchPart
+	 */
+	public void createPartControl(Composite parent) {
+		TreeViewer vv = new TreeViewer(parent, SWT.MULTI);
+		fViewer= vv;
+		fDrillPart = new DrillDownAdapter(vv);
+		initializeActions();
+		initializeToolBar();
+		fContentProvider= new InspectorContentProvider(fRemoveAllFromInspectorAction);
+		fViewer.setContentProvider(fContentProvider);
+		fViewer.setLabelProvider(new DelegatingModelPresentation());
+		fViewer.setUseHashlookup(true);
+
+		createContextMenu(vv.getTree());
+		
+		fViewer.setInput(fContentProvider.getInspectorList());
+		fViewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				handleKeyPressed(e);
+			}
+		});
+
+		setTitleToolTip(getTitleToolTipText(PREFIX));
+	}
+
+	/**
+	 * Initializes the actions of this view.
+	 */
+	protected void initializeActions() {
+		fShowTypesAction= new ShowTypesAction(fViewer);
+		fShowTypesAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TYPE_NAMES));
+		fShowTypesAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES));
+		fShowTypesAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES));
+		fShowTypesAction.setChecked(false);
+		
+		fShowQualifiedAction= new ShowQualifiedAction(fViewer);
+		fShowQualifiedAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_QUALIFIED_NAMES));
+		fShowQualifiedAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_QUALIFIED_NAMES));
+		fShowQualifiedAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_QUALIFIED_NAMES));
+		fShowQualifiedAction.setChecked(false);
+				
+		fAddToInspectorAction = new InspectorViewAddToInspectorAction(fViewer);
+
+		fRemoveFromInspectorAction= new RemoveFromInspectorAction(fViewer);
+		fRemoveFromInspectorAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE));
+		fRemoveFromInspectorAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE));
+		fRemoveFromInspectorAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE));
+
+		fRemoveAllFromInspectorAction= new RemoveAllFromInspectorAction(fViewer);
+		fRemoveAllFromInspectorAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_REMOVE_ALL));
+		fRemoveAllFromInspectorAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL));
+		fRemoveAllFromInspectorAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_REMOVE_ALL));
+		
+		fChangeVariableAction= new ChangeVariableValueAction(fViewer);
+		fChangeVariableAction.setEnabled(false);
+	}
+
+	/**
+	 * Configures the toolBar
+	 */
+	protected void configureToolBar(IToolBarManager tbm) {
+		fDrillPart.addNavigationActions(tbm);
+		tbm.add(new Separator(this.getClass().getName()));
+		tbm.add(fShowTypesAction);
+		tbm.add(fShowQualifiedAction);
+		tbm.add(new Separator(this.getClass().getName()));
+		tbm.add(fRemoveFromInspectorAction);
+		tbm.add(fRemoveAllFromInspectorAction);
+	}
+
+	/**
+	 * Adds items to the context menu including any extension defined actions.
+	 */
+	protected void fillContextMenu(IMenuManager menu) {
+
+		// Add the actions defined in this view
+		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
+		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
+		menu.add(fAddToInspectorAction);
+		menu.add(fChangeVariableAction);
+		menu.add(fRemoveFromInspectorAction);
+		menu.add(fRemoveAllFromInspectorAction);
+		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
+		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
+		menu.add(fShowTypesAction);
+		menu.add(fShowQualifiedAction);
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	/**
+	 * Adds a inspect item to the list, and sets the selection to either
+	 * the first child or to the item if it has no children.
+	 */
+	public void addToInspector(InspectItem item) {
+		fContentProvider.addToInspector(item);
+	}
+
+	/**
+	 * Removes a items from the list
+	 */
+	public void removeFromInspector(Object object) {
+		// first we have to get the root item to remove
+		while (! (object instanceof InspectItem && object != null)) {
+			object = fContentProvider.getParent(object);
+		}
+		if (object != null) {
+			fContentProvider.removeFromInspector((InspectItem)object);
+		}
+	}
+
+	/**
+	 * Removes all items from the list
+	 */
+	public void removeAllFromInspector() {
+		fContentProvider.removeAll();
+		fViewer.setInput(null);
+		fDrillPart.reset();
+	}
+	
+	/**
+	 * Handles key events in viewer.  Specifically interested in
+	 * the Delete key.
+	 */
+	protected void handleKeyPressed(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0 
+			&& fRemoveFromInspectorAction.isEnabled()) {
+				fRemoveFromInspectorAction.run();
+		}
+	}
+}
+
