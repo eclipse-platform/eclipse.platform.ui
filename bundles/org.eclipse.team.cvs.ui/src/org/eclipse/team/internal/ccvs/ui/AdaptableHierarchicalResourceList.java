@@ -10,18 +10,15 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**

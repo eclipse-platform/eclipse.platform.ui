@@ -5,11 +5,9 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Collator to compare two CVS revisions

@@ -23,9 +23,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.ui.IMarkerResolution;
 
 /**

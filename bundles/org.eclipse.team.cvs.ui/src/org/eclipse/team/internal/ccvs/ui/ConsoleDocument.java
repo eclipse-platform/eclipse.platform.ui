@@ -14,14 +14,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.GapTextStore;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
 
 public class ConsoleDocument extends AbstractDocument {
 	public static final int COMMAND = 0; // command text

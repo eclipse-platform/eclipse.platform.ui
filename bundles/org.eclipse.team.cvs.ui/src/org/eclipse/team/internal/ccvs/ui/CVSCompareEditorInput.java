@@ -5,25 +5,19 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
  
-import java.io.ByteArrayInputStream;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,14 +30,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**

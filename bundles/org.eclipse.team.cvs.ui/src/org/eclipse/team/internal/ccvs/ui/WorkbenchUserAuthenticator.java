@@ -10,14 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
