@@ -11,7 +11,6 @@
 package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -118,10 +117,8 @@ public class MoveProjectAction extends CopyProjectAction {
 		} catch (InvocationTargetException e) {
 			// CoreExceptions are collected above, but unexpected runtime
 			// exceptions and errors may still occur.
-			IDEWorkbenchPlugin
-					.log(MessageFormat
-							.format(
-									"Exception in {0}.performMove(): {1}", new Object[] { getClass().getName(), e.getTargetException() }));//$NON-NLS-1$
+			IDEWorkbenchPlugin.log(getClass(),
+                    "performMove()", e.getTargetException()); //$NON-NLS-1$
 			displayError(IDEWorkbenchMessages
 					.format(
 							"MoveProjectAction.internalError", new Object[] { e.getTargetException().getMessage() })); //$NON-NLS-1$

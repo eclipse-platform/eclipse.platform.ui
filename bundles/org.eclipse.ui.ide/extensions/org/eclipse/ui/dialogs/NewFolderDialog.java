@@ -14,7 +14,6 @@
 package org.eclipse.ui.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
@@ -293,10 +292,8 @@ public class NewFolderDialog extends SelectionStatusDialog {
                                 .getStatus());
             } else {
                 // CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-                IDEWorkbenchPlugin.log(MessageFormat.format(
-                        "Exception in {0}.createNewFolder(): {1}", //$NON-NLS-1$
-                        new Object[] { getClass().getName(),
-                                exception.getTargetException() }));
+                IDEWorkbenchPlugin.log(getClass(),
+                        "createNewFolder", exception.getTargetException()); //$NON-NLS-1$
                 MessageDialog.openError(getShell(), IDEWorkbenchMessages
                         .getString("NewFolderDialog.errorTitle"), //$NON-NLS-1$
                         IDEWorkbenchMessages.format(

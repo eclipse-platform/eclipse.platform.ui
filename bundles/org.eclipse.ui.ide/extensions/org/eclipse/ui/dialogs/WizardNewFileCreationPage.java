@@ -13,7 +13,6 @@ package org.eclipse.ui.dialogs;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
@@ -327,10 +326,8 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
                                         .getStatus());
             } else {
                 // CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-                IDEWorkbenchPlugin
-                        .log(MessageFormat
-                                .format(
-                                        "Exception in {0}.getNewFile(): {1}", new Object[] { getClass().getName(), e.getTargetException() }));//$NON-NLS-1$
+                IDEWorkbenchPlugin.log(getClass(),
+                        "createNewFile()", e.getTargetException()); //$NON-NLS-1$
                 MessageDialog
                         .openError(
                                 getContainer().getShell(),

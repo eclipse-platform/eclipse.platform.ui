@@ -274,8 +274,7 @@ public class GlobalBuildAction extends Action implements
                         return true;
             }
         } catch (CoreException e) {
-            IDEWorkbenchPlugin
-                    .log("Exception in " + getClass().getName() + ".run: " + e);//$NON-NLS-2$//$NON-NLS-1$
+            IDEWorkbenchPlugin.log(getClass(), "verifyBuildersAvailable", e); //$NON-NLS-1$
             ErrorDialog
                     .openError(
                             getShell(),

@@ -234,7 +234,7 @@ public class QuickStartAction extends Action implements
             page.openEditor(input, EDITOR_ID);
         } catch (PartInitException e) {
             IDEWorkbenchPlugin
-                    .log("Error opening welcome editor for feature: " + feature.getFeatureId()); //$NON-NLS-1$
+                    .log("Error opening welcome editor for feature: " + feature.getFeatureId(), e); //$NON-NLS-1$
             IStatus status = new Status(
                     IStatus.ERROR,
                     IDEWorkbenchPlugin.IDE_WORKBENCH,

@@ -11,7 +11,6 @@
 package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -504,10 +503,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
                 }
             } else {
                 // CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-                IDEWorkbenchPlugin
-                        .log(MessageFormat
-                                .format(
-                                        "Exception in {0}.run: {1}", new Object[] { getClass().getName(), t }), t);//$NON-NLS-1$
+                IDEWorkbenchPlugin.log(getClass(), "run()", t);//$NON-NLS-1$
                 MessageDialog
                         .openError(
                                 shell,

@@ -12,7 +12,6 @@
 package org.eclipse.ui.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
@@ -317,10 +316,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
             } else {
                 // CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
 
-                IDEWorkbenchPlugin
-                        .log(MessageFormat
-                                .format(
-                                        "Exception in {0}.getNewFolder(): {1}", new Object[] { getClass().getName(), e.getTargetException() }));//$NON-NLS-1$
+                IDEWorkbenchPlugin.log(getClass(),
+                        "createNewFolder()", e.getTargetException()); //$NON-NLS-1$
                 MessageDialog
                         .openError(
                                 getContainer().getShell(),
