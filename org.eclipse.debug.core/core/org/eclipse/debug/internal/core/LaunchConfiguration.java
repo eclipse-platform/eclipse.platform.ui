@@ -274,8 +274,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (object instanceof ILaunchConfiguration) {
 			if (isWorkingCopy()) {
 				return this == object;
-			} else {
-				return  ((ILaunchConfiguration)object).getLocation().equals(getLocation());
+			} 
+			ILaunchConfiguration config = (ILaunchConfiguration) object;
+			if (!config.isWorkingCopy()) {
+				return config.getLocation().equals(getLocation());
 			}
 		}
 		return false;

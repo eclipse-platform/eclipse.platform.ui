@@ -5,6 +5,7 @@ package org.eclipse.debug.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -54,6 +55,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
@@ -90,7 +92,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	private HashMap fLaunchConfigurationTypesByFileExtension = new HashMap(5);
 	
 	/**
-	 * Launch configuration cache. Keys are <code>IPath</code>,
+	 * Launch configuration cache. Keys are <code>LaunchConfiguration</code>,
 	 * values are <code>LaunchConfigurationInfo</code>.
 	 */
 	private HashMap fLaunchConfigurations = new HashMap(10);
@@ -475,6 +477,66 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	public void setDefaultLaunchConfigurationType(String fileExtension, ILaunchConfigurationType configType) {
 		fDefaultLaunchConfigurationTypes.put(fileExtension, configType);
 	}
+	
+	/**
+	 * @see ILaunchManager#setDefaultLaunchConfiguration(IResource, ILaunchConfiguration)
+	 */
+	public boolean setDefaultLaunchConfiguration(IResource resource, ILaunchConfiguration config) {
+		LaunchConfiguration launchConfig = (LaunchConfiguration) config;
+		try {
+			LaunchConfigurationInfo info = launchConfig.getInfo();
+			String xmlString = info.getAsXML();
+			String configTypeID = launchConfig.getType().getIdentifier();
+			resource.setPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION_TYPE, configTypeID), xmlString);
+		} catch (CoreException ce) {
+			return false;
+		} catch (IOException ioe) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * @see ILaunchManager#initializeFromDefaultLaunchConfiguration(IResource, ILaunchConfigurationWorkingCopy, String)
+	 */
+	public boolean initializeFromDefaultLaunchConfiguration(IResource resource, ILaunchConfigurationWorkingCopy workingCopy, String configTypeID) {
+		try {
+			String xmlString = resource.getPersistentProperty(new QualifiedName(DEFAULT_LAUNCH_CONFIGURATION_TYPE, configTypeID));
+			if (xmlString == null) {
+				return false;
+			}
+			ByteArrayInputStream bais = new ByteArrayInputStream(xmlString.getBytes());
+			LaunchConfigurationInfo info = createInfoFromXML(bais);
+			((LaunchConfigurationWorkingCopy)workingCopy).setInfo(info);
+		} catch (CoreException ce) {
+			return false;
+		} catch (ParserConfigurationException pce) {
+			return false;
+		} catch (IOException ioe) {
+			return false;
+		} catch (SAXException se) {
+			return false;
+		}		
+		return true;													  	
+	}
+	
+	/**
+	 * Return a LaunchConfigurationInfo object initialized from XML contained in
+	 * the specified stream.  Simply pass out any exceptions encountered so that
+	 * caller can deal with them.  This is important since caller may need access to the
+	 * actual exception.
+	 */
+	protected LaunchConfigurationInfo createInfoFromXML(InputStream stream) throws CoreException,
+																			 ParserConfigurationException,
+																			 IOException,
+																			 SAXException {
+		Element root = null;
+		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		root = parser.parse(new InputSource(stream)).getDocumentElement();
+		LaunchConfigurationInfo info = new LaunchConfigurationInfo();
+		info.initializeFromXML(root);
+		return info;
+	}
 
 	/**
 	 * Terminates/Disconnects any active debug targets/processes.
@@ -735,7 +797,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * @exception DebugException if the config does not exist
 	 */
 	protected LaunchConfigurationInfo getInfo(ILaunchConfiguration config) throws CoreException {
-		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config.getLocation());
+		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
 		if (info == null) {
 			if (config.exists()) {
 				InputStream stream = null;
@@ -748,56 +810,44 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 						IFile file = ((LaunchConfiguration) config).getFile();
 						stream = file.getContents();
 					}
-					Element root = null;
-					DocumentBuilder parser =
-						DocumentBuilderFactory.newInstance().newDocumentBuilder();
-					root = parser.parse(new InputSource(stream)).getDocumentElement();
-					info = new LaunchConfigurationInfo();
-					info.initializeFromXML(root);
+					info = createInfoFromXML(stream);
+					fLaunchConfigurations.put(config, info);
 				} catch (FileNotFoundException e) {
-					throw new DebugException(
-						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
-					);					
+					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
 				} catch (SAXException e) {
-					throw new DebugException(
-						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
-					);
+					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
 				} catch (ParserConfigurationException e) {
-					throw new DebugException(
-						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
-					);		
+					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
 				} catch (IOException e) {
-					throw new DebugException(
-						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
-					);										
+					throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
 				} finally {
 					if (stream != null) {
 						try {
 							stream.close();
 						} catch (IOException e) {
-							throw new DebugException(
-								new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
-								 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e) //$NON-NLS-1$
-							);																	
+							throw createDebugException(MessageFormat.format(DebugCoreMessages.getString("LaunchManager.{0}_occurred_while_reading_launch_configuration_file._1"), new String[]{e.toString()}), e); //$NON-NLS-1$					
 						}
 					}
 				}
 		
 			} else {
-				throw new DebugException(
-					new Status(
-					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchManager.Launch_configuration_does_not_exist._6"), null //$NON-NLS-1$
-					)
-				);
+				throw createDebugException(DebugCoreMessages.getString("LaunchManager.Launch_configuration_does_not_exist._6"), null); //$NON-NLS-1$
 			}
 		}
 		return info;
 	}	
+	
+	/**
+	 * Return an instance of DebugException containing the specified message and Throwable.
+	 */
+	protected DebugException createDebugException(String message, Throwable throwable) {
+		return new DebugException(
+					new Status(
+					 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					 DebugException.REQUEST_FAILED, message, throwable 
+					)
+				);
+	}
 	
 	/**
 	 * Removes the given launch configuration from the cache of configurations.

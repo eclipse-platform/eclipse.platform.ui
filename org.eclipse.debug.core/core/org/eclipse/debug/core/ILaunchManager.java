@@ -353,6 +353,30 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public boolean isExistingLaunchConfigurationName(String name);
+
+	/**
+	 * Set the specified launch configuration as the source of default attribute values
+	 * for the specified resource.  Returns <code>true</code> if the default was successfully
+	 * set, <code>false</code> otherwise.
+	 * 
+	 * @param resource the <code>IResource</code> whose default launch configuration is being set
+	 * @param config the launch configuration being set as the default
+	 * @since 2.0
+	 */
+	public boolean setDefaultLaunchConfiguration(IResource resource, ILaunchConfiguration config);
+
+	/**
+	 * Look for a default launch configuration of the specified type on the specified resource.
+	 * If found, set the attribute values of the specified launch configuration working copy to 
+	 * the attribute values of the default launch configuration.  The return value is 
+	 * <code>true</code> if any values on config were modified, <code>false</code> otherwise.
+	 * 
+	 * @param resource the <code>IResource</code> on which to look for a default launch configuration
+	 * @param workingCopy the launch configuration working copy whose attribute values will be set
+	 * @param configTypeID the identifying String of the launch configuration type to look for on resource
+	 * @since 2.0
+	 */
+	public boolean initializeFromDefaultLaunchConfiguration(IResource resource, ILaunchConfigurationWorkingCopy workingCopy, String configTypeID);
 }
 
 

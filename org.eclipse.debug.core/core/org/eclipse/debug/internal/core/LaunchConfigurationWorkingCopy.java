@@ -308,7 +308,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @param info a copy of attributes from this working copy's
 	 * 	original launch configuration
 	 */
-	private void setInfo(LaunchConfigurationInfo info) {
+	protected void setInfo(LaunchConfigurationInfo info) {
 		fInfo = info;
 	}
 

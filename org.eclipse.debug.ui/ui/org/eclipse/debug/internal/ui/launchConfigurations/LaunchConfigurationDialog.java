@@ -75,7 +75,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	/**
 	 * The starting mode, as specified by the caller
 	 */
-	private String fInitialMode;
+	private String fMode;
 	
 	/**
 	 * The 'new' button to create a new configuration
@@ -106,12 +106,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * The 'launch' button
 	 */
 	private Button fLaunchButton;
-	
-	/**
-	 * The mutually exclusive radio buttons that specify the launch mode
-	 */
-	private Button fRadioRunButton;
-	private Button fRadioDebugButton;
 	
 	/**
 	 * Background color for everything in the 'wizard' banner area at the top of the dialog
@@ -207,7 +201,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	public LaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
 		super(shell);
 		resolveWorkbenchSelection(selection);
-		setInitialMode(mode);
+		setMode(mode);
 	}
 	
 	protected void resolveWorkbenchSelection(IStructuredSelection selection) {
@@ -313,7 +307,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	protected void initializeSettings() {
 		getTreeViewer().setInput(ResourcesPlugin.getWorkspace().getRoot());		
 		initializeFirstConfig();
-		initializeModeButtons();		
 	}
 	
 	/**
@@ -391,22 +384,9 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		return type;		
 	}
 	
-	/**
-	 * Set the state of the Run/Debug radio buttons based on any initial mode that was
-	 * passed in to this dialog.
-	 */
-	protected void initializeModeButtons() {
-		if (getInitialMode().equals(ILaunchManager.DEBUG_MODE)) {
-			getRadioDebugButton().setSelection(true);
-		} else {
-			getRadioRunButton().setSelection(true);
-		}
-		setModeLabelState();
-	}
-	
 	protected void setModeLabelState() {
 		Image image;
-		if (getRadioDebugButton().getSelection()) {
+		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
 			image = DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_DEBUG);
 		} else {
 			image = DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_RUN);
@@ -421,18 +401,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		getTreeViewer().setSelection(selection);
 	}
 	
-	/**
-	 * Return whether the debug mode radio button is currently selected.
-	 * Because there are only two modes, RUN & DEBUG, a return value of false
-	 * can be interpreted to mean the RUN mode is selected.
-	 */
-	protected String getMode() {
-		if (getRadioDebugButton().getSelection()) {
-			return ILaunchManager.DEBUG_MODE;
-		}
-		return ILaunchManager.RUN_MODE;
-	}
-
 	private void setLastSavedName(String lastSavedName) {
 		this.fLastSavedName = lastSavedName;
 	}
@@ -706,7 +674,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		GridLayout topLayout = new GridLayout();
 		topLayout.marginHeight = 0;
 		topLayout.marginWidth = 0;
-		topLayout.numColumns = 4;
+		topLayout.numColumns = 3;
 		comp.setLayout(topLayout);
 		comp.setBackground(getBannerBackground());
 		GridData gd;
@@ -715,7 +683,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		statusImageComp.setBackground(getBannerBackground());
 		GridLayout statusImageLayout = new GridLayout();
 		statusImageLayout.marginHeight = 0;
-		statusImageLayout.marginWidth = 4;
+		statusImageLayout.marginWidth = 0;
 		statusImageComp.setLayout(statusImageLayout);
 		
 		setStatusImageLabel(new Label(statusImageComp, SWT.NONE));
@@ -733,27 +701,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		getMessageLabel().setLayoutData(gd);
 		
-		Composite radioComposite = new Composite(comp, SWT.NONE);
-		radioComposite.setBackground(getBannerBackground());
-		GridLayout radioLayout = new GridLayout();
-		radioLayout.numColumns = 1;
-		radioComposite.setLayout(radioLayout);
-		//gd = new GridData(GridData.FILL_BOTH);
-		//radioComposite.setLayoutData(gd);
-		
-		setRadioRunButton(new Button(radioComposite, SWT.RADIO));
-		getRadioRunButton().setBackground(getBannerBackground());
-		getRadioRunButton().setText("Run");
-		setRadioDebugButton(new Button(radioComposite, SWT.RADIO));
-		getRadioDebugButton().setBackground(getBannerBackground());
-		getRadioDebugButton().setText("Debug");
-		getRadioDebugButton().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				setModeLabelState();
-			}
-		});
-		
 		fModeLabel = new Label(comp, SWT.NONE);
+		setModeLabelState();
 		
 		return comp;
 	}
@@ -1055,42 +1004,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  	} 	
  	
  	/**
- 	 * Sets the 'debug' radio button.
- 	 * 
- 	 * @param button the 'debug' button.
- 	 */	
- 	protected void setRadioDebugButton(Button button) {
- 		fRadioDebugButton = button;
- 	}
- 	
- 	/**
- 	 * Returns the 'debug' radio button
- 	 * 
- 	 * @return the 'debug' button
- 	 */
- 	protected Button getRadioDebugButton() {
- 		return fRadioDebugButton;
- 	} 	
- 	
- 	/**
- 	 * Sets the 'run' radio button.
- 	 * 
- 	 * @param button the 'run' button.
- 	 */	
- 	protected void setRadioRunButton(Button button) {
- 		fRadioRunButton = button;
- 	}
- 	
- 	/**
- 	 * Returns the 'run' radio button
- 	 * 
- 	 * @return the 'run' button
- 	 */
- 	protected Button getRadioRunButton() {
- 		return fRadioRunButton;
- 	} 	
- 	
- 	/**
  	 * Sets the 'message' label.
  	 * 
  	 * @param label the 'message' label.
@@ -1297,12 +1210,12 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		return fSelectedTreeObject;
  	}
  	
- 	protected void setInitialMode(String mode) {
- 		fInitialMode = mode;
+ 	protected void setMode(String mode) {
+ 		fMode = mode;
  	}
  	
- 	protected String getInitialMode() {
- 		return fInitialMode;
+ 	protected String getMode() {
+ 		return fMode;
  	}
  	
 	/**
