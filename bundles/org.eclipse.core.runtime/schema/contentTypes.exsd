@@ -106,7 +106,7 @@ a file association extends an existing content type by associating new file name
          <attribute name="default-charset" type="string">
             <annotation>
                <documentation>
-                  the default charset for this content type
+                  the default charset for this content type. Should be an empty string, if this content type should not have a default charset even if the parent has one
                </documentation>
             </annotation>
          </attribute>

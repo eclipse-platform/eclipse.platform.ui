@@ -131,6 +131,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertEquals("4.2", "UTF-8", description.getProperty(IContentDescription.CHARSET));
 		IContentType mytext = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext");
 		assertNotNull("5.0", mytext);
+		assertEquals("5.0b", "BAR", mytext.getDefaultCharset());		
 		description = contentTypeManager.getDescriptionFor(getInputStream("some contents"), "abc.tzt", IContentDescription.ALL);
 		assertNotNull("5.1", description);
 		assertEquals("5.2", mytext, description.getContentType());
@@ -146,6 +147,12 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNotNull("5.10", description);
 		assertEquals("5.11", mytext, description.getContentType());
 		assertEquals("5.12", "BAR", description.getProperty(IContentDescription.CHARSET));
+		IContentType mytext1 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext1");
+		assertNotNull("6.0", mytext1);
+		assertEquals("6.1", "BAR", mytext1.getDefaultCharset());
+		IContentType mytext2 = contentTypeManager.getContentType(PI_RUNTIME_TESTS + '.' + "mytext2");		
+		assertNotNull("6.2", mytext2);
+		assertEquals("6.3", null, mytext2.getDefaultCharset());		
 	}
 
 	public void testBinaryTypes() throws IOException {

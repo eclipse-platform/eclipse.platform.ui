@@ -30,6 +30,7 @@ public class ContentType implements IContentType {
 			return new QualifiedName[0];
 		}
 	}
+
 	final static byte ASSOCIATED_BY_EXTENSION = 2;
 	final static byte ASSOCIATED_BY_NAME = 1;
 
@@ -183,7 +184,7 @@ public class ContentType implements IContentType {
 		} catch (IOException ioe) {
 			// I/O exceptions are expected, and will flow to the caller
 			throw ioe;
-		} catch (RuntimeException re) {		
+		} catch (RuntimeException re) {
 			// describer seems to be buggy. just disable it (logging the reason)			
 			invalidateDescriber(re);
 			return IContentDescriber.INVALID;
@@ -221,7 +222,17 @@ public class ContentType implements IContentType {
 		if (aliasTarget != null)
 			return getTarget().getDefaultCharset();
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
-		return contentTypeNode.get(CONTENT_TYPE_CHARSET_PREF, defaultCharset);
+		String currentCharset = contentTypeNode.get(CONTENT_TYPE_CHARSET_PREF, internalGetDefaultCharset());
+		// an empty string as charset means: no default charset 
+		return "".equals(currentCharset) ? null : currentCharset; //$NON-NLS-1$
+	}
+
+	private String internalGetDefaultCharset() {
+		if (defaultCharset == null) {
+			ContentType baseType = (ContentType) getBaseType();
+			return baseType == null ? null : baseType.getDefaultCharset();
+		}
+		return defaultCharset;
 	}
 
 	public int getDepth() {
