@@ -134,7 +134,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(Object otherJob) {
-		return (int) (((InternalJob) otherJob).startTime - startTime);
+		return ((InternalJob) otherJob).startTime >= startTime ? 1 : -1;
 	}
 	/* (non-Javadoc)
 	 * @see Job#done(IStatus)
