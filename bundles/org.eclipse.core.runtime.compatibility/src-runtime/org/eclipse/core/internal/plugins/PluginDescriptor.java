@@ -21,8 +21,7 @@ import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
+import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.*;
 
 public class PluginDescriptor implements IPluginDescriptor {
@@ -155,6 +154,16 @@ public class PluginDescriptor implements IPluginDescriptor {
 		return null;
 	}
 
+	/**
+	 * @see IPluginDescriptor
+	 */
+	public IPluginPrerequisite[] getPluginPrerequisites() {
+		// only surface resolved pre-requisites because the 
+		// PluginPrerequisite implementation needs an existing  
+		// bundle to get its info from
+		return getPluginResolvedPrerequisites();
+	}
+
 	public PluginRegistry getPluginRegistry() {
 		return (PluginRegistry) org.eclipse.core.internal.plugins.InternalPlatform.getPluginRegistry();
 	}
@@ -251,22 +260,66 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public static PluginVersionIdentifier getVersionIdentifierFromString(String pluginString) {
 		return new PluginVersionIdentifier(pluginString);
 	}
-
-	
-	public IPluginPrerequisite[] getPluginPrerequisites() {
+	/**
+	 * Returns all pre-requisites that have been properly resolved, excluding any
+	 * redundant references to Platform.PI_RUNTIME and BootLoader.PI_BOOT.
+	 */
+	public IPluginPrerequisite[] getPluginResolvedPrerequisites() {
 		if (!isLegacy())
 			return new IPluginPrerequisite[0];
 
-		BundleDescription description = Platform.getPlatformAdmin().getState(false).getBundle(bundleOsgi.getBundleId());
-		BundleSpecification[] specs = description.getRequiredBundles();
-		
-		IPluginPrerequisite[] resolvedPrerequisites = new IPluginPrerequisite[specs.length];
-		for (int j = 0; j < specs.length; j++) {
-			resolvedPrerequisites[j] = new PluginPrerequisite(specs[j]);
+		String prereqs = (String) bundleOsgi.getHeaders().get(Constants.REQUIRE_BUNDLE);
+		if (prereqs == null)
+			return new IPluginPrerequisite[0];
+
+		ManifestElement[] elements;
+		Set allRequired = new HashSet();
+		try {
+			elements = ManifestElement.parseBasicCommaSeparation(Constants.REQUIRE_BUNDLE, prereqs);
+			for (int i = 0; i < elements.length; i++) {
+				allRequired.add(elements[i].getValue());
+				allRequired.addAll(collectRequired(elements[i].getValue()));
+			}
+		} catch (BundleException e) {
+			return new IPluginPrerequisite[0];
 		}
+
+		IPluginPrerequisite[] resolvedPrerequisites = new IPluginPrerequisite[allRequired.size()];
+		int i = 0;
+		for (Iterator iter = allRequired.iterator(); iter.hasNext();) {
+			String element = (String) iter.next();
+			resolvedPrerequisites[i++] = new PluginPrerequisite(InternalPlatform.getDefault().getBundle(element));
+		}
+		
 		return resolvedPrerequisites;
 	}
 
+	//Recusively collect the required bundles of a given bundles
+	private Set collectRequired(String requiredId) {
+		Set recursiveRequired = new HashSet(3);
+		Bundle required = InternalPlatform.getDefault().getBundle(requiredId);
+		if (required == null)
+			return recursiveRequired;
+
+		String requiredBundle = (String) required.getHeaders().get(Constants.REQUIRE_BUNDLE);
+		ManifestElement[] entries;
+		try {
+			entries = ManifestElement.parseBasicCommaSeparation(Constants.REQUIRE_BUNDLE, requiredBundle);
+			if (entries == null)
+				return recursiveRequired;
+			
+			for (int i = 0; i < entries.length; i++) {
+				String reexport = (String) entries[i].getAttribute(Constants.PROVIDE_PACKAGES_ATTRIBUTE);
+				if ("true".equalsIgnoreCase(reexport)) {
+					recursiveRequired.add(entries[i].getValue());
+					recursiveRequired.addAll(collectRequired(entries[i].getValue()));
+				}
+			}
+		} catch (BundleException e) {
+			return recursiveRequired;
+		}
+		return recursiveRequired;
+	}
 	/**
 	 * Returns true if the plugin is active or is currently in the process of being 
 	 * activated, and false otherwse.
