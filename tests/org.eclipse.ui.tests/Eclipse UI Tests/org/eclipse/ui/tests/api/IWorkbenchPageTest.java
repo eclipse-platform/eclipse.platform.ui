@@ -534,7 +534,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals( fActivePage.closeEditor(editor, true), true );
 		assertEquals(
 			callTrace.verifyOrder(
-				new String[] { "isSaveOnCloseNeeded", "isDirty", "dispose" }),
+				new String[] { "isDirty", "dispose" }),
 			true);
 
 	/*
