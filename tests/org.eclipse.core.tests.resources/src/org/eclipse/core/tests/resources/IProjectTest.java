@@ -2438,6 +2438,14 @@ public void testProjectReferences() {
 		fail("2.0", e);
 	}
 	assertTrue("2.1", target.getReferencingProjects().length == 1);
+
+	//get references for a non-existent project
+	try {
+		getWorkspace().getRoot().getProject("DoesNotExist").getReferencedProjects();
+		fail("3.0");
+	} catch (CoreException e1) {
+		//should fail
+	}
 }
 public void testSetGetProjectPersistentProperty() {
 	IProject target = getWorkspace().getRoot().getProject("Project");
