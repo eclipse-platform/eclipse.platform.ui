@@ -1,13 +1,20 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.properties;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * The FilePropertySource gives the extra information that is shown for files
@@ -67,12 +74,22 @@ private String getSizeString(IFile file) {
 	if (!file.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
 	else {
-		File localFile = getFile(file);
-		if(localFile == null)
+		IPath location = file.getLocation();
+		if (location == null) {
+			if (file.isLinked())
+				return UNDEFINED_PATH_VARIABLE;
+				
 			return FILE_NOT_FOUND;
-		else
-			return Long.toString(localFile.length());
-	}
+		}
+		else {
+			File localFile = location.toFile();
+		
+			if (localFile.exists()) {
+				return Long.toString(localFile.length());
+			}
+			return FILE_NOT_FOUND;
+		}
+	}	
 }
 
 /**

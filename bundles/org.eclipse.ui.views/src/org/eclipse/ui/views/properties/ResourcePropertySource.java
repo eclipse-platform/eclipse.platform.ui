@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.views.properties;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,6 +25,7 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 public class ResourcePropertySource implements IPropertySource {
 	protected static String NOT_LOCAL_TEXT = PropertiesMessages.getString("PropertySource.notLocal"); //$NON-NLS-1$
 	protected static String FILE_NOT_FOUND = PropertiesMessages.getString("PropertySource.notFound"); //$NON-NLS-1$
+	protected static String UNDEFINED_PATH_VARIABLE = PropertiesMessages.getString("PropertySource.undefinedPathVariable"); //$NON-NLS-1$
 	
 	// The element for the property source
 	protected IResource element;
@@ -86,15 +93,22 @@ private String getDateStringValue(IResource resource) {
 
 	if (!resource.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
+		
+	IPath location = resource.getLocation();
+	if (location == null) {
+		if (resource.isLinked())
+			return UNDEFINED_PATH_VARIABLE;
+				
+		return FILE_NOT_FOUND;
+	}
 	else {
-		File localFile = getFile(resource);
-		if(localFile == null)
-			return FILE_NOT_FOUND;
-		else{
+		File localFile = location.toFile();
+		if (localFile.exists()) {
 			DateFormat format = new SimpleDateFormat();
 			return format.format(new Date(localFile.lastModified()));
 		}
-	}
+		return FILE_NOT_FOUND;
+	}		
 }
 /* (non-Javadoc)
  * Method declared on IPropertySource.
