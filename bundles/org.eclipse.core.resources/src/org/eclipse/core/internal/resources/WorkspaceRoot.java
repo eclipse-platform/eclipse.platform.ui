@@ -74,7 +74,15 @@ public IContainer getContainerForLocation(IPath location) {
  * @see IContainer#getDefaultCharset
  */
 public String getDefaultCharset() {
-	return ResourcesPlugin.getEncoding();
+	return getDefaultCharset(true);
+}
+/**
+ * @see IContainer#getDefaultCharset
+ */
+public String getDefaultCharset(boolean checkImplicit) {
+	if (checkImplicit)
+		return ResourcesPlugin.getEncoding();
+	return ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
 }
 /**
  * @see IWorkspaceRoot

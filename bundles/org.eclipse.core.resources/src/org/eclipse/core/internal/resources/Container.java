@@ -200,14 +200,20 @@ public IResource[] members(int memberFlags) throws CoreException {
 	}		
 }
 /**
- * @see IContainer#getDefaultCharset
+ * @see IContainer
  */
 public String getDefaultCharset() throws CoreException {
+	return getDefaultCharset(true);
+}
+/**
+ * @see IContainer
+ */
+public String getDefaultCharset(boolean checkImplicit) throws CoreException {
 	// non-existing resources default to parent's charset
 	if (!exists())
-		return getParent().getDefaultCharset();	
+		return checkImplicit ? getParent().getDefaultCharset() : null;	
 	String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
-	return charset == null ? getParent().getDefaultCharset() : charset;
+	return (charset == null && checkImplicit) ? getParent().getDefaultCharset() : charset;
 }
 
 /**

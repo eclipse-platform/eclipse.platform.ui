@@ -41,39 +41,47 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			IFile file3 = folder2.getFile("file3.txt");
 			ensureExistsInWorkspace(new IResource[]{file1, file2, file3}, true);
 			// project and children should be using the workspace's default now
-			assertCharsetIs("1.0", ResourcesPlugin.getEncoding(), new IResource[]{workspace.getRoot(), project, file1, folder1, file2, folder2, file3});
+			assertCharsetIs("1.0", ResourcesPlugin.getEncoding(), new IResource[]{workspace.getRoot(), project, file1, folder1, file2, folder2, file3}, true);
+			assertCharsetIs("1.1", null, new IResource[]{project, file1, folder1, file2, folder2, file3}, false);			
 			// sets workspace default charset
 			workspace.getRoot().setDefaultCharset("FOO");
-			assertCharsetIs("2.0", "FOO", new IResource[]{workspace.getRoot(), project, file1, folder1, file2, folder2, file3});
+			assertCharsetIs("2.0", "FOO", new IResource[]{workspace.getRoot(), project, file1, folder1, file2, folder2, file3}, true);
+			assertCharsetIs("2.1", null, new IResource[]{project, file1, folder1, file2, folder2, file3}, false);			
 			// sets project default charset
 			project.setDefaultCharset("BAR");
-			assertCharsetIs("3.0", "BAR", new IResource[]{project, file1, folder1, file2, folder2, file3});
-			assertCharsetIs("3.1", "FOO", new IResource[]{workspace.getRoot()});
+			assertCharsetIs("3.0", "BAR", new IResource[]{project, file1, folder1, file2, folder2, file3}, true);
+			assertCharsetIs("3.1", null, new IResource[]{file1, folder1, file2, folder2, file3}, false);			
+			assertCharsetIs("3.2", "FOO", new IResource[]{workspace.getRoot()}, true);
 			// sets folder1 default charset
 			folder1.setDefaultCharset("FRED");
-			assertCharsetIs("4.0", "FRED", new IResource[]{folder1, file2, folder2, file3});
-			assertCharsetIs("4.1", "BAR", new IResource[]{project, file1});
+			assertCharsetIs("4.0", "FRED", new IResource[]{folder1, file2, folder2, file3}, true);
+			assertCharsetIs("4.1", null, new IResource[]{file2, folder2, file3}, false);			
+			assertCharsetIs("4.2", "BAR", new IResource[]{project, file1}, true);
 			// sets folder2 default charset
 			folder2.setDefaultCharset("ZOO");
-			assertCharsetIs("5.0", "ZOO", new IResource[]{folder2, file3});
-			assertCharsetIs("5.1", "FRED", new IResource[]{folder1, file2});
+			assertCharsetIs("5.0", "ZOO", new IResource[]{folder2, file3}, true);
+			assertCharsetIs("5.1", null, new IResource[]{file3}, false);			
+			assertCharsetIs("5.2", "FRED", new IResource[]{folder1, file2}, true);
 			// sets file3 charset
 			file3.setCharset("ZIT");
-			assertCharsetIs("5.0", "ZIT", new IResource[]{file3});
+			assertCharsetIs("6.0", "ZIT", new IResource[]{file3}, false);
 			folder2.setDefaultCharset(null);
-			assertCharsetIs("6.0", folder2.getParent().getDefaultCharset(), new IResource[]{folder2});
-			assertCharsetIs("6.1", "ZIT", new IResource[]{file3});
+			assertCharsetIs("7.0", folder2.getParent().getDefaultCharset(), new IResource[]{folder2}, true);
+			assertCharsetIs("7.1", null, new IResource[]{folder2}, false);			
+			assertCharsetIs("7.2", "ZIT", new IResource[]{file3}, false);
 			folder1.setDefaultCharset(null);
-			assertCharsetIs("7.0", folder1.getParent().getDefaultCharset(), new IResource[]{folder1, file2, folder2});
-			assertCharsetIs("7.1", "ZIT", new IResource[]{file3});
+			assertCharsetIs("8.0", folder1.getParent().getDefaultCharset(), new IResource[]{folder1, file2, folder2}, true);
+			assertCharsetIs("8.1", null, new IResource[]{folder1, file2, folder2}, false);			
+			assertCharsetIs("8.2", "ZIT", new IResource[]{file3}, false);
 			project.setDefaultCharset(null);
-			assertCharsetIs("8.0", project.getParent().getDefaultCharset(), new IResource[]{project, file1, folder1, file2, folder2});
-			assertCharsetIs("8.1", "ZIT", new IResource[]{file3});
+			assertCharsetIs("9.0", project.getParent().getDefaultCharset(), new IResource[]{project, file1, folder1, file2, folder2}, true);
+			assertCharsetIs("9.1", null, new IResource[]{project, file1, folder1, file2, folder2}, false);			
+			assertCharsetIs("9.2", "ZIT", new IResource[]{file3}, false);
 			workspace.getRoot().setDefaultCharset(null);
-			assertCharsetIs("9.0", project.getParent().getDefaultCharset(), new IResource[]{project, file1, folder1, file2, folder2});
-			assertCharsetIs("9.1", "ZIT", new IResource[]{file3});
+			assertCharsetIs("10.0", project.getParent().getDefaultCharset(), new IResource[]{project, file1, folder1, file2, folder2}, true);
+			assertCharsetIs("10.1", "ZIT", new IResource[]{file3}, false);
 			file3.setCharset(null);
-			assertCharsetIs("9.0", ResourcesPlugin.getEncoding(), new IResource[]{workspace.getRoot(), project, file1, folder1, file2, folder2, file3});
+			assertCharsetIs("11.0", ResourcesPlugin.getEncoding(), new IResource[]{workspace.getRoot(), project, file1, folder1, file2, folder2, file3}, true);
 		} finally {
 			ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, originalCharset);
 			if (project != null)
@@ -328,14 +336,13 @@ public class CharsetTest extends EclipseWorkspaceTest {
 	/**
 	 * Asserts that the given resources have the given [default] charset.
 	 */
-	private void assertCharsetIs(String tag, String encoding, IResource[] resources) throws CoreException {
+	private void assertCharsetIs(String tag, String encoding, IResource[] resources, boolean checkImplicit) throws CoreException {
 		for (int i = 0; i < resources.length; i++) {
-			String resourceCharset = resources[i] instanceof IFile ? ((IFile) resources[i]).getCharset() : ((IContainer) resources[i]).getDefaultCharset();
+			String resourceCharset = resources[i] instanceof IFile ? ((IFile) resources[i]).getCharset(checkImplicit) : ((IContainer) resources[i]).getDefaultCharset(checkImplicit);
 			assertEquals(tag + " " + resources[i].getFullPath(), encoding, resourceCharset);
 		}
 	}
 	public static Test suite() {
 		return new TestSuite(CharsetTest.class);
-		//		return new EncodingTest("testAvoidOwnChanges");
 	}
 }

@@ -171,7 +171,38 @@ public IResource findMember(IPath path, boolean includePhantoms);
 /**
  * Returns the default charset for resources in this container.
  * <p>
- * The charset returned is:
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   getDefaultCharset(true);
+ * </pre>
+ * </p>
+ * <p>
+ * <b>Note 1</b>:  this method does not check whether the result is a supported
+ * charset name. Callers should be prepared to handle 
+ * <code>UnsupportedEncodingException</code> where this charset is used. 
+ * </p>
+ * <p>
+ * <b>Note 2</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p>
+ *
+ * @return the name of the default charset encoding for this container 
+ * @throws CoreException if this method fails
+ * @see IContainer#getDefaultCharset(boolean) 
+ * @see IFile#getCharset
+ * @since 3.0
+ */
+public String getDefaultCharset() throws CoreException;
+/**
+ * Returns the default charset for resources in this container.
+ * <p>
+ * If checkImplicit is <code>false</code>, this method 
+ * will return the charset defined by calling #setDefaultCharset, provided this 
+ * container exists, or <code>null</code> otherwise.
+ * </p>  
+ * <p>
+ * If checkImplicit is <code>true</code>, this method uses the following 
+ * algorithm to determine the charset to be returned:
  * <ol>
  * <li>the one explicitly set by calling #setDefaultCharset 
  * (with a non-null argument) on this container, if any, and this container 
@@ -179,18 +210,24 @@ public IResource findMember(IPath path, boolean includePhantoms);
  * <li>the parent's default charset, if this container has a parent (is not the 
  * workspace root), or</li>
  * <li>the charset returned by ResourcesPlugin#getEncoding.</li> 
- * </ol> 
+ * </ol>
+ *  </p>
+ * <p>
+ * <b>Note 1</b>:  this method does not check whether the result is a supported
+ * charset name. Callers should be prepared to handle 
+ * <code>UnsupportedEncodingException</code> where this charset is used. 
  * </p>
- *  <p>
- * <b>Note</b>: This method is part of early access API that may well 
+ * <p>
+ * <b>Note 2</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
- * @return the name of the default charset encoding for this container 
+ * @return the name of the default charset encoding for this container,
+ * or <code>null</code> 
  * @throws CoreException if this method fails
  * @see IFile#getCharset
  * @since 3.0
  */
-public String getDefaultCharset() throws CoreException;
+public String getDefaultCharset(boolean checkImplicit) throws CoreException;
 /**
  * Returns a handle to the file identified by the given path in this
  * container.

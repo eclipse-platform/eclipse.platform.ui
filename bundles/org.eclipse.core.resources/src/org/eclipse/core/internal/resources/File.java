@@ -200,16 +200,21 @@ protected void ensureClosed(InputStream stream) {
 	}
 }
 /**
- * @see IEncodedStorage#getCharset
+ * @see IFile
  */
-
 public String getCharset() throws CoreException {
+	return getCharset(true);
+}
+/**
+ * @see IFile
+ */
+public String getCharset(boolean checkImplicit) throws CoreException {
 	// non-existing resources default to parent's charset
 	if (!exists())
-		return getParent().getDefaultCharset();
+		return checkImplicit ? getParent().getDefaultCharset() : null;
 	// if there is a file-specific user setting, use it
 	String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
-	if (charset != null)
+	if (charset != null || !checkImplicit)
 		return charset;
 	// tries to obtain a description for the file contents
 	IContentTypeManager contentTypeManager = Platform.getContentTypeManager();

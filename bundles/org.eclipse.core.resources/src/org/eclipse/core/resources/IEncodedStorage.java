@@ -34,6 +34,15 @@ public interface IEncodedStorage extends IStorage {
 	 * Returns the name of a charset encoding to be used when decoding this 
 	 * storage's contents into characters. Returns <code>null</code> if a proper 
 	 * encoding cannot be determined.
+	 * <p>
+	 * <b>Note 1</b>:  this method does not check whether the result is a supported
+	 * charset name. Callers should be prepared to handle 
+	 * <code>UnsupportedEncodingException</code> where this charset is used. 
+	 * </p>
+	 * <p>
+	 * <b>Note 2</b>: This method is part of early access API that may well 
+	 * change in incompatible ways until it reaches its finished form. 
+	 * </p>
 	 *
 	 * @return the name of a charset, or <code>null</code>
 	 * @exception CoreException if an error happens while determining 

@@ -408,18 +408,55 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  * file into characters. 
  * <p>
  * This refinement of the corresponding <code>IEncodingStorage</code> method
- * uses the following algorithm to determine the charset to be returned:
+ * is a convenience method, fully equivalent to:
+ * <pre>
+ *   getCharset(true);
+ * </pre>
+ * </p>
+ * <p>
+ * <b>Note 1</b>:  this method does not check whether the result is a supported
+ * charset name. Callers should be prepared to handle 
+ * <code>UnsupportedEncodingException</code> where this charset is used. 
+ * </p>
+ * <p>
+ * <b>Note 2</b>: This method is part of early access API that may well 
+ * change in incompatible ways until it reaches its finished form. 
+ * </p>
+ *  
+ * @return the name of a charset
+ * @see IFile#getCharset(boolean) 
+ * @see IEncodedStorage#getCharset
+ * @see IContainer#getDefaultCharset
+ * @since 3.0
+ */
+public String getCharset() throws CoreException;
+/**
+ * Returns the name of a charset to be used when decoding the contents of this 
+ * file into characters. 
+ * <p>
+ * If checkImplicit is <code>false</code>, this method 
+ * will return the charset defined by calling #setCharset, provided this file exists, or
+ * <code>null</code> otherwise.
+ * </p>  
+ * <p>
+ * If checkImplicit is <code>true</code>, this method uses the following 
+ * algorithm to determine the charset to be returned:
  * <ol>
  * <li>the charset defined by calling #setCharset, if any, and this file exists, 
  * or</li>
- * <li>the charset automatically discovered based on this file's contents,
+ * <li>if <code>checkImplicit</code> and the charset automatically discovered based on this file's contents,
  * if one can be determined, or</li>
  * <li>the default encoding for this file's parent (as defined by 
  * IContainer#getDefaultCharset).</li>
  * </ol>
  * </p> 
  * <p>
- * <b>Note</b>: This method is part of early access API that may well 
+ * <b>Note 1</b>:  this method does not check whether the result is a supported
+ * charset name. Callers should be prepared to handle 
+ * <code>UnsupportedEncodingException</code> where this charset is used. 
+ * </p>
+ * <p>
+ * <b>Note 2</b>: This method is part of early access API that may well 
  * change in incompatible ways until it reaches its finished form. 
  * </p>
  *  
@@ -428,7 +465,7 @@ public void delete(boolean force, boolean keepHistory, IProgressMonitor monitor)
  * @see IContainer#getDefaultCharset
  * @since 3.0
  */
-public String getCharset() throws CoreException;
+public String getCharset(boolean checkImplicit) throws CoreException;
 /**
  * Returns an open input stream on the contents of this file.
  * This refinement of the corresponding <code>IStorage</code> method 
