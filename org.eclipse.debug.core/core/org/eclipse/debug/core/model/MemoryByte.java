@@ -12,20 +12,45 @@ package org.eclipse.debug.core.model;
 
 
 /**
- * Represents a byte in the meomry block.
- * MemoryByte allows debug adapters to specify attributes for each of the 
- * individual byte from the memory block
- * @since 3.0
+ * A byte of memory in a meomry block. Each byte of memory has a value and a set
+ * of attributes indicating if the byte is read-only, valid, or if the value has
+ * changed.
+ * <p>
+ * Clients may subclass this class. 
+ * </p>
+ * @since 3.1
  */
 public abstract class MemoryByte {
 	
-	public static final byte	READONLY	= 0x01;			// Attribute to indicate the the byte is read-only
-	public static final byte	VALID		= 0x02;			// Attribute to indicate that the byte is valid
-	public static final byte	CHANGED		= 0x04; 		// Attribute to indicate that the byte has changed
-	public static final byte 	UNKNOWN		= 0x08;			// The byte has no history to determine if the byte is changed or not.
-															// The change bit has no effect if this bit is on.
+    /**
+     * Bit mask used in flags to indicate a byte is read-only.
+     */
+	public static final byte	READONLY	= 0x01;
 	
-	// value of the byte
+	/**
+	 * Bit mask used in flags to indicate a byte is valid.
+	 * 
+	 * TODO: specify what makes a byte valid - when is a byte invalid?
+	 */
+	public static final byte	VALID		= 0x02;
+	
+	/**
+	 * Bit mask used in flags to indicate a byte has changed.
+	 * 
+	 * TODO: specify CHANGE flag more clearly - changed since when? 
+	 */
+	public static final byte	CHANGED		= 0x04;
+	
+	/**
+	 * Bit mask used in flags to indicate a byte has no history to
+	 * determine if the byte is changed or not. The change bit has
+	 * no meaning if this bit is on.
+	 */
+	public static final byte 	UNKNOWN		= 0x08;
+	
+	/**
+	 * Value of this byte.
+	 */
 	protected byte value;
 	
 	// Flags for specifying the attributes
