@@ -1303,18 +1303,4 @@ public final class Platform {
 	public static boolean inDevelopmentMode() {
 		return System.getProperty("osgi.dev") != null; //$NON-NLS-1$
 	}
-
-	/**
-	 * Initialize the given class with the values from the specified message bundle.
-	 * <p>
-	 * Note this is interim API and may change before the 3.1 release.
-	 * </p>
-	 * 
-	 * @param bundleName fully qualified path of the class name
-	 * @param clazz the class where the constants will exist
-	 * @since 3.1
-	 */
-	public static void initializeMessages(String bundleName, Class clazz) {
-		InternalPlatform.getDefault().initializeMessages(bundleName, clazz);
-	}
 }
