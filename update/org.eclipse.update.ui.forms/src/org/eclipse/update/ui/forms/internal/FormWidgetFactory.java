@@ -360,7 +360,9 @@ public class FormWidgetFactory {
 		borderColor = getColor(COLOR_BORDER);
 		foregroundColor = display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		hyperlinkHandler = new HyperlinkHandler();
-		hyperlinkHandler.setForeground(registerColor(COLOR_HYPERLINK, 0, 0, 153));
+		Color hyperlinkColor = JFaceColors.getHyperlinkText(display);
+		//hyperlinkHandler.setForeground(registerColor(COLOR_HYPERLINK, 0, 0, 153));
+		hyperlinkHandler.setForeground(hyperlinkColor);
 		hyperlinkHandler.setBackground(backgroundColor);
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
