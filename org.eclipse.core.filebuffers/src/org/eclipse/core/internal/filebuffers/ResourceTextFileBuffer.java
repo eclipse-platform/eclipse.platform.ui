@@ -387,7 +387,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fManager.fireBufferContentAboutToBeReplaced(this);
 		
 		removeFileBufferContentListeners();
-		fDocument.set(newContent);
+		if (replaceContent)
+			fDocument.set(newContent);
 		fCanBeSaved= false;
 		fSynchronizationStamp= fFile.getModificationStamp();
 		fStatus= status;
