@@ -96,7 +96,15 @@ public class RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorI
 		IPath path = new Path(location.getRootDirectory());
 		path = path.setDevice(location.getHost() + Path.DEVICE_SEPARATOR);
 		path = path.append(file.getRepositoryRelativePath());
-		return path.toString();
+		String fullPath;
+		try {
+			String revision = file.getRevision();
+			fullPath = Policy.bind("RemoteFileEditorInput.fullPathAndRevision", path.toString(), revision); //$NON-NLS-1$
+		} catch (TeamException e) {
+			CVSUIPlugin.log(e);
+			fullPath = path.toString();
+		}
+		return fullPath;
 	}
 	/**
 	 * Returns the image descriptor for this input.

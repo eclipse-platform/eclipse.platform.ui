@@ -37,7 +37,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
@@ -373,7 +372,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		getPlugin().getLog().log(status);
 	}
 
-	public static void log(CVSException e) {
+	public static void log(TeamException e) {
 		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));; //$NON-NLS-1$
 	}
 
