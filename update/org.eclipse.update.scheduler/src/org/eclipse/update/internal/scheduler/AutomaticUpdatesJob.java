@@ -160,8 +160,10 @@ public class AutomaticUpdatesJob
 				}
 			});
 		} else {
+			// Don't discard downloaded data, as next time we compare timestamps.
+			
 			// discard all the downloaded data from cache (may include old data as well)
-			Utilities.flushLocalFile();
+			//Utilities.flushLocalFile();
 		}
 		// notify the manager that the job is done
 		done(OK_STATUS);
