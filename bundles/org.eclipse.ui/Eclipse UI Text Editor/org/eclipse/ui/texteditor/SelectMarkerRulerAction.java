@@ -243,7 +243,7 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 		IDocument document= getDocument();
 		AbstractMarkerAnnotationModel model= getAnnotationModel();
 
-		if (resource != null && model != null) {
+		if (resource != null && model != null && resource.exists()) {
 			try {
 				IMarker[] allMarkers= resource.findMarkers(null, true, IResource.DEPTH_ZERO);
 				if (allMarkers != null) {
