@@ -3,8 +3,6 @@ package org.eclipse.ui.part;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.beans.PropertyChangeListener;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.Color;
