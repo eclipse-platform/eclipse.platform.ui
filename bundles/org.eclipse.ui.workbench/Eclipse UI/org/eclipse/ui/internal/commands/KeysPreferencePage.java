@@ -766,18 +766,16 @@ public class KeysPreferencePage
 	}
 
 	protected Control createContents(Composite parent) {
-		final TabFolder tabFolder = new TabFolder(parent, SWT.BORDER);
+		final TabFolder tabFolder = new TabFolder(parent, SWT.NULL);
 
 		// Basic tab
 		final TabItem basicTab = new TabItem(tabFolder, SWT.NULL);
 		basicTab.setText(Util.translateString(RESOURCE_BUNDLE, "basicTab.Text")); //$NON-NLS-1$
-		basicTab.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "basicTab.ToolTipText")); //$NON-NLS-1$
 		basicTab.setControl(createBasicTab(tabFolder));
 
 		// Advanced tab
 		final TabItem advancedTab = new TabItem(tabFolder, SWT.NULL);
 		advancedTab.setText(Util.translateString(RESOURCE_BUNDLE, "advancedTab.Text")); //$NON-NLS-1$
-		advancedTab.setToolTipText(Util.translateString(RESOURCE_BUNDLE, "advancedTab.ToolTipText")); //$NON-NLS-1$
 		advancedTab.setControl(createAdvancedTab(tabFolder));
 
 		return tabFolder;
