@@ -26,6 +26,14 @@ import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+/**
+ * The CarbonUIEnhancer provides the standard "About" and "Preference" menu items
+ * and links them to the corresponding workbench commands. 
+ * This must be done in a MacOS X fragment because SWT doesn't provide an abstraction
+ * for the (MacOS X only) application menu and we have to use MacOS specific natives.
+ * The fragment is for the org.eclipse.ui plugin because we need access to the
+ * Workbench "About" and "Preference" actions.
+ */
 public class CarbonUIEnhancer implements IStartup {
 
     private static final int kHICommandPreferences = ('p' << 24) + ('r' << 16)
@@ -41,6 +49,9 @@ public class CarbonUIEnhancer implements IStartup {
 
     private static String fgAboutActionName;
 
+    /**
+     * Default constructor
+     */
     public CarbonUIEnhancer() {
         if (fgAboutActionName == null) {
             ResourceBundle resourceBundle = ResourceBundle
