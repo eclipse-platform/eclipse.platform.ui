@@ -2,7 +2,7 @@
 <plugin
   name="%pluginName"
   id="org.eclipse.core.resources"
-  version="2.1.0"
+  version="3.0"
   provider-name="%providerName"
   class="org.eclipse.core.resources.ResourcesPlugin">
 
