@@ -855,16 +855,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			// Compute new caret position
 			int newCaretOffset= -1;
-			if (caretOffset == lineEndOffset)
-				// from end of line to end of text
-				newCaretOffset= lineOffset + i;
-			else if (isSmartHomeEndEnabled && caretOffset - lineOffset < i)
-				// to end of text
-				newCaretOffset= lineOffset + i;
-			else if (caretOffset < lineEndOffset)
-				// to end of line
-				newCaretOffset= lineEndOffset;
-
+			
+			if (isSmartHomeEndEnabled) {
+				
+				if (caretOffset - lineOffset == i)
+					// to end of line
+					newCaretOffset= lineEndOffset;
+				else
+					// to end of text
+					newCaretOffset= lineOffset + i;
+										
+			} else {
+				
+				if (caretOffset < lineEndOffset)
+					// to end of line
+					newCaretOffset= lineEndOffset;
+				
+			}
+			
 			if (newCaretOffset == -1)
 				// do nothing
 				return;
@@ -935,21 +943,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			while (i < lineLength && Character.isWhitespace(line.charAt(i)))
 				i++;
 
+
 			// Remember current selection
 			Point oldSelection= st.getSelection();
-
+				
 			// Compute new caret position
 			int newCaretOffset= -1;
-			if (caretOffset == lineOffset)
-				// from start to beginning of text
-				newCaretOffset= lineOffset + i;
-			else if (isSmartHomeEndEnabled && caretOffset - lineOffset > i)
-				// to beginning of text
-				newCaretOffset= lineOffset + i;
-			else if (caretOffset > lineOffset)
-				// to beginning if line
-				newCaretOffset= lineOffset;
-
+			if (isSmartHomeEndEnabled) {
+				
+				if (caretOffset - lineOffset == i)
+					// to beginning of line
+					newCaretOffset= lineOffset;
+				else
+					// to beginning of text
+					newCaretOffset= lineOffset + i;
+									
+			} else {
+				
+				if (caretOffset > lineOffset)
+					// to beginning of line
+					newCaretOffset= lineOffset;
+			}
+			
 			if (newCaretOffset == -1)
 				// do nothing
 				return;
