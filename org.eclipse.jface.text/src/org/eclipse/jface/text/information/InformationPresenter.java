@@ -359,12 +359,14 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 */
 	private Rectangle computeArea(IRegion region) {
 				
-		IRegion widgetRegion= modelRange2WidgetRange(region);
-		if (widgetRegion == null)
-			return null;
+		int start= 0;
+		int end= 0;
 		
-		int start= widgetRegion.getOffset();
-		int end= widgetRegion.getOffset() + widgetRegion.getLength();
+		IRegion widgetRegion= modelRange2WidgetRange(region);
+		if (widgetRegion != null) {
+			start= widgetRegion.getOffset();
+			end= widgetRegion.getOffset() + widgetRegion.getLength();
+		}
 		
 		StyledText styledText= fTextViewer.getTextWidget();
 		Point upperLeft= styledText.getLocationAtOffset(start);
