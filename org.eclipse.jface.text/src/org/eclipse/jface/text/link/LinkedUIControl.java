@@ -380,7 +380,8 @@ public class LinkedUIControl {
 				// Ctrl+Enter on WinXP
 				case 0x0D:
 //					if ((fExitPosition != null && fExitPosition.includes(offset)) || !fEnvironment.anyPositionContains(offset)) {
-					if ((fExitPosition == null || !fExitPosition.includes(offset)) && !fEnvironment.anyPositionContains(offset)) {
+					if (!fEnvironment.anyPositionContains(offset)) {
+//					if ((fExitPosition == null || !fExitPosition.includes(offset)) && !fEnvironment.anyPositionContains(offset)) {
 						// outside any edit box or on exit position -> leave (all? TODO should only leave the affected, level and forward to the next upper)
 						leave(ILinkedListener.EXIT_ALL);
 						break;
