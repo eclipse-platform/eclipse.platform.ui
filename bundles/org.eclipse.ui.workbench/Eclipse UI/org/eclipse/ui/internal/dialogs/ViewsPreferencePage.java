@@ -11,26 +11,26 @@ Contributors:
 
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ColorFieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.preference.PreferencePage;
-
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -86,10 +86,12 @@ public class ViewsPreferencePage
  */
 private Group createButtonGroup(Composite composite, String title) {
 
-	Group buttonComposite = new Group(composite, SWT.LEFT);
+	Group buttonComposite = new Group(composite, SWT.CENTER);
 	buttonComposite.setText(title);
 	buttonComposite.setFont(composite.getFont());
-	GridLayout layout = new GridLayout();
+	FormLayout layout = new FormLayout();
+	layout.marginWidth = 2;
+	layout.marginHeight = 2;
 	buttonComposite.setLayout(layout);
 	GridData data =
 		new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
@@ -141,8 +143,6 @@ protected Control createContents(Composite parent) {
 
 	createNoteComposite(font, composite, NOTE_LABEL,APPLY_MESSAGE);
 
-	new Label(composite, SWT.NONE);  // spacing
-	
 	Group colorComposite = new Group(composite,SWT.NONE);
 	colorComposite.setLayout(new GridLayout());
 	colorComposite.setText(WorkbenchMessages.getString("ViewsPreference.ColorsTitle")); //$NON-NLS-1$
@@ -154,7 +154,9 @@ protected Control createContents(Composite parent) {
 	
 	//Add in an intermediate composite to allow for spacing
 	Composite spacingComposite = new Composite(colorComposite,SWT.NONE);
-	spacingComposite.setLayout(new GridLayout());
+ 	GridLayout spacingLayout = new GridLayout();
+ 	spacingLayout.numColumns = 4;
+	spacingComposite.setLayout(spacingLayout);
 	spacingComposite.setFont(font);
 	
 	errorColorEditor = new ColorFieldEditor(
@@ -222,8 +224,11 @@ private void createEditorTabButtonGroup(Composite composite) {
 			editorAlignment = SWT.BOTTOM;
 		}
 	});
-
-}
+	
+	attachControls(this.editorTopButton,this.editorBottomButton);
+	
+	
+	}
 
 /**
  * Create a composite that contains buttons for selecting tab position for the view selection. 
@@ -258,7 +263,25 @@ private void createViewTabButtonGroup(Composite composite) {
 			viewAlignment = SWT.BOTTOM;
 		}
 	});
+	
+	attachControls(this.viewTopButton,this.viewBottomButton);
 
+}
+
+/**
+ * Set the two supplied controls to be beside each other.
+ */
+
+private void attachControls(Control leftControl,Control rightControl){
+
+	FormData leftData = new FormData();
+	leftData.left = new FormAttachment(0,0);
+	
+	FormData rightData = new FormData();
+	rightData.left = new FormAttachment(leftControl,5);
+	
+	leftControl.setLayoutData(leftData);
+	rightControl.setLayoutData(rightData);
 }
 /**
  * Returns preference store that belongs to the our plugin.
