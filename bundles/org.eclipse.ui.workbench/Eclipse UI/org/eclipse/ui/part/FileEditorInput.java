@@ -13,8 +13,12 @@ package org.eclipse.ui.part;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Adapter for making a file resource a suitable input for an editor.
@@ -30,6 +34,7 @@ public class FileEditorInput implements IFileEditorInput, IPersistableElement {
  * @param file the file resource
  */
 public FileEditorInput(IFile file) {
+	Assert.isNotNull(file);
 	this.file = file;
 }
 /**
