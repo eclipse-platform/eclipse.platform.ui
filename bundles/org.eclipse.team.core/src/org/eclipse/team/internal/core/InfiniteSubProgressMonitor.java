@@ -69,4 +69,15 @@ public class InfiniteSubProgressMonitor extends SubProgressMonitor {
 		}			
 	}
 
+	/**
+	 * Don't allow clearing of the subtask. This will stop the flickering
+	 * of the subtask in the progress dialogs.
+	 * 
+	 * @see IProgressMonitor#subTask(String)
+	 */
+	public void subTask(String name) {
+		if(name != null && ! name.equals("")) {
+			super.subTask(name);
+		}
+	}
 }
