@@ -71,8 +71,8 @@ public class NavigationViewer implements ISelectionProvider {
 			infoSetsCombo =
 				new Combo(contents, SWT.DROP_DOWN | SWT.READ_ONLY /*| SWT.FLAT*/);
 			infoSetsCombo.setLayoutData(gd);
-			infoSetsCombo.setBackground(
-				Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			//infoSetsCombo.setBackground(
+			//	Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
 			HelpNavigationManager navManager = HelpSystem.getNavigationManager();
 			for (int i = 0; i < infoSetIds.size(); i++) {
