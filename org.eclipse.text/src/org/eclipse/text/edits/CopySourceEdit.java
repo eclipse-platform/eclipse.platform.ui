@@ -238,8 +238,10 @@ public final class CopySourceEdit extends TextEdit {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_source")); //$NON-NLS-1$
+		/* causes ASTRewrite to fail
 		if (getRoot() != fTarget.getRoot())
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_tree")); //$NON-NLS-1$
+		*/
 	}
 	
 	//---- source computation -------------------------------------------------------

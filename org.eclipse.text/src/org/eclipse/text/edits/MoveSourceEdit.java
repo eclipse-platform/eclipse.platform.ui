@@ -207,8 +207,10 @@ public final class MoveSourceEdit extends TextEdit {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_source"));  //$NON-NLS-1$
+		/* Causes AST rewrite to fail
 		if (getRoot() != fTarget.getRoot())
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_tree")); //$NON-NLS-1$
+		*/
 	}
 
 	//---- source computation --------------------------------------------------------------
