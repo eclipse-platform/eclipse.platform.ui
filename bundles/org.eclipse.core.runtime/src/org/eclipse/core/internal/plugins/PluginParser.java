@@ -68,6 +68,13 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private static final int LAST_INDEX = 1;
 	private Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
 	
+	/**
+	 * Manifest schema version from "eclipse" processing directive, or
+	 * <code>null</code> if none.
+	 * @since 3.0
+	 */
+	private String schemaVersion = null;
+	
 public PluginParser(Factory factory) {
 	super();
 	this.factory = factory;
@@ -301,14 +308,13 @@ public void handleInitialState(String elementName, Attributes attributes) {
 	if (elementName.equals(PLUGIN)) {
 		stateStack.push(new Integer(PLUGIN_STATE));
 		parsePluginAttributes(attributes);
-	} else
-		if (elementName.equals(FRAGMENT)) {
-			stateStack.push(new Integer(FRAGMENT_STATE));
-			parseFragmentAttributes(attributes);
-		} else {
-			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
-			internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
-		}
+	} else if (elementName.equals(FRAGMENT)) {
+		stateStack.push(new Integer(FRAGMENT_STATE));
+		parseFragmentAttributes(attributes);
+	} else {
+		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
+		internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
+	}
 }
 public void handleLibraryExportState(String elementName, Attributes attributes) {
 	// All elements ignored.
@@ -521,24 +527,23 @@ public void parseExtensionAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		if (attrName.equals(EXTENSION_NAME))
+		if (attrName.equals(EXTENSION_NAME)) {
 			currentExtension.setName(attrValue);
-		else
-			if (attrName.equals(EXTENSION_ID))
-				currentExtension.setId(attrValue);
-			else
-				if (attrName.equals(EXTENSION_TARGET)) {
-					// check if point is specified as a simple or qualified name
-					String targetName;
-					if (attrValue.lastIndexOf('.') == -1) {
-						String baseId = parent instanceof PluginDescriptorModel ? parent.getId() : ((PluginFragmentModel) parent).getPlugin();
-						targetName = baseId + "." + attrValue; //$NON-NLS-1$
-					} else
-						targetName = attrValue;
-					currentExtension.setExtensionPoint(targetName);
-				}
-				else
-					internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName)); //$NON-NLS-1$
+		} else if (attrName.equals(EXTENSION_ID)) {
+			currentExtension.setId(attrValue);
+		} else if (attrName.equals(EXTENSION_TARGET)) {
+			// check if point is specified as a simple or qualified name
+			String targetName;
+			if (attrValue.lastIndexOf('.') == -1) {
+				String baseId = parent instanceof PluginDescriptorModel ? parent.getId() : ((PluginFragmentModel) parent).getPlugin();
+				targetName = baseId + "." + attrValue; //$NON-NLS-1$
+			} else {
+				targetName = attrValue;
+			}
+			currentExtension.setExtensionPoint(targetName);
+		} else {
+			internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName)); //$NON-NLS-1$
+		}
 	}
 }
 public void parseExtensionPointAttributes(Attributes attributes) {
@@ -552,16 +557,15 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		if (attrName.equals(EXTENSION_POINT_NAME))
+		if (attrName.equals(EXTENSION_POINT_NAME)) {
 			currentExtPoint.setName(attrValue);
-		else
-			if (attrName.equals(EXTENSION_POINT_ID))
-				currentExtPoint.setId(attrValue);
-			else
-				if (attrName.equals(EXTENSION_POINT_SCHEMA))
-					currentExtPoint.setSchema(attrValue);
-				else
-					internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName)); //$NON-NLS-1$
+		} else if (attrName.equals(EXTENSION_POINT_ID)) {
+			currentExtPoint.setId(attrValue);
+		} else if (attrName.equals(EXTENSION_POINT_SCHEMA)) {
+			currentExtPoint.setSchema(attrValue);
+		} else {
+			internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName)); //$NON-NLS-1$
+		}
 	}
 	// currentExtPoint contains a pointer to the parent plugin descriptor.
 	PluginModel root = (PluginModel) objectStack.peek();
@@ -573,6 +577,7 @@ public void parseExtensionPointAttributes(Attributes attributes) {
 
 public void parseFragmentAttributes(Attributes attributes) {
 	PluginFragmentModel current = factory.createPluginFragment();
+	current.setSchemaVersion(schemaVersion);
 	current.setStartLine(locator.getLineNumber());
 	objectStack.push(current);
 
@@ -630,23 +635,24 @@ public void parseLibraryAttributes(Attributes attributes) {
 		String attrName = attributes.getLocalName(i);
 		String attrValue = attributes.getValue(i).trim();
 
-		if (attrName.equals(LIBRARY_NAME))
+		if (attrName.equals(LIBRARY_NAME)) {
 			current.setName(attrValue);
-		else
-			if (attrName.equals(LIBRARY_TYPE)) {
-				attrValue = attrValue.toLowerCase();
-				if (attrValue.equals(LibraryModel.CODE) || 
-				     attrValue.equals(LibraryModel.RESOURCE))
-					current.setType(attrValue.toLowerCase());
-				else
-					internalError(Policy.bind("parse.unknownLibraryType", attrValue, current.getName())); //$NON-NLS-1$
-			} else
-				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
+		} else if (attrName.equals(LIBRARY_TYPE)) {
+			attrValue = attrValue.toLowerCase();
+			if (attrValue.equals(LibraryModel.CODE) || 
+			     attrValue.equals(LibraryModel.RESOURCE))
+				current.setType(attrValue.toLowerCase());
+			else
+				internalError(Policy.bind("parse.unknownLibraryType", attrValue, current.getName())); //$NON-NLS-1$
+		} else {
+			internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
+		}
 	}
 }
 public void parsePluginAttributes(Attributes attributes) {
 
 	PluginDescriptorModel current = factory.createPluginDescriptor();
+	current.setSchemaVersion(schemaVersion);
 	current.setStartLine(locator.getLineNumber());
 	objectStack.push(current);
 
@@ -658,20 +664,16 @@ public void parsePluginAttributes(Attributes attributes) {
 
 		if (attrName.equals(PLUGIN_ID))
 			current.setId(attrValue);
+		else if (attrName.equals(PLUGIN_NAME))
+			current.setName(attrValue);
+		else if (attrName.equals(PLUGIN_VERSION))
+			current.setVersion(attrValue);
+		else if (attrName.equals(PLUGIN_VENDOR) || (attrName.equals(PLUGIN_PROVIDER)))
+			current.setProviderName(attrValue);
+		else if (attrName.equals(PLUGIN_CLASS))
+			current.setPluginClass(attrValue);
 		else
-			if (attrName.equals(PLUGIN_NAME))
-				current.setName(attrValue);
-			else
-				if (attrName.equals(PLUGIN_VERSION))
-					current.setVersion(attrValue);
-				else
-					if (attrName.equals(PLUGIN_VENDOR) || (attrName.equals(PLUGIN_PROVIDER)))
-						current.setProviderName(attrValue);
-					else
-						if (attrName.equals(PLUGIN_CLASS))
-							current.setPluginClass(attrValue);
-						else
-							internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName)); //$NON-NLS-1$
+			internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName)); //$NON-NLS-1$
 	}
 }
 public void parsePluginRequiresImport(Attributes attributes) {
@@ -689,33 +691,29 @@ public void parsePluginRequiresImport(Attributes attributes) {
 		else
 			if (attrName.equals(PLUGIN_REQUIRES_PLUGIN_VERSION))
 				current.setVersion(attrValue);
-			else
-				if (attrName.equals(PLUGIN_REQUIRES_OPTIONAL))
-					current.setOptional(TRUE.equalsIgnoreCase(attrValue));
+			else if (attrName.equals(PLUGIN_REQUIRES_OPTIONAL))
+				current.setOptional(TRUE.equalsIgnoreCase(attrValue));
+			else if (attrName.equals(PLUGIN_REQUIRES_MATCH)) {
+				if (PLUGIN_REQUIRES_MATCH_PERFECT.equals(attrValue))
+					current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_PERFECT);
+				else if ((PLUGIN_REQUIRES_MATCH_EQUIVALENT.equals(attrValue)) ||
+				          (PLUGIN_REQUIRES_MATCH_EXACT.equals(attrValue)))
+					current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT);
+				else if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
+					current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE);
+				else if (PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL.equals(attrValue))
+					current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL);
 				else
-					if (attrName.equals(PLUGIN_REQUIRES_MATCH)) {
-						if (PLUGIN_REQUIRES_MATCH_PERFECT.equals(attrValue))
-							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_PERFECT);
-						else if ((PLUGIN_REQUIRES_MATCH_EQUIVALENT.equals(attrValue)) ||
-						          (PLUGIN_REQUIRES_MATCH_EXACT.equals(attrValue)))
-							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_EQUIVALENT);
-						else if (PLUGIN_REQUIRES_MATCH_COMPATIBLE.equals(attrValue))
-							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_COMPATIBLE);
-						else if (PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL.equals(attrValue))
-							current.setMatchByte(PluginPrerequisiteModel.PREREQ_MATCH_GREATER_OR_EQUAL);
-						else
-							internalError(Policy.bind("parse.validMatch", attrValue)); //$NON-NLS-1$
-					} else
-						if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
-							if (TRUE.equals(attrValue))
-								current.setExport(true);
-							else
-								if (FALSE.equals(attrValue))
-									current.setExport(false);
-								else
-									internalError(Policy.bind("parse.validExport", attrValue)); //$NON-NLS-1$
-						} else
-							internalError(Policy.bind("parse.unknownAttribute", PLUGIN_REQUIRES_IMPORT, attrName)); //$NON-NLS-1$
+					internalError(Policy.bind("parse.validMatch", attrValue)); //$NON-NLS-1$
+			} else if (attrName.equals(PLUGIN_REQUIRES_EXPORT)) {
+				if (TRUE.equals(attrValue))
+					current.setExport(true);
+				else if (FALSE.equals(attrValue))
+					current.setExport(false);
+				else
+					internalError(Policy.bind("parse.validExport", attrValue)); //$NON-NLS-1$
+			} else
+				internalError(Policy.bind("parse.unknownAttribute", PLUGIN_REQUIRES_IMPORT, attrName)); //$NON-NLS-1$
 
 	}
 	// Populate the vector of prerequisites with this new element
@@ -789,4 +787,33 @@ private void internalError(String message) {
 	else
 		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null));
 }
+
+/* (non-Javadoc)
+ * @see org.xml.sax.ContentHandler#processingInstruction
+ * @since 3.0
+ */
+public void processingInstruction(String target, String data) throws SAXException {
+	// Since 3.0, a processing instruction of the form <?eclipse version="3.0"?> at
+	// the start of the manifest file is used to indicate the plug-in manifest
+	// schema version in effect. Pre-3.0 (i.e., 2.1) plug-in manifest files do not
+	// have one of these, and this is how we can distinguish the manifest of a
+	// pre-3.0 plug-in from a post-3.0 one (for compatibility tranformations).
+	if (target.equalsIgnoreCase("eclipse")) { //$NON-NLS-1$
+		// just the presence of this processing instruction indicates that this
+		// plug-in is at least 3.0
+		schemaVersion = "3.0";  //$NON-NLS-1$
+		StringTokenizer tokenizer = new StringTokenizer(data, "=\""); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (token.equalsIgnoreCase("version")) { //$NON-NLS-1$
+				if (!tokenizer.hasMoreTokens()) {
+					break;
+				}
+				schemaVersion = tokenizer.nextToken();
+				break;
+			}
+		}
+	}
+}
+
 }

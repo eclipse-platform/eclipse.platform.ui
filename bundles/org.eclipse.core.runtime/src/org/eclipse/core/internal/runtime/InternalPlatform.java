@@ -120,6 +120,18 @@ public final class InternalPlatform {
 	
 	private static final String METADATA_VERSION_KEY = "org.eclipse.core.runtime"; //$NON-NLS-1$
 	private static final int METADATA_VERSION_VALUE = 1;
+	
+	/** Ids of new plug-ins introduced between 2.1 and 3.0. Lazily initialized.
+	 * @since 3.0
+	 */
+	private static String[] newUIPluginIds = null;
+
+	/** Map from old extension point id (key type: String) to 
+	 * new extension point id (value type: String) for extension points renamed
+	 * between 2.1 and 3.0. Lazily initialized.
+	 * @since 3.0
+	 */
+	private static Map renamedUIextensionPoints = null;
 
 /**
  * Private constructor to block instance creation.
@@ -780,6 +792,27 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		long start = System.currentTimeMillis();
 		InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
+		
+// TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
+		boolean genericWorkbenchPresent = false;
+		PluginDescriptorModel[] plugins = registry.getPlugins("org.eclipse.ui"); //$NON-NLS-1$
+		for (int i = 0; i < plugins.length; i++) {
+			if (plugins[i].getSchemaVersion() != null) {
+				genericWorkbenchPresent = true;
+				break;
+			}
+		}
+		if (genericWorkbenchPresent) {
+// TODO - end temporary code
+			applyPre3CompatibilityTransform(registry, factory);
+// TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
+		} else {
+			if (DEBUG) {
+				System.out.println("Skipping pre-3.0 compatibility transformation."); //$NON-NLS-1$
+			}
+		}
+// TODO - end temporary code
+		
 		IStatus resolveStatus;		
 		if (isDynamic()) {
 			resolveStatus = registry.incrementalResolve();
@@ -797,6 +830,162 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	registry.startup(null);
 	return problems;
 }
+
+/**
+ * Transforms plug-ins and fragments in the given registry with pre-3.0 manifests
+ * into a form that makes them compatible with the 3.0 release.
+ * <p>
+ * The transformation entails renaming certain Platform extension points and
+ * revising the list of required plug-ins under certain conditions.
+ * The transformation only affects plug-ins and fragments with a null
+ * {@link org.eclipse.core.runtime.model.PluginModel#getSchemaVersion PluginModel.getSchemaVersion}.
+ * Transformed plug-ins and fragments are given a non-null manifest schema version.
+ * </p>
+ * 
+ * @param registryModel the plug-in registry model
+ * @param factory the factory for creating new model objects. This should be the
+ * factory used to create the registry model in the first place.
+ * @see Platform#applyPre3CompatibilityTransform
+ * @since 3.0
+ */
+public static void applyPre3CompatibilityTransform(PluginRegistryModel registryModel, Factory factory) {
+	PluginDescriptorModel[] plugins = registryModel.getPlugins();
+	for (int i = 0; i < plugins.length; i++) {
+		if (plugins[i].getSchemaVersion() == null) {
+			applyPre3CompatibilityTransform(plugins[i], factory);
+		}
+	}
+	PluginFragmentModel[] fragments = registryModel.getFragments();
+	for (int i = 0; i < fragments.length; i++) {
+		if (plugins[i].getSchemaVersion() == null) {
+			applyPre3CompatibilityTransform(fragments[i], factory);
+		}
+	}
+}
+
+/**
+ * Apply the compatibility transform to the given pre-3.0 plug-in or fragment.
+ * 
+ * @param plugin the pre-3.0 plug-in or fragment
+ * @param factory the factory for creating new model objects
+ * @since 3.0
+ */
+private static void applyPre3CompatibilityTransform(PluginModel plugin, Factory factory) {
+	if (DEBUG) {
+		System.out.println("Applying compatibility transformation to pre-3.0 plug-in: " + plugin.getId()); //$NON-NLS-1$
+	}
+	fixRequiredPlugins(plugin, factory);
+	fixRenamedExtensionPoints(plugin, factory);
+	// mark this plug-in as 3.0-compatible
+	plugin.setSchemaVersion("3.0.0"); //$NON-NLS-1$
+}
+
+/**
+ * Fixes up the list of required plug-ins in the given pre-3.0 plug-in
+ * or fragment to compensate for API packages that split or moved plug-ins between
+ * release 2.1 and 3.0.
+ * 
+ * @param plugin the pre-3.0 plug-in or fragment
+ * @param factory the factory for creating new model objects
+ * @since 3.0
+ */
+private static void fixRequiredPlugins(PluginModel plugin, Factory factory) {
+	PluginPrerequisiteModel[] requiredPlugins = plugin.getRequires();
+	if (requiredPlugins == null) {
+		// this plug-in does not require any plug-ins - nothing to fix
+		return;
+	}
+	PluginPrerequisiteModel refUIPlugin = null;
+	PluginPrerequisiteModel refHelpPlugin = null;
+	for (int i = 0; i < requiredPlugins.length; i++) {
+		PluginPrerequisiteModel requiredPlugin = requiredPlugins[i];
+		if ("org.eclipse.ui".equals(requiredPlugin.getPlugin())) { //$NON-NLS-1$
+			refUIPlugin = requiredPlugin;
+		} else if ("org.eclipse.help".equals(requiredPlugin.getPlugin())) { //$NON-NLS-1$
+			refHelpPlugin = requiredPlugin;
+		}
+	}
+	if (refUIPlugin == null && refHelpPlugin == null) {
+		// this plug-in has nothing for us to fix
+		return;
+	}
+	List req = new ArrayList(Arrays.asList(requiredPlugins));
+	if (refUIPlugin != null) {
+		if (newUIPluginIds == null) {
+			// lazy initialize
+			newUIPluginIds = new String[] {
+					"org.eclipse.ui.ide", //$NON-NLS-1$
+					"org.eclipse.ui.views", //$NON-NLS-1$
+					"org.eclipse.ui.editors", //$NON-NLS-1$
+					"org.eclipse.ui.jface.text", //$NON-NLS-1$
+					"org.eclipse.ui.workbench.texteditor", //$NON-NLS-1$
+				};
+		}
+		// add clauses for the new UI plug-ins
+		for (int i = 0; i < newUIPluginIds.length; i++) {
+			PluginPrerequisiteModel p = factory.createPluginPrerequisite();
+			p.setPlugin(newUIPluginIds[i]);
+			// make it optional to make errors survivable
+			p.setOptional(true);
+			p.setExport(refUIPlugin.getExport());
+			req.add(p);
+		}
+	}
+	if (refHelpPlugin != null) {
+		// add clause for the new help plug-in
+		PluginPrerequisiteModel p = factory.createPluginPrerequisite();
+		p.setPlugin("org.eclipse.help.base"); //$NON-NLS-1$
+		// make it optional to make errors survivable
+		p.setOptional(true);
+		p.setExport(refHelpPlugin.getExport());
+		req.add(p);
+	}
+	PluginPrerequisiteModel[] revisedRequiredPlugins = new PluginPrerequisiteModel[req.size()];
+	req.toArray(revisedRequiredPlugins);
+	plugin.setRequires(revisedRequiredPlugins);
+}
+
+/**
+ * Fixes up the extension declarations in the given pre-3.0 plug-in or fragment to compensate
+ * for extension points that were renamed between release 2.1 and 3.0.
+ * 
+ * @param plugin the pre-3.0 plug-in or fragment
+ * @param factory the factory for creating new model objects
+ * @since 3.0
+ */
+private static void fixRenamedExtensionPoints(PluginModel plugin, Factory factory) {
+	ExtensionModel[] extensions = plugin.getDeclaredExtensions();
+	if (extensions == null) {
+		return;
+	}
+	if (renamedUIextensionPoints ==  null) {
+		// lazily initialize 
+		final Map t = new HashMap(20);
+		t.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.markerHelp", "org.eclipse.ui.ide.markerHelp"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.markerImageProviders", "org.eclipse.ui.ide.markerImageProviders"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.markerResolution", "org.eclipse.ui.ide.markerResolution"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.projectNatureImages", "org.eclipse.ui.ide.projectNatureImages"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.resourceFilters", "org.eclipse.ui.ide.resourceFilters"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.markerUpdaters", "org.eclipse.ui.editors.markerUpdaters"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.documentProviders", "org.eclipse.ui.editors.documentProviders"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification", "org.eclipse.ui.editors.markerAnnotationSpecification"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.help.browser", "org.eclipse.help.base.browser"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.help.luceneAnalyzer", "org.eclipse.help.base.luceneAnalyzer"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.help.webapp", "org.eclipse.help.base.webapp"); //$NON-NLS-1$ //$NON-NLS-2$
+		t.put("org.eclipse.help.support", "org.eclipse.ui.helpSupport"); //$NON-NLS-1$ //$NON-NLS-2$
+		renamedUIextensionPoints = t;
+	}
+	for (int i = 0; i < extensions.length; i++) {
+		ExtensionModel extension = extensions[i];
+		String oldPointId = extension.getExtensionPoint();
+		String newPointId = (String) renamedUIextensionPoints.get(oldPointId);
+		if (newPointId != null) {
+			extension.setExtensionPoint(newPointId );
+		}
+	}
+}
+
 /**
  * Notifies all listeners of the platform log.  This includes the console log, if 
  * used, and the platform log file.  All Plugin log messages get funnelled
@@ -847,7 +1036,7 @@ private static String[] processCommandLine(String[] args) {
 			dynamic = true;
 			found = true;
 		}		
-
+		
 		// look for the log flag
 		if (args[i].equalsIgnoreCase(LOG)) {
 			consoleLogEnabled = true;
@@ -1337,6 +1526,25 @@ public static void installPlugins(URL[] installURLs) throws CoreException {
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("parse.registryProblems"), null); //$NON-NLS-1$
 	Factory factory = new InternalFactory(problems);
 	PluginRegistryModel registryAdditions = parsePlugins(installURLs, factory);
+//	TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
+		 boolean genericWorkbenchPresent = false;
+		 PluginDescriptorModel[] plugins = registry.getPlugins("org.eclipse.ui"); //$NON-NLS-1$
+		 for (int i = 0; i < plugins.length; i++) {
+			 if (plugins[i].getSchemaVersion() != null) {
+				 genericWorkbenchPresent = true;
+				 break;
+			 }
+		 }
+		 if (genericWorkbenchPresent) {
+//	TODO - end temporary code
+			 applyPre3CompatibilityTransform(registry, factory);
+//	TODO - temporary code to make this work in pre-RCP builds before 20031104 - remove by 20031111
+		 } else {
+			 if (DEBUG) {
+				 System.out.println("Skipping pre-3.0 compatibility transformation."); //$NON-NLS-1$
+			 }
+		 }
+//	TODO - end temporary code
 	registry.incrementalResolve(registryAdditions);
 	if (problems.isOK())
 		return;

@@ -23,6 +23,14 @@ import org.eclipse.core.runtime.PluginVersionIdentifier;
  */
 public abstract class PluginModel extends PluginModelObject {
 
+	/**
+	 * Manifest schema version. The version number is canonicalized.
+	 * May be <code>null</code>.
+	 * 
+	 * @since 3.0
+	 */
+	private String schemaVersion = null;
+
 	// DTD properties (included in plug-in manifest)
 	private String id = null;
 	private String providerName = null;
@@ -31,7 +39,7 @@ public abstract class PluginModel extends PluginModelObject {
 	private ExtensionPointModel[] extensionPoints = null;
 	private ExtensionModel[] extensions = null;
 	private PluginPrerequisiteModel[] requires = null;
-
+	
 	// transient properties (not included in plug-in manifest)
 	private PluginRegistryModel registry = null;
 	private String location = null;
@@ -265,4 +273,44 @@ public void setVersion(String value) {
 	assertIsWriteable();
 	version = new PluginVersionIdentifier(value).toString();
 }
+
+/**
+ * Returns the manifest schema version of this plug-in. The version number is
+ * canonicalized.
+ * <p>
+ * The manifest schema version indicates which shape of plug-in manifest this is.
+ * This was introduced in 3.0; plug-ins created prior to then did not explicitly
+ * declare a manifest schema version.
+ * </p> 
+ *
+ * @return the manifest schema version of this plug-in.
+ *		May be <code>null</code>.
+ * @since 3.0
+ */
+public String getSchemaVersion() {
+	return schemaVersion;
+}
+
+/**
+ * Sets the manifest schema version of this plug-in. The version number is
+ * canonicalized. This object must not be read-only.
+ * <p>
+ * The manifest schema version indicates which shape of plug-in manifest this is.
+ * This was introduced in 3.0; plug-ins created prior to then did not explicitly
+ * declare a manifest schema version.
+ * </p> 
+ *
+ * @param value the manifest schema version of this plug-in.
+ *		May be <code>null</code>.
+ * @since 3.0
+ */
+public void setSchemaVersion(String value) {
+	assertIsWriteable();
+	if (value == null) {
+		schemaVersion = null;
+	} else {
+		schemaVersion = new PluginVersionIdentifier(value).toString();
+	}
+}
+
 }

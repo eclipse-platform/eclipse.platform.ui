@@ -65,7 +65,8 @@ public class RegistryCacheReader {
 	public static final byte FRAGMENT_PLUGIN_LABEL = 50;
 	public static final byte FRAGMENT_PLUGIN_VERSION_LABEL = 51;
 	public static final byte FRAGMENT_PLUGIN_MATCH_LABEL = 55;
-	
+	public static final byte FRAGMENT_SCHEMA_VERSION_LABEL = 64;	
+
 	public static final byte ID_LABEL = 15;
 	public static final byte LIBRARY_END_LABEL = 16;
 	public static final byte LIBRARY_EXPORTS_LABEL = 17;
@@ -88,6 +89,7 @@ public class RegistryCacheReader {
 	public static final byte PLUGIN_PARENT_LABEL = 29;
 	public static final byte PLUGIN_PROVIDER_NAME_LABEL = 30;
 	public static final byte PLUGIN_REQUIRES_LABEL = 31;
+	public static final byte PLUGIN_SCHEMA_VERSION_LABEL = 63;
 
 	public static final byte PROPERTIES_LENGTH_LABEL = 32;
 	public static final byte READONLY_LABEL = 33;
@@ -110,7 +112,7 @@ public class RegistryCacheReader {
 	public static final byte SUBELEMENTS_LABEL = 62;
 	
 	// So it's easier to add a new label ...
-	public static final byte LARGEST_LABEL = 62;
+	public static final byte LARGEST_LABEL = 64;
 	
 	// String constants for those byte values in the cache that
 	// do not translate directly to strings found in manifest xml
@@ -565,7 +567,7 @@ private ExtensionModel readExtension(DataInputStream in, boolean debugFlag) thro
 					byte subByte = in.readByte();
 					switch (subByte) {
 						case PLUGIN_LABEL :
-							PluginModel parent = (PluginModel)readPluginDescriptor(in, debugFlag);
+							PluginModel parent = readPluginDescriptor(in, debugFlag);
 							if (parent == null) {
 								if (debugFlag) {
 									String name = extension.getName();
@@ -583,7 +585,7 @@ private ExtensionModel readExtension(DataInputStream in, boolean debugFlag) thro
 							extension.setParent((PluginModel)objectTable.get(in.readInt()));
 							break;
 						case FRAGMENT_LABEL :
-							PluginModel fragmentParent = (PluginModel)readPluginFragment(in, debugFlag);
+							PluginModel fragmentParent = readPluginFragment(in, debugFlag);
 							if (fragmentParent == null) {
 								if (debugFlag) {
 									String name = extension.getName();
@@ -869,6 +871,9 @@ private PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean d
 					break;
 				case PLUGIN_ENABLED_LABEL :
 					plugin.setEnabled(in.readBoolean());
+					break;
+				case PLUGIN_SCHEMA_VERSION_LABEL :
+					plugin.setSchemaVersion(in.readUTF());
 					break;
 				case PLUGIN_REQUIRES_LABEL :
 					PluginPrerequisiteModel requires = readPluginPrerequisite(in, debugFlag);
@@ -1159,6 +1164,9 @@ private PluginFragmentModel readPluginFragment(DataInputStream in, boolean debug
 					break;
 				case FRAGMENT_PLUGIN_VERSION_LABEL :
 					fragment.setPluginVersion(in.readUTF().intern());
+					break;
+				case FRAGMENT_SCHEMA_VERSION_LABEL :
+					fragment.setSchemaVersion(in.readUTF().intern());
 					break;
 				case FRAGMENT_PLUGIN_MATCH_LABEL :
 					fragment.setMatch(in.readByte());
@@ -1543,16 +1551,6 @@ public final PluginRegistryModel readPluginRegistry(DataInputStream in, URL[] pl
 	} else {
 		return cachedRegistry;
 	}
-}
-private String[] getPathMembers(URL path) {
-	String[] list = null;
-	String protocol = path.getProtocol();
-	if (protocol.equals("file")) { //$NON-NLS-1$
-		list = (new File(path.getFile())).list();
-	} else {
-		// XXX: attempt to read URL and see if we got html dir page
-	}
-	return list == null ? new String[0] : list;
 }
 /**
  * Loads the configuration elements for an extension.

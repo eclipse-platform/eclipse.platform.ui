@@ -430,6 +430,10 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, DataOutputStream
 		}
 		writeLabel(RegistryCacheReader.PLUGIN_ENABLED_LABEL, out);
 		out.writeBoolean(plugin.getEnabled());
+		if ((outString = plugin.getSchemaVersion()) != null) {
+			writeLabel(RegistryCacheReader.PLUGIN_SCHEMA_VERSION_LABEL, out);
+			out.writeUTF(outString);
+		}
 
 		// write out prerequisites
 		PluginPrerequisiteModel[] requires = plugin.getRequires();
@@ -534,6 +538,10 @@ public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream o
 		}
 		if ((outString = fragment.getPlugin()) != null) {
 			writeLabel(RegistryCacheReader.FRAGMENT_PLUGIN_LABEL, out);
+			out.writeUTF(outString);
+		}
+		if ((outString = fragment.getSchemaVersion()) != null) {
+			writeLabel(RegistryCacheReader.FRAGMENT_SCHEMA_VERSION_LABEL, out);
 			out.writeUTF(outString);
 		}
 		if ((outString = fragment.getPluginVersion()) != null) {
