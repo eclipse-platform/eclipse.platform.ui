@@ -46,7 +46,6 @@ import org.eclipse.ui.PlatformUI;
  * General utility class dealing with Ant build files
  */
 public final class AntUtil {
-	public static final String RUN_TARGETS_ATTRIBUTE = IAntUIConstants.TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
 	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
 	public static final char ANT_CLASSPATH_DELIMITER= '*';
 	

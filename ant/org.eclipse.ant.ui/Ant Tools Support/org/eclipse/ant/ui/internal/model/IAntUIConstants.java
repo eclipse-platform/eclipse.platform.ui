@@ -31,11 +31,6 @@ public interface IAntUIConstants {
 	 */
 	public static final String ANT_VIEW_ID = PLUGIN_ID + ".AntView"; //$NON-NLS-1$
 
-	/**
-	 * External tool type for Ant build files (value <code>antBuildType</code>).
-	 */
-	public static final String TOOL_TYPE_ANT_BUILD = "antBuildType"; //$NON-NLS-1$;
-
 	// ------- Images -------
 	/**
 	 * Refresh action image
