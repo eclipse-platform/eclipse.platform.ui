@@ -186,4 +186,11 @@ public class RemoteTreeContentManager extends DeferredTreeContentManager {
 			super.runClearPlaceholderJob(placeholder);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.DeferredTreeContentManager#getFetchJobName(java.lang.Object, org.eclipse.ui.progress.IDeferredWorkbenchAdapter)
+	 */
+	protected String getFetchJobName(Object parent, IDeferredWorkbenchAdapter adapter) {
+		return DebugUIViewsMessages.getString("RemoteTreeContentManager.0"); //$NON-NLS-1$
+	}
 }
