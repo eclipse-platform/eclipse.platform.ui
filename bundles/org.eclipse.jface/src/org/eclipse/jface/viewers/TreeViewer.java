@@ -15,8 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -42,11 +46,73 @@ import org.eclipse.jface.util.Assert;
  */
 public class TreeViewer extends AbstractTreeViewer {
 
+	/**
+	 * TreeColorAndFontCollector is an helper class for color and font
+	 * support for trees that support the ITableFontProvider and
+	 * the ITableColorProvider.
+	 * @see ITableColorProvider
+	 * @see ITableFontProvider
+	 */
+	 
+    private class TreeColorAndFontCollector{
+		
+		ITableFontProvider fontProvider = null;
+		ITableColorProvider colorProvider = null;
+		
+		/**
+		 * Create an instance of the receiver. Set the color and font
+		 * providers if provider can be cast to the correct type.
+		 * @param provider IBaseLabelProvider
+		 */
+		public TreeColorAndFontCollector(IBaseLabelProvider provider){
+			if(provider instanceof ITableFontProvider)
+				fontProvider = (ITableFontProvider) provider;
+			if(provider instanceof ITableColorProvider)
+				colorProvider = (ITableColorProvider) provider;
+		}
+		
+		/**
+		 * Create an instance of the receiver with no color and font
+		 * providers.
+		 */
+		public TreeColorAndFontCollector(){
+		}
+		
+		/**
+		 * Set the fonts and colors for the treeItem if there is a color
+		 * and font provider available.
+		 * @param treeItem The item to update.
+		 * @param element The element being represented
+		 * @param column The column index
+		 */
+		public void setFontsAndColors(TreeItem treeItem, Object element, int column){
+			if (colorProvider != null) {
+				treeItem.setBackground(column, colorProvider.getBackground(element,
+						column));
+				treeItem.setForeground(column, colorProvider.getForeground(element,
+						column));
+			}
+			if(fontProvider != null)
+				treeItem.setFont(column,fontProvider.getFont(element,column));
+		}	
+		
+	}
+	
+	/**
+	 * Internal tree viewer implementation.
+	 */
+	private TreeEditorImpl treeViewerImpl;
+	
     /**
      * This viewer's control.
      */
     private Tree tree;
 
+    /**
+	 * This viewer's tree editor.
+	 */
+	private TreeEditor treeEditor;
+	
     /**
 	 * The color and font collector for the cells.
 	 */
@@ -88,6 +154,8 @@ public class TreeViewer extends AbstractTreeViewer {
         super();
         this.tree = tree;
         hookControl(tree);
+        treeEditor = new TreeEditor(tree);
+		initTreeViewerImpl();
     }
 
     /* (non-Javadoc)
@@ -97,6 +165,15 @@ public class TreeViewer extends AbstractTreeViewer {
         ((Tree) c).addTreeListener(listener);
     }
 
+    /**
+	 * Cancels a currently active cell editor. All changes already done in the
+	 * cell editor are lost.
+	 * @since 3.1
+	 */
+	public void cancelEditing() {
+		treeViewerImpl.cancelEditing();
+	}
+	
     /* (non-Javadoc)
      * Method declared in AbstractTreeViewer.
      */
@@ -154,6 +231,39 @@ public class TreeViewer extends AbstractTreeViewer {
 		colorAndFontCollector.applyFontsAndColors(treeItem);
     }
 
+    /**
+	 * Starts editing the given element.
+	 * 
+	 * @param element
+	 *            the element
+	 * @param column
+	 *            the column number
+	 * @since 3.1
+	 */
+	public void editElement(Object element, int column) {
+		treeViewerImpl.editElement(element, column);
+	}
+	
+    /**
+	 * Returns the cell editors of this tree viewer.
+	 * 
+	 * @return the list of cell editors
+	 * @since 3.1
+	 */
+	public CellEditor[] getCellEditors() {
+		return treeViewerImpl.getCellEditors();
+	}
+
+	/**
+	 * Returns the cell modifier of this tree viewer.
+	 * 
+	 * @return the cell modifier
+	 * @since 3.1
+	 */
+	public ICellModifier getCellModifier() {
+		return treeViewerImpl.getCellModifier();
+	}
+	
     /* (non-Javadoc)
      * Method declared in AbstractTreeViewer.
      */
@@ -165,6 +275,17 @@ public class TreeViewer extends AbstractTreeViewer {
         return null;
     }
 
+	/**
+	 * Returns the column properties of this tree viewer. The properties must
+	 * correspond with the columns of the tree control. They are used to
+	 * identify the column in a cell modifier.
+	 * 
+	 * @return the list of column properties
+	 * @since 3.1
+	 */
+	public Object[] getColumnProperties() {
+		return treeViewerImpl.getColumnProperties();
+	}
     /* (non-Javadoc)
      * Method declared in Viewer.
      */
@@ -243,6 +364,75 @@ public class TreeViewer extends AbstractTreeViewer {
         return tree;
     }
 
+    /*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#hookControl(org.eclipse.swt.widgets.Control)
+	 */
+	protected void hookControl(Control control) {
+		super.hookControl(control);
+		Tree treeControl = (Tree) control;
+		treeControl.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				treeViewerImpl.handleMouseDown(e);
+			}
+		});
+	}
+	
+    /**
+	 * Initializes the tree viewer implementation.
+	 */
+	private void initTreeViewerImpl() {
+		treeViewerImpl = new TreeEditorImpl(this) {
+			Rectangle getBounds(Item item, int columnNumber) {
+				return ((TreeItem) item).getBounds(columnNumber);
+			}
+
+			int getColumnCount() {
+				return getTree().getColumnCount();
+			}
+
+			Item[] getSelection() {
+				return getTree().getSelection();
+			}
+
+			void setEditor(Control w, Item item, int columnNumber) {
+				treeEditor.setEditor(w, (TreeItem) item, columnNumber);
+			}
+
+			void setSelection(StructuredSelection selection, boolean b) {
+				TreeViewer.this.setSelection(selection, b);
+			}
+
+			void showSelection() {
+				getTree().showSelection();
+			}
+
+			void setLayoutData(CellEditor.LayoutData layoutData) {
+				treeEditor.grabHorizontal = layoutData.grabHorizontal;
+				treeEditor.horizontalAlignment = layoutData.horizontalAlignment;
+				treeEditor.minimumWidth = layoutData.minimumWidth;
+			}
+
+			void handleDoubleClickEvent() {
+				Viewer viewer = getViewer();
+				fireDoubleClick(new DoubleClickEvent(viewer, viewer
+						.getSelection()));
+				fireOpen(new OpenEvent(viewer, viewer.getSelection()));
+			}
+		};
+	}
+	
+	/**
+	 * Returns whether there is an active cell editor.
+	 * 
+	 * @return <code>true</code> if there is an active cell editor, and
+	 *         <code>false</code> otherwise
+	 * @since 3.1
+	 */
+	public boolean isCellEditorActive() {
+		return treeViewerImpl.isCellEditorActive();
+	}
+	
     /* (non-Javadoc)
      * Method declared in AbstractTreeViewer.
      */
@@ -269,6 +459,41 @@ public class TreeViewer extends AbstractTreeViewer {
         ((Tree) widget).removeAll();
     }
 
+    	/**
+	 * Sets the cell editors of this tree viewer.
+	 * 
+	 * @param editors
+	 *            the list of cell editors
+	 * @since 3.1
+	 */
+	public void setCellEditors(CellEditor[] editors) {
+		treeViewerImpl.setCellEditors(editors);
+	}
+
+	/**
+	 * Sets the cell modifier of this tree viewer.
+	 * 
+	 * @param modifier
+	 *            the cell modifier
+	 * @since 3.1
+	 */
+	public void setCellModifier(ICellModifier modifier) {
+		treeViewerImpl.setCellModifier(modifier);
+	}
+
+	/**
+	 * Sets the column properties of this tree viewer. The properties must
+	 * correspond with the columns of the tree control. They are used to
+	 * identify the column in a cell modifier.
+	 * 
+	 * @param columnProperties
+	 *            the list of column properties
+	 * @since 3.1
+	 */
+	public void setColumnProperties(String[] columnProperties) {
+		treeViewerImpl.setColumnProperties(columnProperties);
+	}
+	
     /* (non-Javadoc)
      * Method declared in AbstractTreeViewer.
      */
@@ -341,48 +566,5 @@ public class TreeViewer extends AbstractTreeViewer {
     protected void showItem(Item item) {
         getTree().showItem((TreeItem) item);
     }
-    
-    private class TreeColorAndFontCollector{
-		
-		ITableFontProvider fontProvider = null;
-		ITableColorProvider colorProvider = null;
-		
-		/**
-		 * Create an instance of the receiver. Set the color and font
-		 * providers if provider can be cast to the correct type.
-		 * @param provider IBaseLabelProvider
-		 */
-		public TreeColorAndFontCollector(IBaseLabelProvider provider){
-			if(provider instanceof ITableFontProvider)
-				fontProvider = (ITableFontProvider) provider;
-			if(provider instanceof ITableColorProvider)
-				colorProvider = (ITableColorProvider) provider;
-		}
-		
-		/**
-		 * Create an instance of the receiver with no color and font
-		 * providers.
-		 */
-		public TreeColorAndFontCollector(){
-		}
-		
-		/**
-		 * Set the fonts and colors for the treeItem if there is a color
-		 * and font provider available.
-		 * @param treeItem The item to update.
-		 * @param element The element being represented
-		 * @param column The column index
-		 */
-		public void setFontsAndColors(TreeItem treeItem, Object element, int column){
-			if (colorProvider != null) {
-				treeItem.setBackground(column, colorProvider.getBackground(element,
-						column));
-				treeItem.setForeground(column, colorProvider.getForeground(element,
-						column));
-			}
-			if(fontProvider != null)
-				treeItem.setFont(column,fontProvider.getFont(element,column));
-		}	
-		
-	}
+ 
 }
