@@ -61,12 +61,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			handleCheckStateChanged(event);
 		}
 	};
-	private boolean fIsTrackingSelection= true;
+	private boolean fIsTrackingSelection= false;
 	// Persistance constants
 	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
 	private static String KEY_VALUE="value"; //$NON-NLS-1$
-	private static String VALUE_FALSE= "false"; //$NON-NLS-1$
-	private static String VALUE_TRUE= "true"; //$NON-NLS-1$
 	
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -104,13 +102,11 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		if (memento != null) {
 			IMemento node= memento.getChild(KEY_IS_TRACKING_SELECTION);
 			if (node != null) {
-				if (VALUE_FALSE.equals(node.getString(KEY_VALUE))) {
-					setTrackSelection(false);
-					return;
-				}
+				setTrackSelection(Boolean.valueOf(node.getString(KEY_VALUE)).booleanValue());
+				return;
 			}
 		}
-		setTrackSelection(true);
+		setTrackSelection(false);
 	}
 
 	/**
@@ -319,7 +315,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		IMemento node= memento.createChild(KEY_IS_TRACKING_SELECTION);
-		node.putString(KEY_VALUE, fIsTrackingSelection ? VALUE_TRUE : VALUE_FALSE);
+		node.putString(KEY_VALUE, String.valueOf(fIsTrackingSelection));
 	}
-
 }
