@@ -38,6 +38,10 @@ public class TaskInfo extends SubTaskInfo {
 	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
+		
+		//Don't bother if we are indeterminate
+		if(totalWork == IProgressMonitor.UNKNOWN)
+			return;
 		preWork += workIncrement;
 
 	}
@@ -51,6 +55,10 @@ public class TaskInfo extends SubTaskInfo {
 	 * @param parentTicks the number of ticks this monitor represents
 	 */
 	void addWork(double workIncrement, IProgressMonitor parentMonitor, int parentTicks) {
+		//Don't bother if we are indeterminate
+		if(totalWork == IProgressMonitor.UNKNOWN)
+			return;
+		
 		addWork(workIncrement);
 		parentMonitor.internalWorked(workIncrement * parentTicks /totalWork);
 	}
