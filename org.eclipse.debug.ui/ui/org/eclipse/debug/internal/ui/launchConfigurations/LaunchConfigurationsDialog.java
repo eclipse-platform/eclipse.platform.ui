@@ -1123,7 +1123,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return one of CANCEL or OK
 	 */
 	private int doLaunch(ILaunchConfiguration config) throws CoreException {
-		if (CommonTab.isRunInBackground(config)) {
+		if (CommonTab.isLaunchInBackground(config)) {
 			// Background launching
 			DebugUITools.launchInBackground(config, getMode());
 			return OK;

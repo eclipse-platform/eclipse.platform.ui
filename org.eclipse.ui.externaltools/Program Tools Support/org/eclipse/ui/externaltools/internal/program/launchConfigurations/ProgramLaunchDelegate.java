@@ -168,7 +168,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdLine));
 		
-		if (CommonTab.isRunInBackground(configuration)) {
+		if (CommonTab.isLaunchInBackground(configuration)) {
 			// refresh resources after process finishes
 			if (LaunchVariableUtil.getRefreshScope(configuration) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);

@@ -133,7 +133,7 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) commandArgs.get(TAG_WORK_DIR));
 		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(commandArgs.get(TAG_CAPTURE_OUTPUT)));
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(commandArgs.get(TAG_SHOW_CONSOLE)));
-		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, TRUE.equals(commandArgs.get(TAG_RUN_BKGRND)));
+		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, TRUE.equals(commandArgs.get(TAG_RUN_BKGRND)));
 		config.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, TRUE.equals(commandArgs.get(TAG_PROMPT_ARGS)));
 		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
 		config.setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, TRUE.equals(commandArgs.get(TAG_REFRESH_RECURSIVE)));
@@ -239,7 +239,7 @@ public final class ExternalToolMigration {
 		// Collect the rest of the information
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
-		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
+		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) args.get(TAG_TOOL_BUILD_TYPES));
 		config.setAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, arguments);
 		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) args.get(TAG_TOOL_DIRECTORY));
@@ -289,7 +289,7 @@ public final class ExternalToolMigration {
 		String noValueFlag= "NoValue"; //$NON-NLS-1$
 		String attr= null;
 		try {
-			attr = config.getAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, noValueFlag);
+			attr = config.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, noValueFlag);
 		} catch (CoreException e) {
 			// Exception will occur if the attribute is set because the attribute is actually a boolean.
 			return config;
@@ -306,7 +306,7 @@ public final class ExternalToolMigration {
 			ILaunchConfigurationWorkingCopy workingCopy;
 			try {
 				workingCopy = config.getWorkingCopy();
-				workingCopy.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, runInBackground);
+				workingCopy.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, runInBackground);
 				config= workingCopy.doSave();
 			} catch (CoreException e) {
 				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.getString("ExternalToolMigration.38"), e); //$NON-NLS-1$

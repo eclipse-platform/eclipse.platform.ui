@@ -733,7 +733,7 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String ATTR_RUN_IN_BACKGROUND = PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
+	public static final String ATTR_LAUNCH_IN_BACKGROUND = PLUGIN_ID + ".ATTR_LAUNCH_IN_BACKGROUND"; //$NON-NLS-1$
 	
 	// Extension points
 	

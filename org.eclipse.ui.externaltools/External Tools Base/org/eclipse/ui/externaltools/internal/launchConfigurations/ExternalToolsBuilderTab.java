@@ -47,7 +47,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	private Button incrementalBuildButton;
 	private Button workingSetButton;
 	private IVariableComponent workingSetComponent;
-	protected Button fRunInBackgroundButton;
+	protected Button fLaunchInBackgroundButton;
 	
 	private SelectionListener selectionListener= new SelectionAdapter() {
 		/**
@@ -85,13 +85,13 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createRunInBackgroundComponent(Composite parent) {
-		fRunInBackgroundButton = new Button(parent, SWT.CHECK);
-		fRunInBackgroundButton.setText("Run in bac&kground");
+		fLaunchInBackgroundButton = new Button(parent, SWT.CHECK);
+		fLaunchInBackgroundButton.setText("Run in bac&kground");
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
-		fRunInBackgroundButton.setLayoutData(data);
-		fRunInBackgroundButton.setFont(parent.getFont());
-		fRunInBackgroundButton.addSelectionListener(new SelectionAdapter() {
+		fLaunchInBackgroundButton.setLayoutData(data);
+		fLaunchInBackgroundButton.setFont(parent.getFont());
+		fLaunchInBackgroundButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -138,7 +138,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
 		buffer.append(','); 
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
-		configuration.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, false);
+		configuration.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false);
 	}
 
 	/**
@@ -191,7 +191,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	}
 	
 	protected void updateRunInBackground(ILaunchConfiguration configuration) { 
-		fRunInBackgroundButton.setSelection(isRunInBackground(configuration));
+		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
 	}
 	
 	/**
@@ -200,14 +200,14 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 	 * @param configuration the configuration
 	 * @return whether the configuration is configured to run in the background
 	 */
-	public static boolean isRunInBackground(ILaunchConfiguration configuration) {
-		boolean runInBackground= false;
+	public static boolean isLaunchInBackground(ILaunchConfiguration configuration) {
+		boolean launchInBackground= false;
 		try {
-			runInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, false);
+			launchInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ce);
 		}
-		return runInBackground;
+		return launchInBackground;
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
 		}
-		setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, configuration, fRunInBackgroundButton.getSelection(), true);
+		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), true);
 	}
 
 	/**

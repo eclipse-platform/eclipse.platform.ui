@@ -498,13 +498,13 @@ public class DebugUITools {
 	 */
 	public static void launch(final ILaunchConfiguration configuration, final String mode) {
 		if (DebugUIPlugin.preLaunchSave()) {
-			boolean runInBackground= true;
+			boolean launchInBackground= true;
 			try {
-				runInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
+				launchInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
-			if (runInBackground) {
+			if (launchInBackground) {
 				launchInBackground(configuration, mode);
 			} else {
 				launchInForeground(configuration, mode);
