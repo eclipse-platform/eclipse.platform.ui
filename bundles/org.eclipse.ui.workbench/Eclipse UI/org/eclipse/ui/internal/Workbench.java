@@ -100,7 +100,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
@@ -790,7 +790,7 @@ public final class Workbench implements IWorkbench {
 						if (keyStrokes.size() == 1) {
 							KeyStroke keyStroke = (KeyStroke) keyStrokes.get(0);
 							accelerator =
-							new Integer(KeySupport.convertKeyStrokeToAccelerator(keyStroke));
+							new Integer(SWTKeySupport.convertKeyStrokeToAccelerator(keyStroke));
 						}
 					}
 				}
@@ -817,7 +817,7 @@ public final class Workbench implements IWorkbench {
 
 			public boolean isAcceleratorInUse(int accelerator) {
 				KeySequence keySequence =
-				KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator));
+				KeySequence.getInstance(SWTKeySupport.convertAcceleratorToKeyStroke(accelerator));
 				return workbenchCommandSupport.getCommandManager().isPerfectMatch(keySequence)
 				|| workbenchCommandSupport.getCommandManager().isPartialMatch(keySequence);
 			}

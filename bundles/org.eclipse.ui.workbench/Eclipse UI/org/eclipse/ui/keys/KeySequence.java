@@ -242,7 +242,7 @@ public final class KeySequence implements Comparable {
 	 *         look; never <code>null</code>.
 	 */
 	public String format() {
-		return format(FormatManager.NATIVE);
+		return format(FormatManager.XEMACS);
 	}
 
 	/**

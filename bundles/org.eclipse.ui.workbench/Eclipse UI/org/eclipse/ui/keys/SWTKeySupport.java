@@ -18,12 +18,19 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * TODO javadoc
+ * A utility class for converting SWT events into key strokes.
+ * 
+ * @since 3.0
  */
-public final class KeySupport {
-	
+public final class SWTKeySupport {
+
 	/**
-	 * TODO javadoc
+	 * Given an SWT accelerator value, provide the corresponding key stroke.
+	 * 
+	 * @param accelerator
+	 *            The accelerator to convert; should be a valid SWT accelerator
+	 *            value.
+	 * @return The equivalent key stroke; never <code>null</code>.
 	 */
 	public static KeyStroke convertAcceleratorToKeyStroke(int accelerator) {
 		final SortedSet modifierKeys = new TreeSet();
@@ -271,14 +278,16 @@ public final class KeySupport {
 		char character = topKey(event);
 		return modifiers + toUpperCase(character);
 	}
-	
+
 	/**
-	 * TODO javadoc
+	 * Given a key stroke, this method provides the equivalent SWT accelerator
+	 * value. The functional inverse of <code>convertAcceleratorToKeyStroke</code>.
+	 * 
+	 * @param keyStroke
+	 *            The key stroke to convert; must not be <code>null</code>.
+	 * @return The SWT accelerator value
 	 */
 	public static final int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
-		if (keyStroke == null)
-			throw new NullPointerException();
-
 		int accelerator = 0;
 		final Iterator iterator = keyStroke.getModifierKeys().iterator();
 
@@ -388,11 +397,11 @@ public final class KeySupport {
 		char character = (char) keyCode;
 		return Character.isLetter(character) ? Character.toUpperCase(character) : keyCode;
 	}
-	
+
 	/**
-	 * TODO javadoc
+	 * This class should never be instantiated.
 	 */
-	private KeySupport() {
+	private SWTKeySupport() {
 		// This class should never be instantiated.
 	}
 }

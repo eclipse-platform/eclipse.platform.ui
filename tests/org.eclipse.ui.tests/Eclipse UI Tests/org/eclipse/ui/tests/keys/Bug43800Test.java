@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.keys;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -48,7 +48,7 @@ public class Bug43800Test extends UITestCase {
 		event.stateMask = 0x00;
 
 		// Convert the event, and test the resulting accelerator value.
-		int accelerator = KeySupport.convertEventToUnmodifiedAccelerator(event);
+		int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(event);
 		assertEquals("Arrow_Left key truncated.", SWT.ARROW_LEFT, accelerator); //$NON-NLS-1$
 	}
 }

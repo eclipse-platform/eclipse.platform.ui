@@ -14,7 +14,7 @@ package org.eclipse.ui.tests.keys;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -47,17 +47,17 @@ public class Bug42035Test extends UITestCase {
 
 		// Test the first-level match.
 		desiredKeyStroke = KeyStroke.getInstance(firstMatch); //$NON-NLS-1$
-		actualKeyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(keyEvent));
+		actualKeyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(SWTKeySupport.convertEventToUnmodifiedAccelerator(keyEvent));
 		assertEquals("Unmodified character with all modifiers doesn't match.", desiredKeyStroke, actualKeyStroke); //$NON-NLS-1$
 
 		// Test the second-level match.
 		desiredKeyStroke = KeyStroke.getInstance(secondMatch); //$NON-NLS-1$
-		actualKeyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnshiftedModifiedAccelerator(keyEvent));
+		actualKeyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(SWTKeySupport.convertEventToUnshiftedModifiedAccelerator(keyEvent));
 		assertEquals("Modified character with no shift doesn't match.", desiredKeyStroke, actualKeyStroke); //$NON-NLS-1$
 
 		// Test the third-level match.
 		desiredKeyStroke = KeyStroke.getInstance(thirdMatch); //$NON-NLS-1$
-		actualKeyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToModifiedAccelerator(keyEvent));
+		actualKeyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(SWTKeySupport.convertEventToModifiedAccelerator(keyEvent));
 		assertEquals("Modified character with all modifiers doesn't match.", desiredKeyStroke, actualKeyStroke); //$NON-NLS-1$
 	}
 
@@ -84,7 +84,7 @@ public class Bug42035Test extends UITestCase {
 		keyEvent.stateMask = SWT.NONE;
 
 		KeyStroke desiredKeyStroke = KeyStroke.getInstance("CTRL+"); //$NON-NLS-1$
-		KeyStroke actualKeyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(keyEvent));
+		KeyStroke actualKeyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(SWTKeySupport.convertEventToUnmodifiedAccelerator(keyEvent));
 		assertEquals("Unmodified character with all modifiers doesn't match", desiredKeyStroke, actualKeyStroke); //$NON-NLS-1$
 	}
 

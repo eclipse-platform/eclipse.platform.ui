@@ -14,6 +14,8 @@ package org.eclipse.ui.keys;
 /**
  * A cache for formatters. It keeps a bunch of formatters around for use within
  * the application.
+ * 
+ * @since 3.0
  */
 public class FormatManager {
 
@@ -40,6 +42,16 @@ public class FormatManager {
 	private static final KeyFormatter NATIVE_FORMATTER = new NativeKeyFormatter();
 
 	/**
+	 * An integer constant used to ask for a <code>EmacsNaturalKeyFormatter</code>.
+	 */
+	public static final int XEMACS = 2;
+
+	/**
+	 * An Emacs natural formatter instance.
+	 */
+	private static final KeyFormatter XEMACS_FORMATTER = new XemacsKeyFormatter();
+
+	/**
 	 * Retrieves a formatter for the given <code>format</code>. This uses
 	 * some caching mechanism to avoid constructing multiple instances of the
 	 * same formatter.
@@ -48,6 +60,9 @@ public class FormatManager {
 		switch (format) {
 			case NATIVE :
 				return NATIVE_FORMATTER;
+
+			case XEMACS :
+				return XEMACS_FORMATTER;
 
 			case FORMAL :
 			default :

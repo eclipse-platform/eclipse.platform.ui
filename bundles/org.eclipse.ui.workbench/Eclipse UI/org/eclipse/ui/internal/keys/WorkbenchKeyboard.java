@@ -49,7 +49,7 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.keys.ParseException;
 
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -126,17 +126,17 @@ public class WorkbenchKeyboard {
 		// Add each unique key stroke to the list for consideration.
 		KeyStroke keyStroke;
 		keyStrokes.add(
-			KeySupport.convertAcceleratorToKeyStroke(
-				KeySupport.convertEventToUnmodifiedAccelerator(event)));
+			SWTKeySupport.convertAcceleratorToKeyStroke(
+				SWTKeySupport.convertEventToUnmodifiedAccelerator(event)));
 		keyStroke =
-			KeySupport.convertAcceleratorToKeyStroke(
-				KeySupport.convertEventToUnshiftedModifiedAccelerator(event));
+			SWTKeySupport.convertAcceleratorToKeyStroke(
+				SWTKeySupport.convertEventToUnshiftedModifiedAccelerator(event));
 		if (!keyStrokes.contains(keyStroke)) {
 			keyStrokes.add(keyStroke);
 		}
 		keyStroke =
-			KeySupport.convertAcceleratorToKeyStroke(
-				KeySupport.convertEventToModifiedAccelerator(event));
+			SWTKeySupport.convertAcceleratorToKeyStroke(
+				SWTKeySupport.convertEventToModifiedAccelerator(event));
 		if (!keyStrokes.contains(keyStroke)) {
 			keyStrokes.add(keyStroke);
 		}
