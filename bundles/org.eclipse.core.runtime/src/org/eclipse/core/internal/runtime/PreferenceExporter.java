@@ -39,7 +39,7 @@ public class PreferenceExporter {
 	/**
 	 * @see Preferences#exportPreferences
 	 */
-	public static void exportPreferences(IPath file) {
+	public static void exportPreferences(IPath file) throws CoreException {
 		//collect all plugin preferences into a single global preference object
 		Preferences globalPreferences = new Preferences();
 		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
@@ -47,12 +47,7 @@ public class PreferenceExporter {
 			IPluginDescriptor descriptor = descriptors[i];
 			//save current preferences to ensure most recent values are exported
 			if (descriptor.isPluginActivated()) {
-				try {
-					descriptor.getPlugin().savePluginPreferences();
-				} catch (CoreException e) {
-					e.printStackTrace();
-					continue;
-				}
+				descriptor.getPlugin().savePluginPreferences();
 			}
 			//now merge the plugin preferences into the global preference object
 			if (mergePluginPreferences(descriptor, globalPreferences)) {
@@ -64,16 +59,9 @@ public class PreferenceExporter {
 		storePreferences(file, globalPreferences);
 	}
 	/**
-	 * Returns the plugin preference file for the given plugin descriptor.
-	 */
-	private static IPath getPluginPreferenceFile(IPluginDescriptor descriptor) {
-		IPath location = InternalPlatform.getMetaArea().getPluginStateLocation(descriptor);
-		return location.append(Plugin.PREFERENCES_FILE_NAME);
-	}
-	/**
 	 * @see Preferences#importPreferences
 	 */
-	public static void importPreferences(IPath file) {
+	public static void importPreferences(IPath file) throws CoreException {
 		Map idsToPreferences = splitPreferences(file);
 		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
@@ -85,7 +73,7 @@ public class PreferenceExporter {
 	 * Loads preferences from the given file into the provided preferences instance.
 	 * Returns the preferences instance.
 	 */
-	private static Preferences loadPreferences(IPath properties, Preferences preferences) {
+	private static Preferences loadPreferences(IPath properties, Preferences preferences) throws CoreException {
 		File propertiesFile = properties.toFile();
 		if (propertiesFile.exists()) {
 			InputStream in = null;
@@ -93,13 +81,14 @@ public class PreferenceExporter {
 				in = new BufferedInputStream(new FileInputStream(propertiesFile));
 				preferences.load(in);
 			} catch (IOException e) {
-				e.printStackTrace();
+				String msg = Policy.bind("preferences.errorReading", propertiesFile.toString()); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
 			} finally {
 				if (in != null) {
 					try {
 						in.close();
 					} catch (IOException e) {
-						e.printStackTrace();
+						//ignore failure to close
 					}
 				}
 			}
@@ -111,9 +100,9 @@ public class PreferenceExporter {
 	 * preferences instance.  Returns true if any properties were added,
 	 * and false otherwise.
 	 */
-	private static boolean mergePluginPreferences(IPluginDescriptor descriptor, Preferences preferences) {
+	private static boolean mergePluginPreferences(IPluginDescriptor descriptor, Preferences preferences) throws CoreException {
 		boolean found = false;
-		IPath propertiesFile = getPluginPreferenceFile(descriptor);
+		IPath propertiesFile = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor);
 		if (propertiesFile.toFile().exists()) {
 			Preferences pluginPreferences = loadPreferences(propertiesFile, new Preferences());
 			String pluginId = descriptor.getUniqueIdentifier();
@@ -127,19 +116,16 @@ public class PreferenceExporter {
 		return found;
 	}
 
+
 	/**
 	 * Sets the given preferences as the preferences for the plugin with the
 	 * given descriptor, overwriting any previously defined preferences.  If
 	 * the given preferences is null, all values are returned to their default value.
 	 */
-	private static void setPluginPreferences(IPluginDescriptor descriptor, Preferences newPreferences) {
+	private static void setPluginPreferences(IPluginDescriptor descriptor, Preferences newPreferences) throws CoreException {
+		IPath location = InternalPlatform.getMetaArea().getPluginPreferenceLocation(descriptor);
 		if (descriptor.isPluginActivated()) {
-			Plugin plugin = null;
-			try {
-				plugin = descriptor.getPlugin();
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
+			Plugin plugin = descriptor.getPlugin();
 			if (plugin != null) {
 				Preferences oldPreferences = plugin.getPluginPreferences();
 				//remove all old values
@@ -155,11 +141,11 @@ public class PreferenceExporter {
 					}
 				}
 				//save the preferences file
-				storePreferences(getPluginPreferenceFile(descriptor), oldPreferences);
+				storePreferences(location, oldPreferences);
 			}
 		} else {
 			//if the plugin isn't loaded, just save the preferences file directly
-			storePreferences(getPluginPreferenceFile(descriptor), newPreferences);
+			storePreferences(location, newPreferences);
 		}
 	}
 	/**
@@ -167,7 +153,7 @@ public class PreferenceExporter {
 	 * descriptor.  Returns a map of plugin IDs to Preferences objects
 	 * for that plugin.
 	 */
-	private static Map splitPreferences(IPath file) {
+	private static Map splitPreferences(IPath file) throws CoreException {
 		Preferences globalPreferences = loadPreferences(file, new Preferences());
 		Map idsToPreferences = new HashMap();
 		String[] keys = globalPreferences.propertyNames();
@@ -192,22 +178,23 @@ public class PreferenceExporter {
 	 * Writes the given preferences to the given file.  If the preferences are
 	 * null or empty, the file is deleted.
 	 */
-	private static void storePreferences(IPath destination, Preferences preferences) {
-		File destinationFile = destination.toFile();
+	private static void storePreferences(IPath destination, Preferences preferences) throws CoreException {
+		File propertiesFile = destination.toFile();
 		if (preferences == null || preferences.propertyNames().length == 0) {
-			destinationFile.delete();
+			propertiesFile.delete();
 			return;
 		}
-		File parent = destinationFile.getParentFile();
+		File parent = propertiesFile.getParentFile();
 		if (!parent.exists()) {
 			parent.mkdirs();
 		}
 		OutputStream out = null;
 		try {
-			out = new BufferedOutputStream(new FileOutputStream(destinationFile));
+			out = new BufferedOutputStream(new FileOutputStream(propertiesFile));
 			preferences.store(out, null);
 		} catch (IOException e) {
-			e.printStackTrace();
+				String msg = Policy.bind("preferences.errorWriting", propertiesFile.toString()); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
 		} finally {
 			if (out != null) {
 				try {
@@ -252,15 +239,17 @@ public class PreferenceExporter {
 		result.add(new Status(severity, Platform.PI_RUNTIME, 1, msg, null));
 	}
 	/**
-	 * Validates that the preference versions in the given file match
-	 * the currently installed plugins.  Returns an OK status if
-	 * all preferences match the currently installed plugins, otherwise a MultiStatus
-	 * describing what preferences don't match.
+	 * @see Preferences#validatePreferenceVersions
 	 */
 	public static IStatus validatePreferenceVersions(IPath file) {
 		String msg = Policy.bind("preferences.validate"); //$NON-NLS-1$
 		MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, 1, msg, null);
-		Preferences globalPreferences = loadPreferences(file, new Preferences());
+		Preferences globalPreferences = null;
+		try {
+			globalPreferences = loadPreferences(file, new Preferences());
+		} catch (CoreException e) {
+			return e.getStatus();
+		}
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		String[] keys = globalPreferences.propertyNames();
 		for (int i = 0; i < keys.length; i++) {
@@ -270,9 +259,15 @@ public class PreferenceExporter {
 				IPluginDescriptor descriptor = registry.getPluginDescriptor(pluginId);
 				if (descriptor != null) {
 					String version = globalPreferences.getString(pluginId);
-					PluginVersionIdentifier preferenceVersion = new PluginVersionIdentifier(version);
-					PluginVersionIdentifier installedVersion = descriptor.getVersionIdentifier();
-					validatePluginVersions(pluginId, preferenceVersion, installedVersion, result);
+					//FIXME - should have version identifier validation method
+					try {
+						PluginVersionIdentifier preferenceVersion = new PluginVersionIdentifier(version);
+						PluginVersionIdentifier installedVersion = descriptor.getVersionIdentifier();
+						validatePluginVersions(pluginId, preferenceVersion, installedVersion, result);
+					} catch (RuntimeException e) {
+						msg = Policy.bind("preferences.invalidVersionIdentifier", version); //$NON-NLS-1$
+						result.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 1, msg, e));
+					}
 				}
 			}
 		}
