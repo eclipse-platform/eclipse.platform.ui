@@ -12,8 +12,14 @@ package org.eclipse.help;
  * @since 2.0
  */
 public interface IHelpResource {
-
+	
+	/**
+	 * This is attribute name used for href in XML files.
+	 */
 	public final static String HREF = "href";
+	/**
+	 * This is attribute name used for label in XML files.
+	 */
 	public final static String LABEL = "label";
 	
 	/**

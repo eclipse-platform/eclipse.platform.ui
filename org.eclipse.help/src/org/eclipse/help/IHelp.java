@@ -50,7 +50,7 @@ public interface IHelp {
 	 * </p>
 	 * 
 	 * 
-	 * @param contexts the context to display
+	 * @param context the context to display
 	 * @param x horizontal position
 	 * @param y verifical position
 	 * @since 2.0
@@ -70,7 +70,7 @@ public interface IHelp {
 	 * @param contextId the help context identifier 
 	 * @param x horizontal position
 	 * @param y verifical position
-	 * @see #findContext
+	 * @see #getContext(String)
 	 * @since 2.0
 	 */
 	public void displayContext(String contextId, int x, int y);
@@ -96,7 +96,7 @@ public interface IHelp {
 	 * The help system makes no guarantee that all the help resources can be displayed or how they are displayed.
 	 * </p>
 	 *
-	 * @param toc the URL of the help resource.
+	 * @param href the URL of the help resource.
 	 * @since 2.0
 	 */
 	public void displayHelpResource(String href);
@@ -110,7 +110,7 @@ public interface IHelp {
 	 * The help system makes no guarantee that all the help resources can be displayed or how they are displayed.
 	 * </p>
 	 * @see IHelp#displayHelpResource(String)
-	 * @param toc the URL of the help resource.
+	 * @param helpResource the URL of the help resource.
 	 * @since 2.0
 	 */
 	public void displayHelpResource(IHelpResource helpResource);
@@ -172,7 +172,7 @@ public interface IHelp {
 	 * @param contextId the help context identifier 
 	 * @param x horizontal position
 	 * @param y verifical position
-	 * @see #findContext
+	 * @see #getContext(String)
 	 * @deprecated use displayContext(contextId, x, y)
 	 */
 	public void displayHelp(String contextId, int x, int y);
@@ -188,7 +188,7 @@ public interface IHelp {
 	 * </p>
 	 * 
 	 * 
-	 * @param contexts the context to display
+	 * @param context the context to display
 	 * @param x horizontal position
 	 * @param y verifical position
 	 * @deprecated use displayContext(context, x, y)

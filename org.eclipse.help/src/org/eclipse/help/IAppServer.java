@@ -27,19 +27,21 @@ public interface IAppServer
 	boolean add(String webAppName, String plugin, String path);
 	
 	/**
-	 * Removes the specified webapp
+	 * Removes the specified webapp.
 	 * @param webApp the name of the web app
 	 * @param plugin the plugin containg the web app. Not used now.
 	 */
 	void remove(String webApp, String plugin);
 
 	/**
-	 * Returns the host name or ip the app server runs on.
+	 * Obtains the host name or ip the app server runs on.
+	 * @return String representaion of host name of IP
 	 */
 	String getHost();
 	
 	/**
-	 * Returns the port number the app server listens on.
+	 * Obtains the port number the app server listens on.
+	 * @return integer port number
 	 */
 	int getPort();
 	

@@ -11,10 +11,13 @@ import org.eclipse.help.IHelpResource;
  * @since 2.0
  */
 public interface ITopic extends IHelpResource {
+	/**
+	 * This is element name used for topic in XML files.
+	 */
 	public final static String TOPIC = "topic";
 	
 	/**
-	 * Returns the topics contained in this node
+	 * Obtains the topics contained in this node.
 	 * @return Array of ITopic
 	 */
 	public ITopic[] getSubtopics();

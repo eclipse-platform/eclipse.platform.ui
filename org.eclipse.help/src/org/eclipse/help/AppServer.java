@@ -75,7 +75,7 @@ public class AppServer
 	}
 
 	/**
-	 * Removes the specified webapp
+	 * Removes the specified webapp.
 	 * @param webApp the name of the web app
 	 * @param plugin the plugin containg the web app. Not used now.
 	 */
@@ -88,6 +88,8 @@ public class AppServer
 
 	/**
 	 * Returns the host name or ip the app server runs on.
+	 * @return String representaion of host name of IP,
+	 *  null if server not started yet
 	 */
 	public static String getHost()
 	{
@@ -98,6 +100,8 @@ public class AppServer
 
 	/**
 	 * Returns the port number the app server listens on.
+	 * @return integer port number,
+	 *  0 if server not started
 	 */
 	public static int getPort()
 	{
@@ -107,7 +111,8 @@ public class AppServer
 	}
 
 	/**
-	 * Returns true if the app server is running
+	 * Checks if the app server is running.
+	 * @return true if the app server is running
 	 */
 	public static boolean isRunning()
 	{
