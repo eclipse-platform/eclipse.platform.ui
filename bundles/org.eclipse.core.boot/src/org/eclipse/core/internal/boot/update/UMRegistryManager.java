@@ -30,6 +30,9 @@ public UMRegistryManager(URL baseURL) {
 	fEclipseBaseURL = UMEclipseTree.appendTrailingSlash(baseURL);
 	fFactory = new UMFactory();
 	
+	// Ensure local registry exists
+	//-----------------------------
+	rehydrateRegistries();
 }
 // add the descriptor to the current and local registries (after successful apply)
 
@@ -224,7 +227,14 @@ public IComponentDescriptor[] getComponentDownloadList() {
 // return the current registry - containing only the active pieces
 
 public IUMRegistry getCurrentRegistry() {
-	rehydrateRegistries();
+
+	// Regenerate the registry for now
+	// This will keep it in sync with LaunchInfo
+	//------------------------------------------
+	fCurrentRegistry = createNewRegistry();
+//	fCurrentRegistry._loadSettings(fFactory);
+	fCurrentRegistry._loadManifests(fEclipseBaseURL, fFactory, true); // filtered for LaunchInfo
+	fCurrentRegistry._setType(UpdateManagerConstants.CURRENT_REGISTRY);
 
 	return fCurrentRegistry;
 	
@@ -267,12 +277,11 @@ private void rehydrateRegistries() {
 		fLocalRegistry._loadManifests(fEclipseBaseURL, fFactory);
 		fLocalRegistry._setType(UpdateManagerConstants.LOCAL_REGISTRY);
 	}
-	if (fCurrentRegistry == null) {
-		fCurrentRegistry = createNewRegistry();
-//		fCurrentRegistry._loadSettings(fFactory);
-		fCurrentRegistry._loadManifests(fEclipseBaseURL, fFactory, true); // filtered for LaunchInfo
-		fCurrentRegistry._setType(UpdateManagerConstants.CURRENT_REGISTRY);
-	}
+	
+	// The creation of the current registry has been moved to
+	// getCurrentRegistry for now so that it is always in sync
+	// with LaunchInfo.
+	//--------------------------------------------------------
 }
 /**
  * Removes the component descriptor from the local and current registry.
