@@ -112,15 +112,17 @@ public class RepositoryRoot extends PlatformObject {
 	private Map getDefinedModulesCache(CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		if (modulesCache == null) {
 			modulesCache = new HashMap();
-			try {
-				ICVSRemoteResource[] folders = root.members(CVSTag.DEFAULT, true, monitor);
-				for (int i = 0; i < folders.length; i++) {
-					ICVSRemoteResource resource = folders[i];
-					modulesCache.put(resource.getName(), resource);
+			synchronized(modulesCache) {
+				try {
+					ICVSRemoteResource[] folders = root.members(CVSTag.DEFAULT, true, monitor);
+					for (int i = 0; i < folders.length; i++) {
+						ICVSRemoteResource resource = folders[i];
+						modulesCache.put(resource.getName(), resource);
+					}
+				} catch (CVSException e) {
+					// we could't fetch the modules. Log the problem and continue
+					CVSUIPlugin.log(e);
 				}
-			} catch (CVSException e) {
-				// we could't fetch the modules. Log the problem and continue
-				CVSUIPlugin.log(e);
 			}
 		}
 		return modulesCache;
@@ -456,7 +458,9 @@ public class RepositoryRoot extends PlatformObject {
 	 * RepositoriesView is pressed.
 	 */
 	void clearCache() {
-		modulesCache = null;
+		synchronized(modulesCache) {
+			modulesCache = null;
+		}
 	}
 
 	/**
