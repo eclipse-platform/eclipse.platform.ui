@@ -68,6 +68,7 @@ public class SaveAsDialog extends TitleAreaDialog {
      */
     public SaveAsDialog(Shell parentShell) {
         super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /* (non-Javadoc)
