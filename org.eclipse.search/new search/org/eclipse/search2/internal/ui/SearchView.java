@@ -350,7 +350,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (result != null) {
 			fSearchAgainAction.setEnabled(result.getQuery().canRerun());
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
-			MenuManager showInSubMenu = new MenuManager("Show in"); 
+			MenuManager showInSubMenu = new MenuManager(SearchMessages.getString("SearchView.showIn.menu"));  //$NON-NLS-1$
 			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getViewSite().getWorkbenchWindow()));
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_OPEN, showInSubMenu);
 		}
