@@ -50,7 +50,7 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchExpression#setExpressionContext(java.lang.Object)
 	 */
-	public void setExpressionContext(final IDebugElement context) {
+	public void setExpressionContext(IDebugElement context) {
 		setObsolete(false);
 		if (context == null) {
 			fResult= null;
@@ -62,9 +62,9 @@ public class WatchExpression implements IWatchExpression {
 			}
 			return;
 		}
-		if (context instanceof IDebugElement) {
-			fDebugTarget= ((IDebugElement) context).getDebugTarget();
-		}	
+		
+		fDebugTarget= context.getDebugTarget();
+			
 		IWatchExpressionListener listener= new IWatchExpressionListener() {
 			/**
 			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IValue)
