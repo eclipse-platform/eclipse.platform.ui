@@ -58,7 +58,7 @@ public class AddCustomDialog extends Dialog {
 	/**
 	 * Creates a new dialog with the given shell and title.
 	 */
-	protected AddCustomDialog(Shell parent, List libraryUrls, String title, String description, String buttonLabel) {
+	public AddCustomDialog(Shell parent, List libraryUrls, String title, String description, String buttonLabel) {
 		super(parent);
 		this.title = title;
 		this.description = description;

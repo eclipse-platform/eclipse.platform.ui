@@ -25,7 +25,8 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 			new ExternalToolsMainTab(),
 			new ExternalToolsOptionTab(),
 			new ExternalToolsRefreshTab(),
-			new AntTargetsTab()
+			new AntTargetsTab(),
+			new AntPropertiesTab()
 		};
 		setTabs(tabs);
 	}

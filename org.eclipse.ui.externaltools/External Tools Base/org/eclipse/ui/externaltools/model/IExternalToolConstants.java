@@ -328,5 +328,19 @@ public interface IExternalToolConstants {
 	 * <code>null</code> which indicates that the default target is to be
 	 * executed. Format is a comma separated listing of targets.
 	 */
-	public static final String ATTR_ANT_TARGETS = PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$					
+	public static final String ATTR_ANT_TARGETS = PLUGIN_ID + ".ATTR_ANT_TARGETS"; //$NON-NLS-1$
+	
+	/**
+	 * Map attribute indicating the Ant properties to be defined during the
+	 * build. Default value is <code>null</code> which indicates no additional
+	 * properties will be defined.
+	 */
+	public static final String ATTR_ANT_PROPERTIES = PLUGIN_ID + ".ATTR_ANT_PROPERTIES"; //$NON-NLS-1$					
+	
+	/**
+	 * String attribute indicating the Ant targets to execute. Default value is
+	 * <code>null</code> which indicates that no additional property files
+	 * will be defined. Format is a comma separated listing of property files.
+	 */
+	public static final String ATTR_ANT_PROPERTY_FILES = PLUGIN_ID + ".ATTR_ANT_PROPERTY_FILES"; //$NON-NLS-1$										
 }

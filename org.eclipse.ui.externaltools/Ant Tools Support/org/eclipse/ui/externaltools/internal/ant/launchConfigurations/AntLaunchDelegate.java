@@ -71,8 +71,6 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			return;
 		}
 		
-		
-		
 		// resolve location
 		IPath location = ExternalToolsUtil.getLocation(configuration, resourceContext);
 		monitor.worked(1);
@@ -115,12 +113,22 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			runnerArgs[runnerArgs.length - 2] = BASE_DIR_PREFIX + baseDir;
 		}
 		runnerArgs[runnerArgs.length -1] = idProperty;
-				
+		
+		Map userProperties= ExternalToolsUtil.getProperties(configuration);
+		String[] propertyFiles= ExternalToolsUtil.getPropertyFiles(configuration);
+		
 		final AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(location.toOSString());
 		runner.addBuildLogger(ANT_LOGGER_CLASS);
 		runner.setInputHandler(INPUT_HANDLER_CLASS);
 		runner.setArguments(runnerArgs);
+		if (userProperties != null) {
+			runner.addUserProperties(userProperties);
+		}
+		
+		if (propertyFiles != null) {
+			runner.setPropertyFiles(propertyFiles);
+		}
 		
 		String[] targets = ExternalToolsUtil.getTargets(configuration);
 		if (targets != null) {

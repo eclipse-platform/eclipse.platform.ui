@@ -11,6 +11,7 @@ Contributors:
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -288,8 +289,7 @@ public class ExternalToolsUtil {
 	 * Returns an array of targets to be run, or <code>null</code> if none are
 	 * specified (indicating the default target should be run).
 	 * 
-	 * @param configuration launch configuration	 * @return array of target names, or <code>null</code>	 * @throws CoreException if an exception occurrs retrieveing the assocaited
-	 * attribute
+	 * @param configuration launch configuration	 * @return array of target names, or <code>null</code>	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getTargets(ILaunchConfiguration configuration) throws CoreException {
 		String attribute= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
@@ -298,5 +298,37 @@ public class ExternalToolsUtil {
 		} else {
 			return AntUtil.parseRunTargets(attribute);
 		}		
+	}
+	
+	/**
+	 * Returns an array of property files to be used for the build, or
+	 * <code>null</code> if none are specified (indicating no additional
+	 * property files specified for the build).
+	 * 
+	 * @param configuration launch configuration
+	 * @return array of property file names, or <code>null</code>
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static String[] getPropertyFiles(ILaunchConfiguration configuration) throws CoreException {
+		String attribute= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
+		if (attribute == null) {
+			return null;
+		} else {
+			return AntUtil.parseString(attribute, ",");
+		}		
+	}
+	
+	/**
+	 * Returns a map of properties to be defined for the build, or
+	 * <code>null</code> if none are specified (indicating no additional
+	 * properties specified for the build).
+	 * 
+	 * @param configuration launch configuration
+	 * @return map of properties (name --> value), or <code>null</code>
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {
+		Map map= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map)null);
+		return map;
 	}
 }

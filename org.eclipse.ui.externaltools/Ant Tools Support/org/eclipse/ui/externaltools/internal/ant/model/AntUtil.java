@@ -121,12 +121,23 @@ public final class AntUtil {
 	 * @return a list of target names
 	 */
 	public static String[] parseRunTargets(String extraAttibuteValue) {
-		if (extraAttibuteValue == null)
+		return parseString(extraAttibuteValue, TARGET_SEPARATOR);
+	}
+	
+	/**
+	 * Returns the list of Strings that were delimiter separated.
+	 * 
+	 * @param extraAttibuteValue the external tool's extra attribute value
+	 * @return a list of Strings
+	 */
+	public static String[] parseString(String attibuteValue, String delim) {
+		if (attibuteValue == null) {
 			return new String[0];
+		}
 		
 		// Need to handle case where separator character is
 		// actually part of the target name!
-		StringTokenizer tokenizer = new StringTokenizer(extraAttibuteValue, TARGET_SEPARATOR);
+		StringTokenizer tokenizer = new StringTokenizer(attibuteValue, delim);
 		String[] results = new String[tokenizer.countTokens()];
 		for (int i = 0; i < results.length; i++) {
 			results[i] = tokenizer.nextToken();
