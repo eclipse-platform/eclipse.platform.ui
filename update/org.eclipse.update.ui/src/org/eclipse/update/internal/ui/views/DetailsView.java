@@ -6,15 +6,14 @@ package org.eclipse.update.internal.ui.views;
 import java.io.*;
 import java.util.Vector;
 
-import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.browser.BrowserManager;
+import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -138,7 +137,12 @@ public class DetailsView extends MultiPageView {
 			} else {
 				// defect 11483
 				IBrowser browser = BrowserManager.getInstance().createBrowser();
-				browser.displayURL(url);
+				try {
+					browser.displayURL(url);
+				}
+				catch (Exception e) {
+					UpdateUI.logException(e);
+				}
 			}
 		}
 		return focusGrabbed;
