@@ -94,8 +94,9 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * <p>
 	 * Clients who reference the <code>org.eclipse.core.resources</code>
 	 * bundle are encouraged <em>not</em> to use this listener mechanism to
-	 * listen to content type changes. The Core Resources bundle will 
-	 * propagate changes to content types and notify clients appropriately
+	 * detect encoding changes. The Core Resources bundle will 
+	 * detect changes to content types and notify clients appropriately
+	 * of potential changes to the encoding of files in the workspace 
 	 * via the resource change mechanism.
 	 * </p>
 	 * <p>
