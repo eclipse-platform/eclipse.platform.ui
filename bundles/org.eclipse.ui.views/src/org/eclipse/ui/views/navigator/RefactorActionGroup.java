@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
@@ -86,17 +87,16 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.MOVE, moveAction);
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.RENAME, renameAction);
 	}
-
 	/**
  	 * Handles a key pressed event by invoking the appropriate action.
- 	 * 
-	 * @deprecated navigator actions are registered with KeyBindingService.
-	 * 	There is no need to invoke actions manually and this is no longer 
-	 * 	supported. API will be removed in the next release (2.1). 
  	 */
 	public void handleKeyPressed(KeyEvent event) {
+		if (event.character == SWT.DEL && event.stateMask == 0) {
+			if (deleteAction.isEnabled()) {
+				deleteAction.run();
+			}
+		}
 	}
-
 	protected void makeActions() {
 		TreeViewer treeViewer = (TreeViewer) navigator.getViewer();
 		Shell shell = navigator.getSite().getShell();

@@ -92,16 +92,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 			closeProjectAction);
 	}
 	
-	/**
- 	 * Handles a key pressed event by invoking the appropriate action.
- 	 * 
-	 * @deprecated navigator actions are registered with KeyBindingService.
-	 * 	There is no need to invoke actions manually and this is no longer 
-	 * 	supported. API will be removed in the next release (2.1). 
- 	 */
-	public void handleKeyPressed(KeyEvent event) {
-	}
-
 	protected void makeActions() {
 		Shell shell = navigator.getSite().getShell();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

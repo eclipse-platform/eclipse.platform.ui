@@ -1,14 +1,14 @@
-/************************************************************************
-Copyright (c) 2000, 2003 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM - Initial implementation
-************************************************************************/
 package org.eclipse.ui.views.navigator;
+
+/**********************************************************************
+Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
@@ -67,10 +67,6 @@ public abstract class ResourceNavigatorActionGroup extends ActionGroup {
 	/**
  	 * Handles a key pressed event by invoking the appropriate action.
 	 * Does nothing by default.
-	 * 
-	 * @deprecated navigator actions are registered with KeyBindingService.
-	 * 	There is no need to invoke actions manually and this is no longer 
-	 * 	supported. API will be removed in the next release (2.1). 
  	 */
 	public void handleKeyPressed(KeyEvent event) {
 	}

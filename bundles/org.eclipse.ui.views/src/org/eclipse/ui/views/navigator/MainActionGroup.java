@@ -1,15 +1,15 @@
-/************************************************************************
-Copyright (c) 2000, 2003 IBM Corporation and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-
-Contributors:
-    IBM - Initial implementation
-	Sebastian Davids <sdavids@gmx.de> - Collapse all action
-************************************************************************/
 package org.eclipse.ui.views.navigator;
+
+/**********************************************************************
+Copyright (c) 2000, 2002, International Business Machines Corp and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+  Sebastian Davids <sdavids@gmx.de> - Collapse all action
+**********************************************************************/
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -193,17 +193,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	}
 			
 	/**
-	 * Handles a key pressed event by invoking the appropriate action,
-	 * delegating to the subgroups as necessary.
-	 * 
-	 * @deprecated navigator actions are registered with KeyBindingService.
-	 * 	There is no need to invoke actions manually and this is no longer 
-	 * 	supported. API will be removed in the next release (2.1). 
-	 */
-	public void handleKeyPressed(KeyEvent event) {
-	}
-
-	/**
 	 * Adds the actions in this group and its subgroups to the action bars.
 	 */
 	public void fillActionBars(IActionBars actionBars) {
@@ -259,6 +248,14 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	 */
 	public void runDefaultAction(IStructuredSelection selection) {
 		openGroup.runDefaultAction(selection);
+	}
+	
+	/**
+ 	 * Handles a key pressed event by invoking the appropriate action,
+ 	 * delegating to the subgroups as necessary.
+ 	 */
+	public void handleKeyPressed(KeyEvent event) {
+		refactorGroup.handleKeyPressed(event);
 	}
 	
 	/**

@@ -790,7 +790,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		WorkbenchHelp.setHelp(deleteAction, IHelpContextIds.DELETE_RETARGET_ACTION);
 		partService.addPartListener(deleteAction);
 		deleteAction.setActionDefinitionId(deleteActionDefId);
-		keyBindingService.registerGlobalAction(deleteAction);
+		//keyBindingService.registerGlobalAction(deleteAction);
 
 		// See if a welcome page is specified
 		AboutInfo[] infos = ((Workbench)workbench).getFeaturesInfo();
