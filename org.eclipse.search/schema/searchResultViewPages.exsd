@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.search.ui" id="searchResultViewPages" name="Search Result View Pages"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This extension point allows clients to plug pages into the search result view.
       </documentation>
    </annotation>
 
@@ -18,14 +18,14 @@
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  a fully qualified identifier of the target extension point
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  an optional identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -37,7 +37,7 @@
          <attribute name="searchResultClass" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The fully qualified class name of the &lt;code&gt;ISearchResult&lt;/code&gt; implementation this search result page supposed to show.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -47,7 +47,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the fully qualified class name implementing this search result page. The class must implement &lt;code&gt;org.eclipse.search.ui.ISearchResultPage&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -57,7 +57,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  the id, typically the same as the fully qualified class name
                </documentation>
             </annotation>
          </attribute>
@@ -69,7 +69,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.0
       </documentation>
    </annotation>
 
@@ -78,7 +78,21 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         As an example, here is the markup for the file search result page.
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension
+	id=&quot;FileSearchPage&quot;
+    point=&quot;org.eclipse.search.searchResultViewPages&quot;&gt;
+	&lt;viewPage
+		id=&quot;org.eclipse.search.text.FileSearchResultPage&quot;
+		searchResultClass=&quot;org.eclipse.search.internal.ui.text.FileSearchResult&quot;
+		class=&quot;org.eclipse.search.internal.ui.text.FileSearchPage&quot;&gt;
+	&lt;/viewPage&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -87,7 +101,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         The contributed class must implement &lt;code&gt;org.eclipse.search.ui.ISearchResultPage&lt;/code&gt;
       </documentation>
    </annotation>
 
@@ -96,7 +110,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         The search project a search result page for file searches.
       </documentation>
    </annotation>
 
@@ -105,7 +119,12 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
