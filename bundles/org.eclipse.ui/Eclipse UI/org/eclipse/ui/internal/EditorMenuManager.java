@@ -18,12 +18,6 @@ import java.util.*;
 public class EditorMenuManager extends SubMenuManager {
 	private IMenuManager parentMgr;
 	private ArrayList wrappers;
-	/**
-	 * Indicates that the items of this manager are allowed to enable;
-	 * <code>true</code> by default.
-	 */
-	private boolean enabledAllowed = true;
-	
 /**
  * Constructs a new editor manager.
  */
@@ -94,12 +88,7 @@ public void setVisible(boolean visible, boolean forceVisibility) {
  * Sets the enablement ability of all the items contributed by the editor.
  */
 public void setEnabledAllowed(boolean enabledAllowed) {
-	this.enabledAllowed = enabledAllowed;
-	IContributionItem[] items = super.getItems();
-	for (int i = 0; i < items.length; i++) {
-		IContributionItem item = items[i];
-		item.setEnabledAllowed(enabledAllowed);
-	}
+	super.setEnabledAllowed(enabledAllowed);
 	// pass it on to the created wrappers
 	if (wrappers != null) {
 		for (int i = 0; i < wrappers.size(); i++) {
