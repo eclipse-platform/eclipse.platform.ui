@@ -9,14 +9,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.boot.BootLoader;
@@ -43,13 +41,6 @@ public class AntRunner implements IPlatformRunnable {
 	 * Constructs an instance of this class.
 	 */
 	public AntRunner() {
-	}
-
-	protected ClassLoader getClassLoader() {
-		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
-		URL[] urls = preferences.getURLs();
-		ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
-		return new AntClassLoader(urls, pluginLoaders, null);
 	}
 
 	/**
@@ -202,7 +193,7 @@ public class AntRunner implements IPlatformRunnable {
 		Class classInternalAntRunner= null;
 		Object runner= null;
 		try {
-			ClassLoader loader = getClassLoader();
+			ClassLoader loader = AntCorePlugin.getPlugin().getClassLoader();
 			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			runner = classInternalAntRunner.newInstance();
 			// set build file
@@ -259,7 +250,7 @@ public class AntRunner implements IPlatformRunnable {
 		Object runner= null;
 		Class classInternalAntRunner= null;
 		try {
-			ClassLoader loader = getClassLoader();
+			ClassLoader loader = AntCorePlugin.getPlugin().getClassLoader();
 			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			runner = classInternalAntRunner.newInstance();
 			// set build file
@@ -389,7 +380,7 @@ public class AntRunner implements IPlatformRunnable {
 			newArgs[args.length] = "-debug"; //$NON-NLS-1$
 			argArray = newArgs;
 		}
-		ClassLoader loader = getClassLoader();
+		ClassLoader loader = AntCorePlugin.getPlugin().getClassLoader();
 		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 		Object runner = classInternalAntRunner.newInstance();
 		Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
