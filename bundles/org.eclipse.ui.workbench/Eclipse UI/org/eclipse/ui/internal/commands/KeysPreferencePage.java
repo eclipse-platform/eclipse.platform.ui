@@ -880,7 +880,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					if (pluginCommandId != null)
 						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
 					else
-						commandString += " (was: " + "Unassigned" + ");";						
+						commandString += " (was: " + "Unassigned" + ")";						
 				} else {
 					if (preferenceCommandId != null) {
 						difference = DIFFERENCE_ADD;						
@@ -977,7 +977,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					if (pluginCommandId != null)
 						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
 					else
-						commandString += " (was: " + "Unassigned" + ");";						
+						commandString += " (was: " + "Unassigned" + ")";						
 				} else {
 					if (preferenceCommandId != null) {
 						difference = DIFFERENCE_ADD;						

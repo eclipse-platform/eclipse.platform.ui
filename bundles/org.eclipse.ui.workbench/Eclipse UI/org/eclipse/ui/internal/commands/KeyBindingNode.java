@@ -398,9 +398,7 @@ final class KeyBindingNode {
 	}
 
 	static void solve(Map tree, String[] keyConfigurationIds, String[] platforms, String[] locales) {
-		Iterator iterator = tree.values().iterator();	
-		
-		while (iterator.hasNext()) {
+		for (Iterator iterator = tree.values().iterator(); iterator.hasNext();) {	
 			KeyBindingNode keyBindingNode = (KeyBindingNode) iterator.next();
 			keyBindingNode.assignmentsByContextId.clear();		
 
@@ -411,20 +409,20 @@ final class KeyBindingNode {
 				KeyBindingNode.Assignment assignment = null;
 				
 				if (keyConfigurationMap != null)
-					for (int j = 0; j < keyConfigurationIds.length && j < 0xFF && keyBindingNode.match == null; j++) {
-						Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[j]);
+					for (int keyConfiguration = 0; keyConfiguration < keyConfigurationIds.length && keyConfiguration < 0xFF; keyConfiguration++) {
+						Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[keyConfiguration]);
 				
 						if (rankMap != null)
-							for (int r = 0; r <= 1; r++) {
-								Map platformMap = (Map) rankMap.get(new Integer(r));
+							for (int rank = 0; rank <= 1; rank++) {
+								Map platformMap = (Map) rankMap.get(new Integer(rank));
 
 								if (platformMap != null)
-									for (int k = 0; k < platforms.length && k < 0xFF && keyBindingNode.match == null; k++) {
-										Map localeMap = (Map) platformMap.get(platforms[k]);
+									for (int platform = 0; platform < platforms.length && platform < 0xFF; platform++) {
+										Map localeMap = (Map) platformMap.get(platforms[platform]);
 					
 										if (localeMap != null)
-											for (int l = 0; l < locales.length && l < 0xFF && keyBindingNode.match == null; l++) {
-												Set commandIds = (Set) localeMap.get(locales[l]);
+											for (int locale = 0; locale < locales.length && locale < 0xFF; locale++) {
+												Set commandIds = (Set) localeMap.get(locales[locale]);
 					
 												if (commandIds != null) {
 													String commandId = commandIds.size() == 1 ? (String) commandIds.iterator().next() : null;
@@ -432,22 +430,28 @@ final class KeyBindingNode {
 													if (assignment == null)
 														assignment = new Assignment();
 														
-													if (r == 0) {
-														if (j == 0) {															
-															assignment.hasPreferenceCommandIdInFirstKeyConfiguration = true;
-															assignment.preferenceCommandIdInFirstKeyConfiguration = commandId;
-														} else {
-															assignment.hasPreferenceCommandIdInInheritedKeyConfiguration = true;
-															assignment.preferenceCommandIdInInheritedKeyConfiguration = commandId;
-														}
-													} else {
-														if (j == 0) {															
-															assignment.hasPluginCommandIdInFirstKeyConfiguration = true;
-															assignment.pluginCommandIdInFirstKeyConfiguration = commandId;
-														} else {
-															assignment.hasPluginCommandIdInInheritedKeyConfiguration = true;
-															assignment.pluginCommandIdInInheritedKeyConfiguration = commandId;
-														}
+													switch (rank) {
+														case 0:
+															if (keyConfiguration == 0 && !assignment.hasPreferenceCommandIdInFirstKeyConfiguration) {															
+																assignment.hasPreferenceCommandIdInFirstKeyConfiguration = true;
+																assignment.preferenceCommandIdInFirstKeyConfiguration = commandId;
+															} else if (!assignment.hasPreferenceCommandIdInInheritedKeyConfiguration) {
+																assignment.hasPreferenceCommandIdInInheritedKeyConfiguration = true;
+																assignment.preferenceCommandIdInInheritedKeyConfiguration = commandId;
+															}
+															
+															break;
+															
+														case 1:										
+															if (keyConfiguration == 0 && !assignment.hasPluginCommandIdInFirstKeyConfiguration) {															
+																assignment.hasPluginCommandIdInFirstKeyConfiguration = true;
+																assignment.pluginCommandIdInFirstKeyConfiguration = commandId;
+															} else if (!assignment.hasPluginCommandIdInInheritedKeyConfiguration) {
+																assignment.hasPluginCommandIdInInheritedKeyConfiguration = true;
+																assignment.pluginCommandIdInInheritedKeyConfiguration = commandId;
+															}
+															
+															break;
 													}
 												}
 											}
@@ -466,33 +470,31 @@ final class KeyBindingNode {
 	}
 
 	static void solve(Map tree, String[] contextIds, String[] keyConfigurationIds, String[] platforms, String[] locales) {
-		Iterator iterator = tree.values().iterator();	
-		
-		while (iterator.hasNext()) {
+		for (Iterator iterator = tree.values().iterator(); iterator.hasNext();) {
 			KeyBindingNode keyBindingNode = (KeyBindingNode) iterator.next();
 			keyBindingNode.match = null;		
 			
-			for (int i = 0; i < contextIds.length && i < 0xFF && keyBindingNode.match == null; i++) {
-				Map keyConfigurationMap = (Map) keyBindingNode.contextMap.get(contextIds[i]);
+			for (int context = 0; context < contextIds.length && context < 0xFF && keyBindingNode.match == null; context++) {
+				Map keyConfigurationMap = (Map) keyBindingNode.contextMap.get(contextIds[context]);
 			
 				if (keyConfigurationMap != null)
-					for (int j = 0; j < keyConfigurationIds.length && j < 0xFF && keyBindingNode.match == null; j++) {
-						Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[j]);
+					for (int keyConfiguration = 0; keyConfiguration < keyConfigurationIds.length && keyConfiguration < 0xFF && keyBindingNode.match == null; keyConfiguration++) {
+						Map rankMap = (Map) keyConfigurationMap.get(keyConfigurationIds[keyConfiguration]);
 		
 						if (rankMap != null) {
-							for (int r = 0; r <= 1; r++) {
-								Map platformMap = (Map) rankMap.get(new Integer(r));
+							for (int rank = 0; rank <= 1; rank++) {
+								Map platformMap = (Map) rankMap.get(new Integer(rank));
 								
 								if (platformMap != null)
-									for (int k = 0; k < platforms.length && k < 0xFF && keyBindingNode.match == null; k++) {
-										Map localeMap = (Map) platformMap.get(platforms[k]);
+									for (int platform = 0; platform < platforms.length && platform < 0xFF && keyBindingNode.match == null; platform++) {
+										Map localeMap = (Map) platformMap.get(platforms[platform]);
 				
 										if (localeMap != null)
-											for (int l = 0; l < locales.length && l < 0xFF && keyBindingNode.match == null; l++) {
-												Set commandIds = (Set) localeMap.get(locales[l]);
+											for (int locale = 0; locale < locales.length && locale < 0xFF && keyBindingNode.match == null; locale++) {
+												Set commandIds = (Set) localeMap.get(locales[locale]);
 				
 												if (commandIds != null)
-													keyBindingNode.match = new Match(commandIds.size() == 1 ? (String) commandIds.iterator().next() : null, (i << 24) + (j << 16) + (k << 8) + l);
+													keyBindingNode.match = new Match(commandIds.size() == 1 ? (String) commandIds.iterator().next() : null, (context << 24) + (keyConfiguration << 16) + (platform << 8) + locale);
 											}
 									}								
 							}
@@ -504,10 +506,10 @@ final class KeyBindingNode {
 		}		
 	}
 
+	private Map assignmentsByContextId = new HashMap();
 	private Map childMap = new HashMap();	
 	private Map contextMap = new HashMap();
 	private Match match = null;
-	private Map assignmentsByContextId = new HashMap();
 	
 	private KeyBindingNode() {
 	}
