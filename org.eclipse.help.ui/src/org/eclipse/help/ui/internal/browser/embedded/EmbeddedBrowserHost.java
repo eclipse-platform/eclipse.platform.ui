@@ -255,13 +255,13 @@ public class EmbeddedBrowserHost implements Runnable {
 		
 		// TODO enable on Windows after 46751 is fixed
 		if (!System.getProperty("os.name").startsWith("Win")) {
-			webBrowser.addNewWindowListener(new NewWindowListener() {
+			webBrowser.addOpenWindowListener(new OpenWindowListener() {
 				/*
 				 * (non-Javadoc)
 				 * 
 				 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
 				 */
-				public void newWindow(NewWindowEvent event) {
+				public void open(OpenWindowEvent event) {
 					int dw = 300;
 					int dh = 300;
 					int dx = x + (w - dw) / 2;
