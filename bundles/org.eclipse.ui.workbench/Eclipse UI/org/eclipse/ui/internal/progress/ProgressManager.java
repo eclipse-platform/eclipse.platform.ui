@@ -55,8 +55,8 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.dialogs.WorkbenchDialogBlockedHandler;
@@ -1197,7 +1197,7 @@ public class ProgressManager extends ProgressProvider implements
      */
     private boolean shouldRunInBackground() {
         return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-                IPreferenceConstants.RUN_IN_BACKGROUND);
+        		IWorkbenchPreferenceConstants.RUN_IN_BACKGROUND);
     }
 
 	/**

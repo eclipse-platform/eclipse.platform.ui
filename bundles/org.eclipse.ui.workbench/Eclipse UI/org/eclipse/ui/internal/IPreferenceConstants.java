@@ -205,11 +205,6 @@ public interface IPreferenceConstants {
     public static String CURRENT_THEME_ID = "CURRENT_THEME_ID"; //$NON-NLS-1$
 
     /**
-     * Preference to show user jobs in a dialog.
-     */
-    public static String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$
-
-    /**
      * Workbench preference id for determining whether the user will be prompted
      * for activity enablement. If this is false then activities are enabled
      * automatically. If it is true, then the user is only prompted for
