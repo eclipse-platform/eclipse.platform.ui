@@ -32,10 +32,11 @@ public String getColumnText(Object element, int columnIndex) {
 	if (element instanceof IWorkbenchPart) {
 		IWorkbenchPart part = (IWorkbenchPart)element;
 		String path = part.getTitleToolTip();
-		if (path.length() == 0) {
-			return part.getTitle();
+		String title = part.getTitle();
+		if (title == null || path == null || path.length() == 0) {
+			return title;
 		} else {
-			return part.getTitle() + "  [" + part.getTitleToolTip() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+			return title + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	return null;
