@@ -340,6 +340,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
 		XmlElement element= (XmlElement)selection.getFirstElement();
 		String path= element.getFilePath();
+		if (element.isRootExternal()){
+			List children= element.getChildNodes();
+			if (!children.isEmpty()) {
+				path= ((XmlElement)children.get(0)).getFilePath();
+			}
+		}
+		
 		if (path != null) {
 			IPath resourcePath= new Path(path);
 			//resourcePath.
@@ -366,7 +373,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				Object selected= selection.getFirstElement();
 				if (selected instanceof XmlElement) {
 					XmlElement element= (XmlElement)selected;
-					return element.isExternal() && !element.isRootExternal();
+					return element.isExternal();
 				}
 			}
 		}
