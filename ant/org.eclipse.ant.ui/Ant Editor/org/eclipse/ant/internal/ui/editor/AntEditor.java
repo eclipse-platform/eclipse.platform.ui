@@ -596,17 +596,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 			if (node != null) {
 				setSelection(node, true);
 				return;
-			} else {
-				String path= getAntModel().getEntityPath(text);
-				if (path != null) {
-					IFile file= AntUtil.getFileForLocation(path, null);
-					if (file.exists()) {
-						try {
-							openInEditor(file, isActivePart());
-							return;
-						} catch (PartInitException e) {
-							errorMessage= e.getLocalizedMessage();
-						}
+			} 
+			String path= getAntModel().getEntityPath(text);
+			if (path != null) {
+				IFile file= AntUtil.getFileForLocation(path, null);
+				if (file.exists()) {
+					try {
+						openInEditor(file, isActivePart());
+						return;
+					} catch (PartInitException e) {
+						errorMessage= e.getLocalizedMessage();
 					}
 				}
 			}

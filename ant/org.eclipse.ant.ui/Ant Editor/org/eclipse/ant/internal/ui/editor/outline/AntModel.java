@@ -160,9 +160,8 @@ public class AntModel {
 				fRemoveLengthOfReplace= region.getLength();
 				fReplaceHasOccurred= false;
 				return;
-			} else {
-				fIsDirty= false;
 			}
+			fIsDirty= false;
 		}
 
 		synchronized (this) {
@@ -207,9 +206,8 @@ public class AntModel {
 		possiblyWaitForReconcile();
 		if (fProjectNode == null) {
 			return new AntElementNode[0];
-		} else {
-			return new AntElementNode[] {fProjectNode};
-		}
+		} 
+		return new AntElementNode[] {fProjectNode};
 	}
 
 	private void parseDocument(IDocument input, DirtyRegion region) {
@@ -329,10 +327,10 @@ public class AntModel {
 					updateAfterIncrementalChange(region, false);
 				}
 				return null;
-			} else { //nodes don't know their lengths due to parsing error --> full parse
-				textToParse = prepareForFullIncremental(input);
-				return textToParse;
 			}
+			//nodes don't know their lengths due to parsing error --> full parse
+			textToParse = prepareForFullIncremental(input);
+			return textToParse;
 		}
 		
 		while (node != null && !(node instanceof AntTargetNode)) {
