@@ -75,11 +75,12 @@ public void createControl(Composite parent) {
  */
 protected void createOptionsGroupButtons(Group optionsGroup) {
 
-	super.createOptionsGroupButtons(optionsGroup);
 	// compress... checkbox
 	compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
 	compressContentsCheckbox.setText(DataTransferMessages.getString("ZipExport.compressContents")); //$NON-NLS-1$
-
+	
+	super.createOptionsGroupButtons(optionsGroup);
+	
 	// initial setup
 	createDirectoryStructureButton.setSelection(true);
 	createSelectionOnlyButton.setSelection(false);
