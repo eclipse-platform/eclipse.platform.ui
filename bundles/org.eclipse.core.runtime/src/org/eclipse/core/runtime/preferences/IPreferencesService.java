@@ -286,7 +286,7 @@ public interface IPreferencesService {
 	 * @exception CoreException if there was a problem exporting the preferences
 	 * @see #importPreferences(java.io.OutputStream)
 	 */
-	public IStatus exportPreferences(IEclipsePreferences node, OutputStream output) throws CoreException;
+	public IStatus exportPreferences(IEclipsePreferences node, OutputStream output, String[] excludesList) throws CoreException;
 
 	/**
 	 * Loads preferences from the given file and stores them in the preferences store.
@@ -302,6 +302,10 @@ public interface IPreferencesService {
 	 * @see exportPreferences(org.eclipse.core.runtime.preferences.IEclipsePreferences, java.io.OutputStream)
 	 */
 	public IStatus importPreferences(InputStream input) throws CoreException;
+
+	public IStatus applyPreferences(IExportedPreferences preferences) throws CoreException;
+
+	public IExportedPreferences readPreferences(InputStream input) throws CoreException;
 
 	/**
 	 * Return an array with the default lookup order for the preference keyed by the given

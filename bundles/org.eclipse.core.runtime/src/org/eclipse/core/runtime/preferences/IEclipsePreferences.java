@@ -57,7 +57,7 @@ public interface IEclipsePreferences extends Preferences {
 	public interface INodeChangeListener {
 
 		/**
-		 * Notification that a node was added to the preference hierarchy.
+		 * Notification that a child node was added to the preference hierarchy.
 		 * The given event must not be <code>null</code>.
 		 * 
 		 * @param event an event specifying the details about the new node
@@ -68,7 +68,7 @@ public interface IEclipsePreferences extends Preferences {
 		public void added(INodeChangeEvent event);
 
 		/**
-		 * Notification that a node was removed from the preference hierarchy.
+		 * Notification that a child node was removed from the preference hierarchy.
 		 * The given event must not be <code>null</code>.
 		 * 
 		 * @param event an event specifying the details about the removed node
@@ -184,8 +184,13 @@ public interface IEclipsePreferences extends Preferences {
 	 * Return the preferences node with the given path. The given path must
 	 * not be <code>null</code>.
 	 * <p>
-	 * Functionally equivalent to <code>return node(path.toString());</code>. 
-	 * See the spec of <code>Preferences.node(String)<code> for more details. 
+	 * Functionally equivalent to calling "<code>return node(path.toString());</code>". 
+	 * See the spec of <code>Preferences#node(String)<code> for more details. 
+	 * </p>
+	 * <p>
+	 * Note that if the node does not yet exist and is created, then the appropriate
+	 * <code>INodeChangeEvent</code> must be sent to listeners who are
+	 * registered at this node.
 	 * </p>
 	 * @param path the path of the node
 	 * @return the node
@@ -198,8 +203,8 @@ public interface IEclipsePreferences extends Preferences {
 	 * given path exists in the preference node hierarchy. The given path
 	 * must not be <code>null</code>.
 	 * <p>
-	 * Functionally equivalent to <code>return nodeExists(path.toString());</code>. 
-	 * See the spec of <code>Preferences.node(String)</code> for more details. 
+	 * Functionally equivalent to calling "<code>return nodeExists(path.toString());</code>". 
+	 * See the spec of <code>Preferences#node(String)</code> for more details. 
 	 * </p>
 	 * @param path the path to the node
 	 * @return <code>true</code> if the node exists and <code>false</code> otherwise
@@ -207,4 +212,38 @@ public interface IEclipsePreferences extends Preferences {
 	 * @see org.osgi.service.prefs.Preferences#nodeExists(String)
 	 */
 	public boolean nodeExists(IPath path) throws BackingStoreException;
+
+	/**
+	 * Remove this node from the preference hierarchy. If this node is the scope
+	 * root, then do not remove this node, only remove this node's children.
+	 * <p>
+	 * Functionally equivalent to calling "<code>removeNode();</code>". 
+	 * See the spec of <code>Preferences#removeNode()<code> for more details. 
+	 * </p>
+	 * <p>
+	 * Implementors must send the appropriate <code>INodeChangeEvent</code>
+	 * to listeners who are registered on this node's parent.
+	 * </p>
+	 * @throws BackingStoreException if there was a problem removing this node
+	 * @see org.osgi.service.prefs.Preferences#removeNode()
+	 */
+	public void removeNode() throws BackingStoreException;
+
+	/**
+	 * Return the preferences node with the given path. The given path must
+	 * not be <code>null</code>.
+	 * <p>
+	 * Functionally equivalent to calling "<code>return node(path.toString());</code>". 
+	 * See the spec of <code>Preferences#node(String)<code> for more details. 
+	 * </p>
+	 * <p>
+	 * Note that if the node does not yet exist and is created, then the appropriate
+	 * <code>INodeChangeEvent</code> must be sent to listeners who are
+	 * registered at this node.
+	 * </p>
+	 * @param path the path of the node
+	 * @return the node
+	 * @see org.osgi.service.prefs.Preferences#node(String)
+	 */
+	public Preferences node(String name);
 }

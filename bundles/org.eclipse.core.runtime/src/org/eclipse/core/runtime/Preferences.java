@@ -217,7 +217,6 @@ public class Preferences {
 		 *
 		 * @return the old value, or <code>null</code> if not known
 		 *  or not relevant
-		 * @deprecated
 		 */
 		public Object getOldValue() {
 			return oldValue;
@@ -312,7 +311,7 @@ public class Preferences {
 		try {
 			output = new BufferedOutputStream(new FileOutputStream(file));
 			IEclipsePreferences node = (IEclipsePreferences) service.getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
-			service.exportPreferences(node, output);
+			service.exportPreferences(node, output, null);
 		} catch (FileNotFoundException e) {
 			String message = Policy.bind("preferences.errorWriting", file.toString(), e.getMessage()); //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);

@@ -89,6 +89,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		public Preferences getChild() {
 			return child;
 		}
+
+		public String toString() {
+			return "NodeChangeEvent(" + getParent().absolutePath() + ", " + getChild().absolutePath() + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		}
 	}
 
 	/*
@@ -128,6 +132,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		 */
 		public Object getOldValue() {
 			return oldValue;
+		}
+
+		public String toString() {
+			return "PreferenceChangeEvent(" + getKey() + ": " + getNewValue() + "->" + getOldValue() + ")"; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 		}
 	}
 
@@ -523,12 +531,21 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return node(new Path(pathName));
 	}
 
+	private IEclipsePreferences calculateRoot() {
+		IEclipsePreferences result = this;
+		while (result.parent() != null)
+			result = (IEclipsePreferences) result.parent();
+		return result;
+	}
+
 	/*
 	 * @see org.eclipse.core.runtime.IEclipsePreferences#node(org.eclipse.core.runtime.IPath)
 	 */
 	public IEclipsePreferences node(IPath path) {
+		// use the root relative to this node instead of the global root
+		// in case we have a different hierarchy. (e.g. export)
 		if (path.isAbsolute())
-			return Platform.getPreferencesService().getRootNode().node(path);
+			return calculateRoot().node(path.makeRelative());
 
 		// TODO: handle relative paths correctly (.. refs)
 
@@ -544,7 +561,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (children != null)
 			child = (IEclipsePreferences) children.get(key);
 		if (child == null) {
-			child = ((PreferencesService) Platform.getPreferencesService()).getScope(this).create(this, key);
+			child = create(this, key);
 			if (children == null)
 				children = new HashMap();
 			children.put(key, child);
@@ -581,8 +598,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.eclipse.core.runtime.IEclipsePreferences#nodeExists(org.eclipse.core.runtime.IPath)
 	 */
 	public boolean nodeExists(IPath path) throws BackingStoreException {
+		// use the root relative to this node instead of the global root
+		// in case we have a different hierarchy. (e.g. export)
 		if (path.isAbsolute())
-			return Platform.getPreferencesService().getRootNode().nodeExists(path);
+			return calculateRoot().nodeExists(path.makeRelative());
 
 		// TODO: handle relative paths correctly (.. refs)
 
@@ -606,13 +625,17 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void removeNode() throws BackingStoreException {
 		// illegal state if this node has been removed
 		checkRemoved();
-		// remove the node from the parent's collection and notify listeners
-		if (parent instanceof EclipsePreferences) {
-			removed = true;
-			((EclipsePreferences) parent).removeNode(this);
-		} else {
-			String message = Policy.bind("preferences.invalidParentClass", absolutePath(), parent.getClass().getName()); //$NON-NLS-1$
-			throw new BackingStoreException(message);
+		// don't remove the scope root from the parent but
+		// remove all its children
+		if (!(parent instanceof RootPreferences)) {
+			// remove the node from the parent's collection and notify listeners
+			if (parent instanceof EclipsePreferences) {
+				removed = true;
+				((EclipsePreferences) parent).removeNode(this);
+			} else {
+				String message = Policy.bind("preferences.invalidParentClass", absolutePath(), parent.getClass().getName()); //$NON-NLS-1$
+				throw new BackingStoreException(message);
+			}
 		}
 		if (children != null) {
 			Preferences[] nodes = (Preferences[]) children.values().toArray(new Preferences[children.size()]);
