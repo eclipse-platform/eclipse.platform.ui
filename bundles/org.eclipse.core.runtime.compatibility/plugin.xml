@@ -15,7 +15,7 @@
       <import plugin="org.eclipse.core.runtime" export="true"/>
       <import plugin="org.eclipse.osgi.util" export="true"/>
       <import plugin="org.eclipse.osgi" export="true"/>
-      <import plugin="org.eclipse.update.configurator"/>
+      <import plugin="org.eclipse.update.configurator" export="true"/>
    </requires>
 
 
