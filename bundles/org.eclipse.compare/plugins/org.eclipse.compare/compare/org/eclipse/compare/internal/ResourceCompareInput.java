@@ -54,12 +54,14 @@ class ResourceCompareInput extends CompareEditorInput {
 			if (fDiffViewer != null)
 				fDiffViewer.refresh(this);
 		}
-		
+		void clearDirty() {
+			fDirty= false;
+		}
 		public String getName() {
 			if (fLastName == null)
 				fLastName= super.getName();
 			if (fDirty)
-				return fLastName + " *";	//$NON-NLS-1$
+				return '<' + fLastName + '>';
 			return fLastName;
 		}
 		
@@ -231,7 +233,9 @@ class ResourceCompareInput extends CompareEditorInput {
 		if (fRoot instanceof DiffNode) {
 			try {
 				commit(pm, (DiffNode) fRoot);
-			} finally {	
+			} finally {
+				if (fDiffViewer != null)
+					fDiffViewer.refresh();				
 				setDirty(false);
 			}
 		}
@@ -241,6 +245,9 @@ class ResourceCompareInput extends CompareEditorInput {
 	 * Recursively walks the diff tree and commits all changes.
 	 */
 	private static void commit(IProgressMonitor pm, DiffNode node) throws CoreException {
+		
+		if (node instanceof MyDiffNode)		
+			((MyDiffNode)node).clearDirty();
 		
 		ITypedElement left= node.getLeft();
 		if (left instanceof BufferedResourceNode)

@@ -89,6 +89,8 @@ import org.eclipse.compare.structuremergeviewer.*;
  */
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress {
 	
+	private static final boolean DEBUG= false;
+
 	/**
 	 * The name of the "dirty" property.
 	 */
@@ -111,6 +113,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private ListenerList fListenerList= new ListenerList();
 	private CompareNavigator fNavigator;
 	private boolean fDirty= false;
+	private ArrayList fDirtyViewers= new ArrayList();
 	private IPropertyChangeListener fDirtyStateListener;
 
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
@@ -135,11 +138,12 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		
 		fDirtyStateListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
-				if (Utilities.getValue(e, false))
-					setDirty(true);
+				String propertyName= e.getProperty();
+				if (CompareEditorInput.DIRTY_STATE.equals(propertyName))
+					setDirty(e.getSource(), Utilities.getValue(e, false));					
 			}
 		};
-		
+
 		IPreferenceStore ps= configuration.getPreferenceStore();
 		if (ps != null)
 			fStructureCompareOnSingleClick= ps.getBoolean(ComparePreferencePage.OPEN_STRUCTURE_COMPARE);
@@ -614,13 +618,17 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @return a compare viewer which is suitable for the given input object or <code>null</code>
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
-		Viewer v= CompareUIPlugin.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
+
+		Viewer newViewer= CompareUIPlugin.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
 		
-		if (v instanceof IPropertyChangeNotifier) {
-			final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) v;
+		boolean isNewViewer= newViewer != oldViewer;
+		if (DEBUG) System.out.println("CompareEditorInput.findContentViewer: " + isNewViewer);
+		
+		if (isNewViewer && newViewer instanceof IPropertyChangeNotifier) {
+			final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) newViewer;
 			dsp.addPropertyChangeListener(fDirtyStateListener);
 			
-			Control c= v.getControl();
+			Control c= newViewer.getControl();
 			c.addDisposeListener(
 				new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
@@ -630,7 +638,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			);
 		}
 		
-		return v;
+		return newViewer;
 	}
 	
 	/**
@@ -645,7 +653,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @return <code>true</code> if there are changes that need to be saved
 	 */
 	public boolean isSaveNeeded() {
-		return fDirty;
+		return fDirty || fDirtyViewers.size() > 0;
 	}
 		
 	/**
@@ -655,12 +663,31 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @param dirty the dirty state for this compare input
 	 */
 	public void setDirty(boolean dirty) {
-		if (dirty != fDirty) {
-			boolean old= fDirty;
+
+		boolean confirmSave= true;
+		Object o= fCompareConfiguration.getProperty(CompareEditor.CONFIRM_SAVE_PROPERTY);
+		if (o instanceof Boolean)
+			confirmSave= ((Boolean)o).booleanValue();
+
+		if (!confirmSave) {
 			fDirty= dirty;
-			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(old), new Boolean(fDirty));
+			if (!fDirty)
+				fDirtyViewers.clear();
 		}
 	}
+	
+	private void setDirty(Object source, boolean dirty) {
+		Assert.isNotNull(source);
+		boolean oldDirty= fDirtyViewers.size() > 0;
+		if (dirty)
+			fDirtyViewers.add(source);
+		else
+			fDirtyViewers.remove(source);
+		boolean newDirty= fDirtyViewers.size() > 0;
+		if (DEBUG) System.out.println("setDirty("+source+", "+dirty+"): " + newDirty);
+		if (oldDirty != newDirty)
+			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(oldDirty), new Boolean(newDirty));
+	}	
 	
 	/* (non Javadoc)
 	 * see IPropertyChangeNotifier.addListener
@@ -691,7 +718,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * Save any unsaved changes.
 	 * Subclasses must override to save any changes.
 	 * This implementation tries to flush changes in all viewers by
-	 * calling <code>setInput</code> on them.
+	 * calling <code>ISavable.save</code> on them.
 	 *
 	 * @param progressMonitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
 	 */

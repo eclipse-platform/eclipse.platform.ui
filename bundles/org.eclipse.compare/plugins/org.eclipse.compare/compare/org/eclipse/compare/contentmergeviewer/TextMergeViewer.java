@@ -1118,14 +1118,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;
 	}
 	
+	/**
+	 * Returns true if the given inputs map to the same documents
+	 */
 	boolean sameDoc(char type, Object newInput, Object oldInput) {
 		IDocument newDoc= getDocument2(type, newInput);
 		IDocument oldDoc= getDocument2(type, oldInput);
-		if (newDoc == oldDoc)
-			return true;
-		if (newDoc == null || oldDoc == null)
-			return true;
-		return false;
+		return newDoc == oldDoc;
 	}
 	
 	/**
