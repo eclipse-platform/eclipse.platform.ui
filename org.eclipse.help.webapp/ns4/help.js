@@ -15,6 +15,10 @@ var linksURL = "links.jsp" + getQuery();
 
 var tocTitle;
 var currToc;
+var lastTab = "";
+
+// workaround for netscape resize bug
+window.onresize = function (evt) { if (lastTab != "") switchTab(lastTab); };
 
 /**
  * Notification when frames are loaded
@@ -86,8 +90,9 @@ function setToolbarTitle(title)
  */ 
 function switchTab(nav, newTitle)
 {		
+	lastTab = nav;
+	
 	// set the title on the navigation toolbar to match the tab
-
   	if (!newTitle)
   		newTitle = titleArray[nav];
   	
@@ -107,17 +112,6 @@ function switchTab(nav, newTitle)
     
     TabsFrame.location = "tabs.jsp?tab="+nav;
  	
-/*
- 	// show the appropriate pressed tab
-  	var buttons = TabsFrame.document.body.getElementsByTagName("TD");
-  	for (var i=0; i<buttons.length; i++)
-  	{
-  		if (buttons[i].id == (nav + "Tab")) // Note: assumes the same id shared by tabs and layers
-			buttons[i].className = "pressed";
-		else if (buttons[i].className == "pressed")
-			buttons[i].className = "tab";
- 	 }
-*/
 }
  
  

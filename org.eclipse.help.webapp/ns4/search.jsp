@@ -77,6 +77,10 @@ INPUT {
 
 <script language="JavaScript">
 
+// workaround for netscape resize bug
+window.onresize = function (evt) { location.reload(); };
+
+
 var selectedBooks;
 var advancedDialog;
 var w = 580;

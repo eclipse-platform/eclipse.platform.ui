@@ -62,6 +62,11 @@ BODY {
 
 </style>
  
+<script language="Javascript">
+// workaround for netscape resize bug
+window.onresize = function (evt) { location.reload(); };
+</script>
+
 </head>
    
 <body>

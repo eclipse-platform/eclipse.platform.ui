@@ -44,10 +44,6 @@ DIV {
 <body >
 <% 
 ContentUtil content = new ContentUtil(application, request);
-String bookshelf = WebappResources.getString("Bookshelf", request);
-%>
-	<div id='bookshelf' class='active'><a href='javascript:void 0;' target="MainFrame" onmouseover='window.status="<%=UrlUtil.JavaScriptEncode(bookshelf)%>"'> <nobr> <img src="../images/home_obj.gif" border=0> <%=bookshelf%> </nobr> </a></div>
-<%
 Element tocsElement = content.loadTocs();
 if (tocsElement == null) return;
 NodeList tocs = tocsElement.getElementsByTagName("toc");
