@@ -218,10 +218,7 @@ If its is omitted, the normal icon will be used.  This path is relative to the l
          <attribute name="state" type="boolean">
             <annotation>
                <documentation>
-                  an optional attribute indicating that the action should be of a toggle type. When added to a menu, 
-it will manifest itself as a check box item. When added to a tool bar, it will become a toggle 
-button. If defined, attribute value will be used as initial state (either &lt;samp&gt;true&lt;/samp&gt;
-or &lt;samp&gt;false&lt;/samp&gt;)
+                  an optional attribute indicating the initial state (either &lt;samp&gt;true&lt;/samp&gt; or &lt;samp&gt;false&lt;/samp&gt;), used when the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;radio&lt;samp&gt; or &lt;samp&gt;toggle&lt;/samp&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -239,21 +236,81 @@ or &lt;samp&gt;false&lt;/samp&gt;)
          <attribute name="enablesFor" type="string">
             <annotation>
                <documentation>
-                  a value indicating the selection count which must be met to enable the action. 
-If this attribute is specified and the condition is met the action is enabled.  
-If the condition is not met the action is disabled.  If no attribute is specified the
-action is enabled for any number of items selected.  
+                  a value indicating the selection count which must be met to enable the action.
+If this attribute is specified and the condition is met, the action is enabled.
+If the condition is not met, the action is disabled.
+If no attribute is specified, the action is enabled for any number of items selected.
 The following attribute formats are supported: 
-&lt;ul&gt;            
-          &lt;br&gt;&lt;b&gt;!&lt;/b&gt; - 0 items selected 
-          &lt;br&gt;&lt;b&gt;?&lt;/b&gt; - 0 or 1 items selected 
-          &lt;br&gt;&lt;b&gt;+&lt;/b&gt; - 1 or more items selected 
-          &lt;br&gt;&lt;b&gt;multiple, 2+&lt;/b&gt; - 2 or more items selected 
-          &lt;br&gt;&lt;b&gt;n&lt;/b&gt; - a precise number of items selected.  Example: 4. 
-          &lt;br&gt;&lt;b&gt;*&lt;/b&gt; - any number of items selected
-&lt;/ul&gt;
+    &lt;table border="0" width="80%"&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;!&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- 0 items selected&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;?&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- 0 or 1 items selected&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;+&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- 1 or more items selected&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;multiple, 2+&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- 2 or more items selected&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;n&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- a precise number of items selected.a precise number of items selected.&amp;nbsp;
+          For example: enablesFor=&amp;quot; 4&amp;quot; enables the action only when 4
+          items are selected&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;*&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- any number of items selected&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="style">
+            <annotation>
+               <documentation>
+                  an optional attribute to define the user interface style type for the action. If defined, the attribute value will be one of the following:
+    &lt;table border="0" width="80%"&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;push&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- as a regular menu item or tool item.&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;radio&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- as a radio style menu item or tool item. Actions with the radio style within the same menu or toolbar group behave as a radio set. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+	&lt;td valign="top" width="25"&gt;&lt;/td&gt;
+        &lt;td valign="top" nowrap&gt;&lt;b&gt;toggle&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign="top"&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="push">
+                  </enumeration>
+                  <enumeration value="radio">
+                  </enumeration>
+                  <enumeration value="toggle">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
@@ -467,7 +524,8 @@ point:
               id="com.xyz.runXYZ" 
               label="&amp;amp;Run XYZ Tool" 
               menubarPath="XYZ/group1" 
-              toolbarPath="Normal/additions" 
+              toolbarPath="Normal/additions"
+              style="toggle"
               state="true" 
               icon="icons/runXYZ.gif" 
               tooltip="Run XYZ Tool" 
@@ -496,7 +554,8 @@ The following is an example of an editor action extension point:
          &lt;action 
               id="com.xyz.runXYZ2" 
               label="&amp;amp;Run XYZ2 Tool" 
-              menubarPath="edit/XYZ2/group1" 
+              menubarPath="edit/XYZ2/group1"
+              style="toggle"
               state="true" 
               icon="icons/runXYZ2.gif" 
               tooltip="Run XYZ2 Tool" 
