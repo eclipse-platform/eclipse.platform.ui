@@ -127,10 +127,14 @@ public class ContextsFileParser extends DefaultHandler {
 		if (is == null)
 			return;
 		InputSource inputSource = new InputSource(is);
-		String file = contextsFile.getDefiningPluginID() + "/" + contextsFile.getHref();
+		String file =
+			"/" + contextsFile.getDefiningPluginID() + "/" + contextsFile.getHref();
 		inputSource.setSystemId(file);
 		try {
 			SAXParser parser = new SAXParser();
+			parser.setFeature(
+				"http://apache.org/xml/features/nonvalidating/load-external-dtd",
+				false);
 			parser.setErrorHandler(this);
 			parser.setContentHandler(this);
 			parser.parse(inputSource);

@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
@@ -28,7 +28,8 @@ class TocFileParser extends DefaultHandler {
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException ex) throws SAXException {
-		String message = getMessage("E024", ex);//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
+		String message = getMessage("E024", ex);
+		//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		Logger.logError(message, null);
 		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
 	}
@@ -37,7 +38,8 @@ class TocFileParser extends DefaultHandler {
 	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
 		// create message string from exception
-		String message = getMessage("E025", ex);//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
+		String message = getMessage("E025", ex);
+		//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		Logger.logError(message, ex);
 		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
 	}
@@ -53,28 +55,30 @@ class TocFileParser extends DefaultHandler {
 	 * Gets the toc
 	 */
 	public void parse(TocFile tocFile) {
-				
 		this.tocFile = tocFile;
 		elementStack = new Stack();
-				
 		InputStream is = tocFile.getInputStream();
-		if (is == null) 
+		if (is == null)
 			return;
-		
 		InputSource inputSource = new InputSource(is);
-		String file = tocFile.getPluginID() + "/" + tocFile.getHref();
+		String file = "/" + tocFile.getPluginID() + "/" + tocFile.getHref();
 		inputSource.setSystemId(file);
 		try {
 			SAXParser parser = new SAXParser();
+			parser.setFeature(
+				"http://apache.org/xml/features/nonvalidating/load-external-dtd",
+				false);
 			parser.setErrorHandler(this);
 			parser.setContentHandler(this);
 			parser.parse(inputSource);
 			is.close();
 		} catch (SAXException se) {
-			String msg = Resources.getString("E026", file);//Error loading Table of Contents file %1.
+			String msg = Resources.getString("E026", file);
+			//Error loading Table of Contents file %1.
 			Logger.logError(msg, se);
 		} catch (IOException ioe) {
-			String msg = Resources.getString("E026", file);//Error loading Table of Contents file %1.
+			String msg = Resources.getString("E026", file);
+			//Error loading Table of Contents file %1.
 			Logger.logError(msg, ioe);
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
@@ -90,29 +94,24 @@ class TocFileParser extends DefaultHandler {
 		String qName,
 		Attributes atts)
 		throws SAXException {
-			TocNode node = null;
-			
+		TocNode node = null;
 		if (qName.equals("toc")) {
 			node = new Toc(tocFile, atts);
-			tocFile.setToc((Toc)node);
+			tocFile.setToc((Toc) node);
 		} else if (qName.equals("topic")) {
 			node = new Topic(tocFile, atts);
 		} else if (qName.equals("link")) {
 			node = new Link(tocFile, atts);
 		} else if (qName.equals("anchor")) {
 			node = new Anchor(tocFile, atts);
-		}
-		else
+		} else
 			return; // perhaps throw some exception
-		
 		if (!elementStack.empty())
-			((TocNode) elementStack.peek()).addChild(node);
+			 ((TocNode) elementStack.peek()).addChild(node);
 		elementStack.push(node);
-		
 		// do any builder specific actions in the node
 		node.build(builder);
 	}
-	
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
@@ -120,5 +119,4 @@ class TocFileParser extends DefaultHandler {
 		throws SAXException {
 		elementStack.pop();
 	}
-
 }
