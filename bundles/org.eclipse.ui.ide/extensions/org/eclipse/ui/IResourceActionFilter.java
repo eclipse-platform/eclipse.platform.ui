@@ -91,16 +91,29 @@ public interface IResourceActionFilter extends IActionFilter {
 	 * with the specified name and tests it for equality with the specified value.
 	 */
 	public static final String PROJECT_SESSION_PROPERTY = "projectSessionProperty";	 //$NON-NLS-1$
+	
 	/**
 	 * An attribute indicating that this is an xml file
 	 * and we should ensure that the first tag (or top-level
 	 * tag) has this name.
+	 * @since 3.0
+	 * @deprecated Please use content types instead.
 	 */
 	public static final String XML_FIRST_TAG = "xmlFirstTag"; //$NON-NLS-1$
 	
 	/**
 	 * An attribute indicating that this is an xml file and we should ensure that the DTD
 	 * definition in this xml file is the value supplied with this attribute.
+	 * @since 3.0
+	 * @deprecated Please use content types instead.
 	 */
 	public static final String XML_DTD_NAME = "xmlDTDName";	 //$NON-NLS-1$
+	
+	/**
+	 * An attribute indicating that this is a file, and we are looking to verify
+	 * that the file matches the content type matching the given identifier.
+	 * The identifier is provided in the value.
+	 * @since 3.0
+	 */
+	public static final String CONTENT_TYPE_ID = "contentTypeId"; //$NON-NLS-1$
 }
