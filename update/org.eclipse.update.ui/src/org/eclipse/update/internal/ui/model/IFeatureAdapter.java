@@ -13,4 +13,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IFeatureAdapter {
 	public IFeature getFeature() throws CoreException;
+	public IFeatureAdapter [] getIncludedFeatures();
+	public boolean hasIncludedFeatures();
+	public boolean isIncluded();
 }

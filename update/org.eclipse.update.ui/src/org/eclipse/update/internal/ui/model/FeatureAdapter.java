@@ -13,12 +13,21 @@ import org.eclipse.core.runtime.CoreException;
  * @author
  */
 public abstract class FeatureAdapter extends UIModelObject implements IFeatureAdapter {
+	private boolean included=false;
 
 	/*
 	 * @see IFeatureAdapter#getInstallConfiguration()
 	 */
 	public IInstallConfiguration getInstallConfiguration() {
 		return null;
+	}
+	
+	public boolean isIncluded() {
+		return included;
+	}
+	
+	protected void setIncluded(boolean included) {
+		this.included = included;
 	}
 	
 	public String toString() {
@@ -28,6 +37,15 @@ public abstract class FeatureAdapter extends UIModelObject implements IFeatureAd
 		}
 		catch (CoreException e) {
 			return "<failure>";
+		}
+	}
+	public boolean hasIncludedFeatures() {
+		try {
+			IFeatureReference [] included = getFeature().getIncludedFeatureReferences();
+			return included.length>0;
+		}
+		catch (CoreException e) {
+			return false;
 		}
 	}
 }

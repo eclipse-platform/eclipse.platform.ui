@@ -20,4 +20,8 @@ public class SimpleFeatureAdapter extends FeatureAdapter {
 	public IFeature getFeature() throws CoreException {
 		return feature;
 	}
+	
+	public IFeatureAdapter [] getIncludedFeatures() {
+		return new IFeatureAdapter[0];
+	}
 }

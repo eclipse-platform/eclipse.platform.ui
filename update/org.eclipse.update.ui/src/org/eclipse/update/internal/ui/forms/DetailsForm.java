@@ -479,6 +479,7 @@ public class DetailsForm extends PropertyWebForm {
 	private boolean getDoButtonVisibility() {
 		if (currentFeature instanceof MissingFeature)
 			return false;
+		if (currentAdapter==null || currentAdapter.isIncluded()) return false;
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		if (model.findRelatedPendingChange(currentFeature) != null)
 			return false;

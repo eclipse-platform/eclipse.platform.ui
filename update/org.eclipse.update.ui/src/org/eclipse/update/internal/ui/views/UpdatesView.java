@@ -140,6 +140,9 @@ public class UpdatesView
 				});
 				return category.getChildren();
 			}
+			if (parent instanceof IFeatureAdapter) {
+				return ((IFeatureAdapter)parent).getIncludedFeatures();
+			}
 			return new Object[0];
 		}
 
@@ -170,6 +173,9 @@ public class UpdatesView
 			}
 			if (parent instanceof SearchResultSite) {
 				return ((SearchResultSite) parent).getChildCount() > 0;
+			}
+			if (parent instanceof IFeatureAdapter) {
+				return ((IFeatureAdapter)parent).hasIncludedFeatures();
 			}
 			return false;
 		}

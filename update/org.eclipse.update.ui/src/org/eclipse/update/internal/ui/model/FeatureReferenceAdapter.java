@@ -11,13 +11,33 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 	private IFeatureReference featureRef;
 
 	public FeatureReferenceAdapter(IFeatureReference featureRef) {
+		this(featureRef, false);
+	}
+	
+	public FeatureReferenceAdapter(IFeatureReference featureRef, boolean included) {
 		this.featureRef = featureRef;
+		setIncluded(included);
 	}
 	
 	public IFeature getFeature() throws CoreException {
 		return featureRef.getFeature();
 	}
-	
+
+	public IFeatureAdapter[] getIncludedFeatures() {
+		try {
+			IFeatureReference[] included =
+				getFeature().getIncludedFeatureReferences();
+			FeatureReferenceAdapter[] result =
+				new FeatureReferenceAdapter[included.length];
+			for (int i = 0; i < included.length; i++) {
+				result[i] = new FeatureReferenceAdapter(included[i], true);
+			}
+			return result;
+		} catch (CoreException e) {
+			return new IFeatureAdapter[0];
+		}
+	}
+
 	public IFeatureReference getFeatureReference() {
 		return featureRef;
 	}
