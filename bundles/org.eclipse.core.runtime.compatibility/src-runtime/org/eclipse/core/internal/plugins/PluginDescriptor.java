@@ -504,7 +504,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public Bundle getBundle() {
 		return bundleOsgi;
 	}
-	/** @see PluginModel#getLocation() */
+	
 	public String getLocation() {
 		return getInstallURLInternal().toExternalForm();
 	}
