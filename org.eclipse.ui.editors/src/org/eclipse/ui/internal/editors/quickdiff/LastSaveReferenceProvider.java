@@ -37,7 +37,7 @@ import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
+import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 
 /**
  * Default provider for the quickdiff display - the saved document is taken as
@@ -45,7 +45,7 @@ import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
  * 
  * @since 3.0
  */
-public class LastSaveReferenceProvider implements IQuickDiffProviderImplementation, IElementStateListener {
+public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, IElementStateListener {
 
 	/** <code>true</code> if the document has been read. */
 	private boolean fDocumentRead= false;
@@ -94,6 +94,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		 * 
 		 * {@inheritdoc}
 		 * 
+		 * @param monitor {@inheritDoc}
 		 * @return {@link Status#OK_STATUS}
 		 */
 		protected IStatus run(IProgressMonitor monitor) {

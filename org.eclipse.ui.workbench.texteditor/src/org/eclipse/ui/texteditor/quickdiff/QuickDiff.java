@@ -83,7 +83,7 @@ public class QuickDiff {
 		Assert.isNotNull(id);
 		
 		List descs= getReferenceProviderDescriptors();
-		IQuickDiffProviderImplementation provider= null;
+		IQuickDiffReferenceProvider provider= null;
 		// try to fetch preferred provider; load if needed
 		for (Iterator iter= descs.iterator(); iter.hasNext();) {
 			ReferenceProviderDescriptor desc= (ReferenceProviderDescriptor) iter.next();

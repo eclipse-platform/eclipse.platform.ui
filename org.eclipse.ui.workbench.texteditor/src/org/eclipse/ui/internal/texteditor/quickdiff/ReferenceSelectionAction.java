@@ -19,7 +19,6 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IChangeRulerColumn;
 
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.quickdiff.IQuickDiffProviderImplementation;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -43,7 +42,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	/** The descriptor of the managed extension. */
 	private final ReferenceProviderDescriptor fDescriptor;
 	/** The implementation of the extension, after it has been loaded. */
-	private IQuickDiffProviderImplementation fProvider;
+	private IQuickDiffReferenceProvider fProvider;
 
 	/**
 	 * Creates a new instance that will lazily create the implementation provided by the extension.
@@ -66,7 +65,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 	 * before. Otherwise, the cached implementation is returned. 
 	 * @return The <code>IQuickDiffProviderImplementation</code> instance provided by the extension. 
 	 */
-	private IQuickDiffProviderImplementation getProvider() {
+	private IQuickDiffReferenceProvider getProvider() {
 		if (fProvider == null) {
 			fProvider= fDescriptor.createProvider();
 		}
@@ -84,7 +83,7 @@ public class ReferenceSelectionAction extends Action implements IUpdate {
 			
 		if (fEditor instanceof ITextEditorExtension3) {
 			ITextEditorExtension3 extension= (ITextEditorExtension3) fEditor;
-			IQuickDiffProviderImplementation provider= getProvider();
+			IQuickDiffReferenceProvider provider= getProvider();
 			if (provider != null) {
 				provider.setActiveEditor(fEditor);
 				if (provider.isEnabled()) {

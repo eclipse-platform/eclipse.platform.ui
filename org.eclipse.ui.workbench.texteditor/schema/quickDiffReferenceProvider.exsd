@@ -52,7 +52,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class of the reference provider, which must implement &lt;code&gt;org.eclipse.ui.editors.quickdiff.IQuickDiffProviderImplementation&lt;/code&gt;.
+                  The class of the reference provider, which must implement &lt;code&gt;org.eclipse.ui.editors.quickdiff.IQuickDiffReferenceProvider&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>

@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.text.IDocument;
 
+import org.eclipse.ui.texteditor.ITextEditor;
+
 
 /**
  * The protocol a reference provider for quickdiff has to implement. Quickdiff references provide
@@ -23,7 +25,6 @@ import org.eclipse.jface.text.IDocument;
  * <p>Extensions to the extension point <code>quickdiff.referenceprovider</code> have to implement
  * this interface (plus another interface for plugin and UI management.</p>
  * 
- * @see IQuickDiffProviderImplementation
  * @since 3.0
  */
 public interface IQuickDiffReferenceProvider {
@@ -48,4 +49,30 @@ public interface IQuickDiffReferenceProvider {
 	 * @return the id of this provider as stated in the extending plugin's manifest.
 	 */
 	String getId();
+
+	/**
+	 * Sets the active editor for the provider implementation. Will usually just be called right after
+	 * creation of the implementation. 
+	 * 
+	 * @param editor the active editor.
+	 */
+	void setActiveEditor(ITextEditor editor);
+
+	/**
+	 * Gives the implementation a hook to publish its enablement. The action corresponding to this
+	 * implementation might be grayed out or not shown at all based on the value presented here.
+	 *  
+	 * @return <code>false</code> if the implementation cannot be executed, <code>true</code> if it can, 
+	 * or if it cannot be decided yet.
+	 */
+	boolean isEnabled();
+
+	/**
+	 * Sets the id of this implementation. This method will be called right after creation, and 
+	 * <code>id</code> will be set to the <code>Id</code> attribute specified in the extension's 
+	 * declaration.
+	 * 
+	 * @param id the provider's new id.
+	 */
+	void setId(String id);
 }

@@ -87,9 +87,9 @@ public class ReferenceProviderDescriptor {
 	 * Creates a referenceprovider as described in the extension's xml. Sets the id on the provider.
 	 * @return a new instance of the reference provider described by this descriptor.
 	 */
-	public IQuickDiffProviderImplementation createProvider() {
+	public IQuickDiffReferenceProvider createProvider() {
 		try {
-			IQuickDiffProviderImplementation impl= (IQuickDiffProviderImplementation)fConfiguration.createExecutableExtension(CLASS_ATTRIBUTE);
+			IQuickDiffReferenceProvider impl= (IQuickDiffReferenceProvider)fConfiguration.createExecutableExtension(CLASS_ATTRIBUTE);
 			impl.setId(getId());
 			return impl;
 		} catch (CoreException e) {
