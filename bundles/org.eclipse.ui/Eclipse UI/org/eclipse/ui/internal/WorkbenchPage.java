@@ -128,7 +128,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 			}
 
 			ArrayList newActionSets = null;
-			if (isNewPartAnEditor) 
+			if (isNewPartAnEditor || (activePart == topEditor && newPart == null)) 
 				 newActionSets = calculateActionSets(newPart, null);
 			else
 				 newActionSets = calculateActionSets(newPart, topEditor);
@@ -2024,6 +2024,11 @@ private void setPerspective(Perspective newPersp) {
 		newPersp.restoreState();	
 	
 	// Deactivate active part.
+	
+	// ensure the switcher is not showing any action sets
+	// so it will reshow them in the new perspective
+	actionSwitcher.updateTopEditor(null); 
+	
 	IWorkbenchPart oldActivePart = activePart;
 	setActivePart(null);
 
@@ -2063,6 +2068,9 @@ private void setPerspective(Perspective newPersp) {
 		if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
 			activate(oldActivePart);
 		} else if (oldActivePart instanceof IViewPart) {
+			IEditorPart ed = editorMgr.getVisibleEditor();	
+			if (ed != null) 
+				actionSwitcher.updateTopEditor(ed);	
 			String id = oldActivePart.getSite().getId();
 			if (findView(id) != null)
 				activate(oldActivePart);
