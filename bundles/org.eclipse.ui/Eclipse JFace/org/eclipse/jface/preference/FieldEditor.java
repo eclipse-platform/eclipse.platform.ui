@@ -334,6 +334,7 @@ protected Label getLabelControl() {
 public Label getLabelControl(Composite parent) {
 	if (label == null) {
 		label = new Label(parent, SWT.LEFT);
+		label.setFont(parent.getFont());
 		String text = getLabelText();
 		if (text != null)
 			label.setText(text);
