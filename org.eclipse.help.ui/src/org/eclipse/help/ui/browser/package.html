@@ -1,0 +1,41 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Provides interfaces that need to be implemented by
+web browser adapters.
+<h2>
+Package Specification</h2>
+Help System UI, requires web browser to display help document.&nbsp; Since
+availability of web browsers differ from system to system, it is possible
+to configure browser adapters in addition to ones provided by Help System
+UI plugin.&nbsp; The browser (or browser adapter) can be configured by
+providing extension <tt>org.eclipse.help.ui.browser</tt> extension point.&nbsp;
+If more than one browser is available on a user system, the default browser
+can be designated in Web Browsers preference page.
+<p>In general terms, implementing a web browser involves:
+<ul>
+<li>
+Implementing standalone UI element having the <tt>IBrowser</tt> API, and
+capable of displaying HTML documents given a URL.</li>
+
+<li>
+Providing a factory for managing of browsers on a particular system, by
+implementing <tt>IBrowserFactory</tt> interface.</li>
+
+<li>
+Declaring an extension of the <tt>org.eclipse.help.ui.browser</tt> extension
+point that mentions the name of that factory class.</li>
+</ul>
+Note that browser factory will be created on every system.&nbsp; If the
+factory is not capable of creating a browser on some system configurations,
+due to missing prerequisites e.t.c., its <tt>isAvailable()</tt> method
+should be returning false on these systems.
+<br>&nbsp;
+</body>
+</html>
