@@ -169,6 +169,11 @@ public abstract class Plugin  {
  * by the platform in the course of plug-in activation.
  * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
  * </p>
+ * <p>
+ * Note: The class loader typically has monitors acquired during invocation of this method.  It is 
+ * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
+ * as this would lead to deadlock vulnerability.
+ * </p>
  *
  * @param descriptor the plug-in descriptor
  * @see #getDescriptor
@@ -446,6 +451,11 @@ public void shutdown() throws CoreException {
  * Note 2: This method is intended to perform simple initialization 
  * of the plug-in environment. The platform may terminate initializers 
  * that do not complete in a timely fashion.
+ * </p>
+ * <p>
+ * Note 3: The class loader typically has monitors acquired during invocation of this method.  It is 
+ * strongly recommended that this method avoid synchronized blocks or other thread locking mechanisms,
+ * as this would lead to deadlock vulnerability.
  * </p>
  * <b>Cliens must never explicitly call this method.</b>
  *

@@ -654,6 +654,12 @@ private void internalDoPluginActivation() throws CoreException {
  * @see IPluginDescriptor
  */
 public synchronized boolean isPluginActivated() {
+	//note that this method is synchronized for good reason.  
+	//During plugin activation, neither true nor false would be valid
+	//return values for this method, so it must block until activation
+	//completes.  For example, returning false during activation
+	//would break the registry shutdown procedure, because a
+	//plugin being activated during shutdown would never be shut down.
 	return active;
 }
 public synchronized boolean isPluginDeactivated() {

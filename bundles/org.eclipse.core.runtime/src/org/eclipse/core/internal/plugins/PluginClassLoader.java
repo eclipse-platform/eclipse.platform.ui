@@ -97,8 +97,10 @@ protected Class findClassParentsSelf(final String name, boolean resolve, Delegat
 
 		// if activation is not going to be required, try the load here.  This is
 		// a short circuit so we don't fall through to the other sync block and do
-		// more work.
-		if (descriptor.isPluginActivated() || pluginActivationInProgress) {
+		// more work.  Note that the order of the tests is important, since 
+		//descriptor.isPluginActivated() blocks while activation in progress,
+		//thus creating a potential deadlock situation.
+		if (pluginActivationInProgress || descriptor.isPluginActivated()) {
 			try {
 				result = super.findClass(name);
 			} catch (ClassNotFoundException e) {
