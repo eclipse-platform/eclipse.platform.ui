@@ -15,6 +15,7 @@ public class DecoratorDefinition {
 	private ILabelDecorator decorator;
 	private boolean enabled;
 	private boolean adaptable;
+	private String id;
 
 	/**
 	 * Create a new instance of the receiver with the
@@ -22,11 +23,13 @@ public class DecoratorDefinition {
 	 */
 
 	DecoratorDefinition(
+		String identifier,
 		String label,
 		String className,
 		boolean apply,
 		boolean isAdaptable,
 		ILabelDecorator definedDecorator) {
+		id = identifier;
 		name = label;
 		objectClass = className;
 		enabled = apply;
@@ -114,4 +117,12 @@ public class DecoratorDefinition {
 	public boolean isAdaptable(){
 		return adaptable;
 	}
+	/**
+	 * Gets the id.
+	 * @return Returns a String
+	 */
+	public String getId() {
+		return id;
+	}
+
 }

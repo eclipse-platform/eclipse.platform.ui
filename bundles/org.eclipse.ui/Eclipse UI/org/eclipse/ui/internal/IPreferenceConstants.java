@@ -41,4 +41,7 @@ public interface IPreferenceConstants {
 	public static final int OVM_EMBED = 0;
 	public static final int OVM_FAST = 1;
 	public static final int OVM_FLOAT = 2;
+	
+	//Identifier for enabled decorators
+	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS";
 }

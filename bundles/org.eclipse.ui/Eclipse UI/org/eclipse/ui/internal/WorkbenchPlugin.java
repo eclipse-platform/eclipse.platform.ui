@@ -321,6 +321,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(IPreferenceConstants.VERSION_2_PERSPECTIVES, false);
 	store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, 
 		IPreferenceConstants.OVM_EMBED);
+	store.setDefault(IPreferenceConstants.ENABLED_DECORATORS,"");
 		
 	FontRegistry registry = JFaceResources.getFontRegistry();
 	initializeFont(JFaceResources.DIALOG_FONT,  registry, store);
@@ -429,8 +430,10 @@ public void setWorkbench(IWorkbench aWorkbench) {
  */
 
 public DecoratorManager getDecoratorManager(){
-	if(decoratorManager == null)
+	if(decoratorManager == null){
 		decoratorManager = new DecoratorManager();
+		decoratorManager.restoreListeners();
+	}
 	return decoratorManager;
 }
 

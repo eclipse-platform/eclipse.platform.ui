@@ -5,7 +5,6 @@ import java.util.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.ResourceAdapterUtil;
@@ -27,6 +26,11 @@ public class DecoratorManager
 	//The definitions are definitions read from the registry
 	private DecoratorDefinition[] definitions;
 
+	private final String PREFERENCE_SEPARATOR = ",";
+	private final String VALUE_SEPARATOR = ":";
+	private final String P_TRUE = "true";
+	private final String P_FALSE = "false";
+
 	/**
 	 * Create a new instance of the receiver and load the
 	 * settings from the installed plug-ins.
@@ -37,9 +41,19 @@ public class DecoratorManager
 		Collection values = reader.readRegistry(Platform.getPluginRegistry());
 		definitions = new DecoratorDefinition[values.size()];
 		values.toArray(definitions);
-		for(int i = 0; i < definitions.length; i ++){
+	}
+	
+	/**
+	 * Restore the stored values from the preference
+	 * store and register the receiver as a listener
+	 * for all of the enabled decorators.
+	 */
+	
+	public void restoreListeners(){
+		applyDecoratorsPreference();
+		for (int i = 0; i < definitions.length; i++) {
 			//Add a listener if it is an enabled option
-			if(definitions[i].isEnabled())
+			if (definitions[i].isEnabled())
 				definitions[i].getDecorator().addListener(this);
 		}
 	}
@@ -291,11 +305,14 @@ public class DecoratorManager
 
 	/**
 	 * Reset the cachedDecorators and fire listeners as
-	 * the enabled state of some decorators has changed
+	 * the enabled state of some decorators has changed.
+	 * Also store the currently enabled decorators as
+	 * a workbench preference.
 	 */
 	public void reset() {
 		cachedDecorators = new HashMap();
 		fireListeners(new LabelProviderChangedEvent(this));
+		writeDecoratorsPreference();
 	}
 
 	/**
@@ -312,4 +329,63 @@ public class DecoratorManager
 		fireListeners(event);
 	}
 
+	/**
+	 * Store the currently enabled decorators in
+	 * preference store.
+	 */
+	private void writeDecoratorsPreference() {
+		StringBuffer enabledIds = new StringBuffer();
+		for (int i = 0; i < definitions.length; i++) {
+			enabledIds.append(definitions[i].getId());
+			enabledIds.append(VALUE_SEPARATOR);
+			if (definitions[i].isEnabled())
+				enabledIds.append(P_TRUE);
+			else
+				enabledIds.append(P_FALSE);
+
+			enabledIds.append(PREFERENCE_SEPARATOR);
+		}
+
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+			IPreferenceConstants.ENABLED_DECORATORS,
+			enabledIds.toString());
+	}
+
+	/**
+	 * Get the currently enabled decorators in
+	 * preference store and set the state of the
+	 * current definitions accordingly.
+	 */
+	private void applyDecoratorsPreference() {
+
+		String preferenceValue =
+			WorkbenchPlugin.getDefault().getPreferenceStore().getString(
+				IPreferenceConstants.ENABLED_DECORATORS);
+
+		StringTokenizer tokenizer =
+			new StringTokenizer(preferenceValue, PREFERENCE_SEPARATOR);
+		Set enabledIds = new HashSet();
+		Set disabledIds = new HashSet();
+		while (tokenizer.hasMoreTokens()) {
+			String nextValuePair = tokenizer.nextToken();
+
+			//Strip out the true or false to get the id
+			String id = nextValuePair.substring(0, nextValuePair.indexOf(VALUE_SEPARATOR));
+			if (nextValuePair.endsWith(P_TRUE))
+				enabledIds.add(id);
+			else
+				disabledIds.add(id);
+		}
+
+		for (int i = 0; i < definitions.length; i++) {
+			String id = definitions[i].getId();
+			if (enabledIds.contains(id))
+				definitions[i].setEnabled(true);
+			else {
+				if (disabledIds.contains(id))
+					definitions[i].setEnabled(false);
+			}
+		}
+
+	}
 }
