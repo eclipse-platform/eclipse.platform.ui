@@ -31,6 +31,7 @@ import org.osgi.service.prefs.Preferences;
  */
 public class ProjectPreferences extends EclipsePreferences {
 
+	public static final String DEFAULT_PREFERENCES_DIRNAME = ".settings"; //$NON-NLS-1$
 	protected boolean isLoading = false;
 	// cache
 	private int segmentCount;
