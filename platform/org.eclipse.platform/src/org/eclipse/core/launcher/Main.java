@@ -139,6 +139,7 @@ public class Main {
     private static final String PROP_FRAMEWORK_SHAPE = "osgi.framework.shape"; //$NON-NLS-1$
 	private static final String PROP_LOGFILE = "osgi.logfile"; //$NON-NLS-1$
 	private static final String PROP_REQUIRED_JAVA_VERSION = "osgi.requiredJavaVersion"; //$NON-NLS-1$
+	private static final String PROP_PARENT_CLASSLOADER = "osgi.parentClassloader"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
 
 	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
@@ -153,6 +154,11 @@ public class Main {
 	private static final String NO_DEFAULT = "@noDefault"; //$NON-NLS-1$
 	private static final String USER_HOME = "@user.home"; //$NON-NLS-1$
 	private static final String USER_DIR = "@user.dir"; //$NON-NLS-1$
+
+	// types of parent classloaders the framework can have
+	private static final String PARENT_CLASSLOADER_APP = "app"; //$NON-NLS-1$
+	private static final String PARENT_CLASSLOADER_EXT = "ext"; //$NON-NLS-1$
+	private static final String PARENT_CLASSLOADER_BOOT = "boot"; //$NON-NLS-1$
 
 	// log file handling
 	protected static final String SESSION = "!SESSION"; //$NON-NLS-1$
@@ -261,7 +267,16 @@ public class Main {
 	}
 
     private void invokeFramework(String[] passThruArgs, URL[] bootPath) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, Error, Exception, InvocationTargetException {
-		URLClassLoader loader = new StartupClassLoader(bootPath, null);
+		String type = System.getProperty(PROP_PARENT_CLASSLOADER, PARENT_CLASSLOADER_BOOT);
+		ClassLoader parent = null;
+		if (PARENT_CLASSLOADER_APP.equalsIgnoreCase(type))
+			parent = ClassLoader.getSystemClassLoader();
+		else if (PARENT_CLASSLOADER_EXT.equalsIgnoreCase(type)) {
+			ClassLoader appCL = ClassLoader.getSystemClassLoader();
+			if (appCL != null)
+				parent = appCL.getParent();
+		}
+		URLClassLoader loader = new StartupClassLoader(bootPath, parent);
         Class clazz = loader.loadClass(STARTER);
         Method method = clazz.getDeclaredMethod("run", new Class[] {String[].class, Runnable.class}); //$NON-NLS-1$
         try {
