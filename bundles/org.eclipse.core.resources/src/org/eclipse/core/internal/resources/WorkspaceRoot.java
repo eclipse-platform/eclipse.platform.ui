@@ -77,6 +77,12 @@ public IFile getFileForLocation(IPath location) {
 	return getLocalManager().fileForLocation(location);
 }
 /**
+ * @see IResource
+ */
+public long getLocalTimeStamp() {
+	return IResource.NULL_STAMP;
+}
+/**
  * @see IResource#getLocation
  */
 public IPath getLocation() {
@@ -178,7 +184,17 @@ public boolean isPhantom() {
 /**
  * @see IResource
  */
+public long setLocalTimeStamp(long value) throws CoreException {
+	if (value < 0)
+		throw new IllegalArgumentException("Illegal time stamp: " + value); //$NON-NLS-1$
+	//can't set local time for root
+	return value;
+}
+/**
+ * @see IResource
+ */
 public void setReadOnly(boolean readonly) {
+	//can't set the root read only
 }
 /**
  * Returns true if this resource has the potential to be

@@ -34,8 +34,6 @@ class WorkManager implements IManager {
 			return contains(rule);
 		}
 	}
-	public static final int OPERATION_EMPTY = 0;
-	public static final int OPERATION_NONE = -1;
 	/**
 	 * Indicates whether any operations have run that may require a build.
 	 */
@@ -195,5 +193,22 @@ class WorkManager implements IManager {
 	public void shutdown(IProgressMonitor monitor) {
 	}
 	public void startup(IProgressMonitor monitor) {
+	}
+	/**
+	 * Returns true if the workspace lock has already been acquired by this thread,
+	 * and false otherwise.
+	 */
+	public boolean isLockAlreadyAcquired() {
+		boolean result = false;
+		try {
+			boolean success = lock.acquire(0L);
+			if (success) {
+				//if lock depth is greater than one, then we already owned it before
+				result = lock.getDepth() > 1;
+				lock.release();
+			}
+		} catch (InterruptedException e) {
+		}
+		return result;
 	}
 }

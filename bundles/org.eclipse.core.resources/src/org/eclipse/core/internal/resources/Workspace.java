@@ -49,18 +49,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected long nextNodeId = 1;
 	protected long nextModificationStamp = 0;
 	protected long nextMarkerId = 0;
-	/**
-	 * Indicates that a POST_CHANGE notification has been requested because
-	 * a maximum time has elapsed since the last notification.
-	 */
-	//	protected boolean notificationRequested = false;
 	protected Synchronizer synchronizer;
 	protected IProject[] buildOrder = null;
 	protected IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
-
-	//jobs
-	protected AutoBuildJob autoBuildJob;
-	//	protected NotificationJob notifyJob;
 
 	protected final HashSet lifecycleListeners = new HashSet(10);
 
@@ -102,6 +93,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/** indicates if the workspace crashed in a previous session */
 	protected boolean crashed = false;
+	
 	public Workspace() {
 		super();
 		localMetaArea = new LocalMetaArea();
@@ -170,7 +162,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			listener.handleEvent(event);
 		}
 	}
-
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -183,7 +174,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())
 					newWorkingTree();
-				autoBuildJob.avoidBuild();
 				endOperation(getRoot(), false, Policy.subMonitorFor(monitor, Policy.buildWork));
 			}
 		} finally {
@@ -836,18 +826,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		boolean hasTreeChanges = false;
 		try {
 			workManager.setBuild(build);
-			//			notifyJob.notifyIfNeeded();
+			notificationManager.notifyIfNeeded();
 			// if we are not exiting a top level operation then just decrement the count and return
 			boolean depthOne = workManager.getPreparedOperationDepth() == 1;
-			//			if (!(notificationRequested || depthOne))
-			if (!depthOne)
+			if (!(notificationManager.shouldNotify() || depthOne))
 				return;
 			// do the following in a try/finally to ensure that the operation tree is nulled at the end
 			// as we are completing a top level operation.
 			try {
-//				notifyJob.cancel();
-//				notificationRequested = false;
-
+				notificationManager.beginNotify();
 				workManager.beginNotify();
 				// check for a programming error on using beginOperation/endOperation
 				Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
@@ -865,8 +852,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				OperationCanceledException cancel = null;
 				CoreException signal = null;
 				if (depthOne && !Policy.BACKGROUND_BUILD) {
-					autoBuildJob.endTopLevel(hasTreeChanges);
-					IStatus result = autoBuildJob.run(Policy.subMonitorFor(monitor, Policy.opWork));
+					buildManager.endTopLevel(hasTreeChanges);
+					IStatus result = buildManager.runAutoBuild(Policy.subMonitorFor(monitor, Policy.opWork));
 					switch (result.getSeverity()) {
 						case IStatus.CANCEL :
 							cancel = new OperationCanceledException();
@@ -895,7 +882,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			workManager.checkOut(rule);
 		}
 		if (Policy.BACKGROUND_BUILD)
-			autoBuildJob.endTopLevel(hasTreeChanges);
+			buildManager.endTopLevel(hasTreeChanges);
 	}
 
 	/**
@@ -1547,7 +1534,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public void prepareOperation(ISchedulingRule rule) throws CoreException {
 		//ask the autobuild to cancel, and it should quickly give up its lock
-		autoBuildJob.checkCancel();
+		buildManager.interrupt();
 		getWorkManager().checkIn(rule);
 		if (!isOpen()) {
 			String message = Policy.bind("resources.workspaceClosed"); //$NON-NLS-1$
@@ -1607,8 +1594,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException {
 		String message;
-		if (full)
+		if (full) {
+			//according to spec it is illegal to start a full save inside another operation
+			if (getWorkManager().isLockAlreadyAcquired()) {
+				message = Policy.bind("resources.saveOp"); //$NON-NLS-1$
+				throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, new IllegalStateException());
+			}
 			return saveManager.save(ISaveContext.FULL_SAVE, null, monitor);
+		}
 		// A snapshot was requested.  Start an operation (if not already started) and 
 		// signal that a snapshot should be done at the end.
 		try {
@@ -1637,7 +1630,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			buildOrder = null;
 		//if autobuild has just been turned on, indicate that a build is necessary
 		if (!description.isAutoBuilding() && newDescription.isAutoBuilding())
-			autoBuildJob.forceBuild();
+			buildManager.forceAutoBuild();
 		description.copyFrom(newDescription);
 		Policy.setupAutoBuildProgress(description.isAutoBuilding());
 		ResourcesPlugin.getPlugin().savePluginPreferences();
@@ -1681,7 +1674,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			synchronizer = null;
 			saveManager = null;
 			_workManager = null;
-			autoBuildJob.cancel();
 			if (!status.isOK())
 				throw new CoreException(status);
 		} finally {
@@ -1718,8 +1710,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//must start after save manager, because (read) access to tree is needed
 		aliasManager = new AliasManager(this);
 		aliasManager.startup(null);
-		autoBuildJob = new AutoBuildJob(this);
-//		notifyJob = new NotificationJob(this);
 		treeLocked = false; // unlock the tree.
 	}
 	/** 
