@@ -194,7 +194,7 @@ private Font createFont(FontData[] fonts) {
 /**
  * Returns the default font.  Creates it if necessary.
  */
-private Font defaultFont() {
+Font defaultFont() {
 	Display current = Display.getCurrent();
 	if(current == null){
 		Shell shell = new Shell();
