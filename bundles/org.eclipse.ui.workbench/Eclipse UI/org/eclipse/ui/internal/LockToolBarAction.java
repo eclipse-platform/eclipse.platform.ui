@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.IWindowListener;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -22,7 +22,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class LockToolBarAction
 		extends Action 
-		implements IWindowListener, ActionFactory.IWorkbenchAction {
+		implements ActionFactory.IWorkbenchAction {
 			
 	/**
 	 * The workbench window; or <code>null</code> if this
@@ -45,9 +45,16 @@ public class LockToolBarAction
 		// @issue missing action id
 		setToolTipText(WorkbenchMessages.getString("LockToolBarAction.toolTip")); //$NON-NLS-1$
 		setEnabled(false);
-		setChecked(false);
+		// queue the update for the checked state since this action is created 
+		// before the coolbar
+		window.getWorkbench().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (workbenchWindow != null) {
+					setChecked(((WorkbenchWindow) workbenchWindow).isToolBarLocked());
+				}
+			}
+		});
 		WorkbenchHelp.setHelp(this, IHelpContextIds.LOCK_TOOLBAR_ACTION);
-		this.workbenchWindow.getWorkbench().addWindowListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -63,42 +70,9 @@ public class LockToolBarAction
 	}
 	
 	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowActivated(IWorkbenchWindow window){
-		// do nothing
-	}   
-
-	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowDeactivated(IWorkbenchWindow window) {
-		// do nothing
-	}   
-
-	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowClosed(IWorkbenchWindow window) {
-		// do nothing
-	}   
-
-	/* (non-Javadoc)
-	 * Method declared on IWindowListener
-	 */
-	public void windowOpened(IWorkbenchWindow window) {
-		setChecked(((WorkbenchWindow)window).isToolBarLocked());
-	}   
-
-	/* (non-Javadoc)
 	 * Method declared on ActionFactory.IWorkbenchAction.
 	 */
 	public void dispose() {
-		if (workbenchWindow == null) {
-			// already disposed
-			return;
-		}
-		workbenchWindow.getWorkbench().removeWindowListener(this);
 		workbenchWindow = null;
 	}
 
