@@ -44,7 +44,11 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 			String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(entryString);
 			return new URL("file:" + expanded); //$NON-NLS-1$
 		} catch (CoreException e) {
-			AntCorePlugin.log(e);
+			try {
+				return new URL("file:" + entryString); //$NON-NLS-1$
+			} catch (MalformedURLException e1) {
+				return null;
+			}
 		} catch (MalformedURLException e) {
 			AntCorePlugin.log(e);
 		}

@@ -724,24 +724,31 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	public URL[] getURLs() {
 		List result = new ArrayList(60);
 		if (antHomeEntries != null) {
-			for (int i = 0; i < antHomeEntries.length; i++) {
-				IAntClasspathEntry entry = antHomeEntries[i];
-				result.add(entry.getEntryURL());	
-			}
+			addEntryURLs(result, antHomeEntries);
 		}
 		if (additionalEntries != null && additionalEntries.length > 0) {
-			for (int i = 0; i < additionalEntries.length; i++) {
-				IAntClasspathEntry entry = additionalEntries[i];
-				result.add(entry.getEntryURL());	
-			}
+			addEntryURLs(result, additionalEntries);
 		}
 		
 		for (int i = 0; i < extraClasspathURLs.size(); i++) {
 			IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
-			result.add(entry.getEntryURL());	
+			URL url= entry.getEntryURL();
+			if (url != null) {
+				result.add(url);
+			}	
 		}
 		
 		return (URL[]) result.toArray(new URL[result.size()]);
+	}
+
+	private void addEntryURLs(List result, IAntClasspathEntry[] entries) {
+		for (int i = 0; i < entries.length; i++) {
+			IAntClasspathEntry entry = entries[i];
+			URL url= entry.getEntryURL();
+			if (url != null) {
+				result.add(url);
+			}
+		}
 	}
 
 	protected ClassLoader[] getPluginClassLoaders() {
@@ -1022,7 +1029,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				filename = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(filename);
 				files.add(filename);
 			} catch (CoreException e) {
-				AntCorePlugin.log(e);
+				//notify the user via the Ant console of the missing file
+				files.add(filename);
 			}
 		}
 		return (String[])files.toArray(new String[files.size()]);

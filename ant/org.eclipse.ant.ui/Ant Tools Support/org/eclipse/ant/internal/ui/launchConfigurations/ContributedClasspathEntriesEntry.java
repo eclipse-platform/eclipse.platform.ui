@@ -82,14 +82,14 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		String path;
 		for (int i = 0; i < userEntries.length; i++) {
 			entry = userEntries[i];
-			path= entry.getEntryURL().getPath();
+			path= entry.getLabel();
 			if (path.endsWith("tools.jar")) { //$NON-NLS-1$
 				haveToolsEntry= true;
 				// replace with dynamically resolved tools.jar based on
 				// the JRE being used
 				addToolsJar(configuration, rtes, path);
 			} else {
-				rtes.add(JavaRuntime.newStringVariableClasspathEntry(entry.getLabel()));
+				rtes.add(JavaRuntime.newStringVariableClasspathEntry(path));
 			}
 		}
 		if (!haveToolsEntry) {

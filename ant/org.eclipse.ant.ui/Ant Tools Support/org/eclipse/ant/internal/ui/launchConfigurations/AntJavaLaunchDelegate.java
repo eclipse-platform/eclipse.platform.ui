@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 
 /**
  * Used by the AntLaunchDelegate for Ant builds in a separate VM
@@ -31,5 +32,16 @@ public class AntJavaLaunchDelegate extends JavaLocalApplicationLaunchConfigurati
 		}
 		//no need to check for breakpoints as always in run mode
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
+		try {
+			return super.getProgramArguments(configuration);
+		} catch (CoreException ce) {
+		}
+		return configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""); //$NON-NLS-1$
 	}
 }
