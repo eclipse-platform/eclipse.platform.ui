@@ -97,6 +97,7 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction revertAction;
 	private IWorkbenchAction refreshAction;
 	private IWorkbenchAction propertiesAction;
+	private IWorkbenchAction quitAction;
 	private IWorkbenchAction moveAction;
 	private IWorkbenchAction renameAction;
 	private IWorkbenchAction goIntoAction;
@@ -306,7 +307,7 @@ public final class WorkbenchActionBuilder {
 		menu.add(ContributionItemFactory.REOPEN_EDITORS.create(getWindow()));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));
 		menu.add(new Separator());
-		menu.add(ActionFactory.QUIT.create(getWindow()));
+		menu.add(quitAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
 		return menu;
 	}
@@ -748,6 +749,9 @@ public final class WorkbenchActionBuilder {
 
 		propertiesAction = ActionFactory.PROPERTIES.create(getWindow());
 		registerGlobalAction(propertiesAction);
+
+		quitAction = ActionFactory.QUIT.create(getWindow());
+		registerGlobalAction(quitAction);
 
 		moveAction = ActionFactory.MOVE.create(getWindow());
 		registerGlobalAction(moveAction);
