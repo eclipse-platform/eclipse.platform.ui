@@ -75,10 +75,14 @@ public class BuildManager implements ICoreConstants, IManager {
 		MissingBuilder(String name) {
 			this.name = name;
 		}
+		/**
+		 * Throw an exception the first time this is called, and just log subsequent attempts.
+		 */
 		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 			if (status == null) {
 				String msg = Policy.bind("events.missing", new String[] {name, getProject().getName()});
 				status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
+				throw new CoreException(status);
 			}
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return null;
@@ -319,18 +323,10 @@ protected IncrementalProjectBuilder getBuilder(String builderName, IProject proj
 	IncrementalProjectBuilder result = (IncrementalProjectBuilder) builders.get(builderName);
 	if (result != null)
 		return result;
-	result = (IncrementalProjectBuilder) instantiateBuilder(builderName, project);
-	if (result == null) {
-		//the builder could not be instantiated.  Return null this time so the user is notified,
-		//but add a dummy builder to the list so errors don't occur in all subsequent builds.
-		result = new MissingBuilder(builderName);
-		((InternalBuilder) result).setProject(project);		
-		builders.put(builderName, result);
-		return null;
-	}
+	result = instantiateBuilder(builderName, project);
 	builders.put(builderName, result);
 	((InternalBuilder) result).setProject(project);
-	((InternalBuilder) result).startupOnInitialize();
+	result.startupOnInitialize();
 	return result;
 }
 /**
@@ -452,17 +448,27 @@ protected boolean needsBuild(InternalBuilder builder) {
 	}
 	return false;	
 }
+/**
+ * Instantiates the builder with the given name.  If the builder or its plugin is missing, 
+ * create a placeholder builder to takes its place.  This is needed to carry forward persistent
+ * builder info, and to generate appropriate exceptions when somebody tries to invoke the builder.
+ * This method NEVER returns null.
+ */
 protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProject project) throws CoreException {
-	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
-	if (extension == null)
-		return null;
-	IConfigurationElement[] configs = extension.getConfigurationElements();
-	if (configs.length == 0)
-		return null;
 	try {
-		IConfigurationElement config = configs[0];
-		IncrementalProjectBuilder builder = (IncrementalProjectBuilder) config.createExecutableExtension("run");
-		((InternalBuilder) builder).setPluginDescriptor(config.getDeclaringExtension().getDeclaringPluginDescriptor());
+		IncrementalProjectBuilder builder = null;
+		IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
+		if (extension != null) {
+			IConfigurationElement[] configs = extension.getConfigurationElements();
+			if (configs.length != 0) {
+				builder = (IncrementalProjectBuilder) configs[0].createExecutableExtension("run");
+				((InternalBuilder) builder).setPluginDescriptor(configs[0].getDeclaringExtension().getDeclaringPluginDescriptor());
+			}
+		}
+		if (builder == null) {
+			//unable to create the builder, so create a placeholder to fill in for it
+			builder = new MissingBuilder(builderName);
+		}
 		// get the map of builders to get the last built tree
 		Map infos = getBuildersPersistentInfo(project);
 		if (infos != null) {
