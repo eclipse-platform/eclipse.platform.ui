@@ -530,9 +530,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			return fInformationPresenter != null;
 			
 		if (operation == FORMAT) {
-			Point p= getSelectedRange();
-			int length= (p == null ? -1 : p.y);
-			return (fContentFormatter != null && isEditable() && (length == 0 || isBlockSelected()));
+			return fContentFormatter != null && isEditable();
 		}
 		
 		return super.canDoOperation(operation);
