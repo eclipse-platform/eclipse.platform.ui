@@ -33,6 +33,6 @@ public class UpdateLabelProvider extends SharedLabelProvider {
 	
 	public Image getLocalSiteImage(IConfiguredSite csite) {
 		ImageDescriptor desc = getLocalSiteDescriptor(csite);
-		return getImage(desc);
+		return get(desc);
 	}
 }
