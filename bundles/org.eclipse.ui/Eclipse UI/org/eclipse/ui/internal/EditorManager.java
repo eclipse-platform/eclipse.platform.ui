@@ -678,6 +678,9 @@ public class EditorManager {
 					String strActivePart = editorMem.getString(IWorkbenchConstants.TAG_ACTIVE_PART);
 					if ("true".equals(strActivePart)) //$NON-NLS-1$
 						activeEditor[0] = (IEditorPart)e.getPart(true);
+				} else {
+					page.removePart(e);
+					activeEditors.remove(e);
 				}
 			} else {
 				String editorName = editorMem.getString(IWorkbenchConstants.TAG_TITLE);

@@ -784,6 +784,10 @@ public void restoreState() {
 
 		// Create and open the view.
 		IViewReference ref = viewFactory.getView(viewID);
+		if(ref == null) {
+			WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
+			continue;
+		}		
 		page.addPart(ref);
 		IViewPart view = (IViewPart)ref.getPart(true);
 		ViewSite site = (ViewSite)view.getSite();
@@ -809,14 +813,13 @@ public void restoreState() {
 			}
 			mapFastViewToWidthRatio.put(viewID, ratio);
 				
-			// Create and open the view.
-			try {
-				IViewReference ref = viewFactory.createView(viewID);
-				page.addPart(ref);
-				fastViews.add(ref.getPart(true));
-			} catch (PartInitException e) {
-				errors.add(e.getStatus());
-			}
+			IViewReference ref = viewFactory.getView(viewID);
+			if(ref == null) {
+				WorkbenchPlugin.log("Could not create view: '" + viewID + "'."); //$NON-NLS-1$
+				continue;
+			}		
+			page.addPart(ref);
+			fastViews.add(ref.getPart(true));
 		}
 	}
 

@@ -898,10 +898,16 @@ public void openTracker(ViewPane pane) {
 		persp.openTracker(pane);
 }
 /**
- * Add a editor to the activation list.
+ * Add a part to the activation list.
  */
 protected void addPart(IWorkbenchPartReference ref) {
 	activationList.add(ref);
+}
+/**
+ * Remove a part from the activation list.
+ */
+protected void removePart(IWorkbenchPartReference ref) {
+	activationList.remove(ref);
 }
 /**
  * Deactivate the last known active editor to force its
