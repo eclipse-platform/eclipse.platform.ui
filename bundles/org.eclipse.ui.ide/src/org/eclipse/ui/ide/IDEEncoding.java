@@ -29,6 +29,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * 
  * @see org.eclipse.ui.WorkbenchEncoding
  * @see org.eclipse.core.resources.ResourcesPlugin
+ * @since 3.1
  */
 public class IDEEncoding {
 

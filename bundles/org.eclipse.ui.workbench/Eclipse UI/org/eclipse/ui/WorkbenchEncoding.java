@@ -21,6 +21,8 @@ import org.eclipse.ui.internal.registry.RegistryReader;
 /**
  * WorkbenchEncoding is a utility class for plug-ins that want to use the list
  * of encodings defined by default in the workbench.
+ * 
+ * @since 3.1
  */
 public class WorkbenchEncoding {
 	
