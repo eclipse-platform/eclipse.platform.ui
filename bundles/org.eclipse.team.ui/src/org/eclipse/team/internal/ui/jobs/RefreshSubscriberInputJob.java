@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 
 /**
@@ -73,4 +74,12 @@ public class RefreshSubscriberInputJob extends RefreshSubscriberJob implements I
 		}
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob#getTaskName(org.eclipse.team.core.subscribers.TeamSubscriber, org.eclipse.core.resources.IResource[])
+	 */
+	protected String getTaskName(TeamSubscriber subscriber, IResource[] roots) {
+		// Return a meaningfull task nam since the job name will be generic
+		return Policy.bind("RefreshSubscriberJob.1", String.valueOf(roots.length), subscriber.getName()); //$NON-NLS-1$
+	}
+
 }
