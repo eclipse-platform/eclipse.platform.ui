@@ -137,7 +137,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	    int style = SWT.BORDER | tabLocation | (multi ? SWT.MULTI : SWT.SINGLE);
 		
 		tabFolder = new CTabFolder2(parent, style);
-		tabFolder.setBorderVisible(true);
+		//tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);
 
 		// prevent close button and scroll buttons from taking focus
@@ -315,12 +315,11 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				if (visibleEditor != null) {
 					// switch to the editor
 					CTabItem2 item = getTab(visibleEditor);
-
 					visibleEditor.setFocus();
 					Rectangle bounds = item.getBounds();
-					if (bounds.contains(e.x, e.y)) {
-						if ((e.button == 1) && overImage(item, e.x))
-							visibleEditor.showPaneMenu();
+
+					if ((e.button == 3) /*&& overImage(item, e.x)*/ && bounds.contains(e.x, e.y)) {
+					    visibleEditor.showPaneMenu();
 					}
 				}
 			}
@@ -331,12 +330,13 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			public void handleEvent(Event event) {
 				EditorPane visibleEditor = getVisibleEditor();
 				if (event.type == SWT.MenuDetect && visibleEditor != null) {
-					CTabItem2 item = getTab(visibleEditor);
-					visibleEditor.setFocus();
-					Rectangle bounds = item.getBounds();
+				    CTabItem2 item = getTab(visibleEditor);
+					visibleEditor.setFocus();					
+					Rectangle bounds = item.getBounds();					
 					Point pt = tabFolder.toControl(event.x, event.y);
-					if (bounds.contains(pt.x, pt.y)) {
-						visibleEditor.showPaneMenu(tabFolder, new Point(event.x, event.y));
+					
+					if ((event.button == 3) && bounds.contains(pt.x, pt.y)) {
+					    visibleEditor.showPaneMenu(tabFolder, new Point(event.x, event.y));
 					}
 				}
 			}
@@ -540,7 +540,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			Rectangle bounds = item.getBounds();
 			visibleEditor.showPaneMenu(
 				tabFolder,
-				tabFolder.toDisplay(new Point(bounds.x, bounds.height)));
+				tabFolder.toDisplay(new Point(bounds.x, bounds.y + bounds.height)));
 		}
 	}
 

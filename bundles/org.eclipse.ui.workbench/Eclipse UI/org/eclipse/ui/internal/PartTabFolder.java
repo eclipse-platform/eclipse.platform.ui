@@ -296,7 +296,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		int style = SWT.BORDER | tabLocation;
 		
 		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
-		tabFolder.setBorderVisible(true);
+		//tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);
 		
 		// listener to switch between visible tabItems
