@@ -74,20 +74,6 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
 	 */
 	private IWizardPage previousPage = null;
 
-	/**
-	 * Message type constant used to display an info icon with the message.
-	 * @since 2.0
-	 * @deprecated
-	 */
-	public static final String INFO_MESSAGE = TitleAreaDialog.INFO_MESSAGE;
-
-	/**
-	 * Message type constant used to display a warning icon with the message.
-	 * @since 2.0
-	 * @deprecated
-	 */
-	public static final String WARNING_MESSAGE = TitleAreaDialog.WARNING_MESSAGE;
-	
 /**
  * Creates a new wizard page with the given name, and
  * with no title or image.

@@ -19,20 +19,6 @@ import org.eclipse.swt.graphics.Point;
  */
 public class TitleAreaDialog extends Dialog {
 	/**
-	 * Image registry key for info message image.
-	 * @since 2.0
-	 * @deprecated
-	 */
-	public static final String DLG_IMG_TITLE_INFO = DLG_IMG_MESSAGE_INFO;//$NON-NLS-1$
-
-	/**
-	 * Image registry key for warning message image.
-	 * @since 2.0
-	 * @deprecated
-	 */
-	public static final String DLG_IMG_TITLE_WARNING = DLG_IMG_MESSAGE_WARNING;//$NON-NLS-1$
-
-	/**
 	 * Image registry key for error message image.
 	 */
 	public static final String DLG_IMG_TITLE_ERROR = DLG_IMG_MESSAGE_ERROR;//$NON-NLS-1$
@@ -339,31 +325,6 @@ protected Label getTitleImageLabel() {
 	return titleImage;
 }
 /**
- * Parses the message to see if it includes an image prefix.
- * 
- * @param unparsedMessage the message or <code>null</code>
- * @return a two element array, the first element is the message without any 
- * prefix or <code>null</code> and the second element in an <code>Image</code>
- * or <code>null</code>
- * @ depricated
- */
-private Object[] parseMessage(String unparsedMessage) {
-	Image newImage = null;
-	String newMessage = unparsedMessage;	
-
-	if (unparsedMessage != null) {
-		if (unparsedMessage.startsWith(INFO_MESSAGE)) {
-			newImage = JFaceResources.getImage(DLG_IMG_TITLE_INFO);
-			newMessage = unparsedMessage.substring(INFO_MESSAGE.length());
-		} else if (unparsedMessage.startsWith(WARNING_MESSAGE)) {
-			newImage = JFaceResources.getImage(DLG_IMG_TITLE_WARNING);
-			newMessage = unparsedMessage.substring(WARNING_MESSAGE.length());
-		}
-	}
-	
-	return new Object[] {newMessage, newImage};
-}
-/**
  * Display the given error message. The currently displayed message
  * is saved and will be redisplayed when the error message is set
  * to <code>null</code>.
@@ -424,47 +385,14 @@ public void setErrorMessage(String newErrorMessage) {
  * the message is saved and will be redisplayed when the error message is set
  * to <code>null</code>.
  * <p>
- * Shortcut for <code>setMessage(newMessage, NONE)</code>
+ * Shortcut for <code>setMessage(newMessage, IMessageProvider.NONE)</code>
  * </p> 
  * 
  * @param newMessage the message, or <code>null</code> to clear
  *   the message
  */
 public void setMessage(String newMessage) {
-	Object[] array = parseMessage(newMessage);
-	if (array[1] == null)
-		setMessage(newMessage, IMessageProvider.NONE);
-	else	
-		showMessage((String)array[0], (Image)array[1]);
-}
-/**
- * Set the message text. If the message line currently displays an error,
- * the message is saved and will be redisplayed when the error message is set
- * to <code>null</code>.
- * <p>
- * A message type of  either <code>INFO_MESSAGE</code> or
- * <code>WARNING_MESSAGE</code> may be specified to display an icon along with 
- * the message.
- * </p> 
- * 
- * @param newMessage the message, or <code>null</code> to clear
- *   the message
- * @param messageType the type of message, one of INFO_MESSAGE or 
- * 	WARNING_MESSAGE or <code>null</code>. 
- * @since 2.0
- * @deprecated
- * 
- */
-public void setMessage(String newMessage, String messageType) {
-	Image newImage = null;
-	if (messageType != null) {
-		if (messageType.equals(INFO_MESSAGE)) 
-			newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_INFO);
-		else if (messageType.equals(WARNING_MESSAGE)) 
-			newImage = JFaceResources.getImage(DLG_IMG_MESSAGE_WARNING);
-	}
-
-	showMessage(newMessage, newImage);
+	setMessage(newMessage, IMessageProvider.NONE);
 }
 /**
  * Sets the message for this dialog with an indication of what type
@@ -487,14 +415,6 @@ public void setMessage(String newMessage, String messageType) {
  * @since 2.0
  */
 public void setMessage(String newMessage, int newType) {
-	// The following is a temp workaround for depricated API
-	Object[] array = parseMessage(newMessage);
-	if (array[1] != null) {
-		showMessage((String)array[0], (Image)array[1]);
-		return;
-	}
-	// end workaround
-	
 	Image newImage = null;
 	
 	if (newMessage != null) {
