@@ -26,6 +26,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -37,7 +40,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Request;
@@ -46,7 +48,6 @@ import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-
 /**
  * This class acts as an abstract class for checkout operations.
  * It provides a few common methods.
@@ -62,27 +63,6 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	public CheckoutProjectOperation(Shell shell, ICVSRemoteFolder[] remoteFolders, String targetLocation) {
 		super(shell, remoteFolders);
 		this.targetLocation = targetLocation;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void runInContext(IProgressMonitor monitor) throws CVSException, InterruptedException {
-		String taskName = getTaskName();
-		monitor.beginTask(taskName, 100);
-		monitor.setTaskName(taskName);
-		checkout(getRemoteFolders(), getTargetProjects(getRemoteFolders()), Policy.subMonitorFor(monitor, 100));
-	}
-	
-	/**
-	 * @return
-	 */
-	protected IProject[] getTargetProjects(ICVSRemoteFolder[] folders) {
-		IProject[] projects = new IProject[folders.length];
-		for (int i = 0; i < projects.length; i++) {
-			projects[i] = ResourcesPlugin.getWorkspace().getRoot().getProject(folders[i].getName());
-		}
-		return projects;
 	}
 	
 	/**
@@ -137,32 +117,6 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		if (targetLocation == null) return null;
 		return new Path(targetLocation);
 	}
-	
-	/**
-	 * Checkout the remote resources into the local workspace. Each resource will 
-	 * be checked out into the corresponding project. If the corresponding project is
-	 * null or if projects is null, the name of the remote resource is used as the name of the project.
-	 * 
-	 * Resources existing in the local file system at the target project location but now 
-	 * known to the workbench will be overwritten.
-	 */
-	protected void checkout(ICVSRemoteFolder[] resources, IProject[] projects, IProgressMonitor pm) throws CVSException {
-		try {
-			pm.beginTask(null, 1000 * resources.length);
-			for (int i=0;i<resources.length;i++) {
-				ICVSRemoteFolder resource = resources[i];
-				
-				// Determine the provided target project if there is one
-				IProject project = null;
-				if (projects != null) 
-					project = projects[i];
-				
-				checkout(resource, project, Policy.subMonitorFor(pm, 1000));
-			}
-		} finally {
-			pm.done();
-		}
-	}
 
 	protected String getRemoteModuleName(ICVSRemoteFolder resource) {
 		String moduleName;
@@ -174,26 +128,84 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		return moduleName;
 	}
 
-	protected void checkout(ICVSRemoteFolder resource, IProject project, final IProgressMonitor pm) throws CVSException {
-		// Get the location of the workspace root
+	protected IStatus checkout(ICVSRemoteFolder resource, IProject project, IProgressMonitor pm) throws CVSException {
+		// Get the location and the workspace root
 		ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(ResourcesPlugin.getWorkspace().getRoot());
-		// Open a connection session to the repository
 		ICVSRepositoryLocation repository = resource.getRepository();
+		// Open a connection session to the repository
 		Session session = new Session(repository, root);
+		pm.beginTask(null, 100);
+		session.open(Policy.subMonitorFor(pm, 5));
 		try {
-			pm.beginTask(null, 1000);
-			session.open(Policy.subMonitorFor(pm, 50));
 			
-			// Determine the local target projects (either the project provider or the module expansions) 
-			IProject[] targetProjects = prepareProjects(session, resource, project, Policy.subMonitorFor(pm, 50));
-			if (targetProjects == null) return;
-			
-			// Determine if the target project is the same name as the remote folder
-			// in which case we'll use -d to flatten the directory structure
-			if (targetProjects.length == 1 && targetProjects[0].getName().equals(resource.getName())) {
-				project = targetProjects[0];
+			// Determine the local target projects (either the project provider or the module expansions)
+			// Note: Module expansions can be run over the same connection as a checkout
+			IProject[] targetProjects = determineProjects(session, resource, project, Policy.subMonitorFor(pm, 5));
+			if (targetProjects == null) {
+				// An error occurred and was recorded so return it
+				return getLastError();
+			} else if (targetProjects.length == 0) {
+				return OK;
 			}
 		
+			try {
+				//	Obtain a scheduling rule on the projects were about to overwrite
+				Platform.getJobManager().beginRule(getSchedulingRule(targetProjects));
+				IStatus result = performCheckout(session, resource, targetProjects, Policy.subMonitorFor(pm, 90));
+				return result;
+			} finally {
+				Platform.getJobManager().endRule();
+			}
+		} catch (CVSException e) {
+			// An exception occurred either during the module-expansion or checkout
+			// Since we were able to make a connection, return the status so the
+			// checkout of any other modules can proceed
+			return e.getStatus();
+		} finally {
+			session.close();
+			pm.done();
+		}
+	}
+
+	private ISchedulingRule getSchedulingRule(IProject[] projects) {
+		if (projects.length == 1) {
+			return projects[0];
+		} else {
+			return new MultiRule(projects);
+		}
+	}
+
+	private IStatus performCheckout(Session session, ICVSRemoteFolder resource, IProject[] targetProjects, IProgressMonitor pm) throws CVSException {
+		// Set the task name of the progress monitor to let the user know
+		// which project we're on. Don't use subTask since that will be
+		// changed when the checkout command is run.
+		String taskName;
+		if (targetProjects.length == 1) {
+			taskName = Policy.bind("CheckoutProjectOperation.8", resource.getName(), targetProjects[0].getName()); //$NON-NLS-1$
+		} else {
+			taskName = Policy.bind("CheckoutProjectOperation.9", resource.getName(), String.valueOf(targetProjects.length)); //$NON-NLS-1$
+		}
+		pm.beginTask(taskName, 100);
+		pm.setTaskName(taskName);
+		
+		try {
+			// Scrub the local contents if requested
+			if (performScrubProjects()) {
+				IStatus result = scrubProjects(resource, targetProjects, Policy.subMonitorFor(pm, 9));
+				if (!result.isOK()) {
+					return result;
+				}
+			}
+				
+			// Determine if the target project is the same name as the remote folder
+			// in which case we'll use -d to flatten the directory structure
+			IProject project;
+			if (targetProjects.length == 1 && targetProjects[0].getName().equals(resource.getName())) {
+				project = targetProjects[0];
+			} else {
+				project = null;
+			}
+				
 			// Build the local options
 			List localOptions = new ArrayList();
 			// Add the option to load into the target project if one was supplied
@@ -210,48 +222,46 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				tag = CVSTag.DEFAULT;
 			}
 			localOptions.add(Update.makeTagOption(tag));
-		
+			
 			// Perform the checkout
 			IStatus status = Command.CHECKOUT.execute(session,
 				Command.NO_GLOBAL_OPTIONS,
 				(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
 				new String[]{getRemoteModuleName(resource)},
 				null,
-				Policy.subMonitorFor(pm, 800));
+				Policy.subMonitorFor(pm, 90));
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				// TODO: Should we cleanup any partially checked out projects?
-				signalFailure(status);
-				return;
+				// Any created projects will exist but will not be mapped to CVS
+				return status;
 			}
-			
+				
 			// Bring the project into the workspace
-			refreshProjects(targetProjects, Policy.subMonitorFor(pm, 100));
-		
+			refreshProjects(targetProjects, Policy.subMonitorFor(pm, 1));
+			
+			return OK;
 		} finally {
-			session.close();
 			pm.done();
 		}
 	}
 
 	/*
-	 * Prepare the workspace to receive the project(s). If project is not null, then
-	 * if will be the only target project of the checkout. Otherwise, the remote folder
-	 * could expand to multiple projects.
+	 * Determine the workspace project(s) that will be affected by the checkout. 
+	 * If project is not null, then it will be the only target project of the checkout. 
+	 * Otherwise, the remote folder could expand to multiple projects.
 	 * 
 	 * If the remote resource is a folder which is not a root folder (i.e. a/b/c),
 	 * then the target project will be the last segment (i.e. c).
 	 */
-	private IProject[] prepareProjects(Session session, final ICVSRemoteFolder remoteFolder, IProject project, IProgressMonitor pm) throws CVSException {
+	private IProject[] determineProjects(Session session, final ICVSRemoteFolder remoteFolder, IProject project, IProgressMonitor pm) throws CVSException {
 			
-		pm.beginTask(null, 100);
 		Set targetProjectSet = new HashSet();
 		String moduleName = getRemoteModuleName(remoteFolder);
 		if (project == null) {
 			
 			// Fetch the module expansions
-			IStatus status = Request.EXPAND_MODULES.execute(session, new String[] {moduleName}, Policy.subMonitorFor(pm, 50));
+			IStatus status = Request.EXPAND_MODULES.execute(session, new String[] {moduleName}, pm);
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				signalFailure(status);
+				collectStatus(status);
 				return null;
 			}
 			
@@ -271,34 +281,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			targetProjectSet.add(project);
 		}
 		
-		final IProject[] targetProjects = (IProject[]) targetProjectSet.toArray(new IProject[targetProjectSet.size()]);
-		// Prepare the target projects to receive resources
-		// TODO: Does this really need to be wrapped or is it done higher up?
-		final IStatus[] result = new IStatus[] { null };
-		
-		if (performScrubProjects()) {
-			session.getLocalRoot().run(new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					try {
-						result[0] = scrubProjects(remoteFolder, targetProjects, monitor);
-					} catch (InterruptedException e) {
-						// The operation was cancelled. The result wiull be null
-					}
-				}
-			}, Policy.subMonitorFor(pm, 50));
-		} else {
-			result[0] = OK;
-		}
-		pm.done();
-		// return the target projects if the scrub succeeded
-		if (result[0] == null) {
-			return null;
-		} else if (result[0].isOK()) {
-			return targetProjects;
-		} else {
-			signalFailure(result[0]);
-			return null;
-		}
+		// Return the local projects affected by the checkout
+		IProject[] targetProjects = (IProject[]) targetProjectSet.toArray(new IProject[targetProjectSet.size()]);
+		return targetProjects;
 	}
 
 	/**
@@ -313,7 +298,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 	 * This method is invoked to scrub the local projects that are the check out target of
 	 * a single remote module.
 	 */
-	private IStatus scrubProjects(ICVSRemoteFolder remoteFolder, IProject[] projects, IProgressMonitor monitor) throws CVSException, InterruptedException {
+	private IStatus scrubProjects(ICVSRemoteFolder remoteFolder, IProject[] projects, IProgressMonitor monitor) throws CVSException {
 		if (projects == null) {
 			monitor.done();
 			return OK;
@@ -325,7 +310,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		for (int i=0;i<projects.length;i++) {
 			IProject project = projects[i];
 			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
-				throw new InterruptedException();
+				Policy.cancelOperation();
 			}
 		}
 		// Create the projects and remove any previous content
@@ -428,19 +413,14 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			monitor.done();
 		}
 	}
-	
-	/**
-	 * @param status
-	 */
-	private void signalFailure(IStatus status) {
-		// TODO: count failures so a count of successes can be displayed at the end
-		addError(status);
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CheckoutOperation#checkout(org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder[], org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void checkout(ICVSRemoteFolder[] folders, IProgressMonitor monitor) throws CVSException {
-		checkout(folders, getTargetProjects(folders), monitor);
-	}
 
+	protected String getTaskName() {
+		ICVSRemoteFolder[] remoteFolders = getRemoteFolders();
+		if (remoteFolders.length == 1) {
+			return Policy.bind("CheckoutSingleProjectOperation.taskname", remoteFolders[0].getName()); //$NON-NLS-1$
+		} else {
+			return Policy.bind("CheckoutMultipleProjectsOperation.taskName", new Integer(remoteFolders.length).toString());  //$NON-NLS-1$
+		}
+	}
+	
 }
