@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -401,33 +401,6 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		}
 		assertEquals("1.5", keys.length, ps.defaultPropertyNames().length);
 
-		// setting to default-default should remove name from set 
-		for (int i = 0; i < keys.length; i++) {
-			ps.setDefault(keys[i], Preferences.STRING_DEFAULT_DEFAULT);
-			Set s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.1", !s.contains(keys[i]));
-
-			ps.setDefault(keys[i], Preferences.BOOLEAN_DEFAULT_DEFAULT);
-			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.2", !s.contains(keys[i]));
-
-			ps.setDefault(keys[i], Preferences.INT_DEFAULT_DEFAULT);
-			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.3", !s.contains(keys[i]));
-
-			ps.setDefault(keys[i], Preferences.LONG_DEFAULT_DEFAULT);
-			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.4", !s.contains(keys[i]));
-
-			ps.setDefault(keys[i], Preferences.FLOAT_DEFAULT_DEFAULT);
-			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.5", !s.contains(keys[i]));
-
-			ps.setDefault(keys[i], Preferences.DOUBLE_DEFAULT_DEFAULT);
-			s = new HashSet(Arrays.asList(ps.defaultPropertyNames()));
-			assertTrue("1.6.6", !s.contains(keys[i]));
-		}
-		assertEquals("1.7", 0, ps.defaultPropertyNames().length);
 	}
 
 	public void testListeners2() {
