@@ -139,7 +139,6 @@ public class MergeSourceViewer extends SourceViewer
 			try {
 				t.setLineBackground(region.x, region.y, c);
 			} catch (IllegalArgumentException ex) {
-				System.out.println("ill range: " + region.x + " " + region.y);
 			}
 		}
 	}
@@ -274,21 +273,13 @@ public class MergeSourceViewer extends SourceViewer
 		int srcExtentSize= getViewportLines();
 
 		if (srcViewSize > srcExtentSize) {
-			//if (pos + srcExtentSize > srcViewSize)
-			//	pos= srcViewSize-srcExtentSize;
 
 			if (line < 0)
 				line= 0;
 
 			int cp= getTopIndex();
-			if (cp != line) {
-				if (line >= srcViewSize-srcExtentSize) {
-					// workaround for PR 1GBB34N: ITPJUI:WIN2000 - Compare Viewer doesn't scroll to last line
-					getTextWidget().setTopIndex(line + getDocumentRegionOffset());
-				} else {
-					setTopIndex(line + getDocumentRegionOffset());
-				}
-			}
+			if (cp != line)
+				setTopIndex(line + getDocumentRegionOffset());
 		}
 	}
 	

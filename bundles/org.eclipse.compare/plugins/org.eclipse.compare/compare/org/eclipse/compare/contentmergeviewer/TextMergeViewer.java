@@ -2125,6 +2125,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		invalidateLines();
 	}
 	
+	/**
+	 * Smart determines whether 
+	 */
 	private void revealDiff(Diff d, boolean smart) {
 		
 		boolean ancestorIsVisible= false;
@@ -2174,15 +2177,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						vpos+= diff.getMaxDiffHeight(fShowAncestor);
 					}
 				}
-				//vpos-= fRight.getViewportLines()/4;
+				vpos-= fRight.getViewportLines()/4;
+				if (vpos < 0)
+					vpos= 0;
 			}
 							
 			scrollVertical(vpos, allButThis);
-			
-			if (fVScrollBar != null) {
-				//int value= Math.max(0, Math.min(vpos, getVirtualHeight() - maxExtentHeight));
+			if (fVScrollBar != null)
 				fVScrollBar.setSelection(vpos);
-			}
 		}
 		
 		// horizontal scrolling
@@ -2200,8 +2202,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private static void reveal(MergeSourceViewer v, Position p) {
-		if (v != null && p != null)
-			v.revealRange(p.offset, p.length);
+		if (v != null && p != null) {
+			StyledText st= v.getTextWidget();
+			if (st != null) {
+				Rectangle r= st.getClientArea();
+				if (!r.isEmpty())	// workaround for #7320: Next diff scrolls when going into current diff 
+					v.revealRange(p.offset, p.length);
+			}
+		}
 	}
 	
 	private static void hscroll(MergeSourceViewer v) {

@@ -85,12 +85,17 @@ public class DiffTreeViewer extends TreeViewer {
 			return getChildren(element);
 		}				
 	}
-
+	
+	/*
+	 * Takes care of swapping left and right if fLeftIsLocal
+	 * is true.
+	 */
 	class DiffViewerLabelProvider extends LabelProvider {
 		
 		public String getText(Object element) {
-			if (element instanceof IDiffElement)
+			if (element instanceof IDiffElement) {
 				return ((IDiffElement)element).getName();
+			}
 			return Utilities.getString(fBundle, "defaultLabel"); //$NON-NLS-1$
 		}
 	
@@ -176,7 +181,6 @@ public class DiffTreeViewer extends TreeViewer {
 		
 		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 
-		
 		tree.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
 
 		Composite parent= tree.getParent();

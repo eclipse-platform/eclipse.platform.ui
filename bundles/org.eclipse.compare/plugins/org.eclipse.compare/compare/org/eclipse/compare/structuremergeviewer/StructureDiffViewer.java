@@ -346,8 +346,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		super.copySelected(leftToRight);
 		
 		if (fStructureCreator != null)
-			fStructureCreator.save(leftToRight ? fRightStructure : fLeftStructure,
-						   leftToRight ? fRightInput : fLeftInput);
+			fStructureCreator.save(
+							leftToRight ? fRightStructure : fLeftStructure,
+							leftToRight ? fRightInput : fLeftInput);
 	}
 }
 

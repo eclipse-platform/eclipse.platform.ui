@@ -179,29 +179,32 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 	 */
 	public String getName() {
 		
-		String s1= null;
+		String right= null;
 		if (fRight != null)
-			s1= fRight.getName();
+			right= fRight.getName();
 
-		String s2= null;
+		String left= null;
 		if (fLeft != null)
-			s2= fLeft.getName();
+			left= fLeft.getName();
 
-		if (s1 == null && s2 == null) {
+		if (right == null && left == null) {
 			if (fAncestor != null)
 				return fAncestor.getName();
 			return Utilities.getString("DiffNode.noName"); //$NON-NLS-1$
 		}
 
-		if (s1 == null)
-			return s2;
-		if (s2 == null)
-			return s1;
+		if (right == null)
+			return left;
+		if (left == null)
+			return right;
 
-		if (s1.equals(s2))
-			return s1;
+		if (right.equals(left))
+			return right;
 			
 		String fmt= Utilities.getString("DiffNode.nameFormat"); //$NON-NLS-1$
+		
+		String s1= right;
+		String s2= left;
 		return MessageFormat.format(fmt, new String[] { s1, s2 });
 	}
 
