@@ -257,23 +257,25 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
 	 */
 	private void addSingleRevision(SyncInfo info, LogEntryCache logs, ICVSRemoteResource remoteResource) {
 		ILogEntry logEntry = logs.getLogEntry(remoteResource);
-		// For incoming deletions grab the comment for the latest on the same branch
-		// which is now in the attic.
-		try {
-			String remoteRevision = ((ICVSRemoteFile) remoteResource).getRevision();
-			if (isDeletedRemotely(info)) {
-				ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
-				for (int i = 0; i < logEntries.length; i++) {
-					ILogEntry entry = logEntries[i];
-					String revision = entry.getRevision();
-					if (entry.isDeletion() && ResourceSyncInfo.isLaterRevision(revision, remoteRevision)) {
-						logEntry = entry;
+	    if (remoteResource != null) {
+			// For incoming deletions grab the comment for the latest on the same branch
+			// which is now in the attic.
+			try {
+				String remoteRevision = ((ICVSRemoteFile) remoteResource).getRevision();
+				if (isDeletedRemotely(info)) {
+					ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
+					for (int i = 0; i < logEntries.length; i++) {
+						ILogEntry entry = logEntries[i];
+						String revision = entry.getRevision();
+						if (entry.isDeletion() && ResourceSyncInfo.isLaterRevision(revision, remoteRevision)) {
+							logEntry = entry;
+						}
 					}
 				}
+			} catch (TeamException e) {
+				// continue and skip deletion checks
 			}
-		} catch (TeamException e) {
-			// continue and skip deletion checks
-		}
+	    }
 		addRemoteChange(info, remoteResource, logEntry);
 	}
 	
@@ -309,6 +311,7 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector impleme
      * Add the remote change to an incoming commit set
      */
     private void addRemoteChange(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
+        if (disposed) return;
         LogEntryCacheUpdateHandler handler = getLogEntryHandler();
         if(handler != null && remoteResource != null && logEntry != null && handler.isRemoteChange(info)) {
 	        if(requiresCustomSyncInfo(info, remoteResource, logEntry)) {
