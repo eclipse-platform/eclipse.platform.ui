@@ -114,9 +114,9 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_CTOOL_NEW_WND_HOVER = "IMG_CTOOL_NEW_WND_HOVER"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_NEW_WND_DISABLED = "IMG_CTOOL_NEW_WND_DISABLED"; //$NON-NLS-1$
 
-	public final static String IMG_CTOOL_REUSE_EDITOR = "IMG_CTOOL_REUSE_EDITOR"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_REUSE_EDITOR_HOVER = "IMG_CTOOL_REUSE_EDITOR_HOVER"; //$NON-NLS-1$
-	public final static String IMG_CTOOL_REUSE_EDITOR_DISABLED = "IMG_CTOOL_REUSE_EDITOR_DISABLED"; //$NON-NLS-1$
+	public final static String IMG_CTOOL_PIN_EDITOR = "IMG_CTOOL_PIN_EDITOR"; //$NON-NLS-1$
+	public final static String IMG_CTOOL_PIN_EDITOR_HOVER = "IMG_CTOOL_PIN_EDITOR_HOVER"; //$NON-NLS-1$
+	public final static String IMG_CTOOL_PIN_EDITOR_DISABLED = "IMG_CTOOL_PIN_EDITOR_DISABLED"; //$NON-NLS-1$
 		
 	public final static String IMG_CTOOL_DEF_PERSPECTIVE = "IMG_CTOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_DEF_PERSPECTIVE_HOVER = "IMG_CTOOL_DEF_PERSPECTIVE_HOVER"; //$NON-NLS-1$

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class EditorPane extends PartPane {
 	private EditorWorkbook workbook;
-	private ReuseEditorAction reuseEditorAction;
+	private PinEditorAction pinEditorAction;
 /**
  * Constructs an editor pane for an editor part.
  */
@@ -168,29 +168,29 @@ protected void addMoveItems(Menu moveMenu) {
 /**
  * Set the action to pin/unpin an editor. 
  */
-protected void setReuseEditorAction(ReuseEditorAction action) {
-	reuseEditorAction = action;
+protected void setPinEditorAction(PinEditorAction action) {
+	pinEditorAction = action;
 }
 /**
  * Add the pin menu item on the editor system menu
  */
-protected void addReuseEditorItem(Menu parent) {
+protected void addPinEditorItem(Menu parent) {
 		// add fast view item
 	final MenuItem item = new MenuItem(parent, SWT.CHECK);
-	item.setText(WorkbenchMessages.getString("EditorPane.reuseEditor")); //$NON-NLS-1$
+	item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			if(reuseEditorAction != null) {
-				reuseEditorAction.setChecked(!reuseEditorAction.isChecked());
-				reuseEditorAction.run();
+			if(pinEditorAction != null) {
+				pinEditorAction.setChecked(!pinEditorAction.isChecked());
+				pinEditorAction.run();
 			}
 		}
 	});
-	if(reuseEditorAction == null) {
+	if(pinEditorAction == null) {
 		item.setEnabled(false);
 	} else {
-		item.setEnabled(reuseEditorAction.isEnabled());
-		item.setSelection(reuseEditorAction.isChecked());
+		item.setEnabled(pinEditorAction.isEnabled());
+		item.setSelection(pinEditorAction.isChecked());
 	}
 }
 

@@ -102,8 +102,6 @@ public void createControl(Composite parent) {
 	control.addListener(SWT.Activate, this);
 	hookFocus(control);
 	hookFocus(content);
-
-	page.firePartOpened(part);
 }
 protected abstract WorkbenchPart createErrorPart(WorkbenchPart oldPart);
 /**
@@ -331,7 +329,7 @@ protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 	});
 	item.setEnabled(!isZoomed && !isFastView && canZoom);
 
-	addReuseEditorItem(aMenu);
+	addPinEditorItem(aMenu);
 	
 	new MenuItem(aMenu, SWT.SEPARATOR);
 	
@@ -412,7 +410,7 @@ protected void addSizeItems(Menu sizeMenu) {
 /**
  * Add the pin menu item on the editor system menu
  */
-protected void addReuseEditorItem(Menu parent) {}
+protected void addPinEditorItem(Menu parent) {}
 /**
  * Add the move items to the Move menu.
  */
