@@ -25,22 +25,22 @@ import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
- * Manages the debug scope in response to active debug sessions.
- * When something is being debugged, the scope is activated. 
- * When all debugging stops, the scope is deactivated.
+ * Manages the debug context in response to active debug sessions.
+ * When something is being debugged, the context is activated. 
+ * When all debugging stops, the context is deactivated.
  * 
  * @since 3.0
  */
 public class DebugContextManager implements ILaunchesListener2 {
 	
 	
-	public static final String DEBUG_SCOPE = "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
+	public static final String DEBUG_CONTEXT = "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
 	
-	// whether the debug scope is currently on
+	// whether the debug context is currently on
 	private boolean fDebugging = false;
 	
-	// debug scope submission
-	private List fDebugSubmission = Collections.singletonList(new EnabledSubmission((String) null, (Shell)null, (IWorkbenchPartSite)null, DEBUG_SCOPE));
+	// debug context submission
+	private List fDebugSubmission = Collections.singletonList(new EnabledSubmission((String) null, (Shell)null, (IWorkbenchPartSite)null, DEBUG_CONTEXT));
 
 	// singleton
 	private static DebugContextManager contextServiceManager;

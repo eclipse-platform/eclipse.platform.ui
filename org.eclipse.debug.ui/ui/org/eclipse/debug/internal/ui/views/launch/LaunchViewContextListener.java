@@ -374,7 +374,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		// bindings to inherit. If we don't ignore it, we'll
 		// end up opening those views whenever a debug session
 		// starts, which is not the desired behavior.
-		contextIds.remove(DebugContextManager.DEBUG_SCOPE);
+		contextIds.remove(DebugContextManager.DEBUG_CONTEXT);
 		if (page == null || contextIds.size() == 0) {
 			return;
 		}
@@ -530,6 +530,10 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		Iterator enabledContexts = PlatformUI.getWorkbench().getContextSupport().getContextManager().getEnabledContextIds().iterator();
 		while (enabledContexts.hasNext()) {
 			String contextId = (String) enabledContexts.next();
+			if (contextId.equals(DebugContextManager.DEBUG_CONTEXT)) {
+				// Ignore the "Debugging" context. See comment in contextEnabled(...)
+				continue;
+			}
 			viewIds.addAll(getApplicableViewIds(contextId));
 		}
 		return viewIds;
@@ -624,7 +628,7 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 			if (ids == null) {
 				// seed with base debug context
 				ids = new ArrayList();
-				ids.add("org.eclipse.debug.ui.debugging"); //$NON-NLS-1$
+				ids.add(DebugContextManager.DEBUG_CONTEXT);
 				modelsToContexts.put(modelIds[i], ids);
 			}
 			contextIds.addAll(ids);
