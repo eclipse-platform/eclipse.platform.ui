@@ -239,7 +239,7 @@ public class LocalMetaArea implements ICoreConstants {
 				return;
 		}
 		try {
-			SafeChunkyInputStream input = new SafeChunkyInputStream(file);
+			SafeChunkyInputStream input = new SafeChunkyInputStream(file, 500);
 			DataInputStream dataIn = new DataInputStream(input);
 			try {
 				try {

@@ -87,7 +87,7 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 		// read chunks
 		SafeChunkyInputStream input = null;
 		try {
-			input = new SafeChunkyInputStream(target.getAbsolutePath());
+			input = new SafeChunkyInputStream(target);
 			try {
 				byte[] read = new byte[chunk.length];
 				assertTrue("3.0", input.read(read) == chunk.length);

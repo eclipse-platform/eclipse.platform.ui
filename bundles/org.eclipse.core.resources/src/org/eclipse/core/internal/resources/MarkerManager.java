@@ -461,7 +461,7 @@ public class MarkerManager implements IManager {
 		if (!sourceLocation.toFile().exists())
 			return;
 		try {
-			DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toOSString()));
+			DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toFile()));
 			try {
 				MarkerSnapshotReader reader = new MarkerSnapshotReader(workspace);
 				while (true)

@@ -17,27 +17,54 @@ import java.io.*;
  */
 
 public class SafeChunkyInputStream extends InputStream {
-	protected InputStream input;
-	protected byte[] buffer;
-	protected byte[] chunk;
-	protected boolean endOfFile = false;
-	protected int nextByteInBuffer = 0;
-	protected int bufferLength = 0;
-	protected int nextByteInChunk = 0;
-	protected int chunkLength = 0;
 	protected static final int BUFFER_SIZE = 8192;
+	protected byte[] buffer;
+	protected int bufferLength = 0;
+	protected byte[] chunk;
+	protected int chunkLength = 0;
+	protected boolean endOfFile = false;
+	protected InputStream input;
+	protected int nextByteInBuffer = 0;
+	protected int nextByteInChunk = 0;
 
 	public SafeChunkyInputStream(File target) throws IOException {
-		this(target.getAbsolutePath());
+		this(target, BUFFER_SIZE);
 	}
 
-	public SafeChunkyInputStream(String filePath) throws IOException {
-		input = new BufferedInputStream(new FileInputStream(filePath));
-		buffer = new byte[BUFFER_SIZE];
+	public SafeChunkyInputStream(File target, int bufferSize) throws IOException {
+		input = new FileInputStream(target);
+		buffer = new byte[bufferSize];
+	}
+
+	protected void accumulate(byte[] data, int start, int end) {
+		byte[] result = new byte[chunk.length + end - start];
+		System.arraycopy(chunk, 0, result, 0, chunk.length);
+		System.arraycopy(data, start, result, chunk.length, end - start);
+		chunk = result;
+		chunkLength = chunkLength + end - start;
 	}
 
 	public int available() throws IOException {
 		return chunkLength - nextByteInChunk;
+	}
+
+	protected void buildChunk() throws IOException {
+		if (nextByteInBuffer + ILocalStoreConstants.CHUNK_DELIMITER_SIZE > bufferLength)
+			shiftAndFillBuffer();
+		int end = find(ILocalStoreConstants.END_CHUNK, nextByteInBuffer, bufferLength, true);
+		if (end != -1) {
+			accumulate(buffer, nextByteInBuffer, end);
+			nextByteInBuffer = end + ILocalStoreConstants.CHUNK_DELIMITER_SIZE;
+			return;
+		}
+		accumulate(buffer, nextByteInBuffer, bufferLength);
+		bufferLength = input.read(buffer);
+		nextByteInBuffer = 0;
+		if (bufferLength == -1) {
+			endOfFile = true;
+			return;
+		}
+		buildChunk();
 	}
 
 	public void close() throws IOException {
@@ -66,8 +93,7 @@ public class SafeChunkyInputStream extends InputStream {
 		}
 		if (compare(buffer, pattern, pos))
 			return pos;
-		else
-			return find(pattern, pos + 1, endIndex, accumulate);
+		return find(pattern, pos + 1, endIndex, accumulate);
 	}
 
 	protected int findByte(byte target, int startIndex, int endIndex) {
@@ -77,28 +103,6 @@ public class SafeChunkyInputStream extends InputStream {
 			startIndex++;
 		}
 		return -1;
-	}
-
-	protected void accumulate(byte[] data, int start, int end) {
-		byte[] result = new byte[chunk.length + end - start];
-		System.arraycopy(chunk, 0, result, 0, chunk.length);
-		System.arraycopy(data, start, result, chunk.length, end - start);
-		chunk = result;
-		chunkLength = chunkLength + end - start;
-	}
-
-	protected void shiftAndFillBuffer() throws IOException {
-		int length = bufferLength - nextByteInBuffer;
-		System.arraycopy(buffer, nextByteInBuffer, buffer, 0, length);
-		nextByteInBuffer = 0;
-		bufferLength = length;
-		int read = input.read(buffer, bufferLength, buffer.length - bufferLength);
-		if (read != -1)
-			bufferLength += read;
-		else {
-			resetChunk();
-			endOfFile = true;
-		}
 	}
 
 	protected void findChunkStart() throws IOException {
@@ -119,23 +123,22 @@ public class SafeChunkyInputStream extends InputStream {
 		findChunkStart();
 	}
 
-	protected void buildChunk() throws IOException {
-		if (nextByteInBuffer + ILocalStoreConstants.CHUNK_DELIMITER_SIZE > bufferLength)
-			shiftAndFillBuffer();
-		int end = find(ILocalStoreConstants.END_CHUNK, nextByteInBuffer, bufferLength, true);
-		if (end != -1) {
-			accumulate(buffer, nextByteInBuffer, end);
-			nextByteInBuffer = end + ILocalStoreConstants.CHUNK_DELIMITER_SIZE;
-			return;
-		}
-		accumulate(buffer, nextByteInBuffer, bufferLength);
-		bufferLength = input.read(buffer);
-		nextByteInBuffer = 0;
-		if (bufferLength == -1) {
-			endOfFile = true;
-			return;
-		}
+	public int read() throws IOException {
+		if (endOfFile)
+			return -1;
+		// if there are bytes left in the chunk, return the first available
+		if (nextByteInChunk < chunkLength)
+			return chunk[nextByteInChunk++] & 0xFF;
+		// Otherwise the chunk is empty so clear the current one, get the next
+		// one and recursively call read.  Need to recur as the chunk may be 
+		// real but empty.
+		resetChunk();
+		findChunkStart();
+		if (endOfFile)
+			return -1;
 		buildChunk();
+		refineChunk();
+		return read();
 	}
 
 	/**
@@ -160,21 +163,17 @@ public class SafeChunkyInputStream extends InputStream {
 		nextByteInChunk = 0;
 	}
 
-	public int read() throws IOException {
-		if (endOfFile)
-			return -1;
-		// if there are bytes left in the chunk, return the first available
-		if (nextByteInChunk < chunkLength)
-			return chunk[nextByteInChunk++] & 0xFF;
-		// Otherwise the chunk is empty so clear the current one, get the next
-		// one and recursively call read.  Need to recur as the chunk may be 
-		// real but empty.
-		resetChunk();
-		findChunkStart();
-		if (endOfFile)
-			return -1;
-		buildChunk();
-		refineChunk();
-		return read();
+	protected void shiftAndFillBuffer() throws IOException {
+		int length = bufferLength - nextByteInBuffer;
+		System.arraycopy(buffer, nextByteInBuffer, buffer, 0, length);
+		nextByteInBuffer = 0;
+		bufferLength = length;
+		int read = input.read(buffer, bufferLength, buffer.length - bufferLength);
+		if (read != -1)
+			bufferLength += read;
+		else {
+			resetChunk();
+			endOfFile = true;
+		}
 	}
 }

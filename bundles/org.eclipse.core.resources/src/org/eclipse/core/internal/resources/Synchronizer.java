@@ -173,7 +173,7 @@ public class Synchronizer implements ISynchronizer {
 		if (!sourceLocation.toFile().exists())
 			return;
 		try {
-			DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toOSString()));
+			DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toFile()));
 			try {
 				SyncInfoSnapReader reader = new SyncInfoSnapReader(workspace, this);
 				while (true)
