@@ -600,9 +600,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.TextViewer#setVisibleDocument(org.eclipse.jface.text.IDocument)
 	 */
 	protected void setVisibleDocument(IDocument document) {
-		if (!isProjectionMode())
+		if (!isProjectionMode()) {
 			super.setVisibleDocument(document);
-
+			return;
+		}
+		
 		// In projection mode we don't want to throw away the find/replace document adapter 
 		FindReplaceDocumentAdapter adapter= fFindReplaceDocumentAdapter;
 		super.setVisibleDocument(document);
@@ -623,7 +625,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	public IRegion getVisibleRegion() {
 		disableProjection();
-		return getModelCoverage();
+		IRegion visibleRegion= getModelCoverage();
+		if (visibleRegion == null)
+			visibleRegion= new Region(0, 0);
+		
+		return visibleRegion;
 	}
 
 	/*
