@@ -59,8 +59,8 @@ protected void writeFile(IFile file, IPath destinationPath) throws IOException, 
 	InputStream contentStream = null;
 
 	try {
-		output = new FileOutputStream(destinationPath.toOSString());
 		contentStream = file.getContents(false);
+		output = new FileOutputStream(destinationPath.toOSString());
 		int chunkSize = contentStream.available();
 		byte[] readBuffer = new byte[chunkSize];
 		int n = contentStream.read(readBuffer);
