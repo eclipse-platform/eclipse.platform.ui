@@ -256,9 +256,9 @@ public class NativeStackPresentation extends StackPresentation {
 		Rectangle bounds = folder.getBounds();
 		Rectangle offset = folder.getClientArea();
 		bounds.x += offset.x;
-		bounds.y += offset.y + 2;
+		bounds.y += offset.y;
 		bounds.width = offset.width;
-		bounds.height = offset.height - 2;
+		bounds.height = offset.height;
 		return bounds;
 	}	
 	
@@ -308,10 +308,8 @@ public class NativeStackPresentation extends StackPresentation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#addPart(org.eclipse.ui.internal.skins.IPresentablePart, org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
-	public void addPart(IPresentablePart newPart, IPresentablePart position) {
-		int idx = indexOf(position);
-		
-		createPartTab(newPart, idx);		
+	public void addPart(IPresentablePart newPart, Object cookie) {
+		createPartTab(newPart, tabFolder.getItemCount());		
 	}
 
 	/* (non-Javadoc)
@@ -343,8 +341,8 @@ public class NativeStackPresentation extends StackPresentation {
 		
 		if (current != null) {
 			tabFolder.setSelection(indexOf(current));
-			setControlSize();
 			current.setVisible(true);
+			setControlSize();
 		}
 	}
 	
