@@ -104,7 +104,7 @@ public final class ContextManager implements IContextManager {
 	public void setActiveContextIds(SortedSet activeContextIds) {
 		activeContextIds = Util.safeCopy(activeContextIds, String.class);
 		
-		if (activeContextIds.equals(this.activeContextIds)) {
+		if (!activeContextIds.equals(this.activeContextIds)) {
 			this.activeContextIds = activeContextIds;	
 			fireContextManagerChanged();
 		}
