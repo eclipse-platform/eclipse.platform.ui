@@ -454,7 +454,7 @@ void createTypesArea(Composite parent) {
 	composite.setLayout(layout);
 
 	Label label = new Label(composite, SWT.NONE);
-	label.setText(TaskListMessages.getString("TaskList.showEntriesOfType")); //$NON-NLS-1$
+	label.setText(TaskListMessages.getString("TaskList.showItemsOfType")); //$NON-NLS-1$
 
 	typesViewer = new CheckboxTreeViewer(composite);
 	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

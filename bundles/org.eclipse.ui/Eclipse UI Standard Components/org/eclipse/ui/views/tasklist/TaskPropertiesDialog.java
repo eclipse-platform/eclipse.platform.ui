@@ -157,9 +157,10 @@ protected void configureShell(Shell newShell) {
 		newShell.setText(TaskListMessages.getString("TaskProp.newTaskTitle")); //$NON-NLS-1$
 	}
 	else {
-		String msg = MarkerUtil.getMessage(marker);
-		String kind = MarkerUtil.getKindText(marker);
-		newShell.setText(TaskListMessages.format("TaskProp.titleFmt", new Object[] { msg, kind })); //$NON-NLS-1$
+		//String msg = MarkerUtil.getMessage(marker);
+		//String kind = MarkerUtil.getKindText(marker);
+		//newShell.setText(TaskListMessages.format("TaskProp.titleFmt", new Object[] { msg, kind })); //$NON-NLS-1$
+		newShell.setText(TaskListMessages.getString("TaskProp.propertiesTitle")); //$NON-NLS-1$
 	}
 	WorkbenchHelp.setHelp(newShell, ITaskListHelpContextIds.PROPERTIES_DIALOG);
 }

@@ -310,14 +310,12 @@ void createColumns() {
 	
 	if (markerLimitExceeded) {
 		stackLayout.topControl = compositeMarkerLimitExceeded;
-		viewer.setSelection(null);
 	}
 	else {
 		stackLayout.topControl = table;
 	}
 
 	parent.layout();
-	viewer.refresh();
 }
 
 /* (non-Javadoc)
@@ -333,6 +331,15 @@ public void createPartControl(Composite parent) {
 	makeActions();
 	fillActionBars();
 	addDragSupport(table);
+
+	compositeMarkerLimitExceeded = new Composite(parent, SWT.NONE);
+	compositeMarkerLimitExceeded.setLayout(new GridLayout());
+	Label labelMarkerLimitExceeded = new Label(compositeMarkerLimitExceeded, 
+			SWT.WRAP);
+	labelMarkerLimitExceeded.setText(TaskListMessages.getString(
+		"TaskList.markerLimitExceeded")); //$NON-NLS-1$
+	parent.setLayout(stackLayout);	
+	setMarkerLimitExceeded(false);
 
 	viewer.setContentProvider(new TaskListContentProvider(this));
 	viewer.setLabelProvider(new TaskListLabelProvider());
@@ -434,17 +441,6 @@ public void createPartControl(Composite parent) {
 			WorkbenchHelp.displayHelp(contextId);
 		}
 	});
-
-	compositeMarkerLimitExceeded = new Composite(parent, SWT.NONE);
-	compositeMarkerLimitExceeded.setLayout(new GridLayout());
-
-	Label labelMarkerLimitExceeded = new Label(compositeMarkerLimitExceeded, 
-			SWT.WRAP);
-	labelMarkerLimitExceeded.setText(TaskListMessages.getString(
-		"TaskList.markerLimitExceeded")); //$NON-NLS-1$
-
-	parent.setLayout(stackLayout);	
-	setMarkerLimitExceeded(false);
 
 	// Prime the status line and title.
 	updateStatusMessage();
