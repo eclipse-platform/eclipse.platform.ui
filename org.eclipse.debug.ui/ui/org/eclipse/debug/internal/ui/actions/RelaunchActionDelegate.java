@@ -73,7 +73,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 			launch= ((IProcess)element).getLaunch();
 		}
 		
-		return launch != null;
+		return launch != null && launch.getLaunchConfiguration() != null;
 	}
 			
 	/**
