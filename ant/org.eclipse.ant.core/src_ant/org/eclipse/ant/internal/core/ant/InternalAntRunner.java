@@ -231,9 +231,17 @@ public class InternalAntRunner {
 			org.eclipse.ant.core.Task task = (org.eclipse.ant.core.Task) iterator.next();
 			try {
 				Class taskClass = Class.forName(task.getClassName());
+				try {
+					project.checkTaskClass(taskClass);
+				} catch (BuildException e) {
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Error_setting_Ant_task"), new String[]{task.getTaskName()}), e); //$NON-NLS-1$
+					AntCorePlugin.getPlugin().getLog().log(status);
+					continue;
+				}
 				project.addTaskDefinition(task.getTaskName(), taskClass);
 			} catch (ClassNotFoundException e) {
-				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_task_{1}_1"), new String[]{task.getClassName(), task.getTaskName()}), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_task_{1}_1"), new String[]{task.getClassName(), task.getTaskName()}), e); //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(status);
 			}
 		}
 	}
@@ -247,7 +255,8 @@ public class InternalAntRunner {
 				Class typeClass = Class.forName(type.getClassName());
 				project.addDataTypeDefinition(type.getTypeName(), typeClass);
 			} catch (ClassNotFoundException e) {
-				throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_type_{1}_2"), new String[]{type.getClassName(), type.getTypeName()}), e); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Class_{0}_not_found_for_type_{1}_2"), new String[]{type.getClassName(), type.getTypeName()}), e); //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(status);
 			}
 		}
 	}

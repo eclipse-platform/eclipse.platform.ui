@@ -230,9 +230,18 @@ public class AntCorePreferences {
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
-				task.setLibrary(url);
-				if (!extraClasspathURLs.contains(url)) {
-					extraClasspathURLs.add(url);
+				if (new File(url.getPath()).exists()) {
+					if (!extraClasspathURLs.contains(url)) {
+						extraClasspathURLs.add(url);
+					}
+					result.add(task);
+					addPluginClassLoader(descriptor.getPluginClassLoader());
+					task.setLibrary(url);
+				} else {
+					//task specifies a library that does not exist
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_task"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
+					AntCorePlugin.getPlugin().getLog().log(status);
+					continue;
 				}
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
@@ -240,8 +249,6 @@ public class AntCorePreferences {
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
-			result.add(task);
-			addPluginClassLoader(descriptor.getPluginClassLoader());
 		}
 		return result;
 	}
@@ -272,9 +279,18 @@ public class AntCorePreferences {
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
-				type.setLibrary(url);
-				if (!extraClasspathURLs.contains(url)) {
-					extraClasspathURLs.add(url);
+				if (new File(url.getPath()).exists()) {
+					if (!extraClasspathURLs.contains(url)) {
+						extraClasspathURLs.add(url);
+					}
+					result.add(type);
+					addPluginClassLoader(descriptor.getPluginClassLoader());
+					type.setLibrary(url);
+				} else {
+					//type specifies a library that does not exist
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_type"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
+					AntCorePlugin.getPlugin().getLog().log(status);
+					continue;
 				}
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
@@ -282,8 +298,6 @@ public class AntCorePreferences {
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
-			result.add(type);
-			addPluginClassLoader(descriptor.getPluginClassLoader());
 		}
 		return result;
 	}
@@ -307,8 +321,17 @@ public class AntCorePreferences {
 			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
-				if (!extraClasspathURLs.contains(url)) {
-					extraClasspathURLs.add(url);
+				
+				if (new File(url.getPath()).exists()) {
+					if (!extraClasspathURLs.contains(url)) {
+						extraClasspathURLs.add(url);
+					}
+					addPluginClassLoader(descriptor.getPluginClassLoader());
+				} else {
+					//extra classpath entry that does not exist
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_extraClasspathEntry"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
+					AntCorePlugin.getPlugin().getLog().log(status);
+					continue;
 				}
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
@@ -316,7 +339,6 @@ public class AntCorePreferences {
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
-			addPluginClassLoader(descriptor.getPluginClassLoader());
 		}
 	}
 
