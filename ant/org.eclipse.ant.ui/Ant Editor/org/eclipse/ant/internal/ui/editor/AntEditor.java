@@ -170,7 +170,7 @@ public class AntEditor extends TextEditor {
         }
     }
 
-    /**
+    /*
      * Returns whether the editor is active.
      */
     private boolean isActivePart() {
