@@ -229,7 +229,7 @@
       <actionSet
             label="%Command.category.name"
             description="%Command.category.description"
-            visible="true"
+            visible="false"
             id="org.eclipse.team.ui.actionSet">
          <action
                allowLabelUpdate="true"
