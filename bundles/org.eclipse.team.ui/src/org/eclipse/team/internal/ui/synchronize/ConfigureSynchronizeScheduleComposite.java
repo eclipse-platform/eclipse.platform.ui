@@ -137,9 +137,7 @@ public class ConfigureSynchronizeScheduleComposite extends Composite {
 			{
 				hoursOrSeconds = new Combo(composite, SWT.READ_ONLY);
 				hoursOrSeconds.setItems(new String[] { Policy.bind("ConfigureRefreshScheduleDialog.5"), Policy.bind("ConfigureRefreshScheduleDialog.6") }); //$NON-NLS-1$ //$NON-NLS-2$
-				final GridData gridData_1 = new GridData();
-				gridData_1.widthHint = 75;
-				hoursOrSeconds.setLayoutData(gridData_1);
+				hoursOrSeconds.setLayoutData(new GridData());
 			}
 		}
 		initializeValues();
