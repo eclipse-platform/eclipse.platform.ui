@@ -15,11 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPersistentPreferenceStore;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,6 +30,13 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -88,33 +91,45 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 * Creates the page's UI content.
 	 */
 	protected Control createContents(Composite parent) {
+		// @issue if the product subclasses this page, then it should provide the help content
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
 
-		Composite pageComponent = new Composite(parent, SWT.NULL);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		pageComponent.setLayoutData(data);
-		pageComponent.setFont(parent.getFont());
+		Composite composite = createComposite(parent);
 
+		createOpenPerspButtonGroup(composite);
+		createOpenViewButtonGroup(composite);
+		createCustomizePerspective(composite);
+
+		return composite;
+	}
+	
+	/**
+	 * Creates the composite which will contain all the preference controls
+	 * for this page.
+	 * 
+	 * @param parent the parent composite
+	 * @return the composite for this page
+	 */
+	protected Composite createComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		composite.setLayoutData(data);
+		composite.setFont(parent.getFont());
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 10;
-		pageComponent.setLayout(layout);
-
-		createOpenPerspButtonGroup(pageComponent);
-		createOpenViewButtonGroup(pageComponent);
-		createCustomizePerspective(pageComponent);
-
-		return pageComponent;
+		composite.setLayout(layout);
+		return composite;
 	}
-	
+
 	/**
 	 * Create a composite that contains buttons for selecting
 	 * the open perspective mode.
 	 * 
-	 * @param composite Composite
+	 * @param composite the parent composite
 	 */
-	private void createOpenPerspButtonGroup(Composite composite) {
+	protected void createOpenPerspButtonGroup(Composite composite) {
 		
 		Font font = composite.getFont();
 
@@ -149,10 +164,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	}
 	
 	/**
-	 * Create a composite that contains buttons for selecting open view mode.
-	 * @param composite Composite
+	 * Creates a composite that contains buttons for selecting open view mode.
+	 * 
+	 * @param composite the parent composite
 	 */
-	private void createOpenViewButtonGroup(Composite composite) {
+	protected void createOpenViewButtonGroup(Composite composite) {
 		
 		Font font = composite.getFont();
 
@@ -193,7 +209,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	}
 
 	/**
-	 * Create a table a 3 buttons to enable the user to manage customized
+	 * Create a table of 3 buttons to enable the user to manage customized
 	 * perspectives.
 	 */
 	protected Composite createCustomizePerspective(Composite parent) {
@@ -345,12 +361,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	}
 	
 	/**
-	 * Get the preference store for the API constants (those in
+	 * Returns the preference store for the API constants (those in
 	 * IWorkbenchPreferenceConstants).
-	 * @return IPreferenceStore
+	 * @return the UI preference store
 	 */
-
-	private IPreferenceStore getUIPublicPreferenceStore() {
+	protected IPreferenceStore getUIPublicPreferenceStore() {
 		AbstractUIPlugin uiPlugin =
 			(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
 		return uiPlugin.getPreferenceStore();
@@ -374,11 +389,11 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		openSameWindowButton.setSelection(IPreferenceConstants.OPM_ACTIVE_PAGE == openPerspMode);
 		openNewWindowButton.setSelection(IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode);
 	}
-	/*
-	 * Delete the perspectives selected by the user if there is not
+	
+	/**
+	 * Deletes the perspectives selected by the user if there is no
 	 * opened instance of that perspective.
 	 */
-
 	private boolean deletePerspectives() {
 		IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
