@@ -167,6 +167,7 @@ public class ProgressFeedbackManager {
 			 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			public void dispose() {
+				//No dispose behavior
 			}
 
 			/*
