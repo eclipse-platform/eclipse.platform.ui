@@ -1,8 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
@@ -29,8 +37,6 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			return;
 		}
 		fWorkingDirText.setText(fDefaultWorkingDirPath);
-		fLocalDirButton.setSelection(true);
-		fWorkspaceDirButton.setSelection(false);		
 	}
 	
 	
@@ -47,21 +53,11 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 			}
 			
 			String wd = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String)null); //$NON-NLS-1$
-			fWorkspaceDirText.setText(""); //$NON-NLS-1$
 			fWorkingDirText.setText(""); //$NON-NLS-1$
 			if (wd == null || isSameAsDefault(wd)) {
 				fUseDefaultWorkingDirButton.setSelection(true);
 			} else {
-				IPath path = new Path(wd);
-				if (path.isAbsolute()) {
-					fWorkingDirText.setText(wd);
-					fLocalDirButton.setSelection(true);
-					fWorkspaceDirButton.setSelection(false);
-				} else {
-					fWorkspaceDirText.setText(wd);
-					fWorkspaceDirButton.setSelection(true);
-					fLocalDirButton.setSelection(false);
-				}
+				fWorkingDirText.setText(wd);
 				fUseDefaultWorkingDirButton.setSelection(false);
 			}
 			handleUseDefaultWorkingDirButtonSelected();
@@ -79,41 +75,18 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		String wd = getCurrentWorkingDirectory();
+		String wd = getAttributeValueFrom(fWorkingDirText);
 		configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, wd);
 	}
 	
-	private String getCurrentWorkingDirectory() {
-		String wd = null;
-		if (isLocalWorkingDirectory()) {
-			wd = getAttributeValueFrom(fWorkingDirText);
-		} else {
-			IPath path = new Path(fWorkspaceDirText.getText());
-			path = path.makeRelative();
-			wd = path.toString();
-		} 
-		
-		return wd;
-	}
-
 	public void setEnabled(boolean enabled) {
 		fUseDefaultWorkingDirButton.setEnabled(enabled);
-		if(!isDefaultWorkingDirectory() && enabled) {
-			boolean local = isLocalWorkingDirectory();
-			fWorkingDirText.setEnabled(local);
-			fWorkingDirBrowseButton.setEnabled(local);
-			fLocalDirButton.setEnabled(true);
-			fWorkspaceDirText.setEnabled(!local);
-			fWorkspaceDirBrowseButton.setEnabled(!local);
-			fWorkspaceDirButton.setEnabled(true);
-		} else {
-			fWorkingDirText.setEnabled(false);
-			fWorkingDirBrowseButton.setEnabled(false);
-			fWorkspaceDirText.setEnabled(false);
-			fWorkspaceDirBrowseButton.setEnabled(false);
-			fLocalDirButton.setEnabled(false);
-			fWorkspaceDirButton.setEnabled(false);
-			fUseDefaultWorkingDirButton.setSelection(isSameAsDefault(getCurrentWorkingDirectory()));
-		}
+		boolean def = isDefaultWorkingDirectory();
+		fUseDefaultWorkingDirButton.setSelection(def);
+		enabled = enabled && !def;
+		fWorkingDirText.setEnabled(enabled);
+		fWorkspaceButton.setEnabled(enabled);
+		fFileSystemButton.setEnabled(enabled);
+		fVariablesButton.setEnabled(enabled);
 	}
 }
