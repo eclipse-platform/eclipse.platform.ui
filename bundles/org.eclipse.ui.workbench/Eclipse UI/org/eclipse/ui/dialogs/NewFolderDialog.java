@@ -39,14 +39,12 @@ import org.eclipse.ui.internal.dialogs.CreateLinkedResourceGroup;
  * </p>
  */
 public class NewFolderDialog extends SelectionDialog {
-	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+	private static final int SIZING_TEXT_FIELD_WIDTH = 300;
 
 	// widgets
 	private Text folderNameField;
 	private CreateLinkedResourceGroup linkedResourceGroup;
 	private MessageLine statusLine;	
-
-	private boolean createLink = false;
 
 	IContainer container;
 	
@@ -209,12 +207,9 @@ private IFolder createNewFolder(String folderName, final String linkTargetName) 
  * Sets the dialog result to the created folder.  
  */
 protected void okPressed() {
-	String linkTarget = null; 
-		
-	if(createLink) {
-		linkTarget = linkedResourceGroup.getLinkTarget();
-	}
+	String linkTarget = linkedResourceGroup.getLinkTarget();
 	IFolder folder = createNewFolder(folderNameField.getText(), linkTarget);
+	
 	setSelectionResult(new IFolder[] {folder});
 	super.okPressed();
 }
