@@ -178,7 +178,10 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 	 * see ITypedElement.getName
 	 */
 	public String getName() {
-		
+		return internalGetName(false);
+	}
+	
+	String internalGetName(boolean swap) {
 		String right= null;
 		if (fRight != null)
 			right= fRight.getName();
@@ -201,10 +204,18 @@ public class DiffNode extends DiffContainer implements ITypedElement, ICompareIn
 		if (right.equals(left))
 			return right;
 			
-		String fmt= Utilities.getString("DiffNode.nameFormat"); //$NON-NLS-1$
+		String s1;
+		String s2;
 		
-		String s1= right;
-		String s2= left;
+		if (swap) {
+			s1= left;
+			s2= right;
+		} else {
+			s1= right;
+			s2= left;
+		}
+		
+		String fmt= Utilities.getString("DiffNode.nameFormat"); //$NON-NLS-1$
 		return MessageFormat.format(fmt, new String[] { s1, s2 });
 	}
 

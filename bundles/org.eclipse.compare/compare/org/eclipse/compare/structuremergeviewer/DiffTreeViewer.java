@@ -93,9 +93,13 @@ public class DiffTreeViewer extends TreeViewer {
 	class DiffViewerLabelProvider extends LabelProvider {
 		
 		public String getText(Object element) {
-			if (element instanceof IDiffElement) {
+			
+			if (element instanceof DiffNode)
+				return ((DiffNode)element).internalGetName(fLeftIsLocal);
+				
+			if (element instanceof IDiffElement)
 				return ((IDiffElement)element).getName();
-			}
+						
 			return Utilities.getString(fBundle, "defaultLabel"); //$NON-NLS-1$
 		}
 	
