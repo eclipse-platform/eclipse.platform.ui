@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IStatus;
  * Represents status related to resources in the Resources plug-in and
  * defines the relevant status code constants.
  * Status objects created by the Resources plug-in bear its unique id
- * (<code>ResourcesPlugin.PI_RESOURCES</code> and one of
+ * (<code>ResourcesPlugin.PI_RESOURCES</code>) and one of
  * these status codes.
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -104,13 +104,13 @@ public interface IResourceStatus extends IStatus {
 	public static final int FAILED_READ_LOCAL = 271;
 	
 	/** Status code constant (value 272) indicating an error occurred while
-	 * writing part of a resource to a the local file system.
+	 * writing part of a resource to the local file system.
  	 * Severity: error. Category: local file system.
  	 */
 	public static final int FAILED_WRITE_LOCAL = 272;
 	
 	/** Status code constant (value 273) indicating an error occurred while
-	 * deleting a resource from a the local file system.
+	 * deleting a resource from the local file system.
  	 * Severity: error. Category: local file system.
  	 */
 	public static final int FAILED_DELETE_LOCAL = 273;

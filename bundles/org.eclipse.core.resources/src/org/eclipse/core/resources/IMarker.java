@@ -62,7 +62,7 @@ import java.util.Map;
  * </p>
  * <p>All markers declared as <code>persistent</code> are saved when the
  * workspace is saved, except those explicitly set as transient (the
- * <code>TRANSIENT</code> attribute is set as <code>true</code>). A plug- in
+ * <code>TRANSIENT</code> attribute is set as <code>true</code>). A plug-in
  * which defines a persistent marker is not directly involved in saving and
  * restoring the marker. Markers are not under version and configuration
  * management, and cannot be shared via VCM repositories.
@@ -82,35 +82,35 @@ public interface IMarker extends IAdaptable {
 	 *====================================================================*/
 	
 	/** 
-	 * Base marker type 
+	 * Base marker type. 
 	 *
 	 * @see #getType
 	 */
 	public static final String MARKER = ResourcesPlugin.PI_RESOURCES + ".marker"; //$NON-NLS-1$
 
 	/** 
-	 * Task marker type 
+	 * Task marker type. 
 	 *
 	 * @see #getType
 	 */
 	public static final String TASK = ResourcesPlugin.PI_RESOURCES + ".taskmarker"; //$NON-NLS-1$
 
 	/** 
-	 * Problem marker type 
+	 * Problem marker type. 
 	 *
 	 * @see #getType
 	 */
 	public static final String PROBLEM = ResourcesPlugin.PI_RESOURCES + ".problemmarker"; //$NON-NLS-1$
 
 	/** 
-	 * Text marker type 
+	 * Text marker type. 
 	 *
 	 * @see #getType
 	 */
 	public static final String TEXT = ResourcesPlugin.PI_RESOURCES + ".textmarker"; //$NON-NLS-1$
 
 	/** 
-	 * Bookmark marker type 
+	 * Bookmark marker type. 
 	 *
 	 * @see #getType
 	 */
@@ -269,13 +269,13 @@ public interface IMarker extends IAdaptable {
  * @exception CoreException if this marker could not be deleted. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void delete() throws CoreException;
 /**
  * Tests this marker for equality with the given object.
- * Two markers are equal iff their id and resource are both equal.
+ * Two markers are equal if their id and resource are both equal.
  * 
  * @param object the other object
  * @return an indication of whether the objects are equal
@@ -426,7 +426,7 @@ public boolean isSubtypeOf(String superType) throws CoreException;
  * <ul>
  * <li> This marker does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void setAttribute(String attributeName, int value) throws CoreException;
@@ -447,7 +447,7 @@ public void setAttribute(String attributeName, int value) throws CoreException;
  * <ul>
  * <li> This marker does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void setAttribute(String attributeName, Object value) throws CoreException;
@@ -465,7 +465,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
  * <ul>
  * <li> This marker does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void setAttribute(String attributeName, boolean value) throws CoreException;
@@ -488,7 +488,7 @@ public void setAttribute(String attributeName, boolean value) throws CoreExcepti
  * <ul>
  * <li> This marker does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void setAttributes(String[] attributeNames, Object[] values) throws CoreException;
@@ -512,7 +512,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
  * <ul>
  * <li> This marker does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void setAttributes(Map attributes) throws CoreException;

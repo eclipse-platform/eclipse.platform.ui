@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.*;
  *		at all times and, as such, the values should not be large.</li>
  * <li>Persistent properties: Persistent properties have string values which are stored
  *		on disk across platform sessions.  The value of a persistent property is a 
- * 		string containing which should be short (i.e., under 2KB). </li>
+ * 		string which should be short (i.e., under 2KB). </li>
  * </ul>
  * </li>
  * <li>Resources are identified by type and by their <i>path</i>, which is similar to a file system 
@@ -49,7 +49,7 @@ import org.eclipse.core.runtime.*;
  *		is located by removing the last segment (the resource's name) from the resource's full path.</li>
  * <li>Resources can be local or non-local. A non-local resource is one whose
  * 		contents and properties have not been fetched from a repository.</li>
- * <li><i>Phantom</i> resource represent incoming additions or outgoing deletions
+ * <li><i>Phantom</i> resources represent incoming additions or outgoing deletions
  *		which have yet to be reconciled with a synchronization partner. </li>
  * </ul>
  * </p>
@@ -129,7 +129,7 @@ public interface IResource extends IAdaptable {
 	
 	/**
 	 * Update flag constant (bit mask value 1) indicating that the operation
-	 * if to proceed even if the resource is out of sync with the local file
+	 * should proceed even if the resource is out of sync with the local file
 	 * system.
 	 * 
 	 * @since 2.0
@@ -184,7 +184,7 @@ public interface IResource extends IAdaptable {
 	
 	/**
 	 * Update flag constant (bit mask value 16) indicating that the link creation
-	 * should proceed even if the local file is missing.
+	 * should proceed even if the local file system file or directory is missing.
 	 * 
 	 * @see IFolder#createLink
 	 * @see IFile#createLink
@@ -243,7 +243,7 @@ public interface IResource extends IAdaptable {
  * <p>
  * The entire subtree under the given resource is traversed to infinite depth,
  * unless the visitor ignores a subtree by returning <code>false</code> from its
- * visit method.
+ * <code>visit</code> method.
  * </p>
  *  <p>No  guarantees are made about the behavior of this method if resources
  * are deleted or added during the traversal of this resource hierarchy.  If
@@ -255,7 +255,7 @@ public interface IResource extends IAdaptable {
  * </p>
 <p>
  * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
- * flags (recommended), only member resources that exists will be visited.
+ * flags (recommended), only member resources that exist will be visited.
  * If the <code>INCLUDE_PHANTOMS</code> flag is specified, the visit will
  * also include any phantom member resource that the workspace is keeping track of.
  * </p>
@@ -450,7 +450,7 @@ public void clearHistory(IProgressMonitor monitor) throws CoreException;
  *      at the destination resource or one of its descendents.</li>
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -518,7 +518,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * </p>
  * <p>
  * An attempt will be made to copy the local history for this resource and its children,
- * to the destination. Since local history existence is a safetly-net mechanism, failure
+ * to the destination. Since local history existence is a safety-net mechanism, failure
  * of this action will not result in automatic failure of the copy operation.
  * </p>
  * <p>
@@ -553,7 +553,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The location of the source resource on disk is the same or a prefix of
  * the location of the destination resource on disk.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #FORCE
  * @see #SHALLOW
@@ -594,7 +594,7 @@ public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -640,7 +640,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * </p>
  * <p>
  * An attempt will be made to copy the local history for this resource and its children,
- * to the destination. Since local history existence is a safetly-net mechanism, failure
+ * to the destination. Since local history existence is a safety-net mechanism, failure
  * of this action will not result in automatic failure of the copy operation.
  * </p>
  * <p> This operation changes resources; these changes will be reported in a
@@ -668,7 +668,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #FORCE
  * @see #SHALLOW
@@ -719,7 +719,7 @@ public IMarker createMarker(String type) throws CoreException;
  * <li> This resource or one of its descendents is out of sync with the local file system
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
  * @see IResource#delete(int,IProgressMonitor)
@@ -781,13 +781,13 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * updated or created.
  * </p>
  * <p>
- * The <code>KEEP_HISTORY</code> update flag controls whether or not file that
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not files that
  * are about to be deleted from the local file system have their current
  * contents saved in the workspace's local history. The local history mechanism
  * serves as a safety net to help the user recover from mistakes that might
  * otherwise result in data loss. Specifying <code>KEEP_HISTORY</code> is
  * recommended except in circumstances where past states of the files are of no
- * conceivable interested to the user. Note that local history is maintained
+ * conceivable interest to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
  * when deleting files and folders, but not projects.
@@ -818,7 +818,7 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * <li> This resource or one of its descendents is out of sync with the local file system
  *      and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IFile#delete
  * @see IFolder#delete
@@ -848,7 +848,7 @@ public void delete(int updateFlags, IProgressMonitor monitor) throws CoreExcepti
  * <li> This resource does not exist.</li>
  * <li> This resource is a project that is not open.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
@@ -1002,7 +1002,7 @@ public IPath getFullPath();
  * <code>null</code>) path computed from the location of the project's local
  * content area and the project- relative path of the file or folder. This is
  * true regardless of whether the file or folders exists, or whether the project
- * is open or closed.
+ * is open or closed. FIXME: for linked resources, it is true only for closed projects
  * </p>
  * <p>
  * If this resource is a project that does not exist in the workspace,
@@ -1154,7 +1154,7 @@ public IProject getProject();
  * </p>
  * <p>
  * Project-relative paths are recommended over absolute paths, since 
- * the former are no affected if the project is renamed.
+ * the former are not affected if the project is renamed.
  * </p>
  *
  * @return the relative path of this resource with respect to its project
@@ -1237,7 +1237,7 @@ public int getType();
  */
 public IWorkspace getWorkspace();
 /**
- * Returns whether this resource is accessible.  For files and folder,
+ * Returns whether this resource is accessible.  For files and folders,
  * this is equivalent to existing; for projects, 
  * this is equivalent to existing and being open.  The workspace root
  * is always accessible.
@@ -1278,6 +1278,7 @@ public boolean isDerived();
  */
 public boolean isLocal(int depth);
 /**
+ * FIXME: a linked resource *can* point to a location inside of the project's location area.
  * Returns <code>true</code> if this resource has been linked to 
  * a location outside of the project's content area.  Returns <code>false</code>
  * in all other cases, including the case where this resource does not exist.
@@ -1416,7 +1417,7 @@ public boolean isTeamPrivateMember();
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
  * @see IResourceDelta#getFlags
@@ -1469,7 +1470,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * mechanism serves as a safety net to help the user recover from mistakes that
  * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
  * is recommended except in circumstances where past states of the files are of
- * no conceivable interested to the user. Note that local history is maintained
+ * no conceivable interest to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
  * when moving files and folders, but not whole projects.
@@ -1477,7 +1478,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <p>
  * If this resource is not a project, an attempt will be made to copy the local history 
  * for this resource and its children, to the destination. Since local history existence 
- * is a safetly-net mechanism, failure of this action will not result in automatic failure 
+ * is a safety-net mechanism, failure of this action will not result in automatic failure 
  * of the move operation.
  * </p>
  * <p>
@@ -1539,7 +1540,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The location of the source resource on disk is the same or a prefix of
  * the location of the destination resource on disk.</li>
  * <li> Resource changes are disallowed during certain types of resource change
- * event notification. See IResourceChangeEvent for more details.</li>
+ * event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
  * @see #FORCE
@@ -1588,7 +1589,7 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
  */
@@ -1635,7 +1636,7 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * serves as a safety net to help the user recover from mistakes that might
  * otherwise result in data loss. Specifying <code>KEEP_HISTORY</code> is
  * recommended except in circumstances where past states of the files are of no
- * conceivable interested to the user. Note that local history is maintained
+ * conceivable interest to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
  * when moving files and folders, but not whole projects.
@@ -1688,7 +1689,7 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *      event notification. See IResourceChangeEvent for more details.</li>
+ *      event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
  * @see #FORCE
@@ -1726,7 +1727,7 @@ public void move(IProjectDescription description, int updateFlags, IProgressMoni
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#DEPTH_ZERO
  * @see IResource#DEPTH_ONE
@@ -1754,7 +1755,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
  * <p>
  * Newly-created resources are not marked as derived; rather, the mark must be
  * set explicitly using <code>setDerived(true)</code>. Derived marks are maintained
- * in the in-memory resource tree, and are discarded when the resources is deleted.
+ * in the in-memory resource tree, and are discarded when the resources are deleted.
  * Derived marks are saved to disk when a project is closed, or when the workspace
  * is saved.
  * </p>
@@ -1773,7 +1774,7 @@ public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreExcepti
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #isDerived
  * @since 2.0
@@ -1802,7 +1803,7 @@ public void setDerived(boolean isDerived) throws CoreException;
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #isLocal
  */
@@ -1833,7 +1834,7 @@ public void setLocal(boolean flag, int depth, IProgressMonitor monitor) throws C
  * <li> This resource is not local.</li>
  * <li> This resource is a project that is not open.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #getPersistentProperty
  * @see #isLocal
@@ -1870,9 +1871,9 @@ public void setReadOnly(boolean readOnly);
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> This resource is not local.</li>
- * <li> This resource is project that is not open.</li>
+ * <li> This resource is a project that is not open.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #getSessionProperty
  */
@@ -1907,7 +1908,7 @@ public void setSessionProperty(QualifiedName key, Object value) throws CoreExcep
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #isTeamPrivateMember
  * @since 2.0
@@ -1935,7 +1936,7 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
  * <li> This resource does not exist.</li>
  * <li> This resource is not local.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */ 
 public void touch(IProgressMonitor monitor) throws CoreException;

@@ -151,7 +151,7 @@ public void map(IPath file, IPath location);
  * be made available. This facility is not available for marker deltas.
  * Plug-ins must assume that all markers may have changed when they are activated.
  * <p>
- * Note that this is orthogonal the <code>needSaveNumber</code>. That is,
+ * Note that this is orthogonal to <code>needSaveNumber</code>. That is,
  * one can ask for a delta regardless of whether or not one is an active participant.
  * </p>
  * <p>
@@ -177,7 +177,7 @@ public void needDelta();
  * participant in this save.
  * </p>
  * <p>
- * Note that this is orthogonal the <code>needDelta</code>. That is,
+ * Note that this is orthogonal to <code>needDelta</code>. That is,
  * one can be an active participant whether or not one asks for a delta.
  * </p>
  *

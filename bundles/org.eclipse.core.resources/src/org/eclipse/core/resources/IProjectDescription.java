@@ -153,7 +153,7 @@ public void setLocation(IPath location);
  * <p>
  * Creating a new project with a description name which doesn't
  * match the project handle name results in the description name
- * being ignored, the project will be creating using the name
+ * being ignored; the project will be created using the name
  * in the handle.
  * </p>
  *

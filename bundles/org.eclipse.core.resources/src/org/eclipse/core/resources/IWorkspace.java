@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.*;
  * <p>
  * The workspace as a whole is thread safe and allows one 
  * writer concurrent with multiple readers.  It also supports mechanisms for
- * saving and snapshoting the current resource state.
+ * saving and snapshooting the current resource state.
  * </p>
  * <p>
  * The workspace is provided by the Resources plug-in and is automatically created
@@ -212,8 +212,8 @@ public void checkpoint(boolean build);
 public IProject[][] computePrerequisiteOrder(IProject[] projects);
 
 /**
- * Data structure for holding the multi-part outcome of <code>IWorkspace.
- * computeProjectOrder</code>.
+ * Data structure for holding the multi-part outcome of 
+ * <code>IWorkspace.computeProjectOrder</code>.
  * <p>
  * This class is not intended to be instantiated by clients.
  * </p>
@@ -243,9 +243,9 @@ public final class ProjectOrder {
 	 * A list of projects ordered so as to honor the project reference
 	 * relationships between these projects wherever possible.
 	 * The elements are a subset of the ones passed as the
-	 * <code>projects</code> parameter to <code>IWorkspace.
-	 * computeProjectOrder</code>, where inaccessible (closed or non-existent)
-	 * projects have been omitted.
+	 * <code>projects</code> parameter to 
+	 * <code>IWorkspace.computeProjectOrder</code>, where inaccessible 
+	 * (closed or non-existent) projects have been omitted.
 	 */
 	public IProject[] projects;
 
@@ -346,7 +346,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
  * the copies are the same as the corresponding originals.
  * <p>
  * This method can be expressed as a series of calls to 
- * <code>IResource.copy(IPath,int,IProgressMonitor</code>, with "best effort"
+ * <code>IResource.copy(IPath,int,IProgressMonitor)</code>, with "best effort"
  * semantics:
  * <ul>
  * <li> Resources are copied in the order specified, using the given update
@@ -406,7 +406,7 @@ public IStatus copy(IResource[] resources, IPath destination, boolean force, IPr
  * <li> One of the resources, or one of its descendents, is out of sync with the
  *      local file system and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#copy(IPath,int,IProgressMonitor)
  * @since 2.0
@@ -502,7 +502,7 @@ public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor m
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void deleteMarkers(IMarker[] markers) throws CoreException;
@@ -515,7 +515,7 @@ public void deleteMarkers(IMarker[] markers) throws CoreException;
  * to do so.
  * A plug-in which uses <code>ISaveContext.needDelta</code> in the
  * process of a save indicates that it would like to be fed the
- * a resource delta the next time it is reactivated. If a plug-in
+ * resource delta the next time it is reactivated. If a plug-in
  * never gets reactivated (or if it fails to successfully register
  * to participate in workspace saves), the workspace nevertheless
  * retains the necessary information to generate the resource delta
@@ -728,7 +728,7 @@ public IStatus move(IResource[] resources, IPath destination, boolean force, IPr
  * <li> One of the resources, or one of its descendents, is out of sync with the
  *      local file system and <code>FORCE</code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#move(IPath,int,IProgressMonitor)
  * @since 2.0
@@ -1158,7 +1158,7 @@ public IStatus validateEdit(IFile[] files, Object context);
  * @return a status object with code <code>IStatus.OK</code> if
  *		the given location is valid as the linked resource location, otherwise a 
  * 	status object with severity <code>IStatus.WARNING</code> or 
- * 	<code>IStatus.ERROR</code> indicating what is wrong with the string
+ * 	<code>IStatus.ERROR</code> indicating what is wrong with the location
  * @see IStatus#OK
  * @see ResourcesPlugin#PREF_DISABLE_LINKING
  * @since 2.1
@@ -1289,7 +1289,7 @@ public IStatus validatePath(String path, int typeMask);
  * @param location the location of the project contents on disk
  * @return a status object with code <code>IStatus.OK</code> if
  *		the given location is valid as the project content location, otherwise a status 
- *		object indicating what is wrong with the string
+ *		object indicating what is wrong with the location
  * @see IProjectDescription#getLocation
  * @see IProjectDescription#setLocation
  * @see IStatus#OK

@@ -67,7 +67,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
  * <li> A project could not be deleted.</li>
  * <li> A project's contents could not be deleted.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#delete(int,IProgressMonitor)
  */
@@ -80,13 +80,13 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
  * If the path maps to the platform working location, the returned object will
  * be a single element array consisting of an object of type <code>ROOT</code>.
  * <p>
- *  If     the path maps to a project, the resulting object will be a single
+ *  If the path maps to a project, the resulting object will be a single
  * element array consisting of an object of type <code>PROJECT</code>; 
  * otherwise the resulting array will contain folders (type
  * <code>FOLDER</code>). 
  * <p>
  * The path must be absolute; its segments need not be valid names; a
- * trailing separator is ignored. The resulting resource(s) need not exist inthe
+ * trailing separator is ignored. The resulting resource(s) need not exist in the
  * workspace.
  * <p>
  * @param location a path in the local file system

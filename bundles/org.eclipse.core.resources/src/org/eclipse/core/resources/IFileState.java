@@ -104,7 +104,7 @@ public String getName();
 /**
  * Returns whether this file state is read-only.
  * This refinement of the corresponding
- * <code>IStorage</code> method restricts <code>IFileState</code>s
+ * <code>IStorage</code> method restricts <code>IFileState</code>s to
  * always be read-only.
  *
  * @see IStorage

@@ -125,7 +125,7 @@ public void rollback(ISaveContext context);
  *     context.needSaveNumber();
  *     context.needDelta(); // optional
  * </pre>
- * When the plug-in is reactivited in a subsequent workspace session,
+ * When the plug-in is reactivated in a subsequent workspace session,
  * it needs to re-register to participate in workspace saves. When it
  * does so, it is handed back key information about what state it had last
  * saved. If it's interested, it can also ask for a resource delta

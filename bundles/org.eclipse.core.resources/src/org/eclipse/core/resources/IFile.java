@@ -118,7 +118,7 @@ public interface IFile extends IResource, IStorage, IAdaptable {
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  * @see #appendContents(java.io.InputStream,int,IProgressMonitor)
@@ -153,7 +153,7 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * mechanism serves as a safety net to help the user recover from mistakes that
  * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
  * is recommended except in circumstances where past states of the files are of
- * no conceivable interested to the user. Note that local history is maintained
+ * no conceivable interest to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace.
  * </p>
@@ -190,7 +190,7 @@ public void appendContents(InputStream source, boolean force, boolean keepHistor
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  * @since 2.0
@@ -235,7 +235,7 @@ public void appendContents(InputStream source, int updateFlags, IProgressMonitor
  * <li> The corresponding location in the local file system is occupied
  *    by a file and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  */
 public void create(InputStream source, boolean force, IProgressMonitor monitor) throws CoreException;
@@ -289,7 +289,7 @@ public void create(InputStream source, boolean force, IProgressMonitor monitor) 
  * <li> The corresponding location in the local file system is occupied
  *    by a file and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @since 2.0
  */
@@ -326,10 +326,10 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  * This method is long-running; progress and cancellation are provided
  * by the given progress monitor. 
  * </p>
- * 
+ *
+ * @param localLocation a file system path where the file should be linked 
  * @param updateFlags bit-wise or of update flag constants
  *   (only ALLOW_MISSING_LOCAL is relevant here)
- * @param localLocation a file system path where the file should be linked
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this method fails. Reasons include:
@@ -347,12 +347,12 @@ public void create(InputStream source, int updateFlags, IProgressMonitor monitor
  * <li> The corresponding location in the local file system is occupied
  *    by a directory (as opposed to a file).</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification.  See IResourceChangeEvent for more details.</li>
+ *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * <li>The team provider for the project which contains this folder does not permit
  *       linked resources.</li>
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
  * </ul>
- * @see IResource#isLinked
+ * @see IResource#isLinked 
  * @see IResource#ALLOW_MISSING_LOCAL
  * @since 2.1
  */
@@ -388,7 +388,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  * <li> This resource is out of sync with the local file system
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#delete(int,IProgressMonitor)
  */
@@ -540,7 +540,7 @@ public boolean isReadOnly();
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
  * @see IResource#move(IPath,int,IProgressMonitor)
@@ -580,7 +580,7 @@ public void move(IPath destination, boolean force, boolean keepHistory, IProgres
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  * @see #setContents(java.io.InputStream,int,IProgressMonitor)
@@ -621,7 +621,7 @@ public void setContents(InputStream source, boolean force, boolean keepHistory, 
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  * @see #setContents(IFileState,int,IProgressMonitor)
@@ -652,7 +652,7 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
  * mechanism serves as a safety net to help the user recover from mistakes that
  * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
  * is recommended except in circumstances where past states of the files are of
- * no conceivable interested to the user. Note that local history is maintained
+ * no conceivable interest to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace.
  * </p>
@@ -689,7 +689,7 @@ public void setContents(IFileState source, boolean force, boolean keepHistory, I
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  * @since 2.0
@@ -716,7 +716,7 @@ public void setContents(InputStream source, int updateFlags, IProgressMonitor mo
  * mechanism serves as a safety net to help the user recover from mistakes that
  * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
  * is recommended except in circumstances where past states of the files are of
- * no conceivable interested to the user. Note that local history is maintained
+ * no conceivable interest to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace.
  * </p>
@@ -754,7 +754,7 @@ public void setContents(InputStream source, int updateFlags, IProgressMonitor mo
  * <li> The workspace is not in sync with the corresponding location
  *       in the local file system and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  * @since 2.0

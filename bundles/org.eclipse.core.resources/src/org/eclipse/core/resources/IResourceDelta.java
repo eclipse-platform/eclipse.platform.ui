@@ -34,7 +34,7 @@ public interface IResourceDelta extends IAdaptable {
 	 *====================================================================*/
 
 	/**
-	 * Delta kind constant indicating that the resource has not been changed in any way
+	 * Delta kind constant indicating that the resource has not been changed in any way.
 	 * @see IResourceDelta#getKind
 	 */
 	public static final int NO_CHANGE = IElementComparator.K_NO_CHANGE;
@@ -118,7 +118,7 @@ public interface IResourceDelta extends IAdaptable {
 	public static final int OPEN = 0x4000;
 
 	/**
-	 * Change constant (bit mask) indicating that the type of the resource has changed
+	 * Change constant (bit mask) indicating that the type of the resource has changed.
 	 * @see IResourceDelta#getFlags
 	 */
 	public static final int TYPE = 0x8000;
@@ -275,7 +275,7 @@ public IResourceDelta findMember(IPath path);
 public IResourceDelta[] getAffectedChildren();
 /**
  * Returns resource deltas for all children of this resource 
- * whose kind is included in the given mask. Kind mask are formed
+ * whose kind is included in the given mask. Kind masks are formed
  * by the bitwise or of <code>IResourceDelta</code> kind constants.
  * Returns an empty array if there are no affected children.
  * <p>
@@ -301,7 +301,7 @@ public IResourceDelta[] getAffectedChildren(int kindMask);
 
 /**
  * Returns resource deltas for all children of this resource 
- * whose kind is included in the given mask. Mask are formed
+ * whose kind is included in the given mask. Masks are formed
  * by the bitwise or of <code>IResourceDelta</code> kind constants.
  * Returns an empty array if there are no affected children.
  * <p>

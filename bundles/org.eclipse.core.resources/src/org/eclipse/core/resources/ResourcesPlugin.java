@@ -93,25 +93,29 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_ENCODING = "encoding"; //$NON-NLS-1$
 	
 	/** 
-	 * Common prefix for workspace preference names. 
+	 * Common prefix for workspace preference names.
+	 * @since 2.1 
 	 */ 
 	private static final String PREF_DESCRIPTION_PREFIX = "description."; //$NON-NLS-1$
 
 	/**
 	 * Name of a preference for configuring whether the workspace performs auto-
 	 * builds.
+	 * @since 2.1
 	 */
 	public static final String PREF_AUTO_BUILDING = PREF_DESCRIPTION_PREFIX + "autobuilding"; //$NON-NLS-1$
 
 	/**
 	 * Name of a preference for configuring the order projects in the workspace
 	 * are built.
+	 * @since 2.1
 	 */
 	public static final String PREF_BUILD_ORDER = PREF_DESCRIPTION_PREFIX + "buildorder"; //$NON-NLS-1$
 
 	/**
 	 * Name of a preference for configuring whether to use the workspace's
 	 * default order for building projects.
+	 * @since 2.1
 	 */
 	public static final String PREF_DEFAULT_BUILD_ORDER = PREF_DESCRIPTION_PREFIX + "defaultbuildorder"; //$NON-NLS-1$
 	
@@ -126,29 +130,34 @@ public final class ResourcesPlugin extends Plugin {
 	/**
 	 * Name of a preference for configuring the maximum number of milliseconds a
 	 * file state should be kept in the local history
+	 * @since 2.1
 	 */
 	public static final String PREF_FILE_STATE_LONGEVITY = PREF_DESCRIPTION_PREFIX + "filestatelongevity"; //$NON-NLS-1$
 
 	/**
 	 * Name of a preference for configuring the maximum permited size of a file
 	 * to be stored in the local history
+	 * @since 2.1
 	 */
 	public static final String PREF_MAX_FILE_STATE_SIZE = PREF_DESCRIPTION_PREFIX + "maxfilestatesize"; //$NON-NLS-1$
 
 	/**
 	 * Name of a preference for configuring the maximum number of states per
 	 * file that can be stored in the local history.
+	 * @since 2.1
 	 */
 	public static final String PREF_MAX_FILE_STATES = PREF_DESCRIPTION_PREFIX + "maxfilestates"; //$NON-NLS-1$	
 	/**
 	 * Name of a preference for configuring the amount of time in milliseconds
 	 * between automatic workspace snapshots
+	 * @since 2.1
 	 */
 	public static final String PREF_SNAPSHOT_INTERVAL = PREF_DESCRIPTION_PREFIX + "snapshotinterval"; //$NON-NLS-1$	
 
 	/**
 	 * Name of a preference for turning off support for linked resources.  When
 	 * this preference is set to "true", attempting to create linked resources will fail.
+	 * @since 2.1
 	 */
 	public static final String PREF_DISABLE_LINKING = PREF_DESCRIPTION_PREFIX + "disableLinking";//$NON-NLS-1$
 	
@@ -168,7 +177,7 @@ public final class ResourcesPlugin extends Plugin {
  * <p>
  * An instance of this plug-in runtime class is automatically created 
  * when the facilities provided by the Resources plug-in are required.
- * <b>Cliens must never explicitly instantiate a plug-in runtime class.</b>
+ * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
  * </p>
  * 
  * @param pluginDescriptor the plug-in descriptor for the
@@ -203,10 +212,11 @@ private static void constructWorkspace() throws CoreException {
  * file system encoding (<code>System.getProperty("file.encoding")</code>)
  * if the preference is not set.
  * <p>
- * Note that this method does not check whether the result is a supporteed
+ * Note that this method does not check whether the result is a supported
  * encoding.  Callers should be prepared to handle 
  * <code>UnsupportedEncodingException</code> where this encoding is used.
  * 
+ * @return  the encoding to use when reading text files in the workspace
  * @see java.io.UnsupportedEncodingException
  */
 public static String getEncoding() {

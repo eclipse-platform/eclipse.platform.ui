@@ -141,7 +141,7 @@ public void build(int kind, IProgressMonitor monitor) throws CoreException;
  * <ul>
  * <li> This resource does not exist.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #open
  * @see #isOpen
@@ -184,7 +184,7 @@ public void close(IProgressMonitor monitor) throws CoreException;
  * <li> The project description file could not be created in the project 
  *      content area.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
  * @see IWorkspace#validateProjectLocation
@@ -232,7 +232,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
  * <li> The project description file could not be created in the project 
  *      content area.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
  * @see IWorkspace#validateProjectLocation
@@ -267,7 +267,7 @@ public void create(IProgressMonitor monitor) throws CoreException;
  * <li> This project could not be deleted.</li>
  * <li> This project's contents could not be deleted.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResource#delete
  * @see #open
@@ -467,7 +467,7 @@ public boolean isOpen();
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
  * @see IResource#move(IProjectDescription,int,IProgressMonitor)
@@ -496,7 +496,7 @@ public void move(IProjectDescription description, boolean force, IProgressMonito
  * @exception CoreException if this method fails. Reasons include:
  * <ul>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see #close
  */
@@ -533,7 +533,7 @@ public void open(IProgressMonitor monitor) throws CoreException;
  * <li> The workspace is out of sync with the project description file 
  *   in the local file system .</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  *
@@ -621,7 +621,7 @@ public void setDescription(IProjectDescription description, IProgressMonitor mon
  *   description file in the local file system and <code>FORCE</code> is not
  *   specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *   event notification. See IResourceChangeEvent for more details.</li>
+ *   event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * <li> The file modification validator disallowed the change.</li>
  * </ul>
  *

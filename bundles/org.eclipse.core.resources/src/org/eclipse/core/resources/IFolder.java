@@ -72,7 +72,7 @@ public interface IFolder extends IContainer, IAdaptable {
  * <li> The corresponding location in the local file system is occupied
  *    by a folder and <code>force </code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification.  See IResourceChangeEvent for more details.</li>
+ *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @see IFolder#create(int,boolean,IProgressMonitor)
  */
@@ -127,7 +127,7 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
  * <li> The corresponding location in the local file system is occupied
  *    by a folder and <code>FORCE</code> is not specified.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification.  See IResourceChangeEvent for more details.</li>
+ *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  * @since 2.0
  */
@@ -165,9 +165,9 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  * by the given progress monitor. 
  * </p>
  * 
- * @param updateFlags bit-wise or of update flag constants
- *   (only ALLOW_MISSING_LOCAL is relevant here)
  * @param localLocation a file system path where the folder should be linked
+ * @param updateFlags bit-wise or of update flag constants
+ *   (only ALLOW_MISSING_LOCAL is relevant here) 
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this method fails. Reasons include:
@@ -185,7 +185,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
  * <li> The corresponding location in the local file system is occupied
  *    by a file (as opposed to a directory).</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification.  See IResourceChangeEvent for more details.</li>
+ *       event notification.  See <code>IResourceChangeEvent</code> for more details.</li>
  * <li>The team provider for the project which contains this folder does not permit
  *       linked resources.</li>
  * <li>This folder's project contains a nature which does not permit linked resources.</li>
@@ -225,7 +225,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
  * <li> This resource is out of sync with the local file system
  *      and <code>force</code> is <code>false</code>.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
  * @see IResource#delete(int,IProgressMonitor)
@@ -302,7 +302,7 @@ public IFolder getFolder(String name);
  * <li> The workspace and the local file system are out of sync
  *      at the destination resource or one of its descendents.</li>
  * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
+ *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
  * </ul>
  *
  * @see IResource#move(IPath,int,IProgressMonitor)
