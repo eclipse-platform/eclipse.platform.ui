@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -26,8 +25,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.NavigationLocation;
 
-import org.eclipse.ui.internal.IWorkbenchConstants;
-
 
 /**
  * Represents the text selection context marked for the user in the navigation history.
@@ -35,13 +32,17 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * @since 2.1
  */
 public class TextSelectionNavigationLocation extends NavigationLocation {
+
+	// Memento tags and values
+	private static final String TAG_X= "x"; //$NON-NLS-1$
+	private static final String TAG_Y= "y"; //$NON-NLS-1$
+	private static final String TAG_INFO= "info"; //$NON-NLS-1$
+	private static final String INFO_DELETED= "deleted"; //$NON-NLS-1$
+	private static final String INFO_NOT_DELETED= "not_deleted"; //$NON-NLS-1$
 	
+	private static final String CATEGORY= "__navigation_" + TextSelectionNavigationLocation.class.hashCode(); //$NON-NLS-1$
+	private static final IPositionUpdater fgPositionUpdater= new DefaultPositionUpdater(CATEGORY);
 	
-	private final static String DELETED= "deleted"; //$NON-NLS-1$
-	private final static String NOT_DELETED= "not_deleted"; //$NON-NLS-1$
-	
-	private final static String CATEGORY= "__navigation_" + TextSelectionNavigationLocation.class.hashCode(); //$NON-NLS-1$
-	private static IPositionUpdater fgPositionUpdater= new DefaultPositionUpdater(CATEGORY);
 	
 	private Position fPosition;
 	private IDocument fDocument;
@@ -258,7 +259,7 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	/**
 	 * Restores the object state from the given memento.
 	 * 
-	 * @param memento the memento 
+	 * @param memento the memento
 	 */
 	public void restoreState(IMemento memento) {
 		
@@ -268,14 +269,14 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			// restore
 			fDocument= getDocument((ITextEditor) part);
 			
-			Integer offset= memento.getInteger(IWorkbenchConstants.TAG_X);
-			Integer length= memento.getInteger(IWorkbenchConstants.TAG_Y);
-			String deleted= memento.getString(IWorkbenchConstants.TAG_INFO);
+			Integer offset= memento.getInteger(TAG_X);
+			Integer length= memento.getInteger(TAG_Y);
+			String deleted= memento.getString(TAG_INFO);
 			
 			if (offset != null && length != null) {
 				Position p= new Position(offset.intValue(), length.intValue());
 				if (deleted != null)
-					p.isDeleted= DELETED.equals(deleted) ? true : false;
+					p.isDeleted= INFO_DELETED.equals(deleted) ? true : false;
 				
 				// activate
 				if (installOnDocument(fDocument, p)) {
@@ -294,9 +295,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	 */
 	public void saveState(IMemento memento) {
 		if (fSavedPosition != null) {
-			memento.putInteger(IWorkbenchConstants.TAG_X, fSavedPosition.offset);
-			memento.putInteger(IWorkbenchConstants.TAG_Y, fSavedPosition.length);
-			memento.putString(IWorkbenchConstants.TAG_INFO, (fSavedPosition.isDeleted ? DELETED : NOT_DELETED));
+			memento.putInteger(TAG_X, fSavedPosition.offset);
+			memento.putInteger(TAG_Y, fSavedPosition.length);
+			memento.putString(TAG_INFO, (fSavedPosition.isDeleted ? INFO_DELETED : INFO_NOT_DELETED));
 		}
 	}
 	

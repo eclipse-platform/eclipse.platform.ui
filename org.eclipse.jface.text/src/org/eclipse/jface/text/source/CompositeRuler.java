@@ -12,6 +12,7 @@ package org.eclipse.jface.text.source;
 
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.internal.SWTEventListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -125,7 +125,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 */
 		static class ListenerInfo {
 			Class fClass;
-			SWTEventListener fListener;
+			EventListener fListener;
 		}
 		
 		/** The list of listeners added to this canvas. */
@@ -173,7 +173,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 * @param control the control to add the listener to
 		 * @param listener the listener to be added
 		 */
-		private void addListener(Class clazz, Control control, SWTEventListener listener) {
+		private void addListener(Class clazz, Control control, EventListener listener) {
 			if (ControlListener.class.equals(clazz)) {
 				control. addControlListener((ControlListener) listener);
 				return;
@@ -224,7 +224,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 * @param control the control to remove the listener from
 		 * @param listener the listener to be removed
 		 */
-		private void removeListener(Class clazz, Control control, SWTEventListener listener) {
+		private void removeListener(Class clazz, Control control, EventListener listener) {
 			if (ControlListener.class.equals(clazz)) {
 				control. removeControlListener((ControlListener) listener);
 				return;
@@ -274,7 +274,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 * @param clazz the listener type
 		 * @param listener the listener object
 		 */
-		private void addListener(Class clazz, SWTEventListener listener) {
+		private void addListener(Class clazz, EventListener listener) {
 			Control[] children= getChildren();
 			for (int i= 0; i < children.length; i++) {
 				if (children[i] != null && !children[i].isDisposed())
@@ -294,7 +294,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		 * @param clazz the listener type
 		 * @param listener the listener object
 		 */
-		private void removeListener(Class clazz, SWTEventListener listener) {
+		private void removeListener(Class clazz, EventListener listener) {
 			int length= fCachedListeners.size();
 			for (int i= 0; i < length; i++) {
 				ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
