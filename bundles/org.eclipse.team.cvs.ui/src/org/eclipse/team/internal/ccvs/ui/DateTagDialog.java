@@ -49,6 +49,7 @@ public class DateTagDialog extends Dialog {
 			createLabel(composite, Policy.bind("DateTagDialog.0"), 1); //$NON-NLS-1$
 			fromMonthCombo = new Combo(composite, SWT.READ_ONLY);
 			fromDayCombo = new Combo(composite, SWT.READ_ONLY);
+			fromDayCombo.setTextLimit(2);
 			fromYearCombo = new Combo(composite, SWT.NONE);
 			fromYearCombo.setTextLimit(4);
 			
@@ -127,8 +128,11 @@ public class DateTagDialog extends Dialog {
 			dateLayout.numColumns = 3;
 			dateComposite.setLayout(dateLayout);
 			hourCombo = new Combo(dateComposite, SWT.READ_ONLY);
+			hourCombo.setTextLimit(2);
 			minuteCombo = new Combo(dateComposite, SWT.READ_ONLY);
+			minuteCombo.setTextLimit(2);
 			secondCombo = new Combo(dateComposite, SWT.READ_ONLY);
+			secondCombo.setTextLimit(2);
 			localTime = createRadioButton(composite, Policy.bind("DateTagDialog.3"), 2);  //$NON-NLS-1$
 			utcTime = createRadioButton(composite, Policy.bind("DateTagDialog.4"), 2);  //$NON-NLS-1$
 			
