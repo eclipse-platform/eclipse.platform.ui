@@ -41,7 +41,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 		 * Add an add update
 		 * @param addition
 		 */
-		void add(Object addition) {
+		void add(JobInfo addition) {
 			additions.add(addition);
 		}
 
@@ -49,14 +49,14 @@ public class ProgressContentProvider implements ITreeContentProvider {
 		 * Add a remove update
 		 * @param addition
 		 */
-		void remove(Object removal) {
+		void remove(JobInfo removal) {
 			deletions.add(removal);
 		}
 		/**
 		 * Add a refresh update
 		 * @param addition
 		 */
-		void refresh(Object refresh) {
+		void refresh(JobInfo refresh) {
 			refreshes.add(refresh);
 		}
 		/**
@@ -148,7 +148,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @param info
 	 */
 	void add(final JobInfo info) {
-
+		
 		currentInfo.add(info);
 		updateJob.schedule(100);
 	}
