@@ -326,8 +326,12 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
 
             // the dialog is not forced on the first iteration, but is on every
             // subsequent one -- if there was an error then the user needs to be
-            // allowed to 
+            // allowed to fix it
             force = true;
+
+            // 70576: don't accept empty input
+            if (instancePath.length() <= 0)
+                continue;
 
             // create the workspace if it does not already exist
             File workspace = new File(instancePath);
@@ -365,6 +369,10 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      *         otherwise.
      */
     private boolean checkValidWorkspace(Shell shell, URL url) {
+        // a null url is not a valid workspace
+        if (url == null)
+            return false;
+
         String version = readWorkspaceVersion(url);
 
         // if the version could not be read, then there is not any existing
