@@ -50,9 +50,11 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 
 /**
+ * Not yet for public use. API under construction.
+ * 
  * @since 3.0
  */
-class SelectResourcesDialog extends Dialog {
+public class SelectResourcesDialog extends Dialog {
 	
 	static interface IFilter {
 		boolean accept(IResource resource);
