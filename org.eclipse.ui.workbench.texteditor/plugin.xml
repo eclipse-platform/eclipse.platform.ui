@@ -673,6 +673,19 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
             keySequence="Ctrl+Arrow_Down">
       </keyBinding>
+	  <keyBinding
+            platform="carbon"
+	        contextId="org.eclipse.ui.textEditorScope"
+			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        keySequence="Ctrl+F9">
+	  </keyBinding>
+	  <keyBinding
+            platform="carbon"
+	        commandId="org.eclipse.ui.edit.text.showRulerContextMenu"
+	        contextId="org.eclipse.ui.textEditorScope"
+			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        keySequence="Command+F9">
+	  </keyBinding>
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.edit.text.delete.line"
