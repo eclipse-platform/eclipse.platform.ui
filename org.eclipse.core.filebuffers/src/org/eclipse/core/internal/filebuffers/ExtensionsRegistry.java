@@ -287,7 +287,7 @@ public class ExtensionsRegistry {
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable document factory or <code>null</code>
 	 */
-	private IDocumentFactory getDocumentFactory(IContentType[] contentTypes) {
+	private IDocumentFactory doGetDocumentFactory(IContentType[] contentTypes) {
 		Set set= null;
 		int i= 0;
 		while (i < contentTypes.length && set == null) {
@@ -299,6 +299,25 @@ public class ExtensionsRegistry {
 			return (IDocumentFactory) getExtension(entry, fFactories, IDocumentFactory.class);
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a sharable document factory for the given content types. This
+	 * method considers the base content types of the given set of content
+	 * types.
+	 * 
+	 * @param contentTypes the content types used to find the factory
+	 * @return the sharable document factory or <code>null</code>
+	 */
+	private IDocumentFactory getDocumentFactory(IContentType[] contentTypes) {
+		IDocumentFactory factory= doGetDocumentFactory(contentTypes);
+		while (factory == null) {
+			contentTypes= computeBaseContentTypes(contentTypes);
+			if (contentTypes == null)
+				break;
+			factory= doGetDocumentFactory(contentTypes);
+		}
+		return factory;
 	}
 	
 	/**
@@ -330,11 +349,11 @@ public class ExtensionsRegistry {
 	 * @param contentTypes the contentTypes to be used for lookup
 	 * @return the sharable set of document setup participants
 	 */
-	private List getDocumentSetupParticipants(IContentType[] contentTypes) {
+	private List doGetDocumentSetupParticipants(IContentType[] contentTypes) {
 		Set resultSet= new HashSet();
 		int i= 0;
 		while (i < contentTypes.length) {
-			Set set= (Set) fSetupParticipants.get(new ContentTypeAdapter(contentTypes[i++]));
+			Set set= (Set) fSetupParticipantDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
 			if (set != null)
 				resultSet.addAll(set);
 		}
@@ -348,6 +367,25 @@ public class ExtensionsRegistry {
 				participants.add(participant);
 		}
 		
+		return participants.isEmpty() ? null : participants;
+	}
+	
+	/**
+	 * Returns the set of setup participants for the given content types. This
+	 * method considers the base content types of the given set of content
+	 * types.
+	 * 
+	 * @param contentTypes the contentTypes to be used for lookup
+	 * @return the sharable set of document setup participants
+	 */
+	private List getDocumentSetupParticipants(IContentType[] contentTypes) {
+		List participants= doGetDocumentSetupParticipants(contentTypes);
+		while (participants == null) {
+			contentTypes= computeBaseContentTypes(contentTypes);
+			if (contentTypes == null)
+				break;
+			participants= doGetDocumentSetupParticipants(contentTypes);
+		}
 		return participants;
 	}
 	
@@ -357,7 +395,7 @@ public class ExtensionsRegistry {
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable annotation model factory or <code>null</code>
 	 */
-	private IAnnotationModelFactory getAnnotationModelFactory(IContentType[] contentTypes) {
+	private IAnnotationModelFactory doGetAnnotationModelFactory(IContentType[] contentTypes) {
 		Set set= null;
 		int i= 0;
 		while (i < contentTypes.length && set == null) {
@@ -369,6 +407,25 @@ public class ExtensionsRegistry {
 			return (IAnnotationModelFactory) getExtension(entry, fAnnotationModelFactories, IAnnotationModelFactory.class);
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns a sharable annotation model factory for the given content types.
+	 * This method considers the base content types of the given set of content
+	 * types.
+	 * 
+	 * @param contentTypes the content types used to find the factory
+	 * @return the sharable annotation model factory or <code>null</code>
+	 */
+	private IAnnotationModelFactory getAnnotationModelFactory(IContentType[] contentTypes) {
+		IAnnotationModelFactory factory= doGetAnnotationModelFactory(contentTypes);
+		while (factory == null) {
+			contentTypes= computeBaseContentTypes(contentTypes);
+			if (contentTypes == null)
+				break;
+			factory= doGetAnnotationModelFactory(contentTypes);
+		}
+		return factory;
 	}
 	
 	/**
@@ -386,27 +443,54 @@ public class ExtensionsRegistry {
 		return null;
 	}
 	
-	private IContentType[] findContentTypes(IPath path) {
-		IFile file= FileBuffers.getWorkspaceFileAtLocation(path);
-		if (file == null)
-			return new IContentType[0];
-		
-		IContentDescription contentDescription;
-		try {
-			contentDescription= file.getContentDescription();
-		} catch (CoreException ex) {
-			contentDescription= null;
+	/**
+	 * Returns the set of content types for the given location.
+	 * 
+	 * @param location the location for which to look up the content types
+	 * @return the set of content types for the location
+	 */
+	private IContentType[] findContentTypes(IPath location) {
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+		if (file != null) {
+			try {
+				IContentDescription contentDescription= file.getContentDescription();
+				if (contentDescription != null) {
+					IContentType contentType= contentDescription.getContentType();
+					if (contentType != null)
+						return new IContentType[] {contentType};
+				}
+			} catch (CoreException x) {
+				// go for the default
+			}
 		}
-		
-		if (contentDescription != null) {
-			IContentType contentType= contentDescription.getContentType();
-			if (contentType != null)
-				return new IContentType[] {contentType};
-		}
-		
-		return fContentTypeManager.findContentTypesFor(path.lastSegment());
+		return fContentTypeManager.findContentTypesFor(location.lastSegment());
 	}
 	
+	/**
+	 * Returns the set of direct base content types for the given set of content
+	 * types. Returns <code>null</code> if non of the given content types has
+	 * a direct base content type.
+	 * 
+	 * @param contentTypes the content types
+	 * @return the set of direct base content types
+	 */
+	private IContentType[] computeBaseContentTypes(IContentType[] contentTypes) {
+		List baseTypes= new ArrayList();
+		for (int i= 0; i < contentTypes.length; i++) {
+			IContentType baseType= contentTypes[i].getBaseType();
+			if (baseType != null)
+				baseTypes.add(baseType);
+		}
+		
+		IContentType[] result= null;
+		int size= baseTypes.size();
+		if (size > 0) {
+			result= new IContentType[size];
+			baseTypes.toArray(result);
+		}
+		return result;
+	}
+		
 	/**
 	 * Returns the sharable document factory for the given location.
 	 *
