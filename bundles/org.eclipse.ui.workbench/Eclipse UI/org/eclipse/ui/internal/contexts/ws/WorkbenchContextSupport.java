@@ -359,7 +359,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
                 } else {
                     // Shells that are not dialogs by default must register.
-                    newSubmissions = (List) registeredWindows.get(newShell);
+                    newSubmissions = null;
 
                 }
 
@@ -788,8 +788,10 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
         registeredWindows.put(shell, submissions);
         addEnabledSubmissions(submissions);
 
-        // Remember the dispose listener so that we can remove it later if we unregister
-        // the shell.
+        /*
+		 * Remember the dispose listener so that we can remove it later if we
+		 * unregister the shell.
+		 */
         DisposeListener shellDisposeListener = new DisposeListener() {
 
             /*
