@@ -261,20 +261,20 @@ public class OperationValidator implements IOperationValidator {
 		IFeature feature,
 		ArrayList status)
 		throws CoreException {
-		if (feature.isPatch()) {
-			IInstallConfiguration backup =
-				UpdateUtils.getBackupConfigurationFor(feature);
-			String msg;
-			if (backup != null)
-				msg =
-					UpdateUtils.getFormattedMessage(
-						KEY_PATCH_UNCONFIGURE_BACKUP,
-						backup.getLabel());
-			else
-				msg = UpdateUtils.getString(KEY_PATCH_UNCONFIGURE);
-			status.add(createStatus(feature, FeatureStatus.CODE_OTHER, msg));
-			return true;
-		}
+//		if (feature.isPatch()) {
+//			IInstallConfiguration backup =
+//				UpdateUtils.getBackupConfigurationFor(feature);
+//			String msg;
+//			if (backup != null)
+//				msg =
+//					UpdateUtils.getFormattedMessage(
+//						KEY_PATCH_UNCONFIGURE_BACKUP,
+//						backup.getLabel());
+//			else
+//				msg = UpdateUtils.getString(KEY_PATCH_UNCONFIGURE);
+//			status.add(createStatus(feature, FeatureStatus.CODE_OTHER, msg));
+//			return true;
+//		}
 		return false;
 	}
 
