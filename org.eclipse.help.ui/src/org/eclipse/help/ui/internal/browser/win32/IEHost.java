@@ -101,12 +101,6 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	 */
 	private void createShell() {
 		shell = new Shell();
-		/*
-		shell.setImage(
-			ImageDescriptor
-				.createFromURL(ieResources.getImagePath("shellIcon"))
-				.createImage());
-		*/
 		shell.setImage(shellImg);
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -187,8 +181,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		bar.setLayoutData(gridData);
 		// Add a button to navigate back
 		backItem = new ToolItem(bar, SWT.HORIZONTAL, 0);
-		backItem.setText(ieResources.getString("Previous_page"));
-		backItem.setToolTipText(ieResources.getString("Previous_page_tip"));
+		backItem.setText(ieResources.getString("back"));
+		backItem.setToolTipText(ieResources.getString("back_top"));
 		backItem.setImage(backImg);
 		backItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -200,8 +194,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		});
 		// Add a button to navigate forward
 		forwardItem = new ToolItem(bar, SWT.NONE, 1);
-		forwardItem.setText(ieResources.getString("Next_page"));
-		forwardItem.setToolTipText(ieResources.getString("Next_page_tip"));
+		forwardItem.setText(ieResources.getString("forward"));
+		forwardItem.setToolTipText(ieResources.getString("forward_tip"));
 		forwardItem.setImage(forwardImg);
 		forwardItem.setHotImage(null);
 		forwardItem.addSelectionListener(new SelectionListener() {
