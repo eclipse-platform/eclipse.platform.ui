@@ -51,9 +51,7 @@ import org.eclipse.compare.internal.*;
 			return null;
 		
 		IPath p= new Path(path);
-		int sc= p.segmentCount();
-		System.out.println(path + " " + sc);
-		if (sc > 1)
+		if (p.segmentCount() > 1)
 			p= p.removeFirstSegments(1);
 		
 		IResource[] selection= Utilities.getResources(fSelection);

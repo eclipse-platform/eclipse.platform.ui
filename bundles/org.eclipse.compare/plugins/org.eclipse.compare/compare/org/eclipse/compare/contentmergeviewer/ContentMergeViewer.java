@@ -280,7 +280,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		
 		fCompareInputChangeListener= new ICompareInputChangeListener() {
 			public void compareInputChanged(ICompareInput input) {
-				ContentMergeViewer.this.compareInputChanged(input);
+				ContentMergeViewer.this.internalRefresh(input);
 			}
 		};
 		
@@ -424,9 +424,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		return (IMergeViewerContentProvider) getContentProvider();
 	}
 
-	public void refresh() {
-	}
-	
 	/**
 	 * The <code>ContentMergeViewer</code> implementation of this 
 	 * <code>Viewer</code> method returns the empty selection. Subclasses may override.
@@ -457,7 +454,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		}
 	}
 	
-	//PR1GI3HDZ
 	void setAncestorVisibility(boolean visible, boolean enabled) {
 		if (fAncestorItem != null) {
 			Action action= (Action) fAncestorItem.getAction();
@@ -469,8 +465,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		if (fCompareConfiguration != null)
 			fCompareConfiguration.setProperty(ANCESTOR_ENABLED, new Boolean(visible));
 	}
-	//end PR1GI3HDZ
-
 
 	//---- input
 			 
@@ -538,10 +532,22 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		setLeftDirty(false);
 		setRightDirty(false);
 
+		internalRefresh(input);
+	}
+	
+	/* (non Javadoc)
+	 * see Viewer.refresh
+	 */
+	public void refresh() {
+		internalRefresh(getInput());
+	}
+	
+	private void internalRefresh(Object input) {
+		
 		// determine the merge direction
 		//boolean rightEditable= fMergeViewerContentProvider.isRightEditable(input);
 		//boolean leftEditable= fMergeViewerContentProvider.isLeftEditable(input);
-				
+		
 		IMergeViewerContentProvider content= getMergeContentProvider();
 		if (content != null) {
 			Object ancestor= content.getAncestorContent(input);
@@ -571,22 +577,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			Object left= content.getLeftContent(input);
 			Object right= content.getRightContent(input);
 			updateContent(ancestor, left, right);
-		}
-	}
-
-	private void compareInputChanged(ICompareInput input) {
-				
-		if (input != null) {
-			
-			IMergeViewerContentProvider content= getMergeContentProvider();
-			
-			if (content != null) {
-				Object ancestor= content.getAncestorContent(input);
-				Object left= content.getLeftContent(input);
-				Object right= content.getRightContent(input);
-					
-				updateContent(ancestor, left, right);
-			}
 		}
 	}
 	

@@ -80,9 +80,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 						h.setData(hunk);
 						h.setText(hunk.getDescription());
 						
-						h.setChecked(true);
-						//if (error)
-						//	isOk= false;
+						h.setChecked(isOk);
 					}
 					
 					d.setChecked(isOk);
