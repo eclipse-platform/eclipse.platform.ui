@@ -126,8 +126,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			return;
 		JobInfo info = getJobInfo(job);
 		info.beginTask(taskName, totalWork);
-
-		refreshViewer(null);
+		refreshViewer(info);
 	}
 
 	/**

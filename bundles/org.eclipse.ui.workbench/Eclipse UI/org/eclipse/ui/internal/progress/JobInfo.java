@@ -54,15 +54,16 @@ class JobInfo extends JobTreeElement {
 	 */
 	String getDisplayString() {
 		if (status.getCode() == PENDING_STATUS)
-			return ProgressMessages.format(
-				"JobInfo.Pending", //$NON-NLS-1$
-				new Object[] { status.getMessage()});
+			return ProgressMessages.format("JobInfo.Pending", //$NON-NLS-1$
+			new Object[] { status.getMessage()});
 		if (status.getCode() == IStatus.ERROR)
-			return ProgressMessages.format(
-				"JobInfo.Error", //$NON-NLS-1$
-				new Object[] { job.getName(), status.getMessage()});
+			return ProgressMessages.format("JobInfo.Error", //$NON-NLS-1$
+			new Object[] { job.getName(), status.getMessage()});
 
-		return status.getMessage();
+		if (taskInfo == null)
+			return status.getMessage();
+		else
+			return taskInfo.getDisplayString();
 	}
 
 	/* (non-Javadoc)
@@ -93,7 +94,7 @@ class JobInfo extends JobTreeElement {
 	 * @param subTaskName
 	 */
 	void addSubTask(String subTaskName) {
-		children.add(subTaskName);
+		children.add(new SubTaskInfo(this.job, subTaskName));
 	}
 
 	/**
