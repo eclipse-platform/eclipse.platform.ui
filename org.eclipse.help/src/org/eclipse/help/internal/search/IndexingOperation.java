@@ -6,6 +6,7 @@ package org.eclipse.help.internal.search;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.*;
 /**
@@ -84,7 +85,8 @@ class IndexingOperation {
 		if (numDocs <= 0)
 			return;
 		int workTotal = WORK_PREPARE + numDocs * WORK_INDEXDOC + WORK_SAVEINDEX;
-		pm.beginTask(""/*Resources.getString("Index_needs_updated")*/, workTotal);
+		pm.beginTask("" /*Resources.getString("Index_needs_updated")*/
+		, workTotal);
 		pm.subTask(Resources.getString("Preparing_for_indexing"));
 		checkCancelled(pm);
 		// first delete all the removed documents
@@ -96,7 +98,7 @@ class IndexingOperation {
 				pm.worked(WORK_PREPARE);
 				for (Iterator it = removedDocs.iterator(); it.hasNext();) {
 					URL doc = (URL) it.next();
-					pm.subTask(Resources.getString("Removing") + doc.getFile());
+					pm.subTask(Resources.getString("Removing") + getName(doc));
 					remove(doc);
 					checkCancelled(pm);
 					pm.worked(WORK_INDEXDOC);
@@ -112,32 +114,32 @@ class IndexingOperation {
 			if (!index.endDeleteBatch())
 				throw new Exception();
 		}
-		if (addedDocs.size() > 0) {
-			// now add all the new documents
-			if (!index.beginAddBatch())
-				throw new Exception();
-			try {
+		// Do not check here if (addedDocs.size() > 0), always perform add batch
+		// to ensure that index is created and saved even if no new documents exist
+		// now add all the new documents
+		if (!index.beginAddBatch())
+			throw new Exception();
+		try {
+			checkCancelled(pm);
+			pm.worked(WORK_PREPARE);
+			for (Iterator it = addedDocs.iterator(); it.hasNext();) {
+				URL doc = (URL) it.next();
+				pm.subTask(Resources.getString("Indexing") + getName(doc));
+				add(doc);
 				checkCancelled(pm);
-				pm.worked(WORK_PREPARE);
-				for (Iterator it = addedDocs.iterator(); it.hasNext();) {
-					URL doc = (URL) it.next();
-					pm.subTask(Resources.getString("Indexing") + doc.getFile());
-					add(doc);
-					checkCancelled(pm);
-					pm.worked(WORK_INDEXDOC);
-				}
-			} catch (OperationCanceledException oce) {
-				// Need to perform rollback on the index
-				pm.subTask(Resources.getString("Undoing_document_adds"));
-				pm.worked(workTotal);
-				//			if (!index.abortUpdate())
-				//				throw new Exception();
-				throw oce;
+				pm.worked(WORK_INDEXDOC);
 			}
-			pm.subTask(Resources.getString("Writing_index"));
-			if (!index.endAddBatch())
-				throw new Exception();
+		} catch (OperationCanceledException oce) {
+			// Need to perform rollback on the index
+			pm.subTask(Resources.getString("Undoing_document_adds"));
+			pm.worked(workTotal);
+			//			if (!index.abortUpdate())
+			//				throw new Exception();
+			throw oce;
 		}
+		pm.subTask(Resources.getString("Writing_index"));
+		if (!index.endAddBatch())
+			throw new Exception();
 		pm.done();
 	}
 	/**
