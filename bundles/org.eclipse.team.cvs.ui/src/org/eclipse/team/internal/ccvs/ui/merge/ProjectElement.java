@@ -28,32 +28,29 @@ public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
 	public static final int INCLUDE_ALL_TAGS = INCLUDE_HEAD_TAG | INCLUDE_BASE_TAG | INCLUDE_BRANCHES | INCLUDE_VERSIONS;
 
 	public static class ProjectElementSorter extends ViewerSorter {
-		public boolean isOfInterest(Object o) {
-			return (o instanceof TagRootElement) || (o instanceof TagElement);
+		/*
+		 * The order in the diaog should be HEAD, Branches, Versions, BASE		 */
+		public int category(Object element) {
+			if (element instanceof TagElement) {
+				CVSTag tag = ((TagElement)element).getTag();
+				if (tag == CVSTag.DEFAULT) return 1;
+				if (tag == CVSTag.BASE) return 4;
+				if (tag.getType() == CVSTag.BRANCH) return 2;
+				if (tag.getType() == CVSTag.VERSION) return 3;
+			} else if (element instanceof TagRootElement) {
+				return ((TagRootElement)element).getTypeOfTagRoot() == CVSTag.BRANCH ? 2 : 3;
+			}
+			return 0;
 		}
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			boolean oneIsOfInterest = isOfInterest(e1);
-			boolean twoIsOfInterest = isOfInterest(e2);
-			if (oneIsOfInterest != twoIsOfInterest) {
-				return oneIsOfInterest ? -1 : 1;
+			int cat1 = category(e1);
+			int cat2 = category(e2);
+			if (cat1 != cat2) return cat1 - cat2;
+			// Sort version tags in reverse order
+			if (e1 instanceof TagElement && ((TagElement)e1).getTag().getType() == CVSTag.VERSION) {
+				return -1 * super.compare(viewer, e1, e2);
 			}
-			if (!oneIsOfInterest) {
-				return super.compare(viewer, e1, e2);
-			}
-			// Tag elements can occur under branches and versions as well as HEAD and BASE
-			if (e1 instanceof TagElement) {
-				if (((TagElement)e1).getTag() == CVSTag.DEFAULT) return -1;
-				if (((TagElement)e1).getTag() == CVSTag.BASE) return 1;
-			}
-			if (e2 instanceof TagElement) {
-				if (((TagElement)e2).getTag() == CVSTag.DEFAULT) return 1;
-				if (((TagElement)e2).getTag() == CVSTag.BASE) return -1;
-			}
-			if (e1 instanceof TagRootElement && e2 instanceof TagRootElement) {
-				return ((TagRootElement)e1).getTypeOfTagRoot() == CVSTag.BRANCH ? -1 : 1;
-			}
-			// Sort in reverse order so larger numbered versions are at the top
-			return -1 * super.compare(viewer, e1, e2);
+			return super.compare(viewer, e1, e2);
 		}
 	}
 		
