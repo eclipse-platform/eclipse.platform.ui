@@ -1110,8 +1110,15 @@ class ExportDialog extends Dialog {
   }
 
   protected Control createDialogArea(Composite parent) {
+  	
+  	parent = new Composite(parent, SWT.NONE);
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 1;	
+	parent.setLayout(layout);
+	parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
     Composite main=new Composite(parent, SWT.NONE);
-    GridLayout layout=new GridLayout();
+    layout=new GridLayout();
     layout.numColumns=3;
     main.setLayout(layout);
     main.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -1135,8 +1142,8 @@ class ExportDialog extends Dialog {
     field=new Text(parent, SWT.BORDER);
     GridData data=new GridData(GridData.FILL_HORIZONTAL);
     data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
+    data.horizontalSpan=2;
     field.setLayoutData(data);
-    new Label(parent, SWT.NONE);
   }
 
   public String getTarget() {
