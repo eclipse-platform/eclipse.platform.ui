@@ -77,7 +77,8 @@ public final class InternalPlatform {
 
 	private ArrayList groupProviders = new ArrayList(3);
 	private IProduct product;
-
+	private boolean missingProductReported = false;
+	
 	private FileManager runtimeFileManager;
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 
@@ -1201,7 +1202,11 @@ public final class InternalPlatform {
 		}
 		if (logEntries != null)
 			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("provider.invalid.general"), 0, null, (FrameworkLogEntry[]) logEntries.toArray())); //$NON-NLS-1$
-
+		
+		if (!missingProductReported) {
+			getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("product.notFound", productId), 0, null, null)); //$NON-NLS-1$
+			missingProductReported = true;
+		}
 		return null;
 	}
 
