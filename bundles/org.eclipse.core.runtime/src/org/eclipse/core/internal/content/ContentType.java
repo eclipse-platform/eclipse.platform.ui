@@ -199,11 +199,15 @@ public class ContentType implements IContentType {
 	 * @see IContentType
 	 */
 	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException {
-		if (aliasTarget != null)
-			return getTarget().getDescriptionFor(contents, options);
 		ByteArrayInputStream buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
 			return null;
+		return internalGetDescriptionFor(buffer, options);
+	}
+
+	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) throws IOException {
+		if (aliasTarget != null)
+			return getTarget().internalGetDescriptionFor(buffer, options);
 		ContentDescription description = new ContentDescription(options);
 		IContentDescriber describer = this.getDescriber();
 		if (describer != null)
@@ -219,11 +223,15 @@ public class ContentType implements IContentType {
 	 * @see IContentType
 	 */
 	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException {
-		if (aliasTarget != null)
-			return getTarget().getDescriptionFor(contents, options);
 		CharArrayReader buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
 			return null;
+		return internalGetDescriptionFor(buffer, options);
+	}
+
+	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) throws IOException {
+		if (aliasTarget != null)
+			return getTarget().internalGetDescriptionFor(buffer, options);
 		ContentDescription description = new ContentDescription(options);
 		IContentDescriber describer = this.getDescriber();
 		if (describer != null) {

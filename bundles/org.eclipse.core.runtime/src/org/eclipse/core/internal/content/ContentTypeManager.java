@@ -67,7 +67,8 @@ public class ContentTypeManager implements IContentTypeManager {
 	static ByteArrayInputStream readBuffer(InputStream contents) throws IOException {
 		boolean failed = false;
 		try {
-			contents.mark(MARK_LIMIT);
+			if (contents.markSupported())
+				contents.mark(MARK_LIMIT);
 			byte[] buffer = new byte[MARK_LIMIT];
 			int read = contents.read(buffer);
 			return read == -1 ? null : new ByteArrayInputStream(buffer, 0, read);
@@ -75,7 +76,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			failed = true;
 			throw ioe;
 		} finally {
-			if (!failed)
+			if (!failed && contents.markSupported())
 				contents.reset();
 		}
 	}
@@ -83,7 +84,8 @@ public class ContentTypeManager implements IContentTypeManager {
 	public static CharArrayReader readBuffer(Reader contents) throws IOException {
 		boolean failed = false;
 		try {
-			contents.mark(MARK_LIMIT);
+			if (contents.markSupported())
+				contents.mark(MARK_LIMIT);
 			char[] buffer = new char[MARK_LIMIT];
 			int read = contents.read(buffer);
 			return read == -1 ? null : new CharArrayReader(buffer, 0, read);
@@ -91,7 +93,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			failed = true;
 			throw ioe;
 		} finally {
-			if (!failed)
+			if (!failed && contents.markSupported())
 				contents.reset();
 		}
 	}
@@ -293,7 +295,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		IContentType[] selected = internalFindContentTypesFor(buffer, subset);
 		if (selected.length == 0)
 			return null;
-		return selected[0].getDescriptionFor(contents, options);
+		return ((ContentType) selected[0]).internalGetDescriptionFor(buffer, options);
 	}
 
 	/**
@@ -308,7 +310,7 @@ public class ContentTypeManager implements IContentTypeManager {
 		IContentType[] selected = internalFindContentTypesFor(buffer, subset);
 		if (selected.length == 0)
 			return null;
-		return selected[0].getDescriptionFor(contents, options);
+		return ((ContentType) selected[0]).internalGetDescriptionFor(buffer, options);
 	}
 
 	Preferences getPreferences() {
