@@ -11,7 +11,10 @@
 package org.eclipse.jface.window;
 
 import java.util.ArrayList;
-
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -28,11 +31,6 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A JFace window is an object that has no visual representation (no widgets)
@@ -730,6 +728,40 @@ protected void setReturnCode(int code) {
 }
 
 /**
+ * Returns the monitor whose client area contains the given point. If no monitor
+ * contains the point, returns the monitor that is closest to the point. 
+ * If this is ever made public, it should be moved into a separate utility class.
+ * 
+ * @param toSearch point to find (display coordinates)
+ * @param toFind point to find (display coordinates)
+ * @return the montor closest to the given point 
+ */
+private static Monitor getClosestMonitor(Display toSearch, Point toFind) {
+	int closest = Integer.MAX_VALUE;
+	
+	Monitor[] monitors = toSearch.getMonitors();
+	Monitor result = monitors[0];
+	
+	for (int idx = 0; idx < monitors.length; idx++) {
+		Monitor current = monitors[idx];
+		
+		Rectangle clientArea = current.getClientArea();
+		
+		if (clientArea.contains(toFind)) {
+			return current;
+		}
+		
+		int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
+		if (distance < closest) {
+			closest = distance;
+			result = current;
+		}
+	}
+	
+	return result;
+}
+
+/**
  * Given the desired position of the window, this method returns an 
  * adjusted position such that the window is no larger than its monitor,
  * and does not extend beyond the edge of the monitor. This is used for
@@ -747,16 +779,7 @@ protected Rectangle getConstrainedShellBounds(Rectangle preferredSize) {
 	Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, 
 			preferredSize.width, preferredSize.height);
 
-	Monitor mon;
-	if (parentShell != null) {
-		// If we have a parent shell, force the shell to be on the same monitor
-		// as its parent.
-		mon = parentShell.getMonitor();
-	} else {
-		// Otherwise, ensure that the shell isn't partway over the edge of
-		// a monitor.
-		mon = shell.getMonitor();
-	}
+	Monitor mon = getClosestMonitor(getShell().getDisplay(), Geometry.centerPoint(result));
 	
 	Rectangle bounds = mon.getClientArea();
 	
