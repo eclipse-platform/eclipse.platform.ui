@@ -14,7 +14,7 @@ import org.eclipse.ui.IActionFilter;
 
 
 /**
- * Describes the public attributes for a marker and the acceptables values
+ * Describes the public attributes for a marker and the acceptable values
  * each may have.  
  * <p>
  * A popup menu extension may use these constants to describe its object target.  

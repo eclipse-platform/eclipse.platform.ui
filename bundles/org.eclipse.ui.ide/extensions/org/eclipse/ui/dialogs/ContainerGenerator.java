@@ -16,7 +16,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
- * For creating non-existing folder resources along a given workspace path.
+ * For creating folder resources that currently do not exist, 
+ * along a given workspace path.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
