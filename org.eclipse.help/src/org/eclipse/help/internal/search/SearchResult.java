@@ -21,14 +21,16 @@ public class SearchResult {
 	private Document factory;
 	private String urlEncodedQuery;
 	private List scope;
+	private int maxHits;
 	/**
 	 * Constructor
 	 * @param query user query
 	 * @param scope list of books to search
 	 */
-	public SearchResult(String query, List scope) {
+	public SearchResult(String query, List scope, int maxHits) {
 		this.urlEncodedQuery = URLCoder.encode(query);
 		this.scope = scope;
+		this.maxHits=maxHits;
 		// instantiate the xml factory and create the root element
 		factory = new DocumentImpl();
 		factory.appendChild(factory.createElement(IToc.TOC));
@@ -38,7 +40,7 @@ public class SearchResult {
 	 * @param Hits hits
 	 */
 	public void addHits(Hits hits) {
-		for (int h = 0; h < hits.length(); h++) {
+		for (int h = 0; h < hits.length() && h < maxHits; h++) {
 			org.apache.lucene.document.Document doc;
 			try {
 				doc = hits.doc(h);

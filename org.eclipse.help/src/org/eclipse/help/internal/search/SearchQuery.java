@@ -29,10 +29,10 @@ public class SearchQuery {
 	}
 	public Collection getFieldNames() {
 		if (terms == null)
-			return null;
+			return new ArrayList(0);
 		Object fields = terms.get("field");
 		if (fields == null)
-			return null;
+			return new ArrayList(0);
 		if (fields instanceof Collection)
 			return (Collection) fields;
 		else {
@@ -48,7 +48,7 @@ public class SearchQuery {
 		try {
 			return Integer.parseInt((String) terms.get("maxHits"));
 		} catch (Exception e) {
-			return 0;
+			return 200;
 		}
 	}
 	public boolean isFieldSearch() {
@@ -100,13 +100,9 @@ public class SearchQuery {
 	public SearchResult search(SearchIndex index) {
 		Logger.logInfo(Resources.getString("Searching_for", getSearchWord()));
 		// Create the xml document for search results
-		SearchResult xmlResults = new SearchResult(getSearchWord(), getScope());
-		index.search(
-			getSearchWord(),
-			getFieldNames(),
-			isFieldSearch(),
-			getMaxHits(),
-			xmlResults);
+		SearchResult xmlResults =
+			new SearchResult(getSearchWord(), getScope(), getMaxHits());
+		index.search(getSearchWord(), getFieldNames(), isFieldSearch(), xmlResults);
 		return xmlResults;
 	}
 }

@@ -6,10 +6,9 @@ package org.eclipse.help.internal.search;
 import java.io.*;
 import java.util.*;
 import org.apache.lucene.HTMLParser.HTMLParser;
-import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.StopAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
@@ -60,7 +59,7 @@ public class SearchIndex {
 				title = parser.getTitle();
 			} catch (InterruptedException ie) {
 			}
-			doc.add(Field.Text("title", title));
+			doc.add(Field.Keyword("title", title));
 			// doc.add(Field.UnIndexed("summary", parser.getSummary()));
 			iw.addDocument(doc);
 			indexedDocs.put(name, "0");
@@ -93,7 +92,7 @@ public class SearchIndex {
 			iw.maxFieldLength = 1000000;
 			return true;
 		} catch (IOException e) {
-			System.out.println("Exception in beginAddBatch " + e);
+			Logger.logError(Resources.getString("ES17"), e);
 			return false;
 		}
 	}
@@ -111,7 +110,7 @@ public class SearchIndex {
 			ir = IndexReader.open(indexDir);
 			return true;
 		} catch (IOException e) {
-			System.out.println("Exception in beginDeleteBatch " + e);
+			Logger.logError(Resources.getString("ES18"), e);
 			return false;
 		}
 	}
@@ -126,14 +125,17 @@ public class SearchIndex {
 			ir.delete(term);
 			indexedDocs.remove(name);
 		} catch (IOException e) {
-			System.out.println(e);
+			Logger.logError(
+				Resources.getString("ES22", name, indexDir.getAbsolutePath()),
+				e);
 			return false;
 		}
 		return true;
-	} /**
-					 * Finish additions.
-					 * To be called after adding documents.
-					 */
+	}
+	/**
+	 * Finish additions.
+	 * To be called after adding documents.
+	 */
 	public boolean endAddBatch() {
 		try {
 			if (iw == null)
@@ -148,7 +150,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			System.out.println("Exception in endAddBatch " + e);
+			Logger.logError(Resources.getString("ES19"), e);
 			return false;
 		}
 	}
@@ -169,7 +171,7 @@ public class SearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			System.out.println("Exception in endDeleteBatch " + e);
+			Logger.logError(Resources.getString("ES20"), e);
 			return false;
 		}
 	}
@@ -183,11 +185,11 @@ public class SearchIndex {
 	}
 	/** 
 	 * Performs a query search on this index 
-	 * @param fieldNames - Collection of field names of type String (e.g. "h1")
-	 *  the search will be performed on the given fields only
-	 *  if empty, then entire document will be searched
+	 * @param fieldNames - Collection of field names of type String (e.g. "h1");
+	 *  the search will be performed on the given fields
 	 * @param fieldSearch - boolean indicating if field only search
-	 *  should be performed
+	 *  should be performed; if set to false, default field "contents"
+	 *  and all other fields will be searched
 	 * @param searchResult SearchResult that will contain all the hits
 	 * @return - an array of document ids. 
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
@@ -195,31 +197,27 @@ public class SearchIndex {
 	public void search(
 		String searchWord,
 		Collection fieldNames,
-		boolean fieldSearch,
-		int maxhits,
+		boolean fieldSearchOnly,
 		SearchResult searchResult) {
-
 		try {
-			Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
-			Analyzer analyzer = new StopAnalyzer();
-			ProcessedQuery processedQuery =
-				new ProcessedQuery(searchWord, fieldNames, fieldSearch);
-			Query luceneQuery =
-				QueryParser.parse(processedQuery.toString(), "contents", analyzer);
-			Hits hits = searcher.search(luceneQuery);
-			searchResult.addHits(hits);
-			searcher.close();
+			QueryBuilder queryBuilder = new QueryBuilder(searchWord, new StopAnalyzer());
+			Query luceneQuery = queryBuilder.getLuceneQuery(fieldNames, fieldSearchOnly);
+			if (luceneQuery != null) {
+				Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
+				Hits hits = searcher.search(luceneQuery);
+				searchResult.addHits(hits);
+				searcher.close();
+			}
 		} catch (Exception e) {
-			System.out.println(e);
+			Logger.logError(Resources.getString("ES21", searchWord), e);
 		}
 	}
 	public String getLocale() {
 		return locale;
-	}
-	/**
-	 * Returns the list of all the plugins in this session
-	 * that have declared a help contribution.
-	 */
+	} /**
+			 * Returns the list of all the plugins in this session
+			 * that have declared a help contribution.
+			 */
 	public PluginVersionInfo getDocPlugins() {
 		if (docPlugins == null) {
 			Iterator docPluginsIterator =
