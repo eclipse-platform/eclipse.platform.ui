@@ -16,6 +16,7 @@ import java.util.*;
 public class PluginRegistry extends PluginRegistryModel implements IPluginRegistry {
 
 	private static final String URL_PROTOCOL_FILE = "file";
+	private static final String F_DEBUG_REGISTRY = ".debugregistry";
 
 	// lifecycle events
 	private static final int STARTUP = 0;
@@ -215,6 +216,29 @@ public void flushRegistry() {
 	IPath tempPath = InternalPlatform.getMetaArea().getBackupFilePathFor(path);
 	path.toFile().delete();
 	tempPath.toFile().delete();
+}
+public void debugRegistry() {
+	IPath path = InternalPlatform.getMetaArea().getLocation().append(F_DEBUG_REGISTRY);
+
+	try {
+		FileOutputStream fs = new FileOutputStream(path.toOSString());
+		PrintWriter w = new PrintWriter(fs);
+		try {
+			RegistryWriter regWriter = new RegistryWriter();
+			regWriter.writePluginRegistry(this, w, 0);
+			w.flush();
+		} finally {
+			w.close();
+		}
+	} catch (IOException ioe) {
+		String message = Policy.bind("meta.unableToCreateRegDebug");
+		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, ioe);
+		logError(status);
+	}
+}
+public void flushDebugRegistry() {
+	IPath path = InternalPlatform.getMetaArea().getLocation().append(F_DEBUG_REGISTRY);
+	path.toFile().delete();
 }
 public void shutdown(IProgressMonitor progress) {
 	shutdownPlugins();

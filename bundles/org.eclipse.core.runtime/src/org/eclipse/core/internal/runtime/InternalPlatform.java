@@ -473,7 +473,17 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
 public static void loaderShutdown() {
 	assertInitialized();
 	registry.shutdown(null);
+	if (DEBUG_PLUGINS) {
+		// We are debugging so output the registry in XML
+		// format.
+		registry.debugRegistry();
+	} else {
+		// get rid of the debug file if it exists
+		registry.flushDebugRegistry();
+	}
+	
 	if (cacheRegistry) {
+		// Write the registry in cache format
 		try {
 			registry.saveRegistry();
 		} catch (IOException e) {

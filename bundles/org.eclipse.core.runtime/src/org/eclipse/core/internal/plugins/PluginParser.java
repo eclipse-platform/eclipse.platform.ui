@@ -62,9 +62,6 @@ public class PluginParser extends DefaultHandler implements IModel {
 	private final int CONFIGURATION_ELEMENT_INDEX = 5;
 	private final int LAST_INDEX = 5;
 	Vector scratchVectors[] = new Vector[LAST_INDEX + 1];
-
-	public static final String[] from = { "&", "<", ">" };
-	public static final String[] to = { "&amp;", "&lt;", "&gt;" };
 	
 public PluginParser(Factory factory) {
 	super();
@@ -935,11 +932,5 @@ public void startElement(String uri, String elementName, String qName, Attribute
 }
 public void warning(SAXParseException ex) {
 	logStatus(ex);
-}
-static String xmlSafe(String s) {
-	String str = s;
-	for (int i = 0; i < from.length; i++) 
-		str = replace(str, from[i], to[i]);
-	return str;
 }
 }

@@ -39,7 +39,7 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, P
 	w.println(">");
 
 	if (configElement.getValue() != null)
-		w.println(gap2 + PluginParser.xmlSafe(configElement.getValue()));
+		w.println(gap2 + xmlSafe(configElement.getValue()));
 	for (int i = 0; i < subElementSize; i++) 
 		writeConfigurationElement(subElementList[i], w, indent + IModel.INDENT);
 
@@ -48,9 +48,9 @@ public void writeConfigurationElement(ConfigurationElementModel configElement, P
 public void writeConfigurationProperty(ConfigurationPropertyModel configProp, PrintWriter w, int indent) {
 	if (configProp.getName() == null)
 		return;
-	w.print(" " + configProp.getName() + "=\"");
+	w.print(" " + xmlSafe(configProp.getName()) + "=\"");
 	if (configProp.getValue() != null)
-		w.print(PluginParser.xmlSafe(configProp.getValue()));
+		w.print(xmlSafe(configProp.getValue()));
 	w.print("\"");
 }
 public void writeExtension(ExtensionModel extension, PrintWriter w, int indent) {
@@ -60,11 +60,11 @@ public void writeExtension(ExtensionModel extension, PrintWriter w, int indent) 
 
 	w.print(gap1 + "<" + IModel.EXTENSION);
 	if (extension.getExtensionPoint() != null)
-		w.print(" " + IModel.EXTENSION_TARGET + "=\"" + PluginParser.xmlSafe(extension.getExtensionPoint()) + "\"");
+		w.print(" " + IModel.EXTENSION_TARGET + "=\"" + xmlSafe(extension.getExtensionPoint()) + "\"");
 	if (extension.getId() != null)
-		w.print(" " + IModel.EXTENSION_ID + "=\"" + PluginParser.xmlSafe(extension.getId()) + "\"");
+		w.print(" " + IModel.EXTENSION_ID + "=\"" + xmlSafe(extension.getId()) + "\"");
 	if (extension.getName() != null)
-		w.print(" " + IModel.EXTENSION_NAME + "=\"" + PluginParser.xmlSafe(extension.getName()) + "\"");
+		w.print(" " + IModel.EXTENSION_NAME + "=\"" + xmlSafe(extension.getName()) + "\"");
 
 	ConfigurationElementModel[] subElements = extension.getSubElements();
 	int size = (subElements == null) ? 0 : subElements.length;
@@ -86,11 +86,11 @@ public void writeExtensionPoint(ExtensionPointModel extPt, PrintWriter w, int in
 
 	w.print(gap1 + "<" + IModel.EXTENSION_POINT);
 	if (extPt.getId() != null)
-		w.print(" " + IModel.EXTENSION_POINT_ID + "=\"" + PluginParser.xmlSafe(extPt.getId()) + "\"");
+		w.print(" " + IModel.EXTENSION_POINT_ID + "=\"" + xmlSafe(extPt.getId()) + "\"");
 	if (extPt.getName() != null)
-		w.print(" " + IModel.EXTENSION_POINT_NAME + "=\"" + PluginParser.xmlSafe(extPt.getName()) + "\"");
+		w.print(" " + IModel.EXTENSION_POINT_NAME + "=\"" + xmlSafe(extPt.getName()) + "\"");
 	if (extPt.getSchema() != null)
-		w.print(" " + IModel.EXTENSION_POINT_SCHEMA + "=\"" + PluginParser.xmlSafe(extPt.getSchema()) + "\"");
+		w.print(" " + IModel.EXTENSION_POINT_SCHEMA + "=\"" + xmlSafe(extPt.getSchema()) + "\"");
 	w.println("/>");
 }
 public void writeLibrary(LibraryModel library, PrintWriter w, int indent) {
@@ -103,9 +103,9 @@ public void writeLibrary(LibraryModel library, PrintWriter w, int indent) {
 
 	w.print(gap1 + "<" + IModel.LIBRARY);
 	if (library.getName() != null)
-		w.print(" " + IModel.LIBRARY_NAME + "=\"" + PluginParser.xmlSafe(library.getName()) + "\"");
+		w.print(" " + IModel.LIBRARY_NAME + "=\"" + xmlSafe(library.getName()) + "\"");
 	if (library.getType() != null)
-		w.print(" " + IModel.LIBRARY_TYPE + "=\"" + PluginParser.xmlSafe(library.getType()) + "\"");
+		w.print(" " + IModel.LIBRARY_TYPE + "=\"" + xmlSafe(library.getType()) + "\"");
 	if (!library.isExported())
 		w.println("/>");
 	else {
@@ -113,7 +113,7 @@ public void writeLibrary(LibraryModel library, PrintWriter w, int indent) {
 		String[] exports = library.getExports();
 		int size = (exports == null) ? 0 : exports.length;
 		for (int i = 0; i < size; i++)
-			w.println(gap2 + "<" + IModel.LIBRARY_EXPORT + " " + IModel.LIBRARY_EXPORT_MASK + "=\"" + PluginParser.xmlSafe(exports[i]) + "\"/>");
+			w.println(gap2 + "<" + IModel.LIBRARY_EXPORT + " " + IModel.LIBRARY_EXPORT_MASK + "=\"" + xmlSafe(exports[i]) + "\"/>");
 		w.println(gap1 + "</" + IModel.LIBRARY + ">");
 	}
 }
@@ -129,15 +129,15 @@ public void writePluginDescriptor(PluginDescriptorModel plugin, PrintWriter w, i
 	w.println("");
 	w.print(gap1 + "<" + IModel.PLUGIN);
 	if (plugin.getId() != null)
-		w.print(" " + IModel.PLUGIN_ID + "=\"" + PluginParser.xmlSafe(plugin.getId()) + "\"");
+		w.print(" " + IModel.PLUGIN_ID + "=\"" + xmlSafe(plugin.getId()) + "\"");
 	if (plugin.getName() != null)
-		w.print(" " + IModel.PLUGIN_NAME + "=\"" + PluginParser.xmlSafe(plugin.getName()) + "\"");
+		w.print(" " + IModel.PLUGIN_NAME + "=\"" + xmlSafe(plugin.getName()) + "\"");
 	if (plugin.getProviderName() != null)
-		w.print(" " + IModel.PLUGIN_PROVIDER + "=\"" + PluginParser.xmlSafe(plugin.getProviderName()) + "\"");
+		w.print(" " + IModel.PLUGIN_PROVIDER + "=\"" + xmlSafe(plugin.getProviderName()) + "\"");
 	if (plugin.getVersion() != null)
-		w.print(" " + IModel.PLUGIN_VERSION + "=\"" + PluginParser.xmlSafe(plugin.getVersion()) + "\"");
+		w.print(" " + IModel.PLUGIN_VERSION + "=\"" + xmlSafe(plugin.getVersion()) + "\"");
 	if (plugin.getPluginClass() != null)
-		w.print(" " + IModel.PLUGIN_CLASS + "=\"" + PluginParser.xmlSafe(plugin.getPluginClass()) + "\"");
+		w.print(" " + IModel.PLUGIN_CLASS + "=\"" + xmlSafe(plugin.getPluginClass()) + "\"");
 	w.println(">");
 
 	PluginPrerequisiteModel[] requires = plugin.getRequires();
@@ -194,17 +194,17 @@ public void writePluginFragment(PluginFragmentModel fragment, PrintWriter w, int
 	w.println("");
 	w.print(gap1 + "<" + IModel.FRAGMENT);
 	if (fragment.getId() != null)
-		w.print(" " + IModel.FRAGMENT_ID + "=\"" + PluginParser.xmlSafe(fragment.getId()) + "\"");
+		w.print(" " + IModel.FRAGMENT_ID + "=\"" + xmlSafe(fragment.getId()) + "\"");
 	if (fragment.getName() != null)
-		w.print(" " + IModel.FRAGMENT_NAME + "=\"" + PluginParser.xmlSafe(fragment.getName()) + "\"");
+		w.print(" " + IModel.FRAGMENT_NAME + "=\"" + xmlSafe(fragment.getName()) + "\"");
 	if (fragment.getProviderName() != null)
-		w.print(" " + IModel.FRAGMENT_PROVIDER + "=\"" + PluginParser.xmlSafe(fragment.getProviderName()) + "\"");
+		w.print(" " + IModel.FRAGMENT_PROVIDER + "=\"" + xmlSafe(fragment.getProviderName()) + "\"");
 	if (fragment.getVersion() != null)
-		w.print(" " + IModel.FRAGMENT_VERSION + "=\"" + PluginParser.xmlSafe(fragment.getVersion()) + "\"");
+		w.print(" " + IModel.FRAGMENT_VERSION + "=\"" + xmlSafe(fragment.getVersion()) + "\"");
 	if (fragment.getPluginId() != null)
-		w.print(" " + IModel.FRAGMENT_PLUGIN_ID + "=\"" + PluginParser.xmlSafe(fragment.getPluginId()) + "\"");
+		w.print(" " + IModel.FRAGMENT_PLUGIN_ID + "=\"" + xmlSafe(fragment.getPluginId()) + "\"");
 	if (fragment.getPluginVersion() != null)
-		w.print(" " + IModel.FRAGMENT_PLUGIN_VERSION + "=\"" + PluginParser.xmlSafe(fragment.getPluginVersion()) + "\"");
+		w.print(" " + IModel.FRAGMENT_PLUGIN_VERSION + "=\"" + xmlSafe(fragment.getPluginVersion()) + "\"");
 	w.println(">");
 
 	PluginPrerequisiteModel[] requires = fragment.getRequires();
@@ -253,9 +253,9 @@ public void writePluginPrerequisite(PluginPrerequisiteModel req, PrintWriter w, 
 
 	w.print(gap1 + "<" + IModel.PLUGIN_REQUIRES_IMPORT);
 	if (req.getPlugin() != null)
-		w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN + "=\"" + PluginParser.xmlSafe(req.getPlugin()) + "\"");
+		w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN + "=\"" + xmlSafe(req.getPlugin()) + "\"");
 	if (req.getVersion() != null)
-		w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN_VERSION + "=\"" + PluginParser.xmlSafe(req.getVersion()) + "\"");
+		w.print(" " + IModel.PLUGIN_REQUIRES_PLUGIN_VERSION + "=\"" + xmlSafe(req.getVersion()) + "\"");
 	if (req.getExport())
 		w.print(" " + IModel.PLUGIN_REQUIRES_EXPORT + "=\"" + IModel.TRUE + "\"");
 	if (req.getOptional())
@@ -281,5 +281,44 @@ public void writePluginRegistry(PluginRegistryModel registry, PrintWriter w, int
 
 	w.println(gap1 + "</" + IModel.REGISTRY + ">");
 
+}
+private static void appendEscapedChar(StringBuffer buffer, char c) {
+	String replacement = getReplacement(c);
+	if (replacement != null) {
+		buffer.append('&');
+		buffer.append(replacement);
+		buffer.append(';');
+	} else {
+		if ((c >= ' ' && c <= 0x7E) || c == '\n' || c == '\r' || c == '\t') {
+			buffer.append(c);
+		} else {
+			buffer.append("&#");
+			buffer.append(Integer.toString(c));
+			buffer.append(';');
+		}
+	}
+}
+public static String xmlSafe(String s) {
+	StringBuffer result = new StringBuffer(s.length() + 10);
+	for (int i = 0; i < s.length(); ++i)
+		appendEscapedChar(result, s.charAt(i));
+	return result.toString();
+}
+private static String getReplacement(char c) {
+	// Encode special XML characters into the equivalent character references.
+	// These five are defined by default for all XML documents.
+	switch (c) {
+		case '<' :
+			return "lt";
+		case '>' :
+			return "gt";
+		case '"' :
+			return "quot";
+		case '\'' :
+			return "apos";
+		case '&' :
+			return "amp";
+	}
+	return null;
 }
 }
