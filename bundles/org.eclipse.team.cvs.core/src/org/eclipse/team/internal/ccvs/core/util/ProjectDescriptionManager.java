@@ -16,19 +16,31 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.core.ITeamProvider;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-// NIK: Maybe we should make the Strings constants ?
-
+/**
+ * This class handles the updating of the .vcm_meta file in projects managed by the CVSTeamProvider.
+ * 
+ * It does so by listening to deltas on the project description and the .vcm_meta file itself.
+ * 
+ */
 public class ProjectDescriptionManager {
 
 	public final static IPath PROJECT_DESCRIPTION_PATH = new Path(".vcm_meta");
@@ -122,10 +134,18 @@ public class ProjectDescriptionManager {
 			DataInputStream is = null;
 			try {
 				is = new DataInputStream(((IFile) descResource).getContents());
-				readProjectDescription(desc, is);
+				try {
+					readProjectDescription(desc, is);
+				} finally {
+					is.close();
+				}
 				project.setDescription(desc, progress);
-				//clearOutgoingChange(project);
-			} catch(CVSException ex) {
+				// Make sure we have the cvs nature (the above read may have removed it)
+				if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
+					TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, progress);
+					writeProjectDescription(project, progress);
+				}
+			} catch(TeamException ex) {
 				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);
 				// something went wrong, delete the project description file
 				descResource.delete(true, progress);
@@ -137,14 +157,6 @@ public class ProjectDescriptionManager {
 				Util.logError(Policy.bind("ProjectDescriptionManager.unableToReadDescription"), ex);
 				// something went wrong, delete the project description file
 				descResource.delete(true, progress);
-			} finally {
-				// try to close the input stream
-				if (is != null)
-					try {
-						is.close();
-					} catch (IOException ex) {
-						Util.logError(Policy.bind("ProjectDescriptionManager.ioDescription"), ex);
-					}
 			}
 		}
 	}
@@ -166,4 +178,49 @@ public class ProjectDescriptionManager {
 		return resource.getProjectRelativePath().equals(PROJECT_DESCRIPTION_PATH);
 	}
 
+	public static void initializeChangeListener() {
+		IResourceChangeListener changeListener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				try {
+					IResourceDelta root = event.getDelta();
+					IResourceDelta[] projectDeltas = root.getAffectedChildren(IResourceDelta.CHANGED);
+					for (int i = 0; i < projectDeltas.length; i++) {
+						IResourceDelta delta = projectDeltas[i];
+						IResource resource = delta.getResource();
+						if (resource.getType() == IResource.PROJECT) {
+							IProject project = (IProject)resource;
+							ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
+							if (! (provider instanceof CVSTeamProvider))
+								continue;
+							// First, check if the .vcm_meta file for the project is in the delta.
+							IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED | IResourceDelta.ADDED | IResourceDelta.CHANGED);
+							for (int j = 0; j < children.length; j++) {
+								IResourceDelta childDelta = children[j];
+								IResource childResource = childDelta.getResource();
+								if (isProjectDescription(childResource))
+									switch (childDelta.getKind()) {
+										case IResourceDelta.REMOVED:
+											writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
+											return; // The file and description are in sync
+										case IResourceDelta.CHANGED:
+										case IResourceDelta.ADDED:
+											updateProjectIfNecessary(project, Policy.monitorFor(null));
+											return; // The file and description are in sync
+									}
+							}
+							// Check if we didn't do anything above and the project description changed.
+							if ((delta.getFlags() & IResourceDelta.DESCRIPTION) != 0) {
+								writeProjectDescriptionIfNecessary((CVSTeamProvider)provider, project, Policy.monitorFor(null));
+							}
+						}
+					}
+				} catch (CVSException ex) {
+					Util.logError("Cannot update project description", ex);
+				} catch (CoreException ex) {
+					Util.logError("Cannot update project description", ex);
+				} 
+			}
+		};
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(changeListener, IResourceChangeEvent.PRE_AUTO_BUILD);
+	}
 }

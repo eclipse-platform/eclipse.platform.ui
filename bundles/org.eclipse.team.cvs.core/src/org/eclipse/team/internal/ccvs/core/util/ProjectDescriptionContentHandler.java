@@ -20,8 +20,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-// NIK: Maybe we should make the Strings constants ?
-
 public class ProjectDescriptionContentHandler implements ContentHandler {
 
 	IProjectDescription desc;

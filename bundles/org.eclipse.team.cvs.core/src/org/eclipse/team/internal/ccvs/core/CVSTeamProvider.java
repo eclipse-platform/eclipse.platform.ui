@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -237,6 +238,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * We should optimize this when time permits to either use one operations or defer server
 	 * contact until the next commit.
 	 * </p>
+	 * 
+	 * <p>
+	 * There are special semantics for adding the project itself to the repo. In this case, the project 
+	 * must be included in the resources array.
+	 * </p>
 	 */
 	public void add(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {	
 		
@@ -250,6 +256,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		final Set binaryfiles = new HashSet(resources.length);
 		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
 		final TeamException[] eHolder = new TeamException[1];
+		boolean addProject = false;
 		for (int i=0;i<resources.length;i++) {
 			
 			// Throw an exception if the resource is not a child of the receiver
@@ -257,11 +264,16 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			
 			try {		
 				// Auto-add parents if they are not already managed
-				IResource parent = resources[i].getParent();
-				while (!isManaged(parent)) {
+				IContainer parent = resources[i].getParent();
+				// XXX Need to consider workspace root
+				
+				while (parent.getType() != IResource.ROOT && !isManaged(parent)) {
 					folders.add(parent.getFullPath().removeFirstSegments(1).toString());
 					parent = parent.getParent();
 				}
+					
+				if (resources[i].equals(project))
+					addProject = true;
 					
 				// Auto-add children
 				resources[i].accept(new IResourceVisitor() {
@@ -295,7 +307,18 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		if (eHolder[0] != null)
 			throw eHolder[0];
 	
-		// We need to add folders first, followed by files!
+		// We need to add the project then folders, followed by files!
+		if (addProject)
+			Client.execute(
+				Client.ADD,
+				getDefaultGlobalOptions(),
+				new String[0],
+				new String[] { managedProject.getFolderSyncInfo().getRepository() },
+				(ICVSFolder)Client.getManagedResource(project.getParent()),
+				progress,
+				getPrintStream(),
+				(CVSRepositoryLocation)CVSProviderPlugin.getProvider().getRepository(managedProject.getFolderSyncInfo().getRoot()),
+				null);
 		if (!folders.isEmpty())
 			Client.execute(
 				Client.ADD,

@@ -150,6 +150,7 @@ public class CVSProviderPlugin extends Plugin {
 		} catch (TeamException e) {
 			throw new CoreException(e.getStatus());
 		}
+		ProjectDescriptionManager.initializeChangeListener();
 	}
 	
 	/**

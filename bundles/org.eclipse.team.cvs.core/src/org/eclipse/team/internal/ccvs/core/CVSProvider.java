@@ -188,15 +188,12 @@ public class CVSProvider implements ICVSProvider {
 				project.open(monitor);
 			else
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			
-			// Get the meta file
-			// NOTE: This is related to project meta-information and is subject to change
-			ProjectDescriptionManager.updateProjectIfNecessary(project, monitor);
-			
+						
 			// Register the project with Team
 			// (unless the project already has the proper nature from the project meta-information)
-			if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID))
+			if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
 				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
+			}
 			
 		} catch (CoreException e) {
 			throw wrapException(e);
@@ -438,9 +435,6 @@ public class CVSProvider implements ICVSProvider {
 			
 			// Get the location of the workspace root
 			ICVSFolder root = Client.getManagedFolder(project.getLocation().toFile());
-		
-			// Create the meta-file
-			ProjectDescriptionManager.writeProjectDescription(project, monitor);
 	
 			// Get the message
 			String message = configuration.getProperty("message");
