@@ -439,7 +439,7 @@
 		<variable
 			tag="container"
 			description="%container.description"
-			expanderClass="org.eclipse.ui.externaltools.internal.variable.ResourceContainerExpander">
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.ContainerExpander">
 		</variable>
 		<variable
 			tag="resource"
