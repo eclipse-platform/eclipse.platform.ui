@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -48,25 +49,30 @@ public class ScopePreferenceDialog extends PreferenceDialog {
 		super(parentShell, manager);
 		this.descManager = descManager;
 	}
-	
-	protected void createButtonsForButtonBar(Composite parent) {
-		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		createButton(parent, NEW_ID, HelpUIResources.getString("ScopePreferenceDialog.new"), false); //$NON-NLS-1$
-		Button rbutton = createButton(parent, DELETE_ID, HelpUIResources.getString("ScopePreferenceDialog.delete"), false); //$NON-NLS-1$
+	protected Control createTreeAreaContents(Composite parent) {
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		Composite container = new Composite(parent, SWT.NULL);
+		container.setLayout(layout);
+		Control treeControl = super.createTreeAreaContents(container);
+		GridData treeGd = (GridData)treeControl.getLayoutData();
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = 2;
+		treeControl.setLayoutData(gd);
+
+		Button lbutton = createButton(container, NEW_ID, HelpUIResources.getString("ScopePreferenceDialog.new"), false); //$NON-NLS-1$
+		gd = (GridData)lbutton.getLayoutData();
+		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		Button rbutton = createButton(container, DELETE_ID, HelpUIResources.getString("ScopePreferenceDialog.delete"), false); //$NON-NLS-1$
 		rbutton.setEnabled(false);
-
-		Label l = new Label(parent, SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		l = new Label(parent, SWT.NONE);
-		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		GridLayout layout = (GridLayout) parent.getLayout();
-		layout.numColumns += 3;
-		layout.makeColumnsEqualWidth = false;
-
-		super.createButtonsForButtonBar(parent);
+		gd = (GridData)rbutton.getLayoutData();
+		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		layout.numColumns = 2;
+		container.setLayoutData(treeGd);
+		Point size = container.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		treeGd.widthHint = Math.max(treeGd.widthHint, size.x);
+		return container;
 	}
 	
 	protected TreeViewer createTreeViewer(Composite parent) {
