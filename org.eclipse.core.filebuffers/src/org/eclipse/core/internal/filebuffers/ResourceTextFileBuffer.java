@@ -204,7 +204,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				persistableModel.revert(fDocument);
 			}
 			
+			fSynchronizationStamp= fFile.getModificationStamp();
+			
 			fManager.fireDirtyStateChanged(this, fCanBeSaved);
+			
 		}
 	}
 	
@@ -348,6 +351,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				finally {
 					monitor.done();
 				}
+				
+				// set synchronization stamp to know whether the file synchronizer must become active
+				fSynchronizationStamp= fFile.getModificationStamp();
+				
+				// TODO commit persistable annotation model
 			}
 			
 		} catch (UnsupportedEncodingException x) {
@@ -460,7 +468,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	}
 	
 	/**
-	 * Intitializes the given document with the given stream using the given encoding.
+	 * Initializes the given document with the given stream using the given encoding.
 	 *
 	 * @param document the document to be initialized
 	 * @param contentStream the stream which delivers the document content

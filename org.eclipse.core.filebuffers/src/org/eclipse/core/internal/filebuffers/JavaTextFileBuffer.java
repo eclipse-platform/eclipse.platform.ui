@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 
 import org.eclipse.jface.text.DocumentEvent;
@@ -168,7 +169,8 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 						out.write(buffer, 0, bytesRead);
 					} catch (IOException e) {
 					}
-					monitor.worked(1);
+					if (monitor != null)
+						monitor.worked(1);
 				}
 			} finally {
 				try {
@@ -204,7 +206,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			status= x.getStatus();
 		}
 			
-		fStatus= status;			
+		fStatus= status;
 			
 		if (original != null) {
 			
@@ -224,6 +226,9 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			if (replaceContents)
 				fManager.fireBufferContentReplaced(this);
 				
+			if (fFile != null)
+				fSynchronizationStamp= fFile.lastModified();
+			
 			fManager.fireDirtyStateChanged(this, fCanBeSaved);
 		}
 	}
@@ -302,13 +307,13 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				bytes= bytesWithBOM;
 			}
 
-			InputStream stream= new ByteArrayInputStream(bytes);
 									
-			if (fFile.exists()) {
+			if (fFile != null && fFile.exists()) {
 								
 				if (!overwrite)
 					checkSynchronizationState();
 							
+				InputStream stream= new ByteArrayInputStream(bytes);
 					
 				// here the file synchronizer should actually be removed and afterwards added again. However,
 				// we are already inside an operation, so the delta is sent AFTER we have added the listener
@@ -319,17 +324,32 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				// TODO if there is an annotation model update it here
 				
 			} else {
-
-//				try {
-//					monitor.beginTask("Saving", 2000); //$NON-NLS-1$
-//					ContainerGenerator generator = new ContainerGenerator(fFile.getWorkspace(), fFile.getParent().getFullPath());
-//					generator.generateContainer(new SubProgressMonitor(monitor, 1000));
-//					fFile.create(stream, false, new SubProgressMonitor(monitor, 1000));
-//				}
-//				finally {
-//					monitor.done();
-//				}
-
+				
+				fFile= FileBuffers.getSystemFileAtLocation(getLocation());
+				fFile.getParentFile().mkdirs();
+				try {
+					FileOutputStream out= new FileOutputStream(fFile);
+					try {
+						out.write(bytes);
+						out.flush();
+					} catch (IOException x) {
+						IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
+						throw new CoreException(s);
+					} finally {
+						try {
+							out.close();
+						} catch (IOException x) {
+						}
+					}
+					
+					// set synchronization stamp to know whether the file synchronizer must become active
+					fSynchronizationStamp= fFile.lastModified();
+					
+				} catch (FileNotFoundException x) {
+					IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
+					throw new CoreException(s);
+				}
+					
 			}
 			
 		} catch (UnsupportedEncodingException x) {
@@ -344,23 +364,25 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
 
-		// Probe content
-		Reader reader= new BufferedReader(new StringReader(fDocument.get()));
-		try {
-			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
-			if (description != null) {
-				String encoding= description.getCharset();
-				if (encoding != null)
-					return encoding;
-			}
-		} catch (IOException ex) {
-			// try next strategy
-		} finally {
+		if (fFile != null) {
+			// Probe content
+			Reader reader= new BufferedReader(new StringReader(fDocument.get()));
 			try {
-				reader.close();
+				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
+				if (description != null) {
+					String encoding= description.getCharset();
+					if (encoding != null)
+						return encoding;
+				}
 			} catch (IOException ex) {
-				FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceTextFileBuffer.error.closeReader"), ex)); //$NON-NLS-1$
+				// try next strategy
+			} finally {
+				try {
+					reader.close();
+				} catch (IOException ex) {
+					FileBuffersPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("ResourceTextFileBuffer.error.closeReader"), ex)); //$NON-NLS-1$
+				}
 			}
 		}
 		
