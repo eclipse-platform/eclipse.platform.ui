@@ -26,5 +26,5 @@ public interface IIntroConstants {
 	// convention: actual string value is class name.
 	String INTRO_LINK = "IntroLink";
 	// default fonts
-	Font DEFAULT_LINK_LABEL_FONT = JFaceResources.getBannerFont();
+	Font DEFAULT_FONT = JFaceResources.getBannerFont();
 }
