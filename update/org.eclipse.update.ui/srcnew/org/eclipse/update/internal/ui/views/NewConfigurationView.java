@@ -452,8 +452,7 @@ public class NewConfigurationView
 			"org.eclipse.update.ui.CofigurationView_revertAction");
 
 		propertiesAction =
-			new PropertyDialogAction(
-				UpdateUI.getActiveWorkbenchShell(),
+			new PropertyDialogAction(UpdateUI.getActiveWorkbenchShell(),
 				getTreeViewer());
 		propertiesAction.setEnabled(false);
 		WorkbenchHelp.setHelp(
@@ -590,7 +589,7 @@ public class NewConfigurationView
 
 		addDrillDownAdapter(manager);
 
-		if (obj instanceof IFeatureAdapter) {
+		if (obj instanceof IFeatureAdapter || obj instanceof ILocalSite) {
 			manager.add(new Separator());
 			manager.add(propertiesAction);
 		}
@@ -763,9 +762,9 @@ public class NewConfigurationView
 	protected void handleDoubleClick(DoubleClickEvent e) {
 		if (e.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) e.getSelection();
-			if (ssel.size() == 1
-				&& ssel.getFirstElement() instanceof IFeatureAdapter)
-				propertiesAction.run();
+				Object obj = ssel.getFirstElement();
+				if (obj instanceof ILocalSite || obj instanceof IFeatureAdapter)
+					propertiesAction.run();
 		}
 	}
 	
@@ -859,10 +858,11 @@ public class NewConfigurationView
 		} else {
 			propertiesAction.setEnabled(false);
 		}
-		/*if (obj instanceof ILocalSite) {
-			preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
-			preserveAction.setEnabled(true);
-		} else*/
+		if (obj instanceof ILocalSite) {
+			propertiesAction.setEnabled(true);
+			//preserveAction.setConfiguration(((ILocalSite) obj).getCurrentConfiguration());
+			//preserveAction.setEnabled(true);
+		} else
 		if (obj instanceof IConfiguredSiteAdapter) {
 			siteStateAction.setSite(((IConfiguredSiteAdapter) obj).getConfiguredSite());
 			siteStateAction.setEnabled(true);
@@ -883,6 +883,7 @@ public class NewConfigurationView
 		key = ILocalSite.class;
 		array.add(new PreviewTask("Revert to Previous", "You can revert to one of the previous configurations if you are having problems with the current one.", revertAction));
 		//array.add(new PreviewTask("Save", "As new configurations are added, the old ones eventually get deleted. Use this task to save a good configuration you can always revert to.", preserveAction));
+		array.add(new PreviewTask("Show Activities", "This task allows you to view the activities that caused the creation of this configuration.", propertiesAction));
 		previewTasks.put(key, array.toArray(new IPreviewTask[array.size()]));
 
 		// configured site tasks

@@ -194,6 +194,12 @@
             class="org.eclipse.update.internal.ui.properties.FeatureStatusPropertyPage"
             id="org.eclipse.update.ui.featureStatusPropertyPage">
       </page>
+      <page
+            objectClass="org.eclipse.update.configuration.ILocalSite"
+            name="%properties.currentConfig.activities"
+            class="org.eclipse.update.internal.ui.properties.ConfigurationActivitiesPreferencePage"
+            id="org.eclipse.update.ui.currentConfigActivities">
+      </page>
    </extension>
    <extension
          point="org.eclipse.update.ui.searchCategory">
