@@ -35,6 +35,7 @@
    <extension-point id="bindings" name="%ExtPoint.bindings" schema="schema/bindings.exsd"/>
    <extension-point id="commands" name="%ExtPoint.commands" schema="schema/commands.exsd"/>
    <extension-point id="contexts" name="%ExtPoint.contexts" schema="schema/contexts.exsd"/>
+   <extension-point id="handlers" name="%ExtPoint.handlers" schema="schema/handlers.exsd"/>
    <extension-point id="decorators" name="%ExtPoint.decorators" schema="schema/decorators.exsd"/>
    <extension-point id="dropActions" name="%ExtPoint.dropActions" schema="schema/dropActions.exsd"/>
    <extension-point id="editorActions" name="%ExtPoint.editorActions" schema="schema/editorActions.exsd"/>
@@ -789,26 +790,30 @@
       		categoryId="org.eclipse.ui.category.window"
       		id="org.eclipse.ui.window.showKeyAssist">
       </command>
-      <handlerSubmission
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
             commandId="org.eclipse.ui.edit.copy"
-            handler="org.eclipse.ui.internal.handlers.WidgetMethodHandler:copy">
-      </handlerSubmission>
-      <handlerSubmission
+            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:copy" />
+      <handler
             commandId="org.eclipse.ui.edit.cut"
-            handler="org.eclipse.ui.internal.handlers.WidgetMethodHandler:cut">
-      </handlerSubmission>
-      <handlerSubmission
+            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:cut" />
+      <handler
             commandId="org.eclipse.ui.edit.paste"
-            handler="org.eclipse.ui.internal.handlers.WidgetMethodHandler:paste">
-      </handlerSubmission>
-      <handlerSubmission
+            class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:paste" />
+      <handler
             commandId="org.eclipse.ui.edit.selectAll"
-            handler="org.eclipse.ui.internal.handlers.SelectAllHandler">
-      </handlerSubmission>
-      <handlerSubmission
+            class="org.eclipse.ui.internal.handlers.SelectAllHandler" />
+      <handler
       		commandId="org.eclipse.ui.window.showKeyAssist"
-      		handler="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler">
-      </handlerSubmission>
+      		class="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler" />
+      <handler
+            commandId="org.eclipse.ui.views.showView"
+            class="org.eclipse.ui.internal.handlers.ShowViewHandler" />
+      <handler
+            commandId="org.eclipse.ui.perspectives.showPerspective"
+            class="org.eclipse.ui.internal.handlers.ShowPerspectiveHandler" />
    </extension>
    <extension
          point="org.eclipse.ui.views">

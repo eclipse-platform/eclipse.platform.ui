@@ -12,14 +12,14 @@ package org.eclipse.ui.internal.handlers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.commands.ExecutionException;
 
 /**
  * This handler is an adaptation of the widget method handler allowing select
@@ -31,94 +31,92 @@ import org.eclipse.ui.commands.ExecutionException;
  */
 public class SelectAllHandler extends WidgetMethodHandler {
 
-    /**
-     * The parameters for a single point select all.
-     */
-    private static final Class[] METHOD_PARAMETERS = { Point.class };
+	/**
+	 * The parameters for a single point select all.
+	 */
+	private static final Class[] METHOD_PARAMETERS = { Point.class };
 
-    /**
-     * @see org.eclipse.ui.commands.IHandler#execute(Map)
-     */
-    public Object execute(Map parameterValuesByName) throws ExecutionException {
-        final Method methodToExecute = getMethodToExecute();
-        if (methodToExecute != null) {
-            try {
-                final Control focusControl = Display.getCurrent()
-                        .getFocusControl();
-                final int numParams = methodToExecute.getParameterTypes().length;
+	public final Object execute(final ExecutionEvent event)
+			throws ExecutionException {
+		final Method methodToExecute = getMethodToExecute();
+		if (methodToExecute != null) {
+			try {
+				final Control focusControl = Display.getCurrent()
+						.getFocusControl();
+				final int numParams = methodToExecute.getParameterTypes().length;
 
-                if (numParams == 0) {
-                    // This is a no-argument selectAll method.
-                    methodToExecute.invoke(focusControl, null);
-                    focusControl.notifyListeners(SWT.Selection, null);
+				if (numParams == 0) {
+					// This is a no-argument selectAll method.
+					methodToExecute.invoke(focusControl, null);
+					focusControl.notifyListeners(SWT.Selection, null);
 
-                } else if (numParams == 1) {
-                    // This is a single-point selection method.
-                    final Method textLimitAccessor = focusControl.getClass()
-                            .getMethod("getTextLimit", NO_PARAMETERS); //$NON-NLS-1$
-                    final Integer textLimit = (Integer) textLimitAccessor
-                            .invoke(focusControl, null);
-                    final Object[] parameters = { new Point(0, textLimit
-                            .intValue()) };
-                    methodToExecute.invoke(focusControl, parameters);
-                    focusControl.notifyListeners(SWT.Selection, null);
+				} else if (numParams == 1) {
+					// This is a single-point selection method.
+					final Method textLimitAccessor = focusControl.getClass()
+							.getMethod("getTextLimit", NO_PARAMETERS); //$NON-NLS-1$
+					final Integer textLimit = (Integer) textLimitAccessor
+							.invoke(focusControl, null);
+					final Object[] parameters = { new Point(0, textLimit
+							.intValue()) };
+					methodToExecute.invoke(focusControl, parameters);
+					focusControl.notifyListeners(SWT.Selection, null);
 
-                } else {
-                    /*
-                     * This means that getMethodToExecute() has been changed,
-                     * while this method hasn't.
-                     */
-                    throw new ExecutionException(
-                            "Too many parameters on select all", new Exception()); //$NON-NLS-1$
+				} else {
+					/*
+					 * This means that getMethodToExecute() has been changed,
+					 * while this method hasn't.
+					 */
+					throw new ExecutionException(
+							"Too many parameters on select all", new Exception()); //$NON-NLS-1$
 
-                }
+				}
 
-            } catch (IllegalAccessException e) {
-                // The method is protected, so do nothing.
+			} catch (IllegalAccessException e) {
+				// The method is protected, so do nothing.
 
-            } catch (InvocationTargetException e) {
-                throw new ExecutionException(
-                        "An exception occurred while executing " //$NON-NLS-1$
-                                + getMethodToExecute(), e.getTargetException());
+			} catch (InvocationTargetException e) {
+				throw new ExecutionException(
+						"An exception occurred while executing " //$NON-NLS-1$
+								+ getMethodToExecute(), e.getTargetException());
 
-            } catch (NoSuchMethodException e) {
-                // I can't get the text limit. Do nothing.
+			} catch (NoSuchMethodException e) {
+				// I can't get the text limit. Do nothing.
 
-            }
-        }
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * Looks up the select all method on the given focus control.
-     * 
-     * @return The method on the focus control; <code>null</code> if none.
-     */
-    protected Method getMethodToExecute() {
-        Method method = super.getMethodToExecute();
+	/**
+	 * Looks up the select all method on the given focus control.
+	 * 
+	 * @return The method on the focus control; <code>null</code> if none.
+	 */
+	protected Method getMethodToExecute() {
+		Method method = super.getMethodToExecute();
 
-        // Let's see if we have a control that supports point-based selection.
-        if (method == null) {
-            final Control focusControl = Display.getCurrent().getFocusControl();
-            try {
-                method = focusControl.getClass().getMethod("setSelection", //$NON-NLS-1$
-                        METHOD_PARAMETERS);
-            } catch (NoSuchMethodException e) {
-                // Do nothing.
-            }
-        }
+		// Let's see if we have a control that supports point-based selection.
+		if (method == null) {
+			final Control focusControl = Display.getCurrent().getFocusControl();
+			try {
+				method = focusControl.getClass().getMethod("setSelection", //$NON-NLS-1$
+						METHOD_PARAMETERS);
+			} catch (NoSuchMethodException e) {
+				// Do nothing.
+			}
+		}
 
-        return method;
-    }
+		return method;
+	}
 
-    /**
-     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-     *      java.lang.String, java.lang.Object)
-     */
-    public void setInitializationData(IConfigurationElement config,
-            String propertyName, Object data) {
-        // The name is always "selectAll".
-        methodName = "selectAll"; //$NON-NLS-1$
-    }
+	/**
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
+	 *      java.lang.String, java.lang.Object)
+	 */
+	public void setInitializationData(IConfigurationElement config,
+			String propertyName, Object data) {
+		// The name is always "selectAll".
+		methodName = "selectAll"; //$NON-NLS-1$
+	}
 }

@@ -11,10 +11,10 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ExecutionException;
 
 /**
  * A handler that can be used to imitate a IWorkbenchWindowActionDelegate.

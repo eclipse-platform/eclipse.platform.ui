@@ -14,13 +14,16 @@ package org.eclipse.ui.internal.handlers;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.misc.Policy;
 
 /**
  * <p>
@@ -36,6 +39,11 @@ import org.eclipse.ui.handlers.IHandlerService;
  * @since 3.1
  */
 public class HandlerService implements IHandlerService {
+	
+	static {
+		Command.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS_VERBOSE;
+		Command.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
+	}
 
 	/**
 	 * The central authority for determining which handler we should use.
@@ -90,6 +98,10 @@ public class HandlerService implements IHandlerService {
 					.next();
 			deactivateHandler(activation);
 		}
+	}
+	
+	public final IEvaluationContext getCurrentState() {
+		return handlerAuthority.getCurrentState();
 	}
 
 	public final void readRegistry() {

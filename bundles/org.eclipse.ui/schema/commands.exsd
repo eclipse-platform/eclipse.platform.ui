@@ -129,6 +129,7 @@ This element has been replaced with a preference.  If your application needs to 
       <complexType>
          <all>
             <element ref="commandParameter"/>
+            <element ref="defaultHandler" minOccurs="0" maxOccurs="1"/>
          </all>
          <attribute name="category" type="string">
             <annotation>
@@ -173,6 +174,16 @@ This element has been replaced with a preference.  If your application needs to 
                <documentation>
                   The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultHandler" type="string">
+            <annotation>
+               <documentation>
+                  The default handler for this command.  If no other handler is active, this handler will be active.  This handler will conflict with other handler definitions that specify no &lt;code&gt;activeWhen&lt;/code&gt; conditions.  If you are creating an &lt;code&gt;IExecutableExtension&lt;/code&gt;, you can use the &lt;code&gt;defaultHandler&lt;/code&gt; element instead.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -397,12 +408,15 @@ This element has been replaced with a preference.  If your application needs to 
 
    <element name="handlerSubmission">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="commandId" deprecated="true"/>
+         </appInfo>
          <documentation>
             &lt;p&gt;
 This element declares a handler for a command.  This handler is then associated with the command with the given restrictions.  This association is done at start-up.  Associating a handler does not mean that this handler will always be the one chosen by the workbench; the actual choice is done by examining the workbench state and comparing with the various handler submissions.
 &lt;/p&gt;
 &lt;p&gt;
-This particular API should still be considered experimental.  While you may use it, you must be willing to accept that this API may change radically or be removed entirely at some point in the future.  We appreciate feedback on this API to &lt;a href=&quot;mailto:platform-ui-dev@eclipse.org&quot;&gt;platform-ui-dev@eclipse.org&lt;/a&gt;.
+Please use the &quot;org.eclipse.ui.handlers&quot; extension point instead.  Or, alternatively, the &lt;code&gt;defaultHandler&lt;/code&gt; attribute on the &lt;code&gt;command&lt;/code&gt; element.
 &lt;/p&gt;
          </documentation>
       </annotation>
@@ -563,18 +577,38 @@ This particular API should still be considered experimental.  While you may use 
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The human-readable name for this parameter value.
+                  The name of the parameter to pass to the &lt;code&gt;IExecutableExtension&lt;/code&gt;.
                </documentation>
-               <appInfo>
-                  <meta.attribute translatable="true"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  The actual value for the parameter, as it would be passed to the handler.
+                  The value of the parameter to pass to the &lt;code&gt;IExecutableExtension&lt;/code&gt;.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="defaultHandler">
+      <annotation>
+         <documentation>
+            The default handler for this command.  If no other handler is active, this handler will be active.  This handler will conflict with other handler definitions that specify no &lt;code&gt;activeWhen&lt;/code&gt; conditions.  If you are not creating an &lt;code&gt;IExecutableExtension&lt;/code&gt;, you can use the &lt;code&gt;defaultHandler&lt;/code&gt; attribute instead.
+         </documentation>
+      </annotation>
+      <complexType>
+         <all>
+            <element ref="parameter"/>
+         </all>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class which implements &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -13,21 +13,19 @@ package org.eclipse.ui.internal.handlers;
 import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.FocusManager;
 import javax.swing.SwingUtilities;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.commands.AbstractHandler;
-import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.internal.ExceptionHandler;
 
 /**
@@ -38,16 +36,6 @@ import org.eclipse.ui.internal.ExceptionHandler;
  */
 public class WidgetMethodHandler extends AbstractHandler implements
 		IExecutableExtension {
-
-	/**
-	 * The name of the attribute controlling the enabled state.
-	 */
-	private static final String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
-
-	/**
-	 * The name of the attribute for the identifier.
-	 */
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	/**
 	 * The parameters to pass to the method this handler invokes. This handler
@@ -61,12 +49,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	 */
 	protected String methodName;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.commands.IHandler#execute(java.lang.Object)
-	 */
-	public Object execute(Map parameterValuesByName) throws ExecutionException {
+	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		final Method methodToExecute = getMethodToExecute();
 		if (methodToExecute != null) {
 			try {
@@ -133,12 +116,8 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		return null;
 	}
 
-	public Map getAttributeValuesByName() {
-		Map attributeValuesByName = new HashMap();
-		attributeValuesByName.put(ATTRIBUTE_ENABLED,
-				getMethodToExecute() == null ? Boolean.FALSE : Boolean.TRUE);
-		attributeValuesByName.put(ATTRIBUTE_ID, null);
-		return Collections.unmodifiableMap(attributeValuesByName);
+	public final boolean isEnabled() {
+		return getMethodToExecute() == null;
 	}
 
 	/**

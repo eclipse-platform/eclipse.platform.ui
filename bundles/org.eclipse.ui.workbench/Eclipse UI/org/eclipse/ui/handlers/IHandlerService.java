@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISourceProvider;
 
 /**
@@ -133,6 +134,14 @@ public interface IHandlerService {
 	 *            collection must not be <code>null</code>.
 	 */
 	public void deactivateHandlers(Collection activations);
+
+	/**
+	 * Returns an evaluation context representing the current state of the
+	 * world.
+	 * 
+	 * @return The current state of the application; never <code>null</code>.
+	 */
+	public IEvaluationContext getCurrentState();
 
 	/**
 	 * <p>

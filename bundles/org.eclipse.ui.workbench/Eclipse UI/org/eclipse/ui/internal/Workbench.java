@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
@@ -104,8 +103,6 @@ import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.handlers.HandlerService;
-import org.eclipse.ui.internal.handlers.ShowPerspectiveHandler;
-import org.eclipse.ui.internal.handlers.ShowViewHandler;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
@@ -906,17 +903,6 @@ public final class Workbench implements IWorkbench {
 				this);
 		handlerService.addSourceProvider(activePartSourceProvider);
 		contextService.addSourceProvider(activePartSourceProvider);
-
-		/*
-		 * TODO Putting this here is a like a sword in my side. But alas, the
-		 * handler support from XML just isn't up to the task yet.
-		 */
-		final Command showViewCommand = commandService
-				.getCommand("org.eclipse.ui.views.showView"); //$NON-NLS-1$
-		showViewCommand.setHandler(new ShowViewHandler());
-		final Command showPerspectiveCommand = commandService
-				.getCommand("org.eclipse.ui.perspectives.showPerspective"); //$NON-NLS-1$
-		showPerspectiveCommand.setHandler(new ShowPerspectiveHandler());
 
 		/*
 		 * Phase 4 of the initialization of commands. This handles the creation

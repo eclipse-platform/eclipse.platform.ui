@@ -11,10 +11,10 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.ui.commands.AbstractHandler;
 
 /**
  * A handler that is intended to be defined in XML. These handlers support the

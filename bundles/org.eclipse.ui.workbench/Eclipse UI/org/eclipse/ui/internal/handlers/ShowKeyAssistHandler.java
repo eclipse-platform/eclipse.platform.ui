@@ -11,9 +11,10 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import java.util.Map;
-
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * A handler that displays the key assist dialog when executed.
@@ -22,16 +23,19 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ShowKeyAssistHandler extends WorkbenchWindowHandlerDelegate {
 
-    /**
-     * Opens the key assistant. This should never be called until initialization
-     * occurs.
-     * 
-     * @param parameterValuesByName
-     *            Ignored
-     * @return <code>null</code>
-     */
-    public Object execute(Map parameterValuesByName) {
-        PlatformUI.getWorkbench().getContextSupport().openKeyAssistDialog();
-        return null;
-    }
+	/**
+	 * Opens the key assistant. This should never be called until initialization
+	 * occurs.
+	 * 
+	 * @param event
+	 *            Ignored
+	 * @return <code>null</code>
+	 */
+	public Object execute(final ExecutionEvent event) {
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		final IBindingService bindingService = (IBindingService) workbench
+				.getAdapter(IBindingService.class);
+		bindingService.openKeyAssistDialog();
+		return null;
+	}
 }

@@ -245,6 +245,41 @@ final class HandlerAuthority implements ISourceProviderListener {
 	}
 
 	/**
+	 * Queries the source providers, and fills in the variables for the given
+	 * evaluation context.
+	 * 
+	 * @param context
+	 *            The context to fill in; must not be <code>null</code>.
+	 */
+	private final void fillInCurrentState(final IEvaluationContext context) {
+		final Iterator providerItr = providers.iterator();
+		while (providerItr.hasNext()) {
+			final ISourceProvider provider = (ISourceProvider) providerItr
+					.next();
+			final Map currentState = provider.getCurrentState();
+			final Iterator variableItr = currentState.entrySet().iterator();
+			while (variableItr.hasNext()) {
+				final Map.Entry entry = (Map.Entry) variableItr.next();
+				final String variableName = (String) entry.getKey();
+				final Object variableValue = entry.getValue();
+				if (variableName != null) {
+					if (variableValue == null) {
+						context.removeVariable(variableName);
+					} else {
+						context.addVariable(variableName, variableValue);
+					}
+				}
+			}
+		}
+	}
+
+	final IEvaluationContext getCurrentState() {
+		final IEvaluationContext context = new EvaluationContext(null, this);
+		fillInCurrentState(context);
+		return context;
+	}
+
+	/**
 	 * Removes this source provider from the list, and detaches this authority
 	 * as a listener.
 	 * 
@@ -483,24 +518,6 @@ final class HandlerAuthority implements ISourceProviderListener {
 	 * source providers.
 	 */
 	private final void updateCurrentState() {
-		final Iterator providerItr = providers.iterator();
-		while (providerItr.hasNext()) {
-			final ISourceProvider provider = (ISourceProvider) providerItr
-					.next();
-			final Map currentState = provider.getCurrentState();
-			final Iterator variableItr = currentState.entrySet().iterator();
-			while (variableItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) variableItr.next();
-				final String variableName = (String) entry.getKey();
-				final Object variableValue = entry.getValue();
-				if (variableName != null) {
-					if (variableValue == null) {
-						context.removeVariable(variableName);
-					} else {
-						context.addVariable(variableName, variableValue);
-					}
-				}
-			}
-		}
+		fillInCurrentState(context);
 	}
 }
