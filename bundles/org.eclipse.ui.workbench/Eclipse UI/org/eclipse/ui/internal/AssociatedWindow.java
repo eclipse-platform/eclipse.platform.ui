@@ -198,24 +198,6 @@ public class AssociatedWindow extends Window {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.window.Window#handleShellCloseEvent()
-	 */
-	protected void handleShellCloseEvent() {
-		super.handleShellCloseEvent();
-		if (roundRegion != null)
-			roundRegion.dispose();
-		
-		
-		getParentShell().removeControlListener(controlListener);
-		owner.removeControlListener(controlListener);
-		
-		Region shellRegion = getShell().getRegion();
-		if(shellRegion != null)
-			shellRegion.dispose();
-	}
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.jface.window.Window#createContents()
 	 */
 	protected Control createContents(Composite parent) {
@@ -363,5 +345,28 @@ public class AssociatedWindow extends Window {
 				+ shellSize.y, 3, 1));
 		cornerRegion.add(new Rectangle(0 + shellSize.x, (shellSize.height - 1)
 				+ shellSize.y, 5, 1));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		
+		//May have never created the shell
+		if(getShell() == null)
+			return super.close();
+		
+		if (roundRegion != null)
+			roundRegion.dispose();		
+		
+		if(controlListener != null){
+			getParentShell().removeControlListener(controlListener);
+			owner.removeControlListener(controlListener);
+		}
+		
+		Region shellRegion = getShell().getRegion();
+		if(shellRegion != null)
+			shellRegion.dispose();
+		return super.close();
 	}
 }
