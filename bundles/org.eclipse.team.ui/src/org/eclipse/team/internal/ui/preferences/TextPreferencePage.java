@@ -55,11 +55,25 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		public String isValid(String newText) {
 			if (newText.trim().length() == 0)
 				return ""; //$NON-NLS-1$
+			newText = strip(newText);
 			if (newText.indexOf('*') >= 0)
 				return Policy.bind("TextPreferencePage.2"); //$NON-NLS-1$
 			if (newText.indexOf('.') >= 0)
 				return Policy.bind("TextPreferencePage.3"); //$NON-NLS-1$
 			return null;
+		}
+
+		/**
+		 * @param newText
+		 * @return
+		 */
+		public String strip(String newText) {
+			newText= newText.trim();
+			if (newText.startsWith("*")) //$NON-NLS-1$
+				newText= newText.substring(1);
+			if (newText.startsWith(".")) //$NON-NLS-1$
+				newText= newText.substring(1);
+			return newText;
 		}
 	}
 	
@@ -256,11 +270,12 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * Add a new item to the table with the default type of Text.
 	 */
 	void addExtension() {
-		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.enterExtensionShort"), Policy.bind("TextPreferencePage.enterExtensionLong"), null, new ExtensionValidator()); //$NON-NLS-1$ //$NON-NLS-2$
+		final ExtensionValidator validator = new ExtensionValidator();
+		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.enterExtensionShort"), Policy.bind("TextPreferencePage.enterExtensionLong"), null, validator); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() != Window.OK) 
 			return;
 		
-		final String extension = dialog.getValue().trim();
+		final String extension = validator.strip(dialog.getValue());
 		
 		// Check if the item already exists
 		final Iterator it = fItems.iterator();

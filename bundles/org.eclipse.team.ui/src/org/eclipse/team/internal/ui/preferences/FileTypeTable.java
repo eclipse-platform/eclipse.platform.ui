@@ -11,6 +11,7 @@
 
 package org.eclipse.team.internal.ui.preferences;
 
+import java.text.Collator;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,17 +47,47 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     private final static int COMBO_INDEX_DONT_SAVE= 1;
     private static final String [] SAVE_TEXT= { Policy.bind("FileTypeTable.2"), Policy.bind("FileTypeTable.3") }; //$NON-NLS-1$ //$NON-NLS-2$
 
-    public abstract static class Item {
+    private static final class FileTypeSorter extends ViewerSorter {
+    	private final Collator fCollator;
+    	
+    	public FileTypeSorter() {
+    		fCollator= Collator.getInstance();
+    	}
+    	
+		private int getCategory(Object element) {
+		    if (element instanceof Extension)
+		        return 0;
+		    if (element instanceof Name) {
+		        return 1;
+		    }
+		    return 2;
+		}
+
+		public int compare(Viewer viewer,Object e1,Object e2) {
+			final int compare= getCategory(e1) - getCategory(e2);
+			if (compare != 0) 
+				return compare;
+			return fCollator.compare(((Item)e1).name,  ((Item)e2).name);
+		}
+	}
+
+	public abstract static class Item implements Comparable {
         public final String name;
         public boolean save;
         public int mode;
         
         public Item(String name) { this.name= name; save= true; mode= Team.BINARY; }
+        
+        /* (non-Javadoc)
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		public int compareTo(Object o) {
+			return name.compareTo(((Item)o).name);
+		}
     }
     
     public static class Extension extends Item {
         public Extension(String name) { super(name); }
-
     }
 
     public static class Name extends Item {
@@ -88,24 +119,6 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		table.setLinesVisible(false);
 		table.setHeaderVisible(true);
 		
-		/**
-		 * Create a viewer for the table.
-		 */
-		fTableViewer = new TableViewer(table);
-		fTableViewer.setContentProvider(this);
-		fTableViewer.setLabelProvider(this);
-		fTableViewer.setSorter(new ViewerSorter() {
-		    public int category(Object element) {
-		        if (element instanceof Extension)
-		            return 0;
-		        if (element instanceof Name) {
-		            return 1;
-		        }
-		        return 2;
-		    }
-		    
-		});
-
         final PixelConverter converter= SWTUtils.createDialogPixelConverter(composite);
         
 		/**
@@ -131,6 +144,14 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		    saveColumn.setText(Policy.bind("FileTypeTable.6")); //$NON-NLS-1$
 		}
 		
+		/**
+		 * Create a viewer for the table.
+		 */
+		fTableViewer = new TableViewer(table);
+		fTableViewer.setContentProvider(this);
+		fTableViewer.setLabelProvider(this);
+		fTableViewer.setSorter(new FileTypeSorter());
+
 		/**
 		 * Add a cell editor in the Keyword Substitution Mode column
 		 */
