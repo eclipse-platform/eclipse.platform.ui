@@ -241,6 +241,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 		super.startup();
 		
 		PerspectiveManager.getDefault().startup();
+		ConsoleDocumentManager.getDefault().startup();
 		
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);

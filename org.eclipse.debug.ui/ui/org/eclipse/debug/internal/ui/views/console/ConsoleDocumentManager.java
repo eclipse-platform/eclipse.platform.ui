@@ -33,6 +33,9 @@ import org.eclipse.ui.PlatformUI;
 
 public class ConsoleDocumentManager implements ILaunchListener {
 
+	/**
+	 * Singleton console document manager
+	 */
 	private static ConsoleDocumentManager fgConsoleDocumentManager= null;
 	
 	/**
@@ -61,14 +64,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	}
 	
 	private ConsoleDocumentManager() {
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		launchManager.addLaunchListener(this);	
-
-		//set up the docs for launches already registered
-		ILaunch[] launches= launchManager.getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-			launchAdded(launches[i]);
-		}
 	}
 	
 	/**
@@ -183,6 +178,28 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		}
 	}
 	
+	/**
+	 * Called by the debug ui plug-in on startup.
+	 * The console document manager starts listening for
+	 * launches to be registered and initializes if any launches
+	 * already exist.
+	 */
+	public void startup() {
+		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		launchManager.addLaunchListener(this);	
+
+		//set up the docs for launches already registered
+		ILaunch[] launches= launchManager.getLaunches();
+		for (int i = 0; i < launches.length; i++) {
+			launchAdded(launches[i]);
+		}
+	}
+	
+	/**
+	 * Called by the debug ui plug-in on shutdown.
+	 * The console document manager de-registers as a 
+	 * launch listener and kills all existing console documents.
+	 */
 	public void shutdown() throws CoreException {
 		Iterator docs= fConsoleDocuments.values().iterator();
 		while (docs.hasNext()) {
