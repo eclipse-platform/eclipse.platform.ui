@@ -22,7 +22,7 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 	 */
 	protected void doAction(Object element) {
 		doAction();
-		getAction().setEnabled(false);
+		update();
 	}
 	
 	/**

@@ -18,6 +18,7 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -30,11 +31,18 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 	protected void doAction() {
 		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
-		try {
-			breakpointManager.removeBreakpoints(breakpoints, true);
-		} catch (CoreException e) {
-			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-			if (window != null) {
+		if (breakpoints.length < 1) {
+			return;
+		}
+		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		boolean proceed = MessageDialog.openQuestion(window.getShell(), "Remove All Breakpoints", "Are you sure you want to remove all breakpoints?");
+		if (proceed) {
+			try {
+				breakpointManager.removeBreakpoints(breakpoints, true);
+			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),ActionMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
