@@ -167,6 +167,7 @@ class IndexingOperation {
 		return name;
 	}
 	public class IndexingException extends Exception {
+		private static final long serialVersionUID = 1L;
 	}
 	/**
 	 * Returns the documents to be added to index. The collection consists of

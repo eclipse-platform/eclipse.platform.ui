@@ -15,4 +15,5 @@ package org.eclipse.help.internal.search;
  * complicated.
  */
 public class QueryTooComplexException extends RuntimeException {
+	private static final long serialVersionUID = 1L;
 }

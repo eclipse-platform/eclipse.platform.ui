@@ -30,6 +30,7 @@ import org.osgi.framework.*;
  * featureId, version, from, to, verifyOnly may be provided for update commands
  */
 public class ControlServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	public static final String UPDATE_PLUGIN_ID = "org.eclipse.update.core"; //$NON-NLS-1$
 
 	public static final String CMD_DISPLAYHELP = "displayHelp"; //$NON-NLS-1$

@@ -20,6 +20,9 @@ import org.eclipse.help.internal.*;
  * Properties stored in file.
  */
 public class HelpProperties extends Properties {
+
+	private static final long serialVersionUID = 1L;
+	
 	private File file = null;
 
 	protected String name = null;

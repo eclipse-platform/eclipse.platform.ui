@@ -24,6 +24,7 @@ import org.eclipse.help.internal.webapp.data.*;
  * http://server/help/context/plugin.id.context.id
  */
 public class ContextServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	protected String locale;
 
 	/**

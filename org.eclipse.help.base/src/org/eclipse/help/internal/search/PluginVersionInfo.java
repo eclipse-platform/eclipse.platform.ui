@@ -21,6 +21,7 @@ import org.osgi.framework.*;
  * pluginID\npluginVersion\nfragment1ID\nfragment1Version\nfragment2ID\nfragment2Version
  */
 public class PluginVersionInfo extends HelpProperties {
+	private static final long serialVersionUID = 1L;
 	// Separates plugins and versions in value strings
 	static final String SEPARATOR = "\n"; //$NON-NLS-1$
 	File dir;

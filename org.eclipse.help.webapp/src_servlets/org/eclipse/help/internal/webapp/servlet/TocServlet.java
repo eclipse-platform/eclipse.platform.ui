@@ -29,6 +29,7 @@ import org.eclipse.help.internal.webapp.data.*;
  * </ul>
  */
 public class TocServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private String locale;
 
 	/**

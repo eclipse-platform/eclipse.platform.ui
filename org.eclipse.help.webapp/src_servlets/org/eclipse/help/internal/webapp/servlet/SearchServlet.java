@@ -29,6 +29,7 @@ import org.eclipse.help.internal.workingset.*;
  * url encoded query string.
  */
 public class SearchServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private String locale;
 
 	/**

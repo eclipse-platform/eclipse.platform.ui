@@ -79,6 +79,7 @@ public class PropertyChange {
 	 * @see PropertyChange.IPropertyChangeListener
 	 */
 	public static class PropertyChangeEvent extends EventObject {
+		private static final long serialVersionUID = 1L;
 
 		/**
 		 * The name of the changed property.

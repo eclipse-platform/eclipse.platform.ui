@@ -18,6 +18,9 @@ import java.util.*;
  * thread safe.
  */
 public class FastStack extends ArrayList {
+
+	private static final long serialVersionUID = 1L;
+	
 	private int last = -1;
 
 	public FastStack() {

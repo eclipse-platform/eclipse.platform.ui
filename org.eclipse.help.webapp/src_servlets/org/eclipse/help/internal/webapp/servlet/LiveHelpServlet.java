@@ -25,6 +25,7 @@ import org.osgi.framework.*;
  * Servlet to handle live help action requests
  */
 public class LiveHelpServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	/**
 	 */
 	public void init() throws ServletException {

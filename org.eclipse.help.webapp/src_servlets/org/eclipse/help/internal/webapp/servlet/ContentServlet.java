@@ -18,6 +18,7 @@ import javax.servlet.http.*;
  * Servlet to interface client with remote Eclipse
  */
 public class ContentServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private EclipseConnector connector;
 
 	/**
