@@ -286,6 +286,65 @@ public class DebugPlugin extends Plugin {
 	 */
 	private static final int NOTIFY_FILTERS = 0;
 	private static final int NOTIFY_EVENTS = 1;
+		
+	/**
+	 * Queue of debug events to fire to listeners.
+	 * @since 3.1
+	 */
+	private List fEventQueue = new ArrayList();
+	
+	/**
+	 * Job to fire events to listeners.
+	 * @since 3.1
+	 */
+	private EventDispatchJob fEventDispatchJob = new EventDispatchJob();
+	
+	/**
+	 * Event dispatch job
+	 * @since 3.1
+	 */
+	class EventDispatchJob extends Job {
+
+	    /**
+         * Creates a new event dispatch job.
+         */
+        public EventDispatchJob() {
+            super(DebugCoreMessages.getString("DebugPlugin.1")); //$NON-NLS-1$
+            setPriority(Job.INTERACTIVE);
+        }
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+         */
+        protected IStatus run(IProgressMonitor monitor) {
+            
+            while (!fEventQueue.isEmpty()) {
+                DebugEvent[] events = null;
+	            synchronized (fEventQueue) {
+	                if (!fEventQueue.isEmpty()) {
+	                    events = (DebugEvent[]) fEventQueue.remove(0);
+	                }
+	            }
+	            if (events != null) {
+	                getEventNotifier().dispatch(events);
+	            }
+            }
+            return Status.OK_STATUS;
+        }
+	    
+        /* (non-Javadoc)
+         * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+         */
+        public boolean shouldRun() {
+            return shouldSchedule();
+        }
+        /* (non-Javadoc)
+         * @see org.eclipse.core.internal.jobs.InternalJob#shouldSchedule()
+         */
+        public boolean shouldSchedule() {
+            return !(isShuttingDown() || fEventListeners == null);
+        }
+        
+	}
 
 	/**
 	 * Returns the singleton instance of the debug plug-in.
@@ -352,7 +411,10 @@ public class DebugPlugin extends Plugin {
 	public void fireDebugEventSet(DebugEvent[] events) {
 		if (isShuttingDown() || events == null || fEventListeners == null)
 			return;
-		getEventNotifier().dispatch(events);
+		synchronized (fEventQueue) {
+			fEventQueue.add(events);
+		}
+		fEventDispatchJob.schedule();
 	}
 	
 	/**
@@ -1229,6 +1291,7 @@ public class DebugPlugin extends Plugin {
 		
 		return res;
 	}	
+	
 }
 
 
