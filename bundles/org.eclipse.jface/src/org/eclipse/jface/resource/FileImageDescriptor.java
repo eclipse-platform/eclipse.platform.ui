@@ -73,21 +73,20 @@ public boolean equals(Object o) {
  */
 public ImageData getImageData() {
 	InputStream in = getStream();
+	ImageData result = null;
 	if (in != null) {
 		try {
-			return new ImageData(in);
-		}
-		finally {
+			result= new ImageData(in);
+		}finally {
 			try {
 				in.close();
-			}
-			catch (IOException e) {
-				return null;
+			}catch (IOException e) {
+				//System.err.println(getClass().getName()+".getImageData(): "+
+				//  "Exception while closing InputStream : "+e);
 			}
 		}
-	} else {
-		return null;
 	}
+	return result;
 }
 /**
  * Returns a stream on the image contents.  Returns
