@@ -516,46 +516,63 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, double)
 	 */
 	public void setValue(String name, double value) {
+		silentRunning = true;//Turn off updates from the store
+		double oldValue = getDouble(name);
 		if (getDefaultDouble(name) == value)
 			getStorePreferences().remove(name);
 		else
 			getStorePreferences().putDouble(name, value);
+		firePropertyChangeEvent(name,new Double(oldValue),new Double(value));
+		silentRunning = false;//Restart listening to preferences
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, float)
 	 */
-	public void setValue(String name, float value) {		
+	public void setValue(String name, float value) {	
+		silentRunning = true;//Turn off updates from the store
+		float oldValue = getFloat(name);
 		if (getDefaultFloat(name) == value)
 			getStorePreferences().remove(name);
 		else
 			getStorePreferences().putFloat(name, value);
+		firePropertyChangeEvent(name,new Float(oldValue),new Float(value));
+		silentRunning = false;//Restart listening to preferences
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, int)
 	 */
 	public void setValue(String name, int value) {
+		silentRunning = true;//Turn off updates from the store
+		int oldValue = getInt(name);
 		if (getDefaultInt(name) == value)
 			getStorePreferences().remove(name);
 		else
 			getStorePreferences().putInt(name, value);
+		firePropertyChangeEvent(name,new Integer(oldValue),new Integer(value));
+		silentRunning = false;//Restart listening to preferences
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, long)
 	 */
 	public void setValue(String name, long value) {
+		silentRunning = true;//Turn off updates from the store
+		long oldValue = getLong(name);
 		if (getDefaultLong(name) == value)
 			getStorePreferences().remove(name);
 		else
 			getStorePreferences().putLong(name, value);
+		firePropertyChangeEvent(name,new Long(oldValue),new Long(value));
+		silentRunning = false;//Restart listening to preferences
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
 	 */
 	public void setValue(String name, String value) {
+		//Do not turn on silent running here as Strings are propagated
 		if (getDefaultString(name).equals(value))
 			getStorePreferences().remove(name);
 		else
@@ -566,10 +583,14 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
 	 */
 	public void setValue(String name, boolean value) {
+		silentRunning = true;//Turn off updates from the store
+		boolean oldValue = getBoolean(name);
 		if (getDefaultBoolean(name) == value)
 			getStorePreferences().remove(name);
 		else
 			getStorePreferences().putBoolean(name, value);
+		firePropertyChangeEvent(name,new Boolean(oldValue),new Boolean(value));
+		silentRunning = false;//Restart listening to preferences
 	}
 
 	/* (non-Javadoc)
