@@ -190,7 +190,7 @@ public class TaskDescriptionProvider {
         	  tmpRequiredValue = aNode.getAttributes().getNamedItem(XML_ATTRIBUTE_REQUIRED).getNodeValue();
    		}
    		
-   		if(tmpRequiredValue.equals("NOTDEFINED")) { //$NON-NLS-1$
+   		if(tmpRequiredValue == null || tmpRequiredValue.equals("NOTDEFINED")) { //$NON-NLS-1$
    			return ""; //$NON-NLS-1$
    		}
    		
@@ -293,7 +293,8 @@ public class TaskDescriptionProvider {
      * Returns the Attributes Node of the specified TaskName
      * 
      * @param aTaskName The name of the task
-     * @param return The Attributes Node of the Task.
+     * @param return The Attributes Node of the Task or <code>null</code> if one
+     * does not exist.
      */    
     protected Node getAttributesNode(String aTaskName) {
     	
@@ -301,11 +302,9 @@ public class TaskDescriptionProvider {
         if(tmpStructureNode != null){
         	return getChildNodeNamedOfTypeFromNode(XML_TAG_ATTRIBUTES, Node.ELEMENT_NODE,
                                                              tmpStructureNode);
-    	}
-    	else {
+    	} else {
     		return null;
     	}
-    		
     }
 
     /**
