@@ -86,7 +86,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 						queryData.getSearchWord(),
 						"{0}"),
 					IMAGE_DSCR_SEARCH,
-					null,
+					(IActionGroupFactory)null,
 					new LabelProvider() {
 			public String getText(Object element) {
 				if (element instanceof ISearchResultViewEntry)
