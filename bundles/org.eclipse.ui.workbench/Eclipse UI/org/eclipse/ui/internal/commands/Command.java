@@ -254,7 +254,7 @@ final class Command implements ICommand {
             if ((DEBUG_HANDLERS)
                     && ((DEBUG_HANDLERS_COMMAND_ID == null) || (DEBUG_HANDLERS_COMMAND_ID
                             .equals(id)))) {
-                System.out.print("HANDLERS >> Command('" + id //$NON-NLS-1$
+                System.out.print("HANDLERS >>> Command('" + id //$NON-NLS-1$
                         + "' has changed to "); //$NON-NLS-1$
                 if (handler == null) {
                     System.out.println("no handler"); //$NON-NLS-1$
