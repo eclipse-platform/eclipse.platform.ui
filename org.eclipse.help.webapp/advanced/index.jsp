@@ -43,7 +43,7 @@ function onloadHandler(e)
 	if(h<=19){
 		return; <%-- no need to resize up to 19px --%>
 	}
-	document.getElementById("indexFrameset").setAttribute("rows", <%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>11+h+",*"); <%-- default 24 --%>
+	document.getElementById("indexFrameset").setAttribute("rows", <%="0".equals(data.getBannerHeight())?"":"\""+data.getBannerHeight()+",\"+"%>(11+h)+",*"); <%-- default 24 --%>
 <%}%>
 <%
 if (data.isMozilla()){
