@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.ClearOutputAction;
+import org.eclipse.debug.internal.ui.ConsoleTerminateActionDelegate;
+import org.eclipse.debug.internal.ui.ControlAction;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -48,14 +51,20 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleView extends AbstractDebugView implements IDocumentListener, ISelectionChangedListener {
+public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionChangedListener {
 
 	protected ClearOutputAction fClearOutputAction= null;
 
 	protected Map fGlobalActions= new HashMap(10);
 	protected List fSelectionActions = new ArrayList(3);
 	
-	protected IDocument fCurrentDocument= null;
+	protected IDocument fCurrentDocument= null;
+	
+	/**
+	 * The current process being viewed, or <code>null</code.
+	 */
+	private IProcess fProcess;
+	
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
@@ -67,6 +76,8 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 		
 		// listen to selection changes in the debug view
 		DebugSelectionManager.getDefault().addSelectionChangedListener(this,getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		
+		setEventHandler(new ConsoleViewEventHandler(this, cv));
 		return cv;
 	}
 	
@@ -78,19 +89,24 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 	}
 	
 	/** 
-	 * Sets the input of the viewer of this view in the
-	 * UI thread.
+	 * Sets the console to view the documents steams
+	 * associated with the given process.
 	 */
-	public void setViewerInput(final IProcess process) {
+	public void setViewerInput(IProcess process) {
 		if (getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
 			return;
 		}
-		if (getViewer().getInput() == process) {
+		if (getProcess() == process) {
+			// do nothing if the input is the same as what is
+			// being viewed. If this is the first input, set
+			// the console to an empty document
 			if (getConsoleViewer().getDocument() == null) {
 				getConsoleViewer().setDocument(new ConsoleDocument(null));
-			}
+				updateActions();
+			}			
 			return;
 		}
+		setProcess(process)	;
 		Runnable r = new Runnable() {
 			public void run() {
 				if (getViewer() == null) {
@@ -101,13 +117,27 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 					return;
 				}
 				IDocument doc = null;
-				if (process != null) {
-					doc = DebugUIPlugin.getDefault().getConsoleDocument(process);
+				if (getProcess() != null) {
+					doc = DebugUIPlugin.getDefault().getConsoleDocument(getProcess());
 				}
 				if (doc == null) {
 					doc = new ConsoleDocument(null);
 				}
 				getConsoleViewer().setDocument(doc);
+				// update view title
+				String title = null;
+				if (getProcess() == null) {
+					title = "Console";
+				} else {
+					// use debug target title if applicable
+					Object obj = getProcess().getAdapter(IDebugTarget.class);
+					if (obj == null) {
+						obj = getProcess();
+					}
+					title = "Console [" + DebugUIPlugin.getModelPresentation().getText(obj) + "]";
+				}
+				setTitle(title);
+				updateActions();
 			}
 		};
 		asyncExec(r);
@@ -159,6 +189,11 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
 		updateAction(ITextEditorActionConstants.FIND);
 		
+		ConsoleTerminateActionDelegate delegate = new ConsoleTerminateActionDelegate();
+		delegate.init(this);
+		IAction terminate = new ControlAction(getViewer(), delegate);
+		setAction("Terminate", terminate);
+				
 		// initialize input, after viewer has been created
 		setViewerInput(DebugUITools.getCurrentProcess());
 	}
@@ -173,6 +208,7 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 	 */
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(fClearOutputAction);
+		mgr.add(getAction("Terminate"));
 	}
 	/**
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
@@ -196,9 +232,9 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
-
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(getAction("Terminate"));
 	}
 
 	/**
@@ -287,6 +323,24 @@ public class ConsoleView extends AbstractDebugView implements IDocumentListener,
 
 	public ConsoleViewer getConsoleViewer() {
 		return (ConsoleViewer)getViewer();
+	}
+	
+	/**
+	 * Sets the process being viewed
+	 * 
+	 * @param process process or <code>null</code>
+	 */
+	private void setProcess(IProcess process) {
+		fProcess = process;
+	}
+	
+	/**
+	 * Returns the process being viewed, or <code>null</code>
+	 * 
+	 * @return process
+	 */
+	public IProcess getProcess() {
+		return fProcess;
 	}
 }
 

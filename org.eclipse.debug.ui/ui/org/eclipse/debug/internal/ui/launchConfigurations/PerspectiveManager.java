@@ -283,6 +283,9 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 *  launch configuration attribute
 	 */
 	protected String getPerspectiveId(ILaunch launch) throws CoreException {
+		if (launch == null) {
+			return null;
+		}
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		String perspectiveId = null;
 		String mode = launch.getLaunchMode();

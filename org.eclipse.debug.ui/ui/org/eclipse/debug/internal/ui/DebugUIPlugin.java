@@ -338,7 +338,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		} catch (IOException e) {
 			logError(e);
 		}
-		
+		if (fgPresentation != null) {
+			fgPresentation.dispose();
+		}
 	}
 
 	/**

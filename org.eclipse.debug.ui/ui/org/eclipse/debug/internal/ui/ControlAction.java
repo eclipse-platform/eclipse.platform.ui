@@ -60,9 +60,13 @@ public class ControlAction extends SelectionProviderAction implements IUpdate {
 	 * @see IUpdate#update()
 	 */
 	public void update() {
-		ISelection sel = getSelectionProvider().getSelection();
-		if (sel instanceof IStructuredSelection) {
-			selectionChanged((IStructuredSelection)sel);
+		if (fDelegate instanceof IUpdate) {
+			((IUpdate)fDelegate).update();
+		} else {
+			ISelection sel = getSelectionProvider().getSelection();
+			if (sel instanceof IStructuredSelection) {
+				selectionChanged((IStructuredSelection)sel);
+			}
 		}
 	}
 }
