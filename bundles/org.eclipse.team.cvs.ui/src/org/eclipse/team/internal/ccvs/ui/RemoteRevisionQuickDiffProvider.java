@@ -166,7 +166,6 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 */
 	public void dispose() {
 		fReferenceInitialized = false;
-		fReference = null;
 		// stop update job
 		if(fUpdateJob != null && fUpdateJob.getState() != Job.NONE) {
 			fUpdateJob.cancel();
@@ -256,6 +255,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 				setDocumentContent(fReference, stream, encoding);
 			} else {
 				// the remote is null, so ensure that the document is null
+				if(monitor.isCanceled()) return;
 				fReference.set(""); //$NON-NLS-1$
 			}
 			if(DEBUG) System.out.println("+ CVSQuickDiff: updating document " + (fReference!=null ? "remote found" : "remote empty")); //$NON-NLS-1$ //$NON-NLS-2$
