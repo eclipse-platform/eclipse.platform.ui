@@ -43,18 +43,6 @@ public class TocManager {
 	}
 
 	/**
-	 * Checks if a TOC is available in the active roles.
-	 */
-	public boolean isTocInRole(int toc, String locale) {
-		IToc[] tocs = getTocs(locale); // build them all
-		IHelpRoleManager roleManager = HelpPlugin.getRoleManager();
-		if (roleManager == null) {
-			return true;
-		}
-		return roleManager.isEnabled(tocs[toc].getHref());
-	}
-
-	/**
 	 * Returns the list of TOC's available in the help system
 	 */
 	public IToc[] getTocs(String locale) {

@@ -17,7 +17,6 @@ import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.protocols.*;
 import org.eclipse.help.internal.webapp.data.*;
@@ -63,10 +62,8 @@ public class EclipseConnector {
 					return;
 				}
 			} else {
-				// enable the role
-				IHelpRoleManager roleManager = HelpPlugin.getRoleManager();
-				if (roleManager != null)
-					roleManager.enabledActivities(url);
+				// enable activities matching url
+				HelpBasePlugin.getActivitySupport().enableActivities(url);
 
 				url = "help:" + url;
 			}

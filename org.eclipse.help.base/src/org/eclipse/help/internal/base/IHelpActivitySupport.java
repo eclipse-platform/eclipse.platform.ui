@@ -9,15 +9,16 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.help.internal;
+package org.eclipse.help.internal.base;
 
 /**
  * @since 3.0
  */
-public interface IHelpRoleManager {
+public interface IHelpActivitySupport {
 
 	/**
-	 * Checks if href is valid in the actives roles
+	 * Checks if href is matches an enabled activity.
+	 * If it does not match any defined activites, it is assumed to be enabled.
 	 * 
 	 * @param href
 	 * @return
@@ -25,9 +26,9 @@ public interface IHelpRoleManager {
 	public boolean isEnabled(String href);
 
 	/**
-	 * Enables all the roles whose activity binding pattersn match the href
+	 * Enables activities with patterns matching the href
 	 * 
 	 * @param href
 	 */
-	public void enabledActivities(String href);
+	public void enableActivities(String href);
 }

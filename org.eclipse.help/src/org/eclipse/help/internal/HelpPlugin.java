@@ -29,7 +29,6 @@ public class HelpPlugin extends Plugin {
 	protected static Object tocManagerCreateLock = new Object();
 	protected ContextManager contextManager;
 
-	private IHelpRoleManager roleManager;
 	/**
 	 * Logs an Error message with an exception. Note that the message should
 	 * already be localized to proper locale. ie: Resources.getString() should
@@ -168,21 +167,4 @@ public class HelpPlugin extends Plugin {
 		return getDefault().contextManager;
 	}
 
-	/**
-	 * Used to obtain Role Manager
-	 * 
-	 * @return instance of IHelpRoleManager
-	 */
-	public static IHelpRoleManager getRoleManager() {
-		return getDefault().roleManager;
-	}
-
-	/**
-	 * Sets the role manager
-	 * 
-	 * @param roleManager
-	 */
-	public static void setRoleManager(IHelpRoleManager roleManager) {
-		getDefault().roleManager = roleManager;
-	}
 }

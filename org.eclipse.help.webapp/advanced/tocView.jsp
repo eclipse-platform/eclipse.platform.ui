@@ -126,7 +126,7 @@ if (data.isIE()){
 	for (int toc=0; toc<data.getTocCount(); toc++) {
 		boolean isSelected =data.getSelectedToc() != -1 &&
 					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc));
-		if(!data.isInRole(toc) && !isSelected){
+		if(!data.isEnabled(toc) && !isSelected){
 			// do not show
 			continue;
 		}

@@ -16,6 +16,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.toc.*;
 
 /**
@@ -164,13 +165,14 @@ public class TocData extends RequestData {
 	}
 
 	/**
-	 * Check if given TOC is visible (belongs to active role)
+	 * Check if given TOC is visible (belongs to an enabled activity)
 	 * 
 	 * @param toc
 	 * @return true if TOC should be visible
 	 */
-	public boolean isInRole(int toc) {
-		return HelpPlugin.getTocManager().isTocInRole(toc, getLocale());
+	public boolean isEnabled(int toc) {
+		IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
+		return HelpBasePlugin.getActivitySupport().isEnabled(tocs[toc].getHref());
 	}
 
 	private void loadTocs() {

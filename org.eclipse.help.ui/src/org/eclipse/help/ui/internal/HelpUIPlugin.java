@@ -100,9 +100,10 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		BaseHelpSystem.setDefaultErrorUtil(new ErrorUtil());
 
 		if (PlatformUI.isWorkbenchRunning()) {
+			// This is workbench scenario.  Set activity support of base help to use workbench activity support
 			IWorkbench workbench = PlatformUI.getWorkbench();
 			if (workbench != null) {
-				HelpPlugin.setRoleManager(new HelpRoleManager(workbench));
+				HelpBasePlugin.setActivitySupport(new HelpActivitySupport(workbench));
 			}
 		}
 	}

@@ -13,28 +13,23 @@ package org.eclipse.help.ui.internal;
 
 import java.util.*;
 
-import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.base.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.activities.*;
-import org.eclipse.ui.commands.*;
 
 /**
- * Wrapper for eclipe ui role manager
+ * Wrapper for eclipse ui activity support
  */
-public class HelpRoleManager implements IHelpRoleManager {
-	private IWorkbench workbench;
+public class HelpActivitySupport implements IHelpActivitySupport {
 	private IWorkbenchActivitySupport activitySupport;
-	private ICommandManager commandManager;
-	public HelpRoleManager(IWorkbench workbench) {
-		this.workbench = workbench;
-		
-		activitySupport = (IWorkbenchActivitySupport) workbench.getAdapter(IWorkbenchActivitySupport.class);
-		commandManager = workbench.getCommandManager();
+	
+	public HelpActivitySupport(IWorkbench workbench) {
+		activitySupport = (IWorkbenchActivitySupport) workbench.getActivitySupport();
 	}
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.help.internal.IHelpRoleManager#isEnabled()
+	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#isEnabled()
 	 */
 	public boolean isEnabled(String href) {
 		if (activitySupport == null) {
@@ -55,9 +50,9 @@ public class HelpRoleManager implements IHelpRoleManager {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.help.internal.IHelpRoleManager#enabledActivities(java.lang.String)
+	 * @see org.eclipse.help.internal.base.IHelpActivitySupport#enableActivities(java.lang.String)
 	 */
-	public void enabledActivities(String href) {
+	public void enableActivities(String href) {
 		if (activitySupport == null) {
 			return;
 		}
