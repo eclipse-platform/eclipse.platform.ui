@@ -62,8 +62,8 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		"ConfigurationWizardMainPage.STORE_HOSTNAME_ID";//$NON-NLS-1$
 	private static final String STORE_PATH_ID =
 		"ConfigurationWizardMainPage.STORE_PATH_ID";//$NON-NLS-1$
-	private static final String STORE_VALIDATE_ID =
-		"ConfigurationWizardMainPage.STORE_VALIDATE_ID";//$NON-NLS-1$
+	private static final String STORE_DONT_VALIDATE_ID =
+		"ConfigurationWizardMainPage.STORE_DONT_VALIDATE_ID";//$NON-NLS-1$
 	
 	// In case the page was launched from a different wizard	
 	private IDialogSettings settings;
@@ -249,7 +249,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 				}
 			}
 			if (showValidate) {
-				validate = settings.getBoolean(STORE_VALIDATE_ID);
+				validate = !settings.getBoolean(STORE_DONT_VALIDATE_ID);
 				validateButton.setSelection(validate);
 			}
 		}
@@ -317,7 +317,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			settings.put(STORE_PATH_ID, paths);
 
 			if (showValidate) {
-				settings.put(STORE_VALIDATE_ID, validate);
+				settings.put(STORE_DONT_VALIDATE_ID, !validate);
 			}
 		}
 	}
