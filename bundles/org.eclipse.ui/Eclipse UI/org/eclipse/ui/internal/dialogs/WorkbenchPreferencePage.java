@@ -21,6 +21,8 @@ import org.eclipse.core.resources.*;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.GlobalBuildAction;
@@ -171,7 +173,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 * Create a composite that contains entry fields specifying editor reuse preferences.
 	 */
 	private void createEditorReuseGroup(Composite composite) {
-
 		final Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -183,7 +184,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		
 		reuseEditors = new Button(groupComposite, SWT.CHECK);
 		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
-
 		GridData reuseEditorsData = new GridData();
 		reuseEditorsData.horizontalSpan = layout.numColumns;
 		reuseEditors.setLayoutData(reuseEditorsData);
@@ -206,6 +206,12 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		reuseEditorsThreshold.setValidRange(1, 99);
 		reuseEditorsThreshold.load();
 		reuseEditorsThreshold.getTextControl(groupComposite).setEnabled(reuseEditors.getSelection());
+		reuseEditorsThreshold.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					setValid(reuseEditorsThreshold.isValid());
+			}
+		});
 	}
 	/**
 	 * Create a composite that contains entry fields specifying editor history preferences.
@@ -230,6 +236,13 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		recentFilesEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		recentFilesEditor.setValidRange(0, recentFilesMax);
 		recentFilesEditor.load();
+		recentFilesEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					setValid(recentFilesEditor.isValid());
+			}
+		});
+		
 	}
 	/**
 	 * Create a composite that contains buttons for selecting the 
