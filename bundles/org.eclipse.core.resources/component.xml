@@ -9,6 +9,7 @@
  <plugin id="org.eclipse.core.resources.hpux" fragment="true" />
  <plugin id="org.eclipse.core.resources.macosx" fragment="true" />
  <plugin id="org.eclipse.core.resources.qnx" fragment="true" />
+ <plugin id="org.eclipse.core.resources.compatibility" fragment="true" />
 
  <package name="org.eclipse.core.resources">
    <type name="ICommand" implement="false" />
