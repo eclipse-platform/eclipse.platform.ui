@@ -423,7 +423,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		// Update the most recent launch list
 		boolean modified = false;
 		if (launch.getLaunchMode().equals(mode)) {
-			int index = fLastLaunchList.indexOf(item);
+			int index = findConfigInHistoryList(fLastLaunchList, launchConfig);
 			if (index > 0) {
 				fLastLaunchList.remove(item);
 			}	
@@ -570,7 +570,7 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	 * Find the specified history element in the specified list and return the index at which
 	 * it was found.  Return -1 if the element wasn't found in the list.
 	 */
-	protected int findConfigInHistoryList(Vector list, ILaunchConfiguration config) {
+	protected int findConfigInHistoryList(List list, ILaunchConfiguration config) {
 		for (int i = 0; i < list.size(); i++) {
 			LaunchConfigurationHistoryElement historyElement = (LaunchConfigurationHistoryElement) list.get(i);
 			if (historyElement.getLaunchConfiguration().contentsEqual(config)) {
