@@ -27,6 +27,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.util.ArrayUtil;
 import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -44,9 +45,8 @@ public class IWorkbenchTest extends UITestCase {
 	public void testGetActiveWorkbenchWindow() throws Throwable {
 		IWorkbenchWindow win1, win2;
 
-		// Bug 41400 - Fails on GTK.
-		String platform = SWT.getPlatform();
-		if (platform.equals("gtk"))
+		// PR 41400
+		if (PlatformUtil.onLinux())
 			return;
 		
 		// Test initial window.

@@ -34,6 +34,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 public class IWorkbenchPageTest extends UITestCase {
@@ -215,9 +216,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		/*
 			javadoc: 3. If all else fails the file will be opened in a default text editor.		
 		*/
-		// PR 1GkD5O0 - Fails on linux
-		String platform = SWT.getPlatform();
-		if (!platform.equals("motif")) {
+		
+		if (!PlatformUtil.onLinux()) {
 			file = FileUtil.createFile("a.null and void", proj);
 			editor = fActivePage.openEditor(file);
 			assertEquals(hasEditor(editor), true);

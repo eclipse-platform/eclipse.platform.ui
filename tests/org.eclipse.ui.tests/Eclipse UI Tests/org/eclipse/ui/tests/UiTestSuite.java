@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.tests.util.PlatformUtil;
 
 /**
  * Test all areas of the UI.
@@ -33,9 +34,8 @@ public class UiTestSuite extends TestSuite {
 	 */
 	public UiTestSuite() {
 		addTest(new org.eclipse.ui.tests.api.ApiTestSuite());
-		// PR 1GkD5O0 - Fails on linux.
-		String platform = SWT.getPlatform();
-		if (!platform.equals("motif")) {
+
+		if (!PlatformUtil.onLinux()) {
 			addTest(new org.eclipse.ui.tests.dialogs.UIAutomatedSuite());
 		}
 		addTest(new org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite());		

@@ -33,6 +33,7 @@ import org.eclipse.ui.tests.util.ArrayUtil;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.PlatformUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 
 public class IDeprecatedWorkbenchPageTest extends UITestCase {
@@ -204,7 +205,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	*/
 		// PR 1GkD5O0 - Fails on linux
 		String platform = SWT.getPlatform();
-		if (!platform.equals("motif")) {
+		if (!PlatformUtil.onLinux()) {
 			file = FileUtil.createFile("a.null and void", proj);
 			editor = fActivePage.openEditor(file);
 			assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
