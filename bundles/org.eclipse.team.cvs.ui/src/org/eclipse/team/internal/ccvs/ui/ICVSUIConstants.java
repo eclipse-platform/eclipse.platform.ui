@@ -38,15 +38,17 @@ public interface ICVSUIConstants {
 	public final String IMG_REFRESH = "clcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR = "clcl16/clear_co.gif"; //$NON-NLS-1$
 	public final String IMG_COLLAPSE_ALL = "clcl16/collapseall.gif"; //$NON-NLS-1$
+	public final String IMG_LINK_WITH_EDITOR = "clcl16/synced.gif"; //$NON-NLS-1$
 	
 	// toolbar (disabled)
 	public final String IMG_REFRESH_DISABLED = "dlcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR_DISABLED = "dlcl16/clear_co.gif"; //$NON-NLS-1$
-	
+		
 	// toolbar (enabled)
 	public final String IMG_REFRESH_ENABLED = "elcl16/refresh.gif"; //$NON-NLS-1$
 	public final String IMG_CLEAR_ENABLED = "elcl16/clear_co.gif"; //$NON-NLS-1$
 	public final String IMG_COLLAPSE_ALL_ENABLED = "elcl16/collapseall.gif"; //$NON-NLS-1$
+	public final String IMG_LINK_WITH_EDITOR_ENABLED = "elcl16/synced.gif"; //$NON-NLS-1$
 	
 	// wizards
 	public final String IMG_NEWLOCATION = "wizards/newlocation_wiz.gif"; //$NON-NLS-1$
@@ -54,6 +56,7 @@ public interface ICVSUIConstants {
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
 	public final String PREF_SHOW_TAGS = "pref_show_tags"; //$NON-NLS-1$
+	public final String PREF_HISTORY_VIEW_EDITOR_LINKING = "pref_history_view_linking"; //$NON-NLS-1$
 	public final String PREF_PRUNE_EMPTY_DIRECTORIES = "pref_prune_empty_directories";	 //$NON-NLS-1$
 	public final String PREF_TIMEOUT = "pref_timeout";	 //$NON-NLS-1$
 	public final String PREF_QUIETNESS = "pref_quietness"; //$NON-NLS-1$

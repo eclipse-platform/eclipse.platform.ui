@@ -342,6 +342,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_REFRESH, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_REFRESH_ENABLED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR_ENABLED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION, baseURL);
@@ -566,6 +568,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_COMMENTS, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
+		store.setDefault(ICVSUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING, false);
 		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, false);

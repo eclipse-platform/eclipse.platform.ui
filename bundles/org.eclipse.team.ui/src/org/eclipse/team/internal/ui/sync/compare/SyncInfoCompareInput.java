@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -114,9 +115,9 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	}
 	
 	protected void updateLabels() {
-		CompareConfiguration config = getCompareConfiguration();
-		IRemoteResource remote = sync.getRemote();
-		IRemoteResource base = sync.getBase();
+		final CompareConfiguration config = getCompareConfiguration();
+		final IRemoteResource remote = sync.getRemote();
+		final IRemoteResource base = sync.getBase();
 		
 		String localContentId = sync.getLocalContentIdentifier();
 		if(localContentId != null) {		
@@ -127,7 +128,7 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		
 		if(remote != null) {
 			try {
-				config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabelExists", remote.getContentIdentifier(), remote.getCreatorDisplayName(), flattenText(remote.getComment()))); //$NON-NLS-1$
+				config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabelExists", remote.getContentIdentifier())); //$NON-NLS-1$
 			} catch (TeamException e) {
 				config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabel")); //$NON-NLS-1$
 			}
@@ -137,7 +138,7 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		
 		if(base != null) {
 			try {
-				config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabelExists", base.getContentIdentifier(), base.getCreatorDisplayName(), flattenText(base.getComment()))); //$NON-NLS-1$
+				config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabelExists", base.getContentIdentifier())); //$NON-NLS-1$
 			} catch (TeamException e) {
 				config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabel")); //$NON-NLS-1$
 			}

@@ -22,7 +22,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -65,8 +67,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSSyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -79,9 +83,14 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
+import org.eclipse.team.internal.ui.sync.compare.SyncInfoCompareInput;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -113,6 +122,7 @@ public class HistoryView extends ViewPart {
 	private Action getRevisionAction;
 	private Action refreshAction;
 	private Action tagWithExistingAction;
+	private Action linkWithEditorAction;
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -121,9 +131,27 @@ public class HistoryView extends ViewPart {
 	private Image versionImage;
 	
 	private ILogEntry currentSelection;
+	private boolean linkingEnabled;
+	
+	private IPreferenceStore settings;
 	
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView"; //$NON-NLS-1$
 	
+	private IPartListener partListener = new IPartListener() {
+		public void partActivated(IWorkbenchPart part) {
+			if (part instanceof IEditorPart)
+				editorActivated((IEditorPart) part);
+		}
+		public void partBroughtToTop(IWorkbenchPart part) {
+		}
+		public void partClosed(IWorkbenchPart part) {
+		}
+		public void partDeactivated(IWorkbenchPart part) {
+		}
+		public void partOpened(IWorkbenchPart part) {
+		}
+	};
+
 	/**
 	 * Adds the action contributions for this view.
 	 */
@@ -138,6 +166,16 @@ public class HistoryView extends ViewPart {
 		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh")); //$NON-NLS-1$
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
+		
+		//	Link with Editor (toolbar)
+		 linkWithEditorAction = new Action(Policy.bind("HistoryView.linkWithLabel"), plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR_ENABLED)) { //$NON-NLS-1$
+			 public void run() {
+				 setLinkingEnabled(isChecked());
+			 }
+		 };
+		linkWithEditorAction.setToolTipText(Policy.bind("HistoryView.linkWithLabel")); //$NON-NLS-1$
+		linkWithEditorAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LINK_WITH_EDITOR));
+		linkWithEditorAction.setChecked(isLinkingEnabled());
 		
 		// Double click open action
 		openAction = new OpenLogEntryAction();
@@ -272,6 +310,7 @@ public class HistoryView extends ViewPart {
 		// Create the local tool bar
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 		tbm.add(refreshAction);
+		tbm.add(linkWithEditorAction);
 		tbm.update(false);
 	
 		// Create actions for the text editor
@@ -316,20 +355,31 @@ public class HistoryView extends ViewPart {
 	 * Method declared on IWorkbenchPart
 	 */
 	public void createPartControl(Composite parent) {
+		settings = CVSUIPlugin.getPlugin().getPreferenceStore();
+		this.linkingEnabled = settings.getBoolean(ICVSUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING);
+
 		initializeImages();
+		
 		sashForm = new SashForm(parent, SWT.VERTICAL);
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
 		tableViewer = createTable(sashForm);
 		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
 		tagViewer = createTagTable(innerSashForm);
 		textViewer = createText(innerSashForm);
 		sashForm.setWeights(new int[] { 70, 30 });
 		innerSashForm.setWeights(new int[] { 50, 50 });
+		
 		contributeActions();
+		
 		setViewerVisibility();
+		
 		// set F1 help
 		WorkbenchHelp.setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
 		initDragAndDrop();
+		
+		// add listener for editor page activation - this is to support editor linking
+		getSite().getPage().addPartListener(partListener);		
 	}
 	private void initializeImages() {
 		CVSUIPlugin plugin = CVSUIPlugin.getPlugin();
@@ -468,6 +518,7 @@ public class HistoryView extends ViewPart {
 			versionImage.dispose();
 			versionImage = null;
 		}
+		getSite().getPage().removePartListener(partListener);
 	}	
 	/**
 	 * Returns the table viewer contained in this view.
@@ -563,6 +614,33 @@ public class HistoryView extends ViewPart {
 	}
 	
 	/**
+	 * An editor has been activated.  Sets the selection in this navigator
+	 * to be the editor's input, if linking is enabled.
+	 * 
+	 * @param editor the active editor
+	 * @since 2.0
+	 */
+	protected void editorActivated(IEditorPart editor) {
+		if (!isLinkingEnabled()) {
+			return;
+		}
+		IEditorInput input = editor.getEditorInput();
+		if (input instanceof SyncInfoCompareInput) {
+			SyncInfoCompareInput syncInput = (SyncInfoCompareInput) input;
+			SyncInfo info = syncInput.getSyncInfo();
+			if(info instanceof CVSSyncInfo && info.getLocal().getType() == IResource.FILE) {
+				ICVSRemoteFile remote = (ICVSRemoteFile)info.getRemote();
+				ICVSRemoteFile base = (ICVSRemoteFile)info.getBase();
+				if(remote != null) {
+					showHistory(remote);
+				} else if(base != null) {
+					showHistory(base);
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Shows the history for the given ICVSRemoteFile in the view.
 	 */
 	public void showHistory(ICVSRemoteFile remoteFile) {
@@ -572,6 +650,8 @@ public class HistoryView extends ViewPart {
 				setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 				return;
 			}
+			ICVSFile existingFile = historyTableProvider.getICVSFile(); 
+			if(existingFile != null && existingFile.equals(remoteFile)) return;
 			this.file = null;
 			historyTableProvider.setFile(remoteFile);
 			tableViewer.setInput(remoteFile);
@@ -679,21 +759,48 @@ public class HistoryView extends ViewPart {
 	 * Select the revision in the receiver.
 	 */
 	public void selectRevision(String revision) {
-			if (entries == null) {
-				return;
-			}
-		
-			ILogEntry entry = null;
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].getRevision().equals(revision)) {
-					entry = entries[i];
-					break;
-				}
-			}
-		
-			if (entry != null) {
-				IStructuredSelection selection = new StructuredSelection(entry);
-				tableViewer.setSelection(selection, true);
+		if (entries == null) {
+			return;
+		}
+	
+		ILogEntry entry = null;
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getRevision().equals(revision)) {
+				entry = entries[i];
+				break;
 			}
 		}
+	
+		if (entry != null) {
+			IStructuredSelection selection = new StructuredSelection(entry);
+			tableViewer.setSelection(selection, true);
+		}
+	}
+	
+	/**
+	 * Enabled linking to the active editor
+	 * @since 3.0
+	 */
+	public void setLinkingEnabled(boolean enabled) {
+		this.linkingEnabled = enabled;
+
+		// remember the last setting in the dialog settings		
+		settings.setValue(ICVSUIConstants.PREF_HISTORY_VIEW_EDITOR_LINKING, enabled);
+	
+		// if turning linking on, update the selection to correspond to the active editor
+		if (enabled) {
+			IEditorPart editor = getSite().getPage().getActiveEditor();
+			if (editor != null) {
+				editorActivated(editor);
+			}
+		}
+	}
+	
+	/**
+	 * Returns if linking to the ative editor is enabled or disabled.
+	 * @return boolean indicating state of editor linking.
+	 */
+	private boolean isLinkingEnabled() {
+		return linkingEnabled;
+	}
 }

@@ -394,4 +394,8 @@ public class HistoryTableProvider {
 		this.currentFile = file;
 		this.currentRevision = getRevision(this.currentFile);
 	}
+
+	public ICVSFile getICVSFile() {
+		return this.currentFile;
+	}
 }

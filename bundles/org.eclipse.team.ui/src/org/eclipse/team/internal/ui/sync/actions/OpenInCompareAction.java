@@ -72,8 +72,8 @@ public class OpenInCompareAction extends Action {
 					// if editor is currently not open on that input either re-use existing
 					if (!prefetchFileContents(viewer, info)) return null;
 					if(editor != null && editor instanceof IReusableEditor) {
-						page.activate(editor);
 						CompareUI.reuseCompareEditor(input, (IReusableEditor)editor);
+						page.activate(editor);
 					}
 				}
 			} else {
