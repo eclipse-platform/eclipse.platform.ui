@@ -20,7 +20,6 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -78,28 +77,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseMove(MouseEvent e) {
-			if (fCachedTextViewer!= null) {
-				int line= toDocumentLineNumber(e.y);
-				ILineDiffInfo info= getDiffInfo(line);
-				Cursor cursor= null;
-				if (info != null) {
-					int type= info.getChangeType();
-					if (type == ILineDiffInfo.ADDED || type == ILineDiffInfo.CHANGED)
-						cursor= fHitDetectionCursor;
-					else if (info.getRemovedLinesAbove() > 0) {
-						if (line > 0) {
-							info= getDiffInfo(line - 1);
-							if (info != null && info.getChangeType() == ILineDiffInfo.UNCHANGED)
-								cursor= fHitDetectionCursor;
-						}
-					}
-				}
-				if (cursor != fLastCursor) {
-					fCanvas.setCursor(cursor);
-					fLastCursor= cursor;
-				}
-			}				
-			
 		}
 	
 	}
@@ -177,10 +154,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	private AnnotationListener fAnnotationListener= new AnnotationListener();
 	/** The width of the change ruler column. */
 	private int fWidth= 5;
-	/** The hand cursor that will show when hovering over a change. */
-	Cursor fHitDetectionCursor;
-	/** The last used cursor. */
-	Cursor fLastCursor;
 
 
 	/**
@@ -208,8 +181,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 			
-		fHitDetectionCursor= new Cursor(parentControl.getDisplay(), SWT.CURSOR_HAND);
-
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
@@ -253,11 +224,6 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		if (fCachedTextViewer != null) {
 			fCachedTextViewer.removeViewportListener(fInternalListener);
 			fCachedTextViewer.removeTextListener(fInternalListener);
-		}
-		
-		if (fHitDetectionCursor != null) {
-			fHitDetectionCursor.dispose();
-			fHitDetectionCursor= null;
 		}
 		
 		if (fBuffer != null) {
