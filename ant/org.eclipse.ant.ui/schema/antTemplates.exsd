@@ -88,9 +88,14 @@
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.ant.ui.antTemplates&quot;&gt;
-      &lt;antTemplate name=&quot;fileset&quot;
-           description=&quot;Ant fileset type with include clause&quot;
-      pattern name=&quot;&lt;fileset dir=&quot;${dir}&quot;&gt;\n\t\t&lt;include name=&quot;${pattern}&quot; /&gt;\n\t&lt;/fileset&gt;\n&quot;/&gt;
+     &lt;antTemplate
+            name="fileset"
+            description="%filesetTemplate.description"
+            pattern="&lt;fileset dir=&quot;${dir}&quot;&gt;
+		&lt;include name=&quot;${pattern}&quot; /&gt;
+	&lt;/fileset&gt;
+"&gt;
+      &lt;/antTemplate&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
