@@ -11,11 +11,13 @@
 package org.eclipse.welcome.internal;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.core.internal.boot.InternalBootLoader;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.jface.resource.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -231,7 +233,7 @@ public static Image manage(String key, ImageDescriptor desc) {
 public static URL getDefaultProviderImageURL() {
 	URL url = makeImageURL(PATH_FORMS, "def_provider.jpg");
 	try {
-		url = InternalBootLoader.resolve(url);
+		url = Platform.resolve(url);
 	}
 	catch (IOException e) {
 	}

@@ -26,6 +26,7 @@ public class TipsAndTricksContentProvider implements IFormContentProvider {
 	 * @see org.eclipse.welcome.internal.portal.IFormContentProvider#getContent()
 	 */
 	public String getContent() {
+		/*
 		// Ask the user to select a feature
 		AboutInfo[] features = ((Workbench) WelcomePortal.getDefault().getWorkbench()).getConfigurationInfo().getFeaturesInfo();
 		ArrayList welcomeFeatures = new ArrayList();
@@ -41,6 +42,8 @@ public class TipsAndTricksContentProvider implements IFormContentProvider {
 		writer.println("</form>");
 		writer.close();
 		return swriter.toString();
+		*/
+		return "<form></form>";
 	}
 
 	private void addFeatureLink(PrintWriter writer, AboutInfo feature) {

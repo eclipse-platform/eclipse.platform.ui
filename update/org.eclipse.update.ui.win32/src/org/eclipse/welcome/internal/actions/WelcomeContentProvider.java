@@ -27,6 +27,7 @@ public class WelcomeContentProvider implements IFormContentProvider {
 	 * @see org.eclipse.welcome.internal.portal.IFormContentProvider#getContent()
 	 */
 	public String getContent() {
+		/*
 		// Ask the user to select a feature
 		AboutInfo[] features = ((Workbench) WelcomePortal.getDefault().getWorkbench()).getConfigurationInfo().getFeaturesInfo();
 		ArrayList welcomeFeatures = new ArrayList();
@@ -72,9 +73,10 @@ public class WelcomeContentProvider implements IFormContentProvider {
 				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
 				status);
 		}
-		*/
 		writer.close();
 		return swriter.toString();
+		*/
+		return "<form></form>";
 	}
 
 	private void addFeatureLink(PrintWriter writer, AboutInfo feature) {
