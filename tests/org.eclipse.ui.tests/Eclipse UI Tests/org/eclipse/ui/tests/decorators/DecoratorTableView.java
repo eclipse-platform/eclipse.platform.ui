@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -58,6 +60,17 @@ public class DecoratorTableView extends DecoratorTestPart {
 
 	}
 
-	
+	public ILabelProviderListener getDecoratorManagerListener() {
+		return new ILabelProviderListener() {
+			public void labelProviderChanged(LabelProviderChangedEvent event) {
+				Object[] elements = event.getElements();
+				for (int i = 0; i < elements.length; i++) {
+					Object object = elements[i];
+					if (object.equals(TestTableContentProvider.elements[0]))
+						updateHappened = DecoratorViewerTest.treeHit;
+				}
 
+			}
+		};
+	}
 }

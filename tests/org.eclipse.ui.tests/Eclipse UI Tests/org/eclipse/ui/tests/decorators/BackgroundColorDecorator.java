@@ -12,7 +12,6 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.PlatformUI;
@@ -21,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
  * The BackgroundColorDecorator is a test for background coloring of the
  * navigator.
  */
-public class BackgroundColorDecorator implements ILightweightLabelDecorator {
+public class BackgroundColorDecorator extends AbstractViewerDecorator {
 
 	public static final String ID = "org.eclipse.ui.tests.backgroundDecorator";
 
@@ -51,6 +50,7 @@ public class BackgroundColorDecorator implements ILightweightLabelDecorator {
 
 		}
 		decoration.setBackgroundColor(color);
+		testForDecorationHit(element);
 
 	}
 

@@ -10,16 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * The DecoratorTreeView is a TreeView that tests the 
- * font and color decorations.
+ * The DecoratorTreeView is a TreeView that tests the font and color
+ * decorations.
  */
 public class DecoratorTreeView extends DecoratorTestPart {
-	
+
 	TreeViewer viewer;
 
 	/**
@@ -30,33 +32,29 @@ public class DecoratorTreeView extends DecoratorTestPart {
 		// XXX Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		 viewer = new TreeViewer(parent){
-		 	/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.AbstractTreeViewer#labelProviderChanged()
-			 */
-			protected void labelProviderChanged() {
-				super.labelProviderChanged();
-			}
-		 };
+		viewer = new TreeViewer(parent);
 
 		viewer.setLabelProvider(getLabelProvider());
 
 		viewer.setContentProvider(new TestTreeContentProvider());
 		viewer.setInput(this);
 
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL
-				| GridData.FILL_BOTH);
-		
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+
 		viewer.getControl().setLayoutData(data);
 
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
@@ -64,5 +62,23 @@ public class DecoratorTreeView extends DecoratorTestPart {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.decorators.DecoratorTestPart#getDecoratorManagerListener()
+	 */
+	public ILabelProviderListener getDecoratorManagerListener() {
+		return new ILabelProviderListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
+			 */
+			public void labelProviderChanged(LabelProviderChangedEvent event) {
+				Object[] elements = event.getElements();
+				for (int i = 0; i < elements.length; i++) {
+					Object object = elements[i];
+					if (object.equals(TestTreeContentProvider.root))
+						updateHappened = DecoratorViewerTest.treeHit;
+				}
 
+			}
+		};
+	}
 }

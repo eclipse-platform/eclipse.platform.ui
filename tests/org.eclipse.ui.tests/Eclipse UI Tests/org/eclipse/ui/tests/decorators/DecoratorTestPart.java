@@ -12,8 +12,6 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -25,13 +23,9 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class DecoratorTestPart extends ViewPart {
 
-	private static final int DELAY_TIME = 2000;// Wait 2 seconds
-
-	public boolean waitingForDecoration = true;
-
-	private long endTime;
-
 	private ILabelProviderListener listener;
+	
+	public boolean updateHappened = false;
 
 	public DecoratorTestPart() {
 		super();
@@ -52,43 +46,20 @@ public abstract class DecoratorTestPart extends ViewPart {
 	}
 
 	/**
-	 * Get the listener for the suite.
-	 * 
-	 * @return
+	 * Get a listener that is informed of DecoratorManager updates.
+	 * @return ILabelProviderListener
 	 */
-	private ILabelProviderListener getDecoratorManagerListener() {
-		listener = new ILabelProviderListener() {
+	public abstract ILabelProviderListener getDecoratorManagerListener();
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
-			 */
-			public void labelProviderChanged(LabelProviderChangedEvent event) {
-				// Reset the end time each time we get an update
-				endTime = System.currentTimeMillis() + DELAY_TIME;
-
-			}
-		};
-
-		return listener;
-	}
-
-	public void readAndDispatchForUpdates() {
-		while (System.currentTimeMillis() < endTime)
-			Display.getCurrent().readAndDispatch();
-
-	}
-
-	public void setUpForDecorators() {
-		endTime = System.currentTimeMillis() + DELAY_TIME;
-
-	}
+	
 
 	public void dispose() {
 		PlatformUI.getWorkbench().getDecoratorManager()
 				.removeListener(listener);
 
 	}
-
+	
+	public void clearFlags() {
+		updateHappened = false;
+	}
 }

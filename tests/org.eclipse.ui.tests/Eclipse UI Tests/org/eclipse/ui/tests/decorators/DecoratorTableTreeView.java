@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TableTreeViewer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * The DecoratorTableTreeView is the view that tests decorators
- * for table trees.
+ * The DecoratorTableTreeView is the view that tests decorators for table trees.
  */
 public class DecoratorTableTreeView extends DecoratorTestPart {
 	
@@ -29,7 +30,9 @@ public class DecoratorTableTreeView extends DecoratorTestPart {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -47,12 +50,34 @@ public class DecoratorTableTreeView extends DecoratorTestPart {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		// XXX Auto-generated method stub
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.decorators.DecoratorTestPart#getDecoratorManagerListener()
+	 */
+	public ILabelProviderListener getDecoratorManagerListener() {
+		return new ILabelProviderListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
+			 */
+			public void labelProviderChanged(LabelProviderChangedEvent event) {
+				Object[] elements = event.getElements();
+				for (int i = 0; i < elements.length; i++) {
+					Object object = elements[i];
+					if (object.equals(TestTreeContentProvider.root))
+						updateHappened = DecoratorViewerTest.treeHit;
+				}
+
+			}
+		};
 	}
 
 }
