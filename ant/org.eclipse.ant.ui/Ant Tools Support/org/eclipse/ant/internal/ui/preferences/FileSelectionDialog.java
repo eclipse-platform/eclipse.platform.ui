@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,11 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.util.List;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -36,6 +39,7 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 	private String fFilterMessage;
 	private boolean fShowAll= false;
 	private final static String DIALOG_SETTING= "AntPropertiesFileSelectionDialog.showAll";  //$NON-NLS-1$
+	private final static String LAST_CONTAINER= "AntPropertiesFileSelectionDialog.lastContainer";  //$NON-NLS-1$
 	
 	public FileSelectionDialog(Shell parent, List files, String title, String message, String filterExtension, String filterMessage) {
 		super(parent, new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -75,6 +79,14 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		
 		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
 		fShowAll= settings.getBoolean(DIALOG_SETTING);
+		
+		String lastPath= settings.get(LAST_CONTAINER);
+		if (lastPath != null) {
+			IPath path= Path.fromPortableString(lastPath);
+			IResource resource= ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			setInitialSelection(resource);
+		}
+		
 		fFilter.considerExtension(!fShowAll);
 		getTreeViewer().addFilter(fFilter);
 		if (!fShowAll) {
@@ -102,6 +114,11 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 	public boolean close() {
 		IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
 		settings.put(DIALOG_SETTING, fShowAll);
+		
+		Object[] result= getResult();
+		if (result != null && result.length > 0) {
+			settings.put(LAST_CONTAINER, ((IResource)result[0]).getParent().getFullPath().toPortableString());
+		}
 		return super.close();
 	}
 }
