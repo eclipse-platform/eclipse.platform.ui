@@ -21,7 +21,7 @@ import java.io.File;
  * return a new path; the receiver is unscathed.
  * </p>
  * <p>
- * UNC paths are denoted by preceeding double-slashes such 
+ * UNC paths are denoted by leading double-slashes such 
  * as <code>//Server/Volume/My/Path</code>. When a new path
  * is constructed all double-slashes are removed except those
  * appearing at the beginning of the path.
