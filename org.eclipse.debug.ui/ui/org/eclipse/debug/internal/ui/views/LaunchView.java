@@ -471,7 +471,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			}
 		} catch (PartInitException e) {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
-			 DebugUIViewsMessages.getString("LaunchView.Error_1"), DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
+				DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
+				e.getStatus());
 		}		
 		
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
