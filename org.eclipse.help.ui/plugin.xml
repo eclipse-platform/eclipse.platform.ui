@@ -207,14 +207,5 @@
          id="org.eclipse.help.ui.searchPage">
       </page>
    </extension>
-   
-   <extension id="helpsearchhit"
-      point="org.eclipse.core.resources.markers"
-      name="%helpsearchhitname">
-      <super type="org.eclipse.search.searchmarker"/>
-      <attribute name="href"/>
-      <attribute name="label"/>   
-      <attribute name="resultfof"/>
-   </extension>
 
 </plugin>
