@@ -544,34 +544,35 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		//boolean leftEditable= fMergeViewerContentProvider.isLeftEditable(input);
 				
 		IMergeViewerContentProvider content= getMergeContentProvider();
-		
-		Object ancestor= content.getAncestorContent(input);
-		if (input instanceof ICompareInput)	
-			fIsThreeWay= (((ICompareInput)input).getKind() & Differencer.DIRECTION_MASK) != 0;
-		else 
-			fIsThreeWay= true;	// ancestor != null;
+		if (content != null) {
+			Object ancestor= content.getAncestorContent(input);
+			if (input instanceof ICompareInput)	
+				fIsThreeWay= (((ICompareInput)input).getKind() & Differencer.DIRECTION_MASK) != 0;
+			else 
+				fIsThreeWay= true;	// ancestor != null;
+				
+			if (fAncestorItem != null)
+				fAncestorItem.setVisible(fIsThreeWay);
+				
+			boolean oldFlag= fShowAncestor;
+			fShowAncestor= fIsThreeWay && content.showAncestor(input);
 			
-		if (fAncestorItem != null)
-			fAncestorItem.setVisible(fIsThreeWay);
+			if (fAncestorEnabled && oldFlag != fShowAncestor)
+				fComposite.layout(true);
 			
-		boolean oldFlag= fShowAncestor;
-		fShowAncestor= fIsThreeWay && content.showAncestor(input);
-		
-		if (fAncestorEnabled && oldFlag != fShowAncestor)
-			fComposite.layout(true);
-		
-		ToolBarManager tbm= CompareViewerSwitchingPane.getToolBarManager(fComposite.getParent());
-		if (tbm != null) {
-			updateToolItems();
-			tbm.update(true);
-			tbm.getControl().getParent().layout(true);
+			ToolBarManager tbm= CompareViewerSwitchingPane.getToolBarManager(fComposite.getParent());
+			if (tbm != null) {
+				updateToolItems();
+				tbm.update(true);
+				tbm.getControl().getParent().layout(true);
+			}
+			
+			updateHeader();
+									
+			Object left= content.getLeftContent(input);
+			Object right= content.getRightContent(input);
+			updateContent(ancestor, left, right);
 		}
-		
-		updateHeader();
-								
-		Object left= content.getLeftContent(input);
-		Object right= content.getRightContent(input);
-		updateContent(ancestor, left, right);
 	}
 
 	private void compareInputChanged(ICompareInput input) {
