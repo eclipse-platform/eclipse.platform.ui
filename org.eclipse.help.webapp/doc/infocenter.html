@@ -74,8 +74,8 @@ Runtime     Binary      from    <a
        Infocenter</font></b></td>
                           </tr>
                            <tr>
-                             <td>        Download Eclipse Infocenter web
-module archive     file, with "<tt>.war</tt>"   extension .<br>
+                             <td>        Download Eclipse Infocenter from the same page you downloaded the eclipse driver in Step 1. Create a directory "infocenter" on your system and unzip the 
+                             infocenter driver. Let us assume that this directory is "<tt>d:\infocenter\</tt>". The directory should contain a web module (.WAR file) and the legal documents.<br>
             <br>
             </td>
                           </tr>
@@ -141,15 +141,15 @@ form click New button, input values:
                                   <b>WebSphere Application Server</b>   
                                                                         
                                             
-      <blockquote>Open downloaded WAR file using Application Assembly Tool<br>
+      <blockquote>Open the WAR file in <tt>d:\infocenter\" using Application Assembly Tool<br>
                          Select help -&gt; Context Parameters in the tree<br>
                          Set the value of ECLIPSE_HOME parameter to <tt>D:\eclipse</tt><br>
                          click Apply, and save the application archive.</blockquote>
                                                                         
             <b>Tomcat</b>                                               
                                                                        
-      <blockquote>Create eclipseinfocenter directory in a temporary location<br>
-                        Unjar&nbsp;downloaded WAR to the eclipseinfocenter
+      <blockquote>Create a <tt>help</tt> subdirectory, <tt>d:\infocenter\help\</tt><br>
+                        Unjar&nbsp;the WAR file from <tt>d:\infocenter</tt> into the "help" subdirectory.
   directory<br>
                         In the file WEB-INF/web.xml replace lines<br>
            <tt>                     &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 
@@ -192,14 +192,9 @@ WAR        file<br>
                                                                         
            <b>Tomcat</b>                                                
                                                                        
-      <blockquote>Copy eclipse infocenter directory created in step 4 from 
-      the temporary folder to D:\jakarta-tomcat-4.0.4\webapps. &nbsp;Add the
-  following       line to the tomcat\conf\server.xml   file:<em><span
- style="font-style: normal;"></span></em>                          <br>
-    <tt><em><span style="font-style: normal;">&lt;</span></em>Context path="/help"&nbsp; 
- docBase="D:\jakarta-tomcat-4.0.4\webapps\eclipseinfocenter" /&gt;</tt><br>
- as the last element inside the Host section.&nbsp; <br>
- If you use jdk1.4 to run Tomcat, you need to delete file D:\jakarta-tomcat-4.0.4\common\lib\xerces.jar 
+      <blockquote>Copy the directory created in step 4 (<tt>d:\infocenter\help</tt>) to 
+      <tt>D:\jakarta-tomcat-4.0.4\webapps</tt>. &nbsp; 
+ If you use jdk1.4 to run Tomcat, you need to delete file <tt>D:\jakarta-tomcat-4.0.4\common\lib\xerces.jar </tt>
         <br>
  Restart the server.<br>
                   <br>

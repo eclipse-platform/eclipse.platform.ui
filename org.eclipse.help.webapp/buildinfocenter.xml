@@ -38,6 +38,9 @@
 			<fileset dir="${basedir}" includes="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,webapp.properties" excludes="about.html,WEB-INF/classes/"/>
 		</copy>
 		<!-- custom addition begin -->
+		<copy file="${basedir}/infocenter/about.html" todir="${destination.temp.folder}/${full.name}" overwrite="true"/>
+		<copy file="${basedir}/infocenter/cpl-v10.html" todir="${destination.temp.folder}/${full.name}" overwrite="true"/>
+		<copy file="${basedir}/infocenter/notice.html" todir="${destination.temp.folder}/${full.name}" overwrite="true"/>
 		<copy file="${basedir}/infocenter/web.xml" todir="${destination.temp.folder}/${full.name}/WEB-INF" overwrite="true"/>
 		<copy file="${basedir}/../org.apache.xerces/xmlParserAPIs.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${basedir}/../org.apache.xerces/xercesImpl.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
@@ -109,12 +112,7 @@
 		<eclipse.refreshLocal resource="${plugin}" depth="infinite"/>
 	</target>
 
-	<!-- custom change begin -->
-	<!--
 	<target name="zip.plugin" depends="init">
-	-->
-	<target name="build.war" depends="init">
-	<!-- custom end -->
 		<delete dir="${temp.folder}"/>
 		<mkdir dir="${temp.folder}"/>
 		<antcall target="build.jars"/>
@@ -128,13 +126,16 @@
 		<delete>
 			<fileset dir="${temp.folder}" includes="**/*.bin.log"/>
 		</delete>
+		
 		<!-- custom change begin -->
-		<!--
-		<zip zipfile="${plugin.destination}/${full.name}.zip" basedir="${temp.folder}" filesonly="true"/>
-		-->
-		<jar jarfile="${plugin.destination}/${full.name}.war" basedir="${temp.folder}/${full.name}" filesonly="false"/>
-		<!-- custom end -->
+		<jar jarfile="${temp.folder}/${full.name}.war" basedir="${temp.folder}/${full.name}" filesonly="false"/>
+		
+		<zip zipfile="${plugin.destination}/${full.name}.zip">
+		    <zipfileset dir="${temp.folder}" includes="${full.name}.war"/>
+		    <zipfileset dir="${basedir}/infocenter" includes="about.html,notice.html,cpl-v10.html"/>
+		</zip>
 		<delete dir="${temp.folder}"/>
+		<!-- custom end -->
 	</target>
 
 </project>
