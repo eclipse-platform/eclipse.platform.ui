@@ -28,12 +28,15 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.OpenBreakpointMarkerAction;
 import org.eclipse.debug.internal.ui.actions.ShowSupportedBreakpointsAction;
 import org.eclipse.debug.internal.ui.actions.SkipAllBreakpointsAction;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -42,12 +45,14 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -563,4 +568,26 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
      */
     public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
+     */
+    public IDebugModelPresentation getPresentation(String id) {
+        if (getViewer() instanceof StructuredViewer) {
+            IBaseLabelProvider lp = ((StructuredViewer)getViewer()).getLabelProvider();
+            if (lp instanceof BreakpointsLabelProvider) {
+                BreakpointsLabelProvider blp = (BreakpointsLabelProvider) lp;
+                lp = blp.getPresentation();
+            }
+            if (lp instanceof DelegatingModelPresentation) {
+                return ((DelegatingModelPresentation)lp).getPresentation(id);
+            }
+            if (lp instanceof LazyModelPresentation) {
+                if (((LazyModelPresentation)lp).getDebugModelIdentifier().equals(id)) {
+                    return (IDebugModelPresentation)lp;
+                }
+            }
+        }
+        return null;
+    }    
 }

@@ -73,4 +73,13 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
         }
         return fWorkbenchLabelProvider.getFont(element);
     }
+    
+    /**
+     * Returns the debug model presentation used by this label provider.
+     * 
+     * @return the debug model presentation used by this label provider
+     */
+    protected IDebugModelPresentation getPresentation() {
+        return fPresentation;
+    }
 }
