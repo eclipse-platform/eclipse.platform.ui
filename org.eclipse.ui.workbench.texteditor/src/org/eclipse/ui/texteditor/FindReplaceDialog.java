@@ -68,6 +68,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -1751,7 +1752,9 @@ class FindReplaceDialog extends Dialog {
 	
 	private ContentAssistant createContentAssistant(final Combo combo, ComboContentAssistSubjectAdapter adapter) {
 		final ContentAssistant contentAssistant= new ContentAssistant();
-				
+		
+		contentAssistant.setRestoreCompletionProposalSize(getSettings("FindReplaceDialog.completion_proposal_size"));
+		
 		IContentAssistProcessor processor= new RegExContentAssistProcessor();
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		
@@ -1801,5 +1804,14 @@ class FindReplaceDialog extends Dialog {
 		}});
 		contentAssistant.install(adapter);
 		return contentAssistant;
+	}
+	
+	private IDialogSettings getSettings(String sectionName) {
+		IDialogSettings pluginDialogSettings= TextEditorPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings= pluginDialogSettings.getSection(sectionName);
+		if (settings == null)
+			settings= pluginDialogSettings.addNewSection(sectionName);
+		
+		return settings;
 	}
 }
