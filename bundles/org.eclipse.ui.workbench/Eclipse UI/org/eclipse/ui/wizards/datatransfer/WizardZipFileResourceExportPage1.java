@@ -32,9 +32,6 @@ class WizardZipFileResourceExportPage1
 	// widgets
 	protected Button compressContentsCheckbox;
 
-	// constants
-	protected static final int COMBO_HISTORY_LENGTH = 5;
-
 	// dialog store id constants
 	private final static String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 	private final static String STORE_CREATE_STRUCTURE_ID = "WizardZipFileResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
