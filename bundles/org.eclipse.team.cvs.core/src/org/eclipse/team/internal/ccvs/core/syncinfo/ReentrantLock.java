@@ -79,11 +79,16 @@ public class ReentrantLock {
 				try {
 					Platform.getJobManager().beginRule(rule, monitor);
 				} catch (RuntimeException e) {
-					// The begin was cancelled (or some other problem occurred).
-					// Free the scheduling rule and throw the cancel
-					// so the clients of ReentrantLock don't need to
-					// do an endRule when the operation is cancelled.
-					Platform.getJobManager().endRule(rule);
+					try {
+						// The begin was cancelled (or some other problem occurred).
+						// Free the scheduling rule and throw the cancel
+						// so the clients of ReentrantLock don't need to
+						// do an endRule when the operation is cancelled.
+						Platform.getJobManager().endRule(rule);
+					} catch (RuntimeException e1) {
+						// Log and ignore so the original exception is not lost
+						CVSProviderPlugin.log(CVSException.wrapException(e1));
+					}
 					throw e;
 				}
 			}
