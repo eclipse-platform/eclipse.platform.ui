@@ -37,7 +37,7 @@ CDATA #REQUIRED</tt><br>
   <li><b>description</b> - an optional subelement whose body should contain text
     providing short description of the action set.</li>
 </ul>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT menu (separator)+&gt;</tt><br>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT menu (separator)+ (groupMarker)*&gt;</tt><br>
 <tt>&nbsp;&nbsp; &lt;!ATTLIST menu</tt><br>
 <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt><br>
@@ -66,6 +66,17 @@ CDATA #REQUIRED</tt><br>
     <li><b>name</b> - a name of the separator that can later be referenced as
       the last token in the action path. Therefore, separators serve as named
       groups into which actions and submenus can be added.</li>
+  </ul>
+</blockquote>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT groupMarker EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST groupMarker</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<blockquote>
+  <ul>
+    <li><b>name</b> - a name of the groupMarker that can later be referenced as the
+      last token in the action path.</li>
   </ul>
 </blockquote>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT action (selection)* (enablement)?&gt;</tt><br>
