@@ -711,7 +711,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				verifyName();
 			} catch (CoreException ce) {
 				refreshStatus();
-				//setErrorMessage(ce.getMessage());
 				return;				
 			}
 						
@@ -1078,7 +1077,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		
 		// Take care of any unsaved changes.  If the user aborts, reset selection
 		// to whatever it was previously selected
-		boolean canReplaceConfig = confirmWorkingCopyNotDirty();
+		boolean canReplaceConfig = canReplaceCurrentConfig();
  		if (!canReplaceConfig) {
  			StructuredSelection prevSelection;
  			Object selectedTreeObject = getSelectedTreeObject();
@@ -1336,13 +1335,30 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		if (workingCopy == null) {
  			return false;
  		}
+ 		
+ 		// Working copy hasn't been saved
  		if (workingCopy.getOriginal() == null) {
+ 			return true;
+ 		}
+ 		
+ 		// Name has changed.  Normally, this would be caught in the 'contentsEqual'
+ 		// check below, however there are some circumstances where this fails, such as
+ 		// when the name is invalid
+ 		if (isNameDirty()) {
  			return true;
  		}
 
  		updateWorkingCopyFromPages();
  		ILaunchConfiguration original = workingCopy.getOriginal();
  		return !original.contentsEqual(workingCopy);
+ 	}
+ 	
+ 	/**
+ 	 * Return <code>true</code> if the name has been modified since the last time it was saved.
+ 	 */
+ 	protected boolean isNameDirty() {
+ 		String currentName = getNameTextWidget().getText().trim();
+ 		return !currentName.equals(getLastSavedName());
  	}
  	
  	protected void setContext(Object context) {
@@ -1491,11 +1507,10 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Return whether the current working copy exists and isn't dirty.  If it is dirty,
-	 * ask the user whether to save changes.
+	 * Return whether the current configuration can be replaced.  This involves determining
+	 * if it is dirty, and if it is, asking the user what to do.
 	 */
-	protected boolean confirmWorkingCopyNotDirty() {
-		
+	protected boolean canReplaceCurrentConfig() {		
 		// If there is no working copy, there's no problem, return true
 		ILaunchConfigurationWorkingCopy workingCopy = getLaunchConfiguration();
 		if (workingCopy == null) {
@@ -1503,15 +1518,30 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		
 		if (isWorkingCopyDirty()) {
-			return showSaveChangesDialog();
+			return showUnsavedChangesDialog();
 		} else {
 			return true;
 		}
 	}
 	
 	/**
-	 * Show the user a dialog with specified title, message and buttons.  
-	 * Return true if the user hit 'CANCEL', false otherwise.
+	 * Show the user a dialog appropriate to whether the unsaved changes in the current config
+	 * can be saved or not.  Return <code>true</code> if the user indicated that they wish to replace
+	 * the current config, either by saving changes or by discarding the, return <code>false</code>
+	 * otherwise.
+	 */
+	protected boolean showUnsavedChangesDialog() {
+		if (canSaveConfig()) {
+			return showSaveChangesDialog();
+		} else {
+			return showDiscardChangesDialog();
+		}
+	}
+	
+	/**
+	 * Create and return a dialog that asks the user whether they want to save
+	 * unsaved changes.  Return <code>true </code> if they chose to save changes,
+	 * <code>false</code> otherwise.
 	 */
 	protected boolean showSaveChangesDialog() {
 		StringBuffer buffer = new StringBuffer("The configuration \"");
@@ -1524,10 +1554,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 												 MessageDialog.QUESTION,
 												 new String[] {"Yes", "No", "Cancel"},
 												 0);
+		// If user clicked 'Cancel' or closed dialog, return false
 		int selectedButton = dialog.open();
-		
-		// If the user hit cancel or closed the dialog, return true
-		if ((selectedButton < 0) || selectedButton == 2) {
+		if ((selectedButton < 0) || (selectedButton == 2)) {
 			return false;
 		}
 		
@@ -1538,6 +1567,46 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		return true;
 	}
+	
+	/**
+	 * Create and return a dialog that asks the user whether they want to discard
+	 * unsaved changes.  Return <code>true</code> if they chose to discard changes,
+	 * <code>false</code> otherwise.
+	 */
+	protected boolean showDiscardChangesDialog() {
+		StringBuffer buffer = new StringBuffer("The configuration \"");
+		buffer.append(getLaunchConfiguration().getName());
+		buffer.append("\" has unsaved changes that CANNOT be saved.  Do you wish to discard them?");
+		MessageDialog dialog = new MessageDialog(getShell(), 
+												 "Discard changes?",
+												 null,
+												 buffer.toString(),
+												 MessageDialog.QUESTION,
+												 new String[] {"Yes", "No"},
+												 1);
+		// If user clicked 'Yes', return true
+		int selectedButton = dialog.open();
+		if (selectedButton == 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Return <code>true</code> if the current configuration can be saved, <code>false</code>
+	 * otherwise.  Note this is NOT the same thing as the config simply being valid.  It is
+	 * possible to save a config that does not validate.  This method determines whether the
+	 * config can be saved without causing a serious error.  For example, a shared config that
+	 * has no specified location would cause this method to return <code>false</code>.
+	 */
+	protected boolean canSaveConfig() {
+		try {
+			verifyName();
+			return true;
+		} catch (CoreException ce) {
+			return false;
+		}
+	}
 
 	/**
 	 * Notification the 'new' button has been pressed
@@ -1545,7 +1614,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected void handleNewPressed() {
 		
 		// Take care of any unsaved changes
-		if (!confirmWorkingCopyNotDirty()) {
+		if (!canReplaceCurrentConfig()) {
 			return;
 		}
 		
