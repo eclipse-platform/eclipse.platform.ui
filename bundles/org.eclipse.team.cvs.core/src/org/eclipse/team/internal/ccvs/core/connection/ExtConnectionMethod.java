@@ -5,9 +5,7 @@ package org.eclipse.team.internal.ccvs.core.connection;
  * All Rights Reserved.
  */
  
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
-import org.eclipse.team.internal.ccvs.core.IServerConnection;
+import org.eclipse.team.internal.ccvs.core.*;
 
 public class ExtConnectionMethod implements IConnectionMethod {
 	/**
@@ -22,5 +20,8 @@ public class ExtConnectionMethod implements IConnectionMethod {
 	 */
 	public IServerConnection createConnection(ICVSRepositoryLocation repositoryRoot, String password) {
 		return new ExtConnection(repositoryRoot, password);
+	}
+	
+	public void disconnect(ICVSRepositoryLocation location) {
 	}
 }

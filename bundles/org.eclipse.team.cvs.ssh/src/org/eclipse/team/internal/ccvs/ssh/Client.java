@@ -430,6 +430,9 @@ public void connect(IProgressMonitor monitor) throws IOException, CVSAuthenticat
  * Terminate the connection to the server.
  */
 public void disconnect() throws IOException {
+	if (Policy.DEBUG_SSH_PROTOCOL) {
+		System.out.println("Disconnecting.");
+	}	
 	if (connected) {
 		connected = false;
 		send(SSH_MSG_DISCONNECT, null);

@@ -28,4 +28,18 @@ public interface IConnectionMethod {
 	 * (which includes the user name) and the given password.
 	 */
 	public IServerConnection createConnection(ICVSRepositoryLocation location, String password);
+	
+	/**
+	 * Some connection method may persist the physical connection to the server
+	 * through several IServerConnections.  For example, when making several
+	 * successive connections to the same location using SSH2, it would be very
+	 * expensive to re-connect, re-negotiate and re-authenticate for each
+	 * operation; therefore the SSH2 connection method will create one SSH
+	 * session and open several channels (one for each IServerConnection
+	 * created), and keep the session open until disconnect() is called.
+	 * <p>
+	 *  This method actually closes any connection to the indicated location.
+	 * </p>
+	 */
+	public void disconnect(ICVSRepositoryLocation location);
 }

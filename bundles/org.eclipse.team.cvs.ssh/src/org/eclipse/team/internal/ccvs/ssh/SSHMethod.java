@@ -23,4 +23,6 @@ public class SSHMethod implements IConnectionMethod {
 		return new SSHServerConnection(repositoryRoot, password);
 	}
 
+	public void disconnect(ICVSRepositoryLocation location) {
+	}
 }
