@@ -45,6 +45,7 @@ public final class NotDefinedException extends ContextException {
 	 * 
 	 * @param e
 	 *            The exception being thrown; must not be <code>null</code>.
+	 * @since 3.1
 	 */
 	public NotDefinedException(
 			org.eclipse.core.commands.common.NotDefinedException e) {
