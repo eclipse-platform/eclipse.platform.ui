@@ -14,11 +14,23 @@ import java.net.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.branding.*;
 import org.osgi.framework.*;
 import org.w3c.dom.*;
 
 
-public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConfigurationConstants, IBundleGroup, IProduct {
+/**
+ * 
+ * Feature information
+ */
+public class FeatureEntry
+		implements
+			IPlatformConfiguration.IFeatureEntry,
+			IConfigurationConstants,
+			IBundleGroup,
+			IBundleGroupConstants,
+			IProduct,
+			IProductConstants {
 	private String id;
 	private String version;
 	private String pluginVersion;
@@ -27,6 +39,7 @@ public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConf
 	private boolean primary;
 	private String pluginIdentifier;
 	private String url;
+	private AboutInfo branding;
 
 	public FeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
 		if (id == null)
@@ -172,7 +185,43 @@ public class FeatureEntry implements IPlatformConfiguration.IFeatureEntry, IConf
 	 * @see org.eclipse.core.runtime.IBundleGroup#getProperty(java.lang.String)
 	 */
 	public String getProperty(String key) {
-		// TODO Auto-generated method stub
+		if (key == null)
+			return null;
+		
+		if (branding == null)
+			branding = AboutInfo.readFeatureInfo(id, version, getFeaturePluginIdentifier());
+		
+		// IBundleGroupConstants
+		if (key.equals(FEATURE_IMAGE))
+			return branding.getFeatureImageURL().toExternalForm();
+		else if (key.equals(TIPS_AND_TRICKS_HREF)) 
+			return branding.getTipsAndTricksHref();
+		else if (key.equals(WELCOME_PAGE)) 
+			return branding.getWelcomePageURL().toExternalForm();
+		else if (key.equals(WELCOME_PERSPECTIVE))
+			return branding.getWelcomePerspectiveId();
+		// IProductConstants
+		else if (key.equals(APP_NAME)) 
+			return branding.getAppName();
+		else if (key.equals(ABOUT_TEXT))
+			return branding.getAboutText();
+		else if (key.equals(ABOUT_IMAGE))
+			return branding.getAboutImageURL().toExternalForm();
+		else if (key.equals(WINDOW_IMAGE))
+			return branding.getWindowImageURL().toExternalForm();
+		else if (key.equals(WINDOW_IMAGES)) {
+			URL[] urls = branding.getWindowImagesURLs();
+			if (urls == null)
+				return null;
+			StringBuffer windowImagesURLs = new StringBuffer();
+			for (int i=0; i<urls.length; i++){
+				windowImagesURLs.append(urls[i].toExternalForm());
+				if (i != urls.length-1)
+					windowImagesURLs.append(',');
+			}
+			return windowImagesURLs.toString();
+		}
+		
 		return null;
 	}
 	/* (non-Javadoc)
