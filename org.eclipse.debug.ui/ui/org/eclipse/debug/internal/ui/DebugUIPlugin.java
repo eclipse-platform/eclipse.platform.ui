@@ -765,7 +765,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 			if (document != null) {
 				return document;
 			}
-			document= new ConsoleDocument((IProcess) process);
+			document= new ConsoleDocument(process);
 			fConsoleDocuments.put(process, document);
 			return document;
 		}
@@ -786,7 +786,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 				return document;
 			}
 		}
-
+
 		return new ConsoleDocument(null);
 	}
 
@@ -869,8 +869,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * If no debug targets, returns the first <code>IProcess</code> found in the launch manager.
 	 * Can return <code>null</code>.
 	 */
-	public IProcess determineCurrentProcess() {
-
+	public IProcess determineCurrentProcess() {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		IDebugTarget[] debugTargets= launchManager.getDebugTargets();
 		for (int i = 0; i < debugTargets.length; i++) {
@@ -882,13 +881,16 @@ public static Object createExtension(final IConfigurationElement element, final 
 		}
 
 		IProcess[] processes= launchManager.getProcesses();
-		if ((processes != null) && (processes.length > 0)) {
-			return processes[0];
+		for (int i=0; i < processes.length; i++) {
+			IProcess process= processes[i];
+			if (process.getLaunch() != null) {
+				return process;
+			}
 		}
-
+
 		return null;
 	}
-
+
 	protected IProcess getProcessFromInput(Object input) {
 		IProcess processInput= null;
 		if (input instanceof IProcess) {
@@ -908,14 +910,14 @@ public static Object createExtension(final IConfigurationElement element, final 
 				if (input instanceof IDebugElement) {
 					processInput= ((IDebugElement) input).getProcess();
 				}
-
+
 		if ((processInput == null) || (processInput.getLaunch() == null)) {
 			return null;
 		} else {
 			return processInput;
 		}
 	}
-
+
 	/**
 	 * @see IDocumentListener
 	 */
@@ -958,8 +960,7 @@ public static Object createExtension(final IConfigurationElement element, final 
 	
 	public IProcess getCurrentProcess() {
 		return fCurrentProcess;
-	}
-
+	}
 	public void setCurrentProcess(IProcess process) {
 		if (fCurrentProcess != null) {
 			getConsoleDocument(fCurrentProcess).removeDocumentListener(this);
@@ -987,7 +988,6 @@ public static Object createExtension(final IConfigurationElement element, final 
 		}		
 	}
 	
-
 	/**
 	 * @see ILaunchListener
 	 */
@@ -995,20 +995,20 @@ public static Object createExtension(final IConfigurationElement element, final 
 		getDisplay().syncExec(new Runnable () {
 			public void run() {
 				IProcess[] processes= launch.getProcesses();
-				IProcess currentProcess= getCurrentProcess();
-				if (currentProcess != null && currentProcess.getLaunch() == null) {
-					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(currentProcess);
+				for (int i= 0; i < processes.length; i++) {
+					ConsoleDocument doc= (ConsoleDocument)getConsoleDocument(processes[i]);
 					doc.removeDocumentListener(DebugUIPlugin.this);
 					doc.close();
-					setConsoleDocument(currentProcess, null);
+					setConsoleDocument(processes[i], null);
+				}
+				IProcess currentProcess= getCurrentProcess();
+				if (currentProcess != null && currentProcess.getLaunch() == null) {
 					fCurrentProcess= null;
 				}
 			}
 		});
-		setCurrentProcess(determineCurrentProcess());
-		setConsoleInput(getCurrentProcess());
 	}
-
+
 	/**
 	 * Must not assume that will only be called from the UI thread.
 	 *
