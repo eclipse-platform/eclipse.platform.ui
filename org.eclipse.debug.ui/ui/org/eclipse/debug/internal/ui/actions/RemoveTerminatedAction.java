@@ -54,7 +54,7 @@ public class RemoveTerminatedAction extends ListenerActionDelegate implements IL
 	 * Removes all of the terminated launches relevant to the
 	 * active launch view.
 	 */
-	public void run() {
+	public void run(IAction action) {
 		doAction(null);
 	}
 
@@ -62,7 +62,7 @@ public class RemoveTerminatedAction extends ListenerActionDelegate implements IL
 	 * Updates the enabled state of this action to enabled if at
 	 * least one launch is terminated and relative to the current perspective.
 	 */
-	public void update() {
+	protected void update() {
 		Object[] elements = getElements();
 		if (elements != null) {
 			for (int i= 0; i < elements.length; i++) {

@@ -7,16 +7,17 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.views.ConsoleView;
+import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.texteditor.IUpdate;
  
 /**
  * Terminate action for the console. Terminates the process
  * currently being displayed in the console.
  */
-public class ConsoleTerminateActionDelegate extends TerminateActionDelegate implements IUpdate {
+public class ConsoleTerminateActionDelegate extends TerminateActionDelegate {
 
 	/**
 	 * Returns a selection with the console view's
@@ -35,12 +36,15 @@ public class ConsoleTerminateActionDelegate extends TerminateActionDelegate impl
 		return StructuredSelection.EMPTY;
 	}
 	
-	/**
-	 * @see IUpdate#update()
-	 */
-	public void update() {
-		if (getAction() != null) {
-			update(getAction(), getSelection());
-		}
+	public void init(IViewPart view) {
+		super.init(view);
+		//listen to selections in the launch view
+		DebugSelectionManager.getDefault().addSelectionChangedListener(this, getWindow(), IDebugUIConstants.ID_DEBUG_VIEW);
 	}
+	
+	public void dispose() {
+		super.dispose();
+		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getWindow(), IDebugUIConstants.ID_DEBUG_VIEW);	
+	}
+	
 }

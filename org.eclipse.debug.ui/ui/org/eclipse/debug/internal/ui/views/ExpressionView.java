@@ -108,7 +108,6 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
-		menu.add(getAction("CopyToClipboard")); //$NON-NLS-1$
 		menu.add(getAction(REMOVE_ACTION));
 		menu.add(getAction("RemoveAll")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));

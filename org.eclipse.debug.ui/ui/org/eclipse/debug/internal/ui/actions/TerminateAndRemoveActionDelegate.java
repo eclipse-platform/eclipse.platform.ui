@@ -21,14 +21,6 @@ import org.eclipse.jface.action.IAction;
 public class TerminateAndRemoveActionDelegate extends ControlActionDelegate {
 
 	/**
-	 * @see ControlActionDelegate#initializeForOwner(ControlAction)
-	 */
-	public void initializeForOwner(ControlAction controlAction) {		
-		super.initializeForOwner(controlAction);
-		controlAction.setEnabled(!controlAction.getStructuredSelection().isEmpty());
-	}
-	
-	/**
 	 * @see ControlActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) throws DebugException {

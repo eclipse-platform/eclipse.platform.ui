@@ -41,9 +41,9 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged(IAction action, ISelection s) {
+	/*public void selectionChanged(IAction action, ISelection s) {
 		action.setEnabled(!s.isEmpty());
-	}
+	}*/
 	
 	/**
 	 * @see ControlActionDelegate#getText()

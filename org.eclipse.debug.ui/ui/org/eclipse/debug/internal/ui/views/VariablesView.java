@@ -25,8 +25,6 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
-import org.eclipse.debug.internal.ui.actions.ControlAction;
-import org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.ShowVariableDetailPaneAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
@@ -249,6 +247,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			}
 		});
 		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
+		getSite().setSelectionProvider(vv);
 		
 		// add text viewer
 		SourceViewer dv= new SourceViewer(getSashForm(), null, SWT.V_SCROLL | SWT.H_SCROLL);
@@ -259,7 +258,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getSashForm().setMaximizedControl(vv.getControl());
 		
 		dv.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
-		getSite().setSelectionProvider(dv.getSelectionProvider());
+
 		dv.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
 				getSite().setSelectionProvider(getDetailViewer().getSelectionProvider());
@@ -428,8 +427,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
-		setAction("CopyToClipboard", new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate())); //$NON-NLS-1$
-		
 		action = new ShowVariableDetailPaneAction(this);
 		action.setChecked(false);
 		setAction("ShowDetailPane", action); //$NON-NLS-1$
@@ -484,7 +481,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
-		menu.add(getAction("CopyToClipboard")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$
@@ -733,6 +729,4 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public void handleException(DebugException e) {
 		showMessage(e.getMessage());
 	}
-
-	}
-
+}

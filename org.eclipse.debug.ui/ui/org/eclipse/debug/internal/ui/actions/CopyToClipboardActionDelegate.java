@@ -28,20 +28,21 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
 
 public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
 	private ContentViewer fViewer;
 	
 	/**
-	 * @see ControlActionDelegate#initializeForOwner(ControlAction)
+	 * @see IViewActionDelegate#init(IViewPart)
 	 */
-	public void initializeForOwner(ControlAction controlAction) {		
-		controlAction.setEnabled(!controlAction.getStructuredSelection().isEmpty());
-		setViewer((ContentViewer)controlAction.getSelectionProvider());
-		super.initializeForOwner(controlAction);
-	}
+	public void init(IViewPart view) {
+		super.init(view);
+		setViewer((ContentViewer)view.getViewSite().getSelectionProvider());
 
+	}
+	
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */

@@ -255,14 +255,11 @@
       </actionSet>
 </extension>
 
-
-<!-- Contributions to Debug View Toolbar -->
-
 <extension point = "org.eclipse.ui.viewActions">
+<!-- Contributions to Debug View Toolbar -->
 	<viewContribution
 		id = "org.eclipse.debug.ui.debugview.toolbar"
 		targetID = "org.eclipse.debug.ui.DebugView">
-
 <!-- Thread Group -->
 		<action
 			id = "org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
@@ -338,58 +335,89 @@
 			label="%StepIntoAction.label">
 		</action>		
 	</viewContribution>
+	<!-- Contributions to Console View Toolbar -->
+	<viewContribution
+		id = "org.eclipse.debug.ui.consoleview.toolbar"
+		targetID = "org.eclipse.debug.ui.ConsoleView">
+		<action
+			id = "org.eclipse.debug.ui.consoleView.toolbar.terminate"
+			icon = "icons/full/clcl16/terminate_co.gif"
+			helpContextId = "terminate_action_context"
+			toolbarPath = "launchGroup"
+			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
+			tooltip="%TerminateAction.tooltip"
+			label="%TerminateAction.label">
+		</action>
+	</viewContribution>
 </extension>
 
-<!-- Contributions to Debug View Popup Menu -->
-
 <extension point = "org.eclipse.ui.popupMenus">
+<!-- Contributions to Debug View Popup Menu -->
 	<viewerContribution
 		id = "org.eclipse.debug.ui.debugview.popupMenu"
 		targetID = "org.eclipse.debug.ui.DebugView">
+<!-- Edit Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.copyToClipboard"
+			menubarPath = "editGroup"
+			helpContextId = "copy_to_clipboard_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
+			label="%CopyToClipboardAction.label">
+		</action>
+<!-- Launch Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.relaunch"
+			menubarPath = "launchGroup"
+			helpContextId = "relaunch_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate"
+			label="%RelaunchAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.terminateAndRemove"
+			menubarPath = "launchGroup"
+			helpContextId = "terminate_and_remove_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.TerminateAndRemoveActionDelegate"
+			label="%TerminateAndRemoveAction.label">
+		</action>
 <!-- Thread Group -->
 		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.removeAllTerminated"
+			id = "org.eclipse.debug.ui.debugview.popupMenu.removeAllTerminated"
 			menubarPath = "launchGroup"
 			icon = "icons/full/clcl16/rem_all_co.gif"
 			helpContextId = "remove_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.RemoveTerminatedAction"
-			tooltip="%RemoveTerminatedAction.tooltip"
 			label="%RemoveTerminatedAction.label">
 		</action>
 		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.disconnect"
+			id = "org.eclipse.debug.ui.debugview.popupMenu.disconnect"
 			menubarPath = "threadGroup"
 			icon = "icons/full/clcl16/disconnect_co.gif"
 			helpContextId = "disconnect_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.DisconnectActionDelegate"
-			tooltip="%DisconnectAction.tooltip"
 			label="%DisconnectAction.label">
 		</action>
 		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.terminate"
+			id = "org.eclipse.debug.ui.debugview.popupMenu.terminate"
 			menubarPath = "threadGroup"
 			icon = "icons/full/clcl16/terminate_co.gif"
 			helpContextId = "terminate_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.TerminateActionDelegate"
-			tooltip="%TerminateAction.tooltip"
 			label="%TerminateAction.label">
 		</action>
 		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.suspend"
+			id = "org.eclipse.debug.ui.debugview.popupMenu.suspend"
 			menubarPath = "threadGroup"
 			icon = "icons/full/clcl16/suspend_co.gif"
 			helpContextId = "suspend_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.SuspendActionDelegate"
-			tooltip="%SuspendAction.tooltip"
 			label="%SuspendAction.label">
 		</action>
 		<action
-			id = "org.eclipse.debug.ui.debugview.toolbar.resume"
+			id = "org.eclipse.debug.ui.debugview.popupMenu.resume"
 			menubarPath = "threadGroup"
 			icon = "icons/full/clcl16/resume_co.gif"
 			helpContextId = "resume_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.ResumeActionDelegate"
-			tooltip="%ResumeAction.tooltip"
 			label="%ResumeAction.label">
 		</action>		
 <!-- Step Group -->		
@@ -399,7 +427,6 @@
 			icon = "icons/full/clcl16/stepreturn_co.gif"
 			helpContextId = "step_return_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepReturnActionDelegate"
-			tooltip="%StepReturnAction.tooltip"
 			label="%StepReturnAction.label">
 		</action>		
 		<action
@@ -408,7 +435,6 @@
 			icon = "icons/full/clcl16/stepover_co.gif"
 			helpContextId = "step_over_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepOverActionDelegate"
-			tooltip="%StepOverAction.tooltip"
 			label="%StepOverAction.label">
 		</action>			
 		<action
@@ -417,10 +443,10 @@
 			icon = "icons/full/clcl16/stepinto_co.gif"
 			helpContextId = "step_into_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.StepIntoActionDelegate"
-			tooltip="%StepIntoAction.tooltip"
 			label="%StepIntoAction.label">
 		</action>		
 	</viewerContribution>
+	<!-- Contributions to Breakpoints View Popup Menu -->
 	<viewerContribution
 		id = "org.eclipse.debug.ui.breakpointview.popupMenu"
 		targetID = "org.eclipse.debug.ui.BreakpointView">
@@ -437,6 +463,45 @@
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
 			enablesFor="2+">
+		</action>
+	</viewerContribution>
+<!-- Contributions to Variables View Popup Menu -->	
+	<viewerContribution
+		id = "org.eclipse.debug.ui.variablesView.popupMenu"
+		targetID = "org.eclipse.debug.ui.VariableView">
+		<!-- Variable Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
+			menubarPath = "variableGroup"
+			helpContextId = "copy_variables_to_clipboard_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
+			label="%CopyVariablesToClipboardAction.label">
+		</action>
+	</viewerContribution>
+<!-- Contributions to Expression View Popup Menu -->
+	<viewerContribution
+		id = "org.eclipse.debug.ui.expressionView.popupMenu"
+		targetID = "org.eclipse.debug.ui.ExpressionView">
+		<!-- Expression Group -->
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
+			menubarPath = "expressionGroup"
+			helpContextId = "copy_variables_to_clipboard_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
+			label="%CopyVariablesToClipboardAction.label">
+		</action>
+	</viewerContribution>
+<!-- Contributions to Console View popup menu -->
+	<viewerContribution
+		id = "org.eclipse.debug.ui.consoleview.popupMenu"
+		targetID = "org.eclipse.debug.ui.ConsoleView">
+		<action
+			id = "org.eclipse.debug.ui.consoleView.popupMenu.terminate"
+			icon = "icons/full/clcl16/terminate_co.gif"
+			menubarPath = "additions"
+			helpContextId = "terminate_action_context"
+			class = "org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate"
+			label="%TerminateAction.label">
 		</action>
 	</viewerContribution>
 </extension>

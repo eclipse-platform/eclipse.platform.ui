@@ -21,8 +21,6 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ClearOutputAction;
-import org.eclipse.debug.internal.ui.actions.ConsoleTerminateActionDelegate;
-import org.eclipse.debug.internal.ui.actions.ControlAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerGotoLineAction;
 import org.eclipse.debug.ui.DebugUITools;
@@ -201,11 +199,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
 		updateAction(ITextEditorActionConstants.FIND);
-		
-		ConsoleTerminateActionDelegate delegate = new ConsoleTerminateActionDelegate();
-		delegate.init(this);
-		IAction terminate = new ControlAction(getViewer(), delegate);
-		setAction("Terminate", terminate); //$NON-NLS-1$
 				
 		// initialize input, after viewer has been created
 		setViewerInput(DebugUITools.getCurrentProcess());
@@ -220,8 +213,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
 	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		mgr.add(fClearOutputAction);
-		mgr.add(getAction("Terminate")); //$NON-NLS-1$
 	}
 	/**
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
@@ -248,7 +241,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(getAction("Terminate")); //$NON-NLS-1$
 	}
 
 	/**
@@ -391,7 +383,5 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	 */
 	public void launchChanged(ILaunch launch) {
 	}
-	
-
 }
 

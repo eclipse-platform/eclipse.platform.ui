@@ -48,12 +48,6 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	protected boolean fInitialized = false;
 	
 	/**
-	 * Whether this delegate has a direct action owner.
-	 * That is it is NOT contributed via XML.
-	 */
-	private boolean fHasOwner = false;
-	
-	/**
 	 * It's crucial that delegate actions have a zero-arg constructor so that
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
@@ -62,21 +56,25 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	}
 	
 	/**
-	 * Not all ControlActionDelegates have an owner, only those that aren't
-	 * specified as part of an action set in plugin.xml.  For those delegates,
-	 * that do have a ControlAction owner, this is the place to do any
-	 * action specific initialization.
+	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
-	public void initializeForOwner(ControlAction controlAction) {
-		setActionImages(controlAction);
-		setAction(controlAction);
-		fHasOwner= true;
+	public void dispose(){
+		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, DebugUIPlugin.getActiveWorkbenchWindow(), IDebugUIConstants.ID_DEBUG_VIEW);
 	}
-	
+
 	/**
-	 * Do the specific action using the current selection.
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
-	public void run() {
+	public void init(IWorkbenchWindow window){
+		// listen to selection changes in the debug view
+		DebugSelectionManager.getDefault().addSelectionChangedListener(this, window, IDebugUIConstants.ID_DEBUG_VIEW);
+	}
+
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action){
+		setAction(action);
 		IStructuredSelection selection= getSelection();
 		
 		final Iterator enum= selection.iterator();
@@ -101,47 +99,21 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	}
 
 	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose(){
-		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, DebugUIPlugin.getActiveWorkbenchWindow(), IDebugUIConstants.ID_DEBUG_VIEW);
-	}
-
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window){
-		// listen to selection changes in the debug view
-		DebugSelectionManager.getDefault().addSelectionChangedListener(this, window, IDebugUIConstants.ID_DEBUG_VIEW);
-	}
-
-	/**
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action){
-		setAction(action);
-		run();
-	}
-
-	/**
 	 * Set the icons for this action on the first selection changed
 	 * event. This is necessary because the XML currently only
 	 * supports setting the enabled icon. 
 	 * <p>
-	 * ControlActionDelegates come in 3 flavors: IViewActionDelegate, 
-	 * IWorkbenchWindowActionDelegate and "fake" action delegate.
+	 * ControlActionDelegates come in 2 flavors: IViewActionDelegate, 
+	 * IWorkbenchWindowActionDelegate delegates.
 	 * </p>
 	 * <ul>
-	 * <li>IViewActionDelegate delegate: getView() != null && fHasOwner == false</li>
-	 * <li>IWorkbenchWindowActionDelegate: getView == null && fHasOwner == false</li>
-	 * <li>"fake": getView == null && fHasOwner == true</li>
+	 * <li>IViewActionDelegate delegate: getView() != null</li>
+	 * <li>IWorkbenchWindowActionDelegate: getView == null</li>
 	 * </ul>
 	 * <p>
-	 * Only want to call update(action, selection) for IViewActionDelegates and "fake".
+	 * Only want to call update(action, selection) for IViewActionDelegates.
 	 * An initialize call to update(action, selection) is made for all flavors to set the initial
 	 * enabled state of the underlying action.
-	 * Adding the "fHasOwner" check distinguishes between the "fake" and 
-	 * IWorkbenchWindowActionDelegate (before there was no way to distinguish). 
 	 * IWorkbenchWindowActionDelegate's listen to selection changes
 	 * in the debug view only.
 	 * </p>
@@ -151,12 +123,11 @@ public abstract class ControlActionDelegate implements IWorkbenchWindowActionDel
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean wasInitialized= initialize(action, s);		
 		if (!wasInitialized) {
-			if (getView() != null || fHasOwner == true) {
+			if (getView() != null) {
 				update(action, s);
 			}
 		}
 	}
-	
 	
 	protected void update(IAction action, ISelection s) {
 		if (s instanceof IStructuredSelection) {
