@@ -83,17 +83,17 @@ public class BulletParagraph extends Paragraph {
 		int width,
 		Locator loc,
 		int lineHeight,
-		Hashtable objectTable,
+		Hashtable resourceTable,
 		HyperlinkSegment selectedLink) {
-		paintBullet(gc, loc, lineHeight, objectTable);
-		super.paint(gc, width, loc, lineHeight, objectTable, selectedLink);
+		paintBullet(gc, loc, lineHeight, resourceTable);
+		super.paint(gc, width, loc, lineHeight, resourceTable, selectedLink);
 	}
 
 	public void paintBullet(
 		GC gc,
 		Locator loc,
 		int lineHeight,
-		Hashtable objectTable) {
+		Hashtable resourceTable) {
 		int x = loc.x - getIndent() + getBulletIndent();
 		if (style == CIRCLE) {
 			int y = loc.y + lineHeight / 2 - CIRCLE_DIAM / 2;
@@ -106,7 +106,7 @@ public class BulletParagraph extends Paragraph {
 		} else if (style == TEXT && text != null) {
 			gc.drawText(text, x, loc.y);
 		} else if (style == IMAGE && text != null) {
-			Image image = (Image) objectTable.get(text);
+			Image image = (Image) resourceTable.get(text);
 			if (image != null) {
 				int y = loc.y + lineHeight / 2 - image.getBounds().height / 2;
 				gc.drawImage(image, x, y);

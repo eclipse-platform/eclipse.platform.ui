@@ -283,8 +283,8 @@ public class FormToolkit {
 	 *            the form.
 	 * @return the rich text widget
 	 */
-	public RichText createRichText(Composite parent, boolean trackFocus) {
-		RichText engine = new RichText(parent, SWT.WRAP);
+	public FormText createFormText(Composite parent, boolean trackFocus) {
+		FormText engine = new FormText(parent, SWT.WRAP);
 		engine.marginWidth = 1;
 		engine.marginHeight = 0;
 		engine.setHyperlinkSettings(getHyperlinkGroup());

@@ -22,6 +22,7 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 public class HyperlinkSegment
 	extends TextSegment {
 	private String href;
+	private static final String LINK_FG = "c.___link_fg";
 	private HyperlinkSettings settings;
 	
 	public HyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
@@ -40,9 +41,10 @@ public class HyperlinkSegment
 	void setHref(String href) {
 		this.href = href;
 	}
-	public void paint(GC gc, int width, Locator locator, Hashtable objectTable, boolean selected) {
-		setColor(settings.getForeground());
-		super.paint(gc, width, locator, objectTable, selected);
+	public void paint(GC gc, int width, Locator locator, Hashtable resourceTable, boolean selected) {
+		resourceTable.put(LINK_FG, settings.getForeground());
+		setColorId(LINK_FG);
+		super.paint(gc, width, locator, resourceTable, selected);
 	}
 	
 	public void repaint(GC gc, boolean hover) {

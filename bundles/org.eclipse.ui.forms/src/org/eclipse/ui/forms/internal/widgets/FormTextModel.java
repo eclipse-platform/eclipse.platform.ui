@@ -21,15 +21,16 @@ import org.eclipse.ui.forms.HyperlinkSettings;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
-public class RichTextModel {
+public class FormTextModel {
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
 	private Vector paragraphs;
 	private HyperlinkSegment[] hyperlinks;
 	private int selectedLinkIndex = -1;
 	private HyperlinkSettings hyperlinkSettings;
+	public static final String BOLD_FONT_ID = "f.____bold";
 	
-	public RichTextModel() {
+	public FormTextModel() {
 		reset();
 	}
 
@@ -168,6 +169,8 @@ public class RichTextModel {
 		}
 		if (valueAtt != null) {
 			text = valueAtt.getNodeValue();
+			if (style==BulletParagraph.IMAGE)
+				text = "i."+text;
 		}
 		if (indentAtt != null) {
 			String value = indentAtt.getNodeValue();
@@ -219,11 +222,11 @@ public class RichTextModel {
 				} else if (name.equalsIgnoreCase("a")) {
 					segment =
 						processHyperlinkSegment(child, getHyperlinkSettings());
-				} else if (name.equalsIgnoreCase("text")) {
+				} else if (name.equalsIgnoreCase("span")) {
 					processTextSegment(p, expandURLs, child);
 				} else if (name.equalsIgnoreCase("b")) {
 					String text = getNodeText(child).trim();
-					String fontId = JFaceResources.BANNER_FONT;
+					String fontId = BOLD_FONT_ID;
 					p.parseRegularText(
 						text,
 						expandURLs,
@@ -256,7 +259,7 @@ public class RichTextModel {
 		Node align = atts.getNamedItem("align");
 		if (id != null) {
 			String value = id.getNodeValue();
-			segment.setObjectId(value);
+			segment.setObjectId("i."+value);
 		}
 		if (align != null) {
 			String value = align.getNodeValue().toLowerCase();
@@ -310,11 +313,16 @@ public class RichTextModel {
 
 		NamedNodeMap atts = textNode.getAttributes();
 		Node font = atts.getNamedItem("font");
+		Node color = atts.getNamedItem("color");
 		String fontId = null;
+		String colorId = null;
 		if (font != null) {
-			fontId = font.getNodeValue();
+			fontId = "f."+font.getNodeValue();
 		}
-		p.parseRegularText(text, expandURLs, getHyperlinkSettings(), fontId);
+		if (color != null) {
+			colorId = "c."+color.getNodeValue();
+		}
+		p.parseRegularText(text, expandURLs, getHyperlinkSettings(), fontId, colorId);
 	}
 
 	public void parseRegularText(String regularText, boolean convertURLs) {

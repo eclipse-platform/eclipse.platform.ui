@@ -13,7 +13,6 @@ package org.eclipse.ui.forms.internal.widgets;
 import java.text.BreakIterator;
 import java.util.*;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 
@@ -22,7 +21,7 @@ import org.eclipse.swt.graphics.*;
  * @author
  */
 public class TextSegment extends ParagraphSegment {
-	private Color color;
+	private String colorId;
 	private String fontId;
 	private String text;
 	protected boolean underline;
@@ -50,8 +49,13 @@ public class TextSegment extends ParagraphSegment {
 	}
 	
 	public TextSegment(String text, String fontId) {
+		this(text, fontId, null);
+	}
+	
+	public TextSegment(String text, String fontId, String colorId) {
 		this.text = cleanup(text);
 		this.fontId = fontId;
+		this.colorId = colorId;
 	}
 
 	private String cleanup(String text) {
@@ -79,15 +83,8 @@ public class TextSegment extends ParagraphSegment {
 		return false;
 	}
 
-	public Color getColor() {
-		return color;
-	}
-
-	public Font getFont() {
-		if (fontId == null)
-			return JFaceResources.getDefaultFont();
-		else
-			return JFaceResources.getFontRegistry().get(fontId);
+	public String getColorId() {
+		return colorId;
 	}
 
 	public String getText() {
@@ -98,8 +95,8 @@ public class TextSegment extends ParagraphSegment {
 		this.text = cleanup(text);
 	}
 
-	void setColor(Color color) {
-		this.color = color;
+	void setColorId(String colorId) {
+		this.colorId = colorId;
 	}
 
 	void setFontId(String fontId) {
@@ -141,7 +138,9 @@ public class TextSegment extends ParagraphSegment {
 		Font oldFont = null;
 		if (fontId != null) {
 			oldFont = gc.getFont();
-			gc.setFont(getFont());
+			Font newFont = (Font)objectTable.get(fontId);
+			if (newFont!=null) 
+				gc.setFont(newFont);
 		}
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
@@ -213,7 +212,7 @@ public class TextSegment extends ParagraphSegment {
 		GC gc,
 		int width,
 		Locator locator,
-		Hashtable objectTable,
+		Hashtable resourceTable,
 		boolean selected) {
 		Font oldFont = null;
 		Color oldColor = null;
@@ -222,11 +221,14 @@ public class TextSegment extends ParagraphSegment {
 
 		if (fontId != null) {
 			oldFont = gc.getFont();
-			gc.setFont(getFont());
+			Font newFont = (Font)resourceTable.get(fontId);
+			if (newFont!=null)
+				gc.setFont(newFont);
 		}
-		if (color != null) {
+		if (colorId != null) {
 			oldColor = gc.getForeground();
-			gc.setForeground(color);
+			Color newColor = (Color)resourceTable.get(colorId);
+			if (newColor!=null) gc.setForeground(newColor);
 		}
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();
@@ -253,7 +255,7 @@ public class TextSegment extends ParagraphSegment {
 				new Rectangle(locator.x - 1, locator.y, extent.x + 2, lineHeight - descent + 3);
 			areaRectangles.add(new AreaRectangle(br, 0, -1));
 			if (selected) {
-				if (color != null)
+				if (colorId != null)
 					gc.setForeground(oldColor);
 				gc.drawFocus(br.x, br.y, br.width, br.height);
 			}
@@ -304,11 +306,12 @@ public class TextSegment extends ParagraphSegment {
 						prevExtent.x + 2,
 						lineHeight - descent + 3);
 				if (selected) {
-					if (color != null)
+					if (colorId != null)
 						gc.setForeground(oldColor);
 					gc.drawFocus(br.x, br.y, br.width, br.height);
-					if (color != null)
-						gc.setForeground(color);
+					Color newColor = (Color)resourceTable.get(colorId);
+					if (newColor != null)
+						gc.setForeground(newColor);
 				}
 				areaRectangles.add(new AreaRectangle(br, saved, last));
 				
@@ -339,7 +342,7 @@ public class TextSegment extends ParagraphSegment {
 			gc.drawLine(locator.x, lineY, locator.x + lastExtent.x, lineY);
 		}
 		if (selected) {
-			if (color != null)
+			if (colorId != null)
 				gc.setForeground(oldColor);
 			gc.drawFocus(br.x, br.y, br.width, br.height);
 		}

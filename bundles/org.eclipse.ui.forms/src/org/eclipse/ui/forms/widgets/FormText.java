@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.util.*;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -26,7 +27,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.internal.widgets.*;
 
 
-public class RichText extends Canvas {
+public class FormText extends Canvas {
 	/**
 	 * The object ID to be used when registering action to handle URL
 	 * hyperlinks (those that should result in opening the web browser). Value
@@ -44,9 +45,9 @@ public class RichText extends Canvas {
 	//private fields
 	private boolean hasFocus;
 	private boolean paragraphsSeparated = true;
-	private RichTextModel model;
+	private FormTextModel model;
 	private Vector listeners;
-	private Hashtable imageTable = new Hashtable();
+	private Hashtable resourceTable = new Hashtable();
 
 	private HyperlinkSegment entered;
 	private boolean mouseDown = false;
@@ -57,8 +58,8 @@ public class RichText extends Canvas {
 	//TODO translate this text
 	private String loadingText = "Loading...";
 
-	private class RichTextLayout extends Layout implements ILayoutExtension {
-		public RichTextLayout() {
+	private class FormTextLayout extends Layout implements ILayoutExtension {
+		public FormTextLayout() {
 		}
 
 		public int computeMaximumWidth(Composite parent, boolean changed) {
@@ -92,7 +93,7 @@ public class RichText extends Canvas {
 		}
 
 		private Point computeLoading() {
-			GC gc = new GC(RichText.this);
+			GC gc = new GC(FormText.this);
 			gc.setFont(getFont());
 			String loadingText = getLoadingText();
 			Point size = gc.textExtent(loadingText);
@@ -105,7 +106,7 @@ public class RichText extends Canvas {
 		private Point computeTextSize(int wHint) {
 			Paragraph[] paragraphs = model.getParagraphs();
 
-			GC gc = new GC(RichText.this);
+			GC gc = new GC(FormText.this);
 			gc.setFont(getFont());
 
 			Locator loc = new Locator();
@@ -131,7 +132,7 @@ public class RichText extends Canvas {
 				if (segments.length > 0) {
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
-						segment.advanceLocator(gc, wHint, loc, imageTable);
+						segment.advanceLocator(gc, wHint, loc, resourceTable);
 						width = Math.max(width, loc.width);
 					}
 					loc.y += loc.rowHeight;
@@ -155,10 +156,10 @@ public class RichText extends Canvas {
 	 * @param style
 	 *            the widget style
 	 */
-	public RichText(Composite parent, int style) {
+	public FormText(Composite parent, int style) {
 		super(parent, SWT.WRAP | style);
-		setLayout(new RichTextLayout());
-		model = new RichTextModel();
+		setLayout(new FormTextLayout());
+		model = new FormTextModel();
 
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -249,6 +250,7 @@ public class RichText extends Canvas {
 		});
 		initAccessible();
 		makeActions();
+		resourceTable.put(FormTextModel.BOLD_FONT_ID, JFaceResources.getBannerFont());
 	}
 	
 	/**
@@ -331,7 +333,37 @@ public class RichText extends Canvas {
 	 *            an object of a type <samp>Image</samp>.
 	 */
 	public void setImage(String key, Image image) {
-		imageTable.put(key, image);
+		resourceTable.put("i."+key, image);
+	}
+	/**
+	 * Registers the color referenced by the provided key. 
+	 * <p>
+	 * For <samp>span</samp> tags, an object of a type <samp>Color</samp>
+	 * must be registered using the key equivalent to the value of the <samp>
+	 * color</samp> attribute.
+	 * @param key
+	 *            unique key that matches the value of the <samp>color</samp>
+	 *            attribute.
+	 * @param color
+	 *            an object of a type <samp>Color</samp>.
+	 */
+	public void setColor(String key, Color color) {
+		resourceTable.put("c."+key, color);
+	}
+	/**
+	 * Registers the font referenced by the provided key. 
+	 * <p>
+	 * For <samp>span</samp> tags, an object of a type <samp>Font</samp>
+	 * must be registered using the key equivalent to the value of the <samp>
+	 * font</samp> attribute.
+	 * @param key
+	 *            unique key that matches the value of the <samp>font</samp>
+	 *            attribute.
+	 * @param font
+ 	 *            an object of a type <samp>Font</samp>.
+	 */
+	public void setFont(String key, Font font) {
+		resourceTable.put("f."+key, font);
 	}
 	/**
 	 * Renders the provided text. Text can be rendered as-is, or by parsing the
@@ -693,7 +725,7 @@ public class RichText extends Canvas {
 			loc.indent = p.getIndent();
 			loc.resetCaret();
 			loc.rowHeight = 0;
-			p.paint(gc, width, loc, lineHeight, imageTable, selectedLink);
+			p.paint(gc, width, loc, lineHeight, resourceTable, selectedLink);
 		}
 	}
 	private int getParagraphSpacing(int lineHeight) {
@@ -768,7 +800,7 @@ public class RichText extends Canvas {
 	public Point computeSize (int wHint, int hHint, boolean changed) {
 		checkWidget ();
 		Point size;
-		RichTextLayout layout = (RichTextLayout)getLayout();
+		FormTextLayout layout = (FormTextLayout)getLayout();
 		if (wHint == SWT.DEFAULT || hHint == SWT.DEFAULT) {
 			size = layout.computeSize (this, wHint, hHint, changed);
 		} else {

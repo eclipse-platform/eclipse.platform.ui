@@ -20,5 +20,5 @@ import org.eclipse.swt.graphics.GC;
  */
 public abstract class ParagraphSegment {
 	public abstract void advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable);
-	public abstract void paint(GC gc, int width, Locator loc, Hashtable objectTable, boolean selected);
+	public abstract void paint(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected);
 }

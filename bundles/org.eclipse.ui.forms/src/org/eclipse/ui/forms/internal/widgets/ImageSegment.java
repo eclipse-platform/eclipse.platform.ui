@@ -73,8 +73,8 @@ public class ImageSegment extends ParagraphSegment {
 		}
 	}
 
-	public void paint(GC gc, int width, Locator loc, Hashtable objectTable, boolean selected) {
-		Image image = getImage(objectTable);
+	public void paint(GC gc, int width, Locator loc, Hashtable resourceTable, boolean selected) {
+		Image image = getImage(resourceTable);
 		int iwidth = 0;
 		int iheight = 0;
 		if (image!=null) {

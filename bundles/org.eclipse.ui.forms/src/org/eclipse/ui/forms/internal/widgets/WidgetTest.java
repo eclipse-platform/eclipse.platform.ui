@@ -272,7 +272,7 @@ public class WidgetTest {
 			TableWrapData td = new TableWrapData();
 			sec.setLayoutData(td);
 			//createExpandable(form, toolkit);
-			RichText rtext = toolkit.createRichText(parent, false);
+			FormText rtext = toolkit.createFormText(parent, false);
 			loadRichText(rtext, toolkit);
 			td = new TableWrapData();
 			td.align = TableWrapData.FILL;
@@ -300,7 +300,7 @@ public class WidgetTest {
 		section.setToggleColor(
 			toolkit.getColors().getColor(FormColors.SEPARATOR));
 		toolkit.createCompositeSeparator(section);
-		RichText rtext = toolkit.createRichText(section, false);
+		FormText rtext = toolkit.createFormText(section, false);
 		section.setClient(rtext);
 		loadRichText(rtext, toolkit);
 		section.addExpansionListener(new ExpansionAdapter() {
@@ -391,7 +391,7 @@ public class WidgetTest {
 		section.setLayoutData(gd);
 	}
 
-	private static void loadRichText(RichText rtext, FormToolkit toolkit) {
+	private static void loadRichText(FormText rtext, FormToolkit toolkit) {
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				System.out.println("Link activated: href=" + e.getHref());

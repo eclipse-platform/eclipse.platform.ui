@@ -52,23 +52,29 @@ public class Paragraph {
 			segments = new Vector();
 		segments.add(segment);
 	}
+	
+	public void parseRegularText(String text, boolean expandURLs,
+			HyperlinkSettings settings, String fontId) {
+		parseRegularText(text, expandURLs, settings, fontId, null);
+	}
 
 	public void parseRegularText(
 		String text,
 		boolean expandURLs,
 		HyperlinkSettings settings,
-		String fontId) {
+		String fontId,
+		String colorId) {
 		if (text.length() == 0)
 			return;
 		if (expandURLs) {
 			int loc = text.indexOf(HTTP);
 
 			if (loc == -1)
-				addSegment(new TextSegment(text, fontId));
+				addSegment(new TextSegment(text, fontId, colorId));
 			else {
 				int textLoc = 0;
 				while (loc != -1) {
-					addSegment(new TextSegment(text.substring(textLoc, loc), fontId));
+					addSegment(new TextSegment(text.substring(textLoc, loc), fontId, colorId));
 					boolean added = false;
 					for (textLoc = loc; textLoc < text.length(); textLoc++) {
 						char c = text.charAt(textLoc);
@@ -86,11 +92,11 @@ public class Paragraph {
 					loc = text.indexOf(HTTP, textLoc);
 				}
 				if (textLoc < text.length()) {
-					addSegment(new TextSegment(text.substring(textLoc), fontId));
+					addSegment(new TextSegment(text.substring(textLoc), fontId, colorId));
 				}
 			}
 		} else {
-			addSegment(new TextSegment(text, fontId));
+			addSegment(new TextSegment(text, fontId, colorId));
 		}
 	}
 
@@ -109,7 +115,7 @@ public class Paragraph {
 		int width,
 		Locator loc,
 		int lineHeight,
-		Hashtable objectTable,
+		Hashtable resourceTable,
 		HyperlinkSegment selectedLink) {
 		ParagraphSegment [] segments = getSegments();
 		if (segments.length > 0) {
@@ -121,7 +127,7 @@ public class Paragraph {
 				boolean doSelect = false;
 				if (selectedLink != null && segment.equals(selectedLink))
 					doSelect = true;
-				segment.paint(gc, width, loc, objectTable, doSelect);
+				segment.paint(gc, width, loc, resourceTable, doSelect);
 			}
 			loc.y += loc.rowHeight;
 		} else {

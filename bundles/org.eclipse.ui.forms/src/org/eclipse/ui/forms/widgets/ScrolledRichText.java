@@ -19,7 +19,7 @@ import org.eclipse.ui.forms.*;
 
 public class ScrolledRichText {
 	private ScrolledComposite scomp;
-	private RichText richText;
+	private FormText richText;
 	private String text;
 	private FormToolkit toolkit;
 	private int style;
@@ -37,7 +37,7 @@ public class ScrolledRichText {
 		if (toolkit==null) toolkit = new FormToolkit(parent.getDisplay());
 		scomp = new ScrolledComposite(parent, style);
 		scomp.setBackground(toolkit.getColors().getBackground());
-		richText = toolkit.createRichText(scomp, false);
+		richText = toolkit.createFormText(scomp, false);
 		richText.marginWidth = 2;
 		richText.marginHeight = 2;
 		richText.setHyperlinkSettings(toolkit.getHyperlinkGroup());
