@@ -19,8 +19,10 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
@@ -74,6 +76,14 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     private TextConsole console;
     
     private IPropertyChangeListener propertyChangeListener;
+    
+    private IDocumentListener documentListener = new IDocumentListener() {
+        public void documentAboutToBeChanged(DocumentEvent event) {
+        }
+        public void documentChanged(DocumentEvent event) {
+            updateLinks(event.fOffset);
+        }
+    };
 
     /**
      * Constructs a new viewer in the given parent for the specified console.
@@ -84,8 +94,11 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
     public TextConsoleViewer(Composite parent, TextConsole console) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
         this.console = console;
-        setDocument(console.getDocument());
-
+        
+        IDocument document = console.getDocument();
+        setDocument(document);
+        document.addDocumentListener(documentListener);
+        
         StyledText styledText = getTextWidget();
         styledText.setDoubleClickEnabled(true);
         styledText.addLineStyleListener(this);
@@ -588,6 +601,10 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      */
     protected void handleDispose() {
         super.handleDispose();
+        IDocument document = getDocument();//
+        if (document != null) {
+            document.removeDocumentListener(documentListener);
+        }
 
         StyledText styledText = getTextWidget();
         styledText.removeLineStyleListener(this);
