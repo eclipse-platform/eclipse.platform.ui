@@ -206,7 +206,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 		tabFolder.addCTabFolderMinMaxListener(expandListener);				
 		tabFolder.setMaximizeVisible(true);
-		tabFolder.setMinimizeVisible(true);
+		//tabFolder.setMinimizeVisible(true);
 		
 		int shellStyle = SWT.RESIZE | SWT.ON_TOP | SWT.NO_TRIM;
 		int tableStyle = SWT.V_SCROLL | SWT.H_SCROLL;

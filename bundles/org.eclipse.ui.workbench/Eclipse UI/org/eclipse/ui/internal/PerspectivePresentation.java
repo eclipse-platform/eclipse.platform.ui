@@ -879,7 +879,7 @@ public class PerspectivePresentation {
 	 */
 	/* package */
 	void onPartDragOver(PartDropEvent e) {
-
+		
 		/*
 		 * Note, any drop that is considered invalid for stack or move, will be
 		 * set as OFF_SCREEN causing either a new detach window to be created
@@ -960,6 +960,12 @@ public class PerspectivePresentation {
 			return;
 		}
 
+		// Disable drag-and-drop when zoomed
+		if (isZoomed()) {
+			e.relativePosition = DragCursors.INVALID;
+			return;
+		}
+		
 		// If drag source is view ..
 		if (e.dragSource instanceof ViewPane) {
 			// If target is detached window force stacking.

@@ -250,6 +250,13 @@ public class EditorPresentation {
 	 * within the same editor area.
 	 */
 	private void onPartDragOver(PartDropEvent e) {
+		
+		// Disable drag-and-drop when zoomed
+		if (page.isZoomed()) {
+			e.relativePosition = DragCursors.INVALID;
+			return;
+		}
+		
 		// If source and target are in different windows reject.
 		if (e.dragSource != null && e.dropTarget != null) {
 			if (e.dragSource.getWorkbenchWindow() != e.dropTarget.getWorkbenchWindow()) {
