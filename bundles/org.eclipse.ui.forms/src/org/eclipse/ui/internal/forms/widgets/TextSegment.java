@@ -302,89 +302,6 @@ public class TextSegment extends ParagraphSegment {
 		return index;
 	}
 
-	private void computeSelectionRange(GC gc, Locator locator, String s,
-			int swidth, SelectionData selData, SelectionRange selRange) {
-		if (selData != null && selData.isEnclosed()) {
-			if (selRange.start == -1 && selData.isFirstSelectionRow(locator)) {
-				// compute selection start
-				int leftOffset = selData.getLeftOffset(locator);
-				if (locator.x + swidth > leftOffset) {
-					selRange.start = convertOffsetToStringIndex(gc, s,
-							locator.x, swidth, leftOffset);
-				}
-			}
-			if (selRange.stop == -1 && selData.isLastSelectionRow(locator)) {
-				// compute selection stop
-				int rightOffset = selData.getRightOffset(locator);
-				if (locator.x + swidth > rightOffset) {
-					selRange.stop = convertOffsetToStringIndex(gc, s,
-							locator.x, swidth, rightOffset);
-				}
-			}
-		}
-	}
-
-	private void drawString(GC gc, String s, int slength, Locator locator,
-			int ly, int lineY, SelectionRange selRange, SelectionData selData) {
-		Color savedBg = gc.getBackground();
-		Color savedFg = gc.getForeground();
-		int x = locator.x;
-
-		if (selData != null) {
-			boolean firstRow = selData.isFirstSelectionRow(locator);
-			boolean lastRow = selData.isLastSelectionRow(locator);
-			boolean selectedRow = selData.isSelectedRow(locator);
-
-			if ((firstRow && x + slength < selData.getLeftOffset(locator))
-					|| lastRow && x > selData.getRightOffset(locator)) {
-				drawStringSegment(gc, s, gc.textExtent(s).x, x, ly, lineY);
-				return;
-			}
-
-			if (selRange.stop >= s.length())
-				selRange.stop = -1;
-			if (selRange.start == 0)
-				selRange.start = -1;
-			if (firstRow && selRange.start != -1) {
-				String left = s.substring(0, selRange.start);
-				int swidth = gc.textExtent(left).x;
-				drawStringSegment(gc, left, swidth, x, ly, lineY);
-				x += swidth;
-			}
-			if (selData.isSelectedRow(locator)) {
-				int lindex = selRange.start != -1 ? selRange.start : 0;
-				int rindex = selRange.stop != -1 ? selRange.stop : s.length();
-				String mid = s.substring(lindex, rindex);
-				Point extent = gc.textExtent(mid);
-				gc.setForeground(selData.fg);
-				gc.setBackground(selData.bg);
-				gc.fillRectangle(x, ly, extent.x, extent.y);
-				drawStringSegment(gc, mid, extent.x, x, ly, lineY);
-				x += extent.x;
-				gc.setForeground(savedFg);
-				gc.setBackground(savedBg);
-				selData.addSegment(mid);
-			} else {
-				drawStringSegment(gc, s, gc.textExtent(s).x, x, ly, lineY);
-			}
-			if (selData.isLastSelectionRow(locator) && selRange.stop != -1) {
-				String right = s.substring(selRange.stop);
-				drawStringSegment(gc, right, gc.textExtent(right).x, x, ly, lineY);
-			}
-		} else {
-			drawStringSegment(gc, s, gc.textExtent(s).x, locator.x, ly, lineY);
-		}
-	}
-
-	private void drawStringSegment(GC gc, String s, int swidth, int x, int y, int lineY) {
-		gc.drawString(s, x, y, true);
-		if (underline) {
-			gc.drawLine(x, lineY, x + swidth, lineY);
-		}
-	}
-
-	// private boolean insideSelection(SelectionData selData, )
-
 	public void paintFocus(GC gc, Color bg, Color fg, boolean selected, Rectangle repaintRegion) {
 		if (areaRectangles == null)
 			return;
@@ -409,14 +326,15 @@ public class TextSegment extends ParagraphSegment {
 	}
 	
 	public void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, SelectionData selData, Rectangle repaintRegion) {
-		this.repaint(gc, hover, resourceTable, selected, false, selData, repaintRegion);
+		this.paint(gc, hover, resourceTable, selected, false, selData, repaintRegion);
 	}
 
-	protected void repaint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, boolean rollover, SelectionData selData, Rectangle repaintRegion) {
+	protected void paint(GC gc, boolean hover, Hashtable resourceTable, boolean selected, boolean rollover, SelectionData selData, Rectangle repaintRegion) {
 		Font oldFont = null;
 		Color oldColor = null;
 		Color oldBg = null;
 
+		// apply segment-specific font, color and background
 		if (fontId != null) {
 			oldFont = gc.getFont();
 			Font newFont = (Font) resourceTable.get(fontId);
@@ -435,6 +353,7 @@ public class TextSegment extends ParagraphSegment {
 		int lineHeight = fm.getHeight();
 		int descent = fm.getDescent();
 
+		// paint area rectangles of the segment
 		for (int i = 0; i < areaRectangles.size(); i++) {
 			AreaRectangle areaRectangle = (AreaRectangle) areaRectangles.get(i);
 			Rectangle rect = areaRectangle.rect;
@@ -447,6 +366,7 @@ public class TextSegment extends ParagraphSegment {
 			if (selected)
 				gc.drawFocus(rect.x, rect.y, rect.width, rect.height);			
 		}
+		// restore GC resources
 		if (oldFont != null) {
 			gc.setFont(oldFont);
 		}
@@ -460,6 +380,7 @@ public class TextSegment extends ParagraphSegment {
 
 	private void repaintString(GC gc, String s, int swidth, int x, int y,
 			int lineY, SelectionData selData, Rectangle bounds, boolean hover, boolean rolloverMode, Rectangle repaintRegion) {
+		// repaints one area rectangle
 		if (selData != null && selData.isEnclosed()) {
 			Color savedBg = gc.getBackground();
 			Color savedFg = gc.getForeground();

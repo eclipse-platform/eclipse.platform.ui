@@ -59,7 +59,7 @@ public class TextHyperlinkSegment extends TextSegment implements
 		Color savedFg = gc.getForeground();
 		gc.setForeground(hover ? settings.getActiveForeground() : settings
 				.getForeground());		
-		super.repaint(gc, hover, resourceTable, selected, rolloverMode, selData, repaintRegion);
+		super.paint(gc, hover, resourceTable, selected, rolloverMode, selData, repaintRegion);
 		gc.setForeground(savedFg);
 	}
 

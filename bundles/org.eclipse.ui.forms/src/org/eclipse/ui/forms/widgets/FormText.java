@@ -1132,9 +1132,6 @@ public final class FormText extends Canvas {
 	}
 	
 	private void repaint(GC gc, int x, int y, int width, int height) {
-		long start=0;
-		if (DEBUG)
-			start = System.currentTimeMillis();
 		Image textBuffer = new Image(getDisplay(), width, height);
 		textBuffer.setBackground(getBackground());
 		GC textGC = new GC(textBuffer, gc.getStyle());
@@ -1153,10 +1150,6 @@ public final class FormText extends Canvas {
 		gc.drawImage(textBuffer, x, y);
 		textGC.dispose();
 		textBuffer.dispose();	
-		if (DEBUG) {
-			long stop = System.currentTimeMillis();
-			System.out.println("FormText.repaint: "+(stop-start)+"ms");
-		}
 	}
 
 	private int getParagraphSpacing(int lineHeight) {
