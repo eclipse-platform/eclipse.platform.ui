@@ -79,7 +79,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 
 	/**
 	 * Creates a new {@link AbstractControlContentAssistSubjectAdapter}.
-	 **/
+	 */
 	public AbstractControlContentAssistSubjectAdapter() {
 		fVerifyKeyListeners= new ArrayList(1);
 		fKeyListeners= new HashSet(1);
