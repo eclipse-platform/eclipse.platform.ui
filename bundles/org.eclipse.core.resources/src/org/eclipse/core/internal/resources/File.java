@@ -257,7 +257,7 @@ public class File extends Resource implements IFile {
 		return getLocalManager().read(this, force, null);
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see IFile#getEncoding()
 	 * @deprecated
 	 */

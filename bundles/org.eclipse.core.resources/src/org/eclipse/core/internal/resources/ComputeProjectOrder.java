@@ -392,10 +392,10 @@ class ComputeProjectOrder {
 							vertex = nextVertex;
 							state = START_DFS_VISIT;
 							continue nextStateLoop;
-						} else {
-							state = NEXT_VERTEX;
-							continue nextStateLoop;
 						}
+						//else
+						state = NEXT_VERTEX;
+						continue nextStateLoop;
 					case START_DFS_VISIT :
 						// on entry, "vertex" contains the vertex to be visited
 						// top of stack is return code
@@ -425,14 +425,13 @@ class ComputeProjectOrder {
 							}
 							state = NEXT_ADJACENT;
 							continue nextStateLoop;
-						} else {
-							// done exploring vertex
-							vertex.color = Vertex.BLACK;
-							time++;
-							vertex.finishTime = time;
-							state = ((Integer) stack.remove(stack.size() - 1)).intValue();
-							continue nextStateLoop;
 						}
+						//else done exploring vertex
+						vertex.color = Vertex.BLACK;
+						time++;
+						vertex.finishTime = time;
+						state = ((Integer) stack.remove(stack.size() - 1)).intValue();
+						continue nextStateLoop;
 					case AFTER_NEXTED_DFS_VISIT :
 						// on entry, stack contains "vertex" and "allAjacent"
 						vertex = (Vertex) stack.remove(stack.size() - 1);

@@ -85,7 +85,7 @@ public abstract class Container extends Resource implements IContainer {
 		return getChildren(parent.getFullPath(), phantom);
 	}
 
-	protected IResource[] getChildren(IPath parentPath, boolean phantom) {
+protected IResource[] getChildren(IPath parentPath, boolean phantom) {
 		IPath[] children = null;
 		try {
 			children = workspace.tree.getChildren(parentPath);
@@ -102,16 +102,12 @@ public abstract class Container extends Resource implements IContainer {
 			if (info != null)
 				result[j++] = workspace.newResource(children[i], info.getType());
 		}
-		if (j == result.length) {
+		if (j == result.length) 
 			return result;
-		} else {
-			Resource[] trimmedResult = new Resource[j];
-			System.arraycopy(result, 0, trimmedResult, 0, j);
-			return trimmedResult;
-		}
-	}
-
-	public IFile getFile(String name) {
+		Resource[] trimmedResult = new Resource[j];
+		System.arraycopy(result, 0, trimmedResult, 0, j);
+		return trimmedResult;
+	}	public IFile getFile(String name) {
 		return (IFile) workspace.newResource(getFullPath().append(name), FILE);
 	}
 
@@ -173,36 +169,32 @@ public abstract class Container extends Resource implements IContainer {
 		ResourceInfo info = getResourceInfo(phantom, false);
 		checkExists(getFlags(info), true);
 		IResource[] allMembers = getChildren(this, phantom);
-		if ((memberFlags & INCLUDE_TEAM_PRIVATE_MEMBERS) != 0) {
-			// if team-private members are wanted, return the whole list
+		// if team-private members are wanted, return the whole list
+		if ((memberFlags & INCLUDE_TEAM_PRIVATE_MEMBERS) != 0)
 			return allMembers;
-		} else {
-			// filter out team-private members (if any)
-			int teamPrivateMemberCount = 0;
-			// make a quick first pass to see if there is anything to exclude
-			for (int i = 0; i < allMembers.length; i++) {
-				Resource child = (Resource) allMembers[i];
-				ResourceInfo childInfo = child.getResourceInfo(phantom, false);
-				if (isTeamPrivateMember(getFlags(childInfo))) {
-					teamPrivateMemberCount++;
-					allMembers[i] = null;//null array entry so we know not to include it
-				}
+		// filter out team-private members (if any)
+		int teamPrivateMemberCount = 0;
+		// make a quick first pass to see if there is anything to exclude
+		for (int i = 0; i < allMembers.length; i++) {
+			Resource child = (Resource) allMembers[i];
+			ResourceInfo childInfo = child.getResourceInfo(phantom, false);
+			if (isTeamPrivateMember(getFlags(childInfo))) {
+				teamPrivateMemberCount++;
+				allMembers[i] = null;//null array entry so we know not to include it
 			}
-			// common case: nothing to exclude
-			if (teamPrivateMemberCount == 0) {
-				return allMembers;
-			}
-			// make a second pass to copy the ones we want
-			IResource[] reducedMembers = new IResource[allMembers.length - teamPrivateMemberCount];
-			int nextPosition = 0;
-			for (int i = 0; i < allMembers.length; i++) {
-				Resource child = (Resource) allMembers[i];
-				if (child != null) {
-					reducedMembers[nextPosition++] = child;
-				}
-			}
-			return reducedMembers;
 		}
+		// common case: nothing to exclude
+		if (teamPrivateMemberCount == 0) 
+			return allMembers;
+		// make a second pass to copy the ones we want
+		IResource[] reducedMembers = new IResource[allMembers.length - teamPrivateMemberCount];
+		int nextPosition = 0;
+		for (int i = 0; i < allMembers.length; i++) {
+			Resource child = (Resource) allMembers[i];
+			if (child != null) 
+				reducedMembers[nextPosition++] = child;
+		}
+		return reducedMembers;
 	}
 
 	/* (non-Javadoc)
