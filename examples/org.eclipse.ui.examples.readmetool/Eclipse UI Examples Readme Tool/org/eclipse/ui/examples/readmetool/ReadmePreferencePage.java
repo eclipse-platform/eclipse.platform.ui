@@ -1,9 +1,16 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.examples.readmetool;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -78,13 +85,13 @@ protected Control createContents(Composite parent)
 	
 	//composite_textField << parent
 	Composite composite_textField = createComposite(parent, 2);
-	Label label_textField = createLabel(composite_textField, MessageUtil.getString("Text_Field"));	 //$NON-NLS-1$
+	createLabel(composite_textField, MessageUtil.getString("Text_Field"));	 //$NON-NLS-1$
 	textField = createTextField(composite_textField);
 	pushButton_textField = createPushButton(composite_textField, MessageUtil.getString("Change")); //$NON-NLS-1$
 
 	//composite_tab << parent
 	Composite composite_tab = createComposite(parent, 2);
-	Label label1 = createLabel(composite_tab, MessageUtil.getString("Radio_Button_Options")); //$NON-NLS-1$
+	createLabel(composite_tab, MessageUtil.getString("Radio_Button_Options")); //$NON-NLS-1$
 
 	//
 	tabForward(composite_tab);
@@ -97,7 +104,7 @@ protected Control createContents(Composite parent)
 
 	//composite_tab2 << parent
 	Composite composite_tab2 = createComposite(parent, 2);
-	Label label2 = createLabel(composite_tab2, MessageUtil.getString("Check_Box_Options")); //$NON-NLS-1$
+	createLabel(composite_tab2, MessageUtil.getString("Check_Box_Options")); //$NON-NLS-1$
 
 	//
 	tabForward(composite_tab2);
