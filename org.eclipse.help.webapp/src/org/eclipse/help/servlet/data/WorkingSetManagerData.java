@@ -82,7 +82,10 @@ public class WorkingSetManagerData extends RequestData {
 		String name = request.getParameter("workingSet");
 		if (name != null && name.length() > 0) {
 
-			WorkingSet ws = wsmgr.getWorkingSet(name);
+			String oldName = request.getParameter("oldName");
+			if (oldName == null || oldName.length() == 0)
+				oldName = name;
+			WorkingSet ws = wsmgr.getWorkingSet(oldName);
 			if (ws != null) {
 				String[] books = request.getParameterValues("books");
 				if (books == null)

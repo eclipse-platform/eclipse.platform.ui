@@ -97,6 +97,8 @@ input[type="checkbox"] {
 
 <script language="JavaScript">
 
+var oldName = '<%=isEditMode?data.getWorkingSetName():""%>';
+
 function doSubmit()
 {
 	try
@@ -113,7 +115,7 @@ function doSubmit()
 			if (buttons[i].checked == false) continue;
 			books += "&books="+escape(buttons[i].name);
 		}
-		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+escape(workingSet)+ books;
+		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+escape(workingSet)+ books+"&oldName="+escape(oldName);
 		window.opener.location.replace("workingSetManager.jsp?"+query);
 		window.opener.focus();
 		window.close();
