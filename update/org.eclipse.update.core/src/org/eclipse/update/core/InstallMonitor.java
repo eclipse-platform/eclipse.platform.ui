@@ -156,7 +156,7 @@ public class InstallMonitor implements IProgressMonitor {
 		if (showDetails && count > 0) {
 			long countK = count / 1024;
 			long totalK = totalCopyCount / 1024;
-			String msg = "(" + countK + "K" + ((totalK <= 0) ? ")" : " of " + totalK + "K)");
+			String msg = "(" + countK + "K" + ((totalK <= 0) ? " bytes)" : " of " + totalK + "K bytes)");
 			monitor.subTask(subTaskString + msg);
 		}
 	}
