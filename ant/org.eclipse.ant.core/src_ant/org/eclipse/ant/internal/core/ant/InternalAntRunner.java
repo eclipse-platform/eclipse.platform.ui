@@ -642,11 +642,13 @@ public class InternalAntRunner {
 			}
 			System.setSecurityManager(new AntSecurityManager(originalSM));
 			
-			if (targets != null && !targets.isEmpty()) {
-				getCurrentProject().executeTargets(targets);
-			} else {
-				getCurrentProject().executeTarget(getCurrentProject().getDefaultTarget());
-			}
+			if (targets == null) {
+                targets= new Vector(1);
+            }
+            if (targets.isEmpty() && getCurrentProject().getDefaultTarget() != null) {
+                targets.add(getCurrentProject().getDefaultTarget());
+            }
+			getCurrentProject().executeTargets(targets);
 		} catch (OperationCanceledException e) {
 			scriptExecuted= false;
 			logMessage(getCurrentProject(), e.getMessage(), Project.MSG_INFO);
