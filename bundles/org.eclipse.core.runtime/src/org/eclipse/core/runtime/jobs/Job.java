@@ -480,11 +480,26 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		return super.sleep();
 	}
 	/**
-	 * Resumes execution of this job.  If the job is not currently
-	 * sleeping, this request is ignored.
+	 * Puts this job immediately into the <code>WAITING</code> state so that it is 
+	 * eligible for immediate execution. If this job is not currently sleeping, 
+	 * the request is ignored.
+	 * <p>
+	 * This is a convenience method, fully equivalent to 
+	 * <code>wakeUp(0L)</code>.
+	 * </p>
 	 * @see #sleep
 	 */
 	public final void wakeUp() {
-		super.wakeUp();
+		super.wakeUp(0L);
+	}
+	/**
+	 * Puts this job back into the <code>WAITING</code> state after
+	 * the specified delay. This is equivalent to canceling the sleeping job and
+	 * rescheduling with the given delay.  If this job is not currently sleeping, 
+	 * the request  is ignored.
+	 * @see #sleep
+	 */
+	public final void wakeUp(long delay) {
+		super.wakeUp(delay);
 	}
 }

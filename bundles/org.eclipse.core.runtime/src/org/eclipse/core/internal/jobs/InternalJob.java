@@ -297,7 +297,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	public String toString() {
 		return getName() + "(" + jobNumber + ")"; //$NON-NLS-1$//$NON-NLS-2$
 	}
-	protected void wakeUp() {
-		manager.wakeUp(this);
+	protected void wakeUp(long delay) {
+		manager.wakeUp(this, delay);
 	}
 }

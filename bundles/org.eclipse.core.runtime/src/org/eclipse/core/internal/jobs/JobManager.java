@@ -638,6 +638,15 @@ public class JobManager implements IJobManager {
 		}
 		//notify listeners outside sync block
 		jobListeners.scheduled((Job) job, delay);
+		//schedule the job
+		doSchedule(job, delay);
+		//call the pool outside sync block to avoid deadlock
+		pool.jobQueued(job);
+	}
+	/**
+	 * Performs the scheduling of a job.  Does not perform any notifications.
+	 */
+	private void doSchedule(InternalJob job, long delay) {
 		synchronized (lock) {
 			//if it's a decoration job, don't run it right now if the system is busy
 			if (job.getPriority() == Job.DECORATE) {
@@ -652,8 +661,6 @@ public class JobManager implements IJobManager {
 				changeState(job, Job.WAITING);
 			}
 		}
-		//call the pool outside sync block to avoid deadlock
-		pool.jobQueued(job);
 	}
 	/**
 	 * Adds all family members in the list of jobs to the collection
@@ -836,15 +843,14 @@ public class JobManager implements IJobManager {
 		}
 	}
 	/* (non-Javadoc)
-	 * @see Job#wakeUp(String)
+	 * @see Job#wakeUp(long)
 	 */
-	protected void wakeUp(InternalJob job) {
+	protected void wakeUp(InternalJob job, long delay) {
 		synchronized (lock) {
 			//cannot wake up if it is not sleeping
 			if (job.getState() != Job.SLEEPING)
 				return;
-			job.setStartTime(System.currentTimeMillis() + delayFor(job.getPriority()));
-			changeState(job, Job.WAITING);
+			doSchedule(job, delay);
 		}
 		//call the pool outside sync block to avoid deadlock
 		pool.jobQueued(job);
@@ -857,7 +863,7 @@ public class JobManager implements IJobManager {
 	public void wakeUp(Object family) {
 		//don't synchronize because wakeUp calls listeners
 		for (Iterator it = select(family).iterator(); it.hasNext();) {
-			wakeUp((InternalJob) it.next());
+			wakeUp((InternalJob) it.next(), 0L);
 		}
 	}
 }
