@@ -26,38 +26,22 @@ public class InternalSiteManager {
 
 	private Map sites;
 	private Map sitesTypes;
-	private static InternalSiteManager inst;
+	private static InternalSiteManager singleton;
 	public static ILocalSite localSite;
 
 	private static void init() throws CoreException {
-		inst = new InternalSiteManager();
-		inst.initVariables();
+		singleton = new InternalSiteManager();
+		singleton.initVariables();
 	}
 
-	private void initVariables() throws CoreException{
+	private void initVariables() throws CoreException {
 
 		// sites types
 		sitesTypes = new HashMap();
-	/*	String pluginID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements = pluginRegistry.getConfigurationElementsFor(pluginID,ISite.SIMPLE_EXTENSION_ID);
-		if (elements==null || elements.length==0){
-			IStatus status = new Status(IStatus.ERROR,pluginID,IStatus.OK,"Cannot find any site factory  ",null);
-			throw new CoreException(status);
-		} else {
-			for (int i = 0; i < elements.length; i++) {
-				IConfigurationElement element = elements[i];
-				String protocol = element.getAttribute("protocol");
-				String siteType = element.getAttribute("siteFactory");
-				sitesTypes.put(protocol,siteType);			
-			}
-		}*/
 
-		//sitesTypes.put("http", "org.eclipse.update.internal.core.SiteURL");
-		//sitesTypes.put("file", "org.eclipse.update.internal.core.SiteFile");
-		
-		sitesTypes.put("http", "org.eclipse.update.core.http");
-		sitesTypes.put("file", "org.eclipse.update.core.file");		
+		// assign default type to protocol		
+		sitesTypes.put("http", SiteURL.SITE_TYPE);
+		sitesTypes.put("file", SiteFile.SITE_TYPE);
 	}
 
 	/**
@@ -77,56 +61,49 @@ public class InternalSiteManager {
 	 */
 	public static ISite getSite(URL siteURL) throws CoreException {
 		ISite site = null;
-		if (inst == null)
+		if (singleton == null)
 			init();
-		
+
 		// protocol
 		String protocol = siteURL.getProtocol();
-		String type = (String) inst.getSitesTypes().get(protocol);
-		
+		String type = null;
+		if (singleton.getSitesTypes().containsKey(protocol)) {
+			type = (String) singleton.getSitesTypes().get(protocol);
+		}
+
 		// if error
 		Exception caughtException = null;
-		
-		if (type != null) {
-			try {
-					site = createSite(type,siteURL);
-			}  catch (InvalidSiteTypeException e){
-				// the type in the site.xml is not the one expected				
-				try {
-						InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
-						site = createSite(exception.getNewType(),siteURL);
-					} catch (Exception e2){
-						caughtException = e2;
-					}
-			}catch (Exception e) {
-				caughtException = e;
-			}
-		} else {
-			// protocol not found, attempt to use default
-			// if the site hasn't a specific type, then cancel...
-			// otherwise use the type in site.xml
-			try {
-				URL newURL = new URL("http",siteURL.getHost(), siteURL.getFile());
-				ISite newSite = getSite(newURL);
-				if (newSite.getType().equals(inst.getSitesTypes().get(protocol))){
-					//The type hasn't changed so we haven't found one in the Site.xml
-					// does not continue.... 
-					caughtException = new Exception("Protocol not found and site.xml does not contain specific type");
+
+		try {
+			if (type != null) {
+				site = attemptCreateSite(type, siteURL);
+			} else {
+				//DEBUG:
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+					UpdateManagerPlugin.getPlugin().debug("URL's protocol :" + protocol + " is not recongnize, attempting to discover site type in site.xml");
 				}
-			} catch (Exception e){
-				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The protocol of the URL is not recognized", null);
-				throw new CoreException(status);
+
+				// protocol not found, attempt to use default site
+				// we will atemopt to read teh site.xml 
+				// if the site.xml hasn't a specific type in it, then cancel...
+				// otherwise use the type in site.xml to create the *real* site
+				type = (String) singleton.getSitesTypes().get("http");
+				site = attemptCreateSite(type, siteURL);
+
+				// same type as we forced ? do not continue
+				if (site.getType().equals(type)) {
+					String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+					IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The site.xml does not contain any type and the protocol of the URL is not recognized. protocol:" + protocol, null);
+					throw new CoreException(status);
+				}
 			}
-		}
 
-
-		if (caughtException!=null){
+		} catch (CoreException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create an instance of the Site Object", caughtException);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create an instance of the Site Object", e);
 			throw new CoreException(status);
 		}
-		
+
 		return site;
 	}
 
@@ -176,6 +153,38 @@ public class InternalSiteManager {
 	 */
 	public void setSitesTypes(Map sitesTypes) {
 		this.sitesTypes = sitesTypes;
+	}
+
+	/**
+	 * Attempt to create a site
+	 * if the site guessed is not teh type found,
+	 * attempt to create a type with the type found
+	 */
+	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL) throws CoreException {
+		ISite site = null;
+		Exception caughtException;
+
+		try {
+			site = createSite(guessedTypeSite, siteURL);
+		} catch (InvalidSiteTypeException e) {
+
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_TYPE) {
+				UpdateManagerPlugin.getPlugin().debug("The Site :" + siteURL.toExternalForm() + " is a different type than the guessed type based on the protocol. new Type:" + e.getNewType());
+			}
+
+			// the type in the site.xml is not the one expected				
+			try {
+				InvalidSiteTypeException exception = (InvalidSiteTypeException) e;
+				site = createSite(exception.getNewType(), siteURL);
+			} catch (InvalidSiteTypeException e1) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "An error occured when trying to create a Site with the new type", e1);
+				throw new CoreException(status);
+			}
+		}
+
+		return site;
 	}
 
 	/**

@@ -23,5 +23,8 @@
 	<feature-factory class="org.eclipse.update.internal.core.FeatureExecutableFactory"/>
 </extension>
 
+<extension 	id="ftp" point="org.eclipse.update.core.siteTypes">
+	<feature-factory class="org.eclipse.update.tests.implementation.SiteFTPFactory"/>
+</extension>
 
 </plugin>

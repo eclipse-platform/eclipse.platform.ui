@@ -12,6 +12,7 @@ import org.eclipse.update.internal.core.FeatureExecutable;
 import org.eclipse.update.internal.core.FeatureTypeFactory;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.eclipse.update.tests.implementation.SiteFTPFactory;
 
 public class TestSiteType extends UpdateManagerTestCase {
 
@@ -41,6 +42,23 @@ public class TestSiteType extends UpdateManagerTestCase {
 
 	}
 	
+	
+/**
+	 * @throws Exception
+	 */
+	public void testFTPSiteType() throws Exception{ 
+		
+		String featurePath = dataPath+"SiteTypeExamples/site1/";
+		ISite site = SiteManager.getSite(new URL("ftp://theguest:theguest@eclipse3.torolab.ibm.com/"));
+		
+		// should not find the mapping
+		// but then should attempt to read the XML file
+		// found a new type
+		// call the new type
+		assertTrue("Wrong site type",site.getType().equals("org.eclipse.update.tests.ftp"));		
+		assertTrue("Wrong file",site.getURL().getFile().equals("/"+SiteFTPFactory.FILE));
+	
+	}	
 	
 		}
 
