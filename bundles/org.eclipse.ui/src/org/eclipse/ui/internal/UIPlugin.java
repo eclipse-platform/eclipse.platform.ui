@@ -93,6 +93,12 @@ public class UIPlugin extends AbstractUIPlugin {
 		//Deprecated but kept for backwards compatibility
 		store.setDefault(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+		
+		// Although there is no longer any item on the preference pages 
+		// for setting the linking preference, since it is now a per-part setting, 
+		// it remains as a preference to allow product overrides of the 
+		// initial state of linking in the Navigator.
+		// By default, linking is off.
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
 		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
