@@ -18,7 +18,6 @@ import java.io.File;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.jface.text.IDocument;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -26,8 +25,6 @@ import org.xml.sax.Attributes;
 /**
  * SAX Parsing Handler that determines the enclosing target task element in
  * respect to a specified cursor position.
- * 
- * @author Alf Schiefelbein
  */
 public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler {
 
@@ -42,13 +39,13 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
     /**
      * Creates an EnclosingTargetSearchingHandler, with the specified parameters.
      * 
-     * @param aRowOfCursorPosition the startingRow where the cursor is located in the
+     * @param cursorRow the startingRow where the cursor is located in the
      * document. The first startingRow is refered to with an index of '0'.
-     * @param aColumnOfCursorPosition the startingColumn where the cursor is located in
+     * @param cursorColumn the startingColumn where the cursor is located in
      * the document. The first startingColumn is refered to with an index of '0'.
      */
-    public EnclosingTargetSearchingHandler(IDocument document, File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
-    	super(document, mainFileContainer, aRowOfCursorPosition, aColumnOfCursorPosition);
+    public EnclosingTargetSearchingHandler(IDocument document, File mainFileContainer, int cursorRow, int cursorColumn) throws ParserConfigurationException {
+    	super(document, mainFileContainer, cursorRow, cursorColumn);
     }
 
     /* (non-Javadoc)
@@ -56,30 +53,26 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
      */
     public void endElement(String aUri, String aLocalName, String aQualifiedName) {
 
-		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
-        	AntUIPlugin.log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}
-
-        if(parsingFinished) {
+		if(parsingFinished) {
             return;
         }        
         
-        // Checks wether we know the parent for sure
-        boolean tempParentKnown = checkForParentElement();
+        // Checks whether we know the parent for sure
+        boolean parentKnown = checkForParentElement();
         
-        String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
+        String tagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
 
-		if(tempTagName.equals("target")) { //$NON-NLS-1$
+		if(tagName.equals("target")) { //$NON-NLS-1$
 			if(!stillOpenElements.isEmpty()) {        
-		        Element tempLastStillOpenElement = (Element)stillOpenElements.peek(); 
-		        if(tempLastStillOpenElement != null && tempLastStillOpenElement.getTagName().equals(tempTagName)) {
+		        Element lastStillOpenElement = (Element)stillOpenElements.peek(); 
+		        if(lastStillOpenElement != null && lastStillOpenElement.getTagName().equals(tagName)) {
 		            stillOpenElements.pop();
 		            
 		            if(!stillOpenElements.empty()) {
-		                Element tempSecondLastStillOpenElement = (Element)stillOpenElements.peek();
-		                tempSecondLastStillOpenElement.appendChild(tempLastStillOpenElement);
+		                Element secondLastStillOpenElement = (Element)stillOpenElements.peek();
+		                secondLastStillOpenElement.appendChild(lastStillOpenElement);
 		            }
-		            if(tempParentKnown && parentElement != null && parentElement.getTagName().equals(tempTagName)) {
+		            if(parentKnown && parentElement != null && parentElement.getTagName().equals(tagName)) {
 		                parsingFinished = true;
 		            }
 		        }
@@ -91,15 +84,7 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
     public void startElement(String aUri, String aLocalName, String aQualifiedName, Attributes anAttributes) {
-        /*
-         * While the crimson parser passes the tag name as local name, apache's
-         * xerces parser, passes the tag name as qualilfied name and an empty 
-         * string as local name.
-         */
-        
-		 if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
-			AntUIPlugin.log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        }
+       
         if(parsingFinished) {
             return;
         }        
@@ -107,19 +92,21 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
         // Checks wether we know the parent for sure
         checkForParentElement();
 
-        // Create a Dom Element
-        String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
-        if(tempTagName == null || tempTagName.length() == 0) {
+        //While the crimson parser passes the tag name as local name, apache's
+        //xerces parser, passes the tag name as qualilfied name and an empty 
+        // string as local name.
+        String tagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
+        if(tagName == null || tagName.length() == 0) {
             throw new AntEditorException(AntEditorMessages.getString("EnclosingTargetSearchingHandler.Error_parsing")); //$NON-NLS-1$
         }
 		
-		if(tempTagName.equals("target")) { //$NON-NLS-1$
-	        Element tempElement = document.createElement(tempTagName);
-	        String tempTargetName = anAttributes.getValue("name"); //$NON-NLS-1$
-	        if(tempTargetName != null && tempTargetName.length() > 0) {
-		        tempElement.setAttribute("name", tempTargetName); //$NON-NLS-1$
+		if(tagName.equals("target")) { //$NON-NLS-1$
+	        Element element = document.createElement(tagName);
+	        String targetName = anAttributes.getValue("name"); //$NON-NLS-1$
+	        if(targetName != null && targetName.length() > 0) {
+		        element.setAttribute("name", targetName); //$NON-NLS-1$
 	        }
-	        stillOpenElements.push(tempElement);
+	        stillOpenElements.push(element);
 		}
     }
 
@@ -137,16 +124,12 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
     protected boolean checkForParentElement() {
         if(parentElement == null && !enclosingTargetElementDetermined) {
             if(locator != null) {
-
-                /*
-                 * The locator's numbers are 1-based though, we do everything
-                 * 0-based.
-                 */
-
-                int tempLineNr = locator.getLineNumber() -1;
-                int tempColumnNr = locator.getColumnNumber() -1;
-                if(tempLineNr> rowOfCursorPosition ||
-                    (tempLineNr == rowOfCursorPosition && tempColumnNr > columnOfCursorPosition)) {
+                 //The locator's numbers are 1-based though, we do everything
+                 //0-based.
+                int lineNr = locator.getLineNumber() -1;
+                int columnNr = locator.getColumnNumber() -1;
+                if(lineNr> rowOfCursorPosition ||
+                    (lineNr == rowOfCursorPosition && columnNr > columnOfCursorPosition)) {
                         determineEnclosingTargetTaskElement();
 	                    return true;
                     }
@@ -162,17 +145,14 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
 	/**
 	 * Determines the enclosing target task element.
 	 * <P>
-	 * This Method shall only be called if the parser has passed the cursor 
-	 * position allready.
+	 * This method shall only be called if the parser has passed the cursor 
+	 * position already.
 	 */
     protected void determineEnclosingTargetTaskElement() {
         while(parentElement == null && !stillOpenElements.empty()) {
-            Element tempElement = (Element)stillOpenElements.pop();
-            if(tempElement.getTagName().equals("target")) { //$NON-NLS-1$
-                parentElement = tempElement;
-				if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
-					AntUIPlugin.log("EnclosingTargetSearchingHandler.checkForParentElement(): Enclosing target element found: " +parentElement, null); //$NON-NLS-1$
-                }
+            Element stillOpen = (Element)stillOpenElements.pop();
+            if(stillOpen.getTagName().equals("target")) { //$NON-NLS-1$
+                parentElement = stillOpen;
             }
         }
     	enclosingTargetElementDetermined = true;
@@ -186,16 +166,16 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
      * position. That happens when the parser finds an error within the parsed 
      * document before. In that case the parent element might be guessed to be
      * the one that opened last. To tell the handler wether the parent should
-     * be guessed, <code>aGuessParentFlag</code> may be specified.
+     * be guessed, <code>guessParent</code> may be specified.
      * 
-     * @param aGuessParentFlag wether the parent should be guessed
+     * @param guessParent whether the parent should be guessed
      * @return the parent element or <code>null</code> if not known.
      */
-    public Element getParentElement(boolean aGuessParentFlag) {
+    public Element getParentElement(boolean guessParent) {
         if(enclosingTargetElementDetermined) {
             return parentElement;
         }
-        if(aGuessParentFlag) {
+        if(guessParent) {
             if(!stillOpenElements.empty()) {
             	determineEnclosingTargetTaskElement();
                 return parentElement;
