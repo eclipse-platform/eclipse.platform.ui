@@ -15,6 +15,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -238,7 +239,7 @@ public class InternalSearchUI {
 		try {
 			IViewPart viewPart= SearchPlugin.getActivePage().findView(SEARCH_VIEW_ID);
 			if (viewPart == null || SearchPreferencePage.isViewBroughtToFront()) {
-				SearchPlugin.getActivePage().showView(SEARCH_VIEW_ID);
+				SearchPlugin.getActivePage().showView(SEARCH_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			}
 		} catch (PartInitException ex) {
 			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.openResultView.title"), SearchMessages.getString("Search.Error.openResultView.message")); //$NON-NLS-2$ //$NON-NLS-1$

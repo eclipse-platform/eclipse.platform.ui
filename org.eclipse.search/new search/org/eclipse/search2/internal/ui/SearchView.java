@@ -323,4 +323,16 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	public void searchQueryFinished(ISearchQuery query) {
 		updateTitle();
 	}
+	
+	/*
+	 *  TODO workaround for focus problem. Clarify focus behaviour.
+	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+		IPage currentPage= getCurrentPage();
+		if (currentPage != null)
+			currentPage.setFocus();
+		else 
+			super.setFocus();
+	}
 }

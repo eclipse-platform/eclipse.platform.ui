@@ -498,6 +498,13 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			MatchEvent me= (MatchEvent) e;
 			Object element= me.getMatch().getElement();
 			postUpdate(element);
+			AbstractTextSearchResult result= (AbstractTextSearchResult) me.getSearchResult();
+			if (result.getMatchCount() == 1)
+				asyncExec(new Runnable() {
+					public void run() {
+						navigateNext(true);
+					}
+				});
 		} else if (e instanceof RemoveAllEvent) {
 			postClear();
 		}
