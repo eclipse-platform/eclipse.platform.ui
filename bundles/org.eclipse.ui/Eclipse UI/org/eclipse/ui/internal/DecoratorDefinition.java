@@ -3,8 +3,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
@@ -188,6 +187,35 @@ public class DecoratorDefinition {
 			handleCoreException(exception);
 		}
 		return null;
+	}
+
+	/**
+	 * Decorate the text and the image provided for the element type.
+	 * If the decorator for the receiver is an instance of 
+	 * <code>IBatchLabelDecorator</code> then do both at the same
+	 * time - otherwise call the decorateText and decorateImage
+	 * simultaneiously. 
+	 * Set imageResult and textResult to the result of the decoration.
+	 */
+	void decorateTextAndImage(Object element, Decoration decorationResult) {
+		try {
+			ILabelDecorator decorator = getDecorator();
+		} catch (CoreException exception) {
+			handleCoreException(exception);
+			return;
+		}
+		if (decorator instanceof IBatchLabelDecorator)
+			((IBatchLabelDecorator) decorator).decorateTextAndImage(
+				element,
+				decorationResult);
+		else {
+			String newText = decorator.decorateText(decorationResult.getText(), element);
+			Image newImage = decorator.decorateImage(decorationResult.getImage(), element);
+			if (newText != null)
+				decorationResult.setText(newText);
+			if (newImage != null)
+				decorationResult.setImage(newImage);
+		}
 	}
 
 	/**
