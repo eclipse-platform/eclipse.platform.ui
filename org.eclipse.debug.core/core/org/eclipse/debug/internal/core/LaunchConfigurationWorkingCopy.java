@@ -166,10 +166,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 						doSave0();
 					}
 				};
-				// TODO: Fix getSchedulingRule to return container of files
-				//ISchedulingRule rule= getSchedulingRule();
-				//ResourcesPlugin.getWorkspace().run(wr, rule, 0, null);
-				ResourcesPlugin.getWorkspace().run(wr, null);
+				
+				ResourcesPlugin.getWorkspace().run(wr, getSchedulingRule(), 0, null);
 			} else {
 				//file is persisted in the metadata not the workspace
 				doSave0();
@@ -190,16 +188,18 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private ISchedulingRule getSchedulingRule() {
 		List changedFiles= new ArrayList(2);
 		if (!isLocal()) {
+			//working copy will be saved to a workspace location
 			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
 			if (files.length > 0) {
-				changedFiles.add(files[0]);
+				changedFiles.add(files[0].getParent());
 			}
 		}
 		ILaunchConfiguration original = getOriginal();
 		if (original != null && !original.isLocal()) {
+			//original will be deleted from a workspace location
 			IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(original.getLocation());
 			if (files.length > 0) {
-				changedFiles.add(files[0]);
+				changedFiles.add(files[0].getParent());
 			}
 		}
 		if (changedFiles.isEmpty()) {
